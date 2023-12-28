@@ -26,7 +26,7 @@ validators.mandatory:x:@.arguments/*/args
 add:x:./*/sockets.signal/*/args
    get-nodes:x:@.arguments/*/args/*
 
-// Checking if we've got [roles] declaration and if so decorating invocation.
+// Checking if we've got a [roles] declaration and if so decorating invocation.
 if
    and
       exists:x:@.arguments/*/roles
