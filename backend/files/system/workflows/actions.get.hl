@@ -22,7 +22,7 @@ io.folder.list:/modules/
 for-each:x:@io.folder.list/*
    strings.concat
       get-value:x:@.dp/#
-      .:/workflows/actions/
+      .:workflows/actions/
    if
       io.folder.exists:x:@strings.concat
       .lambda

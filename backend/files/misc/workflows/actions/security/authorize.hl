@@ -1,6 +1,6 @@
 
 /*
- * Ensures user is authenticated and optionally authorised.
+ * Ensures user is authorized to access endpoint.
  *
  * If you don't supply a list of [roles] this action only verifies the user is authenticated,
  * and does not care about what roles the user belongs to.
