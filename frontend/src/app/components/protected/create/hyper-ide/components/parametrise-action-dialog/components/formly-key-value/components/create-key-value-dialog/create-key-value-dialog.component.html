@@ -38,6 +38,9 @@
       <mat-autocomplete #auto="matAutocomplete">
         <mat-option
           *ngFor="let option of filteredOptions | async"
+          [matTooltip]="option.complete === false ? 'Incomplete expression, cannot deduce complete path' : ''"
+          matTooltipPosition="right"
+          [class]="option.complete === false ? 'warning' : ''"
           [value]="option.value">{{option.label}}</mat-option>
       </mat-autocomplete>
     </mat-form-field>

@@ -76,6 +76,7 @@ export class ParametriseActionDialog implements OnInit {
               field.props.options.push({
                 value: idxCandidate.value,
                 label: idxCandidate.label,
+                complete: idxCandidate.complete,
               });
             }
           }
@@ -113,6 +114,7 @@ export class ParametriseActionDialog implements OnInit {
               field.props.options.push({
                 value: idxCandidate.value,
                 label: idxCandidate.label,
+                complete: idxCandidate.complete,
               });
             }
           }

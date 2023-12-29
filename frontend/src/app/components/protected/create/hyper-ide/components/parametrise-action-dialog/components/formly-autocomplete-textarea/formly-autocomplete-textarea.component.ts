@@ -29,6 +29,9 @@ import { Observable, map, startWith } from 'rxjs';
   <mat-autocomplete #auto="matAutocomplete">
     <mat-option
       *ngFor="let option of filteredOptions | async;"
+      [class]="option.complete === false ? 'warning' : ''"
+      [matTooltip]="option.complete === false ? 'Incomplete expression, cannot deduce complete path' : ''"
+      matTooltipPosition="right"
       [value]="option.value">{{option.label}}</mat-option>
   </mat-autocomplete>
 </mat-form-field>
