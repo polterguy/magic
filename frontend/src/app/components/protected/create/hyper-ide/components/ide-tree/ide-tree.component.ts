@@ -193,6 +193,7 @@ export class IdeTreeComponent implements OnInit {
               return {
                 value: ':x:' + x.expression,
                 label: x.name,
+                complete: x.complete,
               }
             }) || [],
           },

@@ -72,47 +72,88 @@ for-each:x:@hyper2lambda/*
                load-file:x:@.dp/#/*/filename
                hyper2lambda:x:@load-file
 
-               // Iterating through all [return] invocations.
-               for-each:x:@hyper2lambda/**/[yield|return|return-nodes]/*
+               // Checking if action has empty return invocations.
+               if
+                  and
+                     exists:x:@hyper2lambda/**/[yield|return|return-nodes]
+                     not-exists:x:@hyper2lambda/**/[yield|return|return-nodes]/*
+                  .lambda
 
-                  /*
-                   * Checking if currently iterated node has children nodes,
-                   * at which point we have to return a warning to caller.
-                   */
-                  if
-                     exists:x:@.dp/#/*
-                     .lambda
+                     /*
+                      * Action has "weakly type" return invocations, as in it's returning
+                      * "something" we just don't know what. Might be SQL action for instance,
+                      * returning result of SQL execution.
+                      */
+                     .x
+                     set-value:x:@.x
+                        strings.concat
+                           .:--/execute/=
+                           get-value:x:@.dp/#/*/name
+                           .:/*/
 
-                        // Returning warning to caller.
-                        set-value:x:@.warning
-                           .:Warning, some of your actions, and/or arguments, are returning complex objects, and we cannot automatically create candidate expressions for these. You will have to manually edit some of your expressions if you want to reference these nodes in your actions.
+                     /*
+                      * Making sure candidate expression has not already been added before we add it.
+                      *
+                      * Notice, the same [return] invocation can be repeated multiple times in the same action file,
+                      * if there are conditional statements ([if]/[else-if]) that invokes [return] or [yield], etc.
+                      */
+                     if
+                        not-exists:x:../*/return/*/candidates/*/*/expression/={@.x}
+                        .lambda
 
-                  // Creating our candidate expression.
-                  .x
-                  set-value:x:@.x
-                     strings.concat
-                        .:--/execute/=
-                        get-value:x:@.dp/@.dp/#/*/name
-                        .:/*/
-                        get-name:x:@.dp/#
-
-                  /*
-                   * Making sure candidate expression has not already been added before we add it.
-                   *
-                   * Notice, the same [return] invocation can be repeated multiple times in the same action file,
-                   * if there are conditional statements ([if]/[else-if]) that invokes [return] or [yield], etc.
-                   */
-                  if
-                     not-exists:x:../*/return/*/candidates/*/*/expression/={@.x}
-                     .lambda
-
-                        // Argument has not been previously added to return lambda.
-                        unwrap:x:+/*/*/*
-                        add:x:../*/return/*/candidates
-                           .
+                           // Argument has not been previously added to return lambda.
+                           unwrap:x:+/*/*/*
+                           add:x:../*/return/*/candidates
                               .
-                                 name:x:@.x
-                                 expression:x:@.x
+                                 .
+                                    name:x:@.x
+                                    expression:x:@.x
+                                    complete:bool:false
+
+               else
+
+                  // Iterating through all [return] invocations.
+                  for-each:x:@hyper2lambda/**/[yield|return|return-nodes]/*
+
+                     /*
+                      * Checking if currently iterated node has children nodes,
+                      * at which point we have to return a warning to caller.
+                      */
+                     if
+                        exists:x:@.dp/#/*
+                        .lambda
+
+                           // Returning warning to caller.
+                           set-value:x:@.warning
+                              .:Warning, some of your actions, and/or arguments, are returning complex objects, and we cannot automatically create candidate expressions for these. You will have to manually edit some of your expressions if you want to reference these nodes in your actions.
+
+                     // Creating our candidate expression.
+                     .x
+                     set-value:x:@.x
+                        strings.concat
+                           .:--/execute/=
+                           get-value:x:@.dp/@.dp/#/*/name
+                           .:/*/
+                           get-name:x:@.dp/#
+
+                     /*
+                      * Making sure candidate expression has not already been added before we add it.
+                      *
+                      * Notice, the same [return] invocation can be repeated multiple times in the same action file,
+                      * if there are conditional statements ([if]/[else-if]) that invokes [return] or [yield], etc.
+                      */
+                     if
+                        not-exists:x:../*/return/*/candidates/*/*/expression/={@.x}
+                        .lambda
+
+                           // Argument has not been previously added to return lambda.
+                           unwrap:x:+/*/*/*
+                           add:x:../*/return/*/candidates
+                              .
+                                 .
+                                    name:x:@.x
+                                    expression:x:@.x
+                                    complete:bool:true
 
          else
 
@@ -156,6 +197,7 @@ for-each:x:@hyper2lambda/*
                            .
                               name:x:@.x
                               expression:x:@.x
+                              complete:bool:true
 
             /*
              * In case this is a "simple variable" we add it directly if it has a value.
@@ -186,6 +228,7 @@ for-each:x:@hyper2lambda/*
                               .
                                  name:x:@.x
                                  expression:x:@.x
+                                 complete:bool:true
 
 // Checking if we've got warning, at which point we return these to caller.
 if
