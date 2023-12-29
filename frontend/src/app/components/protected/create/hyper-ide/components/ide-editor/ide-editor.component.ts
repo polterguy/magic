@@ -137,6 +137,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   ngAfterViewInit() {
 
     if (!window['_vocabulary']) {
+
       this.vocabularyService.vocabulary().subscribe({
 
         next: (result: {vocabulary: string[], slots: string[]}) => {
@@ -392,12 +393,23 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       width: '550px',
     });
     dialogRef.afterClosed().subscribe((filename: string) => {
+
       if (filename) {
+
+        this.generalService.showLoading();
         this.evaluatorService.loadSnippet(filename).subscribe({
+
           next: (content: string) => {
+
+            this.generalService.hideLoading();
             return this.insertHyperlambda(content);
           },
-          error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+
+          error: (error: any) => {
+
+            this.generalService.hideLoading();
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          }
         });
       }
     });

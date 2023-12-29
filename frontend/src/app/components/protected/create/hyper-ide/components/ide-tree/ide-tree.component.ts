@@ -7,7 +7,7 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 // Application specific imports
 import { FlatNode } from './models/flat-node.model';
@@ -66,6 +66,7 @@ export class IdeTreeComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private fileService: FileService,
+    private cdr: ChangeDetectorRef,
     private workflowService: WorkflowService,
     private generalService: GeneralService,
     private codemirrorActionsService: CodemirrorActionsService) { }
@@ -85,7 +86,11 @@ export class IdeTreeComponent implements OnInit {
         this.getWorkflowActions().then(() => {
 
           this.generalService.hideLoading();
-        })
+        });
+
+      } else {
+
+        this.generalService.hideLoading();
       }
     });
   }
@@ -101,7 +106,7 @@ export class IdeTreeComponent implements OnInit {
   /**
    * Retrieves files and folders from backend.
    */
-  getFilesFromServer(folder: string = '/') {
+  private getFilesFromServer(folder: string = '/') {
 
     return new Promise<boolean>(resolve => {
 
@@ -140,7 +145,11 @@ export class IdeTreeComponent implements OnInit {
               addToRoot(files || [], false);
               resolve(true);
             },
-            error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000)
+            error: (error: any) => {
+
+              resolve(false);
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+            }
           });
         },
         error: (error: any) => {
@@ -603,6 +612,7 @@ export class IdeTreeComponent implements OnInit {
 
         // Hiding rename textbox.
         this.showRenameBox = null;
+        this.cdr.detectChanges();
 
         // Showing feedback to user.
         this.generalService.showFeedback('File successfully renamed', 'successMessage');
