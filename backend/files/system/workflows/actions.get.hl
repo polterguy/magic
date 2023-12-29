@@ -6,12 +6,33 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Listing all actions in workflow folder.
-io.file.list-recursively:/misc/workflows/actions/
-io.file.list-recursively:/etc/workflows/actions/
+// Buffer for all actions in the system.
+.result
+
+// Retrieving all system actions.
+add:x:@.result
+   io.file.list-recursively:/misc/workflows/actions/
+
+// Retrieving all custom actions.
+add:x:@.result
+   io.file.list-recursively:/etc/workflows/actions/
+
+// Then iterating through each installed module, and retrieving all module actions.
+io.folder.list:/modules/
+for-each:x:@io.folder.list/*
+   strings.concat
+      get-value:x:@.dp/#
+      .:/workflows/actions/
+   if
+      io.folder.exists:x:@strings.concat
+      .lambda
+
+         // Module has custom actions.
+         insert-before:x:@.result/0
+            io.file.list-recursively:x:@strings.concat
 
 // Filtering out everything not ending with '.hl'.
-for-each:x:./*/io.file.list-recursively/*
+for-each:x:@.result/*
    if
       strings.ends-with:x:@.dp/#
          .:.hl

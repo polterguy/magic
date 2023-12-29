@@ -6,12 +6,33 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Listing all snippets in workflow folder.
-io.file.list-recursively:/misc/workflows/snippets/
-io.file.list-recursively:/etc/workflows/snippets/
+// Buffer for all snippets in the system.
+.result
+
+// Retrieving all system snippets.
+add:x:@.result
+   io.file.list-recursively:/misc/workflows/snippets/
+
+// Retrieving all custom snippets.
+add:x:@.result
+   io.file.list-recursively:/etc/workflows/snippets/
+
+// Then iterating through each installed module, and retrieving all module snippets.
+io.folder.list:/modules/
+for-each:x:@io.folder.list/*
+   strings.concat
+      get-value:x:@.dp/#
+      .:/workflows/snippets/
+   if
+      io.folder.exists:x:@strings.concat
+      .lambda
+
+         // Module has custom snippets.
+         insert-before:x:@.result/0
+            io.file.list-recursively:x:@strings.concat
 
 // Filtering out everything not ending with '.hl'.
-for-each:x:./*/io.file.list-recursively/*
+for-each:x:@.result/*
    if
       strings.ends-with:x:@.dp/#
          .:.hl
