@@ -25,7 +25,7 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/url
 validators.url:x:@.arguments/*/url
-validators.mandatory:x:@.arguments/*/payload/*
+validators.mandatory:x:@.arguments/*/payload
 
 // Checking if we've got a token.
 if

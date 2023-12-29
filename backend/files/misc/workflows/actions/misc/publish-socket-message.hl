@@ -20,7 +20,7 @@
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/channel
-validators.mandatory:x:@.arguments/*/args/*
+validators.mandatory:x:@.arguments/*/args
 
 // Decorating invocation.
 add:x:./*/sockets.signal/*/args
