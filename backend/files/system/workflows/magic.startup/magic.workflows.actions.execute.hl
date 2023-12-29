@@ -93,9 +93,11 @@ slots.create:magic.workflows.actions.execute
                args
                   type:error
                   message:Exception during execution of action
-                  esception-message:x:@.arguments/*/message
+                  exception-message:x:@.arguments/*/message
                   action-name:x:@.arguments/@.arguments/*/name
                   arguments
 
       // Rethrowing exception
       throw:x:@.arguments/*/message
+         status:x:@.arguments/*/status
+         public:x:@.arguments/*/public

@@ -9,13 +9,13 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Loading actin/snippet Hyperlambda file and transforming to lambda object.
+// Loading action/snippet Hyperlambda file and transforming to lambda object.
 load-file:x:@.arguments/*/filename
 
 // Checking if this is a action template.
 if
-   strings.starts-with:x:@.arguments/*/filename
-      .:/misc/workflows/actions/
+   strings.contains:x:@.arguments/*/filename
+      .:/workflows/actions/
    .lambda
 
       /*
@@ -90,10 +90,7 @@ if
 
 else
 
-   /*
-    * This is just some other template snippet,
-    * returning as is.
-    */
+   // This is a template snippet, returning as is.
    unwrap:x:+/*
    return
       result:x:@load-file

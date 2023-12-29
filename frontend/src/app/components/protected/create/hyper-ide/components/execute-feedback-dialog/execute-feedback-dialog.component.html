@@ -10,6 +10,7 @@
       </h3>
       <pre *ngIf="el.arguments" class="args"><code [highlight]="el.json"></code></pre>
       <div *ngIf="el.time">{{el.time}} seconds</div>
+      <div *ngIf="el.type === 'error'" class="error">{{el['exception-message']}}</div>
       <hr *ngIf="el.time && el !== messages[messages.length - 1]">
     </div>
   </div>
