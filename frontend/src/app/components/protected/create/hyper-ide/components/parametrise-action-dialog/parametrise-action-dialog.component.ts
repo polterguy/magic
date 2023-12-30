@@ -85,6 +85,16 @@ export class ParametriseActionDialog implements OnInit {
         case 'array':
           add = true;
           field.type = 'array';
+          field.props.options = [];
+          if (!this.data.input[idx].noCandidates || this.data.input[idx].noCandidates === false) {
+            for (const idxCandidate of this.data.candidates) {
+              field.props.options.push({
+                value: idxCandidate.value,
+                label: idxCandidate.label,
+                complete: idxCandidate.complete,
+              });
+            }
+          }
           break;
 
         case 'int':
