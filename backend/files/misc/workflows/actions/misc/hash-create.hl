@@ -29,7 +29,7 @@ if
          .:
    .lambda
 
-      // Overriding hashing algorithm.
+      // Overriding hashing algorithm by changing name of slot we invoke below.
       set-name:x:../*/crypto.hash
          strings.concat
             .:crypto.hash.
