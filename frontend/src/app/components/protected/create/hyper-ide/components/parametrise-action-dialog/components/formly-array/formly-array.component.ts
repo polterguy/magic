@@ -61,6 +61,9 @@ export class FormlyArrayComponent extends FieldType<FieldTypeConfig> implements 
     this.dialog.open(CreateArrayDialogComponent, {
       width: '80vw',
       maxWidth: '512px',
+      data: {
+        options: this.props.options,
+      },
     }).afterClosed().subscribe((result: any) => {
 
       if (result) {

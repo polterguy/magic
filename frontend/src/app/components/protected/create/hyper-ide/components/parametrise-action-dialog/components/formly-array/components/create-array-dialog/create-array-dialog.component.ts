@@ -4,8 +4,10 @@
  */
 
 // Angular and system imports.
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Observable, map, startWith } from 'rxjs';
 
 // Application specific imports.
 import { GeneralService } from 'src/app/services/general.service';
@@ -18,22 +20,43 @@ import { GeneralService } from 'src/app/services/general.service';
   templateUrl: './create-array-dialog.component.html',
   styleUrls: ['./create-array-dialog.component.scss']
 })
-export class CreateArrayDialogComponent {
+export class CreateArrayDialogComponent implements OnInit {
 
-  value: string;
+  autocompleter = new FormControl('');
+  filteredOptions: Observable<string[]>;
 
   constructor(
     private generalService: GeneralService,
-    private dialogRef: MatDialogRef<CreateArrayDialogComponent>) {}
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<CreateArrayDialogComponent>) { }
+
+  ngOnInit() {
+
+    this.filteredOptions = this.autocompleter.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '')),
+    );
+  }
 
   onSubmit() {
 
-    if (!this.value|| this.value === '') {
+
+    if (this.autocompleter.value === '') {
 
       this.generalService.showFeedback('Please provide a value', 'errorMessage');
       return;
     }
 
-    this.dialogRef.close(this.value);
+    this.dialogRef.close(this.autocompleter.value);
+  }
+
+  /*
+   * Private helper methods
+   */
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.data.options.filter(option => option.label.toLowerCase().includes(filterValue));
   }
 }
