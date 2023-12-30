@@ -20,6 +20,14 @@
          .:sha512
 .icon:settings
 
+// Sanity checking invocation.
+validators.enum:x:@.arguments/*/algorithm
+   .:sha1
+   .:md5
+   .:sha256
+   .:sha384
+   .:sha512
+
 // Checking if caller wants to override the default hashing algorithm.
 if
    and

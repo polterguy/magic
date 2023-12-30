@@ -30,6 +30,11 @@
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/sql
+validators.enum:x:@.arguments/*/database-type
+   .:sqlite
+   .:mssql
+   .:mysql
+   .:pgsql
 
 // Applying defaults.
 validators.default:x:@.arguments
