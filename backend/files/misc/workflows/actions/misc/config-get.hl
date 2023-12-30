@@ -1,0 +1,19 @@
+
+/*
+ * Returns the specified [key] configuration setting.
+ *
+ * Notice, to traverse into for instance magic.foo.bar, you'll have to colon separate
+ * your path as follows "magic:foo:bar".
+ */
+.arguments
+   key
+      type:string
+      mandatory:bool:true
+.icon:account_balance
+
+// Retrieves config entry.
+config.get:x:@.arguments/*/key
+
+// Returns result of above invocation to caller.
+yield
+   value:x:@config.get
