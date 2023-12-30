@@ -22,7 +22,7 @@ import { CreateArrayDialogComponent } from './components/create-array-dialog/cre
       *ngFor="let item of items"
       (removed)="removeArgument(item)"
       [removable]="true">
-      {{item}}
+      [{{item}}]
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
     <mat-chip (click)="addItem()">
