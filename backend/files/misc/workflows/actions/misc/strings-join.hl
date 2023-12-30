@@ -1,0 +1,23 @@
+
+/*
+ * Joins the specified [values] into a single string.
+ *
+ * Notice, the [separator] is inserted between each string. If no [separator] argument is provided,
+ * the strings will simply be concatenated instead.
+ */
+.arguments
+   values
+      type:array
+      mandatory:bool:true
+   separator
+      type:string
+      mandatory:bool:false
+.icon:settings
+
+// Joining strings.
+strings.join:x:@.arguments/*/values/*
+   get-value:x:@.arguments/*/separator
+
+// Returning result to caller.
+yield
+   result:x:@strings.join

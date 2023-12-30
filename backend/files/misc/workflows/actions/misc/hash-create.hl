@@ -1,0 +1,43 @@
+
+/*
+ * Creates a hash of the specified [input].
+ *
+ * Use [algorithm] to override the default hashing algorithm used. The default hashing algorithm
+ * is SHA 256.
+ */
+.arguments
+   input
+      type:string
+      mandatory:bool:true
+   algorithm
+      type:enum
+      mandatory:bool:false
+      values
+         .:sha1
+         .:md5
+         .:sha256
+         .:sha384
+         .:sha512
+.icon:settings
+
+// Checking if caller wants to override the default hashing algorithm.
+if
+   and
+      exists:x:@.arguments/*/algorithm
+      not-null:x:@.arguments/*/algorithm
+      neq:x:@.arguments/*/algorithm
+         .:
+   .lambda
+
+      // Overriding hashing algorithm.
+      set-name:x:../*/crypto.hash
+         strings.concat
+            .:crypto.hash.
+            get-value:x:@.arguments/*/algorithm
+
+// Hashing string.
+crypto.hash:x:@.arguments/*/input
+
+// Returning result to caller.
+yield
+   result:x:./-
