@@ -85,17 +85,12 @@ slots.create:magic.workflows.actions.execute
          .lambda
 
             // Publishing socket debug message to client.
-            add:x:./*/sockets.signal/*/args/*/arguments
-               get-nodes:x:@.arguments/@.arguments/*/arguments/*
             unwrap:x:+/**
             sockets.signal:magic.workflows.action
                roles:root
                args
                   type:error
-                  message:Exception during execution of action
                   exception-message:x:@.arguments/*/message
-                  action-name:x:@.arguments/@.arguments/*/name
-                  arguments
 
       // Rethrowing exception
       throw:x:@.arguments/*/message
