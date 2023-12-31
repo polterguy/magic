@@ -9,13 +9,7 @@
  * The action will use the [comparison] to compare the [lhs] and [rhs] values/expressions.
  */
 .arguments
-   workflow
-      type:workflow
-      mandatory:bool:true
    lhs
-      type:string
-      mandatory:bool:true
-   rhs
       type:string
       mandatory:bool:true
    comparison
@@ -28,6 +22,12 @@
          .:mte
          .:lt
          .:lte
+   rhs
+      type:string
+      mandatory:bool:true
+   workflow
+      type:workflow
+      mandatory:bool:true
    arguments
       type:key-value
       mandatory:bool:false

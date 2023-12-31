@@ -5,3 +5,12 @@ mat-icon {
   font-size: 18px;
   opacity: 0.4;
 }
+
+.warning {
+  background-color: #fff0f0;
+}
+
+.warning:hover,
+.warning:active {
+  background-color: #f0e0e0;
+}
