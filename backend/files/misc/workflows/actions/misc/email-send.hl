@@ -1,8 +1,9 @@
 
 /*
- * Sends an email to the specified [name]/[email] recipient,
- * with the specified [subject] and [body], using the default from email address and name
- * from your configuration settings.
+ * Sends an email to the specified [name]/[email] recipient, with the specified [subject] and [body].
+ *
+ * Optionally supply [from] and [from-email] as name/email sender. If you don't supply from, this action
+ * will use the default sender settings from your configuration.
  */
 .arguments
    name
@@ -25,7 +26,7 @@
       mandatory:bool:true
    html
       type:bool
-      mandatory:bool:false
+      default:bool:true
 .icon:email
 
 // Sanity checking invocation.

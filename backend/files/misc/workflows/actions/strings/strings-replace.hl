@@ -1,0 +1,26 @@
+
+/*
+ * Replaces the specified [source] string's [what] occurencies with [with].
+ *
+ * Returns the result as [result].
+ */
+.arguments
+   source
+      type:string
+      mandatory:bool:true
+   what
+      type:string
+      mandatory:bool:true
+   with
+      type:string
+      mandatory:bool:true
+.icon:settings
+
+// Joining strings.
+strings.replace:x:@.arguments/*/source
+   get-value:x:@.arguments/*/what
+   get-value:x:@.arguments/*/with
+
+// Returning result to caller.
+yield
+   result:x:@strings.replace
