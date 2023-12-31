@@ -29,6 +29,16 @@ export class WorkflowService {
   }
 
   /**
+   * Returns all workflows.
+   */
+  getArgumentsForFile(file: string) {
+
+    return this.httpService.get<any>(
+      '/magic/system/workflows/get-arguments?file=' + 
+      encodeURIComponent(file));
+  }
+
+  /**
    * Returns a list of all workflow actions.
    */
   getWorkflowActions() {

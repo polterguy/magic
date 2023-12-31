@@ -11,6 +11,7 @@ import { Observable, map, startWith } from 'rxjs';
 // Application specific imports
 import { GeneralService } from 'src/app/services/general.service';
 import { WorkflowService } from 'src/app/services/workflow.service';
+import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 
 /**
  * Formly workflow extension field.
@@ -27,7 +28,7 @@ import { WorkflowService } from 'src/app/services/workflow.service';
     matInput
     [formControl]="formControl"
     [matAutocomplete]="auto">
-  <mat-autocomplete #auto="matAutocomplete">
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event)">
     <mat-option
       *ngFor="let option of filteredOptions | async;"
       [class]="option.complete === false ? 'warning' : ''"
@@ -83,6 +84,30 @@ export class FormlyWorkflowComponent extends FieldType<FieldTypeConfig> implemen
     this.formControl.valueChanges.subscribe((val: string) => {
       this.model[<string>this.field.key] = val;
     });
+  }
+
+  optionSelected(e: MatAutocompleteActivatedEvent) {
+
+    // Verifying this is a filename reference.
+    this.generalService.showLoading();
+    if (e.option.value.startsWith('/') && e.option.value.endsWith('.hl')) {
+
+      // Retrieving arguments workflow file can handle.
+      this.workflowService.getArgumentsForFile(e.option.value).subscribe({
+
+        next: (result: any) => {
+
+          this.generalService.hideLoading();
+          this.props.change.call(this, result);
+        },
+
+        error: (error: any) => {
+
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+          this.generalService.hideLoading();
+        }
+      });
+    }
   }
 
   /*

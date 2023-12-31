@@ -33,6 +33,7 @@ export class ParametriseActionDialog implements OnInit {
 
   ngOnInit() {
 
+    let argumentsField: any = null;
     if (this.data.is_action) {
       this.fields.push({
         key: 'action_name',
@@ -70,6 +71,9 @@ export class ParametriseActionDialog implements OnInit {
         case 'key-value':
           add = true;
           field.type = 'key-value';
+          if (idx === 'arguments') {
+            argumentsField = field;
+          }
           field.props.options = [];
           if (!this.data.input[idx].noCandidates || this.data.input[idx].noCandidates === false) {
             for (const idxCandidate of this.data.candidates) {
@@ -131,6 +135,17 @@ export class ParametriseActionDialog implements OnInit {
                 complete: idxCandidate.complete,
               });
             }
+          }
+          if (field.type === 'workflow') {
+            field.props.change = (args: any) => {
+              if (argumentsField) {
+                this.model.arguments = {};
+                for (const idx in args) {
+                  this.model.arguments[idx] = 'CHANGE-VALUE';
+                }
+                argumentsField.options.detectChanges();
+              }
+            };
           }
           break;
 

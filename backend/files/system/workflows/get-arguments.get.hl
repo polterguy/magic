@@ -1,0 +1,23 @@
+
+/*
+ * Returns arguments the specified file can handle.
+ */
+.arguments
+   file:string
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+/*
+ * Loading action file and transforming Hyperlambda to lambda and making sure
+ * we return [.arguments] collection as [input].
+ *
+ * This becomes our input arguments to our action.
+ */
+load-file:x:@.arguments/*/file
+hyper2lambda:x:@load-file
+add:x:./*/return
+   get-nodes:x:@hyper2lambda/*/.arguments/*
+
+// Returning arguments to caller.
+return
