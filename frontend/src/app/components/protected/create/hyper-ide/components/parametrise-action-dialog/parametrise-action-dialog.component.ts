@@ -141,7 +141,7 @@ export class ParametriseActionDialog implements OnInit {
               if (argumentsField) {
                 this.model.arguments = {};
                 for (const idx in args) {
-                  this.model.arguments[idx] = 'CHANGE-VALUE';
+                  this.model.arguments[idx] = 'CHANGE';
                 }
                 argumentsField.options.detectChanges();
               }
