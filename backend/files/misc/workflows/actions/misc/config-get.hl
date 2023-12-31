@@ -9,7 +9,7 @@
    key
       type:string
       mandatory:bool:true
-.icon:account_balance
+.icon:settings
 
 // Retrieves config entry.
 config.get:x:@.arguments/*/key

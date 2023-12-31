@@ -13,7 +13,7 @@ import { GeneralService } from 'src/app/services/general.service';
 // Application specific imports
 
 /**
- * Formly SQL extension field.
+ * Formly autocomplete extension field.
  */
 @Component({
   selector: 'app-formly-autocomplete',

@@ -21,7 +21,15 @@ export class WorkflowService {
   constructor(private httpService: HttpService) { }
 
   /**
-   * Returns a list of all workflow funtions.
+   * Returns all workflows.
+   */
+  getWorkflows() {
+
+    return this.httpService.get<any[]>('/magic/system/workflows/workflows');
+  }
+
+  /**
+   * Returns a list of all workflow actions.
    */
   getWorkflowActions() {
 
@@ -29,7 +37,7 @@ export class WorkflowService {
   }
 
   /**
-   * Returns a list of all workflow funtions.
+   * Returns a list of all workflow snippets.
    */
   getWorkflowSnippets() {
 
@@ -37,7 +45,7 @@ export class WorkflowService {
   }
 
   /**
-   * Adds the specified function to the specified Hyperlambda and returns the transformed result.
+   * Adds the specified args to the specified Hyperlambda and returns the transformed result.
    */
   getActionHyperlambda(filename: string, args: any = null) {
 
