@@ -5,7 +5,7 @@
 
 // Angular and system imports.
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateKeyValueDialogComponent } from './components/create-key-value-dialog/create-key-value-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
@@ -41,6 +41,7 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
 
   constructor(
     private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
     private generalService: GeneralService) {
 
     super();
@@ -49,6 +50,10 @@ export class FormlyKeyValueComponent extends FieldType<FieldTypeConfig> implemen
   ngOnInit() {
 
     this.createItems();
+    this.options.detectChanges = () => {
+      this.createItems();
+      this.cdr.detectChanges();
+    };
   }
 
   removeArgument(el: any) {
