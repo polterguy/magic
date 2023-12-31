@@ -51,6 +51,11 @@ export class ExecuteFeedbackDialog implements OnInit {
     hubConnection.on('magic.workflows.action', (args) => {
 
       args = JSON.parse(args);
+      if (this.messages.length > 0 &&
+        args['exception-message'] &&
+        this.messages[this.messages.length- 1]['exception-message'] === args['exception-message']) {
+        return; // Making sure we only display the same exception once!
+      }
       args.json = JSON.stringify(args.arguments, null, 2);
       this.messages.push(args);
       this.cdr.detectChanges();
@@ -84,7 +89,7 @@ export class ExecuteFeedbackDialog implements OnInit {
         error: (error: any) => {
   
           this.generalService.hideLoading();
-          this.generalService.showFeedback(error?.error?.message ?? error, 'erroorMessage');
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         }
       });
     });
