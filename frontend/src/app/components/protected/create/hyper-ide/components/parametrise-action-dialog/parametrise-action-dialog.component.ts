@@ -106,8 +106,11 @@ export class ParametriseActionDialog implements OnInit {
         case 'string':
         case 'enum':
         case 'textarea':
+        case 'workflow':
           add = true;
-          field.type = this.data.input[idx].type === 'textarea' ? 'autocomplete-textarea' : 'autocomplete';
+          field.type = this.data.input[idx].type === 'textarea'
+            ? 'autocomplete-textarea'
+            : (this.data.input[idx].type === 'workflow' ? 'workflow' : 'autocomplete');
           field.props.options = [];
           if (this.data.input[idx].type === 'enum') {
             for (let idxNo = 0; idxNo < this.data.input[idx].values.length; idxNo++) {
@@ -115,6 +118,7 @@ export class ParametriseActionDialog implements OnInit {
                 field.props.options.push({
                   value: this.data.input[idx].values[idxNo],
                   label: this.data.input[idx].values[idxNo],
+                  complete: true,
                 });
               }
             }

@@ -1,0 +1,31 @@
+
+/*
+ * Executes the specified [workflow] file as a workflow.
+ *
+ * Will pass in all arguments specified to the workflow.
+ */
+.arguments
+   workflow
+      type:workflow
+      mandatory:bool:true
+   arguments
+      type:key-value
+      mandatory:bool:false
+.icon:settings
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/workflow
+
+// Parametrising [execute-file].
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*/arguments/*
+
+// Executing file.
+execute-file:x:@.arguments/*/workflow
+
+// Parametrising [return] invocation.
+add:x:./*/return
+   get-nodes:x:@execute-file/*
+
+// Returning result of execution to caller.
+return

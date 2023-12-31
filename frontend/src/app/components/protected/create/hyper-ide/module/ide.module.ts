@@ -37,6 +37,7 @@ import { FormlyHyperlambdaComponent } from '../components/parametrise-action-dia
 import { FormlyAutocompleteComponent } from '../components/parametrise-action-dialog/components/formly-autocomplete/formly-autocomplete.component';
 import { FormlyAutocompleteTextareaComponent } from '../components/parametrise-action-dialog/components/formly-autocomplete-textarea/formly-autocomplete-textarea.component';
 import { ExecuteFeedbackDialog } from '../components/execute-feedback-dialog/execute-feedback-dialog.component';
+import { FormlyWorkflowComponent } from '../components/parametrise-action-dialog/components/formly-workflow/formly-workflow.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { ExecuteFeedbackDialog } from '../components/execute-feedback-dialog/exe
     FormlyKeyValueComponent,
     FormlyArrayComponent,
     FormlyAutocompleteComponent,
+    FormlyWorkflowComponent,
     FormlyAutocompleteTextareaComponent,
     CreateKeyValueDialogComponent,
     CreateArrayDialogComponent,
@@ -79,6 +81,7 @@ import { ExecuteFeedbackDialog } from '../components/execute-feedback-dialog/exe
         { name: 'hyperlambda', component: FormlyHyperlambdaComponent },
         { name: 'autocomplete', component: FormlyAutocompleteComponent },
         { name: 'autocomplete-textarea', component: FormlyAutocompleteTextareaComponent },
+        { name: 'workflow', component: FormlyWorkflowComponent },
       ],
     }),
   ],

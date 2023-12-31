@@ -1,0 +1,48 @@
+
+/*
+ * Returns all workflows to caller.
+ */
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Buffer for all workflows in the system.
+.result
+
+// Retrieving all system workflows.
+add:x:@.result
+   io.file.list-recursively:/misc/workflows/workflows/
+
+// Retrieving all custom workflows.
+add:x:@.result
+   io.file.list-recursively:/etc/workflows/workflows/
+
+// Then iterating through each installed module, and retrieving all module workflows.
+io.folder.list:/modules/
+for-each:x:@io.folder.list/*
+   strings.concat
+      get-value:x:@.dp/#
+      .:workflows/workflows/
+   if
+      io.folder.exists:x:@strings.concat
+      .lambda
+
+         // Module has custom actions.
+         add:x:@.result
+            io.file.list-recursively:x:@strings.concat
+
+// Filtering out everything not ending with '.hl'.
+for-each:x:@.result/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.hl
+      .lambda
+
+         // Returning workflows file to caller.
+         unwrap:x:+/*/*
+         add:x:../*/return
+            .
+               .:x:@.dp/#
+
+// Returning result to caller.
+return
