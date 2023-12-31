@@ -23,6 +23,7 @@ import { GeneralService } from 'src/app/services/general.service';
       *ngFor="let item of items"
       (removed)="removeArgument(item)"
       (click)="addEditItem(item)"
+      [class.warning]="item.value === 'CHANGE-THIS'"
       [removable]="true">
       {{item.key}}[{{item.value}}]
       <mat-icon matChipRemove>cancel</mat-icon>
