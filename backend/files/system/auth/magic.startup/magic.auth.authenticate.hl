@@ -1,71 +1,18 @@
 
 /*
  * Authenticates the user with the specified [username] and [password] combination.
- * 
- * Notice, if [check-password] is false, we don't check the user's password, and
- * if [reset-password] is true, we generate a JWT token that can only be used to
- * change the user's password. The latter allows us to generated "change password links"
- * in the frontend, and similar type of logic.
+ *
+ * Returns a JWT token that can be used for consecutive access to the backend.
  */
 slots.create:magic.auth.authenticate
-
-   /*
-    * Checking if JWT secret has been changed, and
-    * if not, simply checking if username/password is
-    * root/root.
-    */
-   config.get:"magic:auth:secret"
-   if
-      or
-         null:x:@config.get
-         lt
-            strings.length:x:@config.get
-            .:int:50
-      .lambda
-
-         // System has not yet been setup.
-         if
-            and
-               eq
-                  get-value:x:@.arguments/*/username
-                  .:root
-               eq
-                  get-value:x:@.arguments/*/password
-                  .:root
-            .lambda
-
-               // Success!
-               auth.ticket.create
-                  username:root
-                  roles
-                     .:root
-               unwrap:x:+/*
-               return
-                  ticket:x:@auth.ticket.create
-
-         else
-
-            // Failure!
-            throw:Access denied
-               status:int:401
-               public:bool:true
-
-   /*
-    * If we came this far, the system has been setup,
-    * and we can check the 'magic' database to see if
-    * the credentials the caller provided is correct.
-    */
 
    // Opens up our database connection.
    data.connect:magic
 
-      // Selects the user with the given username from our table.
-      .password
-      .username
+      // Selects password from our users table belonging to specified [username].
       data.read
          table:users
          columns
-            username
             password
          where
             and
@@ -73,120 +20,23 @@ slots.create:magic.auth.authenticate
 
       // Checking if user with specified [username] exists.
       if
-         eq
-            get-count:x:@data.read/*
-            .:int:0
+         not-exists:x:@data.read/*
          .lambda
 
-            // Checking if we can find the username through users_extra table.
-            data.read
-               table:users_extra
-               columns
-                  user
-               where
-                  and
-                     type.eq:email
-                     value.eq:x:@.arguments/*/username
-            if
-               exists:x:@data.read/*/*
-               .lambda
+            // No such user.
+            throw:Access denied
+               status:int:401
+               public:bool:true
 
-                  // Looking up password now that we have the real username.
-                  data.read
-                     table:users
-                     columns
-                        username
-                        password
-                     where
-                        and
-                           username.eq:x:@data.read/@data.read/*/*/user
-
-                  // Checking if user with specified [username] exists.
-                  if
-                     not-exists:x:@data.read/*/*
-                     .lambda
-
-                        // No such user.
-                        throw:Access denied
-                           status:int:401
-                           public:bool:true
-
-                  else
-
-                     // Storing password and username for later.
-                     set-value:x:@.username
-                        get-value:x:@data.read/*/*/username
-                     set-value:x:@.password
-                        get-value:x:@data.read/*/*/password
-
-            else
-
-               // No such user.
-               throw:Access denied
-                  status:int:401
-                  public:bool:true
-
-      else
-
-         // No such user.
-         throw:Access denied
-            status:int:401
-            public:bool:true
-
-         // Storing password and username for later.
-         set-value:x:@.username
-            get-value:x:@data.read/*/*/username
-         set-value:x:@.password
-            get-value:x:@data.read/*/*/password
-
-      /*
-       * This part exchanges the invocation to [crypto.password.verify] below,
-       * but only if a configuration setting is found to be overriding the default
-       * implementation from your "appsettings.json" file.
-       */
-      config.get:"magic:auth:authentication"
+      // Verifying that the password is a match.
       if
-         and
-            neq:x:@config.get
-               .
-            neq:x:@config.get
-               .:
-            neq:x:@config.get
-               .:crypto.password.verify
+         crypto.password.verify:x:@.arguments/*/password
+            hash:x:@data.read/*/*/password
          .lambda
 
-            /*
-             * User has overridden the default password authentication slot invocation.
-             * Hence we replace the existing invocation to [crypto.password.verify]
-             * with the slot found from the "appsettings.json" file.
-             * 
-             * This is the part that basically allows for external username/password verifications.
-             */
-            strings.split:x:@config.get
-               .:":"
-            set-name:x:+/+/+/*/*
-               get-value:x:@strings.split/0
-            set-value:x:+/+/*/*
-               get-value:x:@strings.split/1
-            unwrap:x:+/*/*/*
-            insert-after:x:../**/crypto.password.verify
-               .
-                  foo
-                     username:x:@.username
-                     password:x:@.arguments/*/password
-            remove-nodes:x:../**/crypto.password.verify
-
-      /*
-       * Verify we have a password match, unless [check-password] was false,
-       * which might occur for instance if a JWT token is generated on behalf of another user.
-       */
-      if
-         or
-            eq:x:@.arguments/*/check-password
-               .:bool:false
-            crypto.password.verify:x:@.arguments/*/password
-               hash:x:@.password
-         .lambda
+            // Logging the fact that user successfully logged in.
+            log.info:User successfully authenticated
+               username:x:@.arguments/*/username
 
             // Now we need to select all roles user belongs to.
             data.read
@@ -195,50 +45,23 @@ slots.create:magic.auth.authenticate
                   role
                where
                   and
-                     user:x:@.username
+                     user.eq:x:@.arguments/*/username
 
-            // Then we can create our JWT token/ticket.
-            add:x:+/*/roles
+            // Parametrizing [auth.ticket.create] with roles user belongs to.
+            add:x:./*/auth.ticket.create/*/roles
                get-nodes:x:@data.read/*/*
+
+            // Now we can create our JWT token/ticket.
             auth.ticket.create
-               username:x:@.username
+               username:x:@.arguments/*/username
                expires:x:@.arguments/*/expires
                roles
 
-            // Logging the fact that user successfully logged in.
-            log.info:User successfully authenticated
-               username:x:@.username
-
-            // Selecting all extra information associated with user.
-            data.read
-               table:users_extra
-               columns
-                  type
-                  value
-               where
-                  and
-                     user.eq:x:@.username
-            for-each:x:@data.read/*
-               set-name:x:./*/add/[0,1]/*/*/name
-                  get-value:x:@.dp/#/*/type
-               unwrap:x:+/*/*
-               add:x:././*/return/*/extra
-                  .
-                     name:x:@.dp/#/*/value
-
-            // Returning results back to caller.
-            unwrap:x:+/+/*
-            if
-               not
-                  exists:x:./././*/return/*/extra/0
-               .lambda
-                  remove-nodes:x:./././*/return/*/extra
-            return
+            // Returning JWT token to caller.
+            yield
                ticket:x:@auth.ticket.create
-               extra
-      else
 
-         // Hash version of password didn't match.
-         throw:Access denied
-            status:int:401
-            public:bool:true
+      // Hash version of password didn't match.
+      throw:Access denied
+         status:int:401
+         public:bool:true

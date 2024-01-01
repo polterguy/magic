@@ -1,13 +1,15 @@
 
 /*
- * This file will setup your system, changing its default JWT secret,
- * create the magic database, and insert a root user - Unless the
- * database, and/or root user exists from before.
+ * This file will setup your system, changing its default JWT secret, create the magic database,
+ * and insert a root user - Unless the database, and/or root user exists from before.
  * 
- * Notice, if the root user exists from before, this file will change
- * its password - However, you cannot setup the system twice, unless you
- * manually change the JWT secret to a value that's less than 50 characters
- * in length.
+ * Notice, if the root user exists from before, this file will change its password.
+ * However, you cannot setup the system twice, unless you manually change the JWT secret to a value
+ * that's less than 50 characters in length.
+ *
+ * Since the setup process always create a JWT secret that's longer than 50 character, this allows you
+ * to "reset" your root password by removing the JWT secret, at which point you can login with
+ * root/root again to your backend.
  */
 .arguments
    username:string
@@ -27,10 +29,8 @@ validators.default:x:@.arguments
    username:root
 
 /*
- * Checking if JWT secret has been changed, and
- * if is has, we throw an exception, to prevent the
- * system from being setup again, overriding the default
- * setup configuration.
+ * Checking if JWT secret has been changed, and if is has, we throw an exception, to prevent the
+ * system from being setup again, overriding the default setup configuration.
  */
 config.get:"magic:auth:secret"
 if
@@ -46,101 +46,77 @@ if
          status:401
          public:true
 
-// Making sure we're able to return exceptions to caller.
-try
+// Loading our appsettings.json file now.
+config.load
+json2lambda:x:@config.load
 
-   // Loading our appsettings.json file now.
-   config.load
-   json2lambda:x:@config.load
+// Updating auth secret to some relatively CSRNG safe value.
+set-value:x:@json2lambda/*/magic/*/auth/*/secret
+   crypto.random
+      min:100
+      max:200
 
-   // Updating auth secret to some CSRNG safe value.
-   set-value:x:@json2lambda/*/magic/*/auth/*/secret
-      crypto.random
-         min:100
-         max:200
-   set-value:x:@json2lambda/*/magic/*/culture/*/defaultTimeZone
-      .:none
+// Saving changed configuration now.
+lambda2json:x:@json2lambda/*
+config.save:x:-
 
-   // Ensuring we're using SQLite as our default database.
-   remove-nodes:x:@json2lambda/*/magic/*/databases/*
-   unwrap:x:+/*/*
-   add:x:@json2lambda/*/magic/*/databases
-      .
-         default:sqlite
-   add:x:@json2lambda/*/magic/*/databases
-      .
-         sqlite
-            generic:"Data Source=files/data/{database}.db; Pooling=False;"
+/*
+ * Sleeping for 2 seconds to allow configuration to kick
+ * in on thread pools threads.
+ *
+ * Notice, even though this is bananas, it is necessary since we're using the appsettings
+ * connection string to connect to database further down in this file and the configuration
+ * object is stale unless we sleep the thread for a couple of seconds.
+ */
+sleep:2000
 
-   // Saving changed configuration now.
-   lambda2json:x:@json2lambda/*
-   config.save:x:-
+// Ensuring our magic database is correctly created.
+io.file.execute:/system/ensure-magic-database.hl
 
-   /*
-    * Sleeping for 2 seconds to allow configuration to kick
-    * in on thread pools threads.
-    *
-    * Notice, even though this is bananas, it is necessary since we're using the appsettings
-    * connection string to connect to database further down in this file and the configuration
-    * object is stale unless we sleep the thread for a couple of seconds.
-    */
-   sleep:2000
+/*
+ * We can start the setup process, inserting a root user, etc ...
+ *
+ * We only insert a new root user if no root user exists in users table though.
+ * If root user already exists, we change its password instead.
+ *
+ * This allows users to "reset" their Magic backend by changing the JWT
+ * secret to anything less than 50 characters in length, and such re-configure
+ * their backend with a new root password.
+ */
+data.connect:[generic|magic]
+   data.read
+      table:users
+      where
+         and
+            username.eq:x:@.arguments/*/username
 
-   // Creating our magic database since default database might have changed.
-   io.file.execute:/system/ensure-magic-database.hl
+   // Checking if root user already exists.
+   if
+      exists:x:@data.read/*/*
+      .lambda
 
-   /*
-    * We can start the setup process, inserting a root user, etc ...
-    *
-    * We only insert a new root user if no root user exists in users table though.
-    * If root user already exists, we change its password instead.
-    *
-    * This allows users to "reset" their Magic backend by changing the JWT
-    * secret to anything less than 50 characters in length, and such re-configure
-    * their backend with a new username/password.
-    */
-   data.connect:[generic|magic]
-      data.read
-         table:users
-         where
-            and
-               username.eq:x:@.arguments/*/username
-
-      // Checking if root user already exists.
-      if
-         exists:x:@data.read/*/*
-         .lambda
-
-            // Root user already exists, hence simply changing its password.
-            execute:magic.auth.change-password
-               password:x:@.arguments/*/password
-               is_hashed:x:@.arguments/*/is_hashed
-
-      else
-
-         // Inserting root user.
-         execute:magic.auth.create-user
-            username:x:@.arguments/*/username
+         // Root user already exists, hence simply changing its password.
+         execute:magic.auth.change-password
             password:x:@.arguments/*/password
             is_hashed:x:@.arguments/*/is_hashed
-            roles
-               .:root
-            extra
-               source:setup
-               email:x:@.arguments/*/email
-               name:x:@.arguments/*/name
 
-      // Authenticating user and returning new JWT token to client.
-      execute:magic.auth.authenticate
+   else
+
+      // Inserting root user.
+      execute:magic.auth.create-user
          username:x:@.arguments/*/username
-         check-password:bool:false
+         password:x:@.arguments/*/password
+         is_hashed:x:@.arguments/*/is_hashed
+         roles
+            .:root
+         extra
+            email:x:@.arguments/*/email
+            name:x:@.arguments/*/name
 
-      // Returns the authentication JWT ticket created above to caller.
-      return-nodes:x:@execute/*
-
-.catch
-
-   // Making sure we make exception publicly visible for frontend.
-   throw:x:@.arguments/*/message
-      public:true
-      status:400
+   // Authenticating user and returning new JWT token to client.
+   auth.ticket.create
+      username:x:@.arguments/*/username
+      roles
+         .:root
+   yield
+      ticket:x:@auth.ticket.create
