@@ -11,13 +11,47 @@ validators.mandatory:x:@.arguments/*/username
 validators.mandatory:x:@.arguments/*/password
 
 /*
+ * Checking if JWT secret has been changed, and if not, simply checking if username/password is
+ * root/root, and if so returning a valid token allowing user to setup his or her cloudlet.
+ *
+ * This is necessary to allow for configuring a new cloudlet where the user haven't selected a root
+ * password yet.
+ */
+config.get:"magic:auth:secret"
+if
+   or
+      null:x:@config.get
+      lt
+         strings.length:x:@config.get
+         .:int:50
+   .lambda
+
+      // System has not been setup.
+      if
+         and
+            eq
+               get-value:x:@.arguments/*/username
+               .:root
+            eq
+               get-value:x:@.arguments/*/password
+               .:root
+         .lambda
+
+            // Success!
+            auth.ticket.create
+               username:root
+               roles
+                  .:root
+            yield
+               ticket:x:@auth.ticket.create
+
+/*
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
  * making sure we return that token to caller.
  */
-unwrap:x:+/*
-signal:magic.auth.authenticate
+execute:magic.auth.authenticate
    username:x:@.arguments/*/username
    password:x:@.arguments/*/password
 
 // Returns the authentication JWT ticket created above to caller.
-return-nodes:x:@signal/*
+return-nodes:x:@execute/*
