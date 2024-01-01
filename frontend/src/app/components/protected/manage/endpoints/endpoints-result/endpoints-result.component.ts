@@ -98,6 +98,7 @@ export class EndpointsResultComponent implements OnInit {
   getArguments(args: Argument[], controlArguments: boolean) {
 
     if (this.itemDetails.type === 'crud-read' || this.itemDetails.type === 'crud-count') {
+
       return args.filter(x => {
         switch (x.name) {
           case 'operator':
