@@ -1,3 +1,4 @@
+
 <mat-form-field
   *ngIf="item.type === 'string' && item.name === 'operator'"
   class="w-100 standalone-field">
@@ -59,7 +60,7 @@
 </mat-form-field>
 
 <mat-form-field
-  *ngIf="item.type === 'string' && item.name !== 'operator' && item.name !== 'direction' && item.name !== 'order'"
+  *ngIf="(item.type === 'string' || item.type === 'guid') && item.name !== 'operator' && item.name !== 'direction' && item.name !== 'order'"
   class="w-100 standalone-field">
   <span
     matPrefix
@@ -99,7 +100,7 @@
 </mat-form-field>
 
 <mat-form-field
-  *ngIf="item.type === 'long' || item.type === 'int' || item.type === 'uint' || item.type === 'ulong' || item.type === 'shor' || item.type === 'ushort'"
+  *ngIf="item.type === 'decimal' || item.type === 'single' || item.type === 'char' || item.type === 'time' || item.type === 'int' || item.type === 'uint' || item.type === 'long' || item.type === 'ulong' || item.type === 'short' || item.type === 'ushort'"
   class="w-100 standalone-field">
   <span
     matPrefix

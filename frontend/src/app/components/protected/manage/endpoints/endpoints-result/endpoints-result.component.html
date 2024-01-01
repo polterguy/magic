@@ -17,16 +17,23 @@
 
           <form [formGroup]="paramsForm" novalidate>
 
-            <div class="row align-items-center params-inputs"
+            <div
+              class="row align-items-center params-inputs"
               *ngFor="let item of getArguments(itemDetails.input, true)">
+
               <div class="col-sm-6 col-12">
-                <app-query-params [item]="item" [allItems]="itemDetails.input"></app-query-params>
+                <app-query-params
+                  [item]="item"
+                  [allItems]="itemDetails.input">
+                </app-query-params>
               </div>
+
               <div class="col-sm-6 col-12">
                 <p class="my-0 ms-3">
                   {{getDescription(item)}}
                 </p>
               </div>
+
             </div>
 
             <div
