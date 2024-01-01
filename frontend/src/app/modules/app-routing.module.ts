@@ -64,10 +64,6 @@ const routes: Routes = [
         loadChildren: () => import('src/app/components/protected/manage/tasks/_module/task.module').then(m => m.TaskModule)
       },
       {
-        path: 'health-check',
-        loadChildren: () => import('src/app/components/protected/misc/health-check/_module/health-check.module').then(m => m.HealthCheckModule)
-      },
-      {
         path: 'configuration',
         loadChildren: () => import('src/app/components/protected/misc/configuration/_module/config.module').then(m => m.ConfigModule)
       },

@@ -3,12 +3,14 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { DomSanitizer } from '@angular/platform-browser';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
+// application specific imports.
 import { Argument } from '../_models/argument.model';
 import { EndpointService } from 'src/app/services/endpoint.service';
 import { GeneralService } from 'src/app/services/general.service';
@@ -21,10 +23,6 @@ import hyperlambda from 'src/app/resources/options/hyperlambda.json';
 import json_readonly from 'src/app/resources/options/json_readonly.json';
 import markdown_readonly from 'src/app/resources/options/markdown_readonly.json';
 import hyperlambda_readonly from 'src/app/resources/options/hyperlambda_readonly.json';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { AssumptionService } from 'src/app/services/assumption.service';
-import { MatDialog } from '@angular/material/dialog';
-import { CreateAssumptionTestDialogComponent, TestModel } from 'src/app/components/protected/manage/endpoints/components/create-assumption-test-dialog/create-assumption-test-dialog.component';
 
 /*
  * Result of invocation.
@@ -80,15 +78,13 @@ export class EndpointsResultComponent implements OnInit {
   };
 
   constructor(
-    private dialog: MatDialog,
     private clipboard: Clipboard,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
     private formBuilder: FormBuilder,
     public backendService: BackendService,
     private generalService: GeneralService,
-    private endpointService: EndpointService,
-    private assumptionService: AssumptionService) { }
+    private endpointService: EndpointService) { }
 
   ngOnInit() {
 
@@ -363,53 +359,6 @@ export class EndpointsResultComponent implements OnInit {
 
     this.clipboard.copy(response);
     this.generalService.showFeedback('Result can be found on your clipboard');
-  }
-
-  createTest() {
-
-    const dialogRef = this.dialog.open(CreateAssumptionTestDialogComponent, {
-      width: '550px',
-    });
-    dialogRef.afterClosed().subscribe((res: TestModel) => {
-      if (res) {
-
-        this.assumptionService.create(
-          res.filename,
-          this.itemDetails.verb,
-          `/${this.itemDetails.path}`,
-          this.result?.status,
-          res.description !== '' ? res.description : null,
-          this.payload !== '' ? this.payload : null,
-          (res.matchResponse && !this.result?.blob) ? this.result?.response : null,
-          this.itemDetails.produces).subscribe({
-            next: () => {
-
-
-              this.generalService.showLoading();
-
-              /*
-               * Snippet saved, showing user some feedback, and reloading assumptions.
-               *
-               * Checking if caller wants response to match, and response is blob,
-               * at which point we inform user this is not possible.
-               */
-              if (res.matchResponse && this.result.blob) {
-                this.generalService.showFeedback('Assumption successfully saved. Notice, blob types of invocations cannot assume response equality.', 'successMessage', 'Ok', 5000);
-              } else {
-                this.generalService.showFeedback('Assumption successfully saved', 'successMessage');
-              }
-
-              this.refetchAssumptions.emit();
-
-            },
-            error: (error: any) => {
-
-              this.generalService.hideLoading();
-              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-            }
-          });
-      }
-    });
   }
 
   /*

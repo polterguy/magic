@@ -8,7 +8,6 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { GeneralService } from 'src/app/services/general.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { Observable } from 'rxjs';
-import { AssumptionsComponent } from 'src/app/components/protected/manage/endpoints/components/assumptions/assumptions.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { FileService } from 'src/app/services/file.service';
@@ -29,7 +28,6 @@ export class EndpointsListComponent {
   @Input() result: any;
   @Input() payload: any;
   @Input() isLoading: Observable<boolean>;
-  @ViewChild('assumptions', { static: false }) assumptions: AssumptionsComponent;
   @Output() changeEditor = new EventEmitter<any>();
   @Output() reload = new EventEmitter<any>();
 
