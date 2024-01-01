@@ -21,7 +21,7 @@
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
-// Defaulting [is_hashed] to false.
+// Defaulting [is_hashed] to false and [username] to root.
 validators.default:x:@.arguments
    is_hashed:bool:false
    username:root
@@ -60,6 +60,17 @@ try
          max:200
    set-value:x:@json2lambda/*/magic/*/culture/*/defaultTimeZone
       .:none
+
+   // Ensuring we're using SQLite as our default database.
+   remove-nodes:x:@json2lambda/*/magic/*/databases/*
+   unwrap:x:+/*/*
+   add:x:@json2lambda/*/magic/*/databases
+      .
+         default:x:@.arguments/*/databaseType
+   add:x:@json2lambda/*/magic/*/databases
+      .
+         sqlite
+            generic:"Data Source=files/data/{database}.db; Pooling=False;"
 
    // Saving changed configuration now.
    lambda2json:x:@json2lambda/*
