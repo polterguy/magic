@@ -421,11 +421,6 @@ optin verification and potential referential integrity issues.`;
             exact: false,
           },
           {
-            name: 'Health Check',
-            url: '/health-check',
-            exact: false,
-          },
-          {
             name: 'Log',
             url: '/log',
             exact: false,
