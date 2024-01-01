@@ -133,7 +133,7 @@ try
       // Authenticating user and returning new JWT token to client.
       execute:magic.auth.authenticate
          username:x:@.arguments/*/username
-         password:x:@.arguments/*/password
+         check-password:bool:false
 
       // Returns the authentication JWT ticket created above to caller.
       return-nodes:x:@execute/*

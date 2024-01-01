@@ -1,5 +1,12 @@
 
-// Authenticates the user with the specified [username] and [password] combination.
+/*
+ * Authenticates the user with the specified [username] and [password] combination.
+ * 
+ * Notice, if [check-password] is false, we don't check the user's password, and
+ * if [reset-password] is true, we generate a JWT token that can only be used to
+ * change the user's password. The latter allows us to generated "change password links"
+ * in the frontend, and similar type of logic.
+ */
 slots.create:magic.auth.authenticate
 
    /*
@@ -92,7 +99,7 @@ slots.create:magic.auth.authenticate
                         password
                      where
                         and
-                           username:x:@data.read/@data.read/*/*/user
+                           username.eq:x:@data.read/@data.read/*/*/user
 
                   // Checking if user with specified [username] exists.
                   if
@@ -120,6 +127,11 @@ slots.create:magic.auth.authenticate
                   public:bool:true
 
       else
+
+         // No such user.
+         throw:Access denied
+            status:int:401
+            public:bool:true
 
          // Storing password and username for later.
          set-value:x:@.username
@@ -157,17 +169,23 @@ slots.create:magic.auth.authenticate
             set-value:x:+/+/*/*
                get-value:x:@strings.split/1
             unwrap:x:+/*/*/*
-            insert-after:x:@if/./**/crypto.password.verify
+            insert-after:x:../**/crypto.password.verify
                .
                   foo
                      username:x:@.username
                      password:x:@.arguments/*/password
-            remove-nodes:x:@if/./**/crypto.password.verify
+            remove-nodes:x:../**/crypto.password.verify
 
-      // Verify we have a password match.
+      /*
+       * Verify we have a password match, unless [check-password] was false,
+       * which might occur for instance if a JWT token is generated on behalf of another user.
+       */
       if
-         crypto.password.verify:x:@.arguments/*/password
-            hash:x:@.password
+         or
+            eq:x:@.arguments/*/check-password
+               .:bool:false
+            crypto.password.verify:x:@.arguments/*/password
+               hash:x:@.password
          .lambda
 
             // Now we need to select all roles user belongs to.
