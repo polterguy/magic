@@ -1,6 +1,6 @@
 
-# Using .Net 6 image from Microsoft
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+# Using .Net 8 image from Microsoft
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
@@ -21,7 +21,7 @@ RUN chown -R magic:magic /magic
 USER magic
 
 # Final stage / image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /magic
 COPY --from=build /magic ./
 EXPOSE 4444
