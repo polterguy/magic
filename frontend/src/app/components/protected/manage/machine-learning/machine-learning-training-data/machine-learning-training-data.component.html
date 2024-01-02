@@ -238,6 +238,7 @@
       <button
         matTooltip="Mark all filtered snippets as unpushed"
         (click)="untrainAll()"
+        [disabled]="filterOnVss"
         mat-button>
         Mark as unpushed
       </button>
@@ -245,6 +246,7 @@
       <button
         matTooltip="Mark all filtered snippets as pushed"
         (click)="trainAll()"
+        [disabled]="filterOnVss"
         mat-button>
         Mark as pushed
       </button>
@@ -252,6 +254,7 @@
       <button
         matTooltip="Exports all filtered training snippets as a CSV file"
         (click)="export()"
+        [disabled]="filterOnVss"
         mat-button>
         Export
       </button>
@@ -260,6 +263,7 @@
         color="warn"
         matTooltip="Delete all filtered snippets"
         (click)="deleteAll()"
+        [disabled]="filterOnVss"
         mat-button>
         Delete all
       </button>

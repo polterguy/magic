@@ -67,6 +67,16 @@ data.connect:[generic|magic]
          .
             conversation:x:@.conv
 
+   // Sanity checking that we've got any data at all.
+   if
+      not-exists:x:@.data/*
+      .lambda
+
+         // Nothing here ...
+         response.status.set:404
+         return
+            result:No questionnaires found
+
    // Converting result to CSV.
    lambda2csv:x:@.data/*
 

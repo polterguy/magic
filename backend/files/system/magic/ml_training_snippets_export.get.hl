@@ -1,6 +1,7 @@
 
 // Returns all filtered training snippets as a CSV file.
 .arguments
+   ml_training_snippets.completion.like:string
    ml_training_snippets.prompt.like:string
    ml_training_snippets.uri.like:string
    ml_training_snippets.type.eq:string
@@ -15,8 +16,10 @@ data.connect:[generic|magic]
 
    // Parametrising our read invocation with filtering arguments.
    add:x:./*/data.read/*/where/*/*/or
+      get-nodes:x:@.arguments/*/ml_training_snippets.completion.like
       get-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
       get-nodes:x:@.arguments/*/ml_training_snippets.uri.like
+   remove-nodes:x:@.arguments/*/ml_training_snippets.completion.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.uri.like
    add:x:./*/data.read/*/where/*

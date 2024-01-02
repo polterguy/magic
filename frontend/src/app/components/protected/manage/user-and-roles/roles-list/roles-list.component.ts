@@ -40,10 +40,6 @@ export class RolesListComponent {
 
     switch (role) {
       case 'root':
-      case 'guest':
-      case 'reset-password':
-      case 'unconfirmed':
-      case 'blocked':
         return true;
 
       default:
