@@ -11,7 +11,6 @@ import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { saveAs } from "file-saver";
 
 // Application specific imports.
-import { Template } from 'src/app/models/template.model';
 import { GeneralService } from 'src/app/services/general.service';
 import { HttpService } from 'src/app/services/http.service';
 import { Crudify } from '../models/crudify.model';
@@ -81,16 +80,6 @@ export class CrudifyService {
   templates() {
 
     return this.httpService.get<string[]>('/magic/system/crudifier/templates');
-  }
-
-  /**
-   * Returns the documentation/README.md file for the specified template.
-   *
-   * @param name Name of template to retrieve README file for
-   */
-  template(name: string) {
-
-    return this.httpService.get<Template>('/magic/system/crudifier/template?name=' + encodeURIComponent(name));
   }
 
   /**
