@@ -3,17 +3,20 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
+// Angular and system imports.
+import { MatDialog } from '@angular/material/dialog';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
+
+// Application specific imports.
+import { ConfigService } from 'src/app/services/config.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { GeneralService } from 'src/app/services/general.service';
-import { OpenAIModel, OpenAIService } from 'src/app/services/openai.service';
-import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { MagicResponse } from 'src/app/models/magic-response.model';
-import { MachineLearningEmbedUiComponent } from 'src/app/components/protected/manage/machine-learning/components/machine-learning-embed-ui/machine-learning-embed-ui.component';
-import { MatDialog } from '@angular/material/dialog';
-import { OpenAIConfigurationDialogComponent } from 'src/app/components/protected/common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { OpenAIModel, OpenAIService } from 'src/app/services/openai.service';
 import { RecaptchaDialogComponent } from 'src/app/components/protected/misc/configuration/components/recaptcha-dialog/recaptcha-dialog.component';
-import { ConfigService } from 'src/app/services/config.service';
+import { OpenAIConfigurationDialogComponent } from 'src/app/components/protected/common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { MachineLearningEmbedUiComponent } from 'src/app/components/protected/manage/machine-learning/components/machine-learning-embed-ui/machine-learning-embed-ui.component';
 
 /**
  * Helper wizard component to create a chatbot rapidly, guiding the user through all
@@ -45,6 +48,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   model: string = '';
   chat_model: OpenAIModel = null;
   chat_models: OpenAIModel[] = [];
+  finished: boolean = false;
   flavors: any[] = [
     {
       name: 'Sales Executive',
@@ -232,90 +236,6 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
     });
   }
 
-  createBotImplementation(feedbackChannel: string) {
-
-    this.crawling = true;
-    this.generalService.showLoading();
-    this.doneCreatingBot = false;
-    this.messages = [];
-
-    let builder = new HubConnectionBuilder();
-    this.hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
-      accessTokenFactory: () => this.backendService.active.token.token,
-      skipNegotiation: true,
-      transport: HttpTransportType.WebSockets,
-    }).build();
-
-    this.hubConnection.on(feedbackChannel, (args) => {
-
-      args = JSON.parse(args);
-      this.messages.push(args);
-      this.doneCreatingBot = args.type === 'success' || args.type === 'error';
-
-      if (args.type === 'success') {
-
-        this.generalService.showFeedback('Done creating bot', 'successMessage');
-        this.embed();
-
-      } else if (args.type === 'warning') {
-
-        this.generalService.showFeedback(args.message);
-
-      } else if (args.type === 'error') {
-
-        this.generalService.showFeedback(args.message, 'errorMessage');
-        if (args.message.includes('license') && this.vectorize === true) {
-
-          /*
-           * Too many snippets according to license, still we'll vectorise the model explicitly to make sure
-           * user gets at least a somewhat working chatbot to embed on page.
-           */
-          this.openAIService.vectorise(this.model, feedbackChannel).subscribe({
-            next: () => {
-
-              console.log('Vectorising started');
-            },
-            error: (error: any) => {
-
-              this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong as we tried to create your bot', 'errorMessage', 'Ok', 10000);
-            }
-          });
-        }
-      }
-      setTimeout(() => {
-
-        const domEl = document.getElementById('m_' + (this.messages.length - 1));
-        domEl.scrollIntoView()
-      }, 50);
-    });
-
-    this.hubConnection.start().then(() => {
-
-      this.openAIService.createBot(
-        this.url,
-        this.chat_model.id,
-        this.flavor?.prefix ?? '',
-        this.max,
-        this.autocrawl,
-        feedbackChannel,
-        this.vectorize).subscribe({
-        next: (result: MagicResponse) => {
-  
-          this.model = result.result;
-          this.generalService.hideLoading();
-        },
-        error: () => {
-  
-          this.generalService.hideLoading();
-          this.generalService.showFeedback('Something went wrong as we tried to create your bot', 'errorMessage');
-          this.doneCreatingBot = true;
-          this.hubConnection.stop();
-          this.hubConnection = null;
-        }
-      });
-    });
-  }
-
   embed() {
 
     this.dialog
@@ -334,6 +254,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   closeBotCreator() {
 
     this.crawling = false;
+    this.finished = false;
   }
 
   /*
@@ -412,5 +333,72 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
           });
         }
       });
+  }
+
+  private createBotImplementation(feedbackChannel: string) {
+
+    this.crawling = true;
+    this.generalService.showLoading();
+    this.doneCreatingBot = false;
+    this.messages = [];
+
+    let builder = new HubConnectionBuilder();
+    this.hubConnection = builder.withUrl(this.backendService.active.url + '/sockets', {
+      accessTokenFactory: () => this.backendService.active.token.token,
+      skipNegotiation: true,
+      transport: HttpTransportType.WebSockets,
+    }).build();
+
+    this.hubConnection.on(feedbackChannel, (args) => {
+
+      args = JSON.parse(args);
+      this.messages.push(args);
+      this.doneCreatingBot = args.type === 'success' || args.type === 'error';
+
+      if (args.type === 'success') {
+
+        this.generalService.showFeedback('Done creating bot', 'successMessage');
+        this.embed();
+        this.finished = true;
+
+      } else if (args.type === 'error') {
+
+        this.generalService.showFeedback(args.message, 'errorMessage');
+        this.hubConnection.stop();
+        this.hubConnection = null;
+        this.finished = true;
+      }
+      setTimeout(() => {
+
+        const domEl = document.getElementById('m_' + (this.messages.length - 1));
+        domEl.scrollIntoView()
+      }, 50);
+    });
+
+    this.hubConnection.start().then(() => {
+
+      this.openAIService.createBot(
+        this.url,
+        this.chat_model.id,
+        this.flavor?.prefix ?? '',
+        this.max,
+        this.autocrawl,
+        feedbackChannel,
+        this.vectorize).subscribe({
+        next: (result: MagicResponse) => {
+  
+          this.model = result.result;
+          this.generalService.hideLoading();
+        },
+        error: () => {
+  
+          this.generalService.hideLoading();
+          this.generalService.showFeedback('Something went wrong as we tried to create your bot', 'errorMessage');
+          this.doneCreatingBot = true;
+          this.hubConnection.stop();
+          this.hubConnection = null;
+        }
+      });
+    });
   }
 }

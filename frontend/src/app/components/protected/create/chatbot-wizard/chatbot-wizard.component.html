@@ -188,5 +188,15 @@
 
     </div>
 
+    <div class="text-end mt-4" *ngIf="crawling">
+      <button
+        mat-flat-button
+        [disabled]="!finished"
+        color="primary"
+        (click)="closeBotCreator()">
+        Close
+      </button>
+    </div>
+
   </mat-card-content>
 </mat-card>
