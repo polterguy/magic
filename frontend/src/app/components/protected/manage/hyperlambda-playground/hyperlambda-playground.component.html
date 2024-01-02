@@ -38,6 +38,7 @@
           <button
             mat-button
             color="primary"
+            [disabled]="!input.hyperlambda || input.hyperlambda === ''"
             class="px-3"
             (click)="save()">
             Save
@@ -48,7 +49,7 @@
             color="primary"
             class="px-3"
             (click)="execute()">
-            Run
+            Execute
           </button>
 
         </div>
