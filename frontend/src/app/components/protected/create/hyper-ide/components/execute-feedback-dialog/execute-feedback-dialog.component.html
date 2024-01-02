@@ -1,23 +1,36 @@
 
-<h3 mat-dialog-title>Debug information</h3>
-
 <div mat-dialog-content>
 
-  <div class="terminal">
-    <div *ngFor="let el of messages" [class]="el.type">
-      <h3 *ngIf="!el.time">
-        {{el['action-name']}}
-      </h3>
-      <pre *ngIf="el.arguments" class="args"><code [highlight]="el.json"></code></pre>
+  <h3 *ngIf="messages && messages.length > 0">Executing Hyperlambda</h3>
+  <div class="terminal" *ngIf="messages && messages.length > 0">
+    <div *ngFor="let el of messages">
+      <h2 class="mb-3">Action: {{el.name}}</h2>
+      <h4 *ngIf="el.input" class="mt-4 mb-3">Input</h4>
+      <pre *ngIf="el.input" class="args"><code [highlight]="el.input"></code></pre>
+      <h4 *ngIf="el.output" class="mt-4 mb-3">Output</h4>
+      <pre *ngIf="el.output" class="args"><code [highlight]="el.output"></code></pre>
       <div *ngIf="el.time">{{el.time}} seconds</div>
-      <div *ngIf="el.type === 'error'" class="error">{{el['exception-message']}}</div>
-      <hr *ngIf="el.time && el !== messages[messages.length - 1]">
+      <div *ngIf="el.error" class="error">{{el.error}}</div>
+      <hr *ngIf="el !== messages[messages.length - 1]">
     </div>
   </div>
+
+  <h3 *ngIf="result">Result</h3>
+  <pre
+    *ngIf="result"
+    class="mb-2 result"
+    [highlight]="result"></pre>
 
 </div>
 
 <div mat-dialog-actions [align]="'end'">
+
+  <button
+    *ngIf="result"
+    mat-button
+    (click)="copy()">
+    Copy
+  </button>
 
   <button
     mat-flat-button
