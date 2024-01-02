@@ -1,6 +1,6 @@
 
 /*
- * Returns all specified HTTP headers to caller.
+ * Returns the HTTP request's originating IP address.
  */
 .arguments
 .icon:http

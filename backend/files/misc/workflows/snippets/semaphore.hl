@@ -1,3 +1,0 @@
-
-// Ensures only one thread at the time can execute the code inside of [semaphore].
-semaphore:whatever-key
