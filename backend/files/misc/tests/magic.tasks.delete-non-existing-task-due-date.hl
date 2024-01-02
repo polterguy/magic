@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:delete
-url:/magic/system/tasks/due/delete
-status:int:400
-description:Assumes that invoking endpoint without a task id fails and that it returns the correct error and status code

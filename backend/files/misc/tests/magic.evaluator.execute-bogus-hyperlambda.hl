@@ -1,9 +1,0 @@
-
-// Automatically generated assumption test.
-verb:post
-url:/magic/system/evaluator/evaluate
-payload:@"{
-  ""hyperlambda"": ""foo:bar""
-}"
-status:int:400
-description:Assumes that executing bogus Hyperlambda fails

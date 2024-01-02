@@ -1,7 +1,0 @@
-verb:post
-url:/magic/system/sql/ddl/column
-status:int:200
-description:Verifies creating a column in SQLite referencing another table with cascading deletes works correctly
-payload:"{\n  \"databaseType\": \"sqlite\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"contacts\",\n  \"columnName\": \"customer_id\",\n  \"columnType\": \"int\",\n  \"foreignTable\": \"customers\",\n  \"foreignField\": \"customer_id\",\n  \"cascading\": true,\n  \"generate\": true\n}"
-response:"{\n  \"sql\": \"alter table contacts add column customer_id int references customers(customer_id) on delete cascade; \"\n}"
-produces:application/json

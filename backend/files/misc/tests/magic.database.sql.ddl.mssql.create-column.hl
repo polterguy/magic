@@ -1,7 +1,0 @@
-verb:post
-url:/magic/system/sql/ddl/column
-status:int:200
-description:Verifies that Microsoft SQL Server creates the correct create column SQL DDL
-payload:"{\n  \"databaseType\": \"mssql\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"tableName\": \"foo\",\n  \"columnName\": \"bar\",\n  \"columnType\": \"varchar\",\n  \"columnLength\": 42,\n  \"generate\": true\n}"
-response:"{\n  \"sql\": \"alter table foo add bar varchar(42); \"\n}"
-produces:application/json

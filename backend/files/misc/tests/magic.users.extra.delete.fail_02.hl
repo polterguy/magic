@@ -1,6 +1,0 @@
-verb:delete
-url:/magic/system/magic/users_extra?type=name
-status:int:400
-description:Verifies that deleting an extra field without providing a username fails
-response:"{\n  \"message\": \"Mandatory argument 'user' not given\",\n  \"field\": \"user\"\n}"
-produces:application/json

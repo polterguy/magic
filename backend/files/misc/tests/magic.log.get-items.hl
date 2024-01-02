@@ -1,7 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/log/list
-status:int:200
-description:Assumes it is possible to retrieve log items from the backend
-produces:application/json

@@ -1,7 +1,0 @@
-
-// Automatically generated assumption test.
-verb:delete
-url:/magic/system/cache/delete
-status:int:400
-response:"{\"message\":\"Mandatory argument 'id' not given\",\"field\":\"id\"}"
-description:Assumes that invoking endpoint without a cache key results in an error

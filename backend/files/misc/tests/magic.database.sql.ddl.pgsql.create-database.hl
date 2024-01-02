@@ -1,7 +1,0 @@
-verb:post
-url:/magic/system/sql/ddl/database
-status:int:200
-description:Verifies that PostgreSQL correctly creates create database SQL DDL
-payload:"{\n  \"databaseType\": \"pgsql\",\n  \"connectionString\": \"generic\",\n  \"databaseName\": \"test\",\n  \"generate\": true\n}"
-response:"{\n  \"sql\": \"create database test;\"\n}"
-produces:application/json

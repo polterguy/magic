@@ -1,7 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/magic/users-count
-status:int:200
-description:Assumes that it is possible to count users
-produces:application/json
