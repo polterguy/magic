@@ -1,0 +1,37 @@
+
+/*
+ * Creates an action, put the description of your action on this line.
+ *
+ * Optionally describe [arg1] and [arg2] here with square brackets surrounding their names.
+ * Obviously change [arg1] and [arg2] to something that better describes your arguments.
+ */
+.arguments
+
+   // Argument collection.
+   arg1
+
+      /*
+       * Type of argument, can be; key-value, array, int, decimal, float, double, long,
+       * email, string, enum, textarea, workflow, sql, csharp, hyperlambda or bool.
+       */
+      type:string
+
+      // If true then argument is required and mandatory.
+      mandatory:bool:true
+
+   arg2
+      type:int
+      mandatory:bool:false
+
+// Some icon for your action
+.icon:home
+
+/*
+ * Actual content of your action.
+ *
+ * This iw where you put your action's implementation.
+ */
+
+// Returning result of above invocation to caller.
+yield
+   result:Some result here!
