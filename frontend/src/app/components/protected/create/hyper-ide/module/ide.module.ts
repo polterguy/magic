@@ -25,7 +25,6 @@ import { NewFileFolderDialogComponent } from '../components/new-file-folder-dial
 import { RenameFileDialogComponent } from '../components/rename-file-dialog/rename-file-dialog.component';
 import { RenameFolderDialogComponent } from '../components/rename-folder-dialog/rename-folder-dialog.component';
 import { UnsavedChangesDialogComponent } from '../components/unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { ExecuteResultDialog } from '../components/execute-result-dialog/execute-result-dialog.component';
 import { ParametriseActionDialog } from '../components/parametrise-action-dialog/parametrise-action-dialog.component';
 import { FormlySqlComponent } from '../components/parametrise-action-dialog/components/formly-sql/formly-sql.component';
 import { FormlyKeyValueComponent } from '../components/parametrise-action-dialog/components/formly-key-value/formly-key-value.component';
@@ -45,7 +44,6 @@ import { FormlyWorkflowComponent } from '../components/parametrise-action-dialog
     IdeTreeComponent,
     IdeEditorComponent,
     IdeSearchboxComponent,
-    ExecuteResultDialog,
     IncompatibleFileDialogComponent,
     NewFileFolderDialogComponent,
     RenameFileDialogComponent,

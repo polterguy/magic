@@ -18,16 +18,15 @@ slots.create:magic.workflows.actions.execute
       .lambda
 
          // Publishing socket debug message to client.
-         add:x:./*/sockets.signal/*/args/*/arguments
+         add:x:./*/sockets.signal/*/args/*/input
             get-nodes:x:@.arguments/*/arguments/*
          unwrap:x:+/**
          sockets.signal:magic.workflows.action
             roles:root
             args
-               type:info
-               message:Action input
-               action-name:x:@.arguments/*/name
-               arguments
+               type:action
+               name:x:@.arguments/*/name
+               input
          set-value:x:@.time
             date.now
 
@@ -50,7 +49,7 @@ slots.create:magic.workflows.actions.execute
          .lambda
 
             // Publishing socket debug message to client.
-            add:x:./*/sockets.signal/*/args/*/arguments
+            add:x:./*/sockets.signal/*/args/*/output
                get-nodes:x:@execute-file/*
             math.subtract
                date.now
@@ -59,11 +58,9 @@ slots.create:magic.workflows.actions.execute
             sockets.signal:magic.workflows.action
                roles:root
                args
-                  type:info
-                  message:Action returned
-                  action-name:x:@.arguments/*/name
+                  type:result
                   time:x:@math.subtract
-                  arguments
+                  output
 
       // Decorating [result] node.
       set-value:x:./*/return
@@ -90,7 +87,7 @@ slots.create:magic.workflows.actions.execute
                roles:root
                args
                   type:error
-                  exception-message:x:@.arguments/*/message
+                  message:x:@.arguments/*/message
 
       // Rethrowing exception
       throw:x:@.arguments/*/message

@@ -7,8 +7,6 @@
   border-radius: 5px;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2);
   height: auto;
-  min-height: 350px;
-  max-height: 350px;
   margin-bottom: 1rem;
   overflow: auto;
 
@@ -21,16 +19,23 @@
     text-wrap:wrap;
   }
 
-  .info {
-    color: #fafafa;
-  }
-
   .error {
     color: #ff2020;
   }
 
   hr {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    margin-top: 4rem;
+    margin-bottom: 3rem;
   }
+}
+
+pre.result {
+  color: #fafafa;
+  border-radius: 5px;
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+  height: auto;
+  margin: 0;
+  text-wrap:wrap;
+  padding: 1rem;
+  overflow: auto;
 }

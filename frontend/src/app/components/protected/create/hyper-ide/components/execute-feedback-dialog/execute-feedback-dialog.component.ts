@@ -4,16 +4,19 @@
  */
 
 // Angular and system imports.
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { HttpTransportType, HubConnectionBuilder } from '@aspnet/signalr';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+
+// Application specific imports.
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BackendService } from 'src/app/services/backend.service';
-import { EvaluatorService } from 'src/app/services/evaluator.service';
 import { GeneralService } from 'src/app/services/general.service';
-import { ExecuteResultDialog } from '../execute-result-dialog/execute-result-dialog.component';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { EvaluatorService } from 'src/app/services/evaluator.service';
 
 /**
- * Modal dialog allowing you to view feedback during execution of some piece of Hyperlambda.
+ * Modal dialog allowing you to view feedback during execution of some piece of Hyperlambda,
+ * in addition to the result of execution.
  */
 @Component({
   selector: 'app-execute-feedback-dialog',
@@ -23,12 +26,13 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 export class ExecuteFeedbackDialog implements OnInit {
 
   messages: any[] = [];
+  result: string = null;
 
   /**
    * Creates an instance of your component.
    */
   constructor(
-    private dialog: MatDialog,
+    private clipBoard: Clipboard,
     private generalService: GeneralService,
     private backendService: BackendService,
     private evaluatorService: EvaluatorService,
@@ -51,14 +55,30 @@ export class ExecuteFeedbackDialog implements OnInit {
     hubConnection.on('magic.workflows.action', (args) => {
 
       args = JSON.parse(args);
-      if (this.messages.length > 0 &&
-        args['exception-message'] &&
-        this.messages[this.messages.length- 1]['exception-message'] === args['exception-message']) {
-        return; // Making sure we only display the same exception once!
+
+      if (args.type === 'action') {
+
+        if (args.input) {
+          args.input = JSON.stringify(args.input, null, 2);
+        }
+  
+        this.messages.push(args);
+
+      } else if (args.type === 'result') {
+
+        if (args.output) {
+          this.messages[this.messages.length - 1].output = JSON.stringify(args.output, null, 2);
+        }
+  
+        this.messages[this.messages.length - 1].time == args.time;
+
+      } else if (args.type === 'error') {
+
+        this.messages[this.messages.length - 1].error = args.message;
       }
-      args.json = JSON.stringify(args.arguments, null, 2);
-      this.messages.push(args);
+
       this.cdr.detectChanges();
+      console.log(this.messages);
     });
 
     hubConnection.start().then(() => {
@@ -73,17 +93,10 @@ export class ExecuteFeedbackDialog implements OnInit {
           }, 500);
 
           this.generalService.hideLoading();
-          if (!response || response === '') {
-  
-            this.generalService.showFeedback('Hyperlambda successfully executed but produced no result', 'successMessage');
-            return;
+          if (response) {
+
+            this.result = JSON.stringify(response, null, 2);
           }
-  
-          this.dialog.open(ExecuteResultDialog, {
-            width: '1024px',
-            maxWidth: '80vw',
-            data: JSON.stringify(response, null, 2),
-          });
         },
   
         error: (error: any) => {
@@ -93,5 +106,11 @@ export class ExecuteFeedbackDialog implements OnInit {
         }
       });
     });
+  }
+
+  copy() {
+
+    this.clipBoard.copy(this.result);
+    this.generalService.showFeedback('You can find the content on your clipboard', 'successMessage');
   }
 }
