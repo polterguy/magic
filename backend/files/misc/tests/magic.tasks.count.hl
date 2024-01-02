@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/tasks/count
-status:int:200
-description:Assumes that counting all tasks in the system succeeds

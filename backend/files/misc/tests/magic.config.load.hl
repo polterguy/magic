@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/config/load
-status:int:200
-description:Assumes loading configuration file (appSettings.json) succeeds

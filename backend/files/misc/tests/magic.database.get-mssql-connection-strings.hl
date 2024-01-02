@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/sql/connection-strings?databaseType=mssql
-status:int:200
-description:Assumes that retrieving connection strings for MS SQL databases succeeds

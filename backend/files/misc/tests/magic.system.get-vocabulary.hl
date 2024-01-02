@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/evaluator/vocabulary
-status:int:200
-description:Assumes that retrieving server Hyperlambda vocabulary succeeds

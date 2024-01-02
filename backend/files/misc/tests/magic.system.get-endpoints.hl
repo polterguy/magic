@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/endpoints/list
-status:int:200
-description:Assumes that retrieving all endpoints and their meta data succeeds

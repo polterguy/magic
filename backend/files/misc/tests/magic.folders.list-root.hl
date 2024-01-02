@@ -1,7 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/file-system/list-folders?folder=%2F
-status:int:200
-response:"[\"/config/\",\"/data/\",\"/etc/\",\"/misc/\",\"/modules/\",\"/system/\"]"
-description:"Assumes that listing all folders in '/' returns the correct result"

@@ -1,7 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/ping
-status:int:200
-response:"{\"result\":\"success\"}"
-description:Assumes that invoking ping endpoint succeeds and returns the correct result

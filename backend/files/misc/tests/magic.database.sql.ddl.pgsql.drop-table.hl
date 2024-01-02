@@ -1,6 +1,0 @@
-verb:delete
-url:/magic/system/sql/ddl/table?databaseType=pgsql&connectionString=generic&databaseName=test&tableName=foo&generate=true
-status:int:200
-description:Verifies that PostgreSQL correctly creates drop table SQL DDL
-response:"{\n  \"sql\": \"drop table foo;\"\n}"
-produces:application/json

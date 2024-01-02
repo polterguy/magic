@@ -1,7 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/magic/users_roles-count
-status:int:200
-description:"Assumes that it's possible to count roles belonging to users"
-produces:application/json

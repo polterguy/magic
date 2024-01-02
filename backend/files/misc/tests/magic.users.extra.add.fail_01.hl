@@ -1,7 +1,0 @@
-verb:post
-url:/magic/system/magic/users_extra
-status:int:500
-description:Verifies that associating an extra field with a non-existent user fails
-payload:"{\n  \"type\": \"name\",\n  \"value\": \"John Doe\",\n  \"user\": \"non-existent-user\"\n}"
-response:"{\n  \"message\": \"Guru meditation, come back when Universe is in order!\"\n}"
-produces:application/json

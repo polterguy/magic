@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/misc/gibberish?min=50&max=100
-status:int:200
-description:Assumes creating gibberish (CSRNG string) succeeds

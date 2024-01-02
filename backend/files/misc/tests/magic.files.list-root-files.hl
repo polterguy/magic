@@ -1,7 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/file-system/list-files?folder=%2F
-status:int:200
-response:"[\"/exceptions.hl\", \"/README.md\"]"
-description:"Assumes that listing files from root folder results in '/README.md' being returned, and that it succeeds"

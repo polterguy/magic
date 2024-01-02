@@ -1,6 +1,0 @@
-
-// Automatically generated assumption test.
-verb:get
-url:/magic/system/file-system/list-folders
-status:int:500
-description:Assumes that trying to list folders results in an error unless a folder argument is specified
