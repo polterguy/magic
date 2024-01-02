@@ -3,11 +3,14 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
+// Angular and system imports
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CommonErrorMessages } from 'src/app/helpers/common-error-messages';
+
+// Application specific imports
 import { CommonRegEx } from 'src/app/helpers/common-regex';
 import { GeneralService } from 'src/app/services/general.service';
+import { CommonErrorMessages } from 'src/app/helpers/common-error-messages';
 import { Argument } from 'src/app/components/protected/manage/endpoints/_models/argument.model';
 
 /**
@@ -39,17 +42,19 @@ export class AddArgumentDialogComponent implements OnInit {
   add() {
 
     if (!this.validateUrlName()) {
-      this.generalService.showFeedback('Please give a proper name.', 'errorMessage');
+      this.generalService.showFeedback('Please provide a valid name', 'errorMessage');
       return;
     }
+
     if (this.data.filter(x => x.name === this.name).length > 0) {
-      this.generalService.showFeedback('Argument already exists.', 'errorMessage');
+      this.generalService.showFeedback('Argument already exists', 'errorMessage');
       return;
     }
+
     this.dialogRef.close({
       name: this.name,
       type: this.selectedType
-    })
+    });
   }
 
   /*
@@ -72,4 +77,8 @@ const Types: string[] = [
  'uint',
  'short',
  'ushort',
+ 'float',
+ 'double',
+ 'single',
+ 'time',
 ];
