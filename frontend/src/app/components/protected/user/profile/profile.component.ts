@@ -54,14 +54,18 @@ export class ProfileComponent implements OnInit {
       value: this.user.name
     }
 
+    this.generalService.showLoading();
     this.userService.editExtra(data).subscribe({
 
       next: () => {
 
+        this.generalService.hideLoading();
         this.generalService.showFeedback('Details saved successfully', 'successMessage');
       },
+
       error: (error: any) => {
-        
+
+        this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
     });
@@ -89,15 +93,21 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
+    this.generalService.showLoading();
     this.backendService.changePassword(this.password).subscribe({
 
       next: () => {
 
+        this.generalService.hideLoading();
         this.generalService.showFeedback('Please sign in with your new password', 'successMessage', 'Ok', 5000);
         this.backendService.logout(false);
         this.router.navigate(['/authentication']);
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
     });
   }
 
@@ -113,10 +123,12 @@ export class ProfileComponent implements OnInit {
 
   private getUser() {
 
+    this.generalService.showLoading();
     this.userService.list(`?username.eq=${encodeURIComponent(this.user.username)}`).subscribe({
 
       next: (res: any) => {
 
+        this.generalService.hideLoading();
         if (res) {
           let user: any = {}
           res.map((item: any) => {
@@ -130,7 +142,11 @@ export class ProfileComponent implements OnInit {
           this.user = user;
         }
       },
-      error: (error: any) => this.generalService.showFeedback(error?.error?.message, 'errorMessage')
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage');
+      }
     });
   }
 }

@@ -1,62 +1,71 @@
 
-<h3 mat-dialog-title>Add argument</h3>
+<form (ngSubmit)="add()">
 
-<div mat-dialog-content>
+  <h3 mat-dialog-title>Add argument</h3>
 
-  <mat-form-field class="w-100">
-    <span
-      matPrefix
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>edit</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
+  <div mat-dialog-content>
 
-    <input
-      matInput
-      type="text"
-      placeholder="Name"
-      [(ngModel)]="name"
-      autocomplete="off"
-      [pattern]="CommonRegEx.appNames"
-      #argName>
-    <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
-  </mat-form-field>
+    <mat-form-field class="w-100">
+      <span
+        matPrefix
+        matTooltip="Argument name"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
 
-  <mat-form-field class="w-100">
-    <span
-      matPrefix
-      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-      <mat-icon>dehaze</mat-icon>
-      <span class="text-muted">|</span>
-    </span>
+      <input
+        matInput
+        type="text"
+        placeholder="Name"
+        [(ngModel)]="name"
+        autocomplete="off"
+        name="name"
+        [pattern]="CommonRegEx.appNames"
+        #argName>
+      <mat-error>{{CommonErrorMessages.appNames}}</mat-error>
+    </mat-form-field>
 
-    <mat-select
-      placeholder="Type"
-      [(ngModel)]="selectedType">
-      <mat-option
-        *ngFor="let item of types | sortBy: 'item'"
-        [value]="item">
-        {{item}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field class="w-100">
+      <span
+        matPrefix
+        matTooltip="Argument type"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>dehaze</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
 
-</div>
+      <mat-select
+        placeholder="Type"
+        name="selectedType"
+        [(ngModel)]="selectedType">
+        <mat-option
+          *ngFor="let item of types | sortBy: 'item'"
+          [value]="item">
+          {{item}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-<div mat-dialog-actions [align]="'end'">
+  </div>
 
-  <button
-    mat-button
-    mat-dialog-close>
-    Cancel
-  </button>
+  <div mat-dialog-actions [align]="'end'">
 
-  <button
-    mat-flat-button
-    color="primary"
-    class="px-4"
-    (click)="add()">
-    Save
-  </button>
+    <button
+      mat-button
+      type="button"
+      mat-dialog-close>
+      Cancel
+    </button>
 
-</div>
+    <button
+      mat-flat-button
+      type="submit"
+      color="primary"
+      class="px-4">
+      Save
+    </button>
+
+  </div>
+
+</form>

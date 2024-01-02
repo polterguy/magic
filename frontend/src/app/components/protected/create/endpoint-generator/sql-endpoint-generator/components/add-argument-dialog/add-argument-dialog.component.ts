@@ -10,6 +10,9 @@ import { CommonRegEx } from 'src/app/helpers/common-regex';
 import { GeneralService } from 'src/app/services/general.service';
 import { Argument } from 'src/app/components/protected/manage/endpoints/_models/argument.model';
 
+/**
+ * Allows user to add an argument to an SQL endpoint, to such allow for dynamically parametrizing SQL.
+ */
 @Component({
   selector: 'app-add-argument-dialog',
   templateUrl: './add-argument-dialog.component.html'
