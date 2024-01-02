@@ -109,10 +109,6 @@
 
       </div>
 
-      <p class="text-muted mt-3" style="word-wrap: break-word;">
-        {{getChatbotEmbed()}}
-      </p>
-
     </mat-tab>
 
     <mat-tab label="AI Search">
@@ -185,10 +181,6 @@
           autocomplete="off">
       </mat-form-field>
   
-      <p class="text-muted mt-3" style="word-wrap: break-word;">
-        {{getSearchEmbed()}}
-      </p>
-  
     </mat-tab>
 
   </mat-tab-group>
@@ -212,7 +204,8 @@
   </button>
 
   <button
-    mat-button
+    mat-flat-button
+    color="primary"
     mat-dialog-close>
     Close
   </button>
