@@ -57,10 +57,7 @@ export class FileObject {
 })
 export class NewFileFolderDialogComponent {
 
-  constructor(
-    private fileService: FileService,
-    private generalService: GeneralService,
-    @Inject(MAT_DIALOG_DATA) public data: FileObject) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: FileObject) { }
 
   getFileName(path: string) {
 
