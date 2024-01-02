@@ -11,7 +11,7 @@
       color="primary"
       (click)="addField()"
       type="button">
-      Add fields
+      Add field
     </button>
 
   </div>
@@ -22,7 +22,10 @@
 
         <mat-form-field class="w-100">
 
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <span
+            matPrefix
+            matTooltip="Roles user belongs to"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>shield</mat-icon>
             <span class="text-muted">|</span>
           </span>
@@ -42,7 +45,7 @@
               class="multiline-mat-option"
               *ngFor="let role of rolesList"
               [value]="role.name"
-              (click)="manageRole(role.name)">
+              (click)="toggleRole(role.name)">
               <span class="d-block name-line">{{role.name}}</span>
               <span class="d-block description-line">{{role.description}}</span>
             </mat-option>
@@ -55,13 +58,23 @@
 
       <div class="col-md-6 col-12" *ngFor="let item of formData">
 
-        <mat-form-field class="w-100 label-element">
-          <span matPrefix class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            {{item.type}}
-            <span class="text-muted ms-1">|</span>
+        <mat-form-field class="w-100">
+          <span
+            matPrefix
+            [matTooltip]="item.type"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
           </span>
-          <input matInput [formControlName]="item.type" [name]="item.type">
-          <button matSuffix mat-icon-button color="warn" type="button"
+          <input
+            matInput
+            [formControlName]="item.type"
+            [name]="item.type">
+          <button
+            matSuffix
+            mat-icon-button
+            color="warn"
+            type="button"
             (click)="deleteField(item.type)">
             <mat-icon>delete</mat-icon>
           </button>
