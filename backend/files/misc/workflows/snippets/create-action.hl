@@ -12,7 +12,7 @@
 
       /*
        * Type of argument, can be; key-value, array, int, decimal, float, double, long,
-       * email, string, enum, textarea, workflow, sql, csharp, hyperlambda or bool.
+       * email, string, enum, textarea, workflow, action, sql, csharp, hyperlambda or bool.
        */
       type:string
 

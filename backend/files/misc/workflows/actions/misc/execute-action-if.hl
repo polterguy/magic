@@ -1,0 +1,68 @@
+
+/*
+ * Executes the specified [action] if the specified [condition] is true.
+ *
+ * Will pass in all arguments specified to the action. The [condition] can be two different
+ * values or expressions, and the [comparison] can be eq, neq, mt, mte, lt, lte, or some other
+ * comparison operator.
+ *
+ * The action will use the [comparison] to compare the [lhs] and [rhs] values/expressions.
+ */
+.arguments
+   lhs
+      type:string
+      mandatory:bool:true
+   comparison
+      type:enum
+      mandatory:bool:true
+      values
+         .:eq
+         .:neq
+         .:mt
+         .:mte
+         .:lt
+         .:lte
+   rhs
+      type:string
+      mandatory:bool:true
+   action
+      type:action
+      mandatory:bool:true
+   arguments
+      type:key-value
+      mandatory:bool:false
+.icon:settings
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/action
+validators.mandatory:x:@.arguments/*/lhs
+validators.mandatory:x:@.arguments/*/rhs
+validators.mandatory:x:@.arguments/*/comparison
+
+// Making sure we use correct comparison operator.
+set-name:x:./*/if/*/comparison
+   get-value:x:@.arguments/*/comparison
+
+// Checking if [comparison] yields true.
+if
+   comparison
+      get-value:x:@.arguments/*/lhs
+      get-value:x:@.arguments/*/rhs
+   .lambda
+
+      // Parametrising [execute].
+      add:x:./*/execute/*/arguments
+         get-nodes:x:@.arguments/*/arguments/*
+
+      // Executing file.
+      execute:magic.workflows.actions.execute
+         name:_
+         filename:x:@.arguments/*/action
+         arguments
+
+      // Parametrising [return] invocation.
+      add:x:./*/return
+         get-nodes:x:@execute/*
+
+      // Returning result of execution to caller.
+      return

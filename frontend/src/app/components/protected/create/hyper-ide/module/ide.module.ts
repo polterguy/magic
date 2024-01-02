@@ -37,6 +37,7 @@ import { FormlyAutocompleteComponent } from '../components/parametrise-action-di
 import { FormlyAutocompleteTextareaComponent } from '../components/parametrise-action-dialog/components/formly-autocomplete-textarea/formly-autocomplete-textarea.component';
 import { ExecuteFeedbackDialog } from '../components/execute-feedback-dialog/execute-feedback-dialog.component';
 import { FormlyWorkflowComponent } from '../components/parametrise-action-dialog/components/formly-workflow/formly-workflow.component';
+import { FormlyActionComponent } from '../components/parametrise-action-dialog/components/formly-action/formly-action.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { FormlyWorkflowComponent } from '../components/parametrise-action-dialog
     FormlyArrayComponent,
     FormlyAutocompleteComponent,
     FormlyWorkflowComponent,
+    FormlyActionComponent,
     FormlyAutocompleteTextareaComponent,
     CreateKeyValueDialogComponent,
     CreateArrayDialogComponent,
@@ -80,6 +82,7 @@ import { FormlyWorkflowComponent } from '../components/parametrise-action-dialog
         { name: 'autocomplete', component: FormlyAutocompleteComponent },
         { name: 'autocomplete-textarea', component: FormlyAutocompleteTextareaComponent },
         { name: 'workflow', component: FormlyWorkflowComponent },
+        { name: 'action', component: FormlyActionComponent },
       ],
     }),
   ],

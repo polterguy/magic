@@ -110,11 +110,29 @@ export class ParametriseActionDialog implements OnInit {
         case 'string':
         case 'enum':
         case 'textarea':
+        case 'action':
         case 'workflow':
+
           add = true;
-          field.type = this.data.input[idx].type === 'textarea'
-            ? 'autocomplete-textarea'
-            : (this.data.input[idx].type === 'workflow' ? 'workflow' : 'autocomplete');
+
+          switch (this.data.input[idx].type) {
+
+            case 'textarea':
+              field.type = 'autocomplete-textarea';
+              break;
+
+            case 'workflow':
+              field.type = 'workflow';
+              break;
+
+            case 'action':
+              field.type = 'action';
+              break;
+
+            default:
+              field.type = 'autocomplete';
+          }
+
           field.props.options = [];
           if (this.data.input[idx].type === 'enum') {
             for (let idxNo = 0; idxNo < this.data.input[idx].values.length; idxNo++) {
@@ -137,6 +155,17 @@ export class ParametriseActionDialog implements OnInit {
             }
           }
           if (field.type === 'workflow') {
+            field.props.change = (args: any) => {
+              if (argumentsField) {
+                this.model.arguments = {};
+                for (const idx in args) {
+                  this.model.arguments[idx] = 'CHANGE-THIS';
+                }
+                argumentsField.options.detectChanges();
+              }
+            };
+          }
+          if (field.type === 'action') {
             field.props.change = (args: any) => {
               if (argumentsField) {
                 this.model.arguments = {};
