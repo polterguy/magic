@@ -142,7 +142,7 @@ data.connect:[generic|magic]
                console.log:x:@.arguments/*/message
 
 // Applying all common Hyperlambda files.
-io.file.list-recursively:/misc/common/
+io.file.list-recursively:/misc/common-startup-files/
 for-each:x:@io.file.list-recursively/*
 
    // Verifying file is a Hyperlambda file.
