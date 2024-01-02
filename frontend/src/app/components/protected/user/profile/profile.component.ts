@@ -107,13 +107,13 @@ export class ProfileComponent implements OnInit {
 
   private getUsername() {
 
-    this.user.username = this.backendService.active.token['_username'];
+    this.user.username = this.backendService.active.username;
     this.getUser();
   }
 
   private getUser() {
 
-    this.userService.list(`?username.like=${encodeURIComponent(this.user.username)}%`).subscribe({
+    this.userService.list(`?username.eq=${encodeURIComponent(this.user.username)}`).subscribe({
 
       next: (res: any) => {
 
