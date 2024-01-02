@@ -1,6 +1,6 @@
 
 /*
- * Loads the specified [file] and returns to caller as [content].
+ * Saves the specified [content] to the specified [file].
  */
 .arguments
    file
