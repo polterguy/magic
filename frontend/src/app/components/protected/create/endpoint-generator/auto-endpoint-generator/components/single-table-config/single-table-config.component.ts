@@ -25,7 +25,6 @@ export class SingleTableConfigComponent implements OnInit {
     'type',
     'key',
     'default',
-    'template',
     'create',
     'read',
     'update',
@@ -34,8 +33,6 @@ export class SingleTableConfigComponent implements OnInit {
   dataSource: any = [];
 
   public foreign_keys: any[] = [];
-
-  public templateList: any = TemplateList;
 
   fkLong: any = {}
 
@@ -154,32 +151,4 @@ export class SingleTableConfigComponent implements OnInit {
       el.handling = item.key
     }
   }
-
-  getTemplateTooltip(name: string) {
-    return TemplateListTooltip[name];
-  }
-}
-
-const TemplateList: any = {
-  'textarea': 'Long text',
-  'image': 'Image',
-  'file': 'File',
-  'email': 'Email',
-  'url': 'URL',
-  'youtube': 'YouTube',
-  'phone': 'Phone',
-  'username_lookup': 'Username lookup',
-  'locked': 'Locked',
-}
-
-const TemplateListTooltip: any = {
-  'textarea': 'Field will be treated as a multi line textarea when generating a frontend',
-  'image': 'Field will be treated as a database stored image when generating a frontend allowing the user to upload an image to the field',
-  'file': 'Field will be treated as a database stored file when generating a frontend allowing the user to upload a file to the field',
-  'email': 'Field will be treated as an email address and result in an email hyperlink when generating a frontend',
-  'url': 'Field will be treated as a URL and result in a hyperlink when generating a frontend',
-  'youtube': 'Field will be treated as a YouTube video and embedded as a video when generating a frontend',
-  'phone': 'Field will be treated as a phone number when generating a frontend and result in a phone hyperlink when generating a frontend',
-  'username_lookup': 'Field will be treated as a username, and result in a username lookup component when generating a frontend',
-  'locked': 'Field will be locked to the currently authenticated username, applying row level security',
 }

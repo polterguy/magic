@@ -4,25 +4,67 @@
 
     <!-- Name column -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef class="ps-0"> Name </th>
-      <td mat-cell *matCellDef="let element" class="ps-0">
-        <mat-icon *ngIf="element.primary === true" title="Primary key">key</mat-icon>
-        <mat-icon *ngIf="element.nullable === true && !element.primary" class="flipped text-muted"
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="ps-0">
+        Name
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element"
+        class="ps-0">
+
+        <mat-icon
+          *ngIf="element.primary === true"
+          title="Primary key">key</mat-icon>
+
+        <mat-icon
+          *ngIf="element.nullable === true && !element.primary"
+          class="flipped text-muted"
           title="Nullable">motion_photos_off</mat-icon>
+
         <span class="name">{{element?.name ?? '-'}}</span>
+
       </td>
+
     </ng-container>
 
     <!-- Type column -->
     <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef class="ps-0"> Type </th>
-      <td mat-cell *matCellDef="let element" class="ps-0"> {{element.db + ' / ' + element.hl}} </td>
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="ps-0">
+        Type
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element"
+        class="ps-0">
+        {{element.db + ' / ' + element.hl}}
+      </td>
+
     </ng-container>
 
     <!-- Display as column -->
     <ng-container matColumnDef="key">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Display as </th>
-      <td mat-cell *matCellDef="let element">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
+        Display as
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element">
+
         <ng-container *ngIf="hasForeignKey(element)">
 
           <button
@@ -56,56 +98,35 @@
 
     <!-- default Column -->
     <ng-container matColumnDef="default">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Default </th>
-      <td mat-cell *matCellDef="let element"> {{element?.automatic === true ? 'Yes' : 'No'}} </td>
-    </ng-container>
 
-    <!-- template Column -->
-    <ng-container matColumnDef="template">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap"> Template </th>
-      <td mat-cell *matCellDef="let element">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
+        Default
+      </th>
 
-        <button
-          mat-button
-          class="table-btn w-100"
-          [matMenuTriggerFor]="templateMenu"
-          [matMenuTriggerData]="{element: element}"
-          [disabled]="element?.primary">
-          <div class="d-flex w-100 justify-content-between align-items-center">
-            {{element.locked ? 'Locked' : templateList[element.handling]}}
-            <mat-icon *ngIf="!element?.primary">keyboard_arrow_down</mat-icon>
-          </div>
-        </button>
-
-        <mat-menu #templateMenu="matMenu">
-          <ng-template matMenuContent let-element="element">
-
-            <button
-              mat-menu-item
-              (click)="element.handling = ''; element.locked = false;">
-              None
-            </button>
-
-            <button
-              mat-menu-item
-              *ngFor="let item of templateList | keyvalue"
-              (click)="changeTemplate(element, item);"
-              [matTooltip]="getTemplateTooltip(item.key)"
-              matTooltipPosition="after">
-              {{item.value}}
-            </button>
-
-          </ng-template>
-        </mat-menu>
+      <td
+        mat-cell
+        *matCellDef="let element">
+        {{element?.automatic === true ? 'Yes' : 'No'}}
       </td>
+
     </ng-container>
 
     <!-- create Column -->
     <ng-container matColumnDef="create">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
         Create
       </th>
-      <td mat-cell *matCellDef="let element">
+
+      <td
+        mat-cell
+        *matCellDef="let element">
 
         <mat-checkbox
           color="primary"
@@ -115,14 +136,22 @@
         </mat-checkbox>
 
       </td>
+
     </ng-container>
 
     <!-- read Column -->
     <ng-container matColumnDef="read">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
         Read
       </th>
-      <td mat-cell *matCellDef="let element">
+
+      <td
+        mat-cell
+        *matCellDef="let element">
 
         <mat-checkbox
           color="primary"
@@ -132,14 +161,22 @@
         </mat-checkbox>
 
       </td>
+
     </ng-container>
 
     <!-- update Column -->
     <ng-container matColumnDef="update">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
         Update
       </th>
-      <td mat-cell *matCellDef="let element">
+
+      <td
+        mat-cell
+        *matCellDef="let element">
 
         <mat-checkbox
           color="primary"
@@ -149,14 +186,22 @@
         </mat-checkbox>
 
       </td>
+
     </ng-container>
 
     <!-- delete Column -->
     <ng-container matColumnDef="delete">
-      <th mat-header-cell *matHeaderCellDef class="text-nowrap">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
         Delete
       </th>
-      <td mat-cell *matCellDef="let element">
+
+      <td
+        mat-cell
+        *matCellDef="let element">
 
         <mat-checkbox
           color="primary"
@@ -166,9 +211,18 @@
         </mat-checkbox>
 
       </td>
+
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedColumns">
+    </tr>
+
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns;">
+    </tr>
+
   </table>
 </div>
