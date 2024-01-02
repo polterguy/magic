@@ -1,0 +1,31 @@
+
+/*
+ * Throws an exception with the specified [message].
+ *
+ * If [public] is true the exception will propagate to the client over an HTTP connection,
+ * and [status] will be the HTTP status code returned to the client.
+ */
+.arguments
+   message
+      type:string
+      mandatory:bool:true
+   status
+      type:int
+      mandatory:bool:false
+   public
+      type:bool
+      mandatory:bool:false
+.icon:warning
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/message
+
+// Applying defaults.
+validators.default:x:@.arguments
+   status:int:500
+   public:bool:false
+
+// Throwing exception.
+throw:x:@.arguments/*/message
+   public:x:@.arguments/*/public
+   status:x:@.arguments/*/status
