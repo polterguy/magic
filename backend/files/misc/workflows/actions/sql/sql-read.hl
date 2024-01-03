@@ -36,6 +36,12 @@
    offset
       type:int
       mandatory:false
+   order
+      type:string
+      mandatory:false
+   direction
+      type:string
+      mandatory:false
 .icon:cloud_download
 
 // Sanity checking invocation.
@@ -83,6 +89,8 @@ data.connect:x:@.connection-string
    add:x:./*/data.read
       get-nodes:x:@.arguments/*/limit
       get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
 
    // Adding [or] and [and] arguments.
    add:x:@data.connect/*/data.read/*/where
