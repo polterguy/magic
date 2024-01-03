@@ -35,8 +35,6 @@
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/action
-validators.mandatory:x:@.arguments/*/lhs
-validators.mandatory:x:@.arguments/*/rhs
 validators.mandatory:x:@.arguments/*/comparison
 
 // Making sure we use correct comparison operator.
