@@ -92,7 +92,7 @@ data.connect:x:@.connection-string
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
 
-   // Adding [or] and [and] arguments.
+   // Adding [or] or [and] arguments.
    add:x:@data.connect/*/data.read/*/where
       get-nodes:x:@.arguments/*/or
       get-nodes:x:@.arguments/*/and
