@@ -1,0 +1,17 @@
+
+/*
+ * Redirects the client to the specified [url].
+ */
+.arguments
+   url
+      type:string
+      mandatory:bool:true
+.icon:http
+
+
+// Ensuring we return the correct status code.
+response.status.set:302
+
+// Making sure we return the new location to caller.
+response.headers.set
+   Location:x:@.arguments/*/url
