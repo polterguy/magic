@@ -117,6 +117,20 @@
         </div>
 
       </form>
+
+      <div class="text-end me-2">
+
+        <mat-slide-toggle
+          labelPosition="before"
+          class="me-2"
+          matTooltip="Summarize training snippets that are too long to be effectively used"
+          [disabled]="uploading"
+          [(ngModel)]="summarize">
+          Summarize
+        </mat-slide-toggle>
+
+      </div>
+
     </mat-tab>
 
     <mat-tab>
@@ -317,20 +331,12 @@
 
 <div mat-dialog-actions [align]="'end'">
 
-  <mat-slide-toggle
-    labelPosition="before"
-    class="me-2"
-    matTooltip="Summarize training snippets that are too long to be effectively used"
-    [disabled]="uploading"
-    [(ngModel)]="summarize">
-    Summarize
-  </mat-slide-toggle>
-
   <button
-    mat-button
+    mat-flat-button
+    color="primary"
     [disabled]="uploading"
     mat-dialog-close>
-    Cancel
+    Close
   </button>
 
 </div>
