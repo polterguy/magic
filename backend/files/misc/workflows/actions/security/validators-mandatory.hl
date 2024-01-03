@@ -1,0 +1,29 @@
+
+/*
+ * Ensures the spcified [args] was given.
+ *
+ * Will iterate through each [args] specified and verify it exists, and if not, the action will
+ * throw an exception with a descriptive text explaining what argument was missing.
+ */
+.arguments
+   args
+      type:key-value
+      mandatory:bool:true
+.icon:shield
+
+// Iterating through each [args] specified.
+for-each:x:@.arguments/*/args/*
+
+   /*
+    * Dynamically creating an expression to make it possible to provide better feedback
+    * if exceptions occurs.
+    */
+   strings.concat
+      .:@.arguments/*/args/*/
+      get-name:x:@.dp/#
+   set-x:x:./*/validators.mandatory
+      convert:x:@strings.concat
+         type:x
+
+   // Ensuring the argument was specified.
+   validators.mandatory

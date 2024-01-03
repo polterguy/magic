@@ -1,0 +1,97 @@
+
+/*
+ * Invokes the SQL CRUD Read slot with the specified parameters.
+ *
+ * Provide [connection-string], [database-type], [database], and [table] to inform the action of
+ * what database/table you want to execute your SQL towards, and add [and] or [or] arguments
+ * to filter your returns, in addition to [limit] and [offset] to apply paging.
+ */
+.arguments
+   database-type
+      type:enum
+      mandatory:bool:true
+      values
+         .:sqlite
+         .:mssql
+         .:mysql
+         .:pgsql
+   connection-string
+      type:string
+      mandatory:bool:true
+   database
+      type:string
+      mandatory:bool:true
+   table
+      type:string
+      mandatory:true
+   and
+      type:key-value
+      mandatory:bool:false
+   or
+      type:key-value
+      mandatory:bool:false
+   limit
+      type:int
+      mandatory:false
+   offset
+      type:int
+      mandatory:false
+.icon:cloud_download
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/table
+validators.enum:x:@.arguments/*/database-type
+   .:sqlite
+   .:mssql
+   .:mysql
+   .:pgsql
+
+// Applying defaults.
+validators.default:x:@.arguments
+   connection-string:generic
+   database-type:sqlite
+   database:magic
+
+// Ensuring user provided either [or] or [and] and not both.
+if
+   and
+      exists:x:@.arguments/*/or/*
+      exists:x:@.arguments/*/and/*
+   .lambda
+
+      throw:Provide either [or] or [and] to sql-read action, and not both
+         public:bool:true
+         status:500
+
+// Connection string to actually use as we connect.
+.connection-string
+
+// Caller supplied an explicit [connection-string] argument.
+set-value:x:@.connection-string
+   strings.concat
+      .:[
+      get-value:x:@.arguments/*/connection-string
+      .:|
+      get-value:x:@.arguments/*/database
+      .:]
+
+// Connecting to database.
+data.connect:x:@.connection-string
+   database-type:x:@.arguments/*/database-type
+
+   // Adding [limit] and [offset] arguments.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+
+   // Adding [or] and [and] arguments.
+   add:x:@data.connect/*/data.read/*/where
+      get-nodes:x:@.arguments/*/or
+      get-nodes:x:@.arguments/*/and
+
+   // Executing SQL.
+   data.read:x:@.arguments/*/sql
+      database-type:x:@.arguments/*/database-type
+      table:x:@.arguments/*/table
+      where
+   return-nodes:x:@data.read/*

@@ -15,9 +15,11 @@
 .icon:shield
 
 /*
- * Checking if backend is configured to use reCAPTCHA, and if so,
- * making sure we ensure the frontend supplied a [recaptcha_token],
- * and invoking slot responsible for verifying reCAPTCHA value.
+ * Checking if backend is configured to use reCAPTCHA, and if so, making sure we ensure the frontend supplied
+ * a [recaptcha_token], and invoking slot responsible for verifying reCAPTCHA value.
+ *
+ * Notice, we do not enforce reCAPTCHA logic if user is authenticated as root.
+ * This makes it easier to debug our endpoint, completely bypassing the reCAPTCHA logic if user is root.
  */
 auth.ticket.get
 config.get:"magic:auth:recaptcha:key"
