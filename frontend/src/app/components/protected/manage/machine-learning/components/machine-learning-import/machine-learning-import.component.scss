@@ -7,7 +7,8 @@
 @import "src/assets/styles/_variables/sizing.scss";
 
 .content {
-  height: 190px;
+  min-height: 300px;
+  height: auto;
 }
 
 .drop-container {

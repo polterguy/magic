@@ -27,12 +27,18 @@ export class MachineLearningImportComponent {
   max: number = 25;
   prompt: string = 'prompt';
   completion: string = 'completion';
-  advanced: boolean = false;
+  massage: string = '';
   threshold: number = 50;
   uploadIndex: number = 0;
   uploadCount: number = 0;
   files: FileList = null;
   summarize: boolean = true;
+  massageTemplate: string = null;
+  massageTemplates: string[] = [
+    'Summarize the following into a desriptive title and content, separated by carrriage return',
+    'Extract the most important information and create a one line descriptive title, and the rest of the content as paragraphs',
+    'Create structured information from the following with a one line descriptive title and the rest of the contenton consecutive lines'
+  ];
 
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
@@ -42,6 +48,12 @@ export class MachineLearningImportComponent {
     private matDialog: MatDialogRef<MachineLearningImportComponent>,
     private generalService: GeneralService,
     private openAIService: OpenAIService) { }
+
+  massageTemplateChanged() {
+
+    this.massage = this.massageTemplate;
+    this.massageTemplate = null;
+  }
 
   importUrl() {
 
@@ -89,6 +101,9 @@ export class MachineLearningImportComponent {
     formData.append('type', this.data.type);
     formData.append('prompt', this.prompt);
     formData.append('completion', this.completion);
+    if (this.massage && this.massage !== '') {
+      formData.append('massage', this.massage);
+    }
 
     this.openAIService.uploadTrainingFile(formData).subscribe({
       next: (result: any) => {
