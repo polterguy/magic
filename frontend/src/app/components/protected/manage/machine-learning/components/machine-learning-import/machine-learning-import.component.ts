@@ -79,6 +79,7 @@ export class MachineLearningImportComponent {
     this.uploadIndex = 0;
     this.uploadCount = 0;
     this.files = event.target.files;
+    this.generalService.showLoading();
     this.uploadCurrentFile();
   }
 
@@ -115,6 +116,7 @@ export class MachineLearningImportComponent {
           // Incrementing upload index
           this.uploadIndex += 1;
           if (this.uploadIndex >= this.files.length) {
+            this.generalService.hideLoading();
             this.generalService.showFeedback(`${this.uploadCount} training snippets successfully imported`, 'successMessage');
             this.uploading = false;
             this.trainingFileModel = '';
