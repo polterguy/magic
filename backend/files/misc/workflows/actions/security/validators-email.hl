@@ -1,0 +1,29 @@
+
+/*
+ * Ensures the spcified [emails] are valid emails.
+ *
+ * Will iterate through each [emails] specified and verifying these, this action will
+ * throw an exception with a descriptive text explaining what argument was not a valid email.
+ */
+.arguments
+   emails
+      type:key-value
+      mandatory:bool:true
+.icon:shield
+
+// Iterating through each [emails] specified.
+for-each:x:@.arguments/*/emails/*
+
+   /*
+    * Dynamically creating an expression to make it possible to provide better feedback
+    * if exceptions occurs.
+    */
+   strings.concat
+      .:@.arguments/*/emails/*/
+      get-name:x:@.dp/#
+   set-x:x:./*/validators.email
+      convert:x:@strings.concat
+         type:x
+
+   // Ensuring the argument was specified.
+   validators.email
