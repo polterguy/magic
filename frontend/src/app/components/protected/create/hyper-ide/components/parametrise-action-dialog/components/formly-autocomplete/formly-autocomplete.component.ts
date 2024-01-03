@@ -79,6 +79,15 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
               this.getDatabases();
           })).subscribe();
       }
+    } else if (this.field.key === 'table') {
+      if (this.form.controls['database-type'] && this.form.controls['connection-string'] && this.form.controls['table']) {
+        this.form.controls['database'].valueChanges.pipe(
+          debounceTime(400),
+          distinctUntilChanged(),
+          tap(() => {
+              this.getTables();
+          })).subscribe();
+      }
     }
   }
 
@@ -104,6 +113,7 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
           this.field.props.options.push({
             value: idx,
             label: idx,
+            complete: true,
           });
         }
         for (const idx of expOptions) {
@@ -140,6 +150,46 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
           this.field.props.options.push({
             value: idx.name,
             label: idx.name,
+            complete: true,
+          });
+        }
+        for (const idx of expOptions) {
+          this.field.props.options.push(idx);
+        }
+        this.formControl.setValue('');
+      },
+
+      error: () => {
+
+        this.generalService.hideLoading();
+      }
+    });
+  }
+
+  private getTables() {
+
+    if (!this.model['database-type'] || this.model['database-type'] === '' ||
+        !this.model['connection-string'] || this.model['connection-string'] === '' ||
+        !this.model['database'] || this.model['database'] === '') {
+      return;
+    }
+
+    this.generalService.showLoading();
+    this.sqlService.getDatabaseMetaInfo(
+      <string>this.model['database-type'],
+      <string>this.model['connection-string']).subscribe({
+
+      next: (result: any) => {
+
+        this.generalService.hideLoading();
+        const db = result.databases.filter((x: any) => x.name === <string>this.model['database'])[0];
+        const expOptions = (<any[]>this.field.props.options).filter(x => x.value.startsWith(':x:'));
+        this.field.props.options = [];
+        for (const idx of db.tables) {
+          this.field.props.options.push({
+            value: idx.name,
+            label: idx.name,
+            complete: true,
           });
         }
         for (const idx of expOptions) {
