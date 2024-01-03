@@ -80,12 +80,21 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
           })).subscribe();
       }
     } else if (this.field.key === 'table') {
-      if (this.form.controls['database-type'] && this.form.controls['connection-string'] && this.form.controls['table']) {
+      if (this.form.controls['database-type'] && this.form.controls['connection-string'] && this.form.controls['database']) {
         this.form.controls['database'].valueChanges.pipe(
           debounceTime(400),
           distinctUntilChanged(),
           tap(() => {
               this.getTables();
+          })).subscribe();
+      }
+    } else if (this.field.key === 'order') {
+      if (this.form.controls['database-type'] && this.form.controls['connection-string'] && this.form.controls['database'] && this.form.controls['table']) {
+        this.form.controls['table'].valueChanges.pipe(
+          debounceTime(400),
+          distinctUntilChanged(),
+          tap(() => {
+              this.getColumns();
           })).subscribe();
       }
     }
@@ -186,6 +195,47 @@ export class FormlyAutocompleteComponent extends FieldType<FieldTypeConfig> impl
         const expOptions = (<any[]>this.field.props.options).filter(x => x.value.startsWith(':x:'));
         this.field.props.options = [];
         for (const idx of db.tables) {
+          this.field.props.options.push({
+            value: idx.name,
+            label: idx.name,
+            complete: true,
+          });
+        }
+        for (const idx of expOptions) {
+          this.field.props.options.push(idx);
+        }
+        this.formControl.setValue('');
+      },
+
+      error: () => {
+
+        this.generalService.hideLoading();
+      }
+    });
+  }
+
+  private getColumns() {
+
+    if (!this.model['database-type'] || this.model['database-type'] === '' ||
+        !this.model['connection-string'] || this.model['connection-string'] === '' ||
+        !this.model['database'] || this.model['database'] === '' ||
+        !this.model['table'] || this.model['table'] === '') {
+      return;
+    }
+
+    this.generalService.showLoading();
+    this.sqlService.getDatabaseMetaInfo(
+      <string>this.model['database-type'],
+      <string>this.model['connection-string']).subscribe({
+
+      next: (result: any) => {
+
+        this.generalService.hideLoading();
+        const db = result.databases.filter((x: any) => x.name === <string>this.model['database'])[0];
+        const table = db.tables.filter(x => x.name === <string>this.model['table'])[0];
+        const expOptions = (<any[]>this.field.props.options).filter(x => x.value.startsWith(':x:'));
+        this.field.props.options = [];
+        for (const idx of table.columns) {
           this.field.props.options.push({
             value: idx.name,
             label: idx.name,

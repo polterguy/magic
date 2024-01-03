@@ -1,12 +1,10 @@
 
 /*
- * Invokes the SQL CRUD Read slot with the specified parameters.
+ * Invokes the SQL CRUD Delete slot with the specified parameters.
  *
  * Provide [connection-string], [database-type], [database], and [table] to inform the action of
  * what database/table you want to execute your SQL towards, and add [and] or [or] arguments
- * to filter your returns, in addition to [limit] and [offset] to apply paging. Use [order]
- * and [direction] to sort either ascending or descending. Notice, you can only use one of [or]
- * or [and], and not both.
+ * to filter your records. Notice, you can only use one of [or] or [and], and not both.
  */
 .arguments
    database-type
@@ -32,21 +30,6 @@
    or
       type:key-value
       mandatory:bool:false
-   limit
-      type:int
-      mandatory:bool:false
-   offset
-      type:int
-      mandatory:bool:false
-   order
-      type:string
-      mandatory:bool:false
-   direction
-      type:enum
-      mandatory:bool:false
-      values
-         .:asc
-         .:desc
 .icon:cloud_download
 
 // Sanity checking invocation.
@@ -90,21 +73,14 @@ set-value:x:@.connection-string
 data.connect:x:@.connection-string
    database-type:x:@.arguments/*/database-type
 
-   // Adding [limit], [offset], [order] and [direction] arguments.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/limit
-      get-nodes:x:@.arguments/*/offset
-      get-nodes:x:@.arguments/*/order
-      get-nodes:x:@.arguments/*/direction
-
    // Adding [or] or [and] arguments.
-   add:x:@data.connect/*/data.read/*/where
+   add:x:@data.connect/*/data.delete/*/where
       get-nodes:x:@.arguments/*/or
       get-nodes:x:@.arguments/*/and
 
    // Executing SQL.
-   data.read:x:@.arguments/*/sql
+   data.delete:x:@.arguments/*/sql
       database-type:x:@.arguments/*/database-type
       table:x:@.arguments/*/table
       where
-   return-nodes:x:@data.read/*
+   return-nodes:x:@data.delete
