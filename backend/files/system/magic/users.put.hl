@@ -15,7 +15,8 @@ auth.ticket.verify:root
 
 // Sanity checking invocation
 validators.mandatory:x:@.arguments/*/username
-execute:transformers.hash-password
+eval:x:+
+signal:transformers.hash-password
    reference:x:@.arguments/*/password
 
 // Opening up our database connection.
