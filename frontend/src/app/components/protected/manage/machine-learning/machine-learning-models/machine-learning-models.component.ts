@@ -144,7 +144,7 @@ export class MachineLearningModelsComponent implements OnInit {
     this.dialog
       .open(MachineLearningImportComponent, {
         width: '80vw',
-        maxWidth: '850px',
+        maxWidth: '1024px',
         data: el,
       }).afterClosed()
       .subscribe((result: {

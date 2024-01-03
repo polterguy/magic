@@ -21,22 +21,6 @@ validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/file/*/name
 validators.mandatory:x:@.arguments/*/file/*/stream
 
-/*
- * To avoid null reference exceptions in case feedback channel
- * is not provided, we default it to something random.
- */
-if
-   not-exists:x:@.arguments/*/feedback-channel
-   .lambda
-
-      // Creating default dummy value.
-      crypto.random
-         min:10
-         max:20
-      unwrap:x:+/*
-      validators.default:x:@.arguments
-         feedback-channel:x:@crypto.random
-
 // Defaulting prompt and completion arguments to prompt and completion.
 if
    not-exists:x:@.arguments/*/prompt
