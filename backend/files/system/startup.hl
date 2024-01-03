@@ -35,4 +35,9 @@ for-each:x:./*/io.file.list-recursively/*
             get-value:x:@.dp/#
             .:"."
          console.log:x:-
-         io.file.execute:x:@.dp/#
+         try
+            io.file.execute:x:@.dp/#
+         .catch
+            log.error:Error while executing startup file
+               exception:x:@.arguments/*/message
+               file:x:@.dp/#
