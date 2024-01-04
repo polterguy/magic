@@ -60,7 +60,7 @@ const routes: Routes = [
         loadChildren: () => import('src/app/components/protected/create/chatbot-wizard/_module/chatbot-wizard.module').then(m => m.ChatbotWizardModule)
       },
       {
-        path: 'tasks',
+        path: 'task-manager',
         loadChildren: () => import('src/app/components/protected/manage/tasks/_module/task.module').then(m => m.TaskModule)
       },
       {
