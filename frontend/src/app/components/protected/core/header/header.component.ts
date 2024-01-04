@@ -193,8 +193,8 @@ meta data for each endpoint, such as the URL, HTTP verb, type of data consumed a
 authorization requirements, and more. Once an endpoint is invoked, a health check test can be created
 to sanity check the system. This component also supports providing JSON payloads to POST and PUT endpoints.`;
 
-      case 'tasks':
-        return `The tasks component allows you to create and persist tasks to your database.
+      case 'task-manager':
+        return `The task manager component allows you to create and persist tasks to your database.
 You can either schedule tasks for later, either a specific date and time in the future or repeatedly,
 or you can trigger tasks from other parts of your Hyperlambda code. Tasks are persisted to
 your Magic database, so even if your server is restarted, scheduled tasks will for the most parts
@@ -262,58 +262,43 @@ optin verification and potential referential integrity issues.`;
         return 'https://polterguy.github.io';
 
       case 'chatbot-wizard':
-        return 'https://polterguy.github.io/documentation/magic/components/chatbot-wizard/';
+        return 'https://polterguy.github.io/dashboard/chatbot-wizard/';
 
       case 'sql-studio':
-        return 'https://polterguy.github.io/documentation/magic/components/sql/';
+        return 'https://polterguy.github.io/dashboard/sql-studio/';
 
       case 'databases':
-        return 'https://polterguy.github.io/documentation/magic/components/databases/';
+        return 'https://polterguy.github.io/dashboard/databases/';
 
       case 'endpoint-generator':
-        return 'https://polterguy.github.io/documentation/magic/components/crudifier/backend/';
-
-      case 'frontend-generator':
-        return 'https://polterguy.github.io/documentation/magic/components/crudifier/frontend/';
+        return 'https://polterguy.github.io/dashboard/endpoint-generator/';
 
       case 'hyper-ide':
-        return 'https://polterguy.github.io/documentation/magic/components/hyper-ide/';
+        return 'https://polterguy.github.io/dashboard/hyper-ide/';
 
       case 'user-roles-management':
-        return 'https://polterguy.github.io/documentation/magic/components/auth/';
+        return 'https://polterguy.github.io/dashboard/users-roles/';
 
       case 'endpoints':
-        return 'https://polterguy.github.io/documentation/magic/components/endpoints/';
+        return 'https://polterguy.github.io/dashboard/endpoints/';
 
-      case 'tasks':
-        return 'https://polterguy.github.io/documentation/magic/components/tasks/';
+      case 'task-manager':
+        return 'https://polterguy.github.io/dashboard/task-manager/';
 
       case 'hyperlambda-playground':
-        return 'https://polterguy.github.io/documentation/magic/components/evaluator/';
-
-      case 'sockets':
-        return 'https://polterguy.github.io/documentation/magic/components/sockets/';
+        return 'https://polterguy.github.io/dashboard/hyperlambda-playground/';
 
       case 'plugins':
-        return 'https://polterguy.github.io/documentation/magic/components/bazar/';
+        return 'https://polterguy.github.io/dashboard/plugins/';
 
       case 'machine-learning':
-        return 'https://polterguy.github.io/documentation/magic/components/machine-learning/';
+        return 'https://polterguy.github.io/dashboard/machine-learning/';
 
       case 'configuration':
-        return 'https://polterguy.github.io/documentation/magic/components/config/';
-
-      case 'health-check':
-        return 'https://polterguy.github.io/documentation/magic/components/assumptions/';
+        return 'https://polterguy.github.io/dashboard/configuration/';
 
       case 'log':
-        return 'https://polterguy.github.io/documentation/magic/components/log/';
-
-      case 'help-center':
-        return 'https://polterguy.github.io/documentation/magic/';
-
-      case 'user-profile':
-        return 'https://polterguy.github.io/documentation/magic/components/profile/';
+        return 'https://polterguy.github.io/dashboard/log/';
     }
   }
 
@@ -388,8 +373,8 @@ optin verification and potential referential integrity issues.`;
             exact: false,
           },
           {
-            name: 'Tasks',
-            url: '/tasks',
+            name: 'Task Manager',
+            url: '/task-manager',
             exact: false,
           },
           {

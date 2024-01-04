@@ -77,16 +77,15 @@
 
   <button
     mat-button
-    color="primary"
-    mat-dialog-close>
-    Close
+    (click)="copy()">
+    Copy
   </button>
 
   <button
     mat-flat-button
     color="primary"
-    (click)="copy()">
-    Copy
+    mat-dialog-close>
+    Close
   </button>
 
 </div>
