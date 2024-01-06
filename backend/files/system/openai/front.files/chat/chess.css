@@ -407,6 +407,7 @@ button.aista-chat-btn:focus i.icofont-chat {
   background-color: rgba(0,0,0,.1);
 }
 .aista-chat-form {
+  background-color: inherit !important;
   padding: 10px !important;
   margin: 0 !important;
 }
