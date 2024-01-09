@@ -1,0 +1,30 @@
+<h3 mat-dialog-title>OpenAPI Specification for endpoints</h3>
+
+<div mat-dialog-content>
+
+  <div class="text-muted mb-2">
+    {{data.url}}
+  </div>
+
+  <pre
+    class="mb-2 result"
+    [highlight]="data.json"></pre>
+  
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <button
+    mat-button
+    (click)="copy()">
+    Copy
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    mat-dialog-close>
+    Close
+  </button>
+
+</div>

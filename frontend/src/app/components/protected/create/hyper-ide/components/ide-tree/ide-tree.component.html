@@ -28,7 +28,16 @@
                   mat-icon-button
                   color="primary"
                   class="tree-action-btn"
-                  title="New file..."
+                  title="Copy OpenAPI specification URL"
+                  (click)="copyOpenAPISpecificationUrl()">
+                  <mat-icon>http</mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  color="primary"
+                  class="tree-action-btn"
+                  title="New file ..."
                   (click)="createNewFileObject('file')">
                   <mat-icon>post_add</mat-icon>
                 </button>
@@ -37,7 +46,7 @@
                   mat-icon-button
                   color="primary"
                   class="tree-action-btn"
-                  title="New folder..."
+                  title="New folder ..."
                   (click)="createNewFileObject('folder')">
                   <mat-icon>create_new_folder</mat-icon>
                 </button>
