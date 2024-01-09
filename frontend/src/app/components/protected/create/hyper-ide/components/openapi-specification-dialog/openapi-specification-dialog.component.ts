@@ -32,6 +32,12 @@ export class OpenAPISpecifictionDialogComponent {
   copy() {
 
     this.clipBoard.copy(this.data.json);
-    this.generalService.showFeedback('You can find the content on your clipboard', 'successMessage');
+    this.generalService.showFeedback('You can find the JSON content on your clipboard', 'successMessage');
+  }
+
+  copyUrl() {
+
+    this.clipBoard.copy(this.data.url);
+    this.generalService.showFeedback('You can find the URL to the OpenAPI specification on your clipboard', 'successMessage');
   }
 }

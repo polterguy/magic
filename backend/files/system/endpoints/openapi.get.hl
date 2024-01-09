@@ -39,8 +39,8 @@ unwrap:x:./*/.result/**
 .result
    openapi:3.1.0
    info
-      title:AINIRO Magic Cloudlet
-      description:Allows you to interact with your Magic cloudlet
+      title:AINIRO.IO Magic Cloud Cloudlet
+      description:Interact with your cloudlet
       version:x:@version
    servers
       .
@@ -53,7 +53,7 @@ endpoints.list
 // Iterating through each public endpoint and adding to above [paths].
 for-each:x:@endpoints.list/*
 
-   // Verifying endpoint is public.
+   // Verifying endpoint is public, or user provided [system] as true.
    if
       and
          neq:x:@.dp/#/*/type
