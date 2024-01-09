@@ -9,31 +9,13 @@ In addition to its workflows, Magic also comes with a CRUD generator, allowing y
 
 ![CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/backend-crud.jpg)
 
-## AI Features
+Magic comes with Docker containers and is easy to install, but [AINIRO.IO also hosts Magic](https://ainiro.io) for a fee.
 
-In addition to the obvious allowing you to scrape your website, [AINIRO.IO](https://ainiro.io) also gives you the following;
+## Modules
 
-* Uploading PDF documents
-* Uploading XML, CSV, JSON and YAML documents
-* Spicing model with individual pages
-* Manually adding training data
-* History (log of all questions and answers)
-* Theming, comes with 7 themes out of the box, but you can also create your own
-* AI Search for only searching your website
-* AI Expert Systems which are password protected ChatGPT based prompt based upon your existing data
-* Voice recognition and speech synthesis for _"talking with your bot"_
-* Etc, etc, etc ...
+Magic was created to make it very easy to create small and medium sized backend APIs, and contains components for all problems related to backend development.
 
-## AINIRO.IO
-
-AINIRO delivers chatbots based upon Magic technology and we will host it for you, for a fee. If you want to contact AINIRO to discuss hosting opportunities, you can contact us below.
-
-* [AINIRO, ChatGPT based Chatbots](https://ainiro.io/contact-us#demo)
-* [Sign up for a DIY ChatGPT website chatbot](https://ainiro.io/blog/how-to-get-chatgpt-on-your-website)
-
-## Low-Code
-
-In addition to its OpenAI and ChatGPT features, Magic is also a complete Low-Code software development platform. You can read more about [Magic's Low-Code features here](https://polterguy.github.io).
+* [Magic Cloud Documentation](https://docs.ainiro.io)
 
 ## License
 
@@ -41,4 +23,4 @@ This project, and all of its satellite project, is licensed under the terms of t
 
 ## Copyright and maintenance
 
-The projects is copyright of Thomas Hansen, Ltd 2021 - 2023, and professionally maintained by [AINIRO your friendly ChatGPT website chatbot vendor](https://ainiro.io).
+The projects is copyright of Thomas Hansen, Ltd 2021 - 2023, and professionally maintained by [AINIRO.IO](https://ainiro.io).
