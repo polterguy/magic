@@ -13,7 +13,7 @@ Magic comes with Docker containers and is easy to install, but [AINIRO.IO also h
 
 ## Modules
 
-Magic was created to make it very easy to create small and medium sized backend APIs, and contains components for all problems related to backend development.
+Magic was created to make it very easy to create small and medium sized backend APIs, and contains components for all problems related to backend development. For more information about Magic, please refer to its documentation below.
 
 * [Magic Cloud Documentation](https://docs.ainiro.io)
 
