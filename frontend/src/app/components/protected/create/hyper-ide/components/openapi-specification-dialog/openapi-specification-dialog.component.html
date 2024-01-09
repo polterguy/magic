@@ -2,7 +2,7 @@
 
 <div mat-dialog-content>
 
-  <div class="text-muted mb-2">
+  <div class="text-muted mb-3">
     {{data.url}}
   </div>
 
@@ -17,7 +17,13 @@
   <button
     mat-button
     (click)="copy()">
-    Copy
+    Copy JSON
+  </button>
+
+  <button
+    mat-button
+    (click)="copyUrl()">
+    Copy URL
   </button>
 
   <button
