@@ -26,6 +26,9 @@ export class EndpointService {
     return this.httpService.get<Endpoint[]>('/magic/system/endpoints/list');
   }
 
+  /**
+   * Invokes URL using HTTP GET verb.
+   */
   get(url: string, responseType: string = 'json') {
 
     return this.httpService.get<any>(url, {
@@ -34,6 +37,9 @@ export class EndpointService {
     });
   }
 
+  /**
+   * Invokes URL using HTTP DELETE verb.
+   */
   delete(url: string, responseType: string = 'json') {
 
     return this.httpService.delete<any>(url, {
@@ -42,6 +48,9 @@ export class EndpointService {
     });
   }
 
+  /**
+   * Invokes URL using HTTP POST verb.
+   */
   post(url: string, args: any, responseType: string = 'json') {
 
     return this.httpService.post<any>(url, args, {
@@ -50,6 +59,9 @@ export class EndpointService {
     });
   }
 
+  /**
+   * Invokes URL using HTTP PUT verb.
+   */
   put(url: string, args: any, responseType: string = 'json') {
 
     return this.httpService.put<any>(url, args, {
@@ -58,11 +70,22 @@ export class EndpointService {
     });
   }
 
+  /**
+   * Invokes URL using HTTP PATCH verb.
+   */
   patch(url: string, args: any, responseType: string = 'json') {
 
     return this.httpService.patch<any>(url, args, {
       observe: 'response',
       responseType,
     });
+  }
+
+  /**
+   * Returns OpenAPI specification for the specified folder.
+   */
+  getOpenAPISpecification(folder: string) {
+
+    return this.httpService.get<any>('/magic/system/endpoints/openapi?system=true&filter=' + encodeURIComponent(folder));
   }
 }

@@ -16,12 +16,15 @@ import { FileNode } from '../../models/file-node.model';
 import { FileService } from 'src/app/services/file.service';
 import { GeneralService } from 'src/app/services/general.service';
 import { WorkflowService } from 'src/app/services/workflow.service';
+import { EndpointService } from 'src/app/services/endpoint.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
+import { ParametriseActionDialog } from '../parametrise-action-dialog/parametrise-action-dialog.component';
+import { OpenAPISpecifictionDialogComponent } from '../openapi-specification-dialog/openapi-specification-dialog.component';
 import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { NewFileFolderDialogComponent } from 'src/app/components/protected/create/hyper-ide/components/new-file-folder-dialog/new-file-folder-dialog.component';
 import { IncompatibleFileDialogComponent } from 'src/app/components/protected/create/hyper-ide/components/incompatible-file-dialog/incompatible-file-dialog.component';
-import { ParametriseActionDialog } from '../parametrise-action-dialog/parametrise-action-dialog.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
@@ -67,7 +70,9 @@ export class IdeTreeComponent implements OnInit {
     private dialog: MatDialog,
     private fileService: FileService,
     private cdr: ChangeDetectorRef,
+    private endpointSerivce: EndpointService,
     private workflowService: WorkflowService,
+    private backendService: BackendService,
     private generalService: GeneralService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
@@ -91,6 +96,33 @@ export class IdeTreeComponent implements OnInit {
       } else {
 
         this.generalService.hideLoading();
+      }
+    });
+  }
+
+  copyOpenAPISpecificationUrl() {
+
+    this.generalService.showLoading();
+    this.endpointSerivce.getOpenAPISpecification(this.activeFolder).subscribe({
+
+      next: (result: any) => {
+
+        this.generalService.hideLoading();
+        this.dialog.open(OpenAPISpecifictionDialogComponent, {
+          width: '750px',
+          maxWidth: '80vw',
+          autoFocus: true,
+          data: {
+            json: JSON.stringify(result, null, 2),
+            url: this.backendService.active.url + '/magic/system/endpoints/openapi?system=true&filter=' + this.activeFolder,
+          }
+        });
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
       }
     });
   }
