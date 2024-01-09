@@ -1,9 +1,13 @@
 
 # An AI-based Low-Code and No-Code Software Development Automation Framework
 
-Magic is a software development automation platform based upon AI, Low-Code, and No-Code. It's based upon [Hyperlambda](https://docs.ainiro.io/hyperlambda/), allowing you to dynamically create and orchestrate workflows, almost within a _"drag'n'drop development environment"_.
+Magic Cloud is a software development automation platform based upon AI, Low-Code, and No-Code. It's based upon [Hyperlambda](https://docs.ainiro.io/hyperlambda/), allowing you to dynamically create and orchestrate workflows, almost within a _"drag'n'drop development environment"_.
 
 ![Editing code in HyperIDE](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyper-ide-actions.jpg)
+
+In addition to its workflows, Magic also comes with a CRUD generator, allowing you to point it at your database, click a button, and wrap all your tables into CRUD endpoints. Combined with its workflow capabilities, this can sometimes save you 98% of your time when delivering backend APIs.
+
+![CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/backend-crud.jpg)
 
 ## AI Features
 
