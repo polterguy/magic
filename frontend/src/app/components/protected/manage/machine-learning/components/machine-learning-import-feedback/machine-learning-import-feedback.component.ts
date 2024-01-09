@@ -89,9 +89,13 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
                 this.generalService.hideLoading();
                 this.generalService.showFeedback('Crawling started, you will be notified when it is finished', 'successMessage');
               },
-              error: () => {
+              error: (error: any) => {
     
                 this.generalService.hideLoading();
+                this.messages.push({
+                  type: 'error',
+                  message: error.error.message ?? error,
+                });
                 this.generalService.showFeedback('Something went wrong as we tried to start import', 'errorMessage');
               }
             });
