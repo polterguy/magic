@@ -97,7 +97,7 @@ slots.create:magic.ai.create-landing-page
          get-value:x:@.arguments/*/type
          .:"&header="
          get-value:x:@.header
-         .:"&button="
+         .:"&button=AI%20Chatbot"
    .search
    set-value:x:@.search
       strings.concat
