@@ -239,10 +239,13 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
         if (this.data?.model) {
           this.model = this.models.filter(x => x.id === this.data.model)[0];
-        } else if (this.data) {
-          this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
         } else {
-          this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
+          const gpt4 = this.models.filter(x => x.id === 'gpt-4-1106-preview');
+          if (gpt4.length > 0) {
+            this.model = gpt4[0];
+          } else {
+            this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
+          }
         }
 
         if (this.data?.vector_model) {

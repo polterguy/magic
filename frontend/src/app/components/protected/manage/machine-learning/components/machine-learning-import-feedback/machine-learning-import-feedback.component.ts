@@ -46,7 +46,13 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
         }).build();
     
         this.hubConnection.on(result.result, (args) => {
-    
+
+          const messageWrapper = document.getElementById('messageWrapper');
+          let shouldScroll= false;
+          if(messageWrapper.scrollTop + 10 > (messageWrapper.scrollHeight - messageWrapper.offsetHeight)) {
+            shouldScroll = true;
+          }
+        
           args = JSON.parse(args);
           this.messages.push(args);
     
@@ -65,11 +71,14 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
     
             this.generalService.showFeedback(args.message, 'errorMessage');
           }
-          setTimeout(() => {
+
+          if(shouldScroll) {
+            setTimeout(() => {
     
             const domEl = document.getElementById('m_' + (this.messages.length - 1));
-            domEl.scrollIntoView()
-          }, 50);
+              domEl.scrollIntoView();
+            }, 50);
+          }
         });
     
         this.hubConnection.start().then(() => {

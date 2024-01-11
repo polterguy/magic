@@ -179,7 +179,7 @@
 
     </form>
 
-    <div class="row" *ngIf="sqlIte && crawling" class="mt-4 messages">
+    <div class="row" *ngIf="sqlIte && crawling" class="mt-4 messages" id="messageWrapper">
 
       <div
         *ngFor="let idx of messages; index as i"
