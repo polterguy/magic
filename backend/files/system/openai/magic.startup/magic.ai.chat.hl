@@ -91,7 +91,7 @@ select prompt, max(completion) as completion
          add:x:@.session
             .
                .
-                  role:system
+                  role:assistant
                   content:x:@.dp/#/*/prompt
 
          // Adding answer as user message.
