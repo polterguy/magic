@@ -334,7 +334,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
       const messageWrapper = document.getElementById('messageWrapper');
       let shouldScroll= false;
-      if(messageWrapper.scrollTop + 10 > (messageWrapper.scrollHeight - messageWrapper.offsetHeight)) {
+      if(messageWrapper.scrollTop + 50 > (messageWrapper.scrollHeight - messageWrapper.offsetHeight)) {
         shouldScroll = true;
       }
 
