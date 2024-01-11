@@ -181,7 +181,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
         this.chat_models = models;
         this.chat_models = this.chat_models.filter((idx: OpenAIModel) => idx.id.startsWith('gpt'));
-        let defModel = this.chat_models.filter(x => x.id === 'gpt-4');
+        let defModel = this.chat_models.filter(x => x.id === 'gpt-4-1106-preview');
 
         if (defModel.length > 0) {
 
@@ -351,6 +351,12 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
     this.hubConnection.on(feedbackChannel, (args) => {
 
+      const messageWrapper = document.getElementById('messageWrapper');
+      let shouldScroll= false;
+      if(messageWrapper.scrollTop + 10 > (messageWrapper.scrollHeight - messageWrapper.offsetHeight)) {
+        shouldScroll = true;
+      }
+
       args = JSON.parse(args);
       this.messages.push(args);
       this.doneCreatingBot = args.type === 'success' || args.type === 'error';
@@ -368,11 +374,14 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         this.hubConnection = null;
         this.finished = true;
       }
-      setTimeout(() => {
+
+      if(shouldScroll) {
+        setTimeout(() => {
 
         const domEl = document.getElementById('m_' + (this.messages.length - 1));
-        domEl.scrollIntoView()
-      }, 50);
+          domEl.scrollIntoView();
+        }, 50);
+      }
     });
 
     this.hubConnection.start().then(() => {

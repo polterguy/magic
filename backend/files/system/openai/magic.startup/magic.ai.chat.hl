@@ -460,7 +460,7 @@ select prompt, max(completion) as completion
             add:x:@.session
                .
                   .
-                     role:system
+                     role:assistant
                      content:x:@.result
             while
                mt:x:@.fixed

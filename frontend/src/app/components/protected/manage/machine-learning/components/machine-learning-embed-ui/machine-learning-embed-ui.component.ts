@@ -25,7 +25,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   themesSearch: string[] = [];
   type: string = null;
   header: string = 'Ask about our services or products';
-  buttonTxt: string = '';
+  buttonTxt: string = 'AI Chatbot';
   search: boolean = false;
   chat: boolean = true;
   markdown: boolean = true;
