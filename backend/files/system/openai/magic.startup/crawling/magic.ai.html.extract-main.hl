@@ -284,6 +284,7 @@ slots.create:magic.ai.html.extract-main
                                     signal:magic.ai.url.normalize
                                        url:x:@.dp/#/./*/\@href/[0,1]
                                        base:x:@.arguments/*/base
+                                       doc-url:x:@.arguments/*/doc-url
                                        scheme:x:@.arguments/*/scheme
 
                                  // Checking if above invocation returned a valid URL.
@@ -489,6 +490,7 @@ slots.create:magic.ai.html.extract-main
                                           signal:magic.ai.url.normalize
                                              url:x:@.dp/#/./*/\@href/[0,1]
                                              base:x:@.arguments/*/base
+                                             doc-url:x:@.arguments/*/doc-url
                                              scheme:x:@.arguments/*/scheme
 
                                        // Checking if above invocation returned a valid URL.
@@ -811,6 +813,7 @@ slots.create:magic.ai.html.extract-main
                                     signal:magic.ai.url.normalize
                                        url:x:@.dp/#/*/\@href/[0,1]
                                        base:x:@.arguments/*/base
+                                       doc-url:x:@.arguments/*/doc-url
                                        scheme:x:@.arguments/*/scheme
                                     set-value:x:@.tmp
                                        strings.concat

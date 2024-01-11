@@ -80,6 +80,29 @@ slots.create:magic.ai.url.normalize
                   .:/
 
    else-if
+      strings.starts-with:x:@.arguments/*/url
+         .:#
+      .lambda
+
+         // Making sure we were given a [doc-url] arguments.
+         if
+            or
+               not
+                  exists:x:@.arguments/*/doc-url
+               null:x:@.arguments/*/doc-url
+            .lambda
+
+               // Oops, relative URL and we were not given a scheme
+               throw:Cannot apply base URL to specified URL since no [doc-url] argument was supplied to [magic.ai.url.normalize].
+
+         // URL is relative to document and starts with a single slash (#).
+         set-value:x:@.url
+            strings.concat
+               get-value:x:@.arguments/*/doc-url
+               strings.trim-start:x:@.arguments/*/url
+                  .:/
+
+   else-if
       and
          not
             strings.starts-with:x:@.arguments/*/url

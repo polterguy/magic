@@ -25,6 +25,7 @@ slots.create:magic.ai.html.extract
 
    // Figuring out base URL and scheme of document.
    .base
+   .doc-url
    .scheme
 
    // Used to return meta information to caller.
@@ -46,6 +47,12 @@ slots.create:magic.ai.html.extract
          strings.split:x:@.arguments/*/url
             .:/
          set-value:x:@.base
+            strings.concat
+               get-value:x:@strings.split/0
+               .://
+               get-value:x:@strings.split/1
+               .:/
+         set-value:x:@.doc-url
             strings.concat
                get-value:x:@strings.split/0
                .://
@@ -73,6 +80,8 @@ slots.create:magic.ai.html.extract
 
          // Document contains a base HTML tag, making sure we use it.
          set-value:x:@.base
+            get-value:x:@html2lambda/*/html/*/head/*/base/*/\@href
+         set-value:x:@.doc-url
             get-value:x:@html2lambda/*/html/*/head/*/base/*/\@href
 
          /*
@@ -156,6 +165,7 @@ slots.create:magic.ai.html.extract
             signal:magic.ai.url.normalize
                url:x:@strings.split/0
                base:x:@.base
+               doc-url:x:@.doc-url
                scheme:x:@.scheme
 
             // Verifying this is a local URL.
@@ -214,6 +224,7 @@ slots.create:magic.ai.html.extract
          signal:magic.ai.html.extract-main
             html:x:@.document
             base:x:@.base
+            doc-url:x:@.doc-url
             scheme:x:@.scheme
             base-prompt:x:@.base-prompt
             lists:x:@.arguments/*/lists
