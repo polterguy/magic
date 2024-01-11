@@ -352,7 +352,9 @@ function aista_submit_form(speech) {
           row.innerHTML = converter.makeHtml(ainiroTempContent);
           const images = row.querySelectorAll('img');
           for (const idxImg of images) {
-            idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
+            if (idxImg.parentElement.tagName.toLowerCase() !== 'a') {
+              idxImg.addEventListener('click', () => aista_zoom_image(idxImg));
+            }
           }
           row.querySelectorAll('pre code').forEach((el) => {
             hljs.highlightElement(el);

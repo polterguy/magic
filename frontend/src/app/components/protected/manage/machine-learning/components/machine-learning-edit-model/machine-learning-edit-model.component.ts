@@ -3,15 +3,19 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
+// Angular and system imports.
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { GeneralService } from 'src/app/services/general.service';
-import { OpenAIModel, OpenAIService } from 'src/app/services/openai.service';
-import { Role } from '../../../user-and-roles/_models/role.model';
-import { RoleService } from '../../../user-and-roles/_services/role.service';
-import { CommonErrorMessages } from 'src/app/helpers/common-error-messages';
-import { CommonRegEx } from 'src/app/helpers/common-regex';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+// Application specific imports.
+import flavors from 'src/app/resources/flavors.json';
+import { CommonRegEx } from 'src/app/helpers/common-regex';
+import { GeneralService } from 'src/app/services/general.service';
+import { Role } from '../../../user-and-roles/_models/role.model';
+import { CommonErrorMessages } from 'src/app/helpers/common-error-messages';
+import { OpenAIModel, OpenAIService } from 'src/app/services/openai.service';
+import { RoleService } from '../../../user-and-roles/_services/role.service';
 import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
 
 /**
@@ -59,39 +63,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
   search_postfix: string;
   no_requests: number;
   max_requests: number;
-  flavors: any[] = [
-    {
-      name: 'Sales Executive',
-      prefix: `You are Frank, a sales executive for the company in the context. Follow these rules when replying to my questions:
-
-* You must answer all my questions exclusively based upon the information found in the context
-* You may suggest relevant products and services you find in the context
-* You should respond with short answers unless asked to elaborate
-* You must respond with Markdown and return relevant images and hyperlinks
-* You may use emojis if it makes sense
-* If you cannot find the answer to the question in the context, then inform the user that you are only configured to answer questions about the current company and that the user should provide some keywords for you to find relevant information
-* Always address the user by his or her name if you know it`
-    },
-    {
-      name: 'The CEO',
-      prefix: `You are Jane, the CEO for the company in the context. Follow these rules when replying to my questions:
-
-* You must answer all my questions exclusively based upon the information found in the context
-* You must respond with Markdown and return relevant images and hyperlinks
-* If you cannot find the answer to the question in the context, then inform the user that you are only configured to answer questions about the current company and that the user should provide some keywords for you to find relevant information
-* Always address the user by his or her name if you know it`
-    },
-    {
-      name: 'Multilingual Support Engineer',
-      prefix: `You are Ann, a multilingual support engineer for the company in the context. Follow these rules when replying to my questions:
-
-* You must answer all my questions exclusively based upon the information found in the context
-* You must respond with Markdown and return relevant images and hyperlinks
-* You must respond in the same language the user asks his questions in
-* If you cannot find the answer to the question in the context, then inform the user that you are only configured to answer questions about the current company and that the user should provide some keywords for you to find relevant information
-* Always address the user by his or her name if you know it`
-    },
-  ];
+  flavors = flavors;
   flavor: any = null;
 
   CommonRegEx = CommonRegEx;
@@ -196,7 +168,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
     this.system_message = this.flavor.prefix;
     setTimeout(() => this.flavor = null, 1);
-    this.generalService.showFeedback('Flavor was changed', 'successMessage');
+    this.generalService.showFeedback('System message was changed, remember to save your type', 'successMessage');
   }
 
   getModels() {
