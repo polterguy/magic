@@ -4,7 +4,7 @@
  */
 
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { BackendService } from 'src/app/services/backend.service';
 import { ConfigService } from 'src/app/services/config.service';
@@ -27,14 +27,10 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private backendService: BackendService,
+    private dialogRef: MatDialogRef<MachineLearningImportFeedbackComponent>,
     private generalService: GeneralService,
     private openAIService: OpenAIService,
     private configService: ConfigService) { }
-
-  ngOnDestroy() {
-
-    this.hubConnection?.stop();
-  }
 
   ngOnInit() {
 
@@ -57,7 +53,10 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
           if (args.type === 'success') {
     
             this.generalService.showFeedback('Done creating bot', 'successMessage');
-    
+            if (this.data.callback) {
+              this.data.callback();
+            }
+            
           } else if (args.type === 'warning') {
     
             this.generalService.showFeedback(args.message);
@@ -137,5 +136,10 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
         this.generalService.showFeedback('Something went wrong as we tried to start import', 'errorMessage');
       }
     });
+  }
+
+  ngOnDestroy() {
+
+    this.hubConnection?.stop();
   }
 }

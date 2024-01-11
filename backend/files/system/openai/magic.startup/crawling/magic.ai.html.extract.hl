@@ -49,7 +49,8 @@ slots.create:magic.ai.html.extract
             strings.concat
                get-value:x:@strings.split/0
                .://
-               get-value:x:@strings.split/1
+               strings.join:x:@strings.split/*/[1,1000]
+                  .:/
                .:/
          set-value:x:@.scheme
             get-value:x:@strings.split/0
