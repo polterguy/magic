@@ -45,22 +45,6 @@ validators.default:x:@.arguments
    autocrawl:bool:false
    vectorize:bool:true
 
-/*
- * To avoid null reference exceptions in case feedback channel
- * is not provided, we default it to something random.
- */
-if
-   not-exists:x:@.arguments/*/feedback-channel
-   .lambda
-
-      // Creating default dummy value.
-      crypto.random
-         min:10
-         max:20
-      unwrap:x:+/*
-      validators.default:x:@.arguments
-         feedback-channel:x:@crypto.random
-
 // Doing some basic logging.
 log.info:Crawling URL to generate OpenAI training data for a chatbot
    url:x:@.arguments/*/url

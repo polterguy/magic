@@ -12,22 +12,6 @@ auth.ticket.verify:root
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/type
 
-/*
- * To avoid null reference exceptions in case feedback channel
- * is not provided, we default it to something random.
- */
-if
-   not-exists:x:@.arguments/*/feedback-channel
-   .lambda
-
-      // Creating default dummy value.
-      crypto.random
-         min:10
-         max:20
-      unwrap:x:+/*
-      validators.default:x:@.arguments
-         feedback-channel:x:@crypto.random
-
 // Doing some basic logging.
 log.info:Started vectorising model
    model:x:@.arguments/*/type

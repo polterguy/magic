@@ -1,0 +1,13 @@
+
+/*
+ * Returns the username of the currently authenticated user,
+ * or null if user isn't authenticated.
+ */
+.icon:shield
+
+// Retrieving username.
+auth.ticket.get
+
+// Returning username to caller.
+yield
+   username:x:@auth.ticket.get

@@ -22,22 +22,6 @@ validators.integer:x:@.arguments/*/threshold
 validators.default:x:@.arguments
    summarize:bool:false
 
-/*
- * To avoid null reference exceptions in case feedback channel
- * is not provided, we default it to something random.
- */
-if
-   not-exists:x:@.arguments/*/feedback-channel
-   .lambda
-
-      // Creating default dummy value.
-      crypto.random
-         min:10
-         max:20
-      unwrap:x:+/*
-      validators.default:x:@.arguments
-         feedback-channel:x:@crypto.random
-
 // Doing some basic logging.
 log.info:Crawling page generating OpenAI training snippets
    url:x:@.arguments/*/url
