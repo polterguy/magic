@@ -63,7 +63,7 @@
   }
 
   .mat-accordion {
-    padding: 0 0 16px;
+    padding: 0;
     max-height: 100%;
     overflow: hidden;
     display: flex;
@@ -74,9 +74,23 @@
 
     .mat-expansion-panel-header {
       height: 25px;
+      &:hover {
+        background-color: $ainiro_default_grey5;
+      }
+
+      .mat-expansion-indicator {
+        margin-top: -5px;
+        margin-right: 5px;
+      }
 
       &.mat-expanded {
-        height: 25px;
+
+        .mat-expansion-indicator {
+          margin-top: 7px;
+        }
+      }
+      .mat-expansion-panel-header-title {
+        padding-left: 7px;
       }
     }
 
@@ -95,32 +109,31 @@
   }
 
   .mat-tree-node {
-    min-height: 30px;
+    min-height: 26px;
     position: relative;
     overflow: visible;
     @include general_transition(0.3s);
 
     &.file-node {
       .file-button {
-        margin-left: 28px !important;
+        margin-left: 20px !important;
+        mat-icon {
+          margin-right: 5px;
+        }
       }
     }
 
     button {
       font-size: 12px;
       line-height: 21px;
+      padding: 0 3px 0 0 !important;
 
       mat-icon {
         font-size: 22px;
         width: 22px;
         height: 22px;
         line-height: 22px;
-        margin-right: 5px;
       }
-    }
-
-    .folder-btn {
-      margin-left: -9px;
     }
 
     .show-on-hover {
@@ -132,7 +145,7 @@
         height: 25px;
         width: 25px;
         line-height: 25px;
-        background-color: transparentize($color: $ainiro_default, $amount: 0.05);
+        background-color: transparentize($color: $ainiro_default, $amount: 0.5);
       }
 
       mat-icon {
