@@ -209,6 +209,12 @@ export class ParametriseActionDialog implements OnInit {
           this.model[idx] = this.data.model[idx];
         } else if (this.data.input[idx].default) {
           this.model[idx] = this.data.input[idx].default;
+        } else if (field.props.options && (<any[]>field.props.options).length > 0) {
+          for (const idxOpt of <any[]>field.props.options) {
+            if (idxOpt.value.endsWith('/' + idx)) {
+              this.model[idx] = idxOpt.value;
+            }
+          }
         }
       }
     }
