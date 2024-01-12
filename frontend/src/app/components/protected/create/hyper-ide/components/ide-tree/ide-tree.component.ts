@@ -100,7 +100,7 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  copyOpenAPISpecificationUrl() {
+  getOpenAPISpecification() {
 
     this.generalService.showLoading();
     this.endpointSerivce.getOpenAPISpecification(this.activeFolder).subscribe({
