@@ -26,6 +26,9 @@
    table
       type:string
       mandatory:bool:true
+   columns
+      type:array
+      mandatory:bool:false
    and
       type:key-value
       mandatory:bool:false
@@ -89,6 +92,22 @@ set-value:x:@.connection-string
 // Connecting to database.
 data.connect:x:@.connection-string
    database-type:x:@.arguments/*/database-type
+
+   // Checking if caller provided explicit [columns].
+   if
+      exists:x:@.arguments/*/columns/*
+      .lambda
+
+         // Adding explicit columns declaration
+         add:x:@data.connect/*/data.read
+            .
+               columns
+         for-each:x:@.arguments/*/columns/*
+            set-name:x:./0/-/*/*
+               get-value:x:@.dp/#
+            add:x:@data.connect/*/data.read/*/columns
+               .
+                  name
 
    // Adding [limit], [offset], [order] and [direction] arguments.
    add:x:./*/data.read
