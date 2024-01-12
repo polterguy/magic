@@ -7,10 +7,6 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
 
-// Application specific imports.
-import { FileService } from 'src/app/services/file.service';
-import { GeneralService } from 'src/app/services/general.service';
-
 /**
  * Helper class for passing parameters in and out of modal dialog.
  */
@@ -67,11 +63,16 @@ export class NewFileFolderDialogComponent {
   pathValid() {
 
     if (!this.data.name || this.data.name.length === 0) {
+
       return false;
     }
+
     if (this.data.isFolder) {
+
       return this.data.folders.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase() + '/').length === 0;
+
     } else {
+
       return this.data.files.filter(x => x.toLowerCase() === this.data.path + this.data.name.toLowerCase()).length === 0;
     }
   }

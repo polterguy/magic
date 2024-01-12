@@ -752,7 +752,7 @@ export class IdeTreeComponent implements OnInit {
 
               this.generalService.hideLoading();
               this.generalService.showFeedback('File successfully created', 'successMessage');
-              this.sort({ dialogResult: result, objectPath: path });
+              this.sort({ dialogResult: result, objectPath: path, autoFocus: false });
 
               // Checking if we should show "Create arguments collection" dialog for file.
               if (path.endsWith('.hl')) {
@@ -899,7 +899,7 @@ export class IdeTreeComponent implements OnInit {
     };
   }
 
-  updateFileObject(fileObject: string) {
+  updateFileObject(fileObject: string, autoFocus: boolean = true) {
 
     let folder = fileObject;
     let isFile = false;
@@ -929,6 +929,9 @@ export class IdeTreeComponent implements OnInit {
               this.generalService.hideLoading();
 
               const cmOptions = this.getCodeMirrorOptions(fileObject);
+              if (autoFocus === false) {
+                cmOptions.autofocus = false;
+              }
 
               if (cmOptions !== null) {
 
@@ -1124,7 +1127,7 @@ export class IdeTreeComponent implements OnInit {
 
       sorter();
       this.dataBindTree();
-      this.updateFileObject(event.objectPath);
+      this.updateFileObject(event.objectPath, event.autoFocus);
     }
   }
 
