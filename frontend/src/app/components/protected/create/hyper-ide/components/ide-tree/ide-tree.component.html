@@ -91,7 +91,7 @@
           <mat-tree-node
             *matTreeNodeDef="let file"
             matTreeNodePadding
-            [matTreeNodePaddingIndent]="10"
+            matTreeNodePaddingIndent="10"
             [class.text-danger]="file.node.systemFile"
             [class.active-file]="currentFileData?.path === file.node.path"
             level="level"

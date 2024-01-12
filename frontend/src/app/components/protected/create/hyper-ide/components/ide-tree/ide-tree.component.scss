@@ -109,7 +109,7 @@
   }
 
   .mat-tree-node {
-    min-height: 26px;
+    min-height: unset;
     position: relative;
     overflow: visible;
     @include general_transition(0.3s);
