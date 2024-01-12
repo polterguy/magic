@@ -1,7 +1,7 @@
 
 <div class="row mt-4">
 
-  <div class="col-md-6 col-12 pe-lg-5">
+  <div class="col-md-6 col-12 pe-lg-4">
     <div class="row">
 
       <!-- Create new database section -->
@@ -11,9 +11,9 @@
       </div>
 
       <div class="col-12 mt-3 mb-5">
-        <form class="d-flex flex-nowrap align-items-stretch w-100">
+        <form class="d-flex justify-content-lg-between align-items-lg-center align-items-end flex-lg-row flex-column w-100">
 
-          <mat-form-field class="w-65 standalone-field">
+          <mat-form-field class="w-100 standalone-field custom-size">
             <span
               matPrefix
               matTooltip="Give your database a name"
@@ -32,11 +32,10 @@
             <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
           </mat-form-field>
 
-          <div class="p-2"></div>
+          <div class="p-lg-2"></div>
 
           <button
             mat-flat-button
-            class="w-35"
             color="primary"
             type="submit"
             [disabled]="!databaseName || databaseName === ''"
@@ -50,7 +49,7 @@
   </div>
 
   <!-- Databases table -->
-  <div class="col-md-6 col-12 position-relative ps-lg-5">
+  <div class="col-md-6 col-12 position-relative ps-lg-4">
 
     <h3 class="fw-bold">Existing databases</h3>
 
