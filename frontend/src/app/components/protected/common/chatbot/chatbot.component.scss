@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+ @import 'src/assets/styles/_variables/colors.scss';
+
+.chatbot {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 550px;
+  height: 550px;
+  z-index: 1000;
+  padding: 10px;
+}
+
+.messages {
+  height: 442px;
+  overflow: auto;
+
+  .message {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 12px 12px 1px 12px;
+    background-color: rgba(0,0,0,.05);
+
+    &.machine {
+      margin-right: 20px;
+      border-radius: 5px 5px 5px 0;
+    }
+
+    &.user {
+      margin-left: 20px;
+      border-radius: 5px 5px 0 5px;
+    }
+  }
+}
+
+::ng-deep .chatbot .messages p img {
+  max-width: 100%;
+}
+
+::ng-deep .chatbot .messages pre {
+  overflow-x: auto;
+}
+
+@keyframes jump {
+  0%   {bottom: 0px;}
+  20%  {bottom: 5px;}
+  40%  {bottom: 0px;}
+}
+
+::ng-deep .chatbot .messages .ainiro-dot {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  animation: jump 1s infinite;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+::ng-deep .chatbot .messages .ainiro-dot-1 {
+  background-color: #474147;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 3px;
+  animation-delay: 200ms;
+}
+
+::ng-deep .chatbot .messages .ainiro-dot-2 {
+  background-color: #474147;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 3px;
+  animation-delay: 400ms;
+}
+
+::ng-deep .chatbot .messages .ainiro-dot-3 {
+  background-color: #474147;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 3px;
+  animation-delay: 600ms;
+}

@@ -36,6 +36,7 @@ export class HeaderComponent implements OnInit {
   sideExpanded: boolean = false;
   isAffiliate: boolean = false;
   completion: string = null;
+  showChatbot: boolean = false;
 
   constructor(
     private router: Router,
@@ -433,5 +434,15 @@ optin verification and potential referential integrity issues.`;
       }
     ];
     this.checkActiveLink(this.router.url);
+  }
+
+  openChatbot() {
+
+    this.showChatbot = !this.showChatbot;
+  }
+
+  hideChatbot() {
+
+    this.showChatbot = false;
   }
 }
