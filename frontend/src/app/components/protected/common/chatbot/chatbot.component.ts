@@ -113,6 +113,7 @@ export class ChatbotComponent implements OnInit {
       type: 'user',
       finish: 'stop',
     });
+    this.cdr.detectChanges();
 
     this.generalService.showLoading();
     this.recaptchaV3Service.execute('aiAutoPrompt').subscribe({
@@ -124,7 +125,13 @@ export class ChatbotComponent implements OnInit {
           type: 'machine',
           finish: 'stop',
         });
-
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          const wrp = document.getElementById('chatMessages');
+          const el = wrp.children[wrp.children.length - 1];
+          el.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }, 1);
+    
         this.service.chat(this.query, token, this.session).subscribe({
 
           error: () => {
