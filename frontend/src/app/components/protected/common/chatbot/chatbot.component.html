@@ -25,7 +25,9 @@
         placeholder="Where the Machine Creates the Code ..."
         [(ngModel)]="query"
         name="query"
+        #queryField
         [disabled]="session === ''"
+        (keyup.esc)="close()"
         autocomplete="off">
       <button
         mat-icon-button

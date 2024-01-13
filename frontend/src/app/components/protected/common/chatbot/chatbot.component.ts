@@ -6,7 +6,7 @@
 // Angular and system imports.
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 import { ReCaptchaV3Service } from 'ng-recaptcha';
-import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 
 // Application specific imports.
 import { BazarService } from 'src/app/services/bazar.service';
@@ -32,6 +32,8 @@ class Message {
 export class ChatbotComponent implements OnInit {
 
   @Output() chatbotClosed = new EventEmitter<any>();
+  @ViewChild('queryField') private queryField: any;
+
   messages: Message[] = [
     {
       content: 'Ask me anything about Magic Cloud or Hyperlambda',
@@ -101,6 +103,11 @@ export class ChatbotComponent implements OnInit {
     });
   }
 
+  focus() {
+
+    setTimeout(() => this.queryField.nativeElement.focus(), 500);
+  }
+
   close() {
 
     this.chatbotClosed.emit();
@@ -151,7 +158,6 @@ export class ChatbotComponent implements OnInit {
   }
 
   getDots() {
-    console.log('dots');
     return `<span class="ainiro-dot ainiro-dot-1"></span>
 <span class="ainiro-dot ainiro-dot-2"></span>
 <span class="ainiro-dot ainiro-dot-3"></span>`;

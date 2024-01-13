@@ -15,6 +15,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { Message } from 'src/app/models/message.model';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MagicResponse } from 'src/app/models/magic-response.model';
+import { ChatbotComponent } from '../../common/chatbot/chatbot.component';
 
 /**
  * Header component showing navbar links and backend switcher.
@@ -27,6 +28,7 @@ import { MagicResponse } from 'src/app/models/magic-response.model';
 export class HeaderComponent implements OnInit {
 
   @ViewChild('completion_menu_trigger') completion_menu_trigger: MatMenuTrigger;
+  @ViewChild('chatbot') private chatbot: ChatbotComponent;
 
   help_description: string;
   help_url: string;
@@ -436,9 +438,13 @@ optin verification and potential referential integrity issues.`;
     this.checkActiveLink(this.router.url);
   }
 
-  openChatbot() {
+  toggleChatbot() {
 
     this.showChatbot = !this.showChatbot;
+
+    if (this.showChatbot) {
+      this.chatbot.focus();
+    }
   }
 
   hideChatbot() {

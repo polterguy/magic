@@ -83,9 +83,9 @@
       mat-button
       color="primary"
       class="ms-2 url-btn"
-      [matMenuTriggerFor]="help_menu">
+      (click)="toggleChatbot()">
       <div class="d-flex flex-nowrap align-items-center ps-1">
-        <mat-icon>question_mark</mat-icon>
+        <mat-icon>chat_bubble</mat-icon>
       </div>
     </button>
 
@@ -93,7 +93,7 @@
       mat-button
       color="primary"
       class="ms-2 url-btn"
-      (click)="openChatbot()">
+      [matMenuTriggerFor]="help_menu">
       <div class="d-flex flex-nowrap align-items-center ps-1">
         <mat-icon>question_mark</mat-icon>
       </div>
@@ -135,5 +135,6 @@
 <div class="overlay" *ngIf="sideExpanded" (click)="toggleSidebar()"></div>
 
 <app-chatbot
-  *ngIf="showChatbot"
+  [class.d-none]="!showChatbot"
+  #chatbot
   (chatbotClosed)="hideChatbot()"></app-chatbot>
