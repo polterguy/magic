@@ -21,7 +21,7 @@
     margin-top: 15px;
     margin-bottom: 15px;
     padding: 12px 12px 1px 12px;
-    background-color: rgba(0,0,0,.05);
+    background-color: rgba(0,0,0,.08);
 
     &.machine {
       margin-right: 20px;
@@ -31,6 +31,7 @@
     &.user {
       margin-left: 20px;
       border-radius: 5px 5px 0 5px;
+      background-color: rgba(0,0,0,.02);
     }
   }
 }
