@@ -9,7 +9,7 @@
     </button>
   </div>
 
-  <div class="messages">
+  <div class="messages" id="chatMessages">
     <div
       *ngFor="let msg of messages"
       [class]="msg.type + ' message ' + msg.finish"
