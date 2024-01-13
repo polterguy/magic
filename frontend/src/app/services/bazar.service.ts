@@ -62,4 +62,18 @@ export class BazarService {
       encodeURIComponent(recaptch_response);
     return this.httpClient.get<MagicResponse>(url);
   }
+
+  chat(prompt: string, recaptch_response: string, session: string) {
+
+    const url = environment.bazarUrl + '/magic/system/openai/chat?stream=true&prompt=' +
+      encodeURIComponent(prompt) +
+      '&type=magic-documentation' +
+      '&session=' +
+      encodeURIComponent(session) +
+      '&user_id=' +
+      encodeURIComponent(session) +
+      '&recaptcha_response=' +
+      encodeURIComponent(recaptch_response);
+    return this.httpClient.get<MagicResponse>(url);
+  }
 }

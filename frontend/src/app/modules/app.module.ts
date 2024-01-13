@@ -45,6 +45,7 @@ import { AuthBaseComponent } from 'src/app/components/public/authentication/auth
 import { SharedModule } from './shared.module';
 import { BackendsListComponent } from '../components/protected/core/header/components/backends-list/backends-list.component';
 import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+import { ChatbotComponent } from '../components/protected/common/chatbot/chatbot.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
     FooterComponent,
     AuthBaseComponent,
     BackendsListComponent,
+    ChatbotComponent,
   ],
   imports: [
     BrowserModule,
