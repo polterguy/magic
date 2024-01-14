@@ -15,6 +15,21 @@ slots.create:magic.ai.get-context
    validators.string:x:@.arguments/*/prompt
       min:1
 
+   /*
+    * Verifying we've got any training snippets that are vectorized at all,
+    * and if not, returning nothing to caller.
+    */
+   data.connect:[generic|magic]
+      data.select:select * from ml_training_snippets where embedding is not null
+      if
+         not-exists:x:@data.select/*/*
+         .lambda
+
+            // There are zero snippets in our database that have been vectorized.
+            return
+               context
+               snippets
+
    // Converting threshold in case we're given the wrong type.
    set-value:x:@.arguments/*/threshold
       convert:x:@.arguments/*/threshold
