@@ -17,7 +17,7 @@
       <mat-tab>
 
         <ng-template mat-tab-label>
-          Model
+          Type
         </ng-template>
 
         <div class="mt-3 tab-content">
@@ -456,7 +456,7 @@
 
               <p class="mb-1 fw-bold">Threshold</p>
 
-              <mat-form-field class="w-100 standalone-field" *ngIf="use_embeddings">
+              <mat-form-field class="w-100 standalone-field">
                 <span
                   matPrefix
                   matTooltip="Threshold for vectors when doing lookup into training data"
@@ -468,7 +468,7 @@
                   matInput
                   placeholder="Threshold ..."
                   type="number"
-                  [disabled]="isLoading"
+                  [disabled]="isLoading || !use_embeddings"
                   min="0.5"
                   max="1"
                   step="0.01"
@@ -524,7 +524,7 @@
 
               <p class="mb-1 fw-bold">Vector model</p>
 
-              <mat-form-field class="w-100 standalone-field" *ngIf="use_embeddings">
+              <mat-form-field class="w-100 standalone-field">
                 <span
                   matPrefix
                   matTooltip="Vector model to vectorise training snippets"
@@ -564,7 +564,7 @@
 
               <p class="mb-1 fw-bold">Max Context tokens</p>
 
-              <mat-form-field class="w-100 standalone-field me-2" *ngIf="use_embeddings">
+              <mat-form-field class="w-100 standalone-field me-2">
                 <span
                   matPrefix
                   matTooltip="Max context tokens, implying maximum size of context to send to OpenAI"
@@ -575,7 +575,7 @@
                 <input
                   matInput
                   placeholder="Max context tokens ..."
-                  [disabled]="isLoading"
+                  [disabled]="isLoading || !use_embeddings"
                   type="number"
                   min="1"
                   max="8000"

@@ -80,6 +80,11 @@ export class MachineLearningEditTypeComponent implements OnInit {
   ngOnInit() {
 
     this.type = this.data?.type;
+    if (this.data?.model) {
+      this.model = {
+        id: this.data?.model,
+      };
+    }
     this.max_context_tokens = this.data?.max_context_tokens ?? 1000;
     this.max_request_tokens = this.data?.max_request_tokens ?? 250;
     this.max_tokens = this.data?.max_tokens ?? 1000;
@@ -197,6 +202,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
             this.model = this.models.filter(x => x.id === 'gpt-3.5-turbo')[0];
           }
         }
+        if (this.model.id.startsWith('gpt')) {
+          this.cached = false;
+        }
 
         if (this.data?.vector_model) {
           this.vector_model = this.models.filter(x => x.id === this.data.vector_model)[0];
@@ -235,6 +243,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
     if (this.model?.id?.startsWith('gpt-')) {
       this.prefix = '';
+      this.cached = false;
     } else if (this.use_embeddings) {
       this.prefix = 'Answer the following QUESTION while using the information in the following CONTEXT. If you cannot answer the question using the specified CONTEXT then answer "I don\'t know the answer, try to be more specific.".\r\n\r\nQUESTION: [QUESTION]\r\n\r\nCONTEXT: [CONTEXT]\r\n\r\nANSWER:';
     }

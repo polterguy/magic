@@ -24,6 +24,7 @@ export class FilterComponent implements OnInit {
   @Input() type: string;
   @Output() typeChange: EventEmitter<string> = new EventEmitter<string>();
   @Input() checkBoxText: string = null;
+  @Input() checkBoxTooltip: string = null;
   @Input() buttonText: string = null;
   @Input() button2Text: string = null;
   @Input() button3Text: string = null;
