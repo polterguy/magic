@@ -130,7 +130,7 @@
               <button
                 mat-icon-button
                 color="primary"
-                *ngIf="file.node.path.endsWith('.html') && file.node.path.startsWith('/etc/www/')"
+                *ngIf="(file.node.path.endsWith('.html') || file.node.path.endsWith('.png') || file.node.path.endsWith('.jpeg') || file.node.path.endsWith('.jpg') || file.node.path.endsWith('.webp')) && file.node.path.startsWith('/etc/www/')"
                 title="Preview file ..."
                 (click)="previewHtmlFile(file.node)">
                 <mat-icon>remove_red_eye</mat-icon>
