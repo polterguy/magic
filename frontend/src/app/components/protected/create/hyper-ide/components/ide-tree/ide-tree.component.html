@@ -131,6 +131,7 @@
                 mat-icon-button
                 color="primary"
                 *ngIf="file.node.path.endsWith('.html') && file.node.path.startsWith('/etc/www/')"
+                title="Preview file ..."
                 (click)="previewHtmlFile(file.node)">
                 <mat-icon>remove_red_eye</mat-icon>
               </button>
@@ -138,6 +139,7 @@
               <button
                 mat-icon-button
                 color="primary"
+                title="Rename file ..."
                 (click)="showRenameInput(file.node)">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -145,6 +147,7 @@
               <button
                 mat-icon-button
                 color="warn"
+                title="Delete file ..."
                 (click)="deleteFile(file.node.path)">
                 <mat-icon>close</mat-icon>
               </button>
