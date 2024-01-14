@@ -109,7 +109,7 @@ export class OpenAIPromptComponent implements OnInit {
     this.generalService.showLoading();
     this.waitingForAnswer = true;
 
-    let currentFileContent = this.currentFileData.content;
+    let currentFileContent = this.currentFileData?.content;
     if (currentFileContent && currentFileContent.length > 0) {
       currentFileContent = '[CURRENT_CONTENT]\r\n\r\n' + currentFileContent;
     }
@@ -117,7 +117,7 @@ export class OpenAIPromptComponent implements OnInit {
       this.openAiPrompt,
       this.fileType,
       false,
-      this.currentFileData.path,
+      this.currentFileData?.path,
       null,
       currentFileContent).subscribe({
       next: (result: any) => {
