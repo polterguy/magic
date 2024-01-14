@@ -43,7 +43,7 @@ strings.split:x:@.arguments/*/file/*/name
    .:.
 strings.to-lower:x:@strings.split/0/-
 
-// Converting file to lambda object according to its extention.
+// Converting file to lambda object according to its extension.
 switch:x:@strings.to-lower
 
    // ZIP file.

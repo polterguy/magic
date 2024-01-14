@@ -49,6 +49,8 @@
             fileType="sql"
             (callback)="insertFromOpenAI($event)"
             callbackText="Use"
+            [currentFileContent]="input.sql"
+            currentFileSession="sql-studio.editor"
             class="w-100">
           </app-openai-prompt>
     

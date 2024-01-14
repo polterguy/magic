@@ -40,9 +40,9 @@ The resolver will not resolve hidden files or folders, implying files and folder
 you to create _"private"_ folders where you store _"reusable component"_ types of files that you use as your own
 mixin components from your Hyperlambda code using the **[io.file.mixin]** slot.
 
-If you add a file extention to your request, and your extention is not _".html"_, the resolver will try to resolve
+If you add a file extension to your request, and your extension is not _".html"_, the resolver will try to resolve
 your request as a static file request, and returning the file as a static resource. The MIME type a statically rendered
-file is served with depends upon its file extention, and can be seen using **[mime.list]**. Notice, if you have
+file is served with depends upon its file extension, and can be seen using **[mime.list]**. Notice, if you have
 an HTML file that does _not_ have an associated Hyperlambda codebehind file, the file will be served as a static
 resource, and not dynamically rendered.
 
