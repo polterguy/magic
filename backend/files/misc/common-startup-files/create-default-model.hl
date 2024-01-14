@@ -19,6 +19,7 @@ try
             cached:int:1
             auth:guest,root
             greeting:Hi there, how can I help you?
+            system_message:You are a helpful assistant. If I ask you to create code for me, then return only the code and no explanation without any Markdown or ``` characters .
 
 .catch
 

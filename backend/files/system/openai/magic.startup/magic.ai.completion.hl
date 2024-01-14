@@ -26,7 +26,7 @@ slots.create:magic.ai.completion
       .lambda
 
          // Checking if we can find a cached request matching prompt and type.
-         data.connect:[generic|ainiro]
+         data.connect:[generic|magic]
             data.read
                table:ml_requests
                columns

@@ -91,14 +91,14 @@ export class ChatbotComponent implements OnInit {
         }).catch(() => {
 
           this.generalService.hideLoading();
-          this.generalService.showFeedback('Could not resolve reCAPTCHA', 'errorMessage');
+          this.generalService.showFeedback('Could not connect to socket', 'errorMessage');
         });
       },
 
       error: () => {
 
         this.generalService.hideLoading();
-        this.generalService.showFeedback('Could not resolve reCAPTCHA', 'errorMessage');
+        this.generalService.showFeedback('Could not create session', 'errorMessage');
       }
     });
   }
