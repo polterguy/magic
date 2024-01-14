@@ -19,7 +19,7 @@ export class MachineLearningEditQuestionnaireComponent {
 
   name: string = '';
   type: string = 'single-shot';
-  action: string = 'sendgrid-subscribe';
+  action: string = '';
   types: string[] = [
     'single-shot'
   ];

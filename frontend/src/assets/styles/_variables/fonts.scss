@@ -8,5 +8,11 @@
   src: url("../../fonts/Inter-Medium.ttf");
 }
 
+@font-face {
+  font-family: "inter-regular";
+  src: url("../../fonts/Inter-Bold.ttf");
+  font-weight: bold;
+}
+
 $ainiro_font: "inter-regular";
 $ainiro_font_medium: "inter-medium";

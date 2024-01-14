@@ -5,6 +5,7 @@
     *ngIf="checkBoxText"
     color="primary"
     class="mt-md-0 mt-1 me-3"
+    [matTooltip]="checkBoxTooltip"
     [(ngModel)]="checked"
     (change)="filter()">
     {{checkBoxText}}
