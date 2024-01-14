@@ -62,7 +62,7 @@ slots.create:magic.ai.url.get
                      // Providing feedback to user.
                      sockets.signal:x:@.arguments/*/feedback-channel
                         args
-                           message:Page moved to, trying https equivalent
+                           message:Page moved to, trying SSL equivalent
                            type:info
                      sleep:100
 
