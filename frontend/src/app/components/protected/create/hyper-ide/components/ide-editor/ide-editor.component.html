@@ -44,7 +44,8 @@
       (callback)="insertFromOpenAI($event)"
       callbackText="Use"
       dialogue="false"
-      [currentFileData]="currentFileData"
+      [currentFileContent]="currentFileData.content"
+      [currentFileSession]="currentFileData.path"
       [fileType]="fileType()"
       class="w-100">
     </app-openai-prompt>

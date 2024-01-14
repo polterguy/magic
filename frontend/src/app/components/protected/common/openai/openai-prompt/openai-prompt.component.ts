@@ -20,7 +20,8 @@ import { OpenAIConfigurationDialogComponent } from 'src/app/components/protected
 })
 export class OpenAIPromptComponent implements OnInit {
 
-  @Input() currentFileData: any;
+  @Input() currentFileContent: string;
+  @Input() currentFileSession: string;
   @Input() fileType: string;
   @Output() callback? = new EventEmitter<string>();
   @Input() callbackText?: string = null;
@@ -109,15 +110,15 @@ export class OpenAIPromptComponent implements OnInit {
     this.generalService.showLoading();
     this.waitingForAnswer = true;
 
-    let currentFileContent = this.currentFileData?.content;
+    let currentFileContent = this.currentFileContent;
     if (currentFileContent && currentFileContent.length > 0) {
-      currentFileContent = '[CURRENT_CONTENT]\r\n\r\n' + currentFileContent;
+      currentFileContent = currentFileContent;
     }
     this.openAiService.query(
       this.openAiPrompt,
       this.fileType,
       false,
-      this.currentFileData?.path,
+      this.currentFileSession,
       null,
       currentFileContent).subscribe({
       next: (result: any) => {
