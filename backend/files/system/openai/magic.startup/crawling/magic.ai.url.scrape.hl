@@ -54,6 +54,7 @@ slots.create:magic.ai.url.scrape
       .html
       add:x:+/+
          get-nodes:x:@.arguments/*/headers
+         get-nodes:x:@.arguments/*/feedback-channel
       unwrap:x:+/*
       signal:magic.ai.url.get
          url:x:@.arguments/*/url

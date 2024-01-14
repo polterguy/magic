@@ -44,14 +44,73 @@ slots.create:magic.ai.url.get
                .:int:300
       .lambda
 
-         // Oops, logging error.
-         log.error:Something went wrong while trying to get URL
-            url:x:@.arguments/*/url
-            status:x:@http.get
-         strings.concat
-            .:"HTTP invocation returned status code "
-            get-value:x:@http.get
-         throw:x:-
+         // Checking if this is a 301 or 302 redirect.
+         if
+            or
+               eq:x:@http.get
+                  .:int:301
+               eq:x:@http.get
+                  .:int:302
+            .lambda
+
+               // Checking if request was HTTP (no SSL) at which point we try SSL.
+               if
+                  strings.starts-with:x:@.arguments/*/url
+                     .:"http://"
+                  .lambda
+
+                     // Providing feedback to user.
+                     sockets.signal:x:@.arguments/*/feedback-channel
+                        args
+                           message:Page moved to, trying https equivalent
+                           type:info
+                     sleep:100
+
+                     // Invoking self and returning result, exchanging http:// with https://.
+                     strings.replace:x:@.arguments/*/url
+                        .:"http://"
+                        .:"https://"
+                     add:x:+/*/headers
+                        get-nodes:x:@.arguments/*/headers/*
+                     execute:magic.ai.url.get
+                        url:x:@strings.replace
+                        headers
+                     return:x:-
+
+               else
+
+                  // Providing feedback to user.
+                  strings.concat
+                     .:"Page moved to '"
+                     get-value:x:@http.get/*/headers/*/Location
+                     .:"', trying alternative location"
+                  unwrap:x:+/**
+                  sockets.signal:x:@.arguments/*/feedback-channel
+                     args
+                        message:x:@strings.concat
+                        type:info
+                  sleep:100
+
+                  // Invoking self and returning result.
+                  add:x:+/+/*/headers
+                     get-nodes:x:@.arguments/*/headers/*
+                  add:x:+
+                     get-nodes:x:@.arguments/*/feedback-channel
+                  execute:magic.ai.url.get
+                     url:x:@http.get/*/headers/*/Location
+                     headers
+                  return:x:-
+
+         else
+
+            // Oops, logging error.
+            log.error:Something went wrong while trying to get URL
+               url:x:@.arguments/*/url
+               status:x:@http.get
+            strings.concat
+               .:"HTTP invocation returned status code "
+               get-value:x:@http.get
+            throw:x:-
 
 
    /*
