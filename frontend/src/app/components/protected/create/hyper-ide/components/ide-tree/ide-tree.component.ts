@@ -1053,6 +1053,11 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
+  previewHtmlFile(el: any) {
+
+    window.open(this.backendService.active.url + el.path.substring(8), '_blank');
+  }
+
   /*
    * Private helper methods.
    */
