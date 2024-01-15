@@ -51,7 +51,7 @@
         <h3 class="fw-bold">Chatbot Wizard</h3>
 
         <p class="text-muted">
-          What website do you wish to generate training data from?
+          Provide me with a URL and I will crawl and scrape the website
         </p>
 
       </div>
@@ -63,7 +63,7 @@
           <mat-form-field class="w-100 standalone-field">
             <span
               matPrefix
-              matTooltip="Website URL"
+              matTooltip="Website to crawl and scrape"
               class="d-flex flex-nowrap align-items-center justify-content-between me-2">
               <mat-icon>http</mat-icon>
               <span class="text-muted">|</span>
@@ -111,7 +111,7 @@
           <mat-form-field class="w-100 standalone-field ms-2">
             <span
               matPrefix
-              matTooltip="Max URLs to crawl"
+              matTooltip="Maximum number of URLs to crawl"
               class="d-flex flex-nowrap align-items-center justify-content-between me-2">
               <mat-icon>get_app</mat-icon>
               <span class="text-muted">|</span>
@@ -131,7 +131,7 @@
           <mat-form-field class="w-100 standalone-field ms-2">
             <span
               matPrefix
-              matTooltip="Flavor"
+              matTooltip="Choose a flavor or persona for your chatbot"
               class="d-flex flex-nowrap align-items-center justify-content-between me-2">
               <mat-icon>person</mat-icon>
               <span class="text-muted">|</span>
@@ -154,6 +154,7 @@
             [disabled]="crawling"
             name="autocrawl"
             class="mx-4"
+            matTooltip="If checked will automatically re-crawl and scrape the website once each day"
             labelPosition="before"
             color="primary">Auto crawl</mat-checkbox>
 
@@ -163,7 +164,17 @@
             name="vectorize"
             class="mx-4"
             labelPosition="before"
+            matTooltip="If checked will vectorize your snippets after crawling is done"
             color="primary">Vectorize</mat-checkbox>
+
+          <mat-checkbox
+            [(ngModel)]="auto_destruct"
+            [disabled]="crawling"
+            name="auto_destruct"
+            class="mx-4"
+            labelPosition="before"
+            matTooltip="If checked will automatically destroy your chatbot after 7 days"
+            color="primary">Auto destruct</mat-checkbox>
 
           <button
             mat-flat-button
