@@ -43,6 +43,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   max: number = 25;
   autocrawl: boolean = false;
   vectorize: boolean = true;
+  auto_destruct: boolean = false;
   crawling: boolean = false;
   messages: any[] = [];
   doneCreatingBot: boolean = false;
@@ -339,22 +340,25 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         this.flavor?.prefix ?? '',
         this.max,
         this.autocrawl,
+        this.auto_destruct,
         feedbackChannel,
         this.vectorize).subscribe({
-        next: (result: MagicResponse) => {
-  
-          this.model = result.result;
-          this.generalService.hideLoading();
-        },
-        error: () => {
-  
-          this.generalService.hideLoading();
-          this.generalService.showFeedback('Something went wrong as we tried to create your bot', 'errorMessage');
-          this.doneCreatingBot = true;
-          this.hubConnection.stop();
-          this.hubConnection = null;
-        }
-      });
+
+          next: (result: MagicResponse) => {
+    
+            this.model = result.result;
+            this.generalService.hideLoading();
+          },
+
+          error: () => {
+    
+            this.generalService.hideLoading();
+            this.generalService.showFeedback('Something went wrong as we tried to create your bot', 'errorMessage');
+            this.doneCreatingBot = true;
+            this.hubConnection.stop();
+            this.hubConnection = null;
+          }
+        });
     });
   }
 }

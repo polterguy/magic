@@ -211,6 +211,7 @@ export class OpenAIService {
     flavor: string,
     max: number,
     autocrawl: boolean,
+    auto_destruct: boolean,
     feedbackChannel: string,
     vectorize: boolean) {
 
@@ -228,6 +229,9 @@ export class OpenAIService {
     }
     if (autocrawl) {
       args.autocrawl = autocrawl;
+    }
+    if (auto_destruct) {
+      args.auto_destruct = auto_destruct;
     }
     return this.httpService.post<any>('/magic/system/openai/create-bot', args);
   }

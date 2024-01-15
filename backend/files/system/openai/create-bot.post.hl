@@ -8,6 +8,7 @@
    flavor:string
    max:int
    autocrawl:bool
+   auto_destruct:bool
    feedback-channel:string
    vectorize:bool
 
@@ -44,6 +45,7 @@ validators.default:x:@.arguments
    max:int:1250
    autocrawl:bool:false
    vectorize:bool:true
+   auto_destruct:bool:false
 
 // Doing some basic logging.
 log.info:Crawling URL to generate OpenAI training data for a chatbot
@@ -168,6 +170,7 @@ try
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.url
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.host
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.feedback-channel
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.auto_destruct
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.vectorize
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onerror/*/.type
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onerror/*/.feedback-channel
@@ -198,6 +201,7 @@ try
          .host:x:@request.host
          .feedback-channel:x:@.arguments/*/feedback-channel
          .vectorize:x:@.arguments/*/vectorize
+         .auto_destruct:x:@.arguments/*/auto_destruct
 
          // Connecting to database to sanity check model.
          data.connect:[generic|magic]
@@ -309,6 +313,64 @@ try
                   args
                      message:Remember to vectorize before attempting to use your model
                      type:info
+
+            // Checking if we're supposed to automatically destroy chatbot after 7 days.
+            if:x:@.auto_destruct
+
+               // Informing user that chatbot will be deleted in 7 days.
+               sockets.signal:x:@.feedback-channel
+                  args
+                     message:Creating scheduled task that deletes chatbot 7 days from now
+                     type:info
+               sleep:100
+
+               // Creating scheduled task that deletes chatbot 7 days from now.
+               math.add
+                  date.now
+                  time
+                     days:7
+               strings.concat
+                  .:delete-chatbot-
+                  get-value:x:@.type
+               unwrap:x:+/+/*/.lambda/*/.task
+               unwrap:x:+/*/.lambda/*/.type
+               tasks.create:x:@strings.concat
+                  description:Deletes demo chatbot 7 days after creating it
+                  due:x:@math.add
+                  .lambda
+
+                     // Forward evaluated further up.
+                     .type:x:@.type
+
+                     // Deleting vectors.
+                     data.connect:[generic|magic]
+                        data.execute:@"
+delete from vss_ml_training_snippets
+   where rowid in (select id as rowid from ml_training_snippets where type = @type)"
+                           type:x:@.type
+
+                     // Deleting ML type.
+                     .task:x:@strings.concat
+                     data.connect:[generic|magic]
+                        data.delete
+                           table:ml_types
+                           where
+                              and
+                                 type.eq:x:@.type
+
+                     // Deleting example HTML page.
+                     strings.concat
+                        .:/etc/www/
+                        get-value:x:@.type
+                        .:.html
+                     io.file.delete:x:@strings.concat
+
+                     // Doing some basic logging.
+                     log.info:Demo chatbot was deleted
+                        type:x:@.type
+
+                     // Deleting currently executing task.
+                     tasks.delete:x:@.task
 
             // Informing user that we're done.
             sockets.signal:x:@.arguments/*/feedback-channel
