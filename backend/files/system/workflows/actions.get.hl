@@ -14,8 +14,11 @@ add:x:@.result
    io.file.list-recursively:/misc/workflows/actions/
 
 // Retrieving all custom actions.
-add:x:@.result
-   io.file.list-recursively:/etc/workflows/actions/
+if
+   io.folder.exists:/etc/workflows/actions/
+   .lambda
+      add:x:@.result
+         io.file.list-recursively:/etc/workflows/actions/
 
 // Then iterating through each installed module, and retrieving all module actions.
 io.folder.list:/modules/
