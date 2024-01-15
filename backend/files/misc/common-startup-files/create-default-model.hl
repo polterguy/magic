@@ -1,5 +1,5 @@
 
-// Created the default OpenAI machine learning model.
+// Creating the default OpenAI machine learning model.
 try
 
    // Connecting to Magic database.
