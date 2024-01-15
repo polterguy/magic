@@ -239,6 +239,7 @@ slots.create:magic.ai.load-sitemap
                            signal:magic.ai.load-sitemap
                               max:int:10000
                               feedback-channel:x:@.arguments/*/feedback-channel
+                              filter-on-url:x:@.arguments/*/filter-on-url
                               sitemap
                                  .:x:@.dp/#
 
@@ -278,6 +279,7 @@ slots.create:magic.ai.load-sitemap
                            signal:magic.ai.load-sitemap
                               max:int:10000
                               feedback-channel:x:@.arguments/*/feedback-channel
+                              filter-on-url:x:@.arguments/*/filter-on-url
                               sitemap
                                  .:x:@.dp/#
 
@@ -402,6 +404,23 @@ slots.create:magic.ai.load-sitemap
                               // Explicitly allowed URL.
                               set-value:x:@.allowed
                                  .:bool:true
+
+            // Verifying URL starts with base URL.
+            if
+               and
+                  get-value:x:@.arguments/*/filter-on-url
+                  exists:x:@.arguments/*/url
+                  not-null:x:@.arguments/*/url
+                  neq:x:@.arguments/*/url
+                     .:
+                  not
+                     strings.starts-with:x:@sort/0
+                        get-value:x:@.arguments/*/url
+               .lambda
+
+                  // URL does not match base URL of scraping invocation.
+                  set-value:x:@.allowed
+                     .:bool:false
 
             // Verifying URL is allowed.
             if

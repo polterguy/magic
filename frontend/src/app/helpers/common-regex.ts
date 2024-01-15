@@ -16,7 +16,7 @@ export const CommonRegEx: { [key: string]: RegExp } = {
   appNamesWithUppercaseDot: /^[a-zA-Z0-9_.\-]+$/,
   appNameWithUppercase: /^[a-zA-Z0-9_]+$/,
   appNameWithUppercaseHyphen: /^[a-zA-Z0-9_\-]+$/,
-  domain: /(^https?:\/\/)([\w\-])+\.{1}([a-zA-Z]{2,63})([\/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
+  domain: /(^https?:\/\/)([\w\-])+(:[0-9]*)\.{1}([a-zA-Z]{2,63})([\/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
   backend: /^https?:\/\/([\w\-.])+(:[0-9]*)?(\.\w+)?$/,
   email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
   password: /^.{12,}$/,
