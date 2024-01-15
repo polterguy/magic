@@ -15,11 +15,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
  */
 @Component({
   selector: 'app-machine-learning-embed-ui',
-  templateUrl: './machine-learning-embed-ui.component.html'
+  templateUrl: './machine-learning-embed-ui.component.html',
+  styleUrls:['./machine-learning-embed-ui.component.scss']
 })
 export class MachineLearningEmbedUiComponent implements OnInit {
 
-  theme: string = 'chess';
+  theme: string = 'scandinavian-navy';
   themes: string[] = [];
   themeSearch: string = 'default';
   themesSearch: string[] = [];
@@ -98,16 +99,30 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     switch (this.currentTabIndex) {
 
       case 0:
-        this.embedChatbot();
+        this.embedChatbot(true);
         break;
 
       case 1:
-        this.embedSearch();
+        this.embedSearch(true);
         break;
     }
   }
 
-  embedChatbot() {
+  embedUrl() {
+
+    switch (this.currentTabIndex) {
+
+      case 0:
+        this.embedChatbot(false);
+        break;
+
+      case 1:
+        this.embedSearch(false);
+        break;
+    }
+  }
+
+  embedChatbot(html: boolean) {
 
     if (this.search === false && this.chat === false) {
 
@@ -115,16 +130,16 @@ export class MachineLearningEmbedUiComponent implements OnInit {
       return;
     }
 
-    this.clipboard.copy(this.getChatbotEmbed());
+    this.clipboard.copy(this.getChatbotEmbed(html));
     this.generalService.showFeedback('HTML to include chatbot can be found on your clipboard', 'successMessage');
     if (this.data.noClose !== true) {
       this.dialogRef.close();
     }
   }
 
-  embedSearch() {
+  embedSearch(html: boolean) {
 
-    this.clipboard.copy(this.getSearchEmbed());
+    this.clipboard.copy(this.getSearchEmbed(html));
     this.generalService.showFeedback('HTML to include AI Search can be found on your clipboard', 'successMessage');
     if (this.data.noClose !== true) {
       this.dialogRef.close();
@@ -135,13 +150,19 @@ export class MachineLearningEmbedUiComponent implements OnInit {
    * Private helper methods.
    */
 
-  private getChatbotEmbed() {
+  private getChatbotEmbed(html: boolean) {
 
-    return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&rtl=${this.rtl ? 'true' : 'false'}&submit_button=${this.has_button ? 'true' : 'false'}&stream=${this.stream ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer async></script>`;
+    if (html) {
+      return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&rtl=${this.rtl ? 'true' : 'false'}&submit_button=${this.has_button ? 'true' : 'false'}&stream=${this.stream ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer async></script>`;
+    }
+    return `${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&rtl=${this.rtl ? 'true' : 'false'}&submit_button=${this.has_button ? 'true' : 'false'}&stream=${this.stream ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}`;
   }
 
-  private getSearchEmbed() {
+  private getSearchEmbed(html: boolean) {
 
-    return `<script src="${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.themeSearch)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}" defer async></script>`;
+    if (html) {
+      return `<script src="${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.themeSearch)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}" defer async></script>`;
+    }
+    return `${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.themeSearch)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}`;
   }
 }

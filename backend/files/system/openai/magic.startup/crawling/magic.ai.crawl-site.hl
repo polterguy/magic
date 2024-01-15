@@ -88,6 +88,20 @@ slots.create:magic.ai.crawl-site
             sleep:100
 
          /*
+          * Checking
+          */
+         .filter-on-url:bool:false
+         strings.split:x:@.arguments/*/url
+            .:/
+         if
+            mt
+               get-count:x:@strings.split/*
+               .:int:2
+            .lambda
+               set-value:x:@.filter-on-url
+                  .:bool:true
+
+         /*
           * Trying to load URLs from sitemap returned from above invocation.
           */
          add:x:./*/signal/[1,2]
@@ -99,6 +113,7 @@ slots.create:magic.ai.crawl-site
             max:x:@.arguments/*/max
             feedback-channel:x:@.arguments/*/feedback-channel
             url:x:@.arguments/*/url
+            filter-on-url:x:@.filter-on-url
 
          // Verifying we found at least one sitemap.
          if
