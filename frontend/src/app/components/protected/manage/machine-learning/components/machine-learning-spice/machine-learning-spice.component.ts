@@ -31,12 +31,6 @@ export class MachineLearningSpiceComponent {
 
   scrape() {
 
-    if (!this.CommonRegEx.domain.test(this.url)) {
-
-      this.generalService.showFeedback('Not a valid URL', 'errorMessage');
-      return;
-    }
-
     this.dialogRef.close(this.url);
   }
 }
