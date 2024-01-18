@@ -107,9 +107,6 @@ icofontCss.href = '[[url]]/magic/system/openai/include-style?file=' + encodeURIC
 icofontCss.rel = 'stylesheet';
 window.document.getElementsByTagName('head')[0].appendChild(icofontCss);
 
-// Creating our chat UI.
-aista_create_chat_ui();
-
 /*
  * Function creating our chat UI.
  */
@@ -918,4 +915,8 @@ function aista_invoke_prompt(msg, token, speech) {
         });
       });
   }
-}})();
+}
+
+  // Creating our chat UI.
+  aista_create_chat_ui();
+})();
