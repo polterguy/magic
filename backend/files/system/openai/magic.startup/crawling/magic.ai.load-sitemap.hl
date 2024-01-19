@@ -435,6 +435,20 @@ slots.create:magic.ai.load-sitemap
                   // Decrementing URL count.
                   math.decrement:x:@.arguments/*/max
 
+            else
+
+               // Informing user that URL is disallowed.
+               strings.concat
+                  .:"URL disallowed by robots.txt '"
+                  get-value:x:@sort/0
+                  .:"'"
+               unwrap:x:+/**
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:x:@strings.concat
+                     type:warning
+               sleep:100
+
             // Removing currently iterated URL.
             remove-nodes:x:@sort/0
 
