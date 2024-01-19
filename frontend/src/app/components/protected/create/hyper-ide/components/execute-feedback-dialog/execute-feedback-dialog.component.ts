@@ -27,6 +27,7 @@ export class ExecuteFeedbackDialog implements OnInit {
 
   messages: any[] = [];
   result: string = null;
+  hasError: boolean = null;
 
   /**
    * Creates an instance of your component.
@@ -97,11 +98,13 @@ export class ExecuteFeedbackDialog implements OnInit {
 
             this.result = JSON.stringify(response, null, 2);
           }
+          this.hasError = false;
         },
   
         error: (error: any) => {
   
           this.generalService.hideLoading();
+          this.hasError = true;
           this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         }
       });

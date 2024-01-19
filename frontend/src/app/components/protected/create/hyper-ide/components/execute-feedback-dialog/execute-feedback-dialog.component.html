@@ -1,6 +1,13 @@
 
 <div mat-dialog-content>
 
+  <div *ngIf="messages && messages.length === 0 && !result && hasError === false">
+    <h3>Done executing file</h3>
+    <p class="text-muted">
+      Executing your Hyperlambda file didn't produce a result, but it executed successfully.
+    </p>
+  </div>
+
   <h3 *ngIf="messages && messages.length > 0">Executing Hyperlambda</h3>
   <div class="terminal" *ngIf="messages && messages.length > 0">
     <div *ngFor="let el of messages">
