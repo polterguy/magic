@@ -332,6 +332,7 @@ export class IdeTreeComponent implements OnInit {
                 // Updating parent folder since unzip operation highly likely produced additional files and/or folder for us.
                 this.updateFileObject(TreeNode.parentFolder(file));
               },
+
               error: (error: any) => {
 
                 this.generalService.hideLoading();
@@ -986,6 +987,8 @@ export class IdeTreeComponent implements OnInit {
 
           this.generalService.hideLoading();
           this.dataBindTree();
+
+          this.cdr.detectChanges();
         }
       } else {
 
@@ -1035,6 +1038,7 @@ export class IdeTreeComponent implements OnInit {
 
       this.generalService.showLoading();
       this.fileService.installModule(file.item(0)).subscribe({
+
         next: () => {
 
           this.generalService.hideLoading();
@@ -1042,13 +1046,17 @@ export class IdeTreeComponent implements OnInit {
           this.zipFileInput = null;
           this.updateFileObject('/modules/');
         },
+
         error: (error: any) => {
 
           this.generalService.hideLoading();
           this.generalService.showFeedback(error);
         }
+
       });
+
     } else {
+
       this.generalService.showFeedback('Only zip files without . are accepted', 'errorMessage', 'Ok', 5000);
     }
   }
