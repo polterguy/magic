@@ -1,0 +1,160 @@
+// Logging.
+log.info:Started importing training snippets from xplain
+
+// Buffer for API key.
+.api-key:YcEgNEUBSL0iL5zwUUY3dYVUMbDpDrRhRdwL9ZE5egik6CBxzdBF764
+
+// Buffer for root URL of documents
+.root-url:"https://foo.com"
+
+// Buffer for type name.
+.type:xplain
+
+// Threshold for import.
+.threshold:int:250
+
+// List modules.
+http.get:"https://kb-api.2xplain.nl/modules"
+   convert:true
+   headers
+      X-API-Key:x:@.api-key
+
+// Sanity checking above invocation.
+if
+   and
+      not-null:x:@http.get
+      mte:x:@http.get
+         .:int:200
+      lt:x:@http.get
+         .:int:300
+   .lambda
+
+      // Looping through modules returned above.
+      for-each:x:@http.get/*/content/*
+
+         // Name of module.
+         .module-name
+         set-value:x:@.module-name
+            get-value:x:@.dp/#/*/name
+
+         // Retrieving currently iterated module.
+         strings.concat
+            .:"https://kb-api.2xplain.nl/menu/"
+            get-value:x:@.dp/#/*/id
+         http.get:x:@strings.concat
+            convert:true
+            headers
+               X-API-Key:x:@.api-key
+
+         // Sanity checking above invocation.
+         if
+            and
+               not-null:x:@http.get
+               mte:x:@http.get
+                  .:int:200
+               lt:x:@http.get
+                  .:int:300
+            .lambda
+
+
+               // Looping through each section returned in above invocation.
+               for-each:x:@http.get/*/content/*
+
+                  // Verifying currently iterated menu item has a [documentId].
+                  if
+                     not-null:x:@.dp/#/*/documentId
+                     .lambda
+
+                        // Name of menu item.
+                        .menu-item-name
+                        set-value:x:@.menu-item-name
+                           get-value:x:@.dp/#/*/name
+
+                        // Retrieving currently iterated document.
+                        strings.concat
+                           .:"https://kb-api.2xplain.nl/pages/doc/"
+                           get-value:x:@.dp/#/*/documentId
+                        http.get:x:@strings.concat
+                           convert:true
+                           headers
+                              X-API-Key:x:@.api-key
+
+                        // Sanity checking above invocation.
+                        if
+                           and
+                              not-null:x:@http.get
+                              mte:x:@http.get
+                                 .:int:200
+                              lt:x:@http.get
+                                 .:int:300
+                           .lambda
+
+                              // Iterating through each document returned above.
+                              for-each:x:@http.get/*/content/*
+                              
+                                 // Making sure we've got some actual content here.
+                                 if
+                                    and
+                                       not-null:x:@.dp/#/*/text
+                                       mt
+                                          strings.length:x:@.dp/#/*/text
+                                          .:int:50
+                                    .lambda
+
+                                       // Creating our URL.
+                                       .url
+                                       set-value:x:@.url
+                                          strings.concat
+                                             get-value:x:@.root-url
+                                             get-value:x:@.dp/#/*/url
+
+                                       // Retrieving content from document.
+                                       .html
+                                       set-value:x:@.html
+                                          strings.concat
+                                             .:"<html><head><title>"
+                                             get-value:x:@.dp/#/*/title
+                                             .:"</title></head><body>"
+                                             get-value:x:@.dp/#/*/text
+                                             .:"</body></html>"
+                                       execute:magic.ai.html.extract
+                                          html:x:@.html
+                                          images:bool:true
+                                          lists:bool:true
+                                          main:bool:true
+                                          semantic:bool:false
+                                          url:x:@.url
+
+                                       // Sanity checking above.
+                                       if
+                                          exists:x:@execute/*/snippets/*
+                                          .lambda
+
+                                             // Connecting to database.
+                                             data.connect:magic
+
+                                                // Looping through each snippet found in above invocation.
+                                                for-each:x:@execute/*/snippets/*
+
+                                                   // Verifying snippet is valid.
+                                                   if
+                                                      and
+                                                         not-null:x:@.dp/#/*/completion
+                                                         or
+                                                            strings.starts-with:x:@.dp/#/*/completion
+                                                               .:![
+                                                            mt
+                                                               strings.length:x:@.dp/#/*/completion
+                                                               get-value:x:@.threshold
+                                                      .lambda
+
+                                                         // Inserting currently iterated snippet.
+                                                         data.create
+                                                            table:ml_training_snippets
+                                                            values
+                                                               prompt:x:@.dp/#/*/prompt
+                                                               completion:x:@.dp/#/*/completion
+                                                               type:x:@.type
+
+// Logging.
+log.info:Finished importing training snippets from xplain
