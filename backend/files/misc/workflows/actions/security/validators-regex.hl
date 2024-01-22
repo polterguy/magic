@@ -2,7 +2,7 @@
 /*
  * Ensures the specified [arg] matches the specified [regex].
  *
- * This action will throw an exception with a descriptive text if [email] is not a valid email.
+ * This action will throw an exception with a descriptive text if [arg] is not conforming to [regex].
  */
 .arguments
    arg
