@@ -57,6 +57,7 @@
           (deleteActiveFolderFromParent)="tree.deleteActiveFolder()"
           (deleteActiveFileFromParent)="tree.deleteActiveFile()"
           (renameFileFromParent)="tree.renameFile($event)"
+          (workflowFilesChanged)="tree.updateWorkflowFiles()"
           (renameFolderFromParent)="tree.renameFolder($event)"
           (createNewFileObjectFromParent)="tree.createNewFileObject($event)"
           (closeFile)="tree.closeFile($event)">

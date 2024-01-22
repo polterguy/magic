@@ -41,7 +41,7 @@ export class WorkflowService {
   /**
    * Returns a list of all workflow actions.
    */
-  getWorkflowActions() {
+  getActions() {
 
     return this.httpService.get<any[]>('/magic/system/workflows/actions');
   }
@@ -49,7 +49,7 @@ export class WorkflowService {
   /**
    * Returns a list of all workflow snippets.
    */
-  getWorkflowSnippets() {
+  getSnippets() {
 
     return this.httpService.get<any[]>('/magic/system/workflows/snippets');
   }

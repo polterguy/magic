@@ -55,7 +55,7 @@ export class FormlyActionComponent extends FieldType<FieldTypeConfig> implements
 
     // Retrieving all workflows from backend.
     this.generalService.showLoading();
-    this.workflowService.getWorkflowActions().subscribe({
+    this.workflowService.getActions().subscribe({
 
       next: (result: any[]) => {
 

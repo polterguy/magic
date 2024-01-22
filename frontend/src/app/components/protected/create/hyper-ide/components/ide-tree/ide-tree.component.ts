@@ -656,6 +656,14 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
+  updateWorkflowFiles() {
+
+    this.getWorkflowActions().then(() => {
+
+      this.generalService.hideLoading();
+    });
+}
+
   /**
    * Renames the specified folder to its new name.
    */
@@ -1206,11 +1214,11 @@ export class IdeTreeComponent implements OnInit {
 
     return new Promise<boolean>(resolve => {
 
-      this.workflowService.getWorkflowActions().subscribe({
+      this.workflowService.getActions().subscribe({
 
         next: (functions: any[]) => {
 
-          this.workflowService.getWorkflowSnippets().subscribe({
+          this.workflowService.getSnippets().subscribe({
 
             next: (snippets: any[]) => {
 
