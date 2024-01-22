@@ -3,26 +3,29 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+// Angular and system imports.
 import { Subscription } from 'rxjs';
-import { LoadSnippetDialogComponent } from 'src/app/components/protected/common/load-snippet-dialog/load-snippet-dialog.component';
-import { ShortkeysDialogComponent } from 'src/app/components/protected/common/shortkeys-dialog/shortkeys-dialog.component';
-import { GeneralService } from 'src/app/services/general.service';
-import { PreviewFileDialogComponent } from '../preview-file-dialog/preview-file-dialog.component';
-import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';
-import { RenameFolderDialogComponent } from '../rename-folder-dialog/rename-folder-dialog.component';
-import { UnsavedChangesDialogComponent } from '../unsaved-changes-dialog/unsaved-changes-dialog.component';
-import { EvaluatorService } from 'src/app/services/evaluator.service';
-import { FileNode } from '../../models/file-node.model';
-import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
-import { FileService } from 'src/app/services/file.service';
-import { VocabularyService } from 'src/app/services/vocabulary.service';
+import { MatDialog } from '@angular/material/dialog';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+
+// Application specific imports.
 import { AiService } from 'src/app/services/ai.service';
-import { ParametriseActionDialog } from '../parametrise-action-dialog/parametrise-action-dialog.component';
+import { FileNode } from '../../models/file-node.model';
+import { FileService } from 'src/app/services/file.service';
+import { GeneralService } from 'src/app/services/general.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 import { WorkflowService } from 'src/app/services/workflow.service';
+import { EvaluatorService } from 'src/app/services/evaluator.service';
+import { VocabularyService } from 'src/app/services/vocabulary.service';
+import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
+import { PreviewFileDialogComponent } from '../preview-file-dialog/preview-file-dialog.component';
+import { RenameFolderDialogComponent } from '../rename-folder-dialog/rename-folder-dialog.component';
 import { ExecuteFeedbackDialog } from '../execute-feedback-dialog/execute-feedback-dialog.component';
+import { ParametriseActionDialog } from '../parametrise-action-dialog/parametrise-action-dialog.component';
+import { UnsavedChangesDialogComponent } from '../unsaved-changes-dialog/unsaved-changes-dialog.component';
+import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';
+import { ShortkeysDialogComponent } from 'src/app/components/protected/common/shortkeys-dialog/shortkeys-dialog.component';
+import { LoadSnippetDialogComponent } from 'src/app/components/protected/common/load-snippet-dialog/load-snippet-dialog.component';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -51,6 +54,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Output() renameFolderFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() createNewFileObjectFromParent: EventEmitter<any> = new EventEmitter<any>();
   @Output() focusToFind: EventEmitter<any> = new EventEmitter<any>();
+  @Output() workflowFilesChanged: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog,
@@ -65,6 +69,23 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
 
     this.watchForActions();
+  }
+
+  ngAfterViewInit() {
+
+    if (!window['_vocabulary']) {
+
+      this.vocabularyService.vocabulary().subscribe({
+
+        next: (result: {vocabulary: string[], slots: string[]}) => {
+
+          window['_vocabulary'] = result.vocabulary;
+          window['_slots'] = result.slots;
+        },
+
+        error: error => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
+      });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -89,6 +110,11 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
     }
+  }
+
+  ngOnDestroy() {
+
+    this.codemirrorActionSubscription?.unsubscribe();
   }
 
   clearEditorHistory() {
@@ -134,28 +160,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  ngAfterViewInit() {
-
-    if (!window['_vocabulary']) {
-
-      this.vocabularyService.vocabulary().subscribe({
-
-        next: (result: {vocabulary: string[], slots: string[]}) => {
-
-          window['_vocabulary'] = result.vocabulary;
-          window['_slots'] = result.slots;
-        },
-
-        error: error => this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage')
-      });
-    }
-  }
-
-  ngOnDestroy() {
-
-    this.codemirrorActionSubscription?.unsubscribe();
-  }
-
   /*
    * Private helper methods.
    */
@@ -167,10 +171,15 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
       next: () => {
 
         this.markEditorClean(false);
-        this.generalService.hideLoading();
         this.generalService.showFeedback('File successfully saved', 'successMessage');
-        if (thenClose) {
-          this.closeActiveFile(true);
+        const folders = this.currentFileData.path.substring(0, this.currentFileData.path.lastIndexOf('/') + 1);
+        if (!thenClose && this.currentFileData.path.endsWith('.hl') && (folders.endsWith('/workflows/actions/') || folders.endsWith('/workflows/snippets/'))) {
+          this.workflowFilesChanged.emit();
+        } else {
+          this.generalService.hideLoading();
+          if (thenClose) {
+            this.closeActiveFile(true);
+          }
         }
       },
       error: (error: any) => {
