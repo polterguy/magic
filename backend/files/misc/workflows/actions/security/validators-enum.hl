@@ -1,0 +1,22 @@
+
+/*
+ * Ensures the specified [arg] was given.
+ *
+ * This action will throw an exception with a descriptive text explaining if the argument is missing.
+ */
+.arguments
+   value
+      type:string
+      mandatory:bool:true
+   values
+      type:array
+      mandatory:bool:true
+.icon:shield
+
+// Parametrising validator.
+add:x:./*/validators.enum
+   get-nodes:x:@.arguments/*/values/*
+
+// Invoking validators, making sure value is mandatory.
+validators.mandatory:x:@.arguments/*/value
+validators.enum:x:@.arguments/*/value
