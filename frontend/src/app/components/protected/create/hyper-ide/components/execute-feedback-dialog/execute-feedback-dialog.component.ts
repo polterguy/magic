@@ -79,7 +79,6 @@ export class ExecuteFeedbackDialog implements OnInit {
       }
 
       this.cdr.detectChanges();
-      console.log(this.messages);
     });
 
     hubConnection.start().then(() => {
