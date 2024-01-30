@@ -1,5 +1,5 @@
 /*
- * Searches the internet using DuckDuckGofor the [query] query,
+ * Searches the internet using DuckDuckGo for the [query] query,
  * scrapes the resulting websites, and returns a context that can
  * be used for querying OpenAI.
  *
