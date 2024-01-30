@@ -86,6 +86,7 @@ slots.create:magic.ai.html.extract
     * DRY at least ...
     */
    html2markdown:x:@.arguments/*/html
+      url:x:@.arguments/*/url
    markdown2html:x:@html2markdown
    html2lambda:x:@markdown2html
    for-each:x:@html2lambda/**/a/*/\@href
@@ -185,6 +186,7 @@ slots.create:magic.ai.html.extract
              */
             lambda2html:x:@.dp/#
             html2markdown:x:@lambda2html
+               url:x:@.arguments/*/url
             unwrap:x:+/*/*/*
             add:x:@.snippets
                .
@@ -193,12 +195,15 @@ slots.create:magic.ai.html.extract
                      completion:x:@html2markdown
 
          default
+
+            // Adding remaining HTML, minus the parts we removed.
             add:x:@.remaining
                get-nodes:x:@.dp/#
 
    lambda2html:x:@.remaining/*
    set-value:x:@.markdown
       html2markdown:x:@lambda2html
+         url:x:@.arguments/*/url
 
    .completion
    set-value:x:@.completion

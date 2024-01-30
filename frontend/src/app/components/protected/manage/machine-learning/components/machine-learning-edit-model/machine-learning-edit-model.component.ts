@@ -85,9 +85,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
         id: this.data?.model,
       };
     }
-    this.max_context_tokens = this.data?.max_context_tokens ?? 1000;
-    this.max_request_tokens = this.data?.max_request_tokens ?? 250;
-    this.max_tokens = this.data?.max_tokens ?? 1000;
+    this.max_context_tokens = this.data?.max_context_tokens ?? 4000;
+    this.max_request_tokens = this.data?.max_request_tokens ?? 1000;
+    this.max_tokens = this.data?.max_tokens ?? 4000;
     this.temperature = this.data?.temperature ?? 0.3;
     this.base_url = this.data?.base_url ?? '';
     this.threshold = this.data?.threshold ?? 0.4;
@@ -320,7 +320,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
       max_tokens: this.max_tokens,
       temperature: this.temperature,
       base_url: this.base_url,
-      model: this.model?.id ?? this.data?.model ?? 'gpt-3.5-turbo',
+      model: this.model?.id ?? this.data?.model ?? 'gpt-4-1106-preview',
       supervised: this.supervised ? 1 : 0,
       recaptcha: this.recaptcha,
       auth: this.auth?.length > 0 ? this.auth.join(',') : null,
