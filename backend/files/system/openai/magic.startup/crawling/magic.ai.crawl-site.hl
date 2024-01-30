@@ -224,11 +224,6 @@ slots.create:magic.ai.crawl-site
                      signal:magic.ai.url.scrape
                         url:x:@.dp/#
                         type:x:@.arguments/*/type
-                        images:bool:true
-                        code:bool:true
-                        lists:bool:true
-                        main:bool:true
-                        empty-completion:bool:false
                         threshold:x:@.arguments/*/threshold
                         feedback-channel:x:@.arguments/*/feedback-channel
 
