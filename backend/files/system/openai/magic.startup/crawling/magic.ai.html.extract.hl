@@ -6,262 +6,211 @@
  *
  * - [html]     - Mandatory. Being the actual HTML we're traversing for training data.
  * - [url]      - Optional.  Being the URL from where the document was fetched
- * - [images]   - Optional.  If true will return images as Markdown training snippets.
- * - [code]     - Optional.  If true will return code tags as Markdown code training snippets.
- * - [lists]    - Optional.  If true will return li tags as list Markdown training snippets.
- * - [main]     - Optional.  If true will return primary HTML content of p, div, article, etc type of tags.
  * - [semantic] - Optional.  If true, will try to start scraping from semantic tags, such as article and main.
  */
 slots.create:magic.ai.html.extract
 
    // Sanity checking invocation.
    validators.mandatory:x:@.arguments/*/html
+   validators.mandatory:x:@.arguments/*/url
    validators.url:x:@.arguments/*/url
    validators.default:x:@.arguments
       semantic:bool:false
 
-   // Converting HTML to lambda object such that we can semantically traverse HTML document.
-   html2lambda:x:@.arguments/*/html
-
-   // Figuring out base URL and scheme of document.
-   .base
-   .doc-url
-   .scheme
-
    // Used to return meta information to caller.
    .meta
-      images:int:0
-      code:int:0
-      lists:int:0
       main:int:0
-
-   /*
-    * Checking if caller provided a [url], and if so,
-    * using it as our default [.base] and [.scheme].
-    */
-   if
-      exists:x:@.arguments/*/url
-      .lambda
-
-         // Using [url] argument as our default [.base] and [.scheme].
-         strings.split:x:@.arguments/*/url
-            .:/
-         set-value:x:@.base
-            strings.concat
-               get-value:x:@strings.split/0
-               .://
-               get-value:x:@strings.split/1
-               .:/
-         set-value:x:@.doc-url
-            strings.concat
-               get-value:x:@strings.split/0
-               .://
-               strings.join:x:@strings.split/*/[1,1000]
-                  .:/
-               .:/
-         set-value:x:@.scheme
-            get-value:x:@strings.split/0
-
-   /*
-    * Checking if document contains a base HTML element, at which point
-    * we use it as our [.base] value for document.
-    */
-   if
-      and
-         exists:x:@html2lambda/*/html/*/head/*/base
-         neq:x:@html2lambda/*/html/*/head/*/base/*/\@href
-            .:
-         or
-            strings.starts-with:x:@html2lambda/*/html/*/head/*/base/*/\@href
-               .:"http://"
-            strings.starts-with:x:@html2lambda/*/html/*/head/*/base/*/\@href
-               .:"https://"
-      .lambda
-
-         // Document contains a base HTML tag, making sure we use it.
-         set-value:x:@.base
-            get-value:x:@html2lambda/*/html/*/head/*/base/*/\@href
-         set-value:x:@.doc-url
-            get-value:x:@html2lambda/*/html/*/head/*/base/*/\@href
-
-         /*
-          * Before we default scheme to base tag's value, we make sure it's not already set.
-          *
-          * This is done since the URL the document was requested with have precedence over
-          * the base tag value when applying scheme to links and images.
-          */
-         if
-            null:x:@.scheme
-            .lambda
-
-               // Scheme has not already been set, hence setting it.
-               strings.split:x:@html2lambda/*/html/*/head/*/base/*/\@href
-                  .://
-               set-value:x:@.scheme
-                  get-value:x:@strings.split/0
-
-   /*
-    * Now we can create base prompt, consisting of title tag.
-    *
-    * The base prompt is used for some of our training snippetsto increase data quality.
-    */
-   .base-prompt:
-   if
-      and
-         exists:x:@html2lambda/*/html/*/head/*/title/*/\#text
-         not-null:x:@html2lambda/*/html/*/head/*/title/*/\#text
-         neq:x:@html2lambda/*/html/*/head/*/title/*/\#text
-            .:
-      .lambda
-
-         // Document contains a title tag, and it's not null or empty.
-         set-value:x:@.base-prompt
-            get-value:x:@html2lambda/*/html/*/head/*/title/*/\#text
-
-   // Trimming our base prompt to remove redundant characters.
-   set-value:x:@.base-prompt
-      strings.trim:x:@.base-prompt
-         .:"- \t\r\n"
 
    // Buffer used for snippet to return.
    .snippets
 
-   // Buffer used to hold all URLs found during scraping.
+   // Buffer for title.
+   .title
+
+   // Buffer for description.
+   .description
+
+   // Used to store a reference to above HTML transformed to Markdown.
+   .markdown
+
+   // Buffer used for URLs from HTML document.
    .urls
 
-   // Used to store a reference to above HTML transformed to lambda.
-   .document
-   set-value:x:@.document
-      reference:x:@html2lambda/*/html
+   // Checking if caller wants to convert HTML semantically or not.
+   if:x:@.arguments/*/semantic
 
-   /*
-    * Looping through entire document to find URLs in it such that we
-    * can return this to caller.
-    */
-   for-each:x:@.document/#/**/a/*/\@href
+      // Converting HTML to lambda such that we can semantically inspect HTML for semantic tags.
+      html2lambda:x:@.arguments/*/html
 
-      // Sanity checking currently iterated URL.
+      // Trying to retrieve HTML from main or article tag.
       if
-         and
-            not-null:x:@.dp/#
-            neq:x:@.dp/#
-               .:
-            neq:x:@.dp/#
-               .:#
-            not
-               strings.starts-with:x:@.dp/#
-                  .:javascript
-            not
-               strings.starts-with:x:@.dp/#
-                  .:void
-            not
-               exists:x:./*/rel/=nofollow
+         exists:x:@html2lambda/**/article/[0,1]
          .lambda
 
-            // Removing hash tag parts, if existing.
-            strings.split:x:@.dp/#
-               .:#
-            unwrap:x:+/*
-            signal:magic.ai.url.normalize
-               url:x:@strings.split/0
-               base:x:@.base
-               doc-url:x:@.doc-url
-               scheme:x:@.scheme
+            // HTML contains "article" HTML element.
+            lambda2html:x:@html2lambda/**/article/[0,1]
+            html2markdown:x:@lambda2html
+               url:x:@.arguments/*/url
+            set-value:x:@.markdown
+               get-value:x:@html2markdown
 
-            // Verifying this is a local URL.
+      else-if
+         exists:x:@html2lambda/**/main/[0,1]
+         .lambda
+
+            // HTML contains "main" HTML element.
+            lambda2html:x:@html2lambda/**/main/[0,1]
+            html2markdown:x:@lambda2html
+               url:x:@.arguments/*/url
+            set-value:x:@.markdown
+               get-value:x:@html2markdown
+
+   // Checking if we've got some Markdown, and if not, resorting to using entire HTML document.
+   if
+      null:x:@.markdown
+      .lambda
+
+         // Using raw HTML.
+         html2markdown:x:@.arguments/*/html
+            url:x:@.arguments/*/url
+         set-value:x:@.markdown
+            get-value:x:@html2markdown
+
+   /*
+    * Finding URLs from document.
+    *
+    * Notice, for simplicity reasons we do this by round tripping HTML
+    * through markdown, converting it to HTML, conerting HTML to lambda,
+    * and iterate through each anchor HTML element in lambda.
+    * This is not optimal, and could be optimised, but it keeps the code
+    * DRY at least ...
+    */
+   html2markdown:x:@.arguments/*/html
+   markdown2html:x:@html2markdown
+   html2lambda:x:@markdown2html
+   for-each:x:@html2lambda/**/a/*/\@href
+
+      /*
+       * Notice, the URLs we return are for the scraper to crawl and scrape,
+       * so we don't return mailto or tel URLs here, and we only return URLs
+       * from the same domain.
+       */
+      if
+         and
+            not
+               strings.starts-with:x:@.dp/#
+                  .:"mailto:"
+            not
+               strings.starts-with:x:@.dp/#
+                  .:"tel:"
+         .lambda
+
+            // Valid URL, now checking if it's the same domain.
+            .local
+            strings.split:x:@.arguments/*/url
+               .:"/"
+            set-value:x:@.local
+               get-value:x:@strings.split/1
+            .current
+            strings.split:x:@.dp/#
+               .:"/"
+            set-value:x:@.current
+               get-value:x:@strings.split/1
             if
-               strings.starts-with:x:@signal
-                  get-value:x:@.base
+               eq:x:@.local
+                  get-value:x:@.current
                .lambda
 
-                  // This is a local URL, trimming trailing slash.
-                  strings.trim-end:x:@signal
+                  // Local URL, now making sure it's not the same URL.
+                  strings.trim-end:x:@.dp/#
                      .:/
-                  unwrap:x:+/*/*
-                  add:x:@.urls
-                     .
-                        .:x:@strings.trim-end
+                  strings.trim-end:x:@.arguments/*/url
+                     .:/
+                  if
+                     neq:x:@strings.trim-end
+                        get-value:x:@strings.trim-end/@strings.trim-end
+                     .lambda
+                     
+                        // Not the same URLas the one we'recurrently scraping.
+                        unwrap:x:+/*/*
+                        add:x:@.urls
+                           .
+                              .:x:@.dp/#
 
-   /*
-    * Checking if caller wants code.
-    *
-    * Notice, code snippets being code tags are returned as isolated snippets,
-    * but only if caller wants to fetch code.
-    */
-   if
-      eq:x:@.arguments/*/code
-         .:bool:true
-      .lambda
+   // Setting title and description from document.
+   set-value:x:@.title
+      get-value:x:@html2lambda/**/meta/**/title/*/\#text
+   set-value:x:@.description
+      get-value:x:@html2lambda/**/meta/**/meta/*/\@name/=description/./*/\@content
 
-         // Extracting all code.
-         unwrap:x:+/*
-         signal:magic.ai.html.extract-code
-            html:x:@.document
-            base-prompt:x:@.base-prompt
+   // Creating our prompt.
+   .prompt
+   set-value:x:@.prompt
+      get-first-value
+         get-value:x:@.title
+         get-value:x:@html2lambda/**/h1/[0,1]/*/\#text
+         get-value:x:@html2lambda/**/h2/[0,1]/*/\#text
+         get-value:x:@html2lambda/**/h3/[0,1]/*/\#text
+         get-value:x:@html2lambda/**/h4/[0,1]/*/\#text
+         get-value:x:@html2lambda/**/h5/[0,1]/*/\#text
+         get-value:x:@html2lambda/**/h6/[0,1]/*/\#text
+         get-value:x:@.description
 
-         // Making sure we return snippets and meta information.
-         add:x:@.snippets
-            get-nodes:x:@signal/*
-         set-value:x:@.meta/*/code
-            get-count:x:@signal/*
+   // Breaking page into sections.
+   .remaining
+   .tmp-prompt
+   set-value:x:@.tmp-prompt
+      get-value:x:@.prompt
+   for-each:x:@html2lambda/*
 
-   /*
-    * Now we can traverse the HTML for Hx elements to use to create training snippets
-    * by traversing all descendent nodes of the above [.root] reference pointing to
-    * the most relevant HTML element where traversing should start.
-    *
-    * This works by breaking the document up into multiple training snippets, one for each
-    * Hx element in the document, with all paragraphs and all content below the currently
-    * iterated Hx tag as its completion.
-    */
-   if
-      eq:x:@.arguments/*/main
-         .:bool:true
-      .lambda
+      get-name:x:@.dp/#
+      switch:x:@get-name
 
-         // Extracting all images.
-         unwrap:x:+/*
-         signal:magic.ai.html.extract-main
-            html:x:@.document
-            base:x:@.base
-            doc-url:x:@.doc-url
-            scheme:x:@.scheme
-            base-prompt:x:@.base-prompt
-            lists:x:@.arguments/*/lists
-            semantic:x:@.arguments/*/semantic
+         case:h1
+         case:h2
+         case:h3
+         case:h4
+         case:h5
+         case:h6
+            set-value:x:@.tmp-prompt
+               get-value:x:@.dp/#/*/\#text
 
-         // Making sure we return snippets and meta information.
-         add:x:@.snippets
-            get-nodes:x:@signal/*
-         set-value:x:@.meta/*/main
-            get-count:x:@signal/*
+         case:ul
+         case:ol
 
-   /*
-    * Checking if caller wants images.
-    *
-    * Notice, images are returned as isolated snippets, but only if caller wants
-    * to fetch images.
-    */
-   if
-      eq:x:@.arguments/*/images
-         .:bool:true
-      .lambda
+            /*
+             * To avoid repeating navbars "everywhere" we remove these from Markdown and returns
+             * these as individual training snippets. This will ensure navbars are only imported
+             * once, as a separated training snippet.
+             */
+            lambda2html:x:@.dp/#
+            html2markdown:x:@lambda2html
+            unwrap:x:+/*/*/*
+            add:x:@.snippets
+               .
+                  .
+                     prompt:x:@.tmp-prompt
+                     completion:x:@html2markdown
 
-         // Extracting all images.
-         unwrap:x:+/*
-         signal:magic.ai.html.extract-images
-            html:x:@.document
-            base:x:@.base
-            scheme:x:@.scheme
-            base-prompt:x:@.base-prompt
+         default
+            add:x:@.remaining
+               get-nodes:x:@.dp/#
 
-         // Making sure we return snippets and meta information.
-         add:x:@.snippets
-            get-nodes:x:@signal/*
-         set-value:x:@.meta/*/images
-            get-count:x:@signal/*
+   lambda2html:x:@.remaining/*
+   set-value:x:@.markdown
+      html2markdown:x:@lambda2html
 
-   // Returning snippets to caller.
+   .completion
+   set-value:x:@.completion
+      get-value:x:@.markdown
+   unwrap:x:+/*/*/*
+   add:x:@.snippets
+      .
+         .
+            prompt:x:@.prompt
+            completion:x:@.completion
+
+   // Returning snippets to caller if we could find anything.
    if
       exists:x:@.snippets/*
       .lambda

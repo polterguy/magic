@@ -9,11 +9,6 @@
  * - [type] - What type to import training snippets into.
  * - [summarize] - If true will summarize all training snippets that are larger than 1,000 tokens.
  * - [headers] - Optional collection of HTTML headers we should associate with HTTP request.
- * - [images] - Optional boolean indicating whether or not we should retrieve images from URL.
- * - [lists] - Optional boolean indicating whether or not we should retrieve lists from URL.
- * - [code] - Optional boolean indicating whether or not we should retrieve code segments from URL.
- * - [main] - Optional boolean indicating whether or not we should retrieve main section from URL.
- * - [empty-completion] - Optional boolean indicating whether or not we should create training snippets that has empty completion.
  */
 slots.create:magic.ai.url.scrape
 
@@ -62,11 +57,6 @@ slots.create:magic.ai.url.scrape
          get-value:x:@signal
 
       // Creating training snippets from page.
-      add:x:+/+
-         get-nodes:x:@.arguments/*/images
-         get-nodes:x:@.arguments/*/lists
-         get-nodes:x:@.arguments/*/code
-         get-nodes:x:@.arguments/*/main
       unwrap:x:+/*
       signal:magic.ai.html.extract
          html:x:@.html
@@ -83,69 +73,7 @@ slots.create:magic.ai.url.scrape
        *
        * This provides valuable feedback to user about what training
        * snippets we found on page.
-       *
-       * First images.
        */
-      if
-         and
-            exists:x:@.arguments/*/images
-            mt:x:@signal/*/meta/*/images
-               .:int:0
-         .lambda
-
-            // We found at least one image on page.
-            strings.concat
-               .:"Found "
-               get-value:x:@signal/*/meta/*/images
-               .:" images on page"
-            unwrap:x:+/**
-            sockets.signal:x:@.arguments/*/feedback-channel
-               args
-                  message:x:@strings.concat
-                  type:info
-            sleep:100
-
-      // Then code snippets.
-      if
-         and
-            exists:x:@.arguments/*/code
-            mt:x:@signal/*/meta/*/code
-               .:int:0
-         .lambda
-
-            // We found at least one code snippet on page.
-            strings.concat
-               .:"Found "
-               get-value:x:@signal/*/meta/*/code
-               .:" code snippets on page"
-            unwrap:x:+/**
-            sockets.signal:x:@.arguments/*/feedback-channel
-               args
-                  message:x:@strings.concat
-                  type:info
-            sleep:100
-
-      // Then lists.
-      if
-         and
-            exists:x:@.arguments/*/lists
-            mt:x:@signal/*/meta/*/lists
-               .:int:0
-         .lambda
-
-            // We found at least one list on page.
-            strings.concat
-               .:"Found "
-               get-value:x:@signal/*/meta/*/lists
-               .:" lists on page"
-            unwrap:x:+/**
-            sockets.signal:x:@.arguments/*/feedback-channel
-               args
-                  message:x:@strings.concat
-                  type:info
-            sleep:100
-
-      // Then main sections.
       if
          and
             exists:x:@.arguments/*/main
@@ -157,7 +85,7 @@ slots.create:magic.ai.url.scrape
             strings.concat
                .:"Found "
                get-value:x:@signal/*/meta/*/main
-               .:" main sections on page"
+               .:" sections on page"
             unwrap:x:+/**
             sockets.signal:x:@.arguments/*/feedback-channel
                args
@@ -231,7 +159,7 @@ slots.create:magic.ai.url.scrape
                   set-value:x:@.api-key
                      get-value:x:@data.read/*/*/api_key
                   set-value:x:@.model
-                     .:gpt-3.5-turbo-16k
+                     .:gpt-4-1106-preview
 
                // Looping through all snippets to check their size.
                for-each:x:@.snippets/*
@@ -359,9 +287,9 @@ slots.create:magic.ai.url.scrape
                                     // Oops, could not summarize snippet.
                                     sockets.signal:x:@.arguments/*/feedback-channel
                                        args
-                                          message:Could not summarize snippet, check your log for details
+                                          message:Could not summarize snippet, check your log for details. Trying again in 3 seconds.
                                           type:warning
-                                    sleep:100
+                                    sleep:3000
                                     lambda2hyper:x:@http.post
                                     log.error:Something went wrong while invoking OpenAI
                                        message:x:@http.post/*/content/*/error/*/message
@@ -468,11 +396,6 @@ slots.create:magic.ai.url.scrape
              */
             for-each:x:@.snippets/*
 
-               // Defaulting completion to empty string if [empty-completion] argument is true.
-               if:x:@.arguments/*/empty-completion
-                  validators.default:x:@.dp/#
-                     completion:
-
                // Checking if completion exists and is not null for training snippet.
                if
                   and
@@ -553,31 +476,38 @@ slots.create:magic.ai.url.scrape
                               .lambda
 
                                  /*
-                                  * Snippet already exists in database and has already been summarized,
-                                  * hence we do nothing.
+                                  * Snippet already exists in database and has already been transformed,
+                                  * implying prompt was updated to "Common" - hHence we do nothing.
                                   */
                                  math.increment:x:@.already-exists
 
-                           else
+                           else-if
+                              not
+                                 eq:x:@data.read/*/*/prompt
+                                    get-value:x:@.dp/#/*/prompt
+                              .lambda
 
-                              // Success creating summary.
-                              sockets.signal:x:@.arguments/*/feedback-channel
-                                 args
-                                    message:Snippet with similar completion exists, updating prompt to common
-                                    type:info
-                              sleep:10
+                                 /*
+                                  * Snippet already exists, but with different prompt.
+                                  * Updating prompt to "Common".
+                                  */
+                                 sockets.signal:x:@.arguments/*/feedback-channel
+                                    args
+                                       message:Snippet with similar completion exists, updating prompt to common
+                                       type:info
+                                 sleep:10
 
-                              // Updating record in database.
-                              data.update
-                                 table:ml_training_snippets
-                                 values
-                                    prompt:Common
-                                 where
-                                    and
-                                       id.eq:x:@data.read/0/*/id
+                                 // Updating record in database.
+                                 data.update
+                                    table:ml_training_snippets
+                                    values
+                                       prompt:Common
+                                    where
+                                       and
+                                          id.eq:x:@data.read/0/*/id
 
-                              // Updating count of snippets that already exists.
-                              math.increment:x:@.already-exists
+                                 // Updating count of snippets that already exists.
+                                 math.increment:x:@.already-exists
 
                      else
 
