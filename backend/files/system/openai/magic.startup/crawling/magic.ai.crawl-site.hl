@@ -88,7 +88,12 @@ slots.create:magic.ai.crawl-site
             sleep:100
 
          /*
-          * Checking
+          * Checking if we should filter according to URL, as
+          * in caller provided a sub-folder URL such as foo.com/bar, at which
+          * point we only import URLs below /bar hierarchy.
+          *
+          * Default value is false, implying robots.txt file is solely responsible
+          * for filtering.
           */
          .filter-on-url:bool:false
          strings.split:x:@.arguments/*/url
