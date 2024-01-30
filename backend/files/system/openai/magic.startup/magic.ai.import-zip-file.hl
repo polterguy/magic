@@ -282,7 +282,7 @@ slots.create:magic.ai.import-zip-file
                            Authorization:x:@.token
                            Content-Type:application/json
                         payload
-                           model:gpt-3.5-turbo-16k
+                           model:gpt-3.5-turbo-1106
                            max_tokens:int:2000
                            temperature:decimal:0.5
                            messages

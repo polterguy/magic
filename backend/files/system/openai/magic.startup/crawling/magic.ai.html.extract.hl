@@ -76,6 +76,21 @@ slots.create:magic.ai.html.extract
          set-value:x:@.markdown
             get-value:x:@html2markdown
 
+   // Checking if site is SPA, at which point we return early.
+   if
+      or
+         null:x:@.markdown
+         eq:x:@.markdown
+            .:
+      .lambda
+
+         // Nothing to do here ...
+         return
+            urls
+            snippets
+            meta
+               main:int:0
+
    /*
     * Finding URLs from document.
     *

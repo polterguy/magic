@@ -288,6 +288,7 @@ slots.create:magic.ai.endpoint-common
    switch:x:@.model/*/model
 
       case:gpt-3.5-turbo-16k
+      case:gpt-3.5-turbo-1106
       case:gpt-3.5-turbo-16k-0613
 
          add:x:@.model

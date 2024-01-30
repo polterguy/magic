@@ -273,6 +273,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
         model_size = 8000;
         break;
 
+      case 'gpt-3.5-turbo-1106':
       case 'gpt-3.5-turbo-16k':
       case 'gpt-3.5-turbo-16k-0613':
         model_size = 16384;
