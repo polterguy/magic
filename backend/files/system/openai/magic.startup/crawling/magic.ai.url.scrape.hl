@@ -21,14 +21,6 @@ slots.create:magic.ai.url.scrape
    validators.default:x:@.arguments
       summarize:bool:true
 
-   // Ensuring we retrieve images, lists, code and main section by default.
-   validators.default:x:@.arguments
-      images:bool:true
-      lists:bool:true
-      code:bool:true
-      main:bool:true
-      empty-completion:bool:false
-
    // Signaling frontend.
    .msg
    set-value:x:@.msg

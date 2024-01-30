@@ -1,6 +1,7 @@
 
 /*
- * Imports the specified page as training data by scraping its content.
+ * Scrapes the specified website for training data to
+ * create a new machine learning type.
  */
 .arguments
    url:string
@@ -128,8 +129,8 @@ try
                base_url:x:@.arguments/*/url
 
       // Figuring out max tokens to use, which varies according to base model.
-      .max-tokens:int:1500
-      .max-context-tokens:int:1500
+      .max-tokens:int:4000
+      .max-context-tokens:int:4000
       if
          not
             strings.starts-with:x:@.arguments/*/model
@@ -150,7 +151,7 @@ try
             model:x:@.arguments/*/model
             max_tokens:x:@.max-tokens
             max_context_tokens:x:@.max-context-tokens
-            max_request_tokens:int:250
+            max_request_tokens:int:1000
             temperature:decimal:0.3
             recaptcha:decimal:0.3
             supervised:int:1
