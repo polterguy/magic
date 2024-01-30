@@ -156,6 +156,7 @@ slots.create:magic.ai.html.extract
          get-value:x:@html2lambda/**/h5/[0,1]/*/\#text
          get-value:x:@html2lambda/**/h6/[0,1]/*/\#text
          get-value:x:@.description
+         .:"Page"
 
    // Breaking page into sections.
    .remaining
