@@ -402,18 +402,9 @@ slots.create:magic.ai.url.scrape
                       * insert it anyway.
                       */
                      if
-                        or
-                           mt
-                              strings.length:x:@.dp/#/*/completion
-                              get-value:x:@.arguments/*/threshold
-                           strings.starts-with:x:@.dp/#/*/completion
-                              .:![
-                           strings.contains:x:@.dp/#/*/completion
-                              .:"* "
-                           strings.contains:x:@.dp/#/*/completion
-                              .:"1. "
-                           strings.contains:x:@.dp/#/*/completion
-                              .:"["
+                        mt
+                           strings.length:x:@.dp/#/*/completion
+                           get-value:x:@.arguments/*/threshold
                         .lambda
 
                            /*
