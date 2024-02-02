@@ -73,8 +73,8 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
     this.dialog
       .open(MachineLearningEditTrainingSnippetComponent, {
-        width: '80vw',
-        maxWidth: '850px',
+        width: '90vw',
+        maxWidth: '1280px',
         data: {
           type: this.type,
         }
@@ -141,8 +141,8 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
     this.dialog
       .open(MachineLearningEditTrainingSnippetComponent, {
-        width: '80vw',
-        maxWidth: '850px',
+        width: '90vw',
+        maxWidth: '1280px',
         data: el,
       })
       .afterClosed()

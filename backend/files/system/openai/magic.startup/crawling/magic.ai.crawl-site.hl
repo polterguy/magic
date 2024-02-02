@@ -120,6 +120,33 @@ slots.create:magic.ai.crawl-site
             url:x:@.arguments/*/url
             filter-on-url:x:@.filter-on-url
 
+         // Signaling user what we're about to do.
+         strings.concat
+            .:"Deleting old snippets for type '"
+            get-value:x:@.arguments/*/type
+            .:"' matching URL of "
+            get-value:x:@.arguments/*/url
+         unwrap:x:+/**
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:x:@strings.concat
+               type:info
+         sleep:100
+
+         // Deleting all old training snippets matching specified URL and type.
+         .uri
+         set-value:x:@.uri
+            strings.concat
+               get-value:x:@.arguments/*/url
+               .:%
+         data.connect:[generic|magic]
+            data.execute:@"
+delete from vss_ml_training_snippets
+   where rowid in (select id as rowid from ml_training_snippets where type = @type and uri like @uri);
+delete from ml_training_snippets where type = @type and uri like @uri;"
+               type:x:@.arguments/*/type
+               uri:x:@.uri
+
          // Verifying we found at least one sitemap.
          if
             eq:x:@signal/*/has-sitemap

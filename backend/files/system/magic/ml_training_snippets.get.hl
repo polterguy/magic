@@ -6,6 +6,8 @@
    order:string
    direction:string
    ml_training_snippets.id.eq:long
+   ml_training_snippets.id.mt:long
+   ml_training_snippets.id.lt:long
    ml_training_snippets.type.like:string
    ml_training_snippets.type.eq:string
    ml_training_snippets.pushed.eq:long
@@ -57,12 +59,18 @@ data.connect:[generic|magic]
       get-nodes:x:@.arguments/*/ml_training_snippets.completion.eq
       get-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
       get-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
+      get-nodes:x:@.arguments/*/ml_training_snippets.id.eq
+      get-nodes:x:@.arguments/*/ml_training_snippets.id.lt
+      get-nodes:x:@.arguments/*/ml_training_snippets.id.mt
    remove-nodes:x:@.arguments/*/ml_training_snippets.completion.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.uri.like
    remove-nodes:x:@.arguments/*/ml_training_snippets.prompt.eq
    remove-nodes:x:@.arguments/*/ml_training_snippets.completion.eq
    remove-nodes:x:@.arguments/*/ml_training_snippets.uri.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.id.eq
+   remove-nodes:x:@.arguments/*/ml_training_snippets.id.lt
+   remove-nodes:x:@.arguments/*/ml_training_snippets.id.mt
    add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
 

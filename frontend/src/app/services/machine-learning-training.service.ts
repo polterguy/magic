@@ -51,13 +51,13 @@ export class MachineLearningTrainingService {
         nFilter['offset'] = filter['offset'];
       }
 
-      return this.httpService.get<any>(
+      return this.httpService.get<any[]>(
         '/magic/system/magic/ml_training_snippets-vss' +
         this.queryArgService.getQueryArgs(nFilter, ['filter']));
 
     } else {
 
-      return this.httpService.get<any>(
+      return this.httpService.get<any[]>(
         '/magic/system/magic/ml_training_snippets' +
         this.queryArgService.getQueryArgs(filter));
     }

@@ -3,11 +3,14 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
+// Angular and system specific imports.
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+// Application specific imports.
 import { GeneralService } from 'src/app/services/general.service';
-import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
+import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
 
 /**
  * Helper component to edit details of one single training item.
@@ -19,8 +22,8 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
 })
 export class MachineLearningEditTrainingSnippetComponent implements OnInit {
 
-  type: string = null;
   types: string[] = [];
+  type: string = null;
   prompt: string;
   uri: string;
   completion: string;
@@ -45,32 +48,22 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
       this.preview = true;
     }
 
-    this.prompt = this.data?.prompt;
-    this.uri = this.data?.uri;
-    this.completion = this.data?.completion;
-    this.type = this.data?.type;
-    this.pushed = this.data?.pushed > 0 ? true : false;
-    this.cached = this.data?.cached > 0 ? true : false;
-
     this.generalService.showLoading();
 
     this.machineLearningTrainingService.ml_types().subscribe({
+
       next: (result: any[]) => {
 
         this.generalService.hideLoading();
         this.types = result.map(x => x.type);
-
-        if (!this.data?.type) {
-
-          // Defaulting to first type we can find.
-          this.type = this.types.pop();
-        }
+        this.initialize();
         this.typeChanged();
       },
-      error: () => {
+
+      error: (error: any) => {
 
         this.generalService.hideLoading();
-        this.generalService.showFeedback('Something went wrong as we tried to delete your snippet', 'errorMessage');
+        this.generalService.showFeedback(error.error.message ?? error, 'errorMessage')
       }
     });
   }
@@ -97,6 +90,64 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
     }
   }
 
+  previous () {
+
+    this.generalService.showLoading();
+    this.machineLearningTrainingService.ml_training_snippets({
+      limit: 1,
+      order: 'ml_training_snippets.id',
+      direction: 'desc',
+      ['ml_training_snippets.id.lt']: this.data.id,
+    }, false).subscribe({
+
+      next: (result: any[]) => {
+
+        this.generalService.hideLoading();
+        if (result && result.length > 0) {
+          this.data = result[0];
+          this.initialize();
+        } else {
+          this.generalService.showFeedback('No more snippets', 'errorMessage');
+        }
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error.error.message ?? error, 'errorMessage');
+      }
+    });
+  }
+
+  next() {
+
+    this.generalService.showLoading();
+    this.machineLearningTrainingService.ml_training_snippets({
+      limit: 1,
+      order: 'ml_training_snippets.id',
+      direction: 'asc',
+      ['ml_training_snippets.id.mt']: this.data.id,
+    }, false).subscribe({
+
+      next: (result: any[]) => {
+
+        this.generalService.hideLoading();
+        if (result && result.length > 0) {
+          this.data = result[0];
+          this.initialize();
+        } else {
+          this.generalService.showFeedback('No more snippets', 'errorMessage');
+        }
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error.error.message ?? error, 'errorMessage');
+      }
+    });
+  }
+
   save() {
 
     const data: any = {
@@ -111,6 +162,20 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
       data.id = this.data.id;
     }
     this.dialogRef.close(data);
+  }
+
+  /*
+   * Private helper methods.
+   */
+
+  private initialize() {
+
+    this.prompt = this.data?.prompt;
+    this.uri = this.data?.uri;
+    this.completion = this.data?.completion;
+    this.type = this.data?.type;
+    this.pushed = this.data?.pushed > 0 ? true : false;
+    this.cached = this.data?.cached > 0 ? true : false;
   }
 }
 

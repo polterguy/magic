@@ -120,6 +120,15 @@ slots.create:magic.ai.html.extract
                strings.starts-with:x:@.dp/#
                   .:"tel:"
          .lambda
+         
+            // Removing '#'.
+            .url
+            set-value:x:@.url
+               get-value:x:@.dp/#
+            strings.split:x:@.url
+               .:#
+            set-value:x:@.url
+               get-value:x:@strings.split/0
 
             // Valid URL, now checking if it's the same domain.
             .local
@@ -128,7 +137,7 @@ slots.create:magic.ai.html.extract
             set-value:x:@.local
                get-value:x:@strings.split/1
             .current
-            strings.split:x:@.dp/#
+            strings.split:x:@.url
                .:"/"
             set-value:x:@.current
                get-value:x:@strings.split/1
@@ -138,7 +147,7 @@ slots.create:magic.ai.html.extract
                .lambda
 
                   // Local URL, now making sure it's not the same URL.
-                  strings.trim-end:x:@.dp/#
+                  strings.trim-end:x:@.url
                      .:/
                   strings.trim-end:x:@.arguments/*/url
                      .:/
@@ -151,7 +160,7 @@ slots.create:magic.ai.html.extract
                         unwrap:x:+/*/*
                         add:x:@.urls
                            .
-                              .:x:@.dp/#
+                              .:x:@.url
 
    // Setting title and description from document.
    set-value:x:@.title

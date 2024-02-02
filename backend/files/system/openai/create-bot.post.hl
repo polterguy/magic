@@ -177,7 +177,7 @@ try
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onerror/*/.feedback-channel
    signal:magic.ai.crawl-site
       delay:int:1000
-      threshold:int:50
+      threshold:int:150
       summarize:bool:true
       type:x:@.type
       .onerror
