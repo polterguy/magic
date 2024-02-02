@@ -175,7 +175,7 @@ button.aista-chat-btn:focus i.icofont-chat {
   margin-left: 60px !important;
   border-radius: 7px 7px 0 7px;
   background:linear-gradient(to right, #fe8464 0%, #fe6e9a 50%, #fe8464 100%) !important;
-  color: #aaaaaa;
+  color: #ddd;
   padding: 15px !important;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2);
 }
