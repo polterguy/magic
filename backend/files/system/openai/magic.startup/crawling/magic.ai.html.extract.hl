@@ -203,6 +203,7 @@ slots.create:magic.ai.html.extract
 
          case:ul
          case:ol
+         case:pre
 
             /*
              * To avoid repeating navbars "everywhere" we remove these from Markdown and returns
