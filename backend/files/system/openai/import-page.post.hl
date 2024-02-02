@@ -20,7 +20,7 @@ validators.mandatory:x:@.arguments/*/type
 validators.integer:x:@.arguments/*/threshold
    min:25
 validators.default:x:@.arguments
-   summarize:bool:false
+   summarize:bool:true
 
 // Doing some basic logging.
 log.info:Crawling page generating OpenAI training snippets
@@ -45,11 +45,6 @@ fork
          url:x:@.arguments/*/url
          type:x:@.arguments/*/type
          feedback-channel:x:@.arguments/*/feedback-channel
-         images:bool:true
-         code:bool:true
-         lists:bool:true
-         main:bool:true
-         empty-completion:bool:false
          threshold:x:@.arguments/*/threshold
          summarize:x:@.arguments/*/summarize
 
