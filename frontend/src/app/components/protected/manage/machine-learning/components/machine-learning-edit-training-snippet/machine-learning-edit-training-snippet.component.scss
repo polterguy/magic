@@ -10,6 +10,12 @@
     margin-top: 25px;
     margin-bottom: 25px;
   }
+  ::ng-deep li img {
+    max-width: 80%;
+    display: inline;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 }
 .modal-wrp {
   position: relative;
