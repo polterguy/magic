@@ -273,10 +273,9 @@ button.aista-chat-btn:focus i.icofont-chat {
   padding-left: 20px !important;
 }
 .aista-chat-answer ul {
-  padding-left: 0 !important;
+  padding-left: 15px !important;
 }
 .aista-chat-answer ul li {
-  list-style-type: none !important;
   margin: 0 !important;
 }
 @keyframes aista-zoom-image {
