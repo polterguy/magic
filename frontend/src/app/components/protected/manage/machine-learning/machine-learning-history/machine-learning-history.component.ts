@@ -78,6 +78,7 @@ export class MachineLearningRequestsComponent implements OnInit {
     if (event.type) {
       this.filter['ml_requests.type.eq'] = event.type;
     }
+    this.generalService.showLoading();
     this.getRequests(true);
   }
 
