@@ -427,6 +427,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     if (event.type) {
       this.filter['ml_training_snippets.type.eq'] = event.type;
     }
+    this.generalService.showLoading();
     this.getTrainingData(true);
   }
 
