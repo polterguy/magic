@@ -88,7 +88,6 @@ if
          code:bool:true
          lists:bool:true
          main:bool:true
-         semantic:bool:true
          html:x:@signal/@signal
 
       // Building our context making sure we don't overflow 10,000 tokens.

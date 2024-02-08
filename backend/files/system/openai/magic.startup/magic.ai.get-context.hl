@@ -135,6 +135,8 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
     *
     * This allows you to have responses that are statically cached, yet still
     * dependent upon semantic AI search towards your training snippets.
+    *
+    * Noticed, caches snippets are executed as mixins if they are the first match.
     */
    if
       and
@@ -147,6 +149,10 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
       .lambda
 
          // First matching snippet has been cached.
+         unwrap:x:+/*/*
+         set-value:x:@.scan/0/*/completion
+            strings.mixin:x:@.scan/0/*/completion
+               prompt:x:@.arguments/*/prompt
          unwrap:x:+/*
          return
             cached:x:@.scan/0/*/completion
@@ -167,8 +173,7 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
 
    /*
     * To avoid mixin snippets from being executed unless they're matched at the top,
-    * we pre-process results, executing mixins for the first snippet, for then to
-    * remove all mixin snippets matched further down.
+    * we pre-process results, and remove all mixin snippets not matched as first match.
     */
    if
       exists:x:@.scan/0/*/completion
