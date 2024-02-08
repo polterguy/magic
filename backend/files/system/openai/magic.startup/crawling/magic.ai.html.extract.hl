@@ -6,7 +6,6 @@
  *
  * - [html]     - Mandatory. Being the actual HTML we're traversing for training data.
  * - [url]      - Optional.  Being the URL from where the document was fetched
- * - [semantic] - Optional.  If true, will try to start scraping from semantic tags, such as article and main.
  */
 slots.create:magic.ai.html.extract
 
@@ -14,8 +13,6 @@ slots.create:magic.ai.html.extract
    validators.mandatory:x:@.arguments/*/html
    validators.mandatory:x:@.arguments/*/url
    validators.url:x:@.arguments/*/url
-   validators.default:x:@.arguments
-      semantic:bool:false
 
    // Used to return meta information to caller.
    .meta
@@ -36,45 +33,11 @@ slots.create:magic.ai.html.extract
    // Buffer used for URLs from HTML document.
    .urls
 
-   // Checking if caller wants to convert HTML semantically or not.
-   if:x:@.arguments/*/semantic
-
-      // Converting HTML to lambda such that we can semantically inspect HTML for semantic tags.
-      html2lambda:x:@.arguments/*/html
-
-      // Trying to retrieve HTML from main or article tag.
-      if
-         exists:x:@html2lambda/**/article/[0,1]
-         .lambda
-
-            // HTML contains "article" HTML element.
-            lambda2html:x:@html2lambda/**/article/[0,1]
-            html2markdown:x:@lambda2html
-               url:x:@.arguments/*/url
-            set-value:x:@.markdown
-               get-value:x:@html2markdown
-
-      else-if
-         exists:x:@html2lambda/**/main/[0,1]
-         .lambda
-
-            // HTML contains "main" HTML element.
-            lambda2html:x:@html2lambda/**/main/[0,1]
-            html2markdown:x:@lambda2html
-               url:x:@.arguments/*/url
-            set-value:x:@.markdown
-               get-value:x:@html2markdown
-
-   // Checking if we've got some Markdown, and if not, resorting to using entire HTML document.
-   if
-      null:x:@.markdown
-      .lambda
-
-         // Using raw HTML.
-         html2markdown:x:@.arguments/*/html
-            url:x:@.arguments/*/url
-         set-value:x:@.markdown
-            get-value:x:@html2markdown
+   // Converting HTML to Markdown.
+   html2markdown:x:@.arguments/*/html
+      url:x:@.arguments/*/url
+   set-value:x:@.markdown
+      get-value:x:@html2markdown
 
    // Checking if site is SPA, at which point we return early.
    if
@@ -91,17 +54,22 @@ slots.create:magic.ai.html.extract
             meta
                main:int:0
 
+   // Converting raw HTML to lambda to allow us to extract title, description, hyperlinks, etc.
+   .html-lambda
+   add:x:@.html-lambda
+      html2lambda:x:@.arguments/*/html
+
    /*
     * Finding URLs from document.
     *
-    * Notice, for simplicity reasons we do this by round tripping HTML
-    * through markdown, converting it to HTML, conerting HTML to lambda,
-    * and iterate through each anchor HTML element in lambda.
+    * Notice, for simplicity reasons we do this by round tripping through HTML,
+    * for then to convert HTML to lambda, and iterate through each anchor HTML
+    * element in lambda.
+    *
     * This is not optimal, and could be optimised, but it keeps the code
-    * DRY at least ...
+    * DRY at least, since our [html2markdown] slot at this point have resolved
+    * our relative URLs ...
     */
-   html2markdown:x:@.arguments/*/html
-      url:x:@.arguments/*/url
    markdown2html:x:@html2markdown
    html2lambda:x:@markdown2html
    for-each:x:@html2lambda/**/a/*/\@href
@@ -164,9 +132,9 @@ slots.create:magic.ai.html.extract
 
    // Setting title and description from document.
    set-value:x:@.title
-      get-value:x:@html2lambda/**/meta/**/title/*/\#text
+      get-value:x:@.html-lambda/**/head/**/title/*/\#text
    set-value:x:@.description
-      get-value:x:@html2lambda/**/meta/**/meta/*/\@name/=description/./*/\@content
+      get-value:x:@.html-lambda/**/head/**/meta/*/\@name/=description/./*/\@content
 
    // Creating our prompt.
    .prompt
@@ -213,11 +181,15 @@ slots.create:magic.ai.html.extract
             lambda2html:x:@.dp/#
             html2markdown:x:@lambda2html
                url:x:@.arguments/*/url
+            strings.concat
+               get-value:x:@.title
+               .:" | "
+               get-value:x:@.tmp-prompt
             unwrap:x:+/*/*/*
             add:x:@.snippets
                .
                   .
-                     prompt:x:@.tmp-prompt
+                     prompt:x:@strings.concat
                      completion:x:@html2markdown
 
          default
