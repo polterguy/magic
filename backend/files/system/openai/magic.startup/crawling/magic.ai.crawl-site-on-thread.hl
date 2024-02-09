@@ -1,0 +1,459 @@
+
+/*
+ * Crawls the specified website generating training data for machine learning in the process.
+ */
+slots.create:magic.ai.crawl-site-on-thread
+
+   /*
+    * Loading robots.txt from specified [url].
+    */
+   unwrap:x:+/*
+   signal:magic.ai.load-robots
+      url:x:@.arguments/*/url
+      feedback-channel:x:@.arguments/*/feedback-channel
+
+   // Checking if site contains a robots.txt file.
+   if
+      eq:x:@signal/*/found
+         .:bool:true
+      .lambda
+
+         // Site contains a robots.txt file, signaling frontend of that fact.
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:Site has robots.txt
+               type:info
+         sleep:100
+
+         // Signaling frontend how many sitemaps we found in robots.txt file.
+         strings.concat
+            .:"Found "
+            get-count:x:@signal/*/sitemap/*
+            .:" sitemaps in robots.txt file"
+         unwrap:x:+/**
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:x:@strings.concat
+               type:info
+         sleep:100
+
+         // Checking if robots.txt contains a crawl-delay.
+         if
+            exists:x:@signal/*/crawl-delay
+            .lambda
+
+               // Updating delay to value from robots.txt.
+               remove-nodes:x:@.arguments/*/delay
+               unwrap:x:+/*
+               validators.default:x:@.arguments
+                  delay:x:@signal/*/crawl-delay
+
+
+               // Signaling frontend to inform of that we found a crawl-delay value.
+               strings.concat
+                  .:"Robots.txt file contains a Crawl-Delay value of "
+                  math.divide:x:@signal/*/crawl-delay
+                     .:int:1000
+                  .:" seconds"
+               unwrap:x:+/**
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:x:@strings.concat
+                     type:info
+
+   else
+
+      // Site does not contain a robots.txt file, signaling that fact to frontend.
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:Could not find a robots.txt file for website
+            type:warning
+      sleep:100
+      strings.concat
+         .:"We will try to retrieve sitemap from "
+         get-value:x:@signal/*/sitemap/0
+      unwrap:x:+/**
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:x:@strings.concat
+            type:info
+      sleep:100
+
+   /*
+    * Checking if we should filter according to URL, as
+    * in caller provided a sub-folder URL such as foo.com/bar, at which
+    * point we only import URLs below /bar hierarchy.
+    *
+    * Default value is false, implying robots.txt file is solely responsible
+    * for filtering.
+    */
+   .filter-on-url:bool:false
+   strings.split:x:@.arguments/*/url
+      .:/
+   if
+      mt
+         get-count:x:@strings.split/*
+         .:int:2
+      .lambda
+         set-value:x:@.filter-on-url
+            .:bool:true
+
+   /*
+    * Trying to load URLs from sitemap returned from above invocation.
+    */
+   add:x:./*/signal/[1,2]
+      get-nodes:x:@signal/*/sitemap
+      get-nodes:x:@signal/*/allow
+      get-nodes:x:@signal/*/disallow
+   unwrap:x:+/*
+   signal:magic.ai.load-sitemap
+      max:x:@.arguments/*/max
+      feedback-channel:x:@.arguments/*/feedback-channel
+      url:x:@.arguments/*/url
+      filter-on-url:x:@.filter-on-url
+
+   // Signaling user what we're about to do.
+   strings.concat
+      .:"Deleting old snippets for type '"
+      get-value:x:@.arguments/*/type
+      .:"' matching URL of "
+      get-value:x:@.arguments/*/url
+   unwrap:x:+/**
+   sockets.signal:x:@.arguments/*/feedback-channel
+      args
+         message:x:@strings.concat
+         type:info
+   sleep:100
+
+   // Deleting all old training snippets matching specified URL and type.
+   .uri
+   set-value:x:@.uri
+      strings.concat
+         get-value:x:@.arguments/*/url
+         .:%
+   data.connect:[generic|magic]
+      data.execute:@"
+delete from vss_ml_training_snippets
+where rowid in (select id as rowid from ml_training_snippets where type = @type and uri like @uri);
+delete from ml_training_snippets where type = @type and uri like @uri;"
+         type:x:@.arguments/*/type
+         uri:x:@.uri
+
+   // Verifying we found at least one sitemap.
+   if
+      eq:x:@signal/*/has-sitemap
+         .:bool:true
+      .lambda
+
+         /*
+          * We found at least one sitemap.
+          *
+          * Signaling frontend how many URLs we found, and how many there are in total.
+          */
+         get-count:x:@signal/*/urls/*
+         strings.concat
+            .:"We found "
+            get-value:x:@signal/*/total
+            .:" URLs in sitemap(s), we will be scraping "
+            get-value:x:@get-count
+            .:" URLs"
+         unwrap:x:+/**
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:x:@strings.concat
+               type:info
+         sleep:100
+
+         // Checking if site contains more URLs than we're scraping.
+         if
+            eq:x:@get-count
+               .:int:0
+            .lambda
+
+               // Warning user!
+               strings.concat
+                  .:"Warning, we could not find a single valid URL in site"
+               unwrap:x:+/**
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:x:@strings.concat
+                     type:warning
+               sleep:100
+         else-if
+            mt
+               get-value:x:@signal/*/total
+               get-value:x:@get-count
+            .lambda
+
+               // Warning user!
+               strings.concat
+                  .:"Warning, site contains more than "
+                  get-value:x:@get-count
+                  .:" URLs and will only be partially scraped"
+               unwrap:x:+/**
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:x:@strings.concat
+                     type:warning
+               sleep:100
+
+         // Feedback about URLs we're about to scrape, but only if there are any URLs.
+         if
+            mt:x:@get-count
+               .:int:0
+            .lambda
+
+               // Adding spacer.
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:------------------------------------------------------------------------------------------------------------------------
+                     type:info
+               sleep:100
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:"URLs we will scrape are as follows:"
+                     type:info
+               sleep:100
+
+         // Iterating through each URL returned from above invocation.
+         for-each:x:@signal/*/urls/*
+
+            unwrap:x:+/**
+            sockets.signal:x:@.arguments/*/feedback-channel
+               args
+                  message:x:@.dp/#
+                  type:info
+            sleep:10
+
+         // Iterating through each URL returned from above invocation.
+         for-each:x:@signal/*/urls/*
+
+            // Making sure we trap exceptions.
+            try
+
+               // Adding spacer.
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:------------------------------------------------------------------------------------------------------------------------
+                     type:info
+               sleep:100
+
+               // Scraping currently iterated URL.
+               unwrap:x:+/*
+               signal:magic.ai.url.scrape
+                  url:x:@.dp/#
+                  type:x:@.arguments/*/type
+                  threshold:x:@.arguments/*/threshold
+                  feedback-channel:x:@.arguments/*/feedback-channel
+
+               // Verifying we've got more snippets before applying Crawl-Delay
+               if
+                  neq:x:@.dp/#
+                     get-value:x:@signal/@signal/*/urls/0/-
+                  .lambda
+
+                     // Signaling frontend that we're waiting for n seconds.
+                     strings.concat
+                        .:"Waiting for "
+                        math.divide:x:@.arguments/*/delay
+                           .:int:1000
+                        .:" seconds to avoid exhausting web server"
+                     unwrap:x:+/**
+                     sockets.signal:x:@.arguments/*/feedback-channel
+                        args
+                           message:x:@strings.concat
+                           type:info
+                     sleep:100
+
+                     // Sleeping for [delay] milliseconds to avoid exhausting web server.
+                     sleep:x:@.arguments/*/delay
+
+            .catch
+
+               // Logging as error.
+               log.error:Could not scrape URL
+                  url:x:@.dp/#
+                  message:x:@.arguments/*/message
+
+               // Signaling frontend to inform about error.
+               strings.concat
+                  .:"Could not scrape URL, error was: '"
+                  get-value:x:@.arguments/*/message
+                  .:"'"
+               unwrap:x:+/**
+               sockets.signal:x:@.arguments/@.arguments/*/feedback-channel
+                  roles:root
+                  args
+                     message:x:@strings.concat
+                     type:warning
+               sleep:100
+
+         // Adding spacer.
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:------------------------------------------------------------------------------------------------------------------------
+               type:info
+         sleep:100
+
+         /*
+          * Crawling is done.
+          * Making sure we notify client that we're done and do some logging.
+          */
+         sockets.signal:magic.backend.message
+            roles:root
+            args
+               message:Done creating OpenAI training data from URL
+               type:success
+         sleep:100
+
+         // Basic logging.
+         log.info:OpenAI training data successfully created
+            url:x:@.arguments/*/url
+            type:x:@.arguments/*/type
+
+         // Checking if caller wants us to execute some lambda object once we're done.
+         if
+            exists:x:@.arguments/*/.onafter
+            .lambda
+               eval:x:@.arguments/*/.onafter
+
+   else
+
+      /*
+       * Site did not have a valid sitemap, hence we
+       * try to crawl it manually instead.
+       *
+       * This is the list of URLs we should scrape.
+       */
+      .urls
+
+      // This is the list of URLs we already have scraped.
+      .done
+
+      // Adding root URL to above list of URLs to be crawled.
+      unwrap:x:+/*/*
+      add:x:@.urls
+         .
+            .:x:@.arguments/*/url
+
+      // No sitemap(s) found, informing user
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:Could not find any valid sitemaps
+            type:warning
+      sleep:100
+
+      // Informing frontend of that we'll try to crawl site.
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:Trying to crawl site even though we did not find a valid sitemap
+            type:info
+      sleep:100
+
+      /*
+       * Looping through all above [.urls] as long as we don't exceed [max] argument,
+       * and for as long as we have URLs to scrape.
+       */
+      while
+         and
+            exists:x:@.urls/*
+            lt
+               get-count:x:@.done/*
+               get-value:x:@.arguments/*/max
+         .lambda
+
+            // Adding spacer.
+            sockets.signal:x:@.arguments/*/feedback-channel
+               args
+                  message:------------------------------------------------------------------------------------------------------------------------
+                  type:info
+            sleep:100
+
+            /*
+             * Scraping first URL in above [.urls] informing slot that
+             * we want it to return URLs found during scraping.
+             */
+            unwrap:x:+/*
+            signal:magic.ai.url.scrape
+               url:x:@.urls/0
+               type:x:@.arguments/*/type
+               images:bool:true
+               code:bool:true
+               lists:bool:true
+               main:bool:true
+               empty-completion:bool:false
+               threshold:x:@.arguments/*/threshold
+               feedback-channel:x:@.arguments/*/feedback-channel
+
+            /*
+             * Adding currently iterated URL to [.done] and removing it
+             * from above [.urls] collection.
+             */
+            add:x:@.done
+               get-nodes:x:@.urls/0
+            remove-nodes:x:@.urls/0
+
+            /*
+             * Adding all URLs returned in above invocation to above [.urls] collection,
+             * unless we've already crawled the URL.
+             */
+            for-each:x:@signal/*
+
+               // Checking if URL has been imported or added before, and that it matches base URL provided by caller.
+               if
+                  and
+                     not-exists:x:@.done/*/={@.dp/#}
+                     not-exists:x:@.urls/*/={@.dp/#}
+                     strings.starts-with:x:@.dp/#
+                        get-value:x:@.arguments/*/url
+                  .lambda
+
+                     // Adding URL to [.urls] collection.
+                     add:x:@.urls
+                        get-nodes:x:@.dp/#
+
+            // Signaling frontend that we're waiting for n seconds.
+            strings.concat
+               .:"Waiting for "
+               math.divide:x:@.arguments/*/delay
+                  .:int:1000
+               .:" seconds to avoid exhausting web server"
+            unwrap:x:+/**
+            sockets.signal:x:@.arguments/*/feedback-channel
+               args
+                  message:x:@strings.concat
+                  type:info
+            sleep:100
+
+            // Sleeping for [delay] milliseconds to avoid exhausting web server.
+            sleep:x:@.arguments/*/delay
+
+      // Adding spacer.
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:------------------------------------------------------------------------------------------------------------------------
+            type:info
+      sleep:100
+
+      // Informing frontend of that we're done crawling.
+      strings.concat
+         .:"Done scraping "
+         get-count:x:@.done/*
+         .:" URLs"
+      unwrap:x:+/**
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:x:@strings.concat
+            type:info
+      sleep:100
+
+      // Basic logging.
+      log.info:OpenAI training data successfully created
+         url:x:@.arguments/*/url
+         type:x:@.arguments/*/type
+
+      // Checking if caller wants us to execute some lambda object once we're done.
+      if
+         exists:x:@.arguments/*/.onafter
+         .lambda
+            eval:x:@.arguments/*/.onafter
