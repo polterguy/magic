@@ -36,14 +36,12 @@ slots.create:magic.ai.html.extract
    // Converting HTML to Markdown.
    html2markdown:x:@.arguments/*/html
       url:x:@.arguments/*/url
-   set-value:x:@.markdown
-      get-value:x:@html2markdown
 
-   // Checking if site is SPA, at which point we return early.
+   // Checking if we have any Markdown at all, and if not we return early.
    if
       or
-         null:x:@.markdown
-         eq:x:@.markdown
+         null:x:@html2markdown
+         eq:x:@html2markdown
             .:
       .lambda
 
@@ -54,107 +52,60 @@ slots.create:magic.ai.html.extract
             meta
                main:int:0
 
-   // Converting raw HTML to lambda to allow us to extract title, description, hyperlinks, etc.
-   .html-lambda
-   add:x:@.html-lambda
-      html2lambda:x:@.arguments/*/html
+   // Retrieving title and description from document.
+   set-value:x:@.title
+      get-value:x:@html2markdown/*/title
+   set-value:x:@.description
+      get-value:x:@html2markdown/*/description
+
+   // Adding URLs found as we transformed HTML to Markdown.
+   add:x:@.urls
+      get-nodes:x:@html2markdown/*/urls/*
+
+   // Storing Markdown in above buffer node.
+   set-value:x:@.markdown
+      get-value:x:@html2markdown
 
    /*
-    * Finding URLs from document.
-    *
-    * Notice, for simplicity reasons we do this by round tripping through HTML,
-    * for then to convert HTML to lambda, and iterate through each anchor HTML
-    * element in lambda.
-    *
-    * This is not optimal, and could be optimised, but it keeps the code
-    * DRY at least, since our [html2markdown] slot at this point have resolved
-    * our relative URLs ...
+    * Creating our "base prompt", which is the default to be used for
+    * all training snippets found in document.
     */
-   markdown2html:x:@html2markdown
-   html2lambda:x:@markdown2html
-   for-each:x:@html2lambda/**/a/*/\@href
-
-      /*
-       * Notice, the URLs we return are for the scraper to crawl and scrape,
-       * so we don't return mailto or tel URLs here, and we only return URLs
-       * from the same domain.
-       */
-      if
-         and
-            not
-               strings.starts-with:x:@.dp/#
-                  .:"mailto:"
-            not
-               strings.starts-with:x:@.dp/#
-                  .:"tel:"
-         .lambda
-         
-            // Removing '#'.
-            .url
-            set-value:x:@.url
-               get-value:x:@.dp/#
-            strings.split:x:@.url
-               .:#
-            set-value:x:@.url
-               get-value:x:@strings.split/0
-
-            // Valid URL, now checking if it's the same domain.
-            .local
-            strings.split:x:@.arguments/*/url
-               .:"/"
-            set-value:x:@.local
-               get-value:x:@strings.split/1
-            .current
-            strings.split:x:@.url
-               .:"/"
-            set-value:x:@.current
-               get-value:x:@strings.split/1
-            if
-               eq:x:@.local
-                  get-value:x:@.current
-               .lambda
-
-                  // Local URL, now making sure it's not the same URL.
-                  strings.trim-end:x:@.url
-                     .:/
-                  strings.trim-end:x:@.arguments/*/url
-                     .:/
-                  if
-                     neq:x:@strings.trim-end
-                        get-value:x:@strings.trim-end/@strings.trim-end
-                     .lambda
-                     
-                        // Not the same URLas the one we'recurrently scraping.
-                        unwrap:x:+/*/*
-                        add:x:@.urls
-                           .
-                              .:x:@.url
-
-   // Setting title and description from document.
-   set-value:x:@.title
-      get-value:x:@.html-lambda/**/head/**/title/*/\#text
-   set-value:x:@.description
-      get-value:x:@.html-lambda/**/head/**/meta/*/\@name/=description/./*/\@content
-
-   // Creating our prompt.
    .prompt
    set-value:x:@.prompt
       get-first-value
          get-value:x:@.title
-         get-value:x:@html2lambda/**/h1/[0,1]/*/\#text
-         get-value:x:@html2lambda/**/h2/[0,1]/*/\#text
-         get-value:x:@html2lambda/**/h3/[0,1]/*/\#text
-         get-value:x:@html2lambda/**/h4/[0,1]/*/\#text
-         get-value:x:@html2lambda/**/h5/[0,1]/*/\#text
-         get-value:x:@html2lambda/**/h6/[0,1]/*/\#text
          get-value:x:@.description
          .:"Page"
 
-   // Breaking page into sections.
+   /*
+    * Breaking page into sections.
+    *
+    * Here we are breaking page down into smaller training snippets, based upon
+    * lists found at root, and pre sections (code).
+    *
+    * This is done to avoid creating summaries of lists that typically might contain
+    * navbar parts and URLs, in addition to making sure we keep all code segments as is.
+    *
+    * The [.tmp-prompt] below is being used as the prompt for individual OL, UL and PRE
+    * elements, while the [.remaining] part is the remaining Markdown after we've remove
+    * all UL, OL and PRE elements.
+    */
    .remaining
    .tmp-prompt
    set-value:x:@.tmp-prompt
       get-value:x:@.prompt
+
+   /*
+    * For simplicity reasons we convert Markdown to HTML and then to lambda again,
+    * to allow us to semantically traverse UL elements, OL elements and PRE elements.
+    *
+    * This allows us to extract UL, OL, and PRE elements, and import these as individual
+    * training snippets.
+    */
+   markdown2html:x:@html2markdown
+   html2lambda:x:@markdown2html
+
+   // Iterating through all root nodes found as we converted Markdown back to lambda again.
    for-each:x:@html2lambda/*
 
       get-name:x:@.dp/#
@@ -166,30 +117,37 @@ slots.create:magic.ai.html.extract
          case:h4
          case:h5
          case:h6
+
+            /*
+             * If page contains Hx element, we append it to our base
+             * prompt, to try to keep as much of the (relevant) information as
+             * possible in our prompt for our UL, OL and PRE training snippets.
+             */
             set-value:x:@.tmp-prompt
-               get-value:x:@.dp/#/*/\#text
+               strings.concat
+                  get-value:x:@.prompt
+                  .:" | "
+                  get-value:x:@.dp/#/*/\#text
 
          case:ul
          case:ol
          case:pre
 
             /*
-             * To avoid repeating navbars "everywhere" we remove these from Markdown and returns
-             * these as individual training snippets. This will ensure navbars are only imported
-             * once, as a separated training snippet.
+             * This is a bulleted list, ordered list, or a code segment.
+             *
+             * We keep it exactly as is, but return it as an individual training snippet,
+             * such that it becomes an isolated training snippet during
+             * import.
              */
             lambda2html:x:@.dp/#
             html2markdown:x:@lambda2html
                url:x:@.arguments/*/url
-            strings.concat
-               get-value:x:@.title
-               .:" | "
-               get-value:x:@.tmp-prompt
             unwrap:x:+/*/*/*
             add:x:@.snippets
                .
                   .
-                     prompt:x:@strings.concat
+                     prompt:x:@.tmp-prompt
                      completion:x:@html2markdown
 
          default
@@ -198,11 +156,18 @@ slots.create:magic.ai.html.extract
             add:x:@.remaining
                get-nodes:x:@.dp/#
 
+   /*
+    * Now we have removed all UL, OL and PRE elements, and [.remaining] contains
+    * a lambda node hierarchy of everything that remains in the page, at which
+    * point we can transform it back to HTML for then to transform it to Markdown,
+    * and return that as an individual snippets, without PRE, UL and OL elements.
+    */
    lambda2html:x:@.remaining/*
    set-value:x:@.markdown
       html2markdown:x:@lambda2html
          url:x:@.arguments/*/url
 
+   // Adding remaining HTML as an individual training snippet.
    .completion
    set-value:x:@.completion
       get-value:x:@.markdown
@@ -213,19 +178,14 @@ slots.create:magic.ai.html.extract
             prompt:x:@.prompt
             completion:x:@.completion
 
-   // Returning snippets to caller if we could find anything.
-   if
-      exists:x:@.snippets/*
-      .lambda
-
-         // Returning snippets and meta information to caller.
-         add:x:./*/return/*/snippets
-            get-nodes:x:@.snippets/*
-         add:x:./*/return/*/meta
-            get-nodes:x:@.meta/*
-         add:x:./*/return/*/urls
-            get-nodes:x:@.urls/*
-         return
-            urls
-            snippets
-            meta
+   // Returning snippets and meta information to caller.
+   add:x:./*/return/*/snippets
+      get-nodes:x:@.snippets/*
+   add:x:./*/return/*/meta
+      get-nodes:x:@.meta/*
+   add:x:./*/return/*/urls
+      get-nodes:x:@.urls/*
+   return
+      urls
+      snippets
+      meta
