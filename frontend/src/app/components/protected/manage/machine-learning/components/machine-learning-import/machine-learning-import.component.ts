@@ -33,6 +33,9 @@ export class MachineLearningImportComponent {
   uploadCount: number = 0;
   files: FileList = null;
   summarize: boolean = true;
+  images: boolean = true;
+  code: boolean = true;
+  lists: boolean = true;
   massageTemplate: string = null;
   massageTemplates: string[] = [
     'Summarize the following into a desriptive title and content, separated by carrriage return',
@@ -67,7 +70,16 @@ export class MachineLearningImportComponent {
       return;
     }
 
-    this.matDialog.close({ crawl: this.url, delay: this.delay * 1000, max: this.max, threshold: this.threshold, summarize: this.summarize });
+    this.matDialog.close({
+      crawl: this.url,
+      delay: this.delay * 1000,
+      max: this.max,
+      threshold: this.threshold,
+      summarize: this.summarize,
+      images: this.images,
+      code: this.code,
+      lists: this.lists,
+    });
   }
 
   getFile(event: any) {

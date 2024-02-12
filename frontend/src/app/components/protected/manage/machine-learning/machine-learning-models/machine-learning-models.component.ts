@@ -153,7 +153,11 @@ export class MachineLearningModelsComponent implements OnInit {
         delay?: number,
         max?: number,
         threshold?: number,
-        summarize?: boolean }) => {
+        summarize?: boolean,
+        images?: boolean,
+        code?: boolean,
+        lists?: boolean,
+      }) => {
 
         if (result?.crawl) {
 
@@ -168,7 +172,10 @@ export class MachineLearningModelsComponent implements OnInit {
                 max: result.max,
                 threshold: result.threshold,
                 summarize: result.summarize,
-                mode: 'site'
+                images: result.images ?? true,
+                code: result.code ?? true,
+                lists: result.lists ?? true,
+                mode: 'site',
               }
             });
         }

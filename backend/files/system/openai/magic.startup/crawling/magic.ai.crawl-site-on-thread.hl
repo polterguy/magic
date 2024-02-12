@@ -245,6 +245,9 @@ delete from ml_training_snippets where type = @type and uri like @uri;"
                   type:x:@.arguments/*/type
                   threshold:x:@.arguments/*/threshold
                   feedback-channel:x:@.arguments/*/feedback-channel
+                  images:x:@.arguments/*/images
+                  lists:x:@.arguments/*/lists
+                  code:x:@.arguments/*/code
 
                // Verifying we've got more snippets before applying Crawl-Delay
                if

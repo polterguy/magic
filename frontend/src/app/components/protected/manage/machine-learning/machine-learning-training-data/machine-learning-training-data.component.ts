@@ -121,12 +121,15 @@ export class MachineLearningTrainingDataComponent implements OnInit {
               width: '80vw',
               maxWidth: '1280px',
               data: {
-                url: result,
+                url: result.url,
                 type: this.type,
                 delay: result.delay,
                 max: result.max,
                 threshold: result.threshold,
                 summarize: result.summarize,
+                images: result.images,
+                lists: result.lists,
+                code: result.code,
                 mode: 'single-page',
                 callback: () => this.getTrainingData(true)
               }

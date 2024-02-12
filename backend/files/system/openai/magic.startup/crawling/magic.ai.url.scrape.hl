@@ -9,6 +9,9 @@
  * - [type] - What type to import training snippets into.
  * - [summarize] - If true will summarize all training snippets that are larger than 1,000 tokens.
  * - [headers] - Optional collection of HTTML headers we should associate with HTTP request.
+ * - [images] - If true will import images
+ * - [lists] - If true will import lists
+ * - [code] - If true will import code
  */
 slots.create:magic.ai.url.scrape
 
@@ -17,9 +20,12 @@ slots.create:magic.ai.url.scrape
    validators.mandatory:x:@.arguments/*/type
    validators.url:x:@.arguments/*/url
 
-   // Ensuring [summarize] defaults to true.
+   // Ensuring defaults.
    validators.default:x:@.arguments
       summarize:bool:true
+      images:bool:true
+      lists:bool:true
+      code:bool:true
 
    // Signaling frontend.
    .msg
@@ -54,6 +60,9 @@ slots.create:magic.ai.url.scrape
          html:x:@.html
          url:x:@.arguments/*/url
          feedback-channel:x:@.arguments/*/feedback-channel
+         images:x:@.arguments/*/images
+         lists:x:@.arguments/*/lists
+         code:x:@.arguments/*/code
 
       // URLs we return to caller.
       .urls

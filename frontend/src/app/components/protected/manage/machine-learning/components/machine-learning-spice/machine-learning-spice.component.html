@@ -30,6 +30,33 @@
 
   <div mat-dialog-actions [align]="'end'">
 
+    <mat-slide-toggle
+      labelPosition="before"
+      class="me-5"
+      matTooltip="Import lists"
+      name="lists"
+      [(ngModel)]="lists">
+      Lists
+    </mat-slide-toggle>
+
+    <mat-slide-toggle
+      labelPosition="before"
+      class="me-5"
+      matTooltip="Import code segments"
+      name="code"
+      [(ngModel)]="code">
+      Code
+    </mat-slide-toggle>
+
+    <mat-slide-toggle
+      labelPosition="before"
+      class="me-5"
+      matTooltip="Import images"
+      name="images"
+      [(ngModel)]="images">
+      Images
+    </mat-slide-toggle>
+
     <button
       mat-button
       type="button"
@@ -40,6 +67,7 @@
     <button
       class="pe-3"
       type="submit"
+      color="primary"
       mat-flat-button>
       Scrape
     </button>

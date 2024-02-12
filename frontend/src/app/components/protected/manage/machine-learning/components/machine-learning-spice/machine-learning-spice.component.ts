@@ -23,14 +23,21 @@ export class MachineLearningSpiceComponent {
 
   CommonRegEx = CommonRegEx;
   CommonErrorMessages = CommonErrorMessages;
+  lists?: boolean = true;
+  images?: boolean = true;
+  code?: boolean = true;
 
   constructor(
-    private generalService: GeneralService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<MachineLearningSpiceComponent>) { }
 
   scrape() {
 
-    this.dialogRef.close(this.url);
+    this.dialogRef.close({
+      url: this.url,
+      lists: this.lists,
+      images: this.images,
+      code: this.code,
+    });
   }
 }

@@ -7,6 +7,9 @@
    type:string
    threshold:int
    summarize:bool
+   images:bool
+   lists:bool
+   code:bool
    feedback-channel:string
 
 // Ensures user is authorized to access endpoint.
@@ -21,6 +24,9 @@ validators.integer:x:@.arguments/*/threshold
    min:25
 validators.default:x:@.arguments
    summarize:bool:true
+   images:bool:true
+   lists:bool:true
+   code:bool:true
 
 // Doing some basic logging.
 log.info:Crawling page generating OpenAI training snippets
@@ -47,6 +53,9 @@ fork
          feedback-channel:x:@.arguments/*/feedback-channel
          threshold:x:@.arguments/*/threshold
          summarize:x:@.arguments/*/summarize
+         lists:x:@.arguments/*/lists
+         images:x:@.arguments/*/images
+         code:x:@.arguments/*/code
 
       /*
        * Crawling is done.
