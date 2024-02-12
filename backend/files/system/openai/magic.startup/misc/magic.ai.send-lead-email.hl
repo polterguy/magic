@@ -114,8 +114,8 @@ slots.create:magic.ai.send-lead-email
                message
                   to
                   reply-to
-                     AINIRO Lead:x:@.email
-                  subject:Lead from AINIRO.IO
+                     Lead:x:@.email
+                  subject:Chatbot lead
                   entity:text/html
                      content:x:@.body
 
