@@ -140,7 +140,10 @@ export class OpenAIService {
     max: number,
     threshold: number,
     summarize: boolean,
-    feedbackChannel: string) {
+    feedbackChannel: string,
+    images: boolean = true,
+    lists: boolean = true,
+    code: boolean = true) {
 
     return this.httpService.post<any>('/magic/system/openai/import-url', {
       url,
@@ -149,6 +152,9 @@ export class OpenAIService {
       max,
       threshold,
       summarize,
+      images,
+      lists,
+      code,
       ['feedback-channel']: feedbackChannel,
     });
   }
@@ -160,12 +166,18 @@ export class OpenAIService {
     url: string,
     type: string,
     threshold: number,
-    feedbackChannel: string) {
+    feedbackChannel: string,
+    images: boolean = true,
+    lists: boolean = true,
+    code: boolean = true) {
 
     return this.httpService.post<any>('/magic/system/openai/import-page', {
       url,
       type,
       threshold,
+      images,
+      lists,
+      code,
       ['feedback-channel']: feedbackChannel,
     });
   }

@@ -14,6 +14,12 @@ slots.create:magic.ai.html.extract
    validators.mandatory:x:@.arguments/*/url
    validators.url:x:@.arguments/*/url
 
+   // Ensuring defaults.
+   validators.default:x:@.arguments
+      images:bool:true
+      lists:bool:true
+      code:bool:true
+
    // Used to return meta information to caller.
    .meta
       main:int:0
@@ -36,6 +42,9 @@ slots.create:magic.ai.html.extract
    // Converting HTML to Markdown.
    html2markdown:x:@.arguments/*/html
       url:x:@.arguments/*/url
+      images:x:@.arguments/*/images
+      lists:x:@.arguments/*/lists
+      code:x:@.arguments/*/code
 
    // Checking if we have any Markdown at all, and if not we return early.
    if
@@ -54,9 +63,9 @@ slots.create:magic.ai.html.extract
 
    // Retrieving title and description from document.
    set-value:x:@.title
-      get-value:x:@html2markdown/*/title
+      get-value:x:@html2markdown/*/title/[0,1]
    set-value:x:@.description
-      get-value:x:@html2markdown/*/description
+      get-value:x:@html2markdown/*/description/[0,1]
 
    // Adding URLs found as we transformed HTML to Markdown.
    add:x:@.urls

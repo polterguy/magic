@@ -11,11 +11,20 @@
    max:int
    threshold:int
    summarize:bool
+   images:bool
+   lists:bool
+   code:bool
    feedback-channel:string
    
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
+
+// Applying defaults.
+validators.default:x:@.arguments
+   images:bool:true
+   lists:bool:true
+   code:bool:true
 
 // Prepending scheme unless given.
 if

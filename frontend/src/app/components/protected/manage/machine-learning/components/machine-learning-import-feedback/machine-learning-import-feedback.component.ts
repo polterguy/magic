@@ -3,13 +3,16 @@
  * Copyright (c) Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
+// Angular and system specific imports.
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
-import { BackendService } from 'src/app/services/backend.service';
+
+// Application specific imports.
 import { ConfigService } from 'src/app/services/config.service';
-import { GeneralService } from 'src/app/services/general.service';
 import { OpenAIService } from 'src/app/services/openai.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { GeneralService } from 'src/app/services/general.service';
 
 /**
  * Helper component to view feedback as we crawl URLs.
@@ -27,7 +30,6 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private backendService: BackendService,
-    private dialogRef: MatDialogRef<MachineLearningImportFeedbackComponent>,
     private generalService: GeneralService,
     private openAIService: OpenAIService,
     private configService: ConfigService) { }
@@ -91,7 +93,10 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
               this.data.max,
               this.data.threshold,
               this.data.summarize,
-              result.result).subscribe({
+              result.result,
+              this.data.images,
+              this.data.lists,
+              this.data.code).subscribe({
               next: () => {
     
                 this.generalService.hideLoading();
@@ -112,7 +117,10 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
               this.data.url,
               this.data.type,
               50,
-              result.result).subscribe({
+              result.result,
+              this.data.images,
+              this.data.lists,
+              this.data.code).subscribe({
               next: () => {
     
                 this.generalService.hideLoading();
