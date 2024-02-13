@@ -2,8 +2,9 @@
 /*
  * Sends an email to the specified [name]/[email] recipient, with the specified [subject] and [body].
  *
- * Optionally supply [from] and [from-email] as name/email sender. If you don't supply from, this action
- * will use the default sender settings from your configuration.
+ * Optionally supply [from] and [from-email] as name/email sender, and/or [reply-to] and [reply-to-email]
+ * as the email to reply to. If you don't supply [from] or [from-email] then this action will use the
+ * default sender settings from your configuration.
  */
 .arguments
    name
