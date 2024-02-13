@@ -18,6 +18,12 @@
    from-email
       type:email
       mandatory:bool:false
+   reply-to
+      type:string
+      mandatory:bool:false
+   reply-to-email
+      type:email
+      mandatory:bool:false
    subject
       type:string
       mandatory:bool:true
@@ -36,6 +42,7 @@ validators.email:x:@.arguments/*/email
 validators.mandatory:x:@.arguments/*/subject
 validators.mandatory:x:@.arguments/*/body
 validators.email:x:@.arguments/*/from-email
+validators.email:x:@.arguments/*/reply-to-email
 
 // Applying defaults.
 validators.default:x:@.arguments
@@ -64,6 +71,21 @@ if
                .
                   name:x:@.arguments/*/from
                   email:x:@.arguments/*/from-email
+
+// Checking if we've got an explicit [reply-to] and [reply-to-email] argument.
+if
+   and
+      exists:x:@.arguments/*/reply-to
+      exists:x:@.arguments/*/reply-to-email
+   .lambda
+
+      // Adding explicit from name/address.
+      add:x:../*/mail.smtp.send/*/message
+         .
+            reply-to
+               .
+                  name:x:@.arguments/*/reply-to
+                  email:x:@.arguments/*/reply-to-email
 
 // Forward evaluating arguments to [mail.smtp.send].
 unwrap:x:./*/mail.smtp.send/**
