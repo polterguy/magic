@@ -1,0 +1,64 @@
+
+/*
+ * Stores the specified file as training data for the specified model.
+ *
+ * Contrary to the other upload endpoint, this assumes it's given a CSV file, and
+ * it will also use ALL columns in the file. It will assume the first column is
+ * the prompt though.
+ */
+.arguments
+   type:string
+   file:*
+.type:internal
+.accept:multipart/form-data
+.description:Imports the specified CSV file as training data for the specified model
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+
+// Reading file data from stream.
+io.stream.read:x:@.arguments/*/file/*/stream
+
+// Converting file to lambda object.
+csv2lambda:x:@io.stream.read
+
+// Opening database connection.
+data.connect:[generic|magic]
+
+   // Iterating through each record in file.
+   for-each:x:@csv2lambda/*
+
+      // Creating our completion.
+      .completion:
+      for-each:x:@.dp/#/*/[1,1000]
+         set-value:x:@.completion
+            strings.concat
+               get-value:x:@.completion
+               .:"\r\n"
+               .:"\r\n"
+               get-name:x:@.dp/#
+               .:": "
+               get-value:x:@.dp/#
+      set-value:x:@.completion
+         strings.trim:x:@.completion
+
+      // Importing item into database.
+      data.create
+         table:ml_training_snippets
+         values
+            type:x:@.arguments/*/type
+            prompt:x:@.dp/#/0
+            completion:x:@.completion
+            meta:x:@.arguments/*/file/*/name
+
+// Returning success to caller.
+get-count:x:@csv2lambda/*
+yield
+   result:success
+   count:x:@get-count
