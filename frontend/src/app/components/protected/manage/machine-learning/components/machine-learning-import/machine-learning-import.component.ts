@@ -22,6 +22,7 @@ export class MachineLearningImportComponent {
 
   uploading: boolean = false;
   trainingFileModel: string = '';
+  trainingFileModelCsv: string = '';
   url: string = null;
   delay: number = 1;
   max: number = 25;
@@ -95,6 +96,19 @@ export class MachineLearningImportComponent {
     this.uploadCurrentFile();
   }
 
+  getFileCsv(event: any) {
+
+    if (!event || !event.target.files || event.target.files.length === 0) {
+      return;
+    }
+    this.uploading = true;
+    this.uploadIndex = 0;
+    this.uploadCount = 0;
+    this.files = event.target.files;
+    this.generalService.showLoading();
+    this.uploadCurrentFile(true);
+  }
+
   getFileName() {
 
     if (!this.files || this.files.length === 0 || this.uploadIndex >= this.files.length) {
@@ -107,18 +121,22 @@ export class MachineLearningImportComponent {
    * Private helper methods.
    */
 
-  private uploadCurrentFile() {
+  private uploadCurrentFile(csvFile: boolean = false) {
 
     const formData = new FormData();
     formData.append('file', this.files[this.uploadIndex], this.files[this.uploadIndex].name);
     formData.append('type', this.data.type);
-    formData.append('prompt', this.prompt);
-    formData.append('completion', this.completion);
-    if (this.massage && this.massage !== '') {
-      formData.append('massage', this.massage);
+    if (!csvFile) {
+      formData.append('prompt', this.prompt);
+      formData.append('completion', this.completion);
+      if (this.massage && this.massage !== '') {
+        formData.append('massage', this.massage);
+      }
     }
 
-    this.openAIService.uploadTrainingFile(formData).subscribe({
+    var svc = csvFile ? this.openAIService.uploadCsvFile.bind(this.openAIService) : this.openAIService.uploadTrainingFile.bind(this.openAIService);
+
+    svc(formData).subscribe({
       next: (result: any) => {
 
         this.uploadCount += result.count;
@@ -131,7 +149,11 @@ export class MachineLearningImportComponent {
             this.generalService.hideLoading();
             this.generalService.showFeedback(`${this.uploadCount} training snippets successfully imported`, 'successMessage');
             this.uploading = false;
-            this.trainingFileModel = '';
+            if (csvFile) {
+              this.trainingFileModelCsv = '';
+            } else {
+              this.trainingFileModel = '';
+            }
             this.uploadIndex = 0;
             this.files = null;
             this.matDialog.close();
@@ -139,13 +161,17 @@ export class MachineLearningImportComponent {
           }
 
           // More files remaining.
-          this.uploadCurrentFile();
+          this.uploadCurrentFile(csvFile);
         }, 100);
       },
       error: (error: any) => {
 
         this.uploading = false;
-        this.trainingFileModel = '';
+        if (csvFile) {
+          this.trainingFileModelCsv = '';
+        } else {
+          this.trainingFileModel = '';
+        }
         this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
         this.generalService.hideLoading();
       }

@@ -123,6 +123,14 @@ export class OpenAIService {
   }
 
   /**
+   * Uploads the specified training data file to the backend.
+   */
+  uploadCsvFile(data: FormData) {
+
+    return this.httpService.post<any>('/magic/system/openai/upload-csv', data);
+  }
+
+  /**
    * Uploads training data to OpenAI and starts a new training session.
    */
   start_training(data: any) {

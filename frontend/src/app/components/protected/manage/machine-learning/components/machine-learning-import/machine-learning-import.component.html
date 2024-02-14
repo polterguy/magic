@@ -19,7 +19,7 @@
         <div class="col-12 mb-3 mt-4">
 
           <p class="text-muted text-small">
-            Crawl and scrape the specified website for training data
+            Crawl and scrape the specified URL for training data
           </p>
 
           <mat-form-field class="standalone-field w-100">
@@ -163,6 +163,58 @@
     <mat-tab>
 
       <ng-template mat-tab-label>
+        CSV file
+      </ng-template>
+
+      <!-- Upload CVS file -->
+      <div class="row px-3">
+  
+        <div class="col-12 mt-4 mb-3">
+
+          <p class="text-muted text-small">
+            Upload CSV file with unspecified columns. The first column is assumed to be the prompt, and all other columns will become part of the completion.
+          </p>
+        </div>
+
+        <div class="col-12 mt-2">
+      
+          <div class="drop-container pointer border-color">
+
+            <input
+              type="file"
+              [(ngModel)]="trainingFileModelCsv"
+              multiple
+              class="w-100 h-100 hide pointer"
+              #uploadCsv
+              (change)="getFileCsv($event)"
+              accept=".csv">
+
+            <button
+              mat-button
+              class="w-100 pt-2"
+              (click)="uploadCsv.click()"
+              *ngIf="trainingFileModelCsv === ''"
+              [disabled]="uploading">
+              <i>Drag & drop your CSV file here</i> <br />
+              <span class="text-primary">Choose a file</span>
+            </button>
+
+            <ng-container *ngIf="trainingFileModelCsv !== ''">
+              <h4 class="mb-0 mt-3 text-center">{{getFileName()}}</h4>
+              <p class="text-center mt-3" *ngIf="uploading">Uploading {{uploadIndex + 1}} of {{files.length}}...</p>
+              <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
+            </ng-container>
+
+          </div>
+      
+        </div>
+
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+
+      <ng-template mat-tab-label>
         Structured data
       </ng-template>
 
@@ -172,7 +224,7 @@
         <div class="col-12 mt-4 mb-3">
 
           <p class="text-muted text-small">
-            Upload XML, JSON, YAML or CSV files as training data
+            Upload XML, JSON, YAML or CSV files as training data. Notice, this will only import two columns from your files, prompt and completion.
           </p>
 
           <div class="row">
