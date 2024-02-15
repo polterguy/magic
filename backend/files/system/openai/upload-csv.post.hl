@@ -35,16 +35,28 @@ data.connect:[generic|magic]
    for-each:x:@csv2lambda/*
 
       // Creating our completion.
+      .prompt:
       .completion:
+      set-value:x:@.prompt
+         strings.concat
+            get-name:x:@.dp/#/0
+            .:": "
+            get-value:x:@.dp/#/0
       for-each:x:@.dp/#/*/[1,1000]
-         set-value:x:@.completion
-            strings.concat
-               get-value:x:@.completion
-               .:"\r\n"
-               .:"\r\n"
-               get-name:x:@.dp/#
-               .:": "
-               get-value:x:@.dp/#
+         if
+            and
+               not-null:x:@.dp/#
+               neq:x:@.dp/#
+                  .:
+            .lambda
+               set-value:x:@.completion
+                  strings.concat
+                     get-value:x:@.completion
+                     .:"\r\n"
+                     .:"\r\n"
+                     get-name:x:@.dp/#
+                     .:": "
+                     get-value:x:@.dp/#
       set-value:x:@.completion
          strings.trim:x:@.completion
 
@@ -53,7 +65,7 @@ data.connect:[generic|magic]
          table:ml_training_snippets
          values
             type:x:@.arguments/*/type
-            prompt:x:@.dp/#/0
+            prompt:x:@.prompt
             completion:x:@.completion
             meta:x:@.arguments/*/file/*/name
 
