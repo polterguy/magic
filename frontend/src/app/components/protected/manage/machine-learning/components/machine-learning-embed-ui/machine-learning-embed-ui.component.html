@@ -69,17 +69,20 @@
           [(ngModel)]="search"
           labelPosition="before"
           class="me-3"
+          matTooltip="Have chatbot show references or citations"
           color="primary">References</mat-checkbox>
 
         <mat-checkbox
           [(ngModel)]="chat"
           labelPosition="before"
+          disabled="true"
           class="me-3"
           color="primary">Chat</mat-checkbox>
 
         <mat-checkbox
           [(ngModel)]="markdown"
           labelPosition="before"
+          matTooltip="Use Markdown conversion in chatbot"
           class="me-3"
           color="primary">Markdown</mat-checkbox>
 
@@ -87,24 +90,28 @@
           [(ngModel)]="speech"
           labelPosition="before"
           class="me-3"
+          disabled="true"
           color="primary">Speech</mat-checkbox>
 
         <mat-checkbox
           [(ngModel)]="rtl"
           labelPosition="before"
           class="me-3"
+          matTooltip="Right to left languages, such as Arabic, Hebrew, Farsi, etc"
           color="primary">RTL</mat-checkbox>
 
         <mat-checkbox
           [(ngModel)]="has_button"
           labelPosition="before"
           class="me-3"
+          matTooltip="Show a submit button simplifying usage"
           color="primary">Submit button</mat-checkbox>
 
         <mat-checkbox
           [(ngModel)]="stream"
           labelPosition="before"
           class="me-3"
+          matTooltip="Stream results, implying start writing out result immediately once it's available"
           color="primary">Stream</mat-checkbox>
 
       </div>
