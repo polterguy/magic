@@ -1,6 +1,8 @@
 
 # An AI-based Low-Code and No-Code Software Development Automation Framework
 
+**IMPORTANT** - Magic is _no longer open source_. You can read the arguments [here](https://ainiro.io/blog/discontinuing-open-source-version).
+
 Magic Cloud is a software development automation platform created and maintained by [AINIRO.IO](https://ainiro.io) based upon AI, Low-Code, and No-Code. It's based upon [Hyperlambda](https://docs.ainiro.io/hyperlambda/), allowing you to dynamically create and orchestrate workflows, almost within a _"drag'n'drop development environment"_.
 
 ![Editing code in HyperIDE](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyper-ide-actions.jpg)
