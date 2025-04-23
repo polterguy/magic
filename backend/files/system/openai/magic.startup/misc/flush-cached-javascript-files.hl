@@ -1,0 +1,16 @@
+
+/*
+ * Ensures cache folder exists.
+ */
+if
+   not
+      io.folder.exists:/etc/cache/
+   .lambda
+      io.folder.create:/etc/cache/
+
+else
+
+   // Empties cache folder for JavaScript files.
+   io.file.list:/etc/cache/
+   for-each:x:@io.file.list/*
+      io.file.delete:x:@.dp/#

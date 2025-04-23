@@ -1,0 +1,88 @@
+
+/*
+ * Invokes the SQL CRUD Create slot with the specified parameters.
+ *
+ * Provide [connection-string], [database-type], [database], and [table] to inform the action of
+ * what database/table you want to execute your SQL towards, and [values] for your actual values
+ * to insert.
+ */
+.arguments
+   database-type
+      type:enum
+      mandatory:bool:true
+      values
+         .:sqlite
+         .:mssql
+         .:mysql
+         .:pgsql
+   connection-string
+      type:string
+      mandatory:bool:true
+   database
+      type:string
+      mandatory:bool:true
+   table
+      type:string
+      mandatory:bool:true
+   values
+      type:key-value
+      mandatory:bool:true
+.icon:cloud_download
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/table
+validators.enum:x:@.arguments/*/database-type
+   .:sqlite
+   .:mssql
+   .:mysql
+   .:pgsql
+
+// Applying defaults.
+validators.default:x:@.arguments
+   connection-string:generic
+   database-type:sqlite
+   database:magic
+
+// Ensuring caller provided [values].
+if
+   not
+      exists:x:@.arguments/*/values/*
+   .lambda
+
+      throw:Provide [values] to sql-insert action.
+         public:bool:true
+         status:500
+
+// Connection string to actually use as we connect.
+.connection-string
+
+// Caller supplied an explicit [connection-string] argument.
+set-value:x:@.connection-string
+   strings.concat
+      .:[
+      get-value:x:@.arguments/*/connection-string
+      .:|
+      get-value:x:@.arguments/*/database
+      .:]
+
+// Connecting to database.
+data.connect:x:@.connection-string
+   database-type:x:@.arguments/*/database-type
+
+   // Adding values.
+   for-each:x:@.arguments/*/values/*
+      set-name:x:./0/-/*/*
+         get-name:x:@.dp/#
+      set-value:x:./0/-/*/*
+         get-value:x:@.dp/#
+      add:x:@data.connect/*/data.create/*/values
+         .
+            name
+
+   // Executing SQL.
+   data.create
+      database-type:x:@.arguments/*/database-type
+      table:x:@.arguments/*/table
+      values
+   yield
+      id:x:@data.create

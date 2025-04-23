@@ -13,6 +13,8 @@ import { HttpService } from 'src/app/services/http.service';
 import { CacheService } from 'src/app/services/cache.service';
 import { DefaultDatabaseType } from '../models/default-database-type.model';
 import { Databases } from '../models/databases.model';
+import saveAs from 'file-saver';
+import { GeneralService } from './general.service';
 
 /**
  * SQL service allowing you to execute SQL and retrieve meta information about
@@ -26,7 +28,8 @@ export class SqlService {
   constructor(
     private httpService: HttpService,
     private fileService: FileService,
-    private cacheService: CacheService) { }
+    private cacheService: CacheService,
+    private generalService: GeneralService) { }
 
   executeSql(
     databaseType: string,
@@ -540,4 +543,48 @@ export class SqlService {
       sql,
     });
   }
+
+  importCsvFile(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    file: any) {
+
+    const formData: FormData = new FormData();
+    formData.append('databaseType', databaseType);
+    formData.append('connectionString', connectionString);
+    formData.append('databaseName', databaseName);
+    formData.append('file', file);
+    return this.httpService.post<any>('/magic/system/sql/import-csv-file', formData);
+  }
+
+  exportTableAsCsvFile(
+    databaseType: string,
+    connectionString: string,
+    databaseName: string,
+    tableName: string) {
+
+      this.httpService.download(
+        '/magic/system/sql/export-as-csv-file?databaseType=' +
+        encodeURIComponent(databaseType) + 
+        '&connectionString=' + encodeURIComponent(connectionString) +
+        '&databaseName=' + encodeURIComponent(databaseName) +
+        '&tableName=' + encodeURIComponent(tableName))
+        .subscribe({
+
+          next: (res) => {
+    
+            let filename = tableName + '.csv';
+            const file = new Blob([res.body]);
+            saveAs(file, filename);
+            this.generalService.hideLoading();
+          },
+    
+          error: (error: any) => {
+
+            this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+            this.generalService.hideLoading();
+          }
+        });
+    }
 }

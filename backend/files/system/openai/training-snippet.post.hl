@@ -1,0 +1,49 @@
+
+/*
+ * Creates a new training snippet.
+ */
+.arguments
+
+   // Optional URL for citations
+   uri:string
+
+   // Mandatory prompt or short one liner description
+   prompt:string
+
+   // Mandatory completion being the content or body of your snippet
+   completion:string
+
+   // Mandatory machine learning to to associate snippet with
+   type:string
+
+.description:Creates a new training snippet
+.type:private
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root,service
+
+// Opening up database connection.
+data.connect:[generic|magic]
+
+   // Verifying user can create more snippets.
+   add:x:+
+      get-nodes:x:@.arguments/*/type
+   try-signal:magic.ai.can-create-snippet
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      table:ml_training_snippets
+      return-id:bool:true
+      values
+
+   // Returning the correct status code.
+   response.status.set:201
+
+   // Returning result of above invocation to caller.
+   unwrap:x:+/*
+   return
+      id:x:@data.create

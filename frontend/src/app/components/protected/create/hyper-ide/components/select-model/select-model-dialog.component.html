@@ -1,0 +1,46 @@
+
+<h3 mat-dialog-title>Select type</h3>
+
+<div mat-dialog-content>
+
+  <p class="text-muted mb-4">
+    Select type to generate AI function(s) for '{{data.folder}}'.
+  </p>
+
+  <mat-form-field class="w-100 standalone-field">
+    <span
+      matPrefix
+      class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+    <mat-icon>folder</mat-icon>
+      <span class="text-muted">|</span>
+    </span>
+    <mat-select
+      [(ngModel)]="type"
+      placeholder="Type or model">
+      <mat-option
+        *ngFor="let idx of types"
+        [value]="idx">
+        {{idx}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <button
+    mat-button
+    mat-dialog-close>
+    Cancel
+    </button>
+
+  <button
+    mat-flat-button
+    [disabled]="!type || type === ''"
+    (click)="selectModel()"
+    color="primary">
+    Generate
+  </button>
+
+</div>

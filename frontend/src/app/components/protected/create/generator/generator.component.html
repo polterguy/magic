@@ -1,0 +1,59 @@
+<mat-card class="h-100 generator">
+  <mat-card-content class="endpoint-generator h-100">
+
+    <mat-tab-group
+      mat-stretch-tabs
+      dynamicHeight
+      animationDuration="0ms"
+      #tabs>
+
+      <mat-tab>
+
+        <ng-template mat-tab-label>
+          CRUD
+        </ng-template>
+
+        <ng-template matTabContent>
+
+          <app-crud-generator
+            [roles]="roles">
+          </app-crud-generator>
+
+        </ng-template>
+
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          SQL
+        </ng-template>
+
+        <ng-template matTabContent>
+
+          <app-sql-generator
+            [roles]="roles">
+          </app-sql-generator>
+
+        </ng-template>
+
+      </mat-tab>
+
+      <mat-tab *ngIf="false">
+        <ng-template mat-tab-label>
+          OpenAPI (BETA)
+        </ng-template>
+
+        <ng-template matTabContent>
+
+          <app-open-api-generator
+            [roles]="roles">
+          </app-open-api-generator>
+
+        </ng-template>
+
+      </mat-tab>
+
+    </mat-tab-group>
+
+  </mat-card-content>
+</mat-card>

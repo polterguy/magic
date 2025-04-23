@@ -11,6 +11,7 @@
    max:int
    threshold:int
    summarize:bool
+   insert_url:bool
    images:bool
    lists:bool
    code:bool
@@ -25,6 +26,7 @@ validators.default:x:@.arguments
    images:bool:true
    lists:bool:true
    code:bool:true
+   insert_url:bool:false
 
 // Prepending scheme unless given.
 if

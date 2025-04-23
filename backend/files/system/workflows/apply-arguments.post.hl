@@ -38,6 +38,35 @@ if
          .
             .arguments
 
+else
+
+   // Checking if we've got a file level comment.
+   if
+      eq
+         get-name:x:@hyper2lambda/0
+         .:..
+      .lambda
+
+         // We have a file level comment, hence applying [.arguments] node after it.
+         insert-after:x:@hyper2lambda/0
+            .
+               .arguments
+
+   else
+
+      // We don't have a file level comment, applying [.arguments] as the first node in the file.
+      insert-before:x:@hyper2lambda/0
+         .
+            .arguments
+
+// Defaulting file [.type] to public.
+if
+   not-exists:x:@hyper2lambda/*/.type
+   .lambda
+      insert-after:x:@hyper2lambda/*/.arguments
+         .
+            .type:public
+
 // Checking if caller provided a [description] for Hyperlambda.
 if
    and

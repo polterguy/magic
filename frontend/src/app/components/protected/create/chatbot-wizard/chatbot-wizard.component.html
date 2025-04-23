@@ -143,6 +143,8 @@
               name="flavor">
               <mat-option
                 *ngFor="let idx of flavors"
+                [matTooltip]="idx.description"
+                matTooltipPosition="after"
                 [value]="idx">
                 {{idx.name}}
               </mat-option>

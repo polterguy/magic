@@ -93,6 +93,7 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
               this.data.max,
               this.data.threshold,
               this.data.summarize,
+              this.data.insert_url,
               result.result,
               this.data.images,
               this.data.lists,
@@ -142,6 +143,31 @@ export class MachineLearningImportFeedbackComponent implements OnInit, OnDestroy
 
                 this.generalService.hideLoading();
                 this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
+              }
+            });
+
+          } else if (this.data.mode === 'url-list') {
+
+            // Uploading a URL set.
+            const formData = new FormData();
+            formData.append('file', this.data.urlList[0]);
+            formData.append('type', this.data.type);
+            formData.append('vectorize', this.data.vectorize);
+            formData.append('feedback-channel', result.result);
+            this.generalService.showLoading()
+            this.openAIService.uploadUrlList(formData).subscribe({
+
+              next: (result: any) => {
+
+                // Success uploading file.
+                this.generalService.hideLoading();
+                this.generalService.showFeedback('File containing ' + result.count + ' URLs successfully uploaded', 'successMessage');
+              },
+
+              error: () => {
+
+                this.generalService.hideLoading();
+                this.generalService.showFeedback('Something went wrong as we tried to upload and scrape your URL list, check the log for more details', 'errorMessage');
               }
             });
           }

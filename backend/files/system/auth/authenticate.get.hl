@@ -1,5 +1,14 @@
 
-// Authenticates a user returning a JWT token if successful
+/*
+ * Authenticates a user returning a JWT token if successful.
+ *
+ * Notice, if Magic is not already setup, implying the auth secret is less than 50
+ * characters in length, then the default username and password is root/root and is
+ * hard coded.
+ *
+ * The JWT token returned will contain the roles the user belongs to. This endpoint
+ * will also return extra information associated with the user.
+ */
 .arguments
    username:string
    password:string
@@ -12,7 +21,7 @@ validators.mandatory:x:@.arguments/*/password
 
 /*
  * Checking if JWT secret has been changed, and if not, simply checking if username/password is
- * root/root, and if so returning a valid token allowing user to setup his or her cloudlet.
+ * root/root, and if so returning a valid token allowing the user to setup his or her cloudlet.
  *
  * This is necessary to allow for configuring a new cloudlet where the user haven't selected a root
  * password yet.
@@ -53,5 +62,27 @@ execute:magic.auth.authenticate
    username:x:@.arguments/*/username
    password:x:@.arguments/*/password
 
+// Buffer for extra information.
+.extra
+data.connect:magic
+   data.read
+      table:users_extra
+      where
+         and
+            user.eq:x:@.arguments/*/username
+            or
+               type.eq:name
+               type.eq:email
+   for-each:x:@data.read/*
+      set-name:x:./*/add/*/*
+         get-value:x:@.dp/#/*/type
+      set-value:x:./*/add/*/*
+         get-value:x:@.dp/#/*/value
+      add:x:@.extra
+         .
+            .
+
 // Returns the authentication JWT ticket created above to caller.
-return-nodes:x:@execute/*
+yield
+   ticket:x:@execute/*/ticket
+   extra:x:@.extra/*

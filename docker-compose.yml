@@ -1,5 +1,5 @@
 
-# Docker file to couple frontend, backend, and MySQL database instance into one.
+# Docker file to couple frontend and backend, and creating required volumes.
 
 version: "3.3"
 

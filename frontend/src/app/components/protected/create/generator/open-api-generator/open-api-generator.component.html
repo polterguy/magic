@@ -1,0 +1,100 @@
+
+<div class="row mt-4 openapi-generator">
+
+  <!-- Load OpenAPI Specification from URL -->
+  <div class="col-12">
+    <p class="fw-bold mb-0">Notice, this is in BETA and bugs should be expected</p>
+  </div>
+
+  <div class="col-12 mt-0">
+
+    <div class="row align-items-stretch">
+
+      <!-- OpenAPI Specification URL -->
+      <div class="col-12 mb-4">
+
+        <form
+          class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row w-100"
+          (ngSubmit)="openApiUrlChanged()">
+
+          <mat-form-field class="w-100 standalone-field me-3">
+            <span
+              matPrefix
+              matTooltip="OpenAPI Specification URL"
+              class="d-flex flex-nowrap align-items-center justify-content-between me-1">
+              <mat-icon>http</mat-icon>
+              <span class="text-muted">|</span>
+            </span>
+            <input
+              matInput
+              name="openAPIURL"
+              autocomplete="off"
+              placeholder="OpenAPI Specification URL ..."
+              [(ngModel)]="openAPIURL"
+              (selectionChange)="openApiUrlChanged()">
+          </mat-form-field>
+
+          <button
+            mat-flat-button
+            class="px-5"
+            type="submit"
+            color="primary">
+            Load
+          </button>
+    
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- OpenAPI Specification -->
+  <div class="col-12">
+    <p class="fw-bold mb-1">OpenAPI Specification</p>
+  </div>
+
+  <div class="col-12 mb-4">
+
+    <ngx-codemirror
+      class="h-100"
+      [(ngModel)]="openAPISpec"
+      [options]="cmOptions.json">
+    </ngx-codemirror>
+
+  </div>
+
+  <form
+    class="d-flex justify-content-md-between align-items-md-center align-items-end flex-md-row w-100"
+    align="end"
+    (ngSubmit)="generateHyperlambda()">
+
+    <mat-form-field class="w-100 standalone-field me-3">
+      <span
+        matPrefix
+        matTooltip="Module name ..."
+        class="d-flex flex-nowrap align-items-center justify-content-between me-1">
+        <mat-icon>link</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        name="moduleName"
+        autocomplete="off"
+        placeholder="Module name ..."
+        [(ngModel)]="moduleName">
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      [disabled]="!openAPISpec || openAPISpec === '' || !moduleName || moduleName === ''"
+      class="px-5"
+      type="submit"
+      color="primary">
+      Generate
+    </button>
+
+  </form>
+
+</div>

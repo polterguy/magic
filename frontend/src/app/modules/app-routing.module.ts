@@ -40,8 +40,8 @@ const routes: Routes = [
         loadChildren: () => import('src/app/components/protected/manage/databases/_module/databases.module').then(m => m.DatabasesModule)
       },
       {
-        path: 'endpoint-generator',
-        loadChildren: () => import('src/app/components/protected/create/endpoint-generator/_module/endpoint.module').then(m => m.EndpointModule)
+        path: 'generator',
+        loadChildren: () => import('src/app/components/protected/create/generator/_module/generator.module').then(m => m.GeneratorModule)
       },
       {
         path: 'plugins',

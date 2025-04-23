@@ -5,24 +5,50 @@ try
    // Connecting to Magic database.
    data.connect:[generic|magic]
 
-      // Creating default generic model.
-      data.create
+      // Checking if default model has already been created.
+      data.read
          table:ml_types
-         values
-            type:default
-            model:gpt-3.5-turbo
-            max_tokens:int:500
-            max_context_tokens:int:1000
-            max_request_tokens:int:100
-            temperature:decimal:0.3
-            supervised:int:1
-            cached:int:1
-            auth:guest,root
-            greeting:Hi there, how can I help you?
-            system_message:You are a helpful assistant. If I ask you to create code for me, then return only the code and no explanation without any Markdown or ``` characters. If I ask you to modify my existing code, then modify my last code according to my instructions and return the entire modified code back to me.
+         where
+            and
+               type.eq:default
+      if
+         not-exists:x:@data.read/*/*
+         .lambda
+
+            // Creating default generic model.
+            data.create
+               table:ml_types
+               values
+                  type:default
+                  model:gpt-4o
+                  max_tokens:int:12000
+                  max_context_tokens:int:12000
+                  max_request_tokens:int:12000
+                  temperature:decimal:0.3
+                  supervised:int:1
+                  cached:int:1
+                  auth:root
+                  greeting:Hi there, how can I help you?
+                  system_message:You are a helpful assistant. If I ask you to create code for me, then return only the code and no explanation without any Markdown or ``` characters. If I ask you to modify my existing code, then modify my last code according to my instructions and return the entire modified code back to me.
+
+      else
+
+         // Updating existing type
+         data.update
+            table:ml_types
+            values
+               model:gpt-4o
+               max_tokens:int:12000
+               max_context_tokens:int:12000
+               max_request_tokens:int:12000
+               temperature:decimal:0.3
+               supervised:int:1
+            where
+               and
+                  type.eq:default
 
 .catch
 
    // Doing some basic logging.
-   log.info:Default model has already been created
+   log.info:Something went wrong as we tried to create default type
       message:x:@.arguments/*/message

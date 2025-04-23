@@ -166,7 +166,7 @@ slots.create:magic.ai.html.extract
                get-nodes:x:@.dp/#
 
    /*
-    * Now we have removed all UL, OL and PRE elements, and [.remaining] contains
+    * Now we have removed all UL, OL, Hx and PRE elements, and [.remaining] contains
     * a lambda node hierarchy of everything that remains in the page, at which
     * point we can transform it back to HTML for then to transform it to Markdown,
     * and return that as an individual snippets, without PRE, UL and OL elements.

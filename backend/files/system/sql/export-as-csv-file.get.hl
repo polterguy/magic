@@ -1,0 +1,37 @@
+/*
+ * Imports the specified CSV file into the specified database.
+ */
+.arguments
+   databaseType:string
+   connectionString:string
+   databaseName:string
+   tableName:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/connectionString
+validators.mandatory:x:@.arguments/*/databaseName
+validators.mandatory:x:@.arguments/*/tableName
+
+// Opening up our database connection.
+strings.concat
+   .:[
+   get-value:x:@.arguments/*/connectionString
+   .:|
+   get-value:x:@.arguments/*/databaseName
+   .:]
+data.connect:x:@strings.concat
+   type:x:@.arguments/*/databaseType
+   data.read
+      table:x:@.arguments/*/tableName
+      limit:-1
+   lambda2csv:x:-/*
+   strings.concat
+      .:"attachment; filename=\""
+      get-value:x:@.arguments/*/tableName
+      .:".csv\""
+   response.headers.set
+      Content-Type:application/csv
+      Content-Disposition:x:@strings.concat
+      Access-Control-Expose-Headers:Content-Disposition
+   return:x:@lambda2csv

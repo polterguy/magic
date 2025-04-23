@@ -32,16 +32,19 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
     this.generalService.showLoading();
 
     this.openAiService.key().subscribe({
+
       next: (result: MagicResponse) => {
 
         this.openApiKey = result.result || '';
         this.generalService.hideLoading();
       },
+
       error: (error: any) => {
 
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this.generalService.hideLoading();
       }
+
     });
   }
 
@@ -55,17 +58,20 @@ export class OpenAIConfigurationDialogComponent implements OnInit {
     this.generalService.showLoading();
 
     this.openAiService.setKey(this.openApiKey).subscribe({
+
       next: () => {
 
         this.generalService.showFeedback('Your OpenAI API key was saved to your configuration', 'successMessage');
         this.generalService.hideLoading();
         this.dialogRef.close({ configured: true, key: this.openApiKey });
       },
+
       error: (error: any) => {
 
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this.generalService.hideLoading();
       }
+
     });
   }
 

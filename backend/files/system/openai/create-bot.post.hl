@@ -12,6 +12,7 @@
    auto_destruct:bool
    feedback-channel:string
    vectorize:bool
+   instruction:string
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -153,14 +154,17 @@ try
             max_context_tokens:x:@.max-context-tokens
             max_request_tokens:int:1000
             temperature:decimal:0.3
-            recaptcha:decimal:0.3
+            recaptcha:decimal:0.0
             supervised:int:1
             cached:int:0
             use_embeddings:int:1
-            threshold:decimal:0.4
+            threshold:decimal:0.3
             vector_model:text-embedding-ada-002
             system_message:x:@.arguments/*/flavor
             greeting:Hi there, how can I help you?
+            conversation_starters:@"* What can I ask you about?
+* How do I contact you?
+* Who created this chatbot?"
 
    // Invoking slot doing the heavy lifting
    request.host
@@ -169,6 +173,8 @@ try
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/type
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.type
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.url
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.instruction
+   unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.flavor
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.host
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.feedback-channel
    unwrap:x:./*/signal/=magic.ai.crawl-site/*/.onafter/*/.auto_destruct
@@ -199,6 +205,8 @@ try
          // Forward evaluated further up.
          .type:x:@.type
          .url:x:@.arguments/*/url
+         .flavor:x:@.arguments/*/flavor
+         .instruction:x:@.arguments/*/instruction
          .host:x:@request.host
          .feedback-channel:x:@.arguments/*/feedback-channel
          .vectorize:x:@.arguments/*/vectorize
@@ -284,7 +292,7 @@ try
                   values
                      type:x:@.type
                      prompt:Who created this AI chatbot?
-                     completion:@"This chatbot is a custom AI chatbot powered by OpenAI allowing you to use natural language to ask questions related to the website you're currently visiting. It was created by [AINIRO.IO](https://ainiro.io). AINIRO.IO have AI chatbot solutions allowing you to scrape your website, upload documents, and create publicly available AI chatbots and AI-based search similar to Bing, in addition to tools helping you build custom GPTs."
+                     completion:@"This chatbot is a custom AI chatbot powered by OpenAI allowing you to use natural language to ask questions related to the website you're currently visiting. It was created by [AINIRO.IO](https://ainiro.io). If you want a similar AI chatbot for your own site, you can [contact AINIRO here](https://ainiro.io/contact-us)."
                      uri:"https://ainiro.io"
 
             // Creating landing page for model.
@@ -294,6 +302,59 @@ try
                type:x:@.type
                host:x:@.host
                feedback-channel:x:@.feedback-channel
+
+            // Creating custom system message if we've got an instruction.
+            if
+               and
+                  exists:x:@.arguments/*/instruction
+                  neq:x:@.arguments/*/instruction
+                     .:
+               .lambda
+
+                  /*
+                   * Caller selected a dynamic system message and provided an instruction
+                   * to create a custom system message.
+                   */
+                  sockets.signal:x:@.feedback-channel
+                     args
+                        message:Invoking OpenAI to create a custom system message. Notice, this might take some time ...
+                        type:info
+
+                  // Catching exceptions to make sure we continue in case of error.
+                  try
+
+                     // Invoking slot responsible for creating custom system message.
+                     execute:magic.ai.create-system-message
+                        url:x:@.url
+                        template:x:@.flavor
+                        instruction:x:@.instruction
+
+                     // Updating system message to result returned from OpenAI.
+                     data.connect:[generic|magic]
+
+                        // Checking if type already exists.
+                        data.update
+                           table:ml_types
+                           values
+                              system_message:x:@execute
+                           where
+                              and
+                                 type.eq:x:@.type
+
+                     // Separator.
+                     sockets.signal:x:@.feedback-channel
+                        args
+                           message:------------------------------------------------------------------------------------------------------------------------
+                           type:info
+
+                  .catch
+
+                     // Oops ...!!
+                     log.error:x:@.arguments/*/message
+                     sockets.signal:x:@.feedback-channel
+                        args
+                           message:We could not create a custom system message, check your log for details
+                           type:warning
 
             // Vectorizing model.
             if

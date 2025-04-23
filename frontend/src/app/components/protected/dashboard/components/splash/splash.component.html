@@ -8,7 +8,7 @@
         <!-- Left hand section display bullet list and links to components -->
         <div class="d-flex justify-content-between">
 
-          <h2 class="mb-0">Welcome, we are happy to see you 🎉</h2>
+          <h2 class="mb-0">Where the Machine Creates the Code ...</h2>
 
           <button
             mat-button
@@ -48,7 +48,18 @@
             Create a chatbot
             <a class="text-primary btn-link pointer" routerLink="/chatbot-wizard">here</a>
           </li>
+          <li class="pb-1">
+            Access your frontend
+            <a class="text-primary btn-link pointer" target="_blank" [href]="frontendUrl">here</a>
+          </li>
         </ol>
+
+        <button
+          mat-button
+          class="text-muted whats-new"
+          (click)="showNew()">
+          What's new?
+        </button>
 
       </div>
 

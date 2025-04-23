@@ -38,6 +38,9 @@ slots.create:magic.ai.send-lead-email
                   get-value:x:@strings.split/@strings.split/0/-
                   .:@
                   get-value:x:@strings.split/0
+            set-value:x:@.email
+               strings.trim:x:@.email
+                  .:".,-"
             validators.email:x:@.email
 
             /*

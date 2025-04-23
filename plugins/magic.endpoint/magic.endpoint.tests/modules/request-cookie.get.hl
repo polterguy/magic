@@ -1,0 +1,10 @@
+﻿
+request.cookies.get:foo
+if
+   not
+      eq
+         get-value:x:@request.cookies.get
+         .:bar
+   .lambda
+      throw:Error
+return:success

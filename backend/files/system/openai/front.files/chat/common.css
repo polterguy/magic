@@ -1,0 +1,693 @@
+/*
+ * Making Google reCAPTCHA invisible.
+ */
+.grecaptcha-badge {
+  opacity: 0 !important;
+}
+
+/*
+ * Resetting all CSS values to make sure site's CSS doesn't interfere with chatbot UI.
+ */
+html>body.ainiro_bdy>button.ainiro,
+html>body.ainiro_bdy>div.ainiro * {
+  all: initial;
+}
+
+/*
+ * Re-applying some sane defaults again.
+ */
+html>body.ainiro_bdy>div.ainiro div {
+  display: block !important;
+}
+
+html>body.ainiro_bdy>div.ainiro a,
+html>body.ainiro_bdy>div.ainiro button,
+html>body.ainiro_bdy>button.ainiro {
+  cursor: pointer !important;
+}
+
+html>body.ainiro_bdy>div.ainiro button * {
+  cursor: pointer !important;
+}
+
+/*
+ * IcoFont
+ */
+@font-face {
+  font-family: AiniroIcoFont;
+  font-weight: 400;
+  font-style: Regular;
+  src: url(https://ainiro.io/assets/css/fonts/icofont.woff2?v=v19.5.11) format("woff2"), url(https://ainiro.io/assets/css/fonts/icofont.woff?v=19.5.11) format("woff")
+}
+
+html>body.ainiro_bdy [class*=" ainiro-icofont-"],
+[class^=ainiro-icofont-] {
+  font-family: AiniroIcoFont !important;
+  speak: none;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  line-height: 1;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased
+}
+
+html>body.ainiro_bdy .ainiro-icofont-arrow-left:before {
+  content: "\ea5c"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-arrow-right:before {
+  content: "\ea5d"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-email:before {
+  content: "\ef12"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-chat:before {
+  content: "\eed5"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-web:before {
+  content: "\f028"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-star:before {
+  content: "\f000"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-close:before {
+  content: "\eee4"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-search-1:before {
+  content: "\ed11"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-location-arrow:before {
+  content: "\ef78"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-microphone:before {
+  content: "\ea47"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-check:before {
+  content: "\eed8"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-maximize:before {
+  content: "\ef8c"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-contract-alt:before {
+  content: "\13af9"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-contract-alt:after {
+  content: "\13af8"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-expand-full:before {
+  content: "\13b15"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-expand-full:after {
+  content: "\13b14"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-purge:before {
+  content: "\13b95"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-purge:after {
+  content: "\13b94"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-copy:before {
+  content: "\edea"
+}
+
+html>body.ainiro_bdy [class*=" ainiro-icofont-"].ainiro-icofont-duotone,
+html>body.ainiro_bdy [class^=ainiro-icofont-].ainiro-icofont-duotone {
+  position: relative
+}
+
+html>body.ainiro_bdy [class*=" ainiro-icofont-"].ainiro-icofont-duotone:before,
+html>body.ainiro_bdy [class^=ainiro-icofont-].ainiro-icofont-duotone:before {
+  position: absolute;
+  left: 0;
+  top: 0
+}
+
+html>body.ainiro_bdy [class*=" ainiro-icofont-"].ainiro-icofont-duotone:after,
+html>body.ainiro_bdy [class^=ainiro-icofont-].ainiro-icofont-duotone:after {
+  opacity: .4
+}
+
+
+
+/*
+ * Making sure Markdown transformed to HTML displays well.
+ */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine * {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine p,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine ul,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine ol,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine img,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h1,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h2,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h3,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h4,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h5,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h6,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine iframe {
+  display: block;
+  margin-bottom: 1rem;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine p>img {
+  margin-top: 1rem;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h1 {
+  font-size: 28px;
+  font-weight: bold;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h2 {
+  font-size: 26px;
+  font-weight: bold;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h3 {
+  font-size: 24px;
+  font-weight: bold;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h4 {
+  font-size: 22px;
+  font-weight: bold;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h5 {
+  font-size: 20px;
+  font-weight: bold;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine h6 {
+  font-size: 18px;
+  font-weight: bold;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine ul,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine ol {
+  padding-left: 25px;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine li {
+  font-size: inherit;
+  display: list-item;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine p {
+  text-align: inherit;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine em,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine i,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine strong,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine b {
+  font-size: inherit;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine strong,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine b {
+  font-weight: bold;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine em,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine i {
+  font-style: italic;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine iframe {
+  margin-left: auto;
+  margin-right: auto;
+  width: 560px;
+  height: 315px;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine table thead {
+  display: table-header-group;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine table tbody {
+  display: table-row-group;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine table thead tr {
+  display: table-row;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine table thead tr th {
+  display:table-cell;
+  font-weight: bold;
+  padding: 5px 7px;
+  border-bottom: solid 1px rgba(0,0,0,.1);
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine table tbody tr {
+  display: table-row;
+  background-color: rgba(0,0,0,0);
+  transition: background-color .1s ease-in-out;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine table tbody tr:hover {
+  display: table-row;
+  background-color: rgba(0,0,0,.2);
+  transition: background-color .1s ease-in-out;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine table tbody tr td {
+  display: table-cell;
+  padding: 5px 7px;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>button.ainiro_copy_response>i.ainiro-icofont {
+  font-style: normal;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>*:last-child {
+  margin-bottom: 0;
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine a {
+  color: var(--ainiro-link);
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre.hljs {
+  display: block;
+  white-space: pre-wrap;
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine code,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre.hljs span {
+  white-space: pre-wrap;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine ul>li {
+  list-style-type: disc;
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine ol>li {
+  list-style-type: decimal;
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine img {
+  max-width: 100%;
+  display: block;
+  max-height: 70vh;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine hr {
+  display: block;
+  height: 1rem;
+  border-bottom: solid 1px var(--ainiro-color);
+  margin-bottom: 2.5rem;
+  width: calc(100% - 3rem);
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  margin-top: 2rem;
+  box-sizing: border-box;
+}
+
+@keyframes ainiro_fade_function_into_view {
+  0% {
+    opacity: 0;
+    margin-left: -100px;
+  }
+  100% {
+    opacity: 1;
+    margin-left: 0;
+  }
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro_function_succeeded,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro_function_failed {
+  display: block;
+  margin-top: 1rem;
+  border-radius: .5rem;
+  font-size: .9rem;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro_function_animate {
+  animation-name: ainiro_fade_function_into_view;
+  animation-duration: .4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro_function_succeeded>i.ainiro-icofont,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro_function_failed>i.ainiro-icofont,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro_function_waiting>i.ainiro-icofont {
+  margin-right: .5rem;
+  font-style: normal;
+  border-radius: .25rem;
+  padding: .125rem;
+}
+@keyframes ainiro_function_waiting {
+  0% {
+    opacity: .2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro_function_waiting {
+  color:#909090;
+  opacity: .2;
+  animation-name: ainiro_function_waiting;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro_function_succeeded>i.ainiro-icofont {
+  background-color: rgba(0,255,0,.5);
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro_function_failed>i.ainiro-icofont {
+  background-color: rgba(255,0,0,.5);
+}
+
+/*
+ * Chatbot button animations.
+ */
+@keyframes ainiro_blink_after {
+  0% {
+    color: rgba(254, 233, 0, 0);
+  }
+  84% {
+    color: rgba(254, 233, 0, 0);
+  }
+  92% {
+    color:var(--ainiro-color);
+  }
+  100% {
+    color: rgba(254, 233, 0, 0);
+  }
+}
+@keyframes ainiro_blink {
+  0% {
+    color:var(--ainiro-color);
+  }
+  50% {
+    color: rgba(254, 233, 0, 1);
+  }
+  100% {
+    color:var(--ainiro-color);
+  }
+}
+html>body.ainiro_bdy>button.ainiro.ainiro_blink {
+  animation: ainiro_blink linear 1s infinite;
+}
+html>body.ainiro_bdy>button.ainiro.ainiro_blink::after {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  font-family: AiniroIcoFont !important;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  content: "\eed5";
+  animation: ainiro_blink_after linear 5s infinite;
+}
+
+/*!
+  Theme: Default
+  Description: Original highlight.js style
+  Author: (c) Ivan Sagalaev <maniac@softwaremaniacs.org>
+  Maintainer: @highlightjs/core-team
+  Website: https://highlightjs.org/
+  License: see project LICENSE
+  Touched: 2021
+*/
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre.hljs {
+  padding: 2rem;
+  position: relative;
+  border-radius: 5px;
+  border: solid 1px rgba(0,0,0,.5);
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre.hljs button.copy_code_button {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  color:rgb(0,0,0);
+  opacity: .5 !important;
+  transition: opacity .1s ease-in-out !important;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre.hljs button.copy_code_button:hover,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre.hljs button.copy_code_button:active,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre.hljs button.copy_code_button:focus {
+  opacity: 1 !important;
+  transition: opacity .1s ease-in-out !important;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre.hljs button.copy_code_button i {
+  font-style: normal;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre.hljs code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine code.hljs {
+  padding: 3px 5px
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs {
+  background: #f3f3f3;
+  color: #444
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-comment {
+  color: #697070
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-punctuation,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-tag {
+  color: #444a
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-tag .hljs-attr,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-tag .hljs-name {
+  color: #444
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-attribute,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-doctag,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-keyword,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-meta .hljs-keyword,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-name,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-tag {
+  font-weight: 700
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-deletion,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-number,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-quote,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-class,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-id,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-string,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-template-tag,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-type {
+  color: #800
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-section,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-title {
+  color: #800;
+  font-weight: 700
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-link,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-operator,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-regexp,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-attr,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-pseudo,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-symbol,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-template-variable,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-variable {
+  color: #ab5656
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-literal {
+  color: #695
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-addition,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-built_in,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-bullet,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-code {
+  color: #397300
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-meta {
+  color: #1f7199
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-meta .hljs-string {
+  color: #38a
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-emphasis {
+  font-style: italic
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-strong {
+  font-weight: 700
+}
+
+/*
+ * Popup styles.
+ */
+@media (min-width: 1024px) {
+  html>body.ainiro_bdy>button.ainiro_popup:not(.ainiro_hide):not(.ainiro_shown)::before {
+    position: fixed;
+    bottom: 80px;
+    right: 10px;
+    content: var(--ainiro-dynamic-content);
+    color: #404040;
+    background: #fefefe;
+    padding:15px;
+    border: solid 1px #a0a0a0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: normal;
+    box-shadow: 3px 3px 5px rgba(0,0,0,.2);
+    opacity: 0;
+    animation-name: ainiro_fade_function_into_view;
+    animation-duration: .4s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-delay: 3s;
+  }
+}
+
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine code.hljs {
+  padding: 3px 5px
+}
+
+/*!
+  Theme: Default
+  Description: Original highlight.js style
+  Author: (c) Ivan Sagalaev <maniac@softwaremaniacs.org>
+  Maintainer: @highlightjs/core-team
+  Website: https://highlightjs.org/
+  License: see project LICENSE
+  Touched: 2021
+*/
+/*
+This is left on purpose making default.css the single file that can be lifted
+as-is from the repository directly without the need for a build step
+
+Typically this "required" baseline CSS is added by `makestuff.js` during build.
+*/
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine code.hljs {
+  padding: 3px 5px
+}
+/* end baseline CSS */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs {
+  background: #F3F3F3;
+  color: #444
+}
+/* Base color: saturation 0; */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-subst {
+  /* default */
+  
+}
+/* purposely ignored */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-formula,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-attr,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-property,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-params {
+  
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-comment {
+  color: #697070
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-tag,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-punctuation {
+  color: #444a
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-tag .hljs-name,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-tag .hljs-attr {
+  color: #444
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-keyword,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-attribute,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-tag,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-meta .hljs-keyword,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-doctag,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-name {
+  font-weight: bold
+}
+/* User color: hue: 0 */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-type,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-string,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-number,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-id,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-class,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-quote,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-template-tag,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-deletion {
+  color: #880000
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-title,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-section {
+  color: #880000;
+  font-weight: bold
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-regexp,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-symbol,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-variable,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-template-variable,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-link,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-attr,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-operator,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-selector-pseudo {
+  color: #ab5656
+}
+/* Language color: hue: 90; */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-literal {
+  color: #695
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-built_in,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-bullet,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-code,
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-addition {
+  color: #397300
+}
+/* Meta color: hue: 200 */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-meta {
+  color: #1f7199
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-meta .hljs-string {
+  color: #38a
+}
+/* Misc effects */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-emphasis {
+  font-style: italic
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-strong {
+  font-weight: bold
+}

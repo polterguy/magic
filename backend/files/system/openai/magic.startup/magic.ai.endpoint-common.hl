@@ -52,6 +52,9 @@ slots.create:magic.ai.endpoint-common
             max_requests
             session_timeout
             search_postfix
+            max_function_invocations
+            max_session_items
+            completion_slot
          where
             and
                type.eq:x:@.arguments/*/type
@@ -91,6 +94,9 @@ slots.create:magic.ai.endpoint-common
                   max_requests
                   session_timeout
                   search_postfix
+                  max_function_invocations
+                  max_session_items
+                  completion_slot
                where
                   and
                      type.eq:default
@@ -140,12 +146,14 @@ slots.create:magic.ai.endpoint-common
          // Checking if model requires reCAPTCHA.
          if
             and
-               not
-                  auth.ticket.in-role:root
+               eq
+                  auth.ticket.get
+                  .
                mt
                   convert:x:@.model/*/recaptcha
                      type:decimal
                   .:decimal:0
+               not-null:x:@.model/*/recaptcha
             .lambda
 
                // Verifying reCAPTCHA was supplied.
@@ -178,6 +186,22 @@ slots.create:magic.ai.endpoint-common
                   site-key:x:@.key
                   secret:x:@.secret
 
+         else-if
+            and
+               eq
+                  auth.ticket.get
+                  .
+               not
+                  lt
+                     convert:x:@.model/*/recaptcha
+                        type:decimal
+                     .:decimal:0
+            .lambda
+
+               // Using built-in CAPTCHA.
+               execute:magic.auth.captcha-verify
+                  token:x:@.arguments/*/recaptcha_response
+
    // Checking if we've reached [max_requests] on model.
    if
       and
@@ -192,6 +216,16 @@ slots.create:magic.ai.endpoint-common
          throw:Maximum number of requests reached for your model this month
             public:bool:true
             status:int:500
+
+   // Applying mixin on model's system message, if it contains mixin logic.
+   if
+      strings.contains:x:@.model/*/system_message
+         .:{{
+      .lambda
+
+         // Applying mixin logic.
+         set-value:x:@.model/*/system_message
+            strings.mixin:x:@.model/*/system_message
 
    // Checking if we've configured integrations for incoming messages.
    .incoming
@@ -287,56 +321,56 @@ slots.create:magic.ai.endpoint-common
    // Making sure se set max size of model
    switch:x:@.model/*/model
 
-      case:gpt-3.5-turbo-16k
-      case:gpt-3.5-turbo-1106
-      case:gpt-3.5-turbo-16k-0613
-
+      case:gpt-4o
+      case:gpt-4o-mini
+      case:gpt-4o-2024-05-13
+      case:gpt-4-turbo
+      case:gpt-4-0125-preview
+      case:gpt-4-1106-preview
+      case:gpt-4-turbo-preview
+      case:gpt-4-turbo-2024-04-09
+      case:gpt-4-vision-preview
+      case:gpt-4-1106-vision-preview
          add:x:@.model
             .
-               model_size:int:16384
-
-      case:text-davinci-003
-      case:gpt-3.5-turbo
-      case:gpt-3.5-turbo-0301
-      case:gpt-3.5-turbo-0314
-      case:gpt-3.5-turbo-0613
-      case:text-davinci-002
-
-         add:x:@.model
-            .
-               model_size:int:4096
-
-      case:code-davinci-002
-
-         add:x:@.model
-            .
-               model_size:int:8000
+               model_size:int:128000
 
       case:gpt-4
-      case:gpt-4-0314
-
+      case:gpt-4-0613
          add:x:@.model
             .
                model_size:int:8192
 
       case:gpt-4-32k
-      case:gpt-4-32k-0314
-
+      case:gpt-4-32k-0613
          add:x:@.model
             .
                model_size:int:32768
 
-      case:gpt-4-1106-preview
-
+      case:gpt-3.5-turbo
+      case:gpt-3.5-turbo-0125
+      case:gpt-3.5-turbo-1106
+      case:gpt-3.5-turbo-16k
+      case:gpt-3.5-turbo-16k-0613
          add:x:@.model
             .
-               model_size:int:131072
+               model_size:int:16384
 
-      default
-
+      case:gpt-3.5-turbo-0613
+      case:gpt-3.5-turbo-instruct
          add:x:@.model
             .
-               model_size:int:2049
+               model_size:int:4096
+
+      case:o3-mini
+         add:x:@.model
+            .
+               model_size:int:200000
+
+      case:gpt-4.5-preview
+         add:x:@.model
+            .
+               model_size:int:128000
 
    // Adding defaults in case model has not been configured with max_request_tokens
    if
@@ -378,9 +412,22 @@ slots.create:magic.ai.endpoint-common
 
             case:gpt-4
             case:gpt-4-0314
+            case:gpt-4o
+            case:gpt-4o-2024-05-13
 
                math.divide
                   math.subtract:int:8192
+                     get-value:x:@.model/*/max_tokens
+                  .:int:2
+               set-value:x:@.model/*/max_context_tokens
+                  get-value:x:@math.divide
+               set-value:x:@.model/*/max_request_tokens
+                  get-value:x:@math.divide
+
+            case:gpt-3.5-turbo-0125
+
+               math.divide
+                  math.subtract:int:16384
                      get-value:x:@.model/*/max_tokens
                   .:int:2
                set-value:x:@.model/*/max_context_tokens
@@ -400,10 +447,22 @@ slots.create:magic.ai.endpoint-common
                set-value:x:@.model/*/max_request_tokens
                   get-value:x:@math.divide
 
+            case:gpt-4-0125-preview
             case:gpt-4-1106-preview
 
                math.divide
                   math.subtract:int:131072
+                     get-value:x:@.model/*/max_tokens
+                  .:int:2
+               set-value:x:@.model/*/max_context_tokens
+                  get-value:x:@math.divide
+               set-value:x:@.model/*/max_request_tokens
+                  get-value:x:@math.divide
+
+            case:o3-mini
+
+               math.divide
+                  math.subtract:int:200000
                      get-value:x:@.model/*/max_tokens
                   .:int:2
                set-value:x:@.model/*/max_context_tokens

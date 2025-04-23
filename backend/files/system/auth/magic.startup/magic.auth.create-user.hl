@@ -15,9 +15,13 @@ slots.create:magic.auth.create-user
    if
       get-value:x:@.arguments/*/is_hashed
       .lambda
+
+         // Password is already hashed.
          set-value:x:@.password
             get-value:x:@.arguments/*/password
    else
+
+      // Password is not hashed, hashing it.
       set-value:x:@.password
          crypto.password.hash:x:@.arguments/*/password
 

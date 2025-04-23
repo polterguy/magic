@@ -1,0 +1,4 @@
+﻿
+response.cookies.set
+   value:foo
+   domain:"http://gokk.no"

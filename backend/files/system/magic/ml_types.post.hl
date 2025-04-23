@@ -27,15 +27,36 @@
    webhook_incoming_url:string
    webhook_outgoing_url:string
    system_message:string
+   conversation_starters:string
    initial_questionnaire:string
    no_requests:int
    max_requests:int
    search_postfix:string
+   max_function_invocations:int
+   max_session_items:int
+   completion_slot:string
 .description:CRUD create endpoint inserting one record into your ml_types table in your magic database taking type, model, max_tokens, temperature with authentication and authorisation for root roles
 .type:crud-create
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.integer:x:@.arguments/*/max_context_tokens
+   min:500
+   max:40000
+validators.integer:x:@.arguments/*/max_request_tokens
+   min:100
+   max:25000
+validators.integer:x:@.arguments/*/max_tokens
+   min:500
+   max:4000
+
+// Applying sane defaults.
+validators.default:x:@.arguments
+   vector_model:text-embedding-ada-002
+   model:gpt-4o
+   threshold:decimal:0.3
 
 // Opening up database connection.
 data.connect:[generic|magic]

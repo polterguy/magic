@@ -136,14 +136,6 @@ if
             ..:Making sure user is authorized to invoke endpoint.
             auth.ticket.verify:x:@.arguments/*/authorization
 
-      // Appending to comment.
-      set-value:x:@apply/0
-         strings.concat
-            get-value:x:@apply/0
-            .:" with authentication and authorisation for "
-            get-value:x:@.arguments/*/authorization
-            .:" roles"
-
 // Appending description to endpoint
 unwrap:x:+/*/*
 insert-after:x:@apply/1
@@ -158,6 +150,47 @@ set-value:x:@.folder
       get-value:x:@.arguments/*/moduleName
       .:/
 io.folder.create:x:@.folder
+
+// Creating our descriptive comment by invoking OpenAI.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      get-first-value
+         get-value:x:@.arguments/*/api_key
+         config.get:"magic:openai:key"
+lambda2hyper:x:@apply/*
+http.post:"https://api.openai.com/v1/chat/completions"
+   convert:bool:true
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload
+      model:gpt-4o
+      max_tokens:int:1000
+      temperature:decimal:0.3
+      messages
+         .
+            role:system
+            content:"Shortly describe what the SQL inside the following code does with a single line of text, for then to add two carriage return characters, and a more elaborate description. The purpose of the result is to being used as the content for a file level comment describing what the SQL does. The comment needs to be high quality containing specific VSS keywords, since it will be used later to match training data using RAG according to the user's instructions. Do not return // characters or /**/ characters, only the text describing the code."
+         .
+            role:user
+            content:x:@lambda2hyper
+
+// Sanity checking above invocation.
+if
+   and
+      mte:x:@http.post
+         .:int:200
+      lt:x:@http.post
+         .:int:300
+   .lambda
+      set-value:x:@apply/0
+         get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+      set-value:x:@apply/0
+         strings.concat:x:@apply/0
+            get-value:x:@apply/0
+            .:"\r\n\r\n All arguments are mandatory."
 
 // Transforming above lambda to Hyperlambda, and figuring out filename.
 lambda2hyper:x:@apply/*

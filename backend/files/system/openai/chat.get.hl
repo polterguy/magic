@@ -1,5 +1,10 @@
 
-// OpenAI chat endpoint, for having conversations using "gpt-xxx" models.
+/*
+ * OpenAI chat endpoint, for having conversations using "gpt-xxx" models.
+ *
+ * Notice, if you set [stream] to true the endpoint will stream response tokens over the specified
+ * [session] back to caller.
+ */
 .arguments
    prompt:string
    type:string
@@ -10,8 +15,17 @@
    session:string
    stream:bool
    data:string
+   referrer:string
+   extra:string
 .description:@"OpenAI chat endpoint, for having conversations using 'gpt-xxx' models"
 .type:public
+
+// Executing all registered interceptor slots.
+add:x:+/*/arguments
+   get-nodes:x:@.arguments/*
+execute:magic.misc.execute-slots
+   namespace:magic.openai.chat-interceptor.
+   arguments
 
 // Invoking slot containing commonalities for all endpoints.
 insert-before:x:../*/signal/*/.callback
@@ -53,32 +67,81 @@ signal:magic.ai.endpoint-common
                   finish_reason:cached
                   result:x:@.arguments/*/contact_us
 
+      // Checking if [referrer] argument was given, and if not, using HTTP Referrer header.
+      .referrer
+      if
+         and
+            exists:x:@.arguments/*/referrer
+            not-null:x:@.arguments/*/referrer
+            neq:x:@.arguments/*/referrer
+               .:
+         .lambda
+
+            // Referrer argument specified.
+            set-value:x:@.referrer
+               get-value:x:@.arguments/*/referrer
+
+      else
+
+         // No referrer argument, defaulting to HTTP header
+         set-value:x:@.referrer
+            request.headers.get:Referer
+
+      // Checking if max-tokens have been overridden.
+      .tokens
+      set-value:x:@.tokens
+         config.get:"magic:openai:max_tokens"
+
       // Checking what type of model this is, and invoking correct slot accordingly.
       if
-         strings.starts-with:x:@.arguments/*/model
-            .:gpt
+         or
+            strings.starts-with:x:@.arguments/*/model
+               .:gpt
+            strings.starts-with:x:@.arguments/*/model
+               .:o1-
+            strings.starts-with:x:@.arguments/*/model
+               .:o3-
+            neq:x:@.slot
+               .:magic.ai.chat
          .lambda
+
+            // Retrieving Referrer value and passing into slot.
+            unwrap:x:+/*/*
+            add:x:./*/signal
+               .
+                  referrer:x:@.referrer
+            remove-nodes:x:@.arguments/*/referrer
 
             // Invoking chat slot.
             add:x:./*/signal
                get-nodes:x:@.arguments/*
-            signal:magic.ai.chat
+
+            // Checking if max_tokens have been overridden.
+            if
+               not-null:x:@.tokens
+               .lambda
+                  set-value:x:@.lambda/@.lambda/*/signal/*/model_size
+                     convert:x:@.tokens
+                        type:int
+
+            // Invoking chat slot and returning result to caller.
+            signal:x:@.arguments/*/completion_slot
             return-nodes:x:@signal/*
 
       else
+
+         // Retrieving Referrer value and passing into slot.
+         unwrap:x:+/*/*
+         add:x:./*/signal
+            .
+               referrer:x:@.referrer
+         remove-nodes:x:@.arguments/*/referrer
 
          // Invoking completion slot.
          add:x:./*/signal
             get-nodes:x:@.arguments/*
          signal:magic.ai.completion
          return-nodes:x:@signal/*
-
-/*
- * Applying some HTTP caching to avoid invoking OpenAI again with
- * the same question before some minimum amount of time has passed.
- */
-response.headers.set
-   Cache-Control:max-age=30
 
 // Returning result of worker slot to caller.
 return-nodes:x:@signal/*

@@ -12,5 +12,5 @@ export const environment = {
       token_raw: null,
     },
   ],
-  bazarUrl: 'https://ainiro.io'
+  bazarUrl: 'http://localhost:5000'
 };

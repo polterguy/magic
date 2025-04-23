@@ -1,0 +1,15 @@
+
+/*
+ * Sets the HTTP status code to the specified value.
+ */
+.arguments
+   status
+      type:int
+      mandatory:bool:true
+.icon:http
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/status
+
+// Changing status code.
+response.status.set:x:@.arguments/*/status

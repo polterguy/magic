@@ -1,0 +1,200 @@
+/*
+ * Distinct Keyword Search from {table} table in {database} database.
+ *
+ * This endpoint will return only records containing one or more of the keywords from the specified [query],
+ * with rows containing the most distinct matched keywords appearing first.
+ */
+.arguments
+
+   // Mandatory query for records to search for
+   query:string
+
+   // Optional number of records to return, defaults to 10 if not specified. Pass in -1 to return all records
+   limit:long
+
+   // Optional offset into the dataset of where to start retrieving records
+   offset:long
+
+// Type of endpoint
+.type:crud-search
+
+// Make sure the user has provided a query.
+validators.mandatory:x:@.arguments/*/query
+
+// Apply defaults if not specified.
+validators.default:x:@.arguments
+   limit:long:10
+
+// Split the user's query into individual keywords, separated by spaces.
+.words
+add:x:@.words
+   strings.split:x:@.arguments/*/query
+      .:' '
+
+// Enforce lower characters for each keyword, and guard against SQL injection.
+.no:int:0
+for-each:x:@.words/*
+   set-value:x:@.dp/#
+      strings.to-lower:x:@.dp/#
+
+// Specify which columns to search against.
+.columns
+
+// Connect to the specified database.
+data.connect:{database}
+   database-type:{database-type}
+
+   // Start building our SQL.
+   .sql:"select *, ("
+
+   // 1) Dynamically create the full text by concatenating all columns we want to search.
+   .fields
+   for-each:x:@.columns/*
+      strings.concat
+         .:"coalesce("
+         get-value:x:@.dp/#
+         .:", '')"
+      unwrap:x:+/*/*
+      add:x:@.fields
+         .
+            .:x:@strings.concat
+   set-value:x:@.fields
+      strings.join:x:@.fields/*
+         .:" || "
+   remove-nodes:x:@.fields/*
+
+   // 2) Keyword density calculation
+   .no:int:0
+   for-each:x:@.words/*
+
+      // Adding SQL parameter.
+      set-name:x:+/+/*/*
+         strings.concat
+            .:@p
+            get-value:x:@.no
+      unwrap:x:+/*/*
+      add:x:@data.connect/*/data.select
+         .
+            .:x:@.dp/#
+
+      // Modifying our SQL.
+      if
+         eq:x:@.no
+            .:int:0
+         .lambda
+
+            // First keyword => no leading plus
+            set-value:x:@.sql
+               strings.concat:x:@.sql
+                  get-value:x:@.sql
+                  .:" (length("
+                  get-value:x:@.fields
+                  .:") - length(replace(lower("
+                  get-value:x:@.fields
+                  .:"), @p"
+                  get-value:x:@.no
+                  .:", ''))) / length(@p"
+                  get-value:x:@.no
+                  .:")"
+      else
+
+         set-value:x:@.sql
+            strings.concat:x:@.sql
+               get-value:x:@.sql
+               .:" + (length("
+               get-value:x:@.fields
+               .:") - length(replace(lower("
+               get-value:x:@.fields
+               .:"), @p"
+               get-value:x:@.no
+               .:", ''))) / length(@p"
+               get-value:x:@.no
+               .:")"
+      math.increment:x:@.no
+
+   set-value:x:@.sql
+      strings.concat:x:@.sql
+         get-value:x:@.sql
+         .:") * 1.0 / length("
+         get-value:x:@.fields
+         .:") as keyword_density, ("
+
+   // 3) Distinct keyword count => For each keyword, 1 if present, 0 if not.
+   .no:int:0
+   for-each:x:@.words/*
+      if
+         eq:x:@.no
+            .:int:0
+         .lambda
+
+            // First keyword => no leading plus
+            set-value:x:@.sql
+               strings.concat:x:@.sql
+                  get-value:x:@.sql
+                  .:" CASE WHEN ((length("
+                  get-value:x:@.fields
+                  .:") - length(replace(lower("
+                  get-value:x:@.fields
+                  .:"), @p"
+                  get-value:x:@.no
+                  .:", ''))) / length(@p"
+                  get-value:x:@.no
+                  .:")) > 0 THEN 1 ELSE 0 END"
+      else
+
+         set-value:x:@.sql
+            strings.concat:x:@.sql
+               get-value:x:@.sql
+               .:" + CASE WHEN ((length("
+               get-value:x:@.fields
+               .:") - length(replace(lower("
+               get-value:x:@.fields
+               .:"), @p"
+               get-value:x:@.no
+               .:", ''))) / length(@p"
+               get-value:x:@.no
+               .:")) > 0 THEN 1 ELSE 0 END"
+      math.increment:x:@.no
+
+   // Finalize "keyword_count".
+   set-value:x:@.sql
+      strings.concat:x:@.sql
+         get-value:x:@.sql
+         .:") as keyword_count"
+
+   // 4) Finish SELECT + WHERE
+   set-value:x:@.sql
+      strings.concat:x:@.sql
+         get-value:x:@.sql
+         .:" from "
+         .:{table}
+         .:" where keyword_count > 0"
+
+   // 5) Order by distinct keyword_count (higher means more distinct keywords), then keyword_density.
+   set-value:x:@.sql
+      strings.concat:x:@.sql
+         get-value:x:@.sql
+         .:" order by keyword_count desc, keyword_density desc limit "
+         get-value:x:@.arguments/*/limit
+
+   // (Optional) offset => pagination
+   if
+      exists:x:@.arguments/*/offset
+      .lambda
+
+         set-value:x:@.sql
+            strings.concat:x:@.sql
+               get-value:x:@.sql
+               .:" offset "
+               get-value:x:@.arguments/*/offset
+
+   // Execute the SQL
+   data.select:x:@.sql
+      database-type:{database-type}
+
+   // Remove helper fields if you don't want them in your final JSON
+   remove-nodes:x:@data.select/*/*/keyword_density
+   remove-nodes:x:@data.select/*/*/keyword_count
+
+   // Return the final result set
+   return-nodes:x:@data.select/*

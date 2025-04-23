@@ -80,63 +80,18 @@
     </button>
 
     <button
-      mat-button
+      mat-flat-button
       color="primary"
-      matTooltip="AI chatbot"
-      class="help"
-      (click)="toggleChatbot()">
+      class="url-btn ai-support"
+      matTooltip="AI support chatbot"
+      (click)="showChatbot()">
       <div class="d-flex flex-nowrap align-items-center ps-1">
-        <mat-icon>chat_bubble</mat-icon>
+        <mat-icon>keyboard_arrow_left</mat-icon>
+        <p class="my-0 mx-2 text-truncate url-text">AI Support</p>
       </div>
     </button>
-
-    <button
-      mat-button
-      color="primary"
-      matTooltip="Help"
-      class="help"
-      [matMenuTriggerFor]="help_menu">
-      <div class="d-flex flex-nowrap align-items-center ps-1">
-        <mat-icon>question_mark</mat-icon>
-      </div>
-    </button>
-
-    <mat-menu
-      #help_menu="matMenu"
-      class="px-4 py-3 m-0 help_menu">
-      <span class="text-muted">
-        {{help_description}}
-      </span>
-      <a
-        class="read_more_help mt-3"
-        mat-button
-        *ngIf="help_url"
-        target="_blank"
-        [href]="help_url">
-        Read more ...
-      </a>
-    </mat-menu>
-
-    <button
-      mat-button
-      class="menu_trigger"
-      #completion_menu_trigger="matMenuTrigger"
-      [matMenuTriggerFor]="completion_menu">
-    </button>
-
-    <mat-menu
-      #completion_menu="matMenu"
-      class="px-4 py-3 m-0 help_menu">
-      <div class="text-muted" [innerHTML]="completion | marked">
-      </div>
-    </mat-menu>
 
   </div>
 </div>
 
 <div class="overlay" *ngIf="sideExpanded" (click)="toggleSidebar()"></div>
-
-<app-chatbot
-  [class.d-none]="!showChatbot"
-  #chatbot
-  (chatbotClosed)="hideChatbot()"></app-chatbot>

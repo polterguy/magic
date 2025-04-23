@@ -69,8 +69,9 @@ if
 set-value:x:@.sql
    strings.concat
       get-value:x:@.sql
+      .:"\""
       get-value:x:@.arguments/*/columnName
-      .:" "
+      .:"\" "
       get-value:x:@.arguments/*/columnType
 
 // Column length part, if specified.

@@ -13,6 +13,16 @@ slots.create:magic.http.html2markdown-links
       max:200
    validators.url:x:@.arguments/*/starts_with
 
+   // Converting [max] to integer if existing.
+   if
+      and
+         exists:x:@.arguments/*/max
+         not-null:x:@.arguments/*/max
+      .lambda
+         set-value:x:@.arguments/*/max
+            convert:x:@.arguments/*/max
+               type:int
+
    // Figuring out base URL of document, defaulting to primary URL we're getting.
    .base
    strings.split:x:@.arguments/*/url

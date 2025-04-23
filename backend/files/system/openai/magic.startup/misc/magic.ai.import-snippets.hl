@@ -1,0 +1,71 @@
+
+/*
+ * Imports a list of training snippets as [snippets].
+ *
+ * Will use [prompt] and [completion] for training snippets, but you can optionally
+ * supply [uri], [filename] and [type]. If you don't provide a [type] argument, snippets will
+ * be imported into the 'default' type. If you supply a [filename] it will be used to determine
+ * what file the snippet originated from, typically only useful for PDF files.
+ *
+ * Ths slot will check to verify that [prompt] is not null, and only import training snippets
+ * that has a non-null value for [prompt].
+ */
+slots.create:magic.ai.import-snippets
+
+   // Connecting to database.
+   data.connect:[generic|magic]
+
+      // Looping through each record specified in [snippets] collection.
+      for-each:x:@.arguments/*/snippets/*
+
+         // Verifying prompt is not null.
+         if:x:@.dp/#/*/prompt
+
+            // Verifying user can create more snippets.
+            add:x:+
+               get-nodes:x:@.arguments/*/type
+            try-signal:magic.ai.can-create-snippet
+
+            // Creating a unique URI based upon the prompt unless the file contains a URI.
+            .uri
+            set-value:x:@.uri
+               get-first-value
+                  get-value:x:@.dp/#/*/uri
+                  .:
+
+            // Using type from arguments unless file contains a type declaration.
+            .type
+            if
+               and
+                  exists:x:@.arguments/*/type
+                  not-null:x:@.arguments/*/type
+                  neq:x:@.arguments/*/type
+                     .:
+               .lambda
+                  set-value:x:@.type
+                     get-value:x:@.arguments/*/type
+            else-if
+               exists:x:@.dp/#/*/type
+               .lambda
+                  set-value:x:@.type
+                     get-value:x:@.dp/#/*/type
+            else
+               set-value:x:@.type
+                  .:default
+
+            // Checking if we've got a filename value.
+            if
+               exists:x:@.dp/#/*/filename
+               .lambda
+                  add:x:@for-each/*/data.create/*/values
+                     get-nodes:x:@.dp/#/*/filename
+
+            // Inserting into database.
+            data.create
+               table:ml_training_snippets
+               values
+                  type:x:@.type
+                  uri:x:@.uri
+                  prompt:x:@.dp/#/*/prompt
+                  completion:x:@.dp/#/*/completion
+                  meta:imported

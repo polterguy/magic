@@ -1,0 +1,251 @@
+/*
+ * Imports the specified CSV file into the specified database.
+ */
+.arguments
+   databaseType:string
+   connectionString:string
+   databaseName:string
+   file:*
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/databaseType
+validators.mandatory:x:@.arguments/*/connectionString
+validators.mandatory:x:@.arguments/*/databaseName
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+
+// Basic logging.
+log.info:Getting ready to import CSV file and create table based upon its structure
+   databaseType:x:@.arguments/*/databaseType
+   connectionString:x:@.arguments/*/connectionString
+   databaseName:x:@.arguments/*/databaseName
+
+// Reading CSV file into memory.
+.content
+set-value:x:@.content
+   io.stream.read:x:@.arguments/*/file/*/stream
+
+// Basic logging.
+log.info:Done reading CSV file
+   databaseType:x:@.arguments/*/databaseType
+   connectionString:x:@.arguments/*/connectionString
+   databaseName:x:@.arguments/*/databaseName
+
+// Resetting stream argument to avoid having to copy it into [fork] invocation.
+set-value:x:@.arguments/*/file/*/stream
+
+// Doing the heavy lifting on a separate thread to avoid timeout.
+insert-before:x:./*/fork/0
+   get-nodes:x:@.arguments
+   get-nodes:x:@.content
+fork
+
+   // Basic logging.
+   log.info:Successfully started a thread to import CSV file
+      databaseType:x:@.arguments/*/databaseType
+      connectionString:x:@.arguments/*/connectionString
+      databaseName:x:@.arguments/*/databaseName
+
+   // Making sure our table name is sanitized.
+   .table
+   strings.split:x:@.arguments/*/file/*/name
+      .:.
+   remove-nodes:x:-/0/-
+   strings.join:x:@strings.split/*
+      .:_
+   strings.to-lower:x:-
+   set-value:x:@.table
+      strings.replace-not-of:x:@strings.to-lower
+         .:abcdefghijklmnopqrstuvwxyz0123456789_
+         .:_
+
+   // Transpiling CSV file to a lambda object.
+   csv2lambda:x:@.content
+
+   // Removing rows without names.
+   remove-nodes:x:@csv2lambda/*/*/
+
+   // Basic logging.
+   log.info:Done removing empty columns
+      databaseType:x:@.arguments/*/databaseType
+      connectionString:x:@.arguments/*/connectionString
+      databaseName:x:@.arguments/*/databaseName
+      tableName:x:@.table
+
+   // Making sure our column names are sanitized.
+   for-each:x:@csv2lambda/*/*
+
+      // Making sure we create lower caps columns.
+      get-name:x:@.dp/#
+      set-name:x:@.dp/#
+         strings.to-lower:x:@get-name
+
+      // Making sure we replace anything not being tolerated characters with '_'.
+      get-name:x:@.dp/#
+      set-name:x:@.dp/#
+         strings.replace-not-of:x:@get-name
+            .:abcdefghijklmnopqrstuvwxyz0123456789_
+            .:_
+
+   // Basic logging.
+   log.info:Done sanitizing column names
+      databaseType:x:@.arguments/*/databaseType
+      connectionString:x:@.arguments/*/connectionString
+      databaseName:x:@.arguments/*/databaseName
+      tableName:x:@.table
+
+   // Wrapping this in try/catch in case table exists from before.
+   .changes:bool:false
+   try
+
+      // Figuring out a sane name for our primary key.
+      .pk
+      set-value:x:@.pk
+         strings.concat
+            get-value:x:@.table
+            .:_id
+
+      // Creating our database table.
+      execute-file:/system/sql/ddl/table.post.hl
+         databaseType:x:@.arguments/*/databaseType
+         connectionString:x:@.arguments/*/connectionString
+         databaseName:x:@.arguments/*/databaseName
+         tableName:x:@.table
+         pkName:x:@.pk
+         pkType:auto_increment
+         pkLength:int:10
+         pkDefault:
+
+      // Making sure we store that we've got DDL changes.
+      set-value:x:@.changes
+         .:bool:true
+
+      // Basic logging.
+      log.info:Table created
+         databaseType:x:@.arguments/*/databaseType
+         connectionString:x:@.arguments/*/connectionString
+         databaseName:x:@.arguments/*/databaseName
+         tableName:x:@.table
+
+      // Creating our columns.
+      for-each:x:@csv2lambda/0/*
+
+         // Buffers for type of column.
+         .type:text
+
+         // Getting name of column.
+         get-name:x:@.dp/#
+
+         // If this is true we found text values in column.
+         .found:bool:false
+
+         // Iterating through all values to see if this is a numeric field.
+         for-each:x:@csv2lambda/*/*/{@get-name}
+
+            // Checking if currently iterated cell contains non-numeric characters.
+            if
+               not
+                  eq
+                     strings.replace-not-of:x:@.dp/#
+                        .:0123456789.
+                        .:
+                     get-value:x:@.dp/#
+               .lambda
+                  set-value:x:@.found
+                     .:bool:true
+
+         // Checking if we found non-numeric characters, and if not, we set the field type to being numeric.
+         if
+            eq:x:@.found
+               .:bool:false
+            .lambda
+               set-value:x:@.type
+                  .:numeric
+
+         // Creating our currently iterated database column.
+         execute-file:/system/sql/ddl/column.post.hl
+            databaseType:x:@.arguments/*/databaseType
+            connectionString:x:@.arguments/*/connectionString
+            databaseName:x:@.arguments/*/databaseName
+            tableName:x:@.table
+            columnName:x:@get-name
+            columnType:x:@.type
+
+      // Basic logging.
+      get-count:x:@csv2lambda/0/*
+      log.info:Columns created
+         column_count:x:@get-count
+         databaseType:x:@.arguments/*/databaseType
+         connectionString:x:@.arguments/*/connectionString
+         databaseName:x:@.arguments/*/databaseName
+         tableName:x:@.table
+
+   .catch
+
+      // Do nothing, table probably already exists, but doing some basic logging just in case.
+      log.error:x:@.arguments/*/message
+
+   // Opening up our database connection.
+   strings.concat
+      .:[
+      get-value:x:@.arguments/*/connectionString
+      .:|
+      get-value:x:@.arguments/*/databaseName
+      .:]
+   data.connect:x:@strings.concat
+      type:x:@.arguments/*/databaseType
+
+      // Iterating through each row and importing into table.
+      for-each:x:@csv2lambda/*
+
+         // Removing null values.
+         remove-nodes:x:@.dp/#/*/=
+
+         // Parametrizing [data.create] invocation.
+         add:x:./*/data.create/*/values
+            get-nodes:x:@.dp/#/*
+
+         // Inserting into database.
+         data.create
+            type:x:@.arguments/*/databaseType
+            table:x:@.table
+            values
+
+   // Basic logging.
+   log.info:Done importing CSV file
+      databaseType:x:@.arguments/*/databaseType
+      connectionString:x:@.arguments/*/connectionString
+      databaseName:x:@.arguments/*/databaseName
+      tableName:x:@.table
+
+   // Flushing database cache.
+   strings.concat
+      .:magic.sql.databases.
+      get-value:x:@.arguments/*/databaseType
+      :.
+      get-value:x:@.arguments/*/connectionString
+   cache.set:x:-
+
+   // Informing frontend.
+   sockets.signal:magic.backend.message
+      roles:root
+      args
+         message:CSV file was successfully imported. Reload the page to see the changes.
+         type:success
+
+.catch
+
+   // Oops ...!!
+   log.error:x:@.arguments/*/message
+
+   // Informing frontend.
+   sockets.signal:magic.backend.message
+      roles:root
+      args
+         message:Something went wrong during import of CSV file. Check your log for details.
+         type:error
+
+// Returning success to caller.
+return
+   result:success

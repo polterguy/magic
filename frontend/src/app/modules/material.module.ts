@@ -42,6 +42,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { A11yModule } from '@angular/cdk/a11y';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTreeModule } from '@angular/material/tree';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 @NgModule({
   exports: [
@@ -81,7 +82,8 @@ import { MatTreeModule } from '@angular/material/tree';
     A11yModule,
     MatSliderModule,
     ScrollingModule,
-    MatTreeModule
+    MatTreeModule,
+    ColorPickerModule,
   ],
   imports: [
     MatIconModule,
@@ -120,7 +122,8 @@ import { MatTreeModule } from '@angular/material/tree';
     A11yModule,
     MatSliderModule,
     ScrollingModule,
-    MatTreeModule
+    MatTreeModule,
+    ColorPickerModule,
   ],
   providers: [
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } }

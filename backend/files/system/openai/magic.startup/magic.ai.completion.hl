@@ -84,7 +84,6 @@ slots.create:magic.ai.completion
             prompt:x:@.arguments/*/prompt
             threshold:x:@.arguments/*/threshold
             max_tokens:x:@.arguments/*/max_context_tokens
-            vector_model:x:@.arguments/*/vector_model
             api_key:x:@.arguments/*/api_key
 
          // Checking if we've got a cached result.
@@ -265,6 +264,7 @@ slots.create:magic.ai.completion
                   finish_reason:x:@.result/*/finish_reason
                   session:x:@.arguments/*/session
                   user_id:x:@.arguments/*/user_id
+                  referrer:x:@.arguments/*/referrer
 
    /*
     * Applying some HTTP caching to avoid invoking OpenAI again with

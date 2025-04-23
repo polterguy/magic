@@ -2,51 +2,14 @@
 // Returns the specified CSS file to caller.
 .arguments
    file:string
+   position:string
+   color:string
+   link:string
+   start:string
+   end:string
    v:string
 
-// Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/file
-
-// Checking if custom CSS file exists.
-.result
-strings.concat
-   .:/etc/system/openai/css/chat/
-   get-value:x:@.arguments/*/file
-   .:.css
-if
-   io.file.exists:x:@strings.concat
-   .lambda
-
-      // Custom template file.
-      set-value:x:@.result
-         io.file.load:x:@strings.concat
-
-else
-
-   //Checking if system CSS file exists.
-   strings.concat
-      .:/system/openai/front.files/chat/
-      get-value:x:@.arguments/*/file
-      .:.css
-   if
-      io.file.exists:x:@strings.concat
-      .lambda
-
-         // Generic template file.
-         set-value:x:@.result
-            io.file.load:x:@strings.concat
-
-   else
-
-      // Oops, no such file exists.
-      throw:No such AI chat CSS file exists
-         public:bool:true
-         status:400
-
-// Making sure we return correct Content-Type to caller, and applying some cache.
-response.headers.set
-   Content-Type:text/css; charset=utf-8
-   Cache-Control:public, max-age=31536000
-
-// Returning result to caller.
-return:x:@.result
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*
+execute-file:/system/openai/include-style.css.get.hl
+return:x:-

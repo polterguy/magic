@@ -1,0 +1,53 @@
+
+/*
+ * Speaks the specified content using OpenAI TTS.
+ */
+.arguments
+   content:string
+   session:string
+.type:internal
+.description:Speaks the specified content using OpenAI TTS
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/content
+validators.mandatory:x:@.arguments/*/session
+
+// Creating a new thread to return before timeout.
+insert-before:x:../*/fork/0
+   get-nodes:x:@.arguments
+fork
+
+   // Retrieving token used to invoke OpenAI.
+   .token
+   config.get:"magic:openai:key"
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         get-first-value
+            get-value:x:@.arguments/*/api_key
+            config.get:"magic:openai:key"
+
+   // Invoking OpenAI's API.
+   http.post:"https://api.openai.com/v1/audio/speech"
+      convert:bool:true
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+         Accept:text/event-stream
+      payload
+         model:tts-1
+         input:x:@.arguments/*/content
+         voice:alloy
+         response_format:mp3
+         speed:decimal:1.0
+
+   // Sending speech to client.
+   convert:x:@http.post/*/content
+      type:base64
+   unwrap:x:+/*/*
+   sockets.signal:x:@.arguments/*/session
+      args
+         audio:x:@http.post/*/content
+
+yield
+   result:success

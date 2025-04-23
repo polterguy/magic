@@ -46,6 +46,7 @@ export class SQLStudioComponent implements OnInit {
   tables = this._tables.asObservable();
   hintTables = this._hintTables.asObservable();
   dbLoading = this._dbLoading.asObservable();
+  fileInput: string;
 
   constructor(
     private dialog: MatDialog,
@@ -135,7 +136,7 @@ export class SQLStudioComponent implements OnInit {
           const tables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
           this._tables.next(tables);
           let hintTables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
-          hintTables = hintTables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]);
+          hintTables = hintTables.map((x: any) => [x.name, (x.columns ?? []).map((y: any) => y.name)]);
           this._hintTables.next(Object.fromEntries(hintTables));
           this._dbLoading.next(false);
           this.generalService.hideLoading();
@@ -264,7 +265,7 @@ export class SQLStudioComponent implements OnInit {
       true).subscribe({
         next: (result: any) => {
 
-          const dialogRef = this.dialog.open(ExportDdlComponent, {
+          this.dialog.open(ExportDdlComponent, {
             width: '80vw',
             panelClass: 'light',
             data: {
@@ -299,7 +300,7 @@ export class SQLStudioComponent implements OnInit {
     const tables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
     this._tables.next(tables);
     let hintTables = this.databases.find((db: any) => db.name === this.selectedDatabase)?.tables || [];
-    hintTables = hintTables.map((x: any) => [x.name, x.columns.map((y: any) => y.name)]);
+    hintTables = hintTables.map((x: any) => [x.name, (x.columns ?? []).map((y: any) => y.name)]);
     this._hintTables.next(Object.fromEntries(hintTables));
   }
 
@@ -319,6 +320,35 @@ export class SQLStudioComponent implements OnInit {
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 5000)
       }
     });
+  }
+
+  uploadFiles(files: FileList, idx: number) {
+
+    this.generalService.showLoading();
+    if (idx === files.length) {
+      // Done!
+      return;
+    }
+    this.sqlService.importCsvFile(
+      this.selectedDbType,
+      this.selectedConnectionString,
+      this.selectedDatabase,
+      files[idx]).subscribe({
+
+        next: () => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback('CSV file import started. You can leave this page, we will notify you when it is done.', 'successMessage');
+          this.fileInput = null;
+        },
+
+        error: (error: any) => {
+
+          this.fileInput = null;
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        }
+      });
   }
 
   /*

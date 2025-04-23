@@ -1,51 +1,105 @@
 
 /*
- * Creates a summary of the specified text and returns as [prompt] and [completion].
+ * Chops up the specified text into multiple training snippets according to type,
+ * and optionally invokes OpenAI to summarize, or 'massage' the content, using the
+ * specified [massage] value as an instruction.
+ *
+ * The content will be chopped up into multiple training snippets, each being a maximum
+ * of 80% of the max_context_tokens for the specified [type], then afterwards each
+ * snippet will be massaged if you specified a [massage] value.
  */
 slots.create:magic.ai.massage
-
-   // Getting OpenAI API token from configuration.
-   .token
-   set-value:x:@.token
-      strings.concat
-         .:"Bearer "
-         config.get:"magic:openai:key"
 
    /*
     * Buffer for snippets since a single invocation might have more
     * characters than whatever OpenAI can maximum tolerate.
     */
    .snippets
+
+   // Retrieving max_context_tokens from type specified by caller.
+   .max_tokens
+   data.connect:[generic|magic]
+      data.scalar:select max_context_tokens from ml_types where type = @type
+         @type:x:@.arguments/*/type
+
+      // Making sure we never create training snippets larger than 80% of type's maximum context size.
+      set-value:x:@.max_tokens
+         math.divide
+            math.multiply
+               convert:x:@data.scalar
+                  type:int
+               .:int:80
+            .:int:100
    
    // Chopping up content into multiple snippets to avoid max_token overflow with OpenAI.
+   .current:
    while
       mt
          strings.length:x:@.arguments/*/content
          .:int:0
       .lambda
 
-         // Creating a 2000 character long sub-section from initial content.
+         // Creating a 500 character long sub-section from current content.
          strings.substring:x:@.arguments/*/content
             .:int:0
-            .:int:2000
+            .:int:500
+
+         // Removing part we're currently handling.
+         if
+            mt
+               strings.length:x:@.arguments/*/content
+               .:int:500
+            .lambda
+
+               // Removing 500 first characters.
+               set-value:x:@.arguments/*/content
+                  strings.substring:x:@.arguments/*/content
+                     .:int:500
+         else
+
+            // There aren't 500 characters left, so we're just setting string to empty to escape [while].
+            set-value:x:@.arguments/*/content
+               .:
+
+         /*
+          * Checking if current string + above substring overflows [.max_tokens],
+          * at which point we create a new training snippet.
+          */
+         .tmp
+         set-value:x:@.tmp
+            strings.concat
+               get-value:x:@.current
+               get-value:x:@strings.substring
+         if
+            mt
+               openai.tokenize:x:@.tmp
+               get-value:x:@.max_tokens
+            .lambda
+
+               // Creating new training snippet.
+               unwrap:x:+/*/*/*
+               add:x:@.snippets
+                  .
+                     .
+                        content:x:@.current
+               set-value:x:@.tmp
+                  get-value:x:@strings.substring
+
+         // Updating [.current].
+         set-value:x:@.current
+            get-value:x:@.tmp
+
+   // Appending the remaining parts, if there are any.
+   if
+      neq:x:@.current
+         .:
+      .lambda
          unwrap:x:+/*/*/*
          add:x:@.snippets
             .
                .
-                  content:x:@strings.substring
+                  content:x:@.current
 
-         // Removing the parts of the string we just used, except 50 characters of overlap.
-         if
-            mt
-               strings.length:x:@.arguments/*/content
-               .:int:2000
-            .lambda
-               set-value:x:@.arguments/*/content
-                  strings.substring:x:@.arguments/*/content
-                     .:int:1950
-         else
-            set-value:x:@.arguments/*/content
-               .:
 
    // Checking if user wants to "massage" content.
    if
@@ -56,7 +110,7 @@ slots.create:magic.ai.massage
             .:
       .lambda
 
-         // User wants to use PDF content as is.
+         // User wants to use content as is.
          for-each:x:@.snippets/*
 
             // Adding currently iterated snippet to return invocation.
@@ -69,9 +123,19 @@ slots.create:magic.ai.massage
 
    else
 
+      // Getting OpenAI API token from configuration.
+      .token
+      set-value:x:@.token
+         strings.concat
+            .:"Bearer "
+            config.get:"magic:openai:key"
+
       /*
-       * User wants to use OpenAI to create for instance summary or something
-       * out of the content from the PDF before creating training data.
+       * User wants to use OpenAI to create for instance a summary
+       * from the content before creating training data.
+       *
+       * The first line returned from OpenAI is assumed to be the prompt, all other lines
+       * will be treated as the completion.
        *
        * Iterating through each snippet created above.
        */
@@ -116,8 +180,6 @@ slots.create:magic.ai.massage
                   message:x:@http.post/*/content/*/error/*/message
                   status:x:@http.post
                   error:x:@lambda2hyper
-               throw:Failure while invoking OpenAI API
-                  public:bool:true
 
          // Creating our prompt.
          .prompt

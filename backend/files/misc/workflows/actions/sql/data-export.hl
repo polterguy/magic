@@ -1,0 +1,93 @@
+
+/*
+ * Exports all columns from specified records in specified database.
+ *
+ * Provide [connection-string], [database-type], [database] and [table] to inform the action of
+ * what database you want to export items from. Optionally provide [limit] and [offset] for paging,
+ * if not specified, all records from table will be returned.
+ *
+ * If you specify [columns] then only these columns will be returned, otherwise all columns will be
+ * returned.
+ */
+.arguments
+   database-type
+      type:enum
+      mandatory:bool:true
+      default:sqlite
+      values
+         .:sqlite
+         .:mssql
+         .:mysql
+         .:pgsql
+   connection-string
+      type:string
+      mandatory:bool:true
+      default:generic
+   database
+      type:string
+      mandatory:bool:true
+   table
+      type:string
+      mandatory:bool:true
+   limit
+      type:int
+      mandatory:bool:false
+   offset
+      type:int
+      mandatory:bool:false
+   columns
+      type:array
+      mandatory:bool:false
+.icon:cloud_download
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/database-type
+validators.mandatory:x:@.arguments/*/connection-string
+validators.mandatory:x:@.arguments/*/database
+validators.mandatory:x:@.arguments/*/table
+validators.enum:x:@.arguments/*/database-type
+   .:sqlite
+   .:mssql
+   .:mysql
+   .:pgsql
+validators.default:x:@.arguments
+   limit:int:-1
+
+// Connection string to actually use as we connect.
+.connection-string
+
+// Caller supplied an explicit [connection-string] argument.
+set-value:x:@.connection-string
+   strings.concat
+      .:[
+      get-value:x:@.arguments/*/connection-string
+      .:|
+      get-value:x:@.arguments/*/database
+      .:]
+
+// Connecting to database.
+data.connect:x:@.connection-string
+   database-type:x:@.arguments/*/database-type
+
+   // Parametrizing SQL.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+
+   // Checking if caller wants to only return specific columns.
+   if:x:@.arguments/*/columns/0
+      add:x:@data.connect/*/data.read
+         .
+            columns
+      for-each:x:@.arguments/*/columns/*
+         set-name:x:+/*/*
+            get-value:x:@.dp/#
+         add:x:@data.connect/*/data.read/*/columns
+            .
+               foo
+
+   // Executing SQL.
+   data.read:x:@.arguments/*/sql
+      database-type:x:@.arguments/*/database-type
+      table:x:@.arguments/*/table
+   return-nodes:x:@data.read/*

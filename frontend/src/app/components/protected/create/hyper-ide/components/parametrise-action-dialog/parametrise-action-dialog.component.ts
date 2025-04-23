@@ -112,6 +112,7 @@ export class ParametriseActionDialog implements OnInit {
         case 'textarea':
         case 'action':
         case 'workflow':
+        case '*':
 
           add = true;
 
@@ -119,6 +120,10 @@ export class ParametriseActionDialog implements OnInit {
 
             case 'textarea':
               field.type = 'autocomplete-textarea';
+              break;
+
+            case '*':
+              field.type = 'autocomplete';
               break;
 
             case 'workflow':
@@ -148,9 +153,9 @@ export class ParametriseActionDialog implements OnInit {
           if (!this.data.input[idx].noCandidates || this.data.input[idx].noCandidates === false) {
             for (const idxCandidate of this.data.candidates) {
               field.props.options.push({
-                value: idxCandidate.value,
-                label: idxCandidate.label,
-                complete: idxCandidate.complete,
+                value: idxCandidate.value + (this.data.input[idx].type === '*' && !idxCandidate.value.endsWith('*') ? '/*' : ''),
+                label: idxCandidate.label + (this.data.input[idx].type === '*' && !idxCandidate.value.endsWith('*') ? '/*' : ''),
+                complete: idxCandidate.complete + (this.data.input[idx].type === '*' && !idxCandidate.value.endsWith('*') ? '/*' : ''),
               });
             }
           }
@@ -212,6 +217,8 @@ export class ParametriseActionDialog implements OnInit {
         } else if (field.props.options && (<any[]>field.props.options).length > 0) {
           for (const idxOpt of <any[]>field.props.options) {
             if (idxOpt.value.endsWith('/' + idx)) {
+              this.model[idx] = idxOpt.value;
+            } else if (this.data.input[idx].type === '*' && idxOpt.value.endsWith('/' + idx + '/*')) {
               this.model[idx] = idxOpt.value;
             }
           }

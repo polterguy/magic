@@ -5,12 +5,13 @@
 
 // Angular and system specific imports.
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 
 // Application specific imports.
 import { GeneralService } from 'src/app/services/general.service';
 import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.service';
 import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
+import { LoadTemplateDialogComponent } from '../load-template-dialog/load-template-dialog.component';
 
 /**
  * Helper component to edit details of one single training item.
@@ -27,6 +28,7 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
   prompt: string;
   uri: string;
   completion: string;
+  meta?: string;
   pushed: boolean;
   cached: boolean;
   ready: boolean = false;
@@ -36,6 +38,7 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<MachineLearningEditTrainingSnippetComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialog: MatDialog,
     private generalService: GeneralService,
     private codemirrorActionsService: CodemirrorActionsService,
     private machineLearningTrainingService: MachineLearningTrainingService) { }
@@ -68,6 +71,9 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
     });
   }
 
+  /*
+   * Invoked when preview state is changed to make sure we store it in local storage to allow user to select it once.
+   */
   previewChanged() {
 
     // Storing value to localStorage
@@ -148,18 +154,42 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
     });
   }
 
+  showTemplates() {
+
+    this.dialog
+      .open(LoadTemplateDialogComponent, {
+        width: '80vw',
+        maxWidth: '550px',
+        data: {
+          type: this.type,
+        }
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+          this.prompt = result.prompt;
+          this.completion = result.completion;
+          this.generalService.showFeedback('Snippet updated, remember to save your changes', 'successMessage');
+        }
+      });
+  }
+
   save() {
 
     const data: any = {
-      prompt: this.prompt,
+      prompt: this.prompt ?? '',
       uri: this.uri,
-      completion: this.ready ? this.model.hyperlambda : this.completion,
+      completion: this.ready ? (this.model.hyperlambda ?? '') : (this.completion ?? ''),
       type: this.type,
       pushed: this.pushed ? 1 : 0,
       cached: this.cached ? 1 : 0,
     };
     if (this.data) {
       data.id = this.data.id;
+    }
+    if (this.meta) {
+      data.meta = this.meta;
     }
     this.dialogRef.close(data);
   }
@@ -170,12 +200,15 @@ export class MachineLearningEditTrainingSnippetComponent implements OnInit {
 
   private initialize() {
 
-    this.prompt = this.data?.prompt;
+    this.prompt = this.data?.prompt ?? this.data.initialPrompt;
     this.uri = this.data?.uri;
-    this.completion = this.data?.completion;
+    this.completion = this.data?.completion ?? this.data.initialCompletion;
     this.type = this.data?.type;
     this.pushed = this.data?.pushed > 0 ? true : false;
     this.cached = this.data?.cached > 0 ? true : false;
+    if (this.data?.meta) {
+      this.meta = this.data.meta;
+    }
   }
 }
 

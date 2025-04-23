@@ -23,6 +23,11 @@ export class HttpService {
     private httpClient: HttpClient,
     private backendService: BackendService) { }
 
+  get raw() {
+
+    return this.httpClient;
+  }
+
   get<MagicResponse>(url: string, requestOptions: object = null) {
 
     if (!this.backendService.active) {

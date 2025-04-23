@@ -28,6 +28,9 @@ slots.create:magic.modules.ensure-database
    // Returned to caller to signal whether or not operation was a success or not.
    .result:bool:true
 
+   // Flushing cache.
+   cache.clear
+
    /*
     * Figuring out folder from where to read migration scripts and
     * main 'create-database.sql' script.

@@ -1,9 +1,19 @@
 
-// Generates a long lasting JWT token with the specified username and the specified role, expiring on the specified date.
+/*
+ * Generates a long lasting JWT token with the specified username and the specified role,
+ * expiring on the specified date.
+ */
 .arguments
+
+   // Mandatory username for token we should generate. Does not need to be an existing user from the database.
    username:string
+
+   // Mandatory argument being the role the returned JWT token should be associated with.
    role:string
+
+   // Mandatory expiration date for the token. Can be any future date and time.
    expires:date
+
 .description:Generates a long lasting JWT token with the specified username and the specified role, expiring on the specified date
 .type:internal
 

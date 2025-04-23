@@ -149,4 +149,19 @@ export class TableEx {
    * If true adds sorting to the table
    */
   sorting: boolean;
+
+  /**
+   * If true adds an aggregate endpoint
+   */
+  aggregate: boolean;
+
+  /**
+   * If true adds a distinct endpoint
+   */
+  distinct: boolean;
+
+  /**
+   * If true adds a search endpoint
+   */
+  search: boolean;
 }

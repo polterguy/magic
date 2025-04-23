@@ -1,0 +1,28 @@
+
+/*
+ * OpenAI chat endpoint, for having conversations using "gpt-xxx" models.
+ *
+ * Notice, if you set [stream] to true the endpoint will stream response tokens over the specified
+ * [session] back to caller.
+ */
+.arguments
+   prompt:string
+   type:string
+   references:bool
+   chat:bool
+   recaptcha_response:string
+   user_id:string
+   session:string
+   stream:bool
+   data:string
+   referrer:string
+.description:@"OpenAI chat endpoint, for having conversations using 'gpt-xxx' models"
+.type:public
+
+// Forwarding to get Hyperlambda file.
+add:x:+
+   get-nodes:x:@.arguments/*
+execute-file:/system/openai/chat.get.hl
+
+// Returning result to caller.
+return-nodes:x:-/*

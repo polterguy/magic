@@ -122,7 +122,7 @@ data.connect:x:@.connection-string
       get-nodes:x:@.arguments/*/and
 
    // Executing SQL.
-   data.read:x:@.arguments/*/sql
+   data.read
       database-type:x:@.arguments/*/database-type
       table:x:@.arguments/*/table
       where

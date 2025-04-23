@@ -1,0 +1,205 @@
+
+/*
+ * Dynamically executes a Hyperlambda file with the specified format assuming the specified [invocation] is 
+ * a string in the following format:
+ *
+ * FUNCTION_INVOCATION[/system/misc/functions/send-email.hl]:
+ * {
+ *   "name": "Thomas Hansen",
+ *   "email": "thomas@gaiasoul.com",
+ *   "subject": "Howdy",
+ *   "body": "This is Frank"
+ * }
+ *
+ * Notice, the string must start with "FUNCTION_INVOCATION" and have the file name to what file
+ * to execute inside of square brackets. The slot will extract the file name, and convert the JSON payload
+ * to a lambda object, and then invoke the file, and return whatever the file returns back to the caller.
+ *
+ * The slots requires a [type] argument being the machine learning type that triggered the invocation,
+ * and if the type does not declare the specific function, the slot will throw an exception.
+ */
+slots.create:magic.ai.functions.invoke
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/type
+   validators.mandatory:x:@.arguments/*/invocation
+
+   // Trimming [invocation] since it might start and end with special characters.
+   set-value:x:@.arguments/*/invocation
+      strings.trim:x:@.arguments/*/invocation
+
+   // Making sure [invocation] starts with FUNCTION_INVOCATION
+   if
+      not
+         strings.starts-with:x:@.arguments/*/invocation
+            .:FUNCTION_INVOCATION
+      .lambda
+
+         // Oops ...!
+         throw:Malformatted function invocation
+            status:int:400
+            public:bool:true
+
+   // Extracting file name.
+   .file
+   strings.split:x:@.arguments/*/invocation
+      .:[
+   strings.split:x:@strings.split/1
+      .:]
+   set-value:x:@.file
+      get-value:x:@strings.split/0
+
+   // Ensuring function file exists in type to avoid "function invocation injection attacks".
+   data.connect:[generic|magic]
+      strings.concat
+         :"%FUNCTION_INVOCATION["
+         get-value:x:@.file
+         .:"]%"
+      strings.concat
+         :"FUNCTION_INVOCATION ==> "
+         get-value:x:@.file
+      data.scalar:"select count(*) from ml_training_snippets where type = @type and (meta = @meta or completion like @completion)"
+         @type:x:@.arguments/*/type
+         @meta:x:@strings.concat
+         @completion:x:@strings.concat/@strings.concat
+
+      // If we couldn't find a training snippet with function invocation declaration, we look in system message.
+      if
+         eq:x:@data.scalar
+            .:long:0
+         .lambda
+
+            // Now checking if function invocation exists on system message.
+            data.scalar:select count(*) from ml_types where type = @type and system_message like @func
+               @type:x:@.arguments/*/type
+               @func:x:@strings.concat/@strings.concat
+            if
+               eq:x:@data.scalar
+                  .:long:0
+               .lambda
+
+                  // Oops ...!!
+                  throw:"That function doesn't exist on type"
+                     public:bool:true
+                     status:int:400
+
+   // Checking if we have a JSON payload.
+   .json
+   if
+      strings.contains:x:@.arguments/*/invocation
+         .:":"
+      .lambda
+
+         // Extracting JSON payload.
+         strings.split:x:@.arguments/*/invocation
+            .:":"
+         remove-nodes:x:@strings.split/0
+         set-value:x:@.json
+            strings.join:x:@strings.split/*
+               .:":"
+
+         // Parametrising invocation.
+         if
+            neq:x:@.json
+               .:
+            .lambda
+
+               // We actually have some JSON.
+               json2lambda:x:@.json
+
+               /*
+                * Removing [session] and [user-id] from JSON arguments, to avoid applying these twice,
+                * in case user didn't correctly prompt engineer the AI function.
+                */
+               remove-nodes:x:@json2lambda/*/_session
+               remove-nodes:x:@json2lambda/*/_user-id
+               remove-nodes:x:@json2lambda/*/_type
+
+               // Adding arguments to [execute-file].
+               add:x:../*/execute-file
+                  get-nodes:x:@json2lambda/*
+
+   /*
+    * Loading file and transforming to lambda to see if the file requires a [_session], [_user-id] or [_type] arguments,
+    * at which point we add the current [_session] value, the current [_user-id] value and the current [_type] value to its invocation.
+    */
+   load-file:x:@.file
+   hyper2lambda:x:@load-file
+
+   if
+      exists:x:@hyper2lambda/*/.arguments/*/_session/=string
+      .lambda
+
+         /*
+          * File requires a [_session] and it is of type string, making sure we pass
+          * in [_session] argument given to invocation.
+          */
+         unwrap:x:+/*/*
+         add:x:../*/execute-file
+            .
+               _session:x:@.arguments/*/session
+
+   if
+      exists:x:@hyper2lambda/*/.arguments/*/_user-id/=string
+      .lambda
+
+         /*
+          * File requires a [_user-id] and it is of type string, making sure we pass
+          * in [_user-id] argument given to invocation.
+          */
+         unwrap:x:+/*/*
+         add:x:../*/execute-file
+            .
+               _user-id:x:@.arguments/*/user-id
+
+   if
+      exists:x:@hyper2lambda/*/.arguments/*/_extra/=string
+      .lambda
+
+         /*
+          * File requires a [_user-id] and it is of type string, making sure we pass
+          * in [_user-id] argument given to invocation.
+          */
+         unwrap:x:+/*/*
+         add:x:../*/execute-file
+            .
+               _extra:x:@.arguments/*/extra
+
+   if
+      exists:x:@hyper2lambda/*/.arguments/*/_type/=string
+      .lambda
+
+         /*
+          * File requires a [_type] and it is of type string, making sure we pass
+          * in [_type] argument given to invocation.
+          */
+         unwrap:x:+/*/*
+         add:x:../*/execute-file
+            .
+               _type:x:@.arguments/*/type
+
+   // Executing file.
+   execute-file:x:@.file
+
+   // Doing some basic logging.
+   log.info:Function invocation succeeded
+      type:x:@.arguments/*/type
+      function-file:x:@.file
+
+   // Figuring out name of function such that we can return it to the caller.
+   strings.split:x:@.file
+      .:/
+   strings.split:x:@strings.split/0/-
+      .:.
+   remove-nodes:x:@strings.split/0/-
+   strings.join:x:@strings.split/*
+      .:.
+
+   // Returning result of invocation to caller.
+   add:x:./*/yield/*/result
+      get-nodes:x:@execute-file/*
+   yield
+      json:x:@.json
+      workflow:x:@strings.join
+      result
+

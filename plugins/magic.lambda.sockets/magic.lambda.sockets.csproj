@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>8</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
+    <ProjectReference Include="..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\magic.endpoint\magic.endpoint\magic.endpoint.contracts\magic.endpoint.contracts.csproj" />
+    <ProjectReference Include="..\magic.lambda.logging\magic.lambda.logging.csproj" />
+  </ItemGroup>
+
+</Project>

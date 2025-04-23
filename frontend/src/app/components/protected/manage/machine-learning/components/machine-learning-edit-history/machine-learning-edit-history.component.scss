@@ -1,0 +1,37 @@
+
+/*
+ * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
+ */
+
+.markdown-preview {
+  height: 285px;
+  overflow: auto;
+  ::ng-deep img {
+    max-width: 80%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+}
+.modal-wrp {
+  position: relative;
+}
+.pager {
+  position: absolute;
+  top:0;
+  right:0;
+  margin-top: -25px;
+  margin-right: -25px;
+}
+.referrer {
+  z-index: 1;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  max-width: 300px;
+  a {
+    text-decoration: none;
+  }
+}

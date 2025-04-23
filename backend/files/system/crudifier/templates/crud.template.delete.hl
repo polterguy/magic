@@ -2,7 +2,7 @@
 .arguments
 
 // Meta data description for endpoint
-.description:Delete endpoint deleting one record from your {table} table in your {database} database
+.description:Delete one record from your {table} table in your {database} database
 
 // Type of endpoint
 .type:crud-delete

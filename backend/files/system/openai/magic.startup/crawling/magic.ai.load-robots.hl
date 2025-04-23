@@ -223,11 +223,8 @@ slots.create:magic.ai.load-robots
                                               * clearing allows/disallows.
                                               */
                                              if
-                                                or
-                                                   eq:x:@.value
-                                                      .:AINIRO
-                                                   eq:x:@.value
-                                                      .:GPTBot
+                                                eq:x:@.value
+                                                   .:AINIRO
                                                 .lambda
 
                                                    // Removing previously iterated allow/disallows.
@@ -294,10 +291,13 @@ slots.create:magic.ai.load-robots
                                              get-value:x:@.domain
                                              .:/
                                              get-value:x:@.value
+                                          strings.replace:x:@strings.concat
+                                             .://
+                                             .:/
                                           unwrap:x:+/*/*
                                           add:x:@.sitemap
                                              .
-                                                .:x:@strings.concat
+                                                .:x:@strings.replace
 
                                     case:Disallow
                                     case:disallow

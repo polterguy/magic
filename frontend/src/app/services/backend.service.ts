@@ -118,6 +118,7 @@ export class BackendService {
       this.httpClient.get<AuthenticateResponse>(
         this.active.url +
         '/magic/system/auth/authenticate' + query).subscribe({
+
         next: (auth: AuthenticateResponse) => {
 
           this.active.token = new Token(auth.ticket);
@@ -128,25 +129,32 @@ export class BackendService {
           }
           this.backendsStorageService.persistBackends();
           this.ensureRefreshJWTTokenTimer(this.active);
-          this._authenticated.next(true);
-          this.retrieveStatusAndVersion().subscribe({
-            next: () => {
 
-              observer.next(auth);
-              observer.complete();
-            },
-            error: (error: any) => {
+          // For odd reasons, retrieving the status immediately without waiting seems to fail sometimes.
+          setTimeout(() => {
 
-              observer.error(error);
-              observer.complete();
-            }
-          });
+            this._authenticated.next(true);
+            this.retrieveStatusAndVersion().subscribe({
+              next: () => {
+
+                observer.next(auth);
+                observer.complete();
+              },
+              error: (error: any) => {
+
+                observer.error(error);
+                observer.complete();
+              }
+            });
+          }, 250);
         },
+
         error: (error: any) => {
 
           observer.error(error);
           observer.complete();
         }
+
       });
     });
   }

@@ -15,19 +15,14 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/key
 validators.string:x:@.arguments/*/key
    min:20
-   max:200
+   max:500
 
 // Loading configuration.
 config.load
 json2lambda:x:@config.load
 
-// Removing existing OpenAI key, if existing.
-if
-   exists:x:@json2lambda/*/magic/*/openai/*/key
-   .lambda
-
-      // OpenAI has already been configured, removing existing key.
-      remove-nodes:x:@json2lambda/*/magic/*/openai
+// Removing existing API key.
+remove-nodes:x:@json2lambda/*/magic/*/openai
 
 // Adding specified key to configuration.
 unwrap:x:+/*/*/*

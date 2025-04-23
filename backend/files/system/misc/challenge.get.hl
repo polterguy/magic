@@ -1,0 +1,22 @@
+
+/*
+ * Returns a Magic CAPTCHA challenge to caller according to arguments specified that can be used to
+ * solve a Proof of Work CAPTCHA puzzle.
+ */
+.arguments
+.description:Returns a Magic CAPTCHA challenge to caller according to arguments specified that can be used to solve a Proof of Work puzzle
+.type:public
+
+// Generating cryptographically secure random text.
+crypto.random
+strings.concat
+   .:c_
+   get-value:x:@crypto.random
+cache.set:x:@strings.concat
+   expiration:long:30
+   value:valid
+
+// Generating gibberish text.
+unwrap:x:+/*
+return
+   result:x:@strings.concat

@@ -1,0 +1,67 @@
+
+/*
+ * List all functions
+ * 
+ * This function lists all functions for the specified [type]. Notice, [type] is mandatory and should always be 'YOUR_TYPE_NAME_HERE'.
+ */
+.arguments
+
+   // Mandatory argument and the type name for which to return functions for.
+   _type:string
+
+.type:public
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/_type
+
+// Opening up a database connection to retrieve all FUNCTION_INVOCATIONS we can find in type.
+data.connect:[generic|magic]
+
+   // Retrieving all training snippets having a meta value starting with "FUNCTION_INVOCATION ==> "
+   data.select:"select prompt from ml_training_snippets where type = @type and meta like '%FUNCTION_INVOCATION ==> %'"
+      @type:x:@.arguments/*/_type
+
+   // Iterating through result from above invocation.
+   for-each:x:@data.select/*
+
+      // Adding prompt to [return] below.
+      unwrap:x:+/*/*
+      add:x:@data.connect/*/yield/*/rag_functions
+         .
+            .:x:@.dp/#/*/prompt
+
+   // Retrieving system message functions.
+   data.read
+      table:ml_types
+      columns
+         system_message
+      where
+         and
+            type.eq:x:@.arguments/*/_type
+   strings.split:x:@data.read/*/*/system_message
+      .:"# "
+   for-each:x:@strings.split/*
+      if
+         and
+            strings.contains:x:@.dp/#
+               .:"FUNCTION_INVOCATION[/"
+            not
+               strings.contains:x:@.dp/#
+                  .:"FUNCTION_INVOCATION[/FOLDER/FILENAME.hl]:"
+            not
+               strings.contains:x:@.dp/#
+                  .:"FUNCTION_INVOCATION[/system/misc/workflows/list-functions.hl]:"
+         .lambda
+            strings.split:x:@.dp/#
+               .:"\n"
+            strings.trim:x:@strings.split/0
+               .:"# \r\n"
+            unwrap:x:+/*/*
+            add:x:@data.connect/*/yield/*/system_functions
+               .
+                  .:x:@strings.trim
+
+   // Returning result to caller.
+   yield
+      rag_functions
+      system_functions

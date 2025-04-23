@@ -1,0 +1,19 @@
+<h3 mat-dialog-title>Find Template Snippet</h3>
+
+<div mat-dialog-content>
+
+  <app-filter (filterList)="filterList($event)">
+  </app-filter>
+
+  <mat-selection-list
+    [multiple]="false"
+    dense>
+    <mat-list-option
+      *ngFor="let item of getTemplates()"
+      [class.d-none]="filter && filter !== '' && (item.prompt.toLowerCase().indexOf(filter.toLowerCase()) === -1 && item.completion.toLowerCase().indexOf(filter.toLowerCase()) === -1)"
+      (click)="select(item)">
+      {{item.prompt}}
+    </mat-list-option>
+  </mat-selection-list>
+
+</div>

@@ -1,0 +1,75 @@
+
+/*
+ * This slot returns the Google OpenID provider.
+ * 
+ * This slot will be invoked by the framework whenever the system needs to know which OIDC providers
+ * are supported by the system due to its name. Any slot named [magic.openid.providers.XYZ] will be invoked
+ * when the system needs to know which OIDC providers are supported.
+ *
+ * This allows you to extend the system with additional OIDC providers according to your requirements.
+ * Notice, the system only supports "id_token" types of providers at the moment, so any additional provider
+ * you want to register must be of type "id_token".
+ */
+
+slots.create:magic.openid.providers.google
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/createNonce
+
+   // Getting client ID for Google from configuration.
+   .client-id
+   set-value:x:@.client-id
+      config.get:"magic:oidc:google:client-id"
+
+   // Checking to see if we've got Google provider configured.
+   if
+      not-null:x:@.client-id
+      .lambda
+
+         // Buffer for nonce.
+         .nonce
+
+         // Checking if caller wants us to generate a nonce.
+         if
+            eq:x:@.arguments/*/createNonce
+               .:bool:true
+            .lambda
+
+               // Creating a unique nonce.
+               set-value:x:@.nonce
+                  crypto.random
+                     min:20
+                     max:30
+
+               /*
+                * Storing nonce to avoid replay attacks.
+                *
+                * Notice, nonce is only stored for 60 minutes, implying the configuration
+                * returned below can only be used within 60 minutes of having been generated.
+                *
+                * And we store the issuer value in cache such that we can verify later that the id_token
+                * was created by the correct issuer.
+                */
+               cache.set:x:@.nonce
+                  value:"https://accounts.google.com"
+                  expiration:3600
+
+               // Making sure we return nonce to caller.
+               add:x:@.lambda/@.lambda/*/add/*/*
+                  .
+                     nonce:x:@.nonce
+                     url:"https://accounts.google.com/o/oauth2/v2/auth"
+                     client_id:x:@.client-id
+                     response_type:id_token
+                     scope:openid email profile
+
+         // Returning providers to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:Google
+                  issuer:"https://accounts.google.com"
+
+   // Returning result to caller.
+   return

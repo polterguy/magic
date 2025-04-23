@@ -74,7 +74,24 @@ data.connect:[generic|magic]
                         site-key:x:@.key
                         secret:x:@.secret
 
-   // Input is OK, now storing question/answer and associating it with session.
+         else
+
+            // Using built-in CAPTCHA.
+            execute:magic.auth.captcha-verify
+               token:x:@.arguments/*/recaptcha_response
+
+   // Input is OK, now deleting similar questionnaire answer submitted previously, if any.
+   data.delete
+      table:ml_requests
+      where
+         and
+            type.eq:x:@.arguments/*/type
+            user_id.eq:x:@.arguments/*/user_id
+            prompt.eq:x:@.arguments/*/question
+            questionnaire.eq:int:1
+            finish_reason.eq:questionnaire
+
+   // Creating new answer.
    data.create
       table:ml_requests
       values
@@ -84,6 +101,7 @@ data.connect:[generic|magic]
          finish_reason:questionnaire
          questionnaire:int:1
          user_id:x:@.arguments/*/user_id
+         session:x:@.arguments/*/session
          context:x:@.arguments/*/context
 
 // Returning success to caller.

@@ -1,0 +1,106 @@
+
+// Returns the specified CSS file to caller.
+.arguments
+   file:string
+   position:string
+   color:string
+   link:string
+   start:string
+   end:string
+   v:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+
+// Buffer for filename.
+.filename
+
+// Checking if custom CSS file exists.
+strings.concat
+   .:/etc/system/openai/css/chat/
+   get-value:x:@.arguments/*/file
+   .:.css
+if
+   io.file.exists:x:@strings.concat
+   .lambda
+
+      // Custom template file.
+      set-value:x:@.filename
+         get-value:x:@strings.concat
+
+else
+
+   // Checking if system CSS file exists.
+   strings.concat
+      .:/system/openai/front.files/chat/
+      get-value:x:@.arguments/*/file
+      .:.css
+   if
+      io.file.exists:x:@strings.concat
+      .lambda
+
+         // Generic template file.
+         set-value:x:@.filename
+            get-value:x:@strings.concat
+
+   else
+
+      // Oops, no such file exists.
+      throw:No such AI chat CSS file exists
+         public:bool:true
+         status:400
+
+// Checking if minified version of file exists.
+strings.replace:x:@.filename
+   .:.css
+   .:.min.css
+if
+   io.file.exists:x:@strings.replace
+   .lambda
+      set-value:x:@.filename
+         get-value:x:@strings.replace
+
+// Loading common file.
+.common
+if
+   io.file.exists:/system/openai/front.files/chat/common.min.css
+   .lambda
+      set-value:x:@.common
+         load-file:/system/openai/front.files/chat/common.min.css
+else
+   set-value:x:@.common
+      load-file:/system/openai/front.files/chat/common.css
+
+// Applying variables.
+set-value:x:@.common
+   strings.concat
+      .:"html>body.ainiro_bdy {--ainiro-color:"
+      get-value:x:@.arguments/*/color
+      .:;
+      .:"--ainiro-link:"
+      get-value:x:@.arguments/*/link
+      .:";"
+      .:"--ainiro-bg-start:"
+      get-value:x:@.arguments/*/start
+      .:";"
+      .:"--ainiro-bg-end:"
+      get-value:x:@.arguments/*/end
+      .:";"
+      .:"}"
+      get-value:x:@.common
+
+// Loading file and adding common.css file first.
+.content
+set-value:x:@.content
+   load-file:x:@.filename
+set-value:x:@.content
+   strings.replace:x:@.content
+      .:".common{opacity:0}"
+      get-value:x:@.common
+
+// Making sure we return correct Content-Type to caller, and applying some cache.
+response.headers.set
+   Content-Type:text/css; charset=utf-8
+
+// Returning result to caller.
+return:x:@.content

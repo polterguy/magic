@@ -4,6 +4,7 @@
  */
 
 // Angular and system imports
+import { Clipboard } from '@angular/cdk/clipboard';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
@@ -25,6 +26,8 @@ import { ConfirmationDialogComponent } from 'src/app/components/protected/common
 import { NewFileFolderDialogComponent } from 'src/app/components/protected/create/hyper-ide/components/new-file-folder-dialog/new-file-folder-dialog.component';
 import { IncompatibleFileDialogComponent } from 'src/app/components/protected/create/hyper-ide/components/incompatible-file-dialog/incompatible-file-dialog.component';
 import { BackendService } from 'src/app/services/backend.service';
+import { SelectModelDialogComponent } from '../select-model/select-model-dialog.component';
+import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
@@ -68,12 +71,14 @@ export class IdeTreeComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    private clipBoard: Clipboard,
     private fileService: FileService,
     private cdr: ChangeDetectorRef,
     private endpointSerivce: EndpointService,
     private workflowService: WorkflowService,
     private backendService: BackendService,
     private generalService: GeneralService,
+    private machineLearningService: MachineLearningTrainingService,
     private codemirrorActionsService: CodemirrorActionsService) { }
 
   ngOnInit() {
@@ -366,17 +371,6 @@ export class IdeTreeComponent implements OnInit {
           setTimeout(() => {
             this.scrollToActiveOpenFile();
             this.clearEditorHistory.emit(true);
-
-            // Scrolling to bottom of file.
-            const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
-            const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
-            const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
-            setTimeout(() => {
-              editor.setCursor({
-                line: editor.doc.lineCount(),
-                ch: 0,
-              });
-            }, 1);
           }, 1);
 
         },
@@ -570,6 +564,53 @@ export class IdeTreeComponent implements OnInit {
     // Signaling other components to let them know active file was changed.
     this.showEditor.emit({ currentFileData: this.currentFileData })
     this.setFocusToActiveEditor.emit();
+  }
+
+  /**
+   * Creates AI functions for all files in folder after having asked user what
+   * model / type she wants to put these in.
+   */
+  createAIFunctionsForFolder(node: TreeNode) {
+
+    // Asking user what model / type to use.
+    const dialogRef = this.dialog.open(SelectModelDialogComponent, {
+      width: '650px',
+      data: {
+        folder: node.path,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // Verifying user actually selected some type or model.
+      if (result) {
+
+        // Generating AI functions for ever file in folder for specified type.
+        this.generateAIFunctions(node.path, result.type);
+      }
+    });
+  }
+
+  /**
+   * Copies file as AI Function.
+   */
+  createAIFunction(node: TreeNode) {
+
+    // Asking user what model / type to use.
+    const dialogRef = this.dialog.open(SelectModelDialogComponent, {
+      width: '650px',
+      data: {
+        folder: node.path,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+
+      // Verifying user actually selected some type or model.
+      if (result) {
+
+        // Generating AI functions for ever file in folder for specified type.
+        this.generateAIFunctions(node.path, result.type);
+      }
+    });
   }
 
   /**
@@ -953,7 +994,9 @@ export class IdeTreeComponent implements OnInit {
                 });
                 this.currentFileData = this.openFiles.filter(x => x.path === fileObject)[0];
                 this.showEditor.emit({ currentFileData: this.currentFileData });
-                this.setFocusToActiveEditor.emit();
+                if (autoFocus === true) {
+                  this.setFocusToActiveEditor.emit();
+                }
 
               } else {
 
@@ -1281,6 +1324,93 @@ export class IdeTreeComponent implements OnInit {
       sel,
       codeToCaret,
     };
+  }
+
+  private generateAIFunctions(fileObject: string, type: string) {
+
+    // Checking if this is a single file or a folder.
+    if (fileObject.endsWith('.hl')) {
+
+      this.generateAIFunctionForFile([fileObject], type, 0);
+
+    } else {
+
+      // Retrieving all Hyperlambda files from specified folder.
+      this.generalService.showLoading();
+      this.fileService.listFilesRecursively(fileObject, false).subscribe({
+
+        next: (files: string[]) => {
+
+          const hlFiles = files.filter(x => x.endsWith('.hl'));
+          this.generateAIFunctionForFile(hlFiles, type, 0);
+        },
+
+        error: (error: any) => {
+
+          this.generalService.hideLoading();
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+        }
+      });
+    }
+  }
+
+  private generateAIFunctionForFile(files: string[], type: string, noInvocation: number) {
+
+    // Checking if we're done.
+    if (files.length === 0) {
+
+      this.generalService.hideLoading();
+      this.generalService.showFeedback(noInvocation + ' AI functions successfully generated', 'successMessage')
+      return; // Done!
+    }
+
+    // Generating AI function for first file in collection.
+    const current = files.pop();
+    this.workflowService.getArgumentsFromPath(current).subscribe({
+
+      next: (snippet: string) => {
+
+        // Verifying invocation produced anything at all.
+        if (snippet && snippet !== '') {
+
+          // Creating AI Function training snippet.
+          let splits = snippet.split('\n');
+          const prompt = splits[0];
+          splits = splits.splice(1);
+          const completion = splits.join('\n').trim();
+          this.machineLearningService.ml_training_snippets_create({
+            prompt: prompt,
+            completion: completion,
+            meta: 'FUNCTION_INVOCATION ==> ' + current,
+            type: type,
+          }).subscribe({
+
+            next: () => {
+
+              // Recursively invoking self.
+              this.generateAIFunctionForFile(files, type, ++noInvocation);
+            },
+
+            error: (error: any) => {
+
+              this.generalService.hideLoading();
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+            }
+          });
+
+        } else {
+
+          // Recursively invoking self.
+          this.generateAIFunctionForFile(files, type, noInvocation);
+        }
+      },
+
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+      }
+    });
   }
 }
 

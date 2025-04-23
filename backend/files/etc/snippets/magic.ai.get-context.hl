@@ -1,6 +1,6 @@
+// Returns context data from 'ainiro_io' type.
 signal:magic.ai.get-context
    type:ainiro_io
-   vector_model:text-embedding-ada-002
    prompt:@"DuckDuckGo ""Pixar"""
    threshold:float:0.6
    max_tokens:int:2000

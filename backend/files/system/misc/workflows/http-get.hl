@@ -1,0 +1,103 @@
+
+/*
+ * Retrieves the specified URL using HTTP GET
+ *
+ * Uses HTTP GET to retrieve the specified [url], optionally with Basic or Bearer authentication.
+ */
+.arguments
+
+   // Mandatory argument being the actual URL to retrieve.
+   url:string
+
+   // Optional argument being the type of token. This value must be either 'Bearer' or 'Basic' if supplied. If this argument is 'Bearer' then one of [token_key] or [token] must be specified. If this argument is 'Basic' then [username] and [password] must be specified.
+   token_type:string
+
+   // Optional argument for 'Bearer' authentication, and if specified must be a configuration key reference to a token that will be extracted from your configuration, such as for instance 'magic:my_app:my_token'.
+   token_key:string
+
+   // Optional argument for 'Bearer' authentication, and if specified must be a valid Bearer token.
+   token:string
+
+   // Optional username for Basic authentication. If [token_type] is 'Basic' this argument becomes mandatory.
+   username:string
+
+   // Optional password for Basic authentication. If [token_type] is 'Basic' this argument becomes mandatory.
+   password:string
+
+   // Optional argument being a key/value list of arguments that will be passed in as QUERY arguments to the endpoint.
+   params:*
+
+.type:public
+
+// Checking if caller provided a [token].
+if
+   and
+      exists:x:@.arguments/*/token_key
+      not-null:x:@.arguments/*/token_key
+      neq:x:@.arguments/*/token_key
+         .:
+   .lambda
+
+      // Parametrizing action invocation.
+      config.get:x:@.arguments/*/token_key
+      unwrap:x:+/*/*
+      add:x:../*/execute/*/arguments
+         .
+            token:x:@config.get
+            token_type:x:@.arguments/*/token_type
+
+else-if
+   and
+      exists:x:@.arguments/*/token
+      not-null:x:@.arguments/*/token
+      neq:x:@.arguments/*/token
+         .:
+   .lambda
+
+      // Parametrizing action invocation.
+      unwrap:x:+/*/*
+      add:x:../*/execute/*/arguments
+         .
+            token:x:@.arguments/*/token
+            token_type:x:@.arguments/*/token_type
+
+else-if
+   and
+      exists:x:@.arguments/*/username
+      not-null:x:@.arguments/*/username
+      neq:x:@.arguments/*/username
+         .:
+      exists:x:@.arguments/*/password
+      not-null:x:@.arguments/*/password
+      neq:x:@.arguments/*/password
+         .:
+   .lambda
+
+      // Parametrising action invocation.
+      unwrap:x:+/*/*
+      add:x:../*/execute/*/arguments
+         .
+            token_type:x:@.arguments/*/token_type
+            username:x:@.arguments/*/username
+            password:x:@.arguments/*/password
+
+// Checking if caller provided QUERY [params].
+if
+   exists:x:@.arguments/*/params/0
+   .lambda
+
+      // Parametrising action invocation.
+      add:x:./0/-/add/*
+         get-nodes:x:@.arguments/*/params
+      add:x:../*/execute/*/arguments
+         .
+
+// Invokes some HTTP GET resource.
+execute:magic.workflows.actions.execute
+   name:http-get
+   filename:/misc/workflows/actions/http/http-get.hl
+   arguments
+      url:x:@.arguments/*/url
+
+// Returns the result of your last action.
+return-nodes:x:@execute/*

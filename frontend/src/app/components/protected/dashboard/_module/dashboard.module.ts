@@ -18,6 +18,7 @@ import { OverviewDialogComponent } from '../components/overview/components/overv
 import { OverviewComponent } from '../components/overview/overview.component';
 import { DashboardComponent } from '../dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
+import { WhatsNewDialogComponent } from '../components/whats-new/whats-new.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     OverviewComponent,
     OverviewDialogComponent,
     ChartComponent,
+    WhatsNewDialogComponent,
   ],
   imports: [
     CommonModule,

@@ -7,11 +7,7 @@
 import { of } from 'rxjs';
 import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 
-// Utility component imports.
-import { saveAs } from "file-saver";
-
 // Application specific imports.
-import { GeneralService } from 'src/app/services/general.service';
 import { HttpService } from 'src/app/services/http.service';
 import { Crudify } from '../models/crudify.model';
 import { LocResult } from '../models/loc-result.model';
@@ -63,5 +59,20 @@ export class CrudifyService {
   generateSqlEndpoint(data: CustomSql) {
 
     return this.httpService.post<MagicResponse>('/magic/system/crudifier/custom-sql', data);
+  }
+
+  getOpenAPISpec(url: string) {
+
+    return this.httpService.raw.get(url);
+  }
+
+  generateOpenAPIWrappers(specification: string, moduleName: string, baseUrl: string) {
+
+    return this.httpService.post<MagicResponse>('/magic/system/crudifier/open-api', {
+      specification,
+      moduleName,
+      overwrite: true,
+      baseUrl,
+    });
   }
 }

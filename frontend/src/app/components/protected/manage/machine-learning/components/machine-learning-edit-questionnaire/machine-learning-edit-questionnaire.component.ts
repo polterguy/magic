@@ -21,7 +21,8 @@ export class MachineLearningEditQuestionnaireComponent {
   type: string = 'single-shot';
   action: string = '';
   types: string[] = [
-    'single-shot'
+    'single-shot',
+    'multi-shot',
   ];
 
   constructor(

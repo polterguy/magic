@@ -9,7 +9,7 @@
 
           <h3 class="fw-bold mb-0">Hyperlambda Playground</h3>
 
-          <div class="d-flex justify-content-end">
+          <div class="d-flex justify-content-end ">
 
             <button
               mat-button
@@ -34,6 +34,15 @@
         </app-codemirror-hyperlambda>
 
         <div class="d-flex justify-content-end align-items-center w-100 mt-3">
+
+          <app-openai-prompt
+            fileType="hl"
+            (callback)="insertFromOpenAI($event)"
+            callbackText="Use"
+            [currentFileContent]="input.hyperlambda"
+            currentFileSession="hyperlambda-playground.editor"
+            class="w-100">
+          </app-openai-prompt>
 
           <button
             mat-button

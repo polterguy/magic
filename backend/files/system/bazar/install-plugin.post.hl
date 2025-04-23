@@ -2,19 +2,22 @@
 /*
  * Installs the specified Bazar module into the local server.
  * 
- * Notice, this will only download the specified ZIP file, extract
- * it, and correctly rename it - But not run startup files for module.
- * Hence, after you've invoked this file, you should invoke the
- * '/system/file-system/install' PUT file.
+ * Notice, this will download the specified ZIP file, extract
+ * it, and correctly rename it - For then to install the plugin.
  */
 .arguments
    url:string
    name:string
+   type:string
 .description:Installs the specified Bazar module into the local server
 .type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
+
+// Defaulting type to "module".
+validators.default:x:@.arguments
+   type:module
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/url
@@ -28,101 +31,140 @@ fork
    // Making sure we catch exceptions such that we can log errors.
    try
 
-      /*
-       * Verifying that folder doesn't already exist, as in that plugin
-       * is already installed - And if plugin is already installed we
-       * delete the folder first which will uninstall the plugin.
-       */
-      strings.concat
-         .:/modules/
-         get-value:x:@.arguments/*/name
-         .:/
-      if
-         io.folder.exists:x:@strings.concat
-         .lambda
+      // Checking what type of plugin this is.
+      switch:x:@.arguments/*/type
+
+         case:module
 
             /*
-             * Oops, folder already exists, hence we first delete existing folder,
-             * which will run through uninstallation scripts to uninstall module completely,
-             * if we execute the 'folder.delete.hl' endpoint.
+             * Verifying that folder doesn't already exist, as in that plugin
+             * is already installed - And if plugin is already installed, we
+             * delete the folder first which will uninstall the plugin.
              */
             strings.concat
                .:/modules/
                get-value:x:@.arguments/*/name
-               .:/
-            unwrap:x:+/*
-            io.file.execute:/system/file-system/folder.delete.hl
-               folder:x:@strings.concat
+               .:/uninstall.hl
             if
-               not
-                  eq
-                     get-value:x:@io.file.execute/*/result
-                     .:success
+               io.file.exists:x:@strings.concat
                .lambda
 
-                  // Oops ...!!
-                  throw:Could not uninstall previously installed version
-                     public:bool:true
-                     status:int:500
+                  // Uninstall file exists
+                  log.info:Uninstalling module
+                     module:x:@strings.concat
+                  io.file.execute:x:@strings.concat
 
-      // Downloading zip file as binary content from specified URL.
-      http.get:x:@.arguments/*/url
+            // Downloading zip file as binary content from specified URL.
+            http.get:x:@.arguments/*/url
 
-      /*
-       * Saving file to modules folder using the 'filename' argument specified
-       * by its HTTP Content-Disposition header.
-       */
-      strings.split:x:@http.get/*/headers/*/Content-Disposition
-         .:=
-      strings.trim:x:@strings.split/1
-         .:"\""
-      strings.concat
-         .:/modules/
-         get-value:x:@strings.trim
-      io.file.save.binary:x:@strings.concat
-         get-value:x:@http.get/*/content
+            /*
+             * Saving file to modules folder using the 'filename' argument specified
+             * by its HTTP Content-Disposition header.
+             */
+            strings.split:x:@http.get/*/headers/*/Content-Disposition
+               .:=
+            strings.trim:x:@strings.split/1
+               .:"\""
+            strings.concat
+               .:/modules/
+               get-value:x:@strings.trim
+            io.file.save.binary:x:@strings.concat
+               get-value:x:@http.get/*/content
 
-      // Unzipping downloaded ZIP file.
-      io.file.unzip:x:@strings.concat
+            // Unzipping downloaded ZIP file.
+            .folder
+            set-value:x:@.folder
+               strings.concat
+                  .:/modules/
+                  get-value:x:@.arguments/*/name
+                  .:/
 
-      // Deleting ZIP file.
-      io.file.delete:x:@strings.concat
+            // Checking if folder already exists, at which point we delete it.
+            if
+               io.folder.exists:x:@.folder
+               .lambda
+                  io.folder.delete:x:@.folder
 
-      /*
-       * Checking if the ZIP file resulted in creating the module folder,
-       * otherwise renaming folder accordingly.
-       */
-      .module-folder
-      set-value:x:@.module-folder
-         strings.concat
-            .:/modules/
-            get-value:x:@.arguments/*/name
-            .:/
-      if
-         not
-            io.folder.exists:x:@.module-folder
-         .lambda
+            // Creating folder and unzipping file.
+            io.folder.create:x:@.folder
+            io.file.unzip:x:@strings.concat
+               folder:x:@.folder
 
-            // Renaming the folder to the name specified by caller.
-            strings.split:x:@strings.concat
-               .:.zip
-            io.folder.move:x:@strings.split/0
-               get-value:x:@.module-folder
+            // Deleting ZIP file.
+            io.file.delete:x:@strings.concat
 
-      /*
-       * Running through installation process of plugin.
-       */
-      strings.split:x:@.module-folder
-         .:/
-      execute:magic.modules.install-module
-         module:x:@strings.split/0/-
+            /*
+             * Checking if the ZIP file resulted in creating the module folder,
+             * otherwise renaming folder accordingly.
+             */
+            .module-folder
+            set-value:x:@.module-folder
+               strings.concat
+                  .:/modules/
+                  get-value:x:@.arguments/*/name
+                  .:/
+            if
+               not
+                  io.folder.exists:x:@.module-folder
+               .lambda
 
-      // Notifying client that installation is done.
-      sockets.signal:magic.backend.message
-         roles:root
-         args
-            message:Plugin was successfully installed
-            type:success
+                  // Renaming the folder to the name specified by caller.
+                  strings.split:x:@strings.concat
+                     .:.zip
+                  io.folder.move:x:@strings.split/0
+                     get-value:x:@.module-folder
+
+            /*
+             * Running through installation process of plugin.
+             */
+            strings.split:x:@.module-folder
+               .:/
+            execute:magic.modules.install-module
+               module:x:@strings.split/0/-
+
+            // Notifying client that installation is done.
+            sockets.signal:magic.backend.message
+               roles:root
+               args
+                  message:Plugin was successfully installed
+                  type:success
+
+         case:frontend
+
+            // Downloading zip file as binary content from specified URL.
+            strings.concat
+               get-value:x:@.arguments/*/url
+               .:&type=frontend
+            http.get:x:@strings.concat
+
+            /*
+             * Saving file to modules folder using the 'filename' argument specified
+             * by its HTTP Content-Disposition header.
+             */
+            strings.split:x:@http.get/*/headers/*/Content-Disposition
+               .:=
+            strings.trim:x:@strings.split/1
+               .:"\""
+            strings.concat
+               .:/modules/
+               get-value:x:@strings.trim
+            io.file.save.binary:x:@strings.concat
+               get-value:x:@http.get/*/content
+
+            // Unzipping downloaded ZIP file into www folder.
+            io.file.unzip:x:@strings.concat
+               folder:/etc/www/
+               overwrite:true
+
+            // Deleting ZIP file.
+            io.file.delete:x:@strings.concat
+
+            // Notifying client that installation is done.
+            sockets.signal:magic.backend.message
+               roles:root
+               args
+                  message:Frontend was successfully installed
+                  type:success
 
    .catch
 
