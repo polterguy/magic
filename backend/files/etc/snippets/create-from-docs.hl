@@ -1,0 +1,26 @@
+/*
+ * This script generates training data from Markdown files.
+ */
+execute:magic.io.file.load-recursively
+   .:/etc/slett/
+for-each:x:@execute/*
+
+   // Verifying we're dealing with a Markdown file.
+   if
+      strings.ends-with:x:@.dp/#
+         .:.md
+      .lambda
+
+         // Extracting training data.
+         markdown2html:x:@.dp/#/0
+         html2lambda:x:-
+         for-each:x:@html2lambda/*/pre/*/code
+            strings.trim:x:@.dp/#/*/\#text
+            data.connect:fine-tune
+               data.create
+                  table:hyperlambda
+                  values
+                     code:x:@strings.trim
+
+// House cleanups.
+remove-nodes:x:@execute/*
