@@ -11,6 +11,8 @@ import { HttpService } from 'src/app/services/http.service';
 import { MagicResponse } from '../models/magic-response.model';
 import { PromptResponse } from '../models/prompt-response.model';
 import { BackendService } from './backend.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 /**
  * OpenAI model.
@@ -20,6 +22,9 @@ export class OpenAIModel {
   created?: number;
   owned_by?: string;
   parent?: string;
+  chat?: boolean;
+  tokens?: number;
+  vector?: boolean;
 }
 
 /**
@@ -32,6 +37,7 @@ export class OpenAIService {
 
   constructor(
     private httpService: HttpService,
+    private httpClient: HttpClient,
     private backendService: BackendService) { }
 
   /**
@@ -42,22 +48,32 @@ export class OpenAIService {
     type: string,
     search: boolean = false,
     session: string = null,
-    model: string = null,
     data: string = null) {
 
-    let query =
-      `/magic/system/openai/${model?.startsWith('gpt-') || !model ? 'chat' : 'prompt'}?prompt=` +
-      encodeURIComponent(prompt) +
-      '&references=' + (search ? 'true' : 'false') +
-      '&type=' + encodeURIComponent(type);
+    // building our payload
+    const payload: any = {
+      prompt,
+      type,
+      user_id: this.backendService.active.username,
+    };
     if (data) {
-      query += '&data=' + encodeURIComponent(data);
+      payload.data = data;
     }
-    if (session) {
-      query += '&session=' + encodeURIComponent(session)
+
+    // Checking if we're dealing with hyperlambda code, at which point we use ainiro.io's generator
+    if (type === 'hl') {
+
+      // TODO: Change URL!!
+      return this.httpClient.post<PromptResponse>(environment.bazarUrl + '/magic/modules/hyperlambda-generator/chat', payload);
+
+    } else {
+
+      if (session) {
+        payload.session = session;
+      }
+      payload.references = search
+      return this.httpService.post<PromptResponse>(`/magic/system/openai/chat`, payload);
     }
-    query += '&user_id=' + encodeURIComponent(this.backendService.active.username);
-    return this.httpService.get<PromptResponse>(query);
   }
 
   /**
@@ -131,11 +147,43 @@ export class OpenAIService {
   }
 
   /**
+   * Uploads the specified URL list file to the backend.
+   */
+  uploadUrlList(data: FormData) {
+
+    return this.httpService.post<any>('/magic/system/openai/upload-url-list', data);
+  }
+
+  /**
+   * Uploads the specified image file as training data to the backend.
+   */
+  uploadImageFile(data: FormData) {
+
+    return this.httpService.post<any>('/magic/system/openai/upload-image', data);
+  }
+
+  /**
    * Uploads training data to OpenAI and starts a new training session.
    */
   start_training(data: any) {
 
     return this.httpService.post<MagicResponse>('/magic/system/openai/train', data);
+  }
+
+  /**
+   * Returns all completion slots the system supports
+   */
+  completionSlots() {
+
+    return this.httpService.get<any>('/magic/system/openai/completion-slots');
+  }
+
+  /**
+   * Returns max tokens for specified completion slot.
+   */
+  maxTokensForCompletionSlot(slot: string) {
+
+    return this.httpService.get<any>('/magic/system/openai/completion-slot-tokens?slot=' + encodeURIComponent(slot));
   }
 
   /**
@@ -148,6 +196,7 @@ export class OpenAIService {
     max: number,
     threshold: number,
     summarize: boolean,
+    insert_url: boolean,
     feedbackChannel: string,
     images: boolean = true,
     lists: boolean = true,
@@ -160,6 +209,7 @@ export class OpenAIService {
       max,
       threshold,
       summarize,
+      insert_url,
       images,
       lists,
       code,
@@ -213,12 +263,33 @@ export class OpenAIService {
   }
 
   /**
+   * Get system messsages.
+   */
+  getSystemMessage() {
+
+    return this.httpService.get<any[]>('/magic/system/openai/system-messages');
+  }
+
+  /**
    * Vectorises only the specified snippet.
    */
   vectoriseSnippet(id: number) {
 
     return this.httpService.post<any>('/magic/system/openai/vectorise-snippet', {
       id,
+    });
+  }
+
+  /**
+   * Creates a system message based upon the specified template, instruction and URL.
+   */
+  createSystemMessage(instruction: string, template: string, url: string, channel: string) {
+
+    return this.httpService.post<MagicResponse>('/magic/system/openai/create-system-message', {
+      instruction,
+      template,
+      url,
+      channel,
     });
   }
 
@@ -233,7 +304,8 @@ export class OpenAIService {
     autocrawl: boolean,
     auto_destruct: boolean,
     feedbackChannel: string,
-    vectorize: boolean) {
+    vectorize: boolean,
+    instruction?: string) {
 
     const args: any = {
       url: url,
@@ -253,6 +325,25 @@ export class OpenAIService {
     if (auto_destruct) {
       args.auto_destruct = auto_destruct;
     }
+    if (instruction) {
+      args.instruction = instruction;
+    }
     return this.httpService.post<any>('/magic/system/openai/create-bot', args);
+  }
+
+  /**
+   * Get available functions.
+   */
+  getAvailableWorkflows(all: boolean = false) {
+
+    return this.httpService.get<any[]>('/magic/system/openai/available-workflows?private=' + all);
+  }
+
+  /**
+   * Get available template snippets.
+   */
+  getAvailableTemplateSnippets() {
+
+    return this.httpService.get<any[]>('/magic/system/openai/available-template-snippets');
   }
 }

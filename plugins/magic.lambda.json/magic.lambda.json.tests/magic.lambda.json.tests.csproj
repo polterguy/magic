@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="3.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Moq" Version="4.16.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\magic.lambda\magic.lambda\magic.lambda.csproj" />
+    <ProjectReference Include="..\..\magic.lambda.hyperlambda\magic.lambda.hyperlambda\magic.lambda.hyperlambda.csproj" />
+    <ProjectReference Include="..\..\magic.lambda\magic.lambda\magic.lambda.csproj" />
+    <ProjectReference Include="..\..\magic.lambda.strings\magic.lambda.strings\magic.lambda.strings.csproj" />
+    <ProjectReference Include="..\..\magic.signals\magic.signals.services\magic.signals.services.csproj" />
+    <ProjectReference Include="..\magic.lambda.json\magic.lambda.json.csproj" />
+  </ItemGroup>
+</Project>

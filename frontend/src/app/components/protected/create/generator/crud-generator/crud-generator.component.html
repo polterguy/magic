@@ -1,0 +1,722 @@
+
+<div class="row mt-4">
+
+  <!-- 1 - Database -->
+  <div class="col-12">
+    <p class="fw-bold mb-0">Choose database table(s)</p>
+  </div>
+
+  <div class="col-12">
+    <div class="row align-items-stretch mt-0">
+
+      <!-- Database types -->
+      <div class="col-md-3 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field class="w-100" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Choose database type"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>database</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            placeholder="Database type"
+            [(ngModel)]="selectedDbType"
+            (selectionChange)="changeDbType()">
+            <mat-option
+              *ngFor="let item of databaseTypes"
+              [value]="item.type">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Connection strings -->
+      <div class="col-md-3 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field class="w-100" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Choose connection string"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>conversion_path</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            placeholder="Connection string"
+            [(ngModel)]="selectedConnectionString"
+            (selectionChange)="changeConnectionString()">
+            <mat-option
+              *ngFor="let item of connectionStrings"
+              [value]="item">{{item}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Database list -->
+      <div class="col-md-3 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field class="w-100" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Choose database or catalog"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>database</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            placeholder="Databases"
+            [(ngModel)]="selectedDatabase"
+            (selectionChange)="changeDatabase()">
+            <mat-option
+              *ngFor="let item of databases | sortBy: 'name'"
+              [value]="item.name">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Available tables list -->
+      <div class="col-md-3 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field class="w-100" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Choose tables from catalog"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>table</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            placeholder="Tables"
+            multiple
+            [formControl]="selectedTables"
+            disableOptionCentering
+            panelClass="custom-select-option"
+            (selectionChange)="selectedTableChanged()">
+            <mat-select-trigger>
+              {{selectedTables.value?.length ? selectedTables.value?.length + ' tables' : 'Nothing is selected'}}
+            </mat-select-trigger>
+            <div class="d-flex align-items-center w-100 search-list-input">
+              <span
+                matPrefix
+                class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+                <mat-icon>search</mat-icon>
+                <span class="text-muted ms-2">|</span>
+              </span>
+              <input
+                matInput
+                type="text"
+                #filterTables autocomplete="off">
+            </div>
+
+            <mat-checkbox
+              #allSelected
+              color="primary"
+              class="w-100 select-all-checkbox"
+              [checked]="selectedTables.value.length === availableTables.length"
+              [indeterminate]="selectedTables.value.length > 0 && selectedTables.value.length !== availableTables.length"
+              (change)="toggleAllTables($event.checked)">
+              All tables
+            </mat-checkbox>
+
+            <mat-option
+              *ngFor="let item of availableTables | sortBy: 'name'"
+              [value]="item.name"
+              [class.d-none]="filterTables.value !== '' && item.name.toLowerCase().indexOf(filterTables.value.toLowerCase()) === -1">
+              {{item.name}}
+            </mat-option>
+
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="selectedTables.value.length === 1">
+
+    <!-- 2 - config table -->
+    <div class="col-12 mt-0">
+      <p class="fw-bold">Configure fields</p>
+
+      <app-single-table-config
+        [selectedTable]="selectedTables.value"
+        [selectedDatabase]="selectedDatabase"
+        [databases]="databases"
+        [dbLoading]="isLoading">
+      </app-single-table-config>
+
+    </div>
+  </ng-container>
+
+  <!-- ? - Endpoint configuration -->
+  <div class="col-12">
+    <p class="fw-bold mb-0 mt-{{selectedTables.value.length === 1 ? '3' : '0'}}">Endpoint configuration</p>
+  </div>
+
+  <div class="col-12">
+    <div class="row align-items-stretch mt-0">
+
+      <!-- Create -->
+      <div class="col-md-3 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Roles required to invoke create endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+            Create
+          </span>
+          <mat-select
+            placeholder="Add roles"
+            multiple
+            [formControl]="createRoles"
+            disableOptionCentering
+            panelClass="custom-select-option">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Read -->
+      <div class="col-md-3 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Roles required to invoke read endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+            Read
+          </span>
+          <mat-select
+            placeholder="Add roles"
+            multiple
+            [formControl]="readRoles"
+            disableOptionCentering
+            panelClass="custom-select-option">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Update -->
+      <div class="col-md-3 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Roles required to invoke update endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+            Update
+          </span>
+          <mat-select
+            placeholder="Add roles"
+            multiple
+            [formControl]="updateRoles"
+            disableOptionCentering
+            panelClass="custom-select-option">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Delete -->
+      <div class="col-md-3 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Roles required to invoke delete endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+            Delete
+          </span>
+          <mat-select
+            placeholder="Add roles"
+            multiple
+            [formControl]="deleteRoles"
+            disableOptionCentering
+            panelClass="custom-select-option">
+            <mat-option
+              *ngFor="let item of roles | sortBy: 'name'"
+              [value]="item.name">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Primary URL -->
+      <div class="col-xl-3 col-lg-4 col-md-5 col-sm-6 col-12">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field
+          class="w-100 standalone-field"
+          *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Primary URL of endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>link</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)"
+            type="text"
+            placeholder="Primary URL"
+            [name]="selectedDatabase"
+            [pattern]="CommonRegEx.appNameWithUppercaseHyphen"
+            autocomplete="off"
+            required
+            spellcheck="false"
+            [(ngModel)]="primaryURL">
+          <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Secondary URL -->
+      <div class="col-xl-3 col-lg-4 col-md-5 col-sm-6 col-12 mb-3" *ngIf="selectedTables.value.length === 1">
+
+        <!-- Loading skeleton -->
+        <ng-container *ngIf="isLoading">
+
+          <app-loading-skeleton
+            amount="1"
+            colClass="col-12 mb-3"
+            blockHeight="45px"
+            hasShadow="false">
+          </app-loading-skeleton>
+
+        </ng-container>
+
+        <mat-form-field class="w-100 standalone-field" *ngIf="!isLoading">
+          <span
+            matPrefix
+            matTooltip="Secondary URL of endpoint(s)"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>link</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            type="text"
+            placeholder="Secondary URL"
+            [pattern]="CommonRegEx.appNameWithUppercaseHyphen"
+            autocomplete="off"
+            required
+            spellcheck="false"
+            [(ngModel)]="secondaryURL">
+          <mat-error>{{CommonErrorMessages.appNameWithUppercaseHyphen}}</mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div class="col-auto align-self-center">
+        <div class="d-flex align-items-center flex-wrap">
+
+          <mat-checkbox
+            color="primary"
+            [(ngModel)]="paging"
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Paging
+          </mat-checkbox>
+
+          <div class="px-2"></div>
+
+          <mat-checkbox
+            color="primary"
+            [(ngModel)]="sorting"
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Sorting
+          </mat-checkbox>
+
+          <div class="px-2"></div>
+
+          <mat-checkbox
+            color="primary"
+            [(ngModel)]="logCreate"
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Log create
+          </mat-checkbox>
+
+          <div class="px-2"></div>
+
+          <mat-checkbox
+            color="primary"
+            [(ngModel)]="logUpdate"
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Log update
+          </mat-checkbox>
+
+          <div class="px-2"></div>
+
+          <mat-checkbox
+            color="primary"
+            [(ngModel)]="logDelete"
+            [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+            Log delete
+          </mat-checkbox>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-container>
+
+    <!-- ? - reCaptcha -->
+    <div class="col-md-6 col-12 mt-3">
+      <p class="fw-bold mb-0">reCAPTCHA</p>
+
+      <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
+        <span
+          matPrefix
+          matTooltip="reCAPTCHA value required to invoke endpoint(s)"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          reCaptcha
+        </span>
+        <input
+          matInput
+          autocomplete="off"
+          type="number"
+          placeholder="Value"
+          [(ngModel)]="captchaValue"
+          min="0.0"
+          max="1.0"
+          step="0.1">
+      </mat-form-field>
+
+      <div class="d-flex align-items-center flex-wrap mt-1">
+
+        <span class="me-2">Apply for: </span>
+
+        <mat-checkbox
+          color="primary"
+          [(ngModel)]="captchaCreate">
+          Create
+        </mat-checkbox>
+
+        <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
+
+        <mat-checkbox
+          color="primary"
+          [(ngModel)]="captchaRead">
+          Read
+        </mat-checkbox>
+
+        <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
+
+        <mat-checkbox
+          color="primary"
+          [(ngModel)]="captchaUpdate">
+          Update
+        </mat-checkbox>
+
+        <div class="px-xl-4 px-lg-3 px-sm-2 px-1"></div>
+
+        <mat-checkbox
+          color="primary"
+          [(ngModel)]="captchaDelete">
+          Delete
+        </mat-checkbox>
+
+      </div>
+    </div>
+
+    <!-- ? - Cache -->
+    <div class="col-md-6 col-12 mt-3">
+
+      <p class="fw-bold mb-0">Caching</p>
+
+      <mat-form-field class="w-100 text-prefix" *ngIf="!isLoading">
+        <span
+          matPrefix
+          matTooltip="HTTP cache duration in seconds"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-3">
+          Duration
+        </span>
+        <input
+          matInput
+          type="number"
+          placeholder="Value"
+          min="0"
+          max="300"
+          autocomplete="off"
+          [(ngModel)]="cacheDuration">
+      </mat-form-field>
+
+      <div class="d-flex align-items-center flex-wrap mt-1">
+
+        <mat-checkbox
+          color="primary"
+          [(ngModel)]="cachePublic">
+          Public cache
+        </mat-checkbox>
+
+      </div>
+
+    </div>
+
+    <!-- ? - Sockets -->
+    <div class="col-md-6 col-12 mt-4">
+
+      <p class="fw-bold">Sockets (SignalR)</p>
+
+      <div class="d-flex align-items-center flex-wrap mt-1">
+
+        <mat-checkbox
+          color="primary"
+          [(ngModel)]="publishSocketMessages">
+          Publish socket messages
+        </mat-checkbox>
+
+      </div>
+
+      <!-- Authorisation type for socket messages published -->
+      <mat-form-field class="w-100 mt-2" *ngIf="publishSocketMessages">
+        <span
+          matPrefix
+          matTooltip="Authorisation type for socket messages published"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>Message auth type</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <mat-select
+          placeholder="Authorisation"
+          [(ngModel)]="socketAuthorisationTypeValue">
+          <mat-option
+            *ngFor="let item of socketAuthorisationTypes"
+            [value]="item">{{item}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Roles authorisation, only applicable if authorisation type is "roles" -->
+      <mat-form-field class="w-100"
+        *ngIf="publishSocketMessages && socketAuthorisationTypeValue === 'roles'">
+        <span
+          matPrefix
+          matTooltip="Roles required for user(s) to receive published socket messages"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>Message auth type</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <mat-select
+          placeholder="Add roles"
+          multiple
+          [formControl]="socketAuthorisationRoles"
+          disableOptionCentering
+          panelClass="custom-select-option">
+          <mat-option
+            *ngFor="let item of roles | sortBy: 'name'"
+            [value]="item.name">
+            {{item.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+  </ng-container>
+
+  <!-- ? - Settings -->
+  <div class="col-md-6 col-12 mt-4">
+
+    <p class="fw-bold">Settings</p>
+
+    <div class="d-flex align-items-center flex-wrap mt-1">
+
+      <mat-checkbox
+        color="primary"
+        [(ngModel)]="transformService.join"
+        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+        Left join
+      </mat-checkbox>
+
+      <div class="px-2"></div>
+
+      <mat-checkbox
+        color="primary"
+        [(ngModel)]="transformService.verbose"
+        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+        Verbose filtering
+      </mat-checkbox>
+
+      <div class="px-2"></div>
+
+      <mat-checkbox
+        color="primary"
+        [(ngModel)]="transformService.overwrite"
+        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+        Overwrite
+      </mat-checkbox>
+
+      <div class="px-2"></div>
+
+      <mat-checkbox
+        color="primary"
+        [(ngModel)]="transformService.aggregates"
+        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+        Aggregates
+      </mat-checkbox>
+
+      <div class="px-2"></div>
+
+      <mat-checkbox
+        color="primary"
+        [(ngModel)]="transformService.distinct"
+        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)">
+        Distinct
+      </mat-checkbox>
+
+      <div class="px-2"></div>
+
+      <mat-checkbox
+        color="primary"
+        [(ngModel)]="transformService.search"
+        [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0) || selectedDbType !== 'sqlite'">
+        Search (BETA)
+      </mat-checkbox>
+
+    </div>
+  </div>
+
+  <div class="col-12 d-flex justify-content-end button-row mt-4">
+
+    <button
+      mat-flat-button
+      [disabled]="!(availableTables && availableTables.length > 0 && selectedTables.value.length > 0)"
+      color="primary"
+      class="px-5 mb-4"
+      (click)="generateEndpoints()">
+      Generate
+    </button>
+
+  </div>
+
+</div>

@@ -3,12 +3,24 @@
 
   <h3 class="my-0">Backends</h3>
 
-  <button
-    mat-flat-button
-    color="primary"
-    (click)="addNew()">
-    Add backend
-</button>
+  <div>
+
+    <a
+      mat-button
+      class="me-3"
+      target="_blank"
+      [href]="frontendUrl">
+      Frontend
+    </a>
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="addNew()">
+      Add backend
+    </button>
+
+  </div>
 
 </div>
 

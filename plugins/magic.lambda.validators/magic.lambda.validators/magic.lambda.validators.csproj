@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.0" />
+    <ProjectReference Include="..\..\magic.lambda\magic.lambda\magic.lambda.csproj" />
+    <ProjectReference Include="..\..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
+    <ProjectReference Include="..\..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\..\magic.signals\magic.signals.services\magic.signals.services.csproj" />
+  </ItemGroup>
+
+</Project>

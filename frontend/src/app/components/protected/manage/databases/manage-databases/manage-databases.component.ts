@@ -12,6 +12,7 @@ import { SqlService } from 'src/app/services/sql.service';
 import { Databases } from 'src/app/models/databases.model';
 import { CommonErrorMessages } from 'src/app/helpers/common-error-messages';
 import { CommonRegEx } from 'src/app/helpers/common-regex';
+import { BackendService } from 'src/app/services/backend.service';
 
 /**
  * Helper component allowing you to manage your existing locally installed
@@ -38,6 +39,7 @@ export class ManageDatabasesComponent implements OnInit {
     private dialog: MatDialog,
     private sqlService: SqlService,
     private fileService: FileService,
+    private backendService: BackendService,
     private generalService: GeneralService) { }
 
   ngOnInit() {
@@ -79,7 +81,11 @@ export class ManageDatabasesComponent implements OnInit {
 
   downloadDatabaseBackup(database: any) {
 
-    this.fileService.downloadFile('/data/' + database.name + '.db');
+    window.open(
+      this.backendService.active.url +
+      '/magic/system/file-system/file-with-token?file=' +
+      encodeURIComponent('/data/' + database.name + '.db') + 
+      '&access_token=' + encodeURIComponent(this.backendService.active.token.token));
   }
 
   uploadDatabaseBackup(file: any) {

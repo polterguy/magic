@@ -139,6 +139,15 @@
               <button
                 mat-icon-button
                 color="primary"
+                *ngIf="file.node.path.endsWith('.hl')"
+                title="Create AI Function for type ..."
+                (click)="createAIFunction(file.node)">
+                <mat-icon>bolt</mat-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                color="primary"
                 title="Rename file ..."
                 (click)="showRenameInput(file.node)">
                 <mat-icon>edit</mat-icon>
@@ -207,6 +216,22 @@
                 (keyup.enter)="renameFolder({folder: folder.node.path, newName: folderInput?.value})"
                 (keyup.esc)="showRenameBox = null">
             </span>
+
+            <!-- Action buttons, for renaming and deleting files -->
+            <div
+              class="show-on-hover"
+              *ngIf="showRenameBox === null">
+
+              <button
+                mat-icon-button
+                color="primary"
+                *ngIf="folder.node.path.startsWith('/modules/')"
+                title="Create AI Functions for all files in folder ..."
+                (click)="createAIFunctionsForFolder(folder.node)">
+                <mat-icon>bolt</mat-icon>
+              </button>
+
+            </div>
 
             <!-- Action buttons for renaming and deleting folder -->
             <div class="show-on-hover" *ngIf="showRenameBox === null">

@@ -30,8 +30,11 @@ slots.create:magic.auth.authenticate
 
       // Verifying that the password is a match.
       if
-         crypto.password.verify:x:@.arguments/*/password
-            hash:x:@data.read/*/*/password
+         or
+            eq:x:@.arguments/*/password-check
+               .:bool:false
+            crypto.password.verify:x:@.arguments/*/password
+               hash:x:@data.read/*/*/password
          .lambda
 
             // Logging the fact that user successfully logged in.

@@ -1,0 +1,41 @@
+# Using .Net 9 image from Microsoft
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /app
+
+# Copying projects
+COPY /backend/ /backend/
+COPY /plugins/ /plugins/
+
+# Restoring and building projects
+RUN dotnet restore /backend/backend.csproj
+RUN dotnet publish /backend/backend.csproj -c release -o /magic
+
+# Making sure we add all SQLite plugins to docker image
+ADD /backend/sqlite-plugins/ /magic/sqlite-plugins/
+
+# Final stage creating image
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+WORKDIR /magic
+COPY --from=build /magic ./
+
+# Getting some default fonts
+RUN echo "deb http://deb.debian.org/debian/ bookworm main contrib" > /etc/apt/sources.list && \
+    echo "deb-src http://deb.debian.org/debian/ bookworm main contrib" >> /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/ bookworm-security main contrib" >> /etc/apt/sources.list && \
+    echo "deb-src http://security.debian.org/ bookworm-security main contrib" >> /etc/apt/sources.list
+RUN sed -i'.bak' 's/$/ contrib/' /etc/apt/sources.list
+RUN apt-get update && apt-get install -y ttf-mscorefonts-installer fontconfig
+RUN fc-cache -f -v
+RUN apt-get install -y libgomp1 libatlas-base-dev liblapack-dev
+
+# TODO: Commented out!
+# This doesn't work. I suspect the reason is that it's dynamically loading the SQLite DLL or something ...?
+# Making sure we run in the context of a custom user with restricted access to core operating system
+# RUN groupadd -r magic && useradd -g magic magic
+# RUN chown -R magic:magic /magic
+# USER magic
+
+# Our entry point
+EXPOSE 4444
+ENV ASPNETCORE_URLS="http://+:4444"
+ENTRYPOINT ["dotnet", "backend.dll"]

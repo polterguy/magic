@@ -1,0 +1,14 @@
+﻿
+.arguments
+   input1:string
+   input2:int
+   input3:bool
+   input4
+      .
+         arr1:bool
+         arr2:int
+         arr3:*
+   input5
+      obj1:string
+      obj2:bool
+return-nodes:x:@.arguments/*

@@ -1,0 +1,61 @@
+// dynamically populated
+.arguments
+
+// Type of endpoint
+.type:openapi
+
+// URL of endpoint.
+.url:URL
+
+// Exchanging dynamic parts of URL.
+.args
+for-each:x:@.arguments/*
+   .tmp
+   set-value:x:@.tmp
+      strings.concat
+         .:{
+         get-name:x:@.dp/#
+         .:}
+   if
+      strings.contains:x:@.url
+         get-value:x:@.tmp
+      .lambda
+
+         // Replacing dynamic parts of URL.
+         set-value:x:@.url
+            strings.replace:x:@.url
+               get-value:x:@.tmp
+               get-value:x:@.dp/#
+   else
+
+      // Not a dynamic argument.
+      add:x:@.args
+         get-nodes:x:@.dp/#
+
+// Invoking HTTP endpoint.
+http.post:x:@.url
+   convert:true
+   payload
+   query
+
+// Making sure invocation was a success.
+if
+   and
+      not
+         mte:x:@http.post
+            .:int:200
+      not
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops ...!!
+      lambda2hyper:x:@http.post
+      throw:Could not invoke 3rd party HTTP endpoint
+         status:int:500
+         public:bool:true
+         url:x:@.url
+         response:x:@lambda2hyper
+
+// Returning result to caller.
+return-nodes:x:@http.post/*/content/*

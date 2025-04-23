@@ -1,0 +1,31 @@
+
+/*
+ * Returns the JavaScript required to embed a ChatGPT based chatbot on some website to caller.
+ */
+.arguments
+   type:string
+   header:string
+   button:string
+   rtl:bool
+   color:string
+   start:string
+   end:string
+   link:string
+   theme:string
+   references:bool
+   file:string
+   placeholder:string
+   position:string
+   clear_button:bool
+   copyButton:bool
+   follow_up:bool
+   new_tab:bool
+   popup:string
+
+   // Not used, but allows embedders to do a hard refresh to reload JavaScript.
+   v:string
+
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*
+execute-file:/system/openai/include-chatbot.js.get.hl
+return:x:-

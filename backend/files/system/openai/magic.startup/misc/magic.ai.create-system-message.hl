@@ -1,0 +1,135 @@
+
+/*
+ * Creates a system message using OpenAI and GPT-4 based upon the specified template.
+ *
+ * Notice, any [[XYZ]] fields in the specified template will be dynamically substituted by
+ * OpenAI according to the instruction you provide.
+ *
+ * Arguments:
+ *
+ * - [url] - URL from where to find context data used to populate template fields.
+ * - [template] - The starting template containing your template fields.
+ * - [instruction] - How to deal with the template.
+ *
+ * Basically, the [url] will be scraped, and the [instruction] will be used to modify the
+ * [template] according to the information found at [url] and the [instruction] provided.
+ */
+slots.create:magic.ai.create-system-message
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/url
+   validators.mandatory:x:@.arguments/*/template
+   validators.mandatory:x:@.arguments/*/instruction
+   validators.url:x:@.arguments/*/url
+
+   // Retrieving context.
+   execute:magic.http.scrape-url
+      url:x:@.arguments/*/url
+   if
+      not-null:x:@execute
+      .lambda
+
+         // Oops ...!!
+         throw:Could not scrape URL
+            public:bool:true
+            status:x:@execute
+
+   // Building our context based upon the [url] specified.
+   .context:
+   while
+      and
+         exists:x:@execute/0
+         lt
+            openai.tokenize:x:@.context
+            .:int:4000
+      .lambda
+
+         // Temporary value.
+         .tmp
+         set-value:x:@.tmp
+            strings.concat
+               get-value:x:@.context
+               .:"\n\n"
+               get-value:x:@execute/0/*/prompt
+               .:"\n\n"
+               get-value:x:@execute/0/*/completion
+         if
+            lt
+               openai.tokenize:x:@.tmp
+               .:int:4000
+            .lambda
+
+               // Still below [max_tokes].
+               set-value:x:@.context
+                  get-value:x:@.tmp
+
+         // Removing top snippet.
+         remove-nodes:x:@execute/0/*/snippets/0
+         if
+            not-exists:x:@execute/0/*/snippets/0
+            .lambda
+
+               // Removing currently iterated URL.
+               remove-nodes:x:@execute/0
+
+   // Trimming result.
+   set-value:x:@.context
+      strings.trim:x:@.context
+
+   // Retrieving OpenAI API token from configuration settings.
+   .token
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         config.get:"magic:openai:key"
+
+   // Invokes OpenAI.
+   http.post:"https://api.openai.com/v1/chat/completions"
+      convert:bool:true
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         model:gpt-4o
+         max_tokens:int:3600
+         temperature:decimal:0.3
+         messages
+            .
+               role:system
+               content:x:@.arguments/*/instruction
+            .
+               role:user
+               content:x:@.arguments/*/template
+            .
+               role:user
+               content:x:@.context
+
+   // Sanity checking above invocation.
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Oops, error - Logging error and returning status 500 to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            message:x:@http.post/*/content/*/error/*/message
+            status:x:@http.post
+            error:x:@lambda2hyper
+         throw:Something went wrong while invoking OpenAI
+            message:x:@http.post/*/content/*/error/*/message
+            status:x:@http.post
+            error:x:@lambda2hyper
+
+   // Returning answer to caller.
+   strings.replace:x:@http.post/*/content/*/choices/0/*/message/*/content
+      .:"\r"
+      .:""
+   strings.replace:x:-
+      .:"\n"
+      .:"\r\n"
+   return:x:-

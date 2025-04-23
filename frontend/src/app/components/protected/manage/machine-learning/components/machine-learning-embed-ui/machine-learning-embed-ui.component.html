@@ -10,7 +10,254 @@
     dynamicHeight
     animationDuration="0ms">
 
-    <mat-tab label="Chatbot">
+    <mat-tab label="Chatbot Modern">
+
+      <div class="row pt-4">
+
+        <mat-form-field class="col-6">
+          <span
+            matPrefix
+            matTooltip="Header of chat window"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Header  ..."
+            spellcheck="false"
+            [(ngModel)]="header"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="col-6">
+          <span
+            matPrefix
+            matTooltip="Popup description"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Popup  ..."
+            spellcheck="false"
+            [(ngModel)]="popup"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="col-6">
+          <span
+            matPrefix
+            matTooltip="Button text, defaults to chat icon"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>touch_app</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Button text ..."
+            spellcheck="false"
+            [(ngModel)]="buttonTxt"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field class="col-6">
+          <span
+            matPrefix
+            matTooltip="Textbox placeholder"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>edit</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            placeholder="Textbox placeholder ..."
+            spellcheck="false"
+            [(ngModel)]="textboxPlaceholder"
+            autocomplete="off">
+        </mat-form-field>
+
+      </div>
+
+      <div class="row">
+        <mat-form-field class="col-4">
+          <span
+            matPrefix
+            matTooltip="Theme to use"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>palette</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            [(ngModel)]="modernTheme"
+            placeholder="Theme ...">
+            <mat-option
+              *ngFor="let idx of modernThemes"
+              [value]="idx">
+              {{idx}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="col-4">
+          <span
+            matPrefix
+            matTooltip="Positioning of the chatbot"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>place</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            [(ngModel)]="positioning"
+            placeholder="Positioning ...">
+            <mat-option value="right">
+              Bottom Right
+            </mat-option>
+            <mat-option value="left">
+              Bottom Left
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="col-4">
+          <span
+            matPrefix
+            matTooltip="Animations on chatbot"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>place</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <mat-select
+            [(ngModel)]="animations"
+            placeholder="Animations ...">
+            <mat-option value="none">
+              No animation
+            </mat-option>
+            <mat-option value="ainiro_blink">
+              Blink
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <div class="d-flex justify-content-md-between align-items-md-center align-items-end">
+
+        <mat-form-field class="me-2">
+          <span
+            matPrefix
+            matTooltip="Background color primary"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>palette</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            [(colorPicker)]="startColor"
+            [style.background]="startColor"/>
+        </mat-form-field>
+
+        <mat-form-field class="me-2">
+          <span
+            matPrefix
+            matTooltip="Background color secondary"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>palette</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            [(colorPicker)]="endColor"
+            [style.background]="endColor"/>
+        </mat-form-field>
+
+        <mat-form-field class="me-2">
+          <span
+            matPrefix
+            matTooltip="Text color"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>palette</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            [(colorPicker)]="foreColor"
+            [style.background]="foreColor"/>
+        </mat-form-field>
+
+        <mat-form-field>
+          <span
+            matPrefix
+            matTooltip="Hyperlink color"
+            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+            <mat-icon>palette</mat-icon>
+            <span class="text-muted">|</span>
+          </span>
+          <input
+            matInput
+            [(colorPicker)]="linkColor"
+            [style.background]="linkColor"/>
+        </mat-form-field>
+
+      </div>
+
+      <div class="mt-3">
+
+        <mat-checkbox
+          [(ngModel)]="follow_up"
+          labelPosition="before"
+          class="me-3"
+          matTooltip="Have the chatbot suggest follow up questions"
+          color="primary">Follow up</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="search"
+          labelPosition="before"
+          class="me-3"
+          matTooltip="Have the chatbot show references or citations"
+          color="primary">References</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="rtl"
+          labelPosition="before"
+          class="me-3"
+          matTooltip="Right to left languages, such as Arabic, Hebrew, Farsi, etc"
+          color="primary">RTL</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="clear_button"
+          labelPosition="before"
+          class="me-3"
+          matTooltip="Add a 'clear chat button' to your chatbot"
+          color="primary">Clear button</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="copy_button"
+          labelPosition="before"
+          class="me-3"
+          matTooltip="Add a 'copy response button' to your chatbot's messages"
+          color="primary">Copy button</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="new_tab"
+          labelPosition="before"
+          class="me-3"
+          matTooltip="Have the chatbot open up all links in a new browser tab"
+          color="primary">New tab</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="code"
+          labelPosition="before"
+          class="me-3"
+          matTooltip="Have the chatbot display highlighted code"
+          color="primary">Code</mat-checkbox>
+
+      </div>
+
+    </mat-tab>
+
+    <mat-tab label="Chatbot Legacy">
 
       <mat-form-field class="w-100 standalone-field pt-4">
         <span

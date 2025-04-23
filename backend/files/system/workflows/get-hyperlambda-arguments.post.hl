@@ -4,22 +4,108 @@
  */
 .arguments
    hyperlambda:string
+   path:string
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
+
+// Checking if caller provided a [path] argument instead of a [hyperlambda] argument.
+if
+   and
+      not-exists:x:@.arguments/*/hyperlambda
+      exists:x:@.arguments/*/path
+      not-null:x:@.arguments/*/path
+   .lambda
+
+      // Loading file.
+      load-file:x:@.arguments/*/path
+      unwrap:x:+/*/*
+      add:x:@.arguments
+         .
+            hyperlambda:x:@load-file
 
 // Converting Hyperlambda to lambda.
 hyper2lambda:x:@.arguments/*/hyperlambda
    comments:true
 
-// Iterating through each argument Hyperlambda can handle.
-for-each:x:@hyper2lambda/*/.arguments/*
-   set-name:x:+/+/*/*
-      get-name:x:@.dp/#
-   unwrap:x:+/*/*
-   add:x:../*/return-nodes/*/args
+// Verifying that file is possible to invoke, as in the file has an [.arguments] collection.
+if
+   and
+      exists:x:@.arguments/*/path
+      exists:x:@hyper2lambda/*/.arguments
+   .lambda
+
+      // Signaling to frontend that file has an [.arguments] collection.
+      add:x:../*/return-nodes
+         .
+            function:bool:true
+
+      /*
+       * Removing [session], [user-id] and [type], since these are
+       * dynamically added to the function invocation by the framework.
+       */
+      if
+         exists:x:@.arguments/*/path
+         .lambda
+            remove-nodes:x:@hyper2lambda/*/.arguments/*/_session
+            remove-nodes:x:@hyper2lambda/*/.arguments/*/_user-id
+            remove-nodes:x:@hyper2lambda/*/.arguments/*/_type
+
+else
+
+   // Signaling to frontend that file does not have an [.arguments] collection.
+   add:x:../*/return-nodes
       .
-         name:x:@.dp/#
+         function:bool:false
+
+/*
+ * Iterating through each argument Hyperlambda can handle.
+ *
+ * Notice, we ONLY return the first 100 arguments to avoid context overflow.
+ */
+for-each:x:@hyper2lambda/*/.arguments/*/[0,100]
+   if
+      neq
+         get-name:x:@.dp/#
+         .:..
+      .lambda
+
+         // Checking if user provided a [path], at which point we return more data.
+         if
+            exists:x:@.arguments/*/path
+            .lambda
+
+               // User provided a [path].
+               set-value:x:+/+/*/*/*/name
+                  get-name:x:@.dp/#
+               set-value:x:+/*/*/*/type
+                  get-value:x:@.dp/#
+               add:x:../*/return-nodes/*/args
+                  .
+                     .
+                        name
+                        type
+
+               // Checking if we've got an argument description / comment.
+               if
+                  eq
+                     get-name:x:@.dp/#/-
+                     .:..
+                  .lambda
+                     unwrap:x:+/*/*
+                     add:x:../*/return-nodes/*/args/0/-
+                        .
+                           description:x:@.dp/#/-
+
+         else
+
+            // User provided [hyperlambda] argument.
+            set-name:x:+/+/*/*
+               get-name:x:@.dp/#
+            unwrap:x:+/*/*
+            add:x:../*/return-nodes/*/args
+               .
+                  name:x:@.dp/#
 
 // Fetching description if existing.
 .desc

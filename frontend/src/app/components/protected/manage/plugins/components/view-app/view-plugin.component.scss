@@ -3,6 +3,10 @@
  */
 
 .file-content ::ng-deep img {
-  max-width: 100%;
+  display: block;
+  max-width: 80%;
+  max-height: 500px;
+  margin-left: auto;
+  margin-right: auto;
   height: auto;
 }

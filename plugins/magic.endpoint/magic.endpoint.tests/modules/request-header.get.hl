@@ -1,0 +1,10 @@
+﻿
+request.headers.get:foo
+if
+   not
+      eq
+         get-value:x:@request.headers.get
+         .:bar
+   .lambda
+      throw:Error
+return:success

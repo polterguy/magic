@@ -1,0 +1,68 @@
+
+/*
+ * Sets the specified cookie with the specified settings.
+ *
+ * Notice, setting a cookie does not allow you to retrieve it later before you're in another
+ * HTTP request. [expires] is number of days until cookie expires. If this is a negative value,
+ * existing cookie will be destroyed.
+ */
+.arguments
+   name
+      type:string
+      mandatory:bool:true
+   value
+      type:string
+      mandatory:bool:true
+   domain
+      type:string
+      mandatory:bool:false
+   expires
+      type:int
+      mandatory:bool:false
+   http-only
+      type:bool
+      mandatory:bool:false
+   secure
+      type:bool
+      mandatory:bool:false
+   path
+      type:string
+      mandatory:bool:false
+   same-site
+      type:enum
+      mandatory:bool:false
+      values
+         .:Strict
+         .:Lax
+         .:None
+.icon:http
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/name
+validators.mandatory:x:@.arguments/*/value
+validators.enum:x:@.arguments/*/same-site
+   .:Strict
+   .:Lax
+   .:None
+
+// Adding optional arguments if specified.
+if:x:@.arguments/*/expires
+   math.add
+      date.now
+      time
+         expires:x:@.arguments/*/expires
+   unwrap:x:+/*/*
+   add:x:../*/response.cookies.set
+      .
+         expires:x:@math.add
+add:x:../*/response.cookies.set
+   get-nodes:x:@.arguments/*/domain
+   get-nodes:x:@.arguments/*/http-only
+   get-nodes:x:@.arguments/*/secure
+   get-nodes:x:@.arguments/*/path
+   get-nodes:x:@.arguments/*/same-site
+
+// Setting cookie value.
+response.cookies.set:x:@.arguments/*/name
+   value:x:@.arguments/*/value
+

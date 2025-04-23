@@ -25,6 +25,7 @@ export class BackendsListComponent implements OnInit {
   backendsList: any = [];
   displayedColumns: string[] = ['username', 'backendURL', 'status', 'actions'];
   activeBackend: string = '';
+  frontendUrl: string = '';
 
   constructor(
     private router: Router,
@@ -37,6 +38,9 @@ export class BackendsListComponent implements OnInit {
 
     this.backendsList = this.backendService.backends;
     this.activeBackend = this.backendService.active.url;
+
+    // Updating frontend URL to primary API URL to allow user to easily access frontend.
+    this.frontendUrl = this.backendService.active.url;
   }
 
   copyUrlWithBackend(url: string) {

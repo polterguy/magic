@@ -96,7 +96,7 @@ slots.create:magic.http.scrape-url
 
          // Document contains base HTML tag, using it as our base for hyperlinks and images.
          set-value:x:@.base
-            strings.trim-end:x:@html2lambda/*/head/*/base/*/\@href
+            strings.trim-end:x:@html2lambda/*/head/*/base/*/\@href/[0,1]
                .:/
    
    // Buffer for what nodes we're to traverse and scrape.
@@ -186,9 +186,9 @@ slots.create:magic.http.scrape-url
             // Verifying we actually have a [@src] attribute.
             if
                and
-                  exists:x:@.dp/#/*/\@src
-                  not-null:x:@.dp/#/*/\@src
-                  neq:x:@.dp/#/*/\@src
+                  exists:x:@.dp/#/*/\@src/[0,1]
+                  not-null:x:@.dp/#/*/\@src/[0,1]
+                  neq:x:@.dp/#/*/\@src/[0,1]
                      .:
                .lambda
 
@@ -197,16 +197,16 @@ slots.create:magic.http.scrape-url
                   if
                      and
                         not
-                           strings.starts-with:x:@.dp/#/*/\@src
+                           strings.starts-with:x:@.dp/#/*/\@src/[0,1]
                               .:"http://"
                         not
-                           strings.starts-with:x:@.dp/#/*/\@src
+                           strings.starts-with:x:@.dp/#/*/\@src/[0,1]
                               .:"https://"
                      .lambda
 
                         // Local URL, prepending base URL.
                         if
-                           strings.starts-with:x:@.dp/#/*/\@src
+                           strings.starts-with:x:@.dp/#/*/\@src/[0,1]
                               .://
                            .lambda
 
@@ -216,17 +216,17 @@ slots.create:magic.http.scrape-url
                                  strings.concat
                                     get-value:x:@strings.split/0
                                     .:":"
-                                    get-value:x:@.dp/#/*/\@src
+                                    get-value:x:@.dp/#/*/\@src/[0,1]
 
                         else-if
-                           strings.starts-with:x:@.dp/#/*/\@src
+                           strings.starts-with:x:@.dp/#/*/\@src/[0,1]
                               .:/
                            .lambda
 
                               set-value:x:@.url
                                  strings.concat
                                     get-value:x:@.base
-                                    get-value:x:@.dp/#/*/\@src
+                                    get-value:x:@.dp/#/*/\@src/[0,1]
 
                         else
 
@@ -234,13 +234,13 @@ slots.create:magic.http.scrape-url
                               strings.concat
                                  get-value:x:@.base
                                  .:/
-                                 get-value:x:@.dp/#/*/\@src
+                                 get-value:x:@.dp/#/*/\@src/[0,1]
 
                   else
 
                      // URL is absolute.
                      set-value:x:@.url
-                        get-value:x:@.dp/#/*/\@src
+                        get-value:x:@.dp/#/*/\@src/[0,1]
 
                   // Checking if we need to append code to existing completion or create new completion.
                   if
@@ -253,7 +253,7 @@ slots.create:magic.http.scrape-url
                               get-value:x:@.snippets/0/-/*/completion
                               .:"\r\n\r\n!["
                               get-first-value
-                                 get-value:x:@.dp/#/*/\@alt
+                                 get-value:x:@.dp/#/*/\@alt/[0,1]
                                  .:"Image "
                               .:"]("
                               get-value:x:@.url
@@ -265,7 +265,7 @@ slots.create:magic.http.scrape-url
                      strings.concat
                         .:"!["
                         get-first-value
-                           get-value:x:@.dp/#/*/\@alt
+                           get-value:x:@.dp/#/*/\@alt/[0,1]
                            .:"Image "
                         .:"]("
                         get-value:x:@.url
@@ -281,22 +281,22 @@ slots.create:magic.http.scrape-url
             // Checking if it's a 'local' URL, implying within the same domain as we're currently scraping.
             if
                and
-                  exists:x:@.dp/#/*/\@href
-                  not-null:x:@.dp/#/*/\@href
-                  neq:x:@.dp/#/*/\@href
+                  exists:x:@.dp/#/*/\@href/[0,1]
+                  not-null:x:@.dp/#/*/\@href/[0,1]
+                  neq:x:@.dp/#/*/\@href/[0,1]
                      .:#
-                  neq:x:@.dp/#/*/\@href
+                  neq:x:@.dp/#/*/\@href/[0,1]
                      .:
                   not
-                     strings.starts-with:x:@.dp/#/*/\@href
+                     strings.starts-with:x:@.dp/#/*/\@href/[0,1]
                         .:"http://"
                   not
-                     strings.starts-with:x:@.dp/#/*/\@href
+                     strings.starts-with:x:@.dp/#/*/\@href/[0,1]
                         .:"https://"
                .lambda
 
                   // Local URL.
-                  strings.split:x:@.dp/#/*/\@href
+                  strings.split:x:@.dp/#/*/\@href/[0,1]
                      .:#
                   strings.trim-end:x:@strings.split/0
                      .:/
@@ -325,16 +325,16 @@ slots.create:magic.http.scrape-url
 
             else-if
                and
-                  exists:x:@.dp/#/*/\@href
-                  not-null:x:@.dp/#/*/\@href
-                  neq:x:@.dp/#/*/\@href
+                  exists:x:@.dp/#/*/\@href/[0,1]
+                  not-null:x:@.dp/#/*/\@href/[0,1]
+                  neq:x:@.dp/#/*/\@href/[0,1]
                      .:#
-                  neq:x:@.dp/#/*/\@href
+                  neq:x:@.dp/#/*/\@href/[0,1]
                      .:
                .lambda
 
                   // Absolute URL.
-                  strings.split:x:@.dp/#/*/\@href
+                  strings.split:x:@.dp/#/*/\@href/[0,1]
                      .:#
                   strings.trim-end:x:@strings.split/0
                      .:/
@@ -501,14 +501,14 @@ slots.create:magic.http.scrape-url
                                  eq
                                     get-name:x:@.dp/#/.
                                     .:a
-                                 exists:x:@.dp/#/./*/\@href
-                                 not-null:x:@.dp/#/./*/\@href
+                                 exists:x:@.dp/#/./*/\@href/[0,1]
+                                 not-null:x:@.dp/#/./*/\@href/[0,1]
                               .lambda
 
                                  // Normalising URL.
                                  .url
                                  if
-                                    strings.starts-with:x:@.dp/#/./*/\@href
+                                    strings.starts-with:x:@.dp/#/./*/\@href/[0,1]
                                        .:/
                                     .lambda
 
@@ -516,14 +516,14 @@ slots.create:magic.http.scrape-url
                                        set-value:x:@.url
                                           strings.concat
                                              get-value:x:@.base
-                                             get-value:x:@.dp/#/./*/\@href
+                                             get-value:x:@.dp/#/./*/\@href/[0,1]
                                  else-if
                                     and
                                        not
-                                          strings.starts-with:x:@.dp/#/./*/\@href
+                                          strings.starts-with:x:@.dp/#/./*/\@href/[0,1]
                                              .:"http://"
                                        not
-                                          strings.starts-with:x:@.dp/#/./*/\@href
+                                          strings.starts-with:x:@.dp/#/./*/\@href/[0,1]
                                              .:"https://"
                                     .lambda
 
@@ -532,12 +532,12 @@ slots.create:magic.http.scrape-url
                                           strings.concat
                                              get-value:x:@.base
                                              .:/
-                                             get-value:x:@.dp/#/./*/\@href
+                                             get-value:x:@.dp/#/./*/\@href/[0,1]
                                  else
 
                                     // URL is absolute.
                                     set-value:x:@.url
-                                       get-value:x:@.dp/#/./*/\@href
+                                       get-value:x:@.dp/#/./*/\@href/[0,1]
 
                                  // Adding URL as Markdown to completion
                                  set-value:x:@.completion

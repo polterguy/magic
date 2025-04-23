@@ -1,6 +1,10 @@
 
+.text-editor {
+  height: 430px;
+  box-sizing: border-box;
+}
 .markdown-preview {
-  height: 329px;
+  height: 430px;
   overflow: auto;
   ::ng-deep img {
     max-width: 80%;

@@ -1,0 +1,72 @@
+
+/*
+ * Imports specified [items] into database.
+ *
+ * Provide [connection-string], [database-type], [database] and [table] to inform the action of
+ * what database you want to import items into. Optionally provide [limit] and [offset] for paging,
+ * if not specified, all records from table will be returned.
+ */
+.arguments
+   database-type
+      type:enum
+      mandatory:bool:true
+      default:sqlite
+      values
+         .:sqlite
+         .:mssql
+         .:mysql
+         .:pgsql
+   connection-string
+      type:string
+      mandatory:bool:true
+      default:generic
+   database
+      type:string
+      mandatory:bool:true
+   table
+      type:string
+      mandatory:bool:true
+   items
+      type:*
+      mandatory:bool:true
+.icon:cloud_upload
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/database-type
+validators.mandatory:x:@.arguments/*/connection-string
+validators.mandatory:x:@.arguments/*/database
+validators.mandatory:x:@.arguments/*/table
+validators.enum:x:@.arguments/*/database-type
+   .:sqlite
+   .:mssql
+   .:mysql
+   .:pgsql
+
+// Connection string to actually use as we connect.
+.connection-string
+
+// Caller supplied an explicit [connection-string] argument.
+set-value:x:@.connection-string
+   strings.concat
+      .:[
+      get-value:x:@.arguments/*/connection-string
+      .:|
+      get-value:x:@.arguments/*/database
+      .:]
+
+// Connecting to database.
+data.connect:x:@.connection-string
+   database-type:x:@.arguments/*/database-type
+
+   // Looping through [items].
+   for-each:x:@.arguments/*/items/*
+
+      // Parametrising our [data.create] invocation.
+      add:x:./*/data.create/*/values
+         get-nodes:x:@.dp/#/*
+
+      // Inserting item.
+      data.create
+         database-type:x:@.arguments/*/database-type
+         table:x:@.arguments/*/table
+         values

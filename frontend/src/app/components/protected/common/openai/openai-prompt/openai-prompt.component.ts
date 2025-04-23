@@ -3,10 +3,13 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+// System imports
 import { MatDialog } from '@angular/material/dialog';
-import { GeneralService } from 'src/app/services/general.service';
 import { OpenAIService } from 'src/app/services/openai.service';
+import { GeneralService } from 'src/app/services/general.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
+// Custom imports
 import { OpenAIAnswerDialogComponent } from 'src/app/components/protected/common/openai/openai-answer-dialog/openai-answer-dialog.component';
 import { OpenAIConfigurationDialogComponent } from 'src/app/components/protected/common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 
@@ -42,8 +45,8 @@ export class OpenAIPromptComponent implements OnInit {
     this.openAiService.isConfigured().subscribe({
       next: (isConfigured: any) => {
 
-        this.openAiEnabled = isConfigured.result;
         this.generalService.hideLoading();
+        this.openAiEnabled = isConfigured.result;
       },
       error: (error: any) => {
 
@@ -102,8 +105,9 @@ export class OpenAIPromptComponent implements OnInit {
 
   askOpenAi() {
 
-    if (!this.openAiPrompt || this.openAiPrompt === '') {
-      this.generalService.showFeedback('No question specified', 'errorMessage');
+    // Sanity checking invocation
+    if (!this.openAiPrompt || this.openAiPrompt.trim() === '') {
+      this.generalService.showFeedback('You have to supply a prompt', 'errorMessage');
       return;
     }
 
@@ -114,12 +118,12 @@ export class OpenAIPromptComponent implements OnInit {
     if (currentFileContent && currentFileContent.length > 0) {
       currentFileContent = currentFileContent;
     }
+
     this.openAiService.query(
       this.openAiPrompt,
       this.fileType,
       false,
       this.currentFileSession,
-      null,
       currentFileContent).subscribe({
       next: (result: any) => {
 

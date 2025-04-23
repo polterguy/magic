@@ -1,0 +1,6 @@
+﻿
+.arguments
+   input1:string
+   input2:int
+   input3:bool
+return-nodes:x:@.arguments/*

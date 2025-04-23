@@ -50,3 +50,42 @@
   </button>
 
 </div>
+
+<div class="backdrop" *ngIf="waitingForAnswer">
+  <svg width="120" height="40" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="15" cy="20" r="10" fill="#9A8AfD">
+      <animate attributeName="opacity"
+               dur="1.2s"
+               values="0.3;1;0.3"
+               repeatCount="indefinite"/>
+      <animate attributeName="cy"
+               dur="1.2s"
+               values="20;10;20"
+               repeatCount="indefinite"/>
+    </circle>
+    <circle cx="60" cy="20" r="10" fill="#9A8AfD">
+      <animate attributeName="opacity"
+               dur="1.2s"
+               values="0.3;1;0.3"
+               repeatCount="indefinite"
+               begin="0.4s"/>
+      <animate attributeName="cy"
+               dur="1.2s"
+               values="20;10;20"
+               repeatCount="indefinite"
+               begin="0.4s"/>
+    </circle>
+    <circle cx="105" cy="20" r="10" fill="#9A8AfD">
+      <animate attributeName="opacity"
+               dur="1.2s"
+               values="0.3;1;0.3"
+               repeatCount="indefinite"
+               begin="0.8s"/>
+      <animate attributeName="cy"
+               dur="1.2s"
+               values="20;10;20"
+               repeatCount="indefinite"
+               begin="0.8s"/>
+    </circle>
+  </svg>
+</div>

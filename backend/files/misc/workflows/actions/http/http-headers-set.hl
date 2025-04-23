@@ -1,0 +1,24 @@
+
+/*
+ * Returns all specified HTTP headers to caller.
+ *
+ * Notice, will only return headers specified in [headers] argument.
+ */
+.arguments
+   headers
+      type:key-value
+      mandatory:bool:true
+.icon:http
+
+/*
+ * Iterating through each header from above invocation and checking if caller is interested in it,
+ * and if caller wants this particular header, we make sure we return it below.
+ */
+for-each:x:@.arguments/*/headers/*
+
+   // Adding currently iterated HTTP header.
+   add:x:../*/response.headers.set
+      get-nodes:x:@.dp/#
+
+// Invoking slot responsible for setting response HTTP headers.
+response.headers.set

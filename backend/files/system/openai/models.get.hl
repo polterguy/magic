@@ -42,6 +42,80 @@ if
       return
          message:Something went wrong while invoking OpenAI, check your log for details
 
+// Adding token count to models we know token count for.
+for-each:x:@http.get/*/content/*/data/*
+
+   switch:x:@.dp/#/*/id
+
+      case:gpt-4o
+      case:gpt-4o-mini
+      case:gpt-4o-2024-05-13
+      case:gpt-4-turbo
+      case:gpt-4-0125-preview
+      case:gpt-4-1106-preview
+      case:gpt-4-turbo-preview
+      case:gpt-4-turbo-2024-04-09
+      case:gpt-4-vision-preview
+      case:gpt-4-1106-vision-preview
+         add:x:@.dp/#
+            .
+               tokens:int:128000
+               chat:bool:true
+
+      case:gpt-4
+      case:gpt-4-0613
+         add:x:@.dp/#
+            .
+               tokens:int:8192
+               chat:bool:true
+
+      case:gpt-4-32k
+      case:gpt-4-32k-0613
+         add:x:@.dp/#
+            .
+               tokens:int:32768
+               chat:bool:true
+
+      case:gpt-3.5-turbo
+      case:gpt-3.5-turbo-0125
+      case:gpt-3.5-turbo-1106
+      case:gpt-3.5-turbo-16k
+      case:gpt-3.5-turbo-16k-0613
+         add:x:@.dp/#
+            .
+               tokens:int:16385
+               chat:bool:true
+
+      case:gpt-3.5-turbo-0613
+         add:x:@.dp/#
+            .
+               tokens:int:4096
+               chat:bool:true
+
+      case:gpt-3.5-turbo-instruct
+         add:x:@.dp/#
+            .
+               tokens:int:4096
+               chat:bool:false
+
+      case:text-embedding-3-small
+      case:text-embedding-ada-002
+         add:x:@.dp/#
+            .
+               vector:bool:true
+
+      case:o3-mini
+         add:x:@.dp/#
+            .
+               tokens:int:200000
+               chat:bool:true
+
+      case:gpt-4.5-preview
+         add:x:@.dp/#
+            .
+               tokens:int:128000
+               chat:bool:true
+
 /*
  * Applying some HTTP caching to avoid invoking OpenAI again with
  * the same question before some minimum amount of time has passed.

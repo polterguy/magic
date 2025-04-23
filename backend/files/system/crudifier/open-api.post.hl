@@ -1,0 +1,388 @@
+
+// Wraps the specified OpenAPI specification into Hyperlambda HTTP endpoints.
+.arguments
+   specification:string
+   moduleName:string
+   overwrite:bool
+   baseUrl:string
+
+.description:Wraps the specified OpenAPI specification into Hyperlambda HTTP endpoints
+.type:internal
+
+// Sanity checks invocation.
+validators.mandatory:x:@.arguments/*/specification
+validators.mandatory:x:@.arguments/*/moduleName
+validators.default:x:@.arguments
+   overwrite:bool:false
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Transforming JSON to lambda.
+json2lambda:x:@.arguments/*/specification
+
+// Sanity checking version of OpenAPI spec.
+if
+   not
+      strings.starts-with:x:@json2lambda/*/openapi
+         .:3.
+   .lambda
+
+      // Oops ...!!
+      throw:Unsupported OpenAPI version, we can only deal with version 3.x
+         status:int:404
+         public:bool:true
+
+// Extracting root URL.
+.host-url
+set-value:x:@.host-url
+   get-value:x:@json2lambda/*/servers/0/*/url
+
+// Checking if this is a relative URL, and we've got a base URL, at which point we prepend the base URL.
+if
+   and
+      exists:x:@.arguments/*/baseUrl
+      not-null:x:@.arguments/*/baseUrl
+      not
+         strings.starts-with:x:@.host-url
+            .:"http://"
+      not
+         strings.starts-with:x:@.host-url
+            .:"https://"
+   .lambda
+
+      // Relative URL, making sure it becomes absolute.
+      set-value:x:@.host-url
+         strings.concat
+            get-value:x:@.arguments/*/baseUrl
+            get-value:x:@.host-url
+
+// Iterating through each unique URL.
+for-each:x:@json2lambda/*/paths/*
+
+   // Retrieving full URL of endpoint.
+   .url
+   set-value:x:@.url
+      strings.concat
+         get-value:x:@.host-url
+         get-name:x:@.dp/#
+
+   // Iterating through each verb for currently iterated URL.
+   for-each:x:@.dp/#/*
+
+      // Finding verb to use.
+      .verb
+      set-value:x:@.verb
+         get-name:x:@.dp/#
+
+      // Making sure we support HTTP invocation.
+      .verb-supported:bool:false
+      switch:x:@.verb
+         case:get
+         case:post
+         case:put
+         case:delete
+         case:patch
+            set-value:x:@.verb-supported
+               .:bool:true
+
+      // Verifying we're dealing with a supported verb.
+      if:x:@.verb-supported
+
+         /*
+          * Creating a unique filename / function name for the endpoint.
+          *
+          * Notice, "operationId" is NOT guaranteed to be unique, but the combination of the URL and the verb
+          * will always be unique, so we're therefor using the URL to create a unique filename, and not the "operationId".
+          */
+         .function-name
+         get-name:x:@for-each/@.dp/#
+         set-value:x:@.function-name
+            strings.replace:x:@get-name
+               .:/
+               .:_
+         set-value:x:@.function-name
+            strings.trim:x:@.function-name
+               .:_
+         set-value:x:@.function-name
+            strings.replace:x:@.function-name
+               .:{
+               .:
+         set-value:x:@.function-name
+            strings.replace:x:@.function-name
+               .:}
+               .:
+
+         // Creating file level comment.
+         .comment
+         set-value:x:@.comment
+            get-value:x:@.dp/#/*/summary
+         if
+            and
+               not-null:x:@.comment
+               neq:x:@.comment
+                  .:
+               not-null:x:@.dp/#/*/description
+               neq:x:@.dp/#/*/description
+                  .:
+            .lambda
+
+               // Making room for description.
+               set-value:x:@.comment
+                  strings.concat
+                     get-value:x:@.comment
+                     .:"\r\n\r\n"
+
+         // Appending description.
+         set-value:x:@.comment
+            strings.concat
+               get-value:x:@.comment
+               get-value:x:@.dp/#/*/description
+
+         // Iterating through each parameter for endpoint.
+         .adds
+         .args
+         for-each:x:@.dp/#/*/parameters/*
+
+            // Adding currently iterated parameter.
+            set-value:x:./*/add/*/\./*/\..
+               get-value:x:@.dp/#/*/description
+            set-value:x:./*/add/*/\./*/\.
+               .:string
+            set-name:x:./*/add/*/\./*/\.
+               get-value:x:@.dp/#/*/name
+            add:x:@.args
+               .
+                  ..
+                  .
+
+            // Checking if this is in query or payload.
+            if
+               eq:x:@.dp/#/*/in
+                  .:query
+               .lambda
+
+                  // Query parameter.
+                  strings.concat
+                     .:"../*/http."
+                     get-value:x:@.verb
+                     .:"/*/query"
+                  strings.concat
+                     .:@.args/*/
+                     get-value:x:@.dp/#/*/name
+                  set-x:x:+/+/*/*
+                     convert:x:@strings.concat/@strings.concat
+                        type:x
+                  set-x:x:+/*/*/*
+                     convert:x:@strings.concat
+                        type:x
+                  add:x:@.adds
+                     .
+                        add:x:../*/[http.post|http.put|http.patch]/*/query
+                           get-nodes
+
+         // Dealing with payload if existing.
+         .accept
+         if
+            exists:x:@.dp/#/*/requestBody
+            .lambda
+
+               // Adding object declaration to [.arguments].
+               .ref
+               set-value:x:@.ref
+                  get-value:x:@"@.dp/#/*/requestBody/*/content/*/""application/json""/*/schema/*/$ref"
+
+               // Verifying [.ref] has a value, at which point it's a reference to another object under "components".
+               if
+                  not-null:x:@.ref
+                  .lambda
+
+                     // We'll need to transpile from #/components/xyz to lambda expression.
+                     .ex:@json2lambda/*/
+                     set-value:x:@.ref
+                        strings.replace:x:@.ref
+                           .:#
+                           .:
+                     strings.split:x:@.ref
+                        .:/
+                     strings.join:x:@strings.split/*
+                        .:/*/
+                     set-value:x:@.ex
+                        strings.concat
+                           get-value:x:@.ex
+                           get-value:x:@strings.join
+                           .:/*/properties/*
+
+                     // Making sure our [for-each] below is iterating through each existing field.
+                     set-x:x:./*/for-each/[0,1]
+                        convert:x:@.ex
+                           type:x
+
+                     // Iterating through each field declaration now that we know where to find it.
+                     for-each
+
+                        // Retrieving name of argument.
+                        get-name:x:@.dp/#
+
+                        // Retrieving type of argument.
+                        .type
+                        set-value:x:@.type
+                           get-value:x:@.dp/#/*/type
+                        switch:x:@.type
+
+                           case:integer
+                              set-value:x:@.type
+                                 .:int
+
+                           case:long
+                              set-value:x:@.type
+                                 .:long
+
+                           case:string
+                              set-value:x:@.type
+                                 .:string
+
+                           default
+                              set-value:x:@.type
+                                 .:*
+
+                        // Adding argument to above [.args].
+                        set-value:x:+/+/*/*
+                           get-value:x:@.type
+                        set-name:x:+/*/*
+                           get-value:x:@get-name
+                        add:x:@.args
+                           .
+                              .
+
+               else-if
+                  exists:x:@.dp/#/*/requestBody/*/content
+                  .lambda
+
+                     // This is not a JSON payload but rather some other type of payload.
+                     set-value:x:@.accept
+                        get-name:x:@.dp/#/*/requestBody/*/content/0
+                     add:x:@.args
+                        .
+                           ..:Actual content
+                           body:*
+                     strings.concat
+                        .:../*/http.
+                        get-value:x:@.verb
+                        .:/*/payload
+                     set-x:x:+/*/*/set-value
+                        convert:x:@strings.concat
+                           type:x
+                     add:x:@.adds
+                        .
+                           ..:Forwarding body of message.
+                           set-value
+                              get-value:x:@.arguments/*/body
+
+         // Figuring out template file to load.
+         .template
+         set-value:x:@.template
+            strings.concat
+               .:/system/crudifier/templates/openapi.template.
+               get-value:x:@.verb
+               .:.hl
+
+         // Loading template file and modifying it accordingly.
+         load-file:x:@.template
+
+         // Converting file content to lambda.
+         hyper2lambda:x:@load-file
+            comments:true
+
+         // Applying URL to lambda object.
+         set-value:x:@hyper2lambda/*/=URL
+            get-value:x:@.url
+
+         // Applying file level comment.
+         set-value:x:@hyper2lambda/0
+            get-value:x:@.comment
+
+         // Applying arguments.
+         add:x:@hyper2lambda/*/.arguments
+            get-nodes:x:@.args/*
+
+         // Forwarding arguments correctly.
+         switch:x:@.verb
+            case:patch
+            case:put
+            case:post
+               if
+                  exists:x:@.adds/0
+                  .lambda
+                     insert-before:x:@hyper2lambda/*/[http.put|http.post|http.patch]/-
+                        .
+                           ..:Forwarding arguments accordingly.
+                        get-nodes:x:@.adds/*
+
+         // Applying [Accept] header.
+         if
+            not-null:x:@.accept
+            .lambda
+
+               // Making sure endpoint accepts correct MIME type.
+               unwrap:x:+/*/*
+               insert-after:x:@hyper2lambda/*/.arguments
+                  .
+                     ..:Making sure endpoint accepts correct MIME type.
+                     .accept:x:@.accept
+
+         // Creating module path.
+         .module
+         set-value:x:@.module
+            strings.concat
+               .:/modules/
+               get-value:x:@.arguments/*/moduleName
+               .:/
+
+         // Verifying folder exists, and if not, creating it.
+         if
+            not
+               io.folder.exists:x:@.module
+            .lambda
+
+               // Creating module folder.
+               io.folder.create:x:@.module
+
+         // Creating our filename.
+         .filename
+         set-value:x:@.filename
+            strings.concat
+               get-value:x:@.module
+               get-value:x:@.function-name
+               .:.
+               get-value:x:@.verb
+               .:.hl
+
+         // Checking if overwrite is false and file exists from before, at which point we throw exception.
+         if
+            and
+               eq:x:@.arguments/*/overwrite
+                  .:bool:false
+               io.file.exists:x:@.filename
+            .lambda
+
+               // Oops ...!!
+               throw:File already exists
+                  status:int:500
+                  public:bool:true
+
+         // Converting lambda object while preserving comments and saving as Hyperlambda file.
+         lambda2hyper:x:@hyper2lambda/*
+            comments:true
+         io.file.save:x:@.filename
+            get-value:x:@lambda2hyper
+
+      else
+
+         // Oops ...!!
+         log.error:Unsupported verb for OpenAPI generator
+            verb:x:@.verb
+
+// Returning success to caller.
+return
+   result:success

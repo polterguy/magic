@@ -1,0 +1,77 @@
+<div class="modal-wrp">
+
+  <div mat-dialog-title class="mb-3">
+
+    <h3>Add function to {{data.type}}</h3>
+  
+  </div>
+
+  <div mat-dialog-content>
+
+    <mat-form-field class="w-100 standalone-field mb-3">
+      <span
+        matPrefix
+        matTooltip="Filter items"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>search</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        placeholder="Filter items ..."
+        [formControl]="filterControl"
+        #input
+        autocomplete="off">
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="removeSearchTerm();"
+        *ngIf="input.value !== ''">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <div class="row">
+
+      <div *ngFor="let el of getFilteredFunctions()" class="col-lg-4 col-md-6 col-12 mb-4">
+        <mat-card
+          mat-button
+          class="function-card w-100 h-100 p3">
+          <h4 class="name fw-bold">{{el.name}}</h4>
+          <div class="description text-muted mb-4">{{el.description}}</div>
+          <mat-icon matTooltipClass="tooltip" [matTooltip]="getFullDescription(el)">flash_on</mat-icon>
+          <button
+            mat-button
+            class="install-button"
+            (click)="install(el)">
+            Install
+          </button>
+        </mat-card>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="actions" mat-dialog-actions [align]="'end'">
+
+    <mat-slide-toggle
+      labelPosition="before"
+      class="me-4"
+      (change)="showAll()"
+      [(ngModel)]="showAllFunctions">
+      Show internal workflows
+    </mat-slide-toggle>
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="close()">
+      Close
+    </button>
+
+    <p class="text-muted count">{{getCount()}} workflows</p>
+
+  </div>
+
+</div>

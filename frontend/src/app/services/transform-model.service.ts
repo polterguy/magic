@@ -22,10 +22,25 @@ export class TransformModelService {
   overwrite = false;
 
   /**
+   * Whether or not we should generate aggregate endpoints.
+   */
+  aggregates = true;
+
+  /**
+   * Whether or not we should generate distinct endpoints.
+   */
+  distinct = true;
+
+  /**
+   * Whether or not we should generate search endpoints.
+   */
+  search = false;
+
+  /**
    * Whether or not scaffolding should create verbose endpoints, implying applying
    * as many argument options as possible, or only apply the bare minimum.
    */
-  verbose = false;
+  verbose = true;
 
   /**
    * Whether or not scaffolding should create left joins for backend GET endpoints.
@@ -88,6 +103,15 @@ export class TransformModelService {
       result.auth = table.authGet;
       result.paging = table.paging;
       result.sorting = table.sorting;
+    }
+    if (verb === 'get' && table.aggregate) {
+      result.aggregate = table.aggregate;
+    }
+    if (verb === 'get' && table.distinct) {
+      result.distinct = table.distinct;
+    }
+    if (verb === 'get' && table.search) {
+      result.search = table.search;
     }
     if (verb === 'put' && table.authPut) {
       result.auth = table.authPut;

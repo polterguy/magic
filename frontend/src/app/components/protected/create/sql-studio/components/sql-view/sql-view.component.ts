@@ -32,12 +32,14 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   private tablesList: any = null;
   private tableSubscription!: Subscription;
   private actionSubscription!: Subscription;
+  formatResultView: boolean = false;
 
   @Input() hintTables: Observable<any[]>;
   @Input() selectedDatabase: string = '';
   @Input() selectedDbType: string = '';
   @Input() selectedConnectionString: string = '';
   @Output() getDatabases: EventEmitter<any> = new EventEmitter<any>();
+  @Input() databases: any = null;
   input: Model = null;
   queryResult: any = [];
   displayedColumns: any = [];
@@ -63,6 +65,11 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         };
       }
     });
+  }
+
+  shouldFormat(cell: any) {
+
+    return this.formatResultView && cell && typeof cell === 'string' && cell.indexOf('\n') !== -1;
   }
 
   codeMirrorInit() {
@@ -283,7 +290,9 @@ export class SqlViewComponent implements OnInit, OnDestroy {
       this.displayedColumns = [];
 
       this.queryResult.forEach((element: any, index: number) => {
-        this.displayedColumns[index] = Object.keys(element[0]);
+        if (element) {
+          this.displayedColumns[index] = Object.keys(element[0]);
+        }
       });
     }
   }

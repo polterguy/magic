@@ -358,4 +358,13 @@ export class MachineLearningTrainingService {
         questions,
       });
   }
+
+  /**
+   * Destroys existing vectors for the specified type.
+   */
+  destroyVectors(type: string) {
+
+    return this.httpService.delete<any>(
+      '/magic/system/openai/vectors?type=' + encodeURIComponent(type));
+  }
 }

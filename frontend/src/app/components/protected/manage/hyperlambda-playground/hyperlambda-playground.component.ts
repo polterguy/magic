@@ -59,6 +59,11 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     this.watchForActions();
   }
 
+  insertFromOpenAI(snippet: string) {
+
+    this.input.hyperlambda = snippet;
+  }
+
   load() {
 
     this.dialog.open(LoadSnippetDialogComponent, {
@@ -208,6 +213,7 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
   }
 
   private prompt() {
+
     const editor = (<any>document.querySelector('.CodeMirror')).CodeMirror;
     const selection = editor.getSelection();
     if (selection?.length > 0) {

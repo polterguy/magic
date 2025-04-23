@@ -4,14 +4,14 @@
  */
 
 import { Injectable } from '@angular/core';
-import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { VocabularyService } from 'src/app/services/vocabulary.service';
 import { BazarService } from './bazar.service';
 import { GeneralService } from './general.service';
 import { MessageService } from './message.service';
+import { MagicCaptcha } from './magiccaptcha.service';
 
 /**
- * Gneral service with helpers for subscribing to screen size changes, showing loader, etc.
+ * AI service for invoking the backend or the bazar to use some sort of AI function.
  */
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class AiService {
 
   constructor(
     private generalService: GeneralService,
-    private recaptchaV3Service: ReCaptchaV3Service,
+    private magicCaptcha: MagicCaptcha,
     private bazarService: BazarService,
     private vocabularyService: VocabularyService,
     private messageService: MessageService) { }
@@ -36,30 +36,25 @@ export class AiService {
     }
 
     this.generalService.showLoading();
-    this.recaptchaV3Service.execute('aiAutoPrompt').subscribe({
-      next: (token: string) => {
+    this.magicCaptcha.token('ab6dee9ac317fcb8df3cb752fc2937345a08cb70b2f009b220ad4cb61d97029f', (token: string) => {
 
-        this.bazarService.prompt(prompt, token).subscribe({
-          next: (result: any) => {
+      this.bazarService.prompt(prompt, token).subscribe({
+        next: (result: any) => {
 
-            this.generalService.hideLoading();
-            const completion = result.result;
-            this.messageService.sendMessage({
-              name: 'magic.show-help',
-              content: completion,
-            });
-          },
-          error: () => {
+          this.generalService.hideLoading();
+          const completion = result.result.split('---')[0];
+          this.messageService.sendMessage({
+            name: 'magic.show-help',
+            content: completion,
+          });
 
-            this.generalService.hideLoading();
-            this.generalService.showFeedback('Could not invoke magic API server to create completion', 'errorMessage');
-          }
-        });
-      },
-      error: () => {
+        },
+        error: () => {
 
-        this.generalService.hideLoading();
-      },
+          this.generalService.hideLoading();
+          this.generalService.showFeedback('Could not invoke magic API server to create completion', 'errorMessage');
+        }
+      });
     });
   }
 }

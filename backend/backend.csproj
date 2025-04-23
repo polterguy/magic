@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <AssemblyName>backend</AssemblyName>
   </PropertyGroup>
@@ -13,21 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="files\misc\templates\**" />
-  </ItemGroup>
-
-  <PropertyGroup>
-    <ServerGarbageCollection>false</ServerGarbageCollection>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <DefaultItemExcludes>$(DefaultItemExcludes);files/**/*.cs</DefaultItemExcludes>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="magic.lambda.system" Version="17.2.0" />
-    <PackageReference Include="magic.library" Version="17.3.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
+    <ProjectReference Include="..\plugins\magic.lambda.system\magic.lambda.system.csproj" />
+    <ProjectReference Include="..\plugins\magic.library\magic.library.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

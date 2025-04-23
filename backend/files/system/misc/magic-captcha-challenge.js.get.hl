@@ -1,0 +1,67 @@
+
+// Returns the Magic CAPTCHA JavaScript library to caller.
+.arguments
+   v:string
+.description:Returns the Magic CAPTCHA JavaScript library to caller
+.type:public
+
+// Getting server auth secret.
+config.get:"magic:auth:secret"
+
+// Double hashing auth secret using SHA256 to avoid predictable hash values.
+crypto.hash.sha256:x:@config.get
+crypto.hash.sha256:x:-
+
+// Loading JavaScript file.
+.file
+if
+   io.file.exists:/system/misc/magic-captcha-challenge.min.js
+   .lambda
+
+      // We have a minified file.
+      set-value:x:@.file
+         load-file:/system/misc/magic-captcha-challenge.min.js
+else
+
+   // We don't have a minified file.
+   set-value:x:@.file
+      load-file:/system/misc/magic-captcha-challenge.js
+
+/*
+ * Dynamically substituting public key in file with public key that was generated
+ * specifically for current server.
+ */
+set-value:x:@.file
+   strings.replace:x:@.file
+      .:[[public-key]]
+      get-value:x:@crypto.hash.sha256
+
+// Figuring out API URL.
+.scheme
+request.host
+if
+   strings.contains:x:@request.host
+      .:localhost
+   .lambda
+      set-value:x:@.scheme
+         .:"http"
+else
+   set-value:x:@.scheme
+      .:"https"
+.url
+set-value:x:@.url
+   strings.concat
+      get-value:x:@.scheme
+      .:"://"
+      request.host
+set-value:x:@.file
+   strings.replace:x:@.file
+      .:[[url]]
+      get-value:x:@.url
+
+// Applying correct HTTP headers.
+response.headers.set
+   Content-Type:text/javascript
+
+// Returning result to caller.
+return:x:@.file

@@ -4,6 +4,10 @@
  */
 slots.create:magic.ai.crawl-site-on-thread
 
+   // Ensuring defaults.
+   validators.default:x:@.arguments
+      summarize:bool:true
+
    /*
     * Loading robots.txt from specified [url].
     */
@@ -244,10 +248,12 @@ delete from ml_training_snippets where type = @type and uri like @uri;"
                   url:x:@.dp/#
                   type:x:@.arguments/*/type
                   threshold:x:@.arguments/*/threshold
+                  summarize:x:@.arguments/*/summarize
                   feedback-channel:x:@.arguments/*/feedback-channel
                   images:x:@.arguments/*/images
                   lists:x:@.arguments/*/lists
                   code:x:@.arguments/*/code
+                  insert_url:x:@.arguments/*/insert_url
 
                // Verifying we've got more snippets before applying Crawl-Delay
                if
@@ -386,6 +392,7 @@ delete from ml_training_snippets where type = @type and uri like @uri;"
                main:bool:true
                empty-completion:bool:false
                threshold:x:@.arguments/*/threshold
+               summarize:x:@.arguments/*/summarize
                feedback-channel:x:@.arguments/*/feedback-channel
 
             /*

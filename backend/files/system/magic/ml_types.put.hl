@@ -27,15 +27,30 @@
    webhook_incoming_url:string
    webhook_outgoing_url:string
    system_message:string
+   conversation_starters:string
    initial_questionnaire:string
    no_requests:int
    max_requests:int
    search_postfix:string
+   max_function_invocations:int
+   max_session_items:int
+   completion_slot:string
 .description:CRUD update endpoint updating one record in your ml_types table in your magic database filtering which item to update with type updating model, max_tokens, temperature fields with authentication and authorisation for root roles
 .type:crud-update
 
 // Sanity checking invocation, making sure primary key(s) are specified.
 validators.mandatory:x:@.arguments/*/type
+
+// Sanity checking invocation.
+validators.integer:x:@.arguments/*/max_context_tokens
+   min:500
+   max:40000
+validators.integer:x:@.arguments/*/max_request_tokens
+   min:100
+   max:25000
+validators.integer:x:@.arguments/*/max_tokens
+   min:500
+   max:4000
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root

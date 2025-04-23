@@ -365,6 +365,7 @@ slots.create:magic.ai.load-sitemap
 
       // Making sure we don't return more than [max] URLs.
       .return
+      .ignored:int:0
       while
          and
             mt:x:@.arguments/*/max
@@ -438,19 +439,27 @@ slots.create:magic.ai.load-sitemap
             else
 
                // Informing user that URL is disallowed.
-               strings.concat
-                  .:"URL disallowed by robots.txt or not matching base URL '"
-                  get-value:x:@sort/0
-                  .:"'"
-               unwrap:x:+/**
-               sockets.signal:x:@.arguments/*/feedback-channel
-                  args
-                     message:x:@strings.concat
-                     type:warning
-               sleep:100
+               math.increment:x:@.ignored
 
             // Removing currently iterated URL.
             remove-nodes:x:@sort/0
+
+      // Checking if we've got URLs we should not import.
+      if
+         neq:x:@.ignored
+            .:int:0
+         .lambda
+
+            // Notifying user we've got ignored URLs.
+            strings.concat
+               get-value:x:@.ignored
+               .:" URLs disallowed by robots.txt or not matching base URL"
+            unwrap:x:+/**
+            sockets.signal:x:@.arguments/*/feedback-channel
+               args
+                  message:x:@strings.concat
+                  type:warning
+            sleep:100
 
       // Returning URLs to caller.
       add:x:./*/return-nodes/*/urls

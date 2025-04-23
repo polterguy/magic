@@ -1,23 +1,23 @@
 
 /*
- * Vectorises the specified model.
+ * Vectorize the specified type.
+ *
+ * This process implies creating embeddings using OpenAI embeddings API for each training snippet.
  */
 slots.create:magic.ai.vectorise
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/type
 
    // Making sure we log exceptions.
    try
 
-      // Maximum number of times we retry OpenAI's API before giving up.
-      .retries:int:3
-
       // Getting OpenAI API token from configuration.
       .token
       set-value:x:@.token
-         strings.concat
-            .:"Bearer "
-            config.get:"magic:openai:key"
+         config.get:"magic:openai:key"
 
-      // Getting vector model, and deleting index.
+      // Getting vector model and OpenAI API key (if specified, otherwise using config key).
       .vector-model
       data.connect:[generic|magic]
 
@@ -26,13 +26,32 @@ slots.create:magic.ai.vectorise
             table:ml_types
             columns
                vector_model
+               api_key
             where
                and
                   type.eq:x:@.arguments/*/type
          set-value:x:@.vector-model
             get-value:x:@data.read/*/*/vector_model
 
-      // To avoid exhausting server's memory, we iterate 50 snippets at the time.
+         // Checking if type overrides the OpenAI API key.
+         if
+            and
+               not-null:x:@data.read/*/*/api_key
+               neq:x:@data.read/*/*/api_key
+                  .:
+            .lambda
+
+               // Type is overriding OpenAI API key.
+               set-value:x:@.token
+                  get-value:x:@data.read/*/*/api_key
+
+      // Making sure we correctly pass in our token as "Bearer" token.
+      set-value:x:@.token
+         strings.concat
+            .:"Bearer "
+            get-value:x:@.token
+
+      // To avoid exhausting server's memory, we iterate 20 snippets at the time.
       .continue:bool:true
       .failed:int:0
       .success:int:0
@@ -50,146 +69,142 @@ slots.create:magic.ai.vectorise
                data.select:@"
 select id, prompt, completion
    from ml_training_snippets
-   where type = @type and id > @id and embedding is null"
+   where type = @type and id > @id and embedding is null order by id limit 20"
                   type:x:@.arguments/*/type
                   id:x:@.id
 
-         // Making sure we start from the next unchecked snippet next iteration through [while].
+         // Making sure we start from the next snippet the next iteration through our [while].
          set-value:x:@.id
             get-value:x:@.data/0/-/*/id
 
          // Looping through all records returned above.
          for-each:x:@.data/*
 
-            // Signaling frontend.
-            strings.concat
-               .:"Vectorizing: \""
-               get-value:x:@.dp/#/*/prompt
-               .:"\""
-            unwrap:x:+/*/args/*/message
-            sockets.signal:x:@.arguments/*/feedback-channel
-               args
-                  message:x:@strings.concat
-                  type:info
+            // Verifying we're supposed to continue, and that logic below didn't abort process.
+            if:x:@.continue
 
-            // Buffer for what we're creating embeddings from.
-            .embedding
-            set-value:x:@.embedding
-               strings.concat
-                  get-value:x:@.dp/#/*/prompt
-                  .:"\r\n"
-                  .:"\r\n"
-                  strings.mixin:x:@.dp/#/*/completion
-                     strip:true
+               // Buffer for what we're creating embeddings from.
+               .embedding
+               set-value:x:@.embedding
+                  strings.concat
+                     get-value:x:@.dp/#/*/prompt
+                     .:"\r\n"
+                     .:"\r\n"
+                     get-value:x:@.dp/#/*/completion
 
-            // Making sure we don't try to create embedding if it would exhaust the number of tokens for model.
-            if
-               lt
-                  openai.tokenize:x:@.embedding
-                  .:int:8191
-               .lambda
+               // Making sure we don't try to create embedding if it would exhaust the number of tokens for model.
+               if
+                  lt
+                     openai.tokenize:x:@.embedding
+                     .:int:8191
+                  .lambda
 
-                  // Creating an HTTP POST request towards OpenAI, now decorated.
-                  http.post:"https://api.openai.com/v1/embeddings"
-                     headers
-                        Authorization:x:@.token
-                        Content-Type:application/json
-                     payload
-                        model:x:@.vector-model
-                        input:x:@.embedding
-                     convert:true
+                     // Signaling frontend.
+                     strings.concat
+                        .:"Vectorizing: \""
+                        get-value:x:@.dp/#/*/prompt
+                        .:"\""
+                     unwrap:x:+/*/args/*/message
+                     sockets.signal:x:@.arguments/*/feedback-channel
+                        args
+                           message:x:@strings.concat
+                           type:info
 
-                  // Sanity checking above invocation.
-                  if
-                     not
-                        and
-                           mte:x:@http.post
-                              .:int:200
-                           lt:x:@http.post
-                              .:int:300
-                     .lambda
+                     // Creating an HTTP POST request towards OpenAI, now decorated.
+                     http.post:"https://api.openai.com/v1/embeddings"
+                        headers
+                           Authorization:x:@.token
+                           Content-Type:application/json
+                        payload
+                           model:x:@.vector-model
+                           input:x:@.embedding
+                        convert:true
 
-                        // Oops, error - Logging error and returning status 500 to caller.
-                        lambda2hyper:x:@http.post
-                        log.error:Something went wrong while invoking OpenAI
-                           message:x:@http.post/*/content/*/error/*/message
-                           error:x:@lambda2hyper
-                        strings.concat
-                           .:"OpenAI failed, could not create vectors for '"
-                           get-value:x:@.dp/#/*/prompt
-                           .:"'"
-                        unwrap:x:+/*/args/*/message
-                        sockets.signal:x:@.arguments/*/feedback-channel
-                           args
-                              message:x:@strings.concat
-                              type:warning
-                        if
+                     // Sanity checking above invocation.
+                     if
+                        not
                            and
+                              mte:x:@http.post
+                                 .:int:200
+                              lt:x:@http.post
+                                 .:int:300
+                        .lambda
+                        
+                           // Incrementing failure count.
+                           math.increment:x:@.failed
+
+                           // Oops, error - Logging error and returning status 500 to caller.
+                           lambda2hyper:x:@http.post
+                           log.error:Something went wrong while invoking OpenAI
+                              message:x:@http.post/*/content/*/error/*/message
+                              error:x:@lambda2hyper
+                           strings.concat
+                              .:"OpenAI failed, could not create vectors for '"
+                              get-value:x:@.dp/#/*/prompt
+                              .:"'"
+                           unwrap:x:+/*/args/*/message
+                           sockets.signal:x:@.arguments/*/feedback-channel
+                              args
+                                 message:x:@strings.concat
+                                 type:warning
+                           if
                               or
                                  eq:x:@http.post
                                     .:int:429
                                  eq:x:@http.post
                                     .:int:500
-                              mt:x:@.retries
-                                 .:int:0
-                           .lambda
+                              .lambda
 
-                              // OpenAI server is busy, waiting 5 seconds to retry.
-                              math.decrement:x:@.retries
-                              sockets.signal:x:@.arguments/*/feedback-channel
+                                 // OpenAI server is busy, waiting 5 seconds before continuing with our next snippet.
+                                 sockets.signal:x:@.arguments/*/feedback-channel
+                                    args
+                                       message:Continuing in 5 seconds with the next snippet to let OpenAI cool down first
+                                       type:info
+                                 sleep:5000
+
+                           else
+
+                              // Non-transitional error or too many retries.
+                              sockets.signal:magic.backend.message
+                                 roles:root
                                  args
-                                    message:Retrying in 5 seconds
-                                    type:info
-                              sleep:5000
+                                    message:Could not vectorize snippet and it was a non-transitional error, aborting vectorization for type
+                                    type:error
 
-                        else
+                              // Aborting while loop.
+                              set-value:x:@.continue
+                                 .:bool:false
 
-                           // Non-transitional error or too many retries.
-                           unwrap:x:+/*/args/*/message
-                           sockets.signal:magic.backend.message
-                              roles:root
-                              args
-                                 message:Could not vectorize snippet
-                                 type:error
+                     else
 
-                           // Aborting while loop.
-                           set-value:x:@.continue
-                              .:bool:false
+                        // Success creating embeddings, updating training snippet now.
+                        .embedding
+                        set-value:x:@.embedding
+                           strings.concat
+                              .:[
+                              strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
+                                 .:,
+                              .:]
 
-                  else
+                        // Connecting to database again to add embeddings to existing ml_training_snippets record.
+                        data.connect:[generic|magic]
+                           data.update
+                              table:ml_training_snippets
+                              values
+                                 embedding:x:@.embedding
+                              where
+                                 and
+                                    id.eq:x:@.dp/#/*/id
 
-                     // Success creating embeddings, updating training snippet now.
-                     .embedding
-                     set-value:x:@.embedding
-                        strings.concat
-                           .:[
-                           strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
-                              .:,
-                           .:]
+                        // Incrementing count.
+                        math.increment:x:@.success
 
-                     // Connecting to database again to add embeddings to existing ml_training_snippets record.
-                     data.connect:[generic|magic]
-                        data.update
-                           table:ml_training_snippets
-                           values
-                              embedding:x:@.embedding
-                           where
-                              and
-                                 id.eq:x:@.dp/#/*/id
+               else
 
-                     // Incrementing count.
-                     math.increment:x:@.success
-
-                     // Resetting retries
-                     set-value:x:@.retries
-                        .:int:3
-
-            else
-
-               // Making sure we count number of snippets that failed.
-               log.info:Cannot vectorize snippet, too long
-                  id:x:@.dp/#/*/id
-               math.increment:x:@.failed
+                  // Making sure we count number of snippets that failed.
+                  log.info:Cannot vectorize snippet, too long
+                     id:x:@.dp/#/*/id
+                  math.increment:x:@.failed
 
 
          // Counting how many records we currently processed.
@@ -209,21 +224,49 @@ select id, prompt, completion
       sockets.signal:magic.backend.message
          roles:root
          args
-            message:Done creating embeddings of your model
+            message:Done creating embeddings for your model
             type:success
 
       // Signaling frontend.
       strings.concat
-         .:"Done vectorising model "
+         .:"Done vectorising model '"
          get-value:x:@.arguments/*/type
-         .:" containing "
+         .:"'. We succeeded vectorizing "
          get-value:x:@.success
-         .:" training snippets"
+         .:" training snippets and failed with "
+         get-value:x:@.failed
+         .:" snippets"
       unwrap:x:+/*/args/*/message
       sockets.signal:x:@.arguments/*/feedback-channel
          args
             message:x:@strings.concat
             type:info
+
+      // Basic logging.
+      log.info:Done with creating vectors for model
+         type:x:@.arguments/*/type
+         success:x:@.success
+         failed:x:@.failed
+
+      // Checking if we had failed snippets.
+      if
+         mt:x:@.failed
+            .:int:0
+         .lambda
+
+            // Messaging frontend to let it know we had failed snippets.
+            sockets.signal:x:@.arguments/*/feedback-channel
+               args
+                  message:One or more training snippets failed to vectorize. You might want to try vectorizing again
+                  type:warning
+
+      else
+
+         // Messaging frontend to let it know we had failed snippets.
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:All training snippets was successfully vectorized
+               type:info
 
       // Messaging frontend to let it know we're about to index embeddings.
       sockets.signal:x:@.arguments/*/feedback-channel
@@ -231,22 +274,31 @@ select id, prompt, completion
             message:Indexing embeddings
             type:info
 
-      // Inserting into vss_ml_training_snippets from ml_training_snippets
-      data.connect:[generic|magic]
-         data.execute:@"
+      // Inserting into vss_ml_training_snippets from ml_training_snippets.
+      .more:bool:true
+      while:x:@.more
+      
+         // Notice, we're only inserting 500 vectors in each go to avoid memory exhaustion of our cloudlet.
+         .sql:@"
 insert into vss_ml_training_snippets (rowid, embedding_vss)
    select id as rowid, embedding as embedding_vss
       from ml_training_snippets ts
-      where embedding is not null and
+      where ts.embedding is not null and
          type = @type and
-         not exists (select rowid from vss_ml_training_snippets vss2 where vss2.rowid = ts.id)"
-            type:x:@.arguments/*/type
+         not exists (select rowid from vss_ml_training_snippets as vss where ts.id = vss.rowid) limit 500"
 
-      // Basic logging.
-      log.info:Done with creating vectors for model
-         type:x:@.arguments/*/type
-         count:x:@.success
-         failed:x:@.failed
+         // Executing SQL, ensuring we're not keeping database connection open for a long time.
+         data.connect:[generic|magic]
+            data.execute:x:@.sql
+               type:x:@.arguments/*/type
+
+            // Checking if there are more available items, and if not, aborting [while].
+            if
+               lt:x:@data.execute
+                  .:int:500
+               .lambda
+                  set-value:x:@.more
+                     .:bool:false
 
       // Checking if we've got a callback, and if so, executing it.
       if

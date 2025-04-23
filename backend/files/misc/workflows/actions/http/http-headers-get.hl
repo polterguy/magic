@@ -1,0 +1,31 @@
+
+/*
+ * Returns all specified HTTP headers to caller.
+ *
+ * Notice, will only return headers specified in [headers] argument.
+ */
+.arguments
+   headers
+      type:array
+      mandatory:bool:true
+.icon:http
+
+// Retrieving HTTP headers from request.
+request.headers.list
+
+/*
+ * Iterating through each header from above invocation and checking if caller is interested in it,
+ * and if caller wants this particular header, we make sure we return it below.
+ */
+for-each:x:@request.headers.list/*
+   get-name:x:@.dp/#
+   if
+      exists:x:@.arguments/*/headers/*/={@get-name}
+      .lambda
+
+         // Caller wants currently iterated HTTP header.
+         add:x:../*/return-nodes
+            get-nodes:x:@.dp/#
+
+// Returning result to caller.
+return-nodes

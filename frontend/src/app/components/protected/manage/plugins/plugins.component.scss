@@ -123,3 +123,12 @@
     box-shadow: 10014px 15px 0 0 rgba(152, 128, 255, 0);
   }
 }
+
+.plugin {
+  position: relative;
+  .type-of-plugin {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+}

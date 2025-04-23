@@ -89,7 +89,7 @@ for-each:x:@hyper2lambda/*
                         strings.concat
                            .:--/execute/=
                            get-value:x:@.dp/#/*/name
-                           .:/*/
+                           .:/*
 
                      /*
                       * Making sure candidate expression has not already been added before we add it.

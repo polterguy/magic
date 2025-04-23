@@ -2,6 +2,10 @@
 /*
  * Default global exception handler, invoked if no other overrides exists
  * at the module level.
+ *
+ * If you want to create a custom exception handler
+ * for a specific module, you can do so by creating a file called "exceptions.hl"
+ * inside a folder in your module.
  */
 log.error:x:@.arguments/*/message
    url:x:@.arguments/*/path
@@ -13,17 +17,21 @@ log.error:x:@.arguments/*/message
  * disclose any security information originating from exceptions.
  */
 if
-   and
-      exists:x:@.arguments/*/public
-      or
-         get-value:x:@.arguments/*/public
-         convert:x:@.arguments/*/public
-            type:bool
+   or
+      auth.ticket.in-role:root
+      and
+         exists:x:@.arguments/*/public
+         or
+            get-value:x:@.arguments/*/public
+            convert:x:@.arguments/*/public
+               type:bool
    .lambda
-   
+
       // Exception message is supposed to propagate to client.
       set-value:x:../*/return/*/message
          get-value:x:@.arguments/*/message
+
+// Parametrizing return invocation.
 add:x:+
    get-nodes:x:@.arguments/*/status
    get-nodes:x:@.arguments/*/field

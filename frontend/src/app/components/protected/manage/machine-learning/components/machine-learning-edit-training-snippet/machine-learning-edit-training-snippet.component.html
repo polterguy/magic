@@ -49,7 +49,7 @@
             <input
               matInput
               cdkFocusInitial
-              placeholder="Prompt"
+              placeholder="Prompt ..."
               [(ngModel)]="prompt"
               name="prompt"
               autocomplete="off">
@@ -64,7 +64,7 @@
           <mat-form-field class="w-100 standalone-field me-2">
             <span
               matPrefix
-              matTooltip="URI"
+              matTooltip="URI for snippet"
               class="d-flex flex-nowrap align-items-center justify-content-between me-2">
               <mat-icon>http</mat-icon>
               <span class="text-muted">|</span>
@@ -72,7 +72,7 @@
             <input
               matInput
               cdkFocusInitial
-              placeholder="URI"
+              placeholder="URI ..."
               [(ngModel)]="uri"
               name="uri"
               autocomplete="off">
@@ -87,14 +87,14 @@
           <mat-form-field class="w-100 standalone-field">
             <span
               matPrefix
-              matTooltip="Type of snippet"
+              matTooltip="Type to add snippet to"
               class="d-flex flex-nowrap align-items-center justify-content-between me-2 pe-2 min-width">
               <mat-icon>list</mat-icon>
               <span class="text-muted">|</span>
             </span>
             <mat-select
               [(ngModel)]="type"
-              placeholder="Type of snippet"
+              placeholder="Type ..."
               [disabled]="data?.prompt"
               (selectionChange)="typeChanged()"
               name="type">
@@ -132,9 +132,9 @@
           <textarea
             matInput
             name="txt_completion"
-            placeholder="Completion"
-            [(ngModel)]="completion"
-            rows="21">
+            placeholder="Completion ..."
+            class="text-editor"
+            [(ngModel)]="completion">
           </textarea>
         </mat-form-field>
 
@@ -149,9 +149,11 @@
 
     <div mat-dialog-actions [align]="'end'">
 
+      <p *ngIf="meta" class="text-muted" style="position: absolute; bottom: 0; left: 0;">Meta: {{meta}}</p>
+
       <mat-slide-toggle
         labelPosition="before"
-        class="me-2"
+        class="me-4"
         name="preview"
         (change)="previewChanged()"
         [(ngModel)]="preview">
@@ -161,21 +163,22 @@
       <mat-checkbox
         [(ngModel)]="cached"
         name="cached"
-        class="me-2"
+        class="me-4"
         labelPosition="before"
         color="primary">Cached</mat-checkbox>
 
       <mat-checkbox
         [(ngModel)]="pushed"
         name="pushed"
-        class="me-2"
+        class="me-4"
         labelPosition="before"
         color="primary">Pushed</mat-checkbox>
 
       <button
         mat-button
-        mat-dialog-close>
-        Close
+        type="button"
+        (click)="showTemplates()">
+        Templates
       </button>
 
       <button
@@ -183,6 +186,12 @@
         color="primary"
         type="submit">
         Save
+      </button>
+
+      <button
+        mat-button
+        mat-dialog-close>
+        Close
       </button>
 
     </div>

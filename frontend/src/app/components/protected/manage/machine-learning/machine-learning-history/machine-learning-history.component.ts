@@ -9,8 +9,9 @@ import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
 import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
-import { MachineLearningEditCacheComponent } from '../components/machine-learning-edit-cache/machine-learning-edit-cache.component';
+import { MachineLearningEditCacheComponent } from '../components/machine-learning-edit-history/machine-learning-edit-history.component';
 import { FilterComponent } from 'src/app/components/protected/common/filter/filter.component';
+import { MachineLearningViewConversationComponent } from '../components/machine-learning-view-conversation/machine-learning-view-conversation.component';
 
 /**
  * Helper component to view and manage Machine Learning requests
@@ -121,6 +122,49 @@ export class MachineLearningRequestsComponent implements OnInit {
     });
   }
 
+  exportConversation() {
+
+    var filter = {
+      ['ml_requests.type.eq']: this.filter['ml_requests.type.eq'],
+      filter: this.filter.filter,
+      limit: 100,
+      order: 'created',
+      direction: 'asc',
+    };
+
+    this.generalService.showLoading();
+    this.machineLearningTrainingService.ml_requests(filter).subscribe({
+      next: (res: any[]) => {
+
+        this.generalService.hideLoading();
+
+        // Checking if we've got more than 100 items.
+        if (res.length >= 100) {
+          this.generalService.showFeedback('Warning! There was more than 100 items in result, only showing the first 100 items.', 'errorMessage');
+        }
+
+        let result = '';
+        res.forEach(idx => {
+          result += 'User: ' + idx.prompt + '\r\n\r\n' + 'Machine: ' + (!idx.completion || idx.completion === '' ? '**ERROR**!!' : idx.completion) + '\r\n\r\n';
+        });
+        this.dialog
+        .open(MachineLearningViewConversationComponent, {
+          width: '80vw',
+          maxWidth: '850px',
+          data: {
+            conversation: result,
+            warning: res.length >= 100,
+          },
+        });
+      },
+      error: (error: any) => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message, 'errorMessage', 'Ok');
+      }
+    });
+  }
+
   sortData(e: any) {
 
     if (e.direction === '') {
@@ -154,6 +198,7 @@ export class MachineLearningRequestsComponent implements OnInit {
           completion: el.completion,
           type: el.type,
           cached: el.cached,
+          referrer: el.referrer,
         },
       })
       .afterClosed()

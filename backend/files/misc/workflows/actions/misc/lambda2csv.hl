@@ -1,0 +1,16 @@
+
+/*
+ * Transforms the specified [items] to CSV and returns to caller.
+ */
+.arguments
+   items
+      type:*
+      mandatory:bool:true
+.icon:input
+
+// Transforming [items] to CSV content.
+lambda2csv:x:@.arguments/*/items/*
+
+// Returning resulting HTML to caller.
+yield
+   csv:x:@lambda2csv

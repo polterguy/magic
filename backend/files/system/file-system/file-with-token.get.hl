@@ -1,0 +1,28 @@
+
+// Loads the specified file and returns to caller as 'application/octet-stream' Content-Type.
+.arguments
+   access_token:string
+   file:string
+.description:Loads the specified file and returns to caller as 'application/octet-stream' Content-Type"
+.type:internal
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/access_token
+
+/*
+ * Loading file and returning it, as text content to caller, making
+ * sure we return the correct Content-Type in the process.
+ */
+strings.split:x:@.arguments/*/file
+   .:/
+strings.concat
+   .:"attachment; filename=\""
+   get-value:x:@strings.split/0/-
+   .:"\""
+response.headers.set
+   Content-Type:application/octet-stream
+   Content-Disposition:x:@strings.concat
+   Access-Control-Expose-Headers:Content-Disposition
+io.stream.open-file:x:@.arguments/*/file
+return:x:-

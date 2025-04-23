@@ -1,0 +1,9 @@
+
+/*
+ * Create the system-message folder in user's /etc/ folder unless it already exists from before.
+ */
+if
+   not
+      io.folder.exists:/etc/system/openai/system-messages/
+   .lambda
+      io.folder.create:/etc/system/openai/system-messages/

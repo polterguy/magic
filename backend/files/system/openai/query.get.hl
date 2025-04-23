@@ -286,7 +286,7 @@ fork
             Content-Type:application/json
             Accept:text/event-stream
          payload
-            model:gpt-3.5-turbo-16k
+            model:gpt-4o
             max_tokens:int:4000
             temperature:decimal:0.3
             stream:bool:true

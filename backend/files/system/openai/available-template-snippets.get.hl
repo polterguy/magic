@@ -1,0 +1,54 @@
+
+// Returns all available template snippets from the backend.
+.arguments
+   private:bool
+.description:Returns all available template snippets from the backend
+.type:internal
+
+// Making sure user has access to invoked endpoint.
+auth.ticket.verify:root
+
+// Contains list of templates we find.
+.result
+
+// Listing files recursively.
+io.file.list-recursively:/modules/
+io.file.list-recursively:/system/
+for-each:x:../*/io.file.list-recursively/*
+
+   // Checking if this is a template file.
+   if
+      and
+         strings.ends-with:x:@.dp/#
+            .:.md
+         strings.contains:x:@.dp/#
+            .:/ts-templates/
+      .lambda
+
+         /*
+          * This is a template file.
+          *
+          * Figuring out its prompt and completion.
+          */
+         load-file:x:@.dp/#
+         strings.split:x:@load-file
+            .:"\n"
+         .prompt
+         set-value:x:@.prompt
+            strings.trim:x:@strings.split/0
+         .completion
+         remove-nodes:x:@strings.split/0
+         set-value:x:@.completion
+            strings.join:x:@strings.split/*
+               .:"\n"
+         set-value:x:@.completion
+            strings.trim:x:@.completion
+         unwrap:x:+/*/*/*
+         add:x:@.result
+            .
+               .
+                  prompt:x:@.prompt
+                  completion:x:@.completion
+
+// Returning result to caller.
+return-nodes:x:@.result/*

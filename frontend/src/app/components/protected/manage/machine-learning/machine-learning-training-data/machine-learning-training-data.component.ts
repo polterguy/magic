@@ -14,6 +14,7 @@ import { OpenAIService } from 'src/app/services/openai.service';
 import { MachineLearningEditTrainingSnippetComponent } from '../components/machine-learning-edit-training-snippet/machine-learning-edit-training-snippet.component';
 import { MachineLearningSpiceComponent } from '../components/machine-learning-spice/machine-learning-spice.component';
 import { MachineLearningImportFeedbackComponent } from '../components/machine-learning-import-feedback/machine-learning-import-feedback.component';
+import { MachineLearningAddWorkflow } from '../components/machine-learning-add-workflow/machine-learning-add-workflow.component';
 
 /**
  * Helper component to administrate training data for OpenAI integration
@@ -27,7 +28,6 @@ import { MachineLearningImportFeedbackComponent } from '../components/machine-le
 export class MachineLearningTrainingDataComponent implements OnInit {
 
   type: string;
-
   types: string[] = null;
   dataSource: any[] = null;
   count: number = 0;
@@ -64,12 +64,11 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     this.getTypes(true);
   }
 
+  /*
+   * Allows the user to create a new training snippet by showing a modal dialogue,
+   * allowing user to provide prompt and completion ++
+   */
   create() {
-
-    if (this.types.length === 0) {
-      this.generalService.showFeedback('You need to create at least one type first', 'errorMessage');
-      return;
-    }
 
     this.dialog
       .open(MachineLearningEditTrainingSnippetComponent, {
@@ -96,6 +95,20 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     });
   }
 
+  /*
+   * Returns the prompt prefixed by distance. 
+   */
+  getPrompt(el: any) {
+
+    if (el.distance) {
+      return `[${el.distance.toFixed(2)}] - ${el.prompt}`;
+    }
+    return el.prompt;
+  }
+
+  /*
+   * Allows user to "spice" model by providing a URL that will be scraped (without crawling).
+   */
   spice() {
 
     if (!this.type || this.type === '') {
@@ -138,6 +151,33 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     });
   }
 
+  /*
+   * Adds a function to the currently selected type by showing a modal dialogue allowing user to select function(s).
+   */
+  addWorkflow() {
+
+    this.dialog
+      .open(MachineLearningAddWorkflow, {
+        width: '80vw',
+        maxWidth: '1100px',
+        data: {
+          type: this.type,
+        }
+      })
+      .afterClosed()
+      .subscribe((result: any) => {
+
+        if (result) {
+
+          // Training data was updated.
+          this.getTrainingData();
+        }
+    });
+  }
+
+  /*
+   * Allows user to edit a single training snippet and modify its prompt, completion, etc.
+   */
   editSnippet(event: any, el: any) {
 
     const hasEmbedding: boolean = el.embedding_vss;
@@ -196,6 +236,9 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     event.stopPropagation();
   }
 
+  /*
+   * Deletes a single training snippet, asking user to confirm action first.
+   */
   delete(event: any, el: any) {
 
     this.dialog.open(ConfirmationDialogComponent, {
@@ -230,6 +273,9 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     event.stopPropagation();
   }
 
+  /*
+   * Deletes all training snippet in current filter.
+   */
   deleteAll() {
 
     this.dialog.open(ConfirmationDialogComponent, {
@@ -276,6 +322,9 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     });
   }
 
+  /*
+   * Untrains all filtered training snippets, implying their "pushed" status will be reset.
+   */
   untrainAll() {
 
     this.dialog.open(ConfirmationDialogComponent, {
@@ -328,6 +377,9 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     });
   }
 
+  /*
+   * Allows user to train a custom machine learning from all filtered training snippets.
+   */
   trainAll() {
 
     this.dialog.open(ConfirmationDialogComponent, {

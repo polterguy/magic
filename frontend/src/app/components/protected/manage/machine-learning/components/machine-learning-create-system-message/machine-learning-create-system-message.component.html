@@ -1,0 +1,56 @@
+
+<div class="obscurer" *ngIf="active">
+  <h1>Please wait <span class="dot dot-1"></span><span class="dot dot-2"></span><span class="dot dot-3"></span></h1>
+</div>
+
+<div class="modal-wrp">
+
+  <h3 mat-dialog-title class="mb-3">URL for creating custom system message</h3>
+
+  <p class="text-muted">
+    It seems you're trying to use a template-based dynamic system message. If you provide me with a URL, I will try my best
+    to create a custom system message for you based upon the URL.
+  </p>
+
+  <form (ngSubmit)="save()">
+    <div mat-dialog-content>
+
+      <mat-form-field class="w-100 standalone-field">
+        <span
+          matPrefix
+          matTooltip="Prompt"
+          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+          <mat-icon>help_outline</mat-icon>
+          <span class="text-muted">|</span>
+        </span>
+        <input
+          matInput
+          cdkFocusInitial
+          placeholder="URL ..."
+          [(ngModel)]="url"
+          name="url"
+          autocomplete="off">
+      </mat-form-field>
+
+    </div>
+
+    <div mat-dialog-actions [align]="'end'">
+
+      <button
+        mat-button
+        mat-dialog-close>
+        Cancel
+      </button>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit">
+        Save
+      </button>
+
+    </div>
+
+  </form>
+
+</div>

@@ -8,7 +8,6 @@
       mandatory:bool:true
 .icon:http
 
-
 // Ensuring we return the correct status code.
 response.status.set:302
 

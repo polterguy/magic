@@ -86,6 +86,10 @@ data.connect:[generic|magic]
          ml_types.no_requests
          ml_types.max_requests
          ml_types.search_postfix
+         ml_types.conversation_starters
+         ml_types.max_function_invocations
+         ml_types.max_session_items
+         ml_types.completion_slot
       where
          and
 
@@ -102,6 +106,7 @@ data.connect:[generic|magic]
             // Checking if model does not require auth at all.
             if
                or
+                  exists:x:@auth.ticket.get/*/roles/*/=root
                   null:x:@.dp/#/*/auth
                   eq:x:@.dp/#/*/auth
                      .:

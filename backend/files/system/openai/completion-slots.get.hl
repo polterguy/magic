@@ -1,0 +1,16 @@
+
+/*
+ * Returns all possible LLMs the system supports.
+ */
+.arguments
+.description:Returns all possible LLMs the system supports
+.type:internal
+
+// Making sure user is authenticate to access endpoint
+auth.ticket.verify:root
+
+// Retrieving possible candidates.
+slots.vocabulary:magic.ai.chat
+
+yield
+   llms:x:@slots.vocabulary/*

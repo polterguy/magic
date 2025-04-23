@@ -5,6 +5,7 @@
    uri:string
    prompt:string
    completion:string
+   meta:string
    type:string
    pushed:long
    cached:int

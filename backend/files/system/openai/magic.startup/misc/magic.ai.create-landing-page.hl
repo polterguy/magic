@@ -93,30 +93,20 @@ slots.create:magic.ai.create-landing-page
       strings.concat
          get-value:x:@.scheme
          get-value:x:@.arguments/*/host
-         .:"/magic/system/openai/include-javascript?stream=true&submit_button=true&markdown=true&speech=false&search=false&chat=true&css=scandinavian-navy&file=default&type="
+         .:"/magic/system/openai/include-chatbot.js?theme=modern-bubbles&type="
          get-value:x:@.arguments/*/type
          .:"&header="
          get-value:x:@.header
          .:"&button=AI%20Chatbot"
-   .search
-   set-value:x:@.search
-      strings.concat
-         get-value:x:@.scheme
-         get-value:x:@.arguments/*/host
-         .:"/magic/system/openai/include-search?css=default&type="
-         get-value:x:@.arguments/*/type
-         .:"&placeholder=Search%20this%20site%20...&button=&max=10"
+         .:"&color=%23fefefe&start=%237892e5&end=%23142660&link=%23fe8464&v="
+         version
+         .:"&follow_up=true"
    unwrap:x:+/*/*/*/\@src
    add:x:@html2lambda/*/html/*/body
       .
          script
             @src:x:@.chatbot
             @defer
-            @async
-         script
-            @src:x:@.search
-            @defer
-            @async
 
    // Adding noindex to avoid duplicated content.
    add:x:@html2lambda/*/html/*/head

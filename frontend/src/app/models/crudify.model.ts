@@ -142,4 +142,19 @@ export class Crudify {
    * If true adds sorting to the table
    */
   sorting: boolean;
+
+  /**
+   * If true adds an aggregate endpoint to the table
+   */
+  aggregate: boolean;
+
+  /**
+   * If true adds a distinct endpoint to the table
+   */
+  distinct: boolean;
+
+  /**
+   * If true adds a search endpoint to the table
+   */
+  search: boolean;
 }

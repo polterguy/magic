@@ -1,0 +1,40 @@
+<div class="modal-wrp">
+
+  <h3 mat-dialog-title class="mb-3">Conversation</h3>
+
+  <!-- Any other types of content besides code -->
+  <div class="col-12 mb-0">
+
+    <mat-form-field class="w-100 custom-alignment">
+      <span
+        matPrefix
+        matTooltip="Completion for prompt"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>featured_play_list</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <textarea
+        matInput
+        [(ngModel)]="data.conversation"
+        rows="18">
+      </textarea>
+    </mat-form-field>
+
+    <p
+      *ngIf="data.warning"
+      class="text-muted">Warning! Too many items to display, only showing the first 100 items!</p>
+
+  </div>
+
+  <div class="actions" mat-dialog-actions [align]="'end'">
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="close()">
+      Close
+    </button>
+
+  </div>
+
+</div>

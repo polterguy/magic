@@ -1,0 +1,16 @@
+
+/*
+ * HTML encodes the specified [html] and returns to caller.
+ */
+.arguments
+   html
+      type:string
+      mandatory:bool:true
+.icon:pageview
+
+// Transforming Markdown to HTML.
+strings.html-encode:x:@.arguments/*/html
+
+// Returning resulting HTML to caller.
+yield
+   content:x:@strings.html-encode

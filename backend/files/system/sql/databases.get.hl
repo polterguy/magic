@@ -59,7 +59,6 @@ cache.try-get:x:@strings.concat
             remove-nodes:x:@signal/*/*/db/=sys
 
          case:pgsql
-            remove-nodes:x:@signal/*/*/db/=postgres
             remove-nodes:x:@signal/*/*/db/=template1
             remove-nodes:x:@signal/*/*/db/=template0
 

@@ -1,0 +1,163 @@
+
+// Creates a permalink for current chat conversation
+.arguments
+   session:string
+.description:Creates a permalink for current chat conversation
+.type:internal
+
+// Making sure user has access to invoked endpoint.
+auth.ticket.verify
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/session
+
+// Retrieving session items.
+cache.get:x:@.arguments/*/session
+
+// Checking that cache didn't expire.
+if
+   or
+      null:x:@cache.get
+      eq:x:@cache.get
+         .:
+   .lambda
+
+      // Cache expired!
+      throw:Cache expired, items no longer available
+         status:int:500
+         public:bool:true
+
+// Creating a unique URL.
+crypto.random
+   min:20
+   max:20
+
+// Storing items in database.
+data.connect:[generic|magic]
+
+   // Verifying we didn't already create a permalink for this previously.
+   data.select:select id from ml_permalinks where messages = @messages limit 1
+      @messages:x:@cache.get
+   if
+      exists:x:@data.select/*
+      .lambda
+
+         // Permalink exists from before.
+         yield
+            url:x:@data.select/*/*/id
+
+   // Creating a title for the article by asking OpenAI to summarize conversation.
+   .token
+   set-value:x:@.token
+      strings.concat
+         .:"Bearer "
+         get-first-value
+            get-value:x:@.arguments/*/api_key
+            config.get:"magic:openai:key"
+   http.post:"https://api.openai.com/v1/chat/completions"
+      convert:bool:true
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         model:o3-mini
+         max_completion_tokens:int:1000
+         messages
+            .
+               role:system
+               content:Create an SEO optimised summary of the following content intended to serve as a title
+            .
+               role:user
+               content:x:@cache.get
+
+   // Sanity checking above invocation.
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Oops, error - Logging error and throwing exception.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            message:x:@http.post/*/content/*/error/*/message
+            status:x:@http.post
+            error:x:@lambda2hyper
+
+   // Saving title temporary
+   .title2
+   set-value:x:@.title2
+      get-first-value
+         get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+         .:
+   set-value:x:@.title2
+      strings.trim:x:@.title2
+         .:"\"\r\n\t "
+   set-value:x:@.title2
+      strings.replace:x:@.title2
+         .:"\""
+         .:"'"
+
+   // Creating a description for the article by asking OpenAI to summarize conversation.
+   http.post:"https://api.openai.com/v1/chat/completions"
+      convert:bool:true
+      headers
+         Authorization:x:@.token
+         Content-Type:application/json
+      payload
+         model:o3-mini
+         max_completion_tokens:int:1000
+         messages
+            .
+               role:system
+               content:Create a short and SEO optimised one sentence description of the following content intended to serve as a description for an HTML page with its content
+            .
+               role:user
+               content:x:@cache.get
+
+   // Sanity checking above invocation.
+   if
+      not
+         and
+            mte:x:@http.post
+               .:int:200
+            lt:x:@http.post
+               .:int:300
+      .lambda
+
+         // Oops, error - Logging error and returning HTTP status code to caller.
+         lambda2hyper:x:@http.post
+         log.error:Something went wrong while invoking OpenAI
+            message:x:@http.post/*/content/*/error/*/message
+            status:x:@http.post
+            error:x:@lambda2hyper
+
+   // Saving title temporary
+   .description2
+   set-value:x:@.description2
+      get-first-value
+         get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+         .:
+   set-value:x:@.description2
+      strings.trim:x:@.description2
+         .:"\"\r\n\t "
+   set-value:x:@.description2
+      strings.replace:x:@.description2
+         .:"\""
+         .:"'"
+
+   // Inserting item.
+   data.create
+      table:ml_permalinks
+      values
+         id:x:@crypto.random
+         messages:x:@cache.get
+         title:x:@.title2
+         description:x:@.description2
+
+// Returning success to caller.
+yield
+   url:x:@crypto.random

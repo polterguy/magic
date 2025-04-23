@@ -1,0 +1,39 @@
+
+/*
+ * Returns the conversation starters for the specified type.
+ */
+.arguments
+   type:string
+.description:Returns the conversation starters for the specified type
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+
+// Opening up database connection.
+data.connect:[generic|magic]
+
+   // Retrieving all questions from database.
+   data.select:@"
+select conversation_starters
+	from ml_types
+	where type = @type"
+      type:x:@.arguments/*/type
+
+   // Transforming to markdown and splitting into individual questions, but only if we have conversation starters.
+   if
+      and
+         not-null:x:@data.select/*/*/conversation_starters
+         neq:x:@data.select/*/*/conversation_starters
+            .:
+      .lambda
+         markdown2html:x:@data.select/*/*/conversation_starters
+         html2lambda:x:@markdown2html
+         for-each:x:@html2lambda/**/li/**/\#text
+            unwrap:x:+/*/*
+            add:x:../*/return/*/questions
+               .
+                  .:x:@.dp/#
+
+// Returning result to caller.
+return
+   questions

@@ -19,7 +19,7 @@
         <div class="col-12 mb-3 mt-4">
 
           <p class="text-muted text-small">
-            Crawl and scrape the specified URL for training data
+            Crawl and scrape the specified URL for training data.
           </p>
 
           <mat-form-field class="standalone-field w-100">
@@ -149,11 +149,20 @@
 
         <mat-slide-toggle
           labelPosition="before"
-          class="me-2"
+          class="me-5"
           matTooltip="Summarize training snippets that are too long to be effectively used"
           [disabled]="uploading"
           [(ngModel)]="summarize">
           Summarize
+        </mat-slide-toggle>
+
+        <mat-slide-toggle
+          labelPosition="before"
+          class="me-2"
+          matTooltip="Inserts the source URL into the completion for each training snippet created."
+          [disabled]="uploading"
+          [(ngModel)]="insert_url">
+          Insert URL
         </mat-slide-toggle>
 
       </div>
@@ -163,59 +172,7 @@
     <mat-tab>
 
       <ng-template mat-tab-label>
-        CSV file
-      </ng-template>
-
-      <!-- Upload CVS file -->
-      <div class="row px-3">
-  
-        <div class="col-12 mt-4 mb-3">
-
-          <p class="text-muted text-small">
-            Upload CSV file with unspecified columns. The first column is assumed to be the prompt, and all other columns will become part of the completion.
-          </p>
-        </div>
-
-        <div class="col-12 mt-2">
-      
-          <div class="drop-container pointer border-color">
-
-            <input
-              type="file"
-              [(ngModel)]="trainingFileModelCsv"
-              multiple
-              class="w-100 h-100 hide pointer"
-              #uploadCsv
-              (change)="getFileCsv($event)"
-              accept=".csv">
-
-            <button
-              mat-button
-              class="w-100 pt-2"
-              (click)="uploadCsv.click()"
-              *ngIf="trainingFileModelCsv === ''"
-              [disabled]="uploading">
-              <i>Drag & drop your CSV file here</i> <br />
-              <span class="text-primary">Choose a file</span>
-            </button>
-
-            <ng-container *ngIf="trainingFileModelCsv !== ''">
-              <h4 class="mb-0 mt-3 text-center">{{getFileName()}}</h4>
-              <p class="text-center mt-3" *ngIf="uploading">Uploading {{uploadIndex + 1}} of {{files.length}}...</p>
-              <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
-            </ng-container>
-
-          </div>
-      
-        </div>
-
-      </div>
-    </mat-tab>
-
-    <mat-tab>
-
-      <ng-template mat-tab-label>
-        Structured data
+        Training data
       </ng-template>
 
       <!-- Upload training data part XML/JSON/YAML/CVS -->
@@ -224,7 +181,7 @@
         <div class="col-12 mt-4 mb-3">
 
           <p class="text-muted text-small">
-            Upload XML, JSON, YAML or CSV files as training data. Notice, this will only import two columns from your files, prompt and completion.
+            Upload XML, JSON, YAML, or CSV files as training data. Notice, this will only import two columns from your files; prompt and completion.
           </p>
 
           <div class="row">
@@ -233,7 +190,7 @@
               <mat-form-field class="w-100 standalone-field me-2">
                 <span
                   matPrefix
-                  matTooltip="Prompt field"
+                  matTooltip="Name of prompt field in your file(s)"
                   class="d-flex flex-nowrap align-items-center justify-content-between me-2">
                   <mat-icon>help_outline</mat-icon>
                   <span class="text-muted">|</span>
@@ -252,7 +209,7 @@
               <mat-form-field class="w-100 standalone-field">
                 <span
                   matPrefix
-                  matTooltip="Completion field"
+                  matTooltip="Name of completion field in your file(s)"
                   class="d-flex flex-nowrap align-items-center justify-content-between me-2">
                   <mat-icon>edit</mat-icon>
                   <span class="text-muted">|</span>
@@ -288,8 +245,8 @@
               (click)="upload.click()"
               *ngIf="trainingFileModel === ''"
               [disabled]="uploading">
-              <i>Drag & drop your training data here, CSV, XML, JSON or YAML</i> <br />
-              <span class="text-primary">Choose a file</span>
+              <i>Drag & drop your training files here, CSV, XML, JSON or YAML</i> <br />
+              <span class="text-primary">Choose one or more files</span>
             </button>
 
             <ng-container *ngIf="trainingFileModel !== ''">
@@ -308,26 +265,289 @@
     <mat-tab>
 
       <ng-template mat-tab-label>
-        Unstructured data
+        Generic CSV
       </ng-template>
 
-      <!-- Upload PDF tradining data part -->
+      <!-- Upload CVS file -->
+      <div class="row px-3">
+  
+        <div class="col-12 mt-4">
+
+          <p class="text-muted text-small">
+            Upload CSV files with generic columns. The first column is assumed to be the prompt, and all other columns will become part of the completion.
+          </p>
+        </div>
+
+        <div class="col-12">
+      
+          <div class="drop-container pointer border-color">
+
+            <input
+              type="file"
+              [(ngModel)]="trainingFileModelCsv"
+              multiple
+              class="w-100 h-100 hide pointer"
+              #uploadCsv
+              (change)="getFileCsv($event)"
+              accept=".csv">
+
+            <button
+              mat-button
+              class="w-100 pt-2"
+              (click)="uploadCsv.click()"
+              *ngIf="trainingFileModelCsv === ''"
+              [disabled]="uploading">
+              <i>Drag & drop your CSV files here</i> <br />
+              <span class="text-primary">Choose one or more file</span>
+            </button>
+
+            <ng-container *ngIf="trainingFileModelCsv !== ''">
+              <h4 class="mb-0 mt-3 text-center">{{getFileName()}}</h4>
+              <p class="text-center mt-3" *ngIf="uploading">Uploading {{uploadIndex + 1}} of {{files.length}}...</p>
+              <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
+            </ng-container>
+
+          </div>
+      
+        </div>
+
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+
+      <ng-template mat-tab-label>
+        URL set
+      </ng-template>
+
+      <!-- Upload CVS file -->
+      <div class="row px-3">
+  
+        <div class="col-12 mt-4">
+
+          <p class="text-muted text-small">
+            Upload CSV files with a list of URLs. Notice, the CSV file must have only one column and have a header column.
+          </p>
+        </div>
+
+        <div class="col-12 mt-2 mb-4">
+
+          <mat-checkbox
+            color="primary"
+            class="mt-md-0 mt-1 me-3"
+            matTooltip="Improve RAG and VSS lookups by creating summary prompts for each individual training snippet generated from file(s)"
+            [(ngModel)]="vectorize">
+            Vectorize
+          </mat-checkbox>
+
+        </div>
+
+        <div class="col-12 mt-3">
+      
+          <div class="drop-container pointer border-color">
+
+            <input
+              type="file"
+              [(ngModel)]="urlList"
+              class="w-100 h-100 hide pointer"
+              #uploadUrlList
+              (change)="getUrlList($event)"
+              accept=".csv">
+
+            <button
+              mat-button
+              class="w-100 pt-2"
+              (click)="uploadUrlList.click()"
+              *ngIf="trainingFileModelCsv === ''"
+              [disabled]="uploading">
+              <i>Drag & drop your CSV file here</i> <br />
+              <span class="text-primary">Choose one CSV file</span>
+            </button>
+
+          </div>
+      
+        </div>
+
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+
+      <ng-template mat-tab-label>
+        Text
+      </ng-template>
+
+      <!-- Upload TXT training data part -->
       <div class="row px-3">
   
         <div class="col-12 mt-4 mb-3">
 
           <p class="text-muted text-small">
-            Upload PDF files as training data
+            Upload text files as training data, such as .txt files, .md files, or .csv files as plain text. Optionally create a summary prompt to increase retrieval quality.
           </p>
 
           <div class="row">
 
-            <div class="col-12 col-lg-8">
+            <div class="col-12 mt-2 mb-4">
 
-              <mat-form-field class="w-100 standalone-field me-lh-2">
+              <mat-checkbox
+                color="primary"
+                class="mt-md-0 mt-1 me-3"
+                matTooltip="Improve RAG and VSS lookups by creating summary prompts for each individual training snippet generated from file(s)"
+                [(ngModel)]="summarizeTxtFile">
+                Summary prompt
+              </mat-checkbox>
+
+            </div>
+
+            <div class="col-12 mt-3">
+          
+              <div class="drop-container pointer border-color">
+
+                <input
+                  type="file"
+                  [(ngModel)]="trainingFileModel"
+                  multiple
+                  class="w-100 h-100 hide pointer"
+                  #uploadTxt
+                  (change)="getFile($event, true)"
+                  accept=".txt,.md,.csv">
+
+                <button
+                  mat-button
+                  class="w-100 pt-2"
+                  (click)="uploadTxt.click()"
+                  *ngIf="trainingFileModel === ''"
+                  [disabled]="uploading">
+                  <i>Drag & drop your text-based training files here</i> <br />
+                  <span class="text-primary">Choose one or more files</span>
+                </button>
+
+                <ng-container *ngIf="trainingFileModel !== ''">
+                  <h4 class="mb-0 mt-3 text-center">{{getFileName()}}</h4>
+                  <p class="text-center mt-3" *ngIf="uploading">Uploading {{uploadIndex + 1}} of {{files.length}}...</p>
+                  <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
+                </ng-container>
+
+              </div>
+          
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+
+    <mat-tab>
+
+      <ng-template mat-tab-label>
+        Images
+      </ng-template>
+
+      <!-- Upload TXT training data part -->
+      <div class="row px-3">
+  
+        <div class="col-12 mt-4 mb-3">
+
+          <p class="text-muted text-small">
+            Upload images as training data to have your AI Agent or AI Chatbot display images inline into the conversation.
+          </p>
+
+          <div class="row">
+
+            <div class="col-12">
+          
+              <div class="drop-container pointer border-color">
+
+                <input
+                  type="file"
+                  [(ngModel)]="imageFileModel"
+                  multiple
+                  class="w-100 h-100 hide pointer"
+                  #uploadImages
+                  (change)="getImageFile($event)"
+                  accept=".png,.jpg,.jpeg,.webp,.gif">
+
+                <button
+                  mat-button
+                  class="w-100 pt-2"
+                  (click)="uploadImages.click()"
+                  *ngIf="imageFileModel === ''"
+                  [disabled]="uploading">
+                  <i>Drag & drop your image training files here</i> <br />
+                  <span class="text-primary">Choose one or more files</span>
+                </button>
+
+                <ng-container *ngIf="trainingFileModel !== ''">
+                  <h4 class="mb-0 mt-3 text-center">{{getFileName()}}</h4>
+                  <p class="text-center mt-3" *ngIf="uploading">Uploading {{uploadIndex + 1}} of {{files.length}}...</p>
+                  <p class="text-center mt-3" *ngIf="!uploading">Done!</p>
+                </ng-container>
+
+              </div>
+          
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab>
+
+      <ng-template mat-tab-label>
+        PDF
+      </ng-template>
+
+      <!-- Upload PDF training data files -->
+      <div class="row px-3">
+  
+        <div class="col-12 mt-4 mb-3">
+
+          <p class="text-muted text-small">
+            Upload PDF files as training data, and optionally massage your files using OpenAI before creating training snippets.
+          </p>
+
+          <div class="row">
+
+            <div class="col-12 col-lg-4">
+
+              <mat-checkbox
+                color="primary"
+                class="mt-md-0 mt-1 me-2"
+                matTooltip="Create one training snippet for each page in file, and preserve page numbers snippets are taken from."
+                [(ngModel)]="preservePages">
+                Keep pages
+              </mat-checkbox>
+
+              <mat-checkbox
+                color="primary"
+                class="mt-md-0 mt-1 me-2"
+                [disabled]="uploading"
+                *ngIf="!preservePages"
+                matTooltip="Improve RAG and VSS lookups by creating summary prompts for each individual training snippet generated from file(s). WARNING! This is NOT suitable for PDF files with hundreds of pages."
+                [(ngModel)]="summarizePdfFile">
+                Summarize
+              </mat-checkbox>
+
+              <mat-checkbox
+                color="primary"
+                class="mt-md-0 mt-1"
+                [disabled]="uploading"
+                matTooltip="Overwrites any existing files with the same filename. Notice, will not delete training snippets created from a file previously imported having the same filename, will only overwrite the physical file."
+                [(ngModel)]="overwrite">
+                Overwrite
+              </mat-checkbox>
+
+            </div>
+
+            <div class="col-12 col-lg-4">
+
+              <mat-form-field class="w-100 standalone-field me-lh-2" *ngIf="!preservePages">
                 <span
                   matPrefix
-                  matTooltip="Massage value used to summarize, and/or clean PDF data"
+                  matTooltip="Massage value used to summarize, and/or clean PDF data. WARNING! This is NOT suitable for PDF files with hundreds of pages."
                   class="d-flex flex-nowrap align-items-center justify-content-between me-2">
                   <mat-icon>help_outline</mat-icon>
                   <span class="text-muted">|</span>
@@ -344,10 +564,10 @@
 
             <div class="col-12 col-lg-4">
 
-              <mat-form-field class="w-100 standalone-field">
+              <mat-form-field class="w-100 standalone-field" *ngIf="!preservePages">
                 <span
                   matPrefix
-                  matTooltip="Example massage values"
+                  matTooltip="Example massage values. WARNING! This is NOT suitable for PDF files with hundreds of pages."
                   class="d-flex flex-nowrap align-items-center justify-content-between me-2">
                   <mat-icon>help_outline</mat-icon>
                   <span class="text-muted">|</span>
@@ -385,8 +605,8 @@
                   (click)="upload.click()"
                   *ngIf="trainingFileModel === ''"
                   [disabled]="uploading">
-                  <i>Drag & drop your PDF training data here</i> <br />
-                  <span class="text-primary">Choose a file</span>
+                  <i>Drag & drop your PDF training files here</i> <br />
+                  <span class="text-primary">Choose one or more files</span>
                 </button>
 
                 <ng-container *ngIf="trainingFileModel !== ''">

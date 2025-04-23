@@ -1,0 +1,131 @@
+
+/*
+ * Invokes some HTTP GET resource.
+ */
+.arguments
+   url
+      type:string
+      mandatory:bool:true
+   token
+      type:string
+      mandatory:bool:false
+   token_type
+      type:enum
+      mandatory:bool:false
+      values
+         .:Bearer
+         .:Basic
+   params
+      type:key-value
+      mandatory:bool:false
+.icon:http
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/url
+validators.url:x:@.arguments/*/url
+
+// Checking if we've got a token, and if so, adding it to HTTP GET invocation.
+if
+   and
+      exists:x:@.arguments/*/token_type
+      not-null:x:@.arguments/*/token_type
+      neq:x:@.arguments/*/token_type
+         .:
+   .lambda
+
+      // Buffer for token to pass in as Authorization HTTP header.
+      .token
+
+      // Handling token according to type.
+      switch:x:@.arguments/*/token_type
+
+         case:Bearer
+
+            // Making sure [token] is supplied.
+            validators.mandatory:x:@.arguments/*/token
+
+            // Creating our token.
+            set-value:x:@.token
+               strings.concat
+                  .:"Bearer "
+                  get-value:x:@.arguments/*/token
+
+         case:Basic
+
+            // Making sure [token] is supplied.
+            validators.mandatory:x:@.arguments/*/username
+            validators.mandatory:x:@.arguments/*/password
+
+            // Creating Basic AUTH token
+            set-value:x:@.token
+               strings.concat
+                  get-value:x:@.arguments/*/username
+                  .:":"
+                  get-value:x:@.arguments/*/password
+            set-value:x:@.token
+               convert:x:@.token
+                  type:bytes
+            set-value:x:@.token
+               strings.concat
+                  .:"Basic "
+                  convert:x:@.token
+                     type:base64
+
+      // Adding token to invocation.
+      unwrap:x:+/*/*/*
+      add:x:../*/http.get
+         .
+            headers
+               Authorization:x:@.token
+
+// Handling QUERY parameters.
+if
+   exists:x:@.arguments/*/params/0
+   .lambda
+
+      // Buffer for QUERY params parts of URL.
+      .params
+
+      // Caller provided at least one QUERY parameter.
+      set-value:x:@.params
+         strings.concat
+            get-value:x:@.arguments/*/url
+            .:?
+
+      // Looping through each parameter and appending it to above [.params].
+      for-each:x:@.arguments/*/params/*
+         set-value:x:@.params
+            strings.concat
+               get-value:x:@.params
+               get-name:x:@.dp/#
+               .:=
+               strings.url-encode:x:@.dp/#
+               .:&
+
+      // Removing trailing & and updating our [url].
+      set-value:x:@.arguments/*/url
+         strings.trim:x:@.params
+            .:&
+
+// Invoking HTTP GET endpoint.
+http.get:x:@.arguments/*/url
+   convert:true
+
+// Making sure invocation was a success.
+if
+   not
+      and
+         mte:x:@http.get
+            .:int:200
+         lt:x:@http.get
+            .:int:300
+   .lambda
+
+      // Oops ...!
+      throw:Something went wrong while invoking HTTP GET action
+
+// Returning result of invocation to caller.
+add:x:./*/return
+   get-nodes:x:@http.get/*/content
+   get-nodes:x:@http.get/*/headers
+return

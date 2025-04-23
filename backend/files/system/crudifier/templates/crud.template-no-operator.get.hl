@@ -1,20 +1,20 @@
 // dynamically populated
 .arguments
 
-   // Number of records to return
+   // Number of records to return, defaults to 25 if not specified. Pass in -1 to return all records.
    limit:long
 
    // Offset into the dataset of where to start retrieving records
    offset:long
 
-   // What column to order by
+   // Fully qualified name of column to order by, must be in TABLE_NAME.COLUMN_NAME format
    order:string
 
    // What direction to order, can be 'asc' or 'desc' implying ascending and descending
    direction:string
 
 // Meta data description for endpoint
-.description:Read endpoint with {paging}{sorting}filtering selecting records from your {table} table in your {database} database
+.description:Read or list records from your {table} table in your {database} database
 
 // Type of endpoint
 .type:crud-read

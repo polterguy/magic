@@ -8,7 +8,10 @@
    prompt:string
    completion:string
    massage:string
-   feedback-channel:string
+   massagePrompt:string
+   preservePages:bool
+   overwrite:bool
+   forceAsText:bool
 .type:internal
 .accept:multipart/form-data
 .description:Stores the specified file as training data for the specified model
@@ -20,6 +23,9 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/file/*/name
 validators.mandatory:x:@.arguments/*/file/*/stream
+validators.default:x:@.arguments
+   preservePages:bool:false
+   overwrite:bool:false
 
 // Defaulting prompt and completion arguments to prompt and completion.
 if
@@ -43,6 +49,9 @@ strings.split:x:@.arguments/*/file/*/name
    .:.
 strings.to-lower:x:@strings.split/0/-
 
+// If true, file will be imported as text even if the file is a CSV file.
+.text:bool:false
+
 // Converting file to lambda object according to its extension.
 switch:x:@strings.to-lower
 
@@ -58,12 +67,22 @@ switch:x:@strings.to-lower
    // CSV file type.
    case:csv
 
-      // Reading file data from stream.
-      io.stream.read:x:@.arguments/*/file/*/stream
+      // Checking if caller wants to force file as text.
+      if
+         eq:x:@.arguments/*/forceAsText
+            .:bool:true
+         .lambda
+            set-value:x:@.text
+               .:bool:true
 
-      // Parsing CSV from stream's content.
-      add:x:@.file-data
-         csv2lambda:x:@io.stream.read
+      else
+
+         // Reading file data from stream.
+         io.stream.read:x:@.arguments/*/file/*/stream
+
+         // Parsing CSV from stream's content.
+         add:x:@.file-data
+            csv2lambda:x:@io.stream.read
 
    // XML file type.
    case:xml
@@ -108,31 +127,79 @@ switch:x:@strings.to-lower
    // PDF file type.
    case:pdf
 
-      // Parsing PDF.
+      // Creating our filename.
       .filename
       set-value:x:@.filename
-         strings.concat
-            crypto.random
-               min:20
-               max:30
-            get-value:x:@.arguments/*/file/*/name
+         get-value:x:@.arguments/*/file/*/name
       .filepath
       set-value:x:@.filepath
          strings.concat
             .:/etc/system/openai/pdf/
             get-value:x:@.filename
 
+      /*
+       * Checking if file exists from before, and if it does, we throw an exception unless
+       * caller provided [overwrite] argument as true.
+       */
+      if
+         and
+            eq:x:@.arguments/*/overwrite
+               .:bool:false
+            io.file.exists:x:@.filepath
+         .lambda
+
+            // Oops, file already exists!
+            throw:File already exists
+               status:int:400
+               public:bool:true
+
       // Saving file.
       io.stream.save-file:x:@.filepath
          get-value:x:@.arguments/*/file/*/stream
 
-      // Structuring PDF content.
+      // Converting PDF file to snippet(s).
+      .tmp-snippets
       pdf2text:x:@.filepath
-      unwrap:x:+/*
-      signal:magic.ai.massage
-         content:x:@pdf2text
-         massage:x:@.arguments/*/massage
-         prompt:x:@.arguments/*/file/*/name
+         preserve-pages:x:@.arguments/*/preservePages
+
+      // Checking if caller wants to preserve pages as is.
+      if
+         eq:x:@.arguments/*/preservePages
+            .:bool:true
+         .lambda
+
+            // Use to track page number.
+            .no:int:1
+
+            // Caller wants to preserve pages as is.
+            for-each:x:@pdf2text/*
+
+               // Creating temporary prompt.
+               .prompt
+               set-value:x:@.prompt
+                  strings.concat
+                     get-value:x:@.arguments/*/file/*/name
+                     .:" - Page "
+                     get-value:x:@.no
+               unwrap:x:+/*/*/*
+               add:x:@.tmp-snippets
+                  .
+                     .
+                        prompt:x:@.prompt
+                        completion:x:@.dp/#
+               math.increment:x:@.no
+
+      else
+
+         // Caller does not want to preserve pages.
+         unwrap:x:+/*
+         signal:magic.ai.massage
+            content:x:@pdf2text
+            massage:x:@.arguments/*/massage
+            prompt:x:@.arguments/*/file/*/name
+            type:x:@.arguments/*/type
+         add:x:@.tmp-snippets
+            get-nodes:x:@signal/*
 
       // Creating our Hyperlink URI to allow for downloading the PDF file.
       .uri
@@ -144,8 +211,199 @@ switch:x:@strings.to-lower
             .:"/magic/system/openai/download-pdf?file="
             strings.url-encode:x:@.filename
 
+      // Checking if caller wants to massage file.
+      if
+         and
+            not-null:x:@.arguments/*/massagePrompt
+            neq:x:@.arguments/*/massagePrompt
+               .:
+         .lambda
+
+            // Retrieving token.
+            .token
+            set-value:x:@.token
+               strings.concat
+                  .:"Bearer "
+                  config.get:"magic:openai:key"
+
+            // Looping through all training snippets created as we invoked our massage slot.
+            for-each:x:@.tmp-snippets/*
+
+               // Structuring TXT content by invoking OpenAI to create a perfect RAG/VSS one liner to improve RAG quality.
+               http.post:"https://api.openai.com/v1/chat/completions"
+                  convert:bool:true
+                  headers
+                     Authorization:x:@.token
+                     Content-Type:application/json
+                     Accept:text/event-stream
+                  payload
+                     model:gpt-3.5-turbo
+                     max_tokens:int:1000
+                     temperature:decimal:0.3
+                     messages
+                        .
+                           role:system
+                           content:x:@.arguments/*/massagePrompt
+                        .
+                           role:user
+                           content:x:@.dp/#/*/completion
+
+               // Sanity checking above invocation.
+               if
+                  not
+                     and
+                        mte:x:@http.post
+                           .:int:200
+                        lt:x:@http.post
+                           .:int:300
+                  .lambda
+
+                     // Oops, error - Logging error and returning status 500 to caller.
+                     lambda2hyper:x:@http.post
+                     log.error:Something went wrong while invoking OpenAI
+                        message:x:@http.post/*/content/*/error/*/message
+                        status:x:@http.post
+                        error:x:@lambda2hyper
+
+               else
+
+                  // Updating our [.prompt].
+                  set-value:x:@.dp/#/*/prompt
+                     get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+
       /*
-       * Creating training snippets from PDF content.
+       * Creating training snippets from PDF file's content.
+       *
+       * Notice, this might produce one training snippet or multiple training
+       * snippets, depending upon the size of the PDF document.
+       */
+      unwrap:x:+/*/*
+      add:x:@.tmp-snippets/*
+         .
+            uri:x:@.uri
+            filename:x:@.filepath
+      add:x:@.file-data
+         get-nodes:x:@.tmp-snippets/*
+
+   // TXT file type.
+   case:md
+   case:txt
+
+      // Making sure we import file as text.
+      set-value:x:@.text
+         .:bool:true
+
+if
+   eq:x:@.text
+      .:bool:true
+   .lambda
+
+      // Figuring out filename.
+      .filename
+      set-value:x:@.filename
+         get-value:x:@.arguments/*/file/*/name
+      .filepath
+      set-value:x:@.filepath
+         strings.concat
+            .:/etc/system/openai/pdf/
+            get-value:x:@.filename
+
+      // Saving file.
+      io.stream.save-file:x:@.filepath
+         get-value:x:@.arguments/*/file/*/stream
+
+      // Loading content of text file.
+      io.file.load:x:@.filepath
+
+      // Creating our Hyperlink URI to allow for downloading the text file.
+      .uri
+      set-value:x:@.uri
+         strings.concat
+            request.scheme
+            .:"://"
+            request.host
+            .:"/magic/system/openai/download-txt?file="
+            strings.url-encode:x:@.filename
+
+      // Massaging or chopping up file into chunks of training snippets, not exceeding max_context_tokens.
+      unwrap:x:+/*
+      signal:magic.ai.massage
+         content:x:@io.file.load
+         prompt:x:@.arguments/*/file/*/name
+         type:x:@.arguments/*/type
+
+      // Creating our Hyperlink URI to allow for downloading the PDF file.
+      .uri
+      set-value:x:@.uri
+         strings.concat
+            request.scheme
+            .:"://"
+            request.host
+            .:"/magic/system/openai/download-txt?file="
+            strings.url-encode:x:@.filename
+
+      // Checking if caller wants to massage file.
+      if
+         and
+            not-null:x:@.arguments/*/massagePrompt
+            neq:x:@.arguments/*/massagePrompt
+               .:
+         .lambda
+
+            // Retrieving token.
+            .token
+            set-value:x:@.token
+               strings.concat
+                  .:"Bearer "
+                  config.get:"magic:openai:key"
+
+            // Looping through all training snippets created as we invoked our massage slot.
+            for-each:x:@signal/*
+
+               // Structuring TXT content by invoking OpenAI to create a perfect RAG/VSS one liner to improve RAG quality.
+               http.post:"https://api.openai.com/v1/chat/completions"
+                  convert:bool:true
+                  headers
+                     Authorization:x:@.token
+                     Content-Type:application/json
+                     Accept:text/event-stream
+                  payload
+                     model:gpt-3.5-turbo
+                     max_tokens:int:1000
+                     temperature:decimal:0.3
+                     messages
+                        .
+                           role:system
+                           content:x:@.arguments/*/massagePrompt
+                        .
+                           role:user
+                           content:x:@.dp/#/*/completion
+
+               // Sanity checking above invocation.
+               if
+                  not
+                     and
+                        mte:x:@http.post
+                           .:int:200
+                        lt:x:@http.post
+                           .:int:300
+                  .lambda
+
+                     // Oops, error - Logging error and returning status 500 to caller.
+                     lambda2hyper:x:@http.post
+                     log.error:Something went wrong while invoking OpenAI
+                        message:x:@http.post/*/content/*/error/*/message
+                        status:x:@http.post
+                        error:x:@lambda2hyper
+
+               else
+
+                  // Updating our [.prompt].
+                  set-value:x:@.dp/#/*/prompt
+                     get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+
+      /*
+       * Creating training snippets from text file's content.
        *
        * Notice, this might produce one training snippet or multiple training
        * snippets, depending upon the size of the PDF document.
@@ -170,63 +428,20 @@ if
       return
          message:"Your file needs to have at the very least prompt and completion fields, or you need to correctly apply the right fields to use as substitutes"
 
-// Connecting to database.
-data.connect:[generic|magic]
+// Making sure we get name of prompt and completion correctly applied.
+for-each:x:@.file-data/*
+   set-name:x:@.dp/#/*/{@.arguments/*/prompt}
+      .:prompt
+   set-name:x:@.dp/#/*/{@.arguments/*/completion}
+      .:completion
 
-   // Verifying user can create more snippets.
-   add:x:+
-      get-nodes:x:@.arguments/*/type
-   try-signal:magic.ai.can-create-snippet
-
-   // Looping through each CSV record inserting into database.
-   for-each:x:@.file-data/*
-
-      // Creating a unique URI based upon the prompt unless the file contains a URI.
-      .uri
-      if
-         exists:x:@.dp/#/*/uri
-         .lambda
-            set-value:x:@.uri
-               get-value:x:@.dp/#/*/uri
-      else
-         set-value:x:@.uri
-            crypto.hash.sha256:x:@.dp/#/*/{@.arguments/*/prompt}
-
-      // Using type from arguments unless file contains a type declaration.
-      .type
-      if
-         and
-            exists:x:@.arguments/*/type
-            not-null:x:@.arguments/*/type
-            neq:x:@.arguments/*/type
-               .:
-         .lambda
-            set-value:x:@.type
-               get-value:x:@.arguments/*/type
-      else-if
-         exists:x:@.dp/#/*/type
-         .lambda
-            set-value:x:@.type
-               get-value:x:@.dp/#/*/type
-      else
-         set-value:x:@.type
-            .:default
-
-      // Checking if we've got a filename value.
-      if
-         exists:x:@.dp/#/*/filename
-         .lambda
-            add:x:@for-each/*/data.create/*/values
-               get-nodes:x:@.dp/#/*/filename
-
-      // Inserting into database.
-      data.create
-         table:ml_training_snippets
-         values
-            type:x:@.type
-            uri:x:@.uri
-            prompt:x:@.dp/#/*/{@.arguments/*/prompt}
-            completion:x:@.dp/#/*/{@.arguments/*/completion}
+// Invoking slot that does the heavy work.
+add:x:+/+
+   get-nodes:x:@.arguments/*/type
+add:x:+/*/snippets
+   get-nodes:x:@.file-data/*
+signal:magic.ai.import-snippets
+   snippets
 
 // Returning success to caller.
 get-count:x:@.file-data/*

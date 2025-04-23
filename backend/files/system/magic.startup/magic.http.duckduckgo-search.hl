@@ -12,7 +12,6 @@ slots.create:magic.http.duckduckgo-search
    validators.mandatory:x:@.arguments/*/query
    validators.integer:x:@.arguments/*/max
       min:1
-      max:10
 
    // Creating our search URL.
    .url
@@ -120,12 +119,15 @@ slots.create:magic.http.duckduckgo-search
             math.decrement:x:@.arguments/*/max
 
             // Adding currently iterated URL to [.result].
+            strings.join:x:@.dp/#/././**/a/*/\@class/=result__snippet/./**/\#text
+               .:
             unwrap:x:+/*/*/*
             add:x:@.result/*/result
                .
                   .
                      url:x:@.cur
                      title:x:@.dp/#/*/\#text
+                     description:x:@strings.join
 
    // Returing result to caller.
    return-nodes:x:@.result/*

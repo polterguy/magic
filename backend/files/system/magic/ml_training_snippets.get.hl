@@ -94,6 +94,7 @@ data.connect:[generic|magic]
          ml_training_snippets.embedding
             as:embedding_vss
          ml_training_snippets.cached
+         ml_training_snippets.meta
       where
          and
             or

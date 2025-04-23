@@ -1,0 +1,150 @@
+
+/*
+ * Scrapes all URLs given in the specified CSV file.
+ *
+ * Contrary to normal scraping and crawling, this will use the "Spice" feature and
+ * only import all URLs specified in the given file.
+ */
+.arguments
+   type:string
+   feedback-channel:string
+   vectorize:bool
+   file:*
+.type:internal
+.accept:multipart/form-data
+.description:Imports the specified CSV file as a URL set by scraping all URLs found in the specified CSV file.
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+
+// Applying defaults.
+validators.default:x:@.arguments
+   vectorize:bool:false
+
+// Reading file data from stream.
+io.stream.read:x:@.arguments/*/file/*/stream
+
+// Converting file to lambda object.
+csv2lambda:x:@io.stream.read
+
+// Sanity checking file.
+if
+   or
+      mt
+         get-count:x:@csv2lambda/0/*
+         .:int:1
+      and
+         not
+            strings.starts-with:x:@csv2lambda/0/0
+               .:"http://"
+         not
+            strings.starts-with:x:@csv2lambda/0/0
+               .:"https://"
+   .lambda
+
+      // Oops, bogus file!
+      log.info:URL list file not in correct format
+         filename:x:@.arguments/*/file/*/name
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:File not valid. A URL list file must have only one column, and contain only URLs in its single column.
+            type:error
+      return
+         result:error
+
+// Doing some basic logging.
+get-count:x:@csv2lambda/*
+log.info:URL list successfully uploaded
+   count:x:@get-count
+   type:x:@.arguments/*/type
+
+// Scraping on a background thread.
+add:x:./*/fork/*/.urls
+   get-nodes:x:@csv2lambda/*
+insert-before:x:./*/fork/0
+   get-nodes:x:@.arguments
+fork
+
+   // Buffer containing all URLs we've got.
+   .urls
+
+   // Looping through each URL in our list of URLs.
+   for-each:x:@.urls/*/*
+
+      // Making sure we catch exceptions.
+      try
+
+         /*
+          * Invoking crawl implementation file, now with explicit list of links,
+          * informing invocation that we do NOT want to process links.
+          */
+         execute:magic.ai.url.scrape
+            url:x:@.dp/#
+            type:x:@.arguments/*/type
+            feedback-channel:x:@.arguments/*/feedback-channel
+            lists:bool:false
+            images:bool:false
+            code:bool:false
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:------------------------------------------------------------------------------------------------------------------------
+               type:info
+
+      .catch
+
+         // Informing user of what went wrong.
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:x:@.arguments/*/message
+               type:warning
+
+   /*
+    * Crawling is done.
+    *
+    * Making sure we notify client that we're done and do some logging.
+    */
+   sockets.signal:magic.backend.message
+      roles:root
+      args
+         message:Done creating OpenAI training data from URL list
+         type:success
+
+   // Checking if we're supposed to vectorize model.
+   if
+      eq:x:@.arguments/*/vectorize
+         .:bool:true
+      .lambda
+
+         // Vectorizing model.
+         execute:magic.ai.vectorise
+            type:x:@.arguments/*/type
+            feedback-channel:x:@.arguments/*/feedback-channel
+            .onafter
+
+               // Signaling frontend.
+               sockets.signal:x:@.arguments/*/feedback-channel
+                  args
+                     message:Done!
+                     type:success
+   else
+
+      // Signaling frontend.
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:Done!
+            type:success
+
+   // Basic logging.
+   log.info:OpenAI training data successfully created from URL list
+      type:x:@.arguments/*/type
+
+// Returning success to caller.
+yield
+   result:success
+   count:x:@get-count

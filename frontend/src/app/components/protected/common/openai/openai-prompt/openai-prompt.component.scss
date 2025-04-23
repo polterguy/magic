@@ -5,3 +5,29 @@
 .prompt {
   font-size: 11px;
 }
+
+@keyframes waiting_for_ai {
+  to {
+    opacity: 1;
+  }
+}
+
+.backdrop {
+  background: rgba(0,0,0,.7);
+  z-index: 10000;
+  position: fixed;
+  left: 0;
+  top:0;
+  right:0;
+  bottom:0;
+  animation: 1s waiting_for_ai linear forwards;
+  opacity: 0;
+}
+
+.backdrop svg {
+  width: 150px;
+  display: block;
+  position: absolute;
+  bottom: 1rem;
+  left: calc(50% - 75px)
+}

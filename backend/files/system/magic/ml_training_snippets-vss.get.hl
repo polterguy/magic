@@ -28,6 +28,19 @@ set-value:x:@.token
       .:"Bearer "
       config.get:"magic:openai:key"
 
+// Figuring out embeddings model to use.
+.embeddings-model
+data.connect:[generic|magic]
+   data.read
+      table:ml_types
+      columns
+         vector_model
+      where
+         and
+            type.eq:x:@.arguments/*/type
+   set-value:x:@.embeddings-model
+      get-value:x:@data.read/*/*/vector_model
+
 // Retrieving embedding for prompt.
 http.post:"https://api.openai.com/v1/embeddings"
    headers
@@ -35,7 +48,7 @@ http.post:"https://api.openai.com/v1/embeddings"
       Content-Type:application/json
    payload
       input:x:@.arguments/*/filter
-      model:text-embedding-ada-002
+      model:x:@.embeddings-model
    convert:true
 
 // Sanity checking above invocation.
@@ -64,7 +77,7 @@ floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
 data.connect:[generic|magic]
 
    .sql:@"
-select id, created, type, pushed, uri, prompt, completion, filename, cached, meta, embedding as embedding_vss
+select vss.distance, id, created, type, pushed, uri, prompt, completion, filename, cached, meta, embedding as embedding_vss
    from vss_ml_training_snippets as vss
     	inner join ml_training_snippets ts on ts.id = vss.rowid
    where

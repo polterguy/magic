@@ -76,17 +76,17 @@ slots.create:magic.ai.url.scrape
        * snippets we found on page.
        */
       if
-         and
-            exists:x:@.arguments/*/main
-            mt:x:@signal/*/meta/*/main
-               .:int:0
+         mt
+            get-count:x:@signal/*/snippets/*
+            .:int:0
          .lambda
 
             // We found at least one main section on page.
+            get-count:x:@signal/*/snippets/*
             strings.concat
                .:"Found "
-               get-value:x:@signal/*/meta/*/main
-               .:" sections on page"
+               get-count:x:@signal/*/snippets/*
+               .:" training snippets on page"
             unwrap:x:+/**
             sockets.signal:x:@.arguments/*/feedback-channel
                args
@@ -144,6 +144,7 @@ slots.create:magic.ai.url.scrape
                      columns
                         max_context_tokens
                         api_key
+                        model
                      where
                         and
                            type.eq:x:@.arguments/*/type
@@ -160,7 +161,7 @@ slots.create:magic.ai.url.scrape
                   set-value:x:@.api-key
                      get-value:x:@data.read/*/*/api_key
                   set-value:x:@.model
-                     .:gpt-4-1106-preview
+                     get-value:x:@data.read/*/*/model
 
                // Looping through all snippets to check their size.
                for-each:x:@.snippets/*
@@ -174,13 +175,11 @@ slots.create:magic.ai.url.scrape
                         .:"\r\n"
                         get-value:x:@.dp/#/*/completion
 
-                  // Counting total token count.
-                  openai.tokenize:x:@.tmp
 
                   // Checking if there are too many tokens in snippet.
                   if
                      mt
-                        get-value:x:@openai.tokenize
+                        openai.tokenize:x:@.tmp
                         get-value:x:@.max-size
                      .lambda
 
@@ -395,6 +394,7 @@ slots.create:magic.ai.url.scrape
              * Now looping through each snippet from above [.snippet] and inserting into database
              * as training snippets.
              */
+            .similar:int:0
             for-each:x:@.snippets/*
 
                // Checking if completion exists and is not null for training snippet.
@@ -403,7 +403,7 @@ slots.create:magic.ai.url.scrape
                      exists:x:@.dp/#/*/completion
                      not-null:x:@.dp/#/*/completion
                   .lambda
-
+                  
                      /*
                       * Verifying snippet is longer than minimum threshold required to import snippet.
                       *
@@ -437,6 +437,12 @@ slots.create:magic.ai.url.scrape
                             * Before we insert snippet we make sure snippet doesn't
                             * already exist in database.
                             */
+                           strings.concat
+                              get-value:x:@.dp/#/*/completion
+                              .:"\r\n"
+                              .:"\r\n"
+                              .:"This information was taken from [this URL]("
+                              .:%
                            data.read
                               table:ml_training_snippets
                               columns
@@ -447,10 +453,25 @@ slots.create:magic.ai.url.scrape
                               where
                                  and
                                     type.eq:x:@.arguments/*/type
-                                    completion.eq:x:@.dp/#/*/completion
+                                    or
+                                       completion.eq:x:@.dp/#/*/completion
+                                       completion.like:x:@strings.concat
                            if
                               not-exists:x:@data.read/*
                               .lambda
+
+                                 // Checking if we should insert source URL into completion.
+                                 if:x:@.arguments/*/insert_url
+
+                                    // Appending source URL as Markdown into completion.
+                                    set-value:x:@.dp/#/*/completion
+                                       strings.concat
+                                          get-value:x:@.dp/#/*/completion
+                                          .:"\r\n"
+                                          .:"\r\n"
+                                          .:"This information was taken from [this URL]("
+                                          get-value:x:@.arguments/*/url
+                                          .:)
 
                                  // Inserting training snippet into database.
                                  data.create
@@ -469,7 +490,7 @@ slots.create:magic.ai.url.scrape
 
                                  /*
                                   * Snippet already exists in database and has already been transformed,
-                                  * implying prompt was updated to "Common" - hHence we do nothing.
+                                  * implying prompt was updated to "Common" - Hence we do nothing.
                                   */
                                  math.increment:x:@.already-exists
 
@@ -483,13 +504,7 @@ slots.create:magic.ai.url.scrape
                                   * Snippet already exists, but with different prompt.
                                   * Updating prompt to "Common".
                                   */
-                                 sockets.signal:x:@.arguments/*/feedback-channel
-                                    args
-                                       message:Snippet with similar completion exists, updating prompt to common
-                                       type:info
-                                 sleep:10
-
-                                 // Updating record in database.
+                                 math.increment:x:@.similar
                                  data.update
                                     table:ml_training_snippets
                                     values
@@ -498,13 +513,27 @@ slots.create:magic.ai.url.scrape
                                        and
                                           id.eq:x:@data.read/0/*/id
 
-                                 // Updating count of snippets that already exists.
-                                 math.increment:x:@.already-exists
-
                      else
 
                         // Updating count of snippets that's below threshold.
                         math.increment:x:@.below-threshold
+
+            // Checking if we've got snippets with similar completions existing, at which point we inform user.
+            if
+               neq:x:@.similar
+                  .:int:0
+               .lambda
+
+                  // Informing user of how many snippets we already had in database that had their prompts changed.
+                  strings.concat
+                     get-value:x:@.similar
+                     .:" snippets with similar completion exists, updating prompt to 'Common'"
+                  unwrap:x:+/**
+                  sockets.signal:x:@.arguments/*/feedback-channel
+                     args
+                        message:x:@strings.concat
+                        type:info
+                  sleep:10
 
          // Informing user that we're done creating training snippets from specified URL.
          .imported

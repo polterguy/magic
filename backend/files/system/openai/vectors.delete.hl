@@ -1,0 +1,27 @@
+
+// Deletes all existing vectors for specified model.
+.arguments
+   type:string
+.description:Deletes all existing vectors for specified model
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+
+// Connecting to database.
+data.connect:[generic|magic]
+
+   // Deleting VSS data.
+   data.execute:delete from vss_ml_training_snippets where rowid in (select id as rowid from ml_training_snippets where type = @type)
+      @type:x:@.arguments/*/type
+
+   // Deleting embeddings.
+   data.execute:update ml_training_snippets set embedding = null where type = @type
+      @type:x:@.arguments/*/type
+
+// Returning success to caller.
+return
+   result:success

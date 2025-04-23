@@ -1,0 +1,51 @@
+
+/*
+ * Validates the specified Magic CAPTCHA token.
+ *
+ * This action will validate the specified Magic CAPTCHA token and throw an exception if validation fails,
+ * unless the user is authenticated and belongs to the root role.
+ *
+ * [workload] is the number of trailing zeros the token needs to be considered valid, and [age] is the
+ * maximum number of milliseconds old the token can be to be considered valid.
+ */
+.arguments
+   token
+      type:string
+      mandatory:bool:true
+   workload
+      type:int
+      mandatory:bool:false
+      default:int:3
+   age
+      type:int
+      mandatory:bool:false
+      default:int:10000
+.icon:shield
+
+// Notice, we only validate token if user is not root.
+if
+   not
+      auth.ticket.in-role:root
+   .lambda
+
+      // [token] is a mandatory field.
+      validators.mandatory:x:@.arguments/*/token
+
+      // Defaulting [workload] to 3 and age to 10 seconds.
+      validators.default:x:@.arguments
+         workload:int:3
+         age:int:10000
+
+      // Converting to correct types.
+      set-value:x:@.arguments/*/workload
+         convert:x:@.arguments/*/workload
+            type:int
+      set-value:x:@.arguments/*/age
+         convert:x:@.arguments/*/age
+            type:int
+
+      // Validating token with specified [workload] and [age].
+      execute:magic.auth.captcha-verify
+         token:x:@.arguments/*/token
+         workload:x:@.arguments/*/workload
+         age:x:@.arguments/*/age

@@ -22,16 +22,25 @@ export class MachineLearningEmbedUiComponent implements OnInit {
 
   theme: string = 'scandinavian-navy';
   themes: string[] = [];
+  modernTheme: string = 'modern-square';
+  modernThemes: string[] = [];
   themeSearch: string = 'default';
   themesSearch: string[] = [];
   type: string = null;
   header: string = 'Ask about our services or products';
+  popup: string = '';
   buttonTxt: string = 'AI Chatbot';
+  textboxPlaceholder = 'Ask me anything ...';
   search: boolean = false;
   chat: boolean = true;
   markdown: boolean = true;
   speech: boolean = false;
   rtl: boolean = false;
+  clear_button: boolean = false;
+  follow_up: boolean = true;
+  copy_button: boolean = false;
+  new_tab: boolean = false;
+  code: boolean = false;
   has_button: boolean = true;
   stream: boolean = true;
   placeholder: string = 'Search ...';
@@ -39,6 +48,12 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   maxSearch: number = 5;
   currentTabIndex: number = 0;
   landing_page: boolean = false;
+  startColor: string = '#7892e5';
+  endColor: string = '#142660';
+  foreColor: string = '#fefefe';
+  linkColor: string = '#fe8464';
+  positioning: string = 'right';
+  animations: string = 'none';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -61,7 +76,8 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     this.openAiService.themes().subscribe({
       next: (themes: string[]) => {
 
-        this.themes = themes;
+        this.themes = themes.filter(x => !x.startsWith('modern') && !x.startsWith('common'));
+        this.modernThemes = themes.filter(x => x.startsWith('modern'));
       },
       error: () => {
 
@@ -99,10 +115,14 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     switch (this.currentTabIndex) {
 
       case 0:
-        this.embedChatbot(true);
+        this.embedModernChatbot(true);
         break;
 
       case 1:
+        this.embedChatbot(true);
+        break;
+
+      case 2:
         this.embedSearch(true);
         break;
     }
@@ -113,12 +133,25 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     switch (this.currentTabIndex) {
 
       case 0:
-        this.embedChatbot(false);
+        this.embedModernChatbot(false);
         break;
 
       case 1:
+        this.embedChatbot(false);
+        break;
+
+      case 2:
         this.embedSearch(false);
         break;
+    }
+  }
+
+  embedModernChatbot(html: boolean) {
+
+    this.clipboard.copy(this.getModernChatbotEmbed(html));
+    this.generalService.showFeedback('HTML to include chatbot can be found on your clipboard', 'successMessage');
+    if (this.data.noClose !== true) {
+      this.dialogRef.close();
     }
   }
 
@@ -150,10 +183,23 @@ export class MachineLearningEmbedUiComponent implements OnInit {
    * Private helper methods.
    */
 
+  private getModernChatbotEmbed(html: boolean) {
+
+    let url = `${this.backendService.active.url}/magic/system/openai/include-chatbot.js?rtl=${this.rtl ? 'true' : 'false'}&clear_button=${this.clear_button ? 'true' : 'false'}&follow_up=${this.follow_up ? 'true' : 'false'}&copyButton=${this.copy_button ? 'true' : 'false'}&new_tab=${this.new_tab ? 'true' : 'false'}&code=${this.code ? 'true' : 'false'}&references=${this.search ? 'true' : 'false'}&position=${this.positioning}&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&popup=${encodeURIComponent(this.popup)}&button=${encodeURIComponent(this.buttonTxt)}&placeholder=${encodeURIComponent(this.textboxPlaceholder)}&color=${encodeURIComponent(this.foreColor)}&start=${encodeURIComponent(this.startColor)}&end=${encodeURIComponent(this.endColor)}&link=${encodeURIComponent(this.linkColor)}&theme=${encodeURIComponent(this.modernTheme)}`;
+    if (this.animations && this.animations !== 'none') {
+      url += '&animation=' + this.animations;
+    }
+
+    if (html) {
+      return `<script src="${url}" defer></script>`;
+    }
+    return url;
+  }
+
   private getChatbotEmbed(html: boolean) {
 
     if (html) {
-      return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&rtl=${this.rtl ? 'true' : 'false'}&submit_button=${this.has_button ? 'true' : 'false'}&stream=${this.stream ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer async></script>`;
+      return `<script src="${this.backendService.active.url}/magic/system/openai/include-javascript.js?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&rtl=${this.rtl ? 'true' : 'false'}&submit_button=${this.has_button ? 'true' : 'false'}&stream=${this.stream ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}" defer></script>`;
     }
     return `${this.backendService.active.url}/magic/system/openai/include-javascript?markdown=${this.markdown ? 'true' : 'false'}&speech=${this.speech ? 'true' : 'false'}&rtl=${this.rtl ? 'true' : 'false'}&submit_button=${this.has_button ? 'true' : 'false'}&stream=${this.stream ? 'true' : 'false'}&search=${this.search ? 'true' : 'false'}&chat=${this.chat ? 'true' : 'false'}&css=${encodeURIComponent(this.theme)}&file=default&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&button=${encodeURIComponent(this.buttonTxt)}`;
   }
@@ -161,7 +207,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   private getSearchEmbed(html: boolean) {
 
     if (html) {
-      return `<script src="${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.themeSearch)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}" defer async></script>`;
+      return `<script src="${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.themeSearch)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}" defer></script>`;
     }
     return `${this.backendService.active.url}/magic/system/openai/include-search?css=${encodeURIComponent(this.themeSearch)}&type=${encodeURIComponent(this.type)}&placeholder=${encodeURIComponent(this.placeholder)}&button=${encodeURIComponent(this.buttonTxtSearch)}&max=${this.maxSearch}`;
   }

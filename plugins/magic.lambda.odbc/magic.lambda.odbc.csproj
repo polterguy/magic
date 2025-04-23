@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.Odbc" Version="9.0.0" />
+    <ProjectReference Include="..\magic.data.common\magic.data.common\magic.data.common.csproj" />
+  </ItemGroup>
+
+</Project>

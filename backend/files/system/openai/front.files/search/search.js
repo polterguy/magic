@@ -8,7 +8,7 @@
 if (!window.ainiroHasDownloadIcofont) {
   window.ainiroHasDownloadIcofont = true;
   const icofontCss = window.document.createElement('link');
-  icofontCss.href = 'https://ainiro.io/assets/css/icofont.min.css?v=16.9.5';
+  icofontCss.href = 'https://ainiro.io/assets/css/icofont.min.css?v=18.2.1';
   icofontCss.rel = 'stylesheet';
   window.document.getElementsByTagName('head')[0].appendChild(icofontCss);
 }

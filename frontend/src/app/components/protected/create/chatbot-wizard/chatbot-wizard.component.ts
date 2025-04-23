@@ -9,7 +9,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 // Application specific imports.
-import flavors from 'src/app/resources/flavors.json';
 import { ConfigService } from 'src/app/services/config.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { GeneralService } from 'src/app/services/general.service';
@@ -43,7 +42,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   max: number = 25;
   autocrawl: boolean = false;
   vectorize: boolean = true;
-  auto_destruct: boolean = false;
+  auto_destruct: boolean = true;
   crawling: boolean = false;
   messages: any[] = [];
   doneCreatingBot: boolean = false;
@@ -51,7 +50,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   chat_model: OpenAIModel = null;
   chat_models: OpenAIModel[] = [];
   finished: boolean = false;
-  flavors = flavors;
+  flavors: any[] = [];
   flavor: any = null;
 
   constructor(
@@ -71,40 +70,23 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         this.sqlIte = result.default === 'sqlite';
 
         this.openAIService.key().subscribe({
+
           next: (apiKey: any) => {
     
             this.hasApiKey = apiKey.result?.length > 0;
+
+            if (!this.hasApiKey) {
     
-            this.apiKey = apiKey.result;
-    
-            this.backendService.getReCaptchaKeySecret().subscribe({
-              next: (reCaptcha: any) => {
-                this.hasReCaptcha = reCaptcha.key?.length > 0 && reCaptcha.secret?.length > 0;
-                this.configured = this.hasApiKey && this.hasReCaptcha;
-                this.reCaptcha = reCaptcha;
-                this.flavor = this.flavors[0];
-    
-                if (!this.hasApiKey) {
-    
-                  this.manageOpenAI();
-    
-                } else if (!this.hasReCaptcha) {
-    
-                  this.manageCAPTCHA();
-    
-                } else {
-    
-                  this.getModels();
-                }
-              },
-              error: () => {
-    
-                this.generalService.hideLoading();
-                this.isLoading = false;
-                this.generalService.showFeedback('Something went wrong as we tried to check if OpenAI API key is configured', 'errorMessage');
-              }
-            });
+              this.manageOpenAI();
+
+            } else {
+
+              this.apiKey = apiKey.result;
+              this.configured = this.hasApiKey;
+              this.getModels();
+            }
           },
+
           error: () => {
     
             this.generalService.hideLoading();
@@ -125,23 +107,50 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
   getModels() {
 
     this.openAIService.models(this.apiKey).subscribe({
+
       next: (models: OpenAIModel[]) => {
 
         this.chat_models = models;
-        this.chat_models = this.chat_models.filter((idx: OpenAIModel) => idx.id.startsWith('gpt'));
-        let defModel = this.chat_models.filter(x => x.id === 'gpt-4-1106-preview');
+        this.chat_models = this.chat_models.filter(el => el.chat === true);
+        let defModel = this.chat_models.filter(x => x.id === 'gpt-4o');
 
         if (defModel.length > 0) {
 
           this.chat_model = defModel[0];
+
         } else {
 
           this.chat_model = this.chat_models.filter(x => x.id === 'gpt-3.5-turbo')[0];
         }
 
-        this.generalService.hideLoading();
-        this.isLoading = false;
+        this.openAIService.getSystemMessage().subscribe({
+
+          next: (result: any[]) => {
+
+            result = result.sort((lhs: any, rhs: any) => {
+              if (lhs.name.includes('DYNAMIC')) {
+                return -1;
+              }
+              else if (rhs.name.includes('DYNAMIC')) {
+                return 1;
+              }
+              return 0;
+            });
+            this.flavors = result;
+            this.flavor = this.flavors.filter(x => x.name.includes('Frank') && x.name.includes('DYNAMIC'))[0];
+            this.generalService.hideLoading();
+            this.isLoading = false;
+          },
+
+          error: () => {
+
+            this.isLoading = false;
+            this.generalService.showFeedback('Something went wrong as we tried to retrieve questionnaires', 'errorMessage');
+            this.generalService.hideLoading();
+          }
+        });
       },
+
       error: () => {
 
         this.generalService.hideLoading();
@@ -244,7 +253,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         width: '80vw',
         maxWidth: '550px',
         data: this.reCaptcha,
-        disableClose: true,
+        disableClose: false,
       })
       .afterClosed()
       .subscribe((result: any) => {
@@ -254,11 +263,12 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
           this.generalService.showLoading();
           this.isLoading = true;
           this.backendService.setReCaptchaKeySecret(result.key, result.secret).subscribe({
+
             next: () => {
 
               this.generalService.hideLoading();
               this.isLoading = false;
-              this.generalService.showFeedback('reCAPTCHA settings successfully save', 'successMessage');
+              this.generalService.showFeedback('reCAPTCHA settings successfully saved', 'successMessage');
               this.hasReCaptcha = true;
               this.configured = this.hasApiKey;
 
@@ -271,6 +281,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
                 this.getModels();
               }
             },
+
             error: () => {
 
               this.generalService.hideLoading();
@@ -279,6 +290,10 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
               this.isLoading = false;
             }
           });
+        } else {
+
+          this.configured = true;
+          this.getModels();
         }
       });
   }
@@ -342,7 +357,8 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
         this.autocrawl,
         this.auto_destruct,
         feedbackChannel,
-        this.vectorize).subscribe({
+        this.vectorize,
+        this.flavor?.instruction).subscribe({
 
           next: (result: MagicResponse) => {
     

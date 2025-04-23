@@ -37,9 +37,19 @@
             <button
               mat-icon-button
               color="primary"
-              title="Export table ..."
-              (click)="viewTableDDL(item.name)">
+              (click)="downloadTableAsCsv(item)"
+              title="Download table as CSV ...">
               <mat-icon>file_download</mat-icon>
+            </button>
+
+            <div class="me-1"></div>
+
+            <button
+              mat-icon-button
+              color="primary"
+              title="Export table DDL ..."
+              (click)="viewTableDDL(item.name)">
+              <mat-icon>extension</mat-icon>
             </button>
 
             <div class="me-1"></div>

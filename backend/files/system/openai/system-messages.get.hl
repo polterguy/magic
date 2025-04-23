@@ -1,0 +1,73 @@
+
+// Returns all available system messages from the backend.
+.arguments
+.description:Returns all available system messages from the backend
+.type:internal
+
+// Making sure user has access to invoked endpoint.
+auth.ticket.verify:root
+
+// Contains list of system messages we find.
+.result
+
+// Listing custom files.
+if
+   io.folder.exists:/etc/system/openai/system-messages/
+   .lambda
+      io.file.list:/etc/system/openai/system-messages/
+      for-each:x:@io.file.list/*
+         if
+            strings.ends-with:x:@.dp/#
+               .:hl
+            .lambda
+               io.file.load:x:@.dp/#
+               hyper2lambda:x:@io.file.load
+               add:x:+/*/*
+                  get-nodes:x:@hyper2lambda/*
+               add:x:@.result
+                  .
+                     .
+
+// Listing system files.
+if
+   io.folder.exists:/system/openai/system-messages/
+   .lambda
+      io.file.list:/system/openai/system-messages/
+      for-each:x:@io.file.list/*
+         if
+            strings.ends-with:x:@.dp/#
+               .:hl
+            .lambda
+               io.file.load:x:@.dp/#
+               hyper2lambda:x:@io.file.load
+               add:x:+/*/*
+                  get-nodes:x:@hyper2lambda/*
+               add:x:@.result
+                  .
+                     .
+
+// Listing module specific system messages.
+io.folder.list:/modules/
+for-each:x:@io.folder.list/*
+   strings.concat
+      get-value:x:@.dp/#
+      .:system-messages/
+   if
+      io.folder.exists:x:@strings.concat
+      .lambda
+         io.file.list:x:@strings.concat
+         for-each:x:@io.file.list/*
+            if
+               strings.ends-with:x:@.dp/#
+                  .:hl
+               .lambda
+                  io.file.load:x:@.dp/#
+                  hyper2lambda:x:@io.file.load
+                  add:x:+/*/*
+                     get-nodes:x:@hyper2lambda/*
+                  add:x:@.result
+                     .
+                        .
+
+// Returning result to caller.
+return-nodes:x:@.result/*

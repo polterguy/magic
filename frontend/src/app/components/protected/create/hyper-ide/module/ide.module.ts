@@ -39,6 +39,7 @@ import { ExecuteFeedbackDialog } from '../components/execute-feedback-dialog/exe
 import { FormlyWorkflowComponent } from '../components/parametrise-action-dialog/components/formly-workflow/formly-workflow.component';
 import { FormlyActionComponent } from '../components/parametrise-action-dialog/components/formly-action/formly-action.component';
 import { OpenAPISpecifictionDialogComponent } from '../components/openapi-specification-dialog/openapi-specification-dialog.component';
+import { SelectModelDialogComponent } from '../components/select-model/select-model-dialog.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { OpenAPISpecifictionDialogComponent } from '../components/openapi-specif
     CreateArrayDialogComponent,
     ExecuteFeedbackDialog,
     OpenAPISpecifictionDialogComponent,
+    SelectModelDialogComponent,
   ],
   imports: [
     CommonModule,

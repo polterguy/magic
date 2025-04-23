@@ -1,0 +1,24 @@
+
+/*
+ * Returns the greeting for the specified type.
+ */
+.arguments
+   type:string
+.description:Returns the greeting for the specified type
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+
+// Opening up database connection.
+data.connect:[generic|magic]
+
+   // Retrieving all questions from database.
+   data.select:@"
+select greeting
+	from ml_types
+	where type = @type"
+      type:x:@.arguments/*/type
+
+   // Returning greeting to caller.
+   yield
+      greeting:x:@data.select/*/*/greeting

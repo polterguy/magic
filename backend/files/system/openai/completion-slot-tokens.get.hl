@@ -1,0 +1,23 @@
+
+/*
+ * Returns maximum tokens for specified completion slot.
+ */
+.arguments
+   slot:string
+.description:Returns maximum tokens for specified completion slot
+.type:internal
+
+// Making sure user is authenticate to access endpoint
+auth.ticket.verify:root
+
+// Retrieving max tokens from config.
+strings.split:x:@.arguments/*/slot
+   .:.
+strings.concat
+   .:"magic:"
+   get-value:x:@strings.split/0/-
+   .:":max_tokens"
+config.get:x:@strings.concat
+
+yield
+   max_tokens:x:@config.get

@@ -72,6 +72,16 @@ export class TablesViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  downloadTableAsCsv(item: any) {
+
+    this.generalService.showLoading();
+    this.sqlService.exportTableAsCsvFile(
+      this.selectedDbType,
+      this.selectedConnectionString,
+      this.selectedDatabase,
+      item.name);
+  }
+
   scrollTableIntoView(el: any) {
 
     const domEl = document.getElementById(el.foreign_table);

@@ -13,6 +13,10 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
 
+// Sanity checking invocation.
+validators.regex:x:@.arguments/*/type
+   regex:^[a-zA-Z0-9-_]+$
+
 // Opening up database connection.
 data.connect:[generic|magic]
 

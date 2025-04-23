@@ -168,6 +168,13 @@
               Clear server cache
             </button>
 
+            <button
+              mat-menu-item
+              [disabled]="selectedConnectionString === 'generic' && selectedDatabase === 'magic'"
+              (click)="file.click()">
+              Import CSV file
+            </button>
+          
             <div class="m-3">
 
               <mat-slide-toggle
@@ -187,6 +194,14 @@
 
   </mat-card-content>
 </mat-card>
+
+<input
+  type="file"
+  [(ngModel)]="fileInput"
+  #file
+  class="d-none"
+  accept=".csv"
+  (change)="uploadFiles($event.target.files, 0)">
 
 <div class="row mt-2">
 

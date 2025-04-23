@@ -73,23 +73,34 @@ export class LoginComponent implements OnInit {
      * the auth service depends upon user already having selected
      * a current backend.
      */
-    const backend = new Backend(this.loginForm.controls.backend.value.replace(/\/$/, ''), this.loginForm.value.username, this.loginForm.value.password)
+    const backend = new Backend(
+      this.loginForm.controls.backend.value.replace(/\/$/, ''),
+      this.loginForm.value.username,
+      this.loginForm.value.password);
+
     this.backendService.upsert(backend);
     this.backendService.activate(backend);
+
     this.backendService.login(
       this.loginForm.value.username,
       this.loginForm.value.password,
       true).subscribe({
+
         next: () => {
+
           this.router.navigate(['/']);
           setTimeout(() => {
             this.waiting = false;
           }, 1000);
+
         },
+
         error: (error: any) => {
+
           this.generalService.showFeedback(error?.error?.message ?? error ?? 'Something went wrong while trying to login', 'errorMessage', 'Ok');
           this.waiting = false;
         }
+
       });
   }
 

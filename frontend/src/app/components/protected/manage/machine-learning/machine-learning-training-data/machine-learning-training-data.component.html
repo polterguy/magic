@@ -21,11 +21,14 @@
         <app-filter
           (filterList)="filterList($event)"
           buttonText="Add"
+          [buttonDisabled]="!type"
+          (buttonClick)="create()"
           button2Text="Spice"
           (button2Click)="spice()"
-          [buttonDisabled]="!type"
           [button2Disabled]="!type"
-          (buttonClick)="create()"
+          button3Text="Add function"
+          (button3Click)="addWorkflow()"
+          [button3Disabled]="!type"
           [(type)]="type"
           checkBoxText="VSS"
           checkBoxTooltip="Use vector semantic search to search for snippets (ONLY works if you have vectorized your type)"
@@ -60,7 +63,7 @@
             mat-cell
             *matCellDef="let element"
             class="text-truncate px-sm-3">
-            {{element.prompt}}
+            {{getPrompt(element)}}
           </td>
         </ng-container>
 

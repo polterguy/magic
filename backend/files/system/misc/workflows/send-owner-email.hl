@@ -1,0 +1,88 @@
+
+/*
+ * Sends an email to owner
+ * 
+ * This function will send the owner of the cloudlet an email, with the specified [reply-to], [reply-to-email], [subject], and [body].
+ */
+.arguments
+
+   // Mandatory argument being the reply to name of the person sending the email.
+   reply-to:string
+
+   // Mandatory argument being the email address of the person sending the email.
+   reply-to-email:string
+
+   // Mandatory argument being the subject line of the email.
+   subject:string
+
+   // Mandatory argument being the body of the email to send. This argument can be Markdown at which point it will be automatically transformed into HTML.
+   body:string
+
+.type:public
+
+// HTML encodes the specified [html] and returns to caller.
+execute:magic.workflows.actions.execute
+   name:html-encode-body
+   filename:/misc/workflows/actions/misc/html-encode.hl
+   arguments
+      html:x:@.arguments/*/body
+
+// HTML encodes the specified [html] and returns to caller.
+execute:magic.workflows.actions.execute
+   name:html-encode-subject
+   filename:/misc/workflows/actions/misc/html-encode.hl
+   arguments
+      html:x:@.arguments/*/subject
+
+// Transforms the specified [markdown] to HTML and returns to caller.
+execute:magic.workflows.actions.execute
+   name:markdown2html
+   filename:/misc/workflows/actions/misc/markdown2html.hl
+   arguments
+      markdown:x:--/execute/=html-encode-body/*/content
+
+/*
+ * Returns the specified [key] configuration setting.
+ *
+ * Notice, to traverse into for instance magic.foo.bar, you'll have to colon separate
+ * your path as follows "magic:foo:bar".
+ */
+execute:magic.workflows.actions.execute
+   name:config-name
+   filename:/misc/workflows/actions/misc/config.hl
+   arguments
+      key:"magic:smtp:from:name"
+
+/*
+ * Returns the specified [key] configuration setting.
+ *
+ * Notice, to traverse into for instance magic.foo.bar, you'll have to colon separate
+ * your path as follows "magic:foo:bar".
+ */
+execute:magic.workflows.actions.execute
+   name:config-email
+   filename:/misc/workflows/actions/misc/config.hl
+   arguments
+      key:"magic:smtp:from:address"
+
+/*
+ * Send an email to the specified [name]/[email] recipient, with the specified [subject] and [body].
+ *
+ * Optionally supply [from] and [from-email] as name/email sender, and/or [reply-to] and [reply-to-email]
+ * as the email to reply to. If you don't supply [from] or [from-email] then this action will use the
+ * default sender settings from your configuration.
+ */
+execute:magic.workflows.actions.execute
+   name:email
+   filename:/misc/workflows/actions/misc/email.hl
+   arguments
+      reply-to:x:@.arguments/*/reply-to
+      subject:x:--/execute/=html-encode-subject/*/content
+      body:x:--/execute/=markdown2html/*/html
+      html:bool:true
+      name:x:--/execute/=config-name/*/value
+      email:x:--/execute/=config-email/*/value
+      reply-to-email:x:@.arguments/*/reply-to-email
+
+return
+   result:success

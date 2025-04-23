@@ -40,9 +40,9 @@ let ainiroChatbotType = '[[type]]';
 /*
  * "API method" for FAQ questions.
  */
-window.ainiro_faq_question = function(e) {
+window.ainiro_faq_question = function(e, msg = null) {
 
-  const question = e.srcElement.innerHTML;
+  const question = msg ?? e.srcElement.innerHTML;
   aista_show_chat_window();
   setTimeout(() => {
     const prompt = document.getElementsByClassName('aista-chat-prompt')[0];
@@ -385,6 +385,8 @@ function aista_submit_form(speech) {
         } else {
           row.innerText = ainiroTempContent;
         }
+        // Scrolling to the bottom of chat window.
+        row.parentElement.scrollTop = row.parentElement.scrollHeight;
       }
     });
     ainiro_con.start().then(function () {

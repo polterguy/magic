@@ -1,0 +1,183 @@
+
+<div class="table-responsive">
+  <table mat-table [dataSource]="dataSource" class="w-100 borderless hoverable">
+
+    <!-- Name column -->
+    <ng-container matColumnDef="name">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="ps-0">
+        Name
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element"
+        class="ps-0">
+
+        <mat-icon
+          *ngIf="element.primary === true"
+          title="Primary key">key</mat-icon>
+
+        <mat-icon
+          *ngIf="element.nullable === true && !element.primary"
+          class="flipped text-muted"
+          title="Nullable">motion_photos_off</mat-icon>
+
+        <span class="name">{{element?.name ?? '-'}}</span>
+
+      </td>
+
+    </ng-container>
+
+    <!-- Type column -->
+    <ng-container matColumnDef="type">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="ps-0">
+        Type
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element"
+        class="ps-0">
+        {{element.db + ' / ' + element.hl}}
+      </td>
+
+    </ng-container>
+
+    <!-- default Column -->
+    <ng-container matColumnDef="default">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
+        Default
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element">
+        {{element?.automatic === true ? 'Yes' : 'No'}}
+      </td>
+
+    </ng-container>
+
+    <!-- create Column -->
+    <ng-container matColumnDef="create">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
+        Create
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element">
+
+        <mat-checkbox
+          color="primary"
+          [disabled]="verbForColumnIsDisabled('post', element)"
+          [(ngModel)]="element.post">
+          Create
+        </mat-checkbox>
+
+      </td>
+
+    </ng-container>
+
+    <!-- read Column -->
+    <ng-container matColumnDef="read">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
+        Read
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element">
+
+        <mat-checkbox
+          color="primary"
+          [disabled]="verbForColumnIsDisabled('get', element)"
+          [(ngModel)]="element.get">
+          Read
+        </mat-checkbox>
+
+      </td>
+
+    </ng-container>
+
+    <!-- update Column -->
+    <ng-container matColumnDef="update">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
+        Update
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element">
+
+        <mat-checkbox
+          color="primary"
+          [disabled]="verbForColumnIsDisabled('put', element)"
+          [(ngModel)]="element.put">
+          Update
+        </mat-checkbox>
+
+      </td>
+
+    </ng-container>
+
+    <!-- delete Column -->
+    <ng-container matColumnDef="delete">
+
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="text-nowrap">
+        Delete
+      </th>
+
+      <td
+        mat-cell
+        *matCellDef="let element">
+
+        <mat-checkbox
+          color="primary"
+          [disabled]="verbForColumnIsDisabled('delete', element)"
+          [(ngModel)]="element.delete">
+          Delete
+        </mat-checkbox>
+
+      </td>
+
+    </ng-container>
+
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedColumns">
+    </tr>
+
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns;">
+    </tr>
+
+  </table>
+</div>

@@ -25,6 +25,9 @@
    conditions:*
    paging:bool
    sorting:bool
+   aggregate:bool
+   distinct:bool
+   search:bool
 .description:Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments
 .type:internal
 
@@ -71,10 +74,6 @@ if
          .
             databaseType:x:@config.get
 
-// This is added as a tail to our comment, describing the endpoint accurately.
-.comment-tail
-.tail-tail
-
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
 
@@ -83,6 +82,9 @@ semaphore:crudifier
 
    // Ensures user is authorized to access endpoint.
    auth.ticket.verify:root
+
+   // Temporary list of all columns in database.
+   .temp-cols
 
    // Sanity checking module name, to prevent overwriting "/system/".
    strings.to-lower:x:@.arguments/*/moduleName
@@ -155,10 +157,6 @@ semaphore:crudifier
                get-value:x:@.arguments/*/log
                .
       .lambda
-         set-value:x:@.tail-tail
-            strings.concat
-               get-value:x:@.tail-tail
-               .:" with logging"
          unwrap:x:+/*/*/log.info
          insert-after:x:@apply/*/.type
             .
@@ -212,11 +210,6 @@ semaphore:crudifier
                .:*
             .lambda
 
-               set-value:x:@.tail-tail
-                  strings.concat
-                     get-value:x:@.tail-tail
-                     .:" with authentication"
-
                // No roles specified, but user must be authenticated.
                insert-after:x:@apply/*/.type
                   .
@@ -224,13 +217,6 @@ semaphore:crudifier
                      ..:Verifying user is authorized to access endpoint.
                      auth.ticket.verify
          else
-
-            set-value:x:@.tail-tail
-               strings.concat
-                  get-value:x:@.tail-tail
-                  .:" with authentication and authorisation for "
-                  get-value:x:@.arguments/*/auth
-                  .:" roles"
 
             // Comma separated list of roles specified.
             unwrap:x:+/*/*/auth.ticket.verify
@@ -246,12 +232,6 @@ semaphore:crudifier
    if
       exists:x:@.arguments/*/captcha
       .lambda
-
-         set-value:x:@.tail-tail
-            strings.concat
-               get-value:x:@.tail-tail
-               .:" with reCAPTCHA value of "
-               get-value:x:@.arguments/*/captcha
 
          add:x:@apply/*/.arguments
             .
@@ -305,23 +285,16 @@ semaphore:crudifier
                   public:true
                   status:401
 
-         // Adding delete text to comment's tail parts.
-         set-value:x:@.comment-tail
-            strings.concat
-               get-value:x:@.comment-tail
-               .:" with"
-
          /*
           * Applying DELETE arguments.
           * 
           * This basically ensures that all primary keys becomes mandatory arguments.
           */
-         .first:bool:true
          add:x:@apply/*/.arguments
             get-nodes:x:@.arguments/*/args/*/primary/*/*
          insert-before:x:@apply/*/.arguments/*
             .
-               ..:Primary key of record to delete
+               ..:Primary key of record to delete, mandatory argument
          for-each:x:@.arguments/*/args/*/primary/*/*
 
             // Checking if this is our first loop iteration.
@@ -329,30 +302,10 @@ semaphore:crudifier
                get-value:x:@.first
                .lambda
 
-                  // Making sure we don't come here again.
-                  set-value:x:@.first
-                     .:bool:false
-
-                  // Adding currently iterated argument into comment's tail.
-                  set-value:x:@.comment-tail
-                     strings.concat
-                        get-value:x:@.comment-tail
-                        .:" "
-                        get-name:x:@.dp/#
-
                   // Inserting comment describing what we're doing.
                   insert-before:x:@apply/*/data.connect/-
                      .
                         ..:Sanity checking invocation, making sure primary key(s) are specified.
-
-            else
-
-               // Adding currently iterated argument into comment's tail.
-               set-value:x:@.comment-tail
-                  strings.concat
-                     get-value:x:@.comment-tail
-                     .:", "
-                     get-name:x:@.dp/#
 
             .x:@.arguments/*/
             set-value:x:@.x
@@ -365,12 +318,6 @@ semaphore:crudifier
             insert-before:x:@apply/*/data.connect/-
                .
                   validators.mandatory
-
-         // Adding delete text to comment's tail parts.
-         set-value:x:@.comment-tail
-            strings.concat
-               get-value:x:@.comment-tail
-               .:" matching argument"
 
          // Making sure we apply "locked" columns.
          for-each:x:@.arguments/*/args/*/columns/*/*/locked/.
@@ -439,14 +386,6 @@ semaphore:crudifier
                   .lambda
                      set-value:x:@.scope
                         .:public
-               set-value:x:@.tail-tail
-                  strings.concat
-                     get-value:x:@.tail-tail
-                     .:" with "
-                     get-value:x:@.scope
-                     .:" HTTP caching for "
-                     get-value:x:@.arguments/*/cache
-                     .:" seconds"
                strings.concat
                   get-value:x:@.scope
                   .:, max-age=
@@ -504,39 +443,8 @@ semaphore:crudifier
                   remove-nodes:x:@.operators/*/lteq
                   remove-nodes:x:@.operators/*/neq
 
-            .first:bool:true
-            set-value:x:@.comment-tail
-               strings.concat
-                  get-value:x:@.comment-tail
-                  .:" returning"
-
             // Applying arguments to endpoint.
             for-each:x:@.arguments/*/args/*/columns/*
-
-               // Checking if this is our first loop iteration.
-               if
-                  get-value:x:@.first
-                  .lambda
-
-                     // Making sure we don't come here again.
-                     set-value:x:@.first
-                        .:bool:false
-
-                     // Adding currently iterated argument into comment's tail.
-                     set-value:x:@.comment-tail
-                        strings.concat
-                           get-value:x:@.comment-tail
-                           .:" "
-                           get-value:x:@.dp/#/*/name
-
-               else
-
-                  // Adding currently iterated argument into comment's tail.
-                  set-value:x:@.comment-tail
-                     strings.concat
-                        get-value:x:@.comment-tail
-                        .:", "
-                        get-value:x:@.dp/#/*/name
 
                if
                   not-exists:x:@.dp/#/*/locked
@@ -554,7 +462,6 @@ semaphore:crudifier
 
                            // String type of argument, appending ".like" to legal arguments.
                            .buffer
-                              ..
                               .name:x:@.dp/#/*/type
                            unwrap:x:@.buffer/*
                            set-name:x:@.buffer/*/.name
@@ -563,12 +470,6 @@ semaphore:crudifier
                                  .:.
                                  get-value:x:@.dp/#/*/name
                                  .:.like
-                           set-value:x:@.buffer/0
-                              strings.concat
-                                 get-value:x:@.arguments/*/table
-                                 .:" table "
-                                 get-value:x:@.dp/#/*/name
-                                 .:" column wildcard filtering with SQL like '%' comparison"
                            add:x:@apply/*/.arguments
                               get-nodes:x:@.buffer/*
 
@@ -584,7 +485,6 @@ semaphore:crudifier
 
                            // Boolean type of argument, removing everything but ".eq" type of arguments.
                            .buffer
-                              ..
                               .name:x:@.dp/#/*/type
                            unwrap:x:@.buffer/*
                            set-name:x:@.buffer/*/.name
@@ -593,12 +493,6 @@ semaphore:crudifier
                                  .:.
                                  get-value:x:@.dp/#/*/name
                                  .:.eq
-                           set-value:x:@.buffer/0
-                              strings.concat
-                                 get-value:x:@.arguments/*/table
-                                 .:" table "
-                                 get-value:x:@.dp/#/*/name
-                                 .:" column equality exact match filtering"
                            add:x:@apply/*/.arguments
                               get-nodes:x:@.buffer/*
                      else
@@ -609,7 +503,6 @@ semaphore:crudifier
                          */
                         for-each:x:@.operators/*
                            .buffer
-                              ..
                               .name:x:@.dp/@.dp/#/*/type
                            unwrap:x:@.buffer/*/.name
                            set-name:x:@.buffer/*/.name
@@ -619,77 +512,16 @@ semaphore:crudifier
                                  get-value:x:@.dp/@.dp/#/*/name
                                  .:.
                                  get-name:x:@.dp/#
-                           set-value:x:@.buffer/0
-                              strings.concat
-                                 get-value:x:@.arguments/*/table
-                                 .:" table "
-                                 get-value:x:@.dp/@.dp/#/*/name
-                                 .:" column "
-                           .comp
-                           get-name:x:@.dp/#
-                           switch:x:@get-name
-                              case:eq
-                                 set-value:x:@.comp
-                                    .:equality exact match
-                              case:neq
-                                 set-value:x:@.comp
-                                    .:not equals
-                              case:lt
-                                 set-value:x:@.comp
-                                    .:less than
-                              case:mt
-                                 set-value:x:@.comp
-                                    .:more than
-                              case:lteq
-                                 set-value:x:@.comp
-                                    .:less than or equals
-                              case:mteq
-                                 set-value:x:@.comp
-                                    .:more than or equals
-                           set-value:x:@.buffer/0
-                              strings.concat
-                                 get-value:x:@.buffer/0
-                                 get-value:x:@.comp
-                                 .:" filtering"
                            add:x:@apply/*/.arguments
                               get-nodes:x:@.buffer/*
-
-            /*
-             * More semantic commenting.
-             */
-            .first:bool:true
-            set-value:x:@.comment-tail
                strings.concat
-                  get-value:x:@.comment-tail
-                  .:" filtering on"
-
-            // Applying arguments to endpoint.
-            for-each:x:@.arguments/*/args/*/columns/*
-
-               // Checking if this is our first loop iteration.
-               if
-                  get-value:x:@.first
-                  .lambda
-
-                     // Making sure we don't come here again.
-                     set-value:x:@.first
-                        .:bool:false
-
-                     // Adding currently iterated argument into comment's tail.
-                     set-value:x:@.comment-tail
-                        strings.concat
-                           get-value:x:@.comment-tail
-                           .:" "
-                           get-value:x:@.dp/#/*/name
-
-               else
-
-                  // Adding currently iterated argument into comment's tail.
-                  set-value:x:@.comment-tail
-                     strings.concat
-                        get-value:x:@.comment-tail
-                        .:", "
-                        get-value:x:@.dp/#/*/name
+                  get-value:x:@.arguments/*/table
+                  .:.
+                  get-value:x:@.dp/#/*/name
+               unwrap:x:+/*/*
+               add:x:@.temp-cols
+                  .
+                     .:x:@strings.concat
 
          // Making sure we add [.handling] section if needed.
          if
@@ -809,18 +641,6 @@ semaphore:crudifier
                                  as:x:@.display-name
 
                         // Then we need to add the eq and like query parameters for the referenced columns.
-                        set-value:x:+/+/+/+/*/0
-                           strings.concat
-                              get-value:x:@.dp/#/*/foreign_key/*/table
-                              .:" table "
-                              get-value:x:@.dp/#/*/foreign_key/*/name
-                              .:" column equality exact match filtering"
-                        set-value:x:+/+/+/*/2
-                           strings.concat
-                              get-value:x:@.dp/#/*/foreign_key/*/table
-                              .:" table "
-                              get-value:x:@.dp/#/*/foreign_key/*/name
-                              .:" column wildcard filtering with SQL like '%' comparison"
                         set-name:x:+/+/*/*/like
                            strings.concat
                               get-value:x:@.display-col
@@ -831,10 +651,12 @@ semaphore:crudifier
                               .:.eq
                         add:x:@apply/*/.arguments
                            .
-                              ..
                               eq:string
-                              ..
                               like:string
+                        unwrap:x:+/*/*
+                        add:x:@.temp-cols
+                           .
+                              .:x:@.display-name
 
          // Checking if paging is turned off.
          if
@@ -845,10 +667,6 @@ semaphore:crudifier
             .lambda
                remove-nodes:x:@apply/*/.arguments/*/limit
                remove-nodes:x:@apply/*/.arguments/*/offset
-               set-value:x:@apply/*/.description
-                  strings.replace:x:@apply/*/.description
-                     .:"{paging}"
-                     .:
 
          else
 
@@ -860,10 +678,6 @@ semaphore:crudifier
                      get-nodes:x:@.arguments/*/offset
                   remove-nodes:x:@.arguments/*/limit
                   remove-nodes:x:@.arguments/*/offset
-            set-value:x:@apply/*/.description
-               strings.replace:x:@apply/*/.description
-                  .:"{paging}"
-                  .:"paging, "
 
          // Checking if sorting is turned off.
          if
@@ -874,10 +688,6 @@ semaphore:crudifier
             .lambda
                remove-nodes:x:@apply/*/.arguments/*/order
                remove-nodes:x:@apply/*/.arguments/*/direction
-               set-value:x:@apply/*/.description
-                  strings.replace:x:@apply/*/.description
-                     .:"{sorting}"
-                     .:
 
          else
 
@@ -889,10 +699,6 @@ semaphore:crudifier
                      get-nodes:x:@.arguments/*/direction
                   remove-nodes:x:@.arguments/*/order
                   remove-nodes:x:@.arguments/*/direction
-            set-value:x:@apply/*/.description
-               strings.replace:x:@apply/*/.description
-                  .:"{sorting}"
-                  .:"sorting, "
 
          // Removing [operator] argument if there are "locked" columns.
          if:x:@.arguments/*/args/*/columns/*/*/locked
@@ -949,37 +755,7 @@ semaphore:crudifier
           * invokers of endpoint are allowed to insert during creationg of
           * record.
           */
-         .first:bool:true
-         set-value:x:@.comment-tail
-            strings.concat
-               get-value:x:@.comment-tail
-               .:" taking"
          for-each:x:@.arguments/*/args/*/columns/*
-
-            // Checking if this is our first loop iteration.
-            if
-               get-value:x:@.first
-               .lambda
-
-                  // Making sure we don't come here again.
-                  set-value:x:@.first
-                     .:bool:false
-
-                  // Adding currently iterated argument into comment's tail.
-                  set-value:x:@.comment-tail
-                     strings.concat
-                        get-value:x:@.comment-tail
-                        .:" "
-                        get-value:x:@.dp/#/*/name
-
-            else
-
-               // Adding currently iterated argument into comment's tail.
-               set-value:x:@.comment-tail
-                  strings.concat
-                     get-value:x:@.comment-tail
-                     .:", "
-                     get-value:x:@.dp/#/*/name
 
             if
                not-exists:x:@.dp/#/*/locked
@@ -1082,42 +858,12 @@ semaphore:crudifier
           * This is done by making sure all specified primary keys becomes mandatory
           * arguments when invoking the endpoint.
           */
-         .first:bool:true
-         set-value:x:@.comment-tail
-            strings.concat
-               get-value:x:@.comment-tail
-               .:" filtering which item to update with"
          for-each:x:@.arguments/*/args/*/primary/*
-
-            // Checking if this is our first loop iteration.
-            if
-               get-value:x:@.first
-               .lambda
-
-                  // Making sure we don't come here again.
-                  set-value:x:@.first
-                     .:bool:false
-
-                  // Adding currently iterated argument into comment's tail.
-                  set-value:x:@.comment-tail
-                     strings.concat
-                        get-value:x:@.comment-tail
-                        .:" "
-                        get-value:x:@.dp/#/*/name
-
-            else
-
-               // Adding currently iterated argument into comment's tail.
-               set-value:x:@.comment-tail
-                  strings.concat
-                     get-value:x:@.comment-tail
-                     .:", "
-                     get-value:x:@.dp/#/*/name
 
             set-value:x:+/+/+/*/0
                strings.concat
                   get-value:x:@.dp/#/*/name
-                  .:" column value being primary key of record to update"
+                  .:" column value being primary key of record to update, mandatory argument"
             set-name:x:+/+/*/1
                get-value:x:@.dp/#/*/name
             set-value:x:+/*/1
@@ -1155,37 +901,7 @@ semaphore:crudifier
           * which we can get away with, since we know that all primary keys are mandatory,
           * and declared first in our [.arguments] node in our endpoint.
           */
-         .first:bool:true
-         set-value:x:@.comment-tail
-            strings.concat
-               get-value:x:@.comment-tail
-               .:" updating"
          for-each:x:@.arguments/*/args/*/columns/*
-
-            // Checking if this is our first loop iteration.
-            if
-               get-value:x:@.first
-               .lambda
-
-                  // Making sure we don't come here again.
-                  set-value:x:@.first
-                     .:bool:false
-
-                  // Adding currently iterated argument into comment's tail.
-                  set-value:x:@.comment-tail
-                     strings.concat
-                        get-value:x:@.comment-tail
-                        .:" "
-                        get-value:x:@.dp/#/*/name
-
-            else
-
-               // Adding currently iterated argument into comment's tail.
-               set-value:x:@.comment-tail
-                  strings.concat
-                     get-value:x:@.comment-tail
-                     .:", "
-                     get-value:x:@.dp/#/*/name
 
             if
                not-exists:x:@.dp/#/*/locked
@@ -1202,11 +918,6 @@ semaphore:crudifier
                      .
                         ..
                         .
-
-         set-value:x:@.comment-tail
-            strings.concat
-               get-value:x:@.comment-tail
-               .:" fields"
 
          // First adding the [add] into [where] parts, which are the primary keys.
          .x:@.arguments/*/[0,
@@ -1380,17 +1091,6 @@ semaphore:crudifier
                get-value:x:@.arguments/*/cqrs
             .lambda
 
-               set-value:x:@.tail-tail
-                  strings.concat
-                     get-value:x:@.tail-tail
-                     .:" publishing "
-                     get-value:x:@.arguments/*/moduleName
-                     .:.
-                     get-value:x:@.arguments/*/moduleUrl
-                     .:.
-                     get-value:x:@.arguments/*/verb
-                     .:" socket message when invoked"
-
                /*
                 * Applying [sockets.signal] just before returning from endpoint.
                 * 
@@ -1494,10 +1194,7 @@ semaphore:crudifier
 
    // Applying comment's tail.
    set-value:x:@apply/*/.description
-      strings.concat
-         get-value:x:@apply/*/.description
-         get-value:x:@.comment-tail
-         get-value:x:@.tail-tail
+      get-value:x:@apply/*/.description
 
    // Applying the correct comment to the file.
    set-value:x:@apply/0
@@ -1615,9 +1312,7 @@ semaphore:crudifier
             .lambda
                insert-before:x:@apply/**/table/./-
                   .
-                     add:x:./*/data.read
-                        get-nodes:x:@.arguments/*/operator
-                     remove-nodes:x:@.arguments/*/operator
+                     ..:Adding filtering arguments.
                      add:x:+/*/where/*
                         get-nodes:x:@.arguments/*
 
@@ -1676,6 +1371,537 @@ semaphore:crudifier
             math.add
                get-value:x:@get-count
                get-count:x:@apply/**
+
+         // Buffering [apply] in case user wants to generate distinct endpoint.
+         .apply
+         add:x:@.apply
+            get-nodes:x:@apply/*
+
+         // Checking if caller wants to generate aggregate endpoint.
+         if:x:@.arguments/*/aggregate
+
+            // Creating aggregate endpoint.
+            set-value:x:@apply/*/.type
+               .:crud-aggregate
+            set-value:x:@apply/*/.description
+               strings.replace:Returns minimum, maximum, average or sum from your {table} table in your {database} database
+                  .:{database}
+                  get-value:x:@.database-name
+            set-value:x:@apply/*/.description
+               strings.replace:x:@apply/*/.description
+                  .:{table}
+                  get-value:x:@.arguments/*/table
+            set-value:x:@apply/0
+               get-value:x:@apply/*/.description
+            insert-before:x:@apply/*/.arguments/0
+               .
+                  ..:Function to aggregate upon. Argument is mandatory and legal values are min, max, sum or avg
+                  aggregate_function:string
+                  ..:Argument is mandatory and must be in the format of TABLE_NAME.COLUMN_NAME.
+                  aggregate_column:string
+            set-value:x:@apply/**/count(*)/0
+               .:result
+            set-name:x:@apply/**/count(*)
+               .:aggregate_functor
+            insert-after:x:@apply/*/data.connect/*/database-type
+               .
+                  ..:Making sure we're using correct aggregate function.
+                  set-name:x:./*/data.read/*/columns/*/aggregate_functor
+                     strings.concat
+                        get-value:x:@.arguments/*/aggregate_function
+                        .:(
+                        get-value:x:@.arguments/*/aggregate_column
+                        .:)
+                  ..:Removing aggregate arguments to simplify adding other arguments.
+                  remove-nodes:x:@.arguments/*/[0,2]
+            add:x:+/*/6
+               get-nodes:x:@.temp-cols/*
+            insert-after:x:@apply/*/.type
+               .
+                  ..:Sanity checking mandatory arguments.
+                  validators.mandatory:x:@.arguments/*/aggregate_function
+                  validators.mandatory:x:@.arguments/*/aggregate_column
+                  ..:Sanity checking name of aggregate function.
+                  validators.enum:x:@.arguments/*/aggregate_function
+                     .:min
+                     .:max
+                     .:sum
+                     .:avg
+                  ..:Sanity checking agggregate column name.
+                  validators.enum:x:@.arguments/*/aggregate_column
+
+            // Storing current result to be able to create group by endpoint.
+            .group
+            add:x:@.group
+               get-nodes:x:@apply/*
+
+            // Transforming lambda to Hyperlambda and persisting as CRUD endpoint.
+            lambda2hyper:x:@apply/*
+               comments:bool:true
+            unwrap:x:+
+            .path:x:@.folder
+            strings.split:x:@.filename
+               .:/
+            set-value:x:@.path
+               strings.concat
+                  get-value:x:@.path
+                  get-value:x:@strings.split/0/-
+                  .:-aggregate
+                  .:.
+                  get-value:x:@.arguments/*/verb
+                  .:.hl
+
+            // Figuring out filename for HTTP endpoint.
+            strings.replace:x:@.path
+               .:" "
+               .:_
+
+            // Making sure file does not exist from before, unless [.argument][overwrite] is true.
+            if
+               and
+                  or
+                     not
+                        exists:x:@.arguments/*/overwrite
+                     not
+                        get-value:x:@.arguments/*/overwrite
+                  io.file.exists:x:@strings.replace
+               .lambda
+                  throw:Module already exists
+                     status:int:401
+                     public:bool:true
+
+            /*
+             * Saving file, now applied according to template declaration,
+             * and with the correct filename.
+             */
+            io.file.save:x:@strings.replace
+               get-value:x:@lambda2hyper
+
+            // Adding count endpoint LOC count to our above LOC value.
+            set-value:x:@get-count
+               math.add
+                  get-value:x:@get-count
+                  get-count:x:@apply/**
+
+            /*
+             * Creating group endpoint.
+             */
+            set-value:x:@.group/*/.type
+               .:crud-group
+            set-value:x:@.group/*/.description
+               strings.replace:Returns minimum, maximum, average, sum or count from your {table} table in your {database} database grouped by a column
+                  .:{database}
+                  get-value:x:@.database-name
+            set-value:x:@.group/*/.description
+               strings.replace:x:@.group/*/.description
+                  .:{table}
+                  get-value:x:@.arguments/*/table
+            set-value:x:@.group/0
+               get-value:x:@.group/*/.description
+            add:x:@.group/*/validators.enum/*/=sum/.
+               .
+                  .:count
+            remove-nodes:x:@.group/*/data.connect/*/data.read/*/limit
+            remove-nodes:x:@.group/*/data.connect/*/return-nodes
+            add:x:@.group/*/data.connect
+               .
+                  return-nodes:x:@data.read/*
+            insert-before:x:@.group/*/.arguments/0
+               .
+                  ..:Mandatory argument being column to group by and must be in the format of TABLE_NAME.COLUMN_NAME
+                  group_column:string
+                  ..:Number of records to return, defaults to 25 if not specified. Pass in -1 to return all records.
+                  limit:long
+                  ..:Offset into the dataset of where to start retrieving records
+                  offset:long
+                  ..:Fully qualified name of column to order by, must be in TABLE_NAME.COLUMN_NAME format
+                  order:string
+                  ..:"What direction to order, can be 'asc' or 'desc' implying ascending and descending"
+                  direction:string
+            set-value:x:@.group/*/.arguments/*/aggregate_function/-
+               .:Function to aggregate upon. Argument is mandatory and legal values are min, max, sum, avg or count
+            insert-before:x:@.group/*/validators.mandatory/[0,1]
+               .
+                  validators.mandatory:x:@.arguments/*/group_column
+            add:x:+/*/1
+               get-nodes:x:@.group/*/validators.enum/[1,1]/*
+            insert-after:x:@.group/*/validators.enum/[0,1]
+               .
+                  ..:Sanity checking group column.
+                  validators.enum:x:@.arguments/*/group_column
+            add:x:@.group/*/data.connect/*/data.read
+               .
+                  group
+                     group_column
+            insert-after:x:@.group/*/data.connect/*/database-type
+               .
+                  ..:"Making sure we're using the correct group column"
+                  set-name:x:@data.connect/*/data.read/*/group/*/group_column
+                     get-value:x:@.arguments/*/group_column
+                  ..:Making sure we return group column as a part of the result
+                  set-name:x:+/*/*
+                     get-value:x:@.arguments/*/group_column
+                  insert-before:x:@data.connect/*/data.read/*/columns/0
+                     .
+                        group_column
+                  ..:Changing name of aggregate column returned to caller.
+                  set-value:x:@data.connect/*/data.read/*/columns/1/*/as
+                     get-value:x:@.arguments/*/aggregate_function
+                  ..:Removing group column to simplify adding other arguments
+                  remove-nodes:x:@.arguments/*/group_column
+                  ..:Adding paging arguments
+                  add:x:@data.connect/*/data.read
+                     get-nodes:x:@.arguments/*/limit
+                     get-nodes:x:@.arguments/*/offset
+                  remove-nodes:x:@.arguments/*/limit
+                  remove-nodes:x:@.arguments/*/offset
+                  ..:Parametrising our read invocation with ordering arguments if specified.
+                  add:x:./*/data.read
+                     get-nodes:x:@.arguments/*/order
+                     get-nodes:x:@.arguments/*/direction
+                  remove-nodes:x:@.arguments/*/order
+                  remove-nodes:x:@.arguments/*/direction
+
+            // Transforming lambda to Hyperlambda and persisting as CRUD endpoint.
+            lambda2hyper:x:@.group/*
+               comments:bool:true
+            unwrap:x:+
+            .path:x:@.folder
+            strings.split:x:@.filename
+               .:/
+            set-value:x:@.path
+               strings.concat
+                  get-value:x:@.path
+                  get-value:x:@strings.split/0/-
+                  .:-group
+                  .:.
+                  get-value:x:@.arguments/*/verb
+                  .:.hl
+
+            // Figuring out filename for HTTP endpoint.
+            strings.replace:x:@.path
+               .:" "
+               .:_
+
+            // Making sure file does not exist from before, unless [.argument][overwrite] is true.
+            if
+               and
+                  or
+                     not
+                        exists:x:@.arguments/*/overwrite
+                     not
+                        get-value:x:@.arguments/*/overwrite
+                  io.file.exists:x:@strings.replace
+               .lambda
+                  throw:Module already exists
+                     status:int:401
+                     public:bool:true
+
+            /*
+             * Saving file, now applied according to template declaration,
+             * and with the correct filename.
+             */
+            io.file.save:x:@strings.replace
+               get-value:x:@lambda2hyper
+
+            // Adding count endpoint LOC count to our above LOC value.
+            set-value:x:@get-count
+               math.add
+                  get-value:x:@get-count
+                  get-count:x:@.group/**
+
+         // Checking if caller wants to generate distinct endpoint.
+         if:x:@.arguments/*/distinct
+
+            // Creating distinct endpoint.
+            set-value:x:@.apply/*/.type
+               .:crud-distinct
+            set-value:x:@.apply/*/.description
+               strings.replace:Returns unique and distinct values from your {table} table in your {database} database
+                  .:{database}
+                  get-value:x:@.database-name
+            set-value:x:@.apply/*/.description
+               strings.replace:x:@.apply/*/.description
+                  .:{table}
+                  get-value:x:@.arguments/*/table
+            set-value:x:@.apply/0
+               get-value:x:@.apply/*/.description
+            insert-before:x:@.apply/*/.arguments/0
+               .
+                  ..:Name of column to return unique and distinct values for.
+                  distinct_column:string
+                  ..:Number of records to return, defaults to 25 if not specified. Pass in -1 to return all records.
+                  limit:long
+                  ..:Offset into the dataset of where to start retrieving records
+                  offset:long
+                  ..:Fully qualified name of column to order by, must be in TABLE_NAME.COLUMN_NAME format
+                  order:string
+                  ..:"What direction to order, can be 'asc' or 'desc' implying ascending and descending"
+                  direction:string
+            set-value:x:@.apply/**/count(*)/0
+               .:.
+            set-name:x:@.apply/**/count(*)
+               .:distinct_functor
+            insert-after:x:@.apply/*/data.connect/*/database-type
+               .
+                  ..:Making sure we're using correct function.
+                  set-name:x:./*/data.read/*/columns/*/distinct_functor
+                     strings.concat
+                        .:distinct(
+                        get-value:x:@.arguments/*/distinct_column
+                        .:)
+                  ..:Removing distinct argument to simplify adding other arguments.
+                  remove-nodes:x:@.arguments/*/distinct_column
+                  ..:Adding [limit] and [offset] arguments
+                  add:x:./*/data.read
+                     get-nodes:x:@.arguments/*/limit
+                     get-nodes:x:@.arguments/*/offset
+                     get-nodes:x:@.arguments/*/order
+                     get-nodes:x:@.arguments/*/direction
+                  remove-nodes:x:@.arguments/*/order
+                  remove-nodes:x:@.arguments/*/direction
+                  remove-nodes:x:@.arguments/*/limit
+                  remove-nodes:x:@.arguments/*/offset
+            add:x:+/*/3
+               get-nodes:x:@.temp-cols/*
+            insert-after:x:@.apply/*/.type
+               .
+                  ..:Sanity checking that distinct column was passed in.
+                  validators.mandatory:x:@.arguments/*/distinct_column
+                  ..:"Sanity checking distinct column's name."
+                  validators.enum:x:@.arguments/*/distinct_column
+            strings.join:x:@.temp-cols/*
+               .:", "
+            set-value:x:@.apply/*/.arguments/*/distinct_column/-
+               strings.concat
+                  get-value:x:@.apply/*/.arguments/*/distinct_column/-
+                  .:" Argument is mandatory and must be in the format of TABLE_NAME.COLUMN_NAME"
+            remove-nodes:x:@.apply/*/data.connect/*/data.read/*/limit
+            lambda2hyper:x:@.apply/*
+               comments:bool:true
+            unwrap:x:+
+            .path:x:@.folder
+            strings.split:x:@.filename
+               .:/
+            set-value:x:@.path
+               strings.concat
+                  get-value:x:@.path
+                  get-value:x:@strings.split/0/-
+                  .:-distinct
+                  .:.
+                  get-value:x:@.arguments/*/verb
+                  .:.hl
+
+            // Figuring out filename for HTTP endpoint.
+            strings.replace:x:@.path
+               .:" "
+               .:_
+
+            // Making sure file does not exist from before, unless [.argument][overwrite] is true.
+            if
+               and
+                  or
+                     not
+                        exists:x:@.arguments/*/overwrite
+                     not
+                        get-value:x:@.arguments/*/overwrite
+                  io.file.exists:x:@strings.replace
+               .lambda
+                  throw:Module already exists
+                     status:int:401
+                     public:bool:true
+
+            /*
+             * Saving file, now applied according to template declaration,
+             * and with the correct filename.
+             */
+            io.file.save:x:@strings.replace
+               get-value:x:@lambda2hyper
+
+            // Adding count endpoint LOC count to our above LOC value.
+            set-value:x:@get-count
+               math.add
+                  get-value:x:@get-count
+                  get-count:x:@.apply/**
+
+            // Creating distinct count endpoint.
+            set-value:x:@.apply/*/.type
+               .:crud-count-distinct
+            set-value:x:@.apply/*/.description
+               strings.replace:Count unique and distinct items from your {table} table in your {database} database
+                  .:{database}
+                  get-value:x:@.database-name
+            set-value:x:@.apply/*/.description
+               strings.replace:x:@.apply/*/.description
+                  .:{table}
+                  get-value:x:@.arguments/*/table
+            set-value:x:@.apply/0
+               get-value:x:@.apply/*/.description
+            set-value:x:@.apply/*/.arguments/*/distinct_column/-
+               .:" Argument is mandatory and must be in the format of TABLE_NAME.COLUMN_NAME"
+            remove-nodes:x:@.apply/*/.arguments/*/limit/-
+            remove-nodes:x:@.apply/*/.arguments/*/limit
+            remove-nodes:x:@.apply/*/.arguments/*/offset/-
+            remove-nodes:x:@.apply/*/.arguments/*/offset
+            remove-nodes:x:@.apply/*/.arguments/*/order/-
+            remove-nodes:x:@.apply/*/.arguments/*/order
+            remove-nodes:x:@.apply/*/.arguments/*/direction/-
+            remove-nodes:x:@.apply/*/.arguments/*/direction
+            remove-nodes:x:@.apply/*/data.connect/*/database-type/+/+/*
+            add:x:@.apply/*/data.connect/*/database-type/+/+
+               .
+                  strings.concat
+                     .:"count(distinct "
+                     get-value:x:@.arguments/*/distinct_column
+                     .:)
+            remove-nodes:x:@.apply/*/data.connect/*/remove-nodes/[0,1]/+/+/+/+/+/+
+            remove-nodes:x:@.apply/*/data.connect/*/remove-nodes/[0,1]/+/+/+/+/+
+            remove-nodes:x:@.apply/*/data.connect/*/remove-nodes/[0,1]/+/+/+/+
+            remove-nodes:x:@.apply/*/data.connect/*/remove-nodes/[0,1]/+/+/+
+            remove-nodes:x:@.apply/*/data.connect/*/remove-nodes/[0,1]/+/+
+            remove-nodes:x:@.apply/*/data.connect/*/remove-nodes/[0,1]/+
+            add:x:+/*/3
+               get-nodes:x:@.temp-cols/*
+            set-value:x:@.apply/**/distinct_functor/0
+               .:count
+            lambda2hyper:x:@.apply/*
+               comments:bool:true
+            unwrap:x:+
+            .path:x:@.folder
+            strings.split:x:@.filename
+               .:/
+            set-value:x:@.path
+               strings.concat
+                  get-value:x:@.path
+                  get-value:x:@strings.split/0/-
+                  .:-count-distinct
+                  .:.
+                  get-value:x:@.arguments/*/verb
+                  .:.hl
+
+            // Figuring out filename for HTTP endpoint.
+            strings.replace:x:@.path
+               .:" "
+               .:_
+
+            // Making sure file does not exist from before, unless [.argument][overwrite] is true.
+            if
+               and
+                  or
+                     not
+                        exists:x:@.arguments/*/overwrite
+                     not
+                        get-value:x:@.arguments/*/overwrite
+                  io.file.exists:x:@strings.replace
+               .lambda
+                  throw:Module already exists
+                     status:int:401
+                     public:bool:true
+
+            /*
+             * Saving file, now applied according to template declaration,
+             * and with the correct filename.
+             */
+            io.file.save:x:@strings.replace
+               get-value:x:@lambda2hyper
+
+            // Adding count endpoint LOC count to our above LOC value.
+            set-value:x:@get-count
+               math.add
+                  get-value:x:@get-count
+                  get-count:x:@.apply/**
+
+         // Checking if caller wants to generate search endpoint.
+         if
+            eq:x:@.arguments/*/search
+               .:bool:true
+            .lambda
+
+               // Caller wants keyword density search endpoint.
+               io.file.load:/system/crudifier/templates/search.template.get.hl
+               hyper2lambda:x:-
+                  comments:bool:true
+               unwrap:x:+/*
+               apply:x:@hyper2lambda
+                  database-type:x:@.arguments/*/databaseType
+                  database:x:@.arguments/*/database
+                  table:x:@.arguments/*/table
+
+               // Creating our file level comment.
+               set-value:x:@apply/0
+                  strings.replace:x:@apply/0
+                     .:{table}
+                     get-value:x:@.arguments/*/table
+               set-value:x:@apply/0
+                  strings.replace:x:@apply/0
+                     .:{database}
+                     get-value:x:@.database-name
+
+               // Making sure we add columns to endpoint.
+               .has-columns:bool:false
+               for-each:x:@.arguments/*/args/*/columns/*
+                  if
+                     eq:x:@.dp/#/*/type
+                        .:string
+                     .lambda
+
+                        set-value:x:@.has-columns
+                           .:bool:true
+                        unwrap:x:+/*/*
+                        add:x:@apply/*/.columns
+                           .
+                              .:x:@.dp/#/*/name
+
+               // Verifying we've actually got columns.
+               if:x:@.has-columns
+
+                  // Saving file.
+                  lambda2hyper:x:@apply/*
+                     comments:true
+                  unwrap:x:+
+                  .path:x:@.folder
+                  strings.split:x:@.filename
+                     .:/
+                  set-value:x:@.path
+                     strings.concat
+                        get-value:x:@.path
+                        get-value:x:@strings.split/0/-
+                        .:-search
+                        .:.
+                        get-value:x:@.arguments/*/verb
+                        .:.hl
+
+                  // Figuring out filename for HTTP endpoint.
+                  strings.replace:x:@.path
+                     .:" "
+                     .:_
+
+                  // Making sure file does not exist from before, unless [.argument][overwrite] is true.
+                  if
+                     and
+                        or
+                           not
+                              exists:x:@.arguments/*/overwrite
+                           not
+                              get-value:x:@.arguments/*/overwrite
+                        io.file.exists:x:@strings.replace
+                     .lambda
+                        throw:Module already exists
+                           status:int:401
+                           public:bool:true
+
+                  /*
+                   * Saving file, now applied according to template declaration,
+                   * and with the correct filename.
+                   */
+                  io.file.save:x:@strings.replace
+                     get-value:x:@lambda2hyper
+
+                  // Adding count endpoint LOC count to our above LOC value.
+                  set-value:x:@get-count
+                     math.add
+                        get-value:x:@get-count
+                        get-count:x:@.apply/**
 
    // Making sure we evict the cache entry for endpoints.
    cache.set:endpoints

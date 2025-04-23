@@ -1,0 +1,93 @@
+
+/*
+ * Creates the slot that avoids abuse of AI chatbot if configuration setting is turned on.
+ *
+ * This allows you to create a maximum number of chat requests each unique user ID can perform per day.
+ */
+slots.create:magic.openai.chat-interceptor.avoid-abuse
+
+   // Getting original IP address of request.
+   request.headers.get:cf-connecting-ip
+
+   // Verifying we've actually got an IP address.
+   if
+      and
+         not-null:x:@request.headers.get
+         neq:x:@request.headers.get
+            .:
+      .lambda
+
+         // Connecting to magic database.
+         data.connect:magic
+
+            // Checking if IP address has been blocked previously.
+            data.read
+               table:ml_blocked_ips
+               where
+                  and
+                     ip_address.eq:x:@request.headers.get
+            if
+               exists:x:@data.read/*
+               .lambda
+
+                  // IP address has been blocked.
+                  request.headers.list
+                  add:x:./*/log.info
+                     get-nodes:x:@request.headers.list/*
+                  log.info:Potential abuse, user has been permanently blocked
+                  throw:Sorry, you have been permanently blocked from accessing this AI chatbot because of abuse. Send an email to team@ainiro.io if you think this is not correct.
+                     public:bool:true
+                     status:int:401
+
+            // True if we should block IP address.
+            .block:bool:false
+
+            // Checking if cloudlet is configured for maximum number of requests per day per user.
+            config.get:"magic:openai:max-daily-requests"
+            if
+               and
+                  not-null:x:@config.get
+                  neq:x:@config.get
+                     .:
+               .lambda
+
+                  // Cloudlet is configured to only answer the same user n times per day.
+                  .no
+                  set-value:x:@.no
+                     convert:x:@config.get
+                        type:int
+
+                  // Counting questions user has asked today.
+                  data.scalar:"select count(*) from ml_requests where user_id = @user and created >= date('now', '-1 day')"
+                     @user:x:@.arguments/*/user_id
+
+                  // Checking if user has exhausted his daily requests.
+                  if
+                     mt
+                        convert:x:@data.scalar
+                           type:int
+                        get-value:x:@.no
+                     .lambda
+
+                        // Blocking user.
+                        set-value:x:@.block
+                           .:bool:true
+
+            // Checking if we should block user.
+            if:x:@.block
+
+               // Blocking IP address.
+               data.create
+                  table:ml_blocked_ips
+                  values
+                     ip_address:x:@request.headers.get
+                     user_id:x:@.arguments/*/user_id
+
+               // Writing it into our log.
+               add:x:./*/log.info
+                  request.headers.list
+               log.info:IP address was permanently blocked
+               throw:Sorry, you have been permanently blocked from accessing this AI chatbot because of abuse. Send an email to team@ainiro.io if you think this is not correct.
+                  public:bool:true
+                  status:int:401
+

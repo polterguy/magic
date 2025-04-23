@@ -10,6 +10,7 @@ import { ViewPluginComponent } from './components/view-app/view-plugin.component
 import { AppManifest } from '../../../../models/app-manifest';
 import { BazarService } from 'src/app/services/bazar.service';
 import { BazarApp } from 'src/app/models/bazar-app.model';
+import { ConfirmationDialogComponent } from '../../common/confirmation-dialog/confirmation-dialog.component';
 
 /**
  * Plugin component displaying available plugins from Bazar.
@@ -57,10 +58,9 @@ export class PluginsComponent implements OnInit {
   getPluginsToDisplay() {
 
     return this.availablePlugins.filter((x: any) => {
-      if (x.installed) {
-        return false;
-      }
-      if (this.searchKey && this.searchKey.length > 0 && x.name.toLowerCase().indexOf(this.searchKey.toLowerCase()) === -1) {
+      if (this.searchKey &&
+          this.searchKey.length > 0 &&
+          (x.name.toLowerCase().indexOf(this.searchKey.toLowerCase()) === -1 && x.type.indexOf(this.searchKey.toLowerCase()) === -1 && x.description.toLowerCase().indexOf(this.searchKey.toLowerCase()) === -1)) {
         return false;
       }
       return true;
@@ -69,21 +69,32 @@ export class PluginsComponent implements OnInit {
 
   install(plugin: any) {
 
-    this.bazarService.installPlugin(plugin).subscribe({
+    if (plugin.type === 'frontend') {
 
-      next: () => {
+      // We need to warn user that his files will be over written.
+      this.dialog.open(ConfirmationDialogComponent, {
+        width: '500px',
+        data: {
+          title: 'Confirm installation',
+          description_extra: `This will overwrite all existing frontend files you might have in your '/etc/www/' folder. Are you sure you want to do this?`,
+          action_btn: 'Yes, I am sure',
+          action_btn_color: 'warn',
+          bold_description: true
+        }
+      }).afterClosed().subscribe((result: string) => {
 
-        plugin.installed = true;
-        this.generalService.showFeedback(
-          'You can leave this page now, you will be notified when plugin is installed.',
-          'successMessage');
-      },
+        if (result === 'confirm') {
 
-      error: (error: any) => {
+          // User confirmed action.
+          this.installImplementation(plugin);
+        }
+      });
 
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-      }
-    });
+    } else {
+
+      // We can install plugin immediately.
+      this.installImplementation(plugin);
+    }
   }
 
   /*
@@ -93,11 +104,18 @@ export class PluginsComponent implements OnInit {
   private loadAvailablePlugins() {
 
     this.generalService.showLoading();
-    this.bazarService.availablePlugins(null, 0, 1000).subscribe({
+    this.bazarService.availablePlugins().subscribe({
 
       next: (apps: BazarApp[]) => {
 
-        this.availablePlugins = apps;
+        this.availablePlugins = apps.map(x => {
+          return {
+            name: x.name,
+            description: x.description,
+            intro: x.description.trim().substring(0, x.description.indexOf('.') + 1),
+            type: x.type,
+          };
+        });
         this.loadInstalledPlugins();
       },
 
@@ -120,13 +138,32 @@ export class PluginsComponent implements OnInit {
         this.installedPlugins = manifests || [];
 
         this.availablePlugins.map((idxAvailable: any) => {
-          idxAvailable.installed = this.installedPlugins.filter((x: any) => x.module_name === idxAvailable.folder_name).length > 0;
+          idxAvailable.installed = this.installedPlugins.filter((x: any) => x.module_name === idxAvailable.name).length > 0;
         });
       },
 
       error: (error: any) => {
 
         this.generalService.hideLoading();
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
+  }
+
+  private installImplementation (plugin: any) {
+
+    this.bazarService.installPlugin(plugin).subscribe({
+
+      next: () => {
+
+        plugin.installed = true;
+        this.generalService.showFeedback(
+          'You can leave this page now, you will be notified when plugin is installed.',
+          'successMessage');
+      },
+
+      error: (error: any) => {
+
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
       }
     });

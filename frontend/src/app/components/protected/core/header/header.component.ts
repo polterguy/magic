@@ -3,7 +3,7 @@
  * Copyright (c) 2023 Thomas Hansen - For license inquiries you can contact thomas@ainiro.io.
  */
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BackendService } from 'src/app/services/backend.service';
 import { NavLinks } from 'src/app/models/nav-links';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,11 +11,7 @@ import { DialogComponent } from 'src/app/components/protected/common/dialog/dial
 import { BackendsListComponent } from 'src/app/components/protected/core/header/components/backends-list/backends-list.component';
 import { GenerateTokenDialogComponent } from 'src/app/components/protected/user/generate-token-dialog/generate-token-dialog.component';
 import { Router } from '@angular/router';
-import { MessageService } from 'src/app/services/message.service';
-import { Message } from 'src/app/models/message.model';
-import { MatMenuTrigger } from '@angular/material/menu';
 import { MagicResponse } from 'src/app/models/magic-response.model';
-import { ChatbotComponent } from '../../common/chatbot/chatbot.component';
 
 /**
  * Header component showing navbar links and backend switcher.
@@ -27,23 +23,16 @@ import { ChatbotComponent } from '../../common/chatbot/chatbot.component';
 })
 export class HeaderComponent implements OnInit {
 
-  @ViewChild('completion_menu_trigger') completion_menu_trigger: MatMenuTrigger;
-  @ViewChild('chatbot') private chatbot: ChatbotComponent;
-
-  help_description: string;
-  help_url: string;
   navLinks: NavLinks[] = [];
   activeUrl: string = '';
   backendList: any = [];
   sideExpanded: boolean = false;
   isAffiliate: boolean = false;
   completion: string = null;
-  showChatbot: boolean = false;
 
   constructor(
     private router: Router,
     private dialog: MatDialog,
-    private messageService: MessageService,
     private backendService: BackendService) { }
 
   ngOnInit() {
@@ -51,29 +40,12 @@ export class HeaderComponent implements OnInit {
     this.createMenu();
     this.getSetupStatus();
     this.activeUrl = this.backendService.active.url.replace('http://', '').replace('https://', '');
-    this.help_description = this.getComponentDescription();
-    this.help_url = this.getComponentURL();
 
-    this.router.events.subscribe({
-      next: (result: any) => {
-
-        if (result.type === 1) {
-          this.help_description = this.getComponentDescription();
-          this.help_url = this.getComponentURL();
-        }
-      }
-    });
-
-    this.messageService.subscriber().subscribe((msg: Message) => {
-
-      switch (msg.name) {
-
-        case 'magic.show-help':
-          this.completion = msg.content;
-          this.completion_menu_trigger.openMenu();
-          break;
-      }
-    });
+    // Including AI chatbot
+    const script = document.createElement('script');
+    script.src = 'https://ainiro.io/magic/system/openai/include-chatbot.js?rtl=false&clear_button=false&follow_up=true&copyButton=false&new_tab=true&code=true&references=false&position=right&type=magic-documentation&header=Ask%20about%20Hyperlambda%20or%20Magic&popup=&button=AI%20Chatbot&placeholder=Ask%20me%20about%20Hyperlambda%20...&color=%23505050&start=%23fefefe&end=%23e0e0e0&link=%23fe8464&theme=modern-square&hidden=true&v=zxcweq';
+    script.async = true;
+    document.body.appendChild(script);
   }
 
   toggleSidebar() {
@@ -142,169 +114,6 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  private getComponentDescription() {
-
-    const vals = this.router.url.split('/');
-    const val = vals[1] === '' ? '/' : vals[1];
-
-    switch (val) {
-
-      case '/':
-        return `The Magic Dashboard is the primary tool for managing an AINIRO.IO Magic Cloud installation.
-It provides a graphical user interface for managing tasks, machine learning models, Hyperlambda code,
-and other aspects of your cloudlet. It also contains key performance indicators, charts, and a YouTube
-tutorial for getting started with Magic and Hyperlambda.`;
-
-      case 'chatbot-wizard':
-        return `The Chatbot Wizard allows you to rapidly create a chatbot for your website by providing
-your OpenAI API Key, your Google reCAPTCHA site-key and secret, and the URL for your website.
-It doesn't give you as many options as the Machine Learning component, but rapidly allows you to create
-a chatbot you can embed on your website. You can start out with this wizard, for then to later edit your
-model using the Machine Learning component.`;
-
-      case 'sql-studio':
-        return `SQL Studio is where you can both visually design your databases in addition to execute
-SQL towards your database of choice. It transparently supports any of the following databases; SQL Server, 
-MySQL, PostgreSQL, MariaDB and SQLite.`;
-
-      case 'databases':
-        return `The databases component is where you manage your databases, and your connection strings.
-It is also where you can create new databases. It transparently allows you to create a new database in
-SQLite, MySQL, MariaDB, PostgreSQL and SQL Server.`;
-
-      case 'endpoint-generator':
-        return `The endpoint generator is where you can automatically create CRUD endpoints wrapping
-your database of choice, in addition to creating SQL based endpoints. It give you a whole range of
-settings, such as turning on or off logging, publishing socket messages upon invocation to write endpoints,
-authentication and authorisation configuration options, etc.`;
-
-      case 'hyper-ide':
-        return `Hyper IDE is Magic's integrated IDE, and is particularly good for editing Hyperlambda files.
-It also gives you a lot of machine learning and AI capabilities, in addition to a whole range of other
-features that simplifies your life as a software developer. You would typically want to use Hyper IDE
-on your generated Hyperlambda code after having used the endpoint generator first to apply your own
-custom business logic according to your requirements.`;
-
-      case 'user-roles-management':
-        return `The users and roles component it where you can manage your users and roles.
-From this component you can create new users and roles, in addition to associate users with roles.`;
-
-      case 'endpoints':
-        return `The Endpoints component in Magic allows you to view and test your HTTP endpoints.
-It provides a search function, parameters, and the ability to simulate a client. It also includes
-meta data for each endpoint, such as the URL, HTTP verb, type of data consumed and produced,
-authorization requirements, and more. Once an endpoint is invoked, a health check test can be created
-to sanity check the system. This component also supports providing JSON payloads to POST and PUT endpoints.`;
-
-      case 'task-manager':
-        return `The task manager component allows you to create and persist tasks to your database.
-You can either schedule tasks for later, either a specific date and time in the future or repeatedly,
-or you can trigger tasks from other parts of your Hyperlambda code. Tasks are persisted to
-your Magic database, so even if your server is restarted, scheduled tasks will for the most parts
-be correctly re-scheduled.`;
-
-      case 'hyperlambda-playground':
-        return `The Hyperlambda Playground component allows you to play with Hyperlambda code,
-execute your code in “immediate mode”, and see the result of your execution immediately.
-It also contains a range of “Hyperlambda snippets” which demonstrate Hyperlambda's capabilities
-and provide examples for you to learn Hyperlambda. The “Save” button allows you to store your Hyperlambda
-snippets as “admin snippets” that can be quickly executed later.`;
-
-      case 'sockets':
-        return `The sockets component allows you to play with and debug your socket messages.
-Subscribe to sockets you wish to debug, and/or publish socket messages as you see fit from this component,
-and see the result in this component.`;
-
-      case 'plugins':
-        return `Magic's plugin component is an integrated "App Store" that allows you to install backend
-plugins on the fly without interrupting normal usage. It provides access to AINIRO.IO's repository of
-pre-fabricated plugins, such as Stripe payment plugins and SQLite example
-databases. Most plugins automatically create their databases and any other necessary components for
-initialization. You can view and edit the plugin code after installing a plugin using Hyper IDE.`;
-
-      case 'machine-learning':
-        return `The machine learning component allows you to create and test AI models.
-It also allows you to import training data for your AI models, either from files containing your
-training data, or by crawling and scraping a website. When you have gathered training data, and
-quality assured your training data, you can upload it to OpenAI's API automatically using this component,
-resulting in a new machine learning model you can test from here, and consume in your own projects - Or
-you can use Magic's RAG features in combination with OpenAI.`;
-
-      case 'configuration':
-        return `The configuration component is where can modify your server's configuration settings, and
-is typically used to for instance configure your server's SMTP settings, reCAPTCHA settings, etc. Be careful
-as you're editing your server's configuration, since applying a wrong configuration setting might in theory
-make your server inaccessible.`;
-
-      case 'health-check':
-        return `The health check component allows you to easily sanity check your system, providing you with
-a diagnostic tool to ensure it is functioning correctly. Automated tests can be created with the "Endpoints"
-menu item or manually written in Hyperlambda. You can then run all tests automatically and view any errors that arise.`;
-
-      case 'log':
-        return `The Log component in Magic allows you to browse your server's log and filter for specific items.
-There are 4 types of log entries you can create: debug, info, error, and fatal. You can configure the log
-level to adjust how much is logged. Refer to magic.lambda.logging to understand how you can create
-log items from your own Hyperlambda code.`;
-
-      case 'user-profile':
-        return `The Profile component of Magic allows you to customize your profile by changing your password,
-theme, and name. However, you cannot change your username or email address due to the need for double
-optin verification and potential referential integrity issues.`;
-    }
-  }
-
-  private getComponentURL() {
-
-    const vals = this.router.url.split('/');
-    const val = vals[1] === '' ? '/' : vals[1];
-
-    switch (val) {
-
-      case '/':
-        return 'https://polterguy.github.io';
-
-      case 'chatbot-wizard':
-        return 'https://polterguy.github.io/dashboard/chatbot-wizard/';
-
-      case 'sql-studio':
-        return 'https://polterguy.github.io/dashboard/sql-studio/';
-
-      case 'databases':
-        return 'https://polterguy.github.io/dashboard/databases/';
-
-      case 'endpoint-generator':
-        return 'https://polterguy.github.io/dashboard/endpoint-generator/';
-
-      case 'hyper-ide':
-        return 'https://polterguy.github.io/dashboard/hyper-ide/';
-
-      case 'user-roles-management':
-        return 'https://polterguy.github.io/dashboard/users-roles/';
-
-      case 'endpoints':
-        return 'https://polterguy.github.io/dashboard/endpoints/';
-
-      case 'task-manager':
-        return 'https://polterguy.github.io/dashboard/task-manager/';
-
-      case 'hyperlambda-playground':
-        return 'https://polterguy.github.io/dashboard/hyperlambda-playground/';
-
-      case 'plugins':
-        return 'https://polterguy.github.io/dashboard/plugins/';
-
-      case 'machine-learning':
-        return 'https://polterguy.github.io/dashboard/machine-learning/';
-
-      case 'configuration':
-        return 'https://polterguy.github.io/dashboard/configuration/';
-
-      case 'log':
-        return 'https://polterguy.github.io/dashboard/log/';
-    }
-  }
-
   private getSetupStatus() {
 
     // Subscribing to status changes and redirect accordingly if we need user to setup system.
@@ -338,8 +147,8 @@ optin verification and potential referential integrity issues.`;
             exact: false,
           },
           {
-            name: 'Endpoint Generator',
-            url: '/endpoint-generator',
+            name: 'Generator',
+            url: '/generator',
             exact: false,
           },
           {
@@ -438,17 +247,10 @@ optin verification and potential referential integrity issues.`;
     this.checkActiveLink(this.router.url);
   }
 
-  toggleChatbot() {
+  showChatbot() {
 
-    this.showChatbot = !this.showChatbot;
-
-    if (this.showChatbot) {
-      this.chatbot.focus();
-    }
-  }
-
-  hideChatbot() {
-
-    this.showChatbot = false;
+    // Invoked when user wants to see the AI chatbot.
+    let tmp: any = window;
+    tmp.ainiro.show();
   }
 }

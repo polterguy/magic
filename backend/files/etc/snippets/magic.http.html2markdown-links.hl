@@ -1,3 +1,4 @@
+// Returns hyperlinks from a DuckDuckGo search to caller.
 unwrap:x:+/*
 signal:magic.http.html2markdown-links
    url:"https://html.duckduckgo.com/html/?q=Pixar"

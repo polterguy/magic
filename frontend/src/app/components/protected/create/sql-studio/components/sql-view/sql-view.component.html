@@ -112,7 +112,7 @@
                   {{column}}
                 </th>
 
-                <td mat-cell *matCellDef="let row" class="ps-3 text-truncate">
+                <td mat-cell *matCellDef="let row" [class.format-result]="shouldFormat(row[column])" class="ps-3">
 
                   <ng-container *ngIf="column !== 'created';else dateColumn">
                     {{row[column] ?? '[null]'}}
@@ -135,6 +135,12 @@
           </div>
 
           <div class="text-end">
+
+            <mat-slide-toggle
+              labelPosition="after"
+              [(ngModel)]="formatResultView">
+              Format
+            </mat-slide-toggle>
 
             <button
               mat-button

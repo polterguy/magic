@@ -1,8 +1,7 @@
 
 /*
  * Slot that returns context and references for the specified [type], given the
- * specified [threshold], the specified [prompt], the specified [vector_model]
- * and the specified [max_tokens].
+ * specified [threshold], the specified [prompt], and the specified [max_tokens].
  */
 slots.create:magic.ai.get-context
 
@@ -11,7 +10,6 @@ slots.create:magic.ai.get-context
    validators.mandatory:x:@.arguments/*/prompt
    validators.mandatory:x:@.arguments/*/threshold
    validators.mandatory:x:@.arguments/*/max_tokens
-   validators.mandatory:x:@.arguments/*/vector_model
    validators.string:x:@.arguments/*/prompt
       min:1
 
@@ -19,16 +17,32 @@ slots.create:magic.ai.get-context
     * Verifying we've got any training snippets that are vectorized at all,
     * and if not, returning nothing to caller.
     */
+   .embeddings-model
    data.connect:[generic|magic]
-      data.select:select * from ml_training_snippets where embedding is not null
+      data.scalar:select count(*) from ml_training_snippets where embedding is not null and type = @type
+         @type:x:@.arguments/*/type
       if
-         not-exists:x:@data.select/*/*
+         eq
+            convert:x:@data.scalar
+               type:int
+            .:int:0
          .lambda
 
             // There are zero snippets in our database that have been vectorized.
             return
                context
                snippets
+
+      // Finding vector model for type.
+      data.read
+         table:ml_types
+         columns
+            vector_model
+         where
+            and
+               type.eq:x:@.arguments/*/type
+      set-value:x:@.embeddings-model
+         get-value:x:@data.read/*/*/vector_model
 
    // Converting threshold in case we're given the wrong type.
    set-value:x:@.arguments/*/threshold
@@ -70,7 +84,7 @@ slots.create:magic.ai.get-context
          Content-Type:application/json
       payload
          input:x:@.prompt
-         model:x:@.arguments/*/vector_model
+         model:x:@.embeddings-model
       convert:true
 
    // Sanity checking above invocation.
@@ -92,6 +106,37 @@ slots.create:magic.ai.get-context
             public:bool:true
             status:x:@http.post
 
+   // Making sure we actually have a [session] argument before we try to create a tal for our SQL.
+   .tail:
+   .next
+   .cache-key
+   if
+      and
+         exists:x:@.arguments/*/session
+         not-null:x:@.arguments/*/session
+      .lambda
+
+         // Figuring out cache key to use for snippets we've already used in session.
+         set-value:x:@.cache-key
+            strings.concat
+               get-value:x:@.arguments/*/session
+               .:.IDs
+
+         // Retrieving IDs of snippet's we already used in session from cache.
+         cache.get:x:@.cache-key
+         if
+            not-null:x:@cache.get
+            .lambda
+
+               // Adding our tal to our SQL contaning all IDs of items we've previously used.
+               set-value:x:@.tail
+                  strings.concat
+                     .:" and id not in("
+                     get-value:x:@cache.get
+                     .:)
+               set-value:x:@.next
+                  get-value:x:@cache.get
+
    // Fetching relevant snippets, making sure we profile the time it takes.
    .begin
    set-value:x:@.begin
@@ -106,14 +151,18 @@ slots.create:magic.ai.get-context
       math.subtract
          .:float:1
          get-value:x:@.arguments/*/threshold
-      data.select:@"
+      strings.concat
+         .:@"
 select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cached
 	from vss_ml_training_snippets as vss
     	inner join ml_training_snippets ts on ts.id = vss.rowid
    where
       ts.type = @type and
       vss_search(vss.embedding_vss, @embedding) and
-      vss.distance < @threshold limit 50"
+      vss.distance < @threshold"
+         get-value:x:@.tail
+         .:" limit 20"
+      data.select:x:@strings.concat
          embedding:x:@floatArray2bytes
          type:x:@.arguments/*/type
          threshold:x:@math.subtract
@@ -159,6 +208,25 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
             db_time:x:@.time
 
    /*
+    * To avoid mixin snippets from being executed unless they're matched at the top,
+    * we execute mixin logic on the first snippet, and ignore all other mixin snippets
+    * while we iterate through all other snippets.
+    */
+   if
+      and
+         exists:x:@.scan/0/*/completion
+         not-null:x:@.scan/0/*/completion
+         strings.contains:x:@.scan/0/*/completion
+            .:"{{"
+      .lambda
+
+         // Executing mixin on the first snippet if snippet contains mixin Hyperlambda.
+         unwrap:x:+/*/*
+         set-value:x:@.scan/0/*/completion
+            strings.mixin:x:@.scan/0/*/completion
+               prompt:x:@.arguments/*/prompt
+
+   /*
     * Used to hold the referenced snippets used to create our context.
     *
     * Returned to caller as [snippets].
@@ -171,140 +239,153 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
    // Temporary variable used to calculate tokens.
    .tmp:
 
-   /*
-    * To avoid mixin snippets from being executed unless they're matched at the top,
-    * we pre-process results, and remove all mixin snippets not matched as first match.
-    */
-   if
-      exists:x:@.scan/0/*/completion
-      .lambda
-
-         // Executing mixin on the first snippet.
-         unwrap:x:+/*/*
-         set-value:x:@.scan/0/*/completion
-            strings.mixin:x:@.scan/0/*/completion
-               prompt:x:@.arguments/*/prompt
-
-         /*
-          * Moving all snippets to [.tmp], such that we can add only snippets
-          * that are not mixin snippets to [.scan].
-          */
-         .tmp
-         add:x:@.tmp
-            get-nodes:x:@.scan/*
-         remove-nodes:x:@.scan/*
-         for-each:x:@.tmp/*
-
-            // Only adding non-mixin snippets back to [.scan]
-            if
-               and
-                  not
-                     strings.contains:x:@.dp/#/*/completion
-                        .:"{{"
-                  not
-                     strings.contains:x:@.dp/#/*/completion
-                        .:"}}"
-               .lambda
-
-                  // Not a mixin snippet.
-                  add:x:@.scan
-                     get-nodes:x:@.dp/#
+   // Used to store IDs of snippets we've created context out of.
+   .ids
 
    /*
-    * Running through all training snippets creating our context
+    * Running through all training snippets, creating our context,
     * and storing referenced snippets in the process.
     */
-   while
-      exists:x:@.scan/0
-      .lambda
+   for-each:x:@.scan/*
 
-         /*
-          * Concatenating top snippet to [.tmp] buffer
-          * such that we can calculate total number of tokens
-          * resulting from adding currently iterated snippet.
-          */
-         set-value:x:@.tmp
-            strings.concat
-               get-value:x:@.tmp
-               .:"\r\n"
-               get-value:x:@.scan/0/*/prompt
-               .:"\r\n"
-               .:"\r\n"
-               get-value:x:@.scan/0/*/completion
-               .:"\r\n"
-
-         /*
-          * Verifying that adding currently iterated snippet doesn't
-          * produce more tokens than acceptable.
-          *
-          * Notice, even if currently iterated snippet might overflow threshold,
-          * it might be possible to add the NEXT snippet, with lower dot product score,
-          * if it is smaller in size. Hence we continue through entire set instead of
-          * stopping once we've reached threshold.
-          */
-         if
-            lt
-               openai.tokenize:x:@.tmp
-               get-value:x:@.arguments/*/max_tokens
-            .lambda
-
-               /*
-                * We've got room for more context, hence updating [.context]
-                * to the value of [.tmp].
-                */
-               set-value:x:@.context
-                  get-value:x:@.tmp
-
-               /*
-                * Checking if we can use currently iterated snippet as a "reference",
-                * which is only true if the snippet actually contains a [uri], and has
-                * not already been added as a reference.
-                */
-               if
-                  and
-                     not-null:x:@.scan/0/*/uri
-                     not-exists:x:@.result/*/*/uri/={@.scan/0/*/uri}
-                  .lambda
-
-                     // Adding current reference to [.result]
-                     unwrap:x:+/*/*/*
-                     add:x:@.result
-                        .
-                           .
-                              prompt:x:@.scan/0/*/prompt
-                              uri:x:@.scan/0/*/uri
-                              distance:x:@.scan/0/*/distance
-         else
+      // Only using non-mixin snippets.
+      if
+         not
+            strings.contains:x:@.dp/#/*/completion
+               .:"{{"
+         .lambda
 
             /*
-             * Removing the currently appended snippet from [.tmp]
-             * to allow the logic to correctly check if we can use the NEXT snippet.
+             * Concatenating top snippet to [.tmp] buffer,
+             * such that we can calculate total number of tokens
+             * resulting from adding currently iterated snippet.
              */
             set-value:x:@.tmp
-               get-value:x:@.context
+               strings.concat
+                  get-value:x:@.tmp
+                  .:"\r\n"
+                  get-value:x:@.dp/#/*/prompt
+                  .:"\r\n"
+                  .:"\r\n"
+                  get-value:x:@.dp/#/*/completion
+                  .:"\r\n\r\n---\r\n"
 
-         /*
-          * Removing currently iterated snippet.
-          *
-          * Notice, this logic allows us to add smaller snippets with "less accuracy"
-          * than larger snippets found as "better matches" since it will loop through
-          * all 50 snippets we found above, and add "whatever it can add" to the context.
-          */
-         remove-nodes:x:@.scan/0
+            /*
+             * Verifying that adding currently iterated snippet doesn't
+             * produce more tokens than the model's max_tokens value.
+             *
+             * Notice, even if currently iterated snippet might overflow threshold,
+             * it might be possible to add the NEXT snippet, with lower dot product score,
+             * if it is smaller in size. Hence we continue through entire set instead of
+             * stopping once we've reached threshold.
+             */
+            if
+               lt
+                  openai.tokenize:x:@.tmp
+                  get-value:x:@.arguments/*/max_tokens
+               .lambda
+
+                  /*
+                   * We've got room for more context, hence updating [.context]
+                   * to the value of [.tmp].
+                   */
+                  set-value:x:@.context
+                     get-value:x:@.tmp
+
+                  // Storing ID of currently used snippet.
+                  unwrap:x:+/*/*
+                  add:x:@.ids
+                     .
+                        .:x:@.dp/#/*/id
+
+                  /*
+                   * Checking if we can use currently iterated snippet as a "reference",
+                   * which is only true if the snippet actually contains a [uri], and has
+                   * not already been added as a reference.
+                   */
+                  if
+                     and
+                        not-null:x:@.dp/#/*/uri
+                        not-exists:x:@.result/*/*/uri/={@.dp/#/*/uri}
+                     .lambda
+
+                        // Adding current reference to [.result]
+                        unwrap:x:+/*/*/*
+                        add:x:@.result
+                           .
+                              .
+                                 prompt:x:@.dp/#/*/prompt
+                                 uri:x:@.dp/#/*/uri
+                                 distance:x:@.dp/#/*/distance
+
+            else
+
+               /*
+                * Removing the currently appended snippet from [.tmp]
+                * to allow the logic to correctly check if we can use the next snippet.
+                */
+               set-value:x:@.tmp
+                  get-value:x:@.context
 
    // Trimming [.context] before we return it to caller.
    set-value:x:@.context
       strings.trim:x:@.context
-         .:"\r\n \t"
+         .:"\r\n \t-"
+
+   // Making sure we've got a [session] before storing snippet IDs into cache.
+   if
+      and
+         exists:x:@.arguments/*/session
+         not-null:x:@.arguments/*/session
+      .lambda
+
+         // Storing IDs of snippets we've already used for session in server cache.
+         .value
+         set-value:x:@.value
+            strings.join:x:@.ids/*
+               .:,
+         if
+            not-null:x:@.tail/+
+            .lambda
+
+               // Adding snippets from session to [.value].
+               set-value:x:@.value
+                  strings.concat
+                     get-value:x:@.value
+                     .:,
+                     get-value:x:@.tail/+
+               set-value:x:@.value
+                  strings.trim:x:@.value
+                     .:,
+
+               /*
+                * Making sure we never cache more than maximum 20 IDs to allow for
+                * re-retrieving the same snippet again.
+                */
+               strings.split:x:@.value
+                  .:,
+               if
+                  mte
+                     get-count:x:@strings.split/*
+                     .:int:20
+                  .lambda
+                     remove-nodes:x:@strings.split/*/[15,20]
+                     set-value:x:@.value
+                        strings.join:x:@strings.split/*
+                           .:,
+
+         // Storing snippet IDs used in cache.
+         cache.set:x:@.cache-key
+            value:x:@.value
+            expiration:x:@.arguments/*/session_timeout
 
    // Returning context and relevant snippets to caller.
    if
-      and
-         exists:x:@.context
-         not-null:x:@.context
-         neq:x:@.context
-            .:
+      neq:x:@.context
+         .:
       .lambda
+
+         // We've got at least some context.
          add:x:+/+/*/*/snippets
             get-nodes:x:@.result/*
          unwrap:x:+/*/*/context
@@ -312,6 +393,8 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
             .
                context:x:@.context
                snippets
-   unwrap:x:./*/return/*
+
+   // We didn't find any context at all.
+   unwrap:x:+/*
    return
       db_time:x:@.time

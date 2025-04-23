@@ -1,0 +1,172 @@
+
+/*
+ * Verifies the specified CAPTCHA, and throws an exception if it's not valid.
+ *
+ * This logic relies upon Proof of Work, which implies a SHA256 hash value with [workload]
+ * amount of trailing zeros, which can only be created by brute force until a valid hash
+ * has been generated.
+ *
+ * The slot handles two different versions of a token, one that relies upon it being
+ * generated less than [age] milliseconds ago. The other being based upon a challenge.
+ *
+ * The challenge logic is more verbose since it relies upon another HTTP invocation having
+ * generated the challenge, while the age logic relies upon the UNIX timestamp on the client
+ * and the server being synchronised. Generally the challenge-based version is more stable,
+ * since it doesn't require the client and the server being perfectly synchronised towards
+ * their time servers, which might happen every once in a while.
+ *
+ * The [age] argument is the how old the token can maximumly be before it's considered invalid.
+ * [age] is measured in milliseconds, implying 5,000 in age implies the token needs to be
+ * created less than 5 seconds ago on the client. The default value for [age] is 10,000, implying
+ * 10 seconds, and the default value for [workload] is 3, implying it requires up to 4,096
+ * hashing iterations on average, while the client has 10 seconds to generate a valid token.
+ *
+ * The magic-captcha.js file will generate a valid [age] token, assuming the [workload] argument to
+ * this slot was the same or less than the workload argument to the `mcaptcha.token` function
+ * invocation on the client.
+ *
+ * The magic-captcha-challenge.js file will generate a challenge-based token and automatically
+ * invoke the server to create a new challenge before trying to solve the token. If the challenge
+ * has not been previously created on the server less than 5 minutes ago, the challenge-based
+ * token will not be accepted.
+ */
+slots.create:magic.auth.captcha-verify
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/token
+   validators.integer:x:@.arguments/*/workload
+   validators.integer:x:@.arguments/*/age
+   validators.default:x:@.arguments
+      workload:int:3
+      age:int:10000
+
+   /*
+    * Splitting token string into entities,
+    * being hash + Unix timestamp when generated + seed value leading to enough trailing zeros.
+    */
+   .token
+   .time-challenge
+   .seed
+   strings.split:x:@.arguments/*/token
+      .:;
+   if
+      neq
+         get-count:x:@strings.split/*
+         .:int:3
+      .lambda
+
+         // Token does not contain 3 parts.
+         throw:"Invalid CAPTCHA token, token did not have 3 parts. A valid Magic CAPTCHA token requires 3 parts; actual token, UNIX time and seed value used to generate token."
+            status:int:400
+            public:bool:true
+
+   set-value:x:@.token
+      strings.to-lower:x:@strings.split/0
+   set-value:x:@.time-challenge
+      get-value:x:@strings.split/1
+   set-value:x:@.seed
+      convert:x:@strings.split/2
+         type:long
+
+   // Checking what type of token we've got, options are age-based and challenge based.
+   if
+      strings.starts-with:x:@.time-challenge
+         .:c_
+      .lambda
+
+         // Challenge-based token, making sure challenge exists in cache.
+         if
+            neq
+               cache.get:x:@.time-challenge
+               .:valid
+            .lambda
+
+               // Challenge for token was not valid
+               throw:"Invalid CAPTCHA token. Challenge for token was not valid."
+                  status:int:400
+                  public:bool:true
+
+         // Removing challenge from cache to avoid user using it twice.
+         cache.set:x:@.time-challenge
+
+   else
+
+      // Verifying token was generated on client less than [age] seconds ago.
+      set-value:x:@.time-challenge
+         convert:x:@.time-challenge
+            type:long
+      if
+         or
+            lt
+               math.add
+                  get-value:x:@.time-challenge
+                  get-value:x:@.arguments/*/age
+               date.unix
+            mt
+               get-value:x:@.time-challenge
+               date.unix
+         .lambda
+
+            // Token is either older than [age] seconds or created in "the future".
+            throw:"Invalid CAPTCHA token. Please check your computer's BIOS time if you suspect this is a mistake."
+               status:int:400
+               public:bool:true
+
+   // Verifying CAPTCHA token ends with enough trailing zeros.
+   .endswith:
+   while
+      lt
+         strings.length:x:@.endswith
+         get-value:x:@.arguments/*/workload
+      .lambda
+         set-value:x:@.endswith
+            strings.concat
+               get-value:x:@.endswith
+               .:0
+   if
+      not
+         strings.ends-with:x:@.token
+            get-value:x:@.endswith
+      .lambda
+
+         // Token does not have enough trailing zeros to be considered valid.
+         throw:"Invalid CAPTCHA token. Workload requirements of endpoint was not met."
+            status:int:400
+            public:bool:true
+
+   /*
+    * Verifying token was generated by server.
+    *
+    * Notice, to avoid predictable hash values, we double hash, which kind of
+    * creates an HMAC token for us making it impossible to guess a valid hash.
+    */
+   config.get:"magic:auth:secret"
+   crypto.hash.sha256:x:@config.get
+   crypto.hash.sha256:x:-
+
+   /*
+    * Concatenating server's auth secret with timestamp for when token was created,
+    * in addition to seed used to generate valid token with enough trailing zeros.
+    */
+   strings.concat
+      get-value:x:@crypto.hash.sha256
+      .:;
+      get-value:x:@.time-challenge
+      .:;
+      get-value:x:@.seed
+
+   // Verifying hash is valid.
+   if
+      neq
+         crypto.hash.sha256:x:@strings.concat
+         get-value:x:@.token
+      .lambda
+
+         // Token is not valid.
+         throw:"Invalid CAPTCHA token. Please verify that public key was generated by server token was submitted to."
+            status:int:400
+            public:bool:true
+
+   // If we come this far, the token was valid, and we can allow the client to continue.
+   return:bool:true
+

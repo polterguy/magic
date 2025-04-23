@@ -1,13 +1,19 @@
 
 /*
- * Creates the magic database, and applies
- * all migration SQL scripts.
+ * Creates the magic database, applies all migration SQL scripts, and
+ * creates a scheduled task that creates a backup of the database once every day at 1AM UTC time.
  */
 
 // Figuring out what our default database type is.
 .db-type
 set-value:x:@.db-type
    config.get:"magic:databases:default"
+
+/*
+ * This one is true if database was corrupt, at which point we do not create a backup of
+ * database further down in this file by executing backup task immediately.
+ */
+.corrupt:bool:false
 
 // Checking if magic db exists, and if not, creating it.
 .slot
@@ -78,6 +84,59 @@ if
       // Magic database successfully created
       console.log:Magic databases was successfully created
 
+else-if
+   eq:x:@.db-type
+      .:sqlite
+   .lambda
+
+      /*
+       * Default database is SQLite.
+       *
+       * Verifying magic database is not corrupted, and if database is corrupt,
+       * we revert to backup version.
+       */
+      try
+
+         /*
+          * The next two lines of Hyperlambda will throw an exception
+          * if the magic database is corrupted.
+          */
+         data.connect:[generic|magic]
+            data.select:select count(*) from log_entries
+
+         // Logging to console.
+         console.log:Successfully connected to magic database
+
+      .catch
+
+         // Logging to console.
+         console.log:Magic database is corrupted
+
+         /*
+          * Could not connect to database, so we revert back to backup,
+          * but only if backup exists.
+          */
+         if
+            io.file.exists:/data/magic.backup
+            .lambda
+
+               // Flushing cached connections.
+               sqlite.connections.flush
+
+               // Deleting magic.db file.
+               io.file.delete:/data/magic.db
+
+               // Copying magic.backup to magic.db.
+               io.file.copy:/data/magic.backup
+                  .:/data/magic.db
+
+               // Logging to console.
+               console.log:Reverted to backup of magic database
+
+               // Making sure code further down understands we had to revert to backup.
+               set-value:x:@.corrupt
+                  .:bool:true
+
 /*
  * Listing all SQL migration scripts, and executing these sequentially,
  * making sure we're using the correct folder, according to what database
@@ -101,7 +160,7 @@ data.connect:[generic|magic]
             .:.sql
          .lambda
 
-            // This is an SQL file, hence loading it, and executing it.
+            // This is an SQL file, hence loading it and executing it.
             io.file.load:x:@.dp/#
 
             /*
@@ -158,3 +217,66 @@ for-each:x:@io.file.list-recursively/*
             get-value:x:@.dp/#
             .:"' successfully executed"
          console.log:x:@strings.concat
+
+/*
+ * Creates a scheduled task that periodically creates a backup of SQLite database,
+ * but only if default database is SQLite.
+ */
+if
+   eq
+      config.get:"magic:databases:default"
+      .:sqlite
+   .lambda
+
+      // Deleting previously created scheduled task with same name.
+      tasks.list:sqlite.create-backup
+      if
+         exists:x:@tasks.list/*
+         .lambda
+
+            // Deleting previously created task.
+            tasks.delete:sqlite.create-backup
+
+      // Creating a new task that creates a backup of database, and scheduling it to execute 1AM UTC every day.
+      tasks.create:sqlite.create-backup
+         description:Creates a backup of your magic database 1AM UTC time every day.
+         repeats:**.**.01.00.00
+         .lambda
+
+            // Connecting to database to create our backup.
+            data.connect:[generic|magic]
+
+               // Checking if old backup exists.
+               if
+                  io.file.exists:/data/magic.backup
+                  .lambda
+
+                     // Deleting old backup.
+                     io.file.delete:/data/magic.backup
+
+               // This ensures transaction is executed, since transactions are lazy in Magic.
+               sqlite.backup:magic.backup
+
+               /*
+                * Flushing connections will remove cached connection to avoid connection
+                * issues the next time we create a backup.
+                */
+               sqlite.connections.flush
+
+               // Logging.
+               log.info:Created backup of magic database
+
+      // Logging success to console.
+      console.log:Successfully created database backup task that creates a backup of magic.db 1AM UTC every day
+
+      // Invoking task to make sure we've got one backup immediately.
+      if
+         eq:x:@.corrupt
+            .:bool:false
+         .lambda
+
+            // Since database was not corrupt we create an immediate backup now.
+            tasks.execute:sqlite.create-backup
+
+            // Logging to console.
+            console.log:Executed task that creates backup of magic database

@@ -1,0 +1,19 @@
+
+<h1 mat-dialog-title class="mb-3">What's new?</h1>
+
+<div mat-dialog-content class="content">
+
+  <div class="changelog" [innerHTML]="changelog | marked"></div>
+
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+
+  <button
+    mat-flat-button
+    color="primary"
+    mat-dialog-close>
+    Close
+  </button>
+
+</div>

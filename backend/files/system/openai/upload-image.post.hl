@@ -1,0 +1,100 @@
+
+/*
+ * Stores the specified image file as training data for the specified model.
+ */
+.arguments
+   type:string
+   file:*
+.type:internal
+.accept:multipart/form-data
+.description:Imports the specified image file as training data for the specified model
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+
+// First making sure folder exists.
+if
+   not
+      io.folder.exists:/etc/www/assets/
+   .lambda
+      io.folder.create:/etc/www/assets/
+if
+   not
+      io.folder.exists:/etc/www/assets/images/
+   .lambda
+      io.folder.create:/etc/www/assets/images/
+
+// Figuring out what filename to store file as.
+.filename
+set-value:x:@.filename
+   strings.concat
+      .:/etc/www/assets/images/
+      get-value:x:@.arguments/*/file/*/name
+
+// Checking if file exists from before, and if so, deleting it.
+if
+   io.file.exists:x:@.filename
+   .lambda
+      io.file.delete:x:@.filename
+
+// Saving file to image folder.
+io.stream.save-file:x:@.filename
+   get-value:x:@.arguments/*/file/*/stream
+
+// Creating our URL.
+.url
+set-value:x:@.url
+   strings.concat
+      request.scheme
+      .:"://"
+      request.host
+      .:/assets/images/
+      get-value:x:@.arguments/*/file/*/name
+
+// Opening database connection.
+data.connect:[generic|magic]
+
+   // Figuring out prompt and completion.
+   .prompt
+   .completion
+   set-value:x:@.prompt
+      strings.concat
+         .:"Image - "
+         get-value:x:@.arguments/*/file/*/name
+   set-value:x:@.completion
+      strings.concat
+         .:![
+         get-value:x:@.arguments/*/file/*/name
+         .:](
+         get-value:x:@.url
+         .:)
+
+   // We only create training snippet if prompt and completion doesn't exist from before.
+   data.read
+      table:ml_training_snippets
+      where
+         and
+            prompt.eq:x:@.prompt
+            completion.eq:x:@.completion
+            type.eq:x:@.arguments/*/type
+   if
+      not-exists:x:@data.read/*
+      .lambda
+
+         // Creating a training snippet for file.
+         data.create
+            table:ml_training_snippets
+            values
+               prompt:x:@.prompt
+               completion:x:@.completion
+               type:x:@.arguments/*/type
+
+// Returning success to caller.
+yield
+   result:success

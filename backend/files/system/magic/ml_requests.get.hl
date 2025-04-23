@@ -7,6 +7,8 @@
    direction:string
    filter:string
    ml_requests.id.eq:long
+   ml_requests.id.mt:long
+   ml_requests.id.lt:long
    ml_requests.created.eq:date
    ml_requests.type.like:string
    ml_requests.type.eq:string
@@ -54,6 +56,7 @@ data.connect:[generic|magic]
             .
                or
                   ml_requests.prompt.like:x:@strings.concat
+                  ml_requests.completion.like:x:@strings.concat
                   ml_requests.user_id.eq:x:@.arguments/*/filter
          remove-nodes:x:@.arguments/*/filter
 
@@ -75,6 +78,7 @@ data.connect:[generic|magic]
          ml_requests.questionnaire
          ml_requests.session
          ml_requests.user_id
+         ml_requests.referrer
       where
          and
 

@@ -22,12 +22,12 @@
           #searchBox
           (filterList)="filterList($event)"
           buttonText="Leads"
-          (buttonClick)="exportLeads()"
-          [buttonDisabled]="!type"
           button2Text="Questionnaires"
-          (button2Click)="exportQuestionnaires()"
           button3Text="Conversations"
+          (buttonClick)="exportLeads()"
+          (button2Click)="exportQuestionnaires()"
           (button3Click)="exportConversations()"
+          [buttonDisabled]="!type"
           [button2Disabled]="!type"
           [button3Disabled]="!type"
           [(type)]="type"
@@ -185,6 +185,17 @@
       [pageSize]="filter.limit"
       (page)="page($event)">
     </mat-paginator>
+
+    <div class="text-end">
+
+      <button
+        mat-flat-button
+        [disabled]="!type || !filter || !filter['filter'] || filter['filter'] === ''"
+        (click)="exportConversation()">
+        Conversation
+      </button>
+
+    </div>
 
   </div>
 

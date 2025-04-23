@@ -1,0 +1,8 @@
+﻿
+response.headers.set
+   Content-Type:text/plain
+strings.concat
+   request.scheme
+   .:"://"
+   request.host
+return-value:x:-
