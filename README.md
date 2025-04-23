@@ -23,4 +23,4 @@ This project, and all of its satellite project, is licensed under the terms of t
 
 ## Copyright and maintenance
 
-The projects is copyright of Thomas Hansen, Ltd 2021 - 2023, and professionally maintained by [AINIRO.IO](https://ainiro.io).
+The projects is copyright of Thomas Hansen, Ltd 2019 - 2025, and professionally maintained by [AINIRO.IO](https://ainiro.io).
