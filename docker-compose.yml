@@ -1,8 +1,4 @@
 
-# Docker file to couple frontend and backend, and creating required volumes.
-
-version: "3.3"
-
 services:
 
   backend:
@@ -21,7 +17,7 @@ services:
     image: servergardens/magic-frontend:latest
     container_name: magic_frontend
     depends_on:
-      - backend
+      - magic_backend
     restart: always
     ports:
       - "5555:80"
