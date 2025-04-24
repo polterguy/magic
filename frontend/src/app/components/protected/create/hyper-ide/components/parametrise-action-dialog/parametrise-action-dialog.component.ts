@@ -11,6 +11,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 // Utility imports
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ConfirmationDialogComponent } from 'src/app/components/protected/common/confirmation-dialog/confirmation-dialog.component';
+import { GeneralService } from 'src/app/services/general.service';
 
 /**
  * Modal dialog allowing you to parametrise and execute a macro.
@@ -28,6 +29,7 @@ export class ParametriseActionDialog implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    private generalService: GeneralService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private refDialog: MatDialogRef<ParametriseActionDialog>) { }
 
@@ -248,14 +250,35 @@ export class ParametriseActionDialog implements OnInit {
       }).afterClosed().subscribe((result: string) => {
 
         if (result === 'confirm') {
-          this.refDialog.close(this.getModel(model));
+          this.refDialog.close(model);
         }
       });
 
     } else {
-
       this.refDialog.close(this.getModel(model));
     }
+  }
+
+  selectAndGenerate(model: any) {
+
+    if (this.data.generate) {
+      model.generate = true;
+    }
+    model = this.getModel(model);
+    if (!model.description || model.description.trim() === '') {
+      this.generalService.showFeedback('You cannot generate code from an empty description', 'errorMessage');
+      return;
+    }
+    this.refDialog.close(model);
+  }
+
+  selectWithoutGenerating(model: any) {
+
+    if (this.data.generate) {
+      model.generate = false;
+    }
+    model = this.getModel(model);
+    this.refDialog.close(model);
   }
 
   /*
