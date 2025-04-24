@@ -40,21 +40,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push multi-arch Docker images
+      - name: Build and push backend (multi-arch)
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
-
           docker buildx build --platform linux/amd64,linux/arm64 \
             -t servergardens/magic-backend:latest \
             -t servergardens/magic-backend:$VERSION \
             -f ./docker.backend . \
             --push
-
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            -t servergardens/magic-frontend:latest \
-            -t servergardens/magic-frontend:$VERSION \
-            -f ./docker.frontend . \
-            --push
+      
+      - name: Build and push frontend (single-arch)
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          docker build -t servergardens/magic-frontend:latest -f ./docker.frontend .
+          docker tag servergardens/magic-frontend:latest servergardens/magic-frontend:$VERSION
+          docker push servergardens/magic-frontend:latest
+          docker push servergardens/magic-frontend:$VERSION
 
       - name: Package versioned ZIP archive
         run: |
