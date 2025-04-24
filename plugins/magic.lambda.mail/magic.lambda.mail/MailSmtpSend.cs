@@ -51,12 +51,23 @@ namespace magic.lambda.mail
                 // Iterating through each message and sending.
                 foreach (var idxMsgNode in input.Children.Where(x => x.Name == "message"))
                 {
-                    // Creating MimeMessage, making sure we dispose any streams created in the process.
-                    var message = await CreateMessageAsync(signaler, idxMsgNode);
-                    using (message.Body)
+                    // Unwrapping expressions.
+                    try
                     {
-                        // Sending message over existing SMTP connection.
-                        await _client.SendAsync(message);
+                        idxMsgNode.Value = new Expression("*/**");
+                        Expression.Unwrap(idxMsgNode.Evaluate(), true);
+
+                        // Creating MimeMessage, making sure we dispose any streams created in the process.
+                        var message = await CreateMessageAsync(signaler, idxMsgNode);
+                        using (message.Body)
+                        {
+                            // Sending message over existing SMTP connection.
+                            await _client.SendAsync(message);
+                        }
+                    }
+                    finally
+                    {
+                        idxMsgNode.Value = null;
                     }
                 }
             }
