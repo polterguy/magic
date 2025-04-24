@@ -17,7 +17,7 @@ services:
     image: servergardens/magic-frontend:latest
     container_name: magic_frontend
     depends_on:
-      - magic_backend
+      - backend
     restart: always
     ports:
       - "5555:80"

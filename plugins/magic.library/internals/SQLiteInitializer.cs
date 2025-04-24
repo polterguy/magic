@@ -21,7 +21,7 @@ namespace magic.library.internals
             // We don't have sqlite-vss on Windows :/
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64 && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
                     using (var cmd = connection.CreateCommand())
                     {
