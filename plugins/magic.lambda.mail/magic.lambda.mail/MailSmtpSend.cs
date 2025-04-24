@@ -51,23 +51,12 @@ namespace magic.lambda.mail
                 // Iterating through each message and sending.
                 foreach (var idxMsgNode in input.Children.Where(x => x.Name == "message"))
                 {
-                    // Unwrapping expressions.
-                    try
+                    // Creating MimeMessage, making sure we dispose any streams created in the process.
+                    var message = await CreateMessageAsync(signaler, idxMsgNode);
+                    using (message.Body)
                     {
-                        idxMsgNode.Value = new Expression("*/**");
-                        Expression.Unwrap(idxMsgNode.Evaluate(), true);
-
-                        // Creating MimeMessage, making sure we dispose any streams created in the process.
-                        var message = await CreateMessageAsync(signaler, idxMsgNode);
-                        using (message.Body)
-                        {
-                            // Sending message over existing SMTP connection.
-                            await _client.SendAsync(message);
-                        }
-                    }
-                    finally
-                    {
-                        idxMsgNode.Value = null;
+                        // Sending message over existing SMTP connection.
+                        await _client.SendAsync(message);
                     }
                 }
             }
@@ -119,13 +108,38 @@ namespace magic.lambda.mail
                     node.Children.FirstOrDefault(x => x.Name == "reply-to")));
 
             // Creating actual MimeEntity to send.
-            var clone = node.Children.First(x => x.Name == "entity").Clone();
+            var entityNode = node.Children.First(x => x.Name == "entity");
+
+            // Unwrapping the currently iterated entity node.
+            Expression.Unwrap(GetDescendants(entityNode), true);
+
+            // Cloning node to execute external slot.
+            var clone = entityNode.Clone();
             await signaler.SignalAsync(".mime.create", clone);
+
+            // Extracting result.
             var entity = clone.Value as MimeEntity;
             message.Body = entity;
 
             // Returning message (and streams) to caller.
             return message;
+        }
+
+        /*
+         * Returns all descendant node of specifed node as a flat hierarchy.
+         */
+        static IEnumerable<Node> GetDescendants(Node input)
+        {
+            if (!input.Children.Any())
+                yield break;
+            foreach (var idx in input.Children)
+            {
+                yield return idx;
+                foreach (var idxInner in GetDescendants(idx))
+                {
+                    yield return idxInner;
+                }
+            }
         }
 
         /*
