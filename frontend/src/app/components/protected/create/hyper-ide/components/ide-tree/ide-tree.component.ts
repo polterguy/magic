@@ -28,6 +28,7 @@ import { IncompatibleFileDialogComponent } from 'src/app/components/protected/cr
 import { BackendService } from 'src/app/services/backend.service';
 import { SelectModelDialogComponent } from '../select-model/select-model-dialog.component';
 import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
+import { OpenAIService } from 'src/app/services/openai.service';
 
 /**
  * Tree component for Hyper IDE displaying files and folders, allowing user
@@ -71,9 +72,9 @@ export class IdeTreeComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private clipBoard: Clipboard,
-    private fileService: FileService,
     private cdr: ChangeDetectorRef,
+    private fileService: FileService,
+    private openAiService: OpenAIService,
     private endpointSerivce: EndpointService,
     private workflowService: WorkflowService,
     private backendService: BackendService,
@@ -870,6 +871,9 @@ export class IdeTreeComponent implements OnInit {
                         const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
                         const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
                         this.currentFileData.content = response.result;
+                        if (args.generate === true) {
+                          this.transformActiveHyperlambdaFile(args.description)
+                        }
                         setTimeout(() => {
                           editor.setCursor({
                             line: editor.doc.lineCount(),
@@ -896,6 +900,28 @@ export class IdeTreeComponent implements OnInit {
           });
 
         }
+      }
+    });
+  }
+
+  private transformActiveHyperlambdaFile(description: string) {
+
+    this.generalService.showLoading();
+    this.openAiService.query(
+      description,
+      'hl',
+      false,
+      this.currentFileData.content).subscribe({
+      next: (result: any) => {
+
+        this.currentFileData.content = result.result;
+        this.generalService.hideLoading();
+
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
       }
     });
   }

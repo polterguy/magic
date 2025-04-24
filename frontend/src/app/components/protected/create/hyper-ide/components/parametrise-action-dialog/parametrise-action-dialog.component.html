@@ -26,10 +26,21 @@
     </button>
 
     <button
+      *ngIf="data.generate"
+      matTooltip="Submits your comment and runs it through the Hyperlambda Generator to generate whatever your comment claims the file is doing"
+      mat-button
+      color="primary"
+      type="button"
+      (click)="selectAndGenerate(model)">
+      Submit &amp; Generate
+    </button>
+
+    <button
       mat-flat-button
       color="primary"
-      type="submit">
-      OK
+      type="submit"
+      (click)="selectWithoutGenerating(model)">
+      Submit
     </button>
 
   </div>

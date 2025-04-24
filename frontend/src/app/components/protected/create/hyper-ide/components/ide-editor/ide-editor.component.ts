@@ -26,6 +26,7 @@ import { UnsavedChangesDialogComponent } from '../unsaved-changes-dialog/unsaved
 import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';
 import { ShortkeysDialogComponent } from 'src/app/components/protected/common/shortkeys-dialog/shortkeys-dialog.component';
 import { LoadSnippetDialogComponent } from 'src/app/components/protected/common/load-snippet-dialog/load-snippet-dialog.component';
+import { OpenAIService } from 'src/app/services/openai.service';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -60,6 +61,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     private dialog: MatDialog,
     private fileService: FileService,
     private aiService: AiService,
+    private openAiService: OpenAIService,
     private generalService: GeneralService,
     private workflowService: WorkflowService,
     private evaluatorService: EvaluatorService,
@@ -551,6 +553,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           maxWidth: '80vw',
           autoFocus: true,
           data: {
+            generate: true,
             name: this.currentFileData.path,
             is_action: false,
             warning: result.warning,
@@ -592,7 +595,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
           },
         }).afterClosed().subscribe((args: any) => {
           if (args) {
-    
+
             this.generalService.showLoading();
             this.workflowService.applyArguments(
               this.currentFileData.content,
@@ -611,6 +614,9 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
                     line: editor.doc.lineCount(),
                     ch: 0,
                   });
+                  if (args.generate === true) {
+                    this.transformActiveHyperlambdaFile(args.description);
+                  }
                 },1);
               },
     
@@ -628,6 +634,28 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
         this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+      }
+    });
+  }
+
+  private transformActiveHyperlambdaFile(description: string) {
+
+    this.generalService.showLoading();
+    this.openAiService.query(
+      description,
+      'hl',
+      false,
+      this.currentFileData.content).subscribe({
+      next: (result: any) => {
+
+        this.currentFileData.content = result.result;
+        this.generalService.hideLoading();
+
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
       }
     });
   }
