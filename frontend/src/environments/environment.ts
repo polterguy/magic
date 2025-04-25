@@ -12,5 +12,6 @@ export const environment = {
       token_raw: null,
     },
   ],
-  bazarUrl: 'https://ainiro.io'
+  bazarUrl: 'https://ainiro.io',
+  hyperLambdaGeneratorUrl: 'http://localhost:5000'
 };
