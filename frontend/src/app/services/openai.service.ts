@@ -53,8 +53,6 @@ export class OpenAIService {
     // building our payload
     const payload: any = {
       prompt,
-      type,
-      user_id: this.backendService.active.username,
     };
     if (data) {
       payload.data = data;
@@ -63,15 +61,16 @@ export class OpenAIService {
     // Checking if we're dealing with hyperlambda code, at which point we use ainiro.io's generator
     if (type === 'hl') {
 
-      // TODO: Change URL!!
-      return this.httpClient.post<PromptResponse>(environment.bazarUrl + '/magic/modules/hyperlambda-generator/chat', payload);
+      return this.httpClient.post<PromptResponse>(environment.hyperLambdaGeneratorUrl + '/magic/modules/hyperlambda-generator/chat', payload);
 
     } else {
 
       if (session) {
         payload.session = session;
       }
-      payload.references = search
+      payload.references = search;
+      payload.type = type;
+      payload.user_id = this.backendService.active.username;
       return this.httpService.post<PromptResponse>(`/magic/system/openai/chat`, payload);
     }
   }

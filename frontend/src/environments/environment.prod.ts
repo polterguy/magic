@@ -15,5 +15,6 @@ export const environment = {
       password: 'root',
     },
   ],
-  bazarUrl: 'https://ainiro.io'
+  bazarUrl: 'https://ainiro.io',
+  hyperLambdaGeneratorUrl: 'https://ainiro.io'
 };
