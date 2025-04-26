@@ -818,6 +818,7 @@ export class IdeTreeComponent implements OnInit {
                   maxWidth: '80vw',
                   autoFocus: true,
                   data: {
+                    generate: true,
                     name: path,
                     is_action: false,
                     description: 'What arguments can your Hyperlambda file handle?',
