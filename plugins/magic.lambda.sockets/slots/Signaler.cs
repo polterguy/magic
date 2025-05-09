@@ -4,6 +4,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using magic.node;
@@ -95,10 +96,11 @@ namespace magic.lambda.sockets.slots
             var method = input.GetEx<string>();
 
             // Retrieving arguments, if any.
-            var args = input.Children.FirstOrDefault(x => x.Name == "args")?.Clone();
+            var args = input.Children.FirstOrDefault(x => x.Name == "args");
             string? json = null;
             if (args != null)
             {
+                Expression.Unwrap(GetDescendants(args), true);
                 var jsonNode = new Node();
                 jsonNode.AddRange(args.Children);
                 signaler.Signal("lambda2json", jsonNode);
@@ -144,6 +146,27 @@ namespace magic.lambda.sockets.slots
 
             // Returning results to caller.
             return (method, json, roles, users, clients, groups);
+        }
+
+        #endregion
+
+        #region [ -- Private helper methods -- ]
+
+        /*
+         * Returns all descendant node of specifed node as a flat hierarchy.
+         */
+        static IEnumerable<Node> GetDescendants(Node input)
+        {
+            if (!input.Children.Any())
+                yield break;
+            foreach (var idx in input.Children)
+            {
+                yield return idx;
+                foreach (var idxInner in GetDescendants(idx))
+                {
+                    yield return idxInner;
+                }
+            }
         }
 
         #endregion
