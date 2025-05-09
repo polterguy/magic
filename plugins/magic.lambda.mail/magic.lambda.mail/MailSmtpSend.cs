@@ -158,7 +158,7 @@ namespace magic.lambda.mail
                 if (idx.Name == ".")
                 {
                     yield return new MailboxAddress(
-                      idx.Children.First(x => x.Name == "name").GetEx<string>(),
+                      idx.Children.FirstOrDefault(x => x.Name == "name")?.GetEx<string>() ?? "",
                       idx.Children.First(x => x.Name == "email").GetEx<string>());
                 }
                 else
