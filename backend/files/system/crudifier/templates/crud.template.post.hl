@@ -6,7 +6,6 @@
 
 // Type of endpoint
 .type:crud-create
-.foreign-keys
 
 // Opening up database connection.
 data.connect:{database}

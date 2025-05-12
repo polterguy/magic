@@ -10,13 +10,6 @@
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
-.foreign-keys
-   .
-      column:questionnaire
-      table:questionnaires
-      foreign_column:name
-      foreign_name:name
-      long:bool:true
 
 // Opening up database connection.
 data.connect:[generic|magic]

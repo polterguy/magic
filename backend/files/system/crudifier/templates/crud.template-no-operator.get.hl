@@ -18,7 +18,6 @@
 
 // Type of endpoint
 .type:crud-read
-.foreign-keys
 
 // Opening up our database connection.
 data.connect:{database}

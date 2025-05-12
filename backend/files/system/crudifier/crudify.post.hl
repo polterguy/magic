@@ -523,27 +523,6 @@ semaphore:crudifier
                   .
                      .:x:@strings.concat
 
-         // Making sure we add [.handling] section if needed.
-         if
-            exists:x:@.arguments/*/args/*/columns/*/*/handling
-            .lambda
-               insert-after:x:@apply/*/.type
-                  .
-                     ..:Columns with custom handling as frontend is generated.
-                     .handling
-
-         for-each:x:@.arguments/*/args/*/columns/*/*/handling
-            set-value:x:+/+/*/*
-               get-value:x:@.dp/#/./*/handling
-            set-name:x:+/*/*
-               strings.concat
-                  get-value:x:@.arguments/*/table
-                  .:.
-                  get-value:x:@.dp/#/./*/name
-            add:x:@apply/*/.handling
-               .
-                  .
-
          /*
           * Making sure we explicitly declare which [columns] that our
           * endpoint should return, according to caller's specifications.
@@ -810,24 +789,6 @@ semaphore:crudifier
                   ..:Table is locked on the following field.
                   .
 
-         // Making sure we add [.handling] section if needed.
-         if
-            exists:x:@.arguments/*/args/*/columns/*/*/handling
-            .lambda
-               insert-after:x:@apply/*/.type
-                  .
-                     ..:Columns with custom handling as we generate a frontend
-                     .handling
-
-         for-each:x:@.arguments/*/args/*/columns/*/*/handling
-            set-value:x:+/+/*/*
-               get-value:x:@.dp/#/./*/handling
-            set-name:x:+/*/*
-               get-value:x:@.dp/#/./*/name
-            add:x:@apply/*/.handling
-               .
-                  .
-
       // HTTP PUT special cases
       case:put
 
@@ -982,101 +943,6 @@ semaphore:crudifier
                .
                   ..:Table is locked on the following field.
                   .
-
-         // Making sure we add [.handling] section if needed.
-         if
-            exists:x:@.arguments/*/args/*/columns/*/*/handling
-            .lambda
-               insert-after:x:@apply/*/.type
-                  .
-                     ..:Columns with custom handling as we generate a frontend
-                     .handling
-         for-each:x:@.arguments/*/args/*/columns/*/*/handling
-            set-value:x:+/+/*/*
-               get-value:x:@.dp/#/./*/handling
-            set-name:x:+/*/*
-               get-value:x:@.dp/#/./*/name
-            add:x:@apply/*/.handling
-               .
-                  .
-
-   // HTTP PUT, POST and GET commonalities
-   switch:x:@.arguments/*/verb
-      case:put
-      case:post
-      case:get
-
-         // Applying foreign keys if specified.
-         for-each:x:@.arguments/*/args/*/columns/*
-
-            /*
-             * Checking if currently iterated column has a foreign key declaration.
-             * 
-             * Notice, for GET endpoints we do NOT generate [.foreign-key] declaration
-             * if caller specified he wanted to create left joins for foreign keys.
-             */
-            if
-               and
-                  exists:x:@.dp/#/*/foreign_key/*
-                  or
-                     not
-                        eq
-                           get-value:x:@.arguments/*/verb
-                           .:get
-                     not
-                        eq
-                           get-value:x:@.arguments/*/join
-                           .:bool:true
-               .lambda
-
-                  // Adding meta information about foreign key to lambda object.
-                  unwrap:x:+/*/*/*
-                  add:x:@apply/*/.foreign-keys
-                     .
-                        .
-                           column:x:@.dp/#/*/name
-                           table:x:@.dp/#/*/foreign_key/*/table
-                           foreign_column:x:@.dp/#/*/foreign_key/*/column
-                           foreign_name:x:@.dp/#/*/foreign_key/*/name
-                           long:x:@.dp/#/*/foreign_key/*/long
-
-         /*
-          * Making sure we also run through the primary arguments, if
-          * this is a PUT invocation.
-          */
-         if
-            eq
-               get-value:x:@.arguments/*/verb
-               .:put
-            .lambda
-
-               // Primry keys can also be foreign keys.
-               for-each:x:@.arguments/*/args/*/primary/*
-
-                  // Checking if currently iterated column has a foreign key declaration.
-                  if
-                     exists:x:@.dp/#/*/foreign_key/*
-                     .lambda
-
-                        // Adding meta information about foreign key to lambda object.
-                        unwrap:x:+/*/*/*
-                        add:x:@apply/*/.foreign-keys
-                           .
-                              .
-                                 column:x:@.dp/#/*/name
-                                 table:x:@.dp/#/*/foreign_key/*/table
-                                 foreign_column:x:@.dp/#/*/foreign_key/*/column
-                                 foreign_name:x:@.dp/#/*/foreign_key/*/name
-                                 long:x:@.dp/#/*/foreign_key/*/long
-
-         // Checking if we have foreign keys at all, and if not, removing entire declaration.
-         if
-            not
-               exists:x:@apply/*/.foreign-keys/*
-            .lambda
-
-               // Removing [.foreign-key] declaration altogether.
-               remove-nodes:x:@apply/*/.foreign-keys
 
    // Notice, we only apply the CQRS pattern to post, put and delete endpoints.
    switch:x:@.arguments/*/verb
@@ -1265,14 +1131,11 @@ semaphore:crudifier
       .lambda
 
          /*
-          * First removing [.foreign-keys], [columns], adding [count(*)
+          * First removing [columns], adding [count(*)
           * as count, and then transforming lambda
           * to Hyperlambda, and saving it to the correct file - Which is the same filename as the
           * plain get, except appending "-count" to it.
           */
-         remove-nodes:x:@apply/*/.foreign-keys
-         remove-nodes:x:@apply/*/.handling/-
-         remove-nodes:x:@apply/*/.handling
          remove-nodes:x:@apply/**/columns/*
          remove-nodes:x:@apply/**/table/././*/remove-nodes
          remove-nodes:x:@apply/**/return-nodes
