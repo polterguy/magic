@@ -21,7 +21,6 @@
 
 // Type of endpoint
 .type:crud-read
-.foreign-keys
 
 // Sanity checking invocation.
 validators.enum:x:@.arguments/*/operator
