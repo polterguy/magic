@@ -821,7 +821,7 @@ export class IdeTreeComponent implements OnInit {
                     generate: true,
                     name: path,
                     is_action: false,
-                    description: 'What arguments can your Hyperlambda file handle?',
+                    description: 'Provide a description and click \'Generate\' to have the AI generate your code',
                     input: {
                       description: {
                         type: 'textarea',
