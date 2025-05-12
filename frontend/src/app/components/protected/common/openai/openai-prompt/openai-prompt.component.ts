@@ -29,6 +29,7 @@ export class OpenAIPromptComponent implements OnInit {
   @Output() callback? = new EventEmitter<string>();
   @Input() callbackText?: string = null;
   @Input() dialogue?: boolean = false;
+  @Input() createContext?: () => Promise<string>;
 
   openAiEnabled: boolean = false;
   waitingForAnswer: boolean = false;
@@ -103,7 +104,7 @@ export class OpenAIPromptComponent implements OnInit {
     });
   }
 
-  askOpenAi() {
+  async askOpenAi() {
 
     // Sanity checking invocation
     if (!this.openAiPrompt || this.openAiPrompt.trim() === '') {
@@ -115,8 +116,10 @@ export class OpenAIPromptComponent implements OnInit {
     this.waitingForAnswer = true;
 
     let currentFileContent = this.currentFileContent;
-    if (currentFileContent && currentFileContent.length > 0) {
-      currentFileContent = currentFileContent;
+
+    if (this.createContext) {
+      const res = await this.createContext();
+      currentFileContent = res;
     }
 
     this.openAiService.query(

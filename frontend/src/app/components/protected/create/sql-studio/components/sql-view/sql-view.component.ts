@@ -5,7 +5,7 @@
 
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subscription } from 'rxjs';
+import { firstValueFrom, from, Observable, Subscription } from 'rxjs';
 import { Model } from 'src/app/components/protected/common/codemirror-sql/codemirror-sql.component';
 import { ShortkeysDialogComponent } from 'src/app/components/protected/common/shortkeys-dialog/shortkeys-dialog.component';
 import { GeneralService } from 'src/app/services/general.service';
@@ -65,6 +65,37 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         };
       }
     });
+  }
+
+  async createAiContext() : Promise<string> {
+
+    const db = this.databases.filter(x => x.name === this.selectedDatabase)[0];
+    let result: any = await firstValueFrom(this.sqlService.exportDdl(
+      this.selectedDbType,
+      this.selectedConnectionString,
+      this.selectedDatabase,
+      db.tables.map((table: any) => table.name),
+      true));
+    let dialect = '';
+    switch (this.selectedDbType) {
+      case 'sqlite':
+        dialect = 'SQLite';
+        break;
+      case 'mysql':
+        dialect = 'MySQL';
+        break;
+      case 'mssql':
+        dialect = 'Microsoft SQL Server';
+        break;
+      case 'pgsql':
+        dialect = 'PostgreSQL';
+        break;
+    }
+    let retVal = 'Current schema:\n\n' + result.result + '\n\n' + 'SQL dialect: ' + dialect + '\n\n';
+    if (this.input.sql && this.input.sql.length > 0) {
+      retVal += 'Current code: \n\n' + this.input.sql;
+    }
+    return retVal;
   }
 
   shouldFormat(cell: any) {

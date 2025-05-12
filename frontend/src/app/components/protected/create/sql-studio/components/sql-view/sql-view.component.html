@@ -48,6 +48,7 @@
           <app-openai-prompt
             fileType="sql"
             (callback)="insertFromOpenAI($event)"
+            [createContext]="createAiContext.bind(this)"
             callbackText="Use"
             [currentFileContent]="input.sql"
             currentFileSession="sql-studio.editor"

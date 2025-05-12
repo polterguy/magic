@@ -331,6 +331,8 @@ slots.create:magic.ai.endpoint-common
       case:gpt-4-turbo-2024-04-09
       case:gpt-4-vision-preview
       case:gpt-4-1106-vision-preview
+      case:gpt-4.1-mini-2025-04-14
+      case:gpt-4.1-2025-04-14
          add:x:@.model
             .
                model_size:int:128000
@@ -414,6 +416,8 @@ slots.create:magic.ai.endpoint-common
             case:gpt-4-0314
             case:gpt-4o
             case:gpt-4o-2024-05-13
+            case:gpt-4.1-mini-2025-04-14
+            case:gpt-4.1-2025-04-14
 
                math.divide
                   math.subtract:int:8192
