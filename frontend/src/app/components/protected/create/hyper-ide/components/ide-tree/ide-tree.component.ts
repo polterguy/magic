@@ -821,7 +821,7 @@ export class IdeTreeComponent implements OnInit {
                     generate: true,
                     name: path,
                     is_action: false,
-                    description: 'Provide a description and click \'Generate\' to have the AI generate your code',
+                    description: 'Provide a description and click \'Save & Generate\' to have the AI generate your code',
                     input: {
                       description: {
                         type: 'textarea',

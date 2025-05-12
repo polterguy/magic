@@ -557,7 +557,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             name: this.currentFileData.path,
             is_action: false,
             warning: result.warning,
-            description: 'Provide a description and click \'Generate\' to have the AI generate your code',
+            description: 'Provide a description and click \'Save & Generate\' to have the AI generate your code',
             input: {
               description: {
                 type: 'textarea',
