@@ -6,3 +6,31 @@
 .warning {
   color: #ff5050;
 }
+
+@keyframes blink_ai_button {
+  0% {
+    color: #505050;
+  }
+  3% {
+    color: yellow;
+  }
+  6% {
+    color: #505050;
+  }
+  7% {
+    color: #505050;
+  }
+  10% {
+    color: yellow;
+  }
+  13% {
+    color: #505050;
+  }
+  100% {
+    color: #505050;
+  }
+}
+
+.ai-generator {
+  animation: 5s blink_ai_button linear infinite;
+}
