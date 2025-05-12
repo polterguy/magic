@@ -557,7 +557,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             name: this.currentFileData.path,
             is_action: false,
             warning: result.warning,
-            description: 'Edit description and arguments your Hyperlambda file can handle?',
+            description: 'Provide a description and click \'Generate\' to have the AI generate your code',
             input: {
               description: {
                 type: 'textarea',
