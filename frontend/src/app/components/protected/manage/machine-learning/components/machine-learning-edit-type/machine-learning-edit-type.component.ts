@@ -110,7 +110,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     this.use_embeddings = this.data?.use_embeddings === 1 ? true : (!this.data ? true : false);
     this.cached = this.data?.cached === 1 ? true : false;
     this.prefix = this.data?.prefix ?? '';
-    this.system_message = this.data?.system_message ?? '';
+    this.system_message = this.data?.system_message ?? 'You are a helpful assistant, and you will answer the users questions based upon the information found in your context';
     this.conversation_starters = this.data?.conversation_starters ?? (this.data ? '' : `* What can I ask you about?
 * How do I contact you?
 * Who created this chatbot?`);
@@ -220,28 +220,29 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
     if (e.index === 1 && !this.modelsFetched) {
 
-      this.isLoading = true;
       this.generalService.showLoading();
-      this.getModels(); 
-    }
-    if (e.index === 1 && this.completion_slots.length === 0) {
+      this.isLoading = true;
+      this.getModels(() => {
+        if (e.index === 1 && this.completion_slots.length === 0) {
 
-      this.openAIService.completionSlots().subscribe({
-
-        next: (llms: any) => {
-
-          this.completion_slots = llms.llms;
-          this.isLoading = false;
-          this.generalService.hideLoading();
-        },
-
-        error: () => {
-
-          this.isLoading = false;
-          this.generalService.showFeedback('Something went wrong as we tried to retrieve standard system messages', 'errorMessage');
-          this.generalService.hideLoading();
+          this.openAIService.completionSlots().subscribe({
+    
+            next: (llms: any) => {
+    
+              this.completion_slots = llms.llms;
+              this.isLoading = false;
+              this.generalService.hideLoading();
+            },
+    
+            error: () => {
+    
+              this.isLoading = false;
+              this.generalService.showFeedback('Something went wrong as we tried to retrieve standard system messages', 'errorMessage');
+              this.generalService.hideLoading();
+            }
+          });
         }
-      });
+      }); 
     }
   }
 
@@ -319,7 +320,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
     setTimeout(() => this.flavor = null, 1);
   }
 
-  getModels() {
+  getModels(onAfter: () => void = null) {
 
     this.openAIService.models(this.api_key).subscribe({
 
@@ -327,11 +328,11 @@ export class MachineLearningEditTypeComponent implements OnInit {
 
         this.models = models.filter(x => x.chat === true || x.vector === true);
         this.models.sort((lhs: OpenAIModel, rhs: OpenAIModel) => {
-          if (lhs.id < rhs.id) {
-            return -1;
-          }
-          if (lhs.id > rhs.id) {
+          if (lhs.created < rhs.created) {
             return 1;
+          }
+          if (lhs.created > rhs.created) {
+            return -1;
           }
           return 0;
         });
@@ -339,7 +340,7 @@ export class MachineLearningEditTypeComponent implements OnInit {
         if (this.data?.model) {
           this.model = this.models.filter(x => x.id === this.data.model)[0];
         } else {
-          const gpt4 = this.models.filter(x => x.id === 'o3-mini');
+          const gpt4 = this.models.filter(x => x.id === 'gpt-4.1-2025-04-14');
           if (gpt4.length > 0) {
             this.model = gpt4[0];
           } else {
@@ -360,11 +361,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
           this.generalService.showFeedback('Successfully updated your models based upon your new API key', 'successMessage');
         }
 
-        this.generalService.hideLoading();
-        this.isLoading = false;
         this.modelsFetched = true;
-        if (this.completion_slot !== 'magic.ai.chat') {
-          this.completionSlotChanged();
+        if (onAfter) {
+          onAfter();
         }
       },
 

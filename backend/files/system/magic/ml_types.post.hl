@@ -55,7 +55,7 @@ validators.integer:x:@.arguments/*/max_tokens
 // Applying sane defaults.
 validators.default:x:@.arguments
    vector_model:text-embedding-ada-002
-   model:gpt-4o
+   model:gpt-4.1-2025-04-14
    threshold:decimal:0.3
 
 // Opening up database connection.
