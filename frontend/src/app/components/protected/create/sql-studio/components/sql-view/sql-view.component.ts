@@ -70,32 +70,59 @@ export class SqlViewComponent implements OnInit, OnDestroy {
   async createAiContext() : Promise<string> {
 
     const db = this.databases.filter(x => x.name === this.selectedDatabase)[0];
-    let result: any = await firstValueFrom(this.sqlService.exportDdl(
-      this.selectedDbType,
-      this.selectedConnectionString,
-      this.selectedDatabase,
-      db.tables.map((table: any) => table.name),
-      true));
-    let dialect = '';
-    switch (this.selectedDbType) {
-      case 'sqlite':
-        dialect = 'SQLite';
-        break;
-      case 'mysql':
-        dialect = 'MySQL';
-        break;
-      case 'mssql':
-        dialect = 'Microsoft SQL Server';
-        break;
-      case 'pgsql':
-        dialect = 'PostgreSQL';
-        break;
+
+    if (!db.tables) {
+
+      let dialect = '';
+      switch (this.selectedDbType) {
+        case 'sqlite':
+          dialect = 'SQLite';
+          break;
+        case 'mysql':
+          dialect = 'MySQL';
+          break;
+        case 'mssql':
+          dialect = 'Microsoft SQL Server';
+          break;
+        case 'pgsql':
+          dialect = 'PostgreSQL';
+          break;
+      }
+      let retVal = 'SQL dialect: ' + dialect + '\n\n';
+      if (this.input.sql && this.input.sql.length > 0) {
+        retVal += 'Current code: \n\n' + this.input.sql;
+      }
+      return retVal;
+
+    } else {
+
+      let result: any = await firstValueFrom(this.sqlService.exportDdl(
+        this.selectedDbType,
+        this.selectedConnectionString,
+        this.selectedDatabase,
+        db.tables.map((table: any) => table.name),
+        true));
+      let dialect = '';
+      switch (this.selectedDbType) {
+        case 'sqlite':
+          dialect = 'SQLite';
+          break;
+        case 'mysql':
+          dialect = 'MySQL';
+          break;
+        case 'mssql':
+          dialect = 'Microsoft SQL Server';
+          break;
+        case 'pgsql':
+          dialect = 'PostgreSQL';
+          break;
+      }
+      let retVal = 'Current schema:\n\n' + result.result + '\n\n' + 'SQL dialect: ' + dialect + '\n\n';
+      if (this.input.sql && this.input.sql.length > 0) {
+        retVal += 'Current code: \n\n' + this.input.sql;
+      }
+      return retVal;
     }
-    let retVal = 'Current schema:\n\n' + result.result + '\n\n' + 'SQL dialect: ' + dialect + '\n\n';
-    if (this.input.sql && this.input.sql.length > 0) {
-      retVal += 'Current code: \n\n' + this.input.sql;
-    }
-    return retVal;
   }
 
   shouldFormat(cell: any) {
