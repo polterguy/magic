@@ -28,7 +28,7 @@ export class MachineLearningAddWorkflow implements OnInit {
 
   private hasChanges: boolean = false;
   functions: any[] = [];
-  showAllFunctions: boolean = false;
+  showAllFunctions: boolean = true;
   filterControl: FormControl;
   filterValue: '';
 
@@ -124,7 +124,6 @@ export class MachineLearningAddWorkflow implements OnInit {
                   this.generalService.showFeedback(error?.error?.message ?? 'Something went wrong as we tried to create your snippet', 'errorMessage', 'Ok', 10000);
                 }
               });
-
             }
           });
         }
