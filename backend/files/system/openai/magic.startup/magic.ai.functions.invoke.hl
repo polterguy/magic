@@ -114,6 +114,7 @@ slots.create:magic.ai.functions.invoke
                remove-nodes:x:@json2lambda/*/_session
                remove-nodes:x:@json2lambda/*/_user-id
                remove-nodes:x:@json2lambda/*/_type
+               remove-nodes:x:@json2lambda/*/_extra
 
                // Adding arguments to [execute-file].
                add:x:../*/execute-file
@@ -157,8 +158,8 @@ slots.create:magic.ai.functions.invoke
       .lambda
 
          /*
-          * File requires a [_user-id] and it is of type string, making sure we pass
-          * in [_user-id] argument given to invocation.
+          * File requires a [_extra] and it is of type string, making sure we pass
+          * in [_extra] argument given to invocation.
           */
          unwrap:x:+/*/*
          add:x:../*/execute-file
