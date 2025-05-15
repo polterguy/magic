@@ -127,6 +127,7 @@ slots.create:magic.ai.functions.invoke
    load-file:x:@.file
    hyper2lambda:x:@load-file
 
+   // Checking if we've got a [_session] argument.
    if
       exists:x:@hyper2lambda/*/.arguments/*/_session/=string
       .lambda
@@ -140,6 +141,7 @@ slots.create:magic.ai.functions.invoke
             .
                _session:x:@.arguments/*/session
 
+   // Checking if we've got a [_user-id] argument.
    if
       exists:x:@hyper2lambda/*/.arguments/*/_user-id/=string
       .lambda
@@ -153,6 +155,7 @@ slots.create:magic.ai.functions.invoke
             .
                _user-id:x:@.arguments/*/user-id
 
+   // Checking if we've got a [_extra] argument.
    if
       exists:x:@hyper2lambda/*/.arguments/*/_extra/=string
       .lambda
@@ -166,6 +169,7 @@ slots.create:magic.ai.functions.invoke
             .
                _extra:x:@.arguments/*/extra
 
+   // Checking if we've got a [_type] argument.
    if
       exists:x:@hyper2lambda/*/.arguments/*/_type/=string
       .lambda
