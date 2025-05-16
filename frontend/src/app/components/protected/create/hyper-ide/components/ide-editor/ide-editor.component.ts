@@ -536,7 +536,8 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
     const selection = editor.getSelection();
     if (selection?.length > 0) {
-      this.aiService.prompt(selection);
+      const el = <any>window;
+      el.ainiro_faq_question(null, selection);
     }
   }
 

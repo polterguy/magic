@@ -50,7 +50,7 @@ validators.integer:x:@.arguments/*/max_request_tokens
    max:25000
 validators.integer:x:@.arguments/*/max_tokens
    min:500
-   max:4000
+   max:25000
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
