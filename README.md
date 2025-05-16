@@ -17,7 +17,7 @@ The concept is you provide a comment and description for what your Hyperlambda f
 
 ![AI code generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-generated-code.png)
 
-## Modules
+## Documentation
 
 Magic was created to make it easy to create small and medium sized backend APIs, and contains components for all problems related to backend development. For more information about Magic, please refer to its documentation below.
 
