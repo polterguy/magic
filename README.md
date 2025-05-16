@@ -5,6 +5,8 @@ Magic Cloud is a software development automation platform created and maintained
 
 ![Editing code in HyperIDE](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyper-ide-actions.jpg)
 
+## CRUD generator
+
 In addition to its generative AI capabilities, Magic also comes with a CRUD generator, allowing you to point it at your database, click a button, and wrap all your tables into CRUD endpoints. Combined with its AI capabilities, this can sometimes save you 90% of your time when delivering backend APIs. Magic is built on top of .Net 9 and Angular.
 
 ![CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/backend-crud.jpg)
