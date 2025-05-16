@@ -217,7 +217,8 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     const editor = (<any>document.querySelector('.CodeMirror')).CodeMirror;
     const selection = editor.getSelection();
     if (selection?.length > 0) {
-      this.aiService.prompt(selection);
+      const el = <any>window;
+      el.ainiro_faq_question(null, selection);
     }
   }
 }
