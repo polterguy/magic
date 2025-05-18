@@ -159,20 +159,12 @@ export class MachineLearningAddWorkflow implements OnInit {
     return el.description + '\n\n' + el.file;
   }
 
-  showAll() {
-
-    // Getting functions again.
-    this.getFunctions();
-
-    // Warning user if he shows all functions.
-    if (this.showAllFunctions) {
-      this.generalService.showFeedback('Warning, some of these might be dangerous to use in publicly available chatbots as AI functions', null, 'Ok', 5000);
-    }
-  }
-
   getCount() {
 
-    return this.functions.length;
+    if (!this.filterValue || this.filterValue === '') {
+      return this.functions.length;
+    }
+    return this.functions.filter(x => x.file.toLowerCase().includes(this.filterValue) || x.name.toLowerCase().includes(this.filterValue) || x.description.toLowerCase().includes(this.filterValue)).length;
   }
 
   getFilteredFunctions() {
@@ -180,7 +172,7 @@ export class MachineLearningAddWorkflow implements OnInit {
     if (!this.filterValue || this.filterValue === '') {
       return this.functions;
     }
-    return this.functions.filter(x => x.name.toLowerCase().includes(this.filterValue) || x.description.toLowerCase().includes(this.filterValue));
+    return this.functions.filter(x => x.file.toLowerCase().includes(this.filterValue) || x.name.toLowerCase().includes(this.filterValue) || x.description.toLowerCase().includes(this.filterValue));
   }
 
   removeSearchTerm() {

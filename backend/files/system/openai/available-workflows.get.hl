@@ -78,8 +78,10 @@ for-each:x:../*/io.file.list-recursively/*
                   get-name:x:@hyper2lambda/0
                   .:..
                or
-                  eq:x:@.arguments/*/private
-                     .:bool:true
+                  and
+                     eq:x:@.arguments/*/private
+                        .:bool:true
+                     exists:x:@hyper2lambda/*/\.arguments
                   eq:x:@hyper2lambda/*/.type
                      .:public
                   strings.starts-with:x:@hyper2lambda/*/.type
