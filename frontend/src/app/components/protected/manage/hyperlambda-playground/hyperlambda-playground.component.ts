@@ -218,7 +218,8 @@ export class HyperlambdaPlaygroundComponent implements OnInit, OnDestroy {
     const selection = editor.getSelection();
     if (selection?.length > 0) {
       const el = <any>window;
-      el.ainiro_faq_question(null, selection);
+      const question = 'Explain this code \n```hyperlambda' + selection + '\n```';
+      el.ainiro_faq_question(null, question);
     }
   }
 }
