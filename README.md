@@ -27,8 +27,8 @@ Magic was created to make it easy to create small and medium sized backend APIs,
 
 ## License
 
-This project, and all of its satellite project, is licensed under the terms of the GPL license version 3, as published by the Free Software Foundation unless an explicit and signed exception has been provided by Thomas Hansen its copyright owner. See LICENSE file for details. For licensing inquiries you can contact Thomas Hansen thomas@ainiro.io
+This project, and all of its satellite project, is licensed under the terms of the MIT license, as published by the Open Source Initiative. See LICENSE file for details. For licensing inquiries you can contact Thomas Hansen thomas@ainiro.io
 
 ## Copyright and maintenance
 
-The projects is copyright of Thomas Hansen, Ltd 2019 - 2025, and professionally maintained by [AINIRO.IO](https://ainiro.io).
+The projects is copyright of Thomas Hansen 2019 - 2025, and professionally maintained by [AINIRO.IO](https://ainiro.io).
