@@ -1,0 +1,27 @@
+
+/*
+ * Search the web and returns only the URLs found
+ * 
+ * Searches the web for the specified [query] using DuckDuckGo and returns the resulting hyperlinks to pages matching the query.
+ */
+.arguments
+
+   // Mandatory argument being the actual query to submit to DuckDuckGo.
+   query:string
+
+   // Optional argument being how many URLs to return. Defaults to 10 if not specified.
+   max_urls:int
+
+.description:Searches the web
+.type:public
+
+// Returns [max_urls] for the specified [query] by searching DuckDuckGo.
+execute:magic.workflows.actions.execute
+   name:urls-search
+   filename:/system/workflows/actions/urls-search.hl
+   arguments
+      query:x:@.arguments/*/query
+      max_urls:x:@.arguments/*/max_urls
+
+// Returns the result of your last action.
+return-nodes:x:@execute/*

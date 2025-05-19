@@ -1,0 +1,84 @@
+
+// Scrapes the specified URL and returns the content as Markdown
+.arguments
+   url
+      type:string
+      mandatory:bool:true
+.icon:extension
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/url
+
+// Prepending scheme if not given.
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/url
+            .:"http://"
+      not
+         strings.starts-with:x:@.arguments/*/url
+            .:"https://"
+   .lambda
+   
+      // Defaulting to https
+      set-value:x:@.arguments/*/url
+         strings.concat
+            .:"https://"
+            get-value:x:@.arguments/*/url
+
+// Sanity checking invocation.
+validators.url:x:@.arguments/*/url
+
+// Retrieving HTML from URL.
+http.get:x:@.arguments/*/url
+   timeout:int:30
+   headers
+      User-Agent:AINIRO-Crawler 2.0
+      Accept:text/html
+      Accept-Encoding:identity
+
+// Sanity checking result from above invocation.
+if
+   not
+      and
+         mte:x:@http.get
+            .:int:200
+         lt:x:@http.get
+            .:int:300
+   .lambda
+
+      // Oops, logging error.
+      lambda2hyper:x:@http.get
+      log.error:Something went wrong while trying to scrape URL
+         url:x:@.arguments/*/url
+         error:x:@lambda2hyper
+      return:x:@http.get
+
+// Making sure URL returned HTML.
+if
+   or
+      not-exists:x:@http.get/*/content
+      null:x:@http.get/*/content
+      eq:x:@http.get/*/content
+         .:
+      not-exists:x:@http.get/*/headers/*/Content-Type
+      not
+         strings.starts-with:x:@http.get/*/headers/*/Content-Type
+            .:text/html
+   .lambda
+
+      // Oops, doing some basic logging.
+      lambda2hyper:x:@http.get
+      log.error:URL did not return HTML content when scraping
+         content:x:@lambda2hyper
+         url:x:@.arguments/*/url
+      return:int:415
+
+// Transforming result to HTML
+html2markdown:x:@http.get/*/content
+   url:x:@.arguments/*/url
+
+// Returning result of above tranformation to caller.
+yield
+   result:x:@html2markdown
+   urls:x:@html2markdown/*/urls/*
