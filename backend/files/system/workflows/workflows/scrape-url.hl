@@ -1,0 +1,105 @@
+
+/*
+ * Scrape URL
+ * 
+ * Scrapes the specified [url] and returns the result to caller as Markdown.
+ */
+.arguments
+
+   // If specified declares the name of the machine learning type from where the invocation originated.
+   _type:string
+
+   // Mandatory argument and the actual URL to scrape.
+   url:string
+
+.description:Scrapes the specified [url]
+.type:public
+
+// Scrapes the specified URL and returns the content as Markdown
+execute:magic.workflows.actions.execute
+   name:scrape-url
+   filename:/system/workflows/actions/scrape-url.hl
+   arguments
+      url:x:@.arguments/*/url
+
+/*
+ * Now we need to make sure we don't overflow the type's maximum context tokens.
+ *
+ * Notice, in case workflow is executed without a [_type] argument, we default
+ * the context size to 100,000.
+ */
+.max-tokens:int:100000
+if
+   and
+      exists:x:@.arguments/*/_type
+      not-null:x:@.arguments/*/_type
+   .lambda
+
+      // We've got a machine learning type, finding its maximum context token count.
+      data.connect:[generic|magic]
+         database-type:sqlite
+         data.scalar:select max_context_tokens from ml_types where type = @type
+            database-type:sqlite
+            @type:x:@.arguments/*/_type
+         set-value:x:@.max-tokens
+            convert:x:@data.scalar
+               type:int
+
+      /*
+       * Checking if we're about to overflow the max context tokens,
+       * such that we can try to remove URLs until we're below threshold.
+       */
+      .json
+      set-value:x:@.json
+         lambda2json:x:@execute/*
+      while
+         and
+            exists:x:@execute/*/urls/0
+            mt
+               openai.tokenize:x:@.json
+               get-value:x:@.max-tokens
+         .lambda
+
+            // We need to prune the result, removing the last URL until we're below threshold.
+            remove-nodes:x:@execute/*/urls/0/-
+
+            // Updating above JSON.
+            set-value:x:@.json
+               lambda2json:x:@execute/*
+
+      // Checking if we've remove all URLs.
+      if
+         not
+            exists:x:@execute/*/urls/0
+         .lambda
+
+            // Zero URLs in result set, making sure we don't return [urls] at all.
+            remove-nodes:x:@execute/*/urls
+
+      /*
+       * Now pruning actual result until we're below threshold.
+       *
+       * This is in case removing all URLs didn't prune enough tokens.
+       */
+      while
+         mt
+            openai.tokenize:x:@.json
+            get-value:x:@.max-tokens
+         .lambda
+
+            // Removing 10% of [result] until we're below threshold.
+            math.multiply
+               strings.length:x:@execute/*/result
+               .:decimal:0.9
+            set-value:x:@execute/*/result
+               strings.substring:x:@execute/*/result
+                  .:int:0
+                  convert:x:@math.multiply
+                     type:int
+
+            // Updating JSON result such that next iteration can correctly calculate tokens.
+            set-value:x:@.json
+               lambda2json:x:@execute/*
+
+// Returns the result of your last action.
+return-nodes:x:@execute/*
