@@ -4,7 +4,6 @@
  */
 
 // Angular and system imports
-import { Clipboard } from '@angular/cdk/clipboard';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
@@ -299,11 +298,6 @@ export class IdeTreeComponent implements OnInit {
 
     } else {
 
-      // Checking if we should expand toolbox.
-      if (file.path.endsWith('.hl') && this.toolboxExpanded === null) {
-        this.toolboxExpanded = true;
-      }
-
       // File is not open from before.
       const cmOptions = this.getCodeMirrorOptions(file.path);
       if (cmOptions === null) {
@@ -557,9 +551,6 @@ export class IdeTreeComponent implements OnInit {
 
     // Trying our best to open another file.
     this.currentFileData = this.openFiles.length > 0 ? this.openFiles[this.openFiles.length - 1] : null;
-    if (this.currentFileData === null) {
-      this.toolboxExpanded = null;
-    }
     this.scrollToActiveOpenFile();
 
     // Signaling other components to let them know active file was changed.
@@ -808,11 +799,6 @@ export class IdeTreeComponent implements OnInit {
               // Checking if we should show "Create arguments collection" dialog for file.
               if (path.endsWith('.hl')) {
 
-                // Checking if we should expand toolbox.
-                if (path.endsWith('.hl') && this.toolboxExpanded === null) {
-                  this.toolboxExpanded = true;
-                }
-
                 this.dialog.open(ParametriseActionDialog, {
                   width: '750px',
                   maxWidth: '80vw',
@@ -867,7 +853,6 @@ export class IdeTreeComponent implements OnInit {
                         this.generalService.hideLoading();
                         this.currentFileData.content = response.result;
                         this.setFocusToActiveEditor.emit();
-                        this.toolboxExpanded = true;
                         const fileExisting: number = this.openFiles.findIndex((item: any) => item.path === this.currentFileData.path);
                         const activeWrapper = document.querySelector('.active-codemirror-editor-' + fileExisting);
                         const editor = (<any>activeWrapper.querySelector('.CodeMirror')).CodeMirror;
