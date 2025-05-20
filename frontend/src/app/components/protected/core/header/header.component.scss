@@ -43,6 +43,9 @@
       color: $ainiro_primary;
     }
   }
+  .mat-menu-item:hover {
+    background-color: rgba(0,0,0,.3) !important;
+  }
 
   .nav-button {
     line-height: 35px;
@@ -173,7 +176,7 @@
 }
 
 a {
-  background-color: transparent !important;
+  background-color: transparent;
   @include general_transition(0.3s);
 
   &.active-link,
