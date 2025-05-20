@@ -32,7 +32,8 @@
       mat-button
       type="submit"
       *ngIf="openAiEnabled"
-      [disabled]="waitingForAnswer"
+      [disabled]="waitingForAnswer || !openAiPrompt || openAiPrompt.length === 0"
+      matTooltip="Ask the AI to generate code"
       color="primary"
       class="px-3">
       Ask

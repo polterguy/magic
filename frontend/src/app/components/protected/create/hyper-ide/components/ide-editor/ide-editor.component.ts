@@ -9,9 +9,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 
 // Application specific imports.
-import { AiService } from 'src/app/services/ai.service';
 import { FileNode } from '../../models/file-node.model';
 import { FileService } from 'src/app/services/file.service';
+import { OpenAIService } from 'src/app/services/openai.service';
 import { GeneralService } from 'src/app/services/general.service';
 import { MagicResponse } from 'src/app/models/magic-response.model';
 import { WorkflowService } from 'src/app/services/workflow.service';
@@ -26,7 +26,6 @@ import { UnsavedChangesDialogComponent } from '../unsaved-changes-dialog/unsaved
 import { RenameFileDialogComponent, FileObjectName } from '../rename-file-dialog/rename-file-dialog.component';
 import { ShortkeysDialogComponent } from 'src/app/components/protected/common/shortkeys-dialog/shortkeys-dialog.component';
 import { LoadSnippetDialogComponent } from 'src/app/components/protected/common/load-snippet-dialog/load-snippet-dialog.component';
-import { OpenAIService } from 'src/app/services/openai.service';
 
 /**
  * Hyper IDE editor component, wrapping currently open files, allowing user to edit the code.
@@ -60,7 +59,6 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private dialog: MatDialog,
     private fileService: FileService,
-    private aiService: AiService,
     private openAiService: OpenAIService,
     private generalService: GeneralService,
     private workflowService: WorkflowService,
@@ -231,7 +229,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  private executeHyperlambda() {
+  executeHyperlambda() {
 
     if (this.openFiles.length === 0 || !this.currentFileData.path.endsWith('.hl')) {
       return;
