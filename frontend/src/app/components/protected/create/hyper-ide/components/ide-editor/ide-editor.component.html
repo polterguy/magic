@@ -15,6 +15,7 @@
       <button
         mat-button
         *ngIf="currentFileData"
+        matTooltip="Keyboard shortcuts"
         color="primary"
         (click)="openShortkeys()">
         Shortkeys
@@ -52,6 +53,7 @@
 
     <button
       *ngIf="currentFileData"
+      matTooltip="Close active file"
       mat-button
       color="primary"
       class="px-3"
@@ -60,9 +62,20 @@
     </button>
 
     <button
+      *ngIf="currentFileData && currentFileData.path.endsWith('.hl')"
+      mat-button
+      color="primary"
+      matTooltip="Execute active file or HTTP endpoint"
+      class="px-3"
+      (click)="executeHyperlambda()">
+      Execute
+    </button>
+
+    <button
       *ngIf="currentFileData"
       mat-button
       color="primary"
+      matTooltip="Save active file"
       class="px-3"
       (click)="saveActiveFile()">
       Save
