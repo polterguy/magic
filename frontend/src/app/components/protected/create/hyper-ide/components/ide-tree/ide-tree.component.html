@@ -28,16 +28,7 @@
                   mat-icon-button
                   color="primary"
                   class="tree-action-btn"
-                  title="Get OpenAPI specification ..."
-                  (click)="getOpenAPISpecification()">
-                  <mat-icon>http</mat-icon>
-                </button>
-
-                <button
-                  mat-icon-button
-                  color="primary"
-                  class="tree-action-btn"
-                  title="New file ..."
+                  matTooltip="New file ..."
                   (click)="createNewFileObject('file')">
                   <mat-icon>post_add</mat-icon>
                 </button>
@@ -46,7 +37,7 @@
                   mat-icon-button
                   color="primary"
                   class="tree-action-btn"
-                  title="New folder ..."
+                  matTooltip="New folder ..."
                   (click)="createNewFileObject('folder')">
                   <mat-icon>create_new_folder</mat-icon>
                 </button>
@@ -55,7 +46,7 @@
                   mat-icon-button
                   color="primary"
                   class="tree-action-btn"
-                  [title]="currentFileData && currentSelection === 'file' ? 'Download file...' : 'Download folder...'"
+                  [matTooltip]="currentFileData && currentSelection === 'file' ? 'Download file...' : 'Download folder...'"
                   (click)="currentFileData && currentSelection === 'file' ? downloadActiveFile(currentFileData.path) : downloadFolder()">
                   <mat-icon>file_download</mat-icon>
                 </button>
@@ -64,7 +55,7 @@
                   mat-icon-button
                   color="primary"
                   class="tree-action-btn"
-                  title="Upload file ..."
+                  matTooltip="Upload file ..."
                   (click)="file.click()">
                   <mat-icon>file_upload</mat-icon>
                 </button>
@@ -73,7 +64,7 @@
                   mat-icon-button
                   color="primary"
                   class="tree-action-btn"
-                  title="Install module ..."
+                  matTooltip="Install module ..."
                   (click)="zipfile.click()">
                   <mat-icon>drive_folder_upload</mat-icon>
                 </button>
@@ -131,7 +122,7 @@
                 mat-icon-button
                 color="primary"
                 *ngIf="(file.node.path.endsWith('.html') || file.node.path.endsWith('.png') || file.node.path.endsWith('.jpeg') || file.node.path.endsWith('.jpg') || file.node.path.endsWith('.webp')) && file.node.path.startsWith('/etc/www/')"
-                title="Preview file ..."
+                matTooltip="Preview file ..."
                 (click)="previewHtmlFile(file.node)">
                 <mat-icon>remove_red_eye</mat-icon>
               </button>
@@ -140,7 +131,7 @@
                 mat-icon-button
                 color="primary"
                 *ngIf="file.node.path.endsWith('.hl')"
-                title="Create AI Function for type ..."
+                matTooltip="Create AI Function for type ..."
                 (click)="createAIFunction(file.node)">
                 <mat-icon>bolt</mat-icon>
               </button>
@@ -148,7 +139,16 @@
               <button
                 mat-icon-button
                 color="primary"
-                title="Rename file ..."
+                *ngIf="file.node.path.endsWith('.get.hl') || file.node.path.endsWith('.post.hl') || file.node.path.endsWith('.patch.hl') || file.node.path.endsWith('.put.hl') || file.node.path.endsWith('.delete.hl')"
+                matTooltip="Open API Specification for HTTP endpoint ..."
+                (click)="getOpenAPISpecification(file.node)">
+                <mat-icon>http</mat-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                color="primary"
+                matTooltip="Rename file ..."
                 (click)="showRenameInput(file.node)">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -156,7 +156,7 @@
               <button
                 mat-icon-button
                 color="warn"
-                title="Delete file ..."
+                matTooltip="Delete file ..."
                 (click)="deleteFile(file.node.path)">
                 <mat-icon>close</mat-icon>
               </button>
@@ -226,9 +226,22 @@
                 mat-icon-button
                 color="primary"
                 *ngIf="folder.node.path.startsWith('/modules/')"
-                title="Create AI Functions for all files in folder ..."
+                matTooltip="Create AI Functions for all files in folder ..."
                 (click)="createAIFunctionsForFolder(folder.node)">
                 <mat-icon>bolt</mat-icon>
+              </button>
+
+            </div>
+
+            <div
+              class="show-on-hover">
+
+              <button
+                mat-icon-button
+                color="primary"
+                matTooltip="Open API Specification for HTTP endpoints in folder ..."
+                (click)="getOpenAPISpecification(file.node)">
+                <mat-icon>http</mat-icon>
               </button>
 
             </div>
@@ -239,6 +252,7 @@
               <button
                 mat-icon-button
                 color="primary"
+                matTooltip="Rename folder ..."
                 (click)="showRenameInput(folder.node)">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -246,6 +260,7 @@
               <button
                 mat-icon-button
                 color="warn"
+                matTooltip="Delete folder"
                 (click)="deleteFolder(folder.node.path)">
                 <mat-icon>close</mat-icon>
               </button>
@@ -346,7 +361,7 @@
           class="justify-content-between d-flex w-100 open-files"
           *ngFor="let item of openFiles;let index=index"
           [id]="currentFileData.name === item.name ? 'active' : ''"
-          [title]="item.path"
+          [matTooltip]="item.path"
           (click)="openFile(item, false)"
           [class.active-file]="currentFileData.path === item.path">
 

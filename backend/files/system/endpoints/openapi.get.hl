@@ -50,6 +50,31 @@ unwrap:x:./*/.result/**
 // Retrieves all endpoints in the system.
 endpoints.list
 
+// Checking if filter is a file path, at which point we only return OpenAPI spec for specified file.
+.verb
+if
+   or
+      strings.ends-with:x:@.arguments/*/filter
+         .:.get.hl
+      strings.ends-with:x:@.arguments/*/filter
+         .:.post.hl
+      strings.ends-with:x:@.arguments/*/filter
+         .:.put.hl
+      strings.ends-with:x:@.arguments/*/filter
+         .:.patch.hl
+      strings.ends-with:x:@.arguments/*/filter
+         .:.delete.hl
+   .lambda
+      strings.split:x:@.arguments/*/filter
+         .:.
+      set-value:x:@.verb
+         get-value:x:@strings.split/0/-/-
+      remove-nodes:x:@strings.split/0/-
+      remove-nodes:x:@strings.split/0/-
+      set-value:x:@.arguments/*/filter
+         strings.join:x:@strings.split/*
+            .:.
+
 // Iterating through each public endpoint and adding to above [paths].
 for-each:x:@endpoints.list/*
 
@@ -66,243 +91,260 @@ for-each:x:@endpoints.list/*
          or
             not-exists:x:@.arguments/*/filter
             null:x:@.arguments/*/filter
-            strings.contains:x:@.dp/#/*/path
-               get-value:x:@.arguments/*/filter
+            or
+               and
+                  null:x:@.verb
+                  strings.contains:x:@.dp/#/*/path
+                     get-value:x:@.arguments/*/filter
+               and
+                  not-null:x:@.verb
+                  eq
+                     get-value:x:@.dp/#/*/path
+                     strings.concat
+                        .:magic
+                        get-value:x:@.arguments/*/filter
       .lambda
 
-         // Checking if we've already added URL to [.result].
-         .exists:bool:false
-         for-each:x:@.result/*/paths/*
-            if
-               eq
-                  get-name:x:@.dp/#
-                  strings.concat
-                     .:/
-                     get-value:x:@for-each/@.dp/#/*/path
-               .lambda
-
-                  // Endpoint URL has already been added.
-                  set-value:x:@.exists
-                     .:bool:true
-
-         /*
-          * Endpoint URL has not been added before, making sure
-          * we add it with its correct URL and additional information.
-          */
-         .buffer
-            url
-               verb
-                  operationId
-                  description
-
-         // Setting description, making sure we don't exceed 300 characters.
-         if
-            and
-               exists:x:@.dp/#/*/description
-               mt
-                  strings.length:x:@.dp/#/*/description
-                  .:int:300
-            .lambda
-               set-value:x:@.dp/#/*/description
-                  strings.substring:x:@.dp/#/*/description
-                     .:int:0
-                     .:int:300
-         set-value:x:@.buffer/*/url/*/verb/*/description
-            get-value:x:@.dp/#/*/description
-
-         // Setting verb.
-         set-name:x:@.buffer/*/url/*/verb
-            get-value:x:@.dp/#/*/verb
-
-         // Setting consumes
-         switch:x:@.dp/#/*/verb
-            case:post
-            case:put
-            case:patch
-               unwrap:x:+/*/*/*
-               insert-after:x:@.buffer/*/*/*/operationId
-                  .
-                     consumes
-                        .:x:@.dp/#/*/consumes
-                     produces
-                        .:application/json
-
-         // Setting URL.
-         set-name:x:@.buffer/*/url
-            strings.concat
-               .:/
-               get-value:x:@.dp/#/*/path
-
-         // Setting operationId.
-         strings.split:x:@.dp/#/*/path
-            .:/
-         set-value:x:@.buffer/*/*/*/operationId
-            strings.concat
-               get-value:x:@.dp/#/*/verb
-               .:_
-               get-value:x:@strings.split/0/-/-
-               .:_
-               get-value:x:@strings.split/0/-
-
-         /*
-          * Checking if this is a GET or DELETE endpoint,
-          * at which point parameters are always QUERY parameters.
-          *
-          * If POST, PUT or PATCH however, we use schema level example instead.
-          */
          if
             or
+               null:x:@.verb
                eq:x:@.dp/#/*/verb
-                  .:get
-               eq:x:@.dp/#/*/verb
-                  .:delete
+                  get-value:x:@.verb
             .lambda
 
-               // Adding [parameters].
-               add:x:@.buffer/*/*
-                  .
-                     parameters
-
-               // Iterating through each argument endpoint can handle.
-               for-each:x:@.dp/#/*/input/*
-
-                  // Verifying this is not a wildcard argument.
+               // Checking if we've already added URL to [.result].
+               .exists:bool:false
+               for-each:x:@.result/*/paths/*
                   if
-                     neq:x:@.dp/#/*/type
-                        .:*
+                     eq
+                        get-name:x:@.dp/#
+                        strings.concat
+                           .:/
+                           get-value:x:@for-each/@.dp/#/*/path
                      .lambda
 
-                        // Buffer for parameter.
-                        .arg
-                           name
-                           in:query
-                           schema
-                              type
+                        // Endpoint URL has already been added.
+                        set-value:x:@.exists
+                           .:bool:true
 
-                        // Setting name.
-                        set-value:x:@.arg/*/name
-                           get-value:x:@.dp/#/*/name
+               /*
+                * Endpoint URL has not been added before, making sure
+                * we add it with its correct URL and additional information.
+                */
+               .buffer
+                  url
+                     verb
+                        operationId
+                        description
 
-                        // Setting type.
-                        switch:x:@.dp/#/*/type
-                           case:short
-                           case:ushort
-                           case:int
-                           case:uint
-                           case:long
-                           case:ulong
-                              set-value:x:@.arg/*/schema/*/type
-                                 .:integer
-                           case:float
-                           case:double
-                           case:decimal
-                              set-value:x:@.arg/*/schema/*/type
-                                 .:number
-                           case:bool
-                              set-value:x:@.arg/*/schema/*/type
-                                 .:boolean
-                           default
-                              set-value:x:@.arg/*/schema/*/type
-                                 .:string
-
-                        // Checking if we've got a description, and if so, adding it.
-                        if
-                           exists:x:@.dp/#/*/description
-                           .lambda
-                              unwrap:x:+/*/*
-                              insert-after:x:@.arg/*/name
-                                 .
-                                    description:x:@.dp/#/*/description
-
-                        // Adding currently iterated argument to parameters collection.
-                        add:x:+/*/*
-                           get-nodes:x:@.arg/*
-                        add:x:@.buffer/*/*/*/parameters
-                           .
-                              .
-
-         else
-
-            .body
-               requestBody
-                  content
-                     application/json
-                        schema
-                           type:object
-                           properties
-
-            // Iterating through each argument endpoint can handle.
-            for-each:x:@.dp/#/*/input/*
-
-               // Adding currently iterated argument to parameters collection, making sure it's not already existing.
+               // Setting description, making sure we don't exceed 300 characters.
                if
-                  not-exists:x:@.body/*/requestBody/*/content/*/*/schema/*/properties/*/{@.dp/#/*/name}
+                  and
+                     exists:x:@.dp/#/*/description
+                     mt
+                        strings.length:x:@.dp/#/*/description
+                        .:int:300
+                  .lambda
+                     set-value:x:@.dp/#/*/description
+                        strings.substring:x:@.dp/#/*/description
+                           .:int:0
+                           .:int:300
+               set-value:x:@.buffer/*/url/*/verb/*/description
+                  get-value:x:@.dp/#/*/description
+
+               // Setting verb.
+               set-name:x:@.buffer/*/url/*/verb
+                  get-value:x:@.dp/#/*/verb
+
+               // Setting consumes
+               switch:x:@.dp/#/*/verb
+                  case:post
+                  case:put
+                  case:patch
+                     unwrap:x:+/*/*/*
+                     insert-after:x:@.buffer/*/*/*/operationId
+                        .
+                           consumes
+                              .:x:@.dp/#/*/consumes
+                           produces
+                              .:application/json
+
+               // Setting URL.
+               set-name:x:@.buffer/*/url
+                  strings.concat
+                     .:/
+                     get-value:x:@.dp/#/*/path
+
+               // Setting operationId.
+               strings.split:x:@.dp/#/*/path
+                  .:/
+               set-value:x:@.buffer/*/*/*/operationId
+                  strings.concat
+                     get-value:x:@.dp/#/*/verb
+                     .:_
+                     get-value:x:@strings.split/0/-/-
+                     .:_
+                     get-value:x:@strings.split/0/-
+
+               /*
+                * Checking if this is a GET or DELETE endpoint,
+                * at which point parameters are always QUERY parameters.
+                *
+                * If POST, PUT or PATCH however, we use schema level example instead.
+                */
+               if
+                  or
+                     eq:x:@.dp/#/*/verb
+                        .:get
+                     eq:x:@.dp/#/*/verb
+                        .:delete
                   .lambda
 
-                     // Field does not exist from before, adding field into [properties] lambda.
-                     .prop
-                        name
-                           type
+                     // Adding [parameters].
+                     add:x:@.buffer/*/*
+                        .
+                           parameters
 
-                     // Type
-                     set-value:x:@.prop/*/*/type
-                        get-value:x:@.dp/#/*/type
+                     // Iterating through each argument endpoint can handle.
+                     for-each:x:@.dp/#/*/input/*
 
-                     // Name
-                     set-name:x:@.prop/*
-                        get-value:x:@.dp/#/*/name
+                        // Verifying this is not a wildcard argument.
+                        if
+                           neq:x:@.dp/#/*/type
+                              .:*
+                           .lambda
 
-                     // Checking if we've got a description, and if so, adding it.
+                              // Buffer for parameter.
+                              .arg
+                                 name
+                                 in:query
+                                 schema
+                                    type
+
+                              // Setting name.
+                              set-value:x:@.arg/*/name
+                                 get-value:x:@.dp/#/*/name
+
+                              // Setting type.
+                              switch:x:@.dp/#/*/type
+                                 case:short
+                                 case:ushort
+                                 case:int
+                                 case:uint
+                                 case:long
+                                 case:ulong
+                                    set-value:x:@.arg/*/schema/*/type
+                                       .:integer
+                                 case:float
+                                 case:double
+                                 case:decimal
+                                    set-value:x:@.arg/*/schema/*/type
+                                       .:number
+                                 case:bool
+                                    set-value:x:@.arg/*/schema/*/type
+                                       .:boolean
+                                 default
+                                    set-value:x:@.arg/*/schema/*/type
+                                       .:string
+
+                              // Checking if we've got a description, and if so, adding it.
+                              if
+                                 exists:x:@.dp/#/*/description
+                                 .lambda
+                                    unwrap:x:+/*/*
+                                    insert-after:x:@.arg/*/name
+                                       .
+                                          description:x:@.dp/#/*/description
+
+                              // Adding currently iterated argument to parameters collection.
+                              add:x:+/*/*
+                                 get-nodes:x:@.arg/*
+                              add:x:@.buffer/*/*/*/parameters
+                                 .
+                                    .
+
+               else
+
+                  .body
+                     requestBody
+                        content
+                           application/json
+                              schema
+                                 type:object
+                                 properties
+
+                  // Iterating through each argument endpoint can handle.
+                  for-each:x:@.dp/#/*/input/*
+
+                     // Adding currently iterated argument to parameters collection, making sure it's not already existing.
                      if
-                        exists:x:@.dp/#/*/description
+                        not-exists:x:@.body/*/requestBody/*/content/*/*/schema/*/properties/*/{@.dp/#/*/name}
                         .lambda
-                           unwrap:x:+/*/*
-                           add:x:@.prop/*
-                              .
-                                 description:x:@.dp/#/*/description
 
-                     // Adding field to [properties].
-                     add:x:@.body/*/requestBody/*/content/*/*/schema/*/properties
-                        get-nodes:x:@.prop/*
+                           // Field does not exist from before, adding field into [properties] lambda.
+                           .prop
+                              name
+                                 type
 
-            // Adding currently iterated argument to parameters collection if we've got an example.
-            if
-               exists:x:@.body/*/requestBody/*/content/*/*/schema/*/properties
-               .lambda
+                           // Type
+                           set-value:x:@.prop/*/*/type
+                              get-value:x:@.dp/#/*/type
 
-                  // We've got an example payload.
+                           // Name
+                           set-name:x:@.prop/*
+                              get-value:x:@.dp/#/*/name
+
+                           // Checking if we've got a description, and if so, adding it.
+                           if
+                              exists:x:@.dp/#/*/description
+                              .lambda
+                                 unwrap:x:+/*/*
+                                 add:x:@.prop/*
+                                    .
+                                       description:x:@.dp/#/*/description
+
+                           // Adding field to [properties].
+                           add:x:@.body/*/requestBody/*/content/*/*/schema/*/properties
+                              get-nodes:x:@.prop/*
+
+                  // Adding currently iterated argument to parameters collection if we've got an example.
+                  if
+                     exists:x:@.body/*/requestBody/*/content/*/*/schema/*/properties
+                     .lambda
+
+                        // We've got an example payload.
+                        add:x:+/*
+                           get-nodes:x:@.body/*
+                        add:x:@.buffer/*/*
+                           .
+
+
+               // Removing [parameters] unless we actually have parameters.
+               if
+                  not-exists:x:@.buffer/*/*/*/parameters/*
+                  .lambda
+                     remove-nodes:x:@.buffer/*/*/*/parameters
+
+               /*
+                * Checking if endpoint URL has already been added, and if so,
+                * we add another verb instead of a new URL reference.
+                */
+               if:x:@.exists
+
+                  // Endpoint URL already exists, adding new verb instead.
+                  strings.concat
+                     .:/
+                     get-value:x:@.dp/#/*/path
+                  add:x:@.result/*/paths/*/{@strings.concat}
+                     get-nodes:x:@.buffer/*/*
+
+               else
+
+                  // Adding [.buffer] to [.result].
                   add:x:+/*
-                     get-nodes:x:@.body/*
-                  add:x:@.buffer/*/*
+                     get-nodes:x:@.buffer/*
+                  add:x:@.result/*/paths
                      .
-
-
-         // Removing [parameters] unless we actually have parameters.
-         if
-            not-exists:x:@.buffer/*/*/*/parameters/*
-            .lambda
-               remove-nodes:x:@.buffer/*/*/*/parameters
-
-         /*
-          * Checking if endpoint URL has already been added, and if so,
-          * we add another verb instead of a new URL reference.
-          */
-         if:x:@.exists
-
-            // Endpoint URL already exists, adding new verb instead.
-            strings.concat
-               .:/
-               get-value:x:@.dp/#/*/path
-            add:x:@.result/*/paths/*/{@strings.concat}
-               get-nodes:x:@.buffer/*/*
-
-         else
-
-            // Adding [.buffer] to [.result].
-            add:x:+/*
-               get-nodes:x:@.buffer/*
-            add:x:@.result/*/paths
-               .
 
 // Verifying we have any endpoints at all, and if not, simply removing paths.
 if

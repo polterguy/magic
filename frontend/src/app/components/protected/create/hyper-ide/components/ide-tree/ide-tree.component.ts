@@ -105,10 +105,12 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  getOpenAPISpecification() {
+  getOpenAPISpecification(node: TreeNode = null) {
+
+    let path = node ? node.path : this.activeFolder;
 
     this.generalService.showLoading();
-    this.endpointSerivce.getOpenAPISpecification(this.activeFolder).subscribe({
+    this.endpointSerivce.getOpenAPISpecification(path).subscribe({
 
       next: (result: any) => {
 
@@ -132,75 +134,11 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /**
-   * Returns true if currently open file is a Hyperlambda file.
-   */
   isHyperlambdaFile() {
 
     return this.currentFileData?.path?.endsWith('.hl') || false;
   }
 
-  /**
-   * Retrieves files and folders from backend.
-   */
-  private getFilesFromServer(folder: string = '/') {
-
-    return new Promise<boolean>(resolve => {
-
-      // Helper function to insert files and folders correctly into TreeNode hierarchy.
-      const addToRoot = (objects: string[], isFolder: boolean) => {
-        for (const idx of objects) {
-          const entities = idx.split('/').filter(x => x !== '');
-          let parent = this.root;
-          let level = 1;
-          for (const idxPeek of entities.slice(0, -1)) {
-            parent = parent.children.filter(x => x.name === idxPeek)[0];
-            level += 1;
-          }
-          parent.children.push({
-            name: entities[entities.length - 1],
-            path: idx,
-            isFolder: isFolder,
-            level: level,
-            children: [],
-            systemFile: this.isSystemPath(idx),
-          });
-        }
-      }
-
-      // Getting folders recursively.
-      this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe({
-
-        next: (folders: string[]) => {
-
-          addToRoot(folders || [], true);
-
-          // Getting files recursively.
-          this.fileService.listFilesRecursively(folder, this.systemFiles).subscribe({
-            next: (files: string[]) => {
-
-              addToRoot(files || [], false);
-              resolve(true);
-            },
-            error: (error: any) => {
-
-              resolve(false);
-              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
-            }
-          });
-        },
-        error: (error: any) => {
-
-          resolve(false);
-          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-        }
-      });
-    });
-  }
-
-  /**
-   * Adds the specified action to the currently edited Hyperlambda file.
-   */
   insertAction(el: any) {
 
     // Getting editor and its selection.
@@ -264,9 +202,6 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /**
-   * Adds the specified snippet to the currently edited Hyperlambda.
-   */
   insertSnippet(el: any) {
 
     // Getting editor and its selection.
@@ -278,9 +213,6 @@ export class IdeTreeComponent implements OnInit {
     this.insertHyperlambdaSnippet(el.content, cm.editor, cm.sel);
   }
 
-  /**
-   * Invoked when user wants to open a file for editing.
-   */
   openFile(file: TreeNode, scrollOpenFiles: boolean = true) {
 
     // Checking if file is already open.
@@ -383,16 +315,10 @@ export class IdeTreeComponent implements OnInit {
     this.activeFolder = TreeNode.parentFolder(file);
   }
 
-  /**
-   * Deletes currently activated and open file.
-   */
   deleteActiveFile() {
     this.deleteFile(this.currentFileData.path);
   }
 
-  /**
-   * Deletes the specified file, optionally asking user to confirm action.
-   */
   deleteFile(path: string, askForConfirmation: boolean = true) {
 
     // Callback invoked when file should be deleted.
@@ -450,16 +376,10 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
-  /**
-   * Deletes currently activated folder.
-   */
   deleteActiveFolder() {
     this.deleteFolder(this.activeFolder);
   }
 
-  /**
-   * Deletes the specified folder.
-   */
   deleteFolder(path: string) {
 
     // Making sure user doesn't delete system folders.
@@ -511,10 +431,6 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /**
-   * Data bind the tree, such that folders that are already expanded stays expanded
-   * after data binding is done.
-   */
   dataBindTree() {
 
     // Storing currently expanded nodes such that we can re-expand them after data binding.
@@ -536,9 +452,6 @@ export class IdeTreeComponent implements OnInit {
     }
   }
 
-  /**
-   * Closes the specified file.
-   */
   closeFile(path: string) {
 
     // Removing file from currently open files.
@@ -558,10 +471,6 @@ export class IdeTreeComponent implements OnInit {
     this.setFocusToActiveEditor.emit();
   }
 
-  /**
-   * Creates AI functions for all files in folder after having asked user what
-   * model / type she wants to put these in.
-   */
   createAIFunctionsForFolder(node: TreeNode) {
 
     // Asking user what model / type to use.
@@ -582,9 +491,6 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /**
-   * Copies file as AI Function.
-   */
   createAIFunction(node: TreeNode) {
 
     // Asking user what model / type to use.
@@ -605,9 +511,6 @@ export class IdeTreeComponent implements OnInit {
     });
   }
 
-  /**
-   * Shows the in place rename textbox.
-   */
   showRenameInput(node: TreeNode) {
 
     // Making sure we display renaming textbox for specified tree node.
@@ -619,9 +522,6 @@ export class IdeTreeComponent implements OnInit {
     }, 10);
   }
 
-  /**
-   * Renames the specified file to its new name.
-   */
   renameFile(event: { file: { path: string, name: string }, newName: string }) {
 
     // Sanity checking new name.
@@ -695,11 +595,8 @@ export class IdeTreeComponent implements OnInit {
 
       this.generalService.hideLoading();
     });
-}
+  }
 
-  /**
-   * Renames the specified folder to its new name.
-   */
   renameFolder(event: { folder: string, newName: string }) {
 
     // Sanity checking new name.
@@ -886,28 +783,6 @@ export class IdeTreeComponent implements OnInit {
           });
 
         }
-      }
-    });
-  }
-
-  private transformActiveHyperlambdaFile(description: string) {
-
-    this.generalService.showLoading();
-    this.openAiService.query(
-      description,
-      'hl',
-      false,
-      this.currentFileData.content).subscribe({
-      next: (result: any) => {
-
-        this.currentFileData.content = result.result;
-        this.generalService.hideLoading();
-
-      },
-      error: (error: any) => {
-
-        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
-        this.generalService.hideLoading();
       }
     });
   }
@@ -1421,6 +1296,83 @@ export class IdeTreeComponent implements OnInit {
 
         this.generalService.hideLoading();
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+      }
+    });
+  }
+
+  private getFilesFromServer(folder: string = '/') {
+
+    return new Promise<boolean>(resolve => {
+
+      // Helper function to insert files and folders correctly into TreeNode hierarchy.
+      const addToRoot = (objects: string[], isFolder: boolean) => {
+        for (const idx of objects) {
+          const entities = idx.split('/').filter(x => x !== '');
+          let parent = this.root;
+          let level = 1;
+          for (const idxPeek of entities.slice(0, -1)) {
+            parent = parent.children.filter(x => x.name === idxPeek)[0];
+            level += 1;
+          }
+          parent.children.push({
+            name: entities[entities.length - 1],
+            path: idx,
+            isFolder: isFolder,
+            level: level,
+            children: [],
+            systemFile: this.isSystemPath(idx),
+          });
+        }
+      }
+
+      // Getting folders recursively.
+      this.fileService.listFoldersRecursively(folder, this.systemFiles).subscribe({
+
+        next: (folders: string[]) => {
+
+          addToRoot(folders || [], true);
+
+          // Getting files recursively.
+          this.fileService.listFilesRecursively(folder, this.systemFiles).subscribe({
+            next: (files: string[]) => {
+
+              addToRoot(files || [], false);
+              resolve(true);
+            },
+            error: (error: any) => {
+
+              resolve(false);
+              this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage', 'Ok', 4000);
+            }
+          });
+        },
+        error: (error: any) => {
+
+          resolve(false);
+          this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        }
+      });
+    });
+  }
+
+  private transformActiveHyperlambdaFile(description: string) {
+
+    this.generalService.showLoading();
+    this.openAiService.query(
+      description,
+      'hl',
+      false,
+      this.currentFileData.content).subscribe({
+      next: (result: any) => {
+
+        this.currentFileData.content = result.result;
+        this.generalService.hideLoading();
+
+      },
+      error: (error: any) => {
+
+        this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
+        this.generalService.hideLoading();
       }
     });
   }
