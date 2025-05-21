@@ -88,6 +88,14 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/authentication']);
   }
 
+  openFrontend(clickType: string) {
+
+    if (clickType !== 'Frontend') {
+      return;
+    }
+    window.open(this.backendService.active.url, '_blank');
+  }
+
   viewBackends() {
 
     this.dialog.open(DialogComponent, {
@@ -221,6 +229,9 @@ export class HeaderComponent implements OnInit {
             name: 'Log',
             url: '/log',
             exact: false,
+          },
+          {
+            name: 'Frontend',
           },
         ],
       },
