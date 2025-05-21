@@ -95,6 +95,7 @@
               mat-button
               color="primary"
               routerLink="/sql-studio"
+              matTooltip="Edit database using SQL Studio"
               [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}">
               Edit
             </button>
@@ -102,25 +103,28 @@
             <button
               mat-button
               color="primary"
+              matTooltip="Download a backup of database locally"
               (click)="downloadDatabaseBackup(element)">
               Backup
             </button>
 
             <button
               mat-button
-              color="warn"
-              (click)="deleteDatabase(element)"
+              color="primary"
+              routerLink="/endpoint-generator"
+              matTooltip="Generate CRUD HTTP endpoints for database"
+              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}"
               [disabled]="element.name === 'magic'">
-              Delete
+              Generate endpoints
             </button>
 
             <button
               mat-button
-              color="primary"
-              routerLink="/endpoint-generator"
-              [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}"
+              color="warn"
+              (click)="deleteDatabase(element)"
+              matTooltip="Permanently delete database"
               [disabled]="element.name === 'magic'">
-              Generate endpoints
+              Delete
             </button>
 
           </td>
@@ -138,6 +142,7 @@
         mat-flat-button
         class="me-4"
         color="primary"
+        matTooltip="Upload SQLite database backup"
         (click)="zipfile.click()">
         Upload backup
       </button>

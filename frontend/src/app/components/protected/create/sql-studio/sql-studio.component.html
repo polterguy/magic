@@ -126,7 +126,7 @@
             mat-button
             color="primary"
             matTooltip="Create new table"
-            [disabled]="(dbLoading | async) || sqlView"
+            [disabled]="(dbLoading | async) || sqlView || selectedDatabase === 'magic'"
             (click)="addNewTable()">
             New table
           </button>
@@ -135,7 +135,7 @@
             mat-button
             color="primary"
             matTooltip="New many to many link table"
-            [disabled]="(dbLoading | async) || sqlView"
+            [disabled]="(dbLoading | async) || sqlView || selectedDatabase === 'magic'"
             (click)="createNewLinkTable()">
             Link table
           </button>
@@ -189,7 +189,7 @@
             <div class="m-3">
 
               <mat-slide-toggle
-                [disabled]="sqlView"
+                [disabled]="sqlView || selectedDatabase === 'magic'"
                 labelPosition="before"
                 matTooltip="Automatically apply changes to migration scripts"
                 matTooltipPosition="left"

@@ -175,6 +175,7 @@
               <button
                 mat-flat-button
                 color="primary"
+                [disabled]="!password || password !== confirmPassword"
                 class="w-100"
                 (click)="savePassword()"
                 type="submit">Change password

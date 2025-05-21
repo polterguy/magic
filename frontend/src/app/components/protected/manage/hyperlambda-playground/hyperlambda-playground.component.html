@@ -14,6 +14,7 @@
             <button
               mat-button
               color="primary"
+              matTooltip="Load previously saved Hyperlambda snippet"
               (click)="load()">
               Snippets
             </button>
@@ -49,6 +50,7 @@
             mat-button
             color="primary"
             [disabled]="!input.hyperlambda || input.hyperlambda === ''"
+            matTooltip="Save Hyperlambda to collection of snippets"
             class="px-3"
             (click)="save()">
             Save
@@ -57,6 +59,7 @@
           <button
             mat-flat-button
             color="primary"
+            matTooltip="Execute Hyperlambda"
             class="px-3"
             (click)="execute()">
             Execute
