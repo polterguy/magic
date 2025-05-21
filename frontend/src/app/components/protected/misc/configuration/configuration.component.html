@@ -16,6 +16,7 @@
                 <button
                   mat-button
                   color="primary"
+                  matTooltip="Configure your SMTP settings"
                   (click)="manageSMTP()">
                   SMTP
                 </button>
@@ -23,6 +24,7 @@
                 <button
                   mat-button
                   color="primary"
+                  matTooltip="Configure OpenAI API settings"
                   (click)="manageOpenAI()">
                   OpenAI
                 </button>
@@ -30,6 +32,7 @@
                 <button
                   mat-button
                   color="primary"
+                  matTooltip="Configure your reCAPTCHA settings"
                   (click)="manageCAPTCHA()">
                   reCAPTCHA
                 </button>
@@ -62,6 +65,7 @@
               mat-flat-button
               color="primary"
               class="px-5 me-3"
+              matTooltip="Download a backup of your configuration settings"
               (click)="downloadBackup()">
               Download
             </button>
@@ -70,6 +74,7 @@
               mat-flat-button
               color="primary"
               class="px-5 me-3"
+              matTooltip="Upload an existing backup of your configuration settings"
               (click)="jsonFile.click()">
               Upload
             </button>
@@ -77,6 +82,7 @@
             <button
               mat-flat-button
               color="primary"
+              matTooltip="Save changes to configuration"
               class="px-5"
               (click)="save()">
               Save
