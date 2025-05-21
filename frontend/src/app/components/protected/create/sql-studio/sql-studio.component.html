@@ -5,7 +5,7 @@
     <div class="row align-items-stretch">
 
       <div class="col-lg-auto col-12 align-self-center">
-        <p class="fw-bold mb-lg-0">Select a Database</p>
+        <p class="fw-bold mb-lg-0">Database</p>
       </div>
 
       <!-- Database types -->
@@ -26,6 +26,7 @@
         <mat-form-field *ngIf="!(dbLoading | async)" class="w-100 standalone-field mb-lg-0 mb-2">
           <span
             matPrefix
+            matTooltip="Select type of database to connect to"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
@@ -62,6 +63,7 @@
           *ngIf="!(dbLoading | async)">
           <span
             matPrefix
+            matTooltip="Select connection string from configuration"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>conversion_path</mat-icon>
             <span class="text-muted">|</span>
@@ -98,6 +100,7 @@
           *ngIf="!(dbLoading | async)">
           <span
             matPrefix
+            matTooltip="Select database"
             class="d-flex flex-nowrap align-items-center justify-content-between me-2">
             <mat-icon>database</mat-icon>
             <span class="text-muted">|</span>
@@ -122,7 +125,7 @@
           <button
             mat-button
             color="primary"
-            [disabled]="sqlView"
+            matTooltip="Create new table"
             [disabled]="(dbLoading | async) || sqlView"
             (click)="addNewTable()">
             New table
@@ -131,7 +134,7 @@
           <button
             mat-button
             color="primary"
-            [disabled]="sqlView"
+            matTooltip="New many to many link table"
             [disabled]="(dbLoading | async) || sqlView"
             (click)="createNewLinkTable()">
             Link table
@@ -140,6 +143,7 @@
           <button
             mat-icon-button
             color="primary"
+            matTooltip="More options"
             [disabled]="(dbLoading | async)"
             [matMenuTriggerFor]="menu">
             <mat-icon>more_vert</mat-icon>
@@ -148,6 +152,7 @@
           <button
             mat-button
             color="primary"
+            [matTooltip]="sqlView ? 'Change to table view' : 'Change to SQL view'"
             (click)="sqlView = !sqlView">
             {{sqlView ? 'Table view' : 'SQL view'}}
           </button>
@@ -158,18 +163,24 @@
             <button
               mat-menu-item
               (click)="viewDatabaseDDL()"
+              matTooltip="View database DDL"
+              matTooltipPosition="left"
               [disabled]="sqlView">
               Database DDL
             </button>
 
             <button
               mat-menu-item
+              matTooltip="Clear server-side cache"
+              matTooltipPosition="left"
               (click)="clearServerCache()">
               Clear server cache
             </button>
 
             <button
               mat-menu-item
+              matTooltip="Import CSV file"
+              matTooltipPosition="left"
               [disabled]="selectedConnectionString === 'generic' && selectedDatabase === 'magic'"
               (click)="file.click()">
               Import CSV file
@@ -180,6 +191,8 @@
               <mat-slide-toggle
                 [disabled]="sqlView"
                 labelPosition="before"
+                matTooltip="Automatically apply changes to migration scripts"
+                matTooltipPosition="left"
                 [(ngModel)]="migrate">
                 Auto migrate
               </mat-slide-toggle>

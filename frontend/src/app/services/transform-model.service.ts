@@ -34,18 +34,18 @@ export class TransformModelService {
   /**
    * Whether or not we should generate search endpoints.
    */
-  search = false;
+  search = true;
 
   /**
    * Whether or not scaffolding should create verbose endpoints, implying applying
    * as many argument options as possible, or only apply the bare minimum.
    */
-  verbose = true;
+  verbose = false;
 
   /**
    * Whether or not scaffolding should create left joins for backend GET endpoints.
    */
-  join = true;
+  join = false;
 
   /**
    * Transforms the specified input to a Crudify instance, required to invoke backend

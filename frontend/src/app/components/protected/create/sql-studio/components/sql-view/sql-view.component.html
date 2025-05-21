@@ -21,12 +21,14 @@
             <button
               mat-button
               color="primary"
+              matTooltip="Load SQL files from local computer"
               (click)="sqlFileImport.click()">
               Import
             </button>
 
             <mat-slide-toggle
               labelPosition="before"
+              matTooltip="Toggle safe mode"
               [(ngModel)]="safeMode">
               Safe mode
             </mat-slide-toggle>
@@ -59,13 +61,16 @@
           <button
             mat-button
             color="primary"
+            matTooltip="Load previously saved SQL snippet"
             (click)="loadSnippet()">
             Snippets
           </button>
 
           <button
             mat-button
+            [disabled]="!input.sql"
             color="primary"
+            matTooltip="Save current SQL to snippet collection"
             (click)="save()">
             Save
           </button>
@@ -74,7 +79,8 @@
             mat-flat-button
             color="primary"
             class="px-4"
-            [disabled]="executingSql"
+            matTooltip="Execute your current SQL"
+            [disabled]="executingSql || !input.sql"
             (click)="execute()">
             Execute
           </button>

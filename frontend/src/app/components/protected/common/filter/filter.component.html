@@ -64,6 +64,7 @@
     *ngIf="buttonText || buttonIcon"
     color="primary"
     [disabled]="buttonDisabled"
+    [matTooltip]="buttonTooltip"
     class="ms-3"
     (click)="buttonClicked()">
     <mat-icon *ngIf="buttonIcon">{{buttonIcon}}</mat-icon>
@@ -75,6 +76,7 @@
     *ngIf="button2Text"
     color="primary"
     [disabled]="button2Disabled"
+    [matTooltip]="button2Tooltip"
     class="ms-3"
     (click)="button2Clicked()">
     {{button2Text}}
@@ -85,6 +87,7 @@
     *ngIf="button3Text"
     color="primary"
     [disabled]="button3Disabled"
+    [matTooltip]="button3Tooltip"
     class="ms-3"
     (click)="button3Clicked()">
     {{button3Text}}

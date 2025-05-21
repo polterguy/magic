@@ -28,6 +28,9 @@ export class FilterComponent implements OnInit {
   @Input() buttonText: string = null;
   @Input() button2Text: string = null;
   @Input() button3Text: string = null;
+  @Input() buttonTooltip: string = null;
+  @Input() button2Tooltip: string = null;
+  @Input() button3Tooltip: string = null;
   @Input() buttonIcon: string = null;
   @Input() buttonDisabled: boolean = false;
   @Input() button2Disabled: boolean = false;

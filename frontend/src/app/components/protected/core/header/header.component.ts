@@ -147,7 +147,7 @@ export class HeaderComponent implements OnInit {
             exact: false,
           },
           {
-            name: 'Generator',
+            name: 'CRUD Generator',
             url: '/generator',
             exact: false,
           },
