@@ -56,7 +56,7 @@
         <!-- Search textbox -->
         <app-filter
           (filterList)="filterList($event)"
-          buttonText="Add"
+          buttonText="New type ..."
           (buttonClick)="addType()">
         </app-filter>
 
@@ -138,6 +138,8 @@
               <button
                 mat-button
                 color="primary"
+                matTooltipPosition="above"
+                matTooltip="Import data from PDF files or by scraping websites"
                 (click)="import(element)">
                 Import
               </button>
@@ -145,11 +147,14 @@
               <button
                 mat-button
                 color="primary"
+                matTooltipPosition="above"
+                matTooltip="Create embeddings for your training snippets"
                 (click)="vectorise(element)">
                 Vectorise
               </button>
 
               <button
+                *ngIf="false"
                 mat-button
                 color="primary"
                 (click)="test(element)">
@@ -159,6 +164,8 @@
               <button
                 mat-button
                 color="primary"
+                matTooltipPosition="above"
+                matTooltip="Embed type as an AI chatbot on your website"
                 (click)="embed(element)">
                 Embed
               </button>
@@ -166,11 +173,14 @@
               <button
                 mat-button
                 color="primary"
+                matTooltipPosition="above"
+                matTooltip="Configure your machine learning type"
                 (click)="edit(element)">
                 Configure
               </button>
 
               <button
+                *ngIf="false"
                 mat-button
                 color="primary"
                 (click)="train(element)">
@@ -179,6 +189,8 @@
 
               <button
                 mat-button
+                matTooltipPosition="above"
+                matTooltip="Delete your machine learning type"
                 color="warn"
                 (click)="delete(element)">
                 Delete
