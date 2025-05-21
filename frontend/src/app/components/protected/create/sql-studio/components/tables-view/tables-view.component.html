@@ -28,7 +28,8 @@
               mat-icon-button
               color="primary"
               (click)="addColumnOrKey(item)"
-              matTooltip="Add field or foreign key ...">
+              matTooltip="Add field or foreign key ..."
+              matTooltipPosition="above">
               <mat-icon>add</mat-icon>
             </button>
 
@@ -38,7 +39,8 @@
               mat-icon-button
               color="primary"
               (click)="downloadTableAsCsv(item)"
-              matTooltip="Download table as CSV ...">
+              matTooltip="Download table as CSV ..."
+              matTooltipPosition="above">
               <mat-icon>file_download</mat-icon>
             </button>
 
@@ -48,6 +50,7 @@
               mat-icon-button
               color="primary"
               matTooltip="Export table DDL ..."
+              matTooltipPosition="above"
               (click)="viewTableDDL(item.name)">
               <mat-icon>extension</mat-icon>
             </button>
@@ -57,6 +60,7 @@
             <button
               mat-icon-button color="warn"
               matTooltip="Drop table ..."
+              matTooltipPosition="above"
               (click)="dropItem(item, 'table')">
               <mat-icon>delete</mat-icon>
             </button>
@@ -94,6 +98,7 @@
             <button
               mat-icon-button
               color="warn"
+              matTooltipPosition="before"
               matTooltip="Drop column ..."
               (click)="dropItem(column, 'column', item.foreign_keys, item.name, item)">
               <mat-icon>delete</mat-icon>
@@ -143,6 +148,7 @@
                 mat-icon-button
                 color="warn"
                 matTooltip="Drop index ..."
+                matTooltipPosition="before"
                 (click)="dropItem(idx, 'index', item.foreign_keys, item.name)">
                 <mat-icon>delete</mat-icon>
               </button>

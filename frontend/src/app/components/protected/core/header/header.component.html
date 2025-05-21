@@ -56,7 +56,7 @@
           [routerLinkActiveOptions]="{exact: item.exact}"
           routerLinkActive="active-link"
           #isActiveLink="routerLinkActive"
-          (click)="getGithubToken(item.name);logout(item.name);closeSidebarInSidePanel(item.url)">
+          (click)="getGithubToken(item.name);logout(item.name);openFrontend(item.name);closeSidebarInSidePanel(item.url)">
           {{item.name}}
         </a>
 
@@ -72,7 +72,7 @@
       mat-flat-button
       color="primary"
       class="url-btn me-3"
-      matTooltip="Change cloudlet ..."
+      matTooltip="Switch cloudlet ..."
       (click)="viewBackends()">
       <div class="d-flex flex-nowrap align-items-center ps-1">
         <mat-icon>database</mat-icon>
