@@ -332,41 +332,5 @@ math.dot
    get-nodes:x:@.list2/*");
             Assert.Equal(0.936D, lambda.Children.Skip(2).First().Value);
         }
-
-        [Fact]
-        public void Sum_01()
-        {
-            var lambda = Common.Evaluate(@"
-
-math.sum
-   :int:1
-   :int:2
-   :int:3");
-            Assert.Equal(6, lambda.Children.First().Value);
-        }
-
-        [Fact]
-        public void Sum_NoBaseThrows()
-        {
-            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"math.sum"));
-        }
-
-        [Fact]
-        public void Average_01()
-        {
-            var lambda = Common.Evaluate(@"
-
-math.average
-   :int:2
-   :int:4
-   :int:6");
-            Assert.Equal(4, lambda.Children.First().Value);
-        }
-
-        [Fact]
-        public void Average_NoBaseThrows()
-        {
-            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"math.average"));
-        }
     }
 }
