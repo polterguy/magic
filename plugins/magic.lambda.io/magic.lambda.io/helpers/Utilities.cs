@@ -31,7 +31,7 @@ namespace magic.lambda.io.helpers
             await signaler.SignalAsync("eval", input);
 
             // Retrieving source and destination path.
-            var (Source, Destination) = GetCopyMovePathsPaths(input, rootResolver, isFolder);
+            var (Source, Destination) = GetCopyMovePaths(input, rootResolver, isFolder);
 
             // Checking if IO object exists, at which point we delete it.
             if (await service.ExistsAsync(Destination))
@@ -63,7 +63,7 @@ namespace magic.lambda.io.helpers
         /*
          * Retrieves source and destination path for copy/move file/folder.
          */
-        static (string Source, string Destination) GetCopyMovePathsPaths(
+        static (string Source, string Destination) GetCopyMovePaths(
             Node input,
             IRootResolver rootResolver,
             bool isFolder)
