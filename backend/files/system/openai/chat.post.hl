@@ -16,6 +16,7 @@
    stream:bool
    data:string
    referrer:string
+   file:*
 .description:@"OpenAI chat endpoint, for having conversations using 'gpt-xxx' models"
 .type:public
 
