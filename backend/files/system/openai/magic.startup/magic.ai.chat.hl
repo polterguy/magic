@@ -275,6 +275,33 @@ select prompt, max(completion) as completion
             get-value:x:@.arguments/*/api_key
             config.get:"magic:openai:key"
 
+   // Checking if we've got a file argument
+   if
+      and
+         exists:x:@.arguments/*/file
+         not-null:x:@.arguments/*/file/*/name
+         not-null:x:@.arguments/*/file/*/stream
+      .lambda
+         io.stream.read:x:@.arguments/*/file/*/stream
+         strings.concat
+            .:"data:image/png;base64,"
+            convert:x:@io.stream.read
+               type:base64
+         unwrap:x:+/*/**
+         add:x:@.session
+            .
+               .
+                  role:user
+                  content
+                     .
+                        type:image_url
+                        image_url
+                           url:x:@strings.concat
+                     .
+                        type:text
+                        text:x:@.arguments/*/prompt
+         remove-nodes:x:@.session/0/-/-
+
    /*
     * Checking if caller wants to stream tokens.
     *
