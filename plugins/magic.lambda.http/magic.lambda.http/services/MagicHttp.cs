@@ -123,6 +123,7 @@ namespace magic.lambda.http.services
             if (input.Children.Any(x =>
                 x.Name != "payload" &&
                 x.Name != "query" &&
+                x.Name != "url-params" &&
                 x.Name != "filename" &&
                 x.Name != "headers" &&
                 x.Name != "token" &&
@@ -220,6 +221,21 @@ namespace magic.lambda.http.services
             // Checking if caller supplied a [token] argument.
             if (token != null)
                 headers["Authorization"] = $"Bearer {token}";
+
+            // Retrieving URL parameters.
+            var urlParams = input.Children.FirstOrDefault(x => x.Name == "url-params");
+            if (urlParams != null)
+            {
+                foreach (var idx in urlParams.Children)
+                {
+                    var name = "{" + idx.Name + "}";
+                    if (!url.Contains(name))
+                        throw new HyperlambdaException($"Could not find {name} argument in URL");
+
+                    var value = idx.GetEx<string>();
+                    url = url.Replace(name, value);
+                }
+            }
 
             // Retrieving query parameters.
             var queryNode = input.Children.FirstOrDefault(x => x.Name == "query");
