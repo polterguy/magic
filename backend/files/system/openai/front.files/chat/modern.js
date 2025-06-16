@@ -52,7 +52,7 @@
     /*
      * SignalR socket connection to backend.
      */
-    socketConnection: null,
+    socket: null,
 
     /*
      * If true, we need to initialize session by running through questionnaires.
