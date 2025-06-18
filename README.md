@@ -45,11 +45,7 @@ Magic is a complete software development platform, and contains among other thin
 * [Configuration](https://docs.ainiro.io/dashboard/configuration/) allows you to manage your server's configuration
 * [Chatbot Wizard](https://docs.ainiro.io/dashboard/chatbot-wizard/) allows you to create AI chatbots based upon RAG by scraping a website and embedding a simple JavaScript file into your website
 
-Combined, the above components allows you to rapidly manage your application(s) from an extremely high level, giving you clarity and control over your application. The project is being actively maintained by AINIRO, specifically Thomas Hansen, and has been actively maintained for more than 6 years. The project is particularly useful for anything related to AI, but is also a _"general purpose backend development environment"_.
-
-## Documentation
-
-Magic was created to make it easy to create small and medium sized backend APIs, and contains components for all problems related to backend development. For more information about Magic, please refer to its documentation below.
+Combined, the above components allows you to rapidly manage your application(s) from an extremely high level, giving you clarity and control over your application. The project is being actively maintained by AINIRO, specifically Thomas Hansen, and has been actively maintained for more than 6 years. The project is particularly useful for anything related to AI, but is also a _"general purpose backend development environment"_. For more information about Magic, please refer to its documentation below.
 
 * [Magic Cloud Documentation](https://docs.ainiro.io)
 
