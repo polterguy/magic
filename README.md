@@ -25,6 +25,28 @@ Hyperlambda is a _"5th generation programming language"_, that is on average 10 
 
 ![Hyperlambda versus C#](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/csharp-versus-hyperlambda.png)
 
+The above C# code is 120 lines of code, divided into 9 different files. The Hyperlambda equivalent is 5 lines of code in one file. This makes you on average 20 times more productive, and reduces your technical debt by 95%.
+
+## Components
+
+Magic is a complete software development platform, and contains among other things the following components.
+
+* [Hyper IDE](https://docs.ainiro.io/dashboard/hyper-ide/) is a Low-Code and No-Code IDE with AI integrated into every aspect
+* [SQL Studio](https://docs.ainiro.io/dashboard/sql-studio/) allows you to execute SQL towards connected databases, in addition to visually designing your databases
+* [Endpoint Generator](https://docs.ainiro.io/dashboard/endpoint-generator/) allows you to rapidly generate CRUD endpoints and other types of endpoints that can be automatically generated somehow
+* [Machine Learning](https://docs.ainiro.io/dashboard/machine-learning/) allows you to create AI types with RAG data, and even AI agents allowing you to integrate the LLM into your business apps
+* [Endpoint browser](https://docs.ainiro.io/dashboard/endpoints/) is Magic's own version of Swagger, allowing you to browse and test your HTTP endpoints
+* [Users & Roles Management](https://docs.ainiro.io/dashboard/users-roles/) allows you to manage users and roles in an RBAC-based access control system
+* [Task Manager](https://docs.ainiro.io/dashboard/task-manager/) allows you to create and persist Hyperlambda tasks, in addition to scheduling these to execute in the future at a specific date, or according to a repetition pattern
+* [Plugins](https://docs.ainiro.io/dashboard/plugins/) allows you to install plugins such as NetSuite integrations, HubSpot integrations, etc
+* [Audit Log](https://docs.ainiro.io/dashboard/log/) allows you to see your cloudlet's log
+* [Hyperlambda Playground](https://docs.ainiro.io/dashboard/hyperlambda-playground/) allows you to execute Hyperlambda in immediate mode to perform some task or test a piece of code
+* [Database Administration](https://docs.ainiro.io/dashboard/databases/) allows you to connect to any MySQL, PostgreSQL, or Microsoft SQL Server database - In addition to also creating SQLite databases as you see fit
+* [Configuration](https://docs.ainiro.io/dashboard/configuration/) allows you to manage your server's configuration
+* [Chatbot Wizard](https://docs.ainiro.io/dashboard/chatbot-wizard/) allows you to create AI chatbots based upon RAG by scraping a website and embedding a simple JavaScript file into your website
+
+Combined, the above components allows you to rapidly manage your application(s) from an extremely high level, giving you clarity and control over your application. The project is being actively maintained by AINIRO, specifically Thomas Hansen, and has been actively maintained for more than 6 years. The project is particularly useful for anything related to AI, but is also a _"general purpose backend development environment"_.
+
 ## Documentation
 
 Magic was created to make it easy to create small and medium sized backend APIs, and contains components for all problems related to backend development. For more information about Magic, please refer to its documentation below.
