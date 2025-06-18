@@ -25,9 +25,9 @@ Hyperlambda is a _"5th generation programming language"_, that is on average 10 
 
 ![Hyperlambda versus C#](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/csharp-versus-hyperlambda.png)
 
-The above C# code is 120 lines of code, divided into 9 different files. The Hyperlambda equivalent is 5 lines of code in one file. This makes you on average 20 times more productive, and reduces your technical debt by 95%.
+The above C# code is 120 lines of code, divided into 9 different files. The Hyperlambda equivalent is 5 lines of code in one file. This declarative aspect of Hyperlambda makes you on average 20 times more productive, and reduces your technical debt by 95%.
 
-Hyperlambda has been [recognised by Microsoft in an article](https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/june/csharp-make-csharp-more-dynamic-with-hyperlambda) that became the 5th most read article ever published by MSDN Magazine, and is currently being used by thousands of companies and individuals all over thw world to solve software development backend problems.
+Hyperlambda has been [officially recognised by Microsoft in several articles](https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/june/csharp-make-csharp-more-dynamic-with-hyperlambda), and is currently being used by thousands of companies and individuals all over the world to solve software development backend problems.
 
 ## Components
 
