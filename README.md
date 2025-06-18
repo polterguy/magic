@@ -29,6 +29,12 @@ The above C# code is 120 lines of code, divided into 9 different files. The Hype
 
 Hyperlambda has been [officially recognised by Microsoft in several articles](https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/june/csharp-make-csharp-more-dynamic-with-hyperlambda), and is currently being used by thousands of companies and individuals all over the world to solve software development backend problems. Hyperlambda is async to the bone, and have scalability and performance traits that's almost on pair with C# and .Net 9.
 
+## AI Agents
+
+The combination of meta programming and declarative constructs, in a homoiconic development environment, makes Hyperlambda extremely useful as a tool to create AI agents, sometimes allowing you to create highly complex AI agents, without having to write a single line of code yourself. You can see an example of this in the following video, where I create an AI agent that creates AI agents.
+
+[![Watch the video](https://img.youtube.com/vi/NyDZ5OzREbk/maxresdefault.jpg)](https://www.youtube.com/watch?v=NyDZ5OzREbk)
+
 ## Components
 
 Magic is a complete software development platform, and contains among other things the following components.
