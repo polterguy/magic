@@ -286,6 +286,9 @@ export class MachineLearningEditTypeComponent implements OnInit {
     if (this.flavor.max_function_invocations) {
       this.max_function_invocations = this.flavor.max_function_invocations;
     }
+    if (this.flavor.max_request_tokens) {
+      this.max_request_tokens = this.flavor.max_request_tokens;
+    }
     while (this.system_message.includes('YOUR_TYPE_NAME_HERE')) {
       this.system_message = this.system_message.replace('YOUR_TYPE_NAME_HERE', this.type);
     }
