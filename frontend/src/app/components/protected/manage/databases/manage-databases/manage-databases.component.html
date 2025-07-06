@@ -111,7 +111,7 @@
             <button
               mat-button
               color="primary"
-              routerLink="/endpoint-generator"
+              routerLink="/generator"
               matTooltip="Generate CRUD HTTP endpoints for database"
               [queryParams]="{dbType: element.type, dbName: element.name, dbCString: element.connectionString}"
               [disabled]="element.name === 'magic'">
