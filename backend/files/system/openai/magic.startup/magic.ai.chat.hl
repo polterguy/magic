@@ -275,82 +275,80 @@ select prompt, max(completion) as completion
             get-value:x:@.arguments/*/api_key
             config.get:"magic:openai:key"
 
-   // Checking if we've got a file argument
+   // Checking if we've got file arguments.
    if
-      and
-         exists:x:@.arguments/*/file
-         not-null:x:@.arguments/*/file/*/name
-         not-null:x:@.arguments/*/file/*/stream
+      exists:x:@.arguments/*/file
       .lambda
-         io.stream.read:x:@.arguments/*/file/*/stream
-         .base64-content
-         strings.split:x:@.arguments/*/file/*/name
-            .:.
-         switch:x:@strings.split/0/-
-            case:PDF
-            case:pdf
-               set-value:x:@.base64-content
-                  strings.concat
-                     .:"data:application/pdf;base64,"
-                     convert:x:@io.stream.read
-                        type:base64
-               unwrap:x:+/*/**
-               add:x:@.session
-                  .
+
+         // Removing old message node.
+         remove-nodes:x:@.session/0/-
+
+         // Adding file container message
+         unwrap:x:+/*/**
+         add:x:@.session
+            .
+               .
+                  role:user
+                  content
                      .
-                        role:user
-                        content
+                        type:text
+                        text:x:@.arguments/*/prompt
+
+         // Looping through all file arguments.
+         while
+            exists:x:@.arguments/*/file
+            .lambda
+               io.stream.read:x:@.arguments/*/file/[0,1]/*/stream
+               .base64-content
+               strings.split:x:@.arguments/*/file/[0,1]/*/name
+                  .:.
+               switch:x:@strings.split/0/-
+                  case:PDF
+                  case:pdf
+                     set-value:x:@.base64-content
+                        strings.concat
+                           .:"data:application/pdf;base64,"
+                           convert:x:@io.stream.read
+                              type:base64
+                     unwrap:x:+/*/**
+                     add:x:@.session/0/-/*/content
+                        .
                            .
                               type:file
                               file
-                                 filename:x:@.arguments/*/file/*/name
+                                 filename:x:@.arguments/*/file/[0,1]/*/name
                                  file_data:x:@.base64-content
-                           .
-                              type:text
-                              text:x:@.arguments/*/prompt
-            case:png
-            case:PNG
-               set-value:x:@.base64-content
-                  strings.concat
-                     .:"data:image/png;base64,"
-                     convert:x:@io.stream.read
-                        type:base64
-               unwrap:x:+/*/**
-               add:x:@.session
-                  .
-                     .
-                        role:user
-                        content
+                  case:png
+                  case:PNG
+                     set-value:x:@.base64-content
+                        strings.concat
+                           .:"data:image/png;base64,"
+                           convert:x:@io.stream.read
+                              type:base64
+                     unwrap:x:+/*/**
+                     add:x:@.session/0/-/*/content
+                        .
                            .
                               type:image_url
                               image_url
                                  url:x:@.base64-content
-                           .
-                              type:text
-                              text:x:@.arguments/*/prompt
-            case:jpg
-            case:JPG
-            case:jpeg
-            case:JPEG
-               set-value:x:@.base64-content
-                  strings.concat
-                     .:"data:image/jpeg;base64,"
-                     convert:x:@io.stream.read
-                        type:base64
-               unwrap:x:+/*/**
-               add:x:@.session
-                  .
-                     .
-                        role:user
-                        content
+                  case:jpg
+                  case:JPG
+                  case:jpeg
+                  case:JPEG
+                     set-value:x:@.base64-content
+                        strings.concat
+                           .:"data:image/jpeg;base64,"
+                           convert:x:@io.stream.read
+                              type:base64
+                     unwrap:x:+/*/**
+                     add:x:@.session/0/-/*/content
+                        .
                            .
                               type:image_url
                               image_url
                                  url:x:@.base64-content
-                           .
-                              type:text
-                              text:x:@.arguments/*/prompt
-         remove-nodes:x:@.session/0/-/-
+               remove-nodes:x:@.arguments/*/file/[0,1]
 
    /*
     * Checking if caller wants to stream tokens.
