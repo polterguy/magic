@@ -61,7 +61,7 @@ for-each:x:@http.get/*/content/*/data/*
       case:gpt-4.1-2025-04-14
          add:x:@.dp/#
             .
-               tokens:int:128000
+               tokens:int:1000000
                chat:bool:true
 
       case:gpt-4

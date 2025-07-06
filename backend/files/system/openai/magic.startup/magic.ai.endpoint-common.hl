@@ -335,7 +335,7 @@ slots.create:magic.ai.endpoint-common
       case:gpt-4.1-2025-04-14
          add:x:@.model
             .
-               model_size:int:128000
+               model_size:int:1000000
 
       case:gpt-4
       case:gpt-4-0613
