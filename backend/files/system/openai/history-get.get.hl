@@ -1,0 +1,26 @@
+
+/*
+ * Returns the history for the currently authenticated user.
+ */
+.arguments
+   session_id:string
+
+// Sanity checking invocation.
+auth.ticket.verify
+validators.mandatory:x:@.arguments/*/session_id
+auth.ticket.get
+
+// Opening up database connection.
+data.connect:[generic|magic]
+
+   // Retrieving all questions from database.
+   data.select:@"
+select content
+	from ml_history
+	where username = @username and session_id = @session_id"
+      username:x:@auth.ticket.get
+      session_id:x:@.arguments/*/session_id
+
+   // Returning greeting to caller.
+   hyper2lambda:x:@data.select/*/*/content
+   return-nodes:x:@hyper2lambda/*

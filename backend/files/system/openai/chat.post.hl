@@ -10,6 +10,7 @@
    type:string
    references:bool
    chat:bool
+   permanent:bool
    recaptcha_response:string
    user_id:string
    session:string

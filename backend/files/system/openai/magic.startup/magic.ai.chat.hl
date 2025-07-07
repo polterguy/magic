@@ -904,6 +904,57 @@ select prompt, max(completion) as completion
                      expiration:x:@.arguments/*/session_timeout
                      value:x:@lambda2hyper
 
+                  // Checking if we should permanently store session.
+                  if
+                     eq:x:@.arguments/*/permanent
+                        .:bool:true
+                     .lambda
+                        auth.ticket.get
+                        data.connect:magic
+                           data.read
+                              table:ml_history
+                              where
+                                 and
+                                    session_id.eq:x:@.arguments/*/session
+                           if
+                              not-exists:x:@data.read/*
+                              .lambda
+                                 http.post:"https://api.openai.com/v1/chat/completions"
+                                    convert:bool:true
+                                    headers
+                                       Authorization:x:@.token
+                                       Content-Type:application/json
+                                    payload
+                                       model:x:@.arguments/*/model
+                                       max_tokens:x:@.arguments/*/max_tokens
+                                       temperature:x:@.arguments/*/temperature
+                                       messages
+                                          .
+                                             role:system
+                                             content:Summarise the following text with 3 to 5 words an no punctuation
+                                          .
+                                             role:user
+                                             content:x:@.arguments/*/prompt
+                                 data.create
+                                    table:ml_history
+                                    values
+                                       username:x:@auth.ticket.get
+                                       session_id:x:@.arguments/*/session
+                                       content:x:@lambda2hyper
+                                       name:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                 data.execute:delete from ml_history where session_id not in (select session_id from ml_history order by created desc limit 25)
+                           else
+                              date.now
+                              data.update
+                                 table:ml_history
+                                 values
+                                    content:x:@lambda2hyper
+                                    created:x:@date.now
+                                 where
+                                    and
+                                       username.eq:x:@auth.ticket.get
+                                       session_id.eq:x:@.arguments/*/session
+
             // Checking if type is "supervised" at which point we store request.
             if
                and
