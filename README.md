@@ -57,6 +57,17 @@ Combined, the above components allows you to rapidly manage your application(s) 
 
 * [Magic Cloud Documentation](https://docs.ainiro.io)
 
+## Getting Started
+
+Clone the repository, and make sure you’ve got .Net Core version 9 installed, the latest version of NodeJS, and Angular, and enter the "backend" and "frontend" folders with two terminals, and execute the following commands in the respective terminals.
+
+1. Backend folder `dotnet run`
+2. Frontend folder `ng serve`
+
+After some few minutes you should be able to access the dashboard from localhost:4200, and login to your cloudlet using `http://localhost:5000` as your backend URL. The intial username and password combination is the same; "root" and "root". Once logged in, you have to provide a root password and your email address. Once this is done, you can start using your cloudlet.
+
+If you want to play with the AI capabilities of Magic, you'll have to configure your cloudlet with an OpenAI API key. You can do this from for instance the Misc/Configuration parts of your dashboard.
+
 ## License
 
 This project, and all of its satellite project, is licensed under the terms of the MIT license, as published by the Open Source Initiative. See LICENSE file for details. For licensing inquiries you can contact Thomas Hansen thomas@ainiro.io
