@@ -1,4 +1,6 @@
-<h3 mat-dialog-title>{{data.generate ? 'Generate code for' : 'Arguments to'}} {{data.name}}</h3>
+<h3 mat-dialog-title>
+  {{data.generate ? 'Generate code for' : 'Arguments to'}} {{data.name}}
+</h3>
 
 <form
   [formGroup]="form"
@@ -26,10 +28,11 @@
     </button>
 
     <button
-      mat-button
+      mat-flat-button
       type="submit"
+      color="primary"
       (click)="selectWithoutGenerating(model)">
-      Save
+      {{data.generate ? 'Save' : 'Execute'}}
     </button>
 
     <button
