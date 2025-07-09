@@ -66,7 +66,7 @@ Clone the repository, and make sure you’ve got .Net Core version 9 installed, 
 
 After some few minutes you should be able to access the dashboard from localhost:4200, and login to your cloudlet using `http://localhost:5000` as your backend URL. The intial username and password combination is the same; "root" and "root". Once logged in, you have to provide a root password and your email address. Once this is done, you can start using your cloudlet.
 
-If you want to play with the AI capabilities of Magic, you'll have to configure your cloudlet with an OpenAI API key. You can do this from for instance the Misc/Configuration parts of your dashboard.
+If you want to play with the AI capabilities of Magic, you'll have to configure your cloudlet with an OpenAI API key - You can do this from for instance the Misc/Configuration parts of your dashboard. You can also [use Docker](https://docs.ainiro.io/getting-started/) if you wish, and if this sounds like too much hassle, we can [help you with a managed cloudlet](https://ainiro.io/buy).
 
 ## License
 
