@@ -253,6 +253,12 @@
           matTooltip="Have the chatbot display highlighted code"
           color="primary">Code</mat-checkbox>
 
+        <mat-checkbox
+          [(ngModel)]="sticky"
+          labelPosition="before"
+          matTooltip="Opens the chatbot during navigation if it's already been opened"
+          color="primary">Sticky</mat-checkbox>
+
       </div>
 
     </mat-tab>

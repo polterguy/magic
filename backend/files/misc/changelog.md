@@ -1,5 +1,15 @@
 
 
+## Version 20.3.0
+
+Minor feature release
+
+* Allowing the chatbot to be 'sticky', implying if it's opened on one page, and the user is navigating, the chatbot opens automatically once loading is done
+
+
+----
+
+
 ## Version 19.11.3
 
 Minor bug fix release

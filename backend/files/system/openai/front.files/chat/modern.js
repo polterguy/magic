@@ -43,7 +43,8 @@
       animation: '[[animation]]',
       popup: '[[popup]]',
       extra: '[[extra]]',
-      hidden: [[hidden]]
+      hidden: [[hidden]],
+      sticky: [[sticky]]
     },
 
     // References buffer for storing references during invocation.
@@ -278,7 +279,6 @@
 
         // Making sure surface is scrolled to the bottom when opened.
         this.hasSessionItems = true;
-
       }
 
       // Making sure we close chatbot with ESC.
@@ -316,6 +316,16 @@
           ainiro_faq_question(null, initialPrompt);
         }
       }, 1);
+
+      // Checking if we should show the chatbot by default.
+      if (this.ainiro_settings.sticky === true) {
+        const ses = sessionStorage.getItem('ainiro_state');
+        if (ses === 'open') {
+          this.show();
+        }
+      } else {
+        sessionStorage.setItem('ainiro_state', 'closed');
+      }
     },
 
     /*
@@ -327,6 +337,7 @@
       wnd.parentElement.removeChild(wnd);
       const btn = document.getElementById('ainiro_chat_btn');
       btn.parentElement.removeChild(btn);
+      sessionStorage.setItem('ainiro_state', 'closed');
     },
 
     /*
@@ -349,7 +360,12 @@
       this.includeResources(() => {
 
         // Now we can safely invoke our real show function.
-        this._show(onAfter);
+        this._show(() => {
+          if (onAfter) {
+            onAfter();
+          }
+          sessionStorage.setItem('ainiro_state', 'open');
+        });
       });
     },
 
@@ -877,6 +893,7 @@
       if (shopifyChatbot) {
         shopifyChatbot.style.display = 'block';
       }
+      sessionStorage.setItem('ainiro_state', 'closed');
     },
 
     /*

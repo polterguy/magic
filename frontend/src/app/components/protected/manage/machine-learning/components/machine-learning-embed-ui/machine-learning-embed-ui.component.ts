@@ -54,6 +54,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   linkColor: string = '#fe8464';
   positioning: string = 'right';
   animations: string = 'none';
+  sticky: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -188,6 +189,9 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     let url = `${this.backendService.active.url}/magic/system/openai/include-chatbot.js?rtl=${this.rtl ? 'true' : 'false'}&clear_button=${this.clear_button ? 'true' : 'false'}&follow_up=${this.follow_up ? 'true' : 'false'}&copyButton=${this.copy_button ? 'true' : 'false'}&new_tab=${this.new_tab ? 'true' : 'false'}&code=${this.code ? 'true' : 'false'}&references=${this.search ? 'true' : 'false'}&position=${this.positioning}&type=${encodeURIComponent(this.type)}&header=${encodeURIComponent(this.header)}&popup=${encodeURIComponent(this.popup)}&button=${encodeURIComponent(this.buttonTxt)}&placeholder=${encodeURIComponent(this.textboxPlaceholder)}&color=${encodeURIComponent(this.foreColor)}&start=${encodeURIComponent(this.startColor)}&end=${encodeURIComponent(this.endColor)}&link=${encodeURIComponent(this.linkColor)}&theme=${encodeURIComponent(this.modernTheme)}`;
     if (this.animations && this.animations !== 'none') {
       url += '&animation=' + this.animations;
+    }
+    if (this.sticky) {
+      url += '&sticky=true';
     }
 
     if (html) {

@@ -21,6 +21,7 @@
    follow_up:bool
    new_tab:bool
    popup:string
+   sticky:bool
 
    // Not used, but allows embedders to do a hard refresh to reload JavaScript.
    v:string
