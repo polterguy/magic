@@ -1,5 +1,15 @@
 
 
+## Version 20.3.1
+
+Minor feature release
+
+* Support for file attachments in embeddable website chatbot
+
+
+----
+
+
 ## Version 20.3.0
 
 Minor feature release
