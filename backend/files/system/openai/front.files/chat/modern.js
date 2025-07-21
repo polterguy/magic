@@ -44,7 +44,8 @@
       popup: '[[popup]]',
       extra: '[[extra]]',
       hidden: [[hidden]],
-      sticky: [[sticky]]
+      sticky: [[sticky]],
+      attachments: [[attachments]]
     },
 
     // References buffer for storing references during invocation.
@@ -230,12 +231,18 @@
         chatSurface.appendChild(water);
       }
 
+      // Creating attachment buttons before file input such that we can access it in callback function.
+      const attBtn = document.createElement('button');
+      const attRem = document.createElement('button');
+
       // Creating chatbot form including input textbox and submit button.
       const chatForm = document.createElement('form');
       chatForm.id = 'ainiro_form';
       chatForm.className = 'ainiro_form';
       chatForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        attBtn.classList.remove('ainiro_hidden');
+        attRem.classList.add('ainiro_hidden');
         this.submit();
       });
 
@@ -248,6 +255,46 @@
       textBox.placeholder = this.ainiro_settings.placeholder;
       chatForm.appendChild(textBox);
 
+      // Attachments button.
+      if (this.ainiro_settings.attachments === true) {
+
+        // File upload control.
+        const fileInp = document.createElement('input');
+        fileInp.id = 'ainiro_upload';
+        fileInp.type = 'file';
+        fileInp.style.display = 'none';
+        fileInp.accept = '.csv,.xml,.yaml,.yml,.json,.txt,.md,.html,.htm,.css,.js,.py,.rb,.ts,.scss,.sql,.pdf,.docx,.png,.jpeg,.jpg,.webp,.gif';
+        fileInp.addEventListener('change', (ev) => {
+          const files = Array.from(ev.target.files);
+          this.rawFiles = files;
+          attBtn.classList.add('ainiro_hidden');
+          attRem.classList.remove('ainiro_hidden');
+        });
+        chatForm.appendChild(fileInp);
+
+        // Add attachments button.
+        attBtn.id = 'ainiro_attachments';
+        attBtn.className = 'ainiro_attachments';
+        attBtn.type = 'button';
+        attBtn.addEventListener('click', () => {
+          fileInp.click();
+        });
+        attBtn.innerHTML = '<i class="ainiro-icofont-upload ainiro-icofont-lg"></i>';
+        chatForm.appendChild(attBtn);
+
+        // Remove attachments button.
+        attRem.id = 'ainiro_delete_attachments';
+        attRem.className = 'ainiro_attachments ainiro_hidden';
+        attRem.type = 'button';
+        attRem.addEventListener('click', () => {
+          this.rawFiles = null;
+          attBtn.classList.remove('ainiro_hidden');
+          attRem.classList.add('ainiro_hidden');
+        });
+        attRem.innerHTML = '<i class="ainiro-icofont-duotone ainiro-icofont-purge ainiro-icofont-lg"></i>';
+        chatForm.appendChild(attRem);
+      }
+
       // Submit prompt button.
       const submitButton = document.createElement('button');
       submitButton.id = 'ainiro_send';
@@ -255,6 +302,8 @@
       submitButton.type = 'submit';
       submitButton.innerHTML = '<i class="ainiro-icofont-location-arrow ainiro-icofont-lg"></i>';
       chatForm.appendChild(submitButton);
+
+      // Adding actual form to DOM.
       chatWindow.appendChild(chatForm);
 
       /*
@@ -1229,20 +1278,29 @@
       if (window.getAiniroChatbotType) {
         type = window.getAiniroChatbotType() ?? type;
       }
-      let url = this.ainiro_settings.url +
-        `/magic/system/openai/chat?prompt=` +
-        encodeURIComponent(txtEl.value) +
-        '&type=' + type +
-        '&session=' + this.session +
-        '&user_id=' + this.userId +
-        '&chat=true&stream=true' +
-        '&referrer=' + encodeURIComponent(window.location.href) +
-        '&extra=' + encodeURIComponent(this.ainiro_settings.extra);
+      let url = this.ainiro_settings.url + `/magic/system/openai/chat`;
+      let payload = {
+        prompt: txtEl.value,
+        type: type,
+        session: this.session,
+        user_id: this.userId,
+        chat: true,
+        stream: true,
+        referrer: window.location.href,
+        extra: this.ainiro_settings.extra
+      };
       if (token) {
-        url += '&recaptcha_response=' + encodeURIComponent(token);
+        payload.recaptcha_response = token;
       }
       if (this.ainiro_settings.references) {
-        url += '&references=true';
+        payload.references = true;
+      }
+      const formData  = new FormData();
+      for(const name in payload) {
+        formData.append(name, payload[name]);
+      }
+      for (let idx = 0; idx < (this.rawFiles || []).length; idx++) {
+        formData.append('file', this.rawFiles[idx]);
       }
 
       // Resetting onDone.
@@ -1253,7 +1311,8 @@
 
       // Invoking backend.
       fetch(url, {
-        method: 'GET'
+        method: 'POST',
+        body: formData
       }).then(res => {
         if (!res.ok) {
           throw res;

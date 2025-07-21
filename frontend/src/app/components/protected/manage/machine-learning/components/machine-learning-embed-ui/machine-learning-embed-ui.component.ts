@@ -55,6 +55,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   positioning: string = 'right';
   animations: string = 'none';
   sticky: boolean = false;
+  attachments: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -192,6 +193,9 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     }
     if (this.sticky) {
       url += '&sticky=true';
+    }
+    if (this.attachments) {
+      url += '&attachments=true';
     }
 
     if (html) {

@@ -230,14 +230,14 @@
           labelPosition="before"
           class="me-3"
           matTooltip="Add a 'clear chat button' to your chatbot"
-          color="primary">Clear button</mat-checkbox>
+          color="primary">Clear</mat-checkbox>
 
         <mat-checkbox
           [(ngModel)]="copy_button"
           labelPosition="before"
           class="me-3"
           matTooltip="Add a 'copy response button' to your chatbot's messages"
-          color="primary">Copy button</mat-checkbox>
+          color="primary">Copy</mat-checkbox>
 
         <mat-checkbox
           [(ngModel)]="new_tab"
@@ -256,8 +256,15 @@
         <mat-checkbox
           [(ngModel)]="sticky"
           labelPosition="before"
+          class="me-3"
           matTooltip="Opens the chatbot during navigation if it's already been opened on the previous page"
           color="primary">Sticky</mat-checkbox>
+
+        <mat-checkbox
+          [(ngModel)]="attachments"
+          labelPosition="before"
+          matTooltip="Allows user to upload PDF documents and images during conversations"
+          color="primary">Attachments</mat-checkbox>
 
       </div>
 

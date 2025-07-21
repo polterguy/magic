@@ -25,6 +25,7 @@
    popup:string
    hidden:bool
    sticky:bool
+   attachments:bool
 
    // Extra parameter passed into each invocation towards chat endpoint
    extra:string
@@ -52,6 +53,7 @@ validators.default:x:@.arguments
    popup:
    hidden:bool:false
    sticky:bool:false
+   attachments:bool:false
 
 // Checking if custom JavaScript file exists.
 .filename
@@ -134,6 +136,10 @@ set-value:x:@.result
    strings.replace:x:@.result
       .:[[sticky]]
       strings.to-lower:x:@.arguments/*/sticky
+set-value:x:@.result
+   strings.replace:x:@.result
+      .:[[attachments]]
+      strings.to-lower:x:@.arguments/*/attachments
 set-value:x:@.result
    strings.replace:x:@.result
       .:[[start]]

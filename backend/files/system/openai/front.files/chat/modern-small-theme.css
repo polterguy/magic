@@ -914,7 +914,8 @@ html
   > input.ainiro_query::placeholder {
   color: rgb(180, 180, 180) !important;
 }
-html > body.ainiro_bdy > div.ainiro > form.ainiro_form > button.ainiro_send {
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_send,
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_attachments {
   outline: none;
   padding: 0 25px;
   border: none;
@@ -922,45 +923,29 @@ html > body.ainiro_bdy > div.ainiro > form.ainiro_form > button.ainiro_send {
   transition: color 0.4s ease-in-out;
   cursor: pointer;
   background: linear-gradient(var(--ainiro-bg-start), var(--ainiro-bg-end));
+}
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_send {
   border-radius: 0 10px 10px 0;
 }
-html
-  > body.ainiro_bdy
-  > div.ainiro
-  > form.ainiro_form
-  > button.ainiro_send:disabled {
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_send:disabled,
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_attachments:disabled {
   cursor: not-allowed !important;
 }
-html > body.ainiro_bdy > div.ainiro > form.ainiro_form > button.ainiro_send i {
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_send i,
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_attachments i {
   transition: color 0.4s ease-in-out, opacity 0.4s ease-in-out;
   color: var(--ainiro-color);
 }
-html
-  > body.ainiro_bdy
-  > div.ainiro
-  > form.ainiro_form
-  > button.ainiro_send:hover
-  i,
-html
-  > body.ainiro_bdy
-  > div.ainiro
-  > form.ainiro_form
-  > button.ainiro_send:active
-  i,
-html
-  > body.ainiro_bdy
-  > div.ainiro
-  > form.ainiro_form
-  > button.ainiro_send:focus
-  i {
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_send:hover i,
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form> button.ainiro_send:active i,
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_send:focus i,
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_attachments:hover i,
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_attachments:active i,
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_attachments:focus i {
   color: var(--ainiro-link);
 }
-html
-  > body.ainiro_bdy
-  > div.ainiro
-  > form.ainiro_form
-  > button.ainiro_send:disabled
-  i {
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_send:disabled i,
+html>body.ainiro_bdy>div.ainiro>form.ainiro_form>button.ainiro_attachments:disabled i {
   opacity: 0.1;
   transition: color 0.4s ease-in-out, opacity 0.4s ease-in-out;
   cursor: not-allowed !important;
@@ -1117,6 +1102,7 @@ html
   color: var(--ainiro-color);
 }
 
-html>body.ainiro_bdy>button.ainiro_hidden {
+html>body.ainiro_bdy>button.ainiro_hidden,
+html>body.ainiro_bdy button.ainiro_hidden {
   display: none !important;
 }

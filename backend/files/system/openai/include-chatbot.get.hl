@@ -22,6 +22,7 @@
    new_tab:bool
    popup:string
    sticky:bool
+   attachments:bool
 
    // Not used, but allows embedders to do a hard refresh to reload JavaScript.
    v:string

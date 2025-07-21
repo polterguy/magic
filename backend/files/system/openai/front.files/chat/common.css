@@ -37,7 +37,7 @@ html>body.ainiro_bdy>div.ainiro button * {
   font-family: AiniroIcoFont;
   font-weight: 400;
   font-style: Regular;
-  src: url(https://ainiro.io/assets/css/fonts/icofont.woff2?v=v19.5.11) format("woff2"), url(https://ainiro.io/assets/css/fonts/icofont.woff?v=19.5.11) format("woff")
+  src: url(https://ainiro.io/assets/css/fonts/icofont.woff2?v=v20.3.0) format("woff2"), url(https://ainiro.io/assets/css/fonts/icofont.woff?v=19.5.11) format("woff")
 }
 
 html>body.ainiro_bdy [class*=" ainiro-icofont-"],
@@ -130,6 +130,10 @@ html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-purge:after {
 
 html>body.ainiro_bdy .ainiro-icofont-copy:before {
   content: "\edea"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-upload:before {
+  content: "\f01d"
 }
 
 html>body.ainiro_bdy [class*=" ainiro-icofont-"].ainiro-icofont-duotone,
