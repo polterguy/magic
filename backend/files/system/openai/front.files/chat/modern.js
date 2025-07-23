@@ -2,8 +2,6 @@
 /*
  * Modern JavaScript file for OpenAI chat inclusion.
  */
-var _ainiroOldDefine = window.define;
-window.define = undefined;
 (function() {
 
   // Avoiding double inclusion issues.
@@ -468,7 +466,7 @@ window.define = undefined;
 
       // Scripts we should add.
       const jsFiles = [
-        'https://cdn.jsdelivr.net/npm/marked@13.0.0/marked.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/marked/13.0.0/lib/marked.umd.min.js',
         'https://ainiro.io/assets/js/marked-tables.js',
         'https://ainiro.io/assets/js/signalr.js',
       ];
@@ -1618,7 +1616,3 @@ window.define = undefined;
   }
 
 })();
-if (_ainiroOldDefine !== undefined) {
-  window.define = _ainiroOldDefine;
-  _ainiroOldDefine = undefined;
-}
