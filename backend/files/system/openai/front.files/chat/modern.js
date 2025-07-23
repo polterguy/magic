@@ -2,6 +2,8 @@
 /*
  * Modern JavaScript file for OpenAI chat inclusion.
  */
+var _ainiroOldDefine = window.define;
+window.define = undefined;
 (function() {
 
   // Avoiding double inclusion issues.
@@ -1616,3 +1618,7 @@
   }
 
 })();
+if (_ainiroOldDefine !== undefined) {
+  window.define = _ainiroOldDefine;
+  _ainiroOldDefine = undefined;
+}
