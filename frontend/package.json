@@ -10,6 +10,9 @@
     "e2e": "ng e2e"
   },
   "private": true,
+  "overrides": {
+    "stylus": "0.0.1-security"
+  },
   "dependencies": {
     "@angular-material-components/datetime-picker": "^8.0.0",
     "@angular/animations": "^14.2.3",
