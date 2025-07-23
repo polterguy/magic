@@ -466,7 +466,7 @@
 
       // Scripts we should add.
       const jsFiles = [
-        'https://cdnjs.cloudflare.com/ajax/libs/marked/13.0.0/lib/marked.umd.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/marked/13.0.0/marked.min.js',
         'https://ainiro.io/assets/js/marked-tables.js',
         'https://ainiro.io/assets/js/signalr.js',
       ];
