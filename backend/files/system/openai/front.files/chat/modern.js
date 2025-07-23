@@ -2,8 +2,6 @@
 /*
  * Modern JavaScript file for OpenAI chat inclusion.
  */
-var _ainiroOldDefine = window.define;
-window.define = undefined;
 (function() {
 
   // Avoiding double inclusion issues.
@@ -486,6 +484,8 @@ window.define = undefined;
         // Adding JavaScript file.
         jsFiles.push('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js');
       }
+      var _ainiroOldDefine = window.define;
+      window.define = undefined;
       jsFiles.forEach(idx => {
 
         // Appending JS file to body element.
