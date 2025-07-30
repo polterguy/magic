@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="ScottPlot" Version="5.0.47" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <ProjectReference Include="..\..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
     <ProjectReference Include="..\..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
   </ItemGroup>
