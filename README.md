@@ -68,6 +68,8 @@ After some few minutes you should be able to access the dashboard from localhost
 
 If you want to play with the AI capabilities of Magic, you'll have to configure your cloudlet with an OpenAI API key - You can do this from for instance the Misc/Configuration parts of your dashboard. You can also [use Docker](https://docs.ainiro.io/getting-started/) if you wish, and if this sounds like too much hassle, we can [help you with a managed cloudlet](https://ainiro.io/buy).
 
+**NOTICE** - I've only got Linux and OSX builds of the VSS plugin for SQLite, so all the AI features will only work on OSx (Mx CPU) or Linux.
+
 ## License
 
 This project, and all of its satellite project, is licensed under the terms of the MIT license, as published by the Open Source Initiative. See LICENSE file for details. For licensing inquiries you can contact Thomas Hansen thomas@ainiro.io
