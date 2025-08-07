@@ -262,6 +262,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             data: {
               name: 'Hyperlambda execution',
               description: 'Provide arguments for execution of Hyperlambda',
+              button: 'Execute',
               input: args,
               candidates: []
             }
@@ -278,7 +279,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
         } else {
 
           // Code doesn't require arguments,executing as is.
-          this.executeWithArguments(hyperlambda, args);
+          this.executeWithArguments(hyperlambda, null);
         }
       },
 
@@ -556,6 +557,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
             generate: true,
             name: this.currentFileData.path,
             is_action: false,
+            button: 'Save',
             warning: result.warning,
             description: 'Provide a description and click \'Save & Generate\' to have the AI generate your code',
             input: {

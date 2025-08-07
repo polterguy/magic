@@ -161,6 +161,7 @@ export class IdeTreeComponent implements OnInit {
           data: {
             name: el.name,
             is_action: true,
+            button: 'Save',
             warning: result.warning,
             description: el.description,
             input: result.input,
@@ -704,6 +705,7 @@ export class IdeTreeComponent implements OnInit {
                     generate: true,
                     name: path,
                     is_action: false,
+                    button: 'Save',
                     description: 'Provide a description and click \'Save & Generate\' to have the AI generate your code',
                     input: {
                       description: {

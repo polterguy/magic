@@ -30,12 +30,15 @@ for-each:x:@.arguments/*/args/*
          set-value:x:@.dp/#
             convert:x:@.dp/#
                type:x:@hyper2lambda/*/.arguments/*/{@get-name}/*/type
-   else
+   else-if
+      neq:x:@hyper2lambda/*/.arguments/*/{@get-name}
+         .:*
+      .lambda
 
-      // Endpoint type of argument declaration, converting argument value accordingly.
-      set-value:x:@.dp/#
-         convert:x:@.dp/#
-            type:x:@hyper2lambda/*/.arguments/*/{@get-name}
+         // Endpoint type of argument declaration, converting argument value accordingly.
+         set-value:x:@.dp/#
+            convert:x:@.dp/#
+               type:x:@hyper2lambda/*/.arguments/*/{@get-name}
 
 /*
  * Removing [.arguments] declaration from Hyperlambda we're about to execute,

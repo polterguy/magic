@@ -293,6 +293,9 @@ export class ParametriseActionDialog implements OnInit {
       if (typeof model[idx] === 'string') {
         if (model[idx] !== '') {
           result[this.replaceAll(idx, '$__$', '.')] = model[idx];
+          if (!this.data.is_action && this.data.input[idx] && this.data.input[idx].type === '*') {
+            result[idx] = JSON.parse(model[idx]);
+          }
         }
       } else if (Object.prototype.toString.call(model[idx]) === '[object Array]') {
         result[idx] = model[idx];
