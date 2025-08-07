@@ -139,7 +139,8 @@
                 mat-button
                 color="primary"
                 matTooltipPosition="above"
-                matTooltip="Import data from PDF files or by scraping websites"
+                matTooltip="Import data from files or by scraping websites"
+                [disabled]="element.type === 'default'"
                 (click)="import(element)">
                 Import
               </button>
@@ -149,6 +150,7 @@
                 color="primary"
                 matTooltipPosition="above"
                 matTooltip="Create embeddings for your training snippets"
+                [disabled]="element.type === 'default'"
                 (click)="vectorise(element)">
                 Vectorise
               </button>
@@ -157,6 +159,7 @@
                 *ngIf="false"
                 mat-button
                 color="primary"
+                [disabled]="element.type === 'default'"
                 (click)="test(element)">
                 Test
               </button>
@@ -166,6 +169,7 @@
                 color="primary"
                 matTooltipPosition="above"
                 matTooltip="Embed type as an AI chatbot on your website"
+                [disabled]="element.type === 'default'"
                 (click)="embed(element)">
                 Embed
               </button>
@@ -183,6 +187,7 @@
                 *ngIf="false"
                 mat-button
                 color="primary"
+                [disabled]="element.type === 'default'"
                 (click)="train(element)">
                 Train
               </button>
