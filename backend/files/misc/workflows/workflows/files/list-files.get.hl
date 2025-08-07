@@ -1,0 +1,36 @@
+/*
+ * HTTP endpoint that lists all files for the specified module.
+ *
+ * Returns a list of strings being filenames found inside the specified folder.
+ */
+.arguments
+
+   // Mandatory name of module to retrieve files from.
+   module:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/module
+validators.regex:x:@.arguments/*/module
+   regex:"^[a-z0-9_-]+$"
+
+// Listing all files.
+strings.concat
+   .:/modules/
+   get-value:x:@.arguments/*/module
+   .:/
+io.file.list-recursively:x:@strings.concat
+.result
+for-each:x:@io.file.list-recursively/*
+   if
+      not
+         strings.contains:x:@.dp/#
+            .:/.
+      .lambda
+         add:x:@.result
+            get-nodes:x:@.dp/#
+   
+// Returning files to caller.
+return-nodes:x:@.result/*

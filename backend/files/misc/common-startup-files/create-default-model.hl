@@ -6,13 +6,14 @@ try
    data.connect:[generic|magic]
 
       // Checking if default model has already been created.
+      io.file.load:/misc/common-startup-files/default.md
       data.read
          table:ml_types
          where
             and
                type.eq:default
       if
-         not-exists:x:@data.read/*/*
+         not-exists:x:@data.read/*
          .lambda
 
             // Creating default generic model.
@@ -21,15 +22,15 @@ try
                values
                   type:default
                   model:gpt-4.1-2025-04-14
-                  max_tokens:int:4000
-                  max_context_tokens:int:4000
-                  max_request_tokens:int:4000
-                  temperature:decimal:0.3
+                  max_tokens:int:25000
+                  max_context_tokens:int:25000
+                  max_request_tokens:int:25000
+                  temperature:decimal:0.1
                   supervised:int:1
-                  cached:int:1
+                  cached:int:0
                   auth:root
-                  greeting:Hi there, how can I help you?
-                  system_message:You are a helpful assistant. If I ask you to create code for me, then return only the code and no explanation without any Markdown or ``` characters. If I ask you to modify my existing code, then modify my last code according to my instructions and return the entire modified code back to me.
+                  greeting:Hi there, I am your virtual AI-based software development assistant. How can I help you?
+                  system_message:x:@io.file.load
 
       else
 
@@ -38,11 +39,15 @@ try
             table:ml_types
             values
                model:gpt-4.1-2025-04-14
-               max_tokens:int:4000
-               max_context_tokens:int:4000
-               max_request_tokens:int:4000
-               temperature:decimal:0.3
+               max_tokens:int:25000
+               max_context_tokens:int:25000
+               max_request_tokens:int:25000
+               temperature:decimal:0.1
                supervised:int:1
+               cached:int:0
+               auth:root
+               greeting:Hi there, I am your virtual AI-based software development assistant. How can I help you?
+               system_message:x:@io.file.load
             where
                and
                   type.eq:default

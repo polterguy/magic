@@ -1,0 +1,20 @@
+
+/*
+ * Lists all plugins that can be installed
+ * 
+ * Lists all available backend plugins from the Magic bazar repository
+ */
+.arguments
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Invoking Bazar
+http.get:"https://ainiro.io/magic/modules/bazar/bazar-apps"
+   convert:true
+
+// Removing frontend plugins.
+remove-nodes:x:@http.get/*/content/*/*/type/=frontend/.
+
+// Returning result to caller.
+return-nodes:x:@http.get/*/content/*

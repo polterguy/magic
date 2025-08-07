@@ -1,0 +1,68 @@
+
+/*
+ * HTTP endpoint that returns meta information about a specific Hyperlambda file from a module,
+ * specifically its description being the file level comment (if existing).
+ * 
+ * - [filename], mandatory filename to retrieve information about.
+ *
+ * Endpoint will return description as taken from file comment, in addition to a list of arguments
+ * the file can handle which are in name/type format.
+ */
+.arguments
+
+   // Mandatory name of module to return meta information about.
+   filename:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+if
+   not
+      strings.ends-with:x:@.arguments/*/filename
+         .:.hl
+   .lambda
+      throw:"Endpoint can only inspect Hyperlambda files ending with '.hl'"
+         public:bool:true
+         status:int:400
+
+// Loading file and transforming to lambda object.
+io.file.load:x:@.arguments/*/filename
+hyper2lambda:x:@io.file.load
+   comments:true
+
+// Making sure Hyperlambda file contains a comment.
+if
+   exists:x:@hyper2lambda/0/\..
+   .lambda
+
+      // Buffer for arguments file can handle.
+      .args
+      if
+         exists:x:@hyper2lambda/*/.arguments/0
+         .lambda
+
+            // Iterating through each argument in file and adding to above [.args].
+            for-each:x:@hyper2lambda/*/.arguments/*
+               if
+                  neq
+                     get-name:x:@.dp/#
+                     .:..
+                  .lambda
+
+                     // Adding currently iterated argument to above [.args].
+                     set-name:x:+/+/*/*
+                        get-name:x:@.dp/#
+                     unwrap:x:+/*/*
+                     add:x:@.args
+                        .
+                           foo:x:@.dp/#
+
+      // Returning description and arguments to caller.
+      yield
+         description:x:@hyper2lambda/0/\..
+         args:x:@.args/*
+
+// No description.
+return
+   message:"File doesn't have a description. To retrieve a file's meta information it needs a file level comment describing its content."

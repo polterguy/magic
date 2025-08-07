@@ -1,0 +1,36 @@
+
+/*
+ * HTTP endpoint that allows for reading a file and returning its raw content.
+ * 
+ */
+.arguments
+
+   // Mandatory argument being relative filename of file to load and return.
+   name:string
+
+   // Mandatory argument being name of folder where file exists.
+   module:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/module
+validators.regex:x:@.arguments/*/module
+   regex:"^[a-z0-9_-]+$"
+validators.string:x:@.arguments/*/content
+   min:int:20
+
+// Figuring out full path.
+.full_path
+set-value:x:@.full_path
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/module
+      .:/
+      get-value:x:@.arguments/*/name
+
+// Loading file and returning to caller.
+io.file.load:x:@.full_path
+yield
+   file_content:x:@io.file.load

@@ -1,0 +1,41 @@
+/*
+ * HTTP endpoint that deletes the specified [module]
+ *
+ * Arguments:
+ *
+ * - [module] being mandatory name of module that should be deleted.
+ */
+.arguments
+
+   // Mandatory name of module that contains folder that should be deleted.
+   module:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/module
+validators.regex:x:@.arguments/*/module
+   regex:"^[a-z0-9_-]+$"
+
+// Building full file path.
+.full_path
+set-value:x:@.full_path
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/module
+      .:/
+
+// Verifying folder exists.
+if
+   not
+      io.folder.exists:x:@.full_path
+   .lambda
+      throw:Module does not exist
+         public:bool:true
+         status:int:400
+
+// Deleting folder and returning success to caller.
+io.folder.delete:x:@.full_path
+return
+   result:success

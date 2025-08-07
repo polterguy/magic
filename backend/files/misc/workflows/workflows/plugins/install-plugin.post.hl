@@ -1,0 +1,31 @@
+
+/*
+ * Installs a plugin
+ * 
+ * Installs the specified [plugin] plugin into your Magic Cloud backend.
+ */
+.arguments
+   plugin:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/plugin
+
+// Building our URL.
+.url
+set-value:x:@.url
+   strings.concat
+      .:"https://ainiro.io/magic/modules/bazar/download-bazar-app?name="
+      strings.url-encode:x:@.arguments/*/plugin
+
+// Forwarding heavy lifting to primary file from core.
+execute-file:/system/bazar/install-plugin.post.hl
+   name:x:@.arguments/*/plugin
+   url:x:@.url
+
+// Returning message to caller.
+return
+   result:success
+   message:Plugin is being installed on a background thread, but installation might take some time

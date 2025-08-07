@@ -1,0 +1,43 @@
+
+/*
+ * Generate or analyse Hyperlambda code
+ * 
+ * This function allows you to generate Hyperlambda code. The [query] argument must be the description of what code you want.
+ */
+.arguments
+
+   // Mandatory argument describing the Hyperlambda code you want to generate.
+   prompt:string
+
+   // Optional argument being code you want the AI function to change.
+   data:string
+
+.type:public
+
+try
+
+   /*
+    * Defaulting URL to ainiro.io, fallback during debugging to localhost.
+    * Uncomment line below to debug on localhost!
+    */
+   // .url:"http://localhost:5000/magic/modules/hyperlambda-generator/chat"
+   
+   // Notice, this is the CORRECT URL! Comment out next line an uncomment above line to debug on localhost.
+   .url:"https://ainiro.io/magic/modules/hyperlambda-generator/chat"
+   add:x:./*/http.post/*/payload
+      get-nodes:x:@.arguments/*
+   http.post:x:@.url
+      convert:true
+      payload
+   hyper2lambda:x:@http.post/*/content/*/result
+   lambda2hyper:x:-/*
+   yield
+      code:x:@lambda2hyper
+
+.catch
+   lambda2hyper:x:../*
+   log.error:x:@.arguments/*/message
+      stack:x:@lambda2hyper
+   throw:x:@.arguments/*/message
+      status:int:400
+      public:bool:true

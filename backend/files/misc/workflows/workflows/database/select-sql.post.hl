@@ -1,0 +1,32 @@
+
+/*
+ * Executes the specified [sql] and returns the result
+ * 
+ * Connect to [database] database, and executes the specified [sql], and returns all rows resulting from the SQL to caller.
+ */
+.arguments
+
+   // Mandatory argument being SQL to execute, unless specifically overridden the dialect should be SQLite
+   sql:string
+
+   // Mandatory database to connect to and execute SQL within.
+   database:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/sql
+validators.mandatory:x:@.arguments/*/database
+log.info:x:@.arguments/*/sql
+   database:x:@.arguments/*/database
+
+// Connecting to database
+data.connect:x:@.arguments/*/database
+
+   // Executing SQL.
+   data.select:x:@.arguments/*/sql
+
+   // Returning result to caller.
+   yield
+      rows:x:@data.select/*

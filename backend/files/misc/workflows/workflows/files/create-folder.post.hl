@@ -1,0 +1,51 @@
+
+/*
+ * HTTP endpoint that creates a sub-folder for the specified [module] with the specified [name].
+ * 
+ * Arguments:
+ * 
+ * - [module] being mandatory name of an existing module where the folder should be created.
+ * - [name] being mandatory foldername of the folder that should be created.
+ */
+.arguments
+
+   // Mandatory name of module where file should be created.
+   module:string
+
+   // Mandatory foldername. Must be relative within the module.
+   name:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/module
+validators.regex:x:@.arguments/*/module
+   regex:"^[a-z0-9_-]+$"
+validators.regex:x:@.arguments/*/name
+   regex:"^[a-z0-9_-]+$"
+
+// Figuring out full path.
+.full_path
+set-value:x:@.full_path
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/module
+      .:/
+      get-value:x:@.arguments/*/name
+      .:/
+
+// Verifying folder doesn't already exists.
+if
+   io.folder.exists:x:@.full_path
+   .lambda
+      throw:Folder already exists
+         status:int:400
+         public:bool:true
+
+// Creating folder.
+io.folder.create:x:@.full_path
+
+// Returning success
+return
+   result:success

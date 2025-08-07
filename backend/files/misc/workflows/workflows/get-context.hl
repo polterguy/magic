@@ -1,0 +1,48 @@
+
+/*
+ * Searches through your training snippets using RAG / VSS search for the specified query
+ *
+ * This function will use VSS to search through your RAG database for training snippets matching the specified [query] that are within the specified [threshold] of similarity and return the first [max_tokens] training snippets as Markdown context data.
+ */
+.arguments
+   _type:string
+
+   // Mandatory argument and the actual query to use when finding data from your RAG database.
+   query:string
+
+   // Optional argument and the number of tokens to return. The default value of not spcified is 4000.
+   max_tokens:int
+
+   // Optional argument being similarity distance between query and RAG records matched during search. Will default to 0.3 if not specified.
+   threshold:decimal
+
+.type:public
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/_type
+validators.mandatory:x:@.arguments/*/query
+
+// Applying defaults.
+validators.default:x:@.arguments
+   max_tokens:int:4000
+   threshold:decimal:0.3
+
+/*
+ * Returns context for the specified [query] from the specified [_type],
+ * and returns to caller.
+ *
+ * Optionally add [threshold] and [max_tokens] to specify similarity and maximum
+ * tokens to return. [_type] is a machine learning type from your ml_types database table in
+ * your magic database.
+ */
+execute:magic.workflows.actions.execute
+   name:openai-context-from-database
+   filename:/modules/openai/workflows/actions/openai-context-from-database.hl
+   arguments
+      type:x:@.arguments/*/_type
+      query:x:@.arguments/*/query
+      max_tokens:x:@.arguments/*/max_tokens
+      threshold:x:@.arguments/*/threshold
+
+// Returns the result of your last action.
+return-nodes:x:@execute/*

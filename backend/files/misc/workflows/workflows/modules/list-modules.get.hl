@@ -1,0 +1,44 @@
+/*
+ * HTTP endpoint that lists all modules in system.
+ *
+ * Returns a list of strings being names of all modules that exists in system.
+ */
+.arguments
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Listing modules.
+.result
+io.folder.list:/modules/
+for-each:x:@io.folder.list/*
+
+   // Making sure we only return modules with a description.
+   strings.concat
+      get-value:x:@.dp/#
+      .:README.md
+   .description
+   if
+      io.file.exists:x:@strings.concat
+      .lambda
+         set-value:x:@.description
+            io.file.load:x:@strings.concat
+         strings.split:x:@.dp/#
+            .:/
+         unwrap:x:+/*/*/*
+         add:x:@.result
+            .
+               .
+                  name:x:@strings.split/0/-
+                  description:x:@.description
+   else
+      strings.split:x:@.dp/#
+         .:/
+      unwrap:x:+/*/*/*
+      add:x:@.result
+         .
+            .
+               name:x:@strings.split/0/-
+
+// Returning modules to caller.
+return-nodes:x:@.result/*
