@@ -121,11 +121,8 @@ export class ParametriseActionDialog implements OnInit {
           switch (this.data.input[idx].type) {
 
             case 'textarea':
-              field.type = 'autocomplete-textarea';
-              break;
-
             case '*':
-              field.type = 'autocomplete';
+              field.type = 'autocomplete-textarea';
               break;
 
             case 'workflow':
