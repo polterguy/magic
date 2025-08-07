@@ -20,10 +20,10 @@ try
     * Defaulting URL to ainiro.io, fallback during debugging to localhost.
     * Uncomment line below to debug on localhost!
     */
-   // .url:"http://localhost:5000/magic/modules/hyperlambda-generator/chat"
    
-   // Notice, this is the CORRECT URL! Comment out next line an uncomment above line to debug on localhost.
+   // Notice, this is the CORRECT URL! Comment out next line an uncomment the line below that again to debug on localhost.
    .url:"https://ainiro.io/magic/modules/hyperlambda-generator/chat"
+   // .url:"http://localhost:5000/magic/modules/hyperlambda-generator/chat"
    add:x:./*/http.post/*/payload
       get-nodes:x:@.arguments/*
    http.post:x:@.url
