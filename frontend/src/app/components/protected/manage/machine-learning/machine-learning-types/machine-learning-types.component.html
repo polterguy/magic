@@ -192,6 +192,7 @@
                 matTooltipPosition="above"
                 matTooltip="Delete your machine learning type"
                 color="warn"
+                [disabled]="element.type === 'default'"
                 (click)="delete(element)">
                 Delete
               </button>
