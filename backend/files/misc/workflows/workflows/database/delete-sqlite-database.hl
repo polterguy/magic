@@ -1,0 +1,40 @@
+
+/*
+ * Deletes SQLite database.
+ * 
+ * Deletes the database specified as [name].
+ */
+.arguments
+   database:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/database
+
+// Verifying database doesn't already exist.
+strings.concat
+   .:/data/
+   get-value:x:@.arguments/*/database
+   .:.db
+if
+   not
+      io.file.exists:x:@strings.concat
+   .lambda
+      throw:Database does not exists
+         public:bool:true
+         status:400
+
+// Creating our database file.
+io.file.delete:x:@strings.concat
+
+// Flushing database cache.
+sqlite.connections.flush
+
+// Flushing database cache.
+cache.set:magic.sql.databases.sqlite.generic
+
+// Returning success to caller.
+return
+   result:success
