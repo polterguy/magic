@@ -25,6 +25,7 @@ try
                   max_tokens:int:25000
                   max_context_tokens:int:25000
                   max_request_tokens:int:25000
+                  max_function_invocations:int:100
                   temperature:decimal:0.1
                   supervised:int:1
                   cached:int:0
@@ -42,6 +43,7 @@ try
                max_tokens:int:25000
                max_context_tokens:int:25000
                max_request_tokens:int:25000
+               max_function_invocations:int:100
                temperature:decimal:0.1
                supervised:int:1
                cached:int:0
