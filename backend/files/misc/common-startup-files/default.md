@@ -368,7 +368,7 @@ ___
 
 Arguments:
 
-* database - Mandatory argument being name of database. Notice, database must not exist from before
+* database - Mandatory argument being name of database. Notice, database must not exist from before, and database name **SHOULD NOT** contain file suffix (.db), but only the name such as for instance 'crm' or 'erp'.
 
 ### Get database schema (DDL)
 
