@@ -12,6 +12,8 @@ auth.ticket.verify:root
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/database
+validators.regex:x:@.arguments/*/database
+   regex:^[a-z0-9_-]+$
 
 // Verifying database doesn't already exist.
 strings.concat
