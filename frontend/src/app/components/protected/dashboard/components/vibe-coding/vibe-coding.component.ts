@@ -267,7 +267,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
       }
       this.response = this.response.trim();
       this.response = this.response.replace(
-        '\n\n<span class="function_waiting">Waiting ...</span>\n\n',
+        '<span class="function_waiting">Waiting ...</span>',
         ''
       );
       this.response +=
@@ -285,7 +285,10 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
     setTimeout(() => {
     const el = this.outputDiv?.nativeElement;
     if (el) {
-        el.scrollTop = el.scrollHeight;
+        el.scrollTo({
+          top: el.scrollHeight,
+          behavior: 'smooth'
+        });
       }
     });
   }
