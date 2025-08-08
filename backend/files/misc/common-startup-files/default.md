@@ -368,6 +368,21 @@ Arguments:
 
 * database - Mandatory argument being name of database. Notice, database must not exist from before, and database name **SHOULD NOT** contain file suffix (.db), but only the name such as for instance 'crm' or 'erp'.
 
+### Delete database
+
+Deletes the SQLite database specified as [name]
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/database/delete-sqlite-database.hl]:
+{
+  "database": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+* database - Mandatory argument being name of database. Notice, database must exist from before, and database name **SHOULD NOT** contain file suffix (.db), but only the name such as for instance 'crm' or 'erp'.
+
 ### Get database schema (DDL)
 
 Connect to the [database] database, and returns the schema for the specified database.
@@ -388,7 +403,7 @@ Arguments:
 List all plugins that are available to install into the backend allowing the user to install plugins during development.
 
 ___
-FUNCTION_INVOCATION[/misc/workflows/workflows/plugins/list-plugins.get.hl]
+FUNCTION_INVOCATION[/misc/workflows/workflows/plugins/list-plugins.hl]
 ___
 
 ### Install plugin
