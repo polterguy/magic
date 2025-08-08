@@ -12,7 +12,8 @@
    // Optional argument being code you want the AI function to change.
    data:string
 
-.type:public
+// Ensuring user is root.
+auth.ticket.verify:root
 
 try
 

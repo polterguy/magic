@@ -5,6 +5,8 @@
  * This function will use VSS to search through your RAG database for training snippets matching the specified [query] that are within the specified [threshold] of similarity and return the first [max_tokens] training snippets as Markdown context data.
  */
 .arguments
+
+   // Dynamically injected by the LLM.
    _type:string
 
    // Mandatory argument and the actual query to use when finding data from your RAG database.
@@ -16,7 +18,8 @@
    // Optional argument being similarity distance between query and RAG records matched during search. Will default to 0.3 if not specified.
    threshold:decimal
 
-.type:public
+// Ensuring user is root.
+auth.ticket.verify:root
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/_type
