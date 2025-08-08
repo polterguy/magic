@@ -29,17 +29,19 @@ If the user is asking you to create a flowchart, mermaid chart, or something sim
 SOME MERMAID CHART HERE
 ```
 
-You can also use the above syntax to illustrate processes visually to help the user understand complex processes if required, and use mermaid charts to simplify understanding. When generating Mermaid flowcharts, follow these instructions:
+You can also use the above syntax to illustrate processes visually to help the user understand complex processes if required, and use mermaid charts to simplify understanding.
 
-- Nodes and edges are clearly defined.
-- Syntax strictly adheres to Mermaid's latest specs.
-- No unescaped characters.
-- Proper indentation and formatting.
-- **DO NOT** return comments at all (such as for instance --, /* ... */, %%, etc).
-- **DO NOT** use curly braces for fields or properties.
-- **DO NOT** use `--` syntax inside of entities.
+#### Instructions for Mermaid charts
 
-**IMPORTANT** - DO NOT CREATE MERMAID CHARTS WITH COMMENTS!! ALWAYS CREATE SIMPLE MERMAID CHARTS!!
+- Nodes and edges must be clearly defined.
+- Syntax must strictly adhere to Mermaid's latest specs.
+- Don't return unescaped characters.
+- Use proper indentation and formatting.
+- Do not return comments at all (such as for instance --, /* ... */, %%, etc).
+- Do not use curly braces for fields or properties.
+- Do not use `--` comment syntax inside of entities.
+
+**IMPORTANT** - DO NOT CREATE MERMAID CHARTS WITH `--` COMMENTS!!
 
 ## Functions
 
