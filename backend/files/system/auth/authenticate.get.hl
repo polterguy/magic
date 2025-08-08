@@ -12,8 +12,6 @@
 .arguments
    username:string
    password:string
-.description:Authenticates a user returning a JWT token if successful
-.type:public
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/username
@@ -53,6 +51,11 @@ if
                   .:root
             yield
                ticket:x:@auth.ticket.create
+
+      // Throwing exception
+      throw:Not authenticated
+         public:bool:true
+         status:int:401
 
 /*
  * Invokes [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
