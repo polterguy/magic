@@ -13,202 +13,83 @@ if
       .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
    .lambda
 
-      // Making sure we aggressively cache the HTTP response object on the client side.
-      response.headers.set
-         Cache-Control:public, max-age=300
+      // Retrieving version of Magic we're currently running.
+      version
 
-      // Retrieving data from cache, and/or creating our cache entry.
-      cache.try-get:system-information
-         expiration:300
+      // Retrieving number of persisted tasks.
+      tasks.count
+
+      // Counting total number of log items.
+      log.count
+
+      // Retrieving endpoints.
+      endpoints.list
+      .no-endpoints
+      set-value:x:-
+         get-count:x:@endpoints.list/*
+
+      // Retrieving last 10 log items.
+      add:x:@.lambda/*/lambda2hyper/*/last_log_items
+         log.query
+            max:10
+
+      // Retrieving slots.
+      vocabulary
+      .no-slots
+      set-value:x:-
+         get-count:x:@vocabulary/*
+
+      // Retrieving dynamic slots.
+      slots.vocabulary
+      .no-dynamic-slots
+      set-value:x:-
+         get-count:x:@slots.vocabulary/*
+
+      // Retrieving default database adapter.
+      .default-db
+      set-value:x:-
+         config.get:"magic:databases:default"
+
+      // Retrieving default timezone.
+      .default-timezone
+      set-value:x:-
+         config.get:"magic:culture:defaultTimeZone"
+
+      // Counting cache items.
+      cache.count
+
+      // Verifying scheduler is turned on.
+      .has-scheduler:bool:true
+      if
+         eq
+            config.get:"magic:tasks:scheduler"
+            .
          .lambda
+            set-value:x:@.has-scheduler
+               .:bool:false
 
-            // Retrieving version of Magic we're currently running.
-            version
+      // Checking if OpenAI has been configured.
+      .has-openai:bool:false
+      config.get:"magic:openai:key"
+      if
+         and
+            neq:x:@config.get
+               .:
+            not-null:x:@config.get
+         .lambda
+            set-value:x:@.has-openai
+               .:bool:true
 
-            // Retrieving number of persisted tasks.
-            tasks.count
-
-            /*
-             * Retrieving plugin information associated with endpoint.
-             * Notice, this logic will invoke all slots starting
-             * with [magic.system-information.] and return whatever these
-             * slots are returning back to caller.
-             */
-            slots.vocabulary:magic.system-information.
-            for-each:x:-/*
-               signal:x:@.dp/#
-               add:x:+/*
-                  get-nodes:x:@signal/*
-               add:x:././*/lambda2hyper
-                  .
-
-            // Counting total number of log items.
-            log.count
-
-            /*
-             * Retrieving capabilities of log implementation, and verifying implementation
-             * supports timeshifts before we invoke timeshifts.
-             */
-            log.capabilities
-            if:x:@log.capabilities/*/can-timeshift
-
-               // Adding root nodes for timeshifts.
-               add:x:@.lambda/*/lambda2hyper
-                  .
-                     timeshifts
-                        logins
-                           name:Logins
-                           description:Successfully authenticated users
-                           items
-                        access_denied
-                           name:Access denied
-                           description:Access denied requests
-                           items
-                        openai_success
-                           name:OpenAI success
-                           description:Successful OpenAI API requests
-                           items
-                        openai_failure
-                           name:OpenAI failure
-                           description:Failed OpenAI API requests
-                           items
-                        lead_generated
-                           name:Lead
-                           description:Lead generated
-                           items
-
-               // Retrieving count of log items grouped by day for root logins.
-               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/logins/*/items
-                  log.timeshift:User successfully authenticated
-
-               // Retrieving access denied invocations.
-               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/access_denied/*/items
-                  log.timeshift:Access denied
-
-               // Retrieving successful OpenAI API requests
-               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/openai_success/*/items
-                  log.timeshift:Invoking OpenAI was a success
-
-               // Retrieving failed OpenAI API requests
-               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/openai_failure/*/items
-                  log.timeshift:Something went wrong while invoking OpenAI
-
-               // Retrieving leads
-               add:x:@.lambda/*/lambda2hyper/*/timeshifts/*/lead_generated/*/items
-                  log.timeshift:Lead was generated
-
-            // Retrieving endpoints.
-            endpoints.list
-            .no-endpoints
-            set-value:x:-
-               get-count:x:@endpoints.list/*
-
-            // Retrieving last 10 log items.
-            add:x:@.lambda/*/lambda2hyper/*/last_log_items
-               log.query
-                  max:10
-
-            // Retrieving slots.
-            vocabulary
-            .no-slots
-            set-value:x:-
-               get-count:x:@vocabulary/*
-
-            // Retrieving dynamic slots.
-            slots.vocabulary
-            .no-dynamic-slots
-            set-value:x:-
-               get-count:x:@slots.vocabulary/*
-
-            // Retrieving default database adapter.
-            .default-db
-            set-value:x:-
-               config.get:"magic:databases:default"
-
-            // Retrieving default timezone.
-            .default-timezone
-            set-value:x:-
-               config.get:"magic:culture:defaultTimeZone"
-
-            // Counting cache items.
-            cache.count
-
-            // Verifying scheduler is turned on.
-            .has-scheduler:bool:true
-            if
-               eq
-                  config.get:"magic:tasks:scheduler"
-                  .
-               .lambda
-                  set-value:x:@.has-scheduler
-                     .:bool:false
-                     
-            // Iterating through each module, counting LOC, and files.
-            io.folder.list:/modules/
-            for-each:x:@io.folder.list/*
-            
-               // Finding module name.
-               strings.split:x:@.dp/#
-                  .:/
-                  
-               // Loading all files in module recursively.
-               unwrap:x:+/*
-               signal:magic.io.file.load-recursively
-                  .:x:@.dp/#
-                  
-               // Looping through each file in module folder.
-               .loc:int:0
-               .files:int:0
-               for-each:x:@signal/*
-                  if
-                     strings.ends-with:x:@.dp/#
-                        .:.hl
-                     .lambda
-                        hyper2lambda:x:@.dp/#/0
-                        math.increment:x:@.loc
-                           get-count:x:@hyper2lambda/**
-                        math.increment:x:@.files
-
-               // Adding result to return value.
-               unwrap:x:+/+/*/*/*
-               set-name:x:+/*/*
-                  get-value:x:@strings.split/0/-
-               add:x:@.lambda/*/lambda2hyper/*/modules
-                  .
-                     foo
-                        loc:x:@.loc
-                        files:x:@.files
-
-            // Checking if OpenAI has been configured.
-            .has-openai:bool:false
-            config.get:"magic:openai:key"
-            if
-               and
-                  neq:x:@config.get
-                     .:
-                  not-null:x:@config.get
-               .lambda
-                  set-value:x:@.has-openai
-                     .:bool:true
-
-            // Returning result to caller.
-            unwrap:x:+/*
-            lambda2hyper
-               version:x:@version
-               persisted_tasks:x:@tasks.count
-               has_scheduler:x:@.has-scheduler
-               log_items:x:@log.count
-               cache_items:x:@cache.count
-               endpoints:x:@.no-endpoints
-               slots:x:@.no-slots
-               dynamic_slots:x:@.no-dynamic-slots
-               default_db:x:@.default-db
-               default_timezone:x:@.default-timezone
-               has_openai:x:@.has-openai
-               last_log_items
-               modules
-            return:x:@lambda2hyper
-
-      // Returning result of cache invocation to caller.
-      hyper2lambda:x:@cache.try-get
-      return-nodes:x:@hyper2lambda/*
+      // Returning result to caller.
+      yield
+         version:x:@version
+         persisted_tasks:x:@tasks.count
+         has_scheduler:x:@.has-scheduler
+         log_items:x:@log.count
+         cache_items:x:@cache.count
+         endpoints:x:@.no-endpoints
+         slots:x:@.no-slots
+         dynamic_slots:x:@.no-dynamic-slots
+         default_db:x:@.default-db
+         default_timezone:x:@.default-timezone
+         has_openai:x:@.has-openai

@@ -12,6 +12,7 @@ import { LogTypes, SystemReport } from './_models/dashboard.model';
 import { ConfigureThemeDialog } from 'src/app/components/protected/dashboard/components/configure-theme/configure-theme-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { OpenAIConfigurationDialogComponent } from '../common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
 
 /**
  * Primary dashboard component, displaying dashboard information, such as
@@ -121,6 +122,28 @@ export class DashboardComponent implements OnInit {
         }
         this.cdr.detectChanges();
         this.isLoading = false;
+
+        // Checking if system has been configured with an OpenAI API key, and if not, displaying the modal window that asks the user.
+        if (this.systemReport.has_openai === false) {
+          this.dialog
+            .open(OpenAIConfigurationDialogComponent, {
+              width: '80vw',
+              maxWidth: '550px',
+              disableClose: true,
+            })
+            .afterClosed()
+            .subscribe((result: any) => {
+
+              if (result.configured) {
+
+                this.systemReport.has_openai = true;
+
+              } else {
+
+                this.generalService.showFeedback('You cannot use Magic Cloud optimally without an OpenAI API account');
+              }
+            });
+        }
       },
       error: (error: any) => {
 

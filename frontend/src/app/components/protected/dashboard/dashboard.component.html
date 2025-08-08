@@ -43,16 +43,6 @@
 
   <ng-container>
 
-    <div class="row mb-1" *ngIf="showInfoPanel === 'show'">
-      <div class="col-12 mb-4">
-
-        <app-splash
-          (hideInfoPanel)="hidePanel()">
-        </app-splash>
-
-      </div>
-    </div>
-
     <div class="row mb-1" *ngIf="systemReport && systemReport.has_openai">
       <div class="col-12">
 
@@ -61,53 +51,6 @@
 
       </div>
     </div>
-
-    <ng-container *ngIf="displayKpis && systemReportDisplayable !== null">
-      <div class="row">
-        <div class="col-xl-3 col-md-4 col-12 mb-4 order-xl-first order-2">
-
-          <app-overview
-            [data]="systemReportDisplayable">
-          </app-overview>
-
-        </div>
-        <div class="col-xl-9 col-12 order-xl-2 order-first">
-          <div class="row">
-            <div class="col-sm-6 col-12 mb-4">
-
-              <app-chart
-                [data]="systemReportDisplayable"
-                [log]="true">
-              </app-chart>
-
-            </div>
-            <div class="col-sm-6 col-12 mb-4">
-
-              <app-chart
-                [data]="systemReportDisplayable"
-                [complexity]="true">
-              </app-chart>
-
-            </div>
-          </div>
-        </div>
-        <div class="col-md-8 col-12 mb-4 order-3">
-
-          <app-main-chart
-            [data]="chartData">
-          </app-main-chart>
-
-        </div>
-        <div class="col-xl-4 col-12 mb-4 order-last">
-
-          <app-last-log-items
-            [data]="systemReportDisplayable?.last_log_items"
-            [totalLogs]="systemReportDisplayable?.log_items">
-          </app-last-log-items>
-
-        </div>
-      </div>
-    </ng-container>
 
   </ng-container>
 
