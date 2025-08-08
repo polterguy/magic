@@ -15,6 +15,13 @@ date.format:x:-
    format:"yyyy-MM-ddTHH:mm:ssZ"
 return:x:-
 }} UTC
+* The backend URL is {{
+strings.concat
+   request.scheme
+   .:"://"
+   request.host
+return:x:-
+}}
 
 ### Adhere to the context
 
