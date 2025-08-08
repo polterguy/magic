@@ -10,27 +10,13 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { MaterialModule } from 'src/app/modules/material.module';
 import { SharedModule } from 'src/app/modules/shared.module';
 import { CommonComponentsModule } from 'src/app/components/protected/common/common-components.module';
-import { ChartComponent } from '../components/chart/chart.component';
-import { SplashComponnt } from '../components/splash/splash.component';
-import { LastLogItemsComponent } from '../components/last-log-items/last-log-items.component';
-import { MainChartComponent } from '../components/main-chart/main-chart.component';
-import { OverviewDialogComponent } from '../components/overview/components/overview-dialog/overview-dialog.component';
-import { OverviewComponent } from '../components/overview/overview.component';
 import { DashboardComponent } from '../dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
-import { WhatsNewDialogComponent } from '../components/whats-new/whats-new.component';
 import { VibeCodingComponent } from '../components/vibe-coding/vibe-coding.component';
 
 @NgModule({
   declarations: [
     DashboardComponent,
-    SplashComponnt,
-    LastLogItemsComponent,
-    MainChartComponent,
-    OverviewComponent,
-    OverviewDialogComponent,
-    ChartComponent,
-    WhatsNewDialogComponent,
     VibeCodingComponent,
   ],
   imports: [

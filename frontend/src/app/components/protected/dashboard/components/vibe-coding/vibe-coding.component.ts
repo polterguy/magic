@@ -33,6 +33,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
   private waitingString = '<p><span class="ainiro-dot ainiro-dot-1"></span><span class="ainiro-dot ainiro-dot-2"></span><span class="ainiro-dot ainiro-dot-3"></span></p>';
   messages: any[] = [];
   is_answering: boolean = false;
+  frontendUrl: string = null;
 
   constructor(
     private openAIService: OpenAIService,
@@ -41,6 +42,9 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
     private backendService: BackendService) { }
 
   ngOnInit() {
+
+    // Initialising frontend URL
+    this.frontendUrl = this.backendService.active.url;
 
     // Applying plugin support for marked
     const renderer = {
