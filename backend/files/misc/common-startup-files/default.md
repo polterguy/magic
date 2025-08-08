@@ -41,7 +41,7 @@ When generating Mermaid flowcharts, follow these instructions:
 - **DO NOT** return comments at all (such as for instance --, /* ... */, %%, etc).
 - **DO NOT** use curly braces for fields or properties.
 
-**IMPORTANT** - DO NOT CREATE MERMAID CHARTS WITH COMMENTS!!
+**IMPORTANT** - DO NOT CREATE MERMAID CHARTS WITH COMMENTS!! ALWAYS CREATE SIMPLE MERMAID CHARTS!! **NEVER** USE `--` inside of entities!!
 
 ## Functions
 
@@ -346,6 +346,14 @@ Arguments:
 
 * sql - Mandatory argument being SQL to execute, unless specifically overridden the dialect should be SQLite
 * database - Mandatory database to connect to and execute SQL within.
+
+### List databases
+
+Lists all SQLite databases in the system
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/database/list-databases.get.hl]
+___
 
 ### Create database
 
