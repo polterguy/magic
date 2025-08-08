@@ -12,7 +12,6 @@ export interface SystemReport {
   dynamic_slots?: number,
   endpoints?: number,
   has_scheduler?: boolean,
-  has_sockets?: boolean,
   has_terminal?: boolean,
   persisted_tasks?: number,
   version?: string,

@@ -31,8 +31,9 @@ export class DashboardComponent implements OnInit {
   chartData: any = [];
   userIsRoot: boolean = undefined;
   isLoading: boolean = true;
-  showInfoPanel: string = sessionStorage.getItem('infoPanel') || 'show';
+  showInfoPanel: string = sessionStorage.getItem('infoPanel') || 'hide';
   userAsUsername: string = '';
+  displayKpis: boolean = false; // TODO: Allow for optionally displaying these
 
   constructor(
     private cdr: ChangeDetectorRef,

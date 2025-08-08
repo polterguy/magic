@@ -19,6 +19,7 @@ import { OverviewComponent } from '../components/overview/overview.component';
 import { DashboardComponent } from '../dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { WhatsNewDialogComponent } from '../components/whats-new/whats-new.component';
+import { VibeCodingComponent } from '../components/vibe-coding/vibe-coding.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { WhatsNewDialogComponent } from '../components/whats-new/whats-new.compo
     OverviewDialogComponent,
     ChartComponent,
     WhatsNewDialogComponent,
+    VibeCodingComponent,
   ],
   imports: [
     CommonModule,

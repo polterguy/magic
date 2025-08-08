@@ -14,6 +14,7 @@ import { DatePipe } from "src/app/pipes/date.pipe";
 import { MarkedPipe } from "src/app/pipes/marked.pipe";
 import { SortByPipe } from "src/app/pipes/sort-by.pipe";
 import { DateSincePipe } from "src/app/pipes/date-since.pipe";
+import { NoSanitizePipe } from "../pipes/nosanitizerpipe";
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { DateSincePipe } from "src/app/pipes/date-since.pipe";
     DatePipe,
     MarkedPipe,
     SortByPipe,
+    NoSanitizePipe,
   ],
   imports: [
     CommonModule,
@@ -35,6 +37,7 @@ import { DateSincePipe } from "src/app/pipes/date-since.pipe";
     DatePipe,
     MarkedPipe,
     SortByPipe,
+    NoSanitizePipe,
     MaterialModule,
   ]
 })

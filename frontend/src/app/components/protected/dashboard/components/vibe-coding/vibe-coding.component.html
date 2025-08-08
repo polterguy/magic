@@ -1,0 +1,107 @@
+
+<mat-card class="h-100">
+  <mat-card-content>
+
+    <div class="row">
+
+      <div #outputDiv class="output">
+
+        <div *ngIf="!messages || messages.length === 0" class="row">
+
+          <button
+              mat-flat-button
+              class="create_btn"
+              (click)="startCreating()"
+              color="primary">
+              Get Started
+          </button>
+
+          <div class="col-12 col-lg-3">
+            <img
+              src="assets/images/enterprise-ai-solutions.webp"
+              alt="AINIRO.IO"
+              class="d-block mx-auto exclude graphics">
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <ol class="ms-5 mt-5 ps-3">
+              <li class="pb-1">
+                Connect to your existing database or create a new database
+                <a class="text-primary btn-link pointer" routerLink="/databases">here</a>
+              </li>
+              <li class="pb-1">
+                Edit your database
+                <a class="text-primary btn-link pointer" routerLink="/sql-studio">here</a>
+              </li>
+              <li class="pb-1">
+                Create your API
+                <a class="text-primary btn-link pointer" routerLink="/generator">here</a>
+              </li>
+              <li class="pb-1">
+                Edit your code
+                <a class="text-primary btn-link pointer" routerLink="/hyper-ide">here</a>
+              </li>
+              <li class="pb-1">
+                Install plugins
+                <a class="text-primary btn-link pointer" routerLink="/plugins">here</a>
+              </li>
+              <li class="pb-1">
+                Get started with Machine Learning
+                <a class="text-primary btn-link pointer" routerLink="/machine-learning">here</a>
+              </li>
+              <li class="pb-1">
+                Create a chatbot
+                <a class="text-primary btn-link pointer" routerLink="/chatbot-wizard">here</a>
+              </li>
+              <li class="pb-1">
+                Access your frontend
+                <a class="text-primary btn-link pointer" target="_blank" [href]="frontendUrl">here</a>
+              </li>
+            </ol>
+          </div>
+
+          <div class="col-12 col-lg-5">
+            <div class="video-wrapper">
+
+              <iframe
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/videoseries?si=AgtBPpTcUWZtCV1d&amp;list=PL_iESc2yi8IUCwO1TDft2oAfrUvJHuzU9"
+                title="YouTube video player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+
+            </div>
+          </div>
+        </div>
+
+        <div
+          *ngFor="let el of messages"
+          [class]="'message ' + el.type"
+          [innerHTML]="el.message | noSanitize">
+        </div>
+      </div>
+
+      <form [class]="'col-12' + (is_answering ? ' hide_input' : '')" (ngSubmit)="submit()">
+
+        <mat-form-field class="w-100">
+          <textarea
+            #queryTextarea
+            matInput
+            autocomplete="off"
+            rows="4"
+            name="query"
+            [disabled]="is_answering"
+            placeholder="Where the Machine Creates the Code ..."
+            [(ngModel)]="query"
+            (keydown.enter)="onKeydownEnter($event)">
+          </textarea>
+        </mat-form-field>
+
+      </form>
+
+    </div>
+
+  </mat-card-content>
+</mat-card>

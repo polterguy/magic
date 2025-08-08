@@ -1,6 +1,6 @@
 
 <!-- Loading skeleton shown while frontend is waiting for data from backend -->
-  <ng-container *ngIf="isLoading;else dataLoaded">
+<ng-container *ngIf="isLoading;else dataLoaded">
 
   <div class="row">
     <div class="col-12 mb-4">
@@ -53,7 +53,16 @@
       </div>
     </div>
 
-    <ng-container *ngIf="systemReportDisplayable !== null">
+    <div class="row mb-1" *ngIf="systemReport && systemReport.has_openai">
+      <div class="col-12">
+
+        <app-vibe-coding>
+        </app-vibe-coding>
+
+      </div>
+    </div>
+
+    <ng-container *ngIf="displayKpis && systemReportDisplayable !== null">
       <div class="row">
         <div class="col-xl-3 col-md-4 col-12 mb-4 order-xl-first order-2">
 

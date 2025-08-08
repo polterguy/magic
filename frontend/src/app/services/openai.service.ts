@@ -48,7 +48,8 @@ export class OpenAIService {
     type: string,
     search: boolean = false,
     session: string = null,
-    data: string = null) {
+    data: string = null,
+    stream: boolean = false) {
 
     // building our payload
     const payload: any = {
@@ -71,6 +72,7 @@ export class OpenAIService {
       payload.references = search;
       payload.type = type;
       payload.user_id = this.backendService.active.username;
+      payload.stream = stream;
       return this.httpService.post<PromptResponse>(`/magic/system/openai/chat`, payload);
     }
   }

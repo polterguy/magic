@@ -103,10 +103,6 @@ const titles: any = [
     key: 'has_scheduler'
   },
   {
-    name: 'Active socket',
-    key: 'has_sockets'
-  },
-  {
     name: 'Active terminal',
     key: 'has_terminal'
   },
