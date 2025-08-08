@@ -50,12 +50,22 @@
                 <a class="text-primary btn-link pointer" target="_blank" [href]="frontendUrl">here</a>
               </li>
             </ol>
+
             <button
                 mat-flat-button
                 (click)="startCreating()"
                 color="primary">
                 Quick Start
             </button>
+
+            <button
+              mat-flat-button
+              class="ms-2"
+              color="primary"
+              (click)="getHelp($event)">
+              Get Help
+            </button>
+
           </div>
 
           <div class="col-12 col-lg-5">
