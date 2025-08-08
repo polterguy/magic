@@ -63,18 +63,11 @@
   overflow-y: auto;
   margin-bottom: 0;
   font-size: 14px;
+  line-height: 16px;
 
   .graphics {
     max-height: 300px;
     height: 300px;
-    width: auto;
-    display: block;
-  }
-
-  .create_btn {
-    position: absolute;
-    bottom:15px;
-    right:15px;
     width: auto;
     display: block;
   }

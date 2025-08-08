@@ -8,14 +8,6 @@
 
         <div *ngIf="!messages || messages.length === 0" class="row">
 
-          <button
-              mat-flat-button
-              class="create_btn"
-              (click)="startCreating()"
-              color="primary">
-              Get Started
-          </button>
-
           <div class="col-12 col-lg-3">
             <img
               src="assets/images/enterprise-ai-solutions.webp"
@@ -24,7 +16,7 @@
           </div>
 
           <div class="col-12 col-lg-4">
-            <ol class="ms-5 mt-5 ps-3">
+            <ol class="mt-5 ps-3">
               <li class="pb-2">
                 Connect to existing or create a new database
                 <a class="text-primary btn-link pointer" routerLink="/databases">here</a>
@@ -58,6 +50,12 @@
                 <a class="text-primary btn-link pointer" target="_blank" [href]="frontendUrl">here</a>
               </li>
             </ol>
+            <button
+                mat-flat-button
+                (click)="startCreating()"
+                color="primary">
+                Quick Start
+            </button>
           </div>
 
           <div class="col-12 col-lg-5">
