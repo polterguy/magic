@@ -1,0 +1,36 @@
+
+/*
+ * List all databases in system
+ * 
+ * Lists all SQLite databases in the system and returns as a list of strings.
+ */
+.arguments
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Listing files.
+io.file.list:/data/
+
+// Buffer.
+.data
+
+// Extracting only database names.
+for-each:x:@io.file.list/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.db
+      .lambda
+         strings.split:x:@.dp/#
+            .:/
+         strings.replace:x:@strings.split/0/-
+            .:.db
+            .:
+         unwrap:x:+/*/*
+         add:x:@.data
+            .
+               .:x:@strings.replace
+
+// Returning result to caller.
+yield
+   databases:x:@.data/*
