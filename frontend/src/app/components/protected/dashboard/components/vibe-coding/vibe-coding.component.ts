@@ -137,7 +137,6 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
         next: (res: any) => {
 
           this.query = '';
-          this.messages[this.messages.length - 1].message = this.messages[this.messages.length - 1].message.replace(this.waitingString, '');
           this.generalService.hideLoading();
           this.scrollToBottom();
         },
@@ -233,6 +232,11 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
 
     } else if (msg.message) {
 
+      // Making sure we remove the jumping dots
+      if (this.messages[this.messages.length - 1].message.includes(this.waitingString)) {
+        this.messages[this.messages.length - 1].message = this.messages[this.messages.length - 1].message.replace(this.waitingString, '');
+      }
+
       this.response += msg.message;
       this.messages[this.messages.length - 1].message = marked.parse(this.response);
       this.scrollToBottom();
@@ -241,7 +245,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
 
       this.response = this.response.trim();
       this.response +=
-        '\n\n<span class="function_waiting">Waiting ...</span>';
+        '\n\n<span class="function_waiting">Waiting ...</span>\n\n';
       this.messages[this.messages.length - 1].message = marked.parse(this.response);
       return;
 
@@ -263,7 +267,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
       }
       this.response = this.response.trim();
       this.response = this.response.replace(
-        '<span class="function_waiting">Waiting ...</span>',
+        '\n\n<span class="function_waiting">Waiting ...</span>\n\n',
         ''
       );
       this.response +=
