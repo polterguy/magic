@@ -156,10 +156,6 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
     this.submit();
   }
 
-  getHelp(event) {
-    (<any>window).ainiro_faq_question(event, 'What is Magic Cloud?');
-  }
-
   /*
    * Private helper methods.
    */
