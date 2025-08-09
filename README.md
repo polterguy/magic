@@ -11,6 +11,12 @@ In addition to its generative AI capabilities, Magic also comes with a CRUD gene
 
 ![CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/backend-crud.jpg)
 
+The above is a screenshot of the integrated AI agent that allows you to.
+
+* Create and maintain your databases
+* Create and maintain APIs
+* Create and maintain AI agents, AI chatbots, and everything Magic can do
+
 ## No-Code AI
 
 Magic contains its own LLM that allows for generating Hyperlambda (backend) code using natural language. Combined with meta programming, this almost entirely eliminates the need to understand code and software development, yet still making it possible to create fairly complex systems using _"vibe coding"_, such as for instance [AI agents](https://ainiro.io/ai-agents) with function calling, and custom ChatGPT _"clones"_ using the [AI Expert System](https://ainiro.io/ai-expert-system).
