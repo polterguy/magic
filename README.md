@@ -39,7 +39,7 @@ Hyperlambda has been [officially recognised by Microsoft in several articles](ht
 
 The combination of meta programming and declarative constructs, in a homoiconic development environment, makes Hyperlambda extremely useful as a tool to create AI agents, sometimes allowing you to create highly complex AI agents, without having to write a single line of code yourself. You can see an example of this in the following video, where I create an AI agent that creates AI agents.
 
-[![Watch the video](https://img.youtube.com/vi/NyDZ5OzREbk/maxresdefault.jpg)](https://www.youtube.com/watch?v=NyDZ5OzREbk)
+[![Watch the video](https://img.youtube.com/vi/DJQ4XqPcMmQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=DJQ4XqPcMmQ)
 
 ## Components
 
