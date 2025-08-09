@@ -1,0 +1,41 @@
+
+/*
+ * Deletes the specified user
+ * 
+ * Returns success if deletion was successful.
+ */
+.arguments
+
+   // Mandatory
+   username:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/username
+
+// Opening database connection.
+data.connect:magic
+
+   // Deleting our user.
+   data.delete
+      table:users
+      where
+         and
+            username.eq:x:@.arguments/*/username
+
+   // Checking if we've got name
+   if
+      eq:x:@data.delete
+         .:int:0
+      .lambda
+
+         // Oops ...!!
+         throw:User not found
+            public:bool:true
+            status:int:404
+
+// Returning success
+return
+   result:success

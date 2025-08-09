@@ -1,0 +1,74 @@
+
+/*
+ * Creates a new user with the specified username, password, and optionally name and email.
+ * 
+ * Will insert a new user into the "users" table.
+ */
+.arguments
+
+   // Mandatory
+   username:string
+
+   // Mandatory
+   password:string
+
+   // Optional
+   name:string
+
+   // Optional
+   email:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/username
+validators.mandatory:x:@.arguments/*/password
+validators.email:x:@.arguments/*/email
+
+// Hashing user's password.
+crypto.password.hash:x:@.arguments/*/password
+
+// Opening database connection.
+data.connect:magic
+
+   // Inserting our user.
+   data.create
+      table:users
+      values
+         username:x:@.arguments/*/username
+         password:x:@crypto.password.hash
+
+   // Checking if we've got name
+   if
+      and
+         exists:x:@.arguments/*/name
+         not-null:x:@.arguments/*/name
+      .lambda
+
+         // Inserting name into users_extra table
+         data.create
+            table:users_extra
+            values
+               type:name
+               user:x:@.arguments/*/username
+               value:x:@.arguments/*/name
+
+   // Checking if we've got email
+   if
+      and
+         exists:x:@.arguments/*/email
+         not-null:x:@.arguments/*/email
+      .lambda
+
+         // Inserting name into users_extra table
+         data.create
+            table:users_extra
+            values
+               type:email
+               user:x:@.arguments/*/username
+               value:x:@.arguments/*/email
+
+// Returning success
+return
+   result:success
