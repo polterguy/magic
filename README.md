@@ -5,17 +5,17 @@ Magic Cloud is a software development automation platform created and maintained
 
 ![Vibe Coding with Magic](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/magic-vibe-coding-dashboard.png)
 
-## CRUD generator
-
-In addition to its generative AI capabilities, Magic also comes with a CRUD generator, allowing you to point it at your database, click a button, and wrap all your tables into CRUD endpoints. Combined with its AI capabilities, this can sometimes save you 90% of your time when delivering backend APIs. Magic is built on top of .Net 9 and Angular.
-
-![CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/backend-crud.jpg)
-
 The above is a screenshot of the integrated AI agent that allows you to.
 
 * Create and maintain your databases
 * Create and maintain APIs
 * Create and maintain AI agents, AI chatbots, and everything Magic can do
+
+## CRUD generator
+
+In addition to its generative AI capabilities, Magic also comes with a CRUD generator, allowing you to point it at your database, click a button, and wrap all your tables into CRUD endpoints. Combined with its AI capabilities, this can sometimes save you 90% of your time when delivering backend APIs. Magic is built on top of .Net 9 and Angular.
+
+![CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/backend-crud.jpg)
 
 ## No-Code AI
 
