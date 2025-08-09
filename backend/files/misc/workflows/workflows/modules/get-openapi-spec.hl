@@ -1,0 +1,45 @@
+
+/*
+ * Returns Open API specification for specified module
+ * 
+ * - [module] is mandatory and must be an existing module.
+ * - [scheme] is mandatory and must be either 'http' or 'https', depending upon how the server is configured.
+ * - [base-url] is the hostname of the server.
+ */
+.arguments
+
+   // Mandatory name of module to create.
+   module:string
+
+   // Mandatory scheme of server.
+   scheme:string
+
+   // Optional base URL of server.
+   base-url:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/module
+validators.regex:x:@.arguments/*/module
+   regex:"^[a-z0-9_-]+$"
+
+// Creating our filter condition
+.filter
+set-value:x:@.filter
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/module
+      .:/
+
+// Outsourcing heavy lifting to "openapi.get.hl" from system folder.
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*/scheme
+   get-nodes:x:@.arguments/*/base-url
+execute-file:/system/endpoints/openapi.get.hl
+   system:bool:true
+   filter:x:@.filter
+
+// Returning result to caller.
+return-nodes:x:@execute-file/*

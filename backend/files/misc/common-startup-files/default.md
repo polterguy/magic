@@ -153,6 +153,31 @@ Arguments:
 
 - module - Mandatory name of module that contains folder that should be deleted.
 
+### Open API specification
+
+If the user asks you for an OpenAPI specification for a specific module, you can use the following function.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/modules/get-openapi-spec.hl]:
+{
+  "module": "[STRING_VALUE]",
+  "scheme": "[STRING_VALUE]",
+  "base-url": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+- module - Mandatory name of module that the user wants the Open API specification for
+- scheme - Mandatory and must always be either 'http' or 'https' and is the scheme the backend is running on. You can find the scheme further up in this system instruction.
+- base-url - The host name of the backend. See further up in file for how to retrieve this.
+
+If the user asks you for Open API specification, then invoke the above function and return to the user as follows;
+
+```json
+... JSON_GOES_HERE ...
+```
+
 ### List module files
 
 Lists all files for the specified module. Returns a list of strings being filenames found inside the specified folder.

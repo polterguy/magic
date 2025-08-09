@@ -3,8 +3,8 @@
 .arguments
    system:bool
    filter:string
-.description:Returns all public endpoints as an OpenAPI specification, matching the optional [filter] condition in URL
-.type:public
+   scheme:string
+   base-url:string
 
 // Defaulting system endpoints to false.
 validators.default:x:@.arguments
@@ -14,23 +14,39 @@ validators.default:x:@.arguments
 version
 
 // Retrieving host and scheme for request.
-.scheme
-request.host
+.base-url
 if
-   strings.starts-with:x:@request.host
-      .:"localhost:5000"
+   exists:x:@.arguments/*/base-url
+   .lambda
+      set-value:x:@.base-url
+         get-value:x:@.arguments/*/base-url
+else
+   set-value:x:@.base-url
+      request.host
+.scheme
+if
+   exists:x:@.arguments/*/scheme
    .lambda
       set-value:x:@.scheme
-         .:http
+         get-value:x:@.arguments/*/scheme
 else
    set-value:x:@.scheme
-      .:https
-.base-url
+      request.scheme
+   request.host
+   if
+      strings.starts-with:x:@request.host
+         .:"localhost:5000"
+      .lambda
+         set-value:x:@.scheme
+            .:http
+   else
+      set-value:x:@.scheme
+         .:https
 set-value:x:@.base-url
    strings.concat
       get-value:x:@.scheme
       .:"://"
-      request.host
+      get-value:x:@.base-url
 
 // Unwrapping expressions in [.result].
 unwrap:x:./*/.result/**
