@@ -11,7 +11,8 @@
   },
   "private": true,
   "overrides": {
-    "stylus": "0.0.1-security"
+    "stylus": "0.0.1-security",
+    "@types/d3-dispatch": "3.0.0"
   },
   "dependencies": {
     "@angular-material-components/datetime-picker": "^8.0.0",
