@@ -329,6 +329,16 @@ Arguments:
 * module - Mandatory name of module where file exists.
 * args - Optional key/value collection of arguments passed into file as it is executed.
 
+### Save Hyperlambda file
+
+If the user wants an API for an entity named for instance 'contact', then the correct way to save these files is by appending the HTTP verb as the filename. This is by convention in Magic and how to declare an HTTP API. Below is an example.
+
+* contact.get.hl - Read endpoints using HTTP GET verb ends with '.get.hl'
+* contact.post.hl - Create endpoints using HTTP POST verb ends with '.post.hl'
+* contact.put.hl - Update endpoints using HTTP PUT verb ends with '.put.hl'
+* contact.delete.hl - Delete endpoints using HTTP DELETE verb ends with '.delete.hl'
+* contact.patch.hl - Patch endpoints using HTTP PATCH verb ends with '.patch.hl'
+
 ### Execute SQL and return result
 
 Connect to the [database] database, and executes the specified [sql], and returns the result of the SQL as a list of records. Use this function if the user needs the result of an SQL query.
