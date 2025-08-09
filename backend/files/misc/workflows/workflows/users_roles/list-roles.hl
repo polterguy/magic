@@ -1,0 +1,39 @@
+
+/*
+ * List roles for user
+ * 
+ * Returns all roles the specified user belongs to.
+ */
+.arguments
+
+   // Mandatory
+   username:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation
+validators.mandatory:x:@.arguments/*/username
+
+// Opening database connection.
+data.connect:magic
+
+   // Selecting roles.
+   data.read
+      table:users_roles
+      where
+         and
+            user.eq:x:@.arguments/*/username
+
+   // Returning result to caller.
+   if
+      exists:x:@data.read/*
+      .lambda
+
+         // Returning roles as JSON array.
+         strings.join:x:@data.read/*/*/role
+            .:,
+         strings.split:x:-
+            .:,
+         yield
+            roles:x:@strings.split/*

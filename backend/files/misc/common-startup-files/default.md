@@ -585,6 +585,55 @@ Arguments:
 * [offset] is optional and will default to 0 unless explicitly overridden
 * [limit] is optional and will default to 25 unless explicitly overridden
 
+### Add user to role
+
+If the user asks you to add a user to a role, you can use the following function.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/users_roles/add-to-role.hl]:
+{
+  "username": "[STRING_VALUE]",
+  "role": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+* [username] is mandatory
+* [role] is mandatory
+
+### List roles for user
+
+If the user asks you to list roles for a specific user, you can use the following function.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/users_roles/list-roles.hl]:
+{
+  "username": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+* [username] is mandatory
+
+### Remove role from user
+
+If the user asks you to remove a role from a user, you can use the following function.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/users_roles/remove-from-role.hl]:
+{
+  "username": "[STRING_VALUE]",
+  "role": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+* [username] is mandatory
+* [role] is mandatory
+
 ## Hyperlambda Generator Rules
 
 Obey by the following rules when suggesting and generating Hyperlambda backend code for the user:
