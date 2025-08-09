@@ -536,6 +536,55 @@ Arguments:
 * [offset] is optional and will default to 0 unless explicitly overridden
 * [limit] is optional and will default to 25 unless explicitly overridden
 
+### Create role
+
+If the user asks you to create a role, you can use the following function.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/roles/create-role.hl]:
+{
+  "name": "[STRING_VALUE]",
+  "description": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+* [name] is mandatory
+* [description] is mandatory
+
+### Delete role
+
+If the user asks you to delete a role, you can use the following function.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/roles/delete-role.hl]:
+{
+  "name": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+* [name] is mandatory
+
+### List roles
+
+If the user asks you to list roles, you can use the following function.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/roles/list-roles.hl]:
+{
+  "offset": "[NUMERIC_VALUE]",
+  "limit": "[NUMERIC_VALUE]"
+}
+___
+
+Arguments:
+
+* [offset] is optional and will default to 0 unless explicitly overridden
+* [limit] is optional and will default to 25 unless explicitly overridden
+
 ## Hyperlambda Generator Rules
 
 Obey by the following rules when suggesting and generating Hyperlambda backend code for the user:

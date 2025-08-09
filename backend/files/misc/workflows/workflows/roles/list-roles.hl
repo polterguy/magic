@@ -1,0 +1,35 @@
+
+/*
+ * List roles in system
+ * 
+ * Optionally apply [limit] and [offset] to page.
+ */
+.arguments
+
+   // Optional, default to 25 unless explicitly specified.
+   limit:long
+
+   // Optional, defaults to 0 unless explicitly specified.
+   offset:long
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Opening database connection.
+data.connect:magic
+
+   // Parametrizing invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+
+   // Selecting roles.
+   data.read
+      table:roles
+      columns
+         name
+         description
+
+   // Returning result to caller.
+   yield
+      roles:x:@data.read/*

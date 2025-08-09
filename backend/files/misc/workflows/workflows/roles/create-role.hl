@@ -1,0 +1,34 @@
+
+/*
+ * Creates a new role with the specified [name] and [description].
+ * 
+ * Will insert a new record into the "roles" table.
+ */
+.arguments
+
+   // Mandatory
+   name:string
+
+   // Mandatory
+   description:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/name
+validators.mandatory:x:@.arguments/*/description
+
+// Opening database connection.
+data.connect:magic
+
+   // Inserting our role.
+   data.create
+      table:roles
+      values
+         name:x:@.arguments/*/name
+         description:x:@.arguments/*/description
+
+// Returning success
+return
+   result:success
