@@ -1,0 +1,70 @@
+
+/*
+ * Sends an email with the specified body and subject to the specified receiver
+ *
+ * This function will send an email
+ */
+.arguments
+
+   // Mandatory argument
+   from:string
+
+   // Mandatory argument
+   from-name:string
+
+   // Mandatory argument
+   to:string
+
+   // Mandatory argument
+   to-name:string
+
+   // Mandatory argument
+   subject:string
+
+   // Mandatory argument
+   body:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/from
+validators.email:x:@.arguments/*/from
+validators.mandatory:x:@.arguments/*/from-name
+validators.mandatory:x:@.arguments/*/to
+validators.email:x:@.arguments/*/to
+validators.mandatory:x:@.arguments/*/from-name
+validators.mandatory:x:@.arguments/*/subject
+validators.mandatory:x:@.arguments/*/body
+
+
+// Transforms the specified [markdown] to HTML and returns to caller.
+execute:magic.workflows.actions.execute
+   name:markdown2html
+   filename:/misc/workflows/actions/misc/markdown2html.hl
+   arguments
+      markdown:x:@.arguments/*/body
+
+
+/*
+ * Send an email to the specified [name]/[email] recipient, with the specified [subject] and [body].
+ *
+ * Optionally supply [from] and [from-email] as name/email sender, and/or [reply-to] and [reply-to-email]
+ * as the email to reply to. If you don't supply [from] or [from-email] then this action will use the
+ * default sender settings from your configuration.
+ */
+execute:magic.workflows.actions.execute
+   name:email
+   filename:/misc/workflows/actions/misc/email.hl
+   arguments
+      subject:x:@.arguments/*/subject
+      body:x:--/execute/=markdown2html/*/html
+      html:bool:true
+      name:x:@.arguments/*/to-name
+      email:x:@.arguments/*/to
+      reply-to:x:@.arguments/*/from-name
+      reply-to-email:x:@.arguments/*/from
+
+// Returning success to caller
+return
+   result:success

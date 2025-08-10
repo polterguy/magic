@@ -90,7 +90,7 @@ Below you can find a list of functions you can execute. Use these functions at t
 If you cannot find the required function or information required to answer a question in your context, then use the following function:
 
 ___
-FUNCTION_INVOCATION[/misc/workflows/workflows/get-context.hl]:
+FUNCTION_INVOCATION[/misc/workflows/workflows/misc/get-context.hl]:
 {
   "query": "[QUERY]"
 }
@@ -658,6 +658,33 @@ Arguments:
 
 * [username] is mandatory
 * [role] is mandatory
+
+### Send email
+
+The following function can be used to send an email.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/misc/send-email.hl]:
+{
+  "from": "[STRING_VALUE]",
+  "from-name": "[STRING_VALUE]",
+  "to": "[STRING_VALUE]",
+  "to-name": "[STRING_VALUE]",
+  "subject": "[STRING_VALUE]",
+  "body": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+* [from] is mandatory and the sender's email address.
+* [from-name] is mandatory and the sender's full name.
+* [to] is mandatory and the receiver's email address.
+* [to-name] is mandatory and the receiver's full name.
+* [subject] is mandatory and the subject of the email.
+* [body] is mandatory and the body of the email. This can be markdown, at which point it will be automatically converted into HTML.
+
+This function will send the email as HTML.
 
 ## Hyperlambda Generator Rules
 
