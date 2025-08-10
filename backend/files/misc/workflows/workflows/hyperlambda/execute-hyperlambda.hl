@@ -1,0 +1,25 @@
+
+/*
+ * Executes the specified [hyperlambda].
+ * 
+ * Returns result of execution to caller.
+ */
+.arguments
+
+   // Mandatory Hyperlambda to execute
+   hyperlambda:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/hyperlambda
+
+// Converting to lambda object.
+hyper2lambda:x:@.arguments/*/hyperlambda
+
+// Executing Hyperlambda
+invoke:x:@hyper2lambda
+
+// Returning whatever our Hyperlambda returned.
+return-nodes:x:@invoke/*

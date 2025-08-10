@@ -333,6 +333,23 @@ Create an intentional prompt that you pass into this function, describing what y
 
 If the user is asking you to change existing code, then pass in the code you want to change as `data` and the changes you want to apply as `prompt`.
 
+### Execute Hyperlambda
+
+Executes the specified Hyperlambda without saving it and returns the result to the caller.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/hyperlambda/execute-hyperlambda.hl]:
+{
+  "hyperlambda": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+* hyperlambda - Mandatory argument being the Hyperlambda to execute
+
+If you've got Hyperlambda you wish to execute, without it being saved in a file, then **ALWAYS** prefer this function.
+
 ### Executes Hyperlambda file
 
 Executes the specified [filename] Hyperlambda file passing in the specified [args] arguments, and returns the result of the invocation to caller.
