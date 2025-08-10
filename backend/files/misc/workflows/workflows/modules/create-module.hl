@@ -1,6 +1,6 @@
 
 /*
- * HTTP endpoint that allows for creating a new module.
+ * Creates a new module.
  * 
  * Arguments:
  * 

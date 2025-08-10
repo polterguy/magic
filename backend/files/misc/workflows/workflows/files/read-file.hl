@@ -1,7 +1,6 @@
 
 /*
- * HTTP endpoint that allows for reading a file and returning its raw content.
- * 
+ * Loads a file and returning its raw content.
  */
 .arguments
 

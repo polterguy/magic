@@ -1,6 +1,6 @@
 
 /*
- * HTTP endpoint that creates a sub-folder for the specified [module] with the specified [name].
+ * Creates a new sub-folder for the specified [module] with the specified [name].
  * 
  * Arguments:
  * 

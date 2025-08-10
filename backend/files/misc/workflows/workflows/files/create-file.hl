@@ -1,6 +1,6 @@
 
 /*
- * HTTP endpoint that creates a new file or modifies the content of an existing file
+ * Creates a new file or modifies the content of an existing file
  * for the specified [module] with the specified [name] and the specified [content].
  * 
  * Arguments:

@@ -1,5 +1,5 @@
 /*
- * HTTP endpoint that deletes the specified [file] inside the specified [module]
+ * Deletes the specified [file] inside the specified [module]
  *
  * Arguments:
  *

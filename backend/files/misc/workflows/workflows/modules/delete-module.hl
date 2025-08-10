@@ -1,5 +1,5 @@
 /*
- * HTTP endpoint that deletes the specified [module]
+ * Deletes the specified [module]
  *
  * Arguments:
  *

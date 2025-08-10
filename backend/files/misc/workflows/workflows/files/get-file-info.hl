@@ -1,6 +1,6 @@
 
 /*
- * HTTP endpoint that returns meta information about a specific Hyperlambda file from a module,
+ * Returns meta information about a specific Hyperlambda file from a module,
  * specifically its description being the file level comment (if existing).
  * 
  * - [filename], mandatory filename to retrieve information about.

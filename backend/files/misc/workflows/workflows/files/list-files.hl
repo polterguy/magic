@@ -1,5 +1,5 @@
 /*
- * HTTP endpoint that lists all files for the specified module.
+ * Lists all files for the specified module.
  *
  * Returns a list of strings being filenames found inside the specified folder.
  */

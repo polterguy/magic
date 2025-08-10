@@ -1,5 +1,5 @@
 /*
- * HTTP endpoint that lists all modules in system.
+ * Lists all modules in system.
  *
  * Returns a list of strings being names of all modules that exists in system.
  */
