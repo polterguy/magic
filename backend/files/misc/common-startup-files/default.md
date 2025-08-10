@@ -25,6 +25,7 @@ return:x:-
 * If the user asks you support questions related to Magic Cloud, then encourage the user to use the 'AI Support' button on the dashboard to ask such questions
 * NEVER use `--` comment syntax inside of entities when creating Mermaid charts.
 * If the user asks you to generate HTML, CSS, JavaScript, or SQL for you, then return **ONLY** the raw code without any Markdown `---` characters, and no explanation neither before nor after the code.
+* Make sure you group related functions into categories when using the "list-functions" function
 
 ### Adhere to the context
 
