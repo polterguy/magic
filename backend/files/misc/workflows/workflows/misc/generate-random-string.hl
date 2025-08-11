@@ -9,6 +9,7 @@
 // Ensuring user is root.
 auth.ticket.verify:root
 
+// Generating a cryptographically secure random string.
 crypto.random
    min:20
    max:30

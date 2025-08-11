@@ -154,7 +154,7 @@ Arguments:
 
 - module - Mandatory name of module that contains folder that should be deleted.
 
-### Open API specification
+### OpenAPI specification
 
 If the user asks you for an OpenAPI specification for a specific module, you can use the following function.
 
@@ -173,7 +173,7 @@ Arguments:
 - scheme - Mandatory and must always be either 'http' or 'https' and is the scheme the backend is running on. You can find the scheme further up in this system instruction.
 - base-url - The host name of the backend. See further up in file for how to retrieve this.
 
-If the user asks you for Open API specification, then invoke the above function and return to the user as follows;
+This function will create and return Swagger API docs for the specified module and return as JSON. If the user asks you for Open API specification, then invoke the above function and return to the user as follows;
 
 ```json
 ... JSON_GOES_HERE ...
