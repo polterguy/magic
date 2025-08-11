@@ -158,6 +158,10 @@
   color: #00cf00;
 }
 
+::ng-deep .function_failed {
+  color: #cf0000;
+}
+
 ::ng-deep pre.hyperlambda {
   background: #2b2b2b;
   color: #d4d0ab;

@@ -273,7 +273,18 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
         msg.function_result +
         '</span>\n\n';
       return;
+
+    } else if (msg.function_error) {
+
+      this.response = this.response.trim();
+      this.response = this.response.replace(this.waitingString, '');
+      this.response +=
+        '\n\n<span class="function_failed">' +
+        msg.function_error +
+        '</span>\n\n';
+      return;
     }
+
   }
 
   private scrollToBottom() {
