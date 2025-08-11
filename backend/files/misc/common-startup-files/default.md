@@ -857,7 +857,9 @@ Arguments;
 - [url] is mandatory URL of website to crawl for RAG training data
 - [max] is optional maximum number of pages to crawl. Defaults to 25 unless specified
 
-Notice, this function will retrieve the robots.txt file, and the sitemap of the website, and crawl and scrape max amount of pages and create individual RAG training snippets it inserts into the machine learning model.
+Notice, this function will retrieve the robots.txt file, and the sitemap of the website, and crawl and scrape `max` amount of pages and create individual RAG training snippets it inserts into the machine learning model. The function will determine itself automatically what pages to scrape, based upon the sitemap.
+
+Once crawling is done the function will automatically vectorize the type.
 
 ### Vectorize machine learning type
 

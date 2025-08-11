@@ -16,7 +16,7 @@
    lists:bool
    code:bool
    feedback-channel:string
-   
+   vectorize:bool
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -76,6 +76,8 @@ log.info:Crawling URL generating OpenAI training snippets
 
 // Invoking slot doing the heavy lifting.
 unwrap:x:./*/signal/*/.onafter/*/.feedback-channel
+unwrap:x:./*/signal/*/.onafter/*/.vectorize
+unwrap:x:./*/signal/*/.onafter/*/.type
 add:x:./*/signal
    get-nodes:x:@.arguments/*
 signal:magic.ai.crawl-site
@@ -83,10 +85,19 @@ signal:magic.ai.crawl-site
 
       // Informing client that we're done.
       .feedback-channel:x:@.arguments/*/feedback-channel
-      sockets.signal:x:@.arguments/*/feedback-channel
-         args
-            message:Done!
-            type:success
+      .vectorize:x:@.arguments/*/vectorize
+      .type:x:@.arguments/*/type
+      if
+         eq:x:@.arguments/*/vectorize
+            .:bool:true
+         .lambda
+            execute-file:/system/openai/vectorise.post.hl
+               type:x:@.type
+      else
+         sockets.signal:x:@.arguments/*/feedback-channel
+            args
+               message:Done!
+               type:success
 
 
 // Returning success to caller.
