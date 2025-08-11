@@ -1,0 +1,18 @@
+
+/*
+ * Generates a cryptographically secured random string
+ * 
+ * The string will always be at least 20 characters long and it can be used as a password for instance.
+ */
+.arguments
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+crypto.random
+   min:20
+   max:30
+
+// Returning result to caller.
+yield
+   secret:x:@crypto.random
