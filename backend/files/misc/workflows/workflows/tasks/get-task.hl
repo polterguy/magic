@@ -10,7 +10,7 @@
 // Ensuring user is root.
 auth.ticket.verify:root
 
-// Listing tasks.
+// Retrieving task, including its schedules.
 tasks.get:x:@.arguments/*/name
    schedules:true
 
