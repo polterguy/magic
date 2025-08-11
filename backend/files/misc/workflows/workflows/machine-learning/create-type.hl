@@ -9,6 +9,9 @@
    // Mandatory name of type.
    type:string
 
+   // Optional system instruction for the machine learning type.
+   system_message:string
+
 // Ensuring user is root.
 auth.ticket.verify:root
 
@@ -26,6 +29,7 @@ validators.default:x:@.arguments
    temperature:decimal:0.3
    supervised:int:1
    cached:int:0
+   threshold:decimal:0.3
    greeting:Hi there, I am your virtual AI-based assistant. How can I help you?
 
 // Connecting to our database.

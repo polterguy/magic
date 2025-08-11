@@ -1,0 +1,53 @@
+
+/*
+ * Crawls a website for RAG training data and inserts into the specified machine learning type
+ */
+.arguments
+
+   // Mandatory name of type.
+   type:string
+
+   // Mandatory website URL to crawl.
+   url:string
+
+   // Optional number of pages to crawl. Defaults to 25.
+   max:int
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/url
+validators.regex:x:@.arguments/*/type
+   regex:^[a-z0-9_-]+$
+validators.url:x:@.arguments/*/url
+validators.default:x:@.arguments
+   max:int:25
+
+// Converting to long
+set-value:x:@.arguments/*/max
+   convert:x:@.arguments/*/max
+      type:int
+
+// Applying defaults.
+validators.default:x:@.arguments
+   code:bool:true
+   delay:int:1000
+   feedback-channel:IRRELEVANT
+   images:bool:true
+   insert_url:bool:false
+   lists:bool:true
+   max:int:25
+   summarize:bool:true
+   threshold:int:150
+
+// Executing file doing the heavy lifting.
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*
+execute-file:/system/openai/import-url.post.hl
+
+// Returning result to caller.
+return
+   message:Notice, crawling is happening on a background process and not yet finished. You will be notified when the crawling is done.
+   result:success
