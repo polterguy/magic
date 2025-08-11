@@ -42,6 +42,7 @@ export class MachineLearningModelsComponent implements OnInit {
   isLoadingKey: boolean = false;
   displayedColumns: string[] = [
     'type',
+    'token_count',
     'model',
     'action',
   ];

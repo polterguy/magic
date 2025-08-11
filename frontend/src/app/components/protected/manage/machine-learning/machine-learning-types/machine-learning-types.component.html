@@ -88,6 +88,23 @@
             </td>
           </ng-container>
 
+          <!-- Type column -->
+          <ng-container matColumnDef="token_count">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              matTooltip="OpenAI tokens for System Instruction"
+              class="pe-sm-3 text-nowrap small-table-column">
+              Tokens
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element"
+              class="pe-sm-3 text-nowrap small-table-column">
+              {{element.system_message_token_count}}
+            </td>
+          </ng-container>
+
           <!-- Vectorise model column -->
           <ng-container matColumnDef="vector_model">
             <th
@@ -179,6 +196,7 @@
                 color="primary"
                 matTooltipPosition="above"
                 matTooltip="Configure your machine learning type"
+                [disabled]="element.type === 'default'"
                 (click)="edit(element)">
                 Configure
               </button>

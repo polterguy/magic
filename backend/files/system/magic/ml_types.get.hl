@@ -149,5 +149,13 @@ data.connect:[generic|magic]
                add:x:@.models
                   get-nodes:x:@.dp/#
 
+   // Making sure we retrieve token count for each model.
+   for-each:x:@.models/*
+      openai.tokenize:x:@.dp/#/*/system_message
+      unwrap:x:+/*/*
+      add:x:@.dp/#
+         .
+            system_message_token_count:x:@openai.tokenize
+
    // Returning result of above filter invocation to caller.
    return-nodes:x:@.models/*
