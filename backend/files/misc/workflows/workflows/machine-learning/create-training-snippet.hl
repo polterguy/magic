@@ -1,0 +1,38 @@
+
+/*
+ * Creates a new training snippet for the specified type.
+ */
+.arguments
+
+   // Mandatory name of type.
+   type:string
+
+   // Mandatory prompt argument being a single line summary of the completion.
+   prompt:string
+
+   // Mandatory completion argument being the entire training snippet's content.
+   completion:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/prompt
+validators.mandatory:x:@.arguments/*/completion
+
+// Opening database
+data.connect:magic
+
+   // parametrizing invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Inserting our item.
+   data.create
+      table:ml_training_snippets
+      values
+
+// Returning result to caller.
+return
+   result:success

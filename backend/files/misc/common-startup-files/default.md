@@ -878,6 +878,25 @@ Arguments;
 
 This needs to be done after creating new RAG data such that the training data will be considered during inference.
 
+### Create RAG training data for machine learning type
+
+The following function can be used to create RAG training data for a machine learning type.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/create-training-snippet.hl]:
+{
+  "type": "[STRING_VALUE]",
+  "prompt": "[STRING_VALUE]",
+  "completion": "[STRING_VALUE]"
+}
+___
+
+Arguments;
+
+- [type] is mandatory name of machine learning type
+- [prompt] is mandatory single sentence summary of completion
+- [completion] is mandatory and the actual training data
+
 ## Hyperlambda Generator Rules
 
 Obey by the following rules when suggesting and generating Hyperlambda backend code for the user:
