@@ -1,0 +1,18 @@
+
+/*
+ * Returns the specified [name] task to caller.
+ */
+.arguments
+
+   // Mandatory argument being the task to retrieve
+   name:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Listing tasks.
+tasks.get:x:@.arguments/*/name
+   schedules:true
+
+// Returning all tasks to caller.
+return-nodes:x:@tasks.get/*

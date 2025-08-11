@@ -1,0 +1,38 @@
+
+/*
+ * Creates a new task
+ *
+ * Create and persists a new task that can be executed or scheduled later
+ */
+.arguments
+
+   // Mandatory name, can only contain characters a-z, 0-9, and '-' and '_'.
+   name:string
+
+   // Optional description for the task
+   description:string
+
+   // Mandatory argument being the Hyperlambda that's executed when the task is executed
+   hyperlambda:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/hyperlambda
+validators.regex:x:@.arguments/*/name
+   regex:^[a-z0-9_-]+$
+
+// Parametrizing invocation.
+add:x:./*/tasks.create
+   get-nodes:x:@.arguments/*/description
+add:x:./*/tasks.create/*/.lambda
+   hyper2lambda:x:@.arguments/*/hyperlambda
+
+// Saving task into database.
+tasks.create:x:@.arguments/*/name
+   .lambda
+
+// Returning success to caller.
+return
+   result:success

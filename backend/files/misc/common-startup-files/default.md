@@ -704,6 +704,92 @@ Arguments:
 
 This function will send the email as HTML.
 
+### Create task
+
+The following function can be used to create a new task. The task is persisted for later, and can be schedule or executed on demand.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/tasks/create-task.hl]:
+{
+  "name": "[STRING_VALUE]",
+  "description": "[STRING_VALUE]",
+  "hyperlambda": "[STRING_VALUE]"
+}
+___
+
+Arguments:
+
+* [name] is mandatory and the name or ID of the task. This argument can only contain a-z, 0-9, '_', and '-' characters.
+* [description] is optional and a friendly single line descriptive text of what the task does.
+* [hyperlambda] is mandatory and is the Hyperlambda that'll execute when the task executes.
+
+### List tasks
+
+The following function can be used to list all tasks in the system.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/tasks/list-tasks.hl]
+___
+
+### Get task
+
+The following function can be used to get a specific task, including its Hyperlambda.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/tasks/get-task.hl]:
+{
+  "name": "[STRING_VALUE]"
+}
+___
+
+Arguments;
+
+- [name] is mandatory name or ID of task to retrieve
+
+### Delete task
+
+The following function can be used to delete a specific task.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/tasks/delete-task.hl]:
+{
+  "name": "[STRING_VALUE]"
+}
+___
+
+Arguments;
+
+- [name] is mandatory name or ID of task to delete
+
+### Schedule task
+
+The following function can be used to schedule a specific task.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/tasks/schedule-task.hl]:
+{
+  "name": "[STRING_VALUE]",
+  "due": "[DATE_VALUE]",
+  "repeats": "[REPETITION_STRING]"
+}
+___
+
+Arguments;
+
+- [name] is mandatory name or ID of task to schedule
+* [due] is optional and is an exact date in the future when the task should execute once. This has to be a ISO date in UTC time zone.
+* [repeats] is optional and is a repetition pattern explaining when the task should execute. See below description for how to create this argument.
+
+#### Repetition pattern
+
+The reptition pattern can be populated in 3 different ways:
+
+- `n.unit` where `n` is a number and `unit` is a unit. The unit can be 'seconds', 'minutes', 'hours', or 'days'.
+- `ww.HH.mm.ss` where `ww` is weekday(s), `HH` is military hours UTC time, `mm` is minutes and `ss` is seconds. You can supply multiple weekdays by separating each weekday with a `|` character, such as for instance 'Friday|Sunday.04.30.00' implying Fridays and Sundays at 04:30 UTC time.
+- `MM.dd.HH.mm.ss` where `MM` and `dd` can have multiple values separated by a `|` character.
+
+Notice, **NEVER** use colon (:) to separate parts of the repetition pattern, always use periods (.).
+
 ## Hyperlambda Generator Rules
 
 Obey by the following rules when suggesting and generating Hyperlambda backend code for the user:

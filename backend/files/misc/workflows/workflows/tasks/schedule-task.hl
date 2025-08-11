@@ -1,0 +1,31 @@
+
+/*
+ * Schedules the specified [name] task such that it's being automatically executed in the future.
+ *
+ * You can schedule the task to execute once in the future, or according to a repetition value.
+ */
+.arguments
+
+   // Mandatory argument being the task to retrieve
+   name:string
+
+   // Optional argument being an exact date in the future for when task should execute.
+   due:date
+
+   // Optional argument being the repetition pattern for when task should be executed.
+   repeats:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Parametrizing invocation.
+add:x:./*/tasks.schedule
+   get-nodes:x:@.arguments/*/due
+   get-nodes:x:@.arguments/*/repeats
+
+// Scheduling our task.
+tasks.schedule:x:@.arguments/*/name
+
+// Returning success to caller.
+return
+   result:success

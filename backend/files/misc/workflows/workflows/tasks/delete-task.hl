@@ -1,0 +1,18 @@
+
+/*
+ * Deletes the specified [name] task.
+ */
+.arguments
+
+   // Mandatory argument being the task to delete
+   name:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Deleting task.
+tasks.delete:x:@.arguments/*/name
+
+// Returning success to caller.
+return
+   result:success

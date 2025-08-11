@@ -1,0 +1,16 @@
+
+/*
+ * Lists all tasks in system
+ *
+ * Lists all tasks and returns to caller
+ */
+.arguments
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Listing tasks.
+tasks.list
+
+// Returning all tasks to caller.
+return-nodes:x:@tasks.list/*
