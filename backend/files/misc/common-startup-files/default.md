@@ -859,6 +859,23 @@ Arguments;
 
 Notice, this function will retrieve the robots.txt file, and the sitemap of the website, and crawl and scrape max amount of pages and create individual RAG training snippets it inserts into the machine learning model.
 
+### Vectorize machine learning type
+
+The following function can be used to create embeddings for a machine learning type.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/vectorize-type.hl]:
+{
+  "type": "[STRING_VALUE]"
+}
+___
+
+Arguments;
+
+- [type] is mandatory name of machine learning type to create embeddings for
+
+This needs to be done after creating new RAG data such that the training data will be considered during inference.
+
 ## Hyperlambda Generator Rules
 
 Obey by the following rules when suggesting and generating Hyperlambda backend code for the user:

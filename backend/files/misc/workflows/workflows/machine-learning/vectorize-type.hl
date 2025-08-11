@@ -1,0 +1,23 @@
+
+/*
+ * Crawls a website for RAG training data and inserts into the specified machine learning type
+ */
+.arguments
+
+   // Mandatory name of type.
+   type:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+
+// Executing file doing the heavy lifting.
+execute-file:/system/openai/vectorise.post.hl
+   type:x:@.arguments/*/type
+
+// Returning result to caller.
+return
+   message:Notice, vectorizing is happening on a background process and not yet finished. You will be notified when done.
+   result:success
