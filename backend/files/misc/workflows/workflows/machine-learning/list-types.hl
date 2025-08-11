@@ -1,0 +1,34 @@
+
+/*
+ * Lists all machine learning types in the system
+ * 
+ * Returns all machine learning types in the system.
+ */
+.arguments
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Connecting to database.
+data.connect:magic
+
+   // Returning all machine learning types.
+   data.read
+      table:ml_types
+      columns
+         type
+         model
+         max_tokens
+         max_context_tokens
+         max_request_tokens
+         greeting
+         temperature
+         recaptcha
+         auth
+         supervised
+         threshold
+         
+      limit:-1
+
+   // Returning result to caller.
+   return-nodes:x:@data.read/*

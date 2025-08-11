@@ -798,6 +798,44 @@ ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/misc/generate-random-string.hl]
 ___
 
+### Create machine learning type
+
+The following function can be used to create a new machine learning type.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/create-type.hl]:
+{
+  "type": "[STRING_VALUE]"
+}
+___
+
+Arguments;
+
+- [type] is mandatory name of new machine learning type
+
+### List machine learning types
+
+The following function can be used to list all machine learning types.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/list-types.hl]
+___
+
+### Delete machine learning type
+
+The following function can be used to delete an existing machine learning type.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/delete-type.hl]:
+{
+  "type": "[STRING_VALUE]"
+}
+___
+
+Arguments;
+
+- [type] is mandatory name of machine learning type to delete
+
 ## Hyperlambda Generator Rules
 
 Obey by the following rules when suggesting and generating Hyperlambda backend code for the user:

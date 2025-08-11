@@ -1,0 +1,45 @@
+
+/*
+ * Creates a new machine learning type.
+ * 
+ * You can later populate the type with RAG data.
+ */
+.arguments
+
+   // Mandatory name of type.
+   type:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation
+validators.regex:x:@.arguments/*/name
+   regex:^[a-z0-9_-]+$
+
+// Applying defaults.
+validators.default:x:@.arguments
+   model:gpt-4.1-2025-04-14
+   max_tokens:int:25000
+   max_context_tokens:int:25000
+   max_request_tokens:int:25000
+   max_function_invocations:int:100
+   temperature:decimal:0.3
+   supervised:int:1
+   cached:int:0
+   greeting:Hi there, I am your virtual AI-based assistant. How can I help you?
+
+// Connecting to our database.
+data.connect:magic
+
+   // Parametrizing create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Inserting our record
+   data.create
+      table:ml_types
+      values
+
+// Returning result to caller.
+return
+   result:success
