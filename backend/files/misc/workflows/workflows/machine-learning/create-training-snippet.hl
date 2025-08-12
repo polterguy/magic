@@ -33,6 +33,6 @@ data.connect:magic
       table:ml_training_snippets
       values
 
-// Returning result to caller.
-return
-   result:success
+   // Returning result to caller.
+   yield
+      id:x:@data.create

@@ -1,0 +1,28 @@
+
+/*
+ * Deletes the specified training snippet.
+ */
+.arguments
+
+   // Mandatory ID of snippet to delete.
+   id:long
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/id
+
+// Opening database
+data.connect:magic
+
+   // Inserting our item.
+   data.delete
+      table:ml_training_snippets
+      where
+         and
+            id.eq:x:@.arguments/*/id
+
+   // Returning result to caller.
+   yield
+      affected_records:x:@data.delete

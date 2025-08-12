@@ -1,0 +1,40 @@
+
+/*
+ * Updates the specified training snippet.
+ */
+.arguments
+
+   // Mandatory ID of snippet to update.
+   id:long
+
+   // Optional prompt argument being a single line summary of the completion.
+   prompt:string
+
+   // Optional completion argument being the entire training snippet's content.
+   completion:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/id
+
+// Opening database
+data.connect:magic
+
+   // parametrizing invocation.
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/prompt
+      get-nodes:x:@.arguments/*/completion
+
+   // Inserting our item.
+   data.update
+      table:ml_training_snippets
+      values
+      where
+         and
+            id.eq:x:@.arguments/*/id
+
+   // Returning result to caller.
+   yield
+      affected_records:x:@data.update

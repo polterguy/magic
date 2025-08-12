@@ -878,7 +878,7 @@ Arguments;
 
 This needs to be done after creating new RAG data such that the training data will be considered during inference.
 
-### Create RAG training data for machine learning type
+### Create RAG training snippet for machine learning type
 
 The following function can be used to create RAG training data for a machine learning type.
 
@@ -896,6 +896,40 @@ Arguments;
 - [type] is mandatory name of machine learning type
 - [prompt] is mandatory single sentence summary of completion
 - [completion] is mandatory and the actual training data
+
+### Update training snippet
+
+The following function allows you to update a training snippet given its ID.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/update-training-snippet.hl]:
+{
+  "id": "[NUMERIC_VALUE]",
+  "prompt": "[STRING_VALUE]",
+  "completion": "[STRING_VALUE]"
+}
+___
+
+Arguments;
+
+- [id] is mandatory and the ID of the training snippet to update
+- [prompt] is optional single sentence summary of completion
+- [completion] is optional and the actual training data
+
+### Delete training snippet
+
+The following function allows you to delete a training snippet given its ID.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/delete-training-snippet.hl]:
+{
+  "id": "[NUMERIC_VALUE]"
+}
+___
+
+Arguments;
+
+- [id] is mandatory and the ID of the training snippet to delete
 
 ### Create AI function
 
@@ -918,7 +952,7 @@ Arguments;
 
 An AI function allows a machine learning type to have access to tools, making it become an "AI agent". These tools are supplied to the LLM as function invocation declarations such as this function is. By adding a function invocation declaration to the machine learning type, the type will store this as RAG data, allowing it later to lookup the function using VSS and pass it into the LLM.
 
-If the user tells you he or she wants to create an AI agent, then inform the user of this function and ask which type and file the user wants to turn into a function.
+If the user tells you he or she wants to create an AI agent, then inform the user of this function and ask which type and file the user wants to turn into a function. If the function return "NO DESCRIPTION" for its arguments, then warn the user that he or she might have to prompt engineer the AI function declaration to provide a description for the argument.
 
 ## Hyperlambda Generator Rules
 
