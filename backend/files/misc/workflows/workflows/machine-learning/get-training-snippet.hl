@@ -1,0 +1,33 @@
+
+/*
+ * Returns the specified [id] training snippet
+ */
+.arguments
+
+   // Mandatory type to search.
+   id:long
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/id
+
+// Connecting to database.
+data.connect:magic
+
+   // Finding record.
+   data.read
+      table:ml_training_snippets
+      columns
+         created
+         type
+         uri
+         prompt
+         completion
+         meta
+      where
+         and
+            id.eq:x:@.arguments/*/id
+   yield
+      result:x:@data.read/*/*
