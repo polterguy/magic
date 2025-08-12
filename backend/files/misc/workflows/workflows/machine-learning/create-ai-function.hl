@@ -1,0 +1,143 @@
+
+/*
+ * Creates an AI function for the specified [type] and [filename]
+ */
+.arguments
+
+   // Mandatory name of type.
+   type:string
+
+   // Mandatory AI function file.
+   filename:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.regex:x:@.arguments/*/type
+   regex:^[a-z0-9_-]+$
+validators.mandatory:x:@.arguments/*/filename
+
+// Making sure file exists.
+if
+   not
+      io.file.exists:x:@.arguments/*/filename
+   .lambda
+      throw:File not found
+         status:int:404
+         public:bool:true
+
+// Retrieving arguments by letting another file doing the heavy lifting.
+execute-file:/system/workflows/get-hyperlambda-arguments.post.hl
+   path:x:@.arguments/*/filename
+
+// Reteieving description and arguments to invocation.
+.description
+set-value:x:@.description
+   get-value:x:@execute-file/*/description
+.args
+add:x:@.args
+   get-nodes:x:@execute-file/*/args/*
+
+// Creating our prompt/completion pair.
+.prompt
+.completion
+strings.split:x:@.description
+   .:"\n"
+set-value:x:@.prompt
+   strings.trim:x:@strings.split/0
+remove-nodes:x:@strings.split/0
+set-value:x:@.completion
+   strings.join:x:@strings.split/*
+      .:"\n"
+set-value:x:@.completion
+   strings.trim:x:@.completion
+
+// Adding function invocation declaration to completion.
+set-value:x:@.completion
+   strings.concat
+      get-value:x:@.completion
+      .:"\n\n___\nFUNCTION_INVOCATION["
+      get-value:x:@.arguments/*/filename
+      .:]
+
+// Trimming redundant characters from completion.
+set-value:x:@.completion
+   strings.trim:x:@.completion
+
+// Checking if function accepts arguments
+if
+   exists:x:@.args/*
+   .lambda
+
+      // Making sure we add arguments to function declaration.
+      set-value:x:@.completion
+         strings.concat
+            get-value:x:@.completion
+            .:":\n"
+      .obj
+      .tail:"Arguments:\n"
+      for-each:x:@.args/*
+         set-name:x:+/*/*
+            get-value:x:@.dp/#/*/name
+         add:x:@.obj
+            .
+               name
+         switch:x:@.dp/#/*/type
+            case:int
+            case:long
+            case:date
+               set-value:x:@.obj/0/-
+                  .:"[NUMERIC_VALUE]"
+            default
+               set-value:x:@.obj/0/-
+                  .:"[STRING_VALUE]"
+         set-value:x:@.tail
+            strings.concat
+               get-value:x:@.tail
+               .:"\n - ["
+               get-value:x:@.dp/#/*/name
+               .:"] "
+               get-value:x:@.dp/#/*/description
+      lambda2json:x:@.obj/*
+         format:true
+      set-value:x:@.completion
+         strings.concat
+            get-value:x:@.completion
+            get-value:x:@lambda2json
+            .:"\n___"
+            .:"\n\n"
+            get-value:x:@.tail
+      set-value:x:@.completion
+         strings.trim:x:@.completion
+
+else
+
+   // File doesn't take arguments.
+   set-value:x:@.completion
+      strings.concat
+         get-value:x:@.completion
+         .:"\n___"
+
+// Creating meta value.
+.meta
+set-value:x:@.meta
+   strings.concat
+      .:"FUNCTION_INVOCATION ==> "
+      get-value:x:@.arguments/*/filename
+
+// Inserting training snippet into database.
+data.connect:magic
+   data.create
+      table:ml_training_snippets
+      values
+         type:x:@.arguments/*/type
+         prompt:x:@.prompt
+         completion:x:@.completion
+         meta:x:@.meta
+
+
+// Returning result to caller.
+return
+   result:success
