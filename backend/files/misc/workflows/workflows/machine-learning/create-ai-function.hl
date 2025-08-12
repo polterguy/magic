@@ -137,7 +137,6 @@ data.connect:magic
          completion:x:@.completion
          meta:x:@.meta
 
-
 // Returning result to caller.
 return
    result:success
