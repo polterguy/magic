@@ -36,6 +36,14 @@
       background-color: $ainiro_success;
     }
   }
+
+  tr.relevant td {
+    color:#305030 !important;
+  }
+
+  tr.irrelevant td {
+    color:#909090 !important;
+  }
 }
 
 a {

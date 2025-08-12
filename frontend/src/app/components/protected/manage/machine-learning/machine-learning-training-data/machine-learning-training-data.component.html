@@ -223,6 +223,7 @@
 
         <tr
           mat-row
+          [class]="row.cssClassName"
           *matRowDef="let row; columns: displayedColumns;">
         </tr>
 

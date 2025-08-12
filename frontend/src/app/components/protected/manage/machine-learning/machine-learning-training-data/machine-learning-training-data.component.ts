@@ -29,6 +29,7 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
   type: string;
   types: string[] = null;
+  fullTypes: any[] = null;
   dataSource: any[] = null;
   count: number = 0;
   filter: any = {
@@ -514,6 +515,8 @@ export class MachineLearningTrainingDataComponent implements OnInit {
 
         types = types || [];
 
+        this.fullTypes = types;
+
         this.types = types.map(x => x.type);
 
         if (getTrainingData) {
@@ -537,6 +540,16 @@ export class MachineLearningTrainingDataComponent implements OnInit {
       next: (result: any[]) => {
 
         this.dataSource = result || [];
+
+        // Adding CSS class dynamically if filtering on VSS according to if it's "in context" or not
+        if (this.filterOnVss && this.type && this.type !== '') {
+          const threshold = this.fullTypes.filter(x => x.type === this.type)[0].threshold;
+          for (let idx = 0; idx < this.dataSource.length; idx++) {
+            if (this.dataSource[idx].distance) {
+              this.dataSource[idx].cssClassName = this.dataSource[idx].distance + threshold >= 1 ? 'irrelevant' : 'relevant';
+            }
+          }
+        }
 
         if (!count) {
           this.generalService.hideLoading();
