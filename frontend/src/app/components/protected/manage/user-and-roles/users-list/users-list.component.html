@@ -67,6 +67,7 @@
 
           <button
             mat-menu-item
+            [disabled]="element.username === 'root'"
             (click)="deleteUser(element)">
             Delete
           </button>
