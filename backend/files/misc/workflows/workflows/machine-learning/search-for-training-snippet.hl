@@ -1,0 +1,88 @@
+
+/*
+ * Searches for a training snippet in the specified [type] using VSS on [query]
+ */
+.arguments
+
+   // Mandatory type to search.
+   type:string
+
+   // Mandatory query to use for VSS search.
+   query:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/query
+
+// Retrieving embeddings.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+
+// Retrieving embedding for prompt.
+http.post:"https://api.openai.com/v1/embeddings"
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload
+      input:x:@.arguments/*/query
+      model:text-embedding-ada-002
+   convert:true
+
+// Sanity checking above invocation.
+if
+   not
+      and
+         mte:x:@http.post
+            .:int:200
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning OpenAI's HTTP status code to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking OpenAI
+         message:x:@http.post/*/content/*/error/*/message
+         error:x:@lambda2hyper
+      throw:x:@http.post/*/content/*/error/*/message
+         public:bool:true
+         status:x:@http.post
+
+// Converting embeddings to a byte array of floats, since this is how we store embeddings in SQLite.
+floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
+
+// Connecting to database.
+data.connect:[generic|magic]
+
+   // Creating our SQL.
+   strings.concat
+      .:@"
+select vss.rowid as id, ts.prompt, vss.distance
+	from vss_ml_training_snippets as vss
+    	inner join ml_training_snippets ts on ts.id = vss.rowid
+   where
+      ts.type = @type and
+      vss_search(vss.embedding_vss, @embedding) limit 10"
+   data.select:x:@strings.concat
+      embedding:x:@floatArray2bytes
+      type:x:@.arguments/*/type
+
+   .cont:bool:true
+   while:x:@.cont
+      lambda2hyper:x:@data.select/*
+      if
+         lt
+            openai.tokenize:x:@lambda2hyper
+            .:int:4000
+         .lambda
+            set-value:x:@.cont
+               .:bool:false
+      else
+         remove-nodes:x:@data.select/0/-
+   return-nodes:x:@data.select/*
+

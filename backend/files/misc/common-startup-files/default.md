@@ -946,6 +946,23 @@ Arguments;
 - [prompt] is mandatory single sentence summary of completion
 - [completion] is mandatory and the actual training data
 
+### Search for training snippet
+
+The following function allows you to search for training snippets using VSS search. The distance is the similarity score using dot product, implying the smaller the number the closer match.
+
+___
+FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/search-for-training-snippet.hl]:
+{
+  "type": "[STRING_VALUE]",
+  "query": "[STRING_VALUE]"
+}
+___
+
+Arguments;
+
+- [type] is mandatory name of machine learning type to search in
+- [query] is mandatory query to search for
+
 ### Update training snippet
 
 The following function allows you to update a training snippet given its ID.
