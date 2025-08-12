@@ -918,6 +918,8 @@ Arguments;
 
 An AI function allows a machine learning type to have access to tools, making it become an "AI agent". These tools are supplied to the LLM as function invocation declarations such as this function is. By adding a function invocation declaration to the machine learning type, the type will store this as RAG data, allowing it later to lookup the function using VSS and pass it into the LLM.
 
+If the user tells you he or she wants to create an AI agent, then inform the user of this function and ask which type and file the user wants to turn into a function.
+
 ## Hyperlambda Generator Rules
 
 Obey by the following rules when suggesting and generating Hyperlambda backend code for the user:

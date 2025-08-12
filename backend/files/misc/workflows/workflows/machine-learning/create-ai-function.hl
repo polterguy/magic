@@ -99,7 +99,9 @@ if
                .:"\n - ["
                get-value:x:@.dp/#/*/name
                .:"] "
-               get-value:x:@.dp/#/*/description
+               get-first-value
+                  get-value:x:@.dp/#/*/description
+                  .:"NO DESCRIPTION"
       lambda2json:x:@.obj/*
          format:true
       set-value:x:@.completion
