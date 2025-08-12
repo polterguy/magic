@@ -134,7 +134,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
       this.generalService.showLoading();
       this.openAIService.query(this.query, 'default', false, this.session, null, true).subscribe({
 
-        next: (res: any) => {
+        next: () => {
 
           this.query = '';
           this.generalService.hideLoading();
@@ -167,6 +167,12 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Checking if we've already got an active session
+    if (this.session) {
+      this.createSocket(functor);
+      return;
+    }
+
     // Making sure we create a unique channel for responses to be streamed back to client.
     this.generalService.showLoading();
     this.configService.getGibberish(20, 20).subscribe({
@@ -174,36 +180,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
       next: (res: any) => {
 
         this.session = res.result;
-        let builder = new HubConnectionBuilder();
-        this.hubConnection = builder
-          .withUrl(this.backendService.active.url + '/sockets', {
-            accessTokenFactory: () => this.backendService.active.token.token,
-            skipNegotiation: true,
-            transport: HttpTransportType.WebSockets,
-          })
-          .build();
-
-        // Subscribing to channel messages.
-        this.hubConnection.on(this.session, (args) => {
-          const obj = JSON.parse(args);
-          this.handleSocketMessage(obj);
-        });
-
-        // Connecting to hub
-        this.hubConnection
-          .start()
-          .then(() => {
-            this.generalService.hideLoading();
-            functor();
-          })
-          .catch((error) => {
-            this.generalService.showFeedback(
-              'Could not connect to socket. Check browser log for details.',
-              'errorMessage'
-            );
-            this.generalService.hideLoading();
-            console.log(error);
-          });
+        this.createSocket(functor);
       },
 
       error: (error: any) => {
@@ -211,6 +188,45 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this.generalService.hideLoading();
       }
+    });
+  }
+
+  private createSocket(functor: () => void) {
+
+    let builder = new HubConnectionBuilder();
+    this.hubConnection = builder
+      .withUrl(this.backendService.active.url + '/sockets', {
+        accessTokenFactory: () => this.backendService.active.token.token,
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets,
+      })
+      .build();
+
+    // Subscribing to channel messages.
+    this.hubConnection.on(this.session, (args) => {
+      const obj = JSON.parse(args);
+      this.handleSocketMessage(obj);
+    });
+
+    // Connecting to hub
+    this.hubConnection
+      .start()
+      .then(() => {
+        this.generalService.hideLoading();
+        functor();
+      })
+      .catch((error) => {
+        this.generalService.showFeedback(
+          'Could not connect to socket. Check browser log for details.',
+          'errorMessage'
+        );
+        this.generalService.hideLoading();
+        console.log(error);
+      });
+
+    // Making sure we set channel to null if disconnected to trigger re-creation of connection.
+    this.hubConnection.onclose(() => {
+      this.hubConnection = null;
     });
   }
 
@@ -284,7 +300,6 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
         '</span>\n\n';
       return;
     }
-
   }
 
   private scrollToBottom() {
