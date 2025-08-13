@@ -44,5 +44,5 @@ io.file.save:x:@.full_path
    get-value:x:@.arguments/*/content
 
 // Returning success
-return
-   result:success
+yield
+   full_path:x:@.full_path
