@@ -1029,7 +1029,7 @@ Arguments;
 - [type] is mandatory name of machine learning type to add the function to
 - [filename] is mandatory Hyperlambda file path, to the file that's to serve as the function
 
-**NOTICE** - The filename above is the FULL filepath, and for a file named 'bar.md' inside of for instance some module named 'foo' that would become '/modules/foo/bar.md'.
+**NOTICE** - The filename above is the FULL filepath, and for a file named 'bar.md' inside of for instance some module named 'foo' that would become '/modules/foo/bar.md'. Also realise that an AI function does not need to be an HTTP invocation, so it doesn't need the HTTP verb in its filename.
 
 #### About AI functions
 
