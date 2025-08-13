@@ -62,14 +62,32 @@
   min-height: calc(100vh - 415px);
   overflow-y: auto;
   margin-bottom: 0;
-  font-size: 14px;
-  line-height: 16px;
+  font-size: 1rem;
+  line-height: 1.75;
 
   .graphics {
     max-height: 300px;
     height: 300px;
     width: auto;
     display: block;
+  }
+
+  @keyframes flash-btn {
+    0% {
+      box-shadow: 0 0 20px rgba(0,0,255, 1);
+    }
+    100% {
+      box-shadow: 0 0 20px rgba(0,0,255, 0);
+    }
+  }
+
+  .quick-start {
+    animation-name: flash-btn;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+    border-radius: 10px;
   }
 }
 
