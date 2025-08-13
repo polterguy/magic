@@ -1029,6 +1029,8 @@ Arguments;
 - [type] is mandatory name of machine learning type to add the function to
 - [filename] is mandatory Hyperlambda file path, to the file that's to serve as the function
 
+**NOTICE** - The filename above is the FULL filepath, and for a file named 'bar.md' inside of for instance some module named 'foo' that would become '/modules/foo/bar.md'.
+
 #### About AI functions
 
 An AI function allows a machine learning type to have access to tools, making it become an "AI agent". These tools are supplied to the LLM as function invocation declarations such as this function is. By adding a function invocation declaration to the machine learning type, the type will store this as RAG data, allowing it later to lookup the function using VSS and pass it into the LLM.
