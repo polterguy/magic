@@ -61,7 +61,31 @@ data.connect:[generic|magic]
                .
                   .:x:@strings.trim
 
+   // Retrieving all training snippets having a meta value starting with "WORKFLOW ==> "
+   data.select:"select prompt from ml_training_snippets where type = @type and meta like '%WORKFLOW ==> %'"
+      @type:x:@.arguments/*/_type
+   for-each:x:@data.select/*
+      unwrap:x:+/*/*
+      add:x:@data.connect/*/yield/*/workflows
+         .
+            .:x:@.dp/#/*/prompt
+
+   // Making sure we remove whatever containers doesn't contain data.
+   if
+      not-exists:x:@data.connect/*/yield/*/rag_functions/*
+      .lambda
+         remove-nodes:x:@data.connect/*/yield/*/rag_functions
+   if
+      not-exists:x:@data.connect/*/yield/*/system_functions/*
+      .lambda
+         remove-nodes:x:@data.connect/*/yield/*/system_functions
+   if
+      not-exists:x:@data.connect/*/yield/*/workflows/*
+      .lambda
+         remove-nodes:x:@data.connect/*/yield/*/workflows
+
    // Returning result to caller.
    yield
       rag_functions
       system_functions
+      workflows
