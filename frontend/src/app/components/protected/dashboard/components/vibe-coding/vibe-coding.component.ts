@@ -138,7 +138,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
 
           this.query = '';
           this.generalService.hideLoading();
-          this.scrollToBottom();
+          this.scrollToBottom(false);
         },
 
         error: (error: any) => {
@@ -241,6 +241,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
         mermaid.init(undefined, document.querySelectorAll('.mermaid'));
       }, 1);
       this.applySyntaxHighlighting();
+      this.scrollToBottom(false);
 
     } else if (msg.message) {
 
@@ -251,7 +252,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
 
       this.response += msg.message;
       this.messages[this.messages.length - 1].message = marked.parse(this.response);
-      this.scrollToBottom();
+      this.scrollToBottom(true);
 
     } else if (msg.function_waiting) {
 
@@ -302,11 +303,16 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
     }
   }
 
-  private scrollToBottom() {
-
+  private scrollToBottom(abortIfScrolledUp: boolean = false) {
     setTimeout(() => {
-    const el = this.outputDiv?.nativeElement;
-    if (el) {
+      const el = this.outputDiv?.nativeElement;
+      if (el) {
+        // If aborting is allowed and the user has scrolled up > 100px, do nothing
+        const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+        if (abortIfScrolledUp && distanceFromBottom > 100) {
+          return;
+        }
+
         el.scrollTo({
           top: el.scrollHeight,
           behavior: 'smooth'
