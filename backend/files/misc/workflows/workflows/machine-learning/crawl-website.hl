@@ -2,7 +2,7 @@
 /*
  * Crawls a website for RAG training data and inserts into the specified machine learning type.
  *
- * After crawling is done, it will automatically vectorize the type.
+ * This will not vectorize the type.
  */
 .arguments
 
@@ -46,7 +46,7 @@ validators.default:x:@.arguments
 add:x:./*/execute-file
    get-nodes:x:@.arguments/*
 execute-file:/system/openai/import-url.post.hl
-   vectorize:bool:true
+   vectorize:bool:false
 
 // Returning result to caller.
 return
