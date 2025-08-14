@@ -77,7 +77,7 @@ return:x:@.res
 * Make sure you group related functions into categories when using the "list-functions" function
 {{
 data.connect:magic
-   data.scalar:select count(*) from ml_training_snippets ml where ml.type = 'default' and ml.embedding is null
+   data.scalar:"select count(*) from ml_training_snippets ml where ml.type = 'default' and ml.embedding is null"
    if
       neq:x:@data.scalar
          .:long:0
@@ -874,6 +874,8 @@ Arguments;
 - [type] is mandatory name of new machine learning type
 - [system_message] is optional and the system instruction used during inference
 
+Notice, this function will add description for how to invoke AI functions to its system instruction automatically, allowing the LLM to execute functions and use tools.
+
 ### List machine learning types
 
 The following function can be used to list all machine learning types.
@@ -918,7 +920,7 @@ Arguments;
 
 Notice, this function will retrieve the robots.txt file, and the sitemap of the website, and crawl and scrape `max` amount of pages and create individual RAG training snippets it inserts into the machine learning model. The function will determine itself automatically what pages to scrape, based upon the sitemap.
 
-Once crawling is done the function will automatically vectorize the type.
+Once crawling is done the machine learning type needs to be vectorized to become capable of using the RAG data.
 
 ### Vectorize machine learning type
 
