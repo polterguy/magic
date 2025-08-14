@@ -95,25 +95,6 @@ try
                         meta:x:@.meta
                         completion:x:@.completion
 
-      // Looping through all existing snippets and deleting these if not existing in above [.training-data]
-      data.read
-         table:ml_training_snippets
-         values
-            id
-            meta
-         limit:-1
-
-      // Deleting old snippets that are not existing in current training material.
-      for-each:x:@data.read/*
-         if
-            not-exists:x:@.training-data/*/*/meta/={@.dp/#/*/meta}
-            .lambda
-               data.delete
-                  table:ml_training_snippets
-                  where
-                     and
-                        id.eq:x:@.dp/#/*/id
-
       // Looping through each new snippet and importing into type.
       for-each:x:@.training-data/*
          data.read

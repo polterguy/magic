@@ -13,6 +13,9 @@
    // Mandatory completion argument being the entire training snippet's content.
    completion:string
 
+   // Optional meta argument.
+   meta:string
+
 // Ensuring user is root.
 auth.ticket.verify:root
 
