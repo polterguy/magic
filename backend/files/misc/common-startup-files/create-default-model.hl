@@ -76,11 +76,18 @@ try
                   strings.trim:x:@strings.split/0
                set-value:x:@.meta
                   strings.trim:x:@strings.split/1
-               remove-nodes:x:@strings.split/0
-               remove-nodes:x:@strings.split/0
                set-value:x:@.completion
-                  strings.join:x:@strings.split/*
-                     .:"\n"
+                  get-value:x:@io.file.load
+               set-value:x:@.completion
+                  strings.replace:x:@.completion
+                     get-value:x:@.prompt
+                     .:
+               set-value:x:@.completion
+                  strings.replace:x:@.completion
+                     get-value:x:@.meta
+                     .:
+               set-value:x:@.completion
+                  strings.trim:x:@.completion
                unwrap:x:+/*/*/*
                add:x:@.training-data
                   .
