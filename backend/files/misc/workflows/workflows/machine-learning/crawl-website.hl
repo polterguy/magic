@@ -20,10 +20,8 @@ auth.ticket.verify:root
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/type
-validators.mandatory:x:@.arguments/*/url
 validators.regex:x:@.arguments/*/type
    regex:^[a-z0-9_-]+$
-validators.url:x:@.arguments/*/url
 validators.default:x:@.arguments
    max:int:25
 
