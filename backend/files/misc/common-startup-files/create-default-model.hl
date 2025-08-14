@@ -56,6 +56,78 @@ try
                and
                   type.eq:default
 
+      /*
+       * Importing all new snippets to type.
+       */
+      .training-data
+      io.file.list:/misc/common-startup-files/default-files/
+      for-each:x:@io.file.list/*
+         if
+            strings.ends-with:x:@.dp/#
+               .:.md
+            .lambda
+               .prompt
+               .meta
+               .completion
+               io.file.load:x:@.dp/#
+               strings.split:x:@io.file.load
+                  .:"\n"
+               set-value:x:@.prompt
+                  strings.trim:x:@strings.split/0
+               set-value:x:@.meta
+                  strings.trim:x:@strings.split/1
+               remove-nodes:x:@strings.split/0
+               remove-nodes:x:@strings.split/0
+               set-value:x:@.completion
+                  strings.join:x:@strings.split/*
+                     .:"\n"
+               unwrap:x:+/*/*/*
+               add:x:@.training-data
+                  .
+                     .
+                        prompt:x:@.prompt
+                        meta:x:@.meta
+                        completion:x:@.completion
+
+      // Looping through all existing snippets and deleting these if not existing in above [.training-data]
+      data.read
+         table:ml_training_snippets
+         values
+            id
+            meta
+         limit:-1
+
+      // Deleting old snippets that are not existing in current training material.
+      for-each:x:@data.read/*
+         if
+            not-exists:x:@.training-data/*/*/meta/={@.dp/#/*/meta}
+            .lambda
+               data.delete
+                  table:ml_training_snippets
+                  where
+                     and
+                        id.eq:x:@.dp/#/*/id
+
+      // Looping through each new snippet and importing into type.
+      for-each:x:@.training-data/*
+         data.read
+            table:ml_training_snippets
+            columns
+               id
+            where
+               and
+                  meta.eq:x:@.dp/#/*/meta
+         if
+            not-exists:x:@data.read/*
+            .lambda
+               data.create
+                  table:ml_training_snippets
+                  values
+                     type:default
+                     prompt:x:@.dp/#/*/prompt
+                     meta:x:@.dp/#/*/meta
+                     completion:x:@.dp/#/*/completion
+
 .catch
 
    // Doing some basic logging.
