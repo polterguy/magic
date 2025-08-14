@@ -865,7 +865,8 @@ ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/create-type.hl]:
 {
   "type": "[STRING_VALUE]",
-  "system_message": "[STRING_VALUE]"
+  "system_message": "[STRING_VALUE]",
+  "auth": "[STRING_VALUE]"
 }
 ___
 
@@ -873,6 +874,7 @@ Arguments;
 
 - [type] is mandatory name of new machine learning type
 - [system_message] is optional and the system instruction used during inference
+- [auth] is an optional comma separated list of roles.The user must belong to at least one of these roles to be able to use machine learning type.
 
 Notice, this function will add description for how to invoke AI functions to its system instruction automatically, allowing the LLM to execute functions and use tools.
 

@@ -12,6 +12,9 @@
    // Optional system instruction for the machine learning type.
    system_message:string
 
+   // Optional comma separated list of roles. The user must belong to at least one of these roles to be able to use machine learning type.
+   auth:string
+
 // Ensuring user is root.
 auth.ticket.verify:root
 
