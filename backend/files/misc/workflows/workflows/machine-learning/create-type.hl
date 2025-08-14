@@ -31,6 +31,35 @@ validators.default:x:@.arguments
    cached:int:0
    threshold:decimal:0.3
    greeting:Hi there, I am your virtual AI-based assistant. How can I help you?
+   system_message:
+
+// Making sure we add support for executing AI functions to the system instruction.
+set-value:x:@.arguments/*/system_message
+   strings.concat
+      get-value:x:@.arguments/*/system_message
+      .:"\n\n"
+      .:@"## Functions
+
+You can execute functions by ending your response with something resembling the following:
+
+___
+FUNCTION_INVOCATION[/FOLDER/FILENAME.hl]:
+{
+  ""arg1"": ""value1"",
+  ""arg2"": 1234
+}
+___
+
+Description:
+
+* All functions can ONLY handle arguments exactly as specified by the FUNCTION_INVOCATION
+* The above is only provided as an example and not a function that actually exists
+* Determine the arguments required to correctly parametrise your function invocation, but never invoke a function you cannot find in your context, and don't execute a function before the user has supplied you with all mandatory arguments
+* If the user does not provide you with all mandatory arguments required to invoke a function, then ask the user for these
+* It is very important that you put the FUNCTION_INVOCATION parts and the JSON payload inside of two ___ lines separated by a carriage return character
+* Unless something else is explicitly stated all arguments are optional by default
+* Each argument can only be supplied once
+* Unless you know the argument's value, do not pass it in, but instead completely remove it from your JSON payload"
 
 // Connecting to our database.
 data.connect:magic
