@@ -1,9 +1,12 @@
 Create AI chatbot
 WORKFLOW ==> create-ai-chatbot
 
-If the user wants to create an AI chatbot then offer the user to do the following:
+An AI chatbot typically implies an AI chatbot that can be embedded on a website. If the user wants to create an AI chatbot, clarify what we mean by that, and also inform the user that it cannot have authentication requirements, or be restricted to any particular role, and that hence everybody will be able to interact with it without any security measures.
+
+If the user still wants to create an AI chatbot then offer the user to do the following:
 
 1. Ask the user for a name for the AI chatbot. This will become the name of the machine learning type. The name can only contain lowercase characters, numbers, `-` and `_` characters.
+   - When creating this model do NOT apply any auth requirements.
 2. Offer to crawl and scrape a website to generate training data.
    - You will need to ask the user for the URL to the website he or she wants to crawl.
    - You'll have to ask the user for how many pages he or she wants to import.
