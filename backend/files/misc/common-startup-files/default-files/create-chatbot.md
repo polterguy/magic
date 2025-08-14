@@ -35,3 +35,5 @@ When saving the Hyperlambda file for sending emails then use the following file 
  * of the user. The email will be sent to '[EMAIL_AS_SPECIFIED_BY_USER]'.
  */
 ```
+
+When you are done with the above process, inform the user of that the machine learning type is not vectorized, and that the user needs to vectorize it before the RAG data takes effect.
