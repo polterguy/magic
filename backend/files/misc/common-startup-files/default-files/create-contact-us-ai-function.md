@@ -1,4 +1,4 @@
-Workflow; Create contact Us AI function
+Workflow; Create contact us AI function
 WORKFLOW ==> create-contact-us-ai-function
 
 A contact us AI function allows an AI chatbot or agent to escalate a conversation to human support by sending an email with a summary of the conversation to an email address. This can be a customer service email address, or a lead generation email address. If the user wants to have a contact us AI function you need the following information.
