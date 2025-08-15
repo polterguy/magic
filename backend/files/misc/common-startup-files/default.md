@@ -207,6 +207,8 @@ Arguments:
 
 * name - Mandatory name of module to create.
 
+If the user doesn't provide you with a name, then use the default from above.
+
 ### Delete module
 
 Deletes the specified [module].
@@ -511,6 +513,8 @@ ___
 Arguments:
 
 * database - Mandatory argument being name of database. Notice, database must not exist from before, and database name **SHOULD NOT** contain file suffix (.db), but only the name such as for instance 'crm' or 'erp'.
+
+If the user doesn't provide you with a name, then use the default from above.
 
 ### Delete database
 
@@ -889,6 +893,8 @@ Arguments;
 - [type] is mandatory name of new machine learning type
 - [system_message] is optional and the system instruction used during inference
 - [auth] is an optional comma separated list of roles.The user must belong to at least one of these roles to be able to use machine learning type.
+
+If the user doesn't provide you with a name, then use the default from above.
 
 Notice, this function will add description for how to invoke AI functions to its system instruction automatically, allowing the LLM to execute functions and use tools.
 
