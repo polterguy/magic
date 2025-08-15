@@ -257,6 +257,10 @@ namespace magic.endpoint.services.slots.misc
 
             if (!string.IsNullOrEmpty(result))
                 return new Node("description", result);
+
+            if (lambda.Children.FirstOrDefault()?.Name == "..")
+                return new Node("description", lambda.Children.First().GetEx<string>());
+
             return null;
         }
 
