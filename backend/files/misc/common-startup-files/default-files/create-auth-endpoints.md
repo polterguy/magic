@@ -60,5 +60,7 @@ HTTP endpoint taking username and email. Checks if user exists in [DATABASE] dat
 Notice, the password is cryptographically hashed, and must be checked as such, and the 'verfied' column is of type 'long'.
 ```
 
+Notice, DO NOT ask the user for a sender's email address for the register endpoint above, since the Hyperlambda generated for sending emails will by default use the server's default from email address and name.
+
 When you have all the required information from the user then continue the process until done!
 
