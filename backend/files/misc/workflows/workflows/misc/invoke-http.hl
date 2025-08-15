@@ -1,0 +1,97 @@
+
+/*
+ * Invokes an HTTP endpoint using the specified verb, sending the optional payload and returning the result of the invocation.
+ *
+ * Optionally apply a payload argument or Bearer token.
+ *
+ * Arguments;
+ *
+ * - [url] being the URL, mandatory argument
+ * - [verb] being the HTTP verb to use, optional and defaults to GET. Can be either 'post', 'put', 'get', 'patch', or 'delete'.
+ * - [payload] being the payload to send. Notice, can only be applied for POST, PUT and PATCH endpoints.
+ */
+.arguments
+
+   // The URL, mandatory argument
+   url:string
+
+   // The HTTP verb to use, optional and defaults to 'get'. Can be either 'post', 'put', 'get', 'patch', or 'delete'.
+   verb:string
+
+   // The payload to send. Notice, can only be applied for POST, PUT and PATCH endpoints.
+   payload:string
+
+   // Bearer token to use.
+   token:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/url
+
+// Applying defaults.
+validators.default:x:@.arguments
+   verb:get
+
+// Adding payload.
+if
+   exists:x:@.arguments/*/payload
+   .lambda
+      unwrap:x:+/*/*
+      add:x:../*/http.xxx
+         .
+            payload:x:@.arguments/*/payload
+
+// Checking if we've got a [token].
+if
+   and
+      exists:x:@.arguments/*/token
+      not-null:x:@.arguments/*/token
+   .lambda
+      strings.concat
+         .:"Bearer "
+         get-value:x:@.arguments/*/token
+      unwrap:x:+/*/*/*
+      add:x:../*/http.xxx
+         .
+            headers
+               Authorization:x:@strings.concat
+
+// Changing the HTTP invocation
+set-name:x:./*/http.xxx
+   strings.concat
+      .:http.
+      get-value:x:@.arguments/*/verb
+
+// Invoking endpoint, now correctly decorated. Notice, helper to find node afterwards.
+.helper
+http.xxx:x:@.arguments/*/url
+   convert:true
+
+// Sanity checking above invocation.
+if
+   not
+      and
+         mte:x:@.helper/+
+            .:int:200
+         lt:x:@.helper/+
+            .:int:300
+   .lambda
+
+      // Oops ...!!
+      lambda2hyper:x:@.helper/+
+      log.error:Something went wrong while invoking HTTP endpoint
+         status:x:@.helper/+
+         error:x:@lambda2hyper
+      strings.concat
+         .:"Invocation failed with status "
+         get-value:x:@.helper/+
+         .:" and response was\n\n"
+         lambda2json:x:@.helper/+/*/content/*
+      throw:x:@strings.concat
+         public:bool:true
+         status:int:500
+
+// Returning the result of the invocation.
+return-nodes:x:@.helper/+/*/content/*
