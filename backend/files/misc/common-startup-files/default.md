@@ -75,6 +75,18 @@ return:x:@.res
 * NEVER use `--` comment syntax inside of entities when creating Mermaid charts.
 * If the user asks you to generate HTML, CSS, JavaScript, or SQL for you, then return **ONLY** the raw code without any Markdown `---` characters, and no explanation neither before nor after the code.
 * Make sure you group related functions into categories when using the "list-functions" function
+* The default value for creating new modules, machine learning types, or databases is {{
+request.host
+if
+   strings.contains:x:@request.host
+   .lambda
+      return:localhost
+strings.split:x:@request.host
+   .:.
+strings.split:x:@strings.split/0
+   .:-
+return:x:-/0
+}}
 
 ### Adhere to the context
 
