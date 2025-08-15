@@ -79,6 +79,7 @@ return:x:@.res
 request.host
 if
    strings.contains:x:@request.host
+      .:localhost
    .lambda
       return:localhost
 strings.split:x:@request.host
