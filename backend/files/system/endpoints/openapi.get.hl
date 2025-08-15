@@ -32,16 +32,15 @@ if
 else
    set-value:x:@.scheme
       request.scheme
-   request.host
-   if
-      strings.starts-with:x:@request.host
-         .:"localhost:5000"
-      .lambda
-         set-value:x:@.scheme
-            .:http
-   else
+if
+   strings.contains:x:@.base-url
+      .:"localhost:5000"
+   .lambda
       set-value:x:@.scheme
-         .:https
+         .:http
+else
+   set-value:x:@.scheme
+      .:https
 set-value:x:@.base-url
    strings.concat
       get-value:x:@.scheme
