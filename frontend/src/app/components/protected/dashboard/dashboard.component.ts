@@ -13,6 +13,10 @@ import { ConfigureThemeDialog } from 'src/app/components/protected/dashboard/com
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { OpenAIConfigurationDialogComponent } from '../common/openai/openai-configuration-dialog/openai-configuration-dialog.component';
+import { Count } from 'src/app/models/count.model';
+import { MachineLearningTrainingService } from 'src/app/services/machine-learning-training.service';
+import { MachineLearningImportFeedbackComponent } from '../manage/machine-learning/components/machine-learning-import-feedback/machine-learning-import-feedback.component';
+import { ConfirmationDialogComponent } from '../common/confirmation-dialog/confirmation-dialog.component';
 
 /**
  * Primary dashboard component, displaying dashboard information, such as
@@ -41,7 +45,8 @@ export class DashboardComponent implements OnInit {
     private dialog: MatDialog,
     private router: Router,
     private backendService: BackendService,
-    private diagnosticsService: DiagnosticsService) { }
+    private diagnosticsService: DiagnosticsService,
+    private machineLearningTrainingService: MachineLearningTrainingService) { }
 
   ngOnInit() {
 
@@ -120,10 +125,10 @@ export class DashboardComponent implements OnInit {
           })
         }
         this.cdr.detectChanges();
-        this.isLoading = false;
 
         // Checking if system has been configured with an OpenAI API key, and if not, displaying the modal window that asks the user.
         if (this.systemReport.has_openai === false) {
+
           this.dialog
             .open(OpenAIConfigurationDialogComponent, {
               width: '80vw',
@@ -137,11 +142,77 @@ export class DashboardComponent implements OnInit {
 
                 this.systemReport.has_openai = true;
 
-              } else {
+                this.machineLearningTrainingService.ml_training_snippets_count({
+                  ['ml_training_snippets.type.eq']: 'default',
+                  ['not_embedded']: true,
+                }).subscribe({
+                  next: (result: Count) => {
 
-                this.generalService.showFeedback('You cannot use Magic Cloud optimally without an OpenAI API account');
+                    if (result.count !== 0) {
+
+                      this.dialog.open(ConfirmationDialogComponent, {
+                        width: '500px',
+                        data: {
+                          title: 'Confirm operation',
+                          description_extra: `Do you want to vectorise the model called; <span class="fw-bold">default</span><br/>It has ${result.count} snippets`,
+                          action_btn: 'Vectorise',
+                          close_btn: 'Cancel',
+                          bold_description: true
+                        }
+                      }).afterClosed().subscribe((result: string) => {
+
+                        if (result === 'confirm') {
+
+                          this.machineLearningTrainingService.ml_training_snippets_count({
+                            ['ml_training_snippets.type.eq']: 'default',
+                            ['not_embedded']: true,
+                          }).subscribe({
+
+                            next: (result: Count) => {
+
+                              if (result.count !== 0) {
+
+                                this.dialog
+                                .open(MachineLearningImportFeedbackComponent, {
+                                  width: '80vw',
+                                  maxWidth: '1280px',
+                                  data: {
+                                    url: result,
+                                    type: 'default',
+                                    mode: 'vectorize'
+                                  }
+                                }).afterClosed().subscribe(() => {
+
+                                  this.isLoading = false;
+                                });
+                              }
+                            }
+                          });
+
+                        } else {
+
+                          this.generalService.showFeedback('You can always later vectorize the type through machine learning', 'successMessage');
+                          this.isLoading = false;
+                        }
+                      });
+                    } else {
+
+                      this.isLoading = false;
+                    }
+                  },
+
+                  error: () => {
+
+                    this.generalService.hideLoading();
+                    this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
+                  }
+                });
               }
             });
+
+        } else {
+
+          this.isLoading = false;
         }
       },
       error: (error: any) => {
