@@ -92,6 +92,10 @@ RESPONSE HERE
 
 In the above Markdown code section you can find an example of a response and its follow up questions."
 
+// Trimming.
+set-value:x:@.arguments/*/system_message
+   strings.trim:x:@.arguments/*/system_message
+
 // Connecting to our database.
 data.connect:magic
 
@@ -107,3 +111,4 @@ data.connect:magic
 // Returning result to caller.
 return
    result:success
+   message:Notice, instructions for AI functions, handling images during the conversation, anti-AI hallucination, and follow up questions was automatically added to the instruction.
