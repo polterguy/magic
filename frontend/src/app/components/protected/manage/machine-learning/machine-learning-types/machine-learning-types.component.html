@@ -157,7 +157,6 @@
                 color="primary"
                 matTooltipPosition="above"
                 matTooltip="Import data from files or by scraping websites"
-                [disabled]="element.type === 'default'"
                 (click)="import(element)">
                 Import
               </button>
@@ -167,7 +166,6 @@
                 color="primary"
                 matTooltipPosition="above"
                 matTooltip="Create embeddings for your training snippets"
-                [disabled]="element.type === 'default'"
                 (click)="vectorise(element)">
                 Vectorise
               </button>

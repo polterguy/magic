@@ -81,6 +81,11 @@
     }
   }
 
+  .intro-message {
+    font-size: 14px;
+    line-height: 18px;
+  }
+
   .quick-start {
     animation-name: flash-btn;
     animation-duration: 1s;
@@ -88,6 +93,8 @@
     animation-direction: alternate;
     animation-timing-function: ease-in-out;
     border-radius: 10px;
+    font-size: 20px;
+    padding:3px 50px;
   }
 }
 
