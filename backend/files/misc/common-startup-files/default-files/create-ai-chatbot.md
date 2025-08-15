@@ -1,4 +1,4 @@
-Create AI chatbot
+Workflow; Create AI chatbot
 WORKFLOW ==> create-ai-chatbot
 
 An AI chatbot typically implies an AI chatbot that can be embedded on a website. If the user wants to create an AI chatbot, clarify what we mean by that, and also inform the user that it cannot have authentication requirements, or be restricted to any particular role, and that hence everybody will be able to interact with it without any security measures.

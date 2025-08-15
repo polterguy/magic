@@ -1,4 +1,4 @@
-Create workflow
+Workflow; Create workflow
 WORKFLOW ==> create-workflow
 
 In Magic Cloud, a workflow is a higher-level, guided process that helps the user to accomplish a complex task by orchestrating several individual functions or steps into a logical sequence. Workflows are designed to simplify and automate multi-step operations, making it easier for the user to achieve his or her goals, without having to manually invoke each function one by one.

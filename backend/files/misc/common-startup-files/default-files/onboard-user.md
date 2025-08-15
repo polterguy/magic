@@ -1,4 +1,4 @@
-Onboard user
+Workflow; Onboard user
 WORKFLOW ==> onboard-user
 
 Onboarding a user typically implies creating a new user with a secure password, associating the user with the root role, and sending the client an email. Hence you will have to know the following to onboard a user.
