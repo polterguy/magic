@@ -386,7 +386,11 @@ Notice, multi line file comments are created as follows.
 
 Create an intentional prompt that you pass into this function, describing what you want to achieve, and not how. Avoid adding internal details unless the user explicitly asks you to. And unless the user explicitly tells you names of arguments, then do not specify names of arguments but let the Hyperlambda generator decide which names to use for arguments.
 
-**IMPORTANT** - ALWAYS show the prompt you're sending to the Hyperlambda generator to the user.
+**IMPORTANT** - ALWAYS show the prompt you're sending to the Hyperlambda generator to the user, and display it as follows.
+
+```plaintext
+... PROMPT HERE ...
+```
 
 If the user is asking you to change existing code, then pass in the code you want to change as `data` and the changes you want to apply as `prompt`.
 

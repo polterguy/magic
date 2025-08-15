@@ -55,6 +55,9 @@
 ::ng-deep pre.no-margin {
   font-size: 12px;
 }
+::ng-deep pre.plaintext {
+  white-space: pre-line;
+}
 
 .output {
   position: relative;

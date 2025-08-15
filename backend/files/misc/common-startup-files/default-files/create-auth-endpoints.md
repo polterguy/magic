@@ -60,3 +60,5 @@ HTTP endpoint taking username and email. Checks if user exists in [DATABASE] dat
 Notice, the password is cryptographically hashed, and must be checked as such, and the 'verfied' column is of type 'long'.
 ```
 
+When you have all the required information from the user then continue the process until done!
+
