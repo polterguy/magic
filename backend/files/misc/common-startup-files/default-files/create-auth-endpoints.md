@@ -55,7 +55,7 @@ The '[DATABASE]' above is your database name, the [TABLE] is your table name. Th
 Below is a template prompt you can use to generate authenticate endpoint.
 
 ```plaintext
-HTTP endpoint taking username and email. Checks if user exists in [DATABASE] database and its [TABLE] table, and if it has the value of 1 for its verified column. If it finds the record, returns a new JWT token with the username and a role of 'guest'.
+Authenticate HTTP endpoint taking username and password. Checks if user exists in [DATABASE] database and its [TABLE] table, and if it has the value of 1 for its verified column. If it finds the record, returns a new JWT token with the username and a role of 'guest'.
 
 Notice, the password is cryptographically hashed, and must be checked as such, and the 'verfied' column is of type 'long'.
 ```
