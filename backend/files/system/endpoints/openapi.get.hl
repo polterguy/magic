@@ -55,7 +55,7 @@ unwrap:x:./*/.result/**
    openapi:3.1.0
    info
       title:AINIRO.IO Magic Cloud Cloudlet
-      description:Interact with your cloudlet
+      description:AINIRO Magic Cloud API
       version:x:@version
    servers
       .
