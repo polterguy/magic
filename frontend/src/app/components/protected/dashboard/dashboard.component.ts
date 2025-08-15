@@ -83,13 +83,8 @@ export class DashboardComponent implements OnInit {
         // Allowing us to retrieve system report again.
         this._isRetrievingSystemReport = false;
 
-        // Ensuring backend actually returned something.
-        if (!report) {
-          return;
-        }
-
         // Binding model
-        this.systemReport = report || [];
+        this.systemReport = report;
 
         // Checking if system has been configured with an OpenAI API key, and if not, displaying the modal window that asks the user.
         if (this.systemReport.has_openai === false) {
@@ -106,85 +101,88 @@ export class DashboardComponent implements OnInit {
               if (result.configured) {
 
                 this.systemReport.has_openai = true;
-
-                this.machineLearningTrainingService.ml_training_snippets_count({
-                  ['ml_training_snippets.type.eq']: 'default',
-                  ['not_embedded']: true,
-                }).subscribe({
-
-                  next: (result: Count) => {
-
-                    if (result.count !== 0) {
-
-                      this.dialog.open(ConfirmationDialogComponent, {
-                        width: '500px',
-                        data: {
-                          title: 'Confirm operation',
-                          description_extra: `Do you want to vectorise the model called; <span class="fw-bold">default</span><br/>It has ${result.count} snippets`,
-                          action_btn: 'Vectorise',
-                          close_btn: 'Cancel',
-                          bold_description: true
-                        }
-                      }).afterClosed().subscribe((result: string) => {
-
-                        if (result === 'confirm') {
-
-                          this.machineLearningTrainingService.ml_training_snippets_count({
-                            ['ml_training_snippets.type.eq']: 'default',
-                            ['not_embedded']: true,
-                          }).subscribe({
-
-                            next: (result: Count) => {
-
-                              if (result.count !== 0) {
-
-                                this.dialog
-                                .open(MachineLearningImportFeedbackComponent, {
-                                  width: '80vw',
-                                  maxWidth: '1280px',
-                                  data: {
-                                    url: result,
-                                    type: 'default',
-                                    mode: 'vectorize'
-                                  }
-                                }).afterClosed().subscribe(() => {
-
-                                  this.isLoading = false;
-                                });
-                              }
-                            }
-                          });
-
-                        } else {
-
-                          this.generalService.showFeedback('You can always later vectorize the type through machine learning', 'successMessage');
-                          this.isLoading = false;
-                        }
-                      });
-                    } else {
-
-                      this.isLoading = false;
-                    }
-                  },
-
-                  error: () => {
-
-                    this.generalService.hideLoading();
-                    this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
-                  }
-                });
+                this.checkIfDefaultIsVectorized();
               }
             });
 
         } else {
 
-          this.isLoading = false;
+          this.checkIfDefaultIsVectorized();
         }
       },
       error: (error: any) => {
 
         this.generalService.showFeedback(error?.error?.message ?? error, 'errorMessage');
         this._isRetrievingSystemReport = false;
+      }
+    });
+  }
+
+  private checkIfDefaultIsVectorized() {
+
+    this.machineLearningTrainingService.ml_training_snippets_count({
+      ['ml_training_snippets.type.eq']: 'default',
+      ['not_embedded']: true,
+    }).subscribe({
+
+      next: (result: Count) => {
+
+        if (result.count !== 0) {
+
+          this.dialog.open(ConfirmationDialogComponent, {
+            width: '500px',
+            data: {
+              title: 'Confirm operation',
+              description_extra: `Do you want to vectorise the model called; <span class="fw-bold">default</span><br/>It has ${result.count} snippets`,
+              action_btn: 'Vectorise',
+              close_btn: 'Cancel',
+              bold_description: true
+            }
+          }).afterClosed().subscribe((result: string) => {
+
+            if (result === 'confirm') {
+
+              this.machineLearningTrainingService.ml_training_snippets_count({
+                ['ml_training_snippets.type.eq']: 'default',
+                ['not_embedded']: true,
+              }).subscribe({
+
+                next: (result: Count) => {
+
+                  if (result.count !== 0) {
+
+                    this.dialog
+                    .open(MachineLearningImportFeedbackComponent, {
+                      width: '80vw',
+                      maxWidth: '1280px',
+                      data: {
+                        url: result,
+                        type: 'default',
+                        mode: 'vectorize'
+                      }
+                    }).afterClosed().subscribe(() => {
+                      this.isLoading = false;
+                    });
+                  }
+                }
+              });
+
+            } else {
+
+              this.generalService.showFeedback('You can always later vectorize the type through machine learning', 'successMessage');
+              this.isLoading = false;
+            }
+          });
+        } else {
+
+          this.isLoading = false;
+        }
+      },
+
+      error: () => {
+
+        this.generalService.hideLoading();
+        this.generalService.showFeedback('Something went wrong as we tried to create embeddings for model', 'errorMessage');
       }
     });
   }
