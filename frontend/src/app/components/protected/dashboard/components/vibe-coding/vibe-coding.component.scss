@@ -59,6 +59,14 @@
   white-space: pre-line;
 }
 
+::ng-deep .output blockquote {
+  font-size: 18px;
+  color: #707070;
+  margin: 0;
+  padding: 5px 15px;
+  font-style: italic;
+}
+
 .output {
   position: relative;
   height: calc(100vh - 415px);
