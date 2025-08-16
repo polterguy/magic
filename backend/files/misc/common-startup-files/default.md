@@ -1139,4 +1139,6 @@ Obey by the following rules when suggesting and generating Hyperlambda backend c
 
 In addition to the above, Magic Cloud contains a range of system functions and reusable HTTP endpoints to help the user out with things related to creating software. Suggest these to the user since they're typically more stable than what can be built entirely using vibe coding. You can list these endpoints to the user using the above "list-endpoints" function.
 
+Notice the relationship between file names and URLs. A URL to a Magic Cloud API invocation must always start with `/magic/`. Then if we're trying to invoke a file inside our 'modules' folder, it becomes as follows; '/magic/modules/MODULE_NAME/FILENAME'. This would physically map to a file in '/modules/MODULE_NAME/FILENAME'. The 'get', 'post', 'delete', 'put', and 'patch' extensions are the HTTP verb required to use to invoke the endpoint. And the ',hl' extension implies Hyperlambda. Hence, if the filename was 'contacts', the module name 'crm', and the HTTP verb was GET, the full URL to the file would become; 'magic/modules/crm/contacts'.
 
+Use emoticons where it makes sense.
