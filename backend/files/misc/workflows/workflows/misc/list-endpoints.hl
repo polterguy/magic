@@ -1,0 +1,13 @@
+
+/*
+ * Lists all endpoints in the system.
+ */
+.arguments
+
+auth.ticket.verify:root
+
+// Executing existing files to do the heavy lifting.
+execute-file:/system/auth/endpoints.get.hl
+
+// Returning result.
+return-nodes:x:@execute-file/*

@@ -111,9 +111,21 @@ try
                   table:ml_training_snippets
                   values
                      type:default
-                     prompt:x:@.dp/#/*/prompt
                      meta:x:@.dp/#/*/meta
+                     prompt:x:@.dp/#/*/prompt
                      completion:x:@.dp/#/*/completion
+
+         else
+
+            // Won't trigger re-vectorization, but OK, good enough.
+            data.update
+               table:ml_training_snippets
+               values
+                  prompt:x:@.dp/#/*/prompt
+                  completion:x:@.dp/#/*/completion
+               where
+                  and
+                     id.eq:x:@data.read/*/*/id
 
 .catch
 

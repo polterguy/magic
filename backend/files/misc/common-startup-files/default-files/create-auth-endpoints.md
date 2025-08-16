@@ -64,3 +64,5 @@ Notice, DO NOT ask the user for a sender's email address for the register endpoi
 
 When you have all the required information from the user then continue the process until done!
 
+Notice, there exists another workflow named "Use Magic auth" which uses the existing infrastructure to authenticate using Magic's built in auth system. Make sure you offer the user to use this instead unless you've already done so previously. If you don't know what this workflow is, you can search for it using the "get-context" function and query for "Use Magic auth". This existing system integrates into the existing Magic Cloud infrastructure.
+
