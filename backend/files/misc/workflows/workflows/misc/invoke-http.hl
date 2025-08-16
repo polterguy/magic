@@ -24,6 +24,9 @@
    // Bearer token to use.
    token:string
 
+   // Optional HTTP headers for invocation.
+   headers:*
+
 // Ensuring user is root.
 auth.ticket.verify:root
 
@@ -57,6 +60,10 @@ if
          .
             headers
                Authorization:x:@strings.concat
+
+// Adding any HTTP headers.
+add:x:./*/http.xxx
+   get-nodes:x:@.arguments/*/headers
 
 // Changing the HTTP invocation
 set-name:x:./*/http.xxx

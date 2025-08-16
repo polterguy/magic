@@ -1079,7 +1079,11 @@ FUNCTION_INVOCATION[/misc/workflows/workflows/misc/invoke-http.hl]:
   "url": "[STRING_VALUE]",
   "verb": "[STRING_VALUE]",
   "payload": "[STRING_VALUE]",
-  "token": "[STRING_VALUE]"
+  "token": "[STRING_VALUE]",
+  "headers": {
+    "Content-Type": "application/javascript",
+    "Accept": "application/javascript"
+  }
 }
 ___
 
@@ -1089,6 +1093,7 @@ Arguments;
 - [verb] optional HTTP verb to use in invocation. Defaults to 'get'. Can only be 'post', 'put', 'get', 'patch', or 'delete'.
 - [payload] optional JSON string that becomes the payload to send. Notice, can only be applied for 'post', 'put' and 'patch' endpoints.
 - [token] optional Bearer token that will be added to the Authorization HTTP header as 'Bearer TOKEN_HERE'.
+- [headers] optional collection of key-value HTTP headers for the HTTP invocation.
 
 If the user asks you to invoke an HTTP endpoint, or test an API, invoke a URL, etc, you can use this function to invoke HTTP endpoints.
 
