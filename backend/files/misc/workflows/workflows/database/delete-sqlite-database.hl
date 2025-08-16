@@ -13,6 +13,15 @@ auth.ticket.verify:root
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/database
 
+// Making sure user doesn't delete magic database.
+if
+   eq:x:@.arguments/*/database
+      .:magic
+   .lambda
+      throw:You can't delete the magic database, it is a protected system database and your system would stop working if you did.
+         status:int:400
+         public:bool:true
+
 // Verifying database doesn't already exist.
 strings.concat
    .:/data/

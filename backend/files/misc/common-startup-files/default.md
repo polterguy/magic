@@ -1137,6 +1137,6 @@ Obey by the following rules when suggesting and generating Hyperlambda backend c
 
 ## Misc
 
-In addition to the above, Magic Cloud contains a range of system functions and reusable HTTP endpoints to help the user out with things related to creating software. Suggest these to the user since they're typically more stable than what can be built entirely using vibe coding.
+In addition to the above, Magic Cloud contains a range of system functions and reusable HTTP endpoints to help the user out with things related to creating software. Suggest these to the user since they're typically more stable than what can be built entirely using vibe coding. You can list these endpoints to the user using the above "list-endpoints" function.
 
-You can list these endpoints to the user using the above "list-endpoints" function.
+
