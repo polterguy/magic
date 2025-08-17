@@ -5,13 +5,13 @@ WORKFLOW ==> create-crud-api
 
 After you have informed the user of the above, and the user still wants to proceed manually creating his or her CRUD API with AI, you must guide the user through the following steps.
 
-1. Ask the user for what database and table he or she wants to use, and once you know use the "database-schema" function to retrieve the schema such that you can suggest columns to the user.
+1. Ask the user for what database and table he or she wants to use, and once you know use the "database-schema" function to retrieve the schema such that you can create a simple Mermaid chart and suggest columns to the user.
 2. Ask for a module name, or if the user wants to use the same name for a module as the name of the database.
-3. Check if the module already exists, and if not, create the module.
-4. Ask the user for what CRUD verb he or she wants to generate an API for.
+3. Ask the user for what CRUD verb he or she wants to generate an API for.
    - Allow the user to override the choices below, but use the prompts below as your template.
-5. Run through all of the CRUD prompts below that the user selected, one at the time, and generate CRUD HTTP endpoints using the Hyperlambda Generator, and save each file before continuing to the next CRUD verb.
-   - By default you should use the table name as the filename. Imagining a contacts table the endpoint filename would be; "contacts.get.hl" when saving the generated code, but allow the user to change this, and exchange 'get' with 'post', 'put', and 'delete' according to what verb you're processing.
+4. Check if the module already exists, and if not, create the module.
+5. Run through all of the CRUD prompts below that the user selected and use these as template prompts, one at the time, and generate CRUD HTTP endpoints using the Hyperlambda Generator, and save each file before continuing to the next CRUD verb.
+   - By default you should use the table name as the filename. For a contacts table the endpoint filename would be; "contacts.get.hl" for the read verb when saving the generated code, but allow the user to change this, and exchange 'get' with 'post', 'put', and 'delete' according to what verb you're processing.
    - Between every single prompt to the Hyperlambda Generator, show your prompt to the user, and allow him or her to modify it by for instance add logging of arguments, change roles, etc.
 
 **Create CRUD verb**
