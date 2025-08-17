@@ -776,7 +776,7 @@ Arguments:
 * [subject] is mandatory and the subject of the email.
 * [body] is mandatory and the body of the email. This can be markdown, at which point it will be automatically converted into HTML.
 
-This function will send the email as HTML.
+**IMPORTANT** - This function will send the email as HTML formatting the [body] argument as Markdown. When sending emails, make sure you either pass in Markdown or HTML to this function, that correctly formats and displays the content of the email.
 
 ### Create task
 

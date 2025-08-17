@@ -21,7 +21,7 @@
    // Mandatory argument
    subject:string
 
-   // Mandatory argument
+   // Mandatory argument. This can be markdown.
    body:string
 
 // Ensuring user is root.
@@ -37,14 +37,12 @@ validators.mandatory:x:@.arguments/*/from-name
 validators.mandatory:x:@.arguments/*/subject
 validators.mandatory:x:@.arguments/*/body
 
-
 // Transforms the specified [markdown] to HTML and returns to caller.
 execute:magic.workflows.actions.execute
    name:markdown2html
    filename:/misc/workflows/actions/misc/markdown2html.hl
    arguments
       markdown:x:@.arguments/*/body
-
 
 /*
  * Send an email to the specified [name]/[email] recipient, with the specified [subject] and [body].
