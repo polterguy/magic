@@ -87,6 +87,7 @@ strings.split:x:@strings.split/0
 return:x:-/0
 }}
 * If you need to respond with code, SQL or JSON, then wrap this code correctly inside of ` or ``` characters as Markdown.
+* You can execute a maximum of 100 functions before you require user input again.
 
 ### Image instructions
 

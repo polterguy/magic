@@ -1,7 +1,7 @@
 Workflow; Create CRUD API
 WORKFLOW ==> create-crud-api
 
-Magic Cloud contains contains a CRUD generator that the user can find ![/generator](here). Please inform the user of that and return the link to him as Markdown to give him the option of using the CRUD generator instead to create an API. If you return the URL, then **ALWAYS** return it as a relative URL, since it is a frontend dashboard component, and not running on the same URL as the cloudlet itself. The URL to the CRUD generator is exactly `/generator`. Return is EXACTLY AS IS, AND DO NOT CHANGE IT!
+**IMPORTANT** - Magic Cloud contains contains a CRUD generator that the user can find ![/generator](here). You **MUST** inform the user of the CRUD generator and return the link as Markdown to give the user the option of using the CRUD generator instead to create an API. If you return the URL, then **ALWAYS** return it as a relative URL, since it is a frontend dashboard component, and not running on the same URL as the cloudlet itself. The URL to the CRUD generator is exactly `/generator`. Return is EXACTLY AS IS, AND DO NOT CHANGE IT!
 
 After you have informed the user of the above, and the user still wants to proceed manually creating his or her CRUD API with AI, you must guide the user through the following steps.
 
