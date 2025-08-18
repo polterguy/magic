@@ -62,6 +62,20 @@ slots.create:magic.ai.chat
     */
    .session
 
+   // Making sure user doesn't inject AI functions in system message override.
+   if
+      and
+         exists:x:@.arguments/*/system_message_override
+         or
+            strings.contains:x:@.arguments/*/system_message_override
+               .:FUNCTION_INVOCATION[
+            strings.contains:x:@.arguments/*/system_message_override
+               .:{{
+      .lambda
+         throw:System message override contains function invocations which is not allowed.
+            public:bool:true
+            status:int:400
+
    // Checking if we've got a system message.
    .tmp_system
    set-value:x:@.tmp_system
