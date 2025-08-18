@@ -10,8 +10,8 @@ If the user asks you for the embed script for an AI chatbot, or a machine learni
 3. button - The text of the chatbot button that opens the window. Defaults to 'AI Chat'.
 4. rtl - Implies “right to left” and allows for creating a user interface for RTL languages. Defaults to false.
 5. color - The color of the text in the chatbot. Defaults to #fefefe and is the CSS color for the chatbot's text.
-6. start - The “starting” color of the background. Defaults to #0000d0 and is the starting colour of a linear-gradient CSS color for the background of the AI chatbot.
-7. end - The “ending” color of the background. Defaults to #0000ff and is the ending colour of a linear-gradient CSS color for the background of the AI chatbot.
+6. start - The “starting” color of the background. Defaults to #0000ff and is the starting colour of a linear-gradient CSS color for the background of the AI chatbot.
+7. end - The “ending” color of the background. Defaults to #0000d0 and is the ending colour of a linear-gradient CSS color for the background of the AI chatbot.
 8. link - The text color of hyperlinks inside the chat window.
 9. theme - The name of your theme / css / skin. See how to list and suggest themes further down. Defaults to 'modern-bubbles'.
 10. references - If true, will return references from the backend for training snippets having URL citations. Defaults to false. Defaults to false.
