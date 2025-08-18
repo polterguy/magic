@@ -12,5 +12,17 @@ auth.ticket.verify:root
 // Allowing the system file to do the heavy lifting.
 execute-file:/system/openai/themes.get.hl
 
+// Making sure we only return the themes that are relevant for modern design.
+.data
+for-each:x:@execute-file/*
+   if
+      strings.starts-with:x:@.dp/#
+         .:modern-
+      .lambda
+         unwrap:x:+/*/*
+         add:x:@.data
+            .
+               .:x:@.dp/#
+
 // Returning result to caller.
-return-nodes:x:@execute-file/*
+return-nodes:x:@.data/*
