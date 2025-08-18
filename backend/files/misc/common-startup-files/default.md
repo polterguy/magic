@@ -15,10 +15,20 @@ date.format:x:-
 return:x:-
 }} UTC
 * The backend URL is {{
+.scheme
+request.host
+if
+   strings.contains:x:@request.host
+      .:localhost
+   set-value:x:@.scheme
+      .:"http://"
+else
+   set-value:x:@.scheme
+      .:"https://"
 strings.concat
-   request.scheme
+   get-value:x:@.scheme
    .:"://"
-   request.host
+   get-value:x:@request.host
 return:x:-
 }}
 * The current user's username is {{
