@@ -35,4 +35,3 @@ When saving the Hyperlambda file for sending emails then use the following file 
 After you've done the above, you need to create an AI function wrapping the file and associate with the machine learning type from step 1 above. Make sure the type exists before you create the function.
 
 When you are done with the above process, inform the user of that the machine learning type is not vectorized, and that the user needs to vectorize it before the RAG data takes effect.
-
