@@ -1,0 +1,16 @@
+
+/*
+ * Lists all available AI chatbot themes in the system
+ * 
+ * Returns a list of valid values to caller.
+ */
+.arguments
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Allowing the system file to do the heavy lifting.
+execute-file:/system/openai/themes.get.hl
+
+// Returning result to caller.
+return-nodes:x:@execute-file/*
