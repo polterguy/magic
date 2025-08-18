@@ -20,8 +20,9 @@ request.host
 if
    strings.contains:x:@request.host
       .:localhost
-   set-value:x:@.scheme
-      .:"http"
+   .lambda
+      set-value:x:@.scheme
+         .:"http"
 else
    set-value:x:@.scheme
       .:"https"
