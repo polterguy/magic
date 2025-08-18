@@ -120,13 +120,13 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
   async createAiContext() : Promise<string> {
 
     let result = '';
-    if (this.currentFileData.content && this.currentFileData.content.length > 0) {
-      result = 'Current code:\n\n' + this.currentFileData.content + '\n\n';
-    }
     if (this.currentFileData.name.endsWith('.hl')) {
       result += 'You are a Hyperlambda software developer AI assistant and you will return ONLY CODE! No ``` characters, or explanations, ONLY the code! In the next message you will be given a natural language query being a request from the user. Return only the RAW code that solves the user\' problem'
     } else {
       result += 'You are a software developer AI assistant and you will return ONLY CODE! No ``` characters, or explanations, ONLY the code! In the next message you will be given a natural language query being a request from the user. Return only the RAW code that solves the user\' problem'
+    }
+    if (this.currentFileData.content && this.currentFileData.content.length > 0) {
+      result = '\n\nChange or modify this code according to instructions in the next message:\n\n' + this.currentFileData.content;
     }
     return result;
   }
