@@ -21,10 +21,10 @@ if
    strings.contains:x:@request.host
       .:localhost
    set-value:x:@.scheme
-      .:"http://"
+      .:"http"
 else
    set-value:x:@.scheme
-      .:"https://"
+      .:"https"
 strings.concat
    get-value:x:@.scheme
    .:"://"
