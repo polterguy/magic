@@ -63,10 +63,15 @@ slots.create:magic.ai.chat
    .session
 
    // Checking if we've got a system message.
+   .tmp_system
+   set-value:x:@.tmp_system
+      get-first-value
+         get-value:x:@.arguments/*/system_message_override
+         get-value:x:@.arguments/*/system_message
    if
       and
-         not-null:x:@.arguments/*/system_message
-         neq:x:@.arguments/*/system_message
+         not-null:x:@.tmp_system
+         neq:x:@.tmp_system
             .:
       .lambda
 
@@ -76,7 +81,7 @@ slots.create:magic.ai.chat
             .
                .
                   role:system
-                  content:x:@.arguments/*/system_message
+                  content:x:@.tmp_system
 
    // Then adding context ml_requests belonging to user to [.session]
    data.connect:[generic|magic]

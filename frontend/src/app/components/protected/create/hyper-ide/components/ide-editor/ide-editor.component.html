@@ -45,6 +45,7 @@
       (callback)="insertFromOpenAI($event)"
       callbackText="Use"
       dialogue="false"
+      [createContext]="createAiContext.bind(this)"
       [currentFileContent]="currentFileData.content"
       [currentFileSession]="currentFileData.path"
       [fileType]="fileType()"

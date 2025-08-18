@@ -49,7 +49,8 @@ export class OpenAIService {
     search: boolean = false,
     session: string = null,
     data: string = null,
-    stream: boolean = false) {
+    stream: boolean = false,
+    systemMessage: string = null) {
 
     // building our payload
     const payload: any = {
@@ -57,6 +58,9 @@ export class OpenAIService {
     };
     if (data) {
       payload.data = data;
+    }
+    if (systemMessage) {
+      payload.system_message_override = systemMessage;
     }
 
     // Checking if we're dealing with hyperlambda code, at which point we use ainiro.io's generator

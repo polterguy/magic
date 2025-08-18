@@ -75,15 +75,19 @@ export class SqlViewComponent implements OnInit, OnDestroy {
 
       let dialect = '';
       switch (this.selectedDbType) {
+
         case 'sqlite':
           dialect = 'SQLite';
           break;
+
         case 'mysql':
           dialect = 'MySQL';
           break;
+
         case 'mssql':
           dialect = 'Microsoft SQL Server';
           break;
+
         case 'pgsql':
           dialect = 'PostgreSQL';
           break;
@@ -104,23 +108,30 @@ export class SqlViewComponent implements OnInit, OnDestroy {
         true));
       let dialect = '';
       switch (this.selectedDbType) {
+
         case 'sqlite':
           dialect = 'SQLite';
           break;
+
         case 'mysql':
           dialect = 'MySQL';
           break;
+
         case 'mssql':
           dialect = 'Microsoft SQL Server';
           break;
+
         case 'pgsql':
           dialect = 'PostgreSQL';
           break;
       }
+
       let retVal = 'Current schema:\n\n' + result.result + '\n\n' + 'SQL dialect: ' + dialect + '\n\n';
       if (this.input.sql && this.input.sql.length > 0) {
         retVal += 'Current code: \n\n' + this.input.sql;
       }
+
+      retVal += '\n\n**IMPORTANT** - Return ONLY SQL! No ``` characters, or explanations, ONLY the SQL! In the next message you will be given a natural language query being a request from the user. Return only the RAW SQL that solves the user\' problem';
       return retVal;
     }
   }

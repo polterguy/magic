@@ -19,6 +19,7 @@
    referrer:string
    extra:string
    file:*
+   system_message_override:string
 .description:@"OpenAI chat endpoint, for having conversations using 'gpt-xxx' models"
 .type:public
 

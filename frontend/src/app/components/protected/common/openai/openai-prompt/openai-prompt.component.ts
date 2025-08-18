@@ -115,11 +115,11 @@ export class OpenAIPromptComponent implements OnInit {
     this.generalService.showLoading();
     this.waitingForAnswer = true;
 
-    let currentFileContent = this.currentFileContent;
+    let systemMessageOverride = this.currentFileContent;
 
     if (this.createContext) {
       const res = await this.createContext();
-      currentFileContent = res;
+      systemMessageOverride = res;
     }
 
     this.openAiService.query(
@@ -127,7 +127,9 @@ export class OpenAIPromptComponent implements OnInit {
       this.fileType,
       false,
       this.currentFileSession,
-      currentFileContent).subscribe({
+      null,
+      false,
+      systemMessageOverride).subscribe({
       next: (result: any) => {
 
         this.generalService.hideLoading();
