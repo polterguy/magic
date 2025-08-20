@@ -1,0 +1,51 @@
+
+/*
+ * Creates a landing page for an AI chatbot
+ * 
+ * The page will be saved in /etc/www/ with a unique name serving as a demonstration page for the specified AI chatbot.
+ */
+.arguments
+   website:string
+   type:string
+   host:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/website
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/website
+            .:"http://"
+      not
+         strings.starts-with:x:@.arguments/*/website
+            .:"https://"
+   .lambda
+      set-value:x:@.arguments/*/website
+         strings.concat
+            .:"https://"
+            get-value:x:@.arguments/*/website
+validators.url:x:@.arguments/*/website
+validators.mandatory:x:@.arguments/*/type
+
+// Removing scheme since function depends upon it NOT being there!
+set-value:x:@.arguments/*/host
+   strings.replace:x:@.arguments/*/host
+      .:"https://"
+      .:
+set-value:x:@.arguments/*/host
+   strings.replace:x:@.arguments/*/host
+      .:"http://"
+      .:
+
+// Invoking slot to do the heavy lifting.
+execute:magic.ai.create-landing-page
+   url:x:@.arguments/*/website
+   type:x:@.arguments/*/type
+   host:x:@.arguments/*/host
+
+// Returning success.
+return
+   result:success
