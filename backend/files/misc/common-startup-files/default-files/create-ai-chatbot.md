@@ -17,6 +17,7 @@ If the user still wants to create an AI chatbot manually then offer the user to 
    - Ask the user for what email address and name to send emails to and exchange '[NAME_AS_SPECIFIED_BY_USER]' and '[EMAIL_AS_SPECIFIED_BY_USER]' in the template below.
    - Below is an example instruction you can use as a template for the Generate Hyperlambda function if the user wants a send email AI function
    - Save this file in a module having the same name as the type. Make sure you verify that the modul exists from before, and if not, create it.
+4. Inform the user that he needs to vectorize the type before the AI function can be used, and offer the user to vectorize the type.
 
 ```markdown
 Executable Hyperlambda file that sends an email. It takes the following arguments.
@@ -41,4 +42,4 @@ When saving the Hyperlambda file for sending emails then use the following file 
  */
 ```
 
-When you are done with the above process, inform the user of that the machine learning type is not vectorized, and that the user needs to vectorize it before the RAG data takes effect.
+**IMPORTANT** - When you are done with the above process, inform the user of that the machine learning type is not vectorized, and that the user needs to vectorize it before the RAG data takes effect.
