@@ -42,6 +42,20 @@ validators.default:x:@.arguments
    summarize:bool:true
    threshold:int:150
 
+// Making sure machine learning type exists.
+data.connect:magic
+   data.read
+      table:ml_types
+      where
+         and
+            type.eq:x:@.arguments/*/type
+   if
+      not-exists:x:@data.read/*
+      .lambda
+         throw:No such machine learning type
+            public:bool:true
+            status:int:404
+
 // Executing file doing the heavy lifting.
 add:x:./*/execute-file
    get-nodes:x:@.arguments/*
