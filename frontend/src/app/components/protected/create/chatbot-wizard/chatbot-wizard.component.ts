@@ -112,7 +112,7 @@ export class ChatbotWizardComponent implements OnInit, OnDestroy {
 
         this.chat_models = models;
         this.chat_models = this.chat_models.filter(el => el.chat === true);
-        let defModel = this.chat_models.filter(x => x.id === 'gpt-4o');
+        let defModel = this.chat_models.filter(x => x.id === 'gpt-4.1-2025-04-14');
 
         if (defModel.length > 0) {
 
