@@ -1073,7 +1073,7 @@
 
               case 'assistant':
                 this.addMessage('', 'ainiro_machine');
-                this.chatMessageDone(res[idx].content);
+                this.chatMessageDone(res[idx].content, idx === res.length - 1);
                 break;
             }
           }
@@ -1542,7 +1542,7 @@
     /*
      * Invoked when a chat message is completed by server.
      */
-    chatMessageDone: function(response) {
+    chatMessageDone: function(response, addConvoFollowUps = true) {
 
       // Defaulting Markdown to be transformed to entire result from server.
       let wholeMarkdown = response;
@@ -1589,7 +1589,7 @@
       this.addReferences(this.references);
 
       // Checking if we've got follow up questions.
-      if (followUpQuestions.length > 0) {
+      if (followUpQuestions.length > 0 && addConvoFollowUps) {
 
         // Parsing follow up questions.
         const followUp = [];

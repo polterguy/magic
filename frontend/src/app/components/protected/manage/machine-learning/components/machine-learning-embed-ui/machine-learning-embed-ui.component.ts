@@ -55,6 +55,7 @@ export class MachineLearningEmbedUiComponent implements OnInit {
   positioning: string = 'right';
   animations: string = 'none';
   sticky: boolean = false;
+  history: boolean = false;
   attachments: boolean = false;
 
   constructor(
@@ -193,6 +194,9 @@ export class MachineLearningEmbedUiComponent implements OnInit {
     }
     if (this.sticky) {
       url += '&sticky=true';
+    }
+    if (this.history) {
+      url += '&history=true';
     }
     if (this.attachments) {
       url += '&attachments=true';

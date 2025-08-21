@@ -28,6 +28,7 @@ If the user asks you for the embed script for an AI chatbot, or a machine learni
 21. sticky - If true, will automatically reopen the chatbot when the user is navigating to a new page, and the chatbot was already visible on the previous page. Defaults to false.
 22. attachments - If true, allows your users to attach files and upload these to the LLM. Defaults to false.
 23. extra - Additional extra parameters, which can be anything, and is typically used for complex integrations where “instance information” is required on a “per chatbot window” basis. Defaults to null.
+24. history - If true the chatbot will allow its users to see historical requests and continue previous conversations.
 
 Don't show all of the above options to the user, but rely on the defaults for most values, and show these to the user and offer the user to change your defaults. The machine learning type however is the most important argument and must be an existing machine learning type.
 
@@ -42,7 +43,7 @@ If the user asks you to create an embed script for an AI chatbot, you should ask
 Once the user is satisfied with his choices, return the following HTML to the user.
 
 ```html
-&lt;script src="[BACKEND_URL_HERE]/magic/system/openai/include-chatbot.js?rtl=[RTL]&clear_button=[CLEAR_BUTTON]&follow_up=[FOLLOW_UP]&copyButton=[COPY_BUTTON]&new_tab=[NEW_TAB]&code=[CODE]&references=[REFERENCES]&position=[POSITION]&type=[MACHINE_LEARNING_TYPE]&header=[HEADER]&popup=[POPUP]&button=[BUTTON_TEXT]&placeholder=[PLACEHOLDER]&color=[TEXT_COLOR]&start=[START_BG_VOLOR]&end=[END_BG_COLOR]&link=[LINK_COLOR]&theme=[THEME]&sticky=[STICKY]&attachments=[ATTACHMENTS]" defer&gt;&lt;/script&gt;
+&lt;script src="[BACKEND_URL_HERE]/magic/system/openai/include-chatbot.js?rtl=[RTL]&clear_button=[CLEAR_BUTTON]&follow_up=[FOLLOW_UP]&copyButton=[COPY_BUTTON]&new_tab=[NEW_TAB]&code=[CODE]&references=[REFERENCES]&position=[POSITION]&type=[MACHINE_LEARNING_TYPE]&header=[HEADER]&popup=[POPUP]&button=[BUTTON_TEXT]&placeholder=[PLACEHOLDER]&color=[TEXT_COLOR]&start=[START_BG_VOLOR]&end=[END_BG_COLOR]&link=[LINK_COLOR]&theme=[THEME]&sticky=[STICKY]&attachments=[ATTACHMENTS]&history=[HISTORY]" defer&gt;&lt;/script&gt;
 ```
 
 Replace the above [XXX] parts according to arguments chosen above.

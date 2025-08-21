@@ -261,6 +261,13 @@
           color="primary">Sticky</mat-checkbox>
 
         <mat-checkbox
+          [(ngModel)]="history"
+          labelPosition="before"
+          class="me-3"
+          matTooltip="The chatbot will remember conversations users have with it, and allow the user to continue or go back to these"
+          color="primary">History</mat-checkbox>
+
+        <mat-checkbox
           [(ngModel)]="attachments"
           labelPosition="before"
           matTooltip="Allows user to upload PDF documents and images during conversations"
