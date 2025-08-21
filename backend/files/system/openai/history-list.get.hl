@@ -3,10 +3,30 @@
  * Returns the history for the currently authenticated user.
  */
 .arguments
+   user_id:string
 
-// Sanity checking invocation.
-auth.ticket.verify
-auth.ticket.get
+// User id.
+.user-id
+set-value:x:@.user-id
+   get-first-value
+      get-value:x:@.arguments/*/user_id
+      auth.ticket.get
+
+// Avoiding "session stealing" attacks.
+if
+   and
+      neq:x:@.user-id
+         auth.ticket.get
+      not
+         strings.starts-with:x:@.user-id
+            .:u_
+   .lambda
+
+      // Oops, somebody tried to inject data into user's persisted session.
+      log.error:Injection attack attempted
+      throw:Not allowed
+         status:int:400
+         public:bool:true
 
 // Opening up database connection.
 data.connect:[generic|magic]
@@ -16,7 +36,7 @@ data.connect:[generic|magic]
 select session_id, name, created
 	from ml_history
 	where username = @username order by created desc"
-      username:x:@auth.ticket.get
+      username:x:@.user-id
 
    // Returning greeting to caller.
    return-nodes:x:@data.select/*

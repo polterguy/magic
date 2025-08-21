@@ -5,17 +5,12 @@
 .arguments
    session_id:string
 
-// Sanity checking invocation.
-auth.ticket.verify
-auth.ticket.get
-
 // Opening up database connection.
 data.connect:[generic|magic]
 
    // Retrieving all questions from database.
    data.select:@"
-select content from ml_history where username = @username and session_id = @session_id"
-      username:x:@auth.ticket.get
+select content from ml_history where session_id = @session_id"
       session_id:x:@.arguments/*/session_id
 
    // Making sure above invocation returned something.

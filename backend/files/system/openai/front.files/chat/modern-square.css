@@ -195,6 +195,9 @@ html>body.ainiro_bdy>div.ainiro>div.ainiro_toolbar>button.ainiro_action.ainiro_m
 html>body.ainiro_bdy>div.ainiro>div.ainiro_toolbar>button.ainiro_action.ainiro_close i {
   font-size:26px;
 }
+html>body.ainiro_bdy>div.ainiro>div.ainiro_toolbar>button.ainiro_action.ainiro_sessions i {
+  font-size:29px;
+}
 html>body.ainiro_bdy>div.ainiro.show_ainiro_chatbot:not(.ainiro_maximized)>div.ainiro_toolbar>button.ainiro_maximize>i.ainiro-icofont-contract-alt {
   display: none;
 }

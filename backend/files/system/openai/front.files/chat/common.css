@@ -37,7 +37,7 @@ html>body.ainiro_bdy>div.ainiro button * {
   font-family: AiniroIcoFont;
   font-weight: 400;
   font-style: Regular;
-  src: url(https://ainiro.io/assets/css/fonts/icofont.woff2?v=v20.3.0) format("woff2"), url(https://ainiro.io/assets/css/fonts/icofont.woff?v=19.5.11) format("woff")
+  src: url(https://ainiro.io/assets/css/fonts/icofont.woff2?v=v20.5.6) format("woff2"), url(https://ainiro.io/assets/css/fonts/icofont.woff?v=20.5.6) format("woff")
 }
 
 html>body.ainiro_bdy [class*=" ainiro-icofont-"],
@@ -126,6 +126,16 @@ html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-purge:before {
 
 html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-purge:after {
   content: "\13b94"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-list:before
+{
+  content: "\13b53"
+}
+
+html>body.ainiro_bdy .ainiro-icofont-duotone.ainiro-icofont-list:after
+{
+  content: "\13b50"
 }
 
 html>body.ainiro_bdy .ainiro-icofont-copy:before {
@@ -694,4 +704,30 @@ html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs
 }
 html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine .hljs-strong {
   font-weight: bold
+}
+
+/* Sessions */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_sessions_list {
+  background: linear-gradient(var(--ainiro-bg-start), var(--ainiro-bg-end));
+  color:var(--ainiro-color);
+  min-width: 300px;
+  min-height: 150px;
+  position: absolute;
+  right: 5px;
+  border-radius: 5px;
+  border: solid 1px black;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_sessions_list ul {
+  display: block;
+  margin: 15px;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_sessions_list ul li {
+  display: list-item;
+  list-style-type: none;
+  font-size: smaller;
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_sessions_list ul li a {
+  padding: 5px;
+  color:var(--ainiro-link);
+  font-size: small;
 }

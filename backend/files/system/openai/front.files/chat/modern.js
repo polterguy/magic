@@ -9,6 +9,14 @@
     return;
   }
 
+  // Global handler to make sure we delete popup if anything is clicked in document.
+  document.addEventListener("click", function () {
+    const el = document.querySelector('.ainiro_sessions_list');
+    if (el) {
+      el.parentNode.removeChild(el);
+    }
+  });
+
   // Creating our primary namespace.
   window.ainiro = {
 
@@ -45,7 +53,8 @@
       extra: '[[extra]]',
       hidden: [[hidden]],
       sticky: [[sticky]],
-      attachments: [[attachments]]
+      attachments: [[attachments]],
+      history: [[history]]
     },
 
     // References buffer for storing references during invocation.
@@ -65,11 +74,6 @@
      * If true, we need to initialise session with greeting, and conversation starters.
      */
     initSession: true,
-
-    /*
-     * Channel used for communication, and session ID.
-     */
-    sessionId: null,
 
     /*
      * Callback function to be invoked when server is finished answering question.
@@ -207,6 +211,15 @@
       maximizeButton.className = 'ainiro_action ainiro_maximize';
       maximizeButton.addEventListener('click', () => this.maximize());
       toolbar.appendChild(maximizeButton);
+
+      // Checking if we should store sessions.
+      if (this.ainiro_settings.history === true) {
+        const sessionButton = document.createElement('button');
+        sessionButton.innerHTML = '<i class="ainiro-icofont ainiro-icofont-duotone ainiro-icofont-list"></i>';
+        sessionButton.className = 'ainiro_action ainiro_sessions';
+        sessionButton.addEventListener('click', () => this.showSession());
+        toolbar.appendChild(sessionButton);
+      }
 
       // Creating close chat window button.
       const closeButton = document.createElement('button');
@@ -932,6 +945,149 @@
       }.bind(this));
     },
 
+    showSession: function() {
+
+      // Retreiving session items for user.
+      fetch(`${this.ainiro_settings.url}/magic/system/openai/history-list?user_id=` + encodeURIComponent(this.userId))
+        .then(res => {
+          if (res.status >= 200 && res.status <= 299) {
+            return res.text(); // read raw text first
+          } else {
+            throw res;
+          }
+        })
+        .then(text => {
+          if (text.trim().length === 0) {
+            return [];
+          }
+          return JSON.parse(text);
+        })
+        .then(res => {
+          this._showSession(res);
+        })
+        .catch(err => {
+          console.error("Fetch error:", err);
+        });
+    },
+
+    _showSession: function(items) {
+
+      // Checking if dropdown already exists, at which point we delete it.
+      const existing = document.querySelector('.ainiro_sessions_list');
+      if (existing) {
+        existing.parentNode.removeChild(existing);
+        return;
+      }
+
+      // Making sure we've got items at all.
+      if (items.length === 0) {
+        return;
+      }
+
+      // Figuring out height of toolbar.
+      const toolbar = document.querySelector('.ainiro_toolbar');
+      const topPosition = toolbar.clientHeight + 5;
+
+      // Finding parent element to inject popup into.
+      const parentEl = document.querySelector('#ainiro_chat_wnd');
+
+      // Creating our popup div.
+      const sessionEl = document.createElement('div');
+      sessionEl.className = 'ainiro_sessions_list';
+      sessionEl.style.top = topPosition + 'px';
+
+      // Creating our unordered list.
+      const ul = document.createElement('ul');
+      sessionEl.appendChild(ul);
+
+      // Adding each session item into popup.
+      for (let idx = 0; idx < items.length; idx++) {
+        const cur = document.createElement('li');
+        const link =  document.createElement('a');
+        link.href = '#';
+        link.innerHTML = items[idx].name;
+        link.addEventListener('click', () => this.selectSession(event, items[idx].session_id));
+        cur.appendChild(link);
+        ul.appendChild(cur);
+      }
+
+      // Adding popup into parent.
+      parentEl.appendChild(sessionEl);
+    },
+
+    selectSession: function(event, session) {
+
+      event.stopPropagation();
+      event.preventDefault()
+
+      // Making sure we destroy drop down ...
+      const existing = document.querySelector('.ainiro_sessions_list');
+      if (existing) {
+        existing.parentNode.removeChild(existing);
+      }
+
+      // Fetching session and making it our current session.
+      fetch(`${this.ainiro_settings.url}/magic/system/openai/active-session`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": 'application/json'
+        },
+        body: JSON.stringify({
+          session_id: session
+        })
+        })
+        .then(res => {
+          if (res.status >= 200 && res.status <= 299) {
+            return res.json();
+          } else {
+            throw res;
+          }
+        })
+        .then((res) => {
+
+          // Updating GUI ...
+          const surface = document.getElementById('ainiro_chat_surf');
+
+          // Deleting old items.
+          const toDel = [];
+          for (let idx = 0; idx < surface.childNodes.length; idx++) {
+            switch (surface.childNodes[idx].className) {
+              case 'ainiro_human':
+              case 'ainiro_machine':
+              case 'ainiro_starters':
+                toDel.push(surface.childNodes[idx]);
+                break;
+            }
+          }
+          for (let idx = 0; idx < toDel.length; idx++) {
+            toDel[idx].parentNode.removeChild(toDel[idx]);
+          }
+
+          // Adding new items.
+          for (let idx = 0; idx < res.length; idx++) {
+            switch (res[idx].role) {
+
+              case 'user':
+                this.addMessage(res[idx].content, 'ainiro_human');
+                break;
+
+              case 'assistant':
+                this.addMessage('', 'ainiro_machine');
+                this.chatMessageDone(res[idx].content);
+                break;
+            }
+          }
+
+          // Scrolling to bottom.
+          this.scrollToBottom(true, true);
+
+          // Updating session, which needs to recreate the socket connection.
+          this.session = session;
+          this.socket?.stop();
+          this.initSocket(null);
+        });
+    },
+
     /*
      * Hides the chat window.
      */
@@ -995,9 +1151,11 @@
       btn.disabled = true;
 
       // Making sure we remove conversation starters if they're in the DOM.
-      const wrp = document.getElementById('ainiro_starter');
+      const wrp = document.querySelectorAll('.ainiro_starters');
       if (wrp) {
-        wrp.parentNode.removeChild(wrp);
+        for (let idx = 0; idx < wrp.length; idx++) {
+          wrp[idx].parentNode.removeChild(wrp[idx]);
+        }
       }
 
       // Adding query to surface.
@@ -1299,7 +1457,8 @@
         chat: true,
         stream: true,
         referrer: window.location.href,
-        extra: this.ainiro_settings.extra
+        extra: this.ainiro_settings.extra,
+        permanent: this.ainiro_settings.history
       };
       if (token) {
         payload.recaptcha_response = token;
