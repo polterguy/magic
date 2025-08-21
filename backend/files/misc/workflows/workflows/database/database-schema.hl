@@ -9,30 +9,39 @@
    // Mandatory argument being database the caller wants to have the schema for
    database:string
 
+   // Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
+   database-type:string
+
 // Ensuring user is root.
 auth.ticket.verify:root
 
-// Buffer for result
-.result
+// Applying defaults.
+validators.default:x:@.arguments
+   database-type:sqlite
 
-// Connecting to database.
-data.connect:x:@.arguments/*/database
+// Listing all tables in database.
+.slot_name
+set-value:x:@.slot_name
+   strings.concat
+      .:magic.db.
+      get-value:x:@.arguments/*/database-type
+      .:.tables
+execute:x:@.slot_name
+   connection-string:generic
+   database:x:@.arguments/*/database
+for-each:x:@execute/*/*
+   unwrap:x:+/*/*
+   add:x:../*/execute-file/*/tables
+      .
+         .:x:@.dp/#
 
-   // Executing SQL that returns schema.
-   data.select:@"SELECT sql
-FROM sqlite_master
-WHERE type = 'table'
-  AND name NOT LIKE 'sqlite_%';
-"
+// Calling another file to do the heavy lifting.
+execute-file:/system/sql/ddl/export-tables.post.hl
+   databaseType:x:@.arguments/*/database-type
+   connectionString:generic
+   databaseName:x:@.arguments/*/database
+   full:bool:true
+   tables
 
-   // Iterating through each result from above to create our schema
-   for-each:x:@data.select/*
-      set-value:x:@.result
-         strings.concat
-            get-value:x:@.result
-            get-value:x:@.dp/#/*/sql
-            .:"\n\n"
-
-// Returning the schema to caller.
-yield
-   schema:x:@.result
+// Returning result to caller.
+return-nodes:x:@execute-file/*

@@ -16,8 +16,6 @@
    tables
       .:*
    full:bool
-.description:Exports all the specified tables and returns to caller as DDL
-.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

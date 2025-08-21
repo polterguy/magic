@@ -474,7 +474,8 @@ ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/database/select-sql.hl]:
 {
   "sql": "[STRING_VALUE]",
-  "database": "[STRING_VALUE]"
+  "database": "[STRING_VALUE]",
+  "database-type": "[STRING_VALUE]"
 }
 ___
 
@@ -482,6 +483,7 @@ Arguments:
 
 * sql - Mandatory argument being SQL to execute, unless specifically overridden the dialect should be SQLite
 * database - Mandatory database to connect to and execute SQL within.
+* database-type - Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
 
 ### Execute SQL
 
@@ -491,14 +493,16 @@ ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/database/execute-sql.hl]:
 {
   "sql": "[STRING_VALUE]",
-  "database": "[STRING_VALUE]"
+  "database": "[STRING_VALUE]",
+  "database-type": "[STRING_VALUE]"
 }
 ___
 
 Arguments:
 
-* sql - Mandatory argument being SQL to execute, unless specifically overridden the dialect should be SQLite
+* sql - Mandatory argument being SQL to execute, unless specifically overridden the dialect should be SQLite.
 * database - Mandatory database to connect to and execute SQL within.
+* database-type - Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
 
 ### List databases
 
@@ -547,13 +551,17 @@ Connect to the [database] database, and returns the schema for the specified dat
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/database/database-schema.hl]:
 {
-  "database": "[STRING_VALUE]"
+  "database": "[STRING_VALUE]",
+  "database-type": "[STRING_VALUE]"
 }
 ___
 
 Arguments:
 
 * database - Mandatory database to connect to and return schema for.
+* database-type - Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
+
+If the user doesn't explicitly tell you to use a specific database type, then always use 'sqlite' as your value when executing this function.
 
 ### List plugins
 

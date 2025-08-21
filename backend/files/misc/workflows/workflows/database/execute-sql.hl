@@ -13,26 +13,53 @@
    // Mandatory database to connect to and execute SQL within.
    database:string
 
+   // Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
+   database-type:string
+
 // Ensuring user is root.
 auth.ticket.verify:root
+
+// Applying defaults.
+validators.default:x:@.arguments
+   database-type:sqlite
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/sql
 validators.mandatory:x:@.arguments/*/database
+
+// Logging invocation.
 log.info:x:@.arguments/*/sql
    database:x:@.arguments/*/database
 
+// Parametrizing connect
+insert-before:x:./*/data.connect/0
+   get-nodes:x:@.arguments/*/database-type
+
 // Connecting to database
 data.connect:x:@.arguments/*/database
+
+   // Parametrizing connect
+   add:x:./*/data.execute
+      get-nodes:x:@.arguments/*/database-type
 
    // Executing SQL.
    data.execute:x:@.arguments/*/sql
 
 // Flushing database cache.
-sqlite.connections.flush
+if
+   eq:x:@.arguments/*/database-type
+      .:sqlite
+   .lambda
+      sqlite.connections.flush
 
 // Flushing database cache.
-cache.set:magic.sql.databases.sqlite.generic
+.db
+set-value:x:@.db
+   strings.concat
+      .:magic.sql.databases.
+      get-value:x:@.arguments/*/database-type
+      .:.generic
+cache.set:x:@.db
 
 // Returning success to caller.
 return

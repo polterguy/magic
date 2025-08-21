@@ -12,8 +12,15 @@
    // Mandatory database to connect to and execute SQL within.
    database:string
 
+   // Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
+   database-type:string
+
 // Ensuring user is root.
 auth.ticket.verify:root
+
+// Applying defaults.
+validators.default:x:@.arguments
+   database-type:sqlite
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/sql
@@ -21,8 +28,16 @@ validators.mandatory:x:@.arguments/*/database
 log.info:x:@.arguments/*/sql
    database:x:@.arguments/*/database
 
+// Parametrizing connect
+insert-before:x:./*/data.connect/0
+   get-nodes:x:@.arguments/*/database-type
+
 // Connecting to database
 data.connect:x:@.arguments/*/database
+
+   // Parametrizing connect
+   add:x:./*/data.select
+      get-nodes:x:@.arguments/*/database-type
 
    // Executing SQL.
    data.select:x:@.arguments/*/sql
