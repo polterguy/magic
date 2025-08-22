@@ -1,10 +1,8 @@
 
-// Lists all database in your installation.
+// Returns all databases in your installation, according to the arguments specified.
 .arguments
    databaseType:string
    connectionString:string
-.description:Returns all databases in your installation, according to the arguments specified
-.type:internal
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

@@ -6,31 +6,22 @@
  */
 .arguments
 
+   // Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
+   database-type:string
+
 // Ensuring user is root.
 auth.ticket.verify:root
 
-// Listing files.
-io.file.list:/data/
-
-// Buffer.
-.data
-
-// Extracting only database names.
-for-each:x:@io.file.list/*
-   if
-      strings.ends-with:x:@.dp/#
-         .:.db
-      .lambda
-         strings.split:x:@.dp/#
-            .:/
-         strings.replace:x:@strings.split/0/-
-            .:.db
-            .:
-         unwrap:x:+/*/*
-         add:x:@.data
-            .
-               .:x:@strings.replace
+// Listing all tables in database.
+.slot_name
+set-value:x:@.slot_name
+   strings.concat
+      .:magic.db.
+      get-value:x:@.arguments/*/database-type
+      .:.databases
+execute:x:@.slot_name
+   connection-string:generic
+   database:x:@.arguments/*/database
 
 // Returning result to caller.
-yield
-   databases:x:@.data/*
+return-nodes:x:@execute/*
