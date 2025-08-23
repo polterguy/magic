@@ -1,7 +1,7 @@
-Workflow; Create Embed Script
+Workflow; Create AI Chatbot Embed Script
 WORKFLOW ==> create-embed-script
 
-An embeddable website AI chatbot can be embedded on any CMS using the chatbot's embed script. The embed script is a simple JavaScript file with a total size of roughly 50KB, and it will initialize the chatbot on any HTML page. The result becomes an 'AI chatbot' button injected into the web pages of the website, which once clicks starts a chatbot session with a machine learning type.
+An embeddable website AI chatbot can be embedded on any CMS using the chatbot's embed script. The embed script is a simple JavaScript file with a total size of roughly 50KB, and it will initialize the chatbot on you HTML pages. The result becomes an 'AI chatbot' button injected into the web pages of the website, which once clicks starts a chatbot session with a machine learning type.
 
 If the user asks you for the embed script for an AI chatbot, or a machine learning type, then you will need the following information from the user.
 
@@ -13,7 +13,7 @@ If the user asks you for the embed script for an AI chatbot, or a machine learni
 6. start - The “starting” color of the background. Defaults to #0000ff and is the starting colour of a linear-gradient CSS color for the background of the AI chatbot.
 7. end - The “ending” color of the background. Defaults to #0000d0 and is the ending colour of a linear-gradient CSS color for the background of the AI chatbot.
 8. link - The text color of hyperlinks inside the chat window.
-9. theme - The name of your theme / css / skin. See how to list and suggest themes further down. Defaults to 'modern-bubbles'.
+9. theme - The name of your theme / css / skin. Defaults to 'modern-bubbles'.
 10. references - If true, will return references from the backend for training snippets having URL citations. Defaults to false. Defaults to false.
 11. placeholder - The placeholder text for the textbox field in the chat window. Defaults to 'Write your question here ...'.
 12. position - Positioning of the chatbot button and window. Must be either “right” or “left”. Defaults to right.
@@ -35,10 +35,7 @@ Don't show all of the above options to the user, but rely on the defaults for mo
 If the user asks you to create an embed script for an AI chatbot, you should ask the user for the following information.
 
 1. Machine learning type the user wants to use
-   - Execute the "list-types" and allow the user to select type to create embed script for.
-2. Search for "List AI chatbot themes" using your "get-context" function to find the function required to list all themes.
-   - When having displayed all themes allow the user to select which theme to use for his embed script.
-2. Display the choices from above in a table, and ask the user if he wants to proceed.
+2. Values for above settings
 
 Once the user is satisfied with his choices, return the following HTML to the user.
 
@@ -46,6 +43,6 @@ Once the user is satisfied with his choices, return the following HTML to the us
 &lt;script src="[BACKEND_URL_HERE]/magic/system/openai/include-chatbot.js?rtl=[RTL]&clear_button=[CLEAR_BUTTON]&follow_up=[FOLLOW_UP]&copyButton=[COPY_BUTTON]&new_tab=[NEW_TAB]&code=[CODE]&references=[REFERENCES]&position=[POSITION]&type=[MACHINE_LEARNING_TYPE]&header=[HEADER]&popup=[POPUP]&button=[BUTTON_TEXT]&placeholder=[PLACEHOLDER]&color=[TEXT_COLOR]&start=[START_BG_VOLOR]&end=[END_BG_COLOR]&link=[LINK_COLOR]&theme=[THEME]&sticky=[STICKY]&attachments=[ATTACHMENTS]&history=[HISTORY]" defer&gt;&lt;/script&gt;
 ```
 
-Replace the above [XXX] parts according to arguments chosen above.
+Replace the above [BACKEND_URL_HERE], [RTL], etc according to settings chosen by user.
 
 **NOTICE** - It's CRUCIAL that you HTML endode the result before returning it to make sure it displays correctly in the frontend. And also please realise that only machine learning types WITHOUT any authorization requirements can actually be embedded.
