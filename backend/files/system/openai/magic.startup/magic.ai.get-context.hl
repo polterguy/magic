@@ -13,27 +13,9 @@ slots.create:magic.ai.get-context
    validators.string:x:@.arguments/*/prompt
       min:1
 
-   /*
-    * Verifying we've got any training snippets that are vectorized at all,
-    * and if not, returning nothing to caller.
-    */
+   // Finding vector model for type.
    .embeddings-model
    data.connect:[generic|magic]
-      data.scalar:select count(*) from ml_training_snippets where embeddings is not null and type = @type
-         @type:x:@.arguments/*/type
-      if
-         eq
-            convert:x:@data.scalar
-               type:int
-            .:int:0
-         .lambda
-
-            // There are zero snippets in our database that have been vectorized.
-            return
-               context
-               snippets
-
-      // Finding vector model for type.
       data.read
          table:ml_types
          columns
@@ -71,6 +53,7 @@ slots.create:magic.ai.get-context
                get-value:x:@.arguments/*/prompt
                .:" "
                get-value:x:@.arguments/*/search_postfix
+
    else
 
       // Not search postfix.
