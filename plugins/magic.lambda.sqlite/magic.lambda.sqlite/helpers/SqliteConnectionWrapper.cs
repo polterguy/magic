@@ -3,7 +3,7 @@
  */
 
 using System;
-using Aista.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 
 namespace magic.lambda.sqlite.helpers
 {

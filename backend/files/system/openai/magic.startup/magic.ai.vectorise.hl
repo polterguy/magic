@@ -69,7 +69,7 @@ slots.create:magic.ai.vectorise
                data.select:@"
 select id, prompt, completion
    from ml_training_snippets
-   where type = @type and id > @id and embedding is null order by id limit 20"
+   where type = @type and id > @id and embeddings is null order by id limit 20"
                   type:x:@.arguments/*/type
                   id:x:@.id
 
@@ -185,16 +185,17 @@ select id, prompt, completion
                               strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
                                  .:,
                               .:]
+                        .sql
+                        set-value:x:@.sql
+                           strings.concat
+                              .:"update ml_training_snippets set embeddings = vector_as_f32('"
+                              get-value:x:@.embedding
+                              .:"') where id = @id"
 
                         // Connecting to database again to add embeddings to existing ml_training_snippets record.
                         data.connect:[generic|magic]
-                           data.update
-                              table:ml_training_snippets
-                              values
-                                 embedding:x:@.embedding
-                              where
-                                 and
-                                    id.eq:x:@.dp/#/*/id
+                           data.execute:x:@.sql
+                              @id:x:@.dp/#/*/id
 
                         // Incrementing count.
                         math.increment:x:@.success
@@ -267,38 +268,6 @@ select id, prompt, completion
             args
                message:All training snippets was successfully vectorized
                type:info
-
-      // Messaging frontend to let it know we're about to index embeddings.
-      sockets.signal:x:@.arguments/*/feedback-channel
-         args
-            message:Indexing embeddings
-            type:info
-
-      // Inserting into vss_ml_training_snippets from ml_training_snippets.
-      .more:bool:true
-      while:x:@.more
-      
-         // Notice, we're only inserting 500 vectors in each go to avoid memory exhaustion of our cloudlet.
-         .sql:@"
-insert into vss_ml_training_snippets (rowid, embedding_vss)
-   select id as rowid, embedding as embedding_vss
-      from ml_training_snippets ts
-      where ts.embedding is not null and
-         type = @type and
-         not exists (select rowid from vss_ml_training_snippets as vss where ts.id = vss.rowid) limit 500"
-
-         // Executing SQL, ensuring we're not keeping database connection open for a long time.
-         data.connect:[generic|magic]
-            data.execute:x:@.sql
-               type:x:@.arguments/*/type
-
-            // Checking if there are more available items, and if not, aborting [while].
-            if
-               lt:x:@data.execute
-                  .:int:500
-               .lambda
-                  set-value:x:@.more
-                     .:bool:false
 
       // Checking if we've got a callback, and if so, executing it.
       if

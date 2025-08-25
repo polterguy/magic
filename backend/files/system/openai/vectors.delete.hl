@@ -14,12 +14,8 @@ validators.mandatory:x:@.arguments/*/type
 // Connecting to database.
 data.connect:[generic|magic]
 
-   // Deleting VSS data.
-   data.execute:delete from vss_ml_training_snippets where rowid in (select id as rowid from ml_training_snippets where type = @type)
-      @type:x:@.arguments/*/type
-
    // Deleting embeddings.
-   data.execute:update ml_training_snippets set embedding = null where type = @type
+   data.execute:update ml_training_snippets set embeddings = null where type = @type
       @type:x:@.arguments/*/type
 
 // Returning success to caller.

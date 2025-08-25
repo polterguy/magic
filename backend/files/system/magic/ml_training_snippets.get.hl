@@ -91,7 +91,7 @@ data.connect:[generic|magic]
          ml_training_snippets.uri
          ml_training_snippets.prompt
          ml_training_snippets.completion
-         ml_training_snippets.embedding
+         ml_training_snippets.embeddings
             as:embedding_vss
          ml_training_snippets.cached
          ml_training_snippets.meta

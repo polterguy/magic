@@ -377,11 +377,6 @@ slots.create:magic.ai.url.scrape
                   sleep:10
 
             // Deleting relevant records from VSS table and ml_training_snippets.
-            data.execute:@"
-   delete from vss_ml_training_snippets
-      where rowid in (select id as rowid from ml_training_snippets where type = @type and uri = @url)"
-               @type:x:@.arguments/*/type
-               @url:x:@.arguments/*/url
             data.delete
                table:ml_training_snippets
                where

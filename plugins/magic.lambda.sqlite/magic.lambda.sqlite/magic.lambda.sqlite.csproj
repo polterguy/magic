@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aista.Data.Sqlite" Version="17.0.1" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.0" />
     <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
     <ProjectReference Include="..\..\magic.data.common\magic.data.common\magic.data.common.csproj" />

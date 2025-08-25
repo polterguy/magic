@@ -3,41 +3,62 @@
  */
 
 using System.Runtime.InteropServices;
-using Aista.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using magic.lambda.sqlite;
+using magic.node;
+using magic.signals.contracts;
 
 namespace magic.library.internals
 {
     /*
      * Internal helper class to help wire up plugins for SQLite.
      */
-    internal class SQLiteInitializer : IInitializer
+     [Slot(Name = "sqlite.upgrade")]
+    internal class SQLiteInitializer : ISlot, IInitializer
     {
+        private static bool legacy = true;
+
+        public void Signal(ISignaler signaler, Node input)
+        {
+            legacy = false;
+        }
+
         public void Initialize(SqliteConnection connection)
         {
             connection.EnableExtensions();
             connection.Open();
-
-            // We don't have sqlite-vss on Windows :/
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            
+            if (legacy)
             {
-                if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    using (var cmd = connection.CreateCommand())
+                    if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
                     {
-                        var cmdTxt = @"select load_extension(""./sqlite-plugins/vector0-64"", ""sqlite3_vector_init"");select load_extension(""./sqlite-plugins/vss0-64"", ""sqlite3_vss_init"");";
-                        cmd.CommandText = cmdTxt;
-                        cmd.ExecuteNonQuery();
+                        using (var cmd = connection.CreateCommand())
+                        {
+                            var cmdTxt = @"select load_extension(""./sqlite-plugins/vector0-64"", ""sqlite3_vector_init"");select load_extension(""./sqlite-plugins/vss0-64"", ""sqlite3_vss_init"");";
+                            cmd.CommandText = cmdTxt;
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        using (var cmd = connection.CreateCommand())
+                        {
+                            var cmdTxt = @"select load_extension(""./sqlite-plugins/vector0"", ""sqlite3_vector_init"");select load_extension(""./sqlite-plugins/vss0"", ""sqlite3_vss_init"");";
+                            cmd.CommandText = cmdTxt;
+                            cmd.ExecuteNonQuery();
+                        }
                     }
                 }
-                else
+            }
+            else
+            {
+                using (var cmd = connection.CreateCommand())
                 {
-                    using (var cmd = connection.CreateCommand())
-                    {
-                        var cmdTxt = @"select load_extension(""./sqlite-plugins/vector0"", ""sqlite3_vector_init"");select load_extension(""./sqlite-plugins/vss0"", ""sqlite3_vss_init"");";
-                        cmd.CommandText = cmdTxt;
-                        cmd.ExecuteNonQuery();
-                    }
+                    var cmdTxt = @"select load_extension(""./sqlite-plugins/vector"", ""sqlite3_vector_init"")";
+                    cmd.CommandText = cmdTxt;
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
