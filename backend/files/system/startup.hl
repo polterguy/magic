@@ -41,3 +41,40 @@ for-each:x:./*/io.file.list-recursively/*
             log.error:Error while executing startup file
                exception:x:@.arguments/*/message
                file:x:@.dp/#
+
+// Making sure we upgrade to new SQLite vector library.
+sqlite.upgrade
+
+// Moving vectors into correct column. Notice, this will throw an exception if column doesn't exist.
+try
+   console.log:Moving embedding values into embeddings
+   data.connect:magic
+      .no:int:0
+      .continue:bool:true
+      while:x:@.continue
+         data.select:select id, embedding from ml_training_snippets where embeddings is null and embedding is not null limit 100
+         for-each:x:@data.select/*
+            strings.concat
+               .:"update ml_training_snippets set embeddings = vector_as_f32('"
+               get-value:x:@.dp/#/*/embedding
+               .:"') where id = "
+               get-value:x:@.dp/#/*/id
+            data.execute:x:@strings.concat
+         math.increment:x:@.no
+            .:int:100
+         if
+            lt
+               get-count:x:@data.select/*
+               .:int:100
+            .lambda
+               set-value:x:@.continue
+                  .:bool:false
+
+      // Deleting embedding column.
+      data.execute:alter table ml_training_snippets drop column embedding
+
+   console.log:Done moving embedding values into embeddings
+
+.catch
+   log.error:x:@.arguments/*/message
+   console.log:No legacy vectors remaining

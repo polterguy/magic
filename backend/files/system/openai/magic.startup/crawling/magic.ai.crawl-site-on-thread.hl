@@ -135,14 +135,6 @@ slots.create:magic.ai.crawl-site-on-thread
       strings.concat
          get-value:x:@.arguments/*/url
          .:%
-   data.connect:[generic|magic]
-      data.execute:@"
-delete from vss_ml_training_snippets
-where rowid in (select id as rowid from ml_training_snippets where type = @type and uri like @uri);
-delete from ml_training_snippets where type = @type and uri like @uri;"
-         type:x:@.arguments/*/type
-         uri:x:@.uri
-
    // Verifying we found at least one sitemap.
    if
       eq:x:@signal/*/has-sitemap

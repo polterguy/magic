@@ -72,16 +72,6 @@ data.connect:[generic|magic]
       limit:-1
    .sql
 
-   // Deleting records from vss shadow table.
-   set-value:x:@.sql
-      strings.concat
-         .:delete from vss_ml_training_snippets where rowid in(
-         get-value:x:@data.read
-         .:)
-   add:x:./*/data.execute
-      get-nodes:x:@data.read/*
-   data.execute:x:@.sql
-
    // Finally, deleting ml_training_snippets item from database.
    data.delete
       table:ml_training_snippets

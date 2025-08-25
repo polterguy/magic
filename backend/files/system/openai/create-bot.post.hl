@@ -404,13 +404,6 @@ try
                      // Forward evaluated further up.
                      .type:x:@.type
 
-                     // Deleting vectors.
-                     data.connect:[generic|magic]
-                        data.execute:@"
-delete from vss_ml_training_snippets
-   where rowid in (select id as rowid from ml_training_snippets where type = @type)"
-                           type:x:@.type
-
                      // Deleting ML type.
                      .task:x:@strings.concat
                      data.connect:[generic|magic]

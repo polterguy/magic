@@ -9,7 +9,7 @@ using magic.data.common.helpers;
 using magic.lambda.sqlite.helpers;
 using System.Linq;
 using magic.node.extensions;
-using Aista.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 
 namespace magic.lambda.sqlite
 {

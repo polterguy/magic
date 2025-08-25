@@ -41,7 +41,7 @@ slots.create:magic.db.sqlite.tables
    sqlite.connect:x:@.connection
 
       // Runs our query
-      sqlite.select:"select name from sqlite_master where type = 'table' and name != 'sqlite_sequence'"
+      sqlite.select:"select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' and name != '_sqliteai_vector'"
       set-name:x:@sqlite.select/*/*
          .:table
       return-nodes:x:@sqlite.select/*

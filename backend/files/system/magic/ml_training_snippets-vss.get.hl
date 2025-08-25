@@ -70,18 +70,13 @@ if
          public:bool:true
          status:x:@http.post
 
-// Converting from JSON string to byte array.
-floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
-
 // Opening up our database connection.
 data.connect:[generic|magic]
 
    .sql:@"
-select vss.distance, id, created, type, pushed, uri, prompt, completion, filename, cached, meta, embedding as embedding_vss
-   from vss_ml_training_snippets as vss
-    	inner join ml_training_snippets ts on ts.id = vss.rowid
-   where
-      vss_search(vss.embedding_vss, @embedding)"
+select vss.distance, ts.id, ts.created, ts.type, ts.pushed, ts.uri, ts.prompt, ts.completion, ts.filename, ts.cached, ts.meta, ts.embeddings as embedding_vss
+   from vector_full_scan('ml_training_snippets', 'embeddings', vector_as_f32(@embedding), 10) as vss
+    	inner join ml_training_snippets ts on ts.id = vss.rowid"
 
    // Further parametrising invocation if we should.
    if
@@ -96,14 +91,6 @@ select vss.distance, id, created, type, pushed, uri, prompt, completion, filenam
             .
                @type:x:@.arguments/*/type
    if
-      exists:x:@.arguments/*/limit
-      .lambda
-         set-value:x:@.sql
-            strings.concat
-               get-value:x:@.sql
-               .:" limit "
-               get-value:x:@.arguments/*/limit
-   if
       exists:x:@.arguments/*/offset
       .lambda
          set-value:x:@.sql
@@ -113,8 +100,16 @@ select vss.distance, id, created, type, pushed, uri, prompt, completion, filenam
                get-value:x:@.arguments/*/offset
 
    // Executing SQL towards database.
+   .vec
+   set-value:x:@.vec
+      strings.concat
+         .:[
+         strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
+            .:,
+         .:]
+   data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=384,type=FLOAT32,distance=L2')"
    data.select:x:@.sql
-      @embedding:x:@floatArray2bytes
+      @embedding:x:@.vec
 
    // Changing embedding to a boolean value to preserve bandwidth, and returning token count.
    for-each:x:@data.select/*
