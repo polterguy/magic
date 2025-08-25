@@ -72,12 +72,18 @@ data.connect:[generic|magic]
          throw:Could not create embeddings for model
 
    // Inserting embeddings for training snippet.
-   floatArray2bytes:x:@http.post/*/content/*/data/0/*/embedding/*
-   data.create
+   strings.concat
+      .:[
+      strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
+         .:,
+      .:]
+   data.update
       table:ml_training_snippets
       values
-         embeddings:x:@floatArray2bytes
-         rowid:x:@.arguments/*/id
+         embeddings:x:@strings.concat
+      where
+         and
+            id.eq:x:@.arguments/*/id
 
 // Returning success to caller.
 return
