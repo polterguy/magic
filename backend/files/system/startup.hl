@@ -76,5 +76,4 @@ try
    console.log:Done moving embedding values into embeddings
 
 .catch
-   log.error:x:@.arguments/*/message
    console.log:No legacy vectors remaining

@@ -2,462 +2,270 @@
 
 <h3 mat-dialog-title class="mb-3">Embed Chatbot or AI Search on your website</h3>
 
-<div mat-dialog-content class="content">
+<div mat-dialog-content class="content pb-2">
 
-  <mat-tab-group
-    mat-stretch-tabs
-    (selectedIndexChange)="selectedIndexChange($event)"
-    dynamicHeight
-    animationDuration="0ms">
+  <div class="row">
 
-    <mat-tab label="Chatbot Modern">
+    <mat-form-field class="col-6">
+      <span
+        matPrefix
+        matTooltip="Header of chat window"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        placeholder="Header  ..."
+        spellcheck="false"
+        [(ngModel)]="header"
+        autocomplete="off">
+    </mat-form-field>
 
-      <div class="row pt-4">
+    <mat-form-field class="col-6">
+      <span
+        matPrefix
+        matTooltip="Popup description"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        placeholder="Popup  ..."
+        spellcheck="false"
+        [(ngModel)]="popup"
+        autocomplete="off">
+    </mat-form-field>
 
-        <mat-form-field class="col-6">
-          <span
-            matPrefix
-            matTooltip="Header of chat window"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>edit</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            placeholder="Header  ..."
-            spellcheck="false"
-            [(ngModel)]="header"
-            autocomplete="off">
-        </mat-form-field>
+    <mat-form-field class="col-6">
+      <span
+        matPrefix
+        matTooltip="Button text, defaults to chat icon"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>touch_app</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        placeholder="Button text ..."
+        spellcheck="false"
+        [(ngModel)]="buttonTxt"
+        autocomplete="off">
+    </mat-form-field>
 
-        <mat-form-field class="col-6">
-          <span
-            matPrefix
-            matTooltip="Popup description"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>edit</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            placeholder="Popup  ..."
-            spellcheck="false"
-            [(ngModel)]="popup"
-            autocomplete="off">
-        </mat-form-field>
+    <mat-form-field class="col-6">
+      <span
+        matPrefix
+        matTooltip="Textbox placeholder"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>edit</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        placeholder="Textbox placeholder ..."
+        spellcheck="false"
+        [(ngModel)]="textboxPlaceholder"
+        autocomplete="off">
+    </mat-form-field>
 
-        <mat-form-field class="col-6">
-          <span
-            matPrefix
-            matTooltip="Button text, defaults to chat icon"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>touch_app</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            placeholder="Button text ..."
-            spellcheck="false"
-            [(ngModel)]="buttonTxt"
-            autocomplete="off">
-        </mat-form-field>
+  </div>
 
-        <mat-form-field class="col-6">
-          <span
-            matPrefix
-            matTooltip="Textbox placeholder"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>edit</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            placeholder="Textbox placeholder ..."
-            spellcheck="false"
-            [(ngModel)]="textboxPlaceholder"
-            autocomplete="off">
-        </mat-form-field>
+  <div class="row">
+    <mat-form-field class="col-4">
+      <span
+        matPrefix
+        matTooltip="Theme to use"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>palette</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <mat-select
+        [(ngModel)]="modernTheme"
+        placeholder="Theme ...">
+        <mat-option
+          *ngFor="let idx of modernThemes"
+          [value]="idx">
+          {{idx}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-      </div>
+    <mat-form-field class="col-4">
+      <span
+        matPrefix
+        matTooltip="Positioning of the chatbot"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>place</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <mat-select
+        [(ngModel)]="positioning"
+        placeholder="Positioning ...">
+        <mat-option value="right">
+          Bottom Right
+        </mat-option>
+        <mat-option value="left">
+          Bottom Left
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-      <div class="row">
-        <mat-form-field class="col-4">
-          <span
-            matPrefix
-            matTooltip="Theme to use"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>palette</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <mat-select
-            [(ngModel)]="modernTheme"
-            placeholder="Theme ...">
-            <mat-option
-              *ngFor="let idx of modernThemes"
-              [value]="idx">
-              {{idx}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+    <mat-form-field class="col-4">
+      <span
+        matPrefix
+        matTooltip="Animations on chatbot"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>place</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <mat-select
+        [(ngModel)]="animations"
+        placeholder="Animations ...">
+        <mat-option value="none">
+          No animation
+        </mat-option>
+        <mat-option value="ainiro_blink">
+          Blink
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-        <mat-form-field class="col-4">
-          <span
-            matPrefix
-            matTooltip="Positioning of the chatbot"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>place</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <mat-select
-            [(ngModel)]="positioning"
-            placeholder="Positioning ...">
-            <mat-option value="right">
-              Bottom Right
-            </mat-option>
-            <mat-option value="left">
-              Bottom Left
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+  </div>
 
-        <mat-form-field class="col-4">
-          <span
-            matPrefix
-            matTooltip="Animations on chatbot"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>place</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <mat-select
-            [(ngModel)]="animations"
-            placeholder="Animations ...">
-            <mat-option value="none">
-              No animation
-            </mat-option>
-            <mat-option value="ainiro_blink">
-              Blink
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+  <div class="d-flex justify-content-md-between align-items-md-center align-items-end">
 
-      </div>
+    <mat-form-field class="me-2">
+      <span
+        matPrefix
+        matTooltip="Background color primary"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>palette</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        [(colorPicker)]="startColor"
+        [style.background]="startColor"/>
+    </mat-form-field>
 
-      <div class="d-flex justify-content-md-between align-items-md-center align-items-end">
+    <mat-form-field class="me-2">
+      <span
+        matPrefix
+        matTooltip="Background color secondary"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>palette</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        [(colorPicker)]="endColor"
+        [style.background]="endColor"/>
+    </mat-form-field>
 
-        <mat-form-field class="me-2">
-          <span
-            matPrefix
-            matTooltip="Background color primary"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>palette</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            [(colorPicker)]="startColor"
-            [style.background]="startColor"/>
-        </mat-form-field>
+    <mat-form-field class="me-2">
+      <span
+        matPrefix
+        matTooltip="Text color"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>palette</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        [(colorPicker)]="foreColor"
+        [style.background]="foreColor"/>
+    </mat-form-field>
 
-        <mat-form-field class="me-2">
-          <span
-            matPrefix
-            matTooltip="Background color secondary"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>palette</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            [(colorPicker)]="endColor"
-            [style.background]="endColor"/>
-        </mat-form-field>
+    <mat-form-field>
+      <span
+        matPrefix
+        matTooltip="Hyperlink color"
+        class="d-flex flex-nowrap align-items-center justify-content-between me-2">
+        <mat-icon>palette</mat-icon>
+        <span class="text-muted">|</span>
+      </span>
+      <input
+        matInput
+        [(colorPicker)]="linkColor"
+        [style.background]="linkColor"/>
+    </mat-form-field>
 
-        <mat-form-field class="me-2">
-          <span
-            matPrefix
-            matTooltip="Text color"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>palette</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            [(colorPicker)]="foreColor"
-            [style.background]="foreColor"/>
-        </mat-form-field>
+  </div>
 
-        <mat-form-field>
-          <span
-            matPrefix
-            matTooltip="Hyperlink color"
-            class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-            <mat-icon>palette</mat-icon>
-            <span class="text-muted">|</span>
-          </span>
-          <input
-            matInput
-            [(colorPicker)]="linkColor"
-            [style.background]="linkColor"/>
-        </mat-form-field>
+  <div class="mt-3">
 
-      </div>
+    <mat-checkbox
+      [(ngModel)]="follow_up"
+      labelPosition="before"
+      class="me-3"
+      matTooltip="Have the chatbot suggest follow up questions"
+      color="primary">Follow up</mat-checkbox>
 
-      <div class="mt-3">
+    <mat-checkbox
+      [(ngModel)]="search"
+      labelPosition="before"
+      class="me-3"
+      matTooltip="Have the chatbot show references or citations"
+      color="primary">References</mat-checkbox>
 
-        <mat-checkbox
-          [(ngModel)]="follow_up"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Have the chatbot suggest follow up questions"
-          color="primary">Follow up</mat-checkbox>
+    <mat-checkbox
+      [(ngModel)]="rtl"
+      labelPosition="before"
+      class="me-3"
+      matTooltip="Right to left languages, such as Arabic, Hebrew, Farsi, etc"
+      color="primary">RTL</mat-checkbox>
 
-        <mat-checkbox
-          [(ngModel)]="search"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Have the chatbot show references or citations"
-          color="primary">References</mat-checkbox>
+    <mat-checkbox
+      [(ngModel)]="clear_button"
+      labelPosition="before"
+      class="me-3"
+      matTooltip="Add a 'clear chat button' to your chatbot"
+      color="primary">Clear</mat-checkbox>
 
-        <mat-checkbox
-          [(ngModel)]="rtl"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Right to left languages, such as Arabic, Hebrew, Farsi, etc"
-          color="primary">RTL</mat-checkbox>
+    <mat-checkbox
+      [(ngModel)]="copy_button"
+      labelPosition="before"
+      class="me-3"
+      matTooltip="Add a 'copy response button' to your chatbot's messages"
+      color="primary">Copy</mat-checkbox>
 
-        <mat-checkbox
-          [(ngModel)]="clear_button"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Add a 'clear chat button' to your chatbot"
-          color="primary">Clear</mat-checkbox>
+    <mat-checkbox
+      [(ngModel)]="new_tab"
+      labelPosition="before"
+      class="me-3"
+      matTooltip="Have the chatbot open up all links in a new browser tab"
+      color="primary">New tab</mat-checkbox>
 
-        <mat-checkbox
-          [(ngModel)]="copy_button"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Add a 'copy response button' to your chatbot's messages"
-          color="primary">Copy</mat-checkbox>
+    <mat-checkbox
+      [(ngModel)]="code"
+      labelPosition="before"
+      class="me-3"
+      matTooltip="Have the chatbot display highlighted code"
+      color="primary">Code</mat-checkbox>
 
-        <mat-checkbox
-          [(ngModel)]="new_tab"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Have the chatbot open up all links in a new browser tab"
-          color="primary">New tab</mat-checkbox>
+    <mat-checkbox
+      [(ngModel)]="sticky"
+      labelPosition="before"
+      class="me-3"
+      matTooltip="Opens the chatbot during navigation if it's already been opened on the previous page"
+      color="primary">Sticky</mat-checkbox>
 
-        <mat-checkbox
-          [(ngModel)]="code"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Have the chatbot display highlighted code"
-          color="primary">Code</mat-checkbox>
+    <mat-checkbox
+      [(ngModel)]="history"
+      labelPosition="before"
+      class="me-3"
+      matTooltip="The chatbot will remember conversations users have with it, and allow the user to continue or go back to these"
+      color="primary">History</mat-checkbox>
 
-        <mat-checkbox
-          [(ngModel)]="sticky"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Opens the chatbot during navigation if it's already been opened on the previous page"
-          color="primary">Sticky</mat-checkbox>
+    <mat-checkbox
+      [(ngModel)]="attachments"
+      labelPosition="before"
+      matTooltip="Allows user to upload PDF documents and images during conversations"
+      color="primary">Attachments</mat-checkbox>
 
-        <mat-checkbox
-          [(ngModel)]="history"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="The chatbot will remember conversations users have with it, and allow the user to continue or go back to these"
-          color="primary">History</mat-checkbox>
-
-        <mat-checkbox
-          [(ngModel)]="attachments"
-          labelPosition="before"
-          matTooltip="Allows user to upload PDF documents and images during conversations"
-          color="primary">Attachments</mat-checkbox>
-
-      </div>
-
-    </mat-tab>
-
-    <mat-tab label="Chatbot Legacy">
-
-      <mat-form-field class="w-100 standalone-field pt-4">
-        <span
-          matPrefix
-          matTooltip="Header of chat window"
-          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>edit</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <input
-          matInput
-          placeholder="Header ..."
-          spellcheck="false"
-          [(ngModel)]="header"
-          autocomplete="off">
-      </mat-form-field>
-
-      <mat-form-field class="w-100 standalone-field">
-        <span
-          matPrefix
-          matTooltip="Button text, defaults to chat icon"
-          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>touch_app</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <input
-          matInput
-          placeholder="Button text ..."
-          spellcheck="false"
-          [(ngModel)]="buttonTxt"
-          autocomplete="off">
-      </mat-form-field>
-
-      <mat-form-field class="w-100 standalone-field">
-        <span
-          matPrefix
-          matTooltip="Theme to use"
-          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>palette</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <mat-select
-          [(ngModel)]="theme"
-          placeholder="Theme ...">
-          <mat-option
-            *ngFor="let idx of themes"
-            [value]="idx">
-            {{idx}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <div class="mt-3">
-
-        <mat-checkbox
-          [(ngModel)]="search"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Have chatbot show references or citations"
-          color="primary">References</mat-checkbox>
-
-        <mat-checkbox
-          [(ngModel)]="chat"
-          labelPosition="before"
-          disabled="true"
-          class="me-3"
-          color="primary">Chat</mat-checkbox>
-
-        <mat-checkbox
-          [(ngModel)]="markdown"
-          labelPosition="before"
-          matTooltip="Use Markdown conversion in chatbot"
-          class="me-3"
-          color="primary">Markdown</mat-checkbox>
-
-        <mat-checkbox
-          [(ngModel)]="speech"
-          labelPosition="before"
-          class="me-3"
-          disabled="true"
-          color="primary">Speech</mat-checkbox>
-
-        <mat-checkbox
-          [(ngModel)]="rtl"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Right to left languages, such as Arabic, Hebrew, Farsi, etc"
-          color="primary">RTL</mat-checkbox>
-
-        <mat-checkbox
-          [(ngModel)]="has_button"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Show a submit button simplifying usage"
-          color="primary">Submit button</mat-checkbox>
-
-        <mat-checkbox
-          [(ngModel)]="stream"
-          labelPosition="before"
-          class="me-3"
-          matTooltip="Stream results, implying start writing out result immediately once it's available"
-          color="primary">Stream</mat-checkbox>
-
-      </div>
-
-    </mat-tab>
-
-    <mat-tab label="AI Search">
-
-      <mat-form-field class="w-100 standalone-field pt-4">
-        <span
-          matPrefix
-          matTooltip="Placeholder of search field"
-          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>edit</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <input
-          matInput
-          placeholder="Placeholder"
-          spellcheck="false"
-          [(ngModel)]="placeholder"
-          autocomplete="off">
-      </mat-form-field>
-  
-      <mat-form-field class="w-100 standalone-field">
-        <span
-          matPrefix
-          matTooltip="Button text"
-          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>touch_app</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <input
-          matInput
-          placeholder="Button text"
-          spellcheck="false"
-          [(ngModel)]="buttonTxtSearch"
-          autocomplete="off">
-      </mat-form-field>
-
-      <mat-form-field class="w-100 standalone-field">
-        <span
-          matPrefix
-          matTooltip="Theme to use"
-          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>palette</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <mat-select
-          [(ngModel)]="themeSearch"
-          placeholder="Theme">
-          <mat-option
-            *ngFor="let idx of themesSearch"
-            [value]="idx">
-            {{idx}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-  
-      <mat-form-field class="w-100 standalone-field">
-        <span
-          matPrefix
-          matTooltip="Max number of results"
-          class="d-flex flex-nowrap align-items-center justify-content-between me-2">
-          <mat-icon>timeline</mat-icon>
-          <span class="text-muted">|</span>
-        </span>
-        <input
-          matInput
-          placeholder="Max results"
-          type="number"
-          step="1"
-          [(ngModel)]="maxSearch"
-          autocomplete="off">
-      </mat-form-field>
-  
-    </mat-tab>
-
-  </mat-tab-group>
+  </div>
 
 </div>
 
