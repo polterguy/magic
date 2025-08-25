@@ -43,8 +43,6 @@ export class MachineLearningTrainingDataComponent implements OnInit {
     'uri',
     'tokens',
     'created',
-    'cached',
-    'pushed',
     'embedding_vss',
     'action',
   ];

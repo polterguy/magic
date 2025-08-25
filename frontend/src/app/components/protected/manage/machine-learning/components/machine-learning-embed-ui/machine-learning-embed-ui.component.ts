@@ -15,8 +15,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
  */
 @Component({
   selector: 'app-machine-learning-embed-ui',
-  templateUrl: './machine-learning-embed-ui.component.html',
-  styleUrls:['./machine-learning-embed-ui.component.scss']
+  templateUrl: './machine-learning-embed-ui.component.html'
 })
 export class MachineLearningEmbedUiComponent implements OnInit {
 
