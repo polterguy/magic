@@ -5,8 +5,6 @@
    offset:long
    filter:string
    type:string
-.description:CRUD read endpoint with paging, and VSS filtering selecting records from your ml_training_snippets table in your magic database returning id, created, type, pushed, uri, prompt, completion filtering on id, created, type, pushed, uri, prompt, completion with authentication and authorisation for root roles
-.type:crud-read
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -75,8 +73,24 @@ data.connect:[generic|magic]
 
    .sql:@"
 select vss.distance, ts.id, ts.created, ts.type, ts.pushed, ts.uri, ts.prompt, ts.completion, ts.filename, ts.cached, ts.meta, ts.embeddings as embedding_vss
-   from vector_full_scan('ml_training_snippets', 'embeddings', vector_as_f32(@embedding), 10) as vss
-    	inner join ml_training_snippets ts on ts.id = vss.rowid"
+   from vector_full_scan('ml_training_snippets', 'embeddings', vector_as_f32(@embedding), {{limit}}) as vss
+    	inner join ml_training_snippets ts on ts.id = vss.rowid where 1"
+
+   // Making sure we get enough records.
+   if
+      exists:x:@.arguments/*/offset
+      .lambda
+         set-value:x:@.sql
+            strings.replace:x:@.sql
+               .:{{limit}}
+               math.add
+                  get-value:x:@.arguments/*/offset
+                  get-value:x:@.arguments/*/limit
+   else
+      set-value:x:@.sql
+         strings.replace:x:@.sql
+            .:{{limit}}
+            .:10
 
    // Further parametrising invocation if we should.
    if
@@ -96,7 +110,7 @@ select vss.distance, ts.id, ts.created, ts.type, ts.pushed, ts.uri, ts.prompt, t
          set-value:x:@.sql
             strings.concat
                get-value:x:@.sql
-               .:" offset "
+               .:" limit 10 offset "
                get-value:x:@.arguments/*/offset
 
    // Executing SQL towards database.
@@ -107,7 +121,8 @@ select vss.distance, ts.id, ts.created, ts.type, ts.pushed, ts.uri, ts.prompt, t
          strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
             .:,
          .:]
-   data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=L2')"
+   data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=SQUARED_L2')"
+   log.info:x:@.sql
    data.select:x:@.sql
       @embedding:x:@.vec
 
