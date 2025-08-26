@@ -30,7 +30,7 @@ try
                   supervised:int:1
                   cached:int:0
                   auth:root
-                  threshold:decimal:0.4
+                  threshold:decimal:0.3
                   greeting:Hi there, I am your virtual AI-based software development assistant. How can I help you?
                   system_message:x:@io.file.load
 
@@ -49,7 +49,7 @@ try
                supervised:int:1
                cached:int:0
                auth:root
-               threshold:decimal:0.4
+               threshold:decimal:0.3
                system_message:x:@io.file.load
             where
                and
