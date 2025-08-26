@@ -30,9 +30,11 @@ namespace magic.lambda.sqlite
             using (var shutdownLock = new ShutdownLock())
             {
                 var source = signaler.Peek<SqliteConnectionWrapper>("sqlite.connect").Connection;
-                using (var destination = new SqliteConnection(string.Format(@"Data Source=files/data/{0};", input.GetEx<string>())))
+                var name = input.GetEx<string>();
+                using (var destination = new SqliteConnection(string.Format(@"Data Source=files/data/{0};", name)))
                 {
-                    source.BackupDatabase(destination);
+                    // TODO: Implement!!
+                    // source.BackupDatabase(destination, name, );
                     return Task.CompletedTask;
                 }
             }

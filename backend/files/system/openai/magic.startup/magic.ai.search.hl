@@ -95,7 +95,7 @@ select vss.distance, ts.prompt, ts.uri
          .:@"vss.distance < @threshold
 group by ts.uri
 order by vss.distance"
-      data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=384,type=FLOAT32,distance=L2');"
+      data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=L2');"
       .vec
       set-value:x:@.vec
          strings.concat

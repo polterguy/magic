@@ -130,7 +130,7 @@ slots.create:magic.ai.get-context
    data.connect:[generic|magic]
 
       // Initializing table.
-      data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=384,type=FLOAT32,distance=L2');"
+      data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=L2');"
 
       // Converting embeddings to a byte array of floats, since this is how we store embeddings in SQLite.
       math.subtract
