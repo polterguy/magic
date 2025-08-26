@@ -18,52 +18,52 @@ namespace magic.library.internals
      [Slot(Name = "sqlite.upgrade")]
     internal class SQLiteInitializer : ISlot, IInitializer
     {
-        private static bool legacy = true;
-        private static readonly SemaphoreSlim _extGate = new(1, 1);
+        private static bool _legacy = true;
+        private static readonly SemaphoreSlim _lock = new(1, 1);
 
         public void Signal(ISignaler signaler, Node input)
         {
-            legacy = false;
+            _legacy = false;
         }
 
-        public void Initialize(SqliteConnection connection)
+        public async Task Initialize(SqliteConnection connection)
         {
-            connection.Open();
-            connection.EnableExtensions(true);
-            
-            if (legacy)
-            {
-                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-                    {
-                        connection.LoadExtension("./sqlite-plugins/vector0-64");
-                        connection.LoadExtension("./sqlite-plugins/vss0-64");
-                    }
-                    else
-                    {
-                        connection.LoadExtension("./sqlite-plugins/vector0");
-                        connection.LoadExtension("./sqlite-plugins/vss0");
-                    }
-                }
-            }
-            else
-            {
-                EnsureVectorLoadedAsync(connection).ConfigureAwait(false);
-            }
+            await connection.OpenAsync();
+            await EnsureVectorLoadedAsync(connection).ConfigureAwait(false);
         }
 
+        /*
+         * Ensures serialized initialization of vector lib.
+         */
         private static async Task EnsureVectorLoadedAsync(SqliteConnection connection)
         {
-            await _extGate.WaitAsync().ConfigureAwait(false);
+            await _lock.WaitAsync().ConfigureAwait(false);
             try
             {
-                connection.EnableExtensions(true);
-                connection.LoadExtension("./sqlite-plugins/vector");
+                if (_legacy)
+                {
+                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                        {
+                            connection.LoadExtension("./sqlite-plugins/vector0-64");
+                            connection.LoadExtension("./sqlite-plugins/vss0-64");
+                        }
+                        else
+                        {
+                            connection.LoadExtension("./sqlite-plugins/vector0");
+                            connection.LoadExtension("./sqlite-plugins/vss0");
+                        }
+                    }
+                }
+                else
+                {
+                    connection.LoadExtension("./sqlite-plugins/vector");
+                }
             }
             finally
             {
-                _extGate.Release();
+                _lock.Release();
             }
         }
     }

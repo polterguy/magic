@@ -3,13 +3,12 @@
  */
 
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 using magic.data.common.helpers;
 using magic.lambda.sqlite.helpers;
-using System.Linq;
-using magic.node.extensions;
-using Microsoft.Data.Sqlite;
 
 namespace magic.lambda.sqlite
 {
@@ -33,8 +32,7 @@ namespace magic.lambda.sqlite
                 var name = input.GetEx<string>();
                 using (var destination = new SqliteConnection(string.Format(@"Data Source=files/data/{0};", name)))
                 {
-                    // TODO: Implement!!
-                    // source.BackupDatabase(destination, name, );
+                    source.BackupDatabase(destination);
                     return Task.CompletedTask;
                 }
             }
