@@ -783,7 +783,10 @@
           switch (obj.integration_type) {
 
             default:
-              this.addMessage(obj.text, 'ainiro_machine ' + obj.integration_type, true);
+              this.addMessage(obj.text, 'ainiro_machine integration ' + obj.integration_type, true);
+              const surf = document.getElementById('ainiro_chat_surf');
+              const html = surf.innerHTML;
+              sessionStorage.setItem('ainiro_chatbot.session', html);
               break;
           }
         }

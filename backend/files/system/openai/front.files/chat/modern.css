@@ -325,6 +325,12 @@ html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine:after
   background-image: url('https://ainiro.io/assets/images/misc/machine5.png');
   left: -18px;
 }
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine.integration:after {
+  background-image: url('https://ainiro.io/assets/images/misc/human5.png');
+}
+html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_machine.integration.slack:after {
+  background-image: url('https://ainiro.io/assets/images/misc/slack2.png');
+}
 html>body.ainiro_bdy>div.ainiro>div.ainiro_chat_surface>div.ainiro_human {
   margin-left: 0;
 }
