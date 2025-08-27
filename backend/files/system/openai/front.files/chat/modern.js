@@ -783,7 +783,7 @@
           switch (obj.integration_type) {
 
             default:
-              this.addMessage(obj.text, 'ainiro_machine', true);
+              this.addMessage(obj.text, 'ainiro_machine ' + obj.integration_type, true);
               break;
           }
         }
