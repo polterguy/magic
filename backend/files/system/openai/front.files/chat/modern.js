@@ -777,6 +777,15 @@
           this.response = this.response.replace('<span class="ainiro_function_waiting ainiro_function_animate"><i class="ainiro-icofont ainiro-icofont-web"></i>Waiting ...</span>', '');
           obj.message = '<span class="ainiro_function_failed"><i class="ainiro-icofont ainiro-icofont-close"></i>' + obj.function_error + '</span>\n\n';
 
+        } else if (obj.type === 'integration') {
+
+          // Some sort of integration message.
+          switch (obj.integration_type) {
+
+            default:
+              this.addMessage(obj.text, 'ainiro_machine', true);
+              break;
+          }
         }
 
         // Verifying we've got some sort of message given.
@@ -1130,9 +1139,20 @@
       }
       el.className = cls;
 
-      // Adding message to surface container.
-      const surf = document.getElementById('ainiro_chat_surf');
-      surf.appendChild(el);
+      // Checking if we've got "ainiro_starter" element, at which point we insert the message *BEFORE* these.
+      const starters = document.getElementById('ainiro_starter');
+      if (starters) {
+
+        // Appending message to surface container.
+        const surf = document.getElementById('ainiro_chat_surf');
+        surf.insertBefore(el, starters);
+
+      } else {
+
+        // Appending message to surface container.
+        const surf = document.getElementById('ainiro_chat_surf');
+        surf.appendChild(el);
+      }
     },
 
     /*
