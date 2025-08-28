@@ -9,11 +9,11 @@ The above is a screenshot of the integrated AI agent that allows you to.
 
 * Create and maintain your databases
 * Create and maintain APIs
-* Create and maintain AI agents, AI chatbots, and everything Magic can do
+* Create and maintain AI agents, AI chatbots, and most things Magic can do
 
 ## CRUD generator
 
-In addition to its generative AI capabilities, Magic also comes with a CRUD generator, allowing you to point it at your database, click a button, and wrap all your tables into CRUD endpoints. Combined with its AI capabilities, this can sometimes save you 90% of your time when delivering backend APIs. Magic is built on top of .Net 9 and Angular.
+In addition to its generative AI capabilities, Magic also comes with a CRUD generator, allowing you to point it at your database, click a button, and wrap all your tables into CRUD endpoints. Combined with its AI capabilities, this can sometimes save you 90% of your time when delivering backend APIs.
 
 ![CRUD generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/backend-crud.jpg)
 
@@ -24,6 +24,8 @@ Magic contains its own LLM that allows for generating Hyperlambda (backend) code
 The concept is you provide a comment and description for what your Hyperlambda file should do. Then you click generate, and the LLM will automatically create code encapsulating your use case. Afterwards you can modify the code as you need. To pull this through, we actually fine tuned and created our own LLM model based upon OpenAI's gpt-4.1-mini, which makes it extremely cost effective and fast.
 
 ![AI code generator](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-generated-code.png)
+
+Notice, at some point we'll have to purely logically start charging for access to this LLM, since you'll be using our tokens during inference, but for the time being the costs are so low that we're paying them for you.
 
 ## Hyperlambda
 
