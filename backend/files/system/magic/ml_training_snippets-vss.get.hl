@@ -122,7 +122,6 @@ select vss.distance, ts.id, ts.created, ts.type, ts.pushed, ts.uri, ts.prompt, t
             .:,
          .:]
    data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine')"
-   log.info:x:@.sql
    data.select:x:@.sql
       @embedding:x:@.vec
 

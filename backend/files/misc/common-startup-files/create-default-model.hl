@@ -16,7 +16,7 @@ try
          not-exists:x:@data.read/*
          .lambda
 
-            // Creating default generic model.
+            // Creating default generic type.
             data.create
                table:ml_types
                values
@@ -28,6 +28,7 @@ try
                   max_function_invocations:int:100
                   temperature:decimal:0.1
                   supervised:int:1
+                  vector_model:text-embedding-3-small
                   cached:int:0
                   auth:root
                   threshold:decimal:0.3
@@ -47,10 +48,20 @@ try
                max_function_invocations:int:100
                temperature:decimal:0.1
                supervised:int:1
+               vector_model:text-embedding-3-small
                cached:int:0
                auth:root
                threshold:decimal:0.3
                system_message:x:@io.file.load
+            where
+               and
+                  type.eq:default
+
+         // Deleting vectors for training snippets for 'default' type, which triggers re-vectorization of the type.
+         data.update
+            table:ml_training_snippets
+            values
+               embeddings
             where
                and
                   type.eq:default

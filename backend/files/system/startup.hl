@@ -73,6 +73,10 @@ try
       // Deleting embedding column.
       data.execute:alter table ml_training_snippets drop column embedding
 
+      // Ensuring table is quantized, in case it contains records.
+      data.execute;"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine')"
+      data.execute;"select vector_quantize_preload('ml_training_snippets', 'embeddings')"
+
    console.log:Done moving embedding values into embeddings
 
 .catch

@@ -1,8 +1,0 @@
-
-/*
- * Ensures embeddings is preloaded into memory.
- */
-data.connect:magic
-   data.execute:@"
-select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine');
-select vector_quantize_preload('ml_training_snippets', 'embeddings')"
