@@ -73,7 +73,7 @@ data.connect:[generic|magic]
 
    .sql:@"
 select vss.distance, ts.id, ts.created, ts.type, ts.pushed, ts.uri, ts.prompt, ts.completion, ts.filename, ts.cached, ts.meta, ts.embeddings as embedding_vss
-   from vector_full_scan('ml_training_snippets', 'embeddings', vector_as_f32(@embedding), {{limit}}) as vss
+   from vector_quantize_scan('ml_training_snippets', 'embeddings', vector_as_f32(@embedding), {{limit}}) as vss
     	inner join ml_training_snippets ts on ts.id = vss.rowid where 1"
 
    // Making sure we get enough records.

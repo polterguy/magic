@@ -84,6 +84,10 @@ data.connect:[generic|magic]
       where
          and
             id.eq:x:@.arguments/*/id
+   data.execute:@"
+select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine');
+select vector_quantize('ml_training_snippets', 'embeddings', 'max_memory=100MB');
+select vector_quantize_preload('ml_training_snippets', 'embeddings')"
 
 // Returning success to caller.
 return

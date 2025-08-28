@@ -228,6 +228,25 @@ select id, prompt, completion
             message:Done creating embeddings for your model
             type:success
 
+      // Signaling frontend about quantisation process.
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:Quantizing your type for faster retrieval
+            type:info
+
+      // Quantizing type.
+      data.connect:magic
+         data.execute:@"
+select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine');
+select vector_quantize('ml_training_snippets', 'embeddings', 'max_memory=100MB');
+select vector_quantize_preload('ml_training_snippets', 'embeddings')"
+
+      // Signaling frontend about quantisation process.
+      sockets.signal:x:@.arguments/*/feedback-channel
+         args
+            message:Done quantizing your type
+            type:info
+
       // Signaling frontend.
       strings.concat
          .:"Done vectorising model '"
