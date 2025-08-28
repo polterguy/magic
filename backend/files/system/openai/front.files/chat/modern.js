@@ -787,6 +787,7 @@
               const surf = document.getElementById('ainiro_chat_surf');
               const html = surf.innerHTML;
               sessionStorage.setItem('ainiro_chatbot.session', html);
+              this.scrollToBottom(true, true);
               break;
           }
         }
