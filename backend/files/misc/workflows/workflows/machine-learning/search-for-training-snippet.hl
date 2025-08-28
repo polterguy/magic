@@ -24,6 +24,19 @@ set-value:x:@.token
       .:"Bearer "
       config.get:"magic:openai:key"
 
+// Figuring out model to use.
+.model
+data.connect:magic
+   data.read
+      table:ml_types
+      columns
+         type
+      where
+         and
+            type.eq:x:@.arguments/*/type
+   set-value:x:@.model
+      get-value:x:@data.read/*/*/type
+
 // Retrieving embedding for prompt.
 http.post:"https://api.openai.com/v1/embeddings"
    headers
@@ -31,7 +44,7 @@ http.post:"https://api.openai.com/v1/embeddings"
       Content-Type:application/json
    payload
       input:x:@.arguments/*/query
-      model:text-embedding-ada-002
+      model:x:@.type
    convert:true
 
 // Sanity checking above invocation.

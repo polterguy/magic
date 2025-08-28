@@ -159,7 +159,7 @@ try
             cached:int:0
             use_embeddings:int:1
             threshold:decimal:0.3
-            vector_model:text-embedding-ada-002
+            vector_model:text-embedding-3-small
             system_message:x:@.arguments/*/flavor
             greeting:Hi there, how can I help you?
             conversation_starters:@"* What can I ask you about?
