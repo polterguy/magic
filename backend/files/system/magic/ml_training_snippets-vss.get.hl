@@ -73,24 +73,9 @@ data.connect:[generic|magic]
 
    .sql:@"
 select vss.distance, ts.id, ts.created, ts.type, ts.pushed, ts.uri, ts.prompt, ts.completion, ts.filename, ts.cached, ts.meta, ts.embeddings as embedding_vss
-   from vector_quantize_scan('ml_training_snippets', 'embeddings', vector_as_f32(@embedding), {{limit}}) as vss
-    	inner join ml_training_snippets ts on ts.id = vss.rowid where 1"
-
-   // Making sure we get enough records.
-   if
-      exists:x:@.arguments/*/offset
-      .lambda
-         set-value:x:@.sql
-            strings.replace:x:@.sql
-               .:{{limit}}
-               math.add
-                  get-value:x:@.arguments/*/offset
-                  get-value:x:@.arguments/*/limit
-   else
-      set-value:x:@.sql
-         strings.replace:x:@.sql
-            .:{{limit}}
-            .:10
+   from ml_training_snippets ts 
+      inner join vector_quantize_scan_stream('ml_training_snippets', 'embeddings', vector_as_f32(@embedding)) as vss on vss.rowid = ts.id
+   where 1"
 
    // Further parametrising invocation if we should.
    if
@@ -104,6 +89,10 @@ select vss.distance, ts.id, ts.created, ts.type, ts.pushed, ts.uri, ts.prompt, t
          add:x:@if/./*/data.select
             .
                @type:x:@.arguments/*/type
+   set-value:x:@.sql
+      strings.concat
+         get-value:x:@.sql
+         .:" order by vss.distance"
    if
       exists:x:@.arguments/*/offset
       .lambda
@@ -112,6 +101,11 @@ select vss.distance, ts.id, ts.created, ts.type, ts.pushed, ts.uri, ts.prompt, t
                get-value:x:@.sql
                .:" limit 10 offset "
                get-value:x:@.arguments/*/offset
+   else
+      set-value:x:@.sql
+         strings.concat
+            get-value:x:@.sql
+            .:" limit 10"
 
    // Executing SQL towards database.
    .vec

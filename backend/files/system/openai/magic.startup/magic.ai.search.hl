@@ -87,14 +87,14 @@ slots.create:magic.ai.search
       strings.concat
          .:@"
 select vss.distance, ts.prompt, ts.uri
-	from vector_quantize_scan('ml_training_snippets', 'embeddings', vector_as_f32(@embedding), 10) as vss
+	from vector_quantize_scan_stream('ml_training_snippets', 'embeddings', vector_as_f32(@embedding)) as vss
     	inner join ml_training_snippets ts on ts.id = vss.rowid
    where
       ts.type = @type and "
          get-value:x:@.prefix-url
          .:@"vss.distance < @threshold
 group by ts.uri
-order by vss.distance"
+order by vss.distance limit 25"
       data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine');"
       .vec
       set-value:x:@.vec

@@ -139,13 +139,14 @@ slots.create:magic.ai.get-context
       strings.concat
          .:@"
 select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cached
-	from vector_quantize_scan('ml_training_snippets', 'embeddings', vector_as_f32(@embedding), 20) as vss
+	from vector_quantize_scan_stream('ml_training_snippets', 'embeddings', vector_as_f32(@embedding)) as vss
     	inner join ml_training_snippets ts on ts.id = vss.rowid
    where
       ts.type = @type and
       ts.embeddings is not null and
       vss.distance < @threshold"
          get-value:x:@.tail
+         .:" limit 25"
       strings.concat
          .:[
          strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
