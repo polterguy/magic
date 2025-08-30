@@ -19,11 +19,8 @@ import { CodemirrorActionsService } from 'src/app/services/codemirror-actions.se
 })
 export class MachineLearningEditCacheComponent implements OnInit {
 
-  train: boolean = false;
-  cached: boolean = false;
   ready: boolean = false;
   model: HlModel;
-  preview: boolean = false;
 
   constructor(
     private generalService: GeneralService,
@@ -33,12 +30,6 @@ export class MachineLearningEditCacheComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
-
-    // Checking if we're supposed to preview items or not.
-    const prev = localStorage.getItem('preview-snippets');
-    if (prev === 'true') {
-      this.preview = true;
-    }
 
     // Checking if we have a registered CodeMirror editor for type.
     const res = this.codemirrorActionsService.getActions(null, this.data.type);
@@ -52,12 +43,6 @@ export class MachineLearningEditCacheComponent implements OnInit {
         this.ready = true;
       }, 500);
     }
-  }
-
-  previewChanged() {
-
-    // Storing value to localStorage
-    localStorage.setItem('preview-snippets', this.preview ? 'true' : 'false');
   }
 
   previous () {
@@ -122,37 +107,6 @@ export class MachineLearningEditCacheComponent implements OnInit {
   }
 
   save() {
-
-    if (this.train) {
-
-      // Creating training data before we save request.
-      this.machineLearningTrainingService.ml_training_snippets_create({
-        prompt: this.data.prompt,
-        completion: this.ready ? this.model.hyperlambda : this.data.completion,
-        type: this.data.type,
-      }).subscribe({
-        next: () => {
-
-          this.saveImplementation();
-        },
-        error: () => {
-
-          this.generalService.hideLoading();
-          this.generalService.showFeedback('Something went wrong as we tried to create training data', 'errorMessage');
-        }
-      });
-
-    } else {
-
-      this.saveImplementation();
-    }
-  }
-
-  /*
-   * Private helper methods.
-   */
-
-  private saveImplementation() {
 
     this.dialogRef.close({
       id: this.data.id,
