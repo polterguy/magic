@@ -1,9 +1,0 @@
-
-// Returns the Magic CAPTCHA JavaScript library to caller.
-.arguments
-   v:string
-
-add:x:./*/execute-file
-   get-nodes:x:@.arguments/*
-execute-file:/system/misc/magic-captcha.js.get.hl
-return:x:-

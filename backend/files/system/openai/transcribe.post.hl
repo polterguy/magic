@@ -16,8 +16,6 @@
    referrer:string
    whisper:*
    language:string
-.type:internal
-.description:Transcribes the specified file using OpenAI Whisper API
 
 // Retrieving token used to invoke OpenAI.
 config.get:"magic:openai:key"

@@ -1,6 +1,6 @@
 
 /*
- * Answers a single question from a questionnaire.
+ * Saves an answer from a single questionnaire question, storing for later.
  */
 .arguments
    type:string
@@ -10,7 +10,6 @@
    answer:string
    context:int
    recaptcha_response:string
-.description:Answers a single question from a questionnaire
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/type

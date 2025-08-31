@@ -5,8 +5,6 @@
 .arguments
    content:string
    session:string
-.type:internal
-.description:Speaks the specified content using OpenAI TTS
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/content

@@ -1,6 +1,6 @@
 
 /*
- * Returns the history for the currently authenticated user.
+ * Sets the active session and returns the history for the currently authenticated user.
  */
 .arguments
    session_id:string
