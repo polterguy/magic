@@ -426,6 +426,12 @@
           if (onAfter) {
             onAfter();
           }
+
+          // Disabling button to avoid race conditions.
+          const btn = document.getElementById('ainiro_send');
+          btn.disabled = false;
+
+          // Storing the fact the chatbot is open into session, in case we've got a "sticky" chatbot.
           sessionStorage.setItem('ainiro_state', 'open');
         });
       });
@@ -455,7 +461,7 @@
             }
           };
           marked.use({
-              renderer,
+            renderer,
           });
         }
         marked.use(extendedTables());
@@ -546,6 +552,10 @@
      */
     _show: function(onAfter) {
 
+      // Disabling button to avoid race conditions.
+      const btn = document.getElementById('ainiro_send');
+      btn.disabled = true;
+
       // Showing chat window.
       const wnd = document.getElementById('ainiro_chat_wnd');
       wnd.classList.add('show_ainiro_chatbot');
@@ -601,15 +611,6 @@
        */
       if (this.execQuestionnaires) {
 
-        /*
-         * We should initialise chatbot with initial questionnaires and
-         * conversation starters.
-         * 
-         * First we disable send button while we're initializing chatbot.
-         */
-        const btn = document.getElementById('ainiro_send');
-        btn.disabled = true;
-
         // Fetching questionnaire for type from backend.
         fetch(
           this.ainiro_settings.url +
@@ -626,9 +627,6 @@
             // Making sure we have a questionnaire for type.
             if (!res || res === '') {
 
-              // Enabling button again.
-              btn.disabled = false;
-
               // Adding conversation starters.
               if (this.initSession) {
                 this.addConversationStarters(onAfter);
@@ -643,9 +641,6 @@
               // Making sure we have a questionnaire for type.
               if (res.questions.length === 0) {
 
-                // No questionnaire for type.
-                btn.disabled = false;
-
                 // Adding conversation starters.
                 if (this.initSession) {
                   this.addConversationStarters(onAfter);
@@ -658,9 +653,6 @@
                 // Checking if we should run through questionnaire, and if not, returning early.
                 const previous = localStorage.getItem('ainiro-questionnaire.' + res.name);
                 if (previous && res.type === 'single-shot') {
-
-                  // Single-shot questionnaire and user has already answered it, no questionnaire.
-                  btn.disabled = false;
 
                   // Trying to add conversation starters.
                   if (this.initSession) {
