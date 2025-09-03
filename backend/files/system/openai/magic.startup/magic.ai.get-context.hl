@@ -146,7 +146,7 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
       ts.embeddings is not null and
       vss.distance < @threshold"
          get-value:x:@.tail
-         .:" limit 25"
+         .:" order by vss.distance limit 25"
       strings.concat
          .:[
          strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
