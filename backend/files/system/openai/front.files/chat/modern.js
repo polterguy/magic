@@ -303,6 +303,7 @@
           this.rawFiles = null;
           attBtn.classList.remove('ainiro_hidden');
           attRem.classList.add('ainiro_hidden');
+          fileInp.value = null;
         });
         attRem.innerHTML = '<i class="ainiro-icofont-duotone ainiro-icofont-purge ainiro-icofont-lg"></i>';
         chatForm.appendChild(attRem);
