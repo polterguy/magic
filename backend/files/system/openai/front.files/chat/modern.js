@@ -314,7 +314,9 @@
 
           // Removing text of upload file button.
           const lbl = document.getElementById('ainiro_filename_label');
-          lbl.innerHTML = '';
+          if (lbl) {
+            lbl.innerHTML = '';
+          }
         });
         attRem.innerHTML = '<i class="ainiro-icofont-duotone ainiro-icofont-purge ainiro-icofont-lg"></i>';
         chatForm.appendChild(attRem);
@@ -1188,7 +1190,9 @@
 
       // Removing text of upload file button.
       const lbl = document.getElementById('ainiro_filename_label');
-      lbl.innerHTML = '';
+      if (lbl) {
+        lbl.innerHTML = '';
+      }
 
       // Adding query to surface.
       this.addMessage(txtEl.value, 'ainiro_human');
