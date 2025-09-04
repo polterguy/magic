@@ -29,6 +29,10 @@ namespace magic.lambda.http.services.helpers
             Node payloadNode,
             string slotName)
         {
+            // Short circuiting if we have no nodes.
+            if (!payloadNode.Children.Any())
+                return "";
+
             /*
              * Automatically [unwrap]'ing all nodes, since there are no reasons why you'd want
              * to pass in an expression as JSON token to an endpoint.

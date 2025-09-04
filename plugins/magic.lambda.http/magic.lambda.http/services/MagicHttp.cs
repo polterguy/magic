@@ -391,10 +391,6 @@ namespace magic.lambda.http.services
             // Checking if caller supplied a [payload] value or not, alternatives are structured lambda object.
             if (payloadNode.Value == null)
             {
-                // Verifying user supplied some sort of structured lambda object type of content.
-                if (!payloadNode.Children.Any())
-                    throw new HyperlambdaException($"No [payload] value or children supplied to [{input.Name}]");
-
                 // Figuring out Content-Type of request payload to make sure we correctly transform into the specified value.
                 var contentType = headers.ContainsKey("Content-Type") ?
                     ContentType.Parse(headers["Content-Type"]) :
@@ -409,8 +405,7 @@ namespace magic.lambda.http.services
             else
             {
                 // [payload] contains a value object of some sort.
-                return payloadNode?.GetEx<object>() ??
-                    throw new HyperlambdaException($"No [payload] value supplied to [{input.Name}]");
+                return payloadNode?.GetEx<object>();
             }
         }
 
@@ -422,7 +417,7 @@ namespace magic.lambda.http.services
             // If no [content] was given we check if caller supplied a [filename] argument.
             var filename = input.Children.FirstOrDefault(x => x.Name == "filename")?.GetEx<string>();
             if (filename == null)
-                throw new HyperlambdaException($"No [payload] or [filename] argument supplied to [{input.Name}]");
+              return "";
 
             // Caller supplied a [filename] argument, hence using it as a stream content object.
             if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(filename)))
