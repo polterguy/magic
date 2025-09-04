@@ -731,3 +731,11 @@ html>body.ainiro_bdy>div.ainiro>div.ainiro_sessions_list ul li a {
   color:var(--ainiro-link);
   font-size: small;
 }
+
+/* Upload file label */
+html>body.ainiro_bdy>div.ainiro>div.ainiro_filename {
+  text-align: right;
+  margin-top: -25px;
+  margin-right: 35px;
+  color: var(--ainiro-color);
+}

@@ -271,6 +271,12 @@
       // Attachments button.
       if (this.ainiro_settings.attachments === true) {
 
+        // Show filename label.
+        const lbl = document.createElement('div');
+        lbl.className = 'ainiro_filename';
+        lbl.id = 'ainiro_filename_label';
+        chatWindow.appendChild(lbl);
+
         // File upload control.
         const fileInp = document.createElement('input');
         fileInp.id = 'ainiro_upload';
@@ -282,6 +288,7 @@
           this.rawFiles = files;
           attBtn.classList.add('ainiro_hidden');
           attRem.classList.remove('ainiro_hidden');
+          lbl.innerHTML = ev.target.files[0].name;
         });
         chatForm.appendChild(fileInp);
 
@@ -304,6 +311,10 @@
           attBtn.classList.remove('ainiro_hidden');
           attRem.classList.add('ainiro_hidden');
           fileInp.value = null;
+
+          // Removing text of upload file button.
+          const lbl = document.getElementById('ainiro_filename_label');
+          lbl.innerHTML = '';
         });
         attRem.innerHTML = '<i class="ainiro-icofont-duotone ainiro-icofont-purge ainiro-icofont-lg"></i>';
         chatForm.appendChild(attRem);
@@ -1175,6 +1186,10 @@
         }
       }
 
+      // Removing text of upload file button.
+      const lbl = document.getElementById('ainiro_filename_label');
+      lbl.innerHTML = '';
+
       // Adding query to surface.
       this.addMessage(txtEl.value, 'ainiro_human');
 
@@ -1532,6 +1547,9 @@
         // Retrieving query input field and resetting its prompt.
         const txtbox = document.getElementById('ainiro_txt');
         txtbox.value = '';
+        const fileInp = document.getElementById('ainiro_upload');
+        fileInp.value = null;
+        this.rawFiles = null;
 
       }).catch(err => {
 
