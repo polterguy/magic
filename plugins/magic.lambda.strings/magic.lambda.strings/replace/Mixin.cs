@@ -123,9 +123,8 @@ namespace magic.lambda.strings.replace
                 lambda.Name = ".exe";
                 var exe = new Node("invoke", new Expression("@.exe"));
                 if (args.Children.Any())
-                {
                     exe.AddRange(args.Children.Select(x => x.Clone()));
-                }
+
                 var wrapper = new Node();
                 wrapper.Add(lambda);
                 wrapper.Add(exe);

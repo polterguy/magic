@@ -224,10 +224,12 @@ slots.create:magic.ai.endpoint-common
       .lambda
 
          // Applying mixin logic.
+         add:x:./*/strings.mixin
+            get-nodes:x:@.arguments/*/session
+            get-nodes:x:@.arguments/*/extra
+         strings.mixin:x:@.model/*/system_message
          set-value:x:@.model/*/system_message
-            strings.mixin:x:@.model/*/system_message
-               _session:x:@.arguments/*/session
-               _extra:x:@.arguments/*/_extra
+            get-value:x:@strings.mixin
 
    // Checking if we've configured integrations for incoming messages.
    .incoming
