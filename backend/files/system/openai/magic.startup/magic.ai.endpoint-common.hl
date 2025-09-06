@@ -226,6 +226,8 @@ slots.create:magic.ai.endpoint-common
          // Applying mixin logic.
          set-value:x:@.model/*/system_message
             strings.mixin:x:@.model/*/system_message
+               _session:x:@.arguments/*/session
+               _extra:x:@.arguments/*/_extra
 
    // Checking if we've configured integrations for incoming messages.
    .incoming
