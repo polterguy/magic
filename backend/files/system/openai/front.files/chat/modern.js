@@ -929,7 +929,7 @@
     },
 
     /*
-     * Function to clear chat window.
+     * Function to clear chat window and start a new session.
      */
     clear: function() {
 
