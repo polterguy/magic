@@ -1552,7 +1552,9 @@
         const txtbox = document.getElementById('ainiro_txt');
         txtbox.value = '';
         const fileInp = document.getElementById('ainiro_upload');
-        fileInp.value = null;
+        if (fileInp) {
+          fileInp.value = null;
+        }
         this.rawFiles = null;
 
       }).catch(err => {
