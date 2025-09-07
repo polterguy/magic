@@ -291,12 +291,14 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
                   /*
                    * Checking if we can use currently iterated snippet as a "reference",
                    * which is only true if the snippet actually contains a [uri], and has
-                   * not already been added as a reference.
+                   * not already been added as a reference, and contains a non-empty prompt.
                    */
                   if
                      and
                         not-null:x:@.dp/#/*/uri
                         not-exists:x:@.result/*/*/uri/={@.dp/#/*/uri}
+                        neq:x:@.dp/#/*/prompt
+                           .:
                      .lambda
 
                         // Adding current reference to [.result]
