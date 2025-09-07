@@ -9,7 +9,6 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -31,7 +30,7 @@ namespace magic.backend.slots
         {
             // Retrieving our token.
             var token = input.Children.FirstOrDefault(x => x.Name == "token")?.GetEx<string>() ??
-                throw new HyperlambdaException("No [token] provided to [auth.external-token.validate]");
+                throw new HyperlambdaException("No [token] provided to [auth.token.verify]");
 
             // Finding issuer.
             var handler = new JwtSecurityTokenHandler();
