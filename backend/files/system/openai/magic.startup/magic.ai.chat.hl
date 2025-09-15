@@ -778,6 +778,8 @@ select prompt, max(completion) as completion
                   Authorization:x:@.token
                   Content-Type:application/json
                   Accept:text/event-stream
+                  Accept-Encoding:identity
+                  Connection:close
                payload
                   model:x:@.arguments/*/model
                   max_tokens:x:@.arguments/*/max_tokens
