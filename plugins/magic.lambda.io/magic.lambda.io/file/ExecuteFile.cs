@@ -99,8 +99,7 @@ namespace magic.lambda.io.file
             lambda.Children
                 .FirstOrDefault(x => x.Name == ".arguments")?
                 .UnTie();
-            if (input.Children.Any())
-                lambda.Insert(0, new Node(".arguments", null, input.Children.ToList()));
+            lambda.Insert(0, new Node(".arguments", null, input.Children.ToList()));
 
             // Making sure we declare our [.filename] node in the lambda object.
             lambda.Insert(0, new Node(".filename", filename));
