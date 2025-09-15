@@ -12,6 +12,10 @@
 // Ensuring user is root.
 auth.ticket.verify:root
 
+// Defaulting database type to SQLite.
+validators.default:x:@.arguments
+   database-type:sqlite
+
 // Listing all tables in database.
 .slot_name
 set-value:x:@.slot_name
@@ -21,7 +25,6 @@ set-value:x:@.slot_name
       .:.databases
 execute:x:@.slot_name
    connection-string:generic
-   database:x:@.arguments/*/database
 
 // Returning result to caller.
 return-nodes:x:@execute/*
