@@ -5,6 +5,7 @@
 
 // Angular and system imports.
 import { Subscription } from 'rxjs';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 
@@ -58,6 +59,7 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private dialog: MatDialog,
+    private clipboard: Clipboard,
     private fileService: FileService,
     private openAiService: OpenAIService,
     private generalService: GeneralService,
@@ -172,6 +174,12 @@ export class IdeEditorComponent implements OnInit, OnDestroy, OnChanges {
         type: ['full', 'prompt', 'find', 'arguments']
       }
     });
+  }
+
+  copyPath() {
+
+    this.clipboard.copy(this.currentFileData.path);
+    this.generalService.showFeedback('File path can be found on your clipboard');
   }
 
   /*

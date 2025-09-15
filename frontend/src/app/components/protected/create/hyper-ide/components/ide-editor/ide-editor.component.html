@@ -15,6 +15,15 @@
       <button
         mat-button
         *ngIf="currentFileData"
+        matTooltip="Copy the full file path"
+        color="primary"
+        (click)="copyPath()">
+        Copy path
+      </button>
+
+      <button
+        mat-button
+        *ngIf="currentFileData"
         matTooltip="Keyboard shortcuts"
         color="primary"
         (click)="openShortkeys()">
