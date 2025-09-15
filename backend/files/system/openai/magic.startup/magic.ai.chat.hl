@@ -1175,7 +1175,7 @@ select prompt, max(completion) as completion
          exists:x:@.arguments/*/references
          not-null:x:@.arguments/*/references
          get-value:x:@.arguments/*/references
-         exists:x:@signal/*/snippets
+         exists:x:@signal/*/snippets/*
       .lambda
 
          // We've got references, returning these to caller.
