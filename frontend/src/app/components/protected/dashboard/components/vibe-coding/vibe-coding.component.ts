@@ -125,7 +125,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
       this.response = '';
       this.messages.push({
         type: 'human',
-        message: this.query,
+        message: marked.parse(this.query),
       });
       this.messages.push({
         type: 'machine',
