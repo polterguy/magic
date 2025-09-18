@@ -77,13 +77,9 @@ data.connect:[generic|magic]
       strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
          .:,
       .:]
-   data.update
-      table:ml_training_snippets
-      values
-         embeddings:x:@strings.concat
-      where
-         and
-            id.eq:x:@.arguments/*/id
+   data.execute:update ml_training_snippets set embeddings = vector_as_f32(@embeddings) where id = @id
+      @embeddings:x:@strings.concat
+      @id:x:@.arguments/*/id
    data.execute:@"
 select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine');
 select vector_quantize('ml_training_snippets', 'embeddings', 'max_memory=100MB');
