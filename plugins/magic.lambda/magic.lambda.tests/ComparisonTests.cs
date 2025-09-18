@@ -209,7 +209,7 @@ eq
 eq
    .:int:5
    .:uint:5");
-            Assert.Equal(false, lambda.Children.First().Value);
+            Assert.Equal(true, lambda.Children.First().Value);
         }
 
         [Fact]
@@ -220,6 +220,46 @@ eq
    .:OK
    .:OK");
             Assert.True(lambda.Children.First().Get<bool>());
+        }
+
+        [Fact]
+        public void Eq_09()
+        {
+            var lambda = Common.Evaluate(@"
+eq
+   .:int:5
+   .:long:5");
+            Assert.Equal(true, lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void Eq_10()
+        {
+            var lambda = Common.Evaluate(@"
+eq
+   .:float:5
+   .:double:5");
+            Assert.Equal(true, lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void Eq_11()
+        {
+            var lambda = Common.Evaluate(@"
+eq
+   .:double:5
+   .:int:5");
+            Assert.Equal(true, lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void Eq_12()
+        {
+            var lambda = Common.Evaluate(@"
+eq
+   .:float:5
+   .:decimal:5");
+            Assert.Equal(true, lambda.Children.First().Value);
         }
 
         [Fact]
@@ -497,6 +537,50 @@ lte
 lte
    get-value:x:../*/.foo1
    .:uint:5");
+            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void Lte_08()
+        {
+            var lambda = Common.Evaluate(@"
+.foo1:double:5
+lte
+   get-value:x:../*/.foo1
+   .:uint:5");
+            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void Lte_09()
+        {
+            var lambda = Common.Evaluate(@"
+.foo1:float:5
+lte
+   get-value:x:../*/.foo1
+   .:long:5");
+            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void Lte_10()
+        {
+            var lambda = Common.Evaluate(@"
+.foo1:long:5
+lte
+   get-value:x:../*/.foo1
+   .:double:5.1");
+            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void Lte_11()
+        {
+            var lambda = Common.Evaluate(@"
+.foo1:float:5.1
+lte
+   get-value:x:../*/.foo1
+   .:long:5");
             Assert.Equal(false, lambda.Children.Skip(1).First().Value);
         }
 
