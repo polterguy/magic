@@ -6,8 +6,11 @@
  */
 .arguments
 
-   // Mandatory Hyperlambda to execute
+   // Mandatory Hyperlambda to execute.
    hyperlambda:string
+
+   // Optional arguments to supply to Hyperlambda code.
+   arguments:*
 
 // Ensuring user is root.
 auth.ticket.verify:root
@@ -17,6 +20,10 @@ validators.mandatory:x:@.arguments/*/hyperlambda
 
 // Converting to lambda object.
 hyper2lambda:x:@.arguments/*/hyperlambda
+
+// Parametrising execution.
+add:x:./*/invoke
+   get-nodes:x:@.arguments/*/arguments/*
 
 // Executing Hyperlambda
 invoke:x:@hyper2lambda

@@ -382,9 +382,9 @@ Arguments:
 
 ### Generate or modify Hyperlambda code
 
-This function allows you to generate and modify Hyperlambda code. The [prompt] argument must be the description of what code you want, and if you've got existing code it should be provided as [data]. If the user asks you to generate, modify, or edit Hyperlambda code (files ending with '.hl' extension), you will create an intentional prompt describing the file you want to generate, and then use this function to generate or modify the code.
+This function allows you to generate and modify Hyperlambda code. The [prompt] argument must be the description of what code you want, and if you've got existing code it should be provided as [data]. If the user asks you to generate Hyperlambda, modify Hyperlambda, or edit Hyperlambda code, you will create an intentional prompt describing the file you want to generate, and then use this function to generate or modify Hyperlambda.
 
-After you have generated or modified the Hyperlambda code using this function, make sure you add a multi line intentional comment for the code generated at the top of the code before responding with the code, or using it somehow.
+Use the prompt as a multi line comment at the top of your file and show the resulting code to the user including its comment.
 
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/hyperlambda/generate-hyperlambda.hl]:
@@ -424,13 +424,15 @@ Executes the specified Hyperlambda without saving it and returns the result to t
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/hyperlambda/execute-hyperlambda.hl]:
 {
-  "hyperlambda": "[STRING_VALUE]"
+  "hyperlambda": "[STRING_VALUE]",
+  "arguments": { ... ARGS_HERE ...}
 }
 ___
 
 Arguments:
 
 * hyperlambda - Mandatory argument being the Hyperlambda to execute
+* arguments - Optional additional arguments required to execute the code
 
 If you've got Hyperlambda you wish to execute, without it being saved in a file, then **ALWAYS** prefer this function.
 
