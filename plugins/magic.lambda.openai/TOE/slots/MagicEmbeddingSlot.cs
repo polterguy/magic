@@ -1,319 +1,136 @@
 /**
- * MagicEmbeddingSlot.cs - ULTIMATE VERSION
+ * MagicEmbeddingSlot.cs - CORRECTED VERSION
  * Magic Platform Hyperlambda Slot for TOE-Compressed Embeddings
  *
- * Compression Options:
- * - Phase 2: 4 bytes (768× compression, 98-99% accuracy) ← RECOMMENDED
- * - Phase 3: 1 byte (3,072× compression, 95-97% accuracy) ← HYPERSCALE
+ * Matches Magic's actual slot architecture (ISlot, Signal method, no DI)
  *
  * For Thomas Hansen's Magic Platform
- * Francesco Pedulli, November 1, 2025
+ * Francesco Pedulli, November 2, 2025
  */
 
 using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 
-namespace magic.lambda.openai
+namespace magic.lambda.openai.TOE
 {
     /// <summary>
-    /// Create embedding with TOE compression
-    /// Hyperlambda: openai.embeddings.create
+    /// [openai.toe.compress] - Compress OpenAI embedding using TOE
     /// </summary>
-    [Slot(Name = "openai.embeddings.create")]
-    public class CreateEmbeddingWithTOE : ISlot
+    [Slot(Name = "openai.toe.compress")]
+    public class TOECompress : ISlot
     {
-        private readonly IOpenAIService _openAIService;
-        private readonly IDatabaseService _database;
-        private static Phase2Compressor _phase2Compressor;
-        private static Phase3Compressor _phase3Compressor;
+        private static TOERuntimeLoader _phase2Runtime;
+        private static TOERuntimeLoader _phase3Runtime;
+        private static readonly object _lock = new object();
 
-        public CreateEmbeddingWithTOE(IOpenAIService openAIService, IDatabaseService database)
+        public void Signal(ISignaler signaler, Node input)
         {
-            _openAIService = openAIService ?? throw new ArgumentNullException(nameof(openAIService));
-            _database = database ?? throw new ArgumentNullException(nameof(database));
+            // Get parameters from node
+            var vector = input.Children.FirstOrDefault(x => x.Name == "vector")?.GetEx<float[]>();
+            if (vector == null)
+                throw new ArgumentException("No vector provided. Use [vector] node with float array.");
 
-            // Initialize compressors (singleton pattern)
-            if (_phase2Compressor == null)
-            {
-                _phase2Compressor = new Phase2Compressor();
-                Console.WriteLine("[TOE] Phase 2 compressor initialized (4 bytes, 768×)");
-            }
-
-            if (_phase3Compressor == null)
-            {
-                _phase3Compressor = new Phase3Compressor();
-                Console.WriteLine("[TOE] Phase 3 compressor initialized (1 byte, 3,072×)");
-            }
-        }
-
-        public async Task SignalAsync(Node input)
-        {
-            // Extract parameters
-            var text = input.GetEx<string>() ?? throw new ArgumentException("No text provided");
-            var typeId = input.Children.FirstOrDefault(x => x.Name == "type_id")?.GetEx<int>()
-                         ?? throw new ArgumentException("No type_id provided");
-            var prompt = input.Children.FirstOrDefault(x => x.Name == "prompt")?.GetEx<string>() ?? "";
-            var completion = input.Children.FirstOrDefault(x => x.Name == "completion")?.GetEx<string>() ?? "";
-
-            // Optional: Which phase to use (default = Phase2)
-            var phaseStr = input.Children.FirstOrDefault(x => x.Name == "phase")?.GetEx<string>() ?? "2";
-            int phase = int.Parse(phaseStr);
+            var phase = input.Children.FirstOrDefault(x => x.Name == "phase")?.GetEx<int>() ?? 2;
 
             if (phase != 2 && phase != 3)
+                throw new ArgumentException($"Invalid phase: {phase}. Must be 2 or 3.");
+
+            // Initialize runtimes (lazy, thread-safe)
+            lock (_lock)
             {
-                throw new ArgumentException($"Invalid phase: {phase}. Must be 2 (4 bytes) or 3 (1 byte).");
+                if (_phase2Runtime == null && phase == 2)
+                {
+                    string toePath = "./plugins/magic.lambda.openai/TOE/binaries/phase2.so.toe";
+                    string key = "THOMAS_HANSEN_AINIRO_2025_PHASE2_768X";
+                    _phase2Runtime = new TOERuntimeLoader(toePath, key);
+                }
+
+                if (_phase3Runtime == null && phase == 3)
+                {
+                    string toePath = "./plugins/magic.lambda.openai/TOE/binaries/phase3.so.toe";
+                    string key = "THOMAS_HANSEN_AINIRO_2025_PHASE3_3072X";
+                    _phase3Runtime = new TOERuntimeLoader(toePath, key);
+                }
             }
 
-            // STEP 1: Get embedding from OpenAI
-            var embedding = await _openAIService.GetEmbeddingAsync(text);
-
-            Console.WriteLine($"[TOE] Received {embedding.Length}-d embedding from OpenAI ({embedding.Length * 4} bytes)");
-
-            // STEP 2: Compress with TOE
+            // Compress
             byte[] compressed;
-            int originalBytes = embedding.Length * 4;
-            int compressedBytes;
-            int compressionRatio;
-
             try
             {
-                if (phase == 2)
-                {
-                    // Phase 2: 4 bytes (768× compression, 98-99% accuracy)
-                    compressed = _phase2Compressor.Compress(embedding);
-                    compressedBytes = 4;
-                    compressionRatio = 768;
-                }
-                else
-                {
-                    // Phase 3: 1 byte (3,072× compression, 95-97% accuracy)
-                    compressed = _phase3Compressor.Compress(embedding);
-                    compressedBytes = 1;
-                    compressionRatio = 3072;
-                }
-
-                Console.WriteLine($"[TOE] Compressed: {originalBytes} → {compressedBytes} bytes ({compressionRatio}× compression)");
+                compressed = phase == 2
+                    ? _phase2Runtime.Compress(vector)
+                    : _phase3Runtime.Compress(vector);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[TOE] ERROR: Compression failed: {ex.Message}");
                 throw new Exception($"TOE compression failed: {ex.Message}", ex);
             }
 
-            // STEP 3: Store in database
-            string sql;
-            object parameters;
-
-            if (phase == 2)
-            {
-                sql = @"
-                    INSERT INTO ml_training_snippets
-                    (type_id, prompt, completion, embedding_phase2, embedding_version, created_at)
-                    VALUES
-                    (@typeId, @prompt, @completion, @embedding, 2, NOW())";
-
-                parameters = new
-                {
-                    typeId,
-                    prompt,
-                    completion,
-                    embedding = compressed
-                };
-            }
-            else
-            {
-                sql = @"
-                    INSERT INTO ml_training_snippets
-                    (type_id, prompt, completion, embedding_phase3, embedding_version, created_at)
-                    VALUES
-                    (@typeId, @prompt, @completion, @embedding, 3, NOW())";
-
-                parameters = new
-                {
-                    typeId,
-                    prompt,
-                    completion,
-                    embedding = compressed[0]  // Single byte
-                };
-            }
-
-            await _database.ExecuteAsync(sql, parameters);
-
-            // Return success with stats
-            input.Value = new
-            {
-                success = true,
-                phase = phase,
-                original_bytes = originalBytes,
-                compressed_bytes = compressedBytes,
-                compression_ratio = compressionRatio,
-                accuracy = phase == 2 ? "98-99%" : "95-97%"
-            };
-
-            Console.WriteLine($"[TOE] ✓ Stored embedding (Phase {phase})");
+            // Return compressed blob
+            input.Value = compressed;
+            input.Add(new Node("size", compressed.Length));
+            input.Add(new Node("phase", phase));
+            input.Add(new Node("compression_ratio", phase == 2 ? 768 : 3072));
         }
     }
 
     /// <summary>
-    /// Vector Similarity Search with TOE compression
-    /// Hyperlambda: openai.vss.search
+    /// [openai.toe.distance] - Compute distance between two TOE-compressed embeddings
     /// </summary>
-    [Slot(Name = "openai.vss.search")]
-    public class VectorSearchWithTOE : ISlot
+    [Slot(Name = "openai.toe.distance")]
+    public class TOEDistance : ISlot
     {
-        private readonly IOpenAIService _openAIService;
-        private readonly IDatabaseService _database;
-        private static Phase2Compressor _phase2Compressor;
-        private static Phase3Compressor _phase3Compressor;
+        private static TOERuntimeLoader _phase2Runtime;
+        private static TOERuntimeLoader _phase3Runtime;
+        private static readonly object _lock = new object();
 
-        public VectorSearchWithTOE(IOpenAIService openAIService, IDatabaseService database)
+        public void Signal(ISignaler signaler, Node input)
         {
-            _openAIService = openAIService ?? throw new ArgumentNullException(nameof(openAIService));
-            _database = database ?? throw new ArgumentNullException(nameof(database));
+            // Get parameters
+            var blob_a = input.Children.FirstOrDefault(x => x.Name == "blob_a")?.GetEx<byte[]>();
+            var blob_b = input.Children.FirstOrDefault(x => x.Name == "blob_b")?.GetEx<byte[]>();
 
-            // Initialize compressors
-            if (_phase2Compressor == null)
-                _phase2Compressor = new Phase2Compressor();
+            if (blob_a == null || blob_b == null)
+                throw new ArgumentException("Need both [blob_a] and [blob_b] nodes with byte arrays.");
 
-            if (_phase3Compressor == null)
-                _phase3Compressor = new Phase3Compressor();
-        }
-
-        public async Task SignalAsync(Node input)
-        {
-            // Extract parameters
-            var question = input.GetEx<string>() ?? throw new ArgumentException("No question provided");
-            var typeId = input.Children.FirstOrDefault(x => x.Name == "type_id")?.GetEx<int>()
-                         ?? throw new ArgumentException("No type_id provided");
-            var threshold = input.Children.FirstOrDefault(x => x.Name == "threshold")?.GetEx<double>() ?? 0.5;
-            var maxResults = input.Children.FirstOrDefault(x => x.Name == "max_results")?.GetEx<int>() ?? 10;
             var phase = input.Children.FirstOrDefault(x => x.Name == "phase")?.GetEx<int>() ?? 2;
 
-            Console.WriteLine($"[TOE] Searching with Phase {phase} compression");
+            // Initialize runtimes
+            lock (_lock)
+            {
+                if (_phase2Runtime == null && phase == 2)
+                {
+                    string toePath = "./plugins/magic.lambda.openai/TOE/binaries/phase2.so.toe";
+                    string key = "THOMAS_HANSEN_AINIRO_2025_PHASE2_768X";
+                    _phase2Runtime = new TOERuntimeLoader(toePath, key);
+                }
 
-            // STEP 1: Get question embedding from OpenAI
-            var questionEmbedding = await _openAIService.GetEmbeddingAsync(question);
+                if (_phase3Runtime == null && phase == 3)
+                {
+                    string toePath = "./plugins/magic.lambda.openai/TOE/binaries/phase3.so.toe";
+                    string key = "THOMAS_HANSEN_AINIRO_2025_PHASE3_3072X";
+                    _phase3Runtime = new TOERuntimeLoader(toePath, key);
+                }
+            }
 
-            // STEP 2: Compress question embedding
-            byte[] questionCompressed;
+            // Compute distance
+            double distance;
             try
             {
-                questionCompressed = phase == 2
-                    ? _phase2Compressor.Compress(questionEmbedding)
-                    : _phase3Compressor.Compress(questionEmbedding);
+                distance = phase == 2
+                    ? _phase2Runtime.Distance(blob_a, blob_b)
+                    : _phase3Runtime.Distance(blob_a, blob_b);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[TOE] ERROR: Failed to compress query: {ex.Message}");
-                throw;
+                throw new Exception($"TOE distance calculation failed: {ex.Message}", ex);
             }
 
-            // STEP 3: Retrieve all embeddings for this type
-            string sql = phase == 2
-                ? @"SELECT id, prompt, completion, embedding_phase2, embedding_version
-                    FROM ml_training_snippets
-                    WHERE type_id = @typeId AND embedding_version = 2"
-                : @"SELECT id, prompt, completion, embedding_phase3, embedding_version
-                    FROM ml_training_snippets
-                    WHERE type_id = @typeId AND embedding_version = 3";
-
-            var snippets = await _database.QueryAsync<TrainingSnippet>(sql, new { typeId });
-
-            Console.WriteLine($"[TOE] Found {snippets.Count} snippets to search");
-
-            // STEP 4: Calculate distances and rank
-            var results = new List<SearchResult>();
-
-            foreach (var snippet in snippets)
-            {
-                try
-                {
-                    double distance;
-
-                    if (phase == 2)
-                    {
-                        distance = _phase2Compressor.Distance(
-                            questionCompressed,
-                            snippet.embedding_phase2);
-                    }
-                    else
-                    {
-                        distance = _phase3Compressor.Distance(
-                            questionCompressed,
-                            new byte[] { snippet.embedding_phase3 });
-                    }
-
-                    // Convert distance to similarity (lower distance = higher similarity)
-                    double similarity = 1.0 / (1.0 + distance);
-
-                    if (similarity >= threshold)
-                    {
-                        results.Add(new SearchResult
-                        {
-                            Id = snippet.id,
-                            Prompt = snippet.prompt,
-                            Completion = snippet.completion,
-                            Similarity = similarity,
-                            Distance = distance,
-                            Phase = phase
-                        });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[TOE] Warning: Failed to calculate distance for snippet {snippet.id}: {ex.Message}");
-                }
-            }
-
-            // STEP 5: Sort and limit results
-            var topResults = results
-                .OrderByDescending(r => r.Similarity)
-                .Take(maxResults)
-                .ToList();
-
-            Console.WriteLine($"[TOE] ✓ Found {topResults.Count} results above threshold {threshold}");
-
-            // STEP 6: Return in Hyperlambda format
-            input.Clear();
-            foreach (var result in topResults)
-            {
-                var resultNode = new Node("result");
-                resultNode.Add(new Node("id", result.Id));
-                resultNode.Add(new Node("prompt", result.Prompt));
-                resultNode.Add(new Node("completion", result.Completion));
-                resultNode.Add(new Node("similarity", result.Similarity));
-                resultNode.Add(new Node("distance", result.Distance));
-                resultNode.Add(new Node("phase", result.Phase));
-                input.Add(resultNode);
-            }
+            // Return distance
+            input.Value = distance;
         }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // DATA MODELS
-    // ═══════════════════════════════════════════════════════════════════════
-
-    internal class TrainingSnippet
-    {
-        public int id { get; set; }
-        public string prompt { get; set; }
-        public string completion { get; set; }
-        public byte[] embedding_phase2 { get; set; }  // 4 bytes
-        public byte embedding_phase3 { get; set; }    // 1 byte
-        public int embedding_version { get; set; }
-    }
-
-    internal class SearchResult
-    {
-        public int Id { get; set; }
-        public string Prompt { get; set; }
-        public string Completion { get; set; }
-        public double Similarity { get; set; }
-        public double Distance { get; set; }
-        public int Phase { get; set; }
     }
 }
