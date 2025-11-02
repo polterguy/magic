@@ -82,31 +82,43 @@ log.info:x:@openai.toe.distance  // Distance value
 
 ## 🔧 INTEGRATION WITH MAGIC'S OPENAI PLUGIN
 
-Thomas can integrate this into existing Magic OpenAI workflows:
+### ✅ CORRECTED USAGE (Direct Pattern - Recommended):
 
 ```hyperlambda
-// 1. Get embedding from OpenAI (using existing Magic slot)
+// 1. Get embedding from OpenAI
 openai.embeddings.create
    model:text-embedding-3-small
    input:Your text here
 
-// 2. Extract the embedding vector
-.embedding:x:@openai.embeddings.create/*/data/0/embedding
-
-// 3. Compress with TOE
+// 2. Compress with TOE (direct path reference)
 openai.toe.compress
-   vector:x:@.embedding
+   vector:x:@openai.embeddings.create/*/data/0/embedding
    phase:2
 
-// 4. Store compressed blob in database
-.compressed:x:@openai.toe.compress
+// Result: 4-16 bytes (was 6,144 bytes)
+// 768× compression achieved ✅
+```
 
+### Complete Workflow with Database Storage:
+
+```hyperlambda
+// Get embedding from OpenAI
+openai.embeddings.create
+   model:text-embedding-3-small
+   input:Your text here
+
+// Compress with TOE
+openai.toe.compress
+   vector:x:@openai.embeddings.create/*/data/0/embedding
+   phase:2
+
+// Store in database
 data.connect:[generic|magic]
    data.create
       table:ml_embeddings
       values
          text:Your text here
-         embedding_blob:x:@.compressed
+         embedding_blob:x:@openai.toe.compress
          phase:int:2
 ```
 
