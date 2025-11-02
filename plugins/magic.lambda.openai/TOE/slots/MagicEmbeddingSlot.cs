@@ -22,8 +22,8 @@ namespace magic.lambda.openai.TOE
     [Slot(Name = "openai.toe.compress")]
     public class TOECompress : ISlot
     {
-        private static TOERuntimeLoader _phase2Runtime;
-        private static TOERuntimeLoader _phase3Runtime;
+        private static TOERuntimeLoader? _phase2Runtime;
+        private static TOERuntimeLoader? _phase3Runtime;
         private static readonly object _lock = new object();
 
         public void Signal(ISignaler signaler, Node input)
@@ -61,8 +61,8 @@ namespace magic.lambda.openai.TOE
             try
             {
                 compressed = phase == 2
-                    ? _phase2Runtime.Compress(vector)
-                    : _phase3Runtime.Compress(vector);
+                    ? _phase2Runtime!.Compress(vector)
+                    : _phase3Runtime!.Compress(vector);
             }
             catch (Exception ex)
             {
@@ -83,8 +83,8 @@ namespace magic.lambda.openai.TOE
     [Slot(Name = "openai.toe.distance")]
     public class TOEDistance : ISlot
     {
-        private static TOERuntimeLoader _phase2Runtime;
-        private static TOERuntimeLoader _phase3Runtime;
+        private static TOERuntimeLoader? _phase2Runtime;
+        private static TOERuntimeLoader? _phase3Runtime;
         private static readonly object _lock = new object();
 
         public void Signal(ISignaler signaler, Node input)
@@ -121,8 +121,8 @@ namespace magic.lambda.openai.TOE
             try
             {
                 distance = phase == 2
-                    ? _phase2Runtime.Distance(blob_a, blob_b)
-                    : _phase3Runtime.Distance(blob_a, blob_b);
+                    ? _phase2Runtime!.Distance(blob_a, blob_b)
+                    : _phase3Runtime!.Distance(blob_a, blob_b);
             }
             catch (Exception ex)
             {
