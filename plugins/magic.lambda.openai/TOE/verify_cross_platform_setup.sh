@@ -50,7 +50,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 
 # Check new files
 check_file "Makefile.cross-platform"
-check_file "TOERuntimeLoader_CrossPlatform.cs"
+check_file "slots/TOERuntimeLoader_CrossPlatform.cs"
 check_file "BUILD_MAC_GUIDE.md"
 check_file "build_mac.sh"
 check_file "README_CROSS_PLATFORM.md"
@@ -126,19 +126,19 @@ else
 fi
 
 echo ""
-echo "Checking source code structure..."
+echo "Checking C# integration files..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-check_file "toe_runtime.c"
-check_file "toe_binary_compress.c"
-
-if [ -d "../THOMAS_ALL_3_PHASES_NO_RESIDUE" ]; then
-    echo -e "${GREEN}✓${NC} Source directory: ../THOMAS_ALL_3_PHASES_NO_RESIDUE"
-else
-    echo -e "${RED}✗${NC} Missing: ../THOMAS_ALL_3_PHASES_NO_RESIDUE"
-    echo "  This is required for building!"
-    ((ERRORS++))
+if [ -f "slots/TOERuntimeLoader.cs" ]; then
+    echo -e "${GREEN}✓${NC} Found: slots/TOERuntimeLoader.cs (original Linux loader)"
 fi
+
+if [ -f "slots/MagicEmbeddingSlot.cs" ]; then
+    echo -e "${GREEN}✓${NC} Found: slots/MagicEmbeddingSlot.cs (Hyperlambda integration)"
+fi
+
+echo ""
+echo -e "${BLUE}ℹ${NC} Source .c files not required (pre-built binaries included)"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
