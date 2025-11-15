@@ -56,7 +56,7 @@ namespace magic.lambda.openai.TOE
                 if (_phase2Runtime == null)
                 {
                     _phase2Runtime = new TOERuntimeLoader(
-                        "./plugins/magic.lambda.openai/TOE/binaries/phase2.so.toe",
+                        "./plugins/magic.lambda.openai/TOE/binaries/linux/phase2.so.toe",
                         "THOMAS_HANSEN_AINIRO_2025_PHASE2_768X"
                     );
                 }
@@ -64,7 +64,7 @@ namespace magic.lambda.openai.TOE
                 if (_phase3Runtime == null)
                 {
                     _phase3Runtime = new TOERuntimeLoader(
-                        "./plugins/magic.lambda.openai/TOE/binaries/phase3.so.toe",
+                        "./plugins/magic.lambda.openai/TOE/binaries/linux/phase3.so.toe",
                         "THOMAS_HANSEN_AINIRO_2025_PHASE3_3072X"
                     );
                 }
