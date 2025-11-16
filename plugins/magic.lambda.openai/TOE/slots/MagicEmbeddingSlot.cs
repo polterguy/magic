@@ -44,14 +44,14 @@ namespace magic.lambda.openai.TOE
                 if (_phase2Runtime == null && phase == 2)
                 {
                     string toePath = "./plugins/magic.lambda.openai/TOE/binaries/linux/phase2.so.toe";
-                    string key = "THOMAS_HANSEN_AINIRO_2025_PHASE2_768X";
+                    string key = "THOMAS_HANSEN_AINIRO_2025_SECRET_KEY";
                     _phase2Runtime = new TOERuntimeLoader(toePath, key);
                 }
 
                 if (_phase3Runtime == null && phase == 3)
                 {
                     string toePath = "./plugins/magic.lambda.openai/TOE/binaries/linux/phase3.so.toe";
-                    string key = "THOMAS_HANSEN_AINIRO_2025_PHASE3_3072X";
+                    string key = "THOMAS_HANSEN_AINIRO_2025_SECRET_KEY";
                     _phase3Runtime = new TOERuntimeLoader(toePath, key);
                 }
             }
@@ -104,14 +104,14 @@ namespace magic.lambda.openai.TOE
                 if (_phase2Runtime == null && phase == 2)
                 {
                     string toePath = "./plugins/magic.lambda.openai/TOE/binaries/linux/phase2.so.toe";
-                    string key = "THOMAS_HANSEN_AINIRO_2025_PHASE2_768X";
+                    string key = "THOMAS_HANSEN_AINIRO_2025_SECRET_KEY";
                     _phase2Runtime = new TOERuntimeLoader(toePath, key);
                 }
 
                 if (_phase3Runtime == null && phase == 3)
                 {
                     string toePath = "./plugins/magic.lambda.openai/TOE/binaries/linux/phase3.so.toe";
-                    string key = "THOMAS_HANSEN_AINIRO_2025_PHASE3_3072X";
+                    string key = "THOMAS_HANSEN_AINIRO_2025_SECRET_KEY";
                     _phase3Runtime = new TOERuntimeLoader(toePath, key);
                 }
             }
