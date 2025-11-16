@@ -60,7 +60,7 @@ namespace magic.lambda.openai.TOE
                 if (_phase2Runtime == null)
                 {
                     _phase2Runtime = new TOERuntimeLoader(
-                        "./plugins/magic.lambda.openai/TOE/binaries/linux/phase2.so.toe",
+                        "./TOE/binaries/linux/phase2.so.toe",
                         "THOMAS_HANSEN_AINIRO_2025_SECRET_KEY"
                     );
                 }
@@ -68,7 +68,7 @@ namespace magic.lambda.openai.TOE
                 if (_phase3Runtime == null)
                 {
                     _phase3Runtime = new TOERuntimeLoader(
-                        "./plugins/magic.lambda.openai/TOE/binaries/linux/phase3.so.toe",
+                        "./TOE/binaries/linux/phase3.so.toe",
                         "THOMAS_HANSEN_AINIRO_2025_SECRET_KEY"
                     );
                 }
