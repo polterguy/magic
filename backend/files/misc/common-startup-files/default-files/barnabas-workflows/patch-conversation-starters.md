@@ -1,0 +1,1 @@
+go into nicole machine type and patch her conversation starter, add "Hello, I we have a new product" to it

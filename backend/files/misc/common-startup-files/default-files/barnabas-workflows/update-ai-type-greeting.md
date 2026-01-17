@@ -1,0 +1,1 @@
+go into Nicole ai type and change the greetings to "what do you want to know"

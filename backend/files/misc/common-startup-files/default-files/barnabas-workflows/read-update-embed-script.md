@@ -1,0 +1,1 @@
+go into nicole.html and change the theme to modern-arigato, history to true, and attachments to false

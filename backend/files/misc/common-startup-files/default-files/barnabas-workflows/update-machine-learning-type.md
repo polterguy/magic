@@ -1,0 +1,1 @@
+update the llm chat model type of Nicole machine learning to get 3.5 turbo. if it does not exist , create it -- Did not work
