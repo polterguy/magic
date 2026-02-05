@@ -52,7 +52,7 @@
     "zone.js": "~0.11.8"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^14.2.10",
+    "@angular-devkit/build-angular": "^21.1.3",
     "@angular/cli": "^14.2.3",
     "@angular/compiler-cli": "^14.2.3",
     "@ngx-formly/schematics": "^6.2.2",
