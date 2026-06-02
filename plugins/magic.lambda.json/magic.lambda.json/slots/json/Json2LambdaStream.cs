@@ -21,12 +21,12 @@ namespace magic.lambda.json.slots.json
     [Slot(
         Name = "json2lambda-stream",
         Description = "Transforms JSON stream content into a lambda hierarchy",
-        ValueKind = "json",
+        ValueKind = "stream",
         ValueDescription = "JSON stream to transform",
         ValueRequired = true,
-        ValueMode = SlotValueMode.ValueOrExpression,
+        ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Lambda,
-        ReturnsKind = "json-tree,lambda-tree",
+        ReturnsKind = "lambda-tree",
         ReturnsDescription = "Resolves to the parsed lambda hierarchy as child nodes",
         SignatureType = typeof(global::magic.lambda.json.signatures.JsonStreamSignature))]
     public class Json2LambdaStream : ISlotAsync

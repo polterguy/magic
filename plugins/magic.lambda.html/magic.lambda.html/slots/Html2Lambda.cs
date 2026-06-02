@@ -23,7 +23,7 @@ namespace magic.lambda.html.slots
         ValueMode = SlotValueMode.ValueOrExpression,
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
-        ReturnsKind = "html-tree,lambda-tree",
+        ReturnsKind = "html-tree",
         ReturnsDescription = "Resolves to the parsed HTML hierarchy as child nodes")]
     public class Html2Lambda : ISlot
     {

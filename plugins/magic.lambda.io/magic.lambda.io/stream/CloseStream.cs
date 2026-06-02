@@ -18,7 +18,7 @@ namespace magic.lambda.io.stream
         ValueKind = "stream",
         ValueDescription = "Stream instance to close",
         ValueRequired = true,
-        ValueMode = SlotValueMode.ValueOrExpression,
+        ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.None)]
     public class CloseStream : ISlot
     {

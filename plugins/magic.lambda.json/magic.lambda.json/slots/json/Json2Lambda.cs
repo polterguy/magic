@@ -22,7 +22,7 @@ namespace magic.lambda.json.slots.json
         ValueMode = SlotValueMode.ValueOrExpression,
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
-        ReturnsKind = "json-tree,lambda-tree",
+        ReturnsKind = "lambda-tree",
         ReturnsDescription = "Resolves to the parsed lambda hierarchy as child nodes")]
     public class Json2Lambda : ISlot
     {

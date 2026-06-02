@@ -23,8 +23,8 @@ namespace magic.lambda.xml
         ValueMode = SlotValueMode.ValueOrExpression,
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
-        ReturnsKind = "xml-tree,lambda-tree",
-        ReturnsElementKind = "xml-element,lambda-tree",
+        ReturnsKind = "xml-tree",
+        ReturnsElementKind = "xml-element",
         ReturnsDescription = "Resolves to the parsed XML hierarchy as child nodes; attributes are emitted as @name child nodes, text as #text child nodes, and comments/whitespace-only text nodes are omitted")]
     public class Xml2Lambda : ISlot
     {

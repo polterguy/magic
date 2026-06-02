@@ -16,7 +16,7 @@ namespace magic.lambda.json.slots.lambda
     [Slot(
         Name = "lambda2json",
         Description = "Transforms a lambda hierarchy into JSON",
-        ValueKind = "node-list",
+        ValueKind = "node-list,lambda-tree",
         ValueDescription = "Expression selecting the lambda hierarchy to transform",
         ValueRequired = true,
         ValueMode = SlotValueMode.Expression,

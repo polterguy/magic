@@ -24,7 +24,7 @@ namespace magic.lambda.json.slots.yaml
         ValueMode = SlotValueMode.ValueOrExpression,
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
-        ReturnsKind = "yaml-tree,lambda-tree",
+        ReturnsKind = "lambda-tree",
         ReturnsDescription = "Resolves to the parsed lambda hierarchy as child nodes")]
     public class Yaml2Lambda : ISlot
     {

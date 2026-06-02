@@ -16,7 +16,7 @@ namespace magic.lambda.html.slots
     [Slot(
         Name = "lambda2html",
         Description = "Transforms a lambda hierarchy into HTML",
-        ValueKind = "html-tree,lambda-tree",
+        ValueKind = "html-tree",
         ValueDescription = "Expression selecting the lambda hierarchy to transform",
         ValueRequired = true,
         ValueMode = SlotValueMode.Expression,

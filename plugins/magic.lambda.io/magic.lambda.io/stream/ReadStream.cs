@@ -20,7 +20,7 @@ namespace magic.lambda.io.stream
         ValueKind = "stream",
         ValueDescription = "Stream instance to read from",
         ValueRequired = true,
-        ValueMode = SlotValueMode.ValueOrExpression,
+        ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "binary-content,fingerprint-source",
         ReturnsDescription = "Resolves to the bytes read from the stream")]
