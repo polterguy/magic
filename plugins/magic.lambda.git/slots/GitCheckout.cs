@@ -22,7 +22,7 @@ namespace magic.lambda.git
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
-        ReturnsKind = "git-output,text",
+        ReturnsKind = "git-response,text",
         ReturnsDescription = "Resolves to the git checkout command output",
         SignatureType = typeof(global::magic.lambda.git.signatures.GitCheckoutSignature))]
     public class GitCheckout : ISlotAsync

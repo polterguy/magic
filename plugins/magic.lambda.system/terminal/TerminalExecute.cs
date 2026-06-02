@@ -28,7 +28,7 @@ namespace magic.lambda.system.terminal
         ValueMode = SlotValueMode.ValueOrExpression,
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
-        ReturnsKind = "terminal-output,text",
+        ReturnsKind = "terminal-response,text",
         ReturnsDescription = "Resolves to the standard output from the executed command",
         SignatureType = typeof(global::magic.lambda.system.terminal.signatures.TerminalExecuteSignature))]
     public class TerminalExecute : ISlotAsync

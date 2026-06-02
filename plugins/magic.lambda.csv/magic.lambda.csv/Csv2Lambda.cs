@@ -25,7 +25,7 @@ namespace magic.lambda.csv
         ValueMode = SlotValueMode.ValueOrExpression,
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
-        ReturnsKind = "csv-tree,node-list",
+        ReturnsKind = "node-list",
         ReturnsElementKind = "csv-row,lambda-tree",
         ReturnsDescription = "Resolves to the parsed lambda hierarchy as child nodes; each child is one CSV row containing column-named values",
         SignatureType = typeof(global::magic.lambda.csv.signatures.Csv2LambdaSignature))]

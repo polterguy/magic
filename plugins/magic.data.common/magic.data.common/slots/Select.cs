@@ -20,7 +20,7 @@ namespace magic.data.common.slots
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Lambda,
-        ReturnsKind = "row-list,node-list",
+        ReturnsKind = "node-list",
         ReturnsElementKind = "row-object,lambda-tree",
         ReturnsDescription = "Resolves to query result rows as child nodes",
         RequiresScope = "data.connection",
