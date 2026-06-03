@@ -619,7 +619,7 @@ namespace magic.lambda.signatures
         /// <inheritdoc />
         public override IEnumerable<SlotChild> Children => new[]
         {
-            ExecutableBody("Loop body evaluated once per selected node"),
+            ExecutableBody("Loop body evaluated once per selected node", SlotChildCardinality.OneOrMore),
         };
     }
 

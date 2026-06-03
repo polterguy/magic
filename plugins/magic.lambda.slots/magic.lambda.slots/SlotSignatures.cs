@@ -120,9 +120,9 @@ namespace magic.lambda.slots.signatures
                 Name = "*",
                 Type = "lambda",
                 Description = "Executable child slot stored as the dynamic slot body",
-                Required = false,
+                Required = true,
                 Mode = SlotChildMode.ExecutableLambda,
-                Cardinality = SlotChildCardinality.ZeroOrMore,
+                Cardinality = SlotChildCardinality.OneOrMore,
                 Role = SlotChildRole.ExecutableBody,
                 // `[function]` / `[slots.create]` store this body for LATER
                 // invocation via `[signal]`. By then the wrapper scope where

@@ -22,7 +22,11 @@ namespace magic.lambda.mime
         ValueKind = "content-type",
         ValueDescription = "Primary MIME content type",
         ValueRequired = true,
-        ValueMode = SlotValueMode.ValueOrExpression,
+        // A MIME Content-Type is a literal token (e.g. "multipart/mixed", "text/html") — never an
+        // expression. ValueOrExpression let the synthesizer wire it to any "content-type"-kinded
+        // producer (e.g. [mime.parse]), yielding nonsense like `mime.create:x:@mime.parse`. Value
+        // forces a literal. (Runtime still evaluates it via GetEx, so literals are read as-is.)
+        ValueMode = SlotValueMode.Value,
         ReturnsMode = SlotReturnsMode.Both,
         ReturnsKind = "mime-message,text",
         ReturnsDescription = "Resolves to the MIME message text in value or, when structured, MIME header and content nodes as children",

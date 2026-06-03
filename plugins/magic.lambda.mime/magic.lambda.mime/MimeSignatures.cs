@@ -126,7 +126,12 @@ namespace magic.lambda.mime.signatures
                     "Nested MIME entity content type; same leaf-vs-multipart shape as the parent [mime.create] value" :
                     "Innermost MIME leaf entity content type; must be a leaf type because no further [entity] nesting is permitted here",
                 Required = true,
-                Mode = SlotChildMode.ValueOrExpression,
+                // The entity's value is its MIME Content-Type — a literal token, never an
+                // expression (mirrors [mime.create]'s own value, fixed to Value for the same
+                // reason). Keeps the structured children (StructuredTree) while forcing a literal
+                // content type, so nested entities never become `entity:x:@mime.parse`. Shared
+                // with [mail.smtp.send], whose [message/entity] reuses this declaration.
+                Mode = SlotChildMode.Value,
                 Cardinality = SlotChildCardinality.TwoOrMore,
                 Role = SlotChildRole.StructuredObject,
                 Projection = SlotChildProjection.StructuredTree,
