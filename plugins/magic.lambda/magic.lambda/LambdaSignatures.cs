@@ -201,7 +201,7 @@ namespace magic.lambda.signatures
         /// <inheritdoc />
         public override IEnumerable<SlotChild> Children => new[]
         {
-            ExecutableBody("Fallback branch body evaluated when previous conditions fail"),
+            ExecutableBody("Fallback branch body evaluated when previous conditions fail", SlotChildCardinality.OneOrMore),
         };
 
         /// <inheritdoc />
