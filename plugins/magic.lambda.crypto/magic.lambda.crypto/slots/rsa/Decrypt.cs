@@ -21,7 +21,7 @@ namespace magic.lambda.crypto.slots.rsa
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
-        ReturnsKind = "content,binary-content",
+        ReturnsKind = "text,binary-content",
         ReturnsDescription = "Resolves to the decrypted content as text or raw bytes when [raw] is true",
         SignatureType = typeof(global::magic.lambda.crypto.signatures.RsaPrivateKeySignature))]
     public class Decrypt : ISlot

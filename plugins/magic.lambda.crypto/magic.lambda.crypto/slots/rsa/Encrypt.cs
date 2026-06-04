@@ -16,7 +16,7 @@ namespace magic.lambda.crypto.slots.rsa
     [Slot(
         Name = "crypto.rsa.encrypt",
         Description = "Encrypts data using RSA",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "Content to encrypt",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,

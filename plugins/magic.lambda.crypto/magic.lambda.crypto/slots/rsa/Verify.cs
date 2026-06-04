@@ -18,7 +18,7 @@ namespace magic.lambda.crypto.slots.rsa
     [Slot(
         Name = "crypto.rsa.verify",
         Description = "Verifies an RSA signature",
-        ValueKind = "content,binary-content",
+        ValueKind = "text,binary-content",
         ValueDescription = "Content to verify against the supplied signature",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,

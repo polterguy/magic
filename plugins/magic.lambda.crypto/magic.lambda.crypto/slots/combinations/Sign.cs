@@ -17,7 +17,7 @@ namespace magic.lambda.crypto.slots.combinations
     [Slot(
         Name = "crypto.sign",
         Description = "Signs data using the configured combination algorithm",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "Content to sign",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,

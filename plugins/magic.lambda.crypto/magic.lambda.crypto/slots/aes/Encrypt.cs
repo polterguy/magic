@@ -12,11 +12,15 @@ namespace magic.lambda.crypto.slots.aes
     /// <summary>
     /// [crypto.aes.encrypt] slot to encrypt some content using a symmetric cryptography algorithm (AES).
     /// </summary>
-    // 'text' added: AES-encrypting arbitrary text payloads (secrets, tokens, message bodies) is the primary use case — any `text` producer should be wirable. `content,binary-content` stay for byte[] payloads.
+    // Input kind is 'text' (primary) + 'binary-content': you encrypt text payloads (secrets, tokens,
+    // message bodies) or raw byte[]. The old 'content' supertype was removed — it was crypto-only, so
+    // every crypto producer (decrypt/verify) and consumer (encrypt/sign/hash) advertised it and chained
+    // into each other endlessly. 'text'/'binary-content' are shared broadly, which is both correct and
+    // breaks the closed clique.
     [Slot(
         Name = "crypto.aes.encrypt",
         Description = "Encrypts data using AES",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "Content to encrypt",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,

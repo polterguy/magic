@@ -23,7 +23,7 @@ namespace magic.lambda.crypto.slots.combinations
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
-        ReturnsKind = "content,binary-content",
+        ReturnsKind = "text,binary-content",
         ReturnsDescription = "Resolves to the verified content as text or raw bytes when [raw] is true",
         SignatureType = typeof(global::magic.lambda.crypto.signatures.CombinationVerifySignature))]
     public class Verify : ISlot

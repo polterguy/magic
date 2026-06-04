@@ -22,7 +22,7 @@ namespace magic.lambda.crypto.slots.combinations
     [Slot(
         Name = "crypto.encrypt",
         Description = "Encrypts data using the configured combination algorithm",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "Content to sign and encrypt",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,

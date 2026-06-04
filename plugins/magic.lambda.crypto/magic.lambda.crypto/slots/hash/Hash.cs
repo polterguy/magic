@@ -20,7 +20,7 @@ namespace magic.lambda.crypto.slots.hash
     [Slot(
         Name = "crypto.hash",
         Description = "Hashes input using SHA256 by default, or the supplied [algorithm] child",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "String or byte[] content to hash when [filename] is not supplied",
         ValueRequired = false,
         ValueMode = SlotValueMode.ValueOrExpression,
@@ -31,7 +31,7 @@ namespace magic.lambda.crypto.slots.hash
     [Slot(
         Name = "crypto.hash.sha1",
         Description = "Hashes input using the SHA1 algorithm",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "String or byte[] content to hash when [filename] is not supplied",
         ValueRequired = false,
         ValueMode = SlotValueMode.ValueOrExpression,
@@ -42,7 +42,7 @@ namespace magic.lambda.crypto.slots.hash
     [Slot(
         Name = "crypto.hash.md5",
         Description = "Hashes input using the MD5 algorithm",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "String or byte[] content to hash when [filename] is not supplied",
         ValueRequired = false,
         ValueMode = SlotValueMode.ValueOrExpression,
@@ -53,7 +53,7 @@ namespace magic.lambda.crypto.slots.hash
     [Slot(
         Name = "crypto.hash.sha256",
         Description = "Hashes input using the SHA256 algorithm",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "String or byte[] content to hash when [filename] is not supplied",
         ValueRequired = false,
         ValueMode = SlotValueMode.ValueOrExpression,
@@ -64,7 +64,7 @@ namespace magic.lambda.crypto.slots.hash
     [Slot(
         Name = "crypto.hash.sha384",
         Description = "Hashes input using the SHA384 algorithm",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "String or byte[] content to hash when [filename] is not supplied",
         ValueRequired = false,
         ValueMode = SlotValueMode.ValueOrExpression,
@@ -75,7 +75,7 @@ namespace magic.lambda.crypto.slots.hash
     [Slot(
         Name = "crypto.hash.sha512",
         Description = "Hashes input using the SHA512 algorithm",
-        ValueKind = "content,binary-content,text",
+        ValueKind = "text,binary-content",
         ValueDescription = "String or byte[] content to hash when [filename] is not supplied",
         ValueRequired = false,
         ValueMode = SlotValueMode.ValueOrExpression,

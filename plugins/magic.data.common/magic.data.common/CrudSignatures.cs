@@ -506,7 +506,11 @@ namespace magic.data.common.signatures
                         Description = "Column name or aggregate expression; optional [as] child declares an alias",
                         Required = false,
                         Mode = SlotChildMode.Value,
-                        Cardinality = SlotChildCardinality.ZeroOrMore,
+                        // OneOrMore: when [columns] IS emitted it must list at least one real column, so
+                        // the read's result shadow always carries traversable columns (@read/N/*/<col>)
+                        // instead of collapsing to bare SELECT-* rows. [columns] itself stays ZeroOrOne
+                        // (above), so a genuine column-less SELECT * still emits when [columns] is omitted.
+                        Cardinality = SlotChildCardinality.OneOrMore,
                         Children =
                         {
                             new SlotChild
