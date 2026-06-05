@@ -21,7 +21,7 @@ namespace magic.lambda.http
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Both,
-        ReturnsKind = "http-response,lambda-tree",
+        ReturnsKind = "http-response",
         ReturnsDescription = "Resolves to the HTTP status code in value and response headers and content as child nodes",
         SignatureType = typeof(global::magic.lambda.http.signatures.HttpPayloadRequestSignature))]
     public class HttpPut : ISlotAsync

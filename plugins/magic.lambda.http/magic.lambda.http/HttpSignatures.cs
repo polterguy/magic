@@ -21,6 +21,20 @@ namespace magic.lambda.http.signatures
         /// <inheritdoc />
         public virtual IEnumerable<SlotChild> OutputChildren => new[]
         {
+            // [content] (the payload) is declared FIRST so wiring prefers the body over [headers] when a
+            // consumer matches both (the synthesizer enumerates output children in declaration order).
+            new SlotChild
+            {
+                Name = "content",
+                Type = "string|byte[]|lambda",
+                Kind = "http-response-content,lambda-tree,text",
+                Description = "HTTP response body; text responses are returned as string, binary responses as byte[], and converted known content types as child nodes when [convert] is true",
+                Required = false,
+                Mode = SlotChildMode.Value,
+                Cardinality = SlotChildCardinality.ZeroOrOne,
+                Role = SlotChildRole.Payload,
+                Projection = SlotChildProjection.Self,
+            },
             new SlotChild
             {
                 Name = "headers",
@@ -47,18 +61,6 @@ namespace magic.lambda.http.signatures
                         Projection = SlotChildProjection.Value,
                     },
                 },
-            },
-            new SlotChild
-            {
-                Name = "content",
-                Type = "string|byte[]|lambda",
-                Kind = "http-response-content",
-                Description = "HTTP response body; text responses are returned as string, binary responses as byte[], and converted known content types as child nodes when [convert] is true",
-                Required = false,
-                Mode = SlotChildMode.Value,
-                Cardinality = SlotChildCardinality.ZeroOrOne,
-                Role = SlotChildRole.Payload,
-                Projection = SlotChildProjection.Self,
             },
         };
 
