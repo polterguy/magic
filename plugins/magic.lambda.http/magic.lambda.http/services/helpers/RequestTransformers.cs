@@ -99,7 +99,7 @@ namespace magic.lambda.http.services.helpers
             string slotName)
         {
             // Invoking slot responsible for creating our MIME entity.
-            payloadNode.Value = headers.ContainsKey("Content-Type") ? headers["Content-Type"] : headers[".Content-Type"];
+            payloadNode.Value = headers["Content-Type"];
             signaler.Signal(".mime.create", payloadNode);
             using (var entity = payloadNode.Get<MimeEntity>())
             {

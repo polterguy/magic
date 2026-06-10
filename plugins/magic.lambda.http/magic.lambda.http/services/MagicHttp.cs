@@ -304,8 +304,7 @@ namespace magic.lambda.http.services
 
                     foreach (var idx in DEFAULT_HEADERS_EMPTY_REQUEST)
                     {
-                        if (!headers.ContainsKey("." + idx))
-                            headers[idx.Key] = idx.Value;
+                        headers[idx.Key] = idx.Value;
                     }
                     break;
 
@@ -313,8 +312,7 @@ namespace magic.lambda.http.services
 
                     foreach (var idx in DEFAULT_HEADERS_REQUEST)
                     {
-                        if (!headers.ContainsKey("." + idx))
-                            headers[idx.Key] = idx.Value;
+                        headers[idx.Key] = idx.Value;
                     }
                     break;
             }
@@ -353,8 +351,7 @@ namespace magic.lambda.http.services
                     default:
 
                         // These are the only HTTP headers we're interested in adding to the request message itself.
-                        if (!idx.StartsWith('.'))
-                            result.Headers.Add(idx, headers[idx]);
+                        result.Headers.Add(idx, headers[idx]);
                         break;
                 }
             }
@@ -383,7 +380,7 @@ namespace magic.lambda.http.services
             if (content is byte[] bytes)
                 return new ByteArrayContent(bytes);
 
-            return new ByteArrayContent(System.Text.Encoding.UTF8.GetBytes(content as string));
+            return new StringContent(content as string);
         }
 
         /*
@@ -401,7 +398,7 @@ namespace magic.lambda.http.services
                 // Figuring out Content-Type of request payload to make sure we correctly transform into the specified value.
                 var contentType = headers.ContainsKey("Content-Type") ?
                     ContentType.Parse(headers["Content-Type"]) :
-                    (headers.ContainsKey(".Content-Type") ? ContentType.Parse(headers[".Content-Type"]) : ContentType.Parse("application/json"));
+                    ContentType.Parse("application/json");
 
                 if (_requestTransformers.TryGetValue(contentType.MimeType, out var functor))
                     return functor(signaler, headers, payloadNode, input.Name);
@@ -457,12 +454,9 @@ namespace magic.lambda.http.services
                     case "Last-Modified":
 
                         // These are the only HTTP headers relevant to our HTTP content object.
-                        if (!idx.StartsWith('.') && !headers.ContainsKey("." + idx))
-                        {
-                            if (content.Headers.Contains(idx))
-                                content.Headers.Remove(idx);
-                            content.Headers.Add(idx, headers[idx]);
-                        }
+                        if (content.Headers.Contains(idx))
+                            content.Headers.Remove(idx);
+                        content.Headers.Add(idx, headers[idx]);
                         break;
                 }
             }
