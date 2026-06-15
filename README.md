@@ -66,6 +66,10 @@ In addition to having the ability to generate pure JS, CSS, and HTML frontends, 
 
 The system is particularly well suited for creating AI agents.
 
+## MCP support
+
+Magic comes with MCP support out of the box. Install the plugin called _"mcp"_, and configure Claude Cowork/Code or OpenAI's Codex to use Magic cloud as an MCP server, and Claude/Codex is automagically extended with all HTTP endpoint files you've got in your _"modules"_ folder.
+
 ## Headless Browser
 
 Magic contains a headless browser, PuppeteerSharp specifically, that allows you to browse the web as a human being, fill out forms, click buttons, etc.
