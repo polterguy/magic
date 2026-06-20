@@ -32,7 +32,7 @@ namespace magic.lambda.math.scalars
         /// <returns>An awaitable task.</returns>
         public void Signal(ISignaler signaler, Node input)
         {
-            dynamic original = input.GetEx<dynamic>();
+            var original = input.GetEx<double>();
             input.Value = Math.Sin(original);
         }
     }
