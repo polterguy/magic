@@ -12,6 +12,7 @@ import { GeneralService } from 'src/app/services/general.service';
 import { OpenAIService } from 'src/app/services/openai.service';
 import { TypewriterPlaceholderDirective } from 'src/app/helpers/typewriter-placeholder.directive';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 /**
  * Vibe coding component, allowing the user to instruct the system using natural language.
@@ -42,6 +43,7 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
     private openAIService: OpenAIService,
     private configService: ConfigService,
     private generalService: GeneralService,
+    private clipboard: Clipboard,
     private backendService: BackendService) { }
 
   ngOnInit() {
@@ -176,6 +178,13 @@ export class VibeCodingComponent implements OnInit, OnDestroy {
 
     this.query = 'What can you do?';
     this.submit();
+  }
+
+  copyMcpUrl() {
+
+    // Copying the OAuth2-protected MCP connection URL (what you paste into an AI agent) to the clipboard.
+    this.clipboard.copy(this.backendService.active.url + '/magic/modules/mcp/mcp');
+    this.generalService.showFeedback('AI agent (MCP) connection URL copied to your clipboard', 'successMessage');
   }
 
   /*
