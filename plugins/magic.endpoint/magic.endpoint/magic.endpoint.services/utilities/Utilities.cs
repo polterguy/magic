@@ -70,7 +70,8 @@ namespace magic.endpoint.services.utilities
             var splits = url.Split(separator, StringSplitOptions.RemoveEmptyEntries);
             foreach (var idx in splits)
             {
-                if (idx.StartsWith('.'))
+                // ".well-known" is a public IETF-standard URI prefix (RFC 8615), so it is served despite its leading dot.
+                if (idx.StartsWith('.') && idx != ".well-known")
                     return false; // Hidden file or folder.
             }
             return true; // OK URL!

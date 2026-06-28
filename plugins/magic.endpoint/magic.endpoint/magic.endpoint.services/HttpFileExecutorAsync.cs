@@ -363,14 +363,18 @@ namespace magic.endpoint.services
 
             // Creating response to return to caller.
             var response = new MagicResponse();
-            var ext = url.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).Last();
+
+            // Resolving the extension from the filename only, falling back to the full filename for extensionless
+            // files (e.g. "/.well-known/oauth-authorization-server") so these stay mappable through ".config".
+            var fileName = url.Substring(url.LastIndexOf('/') + 1);
+            var ext = fileName.Contains('.') ? fileName.Substring(fileName.LastIndexOf('.') + 1) : fileName;
             if (_mimeTypes.TryGetValue(ext, out string value))
                 response.Headers["Content-Type"] = value;
             else
                 response.Headers["Content-Type"] = "application/octet-stream"; // Defaulting to binary content
 
             // Adding default headers from .config file.
-            await AddDefaultStaticHttpHeaders(response, url);
+            await AddDefaultStaticHttpHeaders(response, ext);
 
             // Checking if Content-Type is application/json, at which point we load the file before returning it.
             if (response.Headers["Content-Type"].Contains("application/json"))
@@ -384,7 +388,7 @@ namespace magic.endpoint.services
         /*
          * Adds default HTTP headers according to config file to response.
          */
-        async Task AddDefaultStaticHttpHeaders(MagicResponse response, string url)
+        async Task AddDefaultStaticHttpHeaders(MagicResponse response, string extension)
         {
             var configFilename = _rootResolver.AbsolutePath("/etc/www/.config");
             if (await _fileService.ExistsAsync(configFilename))
@@ -397,8 +401,7 @@ namespace magic.endpoint.services
                     response.Headers[idx.Name] = idx.GetEx<string>();
                 }
 
-                // Headers that applies for only files with specified extension.
-                var extension = url.Substring(url.LastIndexOf('.') + 1);
+                // Headers that applies only for files with the specified extension (or filename, for extensionless files).
                 foreach (var idx in new Expression($"*/static_files/*/headers/*/{extension}/*").Evaluate(config))
                 {
                     response.Headers[idx.Name] = idx.GetEx<string>();
