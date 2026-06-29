@@ -7,6 +7,8 @@
  *
  * - [filename] is the mandatory filename of the file that should be patched.
  * - [patch] is the mandatory unified diff patch to apply.
+ *
+ * IMPORTANT - This file CANNOT be used to save Hyperlambda, only other types of files.
  */
 .arguments
 

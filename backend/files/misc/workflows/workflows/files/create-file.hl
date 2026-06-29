@@ -7,6 +7,8 @@
  * 
  * - [filename] is the mandatory filename of the file that should be saved or created.
  * - [content] being mandatory text content for file.
+ *
+ * IMPORTANT - This file CANNOT be used to save Hyperlambda, only other types of files.
  */
 .arguments
 

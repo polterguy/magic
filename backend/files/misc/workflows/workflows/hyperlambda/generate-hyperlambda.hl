@@ -5,6 +5,12 @@
  * This function is the ONLY supported way to create or change Hyperlambda. It produces correct
  * Hyperlambda and, when [filename] is supplied, saves it directly. Never author Hyperlambda by hand -
  * always use this function. The [prompt] argument must describe what the code should do.
+ *
+ * Usage;
+ *
+ * Describe WHAT you want in plain language — the operation, table/columns, database, and any access restriction. Do NOT write
+ * Hyperlambda yourself or describe node structure or indentation; the generator produces correct syntax. One focused task per call;
+ * overly complex multi-step instructions degrade output.
  */
 .arguments
 
