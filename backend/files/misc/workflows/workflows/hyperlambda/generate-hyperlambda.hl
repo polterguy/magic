@@ -114,6 +114,10 @@ try
          return
             message:Code did not return anything!
 
+   if
+      not-null:x:@.arguments/*/filename
+      .lambda
+         remove-nodes:x:@try/*/yield/*/code
    yield
       code:x:@http.post/*/content/*/result
       time_spent:x:@.total
