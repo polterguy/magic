@@ -1,6 +1,7 @@
 
 /*
- * Creates a new file or modifies the content of an existing file.
+ * Creates a new file or modifies the content of an existing file. For NON-Hyperlambda files only -
+ * Hyperlambda (.hl) must be produced by the generate-hyperlambda function, never written by hand.
  * 
  * Arguments:
  * 
@@ -59,19 +60,15 @@ if
    .lambda
       io.folder.create:/etc/tmp/
 
-// Checking file if it's a Hyperlambda file, and if it is we do a basic sanity check.
+// Hyperlambda is never hand-written - it can only be produced by the generate-hyperlambda function,
+// which validates and saves it itself. Refusing any direct attempt to save a Hyperlambda file.
 if
    strings.ends-with:x:@.arguments/*/filename
       .:.hl
    .lambda
-
-      try
-         // This will throw exceptions for the worst errors.
-         hyper2lambda:x:@.arguments/*/content
-      .catch
-         throw:You tried to save invalid Hyperlambda, to successfully save it you will need to re-generate it
-            public:bool:true
-            status:int:400
+      throw:"Hyperlambda files cannot be written directly. Use the generate-hyperlambda function - it produces correct Hyperlambda and saves it through its [filename] argument. Never hand-write Hyperlambda."
+         public:bool:true
+         status:int:400
 
 // Saving file.
 io.file.save:x:@.arguments/*/filename

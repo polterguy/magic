@@ -1,6 +1,7 @@
 
 /*
- * Applies a unified diff patch to an existing file.
+ * Applies a unified diff patch to an existing file. For NON-Hyperlambda files only - Hyperlambda (.hl)
+ * is never hand-edited; re-create it with the generate-hyperlambda function instead.
  *
  * Arguments:
  *
@@ -48,6 +49,16 @@ if
       throw:"You can only patch files in the '/modules/' and '/etc/' folders"
          status:int:400
          public:bool:true
+
+// Hyperlambda is never hand-edited - regenerate the whole file with the generate-hyperlambda function
+// instead. Refusing any attempt to patch a Hyperlambda file.
+if
+   strings.ends-with:x:@.arguments/*/filename
+      .:.hl
+   .lambda
+      throw:"Hyperlambda files cannot be patched directly. Re-create the file with the generate-hyperlambda function instead of hand-editing Hyperlambda."
+         public:bool:true
+         status:int:400
 
 // Ensuring file exists.
 if

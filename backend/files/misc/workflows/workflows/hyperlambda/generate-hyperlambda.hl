@@ -2,8 +2,9 @@
 /*
  * Generate Hyperlambda code
  * 
- * This function allows you to generate Hyperlambda code.
- * The [prompt] argument must be the description of what code you want.
+ * This function is the ONLY supported way to create or change Hyperlambda. It produces correct
+ * Hyperlambda and, when [filename] is supplied, saves it directly. Never author Hyperlambda by hand -
+ * always use this function. The [prompt] argument must describe what the code should do.
  */
 .arguments
 
