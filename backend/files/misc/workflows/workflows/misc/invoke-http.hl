@@ -9,6 +9,7 @@
  * - [url] being the URL, mandatory argument
  * - [verb] being the HTTP verb to use, optional and defaults to GET. Can be either 'post', 'put', 'get', 'patch', or 'delete'.
  * - [payload] being the payload to send. Notice, can only be applied for POST, PUT and PATCH endpoints.
+ * - [headers] is a list of key/name objects declaring HTTP header name and value.
  */
 .arguments
 
