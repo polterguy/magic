@@ -68,6 +68,14 @@ if
 add:x:./*/http.xxx/*/headers
    get-nodes:x:@.arguments/*/headers/*
 
+// Defaulting Content-Type to application/json if caller didn't supply headers.
+if
+   not-exists:x:@.arguments/*/headers
+   .lambda
+      add:x:../*/http.xxx/*/headers
+         .
+            Content-Type:application/json
+
 // Changing the HTTP invocation
 set-name:x:./*/http.xxx
    strings.concat
