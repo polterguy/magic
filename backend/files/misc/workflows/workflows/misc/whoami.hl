@@ -1,8 +1,8 @@
 
 /*
- * Returns the current session context: who you are operating as (username, roles, name, email), the
- * backend URL, and the current UTC date and time. Call this once at the start of a session to ground
- * yourself, and never guess these values.
+ * Call this FIRST, once, at the very start of every session. It returns who you are operating as
+ * (username, roles, name, email), the backend URL, the current UTC date and time, AND your full
+ * operating instructions. Ground yourself in this before doing anything else; never guess these values.
  */
 .arguments
 
@@ -53,6 +53,7 @@ date.format:x:@date.now
    name
    email
    roles
+   instructions
 set-value:x:@.result/*/date
    get-value:x:@date.format
 set-value:x:@.result/*/backend_url
@@ -65,4 +66,9 @@ set-value:x:@.result/*/email
    get-value:x:@.email
 add:x:@.result/*/roles
    get-nodes:x:@auth.ticket.get/*/roles/*
+
+// Carrying the operating instructions in the result too, so clients that ignore the MCP [instructions]
+// field (e.g. claude.ai) still receive them via this tool's output.
+set-value:x:@.result/*/instructions
+   io.file.load:/modules/mcp/system-instruction.md
 return-nodes:x:@.result/*
