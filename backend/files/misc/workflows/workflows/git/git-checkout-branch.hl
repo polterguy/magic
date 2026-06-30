@@ -16,10 +16,10 @@
    // Mandatory folder to where Git repo is locally on dics.
    path:string
 
-   // Mandatory source filename.
+   // Mandatory branch to checkout.
    branch:string
 
-   // Mandatory destination filename.
+   // Optional boolean indicating whether to create the branch.
    create:bool
 
 // Ensuring user is root.

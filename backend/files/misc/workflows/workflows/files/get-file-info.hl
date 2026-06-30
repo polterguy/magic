@@ -10,7 +10,7 @@
  */
 .arguments
 
-   // Mandatory name of module to return meta information about.
+   // Mandatory filename to return meta information about.
    filename:string
 
 // Ensuring user is root.

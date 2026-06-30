@@ -29,6 +29,9 @@
 // Ensuring user is root.
 auth.ticket.verify:root
 
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/prompt
+
 try
    add:x:./*/http.post/*/payload
       get-nodes:x:@.arguments/*/prompt

@@ -1,6 +1,6 @@
 
 /*
- * Copies a files from [source] to [destination]
+ * Copies a file from [source] to [destination]
  * 
  * Arguments:
  * 

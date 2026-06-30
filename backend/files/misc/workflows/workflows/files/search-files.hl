@@ -4,7 +4,7 @@
  */
 .arguments
 
-   // Mandatory argument being relative filename of file to load and return.
+   // Mandatory directory path to search recursively.
    path:string
 
    // Mandatory argument being what to search for. Notice, if regex is true allows for searching using regular expressions.

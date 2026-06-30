@@ -17,7 +17,7 @@
    // Mandatory widget file.
    filename:string
 
-   // Optional arguments used to replace [[placeholder]] tokens in widget HTML.
+   // Optional flat object of argument names; each name becomes a parameter in the generated render-html-widget invocation (values are ignored).
    arguments:*
 
 // Ensuring user is root.
@@ -27,6 +27,7 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/type
 validators.regex:x:@.arguments/*/type
    regex:^[a-z0-9_-]+$
+validators.mandatory:x:@.arguments/*/prompt
 validators.mandatory:x:@.arguments/*/filename
 
 // Making sure file exists.

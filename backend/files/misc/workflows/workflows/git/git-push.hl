@@ -19,7 +19,7 @@
    // Optional remote value, defaults to origin.
    remote:string
 
-   // Optional remote value, defaults to 'main'.
+   // Optional branch to push. Defaults to 'main'.
    branch:string
 
 // Ensuring user is root.

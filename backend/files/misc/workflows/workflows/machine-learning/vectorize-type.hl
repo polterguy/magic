@@ -1,6 +1,6 @@
 
 /*
- * Crawls a website for RAG training data and inserts into the specified machine learning type
+ * Vectorizes the specified machine learning type's RAG data as a background process.
  */
 .arguments
 

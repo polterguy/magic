@@ -19,7 +19,7 @@
    // Optional argument being a named remote. Defaults to 'origin'.
    remote:string
 
-   // Optional argument being the refspec.
+   // Optional branch to pull. Defaults to 'main'.
    branch:string
 
 // Ensuring user is root.

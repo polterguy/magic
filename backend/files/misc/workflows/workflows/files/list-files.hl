@@ -5,7 +5,7 @@
  */
 .arguments
 
-   // Mandatory name of module to retrieve files from.
+   // Mandatory folder path to retrieve files from.
    folder:string
 
 // Ensuring user is root.

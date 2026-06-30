@@ -4,7 +4,7 @@
  * 
  * Arguments:
  * 
- * - [file] being mandatory relative file path.
+ * - [filename] being mandatory relative file path.
  */
 .arguments
 

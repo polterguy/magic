@@ -15,7 +15,7 @@
    // Mandatory folder to where Git repo is locally on dics.
    path:string
 
-   // Mandatory message for commit.
+   // Optional default branch. Defaults to "main".
    branch:string
 
 // Ensuring user is root.

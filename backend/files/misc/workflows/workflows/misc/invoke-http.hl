@@ -9,7 +9,7 @@
  * - [url] being the URL, mandatory argument
  * - [verb] being the HTTP verb to use, optional and defaults to GET. Can be either 'post', 'put', 'get', 'patch', or 'delete'.
  * - [payload] being the payload to send. Notice, can only be applied for POST, PUT and PATCH endpoints.
- * - [headers] is an object whose property names are HTTP header names and property values are the header values, e.g. {"Content-Type":"application/json"}.
+ * - [headers] is an object whose property names are HTTP header names and property values are the header values, e.g. {"Content-Type":"application/json"}. If no [headers] are supplied at all, Content-Type defaults to application/json.
  */
 .arguments
 
@@ -28,7 +28,7 @@
    // Bearer token to use.
    token:string
 
-   // Optional HTTP headers, as an object of header-name/value pairs, e.g. {"Content-Type":"application/json"}.
+   // Optional HTTP headers, as an object of header-name/value pairs, e.g. {"Content-Type":"application/json"}. If omitted entirely, Content-Type defaults to application/json.
    headers:*
 
 // Ensuring user is root.

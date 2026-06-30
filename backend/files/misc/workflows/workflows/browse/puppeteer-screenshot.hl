@@ -4,7 +4,7 @@
  * Arguments:
  * - [session_id] Session id (required)
  * - [filename] Output file path (required)
- * - [full_page] Capture full page (optional)
+ * - [full-page] Capture full page (optional)
  * - [type] Screenshot type (optional)
  * - [quality] JPEG quality 0-100 (optional)
  */

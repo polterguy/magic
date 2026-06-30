@@ -4,7 +4,7 @@
  */
 .arguments
 
-   // Mandatory type to search.
+   // Mandatory ID of snippet to retrieve.
    id:long
 
 // Ensuring user is root.

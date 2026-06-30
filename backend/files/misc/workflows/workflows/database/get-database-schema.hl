@@ -18,6 +18,9 @@
 // Ensuring user is root.
 auth.ticket.verify:root
 
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/database
+
 // Applying defaults.
 validators.default:x:@.arguments
    database-type:sqlite
