@@ -211,6 +211,9 @@ namespace magic.data.common.helpers
             // Retrieves the command text.
             cmd.CommandText = input.GetEx<string>();
 
+            // Applying "generous" timeout. (5 minutes!)
+            cmd.CommandTimeout = 300;
+
             // Applies the parameters, if any.
             foreach (var idxPar in input.Children)
             {
