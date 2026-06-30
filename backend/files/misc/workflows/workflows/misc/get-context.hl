@@ -12,7 +12,7 @@
    // Mandatory argument and the actual query to use when finding data from your RAG database.
    query:string
 
-   // Optional argument and the number of tokens to return. The default value of not spcified is 4000.
+   // Optional argument and the number of tokens to return. The default value if not specified is 5000.
    max_tokens:int
 
    // Optional argument being similarity distance between query and RAG records matched during search. Will default to 0.3 if not specified.

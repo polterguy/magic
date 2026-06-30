@@ -5,7 +5,8 @@
  * Arguments:
  * 
  * - [path] is mandatory folder of where repo is locally on dics.
- * - [message] is the mandatory message.
+ * - [url] is the mandatory upstream URL.
+ * - [name] is the optional remote name, defaulting to "origin".
  */
 .arguments
 
@@ -17,6 +18,9 @@
 
    // Mandatory URL for upstream.
    url:string
+
+   // Optional remote name. Defaults to 'origin'.
+   name:string
 
 // Ensuring user is root.
 auth.ticket.verify:root

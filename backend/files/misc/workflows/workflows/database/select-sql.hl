@@ -16,7 +16,7 @@
    // Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
    database-type:string
 
-   // Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
+   // Optional connection string to use to connect. Defaults to 'generic'.
    connection-string:string
 
 // Ensuring user is root.

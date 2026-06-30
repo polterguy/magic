@@ -54,7 +54,7 @@ sockets.signal:x:@.arguments/*/_session
       floating_message:SQLite database backup successfully created
       floating_state:success
 
-// Returning success to caller.
+// Returning the backup filename to caller.
 strings.concat
    .:/data/
    get-value:x:@strings.concat/@strings.concat

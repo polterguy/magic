@@ -18,6 +18,9 @@
    // Optional and will default to 'vivid' if not specified. Legal values are 'vivid' and 'natural'.
    style:string
 
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/prompt
+
 // Applying defaults.
 validators.default:x:@.arguments
    size:1024x1024

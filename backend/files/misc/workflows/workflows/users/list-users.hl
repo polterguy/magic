@@ -15,6 +15,11 @@
 // Ensuring user is root.
 auth.ticket.verify:root
 
+// Applying defaults.
+validators.default:x:@.arguments
+   limit:long:25
+   offset:long:0
+
 // Opening database connection.
 data.connect:magic
 

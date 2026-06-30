@@ -2,14 +2,14 @@
 /*
  * Sends the specified HTML to the frontend
  * 
- * [html] is mandatory and can be any HTML
+ * Either [html] or [filename] is required (supply exactly one, not both).
  */
 .arguments
 
    // Mandatory argument injected by the framework, being the current session.
    _session:string
 
-   // Mandatory argument being the HTML to send to the client.
+   // The HTML to send to the client. Supply either this or [filename], not both.
    html:string
 
    // Optional filename argument serving as an alternative to above [html] argument.

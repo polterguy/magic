@@ -30,6 +30,10 @@
 // Ensuring user is root.
 auth.ticket.verify:root
 
+// Applying defaults.
+validators.default:x:@.arguments
+   timeout:int:30
+
 // Parametrising invocation.
 add:x:./*/python.execute
    get-nodes:x:@.arguments/*/file

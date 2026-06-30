@@ -6,7 +6,7 @@
  * 
  * - [path] is mandatory local folder path of where to clone repo.
  * - [url] is mandatory repository URL, must be HTTPS.
- * - [branch] is the mandatory branch you want to checkout.
+ * - [branch] is the optional branch you want to checkout, defaulting to "main".
  * - [create] is an optional boolean indicating whether we should create the branch or not.
  */
 .arguments
@@ -32,7 +32,7 @@ auth.ticket.verify:root
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/path
 validators.mandatory:x:@.arguments/*/url
-validators.default:x:@.Arguments
+validators.default:x:@.arguments
    branch:main
 
 // Sanity checking invocation.

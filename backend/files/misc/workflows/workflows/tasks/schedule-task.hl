@@ -9,7 +9,7 @@
    // Injected by the framework.
    _session:string
 
-   // Mandatory argument being the task to retrieve
+   // Mandatory argument being the task to schedule
    name:string
 
    // Optional argument being an exact date in the future for when task should execute.

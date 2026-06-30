@@ -36,7 +36,7 @@ validators.email:x:@.arguments/*/from
 validators.mandatory:x:@.arguments/*/from-name
 validators.mandatory:x:@.arguments/*/to
 validators.email:x:@.arguments/*/to
-validators.mandatory:x:@.arguments/*/from-name
+validators.mandatory:x:@.arguments/*/to-name
 validators.mandatory:x:@.arguments/*/subject
 validators.mandatory:x:@.arguments/*/body
 

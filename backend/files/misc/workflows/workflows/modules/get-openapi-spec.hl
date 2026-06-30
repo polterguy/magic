@@ -8,7 +8,7 @@
  */
 .arguments
 
-   // Mandatory name of module to create.
+   // Mandatory name of an existing module.
    module:string
 
    // Mandatory scheme of server.
@@ -24,6 +24,7 @@ auth.ticket.verify:root
 validators.mandatory:x:@.arguments/*/module
 validators.regex:x:@.arguments/*/module
    regex:"^[a-z0-9_-]+$"
+validators.mandatory:x:@.arguments/*/scheme
 
 // Creating our filter condition
 .filter

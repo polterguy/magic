@@ -27,7 +27,7 @@ if
          status:int:400
          public:bool:true
 
-// Verifying database doesn't already exist.
+// Verifying database exists.
 strings.concat
    .:/data/
    get-value:x:@.arguments/*/database
