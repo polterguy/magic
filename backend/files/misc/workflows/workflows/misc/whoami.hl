@@ -1,0 +1,68 @@
+
+/*
+ * Returns the current session context: who you are operating as (username, roles, name, email), the
+ * backend URL, and the current UTC date and time. Call this once at the start of a session to ground
+ * yourself, and never guess these values.
+ */
+.arguments
+
+// Requiring an authenticated caller - this returns their own identity.
+auth.ticket.verify
+
+// Resolving the authenticated identity.
+auth.ticket.get
+
+// Reading the user's name and email from the users_extra table.
+.name
+.email
+data.connect:magic
+   data.read
+      table:users_extra
+      columns
+         type
+         value
+      where
+         and
+            user.eq:x:@auth.ticket.get
+   for-each:x:@data.read/*
+      switch:x:@.dp/#/*/type
+         case:name
+            set-value:x:@.name
+               get-value:x:@.dp/#/*/value
+         case:email
+            set-value:x:@.email
+               get-value:x:@.dp/#/*/value
+
+// Building the backend URL. Hardcoding https - behind a TLS proxy the internal request scheme is http.
+.backend-url
+set-value:x:@.backend-url
+   strings.concat
+      .:"https://"
+      request.host
+
+// Current UTC date and time.
+date.now
+date.format:x:@date.now
+   format:"yyyy-MM-ddTHH:mm:ssZ"
+
+// Returning the resolved session context.
+.result
+   date
+   backend_url
+   username
+   name
+   email
+   roles
+set-value:x:@.result/*/date
+   get-value:x:@date.format
+set-value:x:@.result/*/backend_url
+   get-value:x:@.backend-url
+set-value:x:@.result/*/username
+   get-value:x:@auth.ticket.get
+set-value:x:@.result/*/name
+   get-value:x:@.name
+set-value:x:@.result/*/email
+   get-value:x:@.email
+add:x:@.result/*/roles
+   get-nodes:x:@auth.ticket.get/*/roles/*
+return-nodes:x:@.result/*

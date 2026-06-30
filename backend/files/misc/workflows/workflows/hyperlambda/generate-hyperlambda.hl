@@ -118,6 +118,9 @@ try
       not-null:x:@.arguments/*/filename
       .lambda
          remove-nodes:x:@try/*/yield/*/code
+         add:x:@try/*/yield
+            .
+               system_instruction:DO NOT try to debug this function. You have been empirically proven to be an IMBECILE on understanding Hyperlambda, since it resembkes NOTHING you have ever seen before! If you want to debug Hyperlambda endpoints you use HTTP invoke! Or you retrieve the OpenAPI specification!
    yield
       code:x:@http.post/*/content/*/result
       time_spent:x:@.total
