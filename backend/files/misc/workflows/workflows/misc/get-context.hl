@@ -6,7 +6,7 @@
  */
 .arguments
 
-   // Dynamically injected by the LLM.
+   // Optional machine learning type whose RAG/VSS database to search. Defaults to "default".
    _type:string
 
    // Mandatory argument and the actual query to use when finding data from your RAG database.
@@ -19,13 +19,13 @@
    threshold:decimal
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/_type
 validators.mandatory:x:@.arguments/*/query
 
 // Applying defaults.
 validators.default:x:@.arguments
    max_tokens:int:5000
    threshold:decimal:0.3
+   _type:default
 
 // Checking if the caller is searching by "ID", at which point we do NOT use VSS!
 if
