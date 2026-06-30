@@ -1,0 +1,50 @@
+
+/*
+ * Lists the available how-to guides for building on this Magic backend.
+ *
+ * Returns a JSON array of objects, each with the guide's [name] and a [when_to_use] trigger,
+ * so the caller can pick a relevant guide and read it in full with the read-guide function.
+ */
+.arguments
+auth.ticket.verify:root
+io.file.list:/modules/mcp/guides/
+map:x:@io.file.list/*
+   if
+      strings.ends-with:x:@.dp/#
+         .:.md
+      .lambda
+
+         // Guide name = filename without folder path or extension.
+         .name
+         set-value:x:@.name
+            strings.replace:x:@.dp/#
+               .:/modules/mcp/guides/
+         set-value:x:@.name
+            strings.replace:x:@.name
+               .:.md
+
+         // when_to_use trigger = the file line starting with "when_to_use:", with the prefix stripped.
+         .trigger
+         set-value:x:@.trigger
+            .:
+         io.file.load:x:@.dp/#
+         strings.split:x:@io.file.load
+            .:"\n"
+         for-each:x:@strings.split/*
+            if
+               strings.starts-with:x:@.dp/#
+                  .:"when_to_use:"
+               .lambda
+                  .line
+                  set-value:x:@.line
+                     strings.replace:x:@.dp/#
+                        .:"when_to_use:"
+                  set-value:x:@.trigger
+                     strings.trim:x:@.line
+
+         unwrap:x:+/*/*
+         yield
+            .
+               name:x:@.name
+               when_to_use:x:@.trigger
+return-nodes:x:@map/*

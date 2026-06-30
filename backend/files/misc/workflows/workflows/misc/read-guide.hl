@@ -1,0 +1,25 @@
+
+/*
+ * Returns the full Markdown text of a single how-to guide.
+ *
+ * Pass the guide's name without extension as [guide]; returns its text as [content], or throws
+ * a public 404 if no such guide exists.
+ */
+.arguments
+   guide:string
+auth.ticket.verify:root
+validators.mandatory:x:@.arguments/*/guide
+strings.concat
+   .:/modules/mcp/guides/
+   get-value:x:@.arguments/*/guide
+   .:.md
+if
+   not
+      io.file.exists:x:@strings.concat
+   .lambda
+      throw:No such guide
+         public:bool:true
+         status:int:404
+io.file.load:x:@strings.concat
+yield
+   content:x:@io.file.load
