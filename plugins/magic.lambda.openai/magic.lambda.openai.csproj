@@ -17,4 +17,12 @@
     <EmbeddedResource Include="resources\vocab.bpe" />
   </ItemGroup>
 
+  <!-- TOE Native Binaries - Copy to output directory -->
+  <ItemGroup>
+    <None Include="TOE/binaries/linux/toe_runtime.so" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TOE/binaries/linux/phase1.so.toe" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TOE/binaries/linux/phase2.so.toe" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TOE/binaries/linux/phase3.so.toe" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
