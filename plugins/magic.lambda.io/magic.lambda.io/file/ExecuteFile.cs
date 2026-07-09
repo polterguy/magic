@@ -125,7 +125,7 @@ namespace magic.lambda.io.file
                 foreach (var idx in input.Children)
                 {
                     var templ = old.Children.FirstOrDefault(x => x.Name == idx.Name);
-                    if (old == null)
+                    if (templ == null)
                         throw new HyperlambdaException($"Argument '{idx.Name}' is not declared in the Hyperlambda file '{filename}'", true, 400);
                     var tp = templ.Get<string>();
                     if (tp != null && tp != "*")
