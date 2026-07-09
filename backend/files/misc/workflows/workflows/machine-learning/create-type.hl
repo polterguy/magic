@@ -106,7 +106,7 @@ The above is only an example and not a real function.
 ### Function return format contract
 
 1. Internal Magic functions and workflows return JSON results to the LLM runtime.
-2. Executed Hyperlambda snippets and files, including `execute-hyperlambda`, `execute-file`, and generated Hyperlambda code, may return any value format depending on the Hyperlambda implementation.
+2. Executed Hyperlambda snippets and files, including `execute-hyperlambda` and generated Hyperlambda code, may return any value format depending on the Hyperlambda implementation.
 3. When reporting results, preserve the returned structure and do not force non-JSON Hyperlambda outputs into JSON unless explicitly requested.
 
 ### Function execution instructions

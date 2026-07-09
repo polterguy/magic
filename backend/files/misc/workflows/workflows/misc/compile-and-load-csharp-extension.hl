@@ -42,7 +42,7 @@ if
          .:
    .lambda
       io.file.load:x:@.arguments/*/file
-      set-value:x:@.arguments/*/.code
+      set-value:x:@.code
          get-value:x:@io.file.load
 else
    set-value:x:@.code
