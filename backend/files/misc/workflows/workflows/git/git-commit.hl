@@ -1,18 +1,13 @@
 
 /*
  * Commits all changes to Git repository.
- * 
- * Arguments:
- * 
- * - [path] is mandatory folder of where repo is locally on dics.
- * - [message] is the mandatory message.
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory folder to where Git repo is locally on dics.
+   // Mandatory folder to where Git repo is locally on disk.
    path:string
 
    // Mandatory message for commit.

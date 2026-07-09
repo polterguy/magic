@@ -2,14 +2,14 @@
 /*
  * Executable Hyperlambda file that lists all databases in system
  * 
- * Lists all SQLite databases in the system and returns as a list of strings.
+ * Lists all databases in the system and returns as a list of strings.
  */
 .arguments
 
    // Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
    database-type:string
 
-   // Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
+   // Optional connection string to use to connect. Defaults to 'generic'.
    connection-string:string
 
 // Ensuring user is root.

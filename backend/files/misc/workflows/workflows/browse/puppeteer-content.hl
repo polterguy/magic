@@ -1,10 +1,12 @@
 /*
- * Returns the page HTML.
+ * Returns the current page's full HTML from an existing headless browser (Puppeteer) session.
  *
- * Arguments:
- * - [session_id] Session id (required)
+ * Use this after navigating with puppeteer-goto to scrape or inspect the page as it is currently
+ * rendered, including markup produced dynamically by JavaScript.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
 
 // Ensuring user is root.

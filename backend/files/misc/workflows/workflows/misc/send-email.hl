@@ -1,30 +1,28 @@
 
 /*
- * Sends an email with the specified body and subject to the specified receiver
- *
- * This function will send an email
+ * Sends an email with the specified body and subject to the specified receiver.
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory argument
+   // Mandatory email address of sender.
    from:string
 
-   // Mandatory argument
+   // Mandatory display name of sender.
    from-name:string
 
-   // Mandatory argument
+   // Mandatory email address of recipient.
    to:string
 
-   // Mandatory argument
+   // Mandatory display name of recipient.
    to-name:string
 
-   // Mandatory argument
+   // Mandatory subject line of email.
    subject:string
 
-   // Mandatory argument. This can be markdown.
+   // Mandatory body of email. This can be Markdown.
    body:string
 
 // Ensuring user is root.

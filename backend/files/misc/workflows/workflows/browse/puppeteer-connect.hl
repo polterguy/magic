@@ -1,22 +1,32 @@
 /*
- * Creates a new Puppeteer session and returns its session id.
+ * Creates a new headless browser (Puppeteer) session and returns its session id.
  *
- * Arguments:
- * - [headless] Boolean (optional, defaults to true)
- * - [executable] Full path to Chromium/Chrome (optional)
- * - [timeout] Launch timeout in milliseconds (optional)
- * - [user-data-dir] Chromium user data directory (optional)
- * - [args] List of Chromium args (optional)
- * - [timeout_minutes] Sliding expiration in minutes (optional)
- * - [max_lifetime_minutes] Max session lifetime in minutes (optional)
+ * This is the entry point for all browsing functions: call this first, then pass the returned
+ * session id as [session_id] to every other puppeteer function, and finish by calling
+ * puppeteer-close to release the browser. Sessions also expire automatically according to
+ * [timeout_minutes] and [max_lifetime_minutes].
  */
 .arguments
+
+   // Optional boolean. Defaults to true.
    headless:bool
+
+   // Optional full path to Chromium/Chrome.
    executable:string
+
+   // Optional launch timeout in milliseconds.
    timeout:int
+
+   // Optional Chromium user data directory.
    user-data-dir:string
+
+   // Optional list of Chromium args.
    args:*
+
+   // Optional sliding expiration in minutes.
    timeout_minutes:int
+
+   // Optional max session lifetime in minutes.
    max_lifetime_minutes:int
 
 // Ensuring user is root.

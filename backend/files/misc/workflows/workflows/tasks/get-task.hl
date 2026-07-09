@@ -4,7 +4,7 @@
  */
 .arguments
 
-   // Mandatory argument being the task to retrieve
+   // Name of task to retrieve.
    name:string
 
 // Ensuring user is root.

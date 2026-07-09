@@ -1,16 +1,22 @@
 /*
- * Presses a key on a selector.
+ * Presses a single keyboard key on the first element matching a CSS selector in an existing
+ * headless browser (Puppeteer) session.
  *
- * Arguments:
- * - [session_id] Session id (required)
- * - [selector] CSS selector (required)
- * - [key] Key name to press (required)
- * - [delay] Delay in milliseconds (optional)
+ * Use this for key-driven interactions typing cannot express, such as pressing 'Enter' to submit
+ * a form or 'Escape' to dismiss a dialog.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
+
+   // Mandatory CSS selector to press key on.
    selector:string
+
+   // Mandatory key name to press.
    key:string
+
+   // Optional delay in milliseconds.
    delay:int
 
 // Ensuring user is root.

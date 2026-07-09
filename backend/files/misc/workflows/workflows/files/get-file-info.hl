@@ -2,11 +2,9 @@
 /*
  * Returns meta information about a specific Hyperlambda file,
  * specifically its description being the file level comment if it has one.
- * 
- * - [filename] is the mandatory filename to retrieve information about.
  *
- * Endpoint will return description as taken from file comment, in addition to a list of arguments
- * the file can handle which are in name/type format.
+ * Returns the description as taken from the file comment, in addition to a list of arguments
+ * the file can handle in name/type format.
  */
 .arguments
 

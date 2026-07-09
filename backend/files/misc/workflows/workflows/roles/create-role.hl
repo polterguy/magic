@@ -9,10 +9,10 @@
    // Injected by the framework.
    _session:string
 
-   // Mandatory
+   // Mandatory name of role to create.
    name:string
 
-   // Mandatory
+   // Mandatory description of role.
    description:string
 
 // Ensuring user is root.

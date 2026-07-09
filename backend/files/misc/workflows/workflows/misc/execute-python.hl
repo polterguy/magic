@@ -9,10 +9,10 @@
    // Injected by the framework.
    _session:string
 
-   // Optional full file name and path for code to execute.
+   // Optional full file name and path for code to execute. Supply either this or [code].
    file:string
 
-   // Optional code to execute.
+   // Optional code to execute. Supply either this or [file].
    code:string
 
    // Optional positional arguments to execution.

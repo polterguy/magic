@@ -1,14 +1,10 @@
 
 /*
- * Downloads the specified web file.
- * 
- * Arguments:
- * 
- * - [filename] being mandatory relative file path.
+ * Downloads the specified file to the client.
  */
 .arguments
 
-   // Mandatory argument specified by the framework being the SignalR session.
+   // Injected by the framework.
    _session:string
 
    // Mandatory relative path of file to download

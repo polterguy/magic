@@ -1,17 +1,13 @@
 
 /*
  * Downloads the specified [url] and saves to the specified [filename].
- * 
- * [filename] is the absolute path for where to save the file.
- * 
- * All arguments are mandatory, and user must be root to execute
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // URL to document caller wants to download.
+   // Mandatory URL of document to download.
    url:string
 
    // Mandatory filename of where to save the result.

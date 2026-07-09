@@ -6,7 +6,7 @@
  */
 .arguments
 
-   // Mandatory
+   // Mandatory username of user to return roles for.
    username:string
 
 // Ensuring user is root.

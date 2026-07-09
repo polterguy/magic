@@ -1,19 +1,13 @@
 
 /*
  * Checks out an existing Git repository.
- * 
- * Arguments:
- * 
- * - [path] is mandatory folder of where repo is locally on dics.
- * - [branch] is the mandatory branch you want to checkout.
- * - [create] is an optional boolean indicating whether we should create the branch or not.
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory folder to where Git repo is locally on dics.
+   // Mandatory folder to where Git repo is locally on disk.
    path:string
 
    // Mandatory branch to checkout.

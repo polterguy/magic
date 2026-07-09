@@ -9,7 +9,7 @@
    // Injected by the framework.
    _session:string
 
-   // Mandatory name of database. Can only contain lover case characters, '_', '-', and 0-9
+   // Mandatory name of database. Can only contain lower case characters, '_', '-', and 0-9
    database:string
 
 // Ensuring user is root.

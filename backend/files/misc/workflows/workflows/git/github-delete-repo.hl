@@ -1,10 +1,6 @@
 
 /*
  * Deletes an existing GitHub repository
- * 
- * Arguments:
- * 
- * - [name] is mandatory name of GitHub project.
  */
 .arguments
 

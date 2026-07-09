@@ -9,16 +9,16 @@
    // Injected by the framework.
    _session:string
 
-   // Mandatory
+   // Mandatory username of user to create.
    username:string
 
-   // Mandatory
+   // Mandatory password for user.
    password:string
 
-   // Optional
+   // Optional full name of user.
    name:string
 
-   // Optional
+   // Optional email address of user.
    email:string
 
 // Ensuring user is root.

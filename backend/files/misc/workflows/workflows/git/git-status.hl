@@ -1,14 +1,10 @@
 
 /*
  * Shows Git repository status
- * 
- * Arguments:
- * 
- * - [path] is mandatory folder of where repo is locally on dics.
  */
 .arguments
 
-   // Mandatory folder to where Git repo is locally on dics.
+   // Mandatory folder to where Git repo is locally on disk.
    path:string
 
 // Ensuring user is root.

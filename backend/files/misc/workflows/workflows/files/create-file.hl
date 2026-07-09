@@ -2,11 +2,6 @@
 /*
  * Creates a new file or modifies the content of an existing file. For NON-Hyperlambda files only -
  * Hyperlambda (.hl) must be produced by the generate-hyperlambda function, never written by hand.
- * 
- * Arguments:
- * 
- * - [filename] is the mandatory filename of the file that should be saved or created.
- * - [content] being mandatory text content for file.
  *
  * IMPORTANT - This file CANNOT be used to save Hyperlambda, only other types of files.
  */

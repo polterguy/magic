@@ -1,19 +1,13 @@
 
 /*
- * Pushes all Git changes upstreams.
- * 
- * Arguments:
- * 
- * - [path] is mandatory folder of where repo is locally on dics.
- * - [remote] is the optional remote value. Defaults to 'origin'.
- * - [branch] is the optional branch to push. Defaults to 'main'.
+ * Pushes all Git changes upstream.
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory folder to where Git repo is locally on dics.
+   // Mandatory folder to where Git repo is locally on disk.
    path:string
 
    // Optional remote value, defaults to origin.

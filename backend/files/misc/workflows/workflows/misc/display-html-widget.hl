@@ -6,7 +6,7 @@
  */
 .arguments
 
-   // Mandatory argument injected by the framework, being the current session.
+   // Injected by the framework.
    _session:string
 
    // The HTML to send to the client. Supply either this or [filename], not both.

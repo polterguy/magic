@@ -1,16 +1,21 @@
 /*
- * Navigates an existing Puppeteer session to a URL.
+ * Navigates an existing headless browser (Puppeteer) session to the specified URL.
  *
- * Arguments:
- * - [session_id] Session id (required)
- * - [url] URL to navigate to (required)
- * - [timeout] Navigation timeout in milliseconds (optional)
- * - [wait_until] One of load, domcontentloaded, networkidle0, networkidle2 (optional)
+ * Waits until the navigation is considered finished according to [wait_until] before returning,
+ * making the page ready for subsequent functions such as puppeteer-content or puppeteer-click.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
+
+   // Mandatory URL to navigate to.
    url:string
+
+   // Optional navigation timeout in milliseconds.
    timeout:int
+
+   // Optional. Legal values are 'load', 'domcontentloaded', 'networkidle0', and 'networkidle2'.
    wait_until:string
 
 // Ensuring user is root.

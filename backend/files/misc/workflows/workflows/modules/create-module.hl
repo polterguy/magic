@@ -1,17 +1,13 @@
 
 /*
  * Creates a new module.
- * 
- * Arguments:
- * 
- * - [module], mandatory name of module. Can only contain lower case characters, numbers, underscores, and hyphens.
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory name of module to create.
+   // Mandatory name of module to create. Can only contain lower case characters, numbers, underscores, and hyphens.
    module:string
 
 // Ensuring user is root.

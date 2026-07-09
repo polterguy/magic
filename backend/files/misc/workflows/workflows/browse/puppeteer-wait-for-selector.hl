@@ -1,18 +1,25 @@
 /*
- * Waits until a selector appears in the DOM.
+ * Waits until an element matching a CSS selector appears in the DOM of an existing headless
+ * browser (Puppeteer) session, or the timeout expires.
  *
- * Arguments:
- * - [session_id] Session id (required)
- * - [selector] CSS selector (required)
- * - [timeout] Timeout in milliseconds (optional)
- * - [visible] Require selector to be visible (optional)
- * - [hidden] Require selector to be hidden (optional)
+ * Use this after navigating or clicking on pages that render content with JavaScript, to make
+ * sure the element you want to read or interact with actually exists before proceeding.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
+
+   // Mandatory CSS selector to wait for.
    selector:string
+
+   // Optional timeout in milliseconds.
    timeout:int
+
+   // Optional boolean requiring selector to be visible.
    visible:bool
+
+   // Optional boolean requiring selector to be hidden.
    hidden:bool
 
 // Ensuring user is root.

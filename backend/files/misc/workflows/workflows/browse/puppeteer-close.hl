@@ -1,10 +1,11 @@
 /*
- * Closes an existing Puppeteer session.
+ * Closes an existing headless browser (Puppeteer) session and releases its resources.
  *
- * Arguments:
- * - [session_id] Session id (required)
+ * Always call this when you are done browsing. The session id becomes invalid afterwards.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
 
 // Ensuring user is root.

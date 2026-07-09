@@ -1,9 +1,5 @@
 /*
  * Deletes the specified [folder]
- *
- * Arguments:
- *
- * - [folder] being mandatory folder path.
  */
 .arguments
 

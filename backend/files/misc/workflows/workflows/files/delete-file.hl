@@ -1,9 +1,5 @@
 /*
  * Deletes the specified [filename].
- *
- * Arguments:
- *
- * - [filename] being mandatory filename to delete.
  */
 .arguments
 

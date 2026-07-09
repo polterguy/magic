@@ -1,10 +1,6 @@
 
 /*
  * Creates a new GitHub repository
- * 
- * Arguments:
- * 
- * - [name] is mandatory name of GitHub project.
  */
 .arguments
 

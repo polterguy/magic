@@ -3,11 +3,6 @@
  * Applies a unified diff patch to an existing file. For NON-Hyperlambda files only - Hyperlambda (.hl)
  * is never hand-edited; re-create it with the generate-hyperlambda function instead.
  *
- * Arguments:
- *
- * - [filename] is the mandatory filename of the file that should be patched.
- * - [patch] is the mandatory unified diff patch to apply.
- *
  * IMPORTANT - This file CANNOT be used to save Hyperlambda, only other types of files.
  */
 .arguments

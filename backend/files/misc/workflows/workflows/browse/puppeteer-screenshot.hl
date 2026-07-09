@@ -1,18 +1,24 @@
 /*
- * Saves a screenshot to disk.
+ * Takes a screenshot of the current page in an existing headless browser (Puppeteer) session
+ * and saves it to the specified [filename] on the server.
  *
- * Arguments:
- * - [session_id] Session id (required)
- * - [filename] Output file path (required)
- * - [full-page] Capture full page (optional)
- * - [type] Screenshot type (optional)
- * - [quality] JPEG quality 0-100 (optional)
+ * Use this to visually verify what the page looks like, or to produce images of rendered pages.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
+
+   // Mandatory output file path.
    filename:string
+
+   // Optional boolean to capture full page.
    full-page:bool
+
+   // Optional screenshot type.
    type:string
+
+   // Optional JPEG quality 0-100.
    quality:int
 
 // Ensuring user is root.

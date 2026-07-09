@@ -10,7 +10,7 @@
    // Mandatory name of type.
    type:string
 
-   // Mandatory prompt serving is single line description.
+   // Mandatory prompt serving as a single-line description.
    prompt:string
 
    // Mandatory completion serving as more detailed description.

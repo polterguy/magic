@@ -1,14 +1,19 @@
 /*
- * Waits until the page URL matches a specific value.
+ * Waits until the page URL of an existing headless browser (Puppeteer) session matches the
+ * specified value, or the timeout expires.
  *
- * Arguments:
- * - [session_id] Session id (required)
- * - [url] URL to wait for (required)
- * - [timeout] Timeout in milliseconds (optional)
+ * Use this after clicks or form submissions that trigger navigation, to make sure the new page
+ * has been reached before reading it.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
+
+   // Mandatory URL to wait for.
    url:string
+
+   // Optional timeout in milliseconds.
    timeout:int
 
 // Ensuring user is root.

@@ -9,10 +9,10 @@
    // Injected by the framework.
    _session:string
 
-   // Mandatory
+   // Mandatory username of user to remove from role.
    username:string
 
-   // Mandatory
+   // Mandatory name of role.
    role:string
 
 // Ensuring user is root.

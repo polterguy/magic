@@ -4,6 +4,7 @@
  */
 .arguments
 
+// Ensuring user is root.
 auth.ticket.verify:root
 
 // Executing existing files to do the heavy lifting.

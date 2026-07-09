@@ -1,26 +1,19 @@
 
 /*
- * Clones an Git repository.
- * 
- * Arguments:
- * 
- * - [path] is mandatory local folder path of where to clone repo.
- * - [url] is mandatory repository URL, must be HTTPS.
- * - [branch] is the optional branch you want to checkout, defaulting to "main".
- * - [create] is an optional boolean indicating whether we should create the branch or not.
+ * Clones a Git repository.
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory folder to where Git repo is locally on dics.
+   // Mandatory folder to where Git repo is locally on disk.
    path:string
 
    // Mandatory repository URL, must be HTTPS.
    url:string
 
-   // Optional branch to initially check out.
+   // Optional branch to initially check out. Defaults to 'main'.
    branch:string
 
    // Optional boolean indicating if we should create the branch or not.

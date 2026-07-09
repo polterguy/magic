@@ -1,10 +1,12 @@
 /*
- * Returns the current page URL.
+ * Returns the current page URL from an existing headless browser (Puppeteer) session.
  *
- * Arguments:
- * - [session_id] Session id (required)
+ * Useful for verifying where a click or navigation actually ended up, for instance after
+ * redirects or form submissions.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
 
 // Ensuring user is root.

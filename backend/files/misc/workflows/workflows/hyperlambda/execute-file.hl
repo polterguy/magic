@@ -12,7 +12,7 @@
    // Mandatory relative path of file to execute.
    filename:string
 
-   // Key/value arguments passed into file as it is executed.
+   // Optional key/value arguments passed into file as it is executed.
    arguments:*
 
 // Ensuring user is root.

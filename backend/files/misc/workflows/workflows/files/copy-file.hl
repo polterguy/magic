@@ -1,11 +1,6 @@
 
 /*
  * Copies a file from [source] to [destination]
- * 
- * Arguments:
- * 
- * - [source] is the mandatory original file
- * - [destination] is the mandatory destination filename, with complete path
  */
 .arguments
 

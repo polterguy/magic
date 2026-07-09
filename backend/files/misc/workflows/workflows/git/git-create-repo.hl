@@ -1,18 +1,13 @@
 
 /*
  * Creates a new Git repository
- * 
- * Arguments:
- * 
- * - [path] is mandatory folder of where repo is locally on dics.
- * - [branch] is the default branch. Defaults to "main".
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory folder to where Git repo is locally on dics.
+   // Mandatory folder to where Git repo is locally on disk.
    path:string
 
    // Optional default branch. Defaults to "main".

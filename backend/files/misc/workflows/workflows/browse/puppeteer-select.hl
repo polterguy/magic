@@ -1,14 +1,19 @@
 /*
- * Selects option values from a selector.
+ * Selects one or more option values in a dropdown (HTML select element) in an existing headless
+ * browser (Puppeteer) session.
  *
- * Arguments:
- * - [session_id] Session id (required)
- * - [selector] CSS selector for a select element (required)
- * - [values] Option values to select (required)
+ * The [values] are matched against the option elements' value attributes, and multiple values
+ * only apply to select elements allowing multiple selections.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
+
+   // Mandatory CSS selector for a select element.
    selector:string
+
+   // Mandatory option values to select.
    values:*
 
 // Ensuring user is root.

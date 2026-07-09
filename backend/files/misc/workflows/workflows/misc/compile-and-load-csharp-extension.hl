@@ -7,16 +7,16 @@
    // Injected by the framework.
    _session:string
 
-   // Optional C# source code.
+   // Optional C# source code. Supply either this or [file].
    code:string
 
-   // Optional full file name and path for code to compile.
+   // Optional full file name and path for code to compile. Supply either this or [code].
    file:string
 
-   // Required DLL name (e.g. my-slots.dll).
+   // Mandatory DLL name (e.g. my-slots.dll).
    assembly_name:string
 
-   // Required assembly references (already loaded in AppDomain).
+   // Mandatory assembly references (already loaded in AppDomain).
    references:*
 
 // Ensuring user is root.

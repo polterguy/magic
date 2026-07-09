@@ -1,17 +1,13 @@
 
 /*
  * Deletes an existing Git repo
- * 
- * Arguments:
- * 
- * - [path] is mandatory folder of where repo is locally on dics.
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory folder to where Git repo is locally on dics.
+   // Mandatory folder to where Git repo is locally on disk.
    path:string
 
 // Ensuring user is root.

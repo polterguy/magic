@@ -1,18 +1,27 @@
 /*
- * Clears and types text into a selector.
+ * Clears the first element matching a CSS selector and types text into it, in an existing
+ * headless browser (Puppeteer) session.
  *
- * Arguments:
- * - [session_id] Session id (required)
- * - [selector] CSS selector (required)
- * - [text] Text to type after clearing (optional if [config-key] is provided)
- * - [config-key] Configuration key resolving the text value (optional if [text] is provided)
- * - [delay] Delay between key presses in milliseconds (optional)
+ * Use this to populate input fields and textareas with a new value, replacing whatever they
+ * already contain; use puppeteer-type instead to type without clearing. The text comes from
+ * [text], or from a configuration setting when [config-key] is supplied - the latter keeps
+ * secrets such as passwords out of the invocation.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
+
+   // Mandatory CSS selector to fill.
    selector:string
+
+   // Text to type after clearing. Optional if [config-key] is provided.
    text:string
+
+   // Configuration key resolving the text value. Optional if [text] is provided.
    config-key:string
+
+   // Optional delay between key presses in milliseconds.
    delay:int
 
 // Ensuring user is root.

@@ -1,18 +1,26 @@
 /*
- * Clicks a selector.
+ * Clicks the first element matching a CSS selector in an existing headless browser (Puppeteer)
+ * session.
  *
- * Arguments:
- * - [session_id] Session id (required)
- * - [selector] CSS selector (required)
- * - [button] Mouse button: left, middle, right (optional)
- * - [click_count] Number of clicks (optional)
- * - [delay] Delay between down and up in milliseconds (optional)
+ * Use this to press buttons, follow links, or trigger any element's click handler. If the click
+ * starts a navigation, follow up with puppeteer-wait-for-url or puppeteer-wait-for-selector
+ * before reading the page.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
+
+   // Mandatory CSS selector to click.
    selector:string
+
+   // Optional mouse button. Legal values are 'left', 'middle', and 'right'.
    button:string
+
+   // Optional number of clicks.
    click_count:int
+
+   // Optional delay between mouse down and mouse up in milliseconds.
    delay:int
 
 // Ensuring user is root.

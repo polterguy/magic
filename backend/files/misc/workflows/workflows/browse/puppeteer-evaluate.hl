@@ -1,14 +1,20 @@
 /*
- * Evaluates a JavaScript expression in the page.
+ * Evaluates a JavaScript expression in the page of an existing headless browser (Puppeteer)
+ * session and returns its result.
  *
- * Arguments:
- * - [session_id] Session id (required)
- * - [expression] JavaScript expression (required)
- * - [args] Optional arguments for JS function invocation
+ * This is the escape hatch when no dedicated function fits: extract data from the DOM, scroll,
+ * or manipulate the page directly. The result must be JSON-serializable to travel back to the
+ * caller.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
+
+   // Mandatory JavaScript expression to evaluate.
    expression:string
+
+   // Optional arguments for JS function invocation.
    args:*
 
 // Ensuring user is root.

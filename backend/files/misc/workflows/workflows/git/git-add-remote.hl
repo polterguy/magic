@@ -1,19 +1,13 @@
 
 /*
  * Adds a remote to the specified Git project.
- * 
- * Arguments:
- * 
- * - [path] is mandatory folder of where repo is locally on dics.
- * - [url] is the mandatory upstream URL.
- * - [name] is the optional remote name, defaulting to "origin".
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory folder to where Git repo is locally on dics.
+   // Mandatory folder to where Git repo is locally on disk.
    path:string
 
    // Mandatory URL for upstream.

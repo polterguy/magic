@@ -1,10 +1,12 @@
 /*
- * Returns the page title.
+ * Returns the current page's title from an existing headless browser (Puppeteer) session.
  *
- * Arguments:
- * - [session_id] Session id (required)
+ * A cheap way to verify a navigation ended up on the expected page without downloading its
+ * entire HTML.
  */
 .arguments
+
+   // Mandatory session id as returned from puppeteer-connect.
    session_id:string
 
 // Ensuring user is root.

@@ -6,7 +6,7 @@
  */
 .arguments
 
-   // Optional, default to 25 unless explicitly specified.
+   // Optional, defaults to 25 unless explicitly specified.
    limit:long
 
    // Optional, defaults to 0 unless explicitly specified.

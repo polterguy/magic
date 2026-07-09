@@ -1,10 +1,6 @@
 
 /*
  * Creates a new folder with the [folder] path.
- * 
- * Arguments:
- * 
- * - [folder] is the mandatory name of the folder that should be created.
  */
 .arguments
 

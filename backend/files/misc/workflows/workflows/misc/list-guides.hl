@@ -6,6 +6,8 @@
  * so the caller can pick a relevant guide and read it in full with the read-guide function.
  */
 .arguments
+
+// Ensuring user is root.
 auth.ticket.verify:root
 io.file.list:/modules/mcp/guides/
 map:x:@io.file.list/*

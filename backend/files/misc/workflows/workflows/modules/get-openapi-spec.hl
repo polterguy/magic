@@ -1,10 +1,6 @@
 
 /*
  * Returns Open API specification for specified module
- * 
- * - [module] is mandatory and must be an existing module.
- * - [scheme] is mandatory and must be either 'http' or 'https', depending upon how the server is configured.
- * - [base-url] is the hostname of the server.
  */
 .arguments
 
