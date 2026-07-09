@@ -13,7 +13,7 @@
    // The HTTP verb to use, optional and defaults to 'get'. Can be either 'post', 'put', 'get', 'patch', or 'delete'.
    verb:string
 
-   // The payload to send. Notice, can only be applied for POST, PUT and PATCH endpoints.
+   // The payload to send, as a string interpreted according to the Content-Type header, which defaults to application/json. Notice, can only be applied for POST, PUT and PATCH endpoints.
    payload:string
 
    // Optional Bearer token used to authorize the invocation.

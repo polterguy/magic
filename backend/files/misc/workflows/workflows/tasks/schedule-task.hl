@@ -15,7 +15,7 @@
    // Optional argument being an exact date in the future for when task should execute.
    due:date
 
-   // Optional argument being the repetition pattern for when task should be executed.
+   // Optional repetition pattern. Three formats exist; 'n.unit' where unit is seconds, minutes, hours, days, weeks or months, e.g. '5.minutes' - 'weekdays.HH.mm.ss' where weekdays is one or more '|'-separated weekday names or '**' for all, e.g. 'saturday|sunday.22.00.00' - or 'MM.dd.HH.mm.ss' where MM and dd are '|'-separated numbers or '**', e.g. '**.1.05.00.00' implying the 1st of every month at 05.00 UTC.
    repeats:string
 
 // Ensuring user is root.

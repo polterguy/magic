@@ -16,7 +16,7 @@
    // Mandatory completion argument being the entire training snippet's content.
    completion:string
 
-   // Optional meta argument.
+   // Optional free-form metadata stored with the snippet, typically the source URL or a reference to where its content originated.
    meta:string
 
 // Ensuring user is root.

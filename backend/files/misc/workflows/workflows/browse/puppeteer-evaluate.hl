@@ -11,7 +11,7 @@
    // Mandatory session id as returned from puppeteer-connect.
    session_id:string
 
-   // Mandatory JavaScript expression to evaluate.
+   // Mandatory JavaScript to evaluate in the page. Without [args] it is evaluated as a bare expression whose value is returned. With [args] it must be a function expression, e.g. '(a,b)=>{...}', invoked with [args] as its positional arguments.
    expression:string
 
    // Optional arguments for JS function invocation.
