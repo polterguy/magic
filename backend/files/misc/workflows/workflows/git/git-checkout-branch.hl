@@ -1,6 +1,6 @@
 
 /*
- * Checks out an existing Git repository.
+ * Checks out a branch within the local Git repository at [path]. Set [create] to true to create the branch if it does not already exist.
  */
 .arguments
 

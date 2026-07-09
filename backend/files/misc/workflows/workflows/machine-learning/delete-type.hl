@@ -7,7 +7,7 @@
    // Injected by the framework.
    _session:string
 
-   // Name of type to delete.
+   // Mandatory name of type to delete.
    type:string
 
 // Ensuring user is root.

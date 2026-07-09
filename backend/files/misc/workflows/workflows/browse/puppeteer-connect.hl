@@ -14,7 +14,7 @@
    // Optional full path to Chromium/Chrome.
    executable:string
 
-   // Optional launch timeout in milliseconds.
+   // Optional browser launch timeout in milliseconds. Defaults to 30000 (30 seconds).
    timeout:int
 
    // Optional Chromium user data directory.

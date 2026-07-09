@@ -13,7 +13,7 @@
    // Mandatory CSS selector to wait for.
    selector:string
 
-   // Optional timeout in milliseconds.
+   // Optional timeout in milliseconds to wait for the selector to appear. Defaults to 30000 (30 seconds).
    timeout:int
 
    // Optional boolean requiring selector to be visible.

@@ -12,7 +12,7 @@
    // Mandatory URL to navigate to.
    url:string
 
-   // Optional navigation timeout in milliseconds.
+   // Optional navigation timeout in milliseconds. Defaults to 30000 (30 seconds).
    timeout:int
 
    // Optional. Legal values are 'load', 'domcontentloaded', 'networkidle0', and 'networkidle2'.

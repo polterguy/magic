@@ -7,7 +7,7 @@
    // Injected by the framework.
    _session:string
 
-   // Name of task to delete.
+   // Mandatory name of task to delete.
    name:string
 
 // Ensuring user is root.

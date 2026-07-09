@@ -13,7 +13,7 @@
    // Mandatory URL to wait for.
    url:string
 
-   // Optional timeout in milliseconds.
+   // Optional timeout in milliseconds to wait for the URL to match. Defaults to 30000 (30 seconds).
    timeout:int
 
 // Ensuring user is root.

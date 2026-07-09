@@ -9,7 +9,7 @@
    // Injected by the framework.
    _session:string
 
-   // Name of plugin to install.
+   // Mandatory name of plugin to install.
    plugin:string
 
 // Ensuring user is root.

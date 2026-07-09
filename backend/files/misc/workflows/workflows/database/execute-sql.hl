@@ -10,7 +10,7 @@
    // Injected by the framework.
    _session:string
 
-   // Mandatory argument being SQL to execute, unless specifically overridden the dialect should be SQLite
+   // Mandatory argument being SQL to execute. Use SQLite dialect unless [database-type] specifies another engine.
    sql:string
 
    // Mandatory database to connect to and execute SQL within.
