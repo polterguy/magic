@@ -59,9 +59,17 @@ if
 add:x:./*/http.xxx/*/headers
    get-nodes:x:@.arguments/*/headers/*
 
-// Defaulting Content-Type to application/json if caller didn't supply headers.
+// Defaulting Content-Type to application/json if caller didn't supply headers, but only for verbs that can have a payload.
 if
-   not-exists:x:@.arguments/*/headers
+   and
+      not-exists:x:@.arguments/*/headers
+      or
+         eq:x:@.arguments/*/verb
+            .:post
+         eq:x:@.arguments/*/verb
+            .:put
+         eq:x:@.arguments/*/verb
+            .:patch
    .lambda
       add:x:../*/http.xxx/*/headers
          .
