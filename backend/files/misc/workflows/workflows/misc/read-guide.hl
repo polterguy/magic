@@ -6,6 +6,8 @@
  * a public 404 if no such guide exists.
  */
 .arguments
+
+   // Mandatory argument being name of guide to read, without its file extension.
    guide:string
 // Ensuring user is root.
 auth.ticket.verify:root
