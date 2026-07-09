@@ -90,6 +90,19 @@ try
                saved:bool:true
                filename:x:@.arguments/*/filename
 
+         // If the generated code declares arguments, returning the file's signature to caller.
+         if
+            exists:x:@hyper2lambda/*/.arguments
+            .lambda
+               unwrap:x:+/*
+               execute-file:/misc/workflows/workflows/files/get-file-info.hl
+                  filename:x:@.arguments/*/filename
+               add:x:+/*/*
+                  get-nodes:x:@execute-file/*
+               add:x:@try/*/yield
+                  .
+                     signature
+
    // Signaling frontend
    sockets.signal:x:@.arguments/*/_session
       args
