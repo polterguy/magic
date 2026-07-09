@@ -4,8 +4,8 @@
  */
 .arguments
 
-   // Mandatory directory path to search recursively.
-   path:string
+   // Mandatory folder to search recursively.
+   folder:string
 
    // Mandatory argument being what to search for. Notice, if regex is true allows for searching using regular expressions.
    pattern:string
@@ -20,7 +20,7 @@
 auth.ticket.verify:root
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/path
+validators.mandatory:x:@.arguments/*/folder
 validators.mandatory:x:@.arguments/*/pattern
 validators.default:x:@.arguments
    regex:false
@@ -28,20 +28,20 @@ validators.default:x:@.arguments
 // Prepending slash unless specified by caller.
 if
    not
-      strings.starts-with:x:@.arguments/*/path
+      strings.starts-with:x:@.arguments/*/folder
          .:/
    .lambda
-      set-value:x:@.arguments/*/path
+      set-value:x:@.arguments/*/folder
          strings.concat
             .:/
-            get-value:x:@.arguments/*/path
+            get-value:x:@.arguments/*/folder
 
 // Making sure caller cannot search protected folders.
 if
    or
-      strings.starts-with:x:@.arguments/*/path
+      strings.starts-with:x:@.arguments/*/folder
          .:/config/
-      strings.starts-with:x:@.arguments/*/path
+      strings.starts-with:x:@.arguments/*/folder
          .:/data/
    .lambda
       throw:"You cannot search files in the '/config/' and '/data/' folders"
@@ -53,5 +53,5 @@ add:x:./*/io.file.search
    get-nodes:x:@.arguments/*/pattern
    get-nodes:x:@.arguments/*/extensions
    get-nodes:x:@.arguments/*/regex
-io.file.search:x:@.arguments/*/path
+io.file.search:x:@.arguments/*/folder
 return-nodes:x:@io.file.search/*

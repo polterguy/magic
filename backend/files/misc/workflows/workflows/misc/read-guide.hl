@@ -2,19 +2,19 @@
 /*
  * Returns the full Markdown text of a single how-to guide.
  *
- * Pass the guide's name without extension as [guide]; returns its text as [content], or throws
+ * Pass the guide's name without extension as [name]; returns its text as [content], or throws
  * a public 404 if no such guide exists.
  */
 .arguments
 
    // Mandatory argument being name of guide to read, without its file extension.
-   guide:string
+   name:string
 // Ensuring user is root.
 auth.ticket.verify:root
-validators.mandatory:x:@.arguments/*/guide
+validators.mandatory:x:@.arguments/*/name
 strings.concat
    .:/modules/mcp/guides/
-   get-value:x:@.arguments/*/guide
+   get-value:x:@.arguments/*/name
    .:.md
 if
    not

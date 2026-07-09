@@ -1,6 +1,6 @@
 
 /*
- * Schedules the specified [name] task such that it's being automatically executed in the future.
+ * Schedules the specified [id] task such that it's being automatically executed in the future.
  *
  * You can schedule the task to execute once in the future, or according to a repetition value.
  */
@@ -9,8 +9,8 @@
    // Injected by the framework.
    _session:string
 
-   // Name of task to schedule.
-   name:string
+   // Id of task to schedule.
+   id:string
 
    // Optional argument being an exact date in the future for when task should execute.
    due:date
@@ -27,7 +27,7 @@ add:x:./*/tasks.schedule
    get-nodes:x:@.arguments/*/repeats
 
 // Scheduling our task.
-tasks.schedule:x:@.arguments/*/name
+tasks.schedule:x:@.arguments/*/id
 
 // Signaling frontend
 sockets.signal:x:@.arguments/*/_session

@@ -9,8 +9,8 @@
    // Injected by the framework.
    _session:string
 
-   // Mandatory name, can only contain characters a-z, 0-9, and '-' and '_'.
-   name:string
+   // Mandatory id, can only contain characters a-z, 0-9, and '-' and '_'.
+   id:string
 
    // Optional description for the task
    description:string
@@ -23,8 +23,8 @@ auth.ticket.verify:root
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/hyperlambda
-validators.mandatory:x:@.arguments/*/name
-validators.regex:x:@.arguments/*/name
+validators.mandatory:x:@.arguments/*/id
+validators.regex:x:@.arguments/*/id
    regex:^[a-z0-9_-]+$
 
 // Parametrizing invocation.
@@ -34,7 +34,7 @@ add:x:./*/tasks.create/*/.lambda
    hyper2lambda:x:@.arguments/*/hyperlambda
 
 // Saving task into database.
-tasks.create:x:@.arguments/*/name
+tasks.create:x:@.arguments/*/id
    .lambda
 
 // Signaling frontend

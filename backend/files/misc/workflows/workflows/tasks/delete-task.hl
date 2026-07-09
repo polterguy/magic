@@ -1,20 +1,20 @@
 
 /*
- * Deletes the specified [name] task.
+ * Deletes the specified [id] task.
  */
 .arguments
 
    // Injected by the framework.
    _session:string
 
-   // Mandatory name of task to delete.
-   name:string
+   // Mandatory id of task to delete.
+   id:string
 
 // Ensuring user is root.
 auth.ticket.verify:root
 
 // Deleting task.
-tasks.delete:x:@.arguments/*/name
+tasks.delete:x:@.arguments/*/id
 
 // Signaling frontend
 sockets.signal:x:@.arguments/*/_session

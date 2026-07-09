@@ -1,17 +1,17 @@
 
 /*
- * Returns the specified [name] task to caller.
+ * Returns the specified [id] task to caller.
  */
 .arguments
 
-   // Mandatory name of task to retrieve.
-   name:string
+   // Mandatory id of task to retrieve.
+   id:string
 
 // Ensuring user is root.
 auth.ticket.verify:root
 
 // Retrieving task, including its schedules.
-tasks.get:x:@.arguments/*/name
+tasks.get:x:@.arguments/*/id
    schedules:true
 
 // Returning all tasks to caller.
