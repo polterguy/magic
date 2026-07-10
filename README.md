@@ -68,7 +68,9 @@ The system is particularly well suited for creating AI agents.
 
 ## MCP support
 
-Magic comes with MCP support out of the box. Install the plugin called _"mcp"_, and configure Claude Cowork/Code or OpenAI's Codex to use Magic cloud as an MCP server, and Claude/Codex is automagically extended with all HTTP endpoint files you've got in your _"modules"_ folder.
+Magic comes with MCP support out of the box. Install the plugin called _"mcp"_, and configure Claude Cowork/Code or OpenAI's Codex to use Magic cloud as an MCP server, and Claude/Codex is automagically extended with all HTTP endpoint files you've got in your _"modules"_ folder. Not only does this unlock new capabilities for both Claude and Codex, but it also reduces your token consumption by roughly 80%.
+
+![Saving 80% of your token costs on Claude](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/claude-savings.png)
 
 ## Headless Browser
 
