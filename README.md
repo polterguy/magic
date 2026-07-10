@@ -82,6 +82,8 @@ You can see an example of that prompt in the screenshot below.
 
 ![Headless browser in Magic filling out a form](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/headless-browser-magic.png)
 
+You can calculate your own saving [here](https://hyperlambda.dev/savings-calculator).
+
 ## Git integration
 
 Contrary to other vibe coding tools, Magic Cloud was built for software developers from day 1. That means among other things it's got Git integrated as an integral part of the platform. This allows you to setup any amount of pipelines you wish, using Git for code, or GitHub workflows for deployments.
