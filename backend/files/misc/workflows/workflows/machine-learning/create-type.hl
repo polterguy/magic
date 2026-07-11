@@ -53,7 +53,7 @@ validators.default:x:@.arguments
 if
    or
       eq:x:@.arguments/*/use_embeddings
-         .:true
+         .:bool:true
       eq:x:@.arguments/*/use_embeddings
          .:int:1
    .lambda
@@ -68,7 +68,6 @@ else
 
 * Always end your response with a `FUNCTION_INVOCATION` when executing functions, and return the `FUNCTION_INVOCATION` parts in the same message as the message you intend to execute the function in.
 * Never execute a function unless you know its exact filename and signature.
-* Apply the **Tool lookup minimization policy (CRITICAL)** before using tools/functions.
 * When executing one or more functions in the current response, no text is allowed after the final `FUNCTION_INVOCATION` block.
 * If a function does not return anything then inform the user that the function didn't return anything.
 * If the user asks you what you can do then use the `list-functions` function and group its result into categories explaining each individual function and workflow.
@@ -103,22 +102,15 @@ The above is only an example and not a real function.
 
 `FUNCTION_INVOCATION` blocks must contain valid JSON arguments matching the function signature. The wrapper syntax (`___` and `FUNCTION_INVOCATION[...]`) is transport metadata and is not itself JSON.
 
-### Function return format contract
-
-1. Internal Magic functions and workflows return JSON results to the LLM runtime.
-2. Executed Hyperlambda snippets and files, including `execute-hyperlambda` and generated Hyperlambda code, may return any value format depending on the Hyperlambda implementation.
-3. When reporting results, preserve the returned structure and do not force non-JSON Hyperlambda outputs into JSON unless explicitly requested.
-
 ### Function execution instructions
 
-- Never execute a function before the user has supplied all mandatory arguments or confirmed that defaults are acceptable.
-- If you are about to execute a function, end your response with the invocation in the same message.
-- Wrap the entire `FUNCTION_INVOCATION` header and JSON payload inside a single block bounded by `___` at the top and bottom.
-- Each argument can only be supplied once.
-- Unless you know an argument's value, omit it entirely.
-- You may return multiple `FUNCTION_INVOCATION` blocks in the same response only when later invocations do not depend on earlier return values, side effects, or created resources.
-- If you experience repeated execution errors, stop and ask the user for help.
-- Do not re-execute GUI-injecting functions such as `download-file` if they already succeeded once."
+* Never execute a function before you've got all the mandatory arguments or confirmed that defaults are acceptable.
+* If you are about to execute a function, end your response with the invocation in the same message.
+* Wrap the entire `FUNCTION_INVOCATION` header and JSON payload inside a single block bounded by `___` at the top and bottom.
+* Each argument can only be supplied once.
+* Unless you know an argument's value, omit it entirely.
+* You may return multiple `FUNCTION_INVOCATION` blocks in the same response only when later invocations do not depend on earlier return values, side effects, or created resources.
+* If you experience repeated execution errors, stop and ask the user for help."
 
 if
    eq:x:@.arguments/*/use_embeddings
@@ -138,7 +130,7 @@ else
       strings.concat
          get-value:x:@.instruction
          .:"\n\n"
-         .:@"Below you can find some functions you can use to your benefit, mot important the `get-context` function you can use to search through your RAG / VSS database for information or other functions required to accomplish your job.
+         .:@"Below you can find some functions you can use to your benefit.
 
 ### List all functions
 
@@ -152,11 +144,9 @@ ___
 
 This function will return RAG functions which are dynamically looked up using VSS based upon the specified prompt, in addition to system message functions which are always a part of the context allowing you to always execute these without a prompt matching based upon VSS.
 
-If you need to execute one of these functions and you don't know its exact FUNCTION_INVOCATION declaration, you can use the ""get-context"" function to retrieve its exact declaration and how to correctly parametrize and execute it.
+If you need to execute one of these functions and you don't know its exact FUNCTION_INVOCATION declaration, you can use the `get-context` function to retrieve its exact declaration and how to correctly parametrize and execute it.
 
 ### Search for function, workflow, or information (`get-context`)
-
-This section describes the `get-context` function format. Decision logic for when to call it is only defined in the **Tool lookup minimization policy (CRITICAL)** section below.
 
 If the user is asking you to search for a function, or you cannot find the required function or information required to perform some task, then use the following function to search for additional information, and/or functions, and/or workflows:
 
@@ -172,29 +162,9 @@ ___
 
 The above can have a [QUERY] value being for instance ""Create module"", ""Delete file"", ""Workflow for how to create an AI chatbot embed script"", or ""Create CRUD API"", etc. The `max_tokens` argument is how many tokens to return. 5000 is a good number here, but if you cannot find anything, you can increase `max_tokens`, vary your prompt, and try again.
 
-If you cannot find the function or information required to perform the user's request after having executed this function, then suggest to use the Hyperlambda Generator to create Hyperlambda code solving the task.
-
 The `get-context` function will return RAG records using VSS, and might return irrelevant information due to it searching using VSS. Records are returned as a string where each individual record is separated by a `---` line, and each new function, workflow, or information snippet starts with a markdown H1 title.
 
-If the user’s query is broad (e.g., “list companies,” “show users,” “find projects”) and you don’t know a direct function, call `get-context` with the query as-is to look for relevant workflows, information, or functions.
-
-#### Tool lookup minimization policy (CRITICAL)
-
-1. Do NOT call `get-context` for requests that can be answered purely through reasoning, explanation, planning, or text editing without any Magic Cloud tool/workflow execution, including:
-   a) pure Q&A about concepts, architecture, or best practices
-   b) summarising, rewriting, or formatting text
-   c) clarifying questions to gather requirements (until tools are actually needed)
-2. For any new user request/subtask that is likely to require tool/workflow execution, file/module changes, or that depends on confirming tool existence/signatures, you MUST call `get-context` exactly once before proposing implementation or executing tools, unless you already have the exact filename AND argument signature for every tool you will use. See an example of a function signature further up in this document.
-3. After a `get-context` call, you MUST NOT call `get-context` again for the same subtask unless at least one of these is true:
-   a) The previous `get-context` result does not contain the required tool’s exact filename and required arguments.
-   b) The previous `get-context` result is clearly unrelated to the requested capability (no matching tools/workflows found).
-   c) The user changes the task requirements.
-4. If rule 3 is true and a second `get-context` is required, you MUST:
-   - Explain internally (briefly) which specific missing tool signature you are trying to retrieve,
-   - Use a single narrow query targeted at that exact tool.
-5. If you issue multiple `get-context` invocations in the same response for the same subtask, then search at most 3 times per response. If still missing, ask the user for clarification or do a single follow-up `get-context` in the next turn.
-
-Violation: Repeated or redundant `get-context` calls are considered a tool-use bug."
+If the user’s query is broad (e.g., “list companies,” “show users,” “find projects”) and you don’t know a direct function, call `get-context` with the query as-is to look for relevant workflows, information, or functions."
 
 // Making sure we add support for executing AI functions to the system instruction.
 set-value:x:@.arguments/*/system_message

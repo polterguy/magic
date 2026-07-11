@@ -39,6 +39,17 @@ if
          status:int:404
          public:bool:true
 
+// Making sure widget is a valid widget
+io.file.load:x:@.arguments/*/filename
+if
+   not
+      strings.contains:x:@io.file.load
+         .:WIDGET_ID_UNIQUE_NUMBER
+   .lambda
+      throw:Specified file is not a valid widget
+         status:int:400
+         public:bool:true
+
 // Makes sure we don't try to add widgets outside of modules.
 if
    not
@@ -74,8 +85,8 @@ if
 set-value:x:@.completion
    strings.concat
       .:"If the user is asking you to do perform an action associated with this function then respond with the following:\n\n"
-      .:"___\n"
-      .:"```plaintext\nFUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/render-html-widget.hl]:\n{\n"
+      .:"```plaintext\n___\n"
+      .:"FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/render-html-widget.hl]:\n{\n"
       .:"  \"filename\":\""
       get-value:x:@.arguments/*/filename
       .:"\"\n"
