@@ -50,6 +50,12 @@ Below is a screenshot from Hyper IDE.
 
 The above illustrates how Magic facilitates for _"comment driven development"_, as in provide _"natural language instructions"_ with a declarative comment, and have the system implement the code using the built-in AI code generator.
 
+# The LLM that **CANNOT** Hallcuniate, not even in **THEORY**
+
+Magic runs Hyperlambda. Hyperlambda can be generated with our own proprietary LLM. Because we're not generating code, but rather AST, we can analyse the generated code, and reject it if it contains hallucinated functions. This results in that the Hyperlambda Generator **cannot, not even in theory respond with hallucinated functions or constructs**. Because hallucinated code is rejected before the code is returned to the caller.
+
+Comnbined with the ability to also restrict the vocabulary, this also allows you to deliver AI agents that dynamically grows their tool space on demand - **Without** security risks!
+
 ## Also a web server
 
 Magic is also a web server, allowing you to _instantly deploy_ everything, without compilation, build processes, complex pipeline connectors, etc. So the process is as follows;
