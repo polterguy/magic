@@ -1,0 +1,60 @@
+
+/*
+ * Executable Hyperlambda file that generates one CRUD HTTP endpoint wrapping a database table,
+ * using the same battle tested CRUD generator the dashboard is using. Invoke once for each verb
+ * you want to generate. GET also generates a record count endpoint, and GET endpoints support
+ * paging, sorting and filtering. Retrieve column names and types with get-database-schema first,
+ * and create the module with create-module unless it already exists. Generated endpoints are
+ * instantly available as HTTP endpoints and MCP tools.
+ */
+.arguments
+
+   // Injected by the framework.
+   _session:string
+
+   // Mandatory argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'.
+   databaseType:string
+
+   // Mandatory argument being database to wrap, on the format '[connection-string|database]', e.g. '[generic|chinook]'.
+   database:string
+
+   // Mandatory argument being name of table to wrap. For PostgreSQL tables outside the public schema use 'schema.table'.
+   table:string
+
+   // Mandatory argument being name of module to generate the endpoint inside of.
+   moduleName:string
+
+   // Mandatory argument being relative URL of the generated endpoint, typically the name of the table.
+   moduleUrl:string
+
+   // Mandatory argument being HTTP verb to generate an endpoint for. Can be either 'get', 'post', 'put' or 'delete'.
+   verb:string
+
+   // Optional argument being comma separated list of roles allowed to invoke the endpoint, or '*' to allow any authenticated user. Omitting it creates an endpoint anyone can invoke.
+   auth:string
+
+   // Optional argument that if true makes the POST endpoint return the id of the created record.
+   returnId:bool
+
+   // Optional argument that if true will overwrite previously generated endpoint files.
+   overwrite:bool
+
+   // Mandatory argument being column declarations. For 'get' provide [columns] being all columns, for 'post' the insertable columns, and for 'put' the updatable non-key columns - each column an object with [name] and [type], where type is the Hyperlambda type of the column, e.g. 'long', 'string', 'decimal', 'double', 'date' or 'bool'. For 'put' additionally provide [primary] being the primary key columns as [name]/[type] objects. For 'delete' provide only [primary], each key an object with a single 'column:type' field, e.g. {"id":"long"}.
+   args:*
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Deriving generator template from verb.
+strings.concat
+   .:/system/crudifier/templates/crud.template.
+   get-value:x:@.arguments/*/verb
+   .:.hl
+
+// Passing arguments through to the CRUD generator.
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*
+remove-nodes:x:./*/execute-file/*/_session
+execute-file:/system/crudifier/crudify.post.hl
+   template:x:@strings.concat
+return-nodes:x:@execute-file/*
