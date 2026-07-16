@@ -70,7 +70,7 @@ else
 
       case:pgsql
          set-value:x:@.master
-            .:template1
+            .:postgres
          set-value:x:@.sql
             strings.concat
                .:"revoke connect on database \""

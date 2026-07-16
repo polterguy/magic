@@ -29,8 +29,8 @@ slots.create:magic.db.pgsql.databases
                .:postgres]
    pgsql.connect:x:@.connection
 
-      // Runs our query
-      pgsql.select:select datname from pg_database
+      // Runs our query, returning only databases we can actually connect to.
+      pgsql.select:"select datname from pg_database where datallowconn and not datistemplate and has_database_privilege(datname, 'CONNECT')"
 
       // Renaming "Database" nodes.
       set-name:x:@pgsql.select/*/*

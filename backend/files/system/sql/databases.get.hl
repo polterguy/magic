@@ -56,10 +56,6 @@ cache.try-get:x:@strings.concat
             remove-nodes:x:@signal/*/*/db/=performance_schema
             remove-nodes:x:@signal/*/*/db/=sys
 
-         case:pgsql
-            remove-nodes:x:@signal/*/*/db/=template1
-            remove-nodes:x:@signal/*/*/db/=template0
-
       // Creating our return value, one for each database.
       .result
       for-each:x:@signal/*/*
@@ -75,84 +71,95 @@ cache.try-get:x:@strings.concat
       // Iterating through databases.
       for-each:x:@.result/*
 
-         // Retrieving tables.
-         strings.concat
-            .:magic.db.
-            get-value:x:@.databaseType
-            .:.tables
-         unwrap:x:+/*
-         signal:x:@strings.concat
-            connection-string:x:@.connection-string
-            database:x:@.dp/#/*/name
-         for-each:x:@signal/*
+         // Making sure one database we cannot enumerate doesn't abort the whole invocation.
+         try
 
-            // Retrieving columns.
-            unwrap:x:+/*/*/*
-            add:x:@for-each/@.dp/#/*/tables
-               .
-                  .
-                     name:x:@.dp/#/*/table
-                     columns
+            // Retrieving tables.
             strings.concat
                .:magic.db.
                get-value:x:@.databaseType
-               .:.columns
+               .:.tables
             unwrap:x:+/*
             signal:x:@strings.concat
                connection-string:x:@.connection-string
-               database:x:@for-each/@.dp/#/*/name
-               table:x:@.dp/#/*/table
+               database:x:@.dp/#/*/name
             for-each:x:@signal/*
+
+               // Retrieving columns.
                unwrap:x:+/*/*/*
-               add:x:@for-each/@for-each/@.dp/#/*/tables/0/-/*/columns
+               add:x:@for-each/@.dp/#/*/tables
                   .
                      .
-                        name:x:@.dp/#/*/name
-                        db:x:@.dp/#/*/db
-                        nullable:x:@.dp/#/*/nullable
-                        primary:x:@.dp/#/*/primary
-                        automatic:x:@.dp/#/*/automatic
-                        hl:x:@.dp/#/*/hl
+                        name:x:@.dp/#/*/table
+                        columns
+               strings.concat
+                  .:magic.db.
+                  get-value:x:@.databaseType
+                  .:.columns
+               unwrap:x:+/*
+               signal:x:@strings.concat
+                  connection-string:x:@.connection-string
+                  database:x:@for-each/@.dp/#/*/name
+                  table:x:@.dp/#/*/table
+               for-each:x:@signal/*
+                  unwrap:x:+/*/*/*
+                  add:x:@for-each/@for-each/@.dp/#/*/tables/0/-/*/columns
+                     .
+                        .
+                           name:x:@.dp/#/*/name
+                           db:x:@.dp/#/*/db
+                           nullable:x:@.dp/#/*/nullable
+                           primary:x:@.dp/#/*/primary
+                           automatic:x:@.dp/#/*/automatic
+                           hl:x:@.dp/#/*/hl
 
-            // Retrieving foreign keys.
-            add:x:@for-each/@for-each/@.dp/#/*/tables/0/-
-               .
-                  foreign_keys
-            strings.concat
-               .:magic.db.
-               get-value:x:@.databaseType
-               .:.foreign_keys
-            unwrap:x:+/*
-            signal:x:@strings.concat
-               connection-string:x:@.connection-string
-               database:x:@for-each/@for-each/@.dp/#/*/name
-               table:x:@.dp/#/*/table
-            for-each:x:@signal/*
-               add:x:+/*/*
-                  get-nodes:x:@.dp/#/*
-               add:x:@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-/*/foreign_keys
+               // Retrieving foreign keys.
+               add:x:@for-each/@for-each/@.dp/#/*/tables/0/-
                   .
+                     foreign_keys
+               strings.concat
+                  .:magic.db.
+                  get-value:x:@.databaseType
+                  .:.foreign_keys
+               unwrap:x:+/*
+               signal:x:@strings.concat
+                  connection-string:x:@.connection-string
+                  database:x:@for-each/@for-each/@.dp/#/*/name
+                  table:x:@.dp/#/*/table
+               for-each:x:@signal/*
+                  add:x:+/*/*
+                     get-nodes:x:@.dp/#/*
+                  add:x:@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-/*/foreign_keys
                      .
+                        .
 
-            // Retrieving indexes.
-            add:x:@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-
-               .
-                  indexes
-            strings.concat
-               .:magic.db.
-               get-value:x:@.databaseType
-               .:.indexes
-            unwrap:x:+/*
-            signal:x:@strings.concat
-               connection-string:x:@.connection-string
-               database:x:@for-each/@for-each/@for-each/@.dp/#/*/name
-               table:x:@.dp/#/*/table
-            for-each:x:@signal/*
-               add:x:+/*/*
-                  get-nodes:x:@.dp/#/*
-               add:x:@for-each/@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-/*/indexes
+               // Retrieving indexes.
+               add:x:@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-
                   .
+                     indexes
+               strings.concat
+                  .:magic.db.
+                  get-value:x:@.databaseType
+                  .:.indexes
+               unwrap:x:+/*
+               signal:x:@strings.concat
+                  connection-string:x:@.connection-string
+                  database:x:@for-each/@for-each/@for-each/@.dp/#/*/name
+                  table:x:@.dp/#/*/table
+               for-each:x:@signal/*
+                  add:x:+/*/*
+                     get-nodes:x:@.dp/#/*
+                  add:x:@for-each/@for-each/@for-each/@for-each/@.dp/#/*/tables/0/-/*/indexes
                      .
+                        .
+
+         .catch
+
+            // Skipping database we cannot enumerate, logging why.
+            log.info:Could not enumerate database
+               database:x:@.dp/#/*/name
+               error:x:@.arguments/*/message
+            remove-nodes:x:@.dp/#
 
       // Returning database to caller.
       lambda2hyper:x:@.result/*

@@ -79,7 +79,7 @@ else
 
       case:pgsql
          set-value:x:@.master
-            .:template1
+            .:postgres
 
       case:mssql
          set-value:x:@.master

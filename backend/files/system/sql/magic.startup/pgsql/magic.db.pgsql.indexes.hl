@@ -14,6 +14,16 @@ slots.create:magic.db.pgsql.indexes
    validators.mandatory:x:@.arguments/*/database
    validators.mandatory:x:@.arguments/*/table
 
+   // Splitting [table] into schema and table, defaulting schema to 'public' unless given as 'schema.table'.
+   .schema:public
+   strings.split:x:@.arguments/*/table
+      .:.
+   if
+      exists:x:@strings.split/1
+      .lambda
+         set-value:x:@.schema
+            get-value:x:@strings.split/0
+
    // Opens up our connection
    .connection:[postgres]
    if
@@ -42,28 +52,24 @@ slots.create:magic.db.pgsql.indexes
             .:]
    pgsql.connect:x:@.connection
 
-      // Dynamically creating our SQL.
-      strings.concat
-         .:@"
+      // Runs our query, excluding primary key and unique constraint indexes.
+      pgsql.select:@"
 select
-    t.relname as table_name,
     i.relname as index_name,
     a.attname as column_name
-from
-    pg_class t,
-    pg_class i,
-    pg_index ix,
-    pg_attribute a
+from pg_class t
+    join pg_namespace n on n.oid = t.relnamespace
+    join pg_index ix on t.oid = ix.indrelid
+    join pg_class i on i.oid = ix.indexrelid
+    join pg_attribute a on a.attrelid = t.oid and a.attnum = ANY(ix.indkey)
 where
-    t.oid = ix.indrelid
-    and i.oid = ix.indexrelid
-    and a.attrelid = t.oid
-    and a.attnum = ANY(ix.indkey)
-    and t.relkind = 'r'
-    and t.relname = '"
-         get-value:x:@.arguments/*/table
-         .:"'"
-      pgsql.select:x:@strings.concat
+    t.relkind in ('r', 'p')
+    and not ix.indisprimary
+    and not ix.indisunique
+    and t.relname = @table
+    and n.nspname = @schema"
+         @table:x:@strings.split/0/-
+         @schema:x:@.schema
 
       /*
        * Creating our return value, by projecting it into

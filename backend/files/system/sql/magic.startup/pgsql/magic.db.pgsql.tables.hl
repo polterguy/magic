@@ -40,8 +40,8 @@ slots.create:magic.db.pgsql.tables
             .:]
    pgsql.connect:x:@.connection
 
-      // Runs our query
-      pgsql.select:"select tablename from pg_catalog.pg_tables where schemaname != 'pg_catalog' and schemaname != 'information_schema'"
+      // Runs our query, returning tables as 'schema.table' to caller.
+      pgsql.select:"select schemaname || '.' || tablename from pg_catalog.pg_tables where schemaname != 'pg_catalog' and schemaname != 'information_schema'"
       set-name:x:@pgsql.select/*/*
          .:table
       return-nodes:x:@pgsql.select/*

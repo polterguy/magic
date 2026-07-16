@@ -14,6 +14,16 @@ slots.create:magic.db.pgsql.columns
    validators.mandatory:x:@.arguments/*/database
    validators.mandatory:x:@.arguments/*/table
 
+   // Splitting [table] into schema and table, defaulting schema to 'public' unless given as 'schema.table'.
+   .schema:public
+   strings.split:x:@.arguments/*/table
+      .:.
+   if
+      exists:x:@strings.split/1
+      .lambda
+         set-value:x:@.schema
+            get-value:x:@strings.split/0
+
    // Opens up our connection
    .connection:[postgres]
    if
@@ -45,19 +55,20 @@ slots.create:magic.db.pgsql.columns
       // Making sure we support table names with special characters.
       strings.concat
          .:@"
-select c.column_name, c.is_nullable, c.data_type, c.column_default, exists(
+select c.column_name, c.is_nullable, c.data_type, c.column_default, c.is_identity, exists(
    select *
-      from information_schema.key_column_usage kcu  
-         join information_schema.table_constraints tc on tc.constraint_name = kcu.constraint_name 
+      from information_schema.key_column_usage kcu
+         join information_schema.table_constraints tc on tc.constraint_name = kcu.constraint_name and tc.constraint_schema = kcu.constraint_schema
       where tc.constraint_type = 'PRIMARY KEY' and
-         kcu.table_name = @table and 
+         kcu.table_name = @table and
+         kcu.table_schema = @schema and
          c.column_name = kcu.column_name and c.table_name = kcu.table_name
    ) as is_pk
    from information_schema.columns c
-   where c.table_name = @table and c.table_catalog = @database order by is_pk desc, c.column_name asc"
+   where c.table_name = @table and c.table_schema = @schema order by is_pk desc, c.column_name asc"
       pgsql.select:x:@strings.concat
-         @table:x:@.arguments/*/table
-         @database:x:@.arguments/*/database
+         @table:x:@strings.split/0/-
+         @schema:x:@.schema
 
       /*
        * Creating our return value, by projecting it into
@@ -97,17 +108,21 @@ select c.column_name, c.is_nullable, c.data_type, c.column_default, exists(
                .
                   primary:bool:false
 
-         // Checking if column has a default value.
+         // Checking if column has a default value, or is a 'generated as identity' column.
          if
-            and
-               not
-                  eq
-                     get-value:x:@.dp/#/*/column_default
-                     .:
-               not
-                  eq
-                     get-value:x:@.dp/#/*/column_default
-                     .
+            or
+               and
+                  not
+                     eq
+                        get-value:x:@.dp/#/*/column_default
+                        .:
+                  not
+                     eq
+                        get-value:x:@.dp/#/*/column_default
+                        .
+               eq
+                  get-value:x:@.dp/#/*/is_identity
+                  .:YES
             .lambda
                add:x:@.tmp/*
                   .
@@ -142,14 +157,8 @@ select c.column_name, c.is_nullable, c.data_type, c.column_default, exists(
          switch:x:@strings.replace
 
             // Everything transformed into date values.
-            case:smallserial
-            case:serial
-            case:smallint
-               set-value:x:@.type
-                  .:int
-
-            // Everything transformed into date values.
             case:timestamp
+            case:date
                set-value:x:@.type
                   .:date
 
@@ -167,10 +176,12 @@ select c.column_name, c.is_nullable, c.data_type, c.column_default, exists(
                   .:double
 
             // Everything transformed into integer long values.
+            case:smallserial
+            case:serial
+            case:smallint
             case:integer
             case:bigint
             case:bigserial
-            case:interval
                set-value:x:@.type
                   .:long
 
@@ -183,6 +194,8 @@ select c.column_name, c.is_nullable, c.data_type, c.column_default, exists(
             case:json
             case:text
             case:xml
+            case:time
+            case:interval
                set-value:x:@.type
                   .:string
 

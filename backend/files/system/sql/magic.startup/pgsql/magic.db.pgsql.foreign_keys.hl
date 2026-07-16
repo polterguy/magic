@@ -14,6 +14,16 @@ slots.create:magic.db.pgsql.foreign_keys
    validators.mandatory:x:@.arguments/*/database
    validators.mandatory:x:@.arguments/*/table
 
+   // Splitting [table] into schema and table, defaulting schema to 'public' unless given as 'schema.table'.
+   .schema:public
+   strings.split:x:@.arguments/*/table
+      .:.
+   if
+      exists:x:@strings.split/1
+      .lambda
+         set-value:x:@.schema
+            get-value:x:@strings.split/0
+
    // Opens up our connection
    .connection:[postgres]
    if
@@ -46,7 +56,7 @@ slots.create:magic.db.pgsql.foreign_keys
       pgsql.select:@"
 select
       kcu.column_name as column,
-      rel_kcu.table_name as foreign_table,
+      rel_kcu.table_schema || '.' || rel_kcu.table_name as foreign_table,
       rel_kcu.column_name as foreign_column,
       tco.constraint_name as name
 from information_schema.table_constraints tco
@@ -62,10 +72,10 @@ join information_schema.key_column_usage rel_kcu
           and kcu.ordinal_position = rel_kcu.ordinal_position
 where tco.constraint_type = 'FOREIGN KEY' and
     kcu.table_name = @table and
-    kcu.table_catalog = @database
+    kcu.table_schema = @schema
 order by kcu.column_name"
-         @table:x:@.arguments/*/table
-         @database:x:@.arguments/*/database
+         @table:x:@strings.split/0/-
+         @schema:x:@.schema
 
       // Returning result to caller.
       return-nodes:x:@pgsql.select/*
