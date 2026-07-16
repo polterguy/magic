@@ -1,9 +1,9 @@
 
 /*
- * Lists all foreign keys in the specified SQLite table.
- * 
+ * Lists all indexes in the specified SQLite table.
+ *
  * Arguments
- * 
+ *
  * - [connection-string] - What connection string to use
  * - [database] - What database you want to check
  * - [table] - What table you want to check
@@ -42,15 +42,13 @@ slots.create:magic.db.sqlite.indexes
             .:]
    sqlite.connect:x:@.connection
 
-      strings.concat
-         .:"select * from sqlite_master where type = 'index' and tbl_name='"
-         get-value:x:@.arguments/*/table
-         .:"'"
-      sqlite.select:x:@strings.concat
+      // Retrieving indexes, excluding SQLite's automatically created primary key and unique constraint indexes.
+      sqlite.select:"select name from sqlite_master where type = 'index' and tbl_name = @table and name not like 'sqlite_autoindex%'"
+         @table:x:@.arguments/*/table
 
       /*
        * Creating our return value, by projecting it into
-       * a generic form, that does not rely upon MySQL's syntactic
+       * a generic form, that does not rely upon SQLite's syntactic
        * details.
        */
       for-each:x:@sqlite.select/*
@@ -60,11 +58,8 @@ slots.create:magic.db.sqlite.indexes
                .
                   name:x:@.dp/#/*/name
                   columns
-         strings.concat
-            .:"pragma index_info('"
-            get-value:x:@.dp/#/*/name
-            .:"')"
-         sqlite.select:x:@strings.concat
+         sqlite.select:"select * from pragma_index_info(@index)"
+            @index:x:@.dp/#/*/name
          for-each:x:@sqlite.select/*
             unwrap:x:+/*/*
             add:x:../*/return-nodes/0/-/*/columns

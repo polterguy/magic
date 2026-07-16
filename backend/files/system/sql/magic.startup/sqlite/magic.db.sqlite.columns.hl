@@ -15,7 +15,7 @@ slots.create:magic.db.sqlite.columns
    validators.mandatory:x:@.arguments/*/table
 
    // Opens up our connection
-   .connection:[postgres]
+   .connection:
    if
       and
          not
@@ -42,11 +42,23 @@ slots.create:magic.db.sqlite.columns
             .:]
    sqlite.connect:x:@.connection
 
-      strings.concat
-         .:"pragma table_info('"
-         get-value:x:@.arguments/*/table
-         .:"')"
-      sqlite.select:x:@strings.concat
+      // Retrieving columns, parametrised to also handle table names with special characters.
+      sqlite.select:"select * from pragma_table_info(@table)"
+         @table:x:@.arguments/*/table
+
+      /*
+       * Checking if table has a composite primary key, since only single column
+       * integer primary keys are rowid aliases with automatically assigned values.
+       */
+      .composite:bool:false
+      for-each:x:@sqlite.select/*
+         if
+            mt
+               get-value:x:@.dp/#/*/pk
+               .:long:1
+            .lambda
+               set-value:x:@.composite
+                  .:bool:true
 
       /*
        * Creating our return value, by projecting it into
@@ -111,10 +123,9 @@ slots.create:magic.db.sqlite.columns
                   automatic:bool:false
 
             /*
-             * Notice, SQLite doesn't inform us that column is automatic if it's an
-             * "autoincrement" column using "pragma table_info" - Hence, we've got to
-             * do a lookup into "sqlite_master" if column is integer and primary key
-             * to determine if column is an autoincrement column.
+             * Notice, a single column integer primary key is a rowid alias in SQLite,
+             * implying its value is automatically assigned even without the
+             * autoincrement keyword.
              */
             strings.to-lower:x:@.dp/#/*/type
             if
@@ -123,16 +134,13 @@ slots.create:magic.db.sqlite.columns
                      .:integer
                   eq:x:@.dp/#/*/pk
                      .:long:1
+                  eq:x:@.composite
+                     .:bool:false
                .lambda
-                  sqlite.select:"select 1 from sqlite_master where type = 'table' and name = @table and sql like '%AUTOINCREMENT%'"
-                     @table:x:@.arguments/*/table
-                  if
-                     exists:x:@sqlite.select/*/*
-                     .lambda
 
-                        // Column is autoincrement
-                        set-value:x:@.tmp/*/*/automatic
-                           .:bool:true
+                  // Column is a rowid alias.
+                  set-value:x:@.tmp/*/*/automatic
+                     .:bool:true
 
          /*
           * Figuring our which Hyperlambda type to project

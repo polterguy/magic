@@ -42,11 +42,9 @@ slots.create:magic.db.sqlite.foreign_keys
             .:]
    sqlite.connect:x:@.connection
 
-      strings.concat
-         .:"pragma foreign_key_list('"
-         get-value:x:@.arguments/*/table
-         .:"')"
-      sqlite.select:x:@strings.concat
+      // Retrieving foreign keys, parametrised to also handle table names with special characters.
+      sqlite.select:"select * from pragma_foreign_key_list(@table)"
+         @table:x:@.arguments/*/table
 
       /*
        * Creating our return value, by projecting it into

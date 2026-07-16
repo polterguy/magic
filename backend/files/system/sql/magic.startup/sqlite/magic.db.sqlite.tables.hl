@@ -13,7 +13,7 @@ slots.create:magic.db.sqlite.tables
    validators.mandatory:x:@.arguments/*/database
 
    // Opens up our connection
-   .connection:[postgres]
+   .connection:
    if
       and
          not
@@ -40,8 +40,16 @@ slots.create:magic.db.sqlite.tables
             .:]
    sqlite.connect:x:@.connection
 
-      // Runs our query
-      sqlite.select:"select name from sqlite_master where type = 'table' and name != 'sqlite_sequence' and name != '_sqliteai_vector'"
+      // Runs our query, excluding SQLite's internal tables and shadow tables belonging to virtual tables.
+      sqlite.select:@"select name from sqlite_master m
+   where m.type = 'table'
+      and m.name not like 'sqlite_%'
+      and m.name != '_sqliteai_vector'
+      and not exists(
+         select 1 from sqlite_master v
+            where v.type = 'table'
+               and v.sql like 'CREATE VIRTUAL TABLE%'
+               and substr(m.name, 1, length(v.name) + 1) = v.name || '_')"
       set-name:x:@sqlite.select/*/*
          .:table
       return-nodes:x:@sqlite.select/*
