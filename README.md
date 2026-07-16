@@ -74,6 +74,8 @@ To use the system you'll need an OpenAI API key. You can create one [here](https
 
 If you don't want to use OpenAI, there are Ollama and HuggingFace plugins for the system, allowing you to _"override"_ the inference functions with Ollama or HuggingFace models and endpoints - but embeddings can only be created with OpenAI's APIs.
 
+**Notice** - You can also use Magic through the MCP server, at which point you don't need an OpenAI API key.
+
 ### DIY Home Cloud
 
 Magic easily installs on for instance a Mac Mini, using the Docker images. By combining it with a CloudFlare tunnel, you can set up a web server in a couple of minutes, serving applications and data out of your home. The link below is running out of my house in Larnaca, Cyprus, through a CloudFlare tunnel. We've tested it from the US, Norway, and a whole range of countries, and it's surprisingly responsive considering the connection it's being served over.
