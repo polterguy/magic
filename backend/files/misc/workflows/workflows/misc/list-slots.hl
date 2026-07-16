@@ -1,0 +1,28 @@
+
+/*
+ * Lists all slots in the system with their descriptions.
+ *
+ * Execute this before instructing the Hyperlambda Generator, to know which capabilities
+ * exist on this instance. A capability not in this list does not exist.
+ *
+ * Optionally provide a [filter] argument to only return slots whose names starts with the specified filter.
+ */
+.arguments
+   filter:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Listing all slots, optionally filtered by prefix.
+vocabulary:x:@.arguments/*/filter
+
+// Decorating each slot with its description.
+for-each:x:@vocabulary/*
+   slot.description:x:@.dp/#
+   set-name:x:@.dp/#
+      get-value:x:@.dp/#
+   set-value:x:@.dp/#
+      get-value:x:@slot.description
+
+// Returning result to caller.
+return-nodes:x:@vocabulary/*
