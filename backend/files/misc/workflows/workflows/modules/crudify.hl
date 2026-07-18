@@ -9,9 +9,6 @@
  */
 .arguments
 
-   // Injected by the framework.
-   _session:string
-
    // Mandatory argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'.
    databaseType:string
 
@@ -54,7 +51,6 @@ strings.concat
 // Passing arguments through to the CRUD generator.
 add:x:./*/execute-file
    get-nodes:x:@.arguments/*
-remove-nodes:x:./*/execute-file/*/_session
 execute-file:/system/crudifier/crudify.post.hl
    template:x:@strings.concat
 return-nodes:x:@execute-file/*
