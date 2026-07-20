@@ -33,6 +33,13 @@ runcmd:
   - |
     set -e
     DOMAIN="magic.example.com"   # <-- EDIT THIS LINE: domain pointing at this droplet
+    # 4 GB swap - the Angular production build gets OOM-killed on small
+    # droplets without it, and it gives headless Chrome headroom at runtime.
+    fallocate -l 4G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
     systemctl enable --now docker
     git clone --depth 1 https://github.com/polterguy/magic.git /opt/magic
     docker build -f /opt/magic/.do/Dockerfile.backend -t magic /opt/magic

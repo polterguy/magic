@@ -47,10 +47,12 @@ Content rules on every container start:
    certificate issuance automatically, so HTTPS comes up within minutes of
    DNS propagation
 
-The user-data script installs Docker, clones this repository, builds the
-all-in-one image, and starts it behind Caddy with the four volumes above.
-**First boot takes roughly 10–15 minutes** (the Docker build runs during it).
-You can watch progress via SSH: `tail -f /var/log/cloud-init-output.log`.
+The user-data script creates a 4 GB swap file (the Angular production build
+is OOM-killed without it on small droplets), installs Docker, clones this
+repository, builds the all-in-one image, and starts it behind Caddy with the
+four volumes above. **First boot takes roughly 15–20 minutes** (the Docker
+build runs during it). You can watch progress via SSH:
+`tail -f /var/log/cloud-init-output.log`.
 
 ## Step 2: Log In and Run the Setup Wizard
 
