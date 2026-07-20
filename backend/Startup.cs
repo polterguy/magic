@@ -2,6 +2,7 @@
  * Copyright (c) Thomas Hansen, 2021 - 2023 thomas@ainiro.io.
  */
 
+// Force cache bust for DigitalOcean builds
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,17 +30,6 @@ namespace magic.backend
         {
             // Initializing Magic.
             app.UseMagic(Configuration);
-
-            // Health check endpoint for container orchestration
-            app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/health", async context => 
-                {
-                    context.Response.ContentType = "application/json";
-                    await context.Response.WriteAsJsonAsync(new { status = "ok" });
-                });
-            });
         }
     }
 }
