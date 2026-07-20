@@ -1,5 +1,18 @@
 name: magic-cloud
 services:
+- name: frontend
+  github:
+    branch: main
+    deploy_on_push: true
+  dockerfile_path: docker.frontend
+  http_port: 80
+  ports:
+  - name: http
+    protocol: HTTP
+    source_port: 80
+  routes:
+  - path: /
+    component_name: frontend
 - name: backend
   github:
     branch: main
@@ -23,14 +36,9 @@ services:
   - key: magic:frontend:urls
     value: https://${APP_DOMAIN}
   routes:
-  - path: /
+  - path: /api
     component_name: backend
   volumes:
   - name: data
     mount_path: /magic/files/data
     filesystem_label: data
-databases:
-- name: magic-db
-  engine: PG
-  version: "15"
-  production: false

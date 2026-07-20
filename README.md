@@ -7,6 +7,8 @@ Magic is built on top of [OpenAI](https://openai.com) and [Hyperlambda](https://
 
 No additional _"backend connectors"_ or _"database connectors"_ required - **zero lock-in**. Everything is 100% integrated, thanks to SQLite, with optional MySQL, PostgreSQL, and Microsoft SQL Server capabilities. You can run the whole thing on your own hardware if you wish.
 
+**Note:** The Hyperlambda code generator is currently free. Future pricing: $49 per 1,000 requests (no payment wall today).
+
 ## Open Source _"Vibe Coding"_ Platform
 
 Below is an app that was created with the following prompt;
@@ -27,9 +29,9 @@ Magic asked a handful of control questions, before it automatically generated th
 
 The fastest way to get Magic running is to deploy directly to DigitalOcean:
 
-[![Deploy to DigitalOcean](https://raw.githubusercontent.com/digitalocean/app_platform_automation/main/buttons/deploy-to-do-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=thomashansen/magic/tree/main)
+**[Deploy to DigitalOcean](https://cloud.digitalocean.com/apps/new?repo=thomashansen/magic/tree/main)**
 
-**What you get:** Fully managed Magic instance with auto HTTPS, PostgreSQL database, persistent storage, and CI/CD integration. Live in 2–3 minutes. See [DigitalOcean deployment guide](docs/deploy-digitalocean.md) for details.
+**What you get:** Fully managed Magic instance with auto HTTPS, persistent storage, and CI/CD integration. Live in 2–3 minutes. Connect to SQLite or any external database (MySQL, PostgreSQL, MSSQL). See [DigitalOcean deployment guide](docs/deploy-digitalocean.md) for details.
 
 ### Docker Compose (Self-Hosted)
 
