@@ -29,7 +29,7 @@ Magic asked a handful of control questions, before it automatically generated th
 
 The fastest way to get Magic running is to deploy directly to DigitalOcean:
 
-**[Deploy to DigitalOcean](https://cloud.digitalocean.com/apps/new?repo=polterguy/magic/tree/master)****
+**[Deploy to DigitalOcean](https://cloud.digitalocean.com/apps/new?repo=https://github.com/polterguy/magic/tree/master)****
 
 **What you get:** Fully managed Magic instance with auto HTTPS, persistent storage, and CI/CD integration. Live in 2–3 minutes. Connect to SQLite or any external database (MySQL, PostgreSQL, MSSQL). See [DigitalOcean deployment guide](docs/deploy-digitalocean.md) for details.
 
