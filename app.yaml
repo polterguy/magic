@@ -1,0 +1,36 @@
+name: magic-cloud
+services:
+- name: backend
+  github:
+    branch: main
+    deploy_on_push: true
+  dockerfile_path: docker.backend
+  http_port: 4444
+  health_check:
+    http_path: /health
+  ports:
+  - name: http
+    protocol: HTTP
+    source_port: 4444
+  envs:
+  - key: ASPNETCORE_ENVIRONMENT
+    value: Production
+  - key: magic:auth:secret
+    scope: RUN_AND_BUILD_TIME
+    value: ${MAGIC_AUTH_SECRET}
+  - key: magic:auth:https-only
+    value: "true"
+  - key: magic:frontend:urls
+    value: https://${APP_DOMAIN}
+  routes:
+  - path: /
+    component_name: backend
+  volumes:
+  - name: data
+    mount_path: /magic/files/data
+    filesystem_label: data
+databases:
+- name: magic-db
+  engine: PG
+  version: "15"
+  production: false

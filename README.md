@@ -23,7 +23,17 @@ Magic asked a handful of control questions, before it automatically generated th
 
 ## Getting Started
 
-The easiest way to get started is to use Docker and create a _"docker-compose.yaml"_ file with the following content;
+### 1-Click Deploy to DigitalOcean (Recommended)
+
+The fastest way to get Magic running is to deploy directly to DigitalOcean:
+
+[![Deploy to DigitalOcean](https://www.deploytom.com/d2018eb/deploy-button-svg/blob/main/img/deploy-to-digitalocean-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=thomashansen/magic/tree/main)
+
+**What you get:** Fully managed Magic instance with auto HTTPS, PostgreSQL database, persistent storage, and CI/CD integration. Live in 2–3 minutes. See [DigitalOcean deployment guide](docs/deploy-digitalocean.md) for details.
+
+### Docker Compose (Self-Hosted)
+
+Alternatively, run Magic locally or on your own hardware using Docker Compose:
 
 ```yaml
 version: "3.8"

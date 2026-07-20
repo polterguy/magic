@@ -27,6 +27,9 @@ namespace magic.backend
 
         public void Configure(IApplicationBuilder app)
         {
+            // Health check endpoint for container orchestration
+            app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
+
             // Initializing Magic.
             app.UseMagic(Configuration);
         }
