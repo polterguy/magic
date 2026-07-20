@@ -38,7 +38,9 @@ Content rules on every container start:
 
 **[Create your droplet](https://cloud.digitalocean.com/droplets/new)**
 
-1. Pick **Ubuntu 24.04**, a plan with **at least 2 GB RAM**, and your region
+1. Pick **Ubuntu 24.04**, a plan with **at least 2 GB RAM** — **4 GB is
+   typically preferred** (faster builds, comfortable headroom for headless
+   Chrome) — and your region
 2. Under **Advanced Options / User Data**, paste the entire contents of
    [`.do/cloud-init.yaml`](../.do/cloud-init.yaml) **after editing its one
    `DOMAIN=` line** to the domain you will use
@@ -115,6 +117,7 @@ frontend UI.
 ## Cost
 
 - Droplet (1 vCPU / 2 GB): ~$12/month
+- Droplet (2 vCPU / 4 GB, typically preferred): ~$24/month
 - Optional droplet backups: +20%
 - Optional block storage volume for extra capacity: from $10/month
 

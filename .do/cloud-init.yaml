@@ -4,8 +4,8 @@
 # Usage:
 #   1. Decide the domain you will point at this droplet (e.g. magic.example.com)
 #   2. Edit the DOMAIN= line in runcmd below - that is the ONLY edit needed
-#   3. Create a droplet (Ubuntu 24.04, 2 GB RAM or more recommended) and paste
-#      this entire file into the "User Data" field
+#   3. Create a droplet (Ubuntu 24.04; 2 GB RAM works, 4 GB is typically
+#      preferred) and paste this entire file into the "User Data" field
 #   4. After creation, point your domain's DNS A record at the droplet's IP.
 #      Caddy retries certificate issuance automatically, so HTTPS comes up
 #      within minutes of DNS propagation.
