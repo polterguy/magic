@@ -12,6 +12,7 @@ Once deployed, Magic will be live at `https://[your-app-name].ondigitalocean.app
 
 ## What You Get
 
+- **Auto HTTPS** — all traffic encrypted, renewed automatically
 - **Persistent Storage** — databases and uploaded files persist across redeploys
 - **Auto-Scaling** — upgrade to higher tier if needed from DigitalOcean dashboard
 - **CI/CD Integration** — push to `main` branch = automatic redeploy
@@ -72,6 +73,8 @@ To connect a database after deployment:
 - Storage: included up to 100GB
 - **Total: ~$5/month minimum (SQLite only)**
 
+To scale up, add a managed database from DigitalOcean for ~$15/month or more, depending on your needs.
+
 ## Persistent Storage
 
 Your data lives in `/magic/files/data/`:
@@ -99,8 +102,9 @@ DigitalOcean automatically rebuilds and redeploys. Downtime is typically < 1 min
 - Common issue: insufficient memory — upgrade to "Medium" tier
 
 ### Database won't connect
-- Ensure PostgreSQL is "Running" (DigitalOcean dashboard → Databases)
-- Check environment variables are injected correctly (dashboard → App Spec)
+- Check your connection string is correct (System Settings → Databases)
+- Ensure the external database is reachable from DigitalOcean (no firewall blocks)
+- Test connection locally if possible
 
 ### HTTPS certificate error
 - Wait 5–10 minutes after first deploy for certificate to provisioning
