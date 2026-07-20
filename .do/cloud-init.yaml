@@ -1,17 +1,26 @@
 #cloud-config
-# Magic Cloud - single-droplet DigitalOcean deployment.
+# Magic Cloud - single-droplet DigitalOcean deployment with automatic HTTPS.
 #
-# Usage: Create a droplet (Ubuntu 24.04, 2 GB RAM or more recommended) and
-# paste this entire file into the "User Data" field. First boot takes
-# roughly 10-15 minutes while Docker builds the image; Magic then answers
-# on http://[droplet-ip]/
+# Usage:
+#   1. Decide the domain you will point at this droplet (e.g. magic.example.com)
+#   2. Edit the DOMAIN= line in runcmd below - that is the ONLY edit needed
+#   3. Create a droplet (Ubuntu 24.04, 2 GB RAM or more recommended) and paste
+#      this entire file into the "User Data" field
+#   4. After creation, point your domain's DNS A record at the droplet's IP.
+#      Caddy retries certificate issuance automatically, so HTTPS comes up
+#      within minutes of DNS propagation.
+#
+# First boot takes roughly 10-15 minutes (Docker build). Magic then answers
+# on https://your-domain/
 #
 # What it does:
 #   1. Installs Docker and git
 #   2. Clones the Magic repository
 #   3. Builds the all-in-one image (Angular frontend compiled and served
-#      by the backend from /magic/files/etc/www - one container only)
-#   4. Runs it with the same four named volumes as docker-compose.yml:
+#      by the backend from /magic/files/etc/www - one application container)
+#   4. Starts a Caddy reverse proxy in front of it (automatic Let's Encrypt
+#      certificates, stored in persistent volumes so rebuilds don't re-issue)
+#   5. Runs Magic with the same four named volumes as docker-compose.yml:
 #      etc, data, config, modules - so all user data survives upgrades
 
 package_update: true
@@ -21,14 +30,23 @@ packages:
   - git
 
 runcmd:
-  - systemctl enable --now docker
-  - git clone --depth 1 https://github.com/polterguy/magic.git /opt/magic
-  - docker build -f /opt/magic/.do/Dockerfile.backend -t magic /opt/magic
-  - >-
-    docker run -d --name magic --restart unless-stopped
-    -p 80:4444
-    -v magic_files_etc:/magic/files/etc
-    -v magic_files_data:/magic/files/data
-    -v magic_files_config:/magic/files/config
-    -v magic_files_modules:/magic/files/modules
-    magic
+  - |
+    set -e
+    DOMAIN="magic.example.com"   # <-- EDIT THIS LINE: domain pointing at this droplet
+    systemctl enable --now docker
+    git clone --depth 1 https://github.com/polterguy/magic.git /opt/magic
+    docker build -f /opt/magic/.do/Dockerfile.backend -t magic /opt/magic
+    docker network create magicnet
+    docker run -d --name caddy --restart unless-stopped --network magicnet \
+      -p 80:80 -p 443:443 \
+      -e DOMAIN="$DOMAIN" \
+      -v /opt/magic/.do/Caddyfile:/etc/caddy/Caddyfile:ro \
+      -v caddy_data:/data \
+      -v caddy_config:/config \
+      caddy:2-alpine
+    docker run -d --name magic --restart unless-stopped --network magicnet \
+      -v magic_files_etc:/magic/files/etc \
+      -v magic_files_data:/magic/files/data \
+      -v magic_files_config:/magic/files/config \
+      -v magic_files_modules:/magic/files/modules \
+      magic

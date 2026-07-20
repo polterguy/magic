@@ -29,7 +29,7 @@ Magic asked a handful of control questions, before it automatically generated th
 
 The fastest way to get Magic running is a single DigitalOcean droplet — one container running the full stack, with persistent volumes for your data, configuration, and modules:
 
-**[DigitalOcean deployment guide](docs/deploy-digitalocean.md)**
+**[Create your droplet](https://cloud.digitalocean.com/droplets/new)** — edit the one `DOMAIN=` line in [`.do/cloud-init.yaml`](.do/cloud-init.yaml) and paste it into the *User Data* field during creation. HTTPS is automatic (Caddy + Let's Encrypt). Full guide: **[DigitalOcean deployment guide](docs/deploy-digitalocean.md)**
 
 Connect to SQLite or any external database (MySQL, PostgreSQL, MSSQL).
 

@@ -10,7 +10,10 @@ upgrades and reboots.
 - **One droplet** running one Docker container (frontend + backend together)
 - **Frontend:** Angular UI, compiled during the image build and served by the
   Magic backend from `/magic/files/etc/www/`
-- **Backend:** ASP.NET Core API running Magic on port 4444 (exposed on port 80)
+- **Backend:** ASP.NET Core API running Magic on port 4444 (not publicly exposed)
+- **TLS:** Caddy reverse proxy on ports 80/443 with automatic Let's Encrypt
+  certificates for your domain (issued and renewed automatically, stored in
+  persistent volumes)
 - **Internal Database:** SQLite, automatically created at `/magic/files/data/magic.db`
 - **Persistent storage:** four named Docker volumes, the same ones used by the
   repository's `docker-compose.yml`:
@@ -22,26 +25,36 @@ upgrades and reboots.
 | `magic_files_modules` | `/magic/files/modules` | Installed modules |
 | `magic_files_etc` | `/magic/files/etc` | Your snippets and files |
 
-The frontend (`etc/www`) and system files (`etc/system`) are refreshed from the
-new image on every container start, so upgrades apply cleanly — everything else
-in the volumes is never touched.
+Content rules on every container start:
+
+- **`/magic/files/etc/www`** (the frontend) is *overwritten* from the new image —
+  overwrite only, user-created web files are never deleted
+- **`/magic/files/system`** and **`/magic/files/misc`** belong to the platform:
+  they are not volumes, so every upgraded container starts with fresh ones
+- **Everything else** (data, config, modules, rest of etc) is copied from the
+  image only if missing — if it exists, it is never touched
 
 ## Step 1: Create the Droplet
 
-1. In the DigitalOcean dashboard, choose **Create → Droplets**
-2. Pick **Ubuntu 24.04**, a plan with **at least 2 GB RAM**, and your region
-3. Under **Advanced Options / User Data**, paste the entire contents of
-   [`.do/cloud-init.yaml`](../.do/cloud-init.yaml) from this repository
-4. Create the droplet
+**[Create your droplet](https://cloud.digitalocean.com/droplets/new)**
+
+1. Pick **Ubuntu 24.04**, a plan with **at least 2 GB RAM**, and your region
+2. Under **Advanced Options / User Data**, paste the entire contents of
+   [`.do/cloud-init.yaml`](../.do/cloud-init.yaml) **after editing its one
+   `DOMAIN=` line** to the domain you will use
+3. Create the droplet
+4. Point your domain's **DNS A record** at the droplet's IP. Caddy retries
+   certificate issuance automatically, so HTTPS comes up within minutes of
+   DNS propagation
 
 The user-data script installs Docker, clones this repository, builds the
-all-in-one image, and starts it with the four volumes above. **First boot takes
-roughly 10–15 minutes** (the Docker build runs during it). You can watch
-progress via SSH: `tail -f /var/log/cloud-init-output.log`.
+all-in-one image, and starts it behind Caddy with the four volumes above.
+**First boot takes roughly 10–15 minutes** (the Docker build runs during it).
+You can watch progress via SSH: `tail -f /var/log/cloud-init-output.log`.
 
 ## Step 2: Log In and Run the Setup Wizard
 
-Browse to `http://[droplet-ip]/` and log in:
+Browse to `https://your-domain/` and log in:
 
 - **Username:** `root`
 - **Password:** `root`
@@ -66,7 +79,7 @@ cd /opt/magic
 git pull
 docker build -f .do/Dockerfile.backend -t magic .
 docker rm -f magic
-docker run -d --name magic --restart unless-stopped -p 80:4444 \
+docker run -d --name magic --restart unless-stopped --network magicnet \
   -v magic_files_etc:/magic/files/etc \
   -v magic_files_data:/magic/files/data \
   -v magic_files_config:/magic/files/config \
@@ -74,14 +87,18 @@ docker run -d --name magic --restart unless-stopped -p 80:4444 \
   magic
 ```
 
-The volumes are reused, so all data persists; the frontend and system files are
-refreshed from the new image automatically at startup.
+The Caddy container keeps running untouched. The volumes are reused, so all
+data persists; the new frontend is overwritten into `etc/www` at startup, and
+`system`/`misc` come fresh from the new image.
 
 ## HTTPS
 
-The droplet serves plain HTTP on port 80. For production use, put it behind TLS
-— e.g. a DigitalOcean Load Balancer with a managed certificate, or your own
-reverse proxy (Caddy/nginx with Let's Encrypt) on the same droplet.
+Handled automatically: the deployment starts a [Caddy](https://caddyserver.com)
+reverse proxy that obtains and renews a free Let's Encrypt certificate for your
+domain. Certificates live in persistent volumes (`caddy_data`, `caddy_config`),
+so rebuilds and reboots don't trigger re-issuance. The only requirement is that
+your domain's A record points at the droplet — Caddy handles everything else,
+including redirecting HTTP to HTTPS.
 
 ## Additional Databases (Optional)
 
@@ -94,15 +111,6 @@ frontend UI.
 - Droplet (1 vCPU / 2 GB): ~$12/month
 - Optional droplet backups: +20%
 - Optional block storage volume for extra capacity: from $10/month
-
-## A Note on App Platform
-
-This repository also contains an App Platform template
-(`.do/deploy.template.yaml`) wired to the "Deploy to DigitalOcean" button. Be
-aware that **App Platform does not support persistent volumes** — its
-filesystem is ephemeral, so databases, configuration, and modules are lost on
-every redeploy. It is usable as a throwaway demo only. The droplet flow above
-is the supported persistent deployment.
 
 ## Pricing: Hyperlambda Generator
 

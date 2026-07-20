@@ -1,0 +1,8 @@
+# Magic Cloud reverse proxy (automatic HTTPS via Let's Encrypt).
+# DOMAIN is injected as an environment variable by the deployment script
+# (see .do/cloud-init.yaml). Caddy obtains and renews the certificate
+# automatically as long as the domain's A record points at the droplet,
+# and redirects all HTTP traffic to HTTPS.
+{$DOMAIN} {
+	reverse_proxy magic:4444
+}
