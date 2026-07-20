@@ -1,0 +1,116 @@
+# =========================
+# Frontend build stage
+# =========================
+FROM node:20-alpine AS frontend
+WORKDIR /app
+COPY frontend/ ./
+
+# Rewrite backend URL to same-origin (relative) inside the BUILD container only.
+# The repo file is never modified - this mirrors the existing CI pipeline transformation.
+RUN sed -i 's|http://localhost:4444||' src/environments/environment.prod.json && \
+    npm ci && npm run build
+
+# =========================
+# Backend build stage
+# =========================
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /app
+
+COPY backend/ /backend/
+COPY plugins/ /plugins/
+
+RUN dotnet restore /backend/backend.csproj
+RUN dotnet publish /backend/backend.csproj -c Release -o /magic
+
+ADD backend/sqlite-plugins/ /magic/sqlite-plugins/
+
+
+# =========================
+# Runtime stage
+# =========================
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+
+WORKDIR /magic
+COPY --from=build /magic ./
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Minimal runtime dependencies only
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+        gnupg \
+        python3 \
+        python3-pip \
+        wget \
+        fonts-liberation \
+        fonts-noto-color-emoji \
+        libasound2t64 \
+        libatk-bridge2.0-0 \
+        libatk1.0-0 \
+        libatspi2.0-0 \
+        libcups2 \
+        libdrm2 \
+        libgbm1 \
+        libgtk-3-0 \
+        libnss3 \
+        libx11-6 \
+        libx11-xcb1 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxext6 \
+        libxfixes3 \
+        libxkbcommon0 \
+        libxrandr2 \
+        libxrender1 \
+        libxshmfence1 \
+        libxss1 \
+        libsqlite3-0 \
+        libstdc++6 \
+        libgcc-s1 \
+        libgomp1 && \
+    if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
+        wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /usr/share/keyrings/google-chrome.gpg && \
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
+          > /etc/apt/sources.list.d/google-chrome.list && \
+        apt-get update && \
+        apt-get install -y --no-install-recommends google-chrome-stable; \
+    else \
+        apt-get install -y --no-install-recommends chromium && \
+        ln -sf /usr/bin/chromium /usr/bin/google-chrome; \
+    fi && \
+    rm -rf /var/lib/apt/lists/*
+
+# Multi-arch safe sqlite symlink
+RUN SQLITE_PATH=$(find /usr/lib -name libsqlite3.so.0 | head -n 1) && \
+    ln -sf "$SQLITE_PATH" "$(dirname "$SQLITE_PATH")/libsqlite3.so"
+
+# Plugin path
+ENV LD_LIBRARY_PATH="/magic/sqlite-plugins"
+ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/google-chrome"
+
+# Deterministic UID/GID (aligned with K8S fsGroup=999)
+RUN GROUP_NAME="$(getent group 999 | cut -d: -f1)" && \
+    if [ -z "$GROUP_NAME" ]; then groupadd -g 999 magic && GROUP_NAME=magic; fi && \
+    if ! getent passwd 999 >/dev/null 2>&1; then useradd -u 999 -g "$GROUP_NAME" -m magic; fi
+
+# Ensure runtime directories exist
+RUN mkdir -p /magic/files/data \
+             /magic/files/etc \
+             /magic/files/config \
+             /magic/files/modules
+
+# Copy compiled Angular frontend into Magic's static www folder.
+# Magic's backend serves these at the root (see magic.endpoint HttpFileExecutorAsync).
+COPY --from=frontend /app/dist/magic /magic/files/etc/www/
+
+RUN chown -R 999:999 /magic
+
+USER 999:999
+
+EXPOSE 4444
+ENV ASPNETCORE_URLS="http://+:4444"
+
+ENTRYPOINT ["dotnet", "backend.dll"]
