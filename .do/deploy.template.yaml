@@ -1,0 +1,24 @@
+spec:
+  name: magic-cloud
+  services:
+  - name: frontend
+    git:
+      branch: master
+      repo_clone_url: https://github.com/polterguy/magic.git
+    dockerfile_path: docker.frontend
+    http_port: 80
+  - name: backend
+    git:
+      branch: master
+      repo_clone_url: https://github.com/polterguy/magic.git
+    dockerfile_path: docker.backend
+    http_port: 4444
+    envs:
+    - key: ASPNETCORE_ENVIRONMENT
+      value: Production
+    - key: magic:auth:secret
+      scope: RUN_AND_BUILD_TIME
+    - key: magic:auth:https-only
+      value: "true"
+    - key: magic:frontend:urls
+      scope: RUN_TIME
