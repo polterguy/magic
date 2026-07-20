@@ -80,6 +80,22 @@ jobs:
             --push .
 
       # ==========================
+      # Build & Push All-In-One (multi-arch)
+      # Frontend + backend in ONE image - used by droplet,
+      # marketplace, and other single-container deployments.
+      # Builds Angular inside the image (self-contained),
+      # identical artifact to .do/Dockerfile.backend.
+      # ==========================
+      - name: Build and push all-in-one (multi-arch)
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -f ./.do/Dockerfile.backend \
+            -t servergardens/magic-aio:latest \
+            -t servergardens/magic-aio:${{ steps.get_version.outputs.VERSION }} \
+            --push .
+
+      # ==========================
       # Create SMALL magic.zip (deployment compatible)
       # Keeps backend/ structure unchanged
       # ==========================
