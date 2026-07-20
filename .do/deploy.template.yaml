@@ -16,9 +16,9 @@ spec:
     envs:
     - key: ASPNETCORE_ENVIRONMENT
       value: Production
-    - key: magic:auth:secret
+    - key: MAGIC_AUTH_SECRET
       scope: RUN_AND_BUILD_TIME
-    - key: magic:auth:https-only
+    - key: MAGIC_AUTH_HTTPS_ONLY
       value: "true"
-    - key: magic:frontend:urls
+    - key: MAGIC_FRONTEND_URLS
       scope: RUN_TIME
