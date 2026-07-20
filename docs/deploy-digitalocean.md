@@ -6,14 +6,12 @@ This guide walks you through deploying Magic Cloud to DigitalOcean App Platform 
 
 Click the button below to deploy Magic Cloud directly to DigitalOcean:
 
-[![Deploy to DigitalOcean](https://www.deploytom.com/d2018eb/deploy-button-svg/blob/main/img/deploy-to-digitalocean-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=thomashansen/magic/tree/main)
+[![Deploy to DigitalOcean](https://raw.githubusercontent.com/digitalocean/app_platform_automation/main/buttons/deploy-to-do-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=thomashansen/magic/tree/main)
 
 Once deployed, Magic will be live at `https://[your-app-name].ondigitalocean.app` within 2–3 minutes.
 
 ## What You Get
 
-- **Managed PostgreSQL Database** — automatically provisioned and connected
-- **Auto HTTPS** — all traffic encrypted, renewed automatically
 - **Persistent Storage** — databases and uploaded files persist across redeploys
 - **Auto-Scaling** — upgrade to higher tier if needed from DigitalOcean dashboard
 - **CI/CD Integration** — push to `main` branch = automatic redeploy
@@ -50,19 +48,29 @@ To enable AI chatbot features:
 
 Navigate to **Chatbots** and click **Create New**. Within minutes you'll have a live AI assistant configured for your data.
 
+## Database Configuration
+
+Magic does not auto-provision a database. Instead, you can connect to:
+- **SQLite** (built-in, files stored in persistent volume, no external DB needed)
+- **MySQL** (connect to managed MySQL from DigitalOcean or elsewhere)
+- **PostgreSQL** (connect to managed PostgreSQL from DigitalOcean or elsewhere)
+- **Microsoft SQL Server** (connect to managed MSSQL or on-premises)
+
+To connect a database after deployment:
+1. Navigate to **System Settings** → **Databases**
+2. Click **Add New Database**
+3. Enter connection string for your database
+4. Choose your alias (e.g., "production")
+
+**SQLite (Recommended for getting started):** Magic creates SQLite databases automatically in `/magic/files/data/` — no configuration needed.
+
 ## Cost
 
 **Default tier:**
 - Backend service: ~$5/month (512MB RAM, auto-scaling)
-- PostgreSQL database: ~$15/month (basic tier)
+- Database: Your choice (managed DB in DigitalOcean, or external)
 - Storage: included up to 100GB
-- **Total: ~$20/month**
-
-To reduce costs, you can:
-- Downgrade to a smaller app tier ($0/month for basic, but limited)
-- Use SQLite instead of PostgreSQL (no database charge, but single-instance only)
-
-Upgrade from the DigitalOcean dashboard if you need more capacity.
+- **Total: ~$5/month minimum (SQLite only)**
 
 ## Persistent Storage
 
