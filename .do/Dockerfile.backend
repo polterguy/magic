@@ -8,7 +8,7 @@ COPY frontend/ ./
 # Rewrite backend URL to same-origin (relative) inside the BUILD container only.
 # The repo file is never modified - this mirrors the existing CI pipeline transformation.
 RUN sed -i 's|http://localhost:4444||' src/environments/environment.prod.json && \
-    npm ci && npm run build
+    npm ci && npm run build-prod
 
 # =========================
 # Backend build stage
