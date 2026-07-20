@@ -12,6 +12,3 @@ spec:
     envs:
     - key: ASPNETCORE_ENVIRONMENT
       value: Production
-    - key: magic__auth__secret
-      scope: RUN_TIME
-      type: SECRET
