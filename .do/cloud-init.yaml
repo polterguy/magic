@@ -1,0 +1,34 @@
+#cloud-config
+# Magic Cloud - single-droplet DigitalOcean deployment.
+#
+# Usage: Create a droplet (Ubuntu 24.04, 2 GB RAM or more recommended) and
+# paste this entire file into the "User Data" field. First boot takes
+# roughly 10-15 minutes while Docker builds the image; Magic then answers
+# on http://[droplet-ip]/
+#
+# What it does:
+#   1. Installs Docker and git
+#   2. Clones the Magic repository
+#   3. Builds the all-in-one image (Angular frontend compiled and served
+#      by the backend from /magic/files/etc/www - one container only)
+#   4. Runs it with the same four named volumes as docker-compose.yml:
+#      etc, data, config, modules - so all user data survives upgrades
+
+package_update: true
+
+packages:
+  - docker.io
+  - git
+
+runcmd:
+  - systemctl enable --now docker
+  - git clone --depth 1 https://github.com/polterguy/magic.git /opt/magic
+  - docker build -f /opt/magic/.do/Dockerfile.backend -t magic /opt/magic
+  - >-
+    docker run -d --name magic --restart unless-stopped
+    -p 80:4444
+    -v magic_files_etc:/magic/files/etc
+    -v magic_files_data:/magic/files/data
+    -v magic_files_config:/magic/files/config
+    -v magic_files_modules:/magic/files/modules
+    magic
