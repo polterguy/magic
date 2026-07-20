@@ -5,7 +5,7 @@ spec:
     git:
       branch: master
       repo_clone_url: https://github.com/polterguy/magic.git
-    dockerfile_path: docker.frontend
+    dockerfile_path: .do/Dockerfile.frontend
     http_port: 80
     routes:
     - path: /
