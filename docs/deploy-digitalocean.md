@@ -50,8 +50,12 @@ Content rules on every container start:
 The user-data script creates a 4 GB swap file (the Angular production build
 is OOM-killed without it on small droplets), installs Docker, clones this
 repository, builds the all-in-one image, and starts it behind Caddy with the
-four volumes above. **First boot takes roughly 15–20 minutes** (the Docker
-build runs during it). You can watch progress via SSH:
+four volumes above.
+
+**First boot takes 15–20 minutes, and the site answers only when it is
+done.** Most of that time is the Angular production build, which is slow by
+nature. Until then the domain refuses connections (behind Cloudflare this
+shows as a 521) — that is expected, not a failure. Watch progress via SSH:
 `tail -f /var/log/cloud-init-output.log`.
 
 ## Step 2: Log In and Run the Setup Wizard

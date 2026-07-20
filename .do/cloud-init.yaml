@@ -10,8 +10,9 @@
 #      Caddy retries certificate issuance automatically, so HTTPS comes up
 #      within minutes of DNS propagation.
 #
-# First boot takes roughly 10-15 minutes (Docker build). Magic then answers
-# on https://your-domain/
+# First boot takes 15-20 minutes - most of it is the (slow) Angular
+# production build, and the site answers only when everything is done.
+# Magic then answers on https://your-domain/
 #
 # What it does:
 #   1. Installs Docker and git
