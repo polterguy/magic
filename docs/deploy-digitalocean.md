@@ -2,7 +2,7 @@
 
 ## Quick Start
 
-**[Deploy to DigitalOcean](https://cloud.digitalocean.com/apps/new?repo=thomashansen/magic/tree/main)**
+**[Deploy to DigitalOcean](https://cloud.digitalocean.com/apps/new?repo=thomashansen/magic/tree/master)**
 
 Once deployed, Magic will be live at `https://[your-app-name].ondigitalocean.app` within 2–3 minutes.
 

@@ -2,7 +2,7 @@ name: magic-cloud
 services:
 - name: frontend
   github:
-    branch: main
+    branch: master
     deploy_on_push: true
   dockerfile_path: docker.frontend
   http_port: 80
@@ -15,7 +15,7 @@ services:
     component_name: frontend
 - name: backend
   github:
-    branch: main
+    branch: master
     deploy_on_push: true
   dockerfile_path: docker.backend
   http_port: 4444
