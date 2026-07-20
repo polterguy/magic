@@ -7,12 +7,16 @@ spec:
       repo_clone_url: https://github.com/polterguy/magic.git
     dockerfile_path: docker.frontend
     http_port: 80
+    routes:
+    - path: /
   - name: backend
     git:
       branch: master
       repo_clone_url: https://github.com/polterguy/magic.git
     dockerfile_path: docker.backend
     http_port: 4444
+    routes:
+    - path: /api
     envs:
     - key: ASPNETCORE_ENVIRONMENT
       value: Production
