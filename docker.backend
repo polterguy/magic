@@ -97,7 +97,4 @@ USER 999:999
 EXPOSE 4444
 ENV ASPNETCORE_URLS="http://+:4444"
 
-HEALTHCHECK --interval=3s --timeout=30s --start-period=5s --retries=2 \
-    CMD curl -f http://localhost:4444/health || exit 1
-
 ENTRYPOINT ["dotnet", "backend.dll"]
