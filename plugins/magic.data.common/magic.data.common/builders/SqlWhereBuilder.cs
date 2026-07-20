@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using magic.node;
 using magic.node.extensions;
@@ -72,6 +73,13 @@ namespace magic.data.common.builders
                 var rhsValue = colNode.GetEx<string>();
                 if (rhsValue.StartsWith("@", StringComparison.InvariantCulture))
                 {
+                    /*
+                     * Sanity checking that value is a plain argument reference, to avoid
+                     * SQL injection attacks through explicitly added arguments referenced
+                     * from for instance join [on] conditions.
+                     */
+                    if (!Regex.IsMatch(rhsValue, @"^@[A-Za-z0-9_.]+$"))
+                        throw new HyperlambdaException($"'{rhsValue}' is not a valid argument reference");
                     builder.Append(rhsValue);
                 }
                 else

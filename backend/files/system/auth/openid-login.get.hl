@@ -52,7 +52,7 @@ for-each:x:@execute-file/*
          set-value:x:@.active
             .:bool:true
 if
-   eq:x:@.issuer
+   eq:x:@.active
       .:bool:false
    .lambda
 

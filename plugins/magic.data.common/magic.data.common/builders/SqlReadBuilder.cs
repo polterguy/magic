@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using magic.node;
 using magic.node.extensions;
 
@@ -15,6 +16,24 @@ namespace magic.data.common.builders
     /// </summary>
     public class SqlReadBuilder : SqlWhereBuilder
     {
+        /*
+         * White list of allowed aggregate function expressions, on the form 'fun(col)' or
+         * 'fun(distinct col)', where 'fun' is one of the explicitly allowed function names,
+         * and 'col' is constrained to letters, digits, underscore, dot and '*' - making sure
+         * no SQL injection can occur through aggregate expressions.
+         */
+        readonly static Regex _aggregateFunction = new Regex(
+            @"^(count|sum|avg|min|max|group_concat|string_agg)\s*\(\s*(distinct\s+)?[A-Za-z0-9_.*]+\s*\)$",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /*
+         * White list of allowed table and join alias names, constraining aliases to plain
+         * identifiers, making sure no SQL injection can occur through [as] arguments.
+         */
+        readonly static Regex _aliasName = new Regex(
+            @"^[A-Za-z0-9_]+$",
+            RegexOptions.Compiled);
+
         /// <summary>
         /// Creates a select SQL statement
         /// </summary>
@@ -77,7 +96,7 @@ namespace magic.data.common.builders
                 // Checking if we have an alias for table.
                 var alias = idx.Children.FirstOrDefault(x => x.Name == "as");
                 if (alias != null)
-                    builder.Append(" ").Append(alias.GetEx<string>());
+                    builder.Append(" ").Append(EscapeAliasName(alias.GetEx<string>()));
 
                 // Then making sure we apply [join] tables, if there are any.
                 foreach (var idxJoin in idx.Children.Where(x => x.Name == "join"))
@@ -121,9 +140,18 @@ namespace magic.data.common.builders
                     var colName = idx.GetEx<string>();
                     if (colName.Contains("("))
                     {
-                        builder.Append(colName).Append(" ").Append(idx.Children
-                                    .FirstOrDefault(x => x.Name == "direction")?
-                                    .GetEx<string>() ?? defaultDirection);
+                        /*
+                         * Aggregate expression, only allowing explicitly white listed
+                         * aggregate functions, to avoid SQL injection attacks.
+                         */
+                        if (first)
+                            first = false;
+                        else
+                            builder.Append(",");
+                        builder
+                            .Append(EscapeAggregateName(colName))
+                            .Append(" ")
+                            .Append(GetDirection(idx, defaultDirection));
                     }
                     else
                     {
@@ -136,9 +164,7 @@ namespace magic.data.common.builders
                             builder
                                 .Append(EscapeTypeName(idxCol.Trim()))
                                 .Append(" ")
-                                .Append(idx.Children
-                                    .FirstOrDefault(x => x.Name == "direction")?
-                                    .GetEx<string>() ?? defaultDirection);
+                                .Append(GetDirection(idx, defaultDirection));
                         }
                     }
                 }
@@ -195,6 +221,54 @@ namespace magic.data.common.builders
             return defaultDirection;
         }
 
+        /*
+         * Returns the direction to apply for a single [order] node, defaulting to the
+         * specified default direction, unless the node explicitly overrides it with a
+         * [direction] child node.
+         */
+        static string GetDirection(Node orderNode, string defaultDirection)
+        {
+            var direction = orderNode.Children
+                .FirstOrDefault(x => x.Name == "direction")?
+                .GetEx<string>()?
+                .ToLower();
+            if (direction == null)
+                return defaultDirection;
+
+            // Sanity checking invocation, making sure we never append unvalidated values to SQL.
+            if (direction != "asc" && direction != "desc")
+                throw new HyperlambdaException("Only 'asc' and 'desc' are supported for the [direction] argument");
+            return direction;
+        }
+
+        /*
+         * Validates that the specified name is a white listed aggregate function expression,
+         * and returns it if it is. Throws an exception if not, to avoid SQL injection attacks
+         * through aggregate expressions being appended raw to the resulting SQL.
+         */
+        static string EscapeAggregateName(string name)
+        {
+            if (!_aggregateFunction.IsMatch(name))
+                throw new HyperlambdaException($"'{name}' is not a supported aggregate function expression");
+
+            // Validated aggregate, character set constrained by white list above.
+            return name;
+        }
+
+        /*
+         * Validates that the specified alias is a plain identifier, and returns it if it is.
+         * Throws an exception if not, to avoid SQL injection attacks through table and
+         * join [as] alias arguments being appended raw to the resulting SQL.
+         */
+        static string EscapeAliasName(string alias)
+        {
+            if (!_aliasName.IsMatch(alias))
+                throw new HyperlambdaException($"'{alias}' is not a valid table alias name");
+
+            // Validated alias, character set constrained by white list above.
+            return alias;
+        }
+
         /// <summary>
         /// Appends any [group] (by) arguments, if given.
         /// </summary>
@@ -217,7 +291,7 @@ namespace magic.data.common.builders
             builder.Append(string.Join(",", groupByNode.Children.Select(x =>
             {
                 if (x.Name.Contains('('))
-                    return x.Name; // Group by aggregate column.
+                    return EscapeAggregateName(x.Name); // Group by aggregate column.
                 return EscapeTypeName(x.Name);
             })));
         }
@@ -254,7 +328,7 @@ namespace magic.data.common.builders
             var builder = new StringBuilder();
             if (column.Name.Contains("(") && column.Name.Contains(")"))
             {
-                builder.Append(column.Name); // Aggregate column, avoid escaping.
+                builder.Append(EscapeAggregateName(column.Name)); // Aggregate column, white listed shape.
             }
             else
             {
@@ -305,7 +379,7 @@ namespace magic.data.common.builders
             // Checking if we have an alias for table.
             var alias = joinNode.Children.FirstOrDefault(x => x.Name == "as");
             if (alias != null)
-                builder.Append(" ").Append(alias.GetEx<string>());
+                builder.Append(" ").Append(EscapeAliasName(alias.GetEx<string>()));
 
             // Appending on condition.
             builder.Append(" on ");
