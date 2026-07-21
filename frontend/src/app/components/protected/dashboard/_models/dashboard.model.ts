@@ -7,6 +7,5 @@
  */
 export interface SystemReport {
   default_db?: string,
-  has_openai?: boolean,
   default_timezone?: string, // "none", "utc" or "local"
 }
