@@ -1,7 +1,10 @@
 # =========================
 # Frontend build stage
 # =========================
-FROM node:20-alpine AS frontend
+# Build the frontend on the BUILD host's native platform: the output is pure
+# static files (arch-neutral), and this avoids running Node under QEMU for
+# arm64, which crashes with 'uncaught target signal 4'.
+FROM --platform=$BUILDPLATFORM node:20-alpine AS frontend
 WORKDIR /app
 COPY frontend/ ./
 
