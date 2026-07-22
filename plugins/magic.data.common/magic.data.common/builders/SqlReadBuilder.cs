@@ -17,13 +17,17 @@ namespace magic.data.common.builders
     public class SqlReadBuilder : SqlWhereBuilder
     {
         /*
-         * White list of allowed aggregate function expressions, on the form 'fun(col)' or
-         * 'fun(distinct col)', where 'fun' is one of the explicitly allowed function names,
-         * and 'col' is constrained to letters, digits, underscore, dot and '*' - making sure
-         * no SQL injection can occur through aggregate expressions.
+         * White list of allowed aggregate function expressions, on the form 'fun(col)',
+         * 'fun(distinct col)', 'fun(col1 * col2)' or 'cast(fun(col) as type)', where 'fun' is one
+         * of the explicitly allowed function names, and operands are constrained to letters,
+         * digits, underscore and dot - or a lone '*' - making sure no SQL injection can occur
+         * through aggregate expressions. Arithmetic operands deliberately exclude '*' inside
+         * identifiers such that '/*' can never form a comment sequence.
          */
+        const string _aggregateCall =
+            @"(count|sum|avg|min|max|group_concat|string_agg)\s*\(\s*(distinct\s+)?(\*|[A-Za-z0-9_.]+)(\s*[-+*/]\s*[A-Za-z0-9_.]+)*\s*\)";
         readonly static Regex _aggregateFunction = new Regex(
-            @"^(count|sum|avg|min|max|group_concat|string_agg)\s*\(\s*(distinct\s+)?[A-Za-z0-9_.*]+\s*\)$",
+            $@"^({_aggregateCall}|cast\s*\(\s*{_aggregateCall}\s+as\s+[A-Za-z0-9_]+\s*\))$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         /*
