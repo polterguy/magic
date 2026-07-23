@@ -6,10 +6,9 @@
    filename:string
    width:int
    height:int
+   convert:bool
    file:*
-.type:internal
 .accept:multipart/form-data
-.description:Uploads a file as streamed multipart/form-data content, optionally resizing images if width and/or height is supplied
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root
@@ -49,35 +48,51 @@ if
    .lambda
       io.file.delete:x:@.arguments/*/filename
 
-// Checking if caller wants to resize an image, and if so, resizing while saving, otherwise saving as is.
+// Figuring out image type from file extension in case we are resizing or converting.
+.type
+strings.split:x:@.arguments/*/filename
+   .:.
+set-value:x:@.type
+   strings.to-lower:x:@strings.split/0/-
+if
+   eq:x:@.type
+      .:jpg
+   .lambda
+      set-value:x:@.type
+         .:jpeg
+
+// Checking if caller wants to resize, convert, or save the file as is.
 if
    or
       exists:x:@.arguments/*/width
       exists:x:@.arguments/*/height
    .lambda
 
-      // Figuring out image type from file extension.
-      .type
-      strings.split:x:@.arguments/*/filename
-         .:.
-      set-value:x:@.type
-         strings.to-lower:x:@strings.split/0/-
-      if
-         eq:x:@.type
-            .:jpg
-         .lambda
-            set-value:x:@.type
-               .:jpeg
-
       // Adding width and/or height as supplied by caller.
       add:x:./*/image.resize
          get-nodes:x:@.arguments/*/width
          get-nodes:x:@.arguments/*/height
 
-      // Resizing image while saving it to its destination.
+      // Resizing image, returning the resized image as a stream.
       image.resize:x:@.arguments/*/file/*/stream
          type:x:@.type
-         dest:x:@.arguments/*/filename
+
+      // Saving resized image to its destination.
+      io.stream.save-file:x:@.arguments/*/filename
+         get-value:x:@image.resize
+
+else-if
+   eq:x:@.arguments/*/convert
+      .:bool:true
+   .lambda
+
+      // Converting image to the format implied by its destination filename, returning it as a stream.
+      image.convert:x:@.arguments/*/file/*/stream
+         type:x:@.type
+
+      // Saving converted image to its destination.
+      io.stream.save-file:x:@.arguments/*/filename
+         get-value:x:@image.convert
 
 else
 

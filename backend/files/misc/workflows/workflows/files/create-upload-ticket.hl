@@ -6,6 +6,8 @@
  * being 'Bearer ' + [ticket], and multipart form fields [file] being the file content, [filename]
  * being the destination path on the server, and optionally [width] and/or [height] to resize
  * images - supplying only one of [width] or [height] preserves the aspect ratio of the image.
+ * Optionally supply [convert] being boolean true to re-encode an image into the format implied
+ * by the extension of [filename] without resizing it - resizing implies conversion either way.
  */
 .arguments
 
