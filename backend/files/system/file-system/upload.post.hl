@@ -1,0 +1,107 @@
+
+/*
+ * Uploads a file as streamed multipart/form-data content, with optional image resizing.
+ */
+.arguments
+   filename:string
+   width:int
+   height:int
+   file:*
+.type:internal
+.accept:multipart/form-data
+.description:Uploads a file as streamed multipart/form-data content, optionally resizing images if width and/or height is supplied
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/filename
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/stream
+
+// Prepending slash unless specified by caller.
+if
+   not
+      strings.starts-with:x:@.arguments/*/filename
+         .:/
+   .lambda
+      set-value:x:@.arguments/*/filename
+         strings.concat
+            .:/
+            get-value:x:@.arguments/*/filename
+
+// Making sure we do not overwrite system files.
+if
+   not
+      or
+         strings.starts-with:x:@.arguments/*/filename
+            .:/etc/
+         strings.starts-with:x:@.arguments/*/filename
+            .:/modules/
+   .lambda
+      throw:"You can only save files to the '/modules/' and '/etc/' folders"
+         status:int:400
+         public:bool:true
+
+// Checking if file exists from before, and if so, deleting it.
+if
+   io.file.exists:x:@.arguments/*/filename
+   .lambda
+      io.file.delete:x:@.arguments/*/filename
+
+// Checking if caller wants to resize an image, and if so, resizing while saving, otherwise saving as is.
+if
+   or
+      exists:x:@.arguments/*/width
+      exists:x:@.arguments/*/height
+   .lambda
+
+      // Figuring out image type from file extension.
+      .type
+      strings.split:x:@.arguments/*/filename
+         .:.
+      set-value:x:@.type
+         strings.to-lower:x:@strings.split/0/-
+      if
+         eq:x:@.type
+            .:jpg
+         .lambda
+            set-value:x:@.type
+               .:jpeg
+
+      // Adding width and/or height as supplied by caller.
+      add:x:./*/image.resize
+         get-nodes:x:@.arguments/*/width
+         get-nodes:x:@.arguments/*/height
+
+      // Resizing image while saving it to its destination.
+      image.resize:x:@.arguments/*/file/*/stream
+         type:x:@.type
+         dest:x:@.arguments/*/filename
+
+else
+
+   // Saving file to its destination as is.
+   io.stream.save-file:x:@.arguments/*/filename
+      get-value:x:@.arguments/*/file/*/stream
+
+// Creating our URL if file is publicly served.
+.url
+if
+   strings.starts-with:x:@.arguments/*/filename
+      .:/etc/www/
+   .lambda
+      strings.substring:x:@.arguments/*/filename
+         .:int:8
+      set-value:x:@.url
+         strings.concat
+            request.scheme
+            .:"://"
+            request.host
+            get-value:x:@strings.substring
+
+// Returning success to caller.
+yield
+   result:success
+   filename:x:@.arguments/*/filename
+   url:x:@.url
