@@ -1,0 +1,125 @@
+/*
+ * Creates an image
+ *
+ * Creates an image using OpenAI's GPT Image 2 model according to the specified [prompt], [size],
+ * and [quality], saves it to [filename] on the server, and returns the filename and URL of the
+ * image to caller. The URL is only returned if the image is saved inside the publicly served
+ * '/etc/www/' folder, and [filename] defaults to a randomly named PNG file inside of
+ * '/etc/www/assets/images/' if omitted.
+ */
+.arguments
+
+   // Mandatory and is the prompt used to generate the image.
+   prompt:string
+
+   // Optional and will default to '1024x1024' if not specified. Legal are 1024x1024, 1536x1024, 1024x1536, and 'auto'.
+   size:string
+
+   // Optional and will default to 'auto' if not specified. Legal values are 'low', 'medium', 'high', and 'auto'.
+   quality:string
+
+   // Optional filename of where to save the image, defaulting to a randomly named PNG file inside of '/etc/www/assets/images/'.
+   filename:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/prompt
+
+// Applying defaults.
+validators.default:x:@.arguments
+   size:1024x1024
+   quality:auto
+
+/*
+ * Invokes OpenAI's image generation API with the specified [query] and [model].
+ *
+ * Will use the default API key found from configurations.
+ */
+execute:magic.workflows.actions.execute
+   name:openai-image-create
+   filename:/modules/openai/workflows/actions/openai-image-create.hl
+   arguments
+      model:gpt-image-2
+      size:x:@.arguments/*/size
+      quality:x:@.arguments/*/quality
+      query:x:@.arguments/*/prompt
+
+// Figuring out what filename to save the image as.
+.filename
+if
+   exists:x:@.arguments/*/filename
+   .lambda
+
+      // Prepending slash unless specified by caller.
+      if
+         not
+            strings.starts-with:x:@.arguments/*/filename
+               .:/
+         .lambda
+            set-value:x:@.arguments/*/filename
+               strings.concat
+                  .:/
+                  get-value:x:@.arguments/*/filename
+
+      // Making sure we do not overwrite system files.
+      if
+         not
+            or
+               strings.starts-with:x:@.arguments/*/filename
+                  .:/etc/
+               strings.starts-with:x:@.arguments/*/filename
+                  .:/modules/
+         .lambda
+            throw:"You can only save files to the '/modules/' and '/etc/' folders"
+               status:int:400
+               public:bool:true
+
+      // Using filename as specified by caller.
+      set-value:x:@.filename
+         get-value:x:@.arguments/*/filename
+
+else
+
+   // Defaulting to a randomly named PNG file.
+   crypto.random
+      min:20
+      max:20
+   set-value:x:@.filename
+      strings.concat
+         .:/etc/www/assets/images/
+         get-value:x:@crypto.random
+         .:.png
+
+// Converting base64 encoded image returned from above action to raw bytes.
+convert:x:@execute/*/b64
+   type:from-base64
+
+// Saving image to disk.
+io.file.save.binary:x:@.filename
+   get-value:x:@convert
+
+// Creating our URL if file is publicly served.
+.url
+if
+   strings.starts-with:x:@.filename
+      .:/etc/www/
+   .lambda
+      strings.substring:x:@.filename
+         .:int:8
+      set-value:x:@.url
+         strings.concat
+            request.scheme
+            .:"://"
+            request.host
+            get-value:x:@strings.substring
+
+// Signaling frontend
+sockets.signal:x:@.arguments/*/_session
+   args
+      type:floating_message
+      floating_message:Image was successfully generated
+      floating_state:success
+
+// Returning filename and URL of image to caller.
+yield
+   filename:x:@.filename
+   url:x:@.url
