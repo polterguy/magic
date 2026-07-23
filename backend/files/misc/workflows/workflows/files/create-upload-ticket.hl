@@ -31,8 +31,7 @@ auth.ticket.create
 .url
 set-value:x:@.url
    strings.concat
-      request.scheme
-      .:"://"
+      .:"https://"
       request.host
       .:/magic/system/file-system/upload
 

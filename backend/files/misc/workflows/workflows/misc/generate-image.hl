@@ -107,8 +107,7 @@ if
          .:int:8
       set-value:x:@.url
          strings.concat
-            request.scheme
-            .:"://"
+            .:"https://"
             request.host
             get-value:x:@strings.substring
 
