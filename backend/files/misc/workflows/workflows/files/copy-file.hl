@@ -1,6 +1,7 @@
 
 /*
- * Copies a file from [source] to [destination]
+ * Copies a file from [source] to [destination]. The destination's parent folder must already
+ * exist - create it first with the create-folder function.
  */
 .arguments
 

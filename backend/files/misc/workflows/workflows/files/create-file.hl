@@ -4,6 +4,9 @@
  * Hyperlambda (.hl) must be produced by the generate-hyperlambda function, never written by hand.
  *
  * IMPORTANT - This file CANNOT be used to save Hyperlambda, only other types of files.
+ *
+ * This function does NOT create folders - the parent folder must already exist. Before the first
+ * write into a new path, create the folder with the create-folder function.
  */
 .arguments
 
@@ -64,6 +67,29 @@ if
       .:.hl
    .lambda
       throw:"Hyperlambda files cannot be written directly. Use the generate-hyperlambda function - it produces correct Hyperlambda and saves it through its [filename] argument. Never hand-write Hyperlambda."
+         public:bool:true
+         status:int:400
+
+// Verifying the parent folder exists, since [io.file.save] cannot create it.
+strings.split:x:@.arguments/*/filename
+   .:/
+remove-nodes:x:@strings.split/0/-
+.parent
+set-value:x:@.parent
+   strings.concat
+      .:/
+      strings.join:x:@strings.split/*
+         .:/
+      .:/
+if
+   not
+      io.folder.exists:x:@.parent
+   .lambda
+      strings.concat
+         .:"Parent folder '"
+         get-value:x:@.parent
+         .:"' does not exist - create it with the create-folder function, then retry"
+      throw:x:@strings.concat
          public:bool:true
          status:int:400
 

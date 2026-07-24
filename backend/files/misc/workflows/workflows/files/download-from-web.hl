@@ -1,6 +1,7 @@
 
 /*
- * Downloads the specified [url] and saves to the specified [filename].
+ * Downloads the specified [url] and saves to the specified [filename]. The parent folder must
+ * already exist - create it first with the create-folder function.
  */
 .arguments
 

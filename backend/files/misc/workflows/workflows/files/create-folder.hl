@@ -1,6 +1,8 @@
 
 /*
- * Creates a new folder with the [folder] path.
+ * Creates a new folder with the [folder] path. Call this before the first file write into a new
+ * path, since the file-writing functions never create folders. Idempotent - if the folder already
+ * exists the function simply returns without error.
  */
 .arguments
 
@@ -27,13 +29,13 @@ if
             .:/
             get-value:x:@.arguments/*/folder
 
-// Verifying folder doesn't already exists.
+// Returning early if the folder already exists, making the function idempotent such that
+// callers can safely create folders defensively before writing files into them.
 if
    io.folder.exists:x:@.arguments/*/folder
    .lambda
-      throw:Folder already exists
-         status:int:400
-         public:bool:true
+      return
+         result:already-existed
 
 // Verifying folder starts with "/etc/" or "/modules/"
 if

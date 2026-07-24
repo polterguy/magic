@@ -20,7 +20,7 @@
    // Mandatory argument describing the Hyperlambda code you want to generate.
    prompt:string
 
-   // Optional filename of where to save the Hyperlambda.
+   // Optional filename of where to save the Hyperlambda. The parent folder must already exist - create it first with the create-folder function.
    filename:string
 
    // Optional value. If true, executes code immediately and returns result instead of code.
@@ -76,6 +76,29 @@ try
                throw:"You can only save files to the '/modules/' and '/etc/' folders"
                   status:int:400
                   public:bool:true
+
+         // Verifying the parent folder exists, since [io.file.save] cannot create it.
+         strings.split:x:@.arguments/*/filename
+            .:/
+         remove-nodes:x:@strings.split/0/-
+         .parent
+         set-value:x:@.parent
+            strings.concat
+               .:/
+               strings.join:x:@strings.split/*
+                  .:/
+               .:/
+         if
+            not
+               io.folder.exists:x:@.parent
+            .lambda
+               strings.concat
+                  .:"Parent folder '"
+                  get-value:x:@.parent
+                  .:"' does not exist - create it with the create-folder function, then retry"
+               throw:x:@strings.concat
+                  public:bool:true
+                  status:int:400
 
          // Caller wants to save the file, so we sanity check it first.
          hyper2lambda:x:@http.post/*/content/*/result
