@@ -48,9 +48,11 @@ if
          public:bool:true
 
 // Hyperlambda is never hand-edited - regenerate the whole file with the generate-hyperlambda function
-// instead. Refusing any attempt to patch a Hyperlambda file.
+// instead. Refusing any attempt to patch a Hyperlambda file. Notice, we compare lowercased to also
+// catch ".HL" style filenames on case-insensitive file systems.
+strings.to-lower:x:@.arguments/*/filename
 if
-   strings.ends-with:x:@.arguments/*/filename
+   strings.ends-with:x:@strings.to-lower
       .:.hl
    .lambda
       throw:"Hyperlambda files cannot be patched directly. Re-create the file with the generate-hyperlambda function instead of hand-editing Hyperlambda."

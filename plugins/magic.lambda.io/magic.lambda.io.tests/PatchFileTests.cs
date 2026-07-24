@@ -409,6 +409,193 @@ io.file.patch:/existing.txt
         }
 
         [Fact]
+        public void PatchFile_ThrowsForMissingPath()
+        {
+            var fileService = new FileService
+            {
+                LoadAction = path => "foo",
+                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid invocations.")
+            };
+
+            var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
+io.file.patch
+   .:not a diff
+""", fileService));
+
+            Assert.Equal("Missing file path.", exception.Message);
+        }
+
+        [Fact]
+        public void PatchFile_DeletesLineStartingWithSqlComment()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService
+            {
+                LoadAction = path => "line0\nselect 1\n-- old comment\nselect 2\nline4\n",
+                SaveAction = (path, content) =>
+                {
+                    saveInvoked = true;
+                    Assert.Equal("line0\nselect 1\nselect 2\nline4\n", content);
+                }
+            };
+
+            Common.Evaluate("""
+io.file.patch:/existing.txt
+   .:@"
+@@ -2,4 +2,3 @@
+ select 1
+--- old comment
+ select 2
+ line4
+"
+""", fileService);
+
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void PatchFile_TreatsEmptyHunkLineAsEmptyContextLine()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService
+            {
+                LoadAction = path => "line1\n\nline3\nline4\n",
+                SaveAction = (path, content) =>
+                {
+                    saveInvoked = true;
+                    Assert.Equal("line1\n\nline3 updated\nline4\n", content);
+                }
+            };
+
+            Common.Evaluate("""
+io.file.patch:/existing.txt
+   .:@"
+@@ -1,4 +1,4 @@
+ line1
+
+-line3
++line3 updated
+ line4
+"
+""", fileService);
+
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void PatchFile_RejectsMultiFileGitPatch()
+        {
+            var fileService = new FileService
+            {
+                LoadAction = path => "line1\nline2\nline3\n",
+                SaveAction = (path, content) => Assert.True(false, "Save should not be called for multi file patches.")
+            };
+
+            var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
+io.file.patch:/existing.txt
+   .:@"
+--- a/existing.txt
++++ b/existing.txt
+@@ -1,3 +1,3 @@
+ line1
+-line2
++line2 updated
+ line3
+diff --git a/other.txt b/other.txt
+--- a/other.txt
++++ b/other.txt
+@@ -1,3 +1,3 @@
+ foo1
+-foo2
++foo2 updated
+ foo3
+"
+""", fileService));
+
+            Assert.Equal("Patch can only modify a single file.", exception.Message);
+        }
+
+        [Fact]
+        public void PatchFile_RejectsSecondFileHeaderBeforeHunks()
+        {
+            var fileService = new FileService
+            {
+                LoadAction = path => "line1\nline2\nline3\n",
+                SaveAction = (path, content) => Assert.True(false, "Save should not be called for multi file patches.")
+            };
+
+            var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
+io.file.patch:/existing.txt
+   .:@"
+--- a/existing.txt
++++ b/existing.txt
+--- a/existing.txt
++++ b/existing.txt
+@@ -1,3 +1,3 @@
+ line1
+-line2
++line2 updated
+ line3
+"
+""", fileService));
+
+            Assert.Equal("Patch can only modify a single file.", exception.Message);
+        }
+
+        [Fact]
+        public void PatchFile_SupportsFilenamesContainingSpaces()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService
+            {
+                LoadAction = path => "line1\nline2\nline3\n",
+                SaveAction = (path, content) =>
+                {
+                    saveInvoked = true;
+                    Assert.Equal("line1\nline2 updated\nline3\n", content);
+                }
+            };
+
+            Common.Evaluate("""
+io.file.patch:/my file.txt
+   .:@"
+--- a/my file.txt
++++ b/my file.txt
+@@ -1,3 +1,3 @@
+ line1
+-line2
++line2 updated
+ line3
+"
+""", fileService);
+
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void PatchFile_RejectsDevNullHeaderForDifferentFile()
+        {
+            var fileService = new FileService
+            {
+                LoadAction = path => "line1\n",
+                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid patches.")
+            };
+
+            var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
+io.file.patch:/existing.txt
+   .:@"
+--- /dev/null
++++ b/other.txt
+@@ -1 +1 @@
+-line1
++line2
+"
+""", fileService));
+
+            Assert.Equal("Patch targets a different file.", exception.Message);
+        }
+
+        [Fact]
         public void PatchFile_KeepsWeakContextHunksStrict()
         {
             var fileService = new FileService

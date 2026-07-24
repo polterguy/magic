@@ -54,7 +54,11 @@ namespace magic.lambda.io.file
             await signaler.SignalAsync("eval", input);
 
             // Retrieving arguments.
-            var path = _rootResolver.AbsolutePath(input.GetEx<string>());
+            var rawPath = input.GetEx<string>();
+            if (string.IsNullOrWhiteSpace(rawPath))
+                throw new HyperlambdaException("Missing file path.");
+
+            var path = _rootResolver.AbsolutePath(rawPath);
             var patchNode = input.Children.FirstOrDefault();
             if (patchNode == null)
                 throw new HyperlambdaException("Missing patch.");
@@ -62,9 +66,6 @@ namespace magic.lambda.io.file
             var patch = patchNode.GetEx<string>();
             if (string.IsNullOrWhiteSpace(patch))
                 throw new HyperlambdaException("Patch is empty.");
-
-            // Enforcing that the patch applies to a single file only.
-            EnsureSingleFilePatch(patch);
 
             // Loading original file content.
             var original = await _service.LoadAsync(path);
@@ -75,27 +76,6 @@ namespace magic.lambda.io.file
         }
 
         #region [ -- Private helper methods -- ]
-
-        /*
-         * Ensures the patch does not attempt to modify multiple files.
-         */
-        static void EnsureSingleFilePatch(string patch)
-        {
-            var lines = SplitLines(patch);
-            var headerCount = 0;
-            for (var i = 0; i < lines.Count; i++)
-            {
-                if (lines[i].StartsWith("--- ", StringComparison.InvariantCulture) &&
-                    i + 1 < lines.Count &&
-                    lines[i + 1].StartsWith("+++ ", StringComparison.InvariantCulture))
-                {
-                    headerCount++;
-                }
-            }
-
-            if (headerCount > 1)
-                throw new HyperlambdaException("Patch can only modify a single file.");
-        }
 
         /*
          * Applies a unified diff patch to the specified content.
@@ -112,6 +92,7 @@ namespace magic.lambda.io.file
             var output = new List<string>();
             var outputHasTrailingNewline = originalHasTrailingNewline;
             var hasHunks = false;
+            var seenHeader = false;
             var originalIndex = 0;
             var patchIndex = 0;
 
@@ -122,16 +103,24 @@ namespace magic.lambda.io.file
                 if (line.StartsWith("diff --git", StringComparison.InvariantCulture) ||
                     line.StartsWith("index ", StringComparison.InvariantCulture))
                 {
+                    // A git preamble after hunks have started implies a second file.
+                    if (hasHunks)
+                        throw new HyperlambdaException("Patch can only modify a single file.");
+
                     patchIndex++;
                     continue;
                 }
 
                 if (line.StartsWith("--- ", StringComparison.InvariantCulture))
                 {
+                    if (seenHeader)
+                        throw new HyperlambdaException("Patch can only modify a single file.");
+
                     if (patchIndex + 1 >= patchLines.Count || !patchLines[patchIndex + 1].StartsWith("+++ ", StringComparison.InvariantCulture))
                         throw new HyperlambdaException("Invalid patch header.");
 
                     ValidatePatchHeaders(line, patchLines[patchIndex + 1], targetPath);
+                    seenHeader = true;
                     patchIndex += 2;
                     continue;
                 }
@@ -149,9 +138,11 @@ namespace magic.lambda.io.file
                 var hunkLines = new List<string>();
                 while (patchIndex < patchLines.Count)
                 {
+                    // Notice, "--- " does NOT terminate a hunk, since it is also a legal deletion of
+                    // a line starting with "-- " (an SQL comment for instance). Headers are only legal
+                    // before the first hunk, making everything up to the next hunk or git preamble content.
                     line = patchLines[patchIndex];
                     if (line.StartsWith("@@", StringComparison.InvariantCulture) ||
-                        line.StartsWith("--- ", StringComparison.InvariantCulture) ||
                         line.StartsWith("diff --git", StringComparison.InvariantCulture) ||
                         line.StartsWith("index ", StringComparison.InvariantCulture))
                         break;
@@ -172,10 +163,9 @@ namespace magic.lambda.io.file
                 var previousOperation = '\0';
                 foreach (var hunkLine in hunkLines)
                 {
-                    if (hunkLine.Length == 0)
-                        throw new HyperlambdaException("Invalid patch line.");
-
-                    var tag = hunkLine[0];
+                    // An entirely empty line is an empty context line whose leading space was
+                    // stripped somewhere in transport.
+                    var tag = hunkLine.Length == 0 ? ' ' : hunkLine[0];
                     var text = hunkLine.Length > 1 ? hunkLine.Substring(1) : string.Empty;
                     switch (tag)
                     {
@@ -299,7 +289,7 @@ namespace magic.lambda.io.file
 
         static int ResolveHunkTargetIndex(IReadOnlyList<string> originalLines, int originalIndex, IReadOnlyList<string> hunkLines)
         {
-            var minimumContextLines = hunkLines.Count(x => x.Length > 0 && x[0] == ' ');
+            var minimumContextLines = hunkLines.Count(x => x.Length == 0 || x[0] == ' ');
             if (minimumContextLines < 2)
                 throw new HyperlambdaException("Patch requires at least 2 context lines.");
 
@@ -321,10 +311,10 @@ namespace magic.lambda.io.file
             var index = candidate;
             foreach (var hunkLine in hunkLines)
             {
-                if (hunkLine.Length == 0)
-                    return false;
-
-                switch (hunkLine[0])
+                // An entirely empty line is an empty context line whose leading space was
+                // stripped somewhere in transport.
+                var tag = hunkLine.Length == 0 ? ' ' : hunkLine[0];
+                switch (tag)
                 {
                     case ' ':
                     case '-':
@@ -357,8 +347,9 @@ namespace magic.lambda.io.file
 
         static string NormalizeHeaderPath(string value)
         {
+            // Only a TAB separates the path from a timestamp, filenames can legally contain spaces.
             var path = value.Trim();
-            var whitespaceIndex = path.IndexOfAny(new[] { '\t', ' ' });
+            var whitespaceIndex = path.IndexOf('\t');
             if (whitespaceIndex >= 0)
                 path = path.Substring(0, whitespaceIndex);
             if (path.StartsWith("a/", StringComparison.InvariantCulture) ||
@@ -369,9 +360,6 @@ namespace magic.lambda.io.file
 
         static bool IsHeaderPathMatch(string headerPath, string targetPath)
         {
-            if (string.Equals(headerPath, "/dev/null", StringComparison.InvariantCulture))
-                return true;
-
             var normalizedTarget = targetPath.Replace("\\", "/");
             if (string.Equals(headerPath, normalizedTarget, StringComparison.InvariantCulture))
                 return true;
