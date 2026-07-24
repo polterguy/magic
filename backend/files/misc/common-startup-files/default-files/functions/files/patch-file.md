@@ -3,7 +3,7 @@ FUNCTION ==> patch-file
 
 Applies a unified diff patch to an existing file.
 
-Use this function only for small, targeted edits to an existing file after you have read the exact current file content. Use `create-file` when creating a new file, when replacing an entire file, or when you are not certain you can produce an exact patch.
+This is the preferred function for editing, updating, or modifying an existing file when the change only touches a small part of it - changing a line, a value, a CSS selector, a paragraph, or similar targeted edits. Read the file first, then produce the patch from the exact current content. Use `create-file` only when creating a new file, when replacing an entire file, or for large rewrites that restructure most of the file.
 
 
 Below is the exact function signature and JSON invocation format for this function.
@@ -56,17 +56,14 @@ When using this function, follow this workflow exactly:
 4. Include at least 2 unchanged context lines above and below each change whenever possible, and make sure the context is unique within the file.
 5. Emit a well-formed hunk header; the hunk is positioned by its context lines, not by the header's line numbers.
 6. Emit a single-file unified diff patch.
-7. If you are not fully certain the patch metadata is exact, do **not** use `patch-file`. Use `create-file` instead.
 
 ## When not to use patch-file
 
 Do **not** use `patch-file` in these situations:
 
 * You have not read the current file contents first.
-* You are changing large parts of the file.
-* You are reformatting, reorganizing, or rewriting a file substantially.
+* You are changing large parts of the file, or reformatting, reorganizing, or rewriting it substantially.
 * You cannot reproduce the exact context lines or the newline state.
-* You cannot preserve exact surrounding context lines, including at least 2 lines above and/or below the change when available.
 
 In these cases, use `create-file` and write the full intended content instead.
 

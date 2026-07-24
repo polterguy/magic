@@ -1,6 +1,7 @@
 
 /*
- * Applies a unified diff patch to an existing file. For NON-Hyperlambda files only - Hyperlambda (.hl)
+ * Applies a unified diff patch to an existing file - the preferred way to edit an existing file
+ * when only changing a minor part of it. For NON-Hyperlambda files only - Hyperlambda (.hl)
  * is never hand-edited; re-create it with the generate-hyperlambda function instead.
  *
  * IMPORTANT - This file CANNOT be used to save Hyperlambda, only other types of files.
