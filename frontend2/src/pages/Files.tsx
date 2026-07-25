@@ -60,7 +60,8 @@ export default function Files() {
   const [content, setContent] = useState('');
   const [dirty, setDirty] = useState(false);
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
-  const [executeResult, setExecuteResult] = useState<string | null>(null);
+  const [executeResult, setExecuteResult] =
+    useState<{ text: string; mode: string } | null>(null);
   const { confirm, prompt, form } = useDialog();
 
   const loadTree = useCallback(async (sys: boolean) => {
@@ -200,12 +201,14 @@ export default function Files() {
       }
       const response = await evaluateWithArgs(content, args);
       let display = response === '' ? 'OK — no result' : response;
+      let mode = 'text/plain';
       try {
         display = JSON.stringify(JSON.parse(response), null, 2);
+        mode = 'application/json';
       } catch {
         // Not JSON — show as-is.
       }
-      setExecuteResult(display);
+      setExecuteResult({ text: display, mode });
     } catch (err: any) {
       show(err.message, true);
     }
@@ -432,9 +435,14 @@ export default function Files() {
               setExecuteResult(null);
             }
           }}>
-          <div className="modal-box" style={{ width: 760, maxWidth: '90vw' }}>
+          <div className="modal-box" style={{ width: 860, maxWidth: '90vw' }}>
             <h2>Execution result</h2>
-            <pre className="result-json" style={{ maxHeight: '60vh' }}>{executeResult}</pre>
+            <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
+              <CodeEditor
+                value={executeResult.text}
+                mode={executeResult.mode}
+                readOnly />
+            </div>
             <div className="modal-actions">
               <button className="btn" onClick={() => setExecuteResult(null)}>Close</button>
             </div>

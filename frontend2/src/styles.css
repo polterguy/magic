@@ -252,7 +252,7 @@ h1 {
   font-size: 12px;
 }
 
-input[type="text"], input[type="password"], input[type="datetime-local"], select, textarea {
+input[type="text"], input[type="password"], input[type="number"], input[type="datetime-local"], select, textarea {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 12px;
