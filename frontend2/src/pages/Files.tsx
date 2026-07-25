@@ -9,7 +9,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from '../components/Icons';
-import { useDialog } from '../components/Dialogs';
+import { Modal, useDialog } from '../components/Dialogs';
 import {
   createFolder,
   deleteFile,
@@ -428,26 +428,18 @@ export default function Files() {
         </div>
       </div>
       {executeResult !== null && (
-        <div
-          className="overlay"
-          onMouseDown={event => {
-            if (event.target === event.currentTarget) {
-              setExecuteResult(null);
-            }
-          }}>
-          <div className="modal-box" style={{ width: 860, maxWidth: '90vw' }}>
-            <h2>Execution result</h2>
-            <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
-              <CodeEditor
-                value={executeResult.text}
-                mode={executeResult.mode}
-                readOnly />
-            </div>
-            <div className="modal-actions">
-              <button className="btn" onClick={() => setExecuteResult(null)}>Close</button>
-            </div>
+        <Modal width={860} onClose={() => setExecuteResult(null)}>
+          <h2>Execution result</h2>
+          <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
+            <CodeEditor
+              value={executeResult.text}
+              mode={executeResult.mode}
+              readOnly />
           </div>
-        </div>
+          <div className="modal-actions">
+            <button className="btn" onClick={() => setExecuteResult(null)}>Close</button>
+          </div>
+        </Modal>
       )}
     </>
   );

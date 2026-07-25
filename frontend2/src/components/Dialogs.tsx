@@ -55,6 +55,43 @@ const DialogContext = createContext<{
   form: (options: FormOptions) => Promise<Record<string, string> | null>;
 }>(null!);
 
+/*
+ * Shared modal shell — every dialog in the app renders through this, so
+ * Escape and backdrop-click always close.
+ */
+export function Modal(props: {
+  onClose: () => void;
+  width?: number;
+  children: ReactNode;
+}) {
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        props.onClose();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  });
+
+  return (
+    <div
+      className="overlay"
+      onMouseDown={event => {
+        if (event.target === event.currentTarget) {
+          props.onClose();
+        }
+      }}>
+      <div
+        className="modal-box"
+        style={props.width ? { width: props.width, maxWidth: '90vw' } : undefined}>
+        {props.children}
+      </div>
+    </div>
+  );
+}
+
 export function useDialog() {
   return useContext(DialogContext);
 }
@@ -99,31 +136,12 @@ export function DialogProvider({ children }: { children: ReactNode }) {
     setActive(null);
   }
 
-  useEffect(() => {
-    if (!active) {
-      return;
-    }
-    const handler = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        dismiss();
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  });
-
   return (
     <DialogContext.Provider value={{ confirm, prompt, form }}>
       {children}
       {active && (
-        <div
-          className="overlay"
-          onMouseDown={event => {
-            if (event.target === event.currentTarget) {
-              dismiss();
-            }
-          }}>
-          <form className="modal-box" onSubmit={submit}>
+        <Modal onClose={dismiss}>
+          <form onSubmit={submit}>
             <h2>{active.options.title}</h2>
             {active.options.message && <p>{active.options.message}</p>}
             {active.kind === 'prompt' && (
@@ -171,7 +189,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
               </button>
             </div>
           </form>
-        </div>
+        </Modal>
       )}
     </DialogContext.Provider>
   );
