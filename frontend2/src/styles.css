@@ -497,13 +497,6 @@ tr.clickable:hover td { background: var(--accent-soft); }
   padding: 12px;
 }
 
-.tree-filter {
-  width: 100%;
-  margin-bottom: 8px;
-  padding: 6px 10px;
-  font-size: 13px;
-}
-
 .splitter {
   width: 5px;
   flex-shrink: 0;
@@ -1113,4 +1106,36 @@ tr.vss-relevant td {
 
 tr.vss-irrelevant td {
   color: #909090;
+}
+
+/* Filter box with a clear button, shown once there's text to clear. */
+.search-input {
+  position: relative;
+  display: inline-flex;
+  width: 260px;
+}
+
+.search-input input {
+  width: 100%;
+  padding-right: 30px;
+}
+
+.search-input button {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  color: var(--text-soft);
+  font-size: 17px;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-input button:hover {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
 }

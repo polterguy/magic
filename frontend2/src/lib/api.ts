@@ -150,6 +150,17 @@ export function listFilesRecursively(folder: string, sysFiles: boolean) {
     encodeURIComponent(folder) + '&sys=' + sysFiles);
 }
 
+/*
+ * Installs a module from a ZIP file into /modules/. The backend takes the
+ * archive's name as the module name, so it must be "<name>.zip" with no
+ * further dots and only lowercase letters, digits, hyphens or underscores.
+ */
+export function installModule(file: File) {
+  const formData = new FormData();
+  formData.append('file', file, file.name);
+  return http.put<any>('/magic/system/file-system/install-module', formData);
+}
+
 export function loadFile(filename: string) {
   return http.getText('/magic/system/file-system/file?file=' + encodeURIComponent(filename));
 }
@@ -762,6 +773,16 @@ export function mlSnippetsDeleteAll(type: string, filter: string) {
   return http.delete<any>('/magic/system/magic/ml_training_snippets_all' + query);
 }
 
+/*
+ * Downloads every snippet matching the filter as CSV — the whole filtered
+ * set, not just the page on screen.
+ */
+export function mlSnippetsExportRaw(type: string, filter: string) {
+  const query = '?ml_training_snippets.type.eq=' + encodeURIComponent(type) +
+    snippetSearchQuery(filter);
+  return requestRaw('GET', '/magic/system/magic/ml_training_snippets_export' + query);
+}
+
 export function mlSnippetCreate(snippet: any) {
   return http.post<any>('/magic/system/magic/ml_training_snippets', snippet);
 }
@@ -782,6 +803,11 @@ export function mlRequests(type: string, offset: number, limit: number) {
 
 export function openaiIsConfigured() {
   return http.get<{ result: boolean }>('/magic/system/openai/is-configured');
+}
+
+// Stores the OpenAI API key in the backend's configuration.
+export function openaiSetKey(key: string) {
+  return http.post<any>('/magic/system/openai/key', { key });
 }
 
 /*
@@ -872,6 +898,36 @@ export function uploadUrlList(
   formData.append('feedback-channel', channel);
   formData.append('vectorize', vectorize ? 'true' : 'false');
   return http.post<any>('/magic/system/openai/upload-url-list', formData);
+}
+
+/*
+ * Scrapes one single page into training snippets — "spicing" a model with
+ * one more page rather than crawling a whole site.
+ */
+export function importPage(args: {
+  url: string;
+  type: string;
+  threshold: number;
+  images: boolean;
+  lists: boolean;
+  code: boolean;
+  channel: string;
+}) {
+  return http.post<any>('/magic/system/openai/import-page', {
+    url: args.url,
+    type: args.type,
+    threshold: args.threshold,
+    images: args.images,
+    lists: args.lists,
+    code: args.code,
+    'feedback-channel': args.channel,
+  });
+}
+
+// HTML widgets a model can render as part of an answer.
+export function availableWidgets() {
+  return http.get<{ name: string; description: string; file: string }[]>(
+    '/magic/system/openai/available-widgets?private=false');
 }
 
 /*

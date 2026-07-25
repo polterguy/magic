@@ -1,3 +1,4 @@
+import SearchInput from '../components/SearchInput';
 import { copyToClipboard } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -8,6 +9,7 @@ import {
   BracesIcon,
   ChevronIcon,
   DownloadIcon,
+  ModuleUploadIcon,
   SparkIcon,
   FileIcon,
   FilePlusIcon,
@@ -30,6 +32,7 @@ import {
   getFunctionDeclaration,
   getHyperlambdaArguments,
   getOpenApiSpec,
+  installModule,
   listFilesRecursively,
   listFoldersRecursively,
   loadFile,
@@ -639,12 +642,11 @@ export default function Files() {
       )}
       <div className="files-layout">
         <div className="file-tree" style={{ width: treeWidth }}>
-          <input
-            type="text"
-            className="tree-filter"
+          <SearchInput
             placeholder="Filter files…"
             value={filter}
-            onChange={e => setFilter(e.target.value)} />
+            onChange={setFilter}
+            style={{ width: '100%', marginBottom: 8 }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '2px 4px 8px' }}>
             <label
               style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}
@@ -675,6 +677,39 @@ export default function Files() {
                       await uploadFile(activeFolder, file);
                     }
                     show('Uploaded ' + files.length + ' file(s) to ' + activeFolder);
+                    await loadTree(systemFiles);
+                  } catch (err: any) {
+                    show(err.message, true);
+                  }
+                }} />
+            </label>
+            <label className="icon-btn" title="Install module from a ZIP file…">
+              <ModuleUploadIcon />
+              <input
+                type="file"
+                accept=".zip"
+                style={{ display: 'none' }}
+                onChange={async e => {
+                  const file = e.target.files?.[0];
+                  e.target.value = '';
+                  if (!file) {
+                    return;
+                  }
+                  /*
+                   * The archive's name becomes the module's folder name, so
+                   * the backend rejects anything but "<name>.zip".
+                   */
+                  if (!/^[a-z0-9_-]+\.zip$/.test(file.name)) {
+                    show(
+                      file.name + ' cannot be a module name — it must be ' +
+                      '<name>.zip, using only lowercase letters, digits, ' +
+                      'hyphens or underscores, and no further dots',
+                      true);
+                    return;
+                  }
+                  try {
+                    await installModule(file);
+                    show('Module ' + file.name.replace(/\.zip$/, '') + ' installed');
                     await loadTree(systemFiles);
                   } catch (err: any) {
                     show(err.message, true);

@@ -1,6 +1,7 @@
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Modal } from '../components/Dialogs';
 import {
   availablePlugins,
   countLog,
@@ -10,9 +11,11 @@ import {
   installPlugin,
   listEndpoints,
   listFolders,
+  openaiIsConfigured,
+  openaiSetKey,
 } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
-import { copyToClipboard } from '../lib/toast';
+import { copyToClipboard, showToast } from '../lib/toast';
 
 /*
  * Plugins that turn the cloudlet into an AI-agent endpoint — MCP exposes its
@@ -96,6 +99,70 @@ const GUIDE = [
   },
 ];
 
+/*
+ * Takes the OpenAI API key and stores it in the backend's configuration,
+ * the way the old dashboard's OpenAI configuration dialog does.
+ */
+function OpenAiKeyDialog(props: {
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+
+  const [key, setKey] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  async function save() {
+    // The old dashboard's sanity check — real keys are far longer than this.
+    if (key.length < 20) {
+      setError('That does not look like a valid API key');
+      return;
+    }
+    setBusy(true);
+    try {
+      await openaiSetKey(key);
+      props.onSaved();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Modal width={560} onClose={props.onClose}>
+      <h2>Configure OpenAI</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        Supply your OpenAI API key. You can get one{' '}
+        <a
+          href="https://platform.openai.com/account/api-keys"
+          target="_blank"
+          rel="noreferrer">
+          here
+        </a>.
+      </p>
+      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
+      <label className="modal-label">
+        OpenAI API key
+        <input
+          type="password"
+          autoFocus
+          autoComplete="off"
+          placeholder="sk-…"
+          value={key}
+          onChange={e => setKey(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') save(); }} />
+      </label>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button className="btn" onClick={save} disabled={busy || !key}>
+          {busy ? 'Saving…' : 'Save key'}
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
 export default function Dashboard() {
 
   const { backend } = useAuth();
@@ -108,6 +175,9 @@ export default function Dashboard() {
   const [missingPlugins, setMissingPlugins] = useState<string[]>([]);
   const [installing, setInstalling] = useState(false);
   const [installed, setInstalled] = useState('');
+  // Null until we know — the prompt stays hidden while the answer is pending.
+  const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(null);
+  const [configuringOpenai, setConfiguringOpenai] = useState(false);
 
   // The endpoint an AI agent connects to for tool discovery.
   const mcpUrl = backend?.url + '/magic/modules/mcp/mcp';
@@ -135,6 +205,9 @@ export default function Dashboard() {
     countTasks().then(r => setTasks(r.count)).catch(() => {});
     countLog().then(r => setLogItems(r.count)).catch(() => {});
     checkPlugins();
+    openaiIsConfigured()
+      .then(response => setOpenaiConfigured(response.result))
+      .catch(() => setOpenaiConfigured(null));
   }, [checkPlugins]);
 
   async function installAgentPlugins() {
@@ -230,6 +303,26 @@ export default function Dashboard() {
           </button>
         </div>
       )}
+      {openaiConfigured === false && (
+        <div className="card agent-prompt">
+          <div style={{ flex: 1 }}>
+            <h2 style={{ margin: '0 0 6px 0' }}>Add your OpenAI API key</h2>
+            <p className="muted" style={{ margin: 0 }}>
+              Machine Learning needs an OpenAI API key before you can train models,
+              crawl content, or run chatbots. You can get one{' '}
+              <a
+                href="https://platform.openai.com/account/api-keys"
+                target="_blank"
+                rel="noreferrer">
+                here
+              </a>.
+            </p>
+          </div>
+          <button className="btn btn-large" onClick={() => setConfiguringOpenai(true)}>
+            OpenAI API key
+          </button>
+        </div>
+      )}
       {installed && (
         <Banner isError={false} onClose={() => setInstalled('')} style={{ marginBottom: 16 }}>
           Installing {installed} — you'll be notified when it completes.
@@ -252,6 +345,15 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+      {configuringOpenai && (
+        <OpenAiKeyDialog
+          onClose={() => setConfiguringOpenai(false)}
+          onSaved={() => {
+            setConfiguringOpenai(false);
+            setOpenaiConfigured(true);
+            showToast('Your OpenAI API key was saved to your configuration');
+          }} />
+      )}
     </>
   );
 }

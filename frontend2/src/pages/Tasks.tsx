@@ -1,3 +1,4 @@
+import SearchInput from '../components/SearchInput';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
@@ -158,13 +159,10 @@ export default function Tasks() {
         </Banner>
       )}
       <div className="toolbar">
-        <input
-          type="text"
+        <SearchInput
           placeholder="Filter tasks…"
-          autoComplete="off"
           value={filter}
-          onChange={e => { setFilter(e.target.value); setPage(0); }}
-          style={{ width: 260 }} />
+          onChange={value => { setFilter(value); setPage(0); }} />
         <span className="muted">{count} tasks</span>
         <span className="spacer" />
         <button className="btn" onClick={openNew}>+ New task</button>

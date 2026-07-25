@@ -1,3 +1,4 @@
+import SearchInput from '../components/SearchInput';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -139,13 +140,10 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
   return (
     <>
       <div className="toolbar">
-        <input
-          type="text"
+        <SearchInput
           placeholder="Filter users…"
-          autoComplete="off"
           value={filter}
-          onChange={e => { setFilter(e.target.value); setPage(0); }}
-          style={{ width: 260 }} />
+          onChange={value => { setFilter(value); setPage(0); }} />
         <span className="muted">{count} users</span>
         <span className="spacer" />
         <button className="btn" onClick={() => setCreating(true)}>+ New user</button>
@@ -604,12 +602,10 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void; notify: Notify 
   return (
     <>
       <div className="toolbar">
-        <input
-          type="text"
+        <SearchInput
           placeholder="Filter roles…"
           value={filter}
-          onChange={e => setFilter(e.target.value)}
-          style={{ width: 260 }} />
+          onChange={setFilter} />
         <span className="muted">{visible.length} of {props.roles.length} roles</span>
         <span className="spacer" />
         <button className="btn" onClick={() => setCreating(true)}>+ New role</button>

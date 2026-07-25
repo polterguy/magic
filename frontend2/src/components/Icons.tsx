@@ -81,6 +81,17 @@ export function DownloadIcon() {
   );
 }
 
+// A folder with an upload arrow — installing a module from an archive.
+export function ModuleUploadIcon() {
+  return (
+    <svg {...base}>
+      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9 14 12 11 15 14" />
+      <line x1="12" y1="11" x2="12" y2="18" />
+    </svg>
+  );
+}
+
 export function SparkIcon() {
   return (
     <svg {...base}>

@@ -1,3 +1,4 @@
+import SearchInput from '../components/SearchInput';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { LogItem, countLog, listLog } from '../lib/api';
@@ -56,11 +57,10 @@ export default function Log() {
       </div>
       {error && <Banner onClose={() => setError('')} style={{ marginBottom: 12 }}>{error}</Banner>}
       <div className="toolbar">
-        <input
-          type="text"
+        <SearchInput
           placeholder="Filter log…"
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          onChange={setQuery}
           style={{ width: 320 }} />
         <span className="spacer" />
         <button

@@ -1,3 +1,4 @@
+import SearchInput from '../components/SearchInput';
 import Banner from '../components/Banner';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
@@ -167,11 +168,10 @@ export default function Endpoints() {
             onChange={e => setShowSystem(e.target.checked)} />
           Show system endpoints
         </label>
-        <input
-          type="text"
+        <SearchInput
           placeholder="Filter endpoints…"
           value={filter}
-          onChange={e => setFilter(e.target.value)}
+          onChange={setFilter}
           style={{ width: 300 }} />
       </div>
       {error && <Banner onClose={() => setError('')} style={{ marginBottom: 12 }}>{error}</Banner>}

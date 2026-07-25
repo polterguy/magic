@@ -1,4 +1,6 @@
-import { copyToClipboard } from '../lib/toast';
+import SearchInput from '../components/SearchInput';
+import { dispositionFilename, downloadBlob } from '../components/ResultViewer';
+import { copyToClipboard, showToast } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
@@ -8,10 +10,12 @@ import CreateSystemMessageDialog from '../components/CreateSystemMessageDialog';
 import Tabs from '../components/Tabs';
 import SortHeader, { SortState, useSort } from '../components/SortHeader';
 import {
+  availableWidgets,
   availableWorkflows,
   backendInfo,
   getFunctionDeclaration,
   gibberish,
+  importPage,
   importUrl,
   listRoles,
   mlRequests,
@@ -20,6 +24,7 @@ import {
   mlSnippets,
   mlSnippetsCount,
   mlSnippetsDeleteAll,
+  mlSnippetsExportRaw,
   mlSnippetUpdate,
   mlTypeCreate,
   mlTypeDelete,
@@ -835,6 +840,7 @@ function EditTypeDialog(props: {
   const [dynamicFlavor, setDynamicFlavor] =
     useState<{ instruction: string; template: string } | null>(null);
   // The instruction as loaded — used to flag unsaved changes in the dialog.
+  const [addingFunction, setAddingFunction] = useState(false);
   const [initialSystemMessage] = useState(() => systemMessage);
   const instructionChanged = systemMessage !== initialSystemMessage;
   // Twilio, webhooks, lead-gen, questionnaires, prefix and search-postfix
@@ -1182,8 +1188,35 @@ function EditTypeDialog(props: {
               mode="markdown" />
           </div>
           <div className="modal-actions">
+            <button
+              className="btn btn-secondary"
+              title="Append an AI function's declaration to the system instruction"
+              onClick={() => setAddingFunction(true)}>
+              + AI function
+            </button>
             <button className="btn" onClick={() => setLargeEditor(false)}>Done</button>
           </div>
+          {addingFunction && (
+            <AddFunctionDialog
+              type={type}
+              onClose={() => setAddingFunction(false)}
+              onInstalled={() => setAddingFunction(false)}
+              onDeclaration={(prompt, completion) => {
+                /*
+                 * Appended as a markdown section, the way the old edit-type
+                 * dialog appends it — heading from the prompt, declaration
+                 * underneath, separated from whatever came before.
+                 */
+                setSystemMessage((current: string) => {
+                  const trimmed = current.trimEnd();
+                  return (trimmed.length > 0 ? trimmed + '\n\n' : '') +
+                    '## ' + prompt + '\n\n' + fenceInvocation(completion);
+                });
+                setAddingFunction(false);
+                showToast('AI function added to your system instruction');
+              }}
+              notify={props.notify} />
+          )}
           {dynamicFlavor && (
             <CreateSystemMessageDialog
               instruction={dynamicFlavor.instruction}
@@ -1202,6 +1235,194 @@ function EditTypeDialog(props: {
 
 
 /*
+ * Wraps the FUNCTION_INVOCATION block — everything between its two ___
+ * markers — in a plaintext fence. A system instruction is markdown, and its
+ * own "## Functions" section shows invocations fenced this way, so inserted
+ * declarations have to match. Argument descriptions stay outside the fence,
+ * since they are prose.
+ */
+function fenceInvocation(completion: string) {
+  const lines = completion.split('\n');
+  const opening = lines.indexOf('___');
+  if (opening === -1) {
+    return completion;
+  }
+  const closing = lines.indexOf('___', opening + 1);
+  if (closing === -1) {
+    return completion;
+  }
+  lines.splice(closing + 1, 0, '```');
+  lines.splice(opening, 0, '```plaintext');
+  return lines.join('\n');
+}
+
+/*
+ * "Spice" — scrapes one single page into the model, as opposed to crawling
+ * a whole site from the import dialog.
+ */
+function SpiceDialog(props: {
+  type: string;
+  onClose: () => void;
+  onScrape: (options: {
+    url: string; threshold: number; images: boolean; lists: boolean; code: boolean;
+  }) => void;
+}) {
+
+  const [url, setUrl] = useState('');
+  const [threshold, setThreshold] = useState('50');
+  const [images, setImages] = useState(true);
+  const [lists, setLists] = useState(true);
+  const [code, setCode] = useState(true);
+
+  return (
+    <Modal width={560} onClose={props.onClose}>
+      <h2>Spice {props.type}</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        Scrapes a single web page into this model, without crawling the rest of
+        the site.
+      </p>
+      <div className="form-grid">
+        <label>Page URL
+          <input
+            type="text"
+            autoFocus
+            placeholder="https://example.com/some-page"
+            value={url}
+            onChange={e => setUrl(e.target.value)} />
+        </label>
+        <label>Text threshold
+          <input
+            type="number"
+            min={25}
+            title="Minimum character count for content to become a training snippet"
+            value={threshold}
+            onChange={e => setThreshold(e.target.value)}
+            style={{ width: 140 }} />
+        </label>
+        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+          <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <input type="checkbox" checked={images} onChange={e => setImages(e.target.checked)} />
+            Import images
+          </label>
+          <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <input type="checkbox" checked={lists} onChange={e => setLists(e.target.checked)} />
+            Import lists
+          </label>
+          <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <input type="checkbox" checked={code} onChange={e => setCode(e.target.checked)} />
+            Import code segments
+          </label>
+        </div>
+      </div>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button
+          className="btn"
+          disabled={!url}
+          onClick={() => props.onScrape({
+            url,
+            threshold: Number(threshold),
+            images,
+            lists,
+            code,
+          })}>
+          Scrape page
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+/*
+ * Adds an HTML widget to a model — a training snippet whose completion tells
+ * the model to render the widget through the render-html-widget workflow.
+ */
+const WIDGET_WORKFLOW = '/misc/workflows/workflows/machine-learning/render-html-widget.hl';
+
+function AddWidgetDialog(props: {
+  type: string;
+  onClose: () => void;
+  onAdded: () => void;
+  notify: (feedback: { text: string; isError: boolean }) => void;
+}) {
+
+  const [widgets, setWidgets] = useState<any[]>([]);
+  const [filter, setFilter] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    availableWidgets()
+      .then(list => setWidgets(list ?? []))
+      .catch(err => setError(err.message));
+  }, []);
+
+  async function install(widget: any) {
+    const completion = 'If the user asks you to perform an action associated with ' +
+      'this function, then responds with the following in the same message:\n' +
+      '\n___\nFUNCTION_INVOCATION[' + WIDGET_WORKFLOW + ']:\n{\n  "filename":' +
+      widget.file + '\n}\n___';
+    try {
+      await mlSnippetCreate({
+        prompt: 'WRITE YOUR PROMPT HERE',
+        completion,
+        type: props.type,
+        meta: 'FUNCTION_INVOCATION ==> ' + WIDGET_WORKFLOW,
+      });
+      props.notify({
+        text: 'Widget added to ' + props.type + ' — edit its prompt to describe when to use it',
+        isError: false,
+      });
+      props.onAdded();
+    } catch (err: any) {
+      props.notify({ text: err.message, isError: true });
+    }
+  }
+
+  const query = filter.toLowerCase();
+  const visible = widgets.filter(widget =>
+    !query ||
+    widget.name?.toLowerCase().includes(query) ||
+    widget.description?.toLowerCase().includes(query));
+
+  return (
+    <Modal width={720} onClose={props.onClose}>
+      <h2>Add widget to {props.type}</h2>
+      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
+      <SearchInput
+        placeholder="Filter widgets…"
+        value={filter}
+        onChange={setFilter}
+        style={{ width: '100%', marginBottom: 10 }} />
+      <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
+        {visible.map(widget => (
+          <div
+            key={widget.file}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '8px 0',
+              borderBottom: '1px solid var(--border)',
+            }}>
+            <div style={{ flex: 1 }}>
+              <strong>{widget.name}</strong>
+              {widget.description && <div className="muted">{widget.description}</div>}
+            </div>
+            <button className="btn btn-secondary btn-small" onClick={() => install(widget)}>
+              Add
+            </button>
+          </div>
+        ))}
+        {visible.length === 0 && <div className="muted">No widgets available.</div>}
+      </div>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Close</button>
+      </div>
+    </Modal>
+  );
+}
+
+/*
  * Training data tab.
  */
 function TrainingTab(props: {
@@ -1217,6 +1438,9 @@ function TrainingTab(props: {
   const [count, setCount] = useState(0);
   const [editing, setEditing] = useState<any | null | 'new'>(null);
   const [pickingFunction, setPickingFunction] = useState(false);
+  const [pickingWidget, setPickingWidget] = useState(false);
+  const [spicing, setSpicing] = useState(false);
+  const [scraping, setScraping] = useState<{ channel: string; options: any } | null>(null);
   const [vectorSearch, setVectorSearch] = useState(false);
   const [sort, setSort] = useSort();
   const latestRequest = useRef(0);
@@ -1320,6 +1544,25 @@ function TrainingTab(props: {
     }
   }
 
+  // Scraping runs on a background thread, so it reports over a socket channel.
+  async function spice(options: any) {
+    setSpicing(false);
+    try {
+      setScraping({ channel: (await gibberish()).result, options });
+    } catch (err: any) {
+      props.notify({ text: err.message, isError: true });
+    }
+  }
+
+  async function exportSnippets() {
+    try {
+      const raw = await mlSnippetsExportRaw(type, filter);
+      downloadBlob(raw.blob, dispositionFilename(raw.disposition) ?? type + '.csv');
+    } catch (err: any) {
+      props.notify({ text: err.message, isError: true });
+    }
+  }
+
   const pageCount = Math.ceil(count / PAGE_SIZE);
 
   return (
@@ -1330,11 +1573,10 @@ function TrainingTab(props: {
             <option key={candidate.type} value={candidate.type}>{candidate.type}</option>
           ))}
         </select>
-        <input
-          type="text"
+        <SearchInput
           placeholder={vectorSearch ? 'Search meaning…' : 'Filter prompts…'}
           value={filter}
-          onChange={e => { setFilter(e.target.value); setPage(0); }}
+          onChange={value => { setFilter(value); setPage(0); }}
           style={{ width: 240 }} />
         <label
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
@@ -1357,6 +1599,27 @@ function TrainingTab(props: {
               : 'Delete every snippet in ' + type}
           onClick={removeFiltered}>
           {filter ? 'Delete filtered' : 'Delete all'}
+        </button>
+        <button
+          className="btn btn-secondary btn-small"
+          disabled={count === 0 || searchingByVector}
+          title={searchingByVector
+            ? 'Vector search ranks snippets rather than filtering them, so there is no filter to export'
+            : 'Download every snippet matching the filter as CSV'}
+          onClick={exportSnippets}>
+          Export
+        </button>
+        <button
+          className="btn btn-secondary"
+          title="Scrape a single web page into this model"
+          onClick={() => setSpicing(true)}>
+          + Spice
+        </button>
+        <button
+          className="btn btn-secondary"
+          title="Add an HTML widget this model can render"
+          onClick={() => setPickingWidget(true)}>
+          + Widget
         </button>
         <button
           className="btn btn-secondary"
@@ -1458,6 +1721,29 @@ function TrainingTab(props: {
           onInstalled={() => { setPickingFunction(false); refresh(); }}
           notify={props.notify} />
       )}
+      {pickingWidget && (
+        <AddWidgetDialog
+          type={type}
+          onClose={() => setPickingWidget(false)}
+          onAdded={() => { setPickingWidget(false); refresh(); }}
+          notify={props.notify} />
+      )}
+      {spicing && (
+        <SpiceDialog
+          type={type}
+          onClose={() => setSpicing(false)}
+          onScrape={spice} />
+      )}
+      {scraping && (
+        <SocketFeedback
+          title={'Scraping ' + scraping.options.url}
+          channel={scraping.channel}
+          onReady={() => {
+            importPage({ ...scraping.options, type, channel: scraping.channel })
+              .catch(err => props.notify({ text: err.message, isError: true }));
+          }}
+          onClose={() => { setScraping(null); refresh(); }} />
+      )}
     </>
   );
 }
@@ -1522,6 +1808,11 @@ function AddFunctionDialog(props: {
   type: string;
   onClose: () => void;
   onInstalled: () => void;
+  /*
+   * When given, the declaration is handed back rather than written as a
+   * training snippet — how a function gets added to a system instruction.
+   */
+  onDeclaration?: (prompt: string, completion: string) => void;
   notify: (feedback: { text: string; isError: boolean }) => void;
 }) {
 
@@ -1550,9 +1841,15 @@ function AddFunctionDialog(props: {
         declaration = declaration.replace('YOUR_TYPE_NAME_HERE', props.type);
       }
       const lines = declaration.split('\n');
+      const prompt = lines[0].trim();
+      const completion = lines.slice(1).join('\n').trim();
+      if (props.onDeclaration) {
+        props.onDeclaration(prompt, completion);
+        return;
+      }
       await mlSnippetCreate({
-        prompt: lines[0].trim(),
-        completion: lines.slice(1).join('\n').trim(),
+        prompt,
+        completion,
         type: props.type,
         meta: 'FUNCTION_INVOCATION ==> ' + workflow.file,
         uri: null,
@@ -1576,11 +1873,10 @@ function AddFunctionDialog(props: {
     <Modal width={720} onClose={props.onClose}>
       <h2>Add AI function to {props.type}</h2>
       {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
-      <input
-        type="text"
+      <SearchInput
         placeholder="Filter functions…"
         value={filter}
-        onChange={e => setFilter(e.target.value)}
+        onChange={setFilter}
         style={{ width: '100%', marginBottom: 10 }} />
       <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
         {visible.map(workflow => (
@@ -1686,6 +1982,13 @@ function HistoryTab(props: {
   );
 }
 
+/*
+ * Conversation content is whatever a visitor typed into the chatbot, and the
+ * backend stores and returns it verbatim — it does not HTML encode. It is
+ * therefore rendered as JSX text, which React escapes, so markup arrives on
+ * screen as visible characters and never as live HTML. Never render any of
+ * these values through dangerouslySetInnerHTML.
+ */
 function RequestRow(props: { request: any; expanded: boolean; onToggle: () => void }) {
   return (
     <>

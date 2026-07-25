@@ -1,3 +1,4 @@
+import SearchInput from '../components/SearchInput';
 import Banner from '../components/Banner';
 import { useEffect, useMemo, useState } from 'react';
 import { marked } from 'marked';
@@ -77,11 +78,10 @@ export default function Plugins() {
           <p>Install plugins and modules from the Bazar</p>
         </div>
         <span style={{ flex: 1 }} />
-        <input
-          type="text"
+        <SearchInput
           placeholder="Search plugins…"
           value={filter}
-          onChange={e => setFilter(e.target.value)}
+          onChange={setFilter}
           style={{ width: 300 }} />
         <span className="muted">{visible.length} shown</span>
       </div>
