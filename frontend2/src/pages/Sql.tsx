@@ -1,3 +1,4 @@
+import { copyToClipboard } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
@@ -479,7 +480,7 @@ export default function Sql() {
               <div className="modal-actions">
                 <button
                   className="btn btn-secondary"
-                  onClick={() => navigator.clipboard.writeText(ddl.sql)}>
+                  onClick={() => copyToClipboard(ddl.sql, 'The DDL')}>
                   Copy
                 </button>
                 <button className="btn" onClick={() => setDdl(null)}>Close</button>

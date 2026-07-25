@@ -1,9 +1,10 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
 import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
+import { setToastListener } from '../lib/toast';
 import { ChevronIcon } from './Icons';
 
 const NAV_ITEMS = [
@@ -65,12 +66,30 @@ export default function Layout({ children }: { children: ReactNode }) {
    */
   const [toasts, setToasts] = useState<{ id: number; text: string; isError: boolean }[]>([]);
   const nextToastId = useRef(0);
+  const timers = useRef<number[]>([]);
   const backendUrl = backend?.url;
   const backendToken = backend?.token;
 
   function dismissToast(id: number) {
     setToasts(current => current.filter(toast => toast.id !== id));
   }
+
+  const pushToast = useCallback((text: string, isError: boolean) => {
+    const id = ++nextToastId.current;
+    setToasts(current => [...current, { id, text, isError }]);
+    timers.current.push(window.setTimeout(
+      () => setToasts(current => current.filter(toast => toast.id !== id)),
+      isError ? 10000 : 5000));
+  }, []);
+
+  // Toasts raised from anywhere in the app — clipboard copies, and so on.
+  useEffect(() => {
+    setToastListener(toast => pushToast(toast.text, toast.isError));
+    return () => {
+      setToastListener(null);
+      timers.current.forEach(clearTimeout);
+    };
+  }, [pushToast]);
 
   useEffect(() => {
     if (!backendUrl || !backendToken) {
@@ -84,28 +103,20 @@ export default function Layout({ children }: { children: ReactNode }) {
       })
       .withAutomaticReconnect()
       .build();
-    const timers: number[] = [];
     connection.on('magic.backend.message', (raw: string) => {
       const args = JSON.parse(raw);
       switch (args.type) {
         case 'success':
-        case 'error': {
-          const id = ++nextToastId.current;
-          const isError = args.type === 'error';
-          setToasts(current => [...current, { id, text: args.message, isError }]);
-          timers.push(window.setTimeout(
-            () => setToasts(current => current.filter(toast => toast.id !== id)),
-            isError ? 10000 : 5000));
+        case 'error':
+          pushToast(args.message, args.type === 'error');
           break;
-        }
       }
     });
     connection.start().catch(() => {});
     return () => {
-      timers.forEach(clearTimeout);
       connection.stop();
     };
-  }, [backendUrl, backendToken]);
+  }, [backendUrl, backendToken, pushToast]);
 
   return (
     <div className="shell">

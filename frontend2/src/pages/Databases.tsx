@@ -1,3 +1,4 @@
+import { copyToClipboard } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -478,7 +479,7 @@ function ExternalTab() {
                     <button
                       className="btn btn-secondary btn-small"
                       onClick={() => {
-                        navigator.clipboard.writeText(row.connectionString);
+                        copyToClipboard(row.connectionString, 'The connection string');
                         show('Connection string copied');
                       }}>
                       Copy

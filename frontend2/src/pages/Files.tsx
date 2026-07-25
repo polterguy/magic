@@ -1,3 +1,4 @@
+import { copyToClipboard } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
@@ -593,8 +594,7 @@ export default function Files() {
               className="btn btn-secondary btn-small"
               title="Copy path"
               onClick={() => {
-                navigator.clipboard.writeText(selectedFile);
-                show('Path copied to clipboard');
+                copyToClipboard(selectedFile, 'The path');
               }}>
               Copy path
             </button>

@@ -704,26 +704,62 @@ export function mlTypeDelete(type: string) {
   return http.delete<any>('/magic/system/magic/ml_types?type=' + encodeURIComponent(type));
 }
 
+/*
+ * Search text matches against prompt, completion or uri — the endpoints nest
+ * these three inside an [or], so they widen the search rather than narrowing
+ * it, while the type stays ANDed. The uri match is a prefix, since URIs start
+ * with their domain.
+ */
+function snippetSearchQuery(filter: string) {
+  if (!filter) {
+    return '';
+  }
+  const like = encodeURIComponent('%' + filter + '%');
+  return '&ml_training_snippets.prompt.like=' + like +
+    '&ml_training_snippets.completion.like=' + like +
+    '&ml_training_snippets.uri.like=' + encodeURIComponent(filter + '%');
+}
+
 export function mlSnippets(
   type: string, filter: string, offset: number, limit: number,
-  sort?: { column: string | null; direction: 'asc' | 'desc' }) {
+  sort?: { column: string | null; direction: 'asc' | 'desc' },
+  vectorSearch = false) {
+  /*
+   * Vector search asks the model which snippets are semantically closest to
+   * the search text, and answers with a distance per snippet — it takes no
+   * ordering or LIKE filters.
+   */
+  if (vectorSearch) {
+    return http.get<any[]>(
+      '/magic/system/magic/ml_training_snippets-vss' +
+      `?limit=${limit}&offset=${offset}` +
+      '&type=' + encodeURIComponent(type) +
+      '&filter=' + encodeURIComponent(filter));
+  }
   const order = sort?.column
     ? `&order=${encodeURIComponent(sort.column)}&direction=${sort.direction}`
     : '&order=created&direction=desc';
-  let query = `?limit=${limit}&offset=${offset}` + order +
-    '&ml_training_snippets.type.eq=' + encodeURIComponent(type);
-  if (filter) {
-    query += '&ml_training_snippets.prompt.like=' + encodeURIComponent('%' + filter + '%');
-  }
+  const query = `?limit=${limit}&offset=${offset}` + order +
+    '&ml_training_snippets.type.eq=' + encodeURIComponent(type) +
+    snippetSearchQuery(filter);
   return http.get<any[]>('/magic/system/magic/ml_training_snippets' + query);
 }
 
-export function mlSnippetsCount(type: string, filter: string) {
-  let query = '?ml_training_snippets.type.eq=' + encodeURIComponent(type);
-  if (filter) {
-    query += '&ml_training_snippets.prompt.like=' + encodeURIComponent('%' + filter + '%');
-  }
+export function mlSnippetsCount(type: string, filter: string, vectorSearch = false) {
+  // Vector search always considers the whole type, so its count ignores the filter.
+  const query = '?ml_training_snippets.type.eq=' + encodeURIComponent(type) +
+    (vectorSearch ? '' : snippetSearchQuery(filter));
   return http.get<{ count: number }>('/magic/system/magic/ml_training_snippets-count' + query);
+}
+
+/*
+ * Deletes every snippet matching the current filter, rather than one at a
+ * time — the filter is passed exactly as the listing uses it.
+ */
+export function mlSnippetsDeleteAll(type: string, filter: string) {
+  const query = '?ml_training_snippets.type.eq=' + encodeURIComponent(type) +
+    snippetSearchQuery(filter);
+  return http.delete<any>('/magic/system/magic/ml_training_snippets_all' + query);
 }
 
 export function mlSnippetCreate(snippet: any) {

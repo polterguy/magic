@@ -1032,3 +1032,85 @@ pre.result-json {
 .CodeMirror-hints {
   z-index: 300;
 }
+
+/* Dashboard prompt for installing the AI-agent plugins. */
+.agent-prompt {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--accent);
+}
+
+.btn-large {
+  padding: 14px 28px;
+  font-size: 15px;
+}
+
+/* Linked guide to the dashboard's sections, on the Welcome card. */
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.guide-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface);
+  transition: border-color 0.12s, box-shadow 0.12s, transform 0.12s;
+}
+
+.guide-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 18px rgba(95, 56, 249, 0.12);
+  transform: translateY(-2px);
+}
+
+.guide-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 16px;
+}
+
+.guide-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.guide-card:hover .guide-title {
+  color: var(--accent-dark);
+}
+
+.guide-text {
+  display: block;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Vector-search results, coloured by whether they'd reach the model's
+   context — the model's threshold decides where that line falls. */
+tr.vss-relevant td {
+  color: #305030;
+}
+
+tr.vss-irrelevant td {
+  color: #909090;
+}

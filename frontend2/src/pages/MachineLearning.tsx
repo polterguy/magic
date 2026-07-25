@@ -1,5 +1,6 @@
+import { copyToClipboard } from '../lib/toast';
 import Banner from '../components/Banner';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
 import SocketFeedback from '../components/SocketFeedback';
@@ -18,6 +19,7 @@ import {
   mlSnippetDelete,
   mlSnippets,
   mlSnippetsCount,
+  mlSnippetsDeleteAll,
   mlSnippetUpdate,
   mlTypeCreate,
   mlTypeDelete,
@@ -784,7 +786,7 @@ function EmbedDialog(props: { type: string; onClose: () => void }) {
       <div className="modal-actions">
         <button
           className="btn btn-secondary"
-          onClick={() => { navigator.clipboard.writeText(script); setCopied(true); }}>
+          onClick={() => { copyToClipboard(script, 'The embed script'); setCopied(true); }}>
           {copied ? 'Copied!' : 'Copy embed code'}
         </button>
         <button className="btn" onClick={props.onClose}>Close</button>
@@ -1215,8 +1217,24 @@ function TrainingTab(props: {
   const [count, setCount] = useState(0);
   const [editing, setEditing] = useState<any | null | 'new'>(null);
   const [pickingFunction, setPickingFunction] = useState(false);
+  const [vectorSearch, setVectorSearch] = useState(false);
   const [sort, setSort] = useSort();
-  const { confirm } = useDialog();
+  const latestRequest = useRef(0);
+  const { confirm, prompt } = useDialog();
+
+  // Vector search only means anything once there's something to search for.
+  const searchingByVector = vectorSearch && !!filter;
+
+  /*
+   * A snippet only makes it into the model's context when its distance is
+   * near enough — the model's threshold decides where that line falls, and
+   * anything past it is shown greyed out.
+   */
+  const threshold = props.types.find(candidate => candidate.type === type)?.threshold;
+  const inContext = (snippet: any) =>
+    typeof snippet.distance !== 'number' || typeof threshold !== 'number'
+      ? true
+      : snippet.distance + threshold < 1;
 
   useEffect(() => {
     if (!type && props.types.length > 0) {
@@ -1228,17 +1246,29 @@ function TrainingTab(props: {
     if (!type) {
       return;
     }
+    /*
+     * Typing fires a request per keystroke, and they don't necessarily come
+     * back in order — only the newest one is allowed to paint, otherwise the
+     * grid and its count can end up describing an older filter than the one
+     * in the box.
+     */
+    const request = ++latestRequest.current;
     try {
       const [list, total] = await Promise.all([
-        mlSnippets(type, filter, page * PAGE_SIZE, PAGE_SIZE, sort),
-        mlSnippetsCount(type, filter),
+        mlSnippets(type, filter, page * PAGE_SIZE, PAGE_SIZE, sort, searchingByVector),
+        mlSnippetsCount(type, filter, searchingByVector),
       ]);
+      if (request !== latestRequest.current) {
+        return;
+      }
       setSnippets(list ?? []);
       setCount(total.count);
     } catch (err: any) {
-      props.notify({ text: err.message, isError: true });
+      if (request === latestRequest.current) {
+        props.notify({ text: err.message, isError: true });
+      }
     }
-  }, [type, filter, page, sort]);
+  }, [type, filter, page, sort, searchingByVector]);
 
   useEffect(() => {
     refresh();
@@ -1261,6 +1291,35 @@ function TrainingTab(props: {
     }
   }
 
+  /*
+   * Deletes every snippet the current filter matches, not just the page on
+   * screen — so it asks for the count to be typed back.
+   */
+  async function removeFiltered() {
+    const typed = await prompt({
+      title: 'Delete all filtered snippets?',
+      message: 'This permanently deletes all ' + count + ' snippet(s) matching the ' +
+        'current filter in ' + type + '. Type the number to confirm.',
+      label: 'Number of snippets',
+      confirmText: 'Delete',
+    });
+    if (typed === null) {
+      return;
+    }
+    if (typed !== String(count)) {
+      props.notify({ text: 'Number did not match — nothing deleted', isError: true });
+      return;
+    }
+    try {
+      await mlSnippetsDeleteAll(type, filter);
+      props.notify({ text: count + ' snippet(s) deleted', isError: false });
+      setPage(0);
+      await refresh();
+    } catch (err: any) {
+      props.notify({ text: err.message, isError: true });
+    }
+  }
+
   const pageCount = Math.ceil(count / PAGE_SIZE);
 
   return (
@@ -1273,12 +1332,32 @@ function TrainingTab(props: {
         </select>
         <input
           type="text"
-          placeholder="Filter prompts…"
+          placeholder={vectorSearch ? 'Search meaning…' : 'Filter prompts…'}
           value={filter}
           onChange={e => { setFilter(e.target.value); setPage(0); }}
           style={{ width: 240 }} />
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="Use vector semantic search to find snippets by meaning rather than by text — only works once you have vectorised this model">
+          <input
+            type="checkbox"
+            checked={vectorSearch}
+            onChange={e => { setVectorSearch(e.target.checked); setPage(0); }} />
+          Vector search
+        </label>
         <span className="muted">{count} snippets</span>
         <span className="spacer" />
+        <button
+          className="btn btn-danger btn-small"
+          disabled={count === 0 || searchingByVector}
+          title={searchingByVector
+            ? 'Vector search ranks snippets rather than filtering them, so there is no filter to delete by'
+            : filter
+              ? 'Delete every snippet matching the filter'
+              : 'Delete every snippet in ' + type}
+          onClick={removeFiltered}>
+          {filter ? 'Delete filtered' : 'Delete all'}
+        </button>
         <button
           className="btn btn-secondary"
           onClick={() => setPickingFunction(true)}>
@@ -1293,13 +1372,24 @@ function TrainingTab(props: {
               <SortHeader column="prompt" label="Prompt" sort={sort} onSort={setSort} />
               {/* tokens is a computed column — the API cannot order by it. */}
               <th style={{ width: 90 }}>Tokens</th>
+              {searchingByVector && <th style={{ width: 100 }}>Distance</th>}
               <th style={{ width: 110 }}>Embedded</th>
               <th style={{ width: 150 }}></th>
             </tr>
           </thead>
           <tbody>
             {snippets.map(snippet => (
-              <tr key={snippet.id}>
+              <tr
+                key={snippet.id}
+                className={searchingByVector
+                  ? (inContext(snippet) ? 'vss-relevant' : 'vss-irrelevant')
+                  : undefined}
+                title={searchingByVector
+                  ? (inContext(snippet)
+                    ? 'Close enough to be included in the model\'s context'
+                    : 'Too distant for the model\'s ' + threshold + ' threshold — ' +
+                      'this would not be included in the context')
+                  : undefined}>
                 <td style={{
                   maxWidth: 520,
                   overflow: 'hidden',
@@ -1309,6 +1399,13 @@ function TrainingTab(props: {
                   {snippet.prompt}
                 </td>
                 <td>{snippet.tokens}</td>
+                {searchingByVector && (
+                  <td className="mono">
+                    {typeof snippet.distance === 'number'
+                      ? snippet.distance.toFixed(3)
+                      : <span className="muted">—</span>}
+                  </td>
+                )}
                 <td>{snippet.embedding_vss ? 'yes' : 'no'}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>

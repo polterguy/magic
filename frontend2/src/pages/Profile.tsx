@@ -1,3 +1,4 @@
+import { copyToClipboard } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useState } from 'react';
 import { Modal } from '../components/Dialogs';
@@ -168,7 +169,7 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
         {token && (
           <button
             className="btn btn-secondary"
-            onClick={() => navigator.clipboard.writeText(token)}>
+            onClick={() => copyToClipboard(token, 'The token')}>
             Copy
           </button>
         )}

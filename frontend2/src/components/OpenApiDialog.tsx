@@ -4,6 +4,7 @@
  * spec URL for external tools like Swagger UI or Postman.
  */
 
+import { copyToClipboard } from '../lib/toast';
 import CodeEditor from './CodeEditor';
 import { Modal } from './Dialogs';
 import { backendInfo } from '../lib/api';
@@ -29,16 +30,14 @@ export default function OpenApiDialog(props: {
           className="btn btn-secondary"
           title="Copies a URL always returning the current spec — note it requires authentication"
           onClick={() => {
-            navigator.clipboard.writeText(specUrl);
-            props.onNotify?.('Spec URL copied to clipboard');
+            copyToClipboard(specUrl, 'The spec URL');
           }}>
           Copy spec URL
         </button>
         <button
           className="btn btn-secondary"
           onClick={() => {
-            navigator.clipboard.writeText(props.json);
-            props.onNotify?.('Specification copied to clipboard');
+            copyToClipboard(props.json, 'The specification');
           }}>
           Copy JSON
         </button>

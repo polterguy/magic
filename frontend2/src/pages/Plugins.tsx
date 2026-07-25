@@ -30,7 +30,9 @@ export default function Plugins() {
       .then(list => setAvailable(list ?? []))
       .catch(err => setFeedback({ text: err.message, isError: true }));
     installedPlugins()
-      .then(list => setInstalled(new Set((list ?? []).map((app: any) => app.name))))
+      // A manifest's module_name is the folder it installed into, which is
+      // what the Bazar calls the plugin — its name is a friendlier label.
+      .then(list => setInstalled(new Set((list ?? []).map((app: any) => app.module_name))))
       .catch(() => {});
   }, []);
 
