@@ -12,6 +12,8 @@ import { Endpoint, getOpenApiSpec, invokeEndpoint, listEndpoints } from '../lib/
  * the old dashboard does: int-ish → 42, decimal-ish → 5.5, bool → true,
  * date → now, everything else → "foo".
  */
+const WILDCARD = '__wildcard__';
+
 function samplePayload(endpoint: Endpoint) {
   const payload: Record<string, any> = {};
   for (const argument of endpoint.input ?? []) {
@@ -28,11 +30,20 @@ function samplePayload(endpoint: Endpoint) {
       case 'date':
         payload[argument.name] = new Date().toISOString();
         break;
+      case '*':
+        /*
+         * Wildcard arguments are sub-objects or lists whose shape can't be
+         * derived declaratively — emitted as a naked * so the JSON is
+         * deliberately invalid, forcing the user to decorate or remove them
+         * before invoking.
+         */
+        payload[argument.name] = WILDCARD;
+        break;
       default:
         payload[argument.name] = 'foo';
     }
   }
-  return JSON.stringify(payload, null, 2);
+  return JSON.stringify(payload, null, 2).replace(/"__wildcard__"/g, '*');
 }
 
 /*
@@ -297,19 +308,22 @@ function InvokePanel(props: {
   const [fullDescription, setFullDescription] = useState(false);
 
   /*
+   * Wildcard (*) arguments are context-dependent — sub-objects, lists of
+   * values, files — and can't be rendered declaratively, so they're dropped
+   * from the generated form. The one exception is the multipart [file]
+   * argument, which becomes a file picker.
+   */
+  const inputs = endpoint.input ?? [];
+  const declared = inputs.filter(argument => argument.type !== '*');
+  const fileArgs = inputs.filter(argument => argument.type === '*' && argument.name === 'file');
+
+  /*
    * Dotted arguments (ml_requests.id.eq etc.) are generated column filters —
    * kept behind an expander so the common arguments stay scannable.
    */
-  const inputs = endpoint.input ?? [];
-  const standardArgs = inputs.filter(argument => !argument.name.includes('.'));
-  const filterArgs = inputs.filter(argument => argument.name.includes('.'));
-
-  /*
-   * Multipart endpoints declare file parts as wildcard arguments (file:*) —
-   * those become file pickers, the rest plain form fields.
-   */
-  const fileArgs = inputs.filter(argument => argument.type === '*');
-  const formFields = inputs.filter(argument => argument.type !== '*');
+  const standardArgs = declared.filter(argument => !argument.name.includes('.'));
+  const filterArgs = declared.filter(argument => argument.name.includes('.'));
+  const formFields = declared;
 
   const description = endpoint.description ?? '';
   const period = description.indexOf('. ');
@@ -358,6 +372,18 @@ function InvokePanel(props: {
         }
         body = form;
       } else {
+        // Wildcard (*) placeholders make the sample payload deliberately
+        // invalid — catch it here and push the burden back to the user.
+        if (consumesJson) {
+          try {
+            JSON.parse(payload);
+          } catch {
+            setInvokeError(
+              'The payload is not valid JSON — replace the * wildcard arguments ' +
+              'with real values (objects, lists or scalars), or remove them.');
+            return;
+          }
+        }
         body = payload;
       }
       const response = await invokeEndpoint(
@@ -447,7 +473,6 @@ function InvokePanel(props: {
             {fileArgs.map(argument => {
               // Magic peculiarity: a multipart argument named "file" accepts
               // MULTIPLE files, all transmitted as parts named "file".
-              const multiple = argument.name === 'file';
               const selected = files[argument.name] ?? [];
               return (
                 <div
@@ -455,25 +480,18 @@ function InvokePanel(props: {
                   style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, fontWeight: 600 }}>
                   <span>
                     {argument.name}
-                    <span className="muted" style={{ fontWeight: 400 }}>
-                      {multiple ? ' — one or more files' : ' — file'}
-                    </span>
+                    <span className="muted" style={{ fontWeight: 400 }}> — one or more files</span>
                   </span>
                   <input
                     type="file"
-                    multiple={multiple}
+                    multiple
                     onChange={e => {
+                      // The "file" argument accumulates across pickings.
                       const picked = Array.from(e.target.files ?? []);
-                      setFiles({
-                        ...files,
-                        // The "file" argument accumulates across pickings.
-                        [argument.name]: multiple ? [...selected, ...picked] : picked,
-                      });
-                      if (multiple) {
-                        e.target.value = '';
-                      }
+                      setFiles({ ...files, [argument.name]: [...selected, ...picked] });
+                      e.target.value = '';
                     }} />
-                  {multiple && selected.length > 0 && (
+                  {selected.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                       {selected.map((file, index) => (
                         <span className="chip" key={index}>
