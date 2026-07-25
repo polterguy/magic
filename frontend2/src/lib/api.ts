@@ -509,15 +509,30 @@ export function listEndpoints() {
  * Users and roles.
  */
 
+/*
+ * The users endpoint joins in each user's roles and extra fields, so the
+ * list gives us everything without per-user round-trips.
+ */
+export interface UserExtra {
+  type: string;
+  value: string;
+}
+
 export interface User {
   username: string;
-  locked?: boolean;
   created?: string;
+  roles?: string[];
+  extra?: UserExtra[];
 }
 
 export interface Role {
   name: string;
   description?: string;
+}
+
+// Value of an extra field, or empty when the user hasn't got that field.
+export function userExtra(user: User, type: string) {
+  return user.extra?.find(entry => entry.type === type)?.value ?? '';
 }
 
 export function listUsers(
@@ -549,6 +564,10 @@ export function deleteUser(username: string) {
   return http.delete<any>('/magic/system/magic/users?username=' + encodeURIComponent(username));
 }
 
+export function changeUserPassword(username: string, password: string) {
+  return http.put<any>('/magic/system/magic/users', { username, password });
+}
+
 export function listRoles() {
   return http.get<Role[]>('/magic/system/magic/roles?limit=-1&order=name');
 }
@@ -557,13 +576,30 @@ export function createRole(name: string, description: string) {
   return http.post<any>('/magic/system/magic/roles', { name, description });
 }
 
+export function updateRole(name: string, description: string) {
+  return http.put<any>('/magic/system/magic/roles', { name, description });
+}
+
 export function deleteRole(name: string) {
   return http.delete<any>('/magic/system/magic/roles?name=' + encodeURIComponent(name));
 }
 
-export function getUserRoles(username: string) {
-  return http.get<{ user: string; role: string }[]>(
-    '/magic/system/magic/users_roles?user.eq=' + encodeURIComponent(username));
+/*
+ * Extra fields associated with a user — name, email, or anything else the
+ * application wants to store per user.
+ */
+export function addUserExtra(user: string, type: string, value: string) {
+  return http.post<any>('/magic/system/magic/users_extra', { user, type, value });
+}
+
+export function updateUserExtra(user: string, type: string, value: string) {
+  return http.put<any>('/magic/system/magic/users_extra', { user, type, value });
+}
+
+export function deleteUserExtra(user: string, type: string) {
+  return http.delete<any>(
+    '/magic/system/magic/users_extra?user=' + encodeURIComponent(user) +
+    '&type=' + encodeURIComponent(type));
 }
 
 export function addUserToRole(user: string, role: string) {
@@ -604,8 +640,14 @@ export function countTasks(filter?: string) {
   return http.get<{ count: number }>(url);
 }
 
-export function getTask(name: string) {
-  return http.get<Task>('/magic/system/tasks/get?name=' + encodeURIComponent(name));
+/*
+ * The endpoint returns the task's properties without its name — the name is
+ * the node the properties hang off, and that gets stripped on the way out —
+ * so we put it back to hand callers a complete task.
+ */
+export async function getTask(name: string) {
+  const task = await http.get<Task>('/magic/system/tasks/get?name=' + encodeURIComponent(name));
+  return { ...task, id: name };
 }
 
 export function createTask(id: string, description: string, hyperlambda: string) {

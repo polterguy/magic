@@ -96,13 +96,23 @@ export function Modal(props: {
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' &&
-          modalStack[modalStack.length - 1] === idRef.current) {
-        props.onClose();
+      if (event.key !== 'Escape' ||
+          modalStack[modalStack.length - 1] !== idRef.current) {
+        return;
       }
+      /*
+       * CodeMirror handles Escape for its autocomplete popup and for
+       * fullscreen mode, but lets the event keep bubbling — so while either
+       * is up, Escape belongs to the editor rather than to us. This runs in
+       * the capture phase, while both are still in the DOM to be seen.
+       */
+      if (document.querySelector('.CodeMirror-hints, .CodeMirror-fullscreen')) {
+        return;
+      }
+      props.onClose();
     };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    window.addEventListener('keydown', handler, true);
+    return () => window.removeEventListener('keydown', handler, true);
   });
 
   return (
@@ -184,6 +194,9 @@ export function DialogProvider({ children }: { children: ReactNode }) {
                 <input
                   autoFocus
                   type={active.options.password ? 'password' : 'text'}
+                  // Keeps the browser from autofilling saved credentials into
+                  // a prompt that merely happens to mask its input.
+                  autoComplete={active.options.password ? 'new-password' : 'off'}
                   value={draft}
                   onChange={event => setDraft(event.target.value)} />
               </label>

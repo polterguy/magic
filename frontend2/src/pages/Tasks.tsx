@@ -23,98 +23,69 @@ const NEW_TASK_CODE = `/*
 log.info:Task executed
 `;
 
+// "every 5.minutes" for repeating schedules, the due date for one-off ones.
+function scheduleLabel(schedule: { due: string; repeats?: string }) {
+  return schedule.repeats
+    ? 'every ' + schedule.repeats
+    : new Date(schedule.due).toLocaleString();
+}
+
 export default function Tasks() {
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
-  const [selected, setSelected] = useState<Task | null>(null);
-  const [editorCode, setEditorCode] = useState('');
-  const [description, setDescription] = useState('');
-  const [isNew, setIsNew] = useState(false);
-  const [newId, setNewId] = useState('');
+  const [filter, setFilter] = useState('');
+  const [editing, setEditing] = useState<{ task: Task; isNew: boolean } | null>(null);
+  const [scheduling, setScheduling] = useState<Task | null>(null);
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const { confirm, prompt } = useDialog();
 
   const refresh = useCallback(async () => {
     try {
       const [taskList, taskCount] = await Promise.all([
-        listTasks(page * PAGE_SIZE, PAGE_SIZE),
-        countTasks(),
+        listTasks(page * PAGE_SIZE, PAGE_SIZE, filter),
+        countTasks(filter),
       ]);
       setTasks(taskList ?? []);
       setCount(taskCount.count);
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
     }
-  }, [page]);
+  }, [page, filter]);
 
   useEffect(() => {
     refresh();
   }, [refresh]);
 
-  async function select(task: Task) {
+  // The list doesn't carry the Hyperlambda, so editing fetches the full task.
+  async function openEdit(task: Task) {
     try {
-      const full = await getTask(task.id);
-      setSelected(full);
-      setEditorCode(full.hyperlambda ?? '');
-      setDescription(full.description ?? '');
-      setIsNew(false);
+      setEditing({ task: await getTask(task.id), isNew: false });
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
     }
   }
 
-  function startNew() {
-    setSelected(null);
-    setIsNew(true);
-    setNewId('');
-    setDescription('');
-    setEditorCode(NEW_TASK_CODE);
+  function openNew() {
+    setEditing({
+      task: { id: '', description: '', hyperlambda: NEW_TASK_CODE },
+      isNew: true,
+    });
   }
 
-  async function save() {
-    try {
-      if (isNew) {
-        if (!newId) {
-          setFeedback({ text: 'Give the task a name', isError: true });
-          return;
-        }
-        await createTask(newId, description, editorCode);
-        setFeedback({ text: 'Task ' + newId + ' created', isError: false });
-        setIsNew(false);
-        await refresh();
-        await select({ id: newId });
-      } else if (selected) {
-        await updateTask(selected.id, description, editorCode);
-        setFeedback({ text: 'Task ' + selected.id + ' updated', isError: false });
-      }
-    } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
-    }
-  }
-
-  async function remove(task: Task) {
+  /*
+   * Executing runs the task on the server right now, with whatever side
+   * effects it has, so it's confirmed first.
+   */
+  async function execute(task: Task) {
     if (!await confirm({
-      title: 'Delete task?',
-      message: task.id,
-      confirmText: 'Delete',
-      danger: true,
+      title: 'Execute task?',
+      message: task.id + ' will run on your server right now.',
+      confirmText: 'Execute',
     })) {
       return;
     }
-    try {
-      await deleteTask(task.id);
-      if (selected?.id === task.id) {
-        setSelected(null);
-      }
-      await refresh();
-    } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
-    }
-  }
-
-  async function execute(task: Task) {
     try {
       await executeTask(task.id);
       setFeedback({ text: 'Task ' + task.id + ' executed', isError: false });
@@ -123,17 +94,25 @@ export default function Tasks() {
     }
   }
 
-  const [scheduling, setScheduling] = useState(false);
-
-  async function addSchedule(due: string | undefined, repeats: string | undefined) {
-    if (!selected) {
+  async function remove(task: Task) {
+    const typed = await prompt({
+      title: 'Delete task?',
+      message: 'This permanently deletes ' + task.id +
+        ' and its Hyperlambda. Type the task name to confirm.',
+      label: 'Task name',
+      confirmText: 'Delete',
+    });
+    if (typed === null) {
+      return;
+    }
+    if (typed !== task.id) {
+      setFeedback({ text: 'Name did not match — nothing deleted', isError: true });
       return;
     }
     try {
-      await scheduleTask(selected.id, due, repeats);
-      setScheduling(false);
-      await select(selected);
-      setFeedback({ text: 'Schedule added', isError: false });
+      await deleteTask(task.id);
+      setFeedback({ text: 'Task ' + task.id + ' deleted', isError: false });
+      await refresh();
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
     }
@@ -142,22 +121,33 @@ export default function Tasks() {
   async function removeSchedule(id: number) {
     try {
       await deleteSchedule(id);
-      if (selected) {
-        await select(selected);
-      }
+      await refresh();
+    } catch (err: any) {
+      setFeedback({ text: err.message, isError: true });
+    }
+  }
+
+  async function addSchedule(due: string | undefined, repeats: string | undefined) {
+    if (!scheduling) {
+      return;
+    }
+    try {
+      await scheduleTask(scheduling.id, due, repeats);
+      setScheduling(null);
+      setFeedback({ text: 'Schedule added to ' + scheduling.id, isError: false });
+      await refresh();
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
     }
   }
 
   const pageCount = Math.ceil(count / PAGE_SIZE);
-  const editing = isNew || selected;
 
   return (
     <>
       <div className="page-header">
         <h1>Task Manager</h1>
-        <p>{count} scheduled or persisted tasks</p>
+        <p>Hyperlambda tasks your server can run on demand or on a schedule</p>
       </div>
       {feedback && (
         <Banner
@@ -168,119 +158,219 @@ export default function Tasks() {
         </Banner>
       )}
       <div className="toolbar">
+        <input
+          type="text"
+          placeholder="Filter tasks…"
+          autoComplete="off"
+          value={filter}
+          onChange={e => { setFilter(e.target.value); setPage(0); }}
+          style={{ width: 260 }} />
+        <span className="muted">{count} tasks</span>
         <span className="spacer" />
-        <button className="btn" onClick={startNew}>+ New task</button>
+        <button className="btn" onClick={openNew}>+ New task</button>
       </div>
-      <div className="editor-split" style={{ alignItems: 'stretch' }}>
-        <div className="card" style={{ padding: 0, overflow: 'auto', maxWidth: 420 }}>
-          <table>
-            <thead>
-              <tr><th>Task</th><th style={{ width: 150 }}></th></tr>
-            </thead>
-            <tbody>
-              {tasks.map(task => (
-                <tr
-                  key={task.id}
-                  className="clickable"
-                  onClick={() => select(task)}
-                  style={selected?.id === task.id
-                    ? { outline: '2px solid var(--accent)' }
-                    : undefined}>
-                  <td>
-                    <div><strong>{task.id}</strong></div>
-                    {task.description && <div className="muted">{task.description}</div>}
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: 4 }}>
-                      <button
-                        className="btn btn-secondary btn-small"
-                        onClick={e => { e.stopPropagation(); execute(task); }}>
-                        ▷
-                      </button>
-                      <button
-                        className="btn btn-danger btn-small"
-                        onClick={e => { e.stopPropagation(); remove(task); }}>
-                        ✕
-                      </button>
+      <div className="card" style={{ padding: 0, overflow: 'auto' }}>
+        <table>
+          <thead>
+            <tr>
+              <th style={{ width: 260 }}>Name</th>
+              <th>Description</th>
+              <th style={{ width: 260 }}>Schedules</th>
+              <th style={{ width: 120 }}>Created</th>
+              <th style={{ width: 300 }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.map(task => (
+              <tr key={task.id}>
+                <td><strong>{task.id}</strong></td>
+                <td
+                  className="truncate"
+                  title={task.description}
+                  style={{ maxWidth: 0 }}>
+                  {task.description || <span className="muted">—</span>}
+                </td>
+                <td>
+                  {(task.schedules ?? []).length === 0 ? (
+                    <span className="muted">not scheduled</span>
+                  ) : (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                      {(task.schedules ?? []).map(schedule => (
+                        <span className="chip" key={schedule.id}>
+                          {scheduleLabel(schedule)}
+                          <button
+                            title="Remove schedule"
+                            onClick={() => removeSchedule(schedule.id)}>
+                            ×
+                          </button>
+                        </span>
+                      ))}
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {pageCount > 1 && (
-            <div className="pagination" style={{ padding: 12 }}>
-              <button
-                className="btn btn-secondary btn-small"
-                disabled={page === 0}
-                onClick={() => setPage(page - 1)}>
-                ‹ Prev
-              </button>
-              <span className="muted">{page + 1} / {pageCount}</span>
-              <button
-                className="btn btn-secondary btn-small"
-                disabled={page >= pageCount - 1}
-                onClick={() => setPage(page + 1)}>
-                Next ›
-              </button>
-            </div>
-          )}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: 400 }}>
-          {editing ? (
-            <>
-              <div className="toolbar">
-                {isNew ? (
-                  <input
-                    type="text"
-                    placeholder="task-name"
-                    value={newId}
-                    onChange={e => setNewId(e.target.value)} />
-                ) : (
-                  <strong>{selected!.id}</strong>
-                )}
-                <input
-                  type="text"
-                  placeholder="Description"
-                  value={description}
-                  onChange={e => setDescription(e.target.value)}
-                  style={{ flex: 1 }} />
-                <button className="btn" onClick={save}>Save</button>
-              </div>
-              {!isNew && (
-                <div className="toolbar">
-                  <span className="editor-pane-title" style={{ margin: 0 }}>Schedules</span>
-                  {(selected!.schedules ?? []).map(schedule => (
-                    <span className="chip" key={schedule.id}>
-                      {schedule.repeats ?? new Date(schedule.due).toLocaleString()}
-                      <button onClick={() => removeSchedule(schedule.id)}>✕</button>
-                    </span>
-                  ))}
+                  )}
+                </td>
+                <td className="muted">
+                  {task.created ? task.created.substring(0, 10) : ''}
+                </td>
+                <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                   <button
                     className="btn btn-secondary btn-small"
-                    onClick={() => setScheduling(true)}>
-                    + Schedule
+                    title="Run this task on your server now"
+                    onClick={() => execute(task)}>
+                    Execute
                   </button>
-                </div>
-              )}
-              <CodeEditor
-                value={editorCode}
-                onChange={setEditorCode}
-                mode="hyperlambda"
-                onSave={save} />
-            </>
-          ) : (
-            <div className="card muted">Select a task, or create a new one.</div>
-          )}
-        </div>
+                  {' '}
+                  <button
+                    className="btn btn-secondary btn-small"
+                    onClick={() => openEdit(task)}>
+                    Edit
+                  </button>
+                  {' '}
+                  <button
+                    className="btn btn-secondary btn-small"
+                    onClick={() => setScheduling(task)}>
+                    Schedule
+                  </button>
+                  {' '}
+                  <button
+                    className="btn btn-danger btn-small"
+                    onClick={() => remove(task)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {pageCount > 1 && (
+          <div className="pagination" style={{ padding: 12 }}>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={page === 0}
+              onClick={() => setPage(page - 1)}>
+              ‹ Prev
+            </button>
+            <span className="muted">{page + 1} / {pageCount}</span>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={page >= pageCount - 1}
+              onClick={() => setPage(page + 1)}>
+              Next ›
+            </button>
+          </div>
+        )}
       </div>
-      {scheduling && selected && (
+      {editing && (
+        <TaskDialog
+          task={editing.task}
+          isNew={editing.isNew}
+          onClose={() => setEditing(null)}
+          onSaved={async (id, wasNew) => {
+            setEditing(null);
+            setFeedback({
+              text: 'Task ' + id + (wasNew ? ' created' : ' updated'),
+              isError: false,
+            });
+            await refresh();
+          }}
+          onError={message => setFeedback({ text: message, isError: true })} />
+      )}
+      {scheduling && (
         <ScheduleDialog
-          taskId={selected.id}
-          onClose={() => setScheduling(false)}
+          taskId={scheduling.id}
+          onClose={() => setScheduling(null)}
           onSave={addSchedule} />
       )}
     </>
+  );
+}
+
+function TaskDialog(props: {
+  task: Task;
+  isNew: boolean;
+  onClose: () => void;
+  onSaved: (id: string, wasNew: boolean) => void;
+  onError: (message: string) => void;
+}) {
+
+  const [id, setId] = useState(props.task.id);
+  const [description, setDescription] = useState(props.task.description ?? '');
+  const [code, setCode] = useState(props.task.hyperlambda ?? '');
+  const [saved, setSaved] = useState({
+    description: props.task.description ?? '',
+    code: props.task.hyperlambda ?? '',
+  });
+  const [busy, setBusy] = useState(false);
+  const { confirm } = useDialog();
+
+  const dirty = props.isNew
+    ? !!id || code !== saved.code
+    : description !== saved.description || code !== saved.code;
+
+  async function close() {
+    if (dirty && !await confirm({
+      title: 'Discard unsaved changes?',
+      message: (id || 'This task') + ' has unsaved changes.',
+      confirmText: 'Discard',
+      danger: true,
+    })) {
+      return;
+    }
+    props.onClose();
+  }
+
+  async function save() {
+    if (props.isNew && !id) {
+      props.onError('Give the task a name');
+      return;
+    }
+    setBusy(true);
+    try {
+      if (props.isNew) {
+        await createTask(id, description, code);
+      } else {
+        await updateTask(id, description, code);
+      }
+      setSaved({ description, code });
+      props.onSaved(id, props.isNew);
+    } catch (err: any) {
+      props.onError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Modal width={1100} onClose={close}>
+      <h2>{props.isNew ? 'New task' : 'Edit ' + props.task.id}</h2>
+      <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+        <input
+          type="text"
+          placeholder="task-name"
+          autoFocus={props.isNew}
+          autoComplete="off"
+          // The name is the task's identifier, so it can't be changed.
+          readOnly={!props.isNew}
+          value={id}
+          onChange={e => setId(e.target.value)}
+          style={{ width: 260 }} />
+        <input
+          type="text"
+          placeholder="Description"
+          autoComplete="off"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          style={{ flex: 1 }} />
+      </div>
+      <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
+        <CodeEditor value={code} onChange={setCode} mode="hyperlambda" onSave={save} />
+      </div>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={close}>Close</button>
+        <button className="btn" onClick={save} disabled={busy || (props.isNew && !id)}>
+          {busy ? 'Saving…' : 'Save'}
+        </button>
+      </div>
+    </Modal>
   );
 }
 

@@ -1019,3 +1019,16 @@ pre.result-json {
 .module-header.system strong {
   color: var(--danger);
 }
+
+/* Single-line cell content, with the full text available on hover. */
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* CodeMirror renders its autocomplete popup into document.body at z-index 10,
+   which puts it behind modals — lift it above every layer we use. */
+.CodeMirror-hints {
+  z-index: 300;
+}

@@ -51,12 +51,16 @@ export default function Profile() {
             <label>New password (min 12 characters)
               <input
                 type="password"
+                // Tells the browser this sets a password rather than logging
+                // in, so it doesn't autofill saved credentials.
+                autoComplete="new-password"
                 value={password}
                 onChange={e => setPassword(e.target.value)} />
             </label>
             <label>Confirm password
               <input
                 type="password"
+                autoComplete="new-password"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)} />
             </label>
