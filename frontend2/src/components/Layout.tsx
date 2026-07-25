@@ -6,22 +6,7 @@ import { getVersion } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
 import { ChevronIcon } from './Icons';
-
-const NAV_ITEMS = [
-  { to: '/', label: 'Dashboard', icon: '⌂' },
-  { to: '/hyper-ide', label: 'Hyper IDE', icon: '🗀' },
-  { to: '/hyperlambda-playground', label: 'Playground', icon: '▷' },
-  { to: '/sql-studio', label: 'SQL Studio', icon: '⛁' },
-  { to: '/databases', label: 'Databases', icon: '⛃' },
-  { to: '/generator', label: 'Generator', icon: '⚙' },
-  { to: '/endpoints', label: 'Endpoints', icon: '⇄' },
-  { to: '/user-roles-management', label: 'Users & roles', icon: '👤' },
-  { to: '/task-manager', label: 'Task Manager', icon: '🕒' },
-  { to: '/machine-learning', label: 'Machine Learning', icon: '✳' },
-  { to: '/plugins', label: 'Plugins', icon: '🧩' },
-  { to: '/configuration', label: 'Configuration', icon: '⚙' },
-  { to: '/log', label: 'Log', icon: '≣' },
-];
+import { SECTIONS } from './sections';
 
 export default function Layout({ children }: { children: ReactNode }) {
 
@@ -126,15 +111,15 @@ export default function Layout({ children }: { children: ReactNode }) {
           <span className="brand-version">{version}</span>
         </div>
         <nav>
-          {NAV_ITEMS.map(item => (
+          {SECTIONS.map(section => (
             <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === '/'}
-              onClick={event => onNavClick(event, item.to)}
+              key={section.to}
+              to={section.to}
+              end={section.to === '/'}
+              onClick={event => onNavClick(event, section.to)}
               className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-              <span className="nav-icon">{item.icon}</span>
-              {item.label}
+              <span className="nav-icon"><section.Icon /></span>
+              {section.label}
             </NavLink>
           ))}
         </nav>

@@ -127,3 +127,122 @@ export function TrashIcon() {
     </svg>
   );
 }
+
+/*
+ * Icons for the dashboard's sections, used by both the navigation and the
+ * Welcome guide. Same stroke weight as the rest of the set, and they inherit
+ * currentColor so the active nav item turns them white.
+ */
+
+export function HomeIcon() {
+  return (
+    <svg {...base}>
+      <path d="M3 11l9-7 9 7" />
+      <path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9" />
+    </svg>
+  );
+}
+
+export function CodeFileIcon() {
+  return (
+    <svg {...base}>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 3 14 8 19 8" />
+      <polyline points="10 12 8 14.5 10 17" />
+      <polyline points="14 12 16 14.5 14 17" />
+    </svg>
+  );
+}
+
+export function PlayIcon() {
+  return (
+    <svg {...base}>
+      <path d="M7 4l13 8-13 8z" />
+    </svg>
+  );
+}
+
+export function TerminalIcon() {
+  return (
+    <svg {...base}>
+      <polyline points="4 7 8 12 4 17" />
+      <line x1="12" y1="17" x2="20" y2="17" />
+    </svg>
+  );
+}
+
+export function DatabaseIcon() {
+  return (
+    <svg {...base}>
+      <ellipse cx="12" cy="6" rx="8" ry="3" />
+      <path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6" />
+      <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
+    </svg>
+  );
+}
+
+export function BoltIcon() {
+  return (
+    <svg {...base}>
+      <path d="M13 2L4 14h7l-1 8 10-12h-7z" />
+    </svg>
+  );
+}
+
+export function ExchangeIcon() {
+  return (
+    <svg {...base}>
+      <path d="M4 9h16l-4-4" />
+      <path d="M20 15H4l4 4" />
+    </svg>
+  );
+}
+
+export function UserIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" />
+    </svg>
+  );
+}
+
+export function ClockIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="12" cy="12" r="9" />
+      <polyline points="12 7 12 12 16 14" />
+    </svg>
+  );
+}
+
+export function PuzzleIcon() {
+  return (
+    <svg {...base}>
+      <path d="M5 5h5V4a2 2 0 1 1 4 0v1h5v5h1a2 2 0 1 1 0 4h-1v5h-5v-1a2 2 0 1 0-4 0v1H5z" />
+    </svg>
+  );
+}
+
+/*
+ * Sliders rather than a gear — a spoked gear collapses into the same
+ * sunburst as SparkIcon at navigation size.
+ */
+export function SlidersIcon() {
+  return (
+    <svg {...base}>
+      <path d="M5 20v-6M5 10V4M12 20v-9M12 7V4M19 20v-4M19 12V4" />
+      <path d="M2.5 14h5M9.5 7h5M16.5 16h5" />
+    </svg>
+  );
+}
+
+export function ListIcon() {
+  return (
+    <svg {...base}>
+      <line x1="4" y1="7" x2="20" y2="7" />
+      <line x1="4" y1="12" x2="20" y2="12" />
+      <line x1="4" y1="17" x2="14" y2="17" />
+    </svg>
+  );
+}

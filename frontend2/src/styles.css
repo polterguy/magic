@@ -1149,3 +1149,14 @@ tr.vss-irrelevant td {
 .task-card .guide-text {
   margin-top: 2px;
 }
+
+/* Section icons are SVG now, sized here rather than by font-size. */
+.nav-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.guide-icon svg {
+  width: 17px;
+  height: 17px;
+}

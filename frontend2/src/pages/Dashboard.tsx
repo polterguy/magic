@@ -2,6 +2,7 @@ import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal, useDialog } from '../components/Dialogs';
+import { SECTIONS } from '../components/sections';
 import {
   availablePlugins,
   Task,
@@ -25,96 +26,6 @@ import { copyToClipboard, showToast } from '../lib/toast';
  * endpoints as tools, OAuth secures them.
  */
 const AGENT_PLUGINS = ['mcp', 'oauth'];
-
-/*
- * What each part of the dashboard is for, linked so the Welcome card doubles
- * as a way in.
- */
-const GUIDE = [
-  {
-    to: '/generator',
-    icon: '⚙',
-    title: 'Generator',
-    text: 'Generate complete CRUD APIs from your database tables, or wrap a ' +
-      'custom SQL statement in an endpoint of its own.',
-  },
-  {
-    to: '/sql-studio',
-    icon: '⛁',
-    title: 'SQL Studio',
-    text: 'Query your databases, and design them — create tables, add columns ' +
-      'and foreign keys without writing the DDL yourself.',
-  },
-  {
-    to: '/databases',
-    icon: '⛃',
-    title: 'Databases',
-    text: 'Create new databases, connect to existing ones, and take backups.',
-  },
-  {
-    to: '/hyper-ide',
-    icon: '🗀',
-    title: 'Hyper IDE',
-    text: 'Edit any file on your server, execute Hyperlambda, and turn your ' +
-      'endpoints into AI functions.',
-  },
-  {
-    to: '/hyperlambda-playground',
-    icon: '▷',
-    title: 'Playground',
-    text: 'Execute Hyperlambda on your server and see what it returns, ' +
-      'without saving anything first.',
-  },
-  {
-    to: '/endpoints',
-    icon: '⇄',
-    title: 'Endpoints',
-    text: 'Browse every endpoint by module, invoke them with real arguments, ' +
-      'and grab their OpenAPI specification.',
-  },
-  {
-    to: '/machine-learning',
-    icon: '✳',
-    title: 'Machine Learning',
-    text: 'Train AI models on your own content by crawling a site or uploading ' +
-      'files, then embed them as chatbots.',
-  },
-  {
-    to: '/task-manager',
-    icon: '🕒',
-    title: 'Task Manager',
-    text: 'Write Hyperlambda tasks and schedule them to run on a repeating ' +
-      'pattern, or once at a fixed date.',
-  },
-  {
-    to: '/user-roles-management',
-    icon: '👤',
-    title: 'Users & roles',
-    text: 'Decide who can reach your backend, and which roles gate which ' +
-      'endpoints.',
-  },
-  {
-    to: '/plugins',
-    icon: '🧩',
-    title: 'Plugins',
-    text: 'Install modules and frontends from the Bazar to extend what your ' +
-      'cloudlet can do.',
-  },
-  {
-    to: '/configuration',
-    icon: '⚙',
-    title: 'Configuration',
-    text: 'Edit your appsettings.json directly — connection strings, SMTP, ' +
-      'authentication and everything else your server runs on.',
-  },
-  {
-    to: '/log',
-    icon: '≣',
-    title: 'Log',
-    text: 'Read what your backend has been doing, and dig into errors when ' +
-      'something goes wrong.',
-  },
-];
 
 /*
  * Takes the OpenAI API key and stores it in the backend's configuration,
@@ -449,12 +360,12 @@ export default function Dashboard() {
           Everything your cloudlet can do, and where to do it.
         </p>
         <div className="guide-grid">
-          {GUIDE.map(item => (
-            <Link className="guide-card" key={item.to} to={item.to}>
-              <span className="guide-icon">{item.icon}</span>
+          {SECTIONS.filter(section => section.description).map(section => (
+            <Link className="guide-card" key={section.to} to={section.to}>
+              <span className="guide-icon"><section.Icon /></span>
               <span>
-                <span className="guide-title">{item.title}</span>
-                <span className="guide-text">{item.text}</span>
+                <span className="guide-title">{section.label}</span>
+                <span className="guide-text">{section.description}</span>
               </span>
             </Link>
           ))}
