@@ -212,6 +212,7 @@ h1 {
   cursor: pointer;
   background: var(--accent);
   color: #fff;
+  white-space: nowrap;
 }
 
 .btn:hover { background: var(--accent-dark); }
@@ -229,12 +230,11 @@ h1 {
 .btn-secondary:hover { background: #e2d8fd; }
 
 .btn-danger {
-  background: transparent;
-  color: var(--danger);
-  border: 1px solid var(--danger);
+  background: var(--danger);
+  color: #fff;
 }
 
-.btn-danger:hover { background: #fbeaec; }
+.btn-danger:hover { filter: brightness(0.9); }
 
 .btn-ghost {
   background: transparent;
@@ -393,6 +393,49 @@ tr.clickable:hover td { background: var(--accent-soft); }
   padding: 10px 14px;
 }
 
+.info-box {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+/* ---------- Spinner ---------- */
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spinner-rotate 0.9s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  to { transform: rotate(360deg); }
+}
+
+.spinner-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 12px;
+  text-align: center;
+}
+
+.spinner-dots::after {
+  content: '';
+  animation: spinner-dots 1.4s steps(4, end) infinite;
+}
+
+@keyframes spinner-dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+}
+
 /* ---------- Editors ---------- */
 
 .code-editor {
@@ -534,6 +577,10 @@ tr.clickable:hover td { background: var(--accent-soft); }
 .tree-row.selected .tree-chevron,
 .tree-row.selected .tree-icon { color: #fff; }
 
+/* Column drop button appears only on row hover. */
+.col-drop { opacity: 0; }
+.col-row:hover .col-drop { opacity: 1; }
+
 /* System folders are tinted red like the old dashboard. */
 .tree-row.system .tree-name,
 .tree-row.system .tree-icon { color: var(--danger); }
@@ -653,6 +700,7 @@ pre.result-json {
   position: fixed;
   inset: 0;
   background: rgba(20, 16, 41, 0.45);
+  backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -661,15 +709,17 @@ pre.result-json {
 
 .modal-box {
   background: var(--surface);
-  border-radius: 14px;
-  padding: 24px;
-  width: 420px;
+  border-radius: 16px;
+  padding: 26px 28px;
+  width: fit-content;
+  min-width: 420px;
+  max-width: min(90vw, 560px);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
 .modal-box h2 {
-  margin: 0 0 8px 0;
-  font-size: 17px;
+  margin: 0 0 10px 0;
+  font-size: 18px;
 }
 
 .modal-box p {
@@ -690,8 +740,8 @@ pre.result-json {
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 18px;
+  gap: 10px;
+  margin-top: 22px;
 }
 
 .form-grid {
@@ -728,4 +778,109 @@ pre.result-json {
   cursor: pointer;
   font-size: 13px;
   padding: 0;
+}
+
+.line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.markdown-body {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  font-size: 15px;
+  margin: 16px 0 6px;
+}
+
+.markdown-body p,
+.markdown-body ul,
+.markdown-body ol {
+  margin: 8px 0;
+}
+
+.markdown-body code {
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 12.5px;
+}
+
+.markdown-body pre {
+  background: var(--accent-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+  overflow-x: auto;
+}
+
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.markdown-body img {
+  max-width: 100%;
+}
+
+/* Open-file tabs above the Hyper IDE editor. */
+.file-tabs {
+  display: flex;
+  overflow-x: auto;
+  flex-shrink: 0;
+  gap: 2px;
+  margin-bottom: 6px;
+  scrollbar-width: thin;
+}
+
+.file-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 6px 5px 12px;
+  border-radius: 8px 8px 0 0;
+  background: var(--accent-soft);
+  color: var(--text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.file-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.file-tab-name {
+  display: inline-flex;
+  align-items: center;
+}
+
+.file-tab-dirty {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-left: 7px;
+}
+
+.file-tab-close {
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 15px;
+  line-height: 1;
+  padding: 1px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.file-tab-close:hover {
+  background: rgba(0, 0, 0, 0.15);
 }

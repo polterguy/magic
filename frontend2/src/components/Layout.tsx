@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { to: '/hyperlambda-playground', label: 'Playground', icon: '▷' },
   { to: '/sql-studio', label: 'SQL Studio', icon: '⛁' },
   { to: '/databases', label: 'Databases', icon: '⛃' },
+  { to: '/generator', label: 'Generator', icon: '⚙' },
   { to: '/endpoints', label: 'Endpoints', icon: '⇄' },
   { to: '/user-roles-management', label: 'Users & roles', icon: '👤' },
   { to: '/task-manager', label: 'Task Manager', icon: '🕒' },

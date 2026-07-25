@@ -4,8 +4,14 @@ import type CodeMirror from 'codemirror';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
 import Tabs from '../components/Tabs';
+import { FIELD_TYPES, PK_TYPES } from '../lib/dbTypes';
 import {
+  addColumn,
+  addForeignKey,
+  addTable,
   defaultDatabaseType,
+  dropColumn,
+  dropTable,
   executeSql,
   exportDdl,
   http,
@@ -39,8 +45,61 @@ export default function Sql() {
   const [snippets, setSnippets] = useState<string[]>([]);
   const [view, setView] = useState<'sql' | 'tables'>('sql');
   const [ddl, setDdl] = useState<{ title: string; sql: string } | null>(null);
+  const [newTable, setNewTable] = useState(false);
+  const [addingColumn, setAddingColumn] = useState<string | null>(null);
   const editorRef = useRef<CodeMirror.Editor | null>(null);
-  const { prompt } = useDialog();
+  const { prompt, confirm } = useDialog();
+
+  const tables = databasesMeta.find(db => db.name === database)?.tables ?? [];
+
+  async function reloadSchema() {
+    try {
+      const response = await listDatabases(type, connectionString);
+      setDatabasesMeta(response.databases ?? []);
+    } catch (err: any) {
+      setFeedback({ text: err.message, isError: true });
+    }
+  }
+
+  async function dropTableConfirmed(tableName: string) {
+    const typed = await prompt({
+      title: 'Drop table?',
+      message: 'This permanently deletes ' + tableName + '. Type the table name to confirm.',
+      label: 'Table name',
+      confirmText: 'Drop',
+    });
+    if (typed !== tableName) {
+      if (typed !== null) {
+        setFeedback({ text: 'Name did not match — nothing dropped', isError: true });
+      }
+      return;
+    }
+    try {
+      await dropTable(type, connectionString, database, tableName);
+      setFeedback({ text: 'Table ' + tableName + ' dropped', isError: false });
+      await reloadSchema();
+    } catch (err: any) {
+      setFeedback({ text: err.message, isError: true });
+    }
+  }
+
+  async function dropColumnConfirmed(tableName: string, columnName: string) {
+    if (!await confirm({
+      title: 'Drop column?',
+      message: tableName + '.' + columnName + ' will be permanently removed.',
+      confirmText: 'Drop',
+      danger: true,
+    })) {
+      return;
+    }
+    try {
+      await dropColumn(type, connectionString, database, tableName, columnName);
+      setFeedback({ text: 'Column ' + columnName + ' dropped', isError: false });
+      await reloadSchema();
+    } catch (err: any) {
+      setFeedback({ text: err.message, isError: true });
+    }
+  }
 
   async function viewDdl(tables: string[], full: boolean, title: string) {
     try {
@@ -65,7 +124,7 @@ export default function Sql() {
     http.get<Record<string, string>>(
       '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type))
       .then(response => {
-        const names = Object.keys(response);
+        const names = Object.keys(response ?? {});
         setConnectionStrings(names);
         const wanted = deepLink.current.connectionString;
         deepLink.current.connectionString = null;
@@ -75,7 +134,14 @@ export default function Sql() {
           setConnectionString(names.includes('generic') ? 'generic' : names[0] ?? '');
         }
       })
-      .catch(err => setFeedback({ text: err.message, isError: true }));
+      .catch(() => {
+        // A database type with no configured connection strings (e.g. the
+        // config has it as null) — clear the selection, no scary error.
+        setConnectionStrings([]);
+        setConnectionString('');
+        setDatabasesMeta([]);
+        setDatabase('');
+      });
     listFiles('/etc/' + type + '/templates/')
       .then(files => setSnippets((files ?? []).filter(file => file.endsWith('.sql'))))
       .catch(() => setSnippets([]));
@@ -96,7 +162,10 @@ export default function Sql() {
       } else {
         setDatabase(names.includes('magic') ? 'magic' : names[0] ?? '');
       }
-    }).catch(err => setFeedback({ text: err.message, isError: true }));
+    }).catch(() => {
+      setDatabasesMeta([]);
+      setDatabase('');
+    });
   }, [type, connectionString]);
 
   /*
@@ -224,7 +293,7 @@ export default function Sql() {
             onChange={e => setSafeMode(e.target.checked)} />
           Safe mode
         </label>
-        <button className="btn" onClick={execute} disabled={busy}>
+        <button className="btn" onClick={execute} disabled={busy || !database}>
           {busy ? 'Running…' : '▷ Run'}
         </button>
       </div>
@@ -235,21 +304,23 @@ export default function Sql() {
         ]}
         active={view}
         onChange={id => setView(id as 'sql' | 'tables')} />
+      {type && connectionStrings.length === 0 && (
+        <div className="info-box" style={{ marginBottom: 12 }}>
+          No connection strings are configured for {type}. Add one under Databases → External.
+        </div>
+      )}
       {view === 'tables' && (
         <>
           <div className="toolbar">
-            <span className="muted">
-              {(databasesMeta.find(db => db.name === database)?.tables ?? []).length}
-              {' tables in '}{database}
-            </span>
+            <span className="muted">{tables.length} tables in {database}</span>
             <span className="spacer" />
+            <button className="btn btn-secondary btn-small" onClick={() => setNewTable(true)}>
+              + New table
+            </button>
             <button
               className="btn btn-secondary btn-small"
               onClick={() => viewDdl(
-                (databasesMeta.find(db => db.name === database)?.tables ?? [])
-                  .map((table: any) => table.name),
-                true,
-                database + ' — full DDL')}>
+                tables.map((table: any) => table.name), true, database + ' — full DDL')}>
               Database DDL
             </button>
           </div>
@@ -259,20 +330,33 @@ export default function Sql() {
             gap: 14,
             overflow: 'auto',
           }}>
-            {(databasesMeta.find(db => db.name === database)?.tables ?? []).map((table: any) => (
+            {tables.map((table: any) => (
               <div className="card" key={table.name} style={{ padding: 14 }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
                   <strong style={{ flex: 1 }}>{table.name}</strong>
+                  <button
+                    className="btn btn-secondary btn-small"
+                    title="Add column"
+                    onClick={() => setAddingColumn(table.name)}>
+                    + Col
+                  </button>
                   <button
                     className="btn btn-secondary btn-small"
                     onClick={() => viewDdl([table.name], false, table.name + ' — DDL')}>
                     DDL
                   </button>
+                  <button
+                    className="btn btn-danger btn-small"
+                    title="Drop table"
+                    onClick={() => dropTableConfirmed(table.name)}>
+                    ✕
+                  </button>
                 </div>
                 {(table.columns ?? []).map((column: any) => (
                   <div
                     key={column.name}
-                    style={{ display: 'flex', gap: 6, fontSize: 13, padding: '2px 0' }}>
+                    className="col-row"
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, padding: '2px 0' }}>
                     <span style={{ width: 14 }}>
                       {column.primary ? '🔑' : ''}
                     </span>
@@ -282,6 +366,15 @@ export default function Sql() {
                     <span className="muted mono" style={{ fontSize: 12 }}>
                       {column.db}{column.nullable ? '' : ' •'}
                     </span>
+                    {!column.primary && (
+                      <button
+                        className="icon-btn danger col-drop"
+                        title="Drop column"
+                        onClick={() => dropColumnConfirmed(table.name, column.name)}
+                        style={{ padding: 2 }}>
+                        <span style={{ fontSize: 12 }}>✕</span>
+                      </button>
+                    )}
                   </div>
                 ))}
                 {(table.foreign_keys ?? []).length > 0 && (
@@ -296,6 +389,48 @@ export default function Sql() {
               </div>
             ))}
           </div>
+          {newTable && (
+            <NewTableDialog
+              databaseType={type}
+              onClose={() => setNewTable(false)}
+              onCreate={async (tableName, pkName, pkType, pkLength) => {
+                try {
+                  await addTable(type, connectionString, database, tableName, pkName, pkType, pkLength);
+                  setNewTable(false);
+                  setFeedback({ text: 'Table ' + tableName + ' created', isError: false });
+                  await reloadSchema();
+                } catch (err: any) {
+                  setFeedback({ text: err.message, isError: true });
+                }
+              }} />
+          )}
+          {addingColumn && (
+            <AddColumnDialog
+              databaseType={type}
+              tableName={addingColumn}
+              tables={tables}
+              onClose={() => setAddingColumn(null)}
+              onSubmit={async payload => {
+                try {
+                  if (payload.foreignTable) {
+                    await addForeignKey(
+                      type, connectionString, database, addingColumn,
+                      payload.columnName, payload.columnType, payload.foreignTable,
+                      payload.foreignField, payload.nullable, payload.columnLength, payload.cascading);
+                  } else {
+                    await addColumn(
+                      type, connectionString, database, addingColumn,
+                      payload.columnName, payload.columnType, payload.defaultValue,
+                      payload.nullable, payload.columnLength);
+                  }
+                  setAddingColumn(null);
+                  setFeedback({ text: 'Column ' + payload.columnName + ' added', isError: false });
+                  await reloadSchema();
+                } catch (err: any) {
+                  setFeedback({ text: err.message, isError: true });
+                }
+              }} />
+          )}
           {ddl && (
             <Modal width={760} onClose={() => setDdl(null)}>
               <h2>{ddl.title}</h2>
@@ -413,4 +548,221 @@ function formatCell(value: any) {
     return JSON.stringify(value);
   }
   return String(value);
+}
+
+/*
+ * Create-table dialog — a primary key column, auto-increment or varchar,
+ * matching the old designer.
+ */
+function NewTableDialog(props: {
+  databaseType: string;
+  onClose: () => void;
+  onCreate: (tableName: string, pkName: string, pkType: string, pkLength: number) => void;
+}) {
+
+  const [tableName, setTableName] = useState('');
+  const [pkName, setPkName] = useState('');
+  const [pkType, setPkType] = useState('auto_increment');
+  const [pkLength, setPkLength] = useState('10');
+
+  // Derive the PK name from the table name like the old dialog does.
+  function onTableName(value: string) {
+    setTableName(value);
+    if (value) {
+      const singular = value.endsWith('s') ? value.substring(0, value.length - 1) : value;
+      setPkName(singular + '_id');
+    }
+  }
+
+  return (
+    <Modal onClose={props.onClose}>
+      <h2>New table</h2>
+      <div className="form-grid">
+        <label>Table name
+          <input type="text" value={tableName} onChange={e => onTableName(e.target.value)} />
+        </label>
+        <label>Primary key name
+          <input type="text" value={pkName} onChange={e => setPkName(e.target.value)} />
+        </label>
+        <label>Primary key type
+          <select value={pkType} onChange={e => setPkType(e.target.value)}>
+            {PK_TYPES.map(option => (
+              <option key={option.value} value={option.value}>{option.name}</option>
+            ))}
+          </select>
+        </label>
+        {pkType === 'varchar' && (
+          <label>Primary key length
+            <input type="number" value={pkLength} onChange={e => setPkLength(e.target.value)} />
+          </label>
+        )}
+      </div>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button
+          className="btn"
+          disabled={!tableName || !pkName}
+          onClick={() => props.onCreate(tableName, pkName, pkType, Number(pkLength))}>
+          Create
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+/*
+ * Add-column dialog — a plain field, or a foreign key referencing another
+ * table (Field vs Foreign key tab).
+ */
+function AddColumnDialog(props: {
+  databaseType: string;
+  tableName: string;
+  tables: any[];
+  onClose: () => void;
+  onSubmit: (payload: {
+    columnName: string;
+    columnType: string;
+    defaultValue: string | null;
+    nullable: boolean;
+    columnLength: number | null;
+    foreignTable: string;
+    foreignField: string;
+    cascading: boolean;
+  }) => void;
+}) {
+
+  const fieldTypes = FIELD_TYPES[props.databaseType] ?? FIELD_TYPES.sqlite;
+  const [mode, setMode] = useState('field');
+  const [columnName, setColumnName] = useState('');
+  const [fieldType, setFieldType] = useState(fieldTypes[0]);
+  const [columnLength, setColumnLength] = useState('255');
+  const [defaultValue, setDefaultValue] = useState('');
+  const [nullable, setNullable] = useState(true);
+  const [foreignTable, setForeignTable] = useState('');
+  const [cascading, setCascading] = useState(true);
+
+  // The foreign field is the referenced table's primary key.
+  const foreignMeta = props.tables.find((table: any) => table.name === foreignTable);
+  const foreignPk = (foreignMeta?.columns ?? []).find((column: any) => column.primary);
+
+  function submit() {
+    if (mode === 'foreign') {
+      if (!columnName || !foreignTable || !foreignPk) {
+        return;
+      }
+      props.onSubmit({
+        columnName,
+        columnType: foreignPk.hl === 'string' ? 'varchar' : (fieldTypes[0].name),
+        defaultValue: null,
+        nullable,
+        columnLength: foreignPk.hl === 'string' ? Number(columnLength) : null,
+        foreignTable,
+        foreignField: foreignPk.name,
+        cascading,
+      });
+    } else {
+      props.onSubmit({
+        columnName,
+        columnType: fieldType.name,
+        defaultValue: defaultValue || null,
+        nullable,
+        columnLength: fieldType.size ? Number(columnLength) : null,
+        foreignTable: '',
+        foreignField: '',
+        cascading: false,
+      });
+    }
+  }
+
+  return (
+    <Modal width={520} onClose={props.onClose}>
+      <h2>Add column to {props.tableName}</h2>
+      <Tabs
+        tabs={[
+          { id: 'field', label: 'Field' },
+          { id: 'foreign', label: 'Foreign key' },
+        ]}
+        active={mode}
+        onChange={setMode} />
+      <div className="form-grid">
+        <label>Column name
+          <input type="text" value={columnName} onChange={e => setColumnName(e.target.value)} />
+        </label>
+        {mode === 'field' ? (
+          <>
+            <label>Type
+              <select
+                value={fieldType.name}
+                onChange={e => {
+                  const next = fieldTypes.find(candidate => candidate.name === e.target.value)!;
+                  setFieldType(next);
+                  if (next.varcharDefault) {
+                    setColumnLength(String(next.varcharDefault));
+                  }
+                }}>
+                {fieldTypes.map(candidate => (
+                  <option key={candidate.name} value={candidate.name}>{candidate.name}</option>
+                ))}
+              </select>
+            </label>
+            {fieldType.size && (
+              <label>Length
+                <input
+                  type="number"
+                  value={columnLength}
+                  onChange={e => setColumnLength(e.target.value)} />
+              </label>
+            )}
+            <label>Default value (optional)
+              <input
+                type="text"
+                value={defaultValue}
+                onChange={e => setDefaultValue(e.target.value)} />
+            </label>
+          </>
+        ) : (
+          <>
+            <label>References table
+              <select value={foreignTable} onChange={e => setForeignTable(e.target.value)}>
+                <option value="">Select table…</option>
+                {props.tables
+                  .filter((table: any) => (table.columns ?? []).some((c: any) => c.primary))
+                  .map((table: any) => (
+                    <option key={table.name} value={table.name}>{table.name}</option>
+                  ))}
+              </select>
+            </label>
+            {foreignPk && (
+              <div className="muted" style={{ fontSize: 13 }}>
+                References {foreignTable}.{foreignPk.name} ({foreignPk.hl})
+              </div>
+            )}
+            <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <input
+                type="checkbox"
+                checked={cascading}
+                onChange={e => setCascading(e.target.checked)} />
+              Cascade on delete
+            </label>
+          </>
+        )}
+        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <input
+            type="checkbox"
+            checked={nullable}
+            onChange={e => setNullable(e.target.checked)} />
+          Nullable
+        </label>
+      </div>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button
+          className="btn"
+          disabled={!columnName || (mode === 'foreign' && !foreignPk)}
+          onClick={submit}>
+          Add
+        </button>
+      </div>
+    </Modal>
+  );
 }

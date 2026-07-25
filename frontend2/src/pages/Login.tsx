@@ -1,10 +1,12 @@
 import { FormEvent, useState } from 'react';
 import { useAuth } from '../lib/AuthContext';
+import { backendUrls } from '../lib/backend';
 
 export default function Login() {
 
   const { backend, login } = useAuth();
-  const [url, setUrl] = useState(backend?.url ?? 'http://localhost:5000');
+  const [previousUrls] = useState(backendUrls);
+  const [url, setUrl] = useState(previousUrls[0] ?? backend?.url ?? 'http://localhost:5000');
   const [username, setUsername] = useState(backend?.username ?? 'root');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -38,7 +40,11 @@ export default function Login() {
             value={url}
             onChange={e => setUrl(e.target.value)}
             placeholder="http://localhost:5000"
+            list="previous-backends"
             required />
+          <datalist id="previous-backends">
+            {previousUrls.map(candidate => <option key={candidate} value={candidate} />)}
+          </datalist>
         </label>
         <label>
           Username

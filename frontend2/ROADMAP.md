@@ -100,6 +100,14 @@ theme service (named themes + CodeMirror themes), PWA update, multi-backend
 switcher, version-update banner, ML history/questionnaires exports,
 socket-type endpoint invocation in the invoker.
 
+## Dropped by decision (2026-07-25, Thomas)
+
+- Vibe-coding console — NOT wanted.
+- ML questionnaires, Twilio, webhooks, lead-gen (contact_us/lead_email),
+  initial_questionnaire — legacy, dropped from UI and payloads.
+- ML test-chat dialog — dropped.
+- (Plus dead code in old frontend: endpoint assumptions, macros.)
+
 ## Notes
 
 - Old frontend facts discovered: macros are dead code (skip); endpoint

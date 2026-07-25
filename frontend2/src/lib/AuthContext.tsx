@@ -17,6 +17,7 @@ import {
   loadBackend,
   saveBackend,
   clearBackend,
+  rememberBackendUrl,
   tokenExpiration,
   tokenExpired,
 } from './backend';
@@ -89,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (url: string, username: string, password: string) => {
     url = url.replace(/\/+$/, '');
     const response = await authenticate(url, username, password);
+    rememberBackendUrl(url);
     applyBackend({ url, username, token: response.ticket });
   }, [applyBackend]);
 

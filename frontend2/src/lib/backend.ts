@@ -29,6 +29,23 @@ export function clearBackend() {
 }
 
 /*
+ * List of all backend URLs the user has successfully signed in to,
+ * most recently used first. Only URLs are persisted — usernames and
+ * passwords are left to the browser's own credential manager.
+ */
+const URLS_KEY = 'magic2.backend-urls';
+
+export function backendUrls(): string[] {
+  const raw = localStorage.getItem(URLS_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+
+export function rememberBackendUrl(url: string) {
+  const urls = [url, ...backendUrls().filter(candidate => candidate !== url)];
+  localStorage.setItem(URLS_KEY, JSON.stringify(urls));
+}
+
+/*
  * Returns the exp claim of a JWT token as a UNIX timestamp in seconds,
  * or null if the token can't be parsed.
  */

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CodeEditor, { modeForFile } from '../components/CodeEditor';
 import ResultViewer, { RawResult } from '../components/ResultViewer';
 import {
+  BracesIcon,
   ChevronIcon,
   DownloadIcon,
   FileIcon,
@@ -81,17 +82,30 @@ export default function Files() {
   useEffect(() => {
     localStorage.setItem('magic2.treeWidth', String(treeWidth));
   }, [treeWidth]);
+  /*
+   * Every open file, in the order they were opened. A file is dirty when its
+   * content differs from what was last loaded or saved.
+   */
+  const [openFiles, setOpenFiles] = useState<{ path: string; content: string; saved: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState('');
-  const [content, setContent] = useState('');
-  const [dirty, setDirty] = useState(false);
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [executeResult, setExecuteResult] = useState<RawResult | null>(null);
-  const [openApiSpec, setOpenApiSpec] = useState<string | null>(null);
+  const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
   const editorRef = useRef<import('codemirror').Editor | null>(null);
-  const { confirm, prompt, form } = useDialog();
+  const { confirm, prompt, form, choice } = useDialog();
+
+  const current = openFiles.find(file => file.path === selectedFile) ?? null;
+  const content = current?.content ?? '';
+  const dirty = !!current && current.content !== current.saved;
+  const dirtyFiles = openFiles.filter(file => file.content !== file.saved);
 
   // The folder that upload/new-file shortcuts operate on.
   const activeFolder = selectedFile ? parentOf(selectedFile) : '/';
+
+  // Keeps the active tab visible when many files are open.
+  useEffect(() => {
+    document.querySelector('.file-tab.active')?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+  }, [selectedFile]);
 
   const loadTree = useCallback(async (sys: boolean) => {
     try {
@@ -111,16 +125,17 @@ export default function Files() {
   }, [loadTree, systemFiles]);
 
   /*
-   * Guard in-app navigation and browser unload while the file is dirty.
+   * Guard in-app navigation and browser unload while any open file is dirty.
    */
+  const dirtyPaths = dirtyFiles.map(file => file.path).join(', ');
   useEffect(() => {
-    if (!dirty) {
+    if (!dirtyPaths) {
       setNavGuard(null);
       return;
     }
     setNavGuard(() => confirm({
       title: 'Discard unsaved changes?',
-      message: selectedFile + ' has unsaved changes.',
+      message: dirtyPaths + ' has unsaved changes.',
       confirmText: 'Discard',
       danger: true,
     }));
@@ -133,7 +148,7 @@ export default function Files() {
       setNavGuard(null);
       window.removeEventListener('beforeunload', beforeUnload);
     };
-  }, [dirty, selectedFile, confirm]);
+  }, [dirtyPaths, confirm]);
 
   /*
    * When a filter is active, a file shows if its name matches, and a folder
@@ -186,34 +201,74 @@ export default function Files() {
   }
 
   async function openFile(path: string) {
-    if (dirty && !await confirm({
-      title: 'Discard unsaved changes?',
-      message: selectedFile + ' has unsaved changes.',
-      confirmText: 'Discard',
-      danger: true,
-    })) {
+    if (openFiles.some(file => file.path === path)) {
+      setSelectedFile(path);
       return;
     }
     try {
       const text = await loadFile(path);
+      setOpenFiles(current => [...current, { path, content: text, saved: text }]);
       setSelectedFile(path);
-      setContent(text);
-      setDirty(false);
     } catch (err: any) {
       show(err.message, true);
     }
   }
 
+  function updateContent(value: string) {
+    setOpenFiles(files => files.map(file =>
+      file.path === selectedFile ? { ...file, content: value } : file));
+  }
+
   async function save() {
-    if (!selectedFile) {
+    const file = openFiles.find(candidate => candidate.path === selectedFile);
+    if (!file) {
       return;
     }
     try {
-      await saveFile(selectedFile, content);
-      setDirty(false);
-      show('Saved ' + selectedFile);
+      await saveFile(file.path, file.content);
+      setOpenFiles(files => files.map(candidate =>
+        candidate.path === file.path ? { ...candidate, saved: file.content } : candidate));
+      show('Saved ' + file.path);
     } catch (err: any) {
       show(err.message, true);
+    }
+  }
+
+  /*
+   * Closes an open file — if it has unsaved changes the user chooses between
+   * saving it, closing without saving, or aborting the close.
+   */
+  async function closeFile(path: string) {
+    const file = openFiles.find(candidate => candidate.path === path);
+    if (!file) {
+      return;
+    }
+    if (file.content !== file.saved) {
+      const answer = await choice({
+        title: 'Unsaved changes',
+        message: path + ' has unsaved changes.',
+        buttons: [
+          { label: 'Save and close', value: 'save', kind: 'primary' },
+          { label: 'Close without saving', value: 'discard', kind: 'danger' },
+          { label: 'Cancel', value: 'cancel' },
+        ],
+      });
+      if (!answer || answer === 'cancel') {
+        return;
+      }
+      if (answer === 'save') {
+        try {
+          await saveFile(path, file.content);
+        } catch (err: any) {
+          show(err.message, true);
+          return;
+        }
+      }
+    }
+    const remaining = openFiles.filter(candidate => candidate.path !== path);
+    setOpenFiles(remaining);
+    if (selectedFile === path) {
+      setSelectedFile(remaining.length > 0 ? remaining[remaining.length - 1].path : '');
     }
   }
 
@@ -301,10 +356,10 @@ export default function Files() {
     }
     try {
       await deleteFile(path);
+      const remaining = openFiles.filter(candidate => candidate.path !== path);
+      setOpenFiles(remaining);
       if (selectedFile === path) {
-        setSelectedFile('');
-        setContent('');
-        setDirty(false);
+        setSelectedFile(remaining.length > 0 ? remaining[remaining.length - 1].path : '');
       }
       await loadTree(systemFiles);
     } catch (err: any) {
@@ -351,10 +406,24 @@ export default function Files() {
     const newPath = parentOf(path) + name + (isFolder ? '/' : '');
     try {
       await renamePath(path, newPath);
-      if (selectedFile === path) {
-        setSelectedFile(newPath);
-      }
+      // Remap open files affected by the rename — the file itself, or
+      // everything inside a renamed folder.
+      const remap = (candidate: string) => isFolder
+        ? (candidate.startsWith(path) ? newPath + candidate.substring(path.length) : candidate)
+        : (candidate === path ? newPath : candidate);
+      setOpenFiles(files => files.map(file => ({ ...file, path: remap(file.path) })));
+      setSelectedFile(remap(selectedFile));
       await loadTree(systemFiles);
+    } catch (err: any) {
+      show(err.message, true);
+    }
+  }
+
+  // Shows the OpenAPI specification for a file (single endpoint) or folder (all endpoints inside it).
+  async function showOpenApi(target: string) {
+    try {
+      const spec = await getOpenApiSpec(target);
+      setOpenApiSpec({ json: JSON.stringify(spec, null, 2), target });
     } catch (err: any) {
       show(err.message, true);
     }
@@ -381,6 +450,7 @@ export default function Files() {
               <FolderActions
                 onNewFile={() => newFile(folder)}
                 onNewFolder={() => newFolder(folder)}
+                onOpenApi={() => showOpenApi(folder)}
                 onRename={() => rename(folder, true)}
                 onDelete={() => removeFolder(folder)} />
             </div>
@@ -447,14 +517,8 @@ export default function Files() {
         {/\.(get|post|put|delete|patch)\.hl$/.test(selectedFile) && (
           <button
             className="btn btn-secondary btn-small"
-            onClick={async () => {
-              try {
-                const spec = await getOpenApiSpec(activeFolder);
-                setOpenApiSpec(JSON.stringify(spec, null, 2));
-              } catch (err: any) {
-                show(err.message, true);
-              }
-            }}>
+            title="OpenAPI specification for this endpoint"
+            onClick={() => showOpenApi(selectedFile)}>
             OpenAPI
           </button>
         )}
@@ -549,10 +613,33 @@ export default function Files() {
             window.addEventListener('mouseup', up);
           }} />
         <div className="file-editor">
-          {selectedFile ? (
+          {openFiles.length > 0 && (
+            <div className="file-tabs">
+              {openFiles.map(file => (
+                <div
+                  key={file.path}
+                  className={'file-tab' + (file.path === selectedFile ? ' active' : '')}
+                  title={file.path}
+                  onClick={() => setSelectedFile(file.path)}>
+                  <span className="file-tab-name">
+                    {nameOf(file.path)}
+                    {file.content !== file.saved && <span className="file-tab-dirty" />}
+                  </span>
+                  <button
+                    className="file-tab-close"
+                    title="Close"
+                    onClick={event => { event.stopPropagation(); closeFile(file.path); }}>
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          {current ? (
             <CodeEditor
+              key={selectedFile}
               value={content}
-              onChange={value => { setContent(value); setDirty(true); }}
+              onChange={updateContent}
               mode={modeForFile(selectedFile)}
               onSave={save}
               onExecute={execute}
@@ -564,12 +651,7 @@ export default function Files() {
                   case 'renameFile': rename(selectedFile, false); break;
                   case 'deleteFile': removeFile(selectedFile); break;
                   case 'deleteFolder': removeFolder(activeFolder); break;
-                  case 'close':
-                    if (!dirty) {
-                      setSelectedFile('');
-                      setContent('');
-                    }
-                    break;
+                  case 'close': closeFile(selectedFile); break;
                 }
               }} />
           ) : (
@@ -581,15 +663,15 @@ export default function Files() {
       </div>
       {openApiSpec !== null && (
         <Modal width={800} onClose={() => setOpenApiSpec(null)}>
-          <h2>OpenAPI specification — {activeFolder}</h2>
+          <h2>OpenAPI specification — {openApiSpec.target}</h2>
           <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
-            <CodeEditor value={openApiSpec} mode="application/json" readOnly />
+            <CodeEditor value={openApiSpec.json} mode="application/json" readOnly />
           </div>
           <div className="modal-actions">
             <button
               className="btn btn-secondary"
               onClick={() => {
-                navigator.clipboard.writeText(openApiSpec);
+                navigator.clipboard.writeText(openApiSpec.json);
                 show('Specification copied to clipboard');
               }}>
               Copy JSON
@@ -614,6 +696,7 @@ export default function Files() {
 function FolderActions(props: {
   onNewFile: () => void;
   onNewFolder: () => void;
+  onOpenApi?: () => void;
   onRename?: () => void;
   onDelete?: () => void;
 }) {
@@ -621,6 +704,8 @@ function FolderActions(props: {
     <span className="row-actions" onClick={e => e.stopPropagation()}>
       <button className="icon-btn" title="New file" onClick={props.onNewFile}><FilePlusIcon /></button>
       <button className="icon-btn" title="New folder" onClick={props.onNewFolder}><FolderPlusIcon /></button>
+      {props.onOpenApi &&
+        <button className="icon-btn" title="OpenAPI specification" onClick={props.onOpenApi}><BracesIcon /></button>}
       {props.onRename &&
         <button className="icon-btn" title="Rename" onClick={props.onRename}><PencilIcon /></button>}
       {props.onDelete &&

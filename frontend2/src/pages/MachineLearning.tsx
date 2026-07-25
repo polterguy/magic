@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
 import SocketFeedback from '../components/SocketFeedback';
+import CreateSystemMessageDialog from '../components/CreateSystemMessageDialog';
 import Tabs from '../components/Tabs';
 import SortHeader, { SortState, useSort } from '../components/SortHeader';
 import {
@@ -26,6 +27,8 @@ import {
   openaiModels,
   openaiSystemMessages,
   openaiThemes,
+  uploadCsvFile,
+  uploadImageFile,
   uploadTrainingFile,
   vectoriseType,
 } from '../lib/api';
@@ -225,6 +228,40 @@ function TypesTab(props: {
 }
 
 /*
+ * The file categories the old dashboard supports, each mapping to its own
+ * backend endpoint and accepted extensions.
+ */
+const UPLOAD_CATEGORIES = {
+  structured: {
+    label: 'Structured data (CSV, XML, YAML, JSON)',
+    accept: '.csv,.xml,.yaml,.yml,.json',
+    help: 'Files containing lists of objects with at least two fields. ' +
+      'Declare which field becomes the prompt and which the completion below.',
+  },
+  text: {
+    label: 'Text (TXT, Markdown, CSV as text)',
+    accept: '.txt,.md,.csv',
+    help: 'Plain-text files imported as content, optionally summarized.',
+  },
+  pdf: {
+    label: 'PDF documents',
+    accept: '.pdf',
+    help: 'PDF files, optionally one snippet per page or AI-summarized.',
+  },
+  csv: {
+    label: 'CSV — first column prompt, rest completion',
+    accept: '.csv',
+    help: 'Imports every row using the first column as prompt, and all ' +
+      'remaining columns concatenated as the completion.',
+  },
+  images: {
+    label: 'Images (PNG, JPG, WEBP, GIF)',
+    accept: '.png,.jpg,.jpeg,.webp,.gif',
+    help: 'Images vectorised and stored as training data.',
+  },
+};
+
+/*
  * Import dialog — crawl a website (progress over the socket), or upload
  * training files.
  */
@@ -240,6 +277,16 @@ function ImportDialog(props: {
   const [summarize, setSummarize] = useState(true);
   const [crawling, setCrawling] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  // Upload-tab options.
+  const [category, setCategory] = useState<keyof typeof UPLOAD_CATEGORIES>('structured');
+  const [promptField, setPromptField] = useState('prompt');
+  const [completionField, setCompletionField] = useState('completion');
+  const [textSummarize, setTextSummarize] = useState(false);
+  const [pdfPreservePages, setPdfPreservePages] = useState(false);
+  const [pdfSummarize, setPdfSummarize] = useState(false);
+  const [pdfOverwrite, setPdfOverwrite] = useState(false);
+  const [pdfMassage, setPdfMassage] = useState('');
 
   async function crawl() {
     if (!url) {
@@ -258,10 +305,33 @@ function ImportDialog(props: {
     let count = 0;
     try {
       for (const file of files) {
-        const response = await uploadTrainingFile(props.type, file);
+        let response: { count: number };
+        if (category === 'images') {
+          response = await uploadImageFile(props.type, file);
+        } else if (category === 'csv') {
+          response = await uploadCsvFile(props.type, file);
+        } else if (category === 'pdf') {
+          response = await uploadTrainingFile(props.type, file, {
+            summarize: pdfSummarize,
+            preservePages: pdfPreservePages,
+            overwrite: pdfOverwrite,
+            massage: pdfMassage || undefined,
+          });
+        } else if (category === 'text') {
+          response = await uploadTrainingFile(props.type, file, {
+            summarize: textSummarize,
+            forceAsText: file.name.toLowerCase().endsWith('.csv'),
+          });
+        } else {
+          response = await uploadTrainingFile(props.type, file, {
+            promptField,
+            completionField,
+          });
+        }
         count += response.count ?? 0;
       }
-      props.notify({ text: count + ' training snippets imported', isError: false });
+      const noun = category === 'images' ? 'image(s) imported' : 'training snippets imported';
+      props.notify({ text: count + ' ' + noun, isError: false });
       props.onClose();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
@@ -308,16 +378,82 @@ function ImportDialog(props: {
         )}
         {tab === 'upload' && (
           <div className="form-grid">
-            <p className="muted" style={{ margin: 0 }}>
-              Upload text, markdown, PDF, or CSV files — each becomes training
-              snippets for {props.type}.
+            <label>File category
+              <select
+                value={category}
+                onChange={e => setCategory(e.target.value as keyof typeof UPLOAD_CATEGORIES)}>
+                {Object.entries(UPLOAD_CATEGORIES).map(([key, value]) => (
+                  <option key={key} value={key}>{value.label}</option>
+                ))}
+              </select>
+            </label>
+            <p className="muted" style={{ margin: 0, fontSize: 13 }}>
+              {UPLOAD_CATEGORIES[category].help}
             </p>
+            {category === 'structured' && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <label>Prompt field
+                  <input
+                    type="text"
+                    value={promptField}
+                    onChange={e => setPromptField(e.target.value)} />
+                </label>
+                <label>Completion field
+                  <input
+                    type="text"
+                    value={completionField}
+                    onChange={e => setCompletionField(e.target.value)} />
+                </label>
+              </div>
+            )}
+            {category === 'text' && (
+              <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <input
+                  type="checkbox"
+                  checked={textSummarize}
+                  onChange={e => setTextSummarize(e.target.checked)} />
+                Summarize each file for better retrieval
+              </label>
+            )}
+            {category === 'pdf' && (
+              <>
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <input
+                      type="checkbox"
+                      checked={pdfPreservePages}
+                      onChange={e => setPdfPreservePages(e.target.checked)} />
+                    One snippet per page
+                  </label>
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <input
+                      type="checkbox"
+                      checked={pdfSummarize}
+                      onChange={e => setPdfSummarize(e.target.checked)} />
+                    Summarize
+                  </label>
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <input
+                      type="checkbox"
+                      checked={pdfOverwrite}
+                      onChange={e => setPdfOverwrite(e.target.checked)} />
+                    Overwrite existing
+                  </label>
+                </div>
+                <label>Massage prompt (optional — reshapes content with AI first)
+                  <input
+                    type="text"
+                    value={pdfMassage}
+                    onChange={e => setPdfMassage(e.target.value)} />
+                </label>
+              </>
+            )}
             <label className="btn btn-secondary" style={{ cursor: 'pointer', alignSelf: 'flex-start' }}>
               {uploading ? 'Uploading…' : 'Select files'}
               <input
                 type="file"
                 multiple
-                accept=".txt,.md,.pdf,.csv"
+                accept={UPLOAD_CATEGORIES[category].accept}
                 style={{ display: 'none' }}
                 disabled={uploading}
                 onChange={e => {
@@ -359,45 +495,150 @@ function ImportDialog(props: {
   );
 }
 
+function boolParam(name: string, value: boolean) {
+  return name + '=' + (value ? 'true' : 'false');
+}
+
 /*
- * Embed dialog — builds the chatbot include-script for the model.
+ * Embed dialog — builds the include-script for the modern chatbot.
+ * Legacy classic-chatbot and AI-search embeds are intentionally dropped.
  */
 function EmbedDialog(props: { type: string; onClose: () => void }) {
 
-  const [themes, setThemes] = useState<string[]>([]);
-  const [theme, setTheme] = useState('default');
-  const [copied, setCopied] = useState(false);
   const backend = backendInfo();
+  const [modernThemes, setModernThemes] = useState<string[]>([]);
+  const [copied, setCopied] = useState(false);
+
+  // Modern chatbot options (old-dashboard defaults).
+  const [modernTheme, setModernTheme] = useState('modern-square');
+  const [header, setHeader] = useState('Ask about our services or products');
+  const [buttonText, setButtonText] = useState('AI Chatbot');
+  const [placeholder, setPlaceholder] = useState('Ask me anything ...');
+  const [position, setPosition] = useState('right');
+  const [animation, setAnimation] = useState('none');
+  const [references, setReferences] = useState(false);
+  const [followUp, setFollowUp] = useState(true);
+  const [copyButton, setCopyButton] = useState(false);
+  const [rtl, setRtl] = useState(false);
+  const [sticky, setSticky] = useState(false);
+  const [history, setHistory] = useState(false);
+  const [attachments, setAttachments] = useState(false);
+  const [startColor, setStartColor] = useState('#7892e5');
+  const [endColor, setEndColor] = useState('#142660');
+  const [foreColor, setForeColor] = useState('#fefefe');
+  const [linkColor, setLinkColor] = useState('#fe8464');
 
   useEffect(() => {
     openaiThemes()
-      .then(list => {
-        setThemes(list ?? []);
-        if (list?.length && !list.includes('default')) {
-          setTheme(list[0]);
-        }
-      })
+      .then(list => setModernThemes((list ?? []).filter(theme => theme.startsWith('modern'))))
       .catch(() => {});
   }, []);
 
-  const script = '<script src="' + backend.url +
-    '/magic/system/openai/include-chatbot.js?type=' + encodeURIComponent(props.type) +
-    '&theme=' + encodeURIComponent(theme) +
-    '" defer></' + 'script>';
+  function buildChatbot() {
+    const e = encodeURIComponent;
+    let url = backend.url + '/magic/system/openai/include-chatbot.js?' + [
+      boolParam('rtl', rtl),
+      boolParam('follow_up', followUp),
+      boolParam('copyButton', copyButton),
+      boolParam('references', references),
+      'position=' + e(position),
+      'type=' + e(props.type),
+      'header=' + e(header),
+      'button=' + e(buttonText),
+      'placeholder=' + e(placeholder),
+      'color=' + e(foreColor),
+      'start=' + e(startColor),
+      'end=' + e(endColor),
+      'link=' + e(linkColor),
+      'theme=' + e(modernTheme),
+    ].join('&');
+    if (animation !== 'none') {
+      url += '&animation=' + animation;
+    }
+    if (sticky) {
+      url += '&sticky=true';
+    }
+    if (history) {
+      url += '&history=true';
+    }
+    if (attachments) {
+      url += '&attachments=true';
+    }
+    return '<script src="' + url + '" defer></' + 'script>';
+  }
+
+  const script = buildChatbot();
 
   return (
-    <Modal width={640} onClose={props.onClose}>
+    <Modal width={680} onClose={props.onClose}>
       <h2>Embed {props.type}</h2>
-      <div className="form-grid">
-        <label>Theme
-          <select value={theme} onChange={e => setTheme(e.target.value)}>
-            {themes.length === 0 && <option value="default">default</option>}
-            {themes.map(candidate => (
-              <option key={candidate} value={candidate}>{candidate}</option>
-            ))}
-          </select>
-        </label>
-        <div>
+      <div style={{ maxHeight: '55vh', overflow: 'auto', paddingRight: 6 }}>
+        <div className="form-grid">
+            <label>Theme
+              <select value={modernTheme} onChange={e => setModernTheme(e.target.value)}>
+                {modernThemes.length === 0 && <option value="modern-square">modern-square</option>}
+                {modernThemes.map(theme => (
+                  <option key={theme} value={theme}>{theme}</option>
+                ))}
+              </select>
+            </label>
+            <label>Header
+              <input type="text" value={header} onChange={e => setHeader(e.target.value)} />
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <label>Button text
+                <input type="text" value={buttonText} onChange={e => setButtonText(e.target.value)} />
+              </label>
+              <label>Input placeholder
+                <input type="text" value={placeholder} onChange={e => setPlaceholder(e.target.value)} />
+              </label>
+              <label>Position
+                <select value={position} onChange={e => setPosition(e.target.value)}>
+                  <option value="right">right</option>
+                  <option value="left">left</option>
+                </select>
+              </label>
+              <label>Animation
+                <select value={animation} onChange={e => setAnimation(e.target.value)}>
+                  <option value="none">none</option>
+                  <option value="scaleUp">scaleUp</option>
+                  <option value="slideInBottom">slideInBottom</option>
+                  <option value="fadeIn">fadeIn</option>
+                </select>
+              </label>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10 }}>
+              <label style={{ fontSize: 12 }}>Gradient start
+                <input type="color" value={startColor} onChange={e => setStartColor(e.target.value)} />
+              </label>
+              <label style={{ fontSize: 12 }}>Gradient end
+                <input type="color" value={endColor} onChange={e => setEndColor(e.target.value)} />
+              </label>
+              <label style={{ fontSize: 12 }}>Foreground
+                <input type="color" value={foreColor} onChange={e => setForeColor(e.target.value)} />
+              </label>
+              <label style={{ fontSize: 12 }}>Links
+                <input type="color" value={linkColor} onChange={e => setLinkColor(e.target.value)} />
+              </label>
+            </div>
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+              {[
+                ['References', references, setReferences],
+                ['Follow-up questions', followUp, setFollowUp],
+                ['Copy button', copyButton, setCopyButton],
+                ['Right-to-left', rtl, setRtl],
+                ['Sticky', sticky, setSticky],
+                ['History', history, setHistory],
+                ['Attachments', attachments, setAttachments],
+              ].map(([label, value, setter]: any) => (
+                <label key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <input type="checkbox" checked={value} onChange={e => setter(e.target.checked)} />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </div>
+        <div style={{ marginTop: 12 }}>
           <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
             Paste this into your website
           </div>
@@ -409,11 +650,8 @@ function EmbedDialog(props: { type: string; onClose: () => void }) {
       <div className="modal-actions">
         <button
           className="btn btn-secondary"
-          onClick={() => {
-            navigator.clipboard.writeText(script);
-            setCopied(true);
-          }}>
-          {copied ? 'Copied!' : 'Copy'}
+          onClick={() => { navigator.clipboard.writeText(script); setCopied(true); }}>
+          {copied ? 'Copied!' : 'Copy embed code'}
         </button>
         <button className="btn" onClick={props.onClose}>Close</button>
       </div>
@@ -457,15 +695,19 @@ function EditTypeDialog(props: {
   const [dialogTab, setDialogTab] = useState('general');
   const [flavors, setFlavors] = useState<any[]>([]);
   const [completionSlots, setCompletionSlots] = useState<string[]>([]);
-  // Twilio, webhooks, lead-gen and questionnaires are legacy — dropped from
-  // the UI and no longer sent.
+  const [largeEditor, setLargeEditor] = useState(false);
+  const [dynamicFlavor, setDynamicFlavor] =
+    useState<{ instruction: string; template: string } | null>(null);
+  // The instruction as loaded — used to flag unsaved changes in the dialog.
+  const [initialSystemMessage] = useState(() => systemMessage);
+  const instructionChanged = systemMessage !== initialSystemMessage;
+  // Twilio, webhooks, lead-gen, questionnaires, prefix and search-postfix
+  // are legacy — dropped from the UI and no longer sent.
   const [extra, setExtra] = useState<any>({
     base_url: existing?.base_url ?? '',
-    prefix: existing?.prefix ?? '',
     conversation_starters: existing?.conversation_starters ?? '',
     api_key: existing?.api_key ?? '',
     no_requests: existing?.no_requests ?? 0,
-    search_postfix: existing?.search_postfix ?? '',
     max_requests: existing?.max_requests ?? -1,
     max_function_invocations: existing?.max_function_invocations ?? 5,
     max_session_items: existing?.max_session_items ?? 15,
@@ -601,7 +843,7 @@ function EditTypeDialog(props: {
             <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
               Authorisation (empty = public)
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, maxHeight: 90, overflow: 'auto' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
               {roles.map(role => (
                 <label
                   key={role}
@@ -649,27 +891,18 @@ function EditTypeDialog(props: {
           <label>Greeting
             <input type="text" value={greeting} onChange={e => setGreeting(e.target.value)} />
           </label>
-          <label>System message flavor
-            <select
-              value=""
-              onChange={e => {
-                const flavor = flavors.find(candidate => candidate.name === e.target.value);
-                if (flavor?.content) {
-                  setSystemMessage(flavor.content);
-                }
-              }}>
-              <option value="">Apply a template…</option>
-              {flavors.map(flavor => (
-                <option key={flavor.name} value={flavor.name}>{flavor.name}</option>
-              ))}
-            </select>
-          </label>
-          <label>System message
-            <textarea
-              rows={5}
-              value={systemMessage}
-              onChange={e => setSystemMessage(e.target.value)} />
-          </label>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{ padding: '12px 16px' }}
+            onClick={() => setLargeEditor(true)}>
+            ✎ Edit system instruction…
+          </button>
+          {instructionChanged && (
+            <div className="success-box">
+              System instruction changed — remember to save your model.
+            </div>
+          )}
         </div>
         <div className="form-grid" style={{ display: dialogTab === 'behaviour' ? 'flex' : 'none' }}>
           <label>Conversation starters (markdown list)
@@ -677,18 +910,6 @@ function EditTypeDialog(props: {
               rows={4}
               value={extra.conversation_starters}
               onChange={e => setField('conversation_starters', e.target.value)} />
-          </label>
-          <label>Prefix (prepended to every prompt)
-            <input
-              type="text"
-              value={extra.prefix}
-              onChange={e => setField('prefix', e.target.value)} />
-          </label>
-          <label>Search postfix
-            <input
-              type="text"
-              value={extra.search_postfix}
-              onChange={e => setField('search_postfix', e.target.value)} />
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             <label>Completion slot
@@ -771,6 +992,74 @@ function EditTypeDialog(props: {
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
         <button className="btn" onClick={save}>Save</button>
       </div>
+      {largeEditor && (
+        <Modal width={1100} onClose={() => setLargeEditor(false)}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+            <h2 style={{ margin: 0, flex: 1 }}>
+              System instruction — {type || 'new model'}
+            </h2>
+            <select
+              value=""
+              onChange={e => {
+                const flavor = flavors.find(candidate => candidate.name === e.target.value);
+                if (!flavor?.prefix) {
+                  return;
+                }
+                // Token-budget overrides apply for every flavor.
+                if (flavor.max_context_tokens) {
+                  setMaxContextTokens(String(flavor.max_context_tokens));
+                }
+                if (flavor.max_request_tokens) {
+                  setMaxRequestTokens(String(flavor.max_request_tokens));
+                }
+                if (flavor.max_function_invocations) {
+                  setField('max_function_invocations', flavor.max_function_invocations);
+                }
+                // A DYNAMIC "templated template" (contains [[...]] placeholders)
+                // is generated from a URL rather than inserted directly.
+                if (flavor.name.includes('DYNAMIC') &&
+                    flavor.instruction &&
+                    flavor.prefix.includes('[[')) {
+                  setDynamicFlavor({
+                    instruction: flavor.instruction,
+                    template: flavor.prefix,
+                  });
+                  return;
+                }
+                // Static template: insert the text, substituting the type name.
+                let message = flavor.prefix;
+                while (message.includes('YOUR_TYPE_NAME_HERE')) {
+                  message = message.replace('YOUR_TYPE_NAME_HERE', type || 'default');
+                }
+                setSystemMessage(message);
+              }}>
+              <option value="">Apply a template…</option>
+              {flavors.map(flavor => (
+                <option key={flavor.name} value={flavor.name}>{flavor.name}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ height: '65vh', display: 'flex', flexDirection: 'column' }}>
+            <CodeEditor
+              value={systemMessage}
+              onChange={setSystemMessage}
+              mode="markdown" />
+          </div>
+          <div className="modal-actions">
+            <button className="btn" onClick={() => setLargeEditor(false)}>Done</button>
+          </div>
+          {dynamicFlavor && (
+            <CreateSystemMessageDialog
+              instruction={dynamicFlavor.instruction}
+              template={dynamicFlavor.template}
+              onGenerated={message => {
+                setSystemMessage(message);
+                setDynamicFlavor(null);
+              }}
+              onClose={() => setDynamicFlavor(null)} />
+          )}
+        </Modal>
+      )}
     </Modal>
   );
 }
@@ -868,12 +1157,8 @@ function TrainingTab(props: {
           <thead>
             <tr>
               <SortHeader column="prompt" label="Prompt" sort={sort} onSort={setSort} />
-              <SortHeader
-                column="tokens"
-                label="Tokens"
-                sort={sort}
-                onSort={setSort}
-                style={{ width: 90 }} />
+              {/* tokens is a computed column — the API cannot order by it. */}
+              <th style={{ width: 90 }}>Tokens</th>
               <th style={{ width: 110 }}>Embedded</th>
               <th style={{ width: 150 }}></th>
             </tr>

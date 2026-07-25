@@ -1,6 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useDialog } from '../components/Dialogs';
+import { marked } from 'marked';
+import { Modal, useDialog } from '../components/Dialogs';
 import { availablePlugins, installedPlugins, installPlugin } from '../lib/api';
+
+// Card intro: render the markdown description to HTML, extract its plain text,
+// and show the first sentence, capped at 150 characters.
+function intro(description: string) {
+  const div = document.createElement('div');
+  div.innerHTML = marked.parse(description ?? '') as string;
+  const text = (div.textContent ?? '').replace(/\s+/g, ' ').trim();
+  const period = text.indexOf('.');
+  const sentence = period === -1 ? text : text.substring(0, period + 1);
+  return sentence.length > 150 ? sentence.substring(0, 150) + '…' : sentence;
+}
 
 export default function Plugins() {
 
@@ -9,6 +21,7 @@ export default function Plugins() {
   const [filter, setFilter] = useState('');
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [installing, setInstalling] = useState<string | null>(null);
+  const [details, setDetails] = useState<any>(null);
   const { confirm } = useDialog();
 
   useEffect(() => {
@@ -87,10 +100,15 @@ export default function Plugins() {
               <strong style={{ flex: 1 }}>{app.name}</strong>
               <span className="badge badge-info">{app.type}</span>
             </div>
-            <p className="muted" style={{ flex: 1, marginTop: 8 }}>
-              {app.intro || app.description}
+            <p className="muted line-clamp" style={{ flex: 1, marginTop: 8 }}>
+              {intro(app.description)}
             </p>
-            <div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                className="btn btn-secondary btn-small"
+                onClick={() => setDetails(app)}>
+                Details
+              </button>
               {installed.has(app.name) ? (
                 <button className="btn btn-secondary btn-small" disabled>Installed</button>
               ) : (
@@ -105,6 +123,25 @@ export default function Plugins() {
           </div>
         ))}
       </div>
+      {details && (
+        <Modal width={700} onClose={() => setDetails(null)}>
+          <h2>{details.name}</h2>
+          <div
+            className="markdown-body"
+            style={{ maxHeight: '60vh', overflowY: 'auto' }}
+            dangerouslySetInnerHTML={{ __html: marked.parse(details.description ?? '') as string }} />
+          <div className="modal-actions">
+            <button className="btn btn-secondary" onClick={() => setDetails(null)}>Close</button>
+            {!installed.has(details.name) && (
+              <button
+                className="btn"
+                onClick={() => { const app = details; setDetails(null); install(app); }}>
+                Install
+              </button>
+            )}
+          </div>
+        </Modal>
+      )}
     </>
   );
 }

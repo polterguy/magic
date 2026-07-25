@@ -11,6 +11,7 @@ import Configuration from './pages/Configuration';
 import Profile from './pages/Profile';
 import MachineLearning from './pages/MachineLearning';
 import Plugins from './pages/Plugins';
+import Generator from './pages/Generator';
 import Endpoints from './pages/Endpoints';
 import Users from './pages/Users';
 import Tasks from './pages/Tasks';
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/hyper-ide" element={<Files />} />
         <Route path="/sql-studio" element={<Sql />} />
         <Route path="/databases" element={<Databases />} />
+        <Route path="/generator" element={<Generator />} />
         <Route path="/endpoints" element={<Endpoints />} />
         <Route path="/user-roles-management" element={<Users />} />
         <Route path="/task-manager" element={<Tasks />} />

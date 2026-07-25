@@ -371,6 +371,28 @@ export function deleteConnectionString(databaseType: string, name: string) {
     '&name=' + encodeURIComponent(name));
 }
 
+/*
+ * Backend generator — one invocation per verb per table.
+ */
+export function crudify(payload: any) {
+  return http.post<{ loc: number; result: string }>(
+    '/magic/system/crudifier/crudify', payload);
+}
+
+export function customSqlEndpoint(payload: {
+  databaseType: string;
+  database: string;
+  authorization: string;
+  moduleName: string;
+  endpointName: string;
+  verb: string;
+  sql: string;
+  arguments: string;
+  overwrite: boolean;
+}) {
+  return http.post<MagicResponse>('/magic/system/crudifier/custom-sql', payload);
+}
+
 export function exportDdl(
   databaseType: string, connectionString: string, databaseName: string,
   tables: string[], full: boolean) {
@@ -381,6 +403,84 @@ export function exportDdl(
     tables,
     full,
   });
+}
+
+/*
+ * DDL mutations — create/drop tables, columns, foreign keys, indexes.
+ * Every mutation invalidates the cached schema for the connection.
+ */
+function bustSchemaCache(databaseType: string, connectionString: string) {
+  return http.delete<any>('/magic/system/cache/delete?id=' +
+    encodeURIComponent('magic.sql.databases.' + databaseType + '.' + connectionString + '.*'))
+    .catch(() => {});
+}
+
+export async function addTable(
+  databaseType: string, connectionString: string, databaseName: string,
+  tableName: string, pkName: string, pkType: string, pkLength: number) {
+  const result = await http.post<any>('/magic/system/sql/ddl/table', {
+    databaseType, connectionString, databaseName,
+    tableName, pkName, pkType, pkLength, pkDefault: null,
+  });
+  await bustSchemaCache(databaseType, connectionString);
+  return result;
+}
+
+export async function dropTable(
+  databaseType: string, connectionString: string, databaseName: string, tableName: string) {
+  const result = await http.delete<any>(
+    '/magic/system/sql/ddl/table?databaseType=' + encodeURIComponent(databaseType) +
+    '&connectionString=' + encodeURIComponent(connectionString) +
+    '&databaseName=' + encodeURIComponent(databaseName) +
+    '&tableName=' + encodeURIComponent(tableName));
+  await bustSchemaCache(databaseType, connectionString);
+  return result;
+}
+
+export async function addColumn(
+  databaseType: string, connectionString: string, databaseName: string, tableName: string,
+  columnName: string, columnType: string, defaultValue: string | null,
+  nullable: boolean, columnLength: number | null) {
+  const result = await http.post<any>('/magic/system/sql/ddl/column', {
+    databaseType, connectionString, databaseName, tableName,
+    columnName, columnType, defaultValue, nullable, indexed: false, columnLength,
+  });
+  await bustSchemaCache(databaseType, connectionString);
+  return result;
+}
+
+export async function addForeignKey(
+  databaseType: string, connectionString: string, databaseName: string, tableName: string,
+  columnName: string, columnType: string, foreignTable: string, foreignField: string,
+  nullable: boolean, columnLength: number | null, cascading: boolean) {
+  const result = await http.post<any>('/magic/system/sql/ddl/column', {
+    databaseType, connectionString, databaseName, tableName,
+    columnName, columnType, foreignTable, foreignField, nullable, columnLength, cascading,
+  });
+  await bustSchemaCache(databaseType, connectionString);
+  return result;
+}
+
+export async function dropColumn(
+  databaseType: string, connectionString: string, databaseName: string,
+  tableName: string, columnName: string) {
+  const result = await http.delete<any>(
+    '/magic/system/sql/ddl/column?databaseType=' + encodeURIComponent(databaseType) +
+    '&connectionString=' + encodeURIComponent(connectionString) +
+    '&databaseName=' + encodeURIComponent(databaseName) +
+    '&tableName=' + encodeURIComponent(tableName) +
+    '&columnName=' + encodeURIComponent(columnName));
+  await bustSchemaCache(databaseType, connectionString);
+  return result;
+}
+
+export async function addLinkTable(
+  databaseType: string, connectionString: string, databaseName: string, args: any) {
+  const result = await http.post<any>('/magic/system/sql/ddl/link-table', {
+    databaseType, connectionString, databaseName, args,
+  });
+  await bustSchemaCache(databaseType, connectionString);
+  return result;
 }
 
 /*
@@ -667,21 +767,100 @@ export function importUrl(args: {
   });
 }
 
-export function uploadTrainingFile(type: string, file: File) {
+// Backend prompt that turns raw content into a searchable one-line summary.
+const SUMMARISE_PROMPT =
+  'Create a short keyword-based single descriptive sentence from the following ' +
+  'information intended for doing VSS-based search on it later to retrieve it using RAG';
+
+export interface UploadOptions {
+  summarize?: boolean;
+  forceAsText?: boolean;
+  // Structured files: which fields in the file become prompt/completion.
+  promptField?: string;
+  completionField?: string;
+  // PDF-only options.
+  preservePages?: boolean;
+  overwrite?: boolean;
+  massage?: string;
+}
+
+/*
+ * Uploads a text/structured/PDF file as training data. Structured formats
+ * (csv/xml/yaml/json) parse into lists of objects, and promptField /
+ * completionField name which fields substitute as prompt and completion.
+ */
+export function uploadTrainingFile(type: string, file: File, options: UploadOptions = {}) {
   const formData = new FormData();
   formData.append('file', file, file.name);
   formData.append('type', type);
-  formData.append('prompt', 'prompt');
-  formData.append('completion', 'completion');
+  formData.append('prompt', options.promptField || 'prompt');
+  formData.append('completion', options.completionField || 'completion');
+  if (options.forceAsText) {
+    formData.append('forceAsText', 'true');
+  }
+  const isPdf = file.name.toLowerCase().endsWith('.pdf');
+  if (isPdf) {
+    if (options.massage) {
+      formData.append('massage', options.massage);
+    }
+    if (options.preservePages) {
+      formData.append('preservePages', 'true');
+    }
+    if (options.overwrite) {
+      formData.append('overwrite', 'true');
+    }
+  }
+  if (options.summarize) {
+    formData.append('massagePrompt', SUMMARISE_PROMPT);
+  }
   return http.post<{ count: number }>('/magic/system/openai/upload-training-data', formData);
+}
+
+/*
+ * Uploads a CSV whose columns become prompt/completion pairs directly.
+ */
+export function uploadCsvFile(type: string, file: File) {
+  const formData = new FormData();
+  formData.append('file', file, file.name);
+  formData.append('type', type);
+  return http.post<{ count: number }>('/magic/system/openai/upload-csv', formData);
+}
+
+/*
+ * Uploads an image, vectorising it as training data.
+ */
+export function uploadImageFile(type: string, file: File) {
+  const formData = new FormData();
+  formData.append('file', file, file.name);
+  formData.append('type', type);
+  return http.post<{ count: number }>('/magic/system/openai/upload-image', formData);
 }
 
 export function openaiThemes() {
   return http.get<string[]>('/magic/system/openai/themes');
 }
 
+export function openaiThemesSearch() {
+  return http.get<string[]>('/magic/system/openai/themes-search');
+}
+
 export function openaiSystemMessages() {
   return http.get<any[]>('/magic/system/openai/system-messages');
+}
+
+/*
+ * Kicks off dynamic system-message generation: the backend crawls `url`,
+ * uses `instruction` to fill the `[[...]]` placeholders in `template`, and
+ * streams the result back on the socket `channel`.
+ */
+export function createSystemMessage(
+  instruction: string, template: string, url: string, channel: string) {
+  return http.post<MagicResponse>('/magic/system/openai/create-system-message', {
+    instruction,
+    template,
+    url,
+    channel,
+  });
 }
 
 export function openaiCompletionSlots() {

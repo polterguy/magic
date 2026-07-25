@@ -9,6 +9,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   FormEvent,
   ReactNode,
@@ -43,9 +44,21 @@ export interface FormOptions {
   confirmText?: string;
 }
 
+export interface ChoiceButton {
+  label: string;
+  value: string;
+  kind?: 'primary' | 'secondary' | 'danger';
+}
+
+export interface ChoiceOptions {
+  title: string;
+  message?: string;
+  buttons: ChoiceButton[];
+}
+
 interface ActiveDialog {
-  kind: 'confirm' | 'prompt' | 'form';
-  options: ConfirmOptions & PromptOptions & Partial<FormOptions>;
+  kind: 'confirm' | 'prompt' | 'form' | 'choice';
+  options: ConfirmOptions & PromptOptions & Partial<FormOptions> & Partial<ChoiceOptions>;
   resolve: (value: any) => void;
 }
 
@@ -53,7 +66,11 @@ const DialogContext = createContext<{
   confirm: (options: ConfirmOptions) => Promise<boolean>;
   prompt: (options: PromptOptions) => Promise<string | null>;
   form: (options: FormOptions) => Promise<Record<string, string> | null>;
+  choice: (options: ChoiceOptions) => Promise<string | null>;
 }>(null!);
+
+// Stack of open modals so Escape only closes the topmost one.
+const modalStack: symbol[] = [];
 
 /*
  * Shared modal shell — every dialog in the app renders through this, so
@@ -65,9 +82,22 @@ export function Modal(props: {
   children: ReactNode;
 }) {
 
+  const idRef = useRef(Symbol('modal'));
+
+  useEffect(() => {
+    modalStack.push(idRef.current);
+    return () => {
+      const index = modalStack.indexOf(idRef.current);
+      if (index !== -1) {
+        modalStack.splice(index, 1);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' &&
+          modalStack[modalStack.length - 1] === idRef.current) {
         props.onClose();
       }
     };
@@ -118,6 +148,10 @@ export function DialogProvider({ children }: { children: ReactNode }) {
       setActive({ kind: 'form', options, resolve });
     }), []);
 
+  const choice = useCallback((options: ChoiceOptions) =>
+    new Promise<string | null>(resolve =>
+      setActive({ kind: 'choice', options, resolve })), []);
+
   function dismiss() {
     if (!active) {
       return;
@@ -137,7 +171,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <DialogContext.Provider value={{ confirm, prompt, form }}>
+    <DialogContext.Provider value={{ confirm, prompt, form, choice }}>
       {children}
       {active && (
         <Modal onClose={dismiss}>
@@ -179,14 +213,31 @@ export function DialogProvider({ children }: { children: ReactNode }) {
               </div>
             )}
             <div className="modal-actions">
-              <button type="button" className="btn btn-secondary" onClick={dismiss}>
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className={'btn' + (active.options.danger ? ' btn-danger' : '')}>
-                {active.options.confirmText ?? 'OK'}
-              </button>
+              {active.kind === 'choice' ? (
+                active.options.buttons!.map(button => (
+                  <button
+                    key={button.value}
+                    type="button"
+                    className={
+                      button.kind === 'primary' ? 'btn' :
+                      button.kind === 'danger' ? 'btn btn-danger' :
+                      'btn btn-secondary'}
+                    onClick={() => { active.resolve(button.value); setActive(null); }}>
+                    {button.label}
+                  </button>
+                ))
+              ) : (
+                <>
+                  <button type="button" className="btn btn-secondary" onClick={dismiss}>
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className={'btn' + (active.options.danger ? ' btn-danger' : '')}>
+                    {active.options.confirmText ?? 'OK'}
+                  </button>
+                </>
+              )}
             </div>
           </form>
         </Modal>

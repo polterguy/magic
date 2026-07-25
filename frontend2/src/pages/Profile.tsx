@@ -126,13 +126,7 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
         </label>
         <div>
           <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles</div>
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 4,
-            maxHeight: 140,
-            overflow: 'auto',
-          }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {roles.map(role => (
               <label
                 key={role}
