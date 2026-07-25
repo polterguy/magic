@@ -34,7 +34,7 @@ const GUIDE = [
   {
     to: '/generator',
     icon: '⚙',
-    title: 'Backend Generator',
+    title: 'Generator',
     text: 'Generate complete CRUD APIs from your database tables, or wrap a ' +
       'custom SQL statement in an endpoint of its own.',
   },
@@ -99,6 +99,20 @@ const GUIDE = [
     title: 'Plugins',
     text: 'Install modules and frontends from the Bazar to extend what your ' +
       'cloudlet can do.',
+  },
+  {
+    to: '/configuration',
+    icon: '⚙',
+    title: 'Configuration',
+    text: 'Edit your appsettings.json directly — connection strings, SMTP, ' +
+      'authentication and everything else your server runs on.',
+  },
+  {
+    to: '/log',
+    icon: '≣',
+    title: 'Log',
+    text: 'Read what your backend has been doing, and dig into errors when ' +
+      'something goes wrong.',
   },
 ];
 
