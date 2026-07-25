@@ -289,7 +289,7 @@ function InvokePanel(props: {
   const isMultipart = endpoint.consumes?.includes('multipart/form-data') ?? false;
   const consumesJson = !endpoint.consumes || endpoint.consumes.includes('json');
   const [args, setArgs] = useState<Record<string, string>>({});
-  const [files, setFiles] = useState<Record<string, File | null>>({});
+  const [files, setFiles] = useState<Record<string, File[]>>({});
   const [payload, setPayload] = useState(() => samplePayload(endpoint));
   const [busy, setBusy] = useState(false);
   const [invokeError, setInvokeError] = useState('');
@@ -350,8 +350,9 @@ function InvokePanel(props: {
           }
         }
         for (const argument of fileArgs) {
-          const file = files[argument.name];
-          if (file) {
+          // Several files under the same part name — Magic's convention for
+          // endpoints accepting multiple files through one [file] argument.
+          for (const file of files[argument.name] ?? []) {
             form.append(argument.name, file, file.name);
           }
         }
@@ -443,19 +444,58 @@ function InvokePanel(props: {
             </div>
           )}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 12 }}>
-            {fileArgs.map(argument => (
-              <label
-                key={argument.name}
-                style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, fontWeight: 600 }}>
-                <span>
-                  {argument.name}
-                  <span className="muted" style={{ fontWeight: 400 }}> — file</span>
-                </span>
-                <input
-                  type="file"
-                  onChange={e => setFiles({ ...files, [argument.name]: e.target.files?.[0] ?? null })} />
-              </label>
-            ))}
+            {fileArgs.map(argument => {
+              // Magic peculiarity: a multipart argument named "file" accepts
+              // MULTIPLE files, all transmitted as parts named "file".
+              const multiple = argument.name === 'file';
+              const selected = files[argument.name] ?? [];
+              return (
+                <div
+                  key={argument.name}
+                  style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, fontWeight: 600 }}>
+                  <span>
+                    {argument.name}
+                    <span className="muted" style={{ fontWeight: 400 }}>
+                      {multiple ? ' — one or more files' : ' — file'}
+                    </span>
+                  </span>
+                  <input
+                    type="file"
+                    multiple={multiple}
+                    onChange={e => {
+                      const picked = Array.from(e.target.files ?? []);
+                      setFiles({
+                        ...files,
+                        // The "file" argument accumulates across pickings.
+                        [argument.name]: multiple ? [...selected, ...picked] : picked,
+                      });
+                      if (multiple) {
+                        e.target.value = '';
+                      }
+                    }} />
+                  {multiple && selected.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                      {selected.map((file, index) => (
+                        <span className="chip" key={index}>
+                          {file.name}
+                          <span className="muted" style={{ fontWeight: 400 }}>
+                            {' '}{Math.ceil(file.size / 1024)} KB
+                          </span>
+                          <button
+                            title="Remove"
+                            onClick={() => setFiles({
+                              ...files,
+                              [argument.name]: selected.filter((_, i) => i !== index),
+                            })}>
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </>
       )}
