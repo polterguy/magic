@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './lib/AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
+import NoAccess from './pages/NoAccess';
 import Dashboard from './pages/Dashboard';
 import Playground from './pages/Playground';
 import Files from './pages/Files';
@@ -19,10 +20,18 @@ import Log from './pages/Log';
 
 export default function App() {
 
-  const { authenticated } = useAuth();
+  const { authenticated, isAdmin } = useAuth();
 
   if (!authenticated) {
     return <Login />;
+  }
+
+  /*
+   * Gate before the layout mounts — the layout opens a socket and the pages
+   * fetch on mount, and every one of those would fail for a non-admin.
+   */
+  if (!isAdmin) {
+    return <NoAccess />;
   }
 
   return (

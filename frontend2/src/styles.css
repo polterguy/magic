@@ -1160,3 +1160,33 @@ tr.vss-irrelevant td {
   width: 17px;
   height: 17px;
 }
+
+/* The no-access warning's exclamation mark. */
+.no-access-mark {
+  align-self: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #fbeaec;
+  color: var(--danger);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 62px;
+}
+
+/* "or" separator between password login and the OpenID providers. */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}

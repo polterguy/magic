@@ -17,6 +17,7 @@ import {
   loadBackend,
   saveBackend,
   clearBackend,
+  isAdminToken,
   rememberBackendUrl,
   tokenExpiration,
   tokenExpired,
@@ -26,7 +27,15 @@ import { authenticate, configureApi, refreshTicket } from './api';
 interface AuthState {
   backend: StoredBackend | null;
   authenticated: boolean;
+  /*
+   * Whether the signed-in user can actually use the dashboard. Every
+   * dashboard endpoint verifies root, so a user without root or admin is
+   * authenticated but unable to do anything — however they signed in.
+   */
+  isAdmin: boolean;
   login: (url: string, username: string, password: string) => Promise<void>;
+  // Signs in with a ticket the backend already issued, as OpenID login does.
+  loginWithTicket: (url: string, username: string, ticket: string) => void;
   logout: () => void;
 }
 
@@ -94,6 +103,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     applyBackend({ url, username, token: response.ticket });
   }, [applyBackend]);
 
+  const loginWithTicket = useCallback((url: string, username: string, ticket: string) => {
+    url = url.replace(/\/+$/, '');
+    rememberBackendUrl(url);
+    applyBackend({ url, username, token: ticket });
+  }, [applyBackend]);
+
   const logout = useCallback(() => {
     if (backend) {
       applyBackend({ ...backend, token: null });
@@ -104,7 +119,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{
       backend,
       authenticated: !!backend?.token,
+      isAdmin: !!backend?.token && isAdminToken(backend.token),
       login,
+      loginWithTicket,
       logout,
     }}>
       {children}

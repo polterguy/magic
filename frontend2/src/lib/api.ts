@@ -801,6 +801,53 @@ export function mlRequests(type: string, offset: number, limit: number) {
     '&order=created&direction=desc&ml_requests.type.eq=' + encodeURIComponent(type));
 }
 
+/*
+ * OpenID Connect. Both of these run before the user is signed in, and
+ * against a backend that isn't configured yet, so they take the URL
+ * explicitly and send no Authorization header.
+ */
+export interface OidcProvider {
+  name: string;
+  issuer: string;
+  nonce?: string;
+  url?: string;
+  client_id?: string;
+  response_type?: string;
+  scope?: string;
+}
+
+/*
+ * Providers the backend has configured — there may be none at all, or
+ * several, so the login screen renders whatever comes back.
+ */
+export async function openidProviders(backendUrl: string) {
+  const response = await fetch(
+    backendUrl.replace(/\/+$/, '') +
+    '/magic/system/auth/openid-providers?createNonce=true');
+  if (!response.ok) {
+    return [];
+  }
+  const text = await response.text();
+  return text === '' ? [] : JSON.parse(text) as OidcProvider[];
+}
+
+// Exchanges a provider's id_token for a Magic JWT.
+export async function openidLogin(backendUrl: string, token: string) {
+  const response = await fetch(
+    backendUrl.replace(/\/+$/, '') +
+    '/magic/system/auth/openid-login?token=' + encodeURIComponent(token));
+  if (!response.ok) {
+    let message = response.statusText;
+    try {
+      message = (await response.json()).message ?? message;
+    } catch {
+      // Non-JSON error body, statusText is the best we have.
+    }
+    throw new ApiError(response.status, message);
+  }
+  return await response.json() as { ticket: string };
+}
+
 export function openaiIsConfigured() {
   return http.get<{ result: boolean }>('/magic/system/openai/is-configured');
 }
