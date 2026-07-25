@@ -286,8 +286,10 @@ function InvokePanel(props: {
   const { endpoint } = props;
   const verb = endpoint.verb.toLowerCase();
   const usesQuery = verb === 'get' || verb === 'delete';
+  const isMultipart = endpoint.consumes?.includes('multipart/form-data') ?? false;
   const consumesJson = !endpoint.consumes || endpoint.consumes.includes('json');
   const [args, setArgs] = useState<Record<string, string>>({});
+  const [files, setFiles] = useState<Record<string, File | null>>({});
   const [payload, setPayload] = useState(() => samplePayload(endpoint));
   const [busy, setBusy] = useState(false);
   const [invokeError, setInvokeError] = useState('');
@@ -302,13 +304,20 @@ function InvokePanel(props: {
   const standardArgs = inputs.filter(argument => !argument.name.includes('.'));
   const filterArgs = inputs.filter(argument => argument.name.includes('.'));
 
+  /*
+   * Multipart endpoints declare file parts as wildcard arguments (file:*) —
+   * those become file pickers, the rest plain form fields.
+   */
+  const fileArgs = inputs.filter(argument => argument.type === '*');
+  const formFields = inputs.filter(argument => argument.type !== '*');
+
   const description = endpoint.description ?? '';
   const period = description.indexOf('. ');
   const shortDescription = period === -1 ? description : description.substring(0, period + 1);
 
-  // Socket endpoints and non-JSON payloads beyond text can't be invoked here.
+  // Socket endpoints and binary payloads can't be invoked from here.
   const canInvoke = verb !== 'socket' &&
-    (usesQuery || consumesJson ||
+    (usesQuery || isMultipart || consumesJson ||
       endpoint.consumes?.includes('hyperlambda') || endpoint.consumes?.startsWith('text/'));
 
   async function invoke() {
@@ -316,7 +325,7 @@ function InvokePanel(props: {
     setInvokeError('');
     try {
       let url = endpoint.path;
-      let body: string | undefined = undefined;
+      let body: string | FormData | undefined = undefined;
       if (usesQuery) {
         const parts: string[] = [];
         for (const argument of inputs) {
@@ -332,6 +341,21 @@ function InvokePanel(props: {
         if (parts.length > 0) {
           url += '?' + parts.join('&');
         }
+      } else if (isMultipart) {
+        const form = new FormData();
+        for (const argument of formFields) {
+          const value = args[argument.name];
+          if (value !== undefined && value !== '') {
+            form.append(argument.name, value);
+          }
+        }
+        for (const argument of fileArgs) {
+          const file = files[argument.name];
+          if (file) {
+            form.append(argument.name, file, file.name);
+          }
+        }
+        body = form;
       } else {
         body = payload;
       }
@@ -405,7 +429,37 @@ function InvokePanel(props: {
           )}
         </div>
       )}
-      {!usesQuery && (
+      {isMultipart && !usesQuery && (
+        <>
+          {formFields.length > 0 && (
+            <div style={argGrid}>
+              {formFields.map(argument => (
+                <ArgumentField
+                  key={argument.name}
+                  argument={argument}
+                  value={args[argument.name] ?? ''}
+                  onChange={value => setArgs({ ...args, [argument.name]: value })} />
+              ))}
+            </div>
+          )}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 12 }}>
+            {fileArgs.map(argument => (
+              <label
+                key={argument.name}
+                style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, fontWeight: 600 }}>
+                <span>
+                  {argument.name}
+                  <span className="muted" style={{ fontWeight: 400 }}> — file</span>
+                </span>
+                <input
+                  type="file"
+                  onChange={e => setFiles({ ...files, [argument.name]: e.target.files?.[0] ?? null })} />
+              </label>
+            ))}
+          </div>
+        </>
+      )}
+      {!usesQuery && !isMultipart && (
         <div style={{ height: 200, display: 'flex', flexDirection: 'column', marginBottom: 12 }}>
           <CodeEditor
             value={payload}

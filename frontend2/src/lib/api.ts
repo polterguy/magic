@@ -232,13 +232,14 @@ export function getHyperlambdaArguments(hyperlambda: string) {
  * error responses rather than throw.
  */
 async function requestRaw(
-  method: string, url: string, body?: string, contentType?: string, allowErrors = false) {
+  method: string, url: string, body?: string | FormData, contentType?: string, allowErrors = false) {
 
   const headers: Record<string, string> = {};
   if (bearerToken) {
     headers['Authorization'] = 'Bearer ' + bearerToken;
   }
-  if (body !== undefined) {
+  // FormData bodies set their own multipart content-type with boundary.
+  if (body !== undefined && !(body instanceof FormData)) {
     headers['Content-Type'] = contentType ?? 'application/json';
   }
   const started = performance.now();
@@ -278,7 +279,7 @@ export function evaluateWithArgs(hyperlambda: string, args: any) {
  * Error responses are returned, not thrown, so the invoker can display them.
  */
 export function invokeEndpoint(
-  verb: string, url: string, payload?: string, contentType?: string) {
+  verb: string, url: string, payload?: string | FormData, contentType?: string) {
   return requestRaw(verb.toUpperCase(), '/' + url, payload, contentType, true);
 }
 
