@@ -63,7 +63,7 @@ export default function Login() {
       .then(response => {
         // Back to whatever the user was trying to reach before signing in.
         navigate(pending.returnPath, { replace: true });
-        loginWithTicket(pending.backendUrl, '', response.ticket);
+        loginWithTicket(pending.backendUrl, response.ticket);
       })
       .catch(err => setError(err.message ?? 'Could not complete sign-in'))
       .finally(() => setBusy(false));

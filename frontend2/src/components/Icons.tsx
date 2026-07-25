@@ -246,3 +246,14 @@ export function ListIcon() {
     </svg>
   );
 }
+
+// A person inside a circle — distinct from UserIcon, which means "users".
+export function ProfileIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="10" r="3" />
+      <path d="M6.2 18.6a6 6 0 0 1 11.6 0" />
+    </svg>
+  );
+}

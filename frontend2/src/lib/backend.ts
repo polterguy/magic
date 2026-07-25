@@ -92,6 +92,16 @@ export function tokenExpired(token: string): boolean {
   return exp !== null && exp * 1000 < Date.now();
 }
 
+// The user a token belongs to, from its [unique_name] claim.
+export function tokenUsername(token: string): string {
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    return '';
+  }
+  const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+  return typeof payload.unique_name === 'string' ? payload.unique_name : '';
+}
+
 /*
  * Roles from the token's [role] claim. The claim is a bare string when the
  * user has one role and an array when they have several, so both shapes have

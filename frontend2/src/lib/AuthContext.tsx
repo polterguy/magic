@@ -18,6 +18,7 @@ import {
   saveBackend,
   clearBackend,
   isAdminToken,
+  tokenUsername,
   rememberBackendUrl,
   tokenExpiration,
   tokenExpired,
@@ -35,7 +36,7 @@ interface AuthState {
   isAdmin: boolean;
   login: (url: string, username: string, password: string) => Promise<void>;
   // Signs in with a ticket the backend already issued, as OpenID login does.
-  loginWithTicket: (url: string, username: string, ticket: string) => void;
+  loginWithTicket: (url: string, ticket: string) => void;
   logout: () => void;
 }
 
@@ -51,6 +52,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const stored = loadBackend();
     if (stored?.token && tokenExpired(stored.token)) {
       stored.token = null;
+    }
+    if (stored?.token && !stored.username) {
+      stored.username = tokenUsername(stored.token);
     }
     configureApi(stored?.url ?? '', stored?.token ?? null);
     return stored;
@@ -103,10 +107,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     applyBackend({ url, username, token: response.ticket });
   }, [applyBackend]);
 
-  const loginWithTicket = useCallback((url: string, username: string, ticket: string) => {
+  const loginWithTicket = useCallback((url: string, ticket: string) => {
     url = url.replace(/\/+$/, '');
     rememberBackendUrl(url);
-    applyBackend({ url, username, token: ticket });
+    // Whoever the ticket belongs to — the caller has no better source.
+    applyBackend({ url, username: tokenUsername(ticket), token: ticket });
   }, [applyBackend]);
 
   const logout = useCallback(() => {

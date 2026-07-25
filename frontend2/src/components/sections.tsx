@@ -14,6 +14,7 @@ import {
   HomeIcon,
   ListIcon,
   PlayIcon,
+  ProfileIcon,
   PuzzleIcon,
   SparkIcon,
   TerminalIcon,
@@ -109,6 +110,13 @@ export const SECTIONS: Section[] = [
     Icon: SlidersIcon,
     description: 'Edit your appsettings.json directly — connection strings, SMTP, ' +
       'authentication and everything else your server runs on.',
+  },
+  {
+    to: '/user-profile',
+    label: 'Profile',
+    Icon: ProfileIcon,
+    description: 'Change your password, and generate long-lived access tokens ' +
+      'for pipelines, service accounts and integrations.',
   },
   {
     to: '/log',

@@ -1,16 +1,32 @@
 import SearchInput from '../components/SearchInput';
 import Banner from '../components/Banner';
 import { useEffect, useMemo, useState } from 'react';
+import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { Modal, useDialog } from '../components/Dialogs';
 import { availablePlugins, installedPlugins, installPlugin } from '../lib/api';
 
-// Card intro: render the markdown description to HTML, extract its plain text,
-// and show the first sentence, capped at 150 characters.
+/*
+ * Descriptions come from the Bazar's manifests, which are markdown, so they
+ * have to be rendered as HTML rather than escaped as text — which makes them
+ * the one place in the dashboard where remote content reaches the DOM as
+ * markup. Markdown permits raw HTML, so a manifest can carry a script tag or
+ * an onerror attribute, and every description is put through this first.
+ */
+function safeHtml(description: string) {
+  return DOMPurify.sanitize(marked.parse(description ?? '') as string);
+}
+
+// Card intro: render the markdown description, extract its plain text, and
+// show the first sentence, capped at 150 characters.
 function intro(description: string) {
-  const div = document.createElement('div');
-  div.innerHTML = marked.parse(description ?? '') as string;
-  const text = (div.textContent ?? '').replace(/\s+/g, ' ').trim();
+  /*
+   * Parsed into an inert document rather than assigned to an element's
+   * innerHTML: an inert document neither runs scripts nor fetches anything,
+   * so an <img onerror> can't fire while we're only after the text.
+   */
+  const parsed = new DOMParser().parseFromString(safeHtml(description), 'text/html');
+  const text = (parsed.body.textContent ?? '').replace(/\s+/g, ' ').trim();
   const period = text.indexOf('.');
   const sentence = period === -1 ? text : text.substring(0, period + 1);
   return sentence.length > 150 ? sentence.substring(0, 150) + '…' : sentence;
@@ -133,7 +149,7 @@ export default function Plugins() {
           <div
             className="markdown-body"
             style={{ maxHeight: '60vh', overflowY: 'auto' }}
-            dangerouslySetInnerHTML={{ __html: marked.parse(details.description ?? '') as string }} />
+            dangerouslySetInnerHTML={{ __html: safeHtml(details.description) }} />
           <div className="modal-actions">
             <button className="btn btn-secondary" onClick={() => setDetails(null)}>Close</button>
             {!installed.has(details.name) && (

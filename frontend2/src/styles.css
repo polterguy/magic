@@ -144,9 +144,16 @@ body {
   gap: 8px;
 }
 
+/* Links to the profile page, so it highlights on hover like a navigation item. */
 .backend-info {
-  padding: 0 10px;
+  display: block;
+  padding: 6px 10px;
+  border-radius: 8px;
   overflow: hidden;
+}
+
+.backend-info:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .backend-user {
