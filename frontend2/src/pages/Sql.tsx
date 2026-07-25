@@ -78,7 +78,7 @@ export default function Sql() {
   return (
     <>
       <div className="page-header">
-        <h1>SQL</h1>
+        <h1>SQL Studio</h1>
         <p>Execute SQL towards your databases</p>
       </div>
       <div className="toolbar">

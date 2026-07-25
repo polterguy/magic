@@ -6,12 +6,12 @@ import { ChevronIcon } from './Icons';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: '⌂' },
-  { to: '/playground', label: 'Playground', icon: '▷' },
-  { to: '/files', label: 'Files', icon: '🗀' },
-  { to: '/sql', label: 'SQL', icon: '⛁' },
+  { to: '/hyper-ide', label: 'Hyper IDE', icon: '🗀' },
+  { to: '/hyperlambda-playground', label: 'Playground', icon: '▷' },
+  { to: '/sql-studio', label: 'SQL Studio', icon: '⛁' },
   { to: '/endpoints', label: 'Endpoints', icon: '⇄' },
-  { to: '/users', label: 'Users & roles', icon: '👤' },
-  { to: '/tasks', label: 'Tasks', icon: '🕒' },
+  { to: '/user-roles-management', label: 'Users & roles', icon: '👤' },
+  { to: '/task-manager', label: 'Task Manager', icon: '🕒' },
   { to: '/log', label: 'Log', icon: '≣' },
 ];
 

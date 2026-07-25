@@ -347,7 +347,7 @@ export default function Files() {
     <>
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div>
-          <h1>Files</h1>
+          <h1>Hyper IDE</h1>
           <p>Browse and edit any file on your server</p>
         </div>
         <span className="spacer" style={{ flex: 1 }} />

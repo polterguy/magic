@@ -52,10 +52,10 @@ export default function Dashboard() {
       <div className="card">
         <h2 style={{ marginTop: 0 }}>Welcome</h2>
         <p className="muted">
-          This is the React edition of the Magic dashboard. Use the Playground to
-          execute Hyperlambda, Files to edit anything on your server, SQL to query
-          your databases, and the manage sections to administer endpoints, users,
-          tasks, and your server log.
+          This is the React edition of the Magic dashboard. Use the Hyperlambda
+          Playground to execute Hyperlambda, Hyper IDE to edit anything on your
+          server, SQL Studio to query your databases, and the manage sections to
+          administer endpoints, users, tasks, and your server log.
         </p>
       </div>
     </>

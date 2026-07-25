@@ -100,7 +100,7 @@ export default function Playground() {
   return (
     <>
       <div className="page-header">
-        <h1>Hyperlambda playground</h1>
+        <h1>Playground</h1>
         <p>Execute Hyperlambda on your server — F5 or the Run button executes</p>
       </div>
       <div className="toolbar">

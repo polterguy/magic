@@ -23,12 +23,12 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/playground" element={<Playground />} />
-        <Route path="/files" element={<Files />} />
-        <Route path="/sql" element={<Sql />} />
+        <Route path="/hyperlambda-playground" element={<Playground />} />
+        <Route path="/hyper-ide" element={<Files />} />
+        <Route path="/sql-studio" element={<Sql />} />
         <Route path="/endpoints" element={<Endpoints />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/tasks" element={<Tasks />} />
+        <Route path="/user-roles-management" element={<Users />} />
+        <Route path="/task-manager" element={<Tasks />} />
         <Route path="/log" element={<Log />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

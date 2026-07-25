@@ -172,7 +172,7 @@ export default function Tasks() {
   return (
     <>
       <div className="page-header">
-        <h1>Tasks</h1>
+        <h1>Task Manager</h1>
         <p>{count} scheduled or persisted tasks</p>
       </div>
       {feedback && (

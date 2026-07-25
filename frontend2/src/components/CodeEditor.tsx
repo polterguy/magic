@@ -8,6 +8,7 @@ import CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/addon/display/fullscreen.css';
+import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/mode/sql/sql';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/htmlmixed/htmlmixed';
@@ -34,7 +35,9 @@ function ensureVocabulary() {
     http.get<string[]>('/magic/system/evaluator/slots'),
   ]).then(([vocabulary, slots]) => {
     (window as any)._vocabulary = vocabulary;
-    (window as any)._slot = slots;
+    // The hint helper reads _slots to offer [execute:...] completions
+    // for dynamic slots.
+    (window as any)._slots = slots;
   });
   return vocabularyPromise;
 }
@@ -87,6 +90,7 @@ export default function CodeEditor(props: CodeEditorProps) {
             cm.setOption('fullScreen', false);
           }
         },
+        'Ctrl-Space': 'autocomplete',
         'Alt-S': () => callbacks.current.onSave?.(),
         'Ctrl-S': () => callbacks.current.onSave?.(),
         'Cmd-S': () => callbacks.current.onSave?.(),
