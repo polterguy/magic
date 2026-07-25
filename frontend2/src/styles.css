@@ -40,6 +40,37 @@ body {
 .shell {
   display: flex;
   height: 100%;
+  position: relative;
+}
+
+/* Collapses/expands the navigation sidebar. */
+.nav-toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  width: 18px;
+  height: 52px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  background: var(--surface);
+  color: var(--text-soft);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-toggle:hover {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.nav-toggle svg {
+  width: 12px;
+  height: 12px;
 }
 
 .sidebar {
@@ -347,6 +378,11 @@ tr.clickable:hover td { background: var(--accent-soft); }
   font-size: 13px;
 }
 
+/* Alt-M fullscreen must sit above the sidebar and nav toggle. */
+.CodeMirror-fullscreen {
+  z-index: 60;
+}
+
 .editor-split {
   display: flex;
   gap: 16px;
@@ -380,13 +416,31 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .file-tree {
-  width: 300px;
   flex-shrink: 0;
   overflow: auto;
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 12px;
+}
+
+.tree-filter {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.splitter {
+  width: 5px;
+  flex-shrink: 0;
+  cursor: col-resize;
+  border-radius: 3px;
+  margin: 0 -2px;
+}
+
+.splitter:hover {
+  background: var(--accent-soft);
 }
 
 .file-editor {
@@ -403,11 +457,13 @@ tr.clickable:hover td { background: var(--accent-soft); }
 .tree-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 6px;
-  border-radius: 6px;
+  gap: 4px;
+  height: 24px;
+  padding: 0 4px;
+  border-radius: 5px;
   cursor: pointer;
   white-space: nowrap;
+  font-size: 13px;
 }
 
 .tree-row:hover { background: var(--accent-soft); }
@@ -417,8 +473,98 @@ tr.clickable:hover td { background: var(--accent-soft); }
   color: #fff;
 }
 
+.tree-chevron {
+  width: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+}
+
+.tree-chevron svg {
+  width: 10px;
+  height: 10px;
+}
+
+.tree-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-soft);
+}
+
+.tree-icon.folder { color: var(--accent); }
+
+.tree-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tree-row.selected .tree-chevron,
+.tree-row.selected .tree-icon { color: #fff; }
+
+.tree-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .tree-children {
-  margin-left: 16px;
+  margin-left: 9px;
+  padding-left: 4px;
+  border-left: 1px solid var(--border);
+}
+
+/* Root level gets no indentation at all. */
+.tree-children.root {
+  margin-left: 0;
+  padding-left: 0;
+  border-left: none;
+}
+
+/* Row actions stay invisible until the row is hovered. */
+.row-actions {
+  display: flex;
+  gap: 1px;
+  opacity: 0;
+}
+
+.tree-row:hover .row-actions {
+  opacity: 1;
+}
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  padding: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--text-soft);
+}
+
+.icon-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.icon-btn:hover {
+  background: rgba(95, 56, 249, 0.14);
+  color: var(--accent-dark);
+}
+
+.icon-btn.danger:hover {
+  background: #fbeaec;
+  color: var(--danger);
+}
+
+.tree-row.selected .icon-btn { color: rgba(255, 255, 255, 0.85); }
+
+.tree-row.selected .icon-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 /* ---------- Dashboard ---------- */
@@ -469,19 +615,50 @@ pre.result-json {
   padding-top: 12px;
 }
 
-dialog.modal {
-  border: none;
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 16, 41, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-box {
+  background: var(--surface);
   border-radius: 14px;
-  padding: 26px;
-  width: 460px;
+  padding: 24px;
+  width: 420px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
-dialog.modal::backdrop {
-  background: rgba(20, 16, 41, 0.45);
+.modal-box h2 {
+  margin: 0 0 8px 0;
+  font-size: 17px;
 }
 
-.modal h2 { margin-top: 0; }
+.modal-box p {
+  margin: 0 0 6px 0;
+  color: var(--text-soft);
+  overflow-wrap: break-word;
+}
+
+.modal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
 
 .form-grid {
   display: flex;

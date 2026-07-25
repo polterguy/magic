@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useDialog } from '../components/Dialogs';
 import {
   Role,
   User,
@@ -26,6 +27,7 @@ export default function Users() {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedUserRoles, setSelectedUserRoles] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
+  const { confirm, prompt } = useDialog();
 
   const refresh = useCallback(async () => {
     try {
@@ -57,11 +59,16 @@ export default function Users() {
   }
 
   async function addUser() {
-    const username = window.prompt('Username');
+    const username = await prompt({ title: 'New user', label: 'Username' });
     if (!username) {
       return;
     }
-    const password = window.prompt('Password');
+    const password = await prompt({
+      title: 'New user',
+      message: username,
+      label: 'Password',
+      password: true,
+    });
     if (!password) {
       return;
     }
@@ -75,7 +82,12 @@ export default function Users() {
   }
 
   async function removeUser(username: string) {
-    if (!window.confirm('Delete user ' + username + '?')) {
+    if (!await confirm({
+      title: 'Delete user?',
+      message: username,
+      confirmText: 'Delete',
+      danger: true,
+    })) {
       return;
     }
     try {
@@ -106,11 +118,15 @@ export default function Users() {
   }
 
   async function addRole() {
-    const name = window.prompt('Role name');
+    const name = await prompt({ title: 'New role', label: 'Role name' });
     if (!name) {
       return;
     }
-    const description = window.prompt('Description') ?? '';
+    const description = await prompt({
+      title: 'New role',
+      message: name,
+      label: 'Description',
+    }) ?? '';
     try {
       await createRole(name, description);
       await refresh();
@@ -120,7 +136,12 @@ export default function Users() {
   }
 
   async function removeRole(name: string) {
-    if (!window.confirm('Delete role ' + name + '?')) {
+    if (!await confirm({
+      title: 'Delete role?',
+      message: name,
+      confirmText: 'Delete',
+      danger: true,
+    })) {
       return;
     }
     try {

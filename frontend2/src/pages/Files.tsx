@@ -1,16 +1,40 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import CodeEditor, { modeForFile } from '../components/CodeEditor';
+import {
+  ChevronIcon,
+  FileIcon,
+  FilePlusIcon,
+  FolderIcon,
+  FolderPlusIcon,
+  PencilIcon,
+  TrashIcon,
+} from '../components/Icons';
+import { useDialog } from '../components/Dialogs';
 import {
   createFolder,
   deleteFile,
   deleteFolder,
-  evaluate,
+  evaluateWithArgs,
+  getHyperlambdaArguments,
   listFilesRecursively,
   listFoldersRecursively,
   loadFile,
   renamePath,
   saveFile,
 } from '../lib/api';
+
+/*
+ * Converts a form value to the argument type the Hyperlambda expects.
+ */
+function convertArgument(value: string, type: string) {
+  if (/^(u?int|u?long|u?short|decimal|double|float)$/.test(type)) {
+    return Number(value);
+  }
+  if (type === 'bool') {
+    return value === 'true' || value === '1' || value === 'yes';
+  }
+  return value;
+}
 
 function parentOf(path: string) {
   const trimmed = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
@@ -30,10 +54,14 @@ export default function Files() {
   const [files, setFiles] = useState<string[]>([]);
   const [systemFiles, setSystemFiles] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [filter, setFilter] = useState('');
+  const [treeWidth, setTreeWidth] = useState(340);
   const [selectedFile, setSelectedFile] = useState('');
   const [content, setContent] = useState('');
   const [dirty, setDirty] = useState(false);
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
+  const [executeResult, setExecuteResult] = useState<string | null>(null);
+  const { confirm, prompt, form } = useDialog();
 
   const loadTree = useCallback(async (sys: boolean) => {
     try {
@@ -51,6 +79,39 @@ export default function Files() {
   useEffect(() => {
     loadTree(systemFiles);
   }, [loadTree, systemFiles]);
+
+  /*
+   * When a filter is active, a file shows if its name matches, and a folder
+   * shows if its name matches or it has a visible descendant — with every
+   * visible folder force-expanded.
+   */
+  const query = filter.trim().toLowerCase();
+
+  const visibleFiles = useMemo(() =>
+    query ? files.filter(file => nameOf(file).toLowerCase().includes(query)) : files,
+    [files, query]);
+
+  const visibleFolders = useMemo(() => {
+    if (!query) {
+      return null;
+    }
+    const set = new Set<string>();
+    const addWithAncestors = (folder: string) => {
+      while (folder !== '/' && folder !== '') {
+        set.add(folder);
+        folder = parentOf(folder);
+      }
+    };
+    for (const folder of folders) {
+      if (nameOf(folder).toLowerCase().includes(query)) {
+        addWithAncestors(folder);
+      }
+    }
+    for (const file of visibleFiles) {
+      addWithAncestors(parentOf(file));
+    }
+    return set;
+  }, [folders, visibleFiles, query]);
 
   function show(text: string, isError = false) {
     setFeedback({ text, isError });
@@ -70,7 +131,12 @@ export default function Files() {
   }
 
   async function openFile(path: string) {
-    if (dirty && !window.confirm('Discard unsaved changes?')) {
+    if (dirty && !await confirm({
+      title: 'Discard unsaved changes?',
+      message: selectedFile + ' has unsaved changes.',
+      confirmText: 'Discard',
+      danger: true,
+    })) {
       return;
     }
     try {
@@ -96,20 +162,57 @@ export default function Files() {
     }
   }
 
+  /*
+   * Executes the open file the way the old Hyper IDE does: extract its
+   * [.arguments] collection, let the user parametrise the invocation, then
+   * run it through evaluate-with-args — which also handles endpoint files.
+   */
   async function execute() {
     if (!selectedFile.endsWith('.hl')) {
       return;
     }
     try {
-      const response = await evaluate(content);
-      show('Executed — result: ' + (response === '' ? 'OK' : response));
+      const argSpec = await getHyperlambdaArguments(content) ?? {};
+      const names = Object.keys(argSpec);
+      let args: any = null;
+      if (names.length > 0) {
+        const values = await form({
+          title: 'Parametrise invocation',
+          message: selectedFile,
+          confirmText: 'Execute',
+          fields: names.map(name => ({
+            name,
+            type: argSpec[name].type,
+            mandatory: argSpec[name].mandatory,
+          })),
+        });
+        if (!values) {
+          return;
+        }
+        args = {};
+        for (const name of names) {
+          const value = values[name];
+          if (value === undefined || value === '') {
+            continue;
+          }
+          args[name] = convertArgument(value, argSpec[name].type);
+        }
+      }
+      const response = await evaluateWithArgs(content, args);
+      let display = response === '' ? 'OK — no result' : response;
+      try {
+        display = JSON.stringify(JSON.parse(response), null, 2);
+      } catch {
+        // Not JSON — show as-is.
+      }
+      setExecuteResult(display);
     } catch (err: any) {
       show(err.message, true);
     }
   }
 
   async function newFile(folder: string) {
-    const name = window.prompt('New file name');
+    const name = await prompt({ title: 'New file', message: folder, label: 'File name' });
     if (!name) {
       return;
     }
@@ -124,7 +227,7 @@ export default function Files() {
   }
 
   async function newFolder(folder: string) {
-    const name = window.prompt('New folder name');
+    const name = await prompt({ title: 'New folder', message: folder, label: 'Folder name' });
     if (!name) {
       return;
     }
@@ -137,7 +240,12 @@ export default function Files() {
   }
 
   async function removeFile(path: string) {
-    if (!window.confirm('Delete ' + path + '?')) {
+    if (!await confirm({
+      title: 'Delete file?',
+      message: path,
+      confirmText: 'Delete',
+      danger: true,
+    })) {
       return;
     }
     try {
@@ -154,7 +262,12 @@ export default function Files() {
   }
 
   async function removeFolder(path: string) {
-    if (!window.confirm('Delete folder ' + path + ' and everything in it?')) {
+    if (!await confirm({
+      title: 'Delete folder?',
+      message: path + ' and everything in it will be deleted.',
+      confirmText: 'Delete',
+      danger: true,
+    })) {
       return;
     }
     try {
@@ -167,7 +280,12 @@ export default function Files() {
 
   async function rename(path: string, isFolder: boolean) {
     const oldName = nameOf(path);
-    const name = window.prompt('New name', oldName);
+    const name = await prompt({
+      title: 'Rename',
+      message: path,
+      label: 'New name',
+      initial: oldName,
+    });
     if (!name || name === oldName) {
       return;
     }
@@ -184,31 +302,38 @@ export default function Files() {
   }
 
   function renderChildren(path: string): JSX.Element {
-    const childFolders = folders.filter(folder => parentOf(folder) === path);
-    const childFiles = files.filter(file => parentOf(file) === path);
+    const childFolders = folders.filter(folder =>
+      parentOf(folder) === path && (!visibleFolders || visibleFolders.has(folder)));
+    const childFiles = visibleFiles.filter(file => parentOf(file) === path);
+    const isOpen = (folder: string) => query ? true : expanded.has(folder);
     return (
-      <div className="tree-children">
+      <div className={'tree-children' + (path === '/' ? ' root' : '')}>
         {childFolders.map(folder => (
           <div className="tree-node" key={folder}>
-            <div className="tree-row" onClick={() => toggle(folder)}>
-              <span>{expanded.has(folder) ? '▾' : '▸'} 🗀</span>
-              <span style={{ flex: 1 }}>{nameOf(folder)}</span>
+            <div className="tree-row" title={folder} onClick={() => toggle(folder)}>
+              <span className="tree-chevron">
+                <ChevronIcon open={isOpen(folder)} />
+              </span>
+              <span className="tree-icon folder"><FolderIcon /></span>
+              <span className="tree-name">{nameOf(folder)}</span>
               <FolderActions
                 onNewFile={() => newFile(folder)}
                 onNewFolder={() => newFolder(folder)}
                 onRename={() => rename(folder, true)}
                 onDelete={() => removeFolder(folder)} />
             </div>
-            {expanded.has(folder) && renderChildren(folder)}
+            {isOpen(folder) && renderChildren(folder)}
           </div>
         ))}
         {childFiles.map(file => (
           <div
             className={'tree-row' + (file === selectedFile ? ' selected' : '')}
             key={file}
+            title={file}
             onClick={() => openFile(file)}>
-            <span>🗎</span>
-            <span style={{ flex: 1 }}>{nameOf(file)}</span>
+            <span className="tree-chevron" />
+            <span className="tree-icon"><FileIcon /></span>
+            <span className="tree-name">{nameOf(file)}</span>
             <FileActions
               onRename={e => { e.stopPropagation(); rename(file, false); }}
               onDelete={e => { e.stopPropagation(); removeFile(file); }} />
@@ -220,9 +345,20 @@ export default function Files() {
 
   return (
     <>
-      <div className="page-header">
-        <h1>Files</h1>
-        <p>Browse and edit any file on your server</p>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div>
+          <h1>Files</h1>
+          <p>Browse and edit any file on your server</p>
+        </div>
+        <span className="spacer" style={{ flex: 1 }} />
+        <span className="mono">
+          {selectedFile || 'No file open'}{dirty ? ' •' : ''}
+        </span>
+        {selectedFile.endsWith('.hl') &&
+          <button className="btn btn-secondary btn-small" onClick={execute}>▷ Execute</button>}
+        <button className="btn btn-small" onClick={save} disabled={!selectedFile || !dirty}>
+          Save
+        </button>
       </div>
       {feedback && (
         <div
@@ -232,36 +368,48 @@ export default function Files() {
         </div>
       )}
       <div className="files-layout">
-        <div className="file-tree">
-          <label
-            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '2px 6px 10px' }}
-            title="Also show /system/, /misc/, /data/ and /config/ — be careful!">
-            <input
-              type="checkbox"
-              checked={systemFiles}
-              onChange={e => setSystemFiles(e.target.checked)} />
-            Show system files
-          </label>
-          <div className="tree-row">
-            <span>🗀</span>
-            <span style={{ flex: 1 }}><strong>/</strong></span>
-            <FolderActions
-              onNewFile={() => newFile('/')}
-              onNewFolder={() => newFolder('/')} />
+        <div className="file-tree" style={{ width: treeWidth }}>
+          <input
+            type="text"
+            className="tree-filter"
+            placeholder="Filter files…"
+            value={filter}
+            onChange={e => setFilter(e.target.value)} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '2px 4px 8px' }}>
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}
+              title="Also show /system/, /misc/, /data/ and /config/ — be careful!">
+              <input
+                type="checkbox"
+                checked={systemFiles}
+                onChange={e => setSystemFiles(e.target.checked)} />
+              Show system files
+            </label>
+            <button className="icon-btn" title="New file in /" onClick={() => newFile('/')}>
+              <FilePlusIcon />
+            </button>
+            <button className="icon-btn" title="New folder in /" onClick={() => newFolder('/')}>
+              <FolderPlusIcon />
+            </button>
           </div>
           {renderChildren('/')}
         </div>
+        <div
+          className="splitter"
+          onMouseDown={event => {
+            event.preventDefault();
+            const startX = event.clientX;
+            const startWidth = treeWidth;
+            const move = (ev: MouseEvent) =>
+              setTreeWidth(Math.max(220, Math.min(640, startWidth + ev.clientX - startX)));
+            const up = () => {
+              window.removeEventListener('mousemove', move);
+              window.removeEventListener('mouseup', up);
+            };
+            window.addEventListener('mousemove', move);
+            window.addEventListener('mouseup', up);
+          }} />
         <div className="file-editor">
-          <div className="toolbar">
-            <span className="mono" style={{ flex: 1 }}>
-              {selectedFile || 'No file open'}{dirty ? ' •' : ''}
-            </span>
-            {selectedFile.endsWith('.hl') &&
-              <button className="btn btn-secondary btn-small" onClick={execute}>▷ Execute</button>}
-            <button className="btn btn-small" onClick={save} disabled={!selectedFile || !dirty}>
-              Save
-            </button>
-          </div>
           {selectedFile ? (
             <CodeEditor
               value={content}
@@ -276,6 +424,23 @@ export default function Files() {
           )}
         </div>
       </div>
+      {executeResult !== null && (
+        <div
+          className="overlay"
+          onMouseDown={event => {
+            if (event.target === event.currentTarget) {
+              setExecuteResult(null);
+            }
+          }}>
+          <div className="modal-box" style={{ width: 760, maxWidth: '90vw' }}>
+            <h2>Execution result</h2>
+            <pre className="result-json" style={{ maxHeight: '60vh' }}>{executeResult}</pre>
+            <div className="modal-actions">
+              <button className="btn" onClick={() => setExecuteResult(null)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -287,13 +452,13 @@ function FolderActions(props: {
   onDelete?: () => void;
 }) {
   return (
-    <span onClick={e => e.stopPropagation()} style={{ display: 'flex', gap: 4 }}>
-      <button className="btn btn-secondary btn-small" title="New file" onClick={props.onNewFile}>+🗎</button>
-      <button className="btn btn-secondary btn-small" title="New folder" onClick={props.onNewFolder}>+🗀</button>
+    <span className="row-actions" onClick={e => e.stopPropagation()}>
+      <button className="icon-btn" title="New file" onClick={props.onNewFile}><FilePlusIcon /></button>
+      <button className="icon-btn" title="New folder" onClick={props.onNewFolder}><FolderPlusIcon /></button>
       {props.onRename &&
-        <button className="btn btn-secondary btn-small" title="Rename" onClick={props.onRename}>✎</button>}
+        <button className="icon-btn" title="Rename" onClick={props.onRename}><PencilIcon /></button>}
       {props.onDelete &&
-        <button className="btn btn-danger btn-small" title="Delete" onClick={props.onDelete}>✕</button>}
+        <button className="icon-btn danger" title="Delete" onClick={props.onDelete}><TrashIcon /></button>}
     </span>
   );
 }
@@ -303,9 +468,9 @@ function FileActions(props: {
   onDelete: (e: React.MouseEvent) => void;
 }) {
   return (
-    <span style={{ display: 'flex', gap: 4 }}>
-      <button className="btn btn-secondary btn-small" title="Rename" onClick={props.onRename}>✎</button>
-      <button className="btn btn-danger btn-small" title="Delete" onClick={props.onDelete}>✕</button>
+    <span className="row-actions">
+      <button className="icon-btn" title="Rename" onClick={props.onRename}><PencilIcon /></button>
+      <button className="icon-btn danger" title="Delete" onClick={props.onDelete}><TrashIcon /></button>
     </span>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
+import { useDialog } from '../components/Dialogs';
 import { evaluate, listFiles, loadFile, saveFile } from '../lib/api';
 
 const DEFAULT_CODE = `/*
@@ -18,6 +19,7 @@ export default function Playground() {
   const [busy, setBusy] = useState(false);
   const [snippets, setSnippets] = useState<string[]>([]);
   const [selectedSnippet, setSelectedSnippet] = useState('');
+  const { prompt } = useDialog();
 
   useEffect(() => {
     listFiles('/etc/snippets/')
@@ -75,7 +77,11 @@ export default function Playground() {
     const suggestion = selectedSnippet
       ? selectedSnippet.substring(selectedSnippet.lastIndexOf('/') + 1).replace(/\.hl$/, '')
       : '';
-    const name = window.prompt('Snippet name', suggestion);
+    const name = await prompt({
+      title: 'Save snippet',
+      label: 'Snippet name',
+      initial: suggestion,
+    });
     if (!name) {
       return;
     }

@@ -193,6 +193,24 @@ export function evaluate(hyperlambda: string) {
 }
 
 /*
+ * Returns the [.arguments] collection of the given Hyperlambda as
+ * {name: {type, mandatory?}}, or null if the code takes no arguments.
+ */
+export function getHyperlambdaArguments(hyperlambda: string) {
+  return http.post<Record<string, { type: string; mandatory?: boolean }> | null>(
+    '/magic/system/evaluator/get-arguments', { hyperlambda });
+}
+
+/*
+ * Executes Hyperlambda decorated with the given arguments — this is how
+ * endpoint files are executed, since plain evaluate refuses them.
+ */
+export function evaluateWithArgs(hyperlambda: string, args: any) {
+  return request<string>(
+    'POST', '/magic/system/evaluator/evaluate-with-args', { hyperlambda, args }, { text: true });
+}
+
+/*
  * SQL.
  */
 

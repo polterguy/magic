@@ -6,6 +6,8 @@
 import { useEffect, useRef } from 'react';
 import CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
+import 'codemirror/addon/display/fullscreen';
+import 'codemirror/addon/display/fullscreen.css';
 import 'codemirror/mode/sql/sql';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/htmlmixed/htmlmixed';
@@ -75,7 +77,17 @@ export default function CodeEditor(props: CodeEditorProps) {
       tabSize: 3,
       indentUnit: 3,
       indentWithTabs: false,
+      // Same shortcut map as the old dashboard: Alt-M fullscreen,
+      // Alt-S save, F5 execute. Ctrl-S/Cmd-S kept as aliases for save.
       extraKeys: {
+        'Alt-M': (cm: CodeMirror.Editor) =>
+          cm.setOption('fullScreen', !cm.getOption('fullScreen')),
+        Esc: (cm: CodeMirror.Editor) => {
+          if (cm.getOption('fullScreen')) {
+            cm.setOption('fullScreen', false);
+          }
+        },
+        'Alt-S': () => callbacks.current.onSave?.(),
         'Ctrl-S': () => callbacks.current.onSave?.(),
         'Cmd-S': () => callbacks.current.onSave?.(),
         F5: () => callbacks.current.onExecute?.(),
@@ -83,7 +95,11 @@ export default function CodeEditor(props: CodeEditorProps) {
       },
     });
     instance.setSize('100%', callbacks.current.height ?? '100%');
-    instance.on('change', () => {
+    instance.on('change', (_, change) => {
+      // Programmatic setValue (e.g. opening a file) is not a user edit.
+      if (change.origin === 'setValue') {
+        return;
+      }
       callbacks.current.onChange?.(instance.getValue());
     });
     editor.current = instance;

@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
+import { ChevronIcon } from './Icons';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: '⌂' },
@@ -18,6 +19,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   const { backend, logout } = useAuth();
   const [version, setVersion] = useState('');
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     getVersion().then(response => setVersion(response.version)).catch(() => {});
@@ -25,7 +27,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="shell">
-      <aside className="sidebar">
+      {!collapsed && <aside className="sidebar">
         <div className="brand">
           <span className="brand-magic">magic</span>
           <span className="brand-version">{version}</span>
@@ -49,7 +51,19 @@ export default function Layout({ children }: { children: ReactNode }) {
           </div>
           <button className="btn btn-ghost" onClick={logout}>Logout</button>
         </div>
-      </aside>
+      </aside>}
+      <button
+        className="nav-toggle"
+        style={{ left: collapsed ? 0 : 220 }}
+        title={collapsed ? 'Show navigation' : 'Hide navigation'}
+        onClick={() => setCollapsed(!collapsed)}>
+        <span style={{
+          display: 'flex',
+          transform: collapsed ? undefined : 'rotate(180deg)',
+        }}>
+          <ChevronIcon />
+        </span>
+      </button>
       <main className="content">
         {children}
       </main>

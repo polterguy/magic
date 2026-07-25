@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
+import { useDialog } from '../components/Dialogs';
 import {
   Task,
   countTasks,
@@ -32,6 +33,7 @@ export default function Tasks() {
   const [isNew, setIsNew] = useState(false);
   const [newId, setNewId] = useState('');
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
+  const { confirm, prompt } = useDialog();
 
   const refresh = useCallback(async () => {
     try {
@@ -92,7 +94,12 @@ export default function Tasks() {
   }
 
   async function remove(task: Task) {
-    if (!window.confirm('Delete task ' + task.id + '?')) {
+    if (!await confirm({
+      title: 'Delete task?',
+      message: task.id,
+      confirmText: 'Delete',
+      danger: true,
+    })) {
       return;
     }
     try {
@@ -119,14 +126,21 @@ export default function Tasks() {
     if (!selected) {
       return;
     }
-    const repeats = window.prompt(
-      'Repetition pattern (e.g. 5.seconds, 00.05.00, or leave empty for one-shot)');
+    const repeats = await prompt({
+      title: 'Schedule task',
+      message: 'Repetition pattern (e.g. 5.seconds or 00.05.00) — leave empty for a one-shot schedule.',
+      label: 'Repeats',
+    });
     if (repeats === null) {
       return;
     }
     let due: string | undefined = undefined;
     if (!repeats) {
-      const dueInput = window.prompt('Due date (ISO format, e.g. 2026-08-01T12:00:00)');
+      const dueInput = await prompt({
+        title: 'Schedule task',
+        message: 'When should the task execute?',
+        label: 'Due date (ISO format, e.g. 2026-08-01T12:00:00)',
+      });
       if (!dueInput) {
         return;
       }
