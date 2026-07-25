@@ -13,6 +13,7 @@ export default function Playground() {
 
   const [code, setCode] = useState(DEFAULT_CODE);
   const [result, setResult] = useState('');
+  const [resultMode, setResultMode] = useState('hyperlambda');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [snippets, setSnippets] = useState<string[]>([]);
@@ -28,8 +29,28 @@ export default function Playground() {
     setBusy(true);
     setError('');
     try {
-      const response = await evaluate(code);
-      setResult(response.result ?? '');
+      /*
+       * When the executed Hyperlambda returns nothing, the endpoint answers
+       * {"result": "<hyperlambda>"} — unwrap and display as Hyperlambda.
+       * Anything else is whatever the code returned — display raw.
+       */
+      const raw = await evaluate(code);
+      let display = raw;
+      let mode = 'text/plain';
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object' &&
+            typeof parsed.result === 'string' && Object.keys(parsed).length === 1) {
+          display = parsed.result;
+          mode = 'hyperlambda';
+        } else {
+          mode = 'application/json';
+        }
+      } catch {
+        // Not JSON — scalar return, keep the raw text.
+      }
+      setResult(display);
+      setResultMode(mode);
     } catch (err: any) {
       setError(err.message);
       setResult('');
@@ -98,7 +119,7 @@ export default function Playground() {
         </div>
         <div>
           <div className="editor-pane-title">Result</div>
-          <CodeEditor value={result} mode="hyperlambda" readOnly />
+          <CodeEditor value={result} mode={resultMode} readOnly />
         </div>
       </div>
     </>

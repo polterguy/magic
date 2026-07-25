@@ -55,10 +55,15 @@ async function request<T>(
   if (response.status === 204) {
     return null as T;
   }
-  if (opts?.text) {
-    return await response.text() as T;
-  }
   const text = await response.text();
+  if (opts?.text) {
+    return text as T;
+  }
+  // The backend answers with text/plain for scalar results and JSON otherwise.
+  const contentType = response.headers.get('Content-Type') ?? '';
+  if (!contentType.includes('json')) {
+    return text as T;
+  }
   return (text === '' ? null : JSON.parse(text)) as T;
 }
 
@@ -131,6 +136,18 @@ export function listFolders(folder: string) {
     '/magic/system/file-system/list-folders?folder=' + encodeURIComponent(folder));
 }
 
+export function listFoldersRecursively(folder: string, sysFiles: boolean) {
+  return http.get<string[]>(
+    '/magic/system/file-system/list-folders-recursively?folder=' +
+    encodeURIComponent(folder) + '&sys=' + sysFiles);
+}
+
+export function listFilesRecursively(folder: string, sysFiles: boolean) {
+  return http.get<string[]>(
+    '/magic/system/file-system/list-files-recursively?folder=' +
+    encodeURIComponent(folder) + '&sys=' + sysFiles);
+}
+
 export function loadFile(filename: string) {
   return http.getText('/magic/system/file-system/file?file=' + encodeURIComponent(filename));
 }
@@ -166,8 +183,13 @@ export function deleteFolder(folder: string) {
  * Hyperlambda evaluator.
  */
 
+/*
+ * Returns the raw response body — text/plain for scalar results,
+ * JSON text for node results.
+ */
 export function evaluate(hyperlambda: string) {
-  return http.post<MagicResponse>('/magic/system/evaluator/evaluate', { hyperlambda });
+  return request<string>(
+    'POST', '/magic/system/evaluator/evaluate', { hyperlambda }, { text: true });
 }
 
 /*

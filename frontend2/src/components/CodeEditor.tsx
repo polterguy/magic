@@ -13,8 +13,29 @@ import 'codemirror/mode/css/css';
 import 'codemirror/mode/markdown/markdown';
 import defineHyperlambda from '../resources/hyperlambda.js';
 import '../resources/ainiro.css';
+import { http } from '../lib/api';
 
 defineHyperlambda(CodeMirror);
+
+/*
+ * The hyperlambda mode colors slot invocations from window._vocabulary,
+ * so the vocabulary must be loaded before an editor is created.
+ */
+let vocabularyPromise: Promise<void> | null = null;
+
+function ensureVocabulary() {
+  if ((window as any)._vocabulary) {
+    return Promise.resolve();
+  }
+  vocabularyPromise ??= Promise.all([
+    http.get<string[]>('/magic/system/evaluator/vocabulary'),
+    http.get<string[]>('/magic/system/evaluator/slots'),
+  ]).then(([vocabulary, slots]) => {
+    (window as any)._vocabulary = vocabulary;
+    (window as any)._slot = slots;
+  });
+  return vocabularyPromise;
+}
 
 interface CodeEditorProps {
   value: string;
@@ -34,11 +55,23 @@ export default function CodeEditor(props: CodeEditorProps) {
   callbacks.current = props;
 
   useEffect(() => {
+    let cancelled = false;
+    ensureVocabulary()
+      .catch(error => console.error('Could not load Hyperlambda vocabulary:', error))
+      .then(() => {
+        if (cancelled) {
+          return;
+        }
+        createEditor();
+      });
+
+    function createEditor() {
     const instance = CodeMirror(host.current!, {
-      value: props.value,
-      mode: props.mode,
+      value: callbacks.current.value,
+      mode: callbacks.current.mode,
       theme: 'ainiro',
       lineNumbers: true,
+      readOnly: callbacks.current.readOnly ?? false,
       tabSize: 3,
       indentUnit: 3,
       indentWithTabs: false,
@@ -54,7 +87,10 @@ export default function CodeEditor(props: CodeEditorProps) {
       callbacks.current.onChange?.(instance.getValue());
     });
     editor.current = instance;
+    }
+
     return () => {
+      cancelled = true;
       host.current?.replaceChildren();
       editor.current = null;
     };

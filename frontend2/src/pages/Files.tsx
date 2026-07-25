@@ -1,36 +1,56 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import CodeEditor, { modeForFile } from '../components/CodeEditor';
 import {
   createFolder,
   deleteFile,
   deleteFolder,
   evaluate,
-  listFiles,
-  listFolders,
+  listFilesRecursively,
+  listFoldersRecursively,
   loadFile,
   renamePath,
   saveFile,
 } from '../lib/api';
 
-interface FolderNode {
-  path: string;
-  folders: string[] | null;
-  files: string[] | null;
-  expanded: boolean;
+function parentOf(path: string) {
+  const trimmed = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
+  return trimmed.substring(0, trimmed.lastIndexOf('/') + 1);
+}
+
+function nameOf(path: string) {
+  const trimmed = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
+  return trimmed.substring(trimmed.lastIndexOf('/') + 1);
 }
 
 export default function Files() {
 
-  // Folder contents keyed by folder path, loaded lazily as folders expand.
-  const [nodes, setNodes] = useState<Record<string, FolderNode>>({});
+  // The entire tree, loaded recursively the way the old dashboard does it —
+  // the backend excludes /system/, /misc/, /data/ and /config/ unless sys is true.
+  const [folders, setFolders] = useState<string[]>([]);
+  const [files, setFiles] = useState<string[]>([]);
+  const [systemFiles, setSystemFiles] = useState(false);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [selectedFile, setSelectedFile] = useState('');
   const [content, setContent] = useState('');
   const [dirty, setDirty] = useState(false);
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
 
-  useEffect(() => {
-    expand('/');
+  const loadTree = useCallback(async (sys: boolean) => {
+    try {
+      const [folderList, fileList] = await Promise.all([
+        listFoldersRecursively('/', sys),
+        listFilesRecursively('/', sys),
+      ]);
+      setFolders(folderList ?? []);
+      setFiles(fileList ?? []);
+    } catch (err: any) {
+      setFeedback({ text: err.message, isError: true });
+    }
   }, []);
+
+  useEffect(() => {
+    loadTree(systemFiles);
+  }, [loadTree, systemFiles]);
 
   function show(text: string, isError = false) {
     setFeedback({ text, isError });
@@ -39,27 +59,14 @@ export default function Files() {
     }
   }
 
-  async function expand(path: string) {
-    const existing = nodes[path];
-    if (existing?.folders) {
-      setNodes(n => ({ ...n, [path]: { ...n[path], expanded: !n[path].expanded } }));
-      return;
+  function toggle(path: string) {
+    const next = new Set(expanded);
+    if (next.has(path)) {
+      next.delete(path);
+    } else {
+      next.add(path);
     }
-    try {
-      const [folders, files] = await Promise.all([listFolders(path), listFiles(path)]);
-      setNodes(n => ({ ...n, [path]: { path, folders, files, expanded: true } }));
-    } catch (err: any) {
-      show(err.message, true);
-    }
-  }
-
-  async function refresh(path: string) {
-    try {
-      const [folders, files] = await Promise.all([listFolders(path), listFiles(path)]);
-      setNodes(n => ({ ...n, [path]: { path, folders, files, expanded: true } }));
-    } catch (err: any) {
-      show(err.message, true);
-    }
+    setExpanded(next);
   }
 
   async function openFile(path: string) {
@@ -95,15 +102,10 @@ export default function Files() {
     }
     try {
       const response = await evaluate(content);
-      show('Executed — result: ' + JSON.stringify(response.result ?? 'OK'));
+      show('Executed — result: ' + (response === '' ? 'OK' : response));
     } catch (err: any) {
       show(err.message, true);
     }
-  }
-
-  function parentOf(path: string) {
-    const trimmed = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
-    return trimmed.substring(0, trimmed.lastIndexOf('/') + 1);
   }
 
   async function newFile(folder: string) {
@@ -114,7 +116,7 @@ export default function Files() {
     const path = folder + name;
     try {
       await saveFile(path, '');
-      await refresh(folder);
+      await loadTree(systemFiles);
       await openFile(path);
     } catch (err: any) {
       show(err.message, true);
@@ -128,7 +130,7 @@ export default function Files() {
     }
     try {
       await createFolder(folder + name + '/');
-      await refresh(folder);
+      await loadTree(systemFiles);
     } catch (err: any) {
       show(err.message, true);
     }
@@ -145,7 +147,7 @@ export default function Files() {
         setContent('');
         setDirty(false);
       }
-      await refresh(parentOf(path));
+      await loadTree(systemFiles);
     } catch (err: any) {
       show(err.message, true);
     }
@@ -157,15 +159,14 @@ export default function Files() {
     }
     try {
       await deleteFolder(path);
-      await refresh(parentOf(path));
+      await loadTree(systemFiles);
     } catch (err: any) {
       show(err.message, true);
     }
   }
 
   async function rename(path: string, isFolder: boolean) {
-    const trimmed = isFolder ? path.substring(0, path.length - 1) : path;
-    const oldName = trimmed.substring(trimmed.lastIndexOf('/') + 1);
+    const oldName = nameOf(path);
     const name = window.prompt('New name', oldName);
     if (!name || name === oldName) {
       return;
@@ -176,40 +177,38 @@ export default function Files() {
       if (selectedFile === path) {
         setSelectedFile(newPath);
       }
-      await refresh(parentOf(path));
+      await loadTree(systemFiles);
     } catch (err: any) {
       show(err.message, true);
     }
   }
 
-  function renderFolder(path: string): JSX.Element | null {
-    const node = nodes[path];
-    if (!node?.expanded) {
-      return null;
-    }
+  function renderChildren(path: string): JSX.Element {
+    const childFolders = folders.filter(folder => parentOf(folder) === path);
+    const childFiles = files.filter(file => parentOf(file) === path);
     return (
       <div className="tree-children">
-        {node.folders!.map(folder => (
+        {childFolders.map(folder => (
           <div className="tree-node" key={folder}>
-            <div className="tree-row" onClick={() => expand(folder)}>
-              <span>{nodes[folder]?.expanded ? '▾' : '▸'} 🗀</span>
-              <span style={{ flex: 1 }}>{folderName(folder)}</span>
+            <div className="tree-row" onClick={() => toggle(folder)}>
+              <span>{expanded.has(folder) ? '▾' : '▸'} 🗀</span>
+              <span style={{ flex: 1 }}>{nameOf(folder)}</span>
               <FolderActions
                 onNewFile={() => newFile(folder)}
                 onNewFolder={() => newFolder(folder)}
                 onRename={() => rename(folder, true)}
                 onDelete={() => removeFolder(folder)} />
             </div>
-            {renderFolder(folder)}
+            {expanded.has(folder) && renderChildren(folder)}
           </div>
         ))}
-        {node.files!.map(file => (
+        {childFiles.map(file => (
           <div
             className={'tree-row' + (file === selectedFile ? ' selected' : '')}
             key={file}
             onClick={() => openFile(file)}>
             <span>🗎</span>
-            <span style={{ flex: 1 }}>{file.substring(file.lastIndexOf('/') + 1)}</span>
+            <span style={{ flex: 1 }}>{nameOf(file)}</span>
             <FileActions
               onRename={e => { e.stopPropagation(); rename(file, false); }}
               onDelete={e => { e.stopPropagation(); removeFile(file); }} />
@@ -217,11 +216,6 @@ export default function Files() {
         ))}
       </div>
     );
-  }
-
-  function folderName(path: string) {
-    const trimmed = path.substring(0, path.length - 1);
-    return trimmed.substring(trimmed.lastIndexOf('/') + 1);
   }
 
   return (
@@ -239,14 +233,23 @@ export default function Files() {
       )}
       <div className="files-layout">
         <div className="file-tree">
-          <div className="tree-row" onClick={() => refresh('/')}>
+          <label
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '2px 6px 10px' }}
+            title="Also show /system/, /misc/, /data/ and /config/ — be careful!">
+            <input
+              type="checkbox"
+              checked={systemFiles}
+              onChange={e => setSystemFiles(e.target.checked)} />
+            Show system files
+          </label>
+          <div className="tree-row">
             <span>🗀</span>
             <span style={{ flex: 1 }}><strong>/</strong></span>
             <FolderActions
               onNewFile={() => newFile('/')}
               onNewFolder={() => newFolder('/')} />
           </div>
-          {renderFolder('/')}
+          {renderChildren('/')}
         </div>
         <div className="file-editor">
           <div className="toolbar">
