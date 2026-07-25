@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import { Modal } from '../components/Dialogs';
+import SortHeader, { useSort } from '../components/SortHeader';
 import ResultViewer, { RawResult } from '../components/ResultViewer';
 import { Endpoint, invokeEndpoint, listEndpoints } from '../lib/api';
 
@@ -50,13 +51,21 @@ export default function Endpoints() {
       .catch(err => setError(err.message));
   }, []);
 
+  const [sort, setSort] = useSort();
+
   const visible = useMemo(() => {
     const query = filter.toLowerCase();
-    return endpoints.filter(endpoint =>
+    const filtered = endpoints.filter(endpoint =>
       !query ||
       endpoint.path.toLowerCase().includes(query) ||
       endpoint.verb.toLowerCase().includes(query));
-  }, [endpoints, filter]);
+    if (!sort.column) {
+      return filtered;
+    }
+    const factor = sort.direction === 'asc' ? 1 : -1;
+    return [...filtered].sort((left: any, right: any) =>
+      String(left[sort.column!] ?? '').localeCompare(String(right[sort.column!] ?? '')) * factor);
+  }, [endpoints, filter, sort]);
 
   return (
     <>
@@ -79,8 +88,13 @@ export default function Endpoints() {
         <table>
           <thead>
             <tr>
-              <th style={{ width: 90 }}>Verb</th>
-              <th>Path</th>
+              <SortHeader
+                column="verb"
+                label="Verb"
+                sort={sort}
+                onSort={setSort}
+                style={{ width: 90 }} />
+              <SortHeader column="path" label="Path" sort={sort} onSort={setSort} />
               <th>Auth</th>
             </tr>
           </thead>

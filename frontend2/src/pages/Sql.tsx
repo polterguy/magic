@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import type CodeMirror from 'codemirror';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
+import Tabs from '../components/Tabs';
 import {
   defaultDatabaseType,
   executeSql,
@@ -223,15 +224,17 @@ export default function Sql() {
             onChange={e => setSafeMode(e.target.checked)} />
           Safe mode
         </label>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setView(view === 'sql' ? 'tables' : 'sql')}>
-          {view === 'sql' ? 'Tables' : 'SQL'}
-        </button>
         <button className="btn" onClick={execute} disabled={busy}>
           {busy ? 'Running…' : '▷ Run'}
         </button>
       </div>
+      <Tabs
+        tabs={[
+          { id: 'sql', label: 'SQL' },
+          { id: 'tables', label: 'Tables' },
+        ]}
+        active={view}
+        onChange={id => setView(id as 'sql' | 'tables')} />
       {view === 'tables' && (
         <>
           <div className="toolbar">

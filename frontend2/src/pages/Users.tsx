@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDialog } from '../components/Dialogs';
+import SortHeader, { useSort } from '../components/SortHeader';
 import {
   Role,
   User,
@@ -27,12 +28,13 @@ export default function Users() {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedUserRoles, setSelectedUserRoles] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
+  const [sort, setSort] = useSort();
   const { confirm, prompt } = useDialog();
 
   const refresh = useCallback(async () => {
     try {
       const [userList, userCount, roleList] = await Promise.all([
-        listUsers(filter, page * PAGE_SIZE, PAGE_SIZE),
+        listUsers(filter, page * PAGE_SIZE, PAGE_SIZE, sort),
         countUsers(filter),
         listRoles(),
       ]);
@@ -42,7 +44,7 @@ export default function Users() {
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
     }
-  }, [filter, page]);
+  }, [filter, page, sort]);
 
   useEffect(() => {
     refresh();
@@ -182,7 +184,10 @@ export default function Users() {
         <div className="card" style={{ padding: 0, overflow: 'auto' }}>
           <table>
             <thead>
-              <tr><th>Username</th><th style={{ width: 120 }}></th></tr>
+              <tr>
+                <SortHeader column="username" label="Username" sort={sort} onSort={setSort} />
+                <th style={{ width: 120 }}></th>
+              </tr>
             </thead>
             <tbody>
               {users.map(user => (

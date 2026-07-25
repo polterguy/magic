@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { to: '/user-roles-management', label: 'Users & roles', icon: '👤' },
   { to: '/task-manager', label: 'Task Manager', icon: '🕒' },
   { to: '/machine-learning', label: 'Machine Learning', icon: '✳' },
+  { to: '/plugins', label: 'Plugins', icon: '🧩' },
   { to: '/configuration', label: 'Configuration', icon: '⚙' },
   { to: '/log', label: 'Log', icon: '≣' },
 ];

@@ -3,6 +3,7 @@ import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
 import SocketFeedback from '../components/SocketFeedback';
 import Tabs from '../components/Tabs';
+import SortHeader, { SortState, useSort } from '../components/SortHeader';
 import {
   availableWorkflows,
   backendInfo,
@@ -20,14 +21,14 @@ import {
   mlTypeDelete,
   mlTypes,
   mlTypeUpdate,
-  openaiChat,
+  openaiCompletionSlots,
   openaiIsConfigured,
   openaiModels,
+  openaiSystemMessages,
   openaiThemes,
   uploadTrainingFile,
   vectoriseType,
 } from '../lib/api';
-import { useAuth } from '../lib/AuthContext';
 
 type Tab = 'types' | 'training' | 'history';
 
@@ -101,7 +102,6 @@ function TypesTab(props: {
 
   const [editing, setEditing] = useState<any | null | 'new'>(null);
   const [vectorising, setVectorising] = useState<{ type: string; channel: string } | null>(null);
-  const [testing, setTesting] = useState<string | null>(null);
   const [importing, setImporting] = useState<string | null>(null);
   const [embedding, setEmbedding] = useState<string | null>(null);
   const { prompt } = useDialog();
@@ -169,11 +169,6 @@ function TypesTab(props: {
                     </button>
                     <button
                       className="btn btn-secondary btn-small"
-                      onClick={() => setTesting(type.type)}>
-                      Test
-                    </button>
-                    <button
-                      className="btn btn-secondary btn-small"
                       onClick={() => vectorise(type.type)}>
                       Vectorise
                     </button>
@@ -215,9 +210,6 @@ function TypesTab(props: {
               .catch(err => props.notify({ text: err.message, isError: true }));
           }}
           onClose={() => setVectorising(null)} />
-      )}
-      {testing && (
-        <TestChatDialog type={testing} onClose={() => setTesting(null)} />
       )}
       {importing && (
         <ImportDialog
@@ -462,6 +454,29 @@ function EditTypeDialog(props: {
   const [systemMessage, setSystemMessage] = useState(existing?.system_message ??
     'You are a helpful assistant, and you will answer the users questions ' +
     'based upon the information found in your context');
+  const [dialogTab, setDialogTab] = useState('general');
+  const [flavors, setFlavors] = useState<any[]>([]);
+  const [completionSlots, setCompletionSlots] = useState<string[]>([]);
+  // Twilio, webhooks, lead-gen and questionnaires are legacy — dropped from
+  // the UI and no longer sent.
+  const [extra, setExtra] = useState<any>({
+    base_url: existing?.base_url ?? '',
+    prefix: existing?.prefix ?? '',
+    conversation_starters: existing?.conversation_starters ?? '',
+    api_key: existing?.api_key ?? '',
+    no_requests: existing?.no_requests ?? 0,
+    search_postfix: existing?.search_postfix ?? '',
+    max_requests: existing?.max_requests ?? -1,
+    max_function_invocations: existing?.max_function_invocations ?? 5,
+    max_session_items: existing?.max_session_items ?? 15,
+    completion_slot: existing?.completion_slot ?? 'magic.ai.chat',
+    vector_model: existing?.vector_model ?? 'text-embedding-ada-002',
+    recaptcha: existing?.recaptcha ?? 0,
+  });
+
+  function setField(key: string, value: any) {
+    setExtra((current: any) => ({ ...current, [key]: value }));
+  }
 
   useEffect(() => {
     openaiModels()
@@ -470,6 +485,13 @@ function EditTypeDialog(props: {
     listRoles()
       .then(list => setRoles((list ?? []).map(role => role.name)))
       .catch(() => {});
+    openaiSystemMessages()
+      .then(list => setFlavors(list ?? []))
+      .catch(() => {});
+    openaiCompletionSlots()
+      .then(response => setCompletionSlots(
+        Array.isArray(response) ? response : response?.slots ?? []))
+      .catch(() => {});
   }, []);
 
   async function save() {
@@ -477,7 +499,6 @@ function EditTypeDialog(props: {
       props.notify({ text: 'Give the model a type name', isError: true });
       return;
     }
-    // Old-dashboard defaults for the fields this dialog doesn't expose.
     const payload: any = {
       type,
       model,
@@ -486,33 +507,19 @@ function EditTypeDialog(props: {
       max_tokens: Number(maxTokens),
       temperature: Number(temperature),
       threshold: Number(threshold),
-      base_url: existing?.base_url ?? '',
       supervised: supervised ? 1 : 0,
-      recaptcha: existing?.recaptcha ?? 0,
       auth: auth.length > 0 ? auth.join(',') : null,
       cached: cached ? 1 : 0,
-      prefix: existing?.prefix ?? '',
       system_message: systemMessage,
-      conversation_starters: existing?.conversation_starters ?? '',
       greeting,
-      contact_us: existing?.contact_us ?? '',
-      lead_email: existing?.lead_email ?? '',
-      api_key: existing?.api_key ?? null,
-      twilio_account_id: existing?.twilio_account_id ?? '',
-      twilio_account_sid: existing?.twilio_account_sid ?? '',
-      webhook_incoming: existing?.webhook_incoming ?? '',
-      webhook_outgoing: existing?.webhook_outgoing ?? '',
-      webhook_incoming_url: existing?.webhook_incoming_url ?? '',
-      webhook_outgoing_url: existing?.webhook_outgoing_url ?? '',
-      initial_questionnaire: existing?.initial_questionnaire ?? null,
       use_embeddings: useEmbeddings ? 1 : 0,
-      no_requests: existing?.no_requests ?? 0,
-      search_postfix: existing?.search_postfix ?? '',
-      max_requests: existing?.max_requests ?? -1,
-      max_function_invocations: existing?.max_function_invocations ?? 5,
-      max_session_items: existing?.max_session_items ?? 15,
-      completion_slot: existing?.completion_slot ?? 'magic.ai.chat',
-      vector_model: existing?.vector_model ?? 'text-embedding-ada-002',
+      ...extra,
+      api_key: extra.api_key?.length > 0 ? extra.api_key : null,
+      no_requests: Number(extra.no_requests),
+      max_requests: Number(extra.max_requests),
+      max_function_invocations: Number(extra.max_function_invocations),
+      max_session_items: Number(extra.max_session_items),
+      recaptcha: Number(extra.recaptcha),
     };
     try {
       if (existing) {
@@ -530,8 +537,16 @@ function EditTypeDialog(props: {
   return (
     <Modal width={640} onClose={props.onClose}>
       <h2>{existing ? 'Edit ' + existing.type : 'New model'}</h2>
-      <div style={{ maxHeight: '60vh', overflow: 'auto', paddingRight: 6 }}>
-        <div className="form-grid">
+      <Tabs
+        tabs={[
+          { id: 'general', label: 'General' },
+          { id: 'behaviour', label: 'Behaviour' },
+          { id: 'integrations', label: 'Integrations' },
+        ]}
+        active={dialogTab}
+        onChange={setDialogTab} />
+      <div style={{ maxHeight: '55vh', overflow: 'auto', paddingRight: 6 }}>
+        <div className="form-grid" style={{ display: dialogTab === 'general' ? 'flex' : 'none' }}>
           {!existing && (
             <label>Type name
               <input type="text" value={type} onChange={e => setType(e.target.value)} />
@@ -540,6 +555,9 @@ function EditTypeDialog(props: {
           <label>Model
             <select value={model} onChange={e => setModel(e.target.value)}>
               <option value="">Select model…</option>
+              {model && !models.some(candidate => candidate.id === model) && (
+                <option value={model}>{model}</option>
+              )}
               {models.map(candidate => (
                 <option key={candidate.id} value={candidate.id}>{candidate.id}</option>
               ))}
@@ -631,12 +649,122 @@ function EditTypeDialog(props: {
           <label>Greeting
             <input type="text" value={greeting} onChange={e => setGreeting(e.target.value)} />
           </label>
+          <label>System message flavor
+            <select
+              value=""
+              onChange={e => {
+                const flavor = flavors.find(candidate => candidate.name === e.target.value);
+                if (flavor?.content) {
+                  setSystemMessage(flavor.content);
+                }
+              }}>
+              <option value="">Apply a template…</option>
+              {flavors.map(flavor => (
+                <option key={flavor.name} value={flavor.name}>{flavor.name}</option>
+              ))}
+            </select>
+          </label>
           <label>System message
             <textarea
               rows={5}
               value={systemMessage}
               onChange={e => setSystemMessage(e.target.value)} />
           </label>
+        </div>
+        <div className="form-grid" style={{ display: dialogTab === 'behaviour' ? 'flex' : 'none' }}>
+          <label>Conversation starters (markdown list)
+            <textarea
+              rows={4}
+              value={extra.conversation_starters}
+              onChange={e => setField('conversation_starters', e.target.value)} />
+          </label>
+          <label>Prefix (prepended to every prompt)
+            <input
+              type="text"
+              value={extra.prefix}
+              onChange={e => setField('prefix', e.target.value)} />
+          </label>
+          <label>Search postfix
+            <input
+              type="text"
+              value={extra.search_postfix}
+              onChange={e => setField('search_postfix', e.target.value)} />
+          </label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <label>Completion slot
+              <select
+                value={extra.completion_slot}
+                onChange={e => setField('completion_slot', e.target.value)}>
+                {!completionSlots.includes(extra.completion_slot) && (
+                  <option value={extra.completion_slot}>{extra.completion_slot}</option>
+                )}
+                {completionSlots.map(slot => (
+                  <option key={slot} value={slot}>{slot}</option>
+                ))}
+              </select>
+            </label>
+            <label>Max requests (-1 = unlimited)
+              <input
+                type="number"
+                value={extra.max_requests}
+                onChange={e => setField('max_requests', e.target.value)} />
+            </label>
+            <label>Max function invocations
+              <input
+                type="number"
+                value={extra.max_function_invocations}
+                onChange={e => setField('max_function_invocations', e.target.value)} />
+            </label>
+            <label>Max session items
+              <input
+                type="number"
+                value={extra.max_session_items}
+                onChange={e => setField('max_session_items', e.target.value)} />
+            </label>
+            <label>No requests served
+              <input
+                type="number"
+                value={extra.no_requests}
+                onChange={e => setField('no_requests', e.target.value)} />
+            </label>
+            <label>reCAPTCHA threshold (0 = off)
+              <input
+                type="number"
+                step="0.1"
+                value={extra.recaptcha}
+                onChange={e => setField('recaptcha', e.target.value)} />
+            </label>
+          </div>
+        </div>
+        <div className="form-grid" style={{ display: dialogTab === 'integrations' ? 'flex' : 'none' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <label>Base URL (alternative API)
+              <input
+                type="text"
+                value={extra.base_url}
+                onChange={e => setField('base_url', e.target.value)} />
+            </label>
+            <label>API key override
+              <input
+                type="password"
+                value={extra.api_key}
+                onChange={e => setField('api_key', e.target.value)} />
+            </label>
+            <label>Vector model
+              <select
+                value={extra.vector_model}
+                onChange={e => setField('vector_model', e.target.value)}>
+                {!models.some(candidate => candidate.id === extra.vector_model) && (
+                  <option value={extra.vector_model}>{extra.vector_model}</option>
+                )}
+                {models
+                  .filter(candidate => (candidate as any).vector)
+                  .map(candidate => (
+                    <option key={candidate.id} value={candidate.id}>{candidate.id}</option>
+                  ))}
+              </select>
+            </label>
+          </div>
         </div>
       </div>
       <div className="modal-actions">
@@ -647,73 +775,6 @@ function EditTypeDialog(props: {
   );
 }
 
-/*
- * Test-chat dialog — prompts the model with stream=false.
- */
-function TestChatDialog(props: { type: string; onClose: () => void }) {
-
-  const { backend } = useAuth();
-  const [session] = useState(() => Math.random().toString(36).substring(2));
-  const [question, setQuestion] = useState('');
-  const [exchanges, setExchanges] =
-    useState<{ question: string; answer: string }[]>([]);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
-
-  async function ask() {
-    if (!question.trim() || busy) {
-      return;
-    }
-    setBusy(true);
-    setError('');
-    const asked = question;
-    setQuestion('');
-    try {
-      const response = await openaiChat(asked, props.type, session, backend?.username ?? '');
-      setExchanges(current => [...current, {
-        question: asked,
-        answer: response?.result ?? JSON.stringify(response),
-      }]);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <Modal width={720} onClose={props.onClose}>
-      <h2>Test {props.type}</h2>
-      {error && <div className="error-box" style={{ marginBottom: 10 }}>{error}</div>}
-      <div
-        className="result-json"
-        style={{ height: '40vh', overflow: 'auto', whiteSpace: 'pre-wrap', fontSize: 13 }}>
-        {exchanges.length === 0 && !busy && 'Ask the model something to test it.'}
-        {exchanges.map((exchange, index) => (
-          <div key={index} style={{ marginBottom: 12 }}>
-            <div style={{ color: '#9d8cff' }}>&gt; {exchange.question}</div>
-            <div>{exchange.answer}</div>
-          </div>
-        ))}
-        {busy && <div className="muted">Thinking…</div>}
-      </div>
-      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-        <input
-          type="text"
-          style={{ flex: 1 }}
-          placeholder="Ask the model…"
-          value={question}
-          autoFocus
-          onChange={e => setQuestion(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') ask(); }} />
-        <button className="btn" onClick={ask} disabled={busy}>Ask</button>
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Close</button>
-      </div>
-    </Modal>
-  );
-}
 
 /*
  * Training data tab.
@@ -731,6 +792,7 @@ function TrainingTab(props: {
   const [count, setCount] = useState(0);
   const [editing, setEditing] = useState<any | null | 'new'>(null);
   const [pickingFunction, setPickingFunction] = useState(false);
+  const [sort, setSort] = useSort();
   const { confirm } = useDialog();
 
   useEffect(() => {
@@ -745,7 +807,7 @@ function TrainingTab(props: {
     }
     try {
       const [list, total] = await Promise.all([
-        mlSnippets(type, filter, page * PAGE_SIZE, PAGE_SIZE),
+        mlSnippets(type, filter, page * PAGE_SIZE, PAGE_SIZE, sort),
         mlSnippetsCount(type, filter),
       ]);
       setSnippets(list ?? []);
@@ -753,7 +815,7 @@ function TrainingTab(props: {
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
     }
-  }, [type, filter, page]);
+  }, [type, filter, page, sort]);
 
   useEffect(() => {
     refresh();
@@ -805,8 +867,13 @@ function TrainingTab(props: {
         <table>
           <thead>
             <tr>
-              <th>Prompt</th>
-              <th style={{ width: 90 }}>Tokens</th>
+              <SortHeader column="prompt" label="Prompt" sort={sort} onSort={setSort} />
+              <SortHeader
+                column="tokens"
+                label="Tokens"
+                sort={sort}
+                onSort={setSort}
+                style={{ width: 90 }} />
               <th style={{ width: 110 }}>Embedded</th>
               <th style={{ width: 150 }}></th>
             </tr>

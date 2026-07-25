@@ -10,6 +10,7 @@ import Databases from './pages/Databases';
 import Configuration from './pages/Configuration';
 import Profile from './pages/Profile';
 import MachineLearning from './pages/MachineLearning';
+import Plugins from './pages/Plugins';
 import Endpoints from './pages/Endpoints';
 import Users from './pages/Users';
 import Tasks from './pages/Tasks';
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/configuration" element={<Configuration />} />
         <Route path="/user-profile" element={<Profile />} />
         <Route path="/machine-learning" element={<MachineLearning />} />
+        <Route path="/plugins" element={<Plugins />} />
         <Route path="/log" element={<Log />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

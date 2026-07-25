@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal, useDialog } from '../components/Dialogs';
+import Tabs from '../components/Tabs';
 import {
   addConnectionString,
   createDatabase,
@@ -28,23 +29,17 @@ export default function Databases() {
 
   return (
     <>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div>
-          <h1>Databases</h1>
-          <p>Manage your SQLite databases, and connect to external databases</p>
-        </div>
-        <span style={{ flex: 1 }} />
-        <button
-          className={'btn ' + (tab === 'internal' ? '' : 'btn-secondary')}
-          onClick={() => setTab('internal')}>
-          Internal
-        </button>
-        <button
-          className={'btn ' + (tab === 'external' ? '' : 'btn-secondary')}
-          onClick={() => setTab('external')}>
-          External
-        </button>
+      <div className="page-header">
+        <h1>Databases</h1>
+        <p>Manage your SQLite databases, and connect to external databases</p>
       </div>
+      <Tabs
+        tabs={[
+          { id: 'internal', label: 'Internal (SQLite)' },
+          { id: 'external', label: 'External' },
+        ]}
+        active={tab}
+        onChange={id => setTab(id as 'internal' | 'external')} />
       {tab === 'internal' ? <InternalTab /> : <ExternalTab />}
     </>
   );

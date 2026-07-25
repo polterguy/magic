@@ -417,8 +417,13 @@ export interface Role {
   description?: string;
 }
 
-export function listUsers(filter: string, offset: number, limit: number) {
-  let query = `?limit=${limit}&offset=${offset}&order=username`;
+export function listUsers(
+  filter: string, offset: number, limit: number,
+  sort?: { column: string | null; direction: 'asc' | 'desc' }) {
+  const order = sort?.column
+    ? `&order=${encodeURIComponent(sort.column)}&direction=${sort.direction}`
+    : '&order=username';
+  let query = `?limit=${limit}&offset=${offset}` + order;
   if (filter) {
     query += '&username.like=' + encodeURIComponent(filter + '%');
   }
@@ -554,8 +559,13 @@ export function mlTypeDelete(type: string) {
   return http.delete<any>('/magic/system/magic/ml_types?type=' + encodeURIComponent(type));
 }
 
-export function mlSnippets(type: string, filter: string, offset: number, limit: number) {
-  let query = `?limit=${limit}&offset=${offset}&order=created&direction=desc` +
+export function mlSnippets(
+  type: string, filter: string, offset: number, limit: number,
+  sort?: { column: string | null; direction: 'asc' | 'desc' }) {
+  const order = sort?.column
+    ? `&order=${encodeURIComponent(sort.column)}&direction=${sort.direction}`
+    : '&order=created&direction=desc';
+  let query = `?limit=${limit}&offset=${offset}` + order +
     '&ml_training_snippets.type.eq=' + encodeURIComponent(type);
   if (filter) {
     query += '&ml_training_snippets.prompt.like=' + encodeURIComponent('%' + filter + '%');
@@ -668,6 +678,38 @@ export function uploadTrainingFile(type: string, file: File) {
 
 export function openaiThemes() {
   return http.get<string[]>('/magic/system/openai/themes');
+}
+
+export function openaiSystemMessages() {
+  return http.get<any[]>('/magic/system/openai/system-messages');
+}
+
+export function openaiCompletionSlots() {
+  return http.get<{ slots: string[] }>('/magic/system/openai/completion-slots');
+}
+
+/*
+ * Plugins / Bazar. Available plugins come from the external bazar; installed
+ * manifests and the install action go through the local backend.
+ */
+const BAZAR_URL = 'https://ainiro.io';
+
+export function availablePlugins() {
+  return request<any[]>('GET', BAZAR_URL + '/magic/modules/bazar/bazar-apps', undefined, {
+    noBase: true,
+  });
+}
+
+export function installedPlugins() {
+  return http.get<any[]>('/magic/system/bazar/app-manifests');
+}
+
+export function installPlugin(app: { name: string; type: string }) {
+  return http.post<MagicResponse>('/magic/system/bazar/install-plugin', {
+    url: BAZAR_URL + '/magic/modules/bazar/download-bazar-app?name=' + encodeURIComponent(app.name),
+    name: app.name,
+    type: app.type,
+  });
 }
 
 export function availableWorkflows() {
