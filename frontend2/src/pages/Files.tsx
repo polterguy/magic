@@ -16,6 +16,7 @@ import {
   UploadIcon,
 } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
+import OpenApiDialog from '../components/OpenApiDialog';
 import { useUnsavedGuard } from '../lib/navGuard';
 import {
   createFolder,
@@ -674,23 +675,11 @@ export default function Files() {
         </div>
       </div>
       {openApiSpec !== null && (
-        <Modal width={800} onClose={() => setOpenApiSpec(null)}>
-          <h2>OpenAPI specification — {openApiSpec.target}</h2>
-          <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
-            <CodeEditor value={openApiSpec.json} mode="application/json" readOnly />
-          </div>
-          <div className="modal-actions">
-            <button
-              className="btn btn-secondary"
-              onClick={() => {
-                navigator.clipboard.writeText(openApiSpec.json);
-                show('Specification copied to clipboard');
-              }}>
-              Copy JSON
-            </button>
-            <button className="btn" onClick={() => setOpenApiSpec(null)}>Close</button>
-          </div>
-        </Modal>
+        <OpenApiDialog
+          json={openApiSpec.json}
+          target={openApiSpec.target}
+          onClose={() => setOpenApiSpec(null)}
+          onNotify={show} />
       )}
       {executeResult !== null && (
         <Modal width={860} onClose={() => setExecuteResult(null)}>

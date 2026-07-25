@@ -1001,3 +1001,21 @@ pre.result-json {
     opacity: 1;
   }
 }
+
+/* Collapsible module sections on the Endpoints screen. */
+.module-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.module-header:hover {
+  background: var(--accent-soft);
+}
+
+.module-header.system strong {
+  color: var(--danger);
+}
