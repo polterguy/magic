@@ -1139,3 +1139,13 @@ tr.vss-irrelevant td {
   background: var(--accent-soft);
   color: var(--accent-dark);
 }
+
+/* Dashboard task tiles — a guide card with an action on the right. */
+.task-card {
+  align-items: center;
+  gap: 14px;
+}
+
+.task-card .guide-text {
+  margin-top: 2px;
+}

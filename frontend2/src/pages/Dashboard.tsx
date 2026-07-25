@@ -1,16 +1,19 @@
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Modal } from '../components/Dialogs';
+import { Modal, useDialog } from '../components/Dialogs';
 import {
   availablePlugins,
+  Task,
   countLog,
   countTasks,
   countUsers,
+  executeTask,
   getVersion,
   installPlugin,
   listEndpoints,
   listFolders,
+  listTasks,
   openaiIsConfigured,
   openaiSetKey,
 } from '../lib/api';
@@ -160,6 +163,104 @@ function OpenAiKeyDialog(props: {
         </button>
       </div>
     </Modal>
+  );
+}
+
+/*
+ * The first handful of tasks, runnable straight from the dashboard. Editing
+ * and scheduling stay in the Task Manager — this is only for firing one off.
+ */
+const TASK_PAGE_SIZE = 6;
+
+function TaskSection(props: {
+  // Total task count, so paging knows where the list ends.
+  count: number | null;
+  notify: (text: string, isError: boolean) => void;
+}) {
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [page, setPage] = useState(0);
+  const [running, setRunning] = useState<string | null>(null);
+  const { confirm } = useDialog();
+
+  useEffect(() => {
+    listTasks(page * TASK_PAGE_SIZE, TASK_PAGE_SIZE)
+      .then(list => setTasks(list ?? []))
+      .catch(() => setTasks([]));
+  }, [page]);
+
+  async function execute(task: Task) {
+    if (!await confirm({
+      title: 'Execute task?',
+      message: task.id + ' will run on your server right now.',
+      confirmText: 'Execute',
+    })) {
+      return;
+    }
+    setRunning(task.id);
+    try {
+      await executeTask(task.id);
+      props.notify('Task ' + task.id + ' executed', false);
+    } catch (err: any) {
+      props.notify(err.message, true);
+    } finally {
+      setRunning(null);
+    }
+  }
+
+  // Hidden only when there genuinely are no tasks, not while paging.
+  if (props.count === 0) {
+    return null;
+  }
+
+  const pageCount = props.count === null
+    ? 1
+    : Math.max(1, Math.ceil(props.count / TASK_PAGE_SIZE));
+
+  return (
+    <div className="card">
+      <h2 style={{ marginTop: 0 }}>Tasks</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        Run one of your tasks now. <Link to="/task-manager">Task Manager</Link> is
+        where you write and schedule them.
+      </p>
+      <div className="guide-grid">
+        {tasks.map(task => (
+          <div className="guide-card task-card" key={task.id}>
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <span className="guide-title">{task.id}</span>
+              <span className="guide-text line-clamp">
+                {task.description || 'No description'}
+              </span>
+            </span>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={running === task.id}
+              title={'Run ' + task.id + ' on your server now'}
+              onClick={() => execute(task)}>
+              {running === task.id ? 'Running…' : '▷ Execute'}
+            </button>
+          </div>
+        ))}
+      </div>
+      {pageCount > 1 && (
+        <div className="pagination" style={{ marginTop: 14 }}>
+          <button
+            className="btn btn-secondary btn-small"
+            disabled={page === 0}
+            onClick={() => setPage(page - 1)}>
+            ‹ Prev
+          </button>
+          <span className="muted">{page + 1} / {pageCount}</span>
+          <button
+            className="btn btn-secondary btn-small"
+            disabled={page >= pageCount - 1}
+            onClick={() => setPage(page + 1)}>
+            Next ›
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -328,7 +429,7 @@ export default function Dashboard() {
           Installing {installed} — you'll be notified when it completes.
         </Banner>
       )}
-      <div className="card">
+      <div className="card" style={{ marginBottom: 16 }}>
         <h2 style={{ marginTop: 0 }}>Welcome</h2>
         <p className="muted" style={{ marginTop: 0 }}>
           Everything your cloudlet can do, and where to do it.
@@ -345,6 +446,9 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+      <TaskSection
+        count={tasks}
+        notify={(text, isError) => isError ? setError(text) : showToast(text)} />
       {configuringOpenai && (
         <OpenAiKeyDialog
           onClose={() => setConfiguringOpenai(false)}
