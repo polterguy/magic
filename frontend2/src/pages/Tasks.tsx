@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
-import { useDialog } from '../components/Dialogs';
+import { Modal, useDialog } from '../components/Dialogs';
 import {
   Task,
   countTasks,
@@ -122,32 +122,15 @@ export default function Tasks() {
     }
   }
 
-  async function addSchedule() {
+  const [scheduling, setScheduling] = useState(false);
+
+  async function addSchedule(due: string | undefined, repeats: string | undefined) {
     if (!selected) {
       return;
     }
-    const repeats = await prompt({
-      title: 'Schedule task',
-      message: 'Repetition pattern (e.g. 5.seconds or 00.05.00) — leave empty for a one-shot schedule.',
-      label: 'Repeats',
-    });
-    if (repeats === null) {
-      return;
-    }
-    let due: string | undefined = undefined;
-    if (!repeats) {
-      const dueInput = await prompt({
-        title: 'Schedule task',
-        message: 'When should the task execute?',
-        label: 'Due date (ISO format, e.g. 2026-08-01T12:00:00)',
-      });
-      if (!dueInput) {
-        return;
-      }
-      due = new Date(dueInput).toISOString();
-    }
     try {
-      await scheduleTask(selected.id, due, repeats || undefined);
+      await scheduleTask(selected.id, due, repeats);
+      setScheduling(false);
       await select(selected);
       setFeedback({ text: 'Schedule added', isError: false });
     } catch (err: any) {
@@ -271,7 +254,9 @@ export default function Tasks() {
                       <button onClick={() => removeSchedule(schedule.id)}>✕</button>
                     </span>
                   ))}
-                  <button className="btn btn-secondary btn-small" onClick={addSchedule}>
+                  <button
+                    className="btn btn-secondary btn-small"
+                    onClick={() => setScheduling(true)}>
                     + Schedule
                   </button>
                 </div>
@@ -287,6 +272,116 @@ export default function Tasks() {
           )}
         </div>
       </div>
+      {scheduling && selected && (
+        <ScheduleDialog
+          taskId={selected.id}
+          onClose={() => setScheduling(false)}
+          onSave={addSchedule} />
+      )}
     </>
+  );
+}
+
+const REPEAT_NUMBERS = [5, 10, 15, 20, 25, 30];
+const REPEAT_PERIODS = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'months'];
+
+/*
+ * The old dashboard's 3-mode schedule dialog: fixed date, simple repetition,
+ * or a custom repetition pattern.
+ */
+function ScheduleDialog(props: {
+  taskId: string;
+  onClose: () => void;
+  onSave: (due: string | undefined, repeats: string | undefined) => void;
+}) {
+
+  const [mode, setMode] = useState<'fixed' | 'repeat' | 'custom'>('repeat');
+  const [due, setDue] = useState('');
+  const [number, setNumber] = useState(5);
+  const [period, setPeriod] = useState('minutes');
+  const [pattern, setPattern] = useState('');
+
+  function save() {
+    switch (mode) {
+      case 'fixed':
+        if (due) {
+          props.onSave(new Date(due).toISOString(), undefined);
+        }
+        break;
+      case 'repeat':
+        props.onSave(undefined, number + '.' + period);
+        break;
+      case 'custom':
+        if (pattern) {
+          props.onSave(undefined, pattern);
+        }
+        break;
+    }
+  }
+
+  return (
+    <Modal onClose={props.onClose}>
+      <h2>Schedule {props.taskId}</h2>
+      <div className="form-grid">
+        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <input
+            type="radio"
+            checked={mode === 'fixed'}
+            onChange={() => setMode('fixed')} />
+          Once, at a fixed date
+        </label>
+        {mode === 'fixed' && (
+          <input
+            type="datetime-local"
+            value={due}
+            onChange={e => setDue(e.target.value)} />
+        )}
+        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <input
+            type="radio"
+            checked={mode === 'repeat'}
+            onChange={() => setMode('repeat')} />
+          Repeating
+        </label>
+        {mode === 'repeat' && (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <select value={number} onChange={e => setNumber(Number(e.target.value))}>
+              {REPEAT_NUMBERS.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+            <select value={period} onChange={e => setPeriod(e.target.value)}>
+              {REPEAT_PERIODS.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <input
+            type="radio"
+            checked={mode === 'custom'}
+            onChange={() => setMode('custom')} />
+          Custom repetition pattern
+        </label>
+        {mode === 'custom' && (
+          <>
+            <input
+              type="text"
+              placeholder="e.g. 10.20.15.22.22 or Sunday.15.22.22"
+              value={pattern}
+              onChange={e => setPattern(e.target.value)} />
+            <span className="muted" style={{ fontSize: 12 }}>
+              Formats: MM.dd.HH.mm.ss (months.days.hours.minutes.seconds) or
+              ww.HH.mm.ss (weekday.hour.minute.second)
+            </span>
+          </>
+        )}
+      </div>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button className="btn" onClick={save}>Schedule</button>
+      </div>
+    </Modal>
   );
 }

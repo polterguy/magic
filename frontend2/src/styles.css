@@ -267,6 +267,36 @@ input:focus, select:focus, textarea:focus {
   outline-offset: -1px;
 }
 
+/* ---------- Tabs ---------- */
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-soft);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab:hover {
+  color: var(--accent-dark);
+}
+
+.tab.active {
+  color: var(--accent-dark);
+  border-bottom-color: var(--accent);
+}
+
 /* ---------- Tables ---------- */
 
 table {
@@ -503,6 +533,10 @@ tr.clickable:hover td { background: var(--accent-soft); }
 
 .tree-row.selected .tree-chevron,
 .tree-row.selected .tree-icon { color: #fff; }
+
+/* System folders are tinted red like the old dashboard. */
+.tree-row.system .tree-name,
+.tree-row.system .tree-icon { color: var(--danger); }
 
 .tree-name {
   flex: 1;

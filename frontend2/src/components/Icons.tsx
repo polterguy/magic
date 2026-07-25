@@ -61,6 +61,26 @@ export function FolderPlusIcon() {
   );
 }
 
+export function UploadIcon() {
+  return (
+    <svg {...base}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 8 12 3 17 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
+
+export function DownloadIcon() {
+  return (
+    <svg {...base}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  );
+}
+
 export function PencilIcon() {
   return (
     <svg {...base}>

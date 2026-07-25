@@ -9,6 +9,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/addon/display/fullscreen.css';
 import 'codemirror/addon/hint/show-hint.css';
+import 'codemirror/addon/hint/sql-hint';
 import 'codemirror/mode/sql/sql';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/htmlmixed/htmlmixed';
@@ -50,6 +51,13 @@ interface CodeEditorProps {
   height?: string;
   onSave?: () => void;
   onExecute?: () => void;
+  // Table → columns map feeding SQL autocomplete.
+  hintTables?: Record<string, string[]>;
+  // Gives the parent access to the CodeMirror instance (selection etc.).
+  onInstance?: (instance: CodeMirror.Editor) => void;
+  // Old-dashboard Alt-key actions: newFile, newFolder, renameFile,
+  // deleteFile, deleteFolder, close.
+  onAction?: (action: string) => void;
 }
 
 export default function CodeEditor(props: CodeEditorProps) {
@@ -91,6 +99,12 @@ export default function CodeEditor(props: CodeEditorProps) {
           }
         },
         'Ctrl-Space': 'autocomplete',
+        'Alt-A': () => callbacks.current.onAction?.('newFile'),
+        'Alt-B': () => callbacks.current.onAction?.('newFolder'),
+        'Alt-R': () => callbacks.current.onAction?.('renameFile'),
+        'Alt-D': () => callbacks.current.onAction?.('deleteFile'),
+        'Alt-X': () => callbacks.current.onAction?.('deleteFolder'),
+        'Alt-C': () => callbacks.current.onAction?.('close'),
         'Alt-S': () => callbacks.current.onSave?.(),
         'Ctrl-S': () => callbacks.current.onSave?.(),
         'Cmd-S': () => callbacks.current.onSave?.(),
@@ -99,6 +113,12 @@ export default function CodeEditor(props: CodeEditorProps) {
       },
     });
     instance.setSize('100%', callbacks.current.height ?? '100%');
+    if (callbacks.current.hintTables) {
+      instance.setOption(
+        'hintOptions' as any,
+        { tables: callbacks.current.hintTables, completeSingle: false });
+    }
+    callbacks.current.onInstance?.(instance);
     instance.on('change', (_, change) => {
       // Programmatic setValue (e.g. opening a file) is not a user edit.
       if (change.origin === 'setValue') {
@@ -130,6 +150,14 @@ export default function CodeEditor(props: CodeEditorProps) {
   useEffect(() => {
     editor.current?.setOption('mode', props.mode);
   }, [props.mode]);
+
+  useEffect(() => {
+    if (props.hintTables) {
+      editor.current?.setOption(
+        'hintOptions' as any,
+        { tables: props.hintTables, completeSingle: false });
+    }
+  }, [props.hintTables]);
 
   return <div className="code-editor" ref={host} />;
 }

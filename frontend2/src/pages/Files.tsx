@@ -1,27 +1,47 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CodeEditor, { modeForFile } from '../components/CodeEditor';
+import ResultViewer, { RawResult } from '../components/ResultViewer';
 import {
   ChevronIcon,
+  DownloadIcon,
   FileIcon,
   FilePlusIcon,
   FolderIcon,
   FolderPlusIcon,
   PencilIcon,
   TrashIcon,
+  UploadIcon,
 } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
+import { setNavGuard } from '../lib/navGuard';
 import {
   createFolder,
   deleteFile,
   deleteFolder,
+  downloadFileRaw,
+  downloadFolderRaw,
   evaluateWithArgs,
   getHyperlambdaArguments,
+  getOpenApiSpec,
   listFilesRecursively,
   listFoldersRecursively,
   loadFile,
   renamePath,
   saveFile,
+  uploadFile,
 } from '../lib/api';
+import { dispositionFilename, downloadBlob } from '../components/ResultViewer';
+
+/*
+ * Paths the backend treats as system content — rename/delete-blocked, and
+ * tinted red in the tree, like the old dashboard.
+ */
+function isSystemPath(path: string) {
+  return ['/system/', '/misc/', '/data/', '/config/'].some(prefix =>
+    path === prefix || path.startsWith(prefix));
+}
+
+const PROTECTED_FOLDERS = ['/', '/system/', '/misc/', '/data/', '/config/', '/etc/', '/modules/'];
 
 /*
  * Converts a form value to the argument type the Hyperlambda expects.
@@ -55,14 +75,23 @@ export default function Files() {
   const [systemFiles, setSystemFiles] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState('');
-  const [treeWidth, setTreeWidth] = useState(340);
+  const [treeWidth, setTreeWidth] = useState(
+    () => Number(localStorage.getItem('magic2.treeWidth')) || 340);
+
+  useEffect(() => {
+    localStorage.setItem('magic2.treeWidth', String(treeWidth));
+  }, [treeWidth]);
   const [selectedFile, setSelectedFile] = useState('');
   const [content, setContent] = useState('');
   const [dirty, setDirty] = useState(false);
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
-  const [executeResult, setExecuteResult] =
-    useState<{ text: string; mode: string } | null>(null);
+  const [executeResult, setExecuteResult] = useState<RawResult | null>(null);
+  const [openApiSpec, setOpenApiSpec] = useState<string | null>(null);
+  const editorRef = useRef<import('codemirror').Editor | null>(null);
   const { confirm, prompt, form } = useDialog();
+
+  // The folder that upload/new-file shortcuts operate on.
+  const activeFolder = selectedFile ? parentOf(selectedFile) : '/';
 
   const loadTree = useCallback(async (sys: boolean) => {
     try {
@@ -80,6 +109,31 @@ export default function Files() {
   useEffect(() => {
     loadTree(systemFiles);
   }, [loadTree, systemFiles]);
+
+  /*
+   * Guard in-app navigation and browser unload while the file is dirty.
+   */
+  useEffect(() => {
+    if (!dirty) {
+      setNavGuard(null);
+      return;
+    }
+    setNavGuard(() => confirm({
+      title: 'Discard unsaved changes?',
+      message: selectedFile + ' has unsaved changes.',
+      confirmText: 'Discard',
+      danger: true,
+    }));
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', beforeUnload);
+    return () => {
+      setNavGuard(null);
+      window.removeEventListener('beforeunload', beforeUnload);
+    };
+  }, [dirty, selectedFile, confirm]);
 
   /*
    * When a filter is active, a file shows if its name matches, and a folder
@@ -173,7 +227,10 @@ export default function Files() {
       return;
     }
     try {
-      const argSpec = await getHyperlambdaArguments(content) ?? {};
+      // Executing a selection runs just the selected code, like the old IDE.
+      const selection = editorRef.current?.getSelection() ?? '';
+      const code = selection !== '' ? selection : content;
+      const argSpec = await getHyperlambdaArguments(code) ?? {};
       const names = Object.keys(argSpec);
       let args: any = null;
       if (names.length > 0) {
@@ -199,16 +256,7 @@ export default function Files() {
           args[name] = convertArgument(value, argSpec[name].type);
         }
       }
-      const response = await evaluateWithArgs(content, args);
-      let display = response === '' ? 'OK — no result' : response;
-      let mode = 'text/plain';
-      try {
-        display = JSON.stringify(JSON.parse(response), null, 2);
-        mode = 'application/json';
-      } catch {
-        // Not JSON — show as-is.
-      }
-      setExecuteResult({ text: display, mode });
+      setExecuteResult(await evaluateWithArgs(code, args));
     } catch (err: any) {
       show(err.message, true);
     }
@@ -265,6 +313,10 @@ export default function Files() {
   }
 
   async function removeFolder(path: string) {
+    if (PROTECTED_FOLDERS.includes(path)) {
+      show('You cannot delete the ' + path + ' folder', true);
+      return;
+    }
     if (!await confirm({
       title: 'Delete folder?',
       message: path + ' and everything in it will be deleted.',
@@ -282,6 +334,10 @@ export default function Files() {
   }
 
   async function rename(path: string, isFolder: boolean) {
+    if (isFolder && PROTECTED_FOLDERS.includes(path)) {
+      show('You cannot rename the ' + path + ' folder', true);
+      return;
+    }
     const oldName = nameOf(path);
     const name = await prompt({
       title: 'Rename',
@@ -313,7 +369,10 @@ export default function Files() {
       <div className={'tree-children' + (path === '/' ? ' root' : '')}>
         {childFolders.map(folder => (
           <div className="tree-node" key={folder}>
-            <div className="tree-row" title={folder} onClick={() => toggle(folder)}>
+            <div
+              className={'tree-row' + (isSystemPath(folder) ? ' system' : '')}
+              title={folder}
+              onClick={() => toggle(folder)}>
               <span className="tree-chevron">
                 <ChevronIcon open={isOpen(folder)} />
               </span>
@@ -357,6 +416,48 @@ export default function Files() {
         <span className="mono">
           {selectedFile || 'No file open'}{dirty ? ' •' : ''}
         </span>
+        {selectedFile && (
+          <>
+            <button
+              className="btn btn-secondary btn-small"
+              title="Copy path"
+              onClick={() => {
+                navigator.clipboard.writeText(selectedFile);
+                show('Path copied to clipboard');
+              }}>
+              Copy path
+            </button>
+            <button
+              className="btn btn-secondary btn-small"
+              title="Download file"
+              onClick={async () => {
+                try {
+                  const raw = await downloadFileRaw(selectedFile);
+                  downloadBlob(
+                    raw.blob,
+                    dispositionFilename(raw.disposition) ?? nameOf(selectedFile));
+                } catch (err: any) {
+                  show(err.message, true);
+                }
+              }}>
+              Download
+            </button>
+          </>
+        )}
+        {/\.(get|post|put|delete|patch)\.hl$/.test(selectedFile) && (
+          <button
+            className="btn btn-secondary btn-small"
+            onClick={async () => {
+              try {
+                const spec = await getOpenApiSpec(activeFolder);
+                setOpenApiSpec(JSON.stringify(spec, null, 2));
+              } catch (err: any) {
+                show(err.message, true);
+              }
+            }}>
+            OpenAPI
+          </button>
+        )}
         {selectedFile.endsWith('.hl') &&
           <button className="btn btn-secondary btn-small" onClick={execute}>▷ Execute</button>}
         <button className="btn btn-small" onClick={save} disabled={!selectedFile || !dirty}>
@@ -394,6 +495,41 @@ export default function Files() {
             <button className="icon-btn" title="New folder in /" onClick={() => newFolder('/')}>
               <FolderPlusIcon />
             </button>
+            <label className="icon-btn" title={'Upload files to ' + activeFolder}>
+              <UploadIcon />
+              <input
+                type="file"
+                multiple
+                style={{ display: 'none' }}
+                onChange={async e => {
+                  const files = Array.from(e.target.files ?? []);
+                  e.target.value = '';
+                  try {
+                    for (const file of files) {
+                      await uploadFile(activeFolder, file);
+                    }
+                    show('Uploaded ' + files.length + ' file(s) to ' + activeFolder);
+                    await loadTree(systemFiles);
+                  } catch (err: any) {
+                    show(err.message, true);
+                  }
+                }} />
+            </label>
+            <button
+              className="icon-btn"
+              title={'Download ' + activeFolder + ' as zip'}
+              onClick={async () => {
+                try {
+                  const raw = await downloadFolderRaw(activeFolder);
+                  downloadBlob(
+                    raw.blob,
+                    dispositionFilename(raw.disposition) ?? 'folder.zip');
+                } catch (err: any) {
+                  show(err.message, true);
+                }
+              }}>
+              <DownloadIcon />
+            </button>
           </div>
           {renderChildren('/')}
         </div>
@@ -419,7 +555,23 @@ export default function Files() {
               onChange={value => { setContent(value); setDirty(true); }}
               mode={modeForFile(selectedFile)}
               onSave={save}
-              onExecute={execute} />
+              onExecute={execute}
+              onInstance={instance => { editorRef.current = instance; }}
+              onAction={action => {
+                switch (action) {
+                  case 'newFile': newFile(activeFolder); break;
+                  case 'newFolder': newFolder(activeFolder); break;
+                  case 'renameFile': rename(selectedFile, false); break;
+                  case 'deleteFile': removeFile(selectedFile); break;
+                  case 'deleteFolder': removeFolder(activeFolder); break;
+                  case 'close':
+                    if (!dirty) {
+                      setSelectedFile('');
+                      setContent('');
+                    }
+                    break;
+                }
+              }} />
           ) : (
             <div className="card muted" style={{ flex: 1 }}>
               Select a file in the tree to start editing.
@@ -427,15 +579,29 @@ export default function Files() {
           )}
         </div>
       </div>
+      {openApiSpec !== null && (
+        <Modal width={800} onClose={() => setOpenApiSpec(null)}>
+          <h2>OpenAPI specification — {activeFolder}</h2>
+          <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
+            <CodeEditor value={openApiSpec} mode="application/json" readOnly />
+          </div>
+          <div className="modal-actions">
+            <button
+              className="btn btn-secondary"
+              onClick={() => {
+                navigator.clipboard.writeText(openApiSpec);
+                show('Specification copied to clipboard');
+              }}>
+              Copy JSON
+            </button>
+            <button className="btn" onClick={() => setOpenApiSpec(null)}>Close</button>
+          </div>
+        </Modal>
+      )}
       {executeResult !== null && (
         <Modal width={860} onClose={() => setExecuteResult(null)}>
           <h2>Execution result</h2>
-          <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
-            <CodeEditor
-              value={executeResult.text}
-              mode={executeResult.mode}
-              readOnly />
-          </div>
+          <ResultViewer result={executeResult} />
           <div className="modal-actions">
             <button className="btn" onClick={() => setExecuteResult(null)}>Close</button>
           </div>

@@ -179,6 +179,28 @@ export function deleteFolder(folder: string) {
     '/magic/system/file-system/folder?folder=' + encodeURIComponent(folder));
 }
 
+export function uploadFile(folder: string, file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return http.put<any>(
+    '/magic/system/file-system/file?folder=' + encodeURIComponent(folder), formData);
+}
+
+export function downloadFileRaw(file: string) {
+  return requestRaw(
+    'GET', '/magic/system/file-system/file?file=' + encodeURIComponent(file));
+}
+
+export function downloadFolderRaw(folder: string) {
+  return requestRaw(
+    'GET', '/magic/system/file-system/download-folder?folder=' + encodeURIComponent(folder));
+}
+
+export function getOpenApiSpec(filter: string) {
+  return http.get<any>(
+    '/magic/system/endpoints/openapi?system=true&filter=' + encodeURIComponent(filter));
+}
+
 /*
  * Hyperlambda evaluator.
  */
@@ -202,12 +224,60 @@ export function getHyperlambdaArguments(hyperlambda: string) {
 }
 
 /*
+ * Issues a request and returns the raw response so callers can dispatch on
+ * Content-Type and Content-Disposition (JSON, HTML, files, anything).
+ * Throws on non-2xx unless allowErrors is set — invokers want to SHOW
+ * error responses rather than throw.
+ */
+async function requestRaw(
+  method: string, url: string, body?: string, contentType?: string, allowErrors = false) {
+
+  const headers: Record<string, string> = {};
+  if (bearerToken) {
+    headers['Authorization'] = 'Bearer ' + bearerToken;
+  }
+  if (body !== undefined) {
+    headers['Content-Type'] = contentType ?? 'application/json';
+  }
+  const started = performance.now();
+  const response = await fetch(baseUrl + url, { method, headers, body });
+  if (!response.ok && !allowErrors) {
+    let message = response.statusText;
+    try {
+      message = (await response.json()).message ?? message;
+    } catch {
+      // Non-JSON error body.
+    }
+    throw new ApiError(response.status, message);
+  }
+  return {
+    blob: await response.blob(),
+    contentType: response.headers.get('Content-Type') ?? '',
+    disposition: response.headers.get('Content-Disposition') ?? '',
+    status: response.status,
+    elapsed: Math.round(performance.now() - started),
+  };
+}
+
+/*
  * Executes Hyperlambda decorated with the given arguments — this is how
  * endpoint files are executed, since plain evaluate refuses them.
  */
 export function evaluateWithArgs(hyperlambda: string, args: any) {
-  return request<string>(
-    'POST', '/magic/system/evaluator/evaluate-with-args', { hyperlambda, args }, { text: true });
+  return requestRaw(
+    'POST',
+    '/magic/system/evaluator/evaluate-with-args',
+    JSON.stringify({ hyperlambda, args }));
+}
+
+/*
+ * Invokes an endpoint with its actual HTTP verb. url includes any query
+ * parameters; payload is the raw request body for POST/PUT/PATCH.
+ * Error responses are returned, not thrown, so the invoker can display them.
+ */
+export function invokeEndpoint(
+  verb: string, url: string, payload?: string, contentType?: string) {
+  return requestRaw(verb.toUpperCase(), '/' + url, payload, contentType, true);
 }
 
 /*
@@ -233,6 +303,83 @@ export function executeSql(
     sql,
     safeMode,
     batch,
+  });
+}
+
+/*
+ * Databases management.
+ */
+
+export function createDatabase(
+  databaseType: string, connectionString: string, databaseName: string) {
+  return http.post<MagicResponse>('/magic/system/sql/ddl/database', {
+    databaseType,
+    connectionString,
+    databaseName,
+  });
+}
+
+export function dropDatabase(
+  databaseType: string, connectionString: string, databaseName: string) {
+  return http.delete<MagicResponse>(
+    '/magic/system/sql/ddl/database?databaseType=' + encodeURIComponent(databaseType) +
+    '&connectionString=' + encodeURIComponent(connectionString) +
+    '&databaseName=' + encodeURIComponent(databaseName));
+}
+
+/*
+ * Direct download URL carrying the JWT as query parameter — the pattern the
+ * old dashboard uses for SQLite backup downloads.
+ */
+export function fileWithTokenUrl(file: string) {
+  return baseUrl + '/magic/system/file-system/file-with-token?file=' +
+    encodeURIComponent(file) + '&access_token=' + encodeURIComponent(bearerToken ?? '');
+}
+
+export function uploadDatabaseBackup(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return http.put<any>('/magic/system/sql/backup', formData);
+}
+
+export function loadConfig() {
+  return http.get<any>('/magic/system/config/load');
+}
+
+export function saveConfig(config: any) {
+  return http.post<MagicResponse>('/magic/system/config/save', config);
+}
+
+export function testConnectionString(databaseType: string, connectionString: string) {
+  return http.post<{ result: string; message?: string }>(
+    '/magic/system/sql/test-connection-string', { databaseType, connectionString });
+}
+
+export function addConnectionString(
+  databaseType: string, name: string, connectionString: string, useAsDefault: boolean) {
+  return http.post<MagicResponse>('/magic/system/sql/connection-string', {
+    databaseType,
+    name,
+    connectionString,
+    useAsDefault,
+  });
+}
+
+export function deleteConnectionString(databaseType: string, name: string) {
+  return http.delete<MagicResponse>(
+    '/magic/system/sql/connection-string?databaseType=' + encodeURIComponent(databaseType) +
+    '&name=' + encodeURIComponent(name));
+}
+
+export function exportDdl(
+  databaseType: string, connectionString: string, databaseName: string,
+  tables: string[], full: boolean) {
+  return http.post<{ result: string }>('/magic/system/sql/ddl/export-tables', {
+    databaseType,
+    connectionString,
+    databaseName,
+    tables,
+    full,
   });
 }
 
@@ -381,6 +528,159 @@ export function scheduleTask(id: string, due?: string, repeats?: string) {
 
 export function deleteSchedule(id: number) {
   return http.delete<MagicResponse>('/magic/system/tasks/due/delete?id=' + id);
+}
+
+/*
+ * Machine learning.
+ */
+
+export function backendInfo() {
+  return { url: baseUrl, token: bearerToken };
+}
+
+export function mlTypes() {
+  return http.get<any[]>('/magic/system/magic/ml_types?limit=-1&order=type');
+}
+
+export function mlTypeCreate(type: any) {
+  return http.post<any>('/magic/system/magic/ml_types', type);
+}
+
+export function mlTypeUpdate(type: any) {
+  return http.put<any>('/magic/system/magic/ml_types', type);
+}
+
+export function mlTypeDelete(type: string) {
+  return http.delete<any>('/magic/system/magic/ml_types?type=' + encodeURIComponent(type));
+}
+
+export function mlSnippets(type: string, filter: string, offset: number, limit: number) {
+  let query = `?limit=${limit}&offset=${offset}&order=created&direction=desc` +
+    '&ml_training_snippets.type.eq=' + encodeURIComponent(type);
+  if (filter) {
+    query += '&ml_training_snippets.prompt.like=' + encodeURIComponent('%' + filter + '%');
+  }
+  return http.get<any[]>('/magic/system/magic/ml_training_snippets' + query);
+}
+
+export function mlSnippetsCount(type: string, filter: string) {
+  let query = '?ml_training_snippets.type.eq=' + encodeURIComponent(type);
+  if (filter) {
+    query += '&ml_training_snippets.prompt.like=' + encodeURIComponent('%' + filter + '%');
+  }
+  return http.get<{ count: number }>('/magic/system/magic/ml_training_snippets-count' + query);
+}
+
+export function mlSnippetCreate(snippet: any) {
+  return http.post<any>('/magic/system/magic/ml_training_snippets', snippet);
+}
+
+export function mlSnippetUpdate(snippet: any) {
+  return http.put<any>('/magic/system/magic/ml_training_snippets', snippet);
+}
+
+export function mlSnippetDelete(id: number) {
+  return http.delete<any>('/magic/system/magic/ml_training_snippets?id=' + id);
+}
+
+export function mlRequests(type: string, offset: number, limit: number) {
+  return http.get<any[]>(
+    `/magic/system/magic/ml_requests?limit=${limit}&offset=${offset}` +
+    '&order=created&direction=desc&ml_requests.type.eq=' + encodeURIComponent(type));
+}
+
+export function openaiIsConfigured() {
+  return http.get<{ result: boolean }>('/magic/system/openai/is-configured');
+}
+
+export function openaiModels() {
+  return http.get<{ id: string; chat?: boolean; vector?: boolean }[]>(
+    '/magic/system/openai/models');
+}
+
+export function gibberish() {
+  return http.get<{ result: string }>('/magic/system/misc/gibberish?min=20&max=30');
+}
+
+export function vectoriseType(type: string, channel: string) {
+  return http.post<any>('/magic/system/openai/vectorise', {
+    type,
+    'feedback-channel': channel,
+  });
+}
+
+/*
+ * Prompts the model — stream=false, so the completion comes back in the
+ * response instead of over the socket.
+ */
+export function openaiChat(prompt: string, type: string, session: string, username: string) {
+  const payload = new FormData();
+  payload.append('prompt', prompt);
+  payload.append('session', session);
+  payload.append('references', 'true');
+  payload.append('type', type);
+  payload.append('user_id', username);
+  payload.append('stream', 'false');
+  return http.post<any>('/magic/system/openai/chat', payload);
+}
+
+/*
+ * Crawls a website into training snippets — progress arrives on the
+ * feedback channel over the socket.
+ */
+export function importUrl(args: {
+  url: string;
+  type: string;
+  delay: number;
+  max: number;
+  threshold: number;
+  summarize: boolean;
+  insert_url: boolean;
+  images: boolean;
+  lists: boolean;
+  code: boolean;
+  channel: string;
+}) {
+  return http.post<any>('/magic/system/openai/import-url', {
+    url: args.url,
+    type: args.type,
+    delay: args.delay,
+    max: args.max,
+    threshold: args.threshold,
+    summarize: args.summarize,
+    insert_url: args.insert_url,
+    images: args.images,
+    lists: args.lists,
+    code: args.code,
+    'feedback-channel': args.channel,
+    meta: null,
+  });
+}
+
+export function uploadTrainingFile(type: string, file: File) {
+  const formData = new FormData();
+  formData.append('file', file, file.name);
+  formData.append('type', type);
+  formData.append('prompt', 'prompt');
+  formData.append('completion', 'completion');
+  return http.post<{ count: number }>('/magic/system/openai/upload-training-data', formData);
+}
+
+export function openaiThemes() {
+  return http.get<string[]>('/magic/system/openai/themes');
+}
+
+export function availableWorkflows() {
+  return http.get<{ name: string; description: string; file: string }[]>(
+    '/magic/system/openai/available-workflows?private=false');
+}
+
+/*
+ * Generates the AI-function declaration snippet for a Hyperlambda file.
+ */
+export function getFunctionDeclaration(path: string) {
+  return http.post<{ result: string }>(
+    '/magic/system/workflows/get-hyperlambda-arguments', { path });
 }
 
 /*

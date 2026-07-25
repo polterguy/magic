@@ -99,15 +99,13 @@ export default function Playground() {
 
   return (
     <>
-      <div className="page-header">
-        <h1>Playground</h1>
-        <p>Execute Hyperlambda on your server — F5 or the Run button executes</p>
-      </div>
-      <div className="toolbar">
-        <button className="btn" onClick={execute} disabled={busy}>
-          {busy ? 'Running…' : '▷ Run'}
-        </button>
-        <button className="btn btn-secondary" onClick={save}>Save snippet</button>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div>
+          <h1>Playground</h1>
+          <p>Execute Hyperlambda on your server — F5 or the Run button executes</p>
+        </div>
+        <span style={{ flex: 1 }} />
+        {error && <span className="error-box" style={{ padding: '6px 12px' }}>{error}</span>}
         <select value={selectedSnippet} onChange={e => openSnippet(e.target.value)}>
           <option value="">Load snippet…</option>
           {snippets.map(snippet => (
@@ -116,7 +114,10 @@ export default function Playground() {
             </option>
           ))}
         </select>
-        {error && <span className="error-box" style={{ padding: '6px 12px' }}>{error}</span>}
+        <button className="btn btn-secondary" onClick={save}>Save snippet</button>
+        <button className="btn" onClick={execute} disabled={busy}>
+          {busy ? 'Running…' : '▷ Run'}
+        </button>
       </div>
       <div className="editor-split">
         <div>
