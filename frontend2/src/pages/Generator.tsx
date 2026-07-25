@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import CodeEditor from '../components/CodeEditor';
@@ -426,12 +427,17 @@ function CrudTab() {
 
   return (
     <>
-      {(selection.error || feedback) && (
-        <div
-          className={(feedback?.isError ?? true) ? 'error-box' : 'success-box'}
-          style={{ marginBottom: 12 }}>
-          {selection.error || feedback?.text}
+      {selection.error ? (
+        <div className="error-box" style={{ marginBottom: 12 }}>
+          {selection.error}
         </div>
+      ) : feedback && (
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
+          style={{ marginBottom: 12 }}>
+          {feedback.text}
+        </Banner>
       )}
       <div className="toolbar">
         <DatabaseSelectors selection={selection} />
@@ -651,12 +657,17 @@ function SqlEndpointTab() {
 
   return (
     <>
-      {(selection.error || feedback) && (
-        <div
-          className={(feedback?.isError ?? true) ? 'error-box' : 'success-box'}
-          style={{ marginBottom: 12 }}>
-          {selection.error || feedback?.text}
+      {selection.error ? (
+        <div className="error-box" style={{ marginBottom: 12 }}>
+          {selection.error}
         </div>
+      ) : feedback && (
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
+          style={{ marginBottom: 12 }}>
+          {feedback.text}
+        </Banner>
       )}
       <div className="toolbar">
         <DatabaseSelectors selection={selection} />

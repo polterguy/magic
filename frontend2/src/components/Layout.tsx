@@ -1,5 +1,6 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
 import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
@@ -56,6 +57,56 @@ export default function Layout({ children }: { children: ReactNode }) {
     getVersion().then(response => setVersion(response.version)).catch(() => {});
   }, []);
 
+  /*
+   * App-wide socket channel the backend pushes notifications through —
+   * plugin installed, training done, vectorising done, etc. Same channel
+   * and payload as the old dashboard: {type: 'success'|'error', message}.
+   * Each message becomes its own toast so several can stack.
+   */
+  const [toasts, setToasts] = useState<{ id: number; text: string; isError: boolean }[]>([]);
+  const nextToastId = useRef(0);
+  const backendUrl = backend?.url;
+  const backendToken = backend?.token;
+
+  function dismissToast(id: number) {
+    setToasts(current => current.filter(toast => toast.id !== id));
+  }
+
+  useEffect(() => {
+    if (!backendUrl || !backendToken) {
+      return;
+    }
+    const connection = new HubConnectionBuilder()
+      .withUrl(backendUrl + '/sockets', {
+        accessTokenFactory: () => backendToken,
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets,
+      })
+      .withAutomaticReconnect()
+      .build();
+    const timers: number[] = [];
+    connection.on('magic.backend.message', (raw: string) => {
+      const args = JSON.parse(raw);
+      switch (args.type) {
+        case 'success':
+        case 'error': {
+          const id = ++nextToastId.current;
+          const isError = args.type === 'error';
+          setToasts(current => [...current, { id, text: args.message, isError }]);
+          timers.push(window.setTimeout(
+            () => setToasts(current => current.filter(toast => toast.id !== id)),
+            isError ? 10000 : 5000));
+          break;
+        }
+      }
+    });
+    connection.start().catch(() => {});
+    return () => {
+      timers.forEach(clearTimeout);
+      connection.stop();
+    };
+  }, [backendUrl, backendToken]);
+
   return (
     <div className="shell">
       {!collapsed && <aside className="sidebar">
@@ -103,6 +154,21 @@ export default function Layout({ children }: { children: ReactNode }) {
       <main className="content">
         {children}
       </main>
+      {toasts.length > 0 && (
+        <div className="toast-stack">
+          {toasts.map(toast => (
+            <div key={toast.id} className={'toast' + (toast.isError ? ' error' : '')}>
+              <span>{toast.text}</span>
+              <button
+                className="toast-close"
+                title="Dismiss"
+                onClick={() => dismissToast(toast.id)}>
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { useDialog } from '../components/Dialogs';
 import SortHeader, { useSort } from '../components/SortHeader';
@@ -163,11 +164,12 @@ export default function Users() {
         <p>{count} users on your backend</p>
       </div>
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
       <div className="toolbar">
         <input

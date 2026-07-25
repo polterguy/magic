@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -159,11 +160,12 @@ export default function Tasks() {
         <p>{count} scheduled or persisted tasks</p>
       </div>
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
       <div className="toolbar">
         <span className="spacer" />

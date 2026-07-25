@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useEffect, useMemo, useState } from 'react';
 import { marked } from 'marked';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -83,11 +84,12 @@ export default function Plugins() {
         <span className="muted">{visible.length} shown</span>
       </div>
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
       <div style={{
         display: 'grid',

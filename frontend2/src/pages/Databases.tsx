@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -133,11 +134,12 @@ function InternalTab() {
   return (
     <>
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
       <div className="toolbar">
         <input
@@ -396,11 +398,12 @@ function ExternalTab() {
   return (
     <>
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
       <div className="toolbar">
         <select value={type} onChange={e => setType(e.target.value)}>

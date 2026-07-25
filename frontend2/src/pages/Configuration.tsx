@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import { Modal } from '../components/Dialogs';
@@ -53,11 +54,12 @@ export default function Configuration() {
         </button>
       </div>
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         <CodeEditor

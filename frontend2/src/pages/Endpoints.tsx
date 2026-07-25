@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useEffect, useMemo, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import { Modal } from '../components/Dialogs';
@@ -83,7 +84,7 @@ export default function Endpoints() {
           style={{ width: 320 }} />
         <span className="muted">{visible.length} shown</span>
       </div>
-      {error && <div className="error-box" style={{ marginBottom: 12 }}>{error}</div>}
+      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 12 }}>{error}</Banner>}
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
           <thead>
@@ -223,7 +224,7 @@ function InvokePanel(props: {
       <div className="muted" style={{ marginBottom: 10 }}>
         Consumes: {endpoint.consumes ?? 'n/a'} — Produces: {endpoint.produces ?? 'n/a'}
       </div>
-      {invokeError && <div className="error-box" style={{ marginBottom: 10 }}>{invokeError}</div>}
+      {invokeError && <Banner onClose={() => setInvokeError('')} style={{ marginBottom: 10 }}>{invokeError}</Banner>}
       {usesQuery && (endpoint.input?.length ?? 0) > 0 && (
         <div style={{
           display: 'grid',

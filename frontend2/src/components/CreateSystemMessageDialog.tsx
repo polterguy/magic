@@ -5,6 +5,7 @@
  * flavor's instruction, and streams the result back over a socket.
  */
 
+import Banner from './Banner';
 import { useRef, useState } from 'react';
 import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
 import { Modal } from './Dialogs';
@@ -92,7 +93,7 @@ export default function CreateSystemMessageDialog(props: {
             URL — the server will crawl it and fill in the template. This takes a
             minute or two; keep this window open.
           </p>
-          {error && <div className="error-box" style={{ marginBottom: 10 }}>{error}</div>}
+          {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
           <label className="modal-label">
             Website URL
             <input

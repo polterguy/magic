@@ -1,4 +1,7 @@
+import Banner from '../components/Banner';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import AiPrompt from '../components/AiPrompt';
+import { useUnsavedGuard } from '../lib/navGuard';
 import { useSearchParams } from 'react-router-dom';
 import type CodeMirror from 'codemirror';
 import CodeEditor from '../components/CodeEditor';
@@ -38,6 +41,8 @@ export default function Sql() {
   const [databasesMeta, setDatabasesMeta] = useState<any[]>([]);
   const [database, setDatabase] = useState('');
   const [sql, setSql] = useState('');
+  // What the editor last loaded or saved — differing content means unsaved changes.
+  const [savedSql, setSavedSql] = useState('');
   const [safeMode, setSafeMode] = useState(true);
   const [result, setResult] = useState<any[][] | null>(null);
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
@@ -49,6 +54,8 @@ export default function Sql() {
   const [addingColumn, setAddingColumn] = useState<string | null>(null);
   const editorRef = useRef<CodeMirror.Editor | null>(null);
   const { prompt, confirm } = useDialog();
+
+  useUnsavedGuard(sql !== savedSql, 'Your SQL has unsaved changes.');
 
   const tables = databasesMeta.find(db => db.name === database)?.tables ?? [];
 
@@ -99,6 +106,35 @@ export default function Sql() {
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
     }
+  }
+
+  /*
+   * AI context for the prompt bar, same as the old sql-view: the full schema
+   * DDL when tables exist, the SQL dialect, and the current editor code.
+   */
+  async function createAiContext() {
+    const dialect = {
+      sqlite: 'SQLite',
+      mysql: 'MySQL',
+      mssql: 'Microsoft SQL Server',
+      pgsql: 'PostgreSQL',
+    }[type] ?? type;
+    let result = '';
+    if (tables.length > 0) {
+      const ddl = await exportDdl(
+        type, connectionString, database, tables.map((table: any) => table.name), true);
+      result += 'Current schema:\n\n' + ddl.result + '\n\n';
+    }
+    result += 'SQL dialect: ' + dialect + '\n\n';
+    if (sql.length > 0) {
+      result += 'Current code: \n\n' + sql;
+    }
+    if (tables.length > 0) {
+      result += '\n\n**IMPORTANT** - Return ONLY SQL! No ``` characters, or explanations, ' +
+        'ONLY the SQL! In the next message you will be given a natural language query being ' +
+        "a request from the user. Return only the RAW SQL that solves the user' problem";
+    }
+    return result;
   }
 
   async function viewDdl(tables: string[], full: boolean, title: string) {
@@ -216,7 +252,9 @@ export default function Sql() {
       return;
     }
     try {
-      setSql(await loadFile(filename));
+      const text = await loadFile(filename);
+      setSql(text);
+      setSavedSql(text);
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
     }
@@ -231,6 +269,7 @@ export default function Sql() {
       (name.endsWith('.sql') ? '' : '.sql');
     try {
       await saveFile(filename, sql);
+      setSavedSql(sql);
       setFeedback({ text: 'Saved ' + filename, isError: false });
       if (!snippets.includes(filename)) {
         setSnippets([...snippets, filename].sort());
@@ -480,13 +519,14 @@ export default function Sql() {
         </span>
       </div>
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
-      <div style={{ height: 260, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: 260, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
         <CodeEditor
           value={sql}
           onChange={setSql}
@@ -495,6 +535,13 @@ export default function Sql() {
           hintTables={hintTables}
           onInstance={instance => { editorRef.current = instance; }} />
       </div>
+      <AiPrompt
+        fileType="sql"
+        getContext={createAiContext}
+        session="sql-studio.editor"
+        onResult={setSql}
+        onError={message => setFeedback({ text: message, isError: true })}
+        style={{ marginTop: 8 }} />
       </>}
       {view === 'sql' && result?.map((resultSet, index) => (
         <div key={index} style={{ marginTop: 16 }}>

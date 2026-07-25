@@ -1,7 +1,10 @@
+import Banner from '../components/Banner';
 import { useEffect, useState } from 'react';
+import AiPrompt from '../components/AiPrompt';
 import CodeEditor from '../components/CodeEditor';
 import { useDialog } from '../components/Dialogs';
 import { evaluate, listFiles, loadFile, saveFile } from '../lib/api';
+import { useUnsavedGuard } from '../lib/navGuard';
 
 const DEFAULT_CODE = `/*
  * Executes on your server, and returns the result.
@@ -13,6 +16,8 @@ return:x:@.foo
 export default function Playground() {
 
   const [code, setCode] = useState(DEFAULT_CODE);
+  // What the editor last loaded or saved — differing content means unsaved changes.
+  const [savedCode, setSavedCode] = useState(DEFAULT_CODE);
   const [result, setResult] = useState('');
   const [resultMode, setResultMode] = useState('hyperlambda');
   const [error, setError] = useState('');
@@ -20,6 +25,8 @@ export default function Playground() {
   const [snippets, setSnippets] = useState<string[]>([]);
   const [selectedSnippet, setSelectedSnippet] = useState('');
   const { prompt } = useDialog();
+
+  useUnsavedGuard(code !== savedCode, 'Your Hyperlambda has unsaved changes.');
 
   useEffect(() => {
     listFiles('/etc/snippets/')
@@ -67,7 +74,9 @@ export default function Playground() {
       return;
     }
     try {
-      setCode(await loadFile(filename));
+      const text = await loadFile(filename);
+      setCode(text);
+      setSavedCode(text);
     } catch (err: any) {
       setError(err.message);
     }
@@ -88,6 +97,7 @@ export default function Playground() {
     const filename = '/etc/snippets/' + name + (name.endsWith('.hl') ? '' : '.hl');
     try {
       await saveFile(filename, code);
+      setSavedCode(code);
       setSelectedSnippet(filename);
       if (!snippets.includes(filename)) {
         setSnippets([...snippets, filename].sort());
@@ -105,7 +115,7 @@ export default function Playground() {
           <p>Execute Hyperlambda on your server — F5 or the Run button executes</p>
         </div>
         <span style={{ flex: 1 }} />
-        {error && <span className="error-box" style={{ padding: '6px 12px' }}>{error}</span>}
+        {error && <Banner onClose={() => setError('')} style={{ padding: '6px 12px' }}>{error}</Banner>}
         <select value={selectedSnippet} onChange={e => openSnippet(e.target.value)}>
           <option value="">Load snippet…</option>
           {snippets.map(snippet => (
@@ -123,6 +133,13 @@ export default function Playground() {
         <div>
           <div className="editor-pane-title">Input</div>
           <CodeEditor value={code} onChange={setCode} mode="hyperlambda" onExecute={execute} />
+          <AiPrompt
+            fileType="hl"
+            getContext={() => code}
+            session="hyperlambda-playground.editor"
+            onResult={setCode}
+            onError={setError}
+            style={{ marginTop: 8 }} />
         </div>
         <div>
           <div className="editor-pane-title">Result</div>

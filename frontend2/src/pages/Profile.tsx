@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useState } from 'react';
 import { Modal } from '../components/Dialogs';
 import { changePassword, http, listRoles } from '../lib/api';
@@ -36,11 +37,12 @@ export default function Profile() {
         <p>Signed in as {backend?.username} on {backend?.url}</p>
       </div>
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
       <div className="editor-split" style={{ flex: 'unset', alignItems: 'flex-start' }}>
         <div className="card">
@@ -119,7 +121,7 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
   return (
     <Modal width={560} onClose={onClose}>
       <h2>Generate token</h2>
-      {error && <div className="error-box" style={{ marginBottom: 10 }}>{error}</div>}
+      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
       <div className="form-grid">
         <label>Username
           <input type="text" value={username} onChange={e => setUsername(e.target.value)} />

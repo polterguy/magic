@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -78,11 +79,12 @@ export default function MachineLearning() {
         </div>
       )}
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
       {tab === 'types' &&
         <TypesTab types={types} onChanged={refreshTypes} notify={setFeedback} />}
@@ -1336,7 +1338,7 @@ function AddFunctionDialog(props: {
   return (
     <Modal width={720} onClose={props.onClose}>
       <h2>Add AI function to {props.type}</h2>
-      {error && <div className="error-box" style={{ marginBottom: 10 }}>{error}</div>}
+      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
       <input
         type="text"
         placeholder="Filter functions…"

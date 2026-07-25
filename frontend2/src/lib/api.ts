@@ -4,6 +4,8 @@
  * Angular service layer.
  */
 
+import { loadBackend } from './backend';
+
 let baseUrl = '';
 let bearerToken: string | null = null;
 
@@ -701,6 +703,50 @@ export function mlRequests(type: string, offset: number, limit: number) {
 
 export function openaiIsConfigured() {
   return http.get<{ result: boolean }>('/magic/system/openai/is-configured');
+}
+
+/*
+ * Asks the AI to generate code. Hyperlambda prompts go to the public
+ * Hyperlambda generator at ainiro.io — same service the old dashboard used,
+ * invoked anonymously — while other file types go through the connected
+ * backend's OpenAI proxy.
+ */
+const GENERATOR_URL = 'https://ainiro.io';
+
+export async function aiQuery(
+  prompt: string,
+  fileType: string,
+  contextOverride?: string,
+  session?: string): Promise<{ result: string }> {
+
+  const payload = new FormData();
+  payload.append('prompt', prompt);
+  if (contextOverride) {
+    payload.append('system_message_override', contextOverride);
+  }
+  if (fileType === 'hl') {
+    const response = await fetch(
+      GENERATOR_URL + '/magic/modules/hyperlambda-generator/chat',
+      { method: 'POST', body: payload });
+    if (!response.ok) {
+      let message = response.statusText;
+      try {
+        message = (await response.json()).message ?? message;
+      } catch {
+        // Non-JSON error body, statusText is the best we have.
+      }
+      throw new ApiError(response.status, message);
+    }
+    return await response.json();
+  }
+  payload.append('type', fileType);
+  payload.append('user_id', loadBackend()?.username ?? '');
+  payload.append('references', 'false');
+  payload.append('stream', 'false');
+  if (session) {
+    payload.append('session', session);
+  }
+  return http.post<{ result: string }>('/magic/system/openai/chat', payload);
 }
 
 export function openaiModels() {

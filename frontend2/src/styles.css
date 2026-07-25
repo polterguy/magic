@@ -884,3 +884,120 @@ pre.result-json {
 .file-tab-close:hover {
   background: rgba(0, 0, 0, 0.15);
 }
+
+/* Global notifications pushed from the backend over the socket channel —
+   newest at the bottom, older ones stack upwards. */
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  padding: 12px 14px 12px 18px;
+  border-radius: 10px;
+  background: var(--ok);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 8px 30px rgba(20, 16, 41, 0.3);
+  animation: toast-in 0.18s ease-out;
+}
+
+.toast.error {
+  background: var(--danger);
+}
+
+.toast-close {
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 17px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.toast-close:hover {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dismissible variant of the feedback boxes. */
+.error-box.closable,
+.success-box.closable {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.banner-close {
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  padding: 1px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.banner-close:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Full-screen waiter shown while the AI generates code — bouncing dots,
+   like the old dashboard's openai-prompt backdrop. */
+.ai-waiter {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(20, 16, 41, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-waiter-dots span {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin: 0 7px;
+  background: #9a8afd;
+  animation: ai-bounce 1.2s infinite;
+}
+
+.ai-waiter-dots span:nth-child(2) { animation-delay: 0.2s; }
+.ai-waiter-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes ai-bounce {
+  0%, 100% {
+    transform: translateY(6px);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}

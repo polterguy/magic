@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useEffect, useState } from 'react';
 import { countLog, countTasks, countUsers, getVersion, listEndpoints } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
@@ -26,7 +27,7 @@ export default function Dashboard() {
         <h1>Dashboard</h1>
         <p>Connected to {backend?.url} as {backend?.username}</p>
       </div>
-      {error && <div className="error-box" style={{ marginBottom: 16 }}>{error}</div>}
+      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 16 }}>{error}</Banner>}
       <div className="kpi-grid">
         <div className="card">
           <div className="kpi-value">{version}</div>

@@ -1,4 +1,6 @@
+import Banner from '../components/Banner';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import AiPrompt from '../components/AiPrompt';
 import CodeEditor, { modeForFile } from '../components/CodeEditor';
 import ResultViewer, { RawResult } from '../components/ResultViewer';
 import {
@@ -14,7 +16,7 @@ import {
   UploadIcon,
 } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
-import { setNavGuard } from '../lib/navGuard';
+import { useUnsavedGuard } from '../lib/navGuard';
 import {
   createFolder,
   deleteFile,
@@ -43,6 +45,28 @@ function isSystemPath(path: string) {
 }
 
 const PROTECTED_FOLDERS = ['/', '/system/', '/misc/', '/data/', '/config/', '/etc/', '/modules/'];
+
+/*
+ * AI context for the prompt bar, same rules as the old ide-editor: an empty
+ * file gets a return-only-code system message, a non-empty file asks the AI
+ * to modify the existing code.
+ */
+function aiContextForFile(path: string, content: string) {
+  if (content.length > 0) {
+    return '\n\nChange or modify this code according to instructions in the next message:\n\n' +
+      content;
+  }
+  if (path.endsWith('.hl')) {
+    return 'You are a Hyperlambda software developer AI assistant and you will return ONLY ' +
+      'CODE! No ``` characters, or explanations, ONLY the code! In the next message you will ' +
+      'be given a natural language query being a request from the user. Return only the RAW ' +
+      "code that solves the user' problem";
+  }
+  return 'You are a software developer AI assistant and you will return ONLY CODE! No ``` ' +
+    'characters, or explanations, ONLY the code! In the next message you will be given a ' +
+    'natural language query being a request from the user. Return only the RAW code that ' +
+    "solves the user' problem";
+}
 
 /*
  * Converts a form value to the argument type the Hyperlambda expects.
@@ -124,31 +148,9 @@ export default function Files() {
     loadTree(systemFiles);
   }, [loadTree, systemFiles]);
 
-  /*
-   * Guard in-app navigation and browser unload while any open file is dirty.
-   */
+  // Guard in-app navigation and browser unload while any open file is dirty.
   const dirtyPaths = dirtyFiles.map(file => file.path).join(', ');
-  useEffect(() => {
-    if (!dirtyPaths) {
-      setNavGuard(null);
-      return;
-    }
-    setNavGuard(() => confirm({
-      title: 'Discard unsaved changes?',
-      message: dirtyPaths + ' has unsaved changes.',
-      confirmText: 'Discard',
-      danger: true,
-    }));
-    const beforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = '';
-    };
-    window.addEventListener('beforeunload', beforeUnload);
-    return () => {
-      setNavGuard(null);
-      window.removeEventListener('beforeunload', beforeUnload);
-    };
-  }, [dirtyPaths, confirm]);
+  useUnsavedGuard(!!dirtyPaths, dirtyPaths + ' has unsaved changes.');
 
   /*
    * When a filter is active, a file shows if its name matches, and a folder
@@ -529,11 +531,12 @@ export default function Files() {
         </button>
       </div>
       {feedback && (
-        <div
-          className={feedback.isError ? 'error-box' : 'success-box'}
+        <Banner
+          isError={feedback.isError}
+          onClose={() => setFeedback(null)}
           style={{ marginBottom: 12 }}>
           {feedback.text}
-        </div>
+        </Banner>
       )}
       <div className="files-layout">
         <div className="file-tree" style={{ width: treeWidth }}>
@@ -658,6 +661,15 @@ export default function Files() {
             <div className="card muted" style={{ flex: 1 }}>
               Select a file in the tree to start editing.
             </div>
+          )}
+          {current && (
+            <AiPrompt
+              fileType={selectedFile.substring(selectedFile.lastIndexOf('.') + 1)}
+              getContext={() => aiContextForFile(selectedFile, content)}
+              session={selectedFile}
+              onResult={updateContent}
+              onError={message => show(message, true)}
+              style={{ marginTop: 8 }} />
           )}
         </div>
       </div>

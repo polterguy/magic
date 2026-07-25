@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { LogItem, countLog, listLog } from '../lib/api';
 
@@ -53,7 +54,7 @@ export default function Log() {
         <h1>Log</h1>
         <p>{count} log items</p>
       </div>
-      {error && <div className="error-box" style={{ marginBottom: 12 }}>{error}</div>}
+      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 12 }}>{error}</Banner>}
       <div className="toolbar">
         <input
           type="text"

@@ -1,3 +1,4 @@
+import Banner from '../components/Banner';
 import { FormEvent, useState } from 'react';
 import { useAuth } from '../lib/AuthContext';
 import { backendUrls } from '../lib/backend';
@@ -32,7 +33,7 @@ export default function Login() {
         <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
           Sign in to your backend
         </p>
-        {error && <div className="error-box">{error}</div>}
+        {error && <Banner onClose={() => setError('')}>{error}</Banner>}
         <label>
           Backend URL
           <input

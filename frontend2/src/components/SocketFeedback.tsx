@@ -5,6 +5,7 @@
  * as a line in this modal.
  */
 
+import Banner from './Banner';
 import { useEffect, useRef, useState } from 'react';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { backendInfo } from '../lib/api';
@@ -66,7 +67,7 @@ export default function SocketFeedback(props: {
   return (
     <Modal width={700} onClose={props.onClose}>
       <h2>{props.title}</h2>
-      {error && <div className="error-box" style={{ marginBottom: 10 }}>{error}</div>}
+      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
       <div
         ref={listRef}
         className="result-json"
