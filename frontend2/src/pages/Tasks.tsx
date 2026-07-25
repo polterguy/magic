@@ -460,13 +460,33 @@ function ScheduleDialog(props: {
           <>
             <input
               type="text"
-              placeholder="e.g. 10.20.15.22.22 or Sunday.15.22.22"
+              placeholder="e.g. **.**.17.30.00 or Monday|Friday.09.00.00"
               value={pattern}
               onChange={e => setPattern(e.target.value)} />
-            <span className="muted" style={{ fontSize: 12 }}>
-              Formats: MM.dd.HH.mm.ss (months.days.hours.minutes.seconds) or
-              ww.HH.mm.ss (weekday.hour.minute.second)
-            </span>
+            <div className="muted" style={{ fontSize: 12, lineHeight: 1.6 }}>
+              <div>
+                <strong>MM.dd.HH.mm.ss</strong> — months.days.hours.minutes.seconds
+              </div>
+              <div>
+                <strong>ww.HH.mm.ss</strong> — weekdays.hours.minutes.seconds
+              </div>
+              <div style={{ marginTop: 6 }}>
+                Use <strong className="mono">**</strong> as a wildcard for the months,
+                days or weekdays part, meaning "every one of them". Give several values
+                with <strong className="mono">|</strong> between them. Hours, minutes and
+                seconds are always exact — they take no wildcard.
+              </div>
+              <div style={{ marginTop: 6 }}>
+                <span className="mono">**.**.17.30.00</span> — every day at 17:30<br />
+                <span className="mono">**.01|15.02.00.00</span> — the 1st and 15th of every
+                month at 02:00<br />
+                <span className="mono">01|07.01.00.00.00</span> — 1 January and 1 July at
+                midnight<br />
+                <span className="mono">Monday|Friday.09.00.00</span> — Mondays and Fridays
+                at 09:00<br />
+                <span className="mono">**.22.00.00</span> — every weekday at 22:00
+              </div>
+            </div>
           </>
         )}
       </div>
