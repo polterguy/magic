@@ -30,6 +30,7 @@ import {
   openaiThemes,
   uploadCsvFile,
   uploadImageFile,
+  uploadUrlList,
   uploadTrainingFile,
   vectoriseType,
 } from '../lib/api';
@@ -261,6 +262,12 @@ const UPLOAD_CATEGORIES = {
     accept: '.png,.jpg,.jpeg,.webp,.gif',
     help: 'Images vectorised and stored as training data.',
   },
+  urls: {
+    label: 'URL list (CSV of URLs to scrape)',
+    accept: '.csv',
+    help: 'Scrapes every URL in the file. The CSV must have a header row and ' +
+      'exactly one column, containing nothing but http:// or https:// URLs.',
+  },
 };
 
 /*
@@ -274,9 +281,22 @@ function ImportDialog(props: {
 }) {
 
   const [tab, setTab] = useState('crawl');
+  // Crawl-tab options, defaulted the way the old dashboard defaults them.
   const [url, setUrl] = useState('');
+  const [delay, setDelay] = useState('1');
   const [max, setMax] = useState('25');
+  const [threshold, setThreshold] = useState('150');
+  const [meta, setMeta] = useState('');
   const [summarize, setSummarize] = useState(true);
+  const [insertUrl, setInsertUrl] = useState(false);
+  const [images, setImages] = useState(true);
+  const [lists, setLists] = useState(true);
+  const [code, setCode] = useState(true);
+
+  // URL-list tab: a single-column CSV of URLs to scrape.
+  const [urlListFile, setUrlListFile] = useState<File | null>(null);
+  const [urlListVectorize, setUrlListVectorize] = useState(false);
+  const [scraping, setScraping] = useState<string | null>(null);
   const [crawling, setCrawling] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -303,6 +323,19 @@ function ImportDialog(props: {
   }
 
   async function upload(files: File[]) {
+    /*
+     * A URL list is scraped asynchronously with progress over the socket,
+     * so it takes the feedback-channel route rather than a plain upload.
+     */
+    if (category === 'urls') {
+      try {
+        setUrlListFile(files[0]);
+        setScraping((await gibberish()).result);
+      } catch (err: any) {
+        props.notify({ text: err.message, isError: true });
+      }
+      return;
+    }
     setUploading(true);
     let count = 0;
     try {
@@ -362,16 +395,92 @@ function ImportDialog(props: {
                 value={url}
                 onChange={e => setUrl(e.target.value)} />
             </label>
-            <label>Max pages
-              <input type="number" value={max} onChange={e => setMax(e.target.value)} />
-            </label>
-            <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 12,
+            }}>
+              <label>Max pages
+                <input
+                  type="number"
+                  min={1}
+                  max={5000}
+                  title="Maximum number of URLs to crawl"
+                  value={max}
+                  onChange={e => setMax(e.target.value)} />
+              </label>
+              <label>Delay (seconds)
+                <input
+                  type="number"
+                  min={0.5}
+                  max={30}
+                  step={0.5}
+                  title="Delay between each page requested"
+                  value={delay}
+                  onChange={e => setDelay(e.target.value)} />
+              </label>
+              <label>Text threshold
+                <input
+                  type="number"
+                  min={25}
+                  title="Minimum character count for a page to become a training snippet"
+                  value={threshold}
+                  onChange={e => setThreshold(e.target.value)} />
+              </label>
+            </div>
+            <label>Meta value
               <input
-                type="checkbox"
-                checked={summarize}
-                onChange={e => setSummarize(e.target.checked)} />
-              Summarize pages
+                type="text"
+                placeholder="AINIRO-Website-Crawler"
+                title="Tag associated with every snippet the crawl creates"
+                value={meta}
+                onChange={e => setMeta(e.target.value)} />
             </label>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, max-content)',
+              gap: '6px 24px',
+            }}>
+              <label
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                title="Summarize snippets too long to be used effectively">
+                <input
+                  type="checkbox"
+                  checked={summarize}
+                  onChange={e => setSummarize(e.target.checked)} />
+                Summarize pages
+              </label>
+              <label
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                title="Insert the source URL into the completion of each snippet">
+                <input
+                  type="checkbox"
+                  checked={insertUrl}
+                  onChange={e => setInsertUrl(e.target.checked)} />
+                Insert source URL
+              </label>
+              <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <input
+                  type="checkbox"
+                  checked={images}
+                  onChange={e => setImages(e.target.checked)} />
+                Import images
+              </label>
+              <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <input
+                  type="checkbox"
+                  checked={lists}
+                  onChange={e => setLists(e.target.checked)} />
+                Import lists
+              </label>
+              <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <input
+                  type="checkbox"
+                  checked={code}
+                  onChange={e => setCode(e.target.checked)} />
+                Import code segments
+              </label>
+            </div>
             <div className="modal-actions">
               <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
               <button className="btn" onClick={crawl} disabled={!url}>Start crawling</button>
@@ -415,6 +524,17 @@ function ImportDialog(props: {
                   checked={textSummarize}
                   onChange={e => setTextSummarize(e.target.checked)} />
                 Summarize each file for better retrieval
+              </label>
+            )}
+            {category === 'urls' && (
+              <label
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                title="Create summary prompts for each snippet, improving RAG and VSS lookups">
+                <input
+                  type="checkbox"
+                  checked={urlListVectorize}
+                  onChange={e => setUrlListVectorize(e.target.checked)} />
+                Vectorise when done
               </label>
             )}
             {category === 'pdf' && (
@@ -480,18 +600,30 @@ function ImportDialog(props: {
             importUrl({
               url,
               type: props.type,
-              delay: 1000,
+              // The backend wants milliseconds, the field asks for seconds.
+              delay: Math.round(Number(delay) * 1000),
               max: Number(max),
-              threshold: 150,
+              threshold: Number(threshold),
               summarize,
-              insert_url: false,
-              images: true,
-              lists: true,
-              code: true,
+              insert_url: insertUrl,
+              images,
+              lists,
+              code,
+              meta,
               channel: crawling,
             }).catch(err => props.notify({ text: err.message, isError: true }));
           }}
           onClose={() => { setCrawling(null); props.onClose(); }} />
+      )}
+      {scraping && urlListFile && (
+        <SocketFeedback
+          title={'Scraping URLs from ' + urlListFile.name}
+          channel={scraping}
+          onReady={() => {
+            uploadUrlList(props.type, urlListFile, scraping, urlListVectorize)
+              .catch(err => props.notify({ text: err.message, isError: true }));
+          }}
+          onClose={() => { setScraping(null); props.onClose(); }} />
       )}
     </>
   );
@@ -1308,7 +1440,15 @@ function AddFunctionDialog(props: {
 
   async function install(workflow: any) {
     try {
-      let declaration = (await getFunctionDeclaration(workflow.file)).result;
+      let declaration = await getFunctionDeclaration(workflow.file);
+      if (!declaration) {
+        props.notify({
+          text: workflow.name + ' has no [.arguments] collection, so it cannot ' +
+            'be invoked as an AI function',
+          isError: true,
+        });
+        return;
+      }
       while (declaration.includes('YOUR_TYPE_NAME_HERE')) {
         declaration = declaration.replace('YOUR_TYPE_NAME_HERE', props.type);
       }

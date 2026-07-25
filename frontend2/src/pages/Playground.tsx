@@ -133,19 +133,20 @@ export default function Playground() {
         <div>
           <div className="editor-pane-title">Input</div>
           <CodeEditor value={code} onChange={setCode} mode="hyperlambda" onExecute={execute} />
-          <AiPrompt
-            fileType="hl"
-            getContext={() => code}
-            session="hyperlambda-playground.editor"
-            onResult={setCode}
-            onError={setError}
-            style={{ marginTop: 8 }} />
         </div>
         <div>
           <div className="editor-pane-title">Result</div>
           <CodeEditor value={result} mode={resultMode} readOnly />
         </div>
       </div>
+      {/* Below the split rather than inside it, so both editors stay equally tall. */}
+      <AiPrompt
+        fileType="hl"
+        getContext={() => code}
+        session="hyperlambda-playground.editor"
+        onResult={setCode}
+        onError={setError}
+        style={{ marginTop: 8 }} />
     </>
   );
 }

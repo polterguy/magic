@@ -331,6 +331,23 @@ function RoleChips(props: { roles: string[]; selected: string[]; onChange: (role
 
 const ALL_VERBS = ['post', 'get', 'put', 'delete'];
 
+/*
+ * One crudify invocation creates several endpoint files: GET always produces
+ * the read + count endpoints, and the aggregate, distinct and search options
+ * add aggregate+group, distinct+count-distinct and search on top of it.
+ * Other verbs produce one endpoint each.
+ */
+function endpointsForVerb(
+  verb: string,
+  options: { aggregate: boolean; distinct: boolean; search: boolean }) {
+  return verb !== 'get'
+    ? 1
+    : 2 +
+      (options.aggregate ? 2 : 0) +
+      (options.distinct ? 2 : 0) +
+      (options.search ? 1 : 0);
+}
+
 function CrudTab() {
 
   const selection = useDatabaseSelection();
@@ -386,6 +403,30 @@ function CrudTab() {
     setSelectedTables(next);
   }
 
+  /*
+   * How many endpoint files the current selection would actually produce —
+   * same rules generation uses, including skipping verbs a table can't
+   * support, such as PUT and DELETE on a table without a primary key.
+   */
+  const plannedEndpoints = useMemo(() => {
+    const options = { aggregate, distinct, search };
+    let total = 0;
+    for (const table of tables.filter((candidate: any) => selectedTables.has(candidate.name))) {
+      for (const verb of ALL_VERBS.filter(candidate => verbs.has(candidate))) {
+        const payload = buildCrudifyPayload(
+          selection.type, selection.connectionString, selection.database, table, verb,
+          { ...options, auth, logging, cache: Number(cache), publicCache, overwrite,
+            paging, sorting, moduleName, moduleUrl: null });
+        if (canGenerate(payload, verb)) {
+          total += endpointsForVerb(verb, options);
+        }
+      }
+    }
+    return total;
+  }, [tables, selectedTables, verbs, aggregate, distinct, search, selection.type,
+      selection.connectionString, selection.database, auth, logging, cache, publicCache,
+      overwrite, paging, sorting, moduleName]);
+
   function toggleExpanded(name: string) {
     const next = new Set(expandedTables);
     if (next.has(name)) {
@@ -428,18 +469,6 @@ function CrudTab() {
       moduleName,
       moduleUrl: singleTable ? componentUrl : null,
     };
-    /*
-     * One crudify invocation creates several endpoint files: GET always
-     * produces the read + count endpoints, and the aggregate, distinct and
-     * search options add aggregate+group, distinct+count-distinct and
-     * search on top of it. Other verbs produce one endpoint each.
-     */
-    const endpointsFor = (verb: string) => verb !== 'get'
-      ? 1
-      : 2 +
-        (options.aggregate ? 2 : 0) +
-        (options.distinct ? 2 : 0) +
-        (options.search ? 1 : 0);
     let loc = 0;
     let generated = 0;
     try {
@@ -452,7 +481,7 @@ function CrudTab() {
           }
           const response = await crudify(payload);
           loc += response.loc ?? 0;
-          generated += endpointsFor(verb);
+          generated += endpointsForVerb(verb, options);
         }
       }
       setFeedback({
@@ -725,7 +754,7 @@ function CrudTab() {
                   ? 'Select at least one table.'
                   : verbs.size === 0
                     ? 'Select at least one HTTP verb.'
-                    : `${verbs.size} verb${verbs.size > 1 ? 's' : ''} × ` +
+                    : `${plannedEndpoints} endpoint${plannedEndpoints === 1 ? '' : 's'} across ` +
                       `${selectedTables.size} table${selectedTables.size > 1 ? 's' : ''} ` +
                       `→ /magic/${moduleName || selection.database}/`}
               </span>

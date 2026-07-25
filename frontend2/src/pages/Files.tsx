@@ -7,6 +7,7 @@ import {
   BracesIcon,
   ChevronIcon,
   DownloadIcon,
+  SparkIcon,
   FileIcon,
   FilePlusIcon,
   FolderIcon,
@@ -25,11 +26,14 @@ import {
   downloadFileRaw,
   downloadFolderRaw,
   evaluateWithArgs,
+  getFunctionDeclaration,
   getHyperlambdaArguments,
   getOpenApiSpec,
   listFilesRecursively,
   listFoldersRecursively,
   loadFile,
+  mlSnippetCreate,
+  mlTypes,
   renamePath,
   saveFile,
   uploadFile,
@@ -46,6 +50,54 @@ function isSystemPath(path: string) {
 }
 
 const PROTECTED_FOLDERS = ['/', '/system/', '/misc/', '/data/', '/config/', '/etc/', '/modules/'];
+
+/*
+ * Lets the user pick which AI model a generated function should be added to,
+ * the way the old dashboard's select-model dialog does.
+ */
+function SelectModelDialog(props: {
+  target: string;
+  onClose: () => void;
+  onSelected: (type: string) => void;
+}) {
+
+  const [types, setTypes] = useState<any[]>([]);
+  const [type, setType] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    mlTypes()
+      .then(list => {
+        setTypes(list ?? []);
+        setType(list?.[0]?.type ?? '');
+      })
+      .catch(err => setError(err.message));
+  }, []);
+
+  return (
+    <Modal width={520} onClose={props.onClose}>
+      <h2>Create AI function</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        Adds {props.target} as an AI function to the model you select.
+      </p>
+      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
+      <label className="modal-label">
+        Model
+        <select value={type} onChange={e => setType(e.target.value)}>
+          {types.map(candidate => (
+            <option key={candidate.type} value={candidate.type}>{candidate.type}</option>
+          ))}
+        </select>
+      </label>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button className="btn" onClick={() => props.onSelected(type)} disabled={!type}>
+          Create
+        </button>
+      </div>
+    </Modal>
+  );
+}
 
 /*
  * AI context for the prompt bar, same rules as the old ide-editor: an empty
@@ -116,6 +168,8 @@ export default function Files() {
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [executeResult, setExecuteResult] = useState<RawResult | null>(null);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
+  // File or folder awaiting a model choice for AI-function generation.
+  const [aiFunctionTarget, setAiFunctionTarget] = useState<string | null>(null);
   const editorRef = useRef<import('codemirror').Editor | null>(null);
   const { confirm, prompt, form, choice } = useDialog();
 
@@ -422,6 +476,43 @@ export default function Files() {
     }
   }
 
+  /*
+   * Turns a single Hyperlambda file, or every Hyperlambda file inside a
+   * folder, into AI functions on the chosen model. Files without an
+   * [.arguments] collection can't be invoked as functions, so they're
+   * skipped — the count reports what was actually generated.
+   */
+  async function createAiFunctions(target: string, type: string) {
+    setAiFunctionTarget(null);
+    try {
+      const targets = target.endsWith('.hl')
+        ? [target]
+        : (await listFilesRecursively(target, systemFiles) ?? [])
+            .filter(file => file.endsWith('.hl'));
+      let generated = 0;
+      for (const file of targets) {
+        const declaration = await getFunctionDeclaration(file);
+        if (!declaration) {
+          continue;
+        }
+        const lines = declaration.split('\n');
+        await mlSnippetCreate({
+          prompt: lines[0].trim(),
+          completion: lines.slice(1).join('\n').trim(),
+          type,
+          meta: 'FUNCTION_INVOCATION ==> ' + file,
+        });
+        generated++;
+      }
+      show(generated + ' AI function(s) generated on ' + type +
+        (generated < targets.length
+          ? ' — ' + (targets.length - generated) + ' file(s) skipped, no [.arguments]'
+          : ''));
+    } catch (err: any) {
+      show(err.message, true);
+    }
+  }
+
   // Shows the OpenAPI specification for a file (single endpoint) or folder (all endpoints inside it).
   async function showOpenApi(target: string) {
     try {
@@ -454,6 +545,10 @@ export default function Files() {
                 onNewFile={() => newFile(folder)}
                 onNewFolder={() => newFolder(folder)}
                 onOpenApi={() => showOpenApi(folder)}
+                // Only modules hold endpoints worth exposing as AI functions.
+                onAiFunctions={folder.startsWith('/modules/')
+                  ? () => setAiFunctionTarget(folder)
+                  : undefined}
                 onRename={() => rename(folder, true)}
                 onDelete={() => removeFolder(folder)} />
             </div>
@@ -470,6 +565,9 @@ export default function Files() {
             <span className="tree-icon"><FileIcon /></span>
             <span className="tree-name">{nameOf(file)}</span>
             <FileActions
+              onAiFunction={file.endsWith('.hl')
+                ? e => { e.stopPropagation(); setAiFunctionTarget(file); }
+                : undefined}
               onRename={e => { e.stopPropagation(); rename(file, false); }}
               onDelete={e => { e.stopPropagation(); removeFile(file); }} />
           </div>
@@ -674,6 +772,12 @@ export default function Files() {
           )}
         </div>
       </div>
+      {aiFunctionTarget !== null && (
+        <SelectModelDialog
+          target={aiFunctionTarget}
+          onClose={() => setAiFunctionTarget(null)}
+          onSelected={type => createAiFunctions(aiFunctionTarget, type)} />
+      )}
       {openApiSpec !== null && (
         <OpenApiDialog
           json={openApiSpec.json}
@@ -698,6 +802,7 @@ function FolderActions(props: {
   onNewFile: () => void;
   onNewFolder: () => void;
   onOpenApi?: () => void;
+  onAiFunctions?: () => void;
   onRename?: () => void;
   onDelete?: () => void;
 }) {
@@ -707,6 +812,14 @@ function FolderActions(props: {
       <button className="icon-btn" title="New folder" onClick={props.onNewFolder}><FolderPlusIcon /></button>
       {props.onOpenApi &&
         <button className="icon-btn" title="OpenAPI specification" onClick={props.onOpenApi}><BracesIcon /></button>}
+      {props.onAiFunctions && (
+        <button
+          className="icon-btn"
+          title="Create AI functions for all Hyperlambda files in folder…"
+          onClick={props.onAiFunctions}>
+          <SparkIcon />
+        </button>
+      )}
       {props.onRename &&
         <button className="icon-btn" title="Rename" onClick={props.onRename}><PencilIcon /></button>}
       {props.onDelete &&
@@ -716,11 +829,20 @@ function FolderActions(props: {
 }
 
 function FileActions(props: {
+  onAiFunction?: (e: React.MouseEvent) => void;
   onRename: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
 }) {
   return (
     <span className="row-actions">
+      {props.onAiFunction && (
+        <button
+          className="icon-btn"
+          title="Create AI function for this file…"
+          onClick={props.onAiFunction}>
+          <SparkIcon />
+        </button>
+      )}
       <button className="icon-btn" title="Rename" onClick={props.onRename}><PencilIcon /></button>
       <button className="icon-btn danger" title="Delete" onClick={props.onDelete}><TrashIcon /></button>
     </span>

@@ -824,6 +824,21 @@ export function openaiChat(prompt: string, type: string, session: string, userna
 }
 
 /*
+ * Scrapes every URL listed in a CSV file — the file must have a single
+ * column containing nothing but URLs. Progress arrives on the feedback
+ * channel over the socket, as it does for crawling.
+ */
+export function uploadUrlList(
+  type: string, file: File, channel: string, vectorize: boolean) {
+  const formData = new FormData();
+  formData.append('file', file, file.name);
+  formData.append('type', type);
+  formData.append('feedback-channel', channel);
+  formData.append('vectorize', vectorize ? 'true' : 'false');
+  return http.post<any>('/magic/system/openai/upload-url-list', formData);
+}
+
+/*
  * Crawls a website into training snippets — progress arrives on the
  * feedback channel over the socket.
  */
@@ -839,6 +854,8 @@ export function importUrl(args: {
   lists: boolean;
   code: boolean;
   channel: string;
+  // Tag associated with the generated snippets — the backend defaults it.
+  meta?: string;
 }) {
   return http.post<any>('/magic/system/openai/import-url', {
     url: args.url,
@@ -852,7 +869,7 @@ export function importUrl(args: {
     lists: args.lists,
     code: args.code,
     'feedback-channel': args.channel,
-    meta: null,
+    meta: args.meta || null,
   });
 }
 
@@ -985,12 +1002,72 @@ export function availableWorkflows() {
     '/magic/system/openai/available-workflows?private=false');
 }
 
+interface HyperlambdaArguments {
+  function?: boolean;
+  description?: string;
+  args?: { name: string; type: string; description?: string }[];
+}
+
+// CRUD-generated filter suffixes, described once as a group rather than per argument.
+const FILTER_SUFFIXES = ['eq', 'neq', 'like', 'mt', 'lt', 'mteq', 'lteq'];
+
+const FILTER_LEGEND = `
+If any of the other arguments ends with:
+
+* lt it implies 'less than'
+* mt it implies 'more than'
+* lteq it implies 'less than or equal to'
+* mteq it implies 'more than or equal to'
+* eq it implies 'equals to'
+* neq it implies 'not equal to'
+* like it implies a LIKE SQL type of query, with % being wildcard character
+`;
+
 /*
- * Generates the AI-function declaration snippet for a Hyperlambda file.
+ * Builds the AI-function declaration for a Hyperlambda file. The endpoint
+ * returns the file's arguments and description — the declaration itself is
+ * assembled here, exactly as the old dashboard assembled it.
  */
-export function getFunctionDeclaration(path: string) {
-  return http.post<{ result: string }>(
+export async function getFunctionDeclaration(path: string) {
+  const result = await http.post<HyperlambdaArguments>(
     '/magic/system/workflows/get-hyperlambda-arguments', { path });
+
+  // Files without an [.arguments] collection can't be invoked as functions.
+  if (result.function !== true) {
+    return '';
+  }
+
+  let declaration = (result.description ?? '') + '\n\n___\n';
+  declaration += 'FUNCTION_INVOCATION[' + path + ']';
+  const args = result.args ?? [];
+  if (args.length === 0) {
+    return (declaration + '\n___').trim();
+  }
+
+  const example: Record<string, string> = {};
+  for (const argument of args) {
+    example[argument.name] = '[' + argument.type.toUpperCase() + '_VALUE]';
+  }
+  declaration += ':\n' + JSON.stringify(example, null, 2) +
+    '\n___\n\n### Description of arguments:\n\n';
+
+  let hasFilters = false;
+  for (const argument of args) {
+    const parts = argument.name.split('.');
+    if (FILTER_SUFFIXES.includes(parts[parts.length - 1])) {
+      hasFilters = true;
+      // Only the bare column name is described, not each filter variant.
+      if (parts.length > 1) {
+        continue;
+      }
+    }
+    declaration += '* ' + argument.name +
+      (argument.description ? ' - ' + argument.description : '') + '\n';
+  }
+  if (hasFilters) {
+    declaration += FILTER_LEGEND;
+  }
+  return declaration.trim();
 }
 
 /*
