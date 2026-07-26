@@ -1,5 +1,4 @@
-import { copyToClipboard } from '../lib/toast';
-import Banner from '../components/Banner';
+import { copyToClipboard, showToast } from '../lib/toast';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -24,6 +23,17 @@ const EXTERNAL_TYPES = [
   { name: 'PostgreSQL', type: 'pgsql' },
   { name: 'SQL Server', type: 'mssql' },
 ];
+
+/*
+ * Notifications go to the toast stack. An inline banner is part of the page,
+ * so showing one pushed everything below it down — the editors and grids
+ * jumped under the pointer. Toasts float above the page instead.
+ */
+function setFeedback(value: { text: string; isError: boolean } | null) {
+  if (value) {
+    showToast(value.text, value.isError);
+  }
+}
 
 export default function Databases() {
 
@@ -54,7 +64,6 @@ function InternalTab() {
 
   const [databases, setDatabases] = useState<any[]>([]);
   const [name, setName] = useState('');
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [busy, setBusy] = useState(false);
   const { prompt } = useDialog();
 
@@ -134,14 +143,6 @@ function InternalTab() {
 
   return (
     <>
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
-      )}
       <div className="toolbar">
         <input
           type="text"
@@ -228,7 +229,6 @@ function ExternalTab() {
   const [type, setType] = useState('mysql');
   const [name, setName] = useState('');
   const [connectionString, setConnectionString] = useState('');
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [busy, setBusy] = useState(false);
   const [catalogs, setCatalogs] = useState<{ row: ConnectionRow; list: any[] } | null>(null);
   const { confirm, prompt } = useDialog();
@@ -398,14 +398,6 @@ function ExternalTab() {
 
   return (
     <>
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
-      )}
       <div className="toolbar">
         <select value={type} onChange={e => setType(e.target.value)}>
           {EXTERNAL_TYPES.map(entry => (

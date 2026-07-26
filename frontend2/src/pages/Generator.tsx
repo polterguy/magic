@@ -1,4 +1,4 @@
-import Banner from '../components/Banner';
+import { showToast } from '../lib/toast';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronIcon } from '../components/Icons';
 import { useSearchParams } from 'react-router-dom';
@@ -167,6 +167,17 @@ function canGenerate(payload: any, verb: string) {
     case 'put': return payload.args.primary.length > 0 && payload.args.columns.length > 0;
     case 'delete': return payload.args.primary.length > 0;
     default: return false;
+  }
+}
+
+/*
+ * Notifications go to the toast stack. An inline banner is part of the page,
+ * so showing one pushed everything below it down — the editors and grids
+ * jumped under the pointer. Toasts float above the page instead.
+ */
+function setFeedback(value: { text: string; isError: boolean } | null) {
+  if (value) {
+    showToast(value.text, value.isError);
   }
 }
 
@@ -369,7 +380,6 @@ function CrudTab() {
   const [distinct, setDistinct] = useState(false);
   const [search, setSearch] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
 
   useEffect(() => {
     listRoles()
@@ -498,17 +508,10 @@ function CrudTab() {
 
   return (
     <>
-      {selection.error ? (
+      {selection.error && (
         <div className="error-box" style={{ marginBottom: 12 }}>
           {selection.error}
         </div>
-      ) : feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
       )}
       <div className="toolbar">
         <DatabaseSelectors selection={selection} />
@@ -786,7 +789,6 @@ function SqlEndpointTab() {
   const [sql, setSql] = useState('');
   const [overwrite, setOverwrite] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
 
   useEffect(() => {
     listRoles()
@@ -842,17 +844,10 @@ function SqlEndpointTab() {
 
   return (
     <>
-      {selection.error ? (
+      {selection.error && (
         <div className="error-box" style={{ marginBottom: 12 }}>
           {selection.error}
         </div>
-      ) : feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
       )}
       <div className="toolbar">
         <DatabaseSelectors selection={selection} />

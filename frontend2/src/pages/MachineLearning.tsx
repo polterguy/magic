@@ -44,12 +44,22 @@ import {
 
 type Tab = 'types' | 'training' | 'history';
 
+/*
+ * Notifications go to the toast stack. An inline banner is part of the page,
+ * so showing one pushed everything below it down — the editors and grids
+ * jumped under the pointer. Toasts float above the page instead.
+ */
+function setFeedback(value: { text: string; isError: boolean } | null) {
+  if (value) {
+    showToast(value.text, value.isError);
+  }
+}
+
 export default function MachineLearning() {
 
   const [tab, setTab] = useState<Tab>('types');
   const [types, setTypes] = useState<any[]>([]);
   const [configured, setConfigured] = useState(true);
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
 
   const refreshTypes = useCallback(async () => {
     try {
@@ -85,14 +95,6 @@ export default function MachineLearning() {
           OpenAI is not configured — add your API key in Configuration before
           training or querying models.
         </div>
-      )}
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
       )}
       {tab === 'types' &&
         <TypesTab types={types} onChanged={refreshTypes} notify={setFeedback} />}

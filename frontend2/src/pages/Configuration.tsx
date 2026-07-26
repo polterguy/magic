@@ -1,4 +1,4 @@
-import Banner from '../components/Banner';
+import { showToast } from '../lib/toast';
 import { useEffect, useRef, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
@@ -10,10 +10,20 @@ import { downloadFileRaw, loadConfig, saveConfig, uploadFile } from '../lib/api'
 const CONFIG_FOLDER = '/config/';
 const CONFIG_FILE = 'appsettings.json';
 
+/*
+ * Notifications go to the toast stack. An inline banner is part of the page,
+ * so showing one pushed everything below it down — the editors and grids
+ * jumped under the pointer. Toasts float above the page instead.
+ */
+function setFeedback(value: { text: string; isError: boolean } | null) {
+  if (value) {
+    showToast(value.text, value.isError);
+  }
+}
+
 export default function Configuration() {
 
   const [config, setConfig] = useState('');
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [busy, setBusy] = useState(false);
   const [smtpOpen, setSmtpOpen] = useState(false);
   const [openaiOpen, setOpenaiOpen] = useState(false);
@@ -126,14 +136,6 @@ export default function Configuration() {
           Save
         </button>
       </div>
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
-      )}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         <CodeEditor
           value={config}

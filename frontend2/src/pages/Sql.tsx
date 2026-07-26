@@ -1,5 +1,4 @@
-import { copyToClipboard } from '../lib/toast';
-import Banner from '../components/Banner';
+import { copyToClipboard, showToast } from '../lib/toast';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import { useUnsavedGuard } from '../lib/navGuard';
@@ -25,6 +24,17 @@ import {
   saveFile,
 } from '../lib/api';
 
+/*
+ * Notifications go to the toast stack. An inline banner is part of the page,
+ * so showing one pushed everything below it down — the editors and grids
+ * jumped under the pointer. Toasts float above the page instead.
+ */
+function setFeedback(value: { text: string; isError: boolean } | null) {
+  if (value) {
+    showToast(value.text, value.isError);
+  }
+}
+
 export default function Sql() {
 
   const [searchParams] = useSearchParams();
@@ -46,7 +56,6 @@ export default function Sql() {
   const [savedSql, setSavedSql] = useState('');
   const [safeMode, setSafeMode] = useState(true);
   const [result, setResult] = useState<any[][] | null>(null);
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [busy, setBusy] = useState(false);
   const [snippets, setSnippets] = useState<string[]>([]);
   const [view, setView] = useState<'sql' | 'tables'>('sql');
@@ -519,14 +528,6 @@ export default function Sql() {
           Ctrl+Space autocompletes tables and columns — selection executes alone
         </span>
       </div>
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
-      )}
       <div style={{ height: 260, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
         <CodeEditor
           value={sql}

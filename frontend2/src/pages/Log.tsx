@@ -1,5 +1,5 @@
+import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
-import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { LogItem, countLog, listLog } from '../lib/api';
 
@@ -11,7 +11,6 @@ export default function Log() {
   const [count, setCount] = useState(0);
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState<number | null>(null);
-  const [error, setError] = useState('');
   // Stack of "from" ids used to page backwards through the log.
   const [fromStack, setFromStack] = useState<number[]>([]);
 
@@ -24,7 +23,7 @@ export default function Log() {
       setItems(logItems ?? []);
       setCount(logCount.count);
     } catch (err: any) {
-      setError(err.message);
+      showToast(err.message, true);
     }
   }, []);
 
@@ -55,7 +54,6 @@ export default function Log() {
         <h1>Log</h1>
         <p>{count} log items</p>
       </div>
-      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 12 }}>{error}</Banner>}
       <div className="toolbar">
         <SearchInput
           placeholder="Filter log…"

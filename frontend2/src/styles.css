@@ -240,9 +240,11 @@ h1 {
 
 .btn:hover { background: var(--accent-dark); }
 
-.btn:disabled {
+/* The class covers labels acting as buttons, which can't be :disabled. */
+.btn:disabled, .btn.disabled {
   opacity: 0.5;
   cursor: default;
+  pointer-events: none;
 }
 
 .btn-secondary {

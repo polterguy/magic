@@ -1,4 +1,3 @@
-import Banner from '../components/Banner';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -133,10 +132,8 @@ export default function Dashboard() {
   const [users, setUsers] = useState<number | null>(null);
   const [tasks, setTasks] = useState<number | null>(null);
   const [logItems, setLogItems] = useState<number | null>(null);
-  const [error, setError] = useState('');
   const [missingPlugins, setMissingPlugins] = useState<string[]>([]);
   const [installing, setInstalling] = useState(false);
-  const [installed, setInstalled] = useState('');
   // Null until we know — the prompt stays hidden while the answer is pending.
   const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(null);
   const [configuringOpenai, setConfiguringOpenai] = useState(false);
@@ -161,7 +158,7 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    getVersion().then(r => setVersion(r.version)).catch(e => setError(e.message));
+    getVersion().then(r => setVersion(r.version)).catch(e => showToast(e.message, true));
     listEndpoints().then(r => setEndpoints(r.length)).catch(() => {});
     countUsers('').then(r => setUsers(r.count)).catch(() => {});
     countTasks().then(r => setTasks(r.count)).catch(() => {});
@@ -174,8 +171,7 @@ export default function Dashboard() {
 
   async function installAgentPlugins() {
     setInstalling(true);
-    setError('');
-    try {
+        try {
       const available = await availablePlugins() ?? [];
       for (const name of missingPlugins) {
         const app = available.find((candidate: any) => candidate.name === name);
@@ -184,7 +180,7 @@ export default function Dashboard() {
         }
         await installPlugin(app);
       }
-      setInstalled(missingPlugins.join(' and '));
+      showToast('Installing ' + missingPlugins.join(' and ') + " — you'll be notified when it completes.");
       /*
        * Installation continues on a background thread, so the module folders
        * won't exist yet — flip the card now rather than leaving it asking
@@ -192,7 +188,7 @@ export default function Dashboard() {
        */
       setMissingPlugins([]);
     } catch (err: any) {
-      setError(err.message);
+      showToast(err.message, true);
     } finally {
       setInstalling(false);
     }
@@ -204,7 +200,6 @@ export default function Dashboard() {
         <h1>Dashboard</h1>
         <p>Connected to {backend?.url} as {backend?.username}</p>
       </div>
-      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 16 }}>{error}</Banner>}
       <div className="kpi-grid">
         <div className="card">
           <div className="kpi-value">{version}</div>
@@ -285,11 +280,6 @@ export default function Dashboard() {
           </button>
         </div>
       )}
-      {installed && (
-        <Banner isError={false} onClose={() => setInstalled('')} style={{ marginBottom: 16 }}>
-          Installing {installed} — you'll be notified when it completes.
-        </Banner>
-      )}
       <div className="card" style={{ marginBottom: 16 }}>
         <h2 style={{ marginTop: 0 }}>Welcome</h2>
         <p className="muted" style={{ marginTop: 0 }}>
@@ -309,7 +299,7 @@ export default function Dashboard() {
       </div>
       <TaskSection
         count={tasks}
-        notify={(text, isError) => isError ? setError(text) : showToast(text)} />
+        notify={(text, isError) => isError ? showToast(text, true) : showToast(text)} />
       {configuringOpenai && (
         <OpenAiKeyDialog
           onClose={() => setConfiguringOpenai(false)}

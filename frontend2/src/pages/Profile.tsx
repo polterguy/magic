@@ -1,16 +1,26 @@
-import { copyToClipboard } from '../lib/toast';
+import { copyToClipboard, showToast } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useEffect, useState } from 'react';
 import { Modal } from '../components/Dialogs';
 import { changePassword, http, listRoles, listUsers, saveUserExtra } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
 
+/*
+ * Notifications go to the toast stack. An inline banner is part of the page,
+ * so showing one pushed everything below it down — the editors and grids
+ * jumped under the pointer. Toasts float above the page instead.
+ */
+function setFeedback(value: { text: string; isError: boolean } | null) {
+  if (value) {
+    showToast(value.text, value.isError);
+  }
+}
+
 export default function Profile() {
 
   const { backend, logout } = useAuth();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [tokenOpen, setTokenOpen] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -67,14 +77,6 @@ export default function Profile() {
         <h1>Profile</h1>
         <p>Signed in as {backend?.username} on {backend?.url}</p>
       </div>
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
-      )}
       <div className="editor-split" style={{ flex: 'unset', alignItems: 'flex-start' }}>
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Your details</h2>

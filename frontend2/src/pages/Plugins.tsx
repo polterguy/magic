@@ -1,10 +1,16 @@
+import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
-import Banner from '../components/Banner';
 import { useEffect, useMemo, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { Modal, useDialog } from '../components/Dialogs';
-import { availablePlugins, installedPlugins, installPlugin } from '../lib/api';
+import {
+  availablePlugins,
+  installModule,
+  installedPlugins,
+  installPlugin,
+  moduleNameFromZip,
+} from '../lib/api';
 
 /*
  * Descriptions come from the Bazar's manifests, which are markdown, so they
@@ -32,14 +38,25 @@ function intro(description: string) {
   return sentence.length > 150 ? sentence.substring(0, 150) + '…' : sentence;
 }
 
+/*
+ * Notifications go to the toast stack. An inline banner is part of the page,
+ * so showing one pushed everything below it down — the editors and grids
+ * jumped under the pointer. Toasts float above the page instead.
+ */
+function setFeedback(value: { text: string; isError: boolean } | null) {
+  if (value) {
+    showToast(value.text, value.isError);
+  }
+}
+
 export default function Plugins() {
 
   const [available, setAvailable] = useState<any[]>([]);
   const [installed, setInstalled] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState('');
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [installing, setInstalling] = useState<string | null>(null);
   const [details, setDetails] = useState<any>(null);
+  const [uploading, setUploading] = useState(false);
   const { confirm } = useDialog();
 
   useEffect(() => {
@@ -62,11 +79,63 @@ export default function Plugins() {
       app.description?.toLowerCase().includes(query));
   }, [available, filter]);
 
+  /*
+   * A module of your own, as a ZIP, rather than one from the Bazar. Same
+   * endpoint Hyper IDE uses — the archive's name becomes the module folder,
+   * so an existing module of that name is overwritten.
+   */
+  async function installFromFile(file: File) {
+    const name = moduleNameFromZip(file);
+    if (!name) {
+      setFeedback({
+        text: file.name + ' cannot be a module — the archive must be named ' +
+          '<name>.zip, using only lowercase letters, digits, hyphens or ' +
+          'underscores, and no further dots',
+        isError: true,
+      });
+      return;
+    }
+    if (installed.has(name) && !await confirm({
+      title: 'Overwrite ' + name + '?',
+      message: 'A module called ' + name + ' is already installed. Installing ' +
+        'this archive replaces its files.',
+      confirmText: 'Yes, overwrite',
+      danger: true,
+    })) {
+      return;
+    }
+    setUploading(true);
+    try {
+      await installModule(file);
+      setFeedback({ text: 'Module ' + name + ' installed', isError: false });
+      const list = await installedPlugins();
+      setInstalled(new Set((list ?? []).map((app: any) => app.module_name)));
+    } catch (err: any) {
+      setFeedback({ text: err.message, isError: true });
+    } finally {
+      setUploading(false);
+    }
+  }
+
   async function install(app: any) {
+    const again = installed.has(app.name);
     if (app.type === 'frontend' && !await confirm({
       title: 'Confirm installation',
       message: 'This overwrites all existing frontend files in your /etc/www/ folder. Are you sure?',
       confirmText: 'Yes, install',
+      danger: true,
+    })) {
+      return;
+    }
+    /*
+     * Reinstalling is how a plugin is updated, so it stays available — but
+     * it overwrites the module's files, which takes any local edits with it.
+     */
+    if (again && app.type !== 'frontend' && !await confirm({
+      title: 'Reinstall ' + app.name + '?',
+      message: 'This overwrites the files in the module with the Bazar\'s current ' +
+        'version. Any changes you have made to them are lost.',
+      confirmText: 'Yes, reinstall',
       danger: true,
     })) {
       return;
@@ -91,9 +160,25 @@ export default function Plugins() {
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div>
           <h1>Plugins</h1>
-          <p>Install plugins and modules from the Bazar</p>
+          <p>Install plugins and modules from the Bazar, or your own from a ZIP file</p>
         </div>
         <span style={{ flex: 1 }} />
+        <label className={'btn btn-secondary' + (uploading ? ' disabled' : '')}>
+          {uploading ? 'Installing…' : 'Install from file…'}
+          <input
+            type="file"
+            accept=".zip"
+            style={{ display: 'none' }}
+            disabled={uploading}
+            onChange={e => {
+              const file = e.target.files?.[0];
+              // Cleared so picking the same archive twice fires again.
+              e.target.value = '';
+              if (file) {
+                installFromFile(file);
+              }
+            }} />
+        </label>
         <SearchInput
           placeholder="Search plugins…"
           value={filter}
@@ -101,14 +186,6 @@ export default function Plugins() {
           style={{ width: 300 }} />
         <span className="muted">{visible.length} shown</span>
       </div>
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
-      )}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
@@ -129,16 +206,17 @@ export default function Plugins() {
                 onClick={() => setDetails(app)}>
                 Details
               </button>
-              {installed.has(app.name) ? (
-                <button className="btn btn-secondary btn-small" disabled>Installed</button>
-              ) : (
-                <button
-                  className="btn btn-small"
-                  disabled={installing === app.name}
-                  onClick={() => install(app)}>
-                  {installing === app.name ? 'Installing…' : 'Install'}
-                </button>
-              )}
+              <button
+                className={'btn btn-small' + (installed.has(app.name) ? ' btn-secondary' : '')}
+                disabled={installing === app.name}
+                title={installed.has(app.name)
+                  ? 'Install the Bazar\'s current version over the one you have'
+                  : undefined}
+                onClick={() => install(app)}>
+                {installing === app.name
+                  ? 'Installing…'
+                  : installed.has(app.name) ? 'Reinstall' : 'Install'}
+              </button>
             </div>
           </div>
         ))}
@@ -152,13 +230,11 @@ export default function Plugins() {
             dangerouslySetInnerHTML={{ __html: safeHtml(details.description) }} />
           <div className="modal-actions">
             <button className="btn btn-secondary" onClick={() => setDetails(null)}>Close</button>
-            {!installed.has(details.name) && (
-              <button
-                className="btn"
-                onClick={() => { const app = details; setDetails(null); install(app); }}>
-                Install
-              </button>
-            )}
+            <button
+              className="btn"
+              onClick={() => { const app = details; setDetails(null); install(app); }}>
+              {installed.has(details.name) ? 'Reinstall' : 'Install'}
+            </button>
           </div>
         </Modal>
       )}

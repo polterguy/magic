@@ -1,5 +1,5 @@
+import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
-import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -31,6 +31,17 @@ function scheduleLabel(schedule: { due: string; repeats?: string }) {
     : new Date(schedule.due).toLocaleString();
 }
 
+/*
+ * Notifications go to the toast stack. An inline banner is part of the page,
+ * so showing one pushed everything below it down — the editors and grids
+ * jumped under the pointer. Toasts float above the page instead.
+ */
+function setFeedback(value: { text: string; isError: boolean } | null) {
+  if (value) {
+    showToast(value.text, value.isError);
+  }
+}
+
 export default function Tasks() {
 
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -39,7 +50,6 @@ export default function Tasks() {
   const [filter, setFilter] = useState('');
   const [editing, setEditing] = useState<{ task: Task; isNew: boolean } | null>(null);
   const [scheduling, setScheduling] = useState<Task | null>(null);
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const { confirm, prompt } = useDialog();
 
   const refresh = useCallback(async () => {
@@ -150,14 +160,6 @@ export default function Tasks() {
         <h1>Task Manager</h1>
         <p>Hyperlambda tasks your server can run on demand or on a schedule</p>
       </div>
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
-      )}
       <div className="toolbar">
         <SearchInput
           placeholder="Filter tasks…"

@@ -186,6 +186,16 @@ export function listFilesRecursively(folder: string, sysFiles: boolean) {
  * archive's name as the module name, so it must be "<name>.zip" with no
  * further dots and only lowercase letters, digits, hyphens or underscores.
  */
+/*
+ * The module name a ZIP would install as, or null when the archive can't be
+ * one. The backend takes the folder name straight from the filename, so it
+ * has to be "<name>.zip" with no further dots.
+ */
+export function moduleNameFromZip(file: File): string | null {
+  const match = /^([a-z0-9_-]+)\.zip$/.exec(file.name);
+  return match ? match[1] : null;
+}
+
 export function installModule(file: File) {
   const formData = new FormData();
   formData.append('file', file, file.name);

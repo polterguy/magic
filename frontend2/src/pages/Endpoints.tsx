@@ -1,5 +1,5 @@
+import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
-import Banner from '../components/Banner';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Modal } from '../components/Dialogs';
 import OpenApiDialog from '../components/OpenApiDialog';
@@ -40,14 +40,13 @@ export default function Endpoints() {
   const [showSystem, setShowSystem] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [error, setError] = useState('');
   const [result, setResult] = useState<InvokeResult | null>(null);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
 
   useEffect(() => {
     listEndpoints()
       .then(setEndpoints)
-      .catch(err => setError(err.message));
+      .catch(err => showToast(err.message, true));
   }, []);
 
   const query = filter.trim().toLowerCase();
@@ -106,7 +105,7 @@ export default function Endpoints() {
       const spec = await getOpenApiSpec(target);
       setOpenApiSpec({ json: JSON.stringify(spec, null, 2), target });
     } catch (err: any) {
-      setError(err.message);
+      showToast(err.message, true);
     }
   }
 
@@ -133,7 +132,6 @@ export default function Endpoints() {
           onChange={setFilter}
           style={{ width: 300 }} />
       </div>
-      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 12 }}>{error}</Banner>}
       <div>
       {groups.map(group => (
         <div

@@ -1,4 +1,4 @@
-import Banner from '../components/Banner';
+import { showToast } from '../lib/toast';
 import { useEffect, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import CodeEditor from '../components/CodeEditor';
@@ -20,7 +20,6 @@ export default function Playground() {
   const [savedCode, setSavedCode] = useState(DEFAULT_CODE);
   const [result, setResult] = useState('');
   const [resultMode, setResultMode] = useState('hyperlambda');
-  const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [snippets, setSnippets] = useState<string[]>([]);
   const [selectedSnippet, setSelectedSnippet] = useState('');
@@ -36,8 +35,7 @@ export default function Playground() {
 
   async function execute() {
     setBusy(true);
-    setError('');
-    try {
+        try {
       /*
        * When the executed Hyperlambda returns nothing, the endpoint answers
        * {"result": "<hyperlambda>"} — unwrap and display as Hyperlambda.
@@ -61,7 +59,7 @@ export default function Playground() {
       setResult(display);
       setResultMode(mode);
     } catch (err: any) {
-      setError(err.message);
+      showToast(err.message, true);
       setResult('');
     } finally {
       setBusy(false);
@@ -78,7 +76,7 @@ export default function Playground() {
       setCode(text);
       setSavedCode(text);
     } catch (err: any) {
-      setError(err.message);
+      showToast(err.message, true);
     }
   }
 
@@ -103,7 +101,7 @@ export default function Playground() {
         setSnippets([...snippets, filename].sort());
       }
     } catch (err: any) {
-      setError(err.message);
+      showToast(err.message, true);
     }
   }
 
@@ -115,7 +113,6 @@ export default function Playground() {
           <p>Execute Hyperlambda on your server — F5 or the Run button executes</p>
         </div>
         <span style={{ flex: 1 }} />
-        {error && <Banner onClose={() => setError('')} style={{ padding: '6px 12px' }}>{error}</Banner>}
         <select value={selectedSnippet} onChange={e => openSnippet(e.target.value)}>
           <option value="">Load snippet…</option>
           {snippets.map(snippet => (
@@ -145,7 +142,7 @@ export default function Playground() {
         getContext={() => code}
         session="hyperlambda-playground.editor"
         onResult={setCode}
-        onError={setError}
+        onError={message => showToast(message, true)}
         style={{ marginTop: 8 }} />
     </>
   );

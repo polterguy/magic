@@ -1,5 +1,5 @@
+import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
-import Banner from '../components/Banner';
 import { useCallback, useEffect, useState } from 'react';
 import { Modal, useDialog } from '../components/Dialogs';
 import SortHeader, { useSort } from '../components/SortHeader';
@@ -30,11 +30,21 @@ const PAGE_SIZE = 15;
 // Roles the backend depends on, and which therefore can't be deleted.
 const PROTECTED_ROLES = ['root'];
 
+/*
+ * Notifications go to the toast stack. An inline banner is part of the page,
+ * so showing one pushed everything below it down — the editors and grids
+ * jumped under the pointer. Toasts float above the page instead.
+ */
+function setFeedback(value: { text: string; isError: boolean } | null) {
+  if (value) {
+    showToast(value.text, value.isError);
+  }
+}
+
 export default function Users() {
 
   const [tab, setTab] = useState('users');
   const [roles, setRoles] = useState<Role[]>([]);
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
 
   const loadRoles = useCallback(async () => {
     try {
@@ -61,14 +71,6 @@ export default function Users() {
         ]}
         active={tab}
         onChange={setTab} />
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
-      )}
       {tab === 'users'
         ? <UsersTab roles={roles} notify={setFeedback} />
         : <RolesTab roles={roles} onChanged={loadRoles} notify={setFeedback} />}
