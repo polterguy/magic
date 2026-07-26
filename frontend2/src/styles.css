@@ -259,7 +259,7 @@ h1 {
   font-size: 12px;
 }
 
-input[type="text"], input[type="password"], input[type="number"], input[type="datetime-local"], select, textarea {
+input[type="text"], input[type="password"], input[type="number"], input[type="date"], input[type="datetime-local"], select, textarea {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 12px;
@@ -267,6 +267,18 @@ input[type="text"], input[type="password"], input[type="number"], input[type="da
   font-family: inherit;
   background: var(--surface);
   color: var(--text);
+}
+
+/*
+ * Third-party secrets — API keys, SMTP passwords, reCAPTCHA secrets. These
+ * are not credentials for this site, so type="password" is wrong for them:
+ * Chrome's password manager sees any password field, offers to save it under
+ * the backend's origin, and can then autofill an OpenAI key where the user's
+ * own password belongs. Masking with CSS keeps them hidden on screen while
+ * leaving them ordinary text fields the password manager ignores.
+ */
+.secret {
+  -webkit-text-security: disc;
 }
 
 input:focus, select:focus, textarea:focus {

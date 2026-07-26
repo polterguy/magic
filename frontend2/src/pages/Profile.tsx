@@ -157,7 +157,12 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
           </div>
         </div>
         <label>Expires
-          <input type="text" value={expires} onChange={e => setExpires(e.target.value)} />
+          {/* A token that expired before it was issued is never what's wanted. */}
+          <input
+            type="date"
+            value={expires}
+            min={new Date().toISOString().substring(0, 10)}
+            onChange={e => setExpires(e.target.value)} />
         </label>
         {token && (
           <div className="success-box mono" style={{ overflowWrap: 'anywhere', fontSize: 12 }}>

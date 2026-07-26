@@ -852,6 +852,11 @@ export function openaiIsConfigured() {
   return http.get<{ result: boolean }>('/magic/system/openai/is-configured');
 }
 
+// The currently configured OpenAI API key, empty when none is set.
+export function openaiGetKey() {
+  return http.get<{ result: string }>('/magic/system/openai/key');
+}
+
 // Stores the OpenAI API key in the backend's configuration.
 export function openaiSetKey(key: string) {
   return http.post<any>('/magic/system/openai/key', { key });

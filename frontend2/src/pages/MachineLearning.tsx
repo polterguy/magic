@@ -1109,7 +1109,9 @@ function EditTypeDialog(props: {
             </label>
             <label>API key override
               <input
-                type="password"
+                type="text"
+                className="secret"
+                autoComplete="off"
                 value={extra.api_key}
                 onChange={e => setField('api_key', e.target.value)} />
             </label>
