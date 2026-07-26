@@ -34,7 +34,7 @@ runcmd:
   - |
     set -e
     DOMAIN="magic.example.com"   # <-- EDIT THIS LINE: domain pointing at this droplet
-    # 4 GB swap - the Angular production build gets OOM-killed on small
+    # 4 GB swap - the production frontend build gets OOM-killed on small
     # droplets without it, and it gives headless Chrome headroom at runtime.
     fallocate -l 4G /swapfile
     chmod 600 /swapfile
@@ -43,7 +43,10 @@ runcmd:
     echo '/swapfile none swap sw 0 0' >> /etc/fstab
     systemctl enable --now docker
     git clone --depth 1 https://github.com/polterguy/magic.git /opt/magic
-    docker build -f /opt/magic/.do/Dockerfile.backend -t magic /opt/magic
+    # BuildKit, because the Dockerfile is shared with the multi-arch CI build
+    # and uses $BUILDPLATFORM - the legacy builder leaves that empty, and the
+    # resulting "--platform=" fails to parse.
+    DOCKER_BUILDKIT=1 docker build -f /opt/magic/.do/Dockerfile.backend -t magic /opt/magic
     docker network create magicnet
     docker run -d --name caddy --restart unless-stopped --network magicnet \
       -p 80:80 -p 443:443 \
