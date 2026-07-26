@@ -23,7 +23,7 @@ import Log from './pages/Log';
 
 export default function App() {
 
-  const { authenticated, isRoot, setupNeeded } = useAuth();
+  const { authenticated, isRoot, setupNeeded, backend } = useAuth();
   /*
    * Through the router rather than window.location, so this re-renders when
    * a page navigates — the magnetic link screen sends you to the dashboard
@@ -61,8 +61,14 @@ export default function App() {
     return <Setup />;
   }
 
+  /*
+   * Keyed on the backend, so switching cloudlets tears the whole thing down
+   * and builds it again. Every page fetches on mount, and none of them watch
+   * for the backend changing underneath them - without this you keep looking
+   * at the previous cloudlet's files, tables and results.
+   */
   return (
-    <Layout>
+    <Layout key={backend?.url}>
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/hyperlambda-playground" element={<Playground />} />

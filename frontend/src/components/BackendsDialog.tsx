@@ -14,6 +14,7 @@ import { Modal, useDialog } from './Dialogs';
 import { useMemo, useState } from 'react';
 import { copyToClipboard } from '../lib/toast';
 import { useAuth } from '../lib/AuthContext';
+import { getNavGuard } from '../lib/navGuard';
 import { tokenExpired } from '../lib/backend';
 
 // Signed in means holding a token that hasn't run out.
@@ -93,7 +94,19 @@ export default function BackendsDialog({ onClose }: { onClose: () => void }) {
                     className="btn btn-secondary btn-small"
                     disabled={active}
                     title={active ? 'This is the backend you are using' : 'Use this backend'}
-                    onClick={() => { switchBackend(candidate.url); onClose(); }}>
+                    onClick={async () => {
+                      /*
+                        * Switching rebuilds every page from scratch, so an
+                        * editor with unsaved work loses it — the same guard
+                        * the nav links use gets to object first.
+                        */
+                      const guard = getNavGuard();
+                      if (guard && !await guard()) {
+                        return;
+                      }
+                      switchBackend(candidate.url);
+                      onClose();
+                    }}>
                     {active ? 'Current' : 'Switch'}
                   </button>
                   {' '}

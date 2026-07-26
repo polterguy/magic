@@ -14,6 +14,11 @@ export function configureApi(url: string, token: string | null) {
   bearerToken = token;
 }
 
+// Lets anything caching backend answers notice that the backend changed.
+export function apiBaseUrl() {
+  return baseUrl;
+}
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {

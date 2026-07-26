@@ -17,20 +17,31 @@ import 'codemirror/mode/css/css';
 import 'codemirror/mode/markdown/markdown';
 import defineHyperlambda from '../resources/hyperlambda.js';
 import '../resources/ainiro.css';
-import { http } from '../lib/api.js';
+import { http, apiBaseUrl } from '../lib/api.js';
 
 defineHyperlambda(CodeMirror);
 
 /*
  * The hyperlambda mode colors slot invocations from window._vocabulary,
  * so the vocabulary must be loaded before an editor is created.
+ *
+ * Cached per backend rather than once: two cloudlets run different plugins,
+ * so they know different slots, and keeping the first one's vocabulary would
+ * mis-colour the second one's code.
  */
 let vocabularyPromise: Promise<void> | null = null;
+let vocabularyFrom: string | null = null;
 
 function ensureVocabulary() {
+  if (vocabularyFrom !== apiBaseUrl()) {
+    vocabularyPromise = null;
+    delete (window as any)._vocabulary;
+    delete (window as any)._slots;
+  }
   if ((window as any)._vocabulary) {
     return Promise.resolve();
   }
+  vocabularyFrom = apiBaseUrl();
   vocabularyPromise ??= Promise.all([
     http.get<string[]>('/magic/system/evaluator/vocabulary'),
     http.get<string[]>('/magic/system/evaluator/slots'),
