@@ -26,7 +26,7 @@ import {
   tokenExpiration,
   tokenExpired,
 } from './backend';
-import { authenticate, configureApi, getStatus, refreshTicket } from './api';
+import { authenticate, configureApi, getStatus, refreshTicket, verifyTicket } from './api';
 
 interface AuthState {
   backend: StoredBackend | null;
@@ -167,6 +167,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       applyBackend({ url, username: '', token: null });
     }
   }, [switchBackend, applyBackend]);
+
+  /*
+   * A stored token that has not expired is still not necessarily good: the
+   * backend rotates its signing secret during setup, and a token signed with
+   * the previous one looks valid here while the server rejects everything.
+   * Asking outright avoids walking into a dashboard that cannot load.
+   *
+   * Only an answer from the backend signs anybody out - an unreachable server
+   * is not a reason to discard a working session.
+   */
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+    let cancelled = false;
+    verifyTicket()
+      .then(valid => {
+        if (valid || cancelled) {
+          return;
+        }
+        setBackend(current => {
+          const next = current ? { ...current, token: null } : null;
+          configureApi(next?.url ?? '', null);
+          if (next) {
+            saveBackend(next);
+          }
+          return next;
+        });
+      })
+      .catch(() => {
+        // Offline or unreachable, which says nothing about the token.
+      });
+    return () => { cancelled = true; };
+  }, [token]);
 
   // Refreshes the JWT token one minute before it expires.
   useEffect(() => {
