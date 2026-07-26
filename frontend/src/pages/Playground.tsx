@@ -1,4 +1,5 @@
 import { showToast } from '../lib/toast';
+import { explainHyperlambda } from '../lib/support';
 import { useEffect, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import CodeEditor from '../components/CodeEditor';
@@ -129,7 +130,12 @@ export default function Playground() {
       <div className="editor-split">
         <div>
           <div className="editor-pane-title">Input</div>
-          <CodeEditor value={code} onChange={setCode} mode="hyperlambda" onExecute={execute} />
+          <CodeEditor
+            value={code}
+            onChange={setCode}
+            mode="hyperlambda"
+            onExecute={execute}
+            onHelp={explainHyperlambda} />
         </div>
         <div>
           <div className="editor-pane-title">Result</div>

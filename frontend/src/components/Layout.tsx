@@ -5,9 +5,10 @@ import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
-import { DatabaseIcon } from './Icons';
+import { DatabaseIcon, SparkIcon } from './Icons';
 import { ChevronIcon } from './Icons';
 import BackendsDialog from './BackendsDialog';
+import { openSupport } from '../lib/support';
 import { SECTIONS } from './sections';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -141,6 +142,12 @@ export default function Layout({ children }: { children: ReactNode }) {
               style={{ flex: 1 }}
               onClick={logout}>
               Logout
+            </button>
+            <button
+              className="btn btn-ghost"
+              title="Ask AINIRO's AI about Hyperlambda and Magic"
+              onClick={openSupport}>
+              <SparkIcon />
             </button>
             <button
               className="btn btn-ghost"

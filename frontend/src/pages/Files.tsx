@@ -1,5 +1,6 @@
 import SearchInput from '../components/SearchInput';
 import { copyToClipboard, showToast } from '../lib/toast';
+import { explainHyperlambda } from '../lib/support';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
@@ -232,6 +233,8 @@ export default function Files() {
    */
   const [openFiles, setOpenFiles] = useState<{ path: string; content: string; saved: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState('');
+  // Set by clicking a folder; null means "follow whichever file is open".
+  const [openFolder, setOpenFolder] = useState<string | null>(null);
   const [executeResult, setExecuteResult] = useState<InvokeResult | null>(null);
   // Set when the result came from invoking an endpoint rather than evaluating.
   const [resultWasHttp, setResultWasHttp] = useState(false);
@@ -252,8 +255,15 @@ export default function Files() {
   const dirty = !!current && current.content !== current.saved;
   const dirtyFiles = openFiles.filter(file => file.content !== file.saved);
 
-  // The folder that upload/new-file shortcuts operate on.
-  const activeFolder = selectedFile ? parentOf(selectedFile) : '/';
+  /*
+   * The folder that upload, download, new-file and new-folder act on.
+   *
+   * State rather than something derived from the open file: clicking a folder
+   * in the tree has to move it, and deriving it meant expanding a folder left
+   * these actions pointing at wherever the open file happened to live - or at
+   * the root when nothing was open at all.
+   */
+  const activeFolder = openFolder ?? (selectedFile ? parentOf(selectedFile) : '/');
 
   // Keeps the active tab visible when many files are open.
   useEffect(() => {
@@ -674,9 +684,11 @@ export default function Files() {
         {childFolders.map(folder => (
           <div className="tree-node" key={folder}>
             <div
-              className={'tree-row' + (isSystemPath(folder) ? ' system' : '')}
+              className={'tree-row'
+                + (isSystemPath(folder) ? ' system' : '')
+                + (folder === activeFolder ? ' active-folder' : '')}
               title={folder}
-              onClick={() => toggle(folder)}>
+              onClick={() => { toggle(folder); setOpenFolder(folder); }}>
               <span className="tree-chevron">
                 <ChevronIcon open={isOpen(folder)} />
               </span>
@@ -701,7 +713,7 @@ export default function Files() {
             className={'tree-row' + (file === selectedFile ? ' selected' : '')}
             key={file}
             title={file}
-            onClick={() => openFile(file)}>
+            onClick={() => { setOpenFolder(null); openFile(file); }}>
             <span className="tree-chevron" />
             <span className="tree-icon"><FileIcon /></span>
             <span className="tree-name">{nameOf(file)}</span>
@@ -933,6 +945,8 @@ export default function Files() {
               mode={modeForFile(selectedFile)}
               onSave={save}
               onExecute={execute}
+              // Only Hyperlambda — the support bot answers about that.
+              onHelp={selectedFile.endsWith('.hl') ? explainHyperlambda : undefined}
               onInstance={instance => {
                 if (editorRef.current === instance) {
                   return;

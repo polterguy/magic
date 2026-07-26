@@ -51,6 +51,11 @@ interface CodeEditorProps {
   height?: string;
   onSave?: () => void;
   onExecute?: () => void;
+  /*
+   * F1 — asks the support chatbot about the selection. Only wired up for
+   * Hyperlambda, so it is the caller that decides whether it applies.
+   */
+  onHelp?: (selection: string) => void;
   // Table → columns map feeding SQL autocomplete.
   hintTables?: Record<string, string[]>;
   // Gives the parent access to the CodeMirror instance (selection etc.).
@@ -109,6 +114,7 @@ export default function CodeEditor(props: CodeEditorProps) {
         'Ctrl-S': () => callbacks.current.onSave?.(),
         'Cmd-S': () => callbacks.current.onSave?.(),
         F5: () => callbacks.current.onExecute?.(),
+        F1: (cm: CodeMirror.Editor) => callbacks.current.onHelp?.(cm.getSelection()),
         Tab: (cm: CodeMirror.Editor) => cm.execCommand('insertSoftTab'),
       },
     });
