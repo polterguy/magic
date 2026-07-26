@@ -270,12 +270,15 @@ input[type="text"], input[type="password"], input[type="number"], input[type="da
 }
 
 /*
- * Third-party secrets — API keys, SMTP passwords, reCAPTCHA secrets. These
- * are not credentials for this site, so type="password" is wrong for them:
- * Chrome's password manager sees any password field, offers to save it under
- * the backend's origin, and can then autofill an OpenAI key where the user's
- * own password belongs. Masking with CSS keeps them hidden on screen while
- * leaving them ordinary text fields the password manager ignores.
+ * Secrets that belong to someone or something else — API keys, SMTP
+ * passwords, reCAPTCHA secrets, and passwords being set for other users.
+ * None of them are the signed-in user's own credentials, so type="password"
+ * is wrong: the browser's password manager engages with any password field,
+ * offers to save it against this origin, and can then autofill an OpenAI key
+ * or another user's password where the user's own belongs. Masking with CSS
+ * keeps them hidden on screen while leaving them ordinary text fields the
+ * password manager ignores. Only signing in and changing your own password
+ * use real password fields.
  */
 .secret {
   -webkit-text-security: disc;

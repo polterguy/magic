@@ -343,10 +343,11 @@ function NewUserDialog(props: {
         </label>
         <label>Password
           <input
-            type="password"
-            // Tells the browser this sets a password rather than logging in,
-            // so it doesn't autofill the signed-in user's credentials.
-            autoComplete="new-password"
+            type="text"
+            // Someone else's password, so it is masked with CSS rather than
+            // being a password field the browser offers to save as yours.
+            className="secret"
+            autoComplete="off"
             value={password}
             onChange={e => setPassword(e.target.value)} />
         </label>
@@ -544,11 +545,12 @@ function ChangePasswordDialog(props: {
       <label className="modal-label">
         New password
         <input
-          type="password"
+          type="text"
           autoFocus
-          // Tells the browser this sets a password rather than logging in,
-          // so it doesn't autofill the signed-in user's credentials.
-          autoComplete="new-password"
+          // Someone else's password, so it is masked with CSS rather than
+          // being a password field the browser offers to save as yours.
+          className="secret"
+          autoComplete="off"
           value={password}
           onChange={e => setPassword(e.target.value)} />
       </label>
