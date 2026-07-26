@@ -483,32 +483,34 @@ function InvokePanel(props: {
                     {argument.name}
                     <span className="muted" style={{ fontWeight: 400 }}> — one or more files</span>
                   </span>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={e => {
-                      // The "file" argument accumulates across pickings.
-                      const picked = Array.from(e.target.files ?? []);
-                      setFiles({ ...files, [argument.name]: [...selected, ...picked] });
-                      e.target.value = '';
-                    }} />
+                  {/*
+                    * The native file input can't be styled, so it's hidden
+                    * inside a label — clicking the label opens the picker
+                    * just the same, and the label can look like any button.
+                    */}
+                  <label className="btn btn-secondary" style={{ alignSelf: 'flex-start' }}>
+                    Choose files…
+                    <input
+                      type="file"
+                      multiple
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        // The "file" argument accumulates across pickings.
+                        const picked = Array.from(e.target.files ?? []);
+                        setFiles({ ...files, [argument.name]: [...selected, ...picked] });
+                        e.target.value = '';
+                      }} />
+                  </label>
                   {selected.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                       {selected.map((file, index) => (
-                        <span className="chip" key={index}>
-                          {file.name}
-                          <span className="muted" style={{ fontWeight: 400 }}>
-                            {' '}{Math.ceil(file.size / 1024)} KB
-                          </span>
-                          <button
-                            title="Remove"
-                            onClick={() => setFiles({
-                              ...files,
-                              [argument.name]: selected.filter((_, i) => i !== index),
-                            })}>
-                            ×
-                          </button>
-                        </span>
+                        <FileChip
+                          key={index}
+                          file={file}
+                          onRemove={() => setFiles({
+                            ...files,
+                            [argument.name]: selected.filter((_, i) => i !== index),
+                          })} />
                       ))}
                     </div>
                   )}
@@ -589,5 +591,53 @@ function ResponseHeaders({ headers }: { headers?: Record<string, string> }) {
         </div>
       )}
     </div>
+  );
+}
+
+/*
+ * One picked file. Images get a thumbnail rendered straight onto the form,
+ * so what's about to be uploaded is visible without opening anything.
+ */
+function FileChip({ file, onRemove }: { file: File; onRemove: () => void }) {
+
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+
+  /*
+   * The object URL is created and revoked inside one effect, so the two are
+   * always paired. Creating it during render instead leaves the cleanup
+   * revoking a URL the next render still points at — which under StrictMode's
+   * mount/unmount/remount means the image is revoked before it ever loads.
+   */
+  useEffect(() => {
+    if (!file.type.startsWith('image/')) {
+      setThumbnail(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setThumbnail(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  return (
+    <span className="chip" style={{ gap: 8 }}>
+      {thumbnail && (
+        <img
+          src={thumbnail}
+          alt=""
+          style={{
+            width: 34,
+            height: 34,
+            objectFit: 'cover',
+            borderRadius: 6,
+            display: 'block',
+            background: 'var(--surface)',
+          }} />
+      )}
+      {file.name}
+      <span className="muted" style={{ fontWeight: 400 }}>
+        {Math.ceil(file.size / 1024)} KB
+      </span>
+      <button title="Remove" onClick={onRemove}>×</button>
+    </span>
   );
 }
