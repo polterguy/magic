@@ -9,6 +9,7 @@
  */
 
 import SearchInput from './SearchInput';
+import { CopyIcon, TrashIcon } from './Icons';
 import { Modal, useDialog } from './Dialogs';
 import { useMemo, useState } from 'react';
 import { copyToClipboard } from '../lib/toast';
@@ -75,7 +76,13 @@ export default function BackendsDialog({ onClose }: { onClose: () => void }) {
             return (
               <tr key={candidate.url}>
                 <td>{candidate.username || <span className="muted">—</span>}</td>
-                <td className="mono">{candidate.url}</td>
+                {/*
+                  * Long cloudlet URLs wrap rather than widen the dialog. They
+                  * have no spaces to break at, so the break has to be allowed
+                  * mid-word — otherwise the table pushes past the dialog and
+                  * the whole thing scrolls sideways.
+                  */}
+                <td className="mono" style={{ wordBreak: 'break-all' }}>{candidate.url}</td>
                 <td>
                   <span className={'badge ' + (connected(candidate.token) ? 'badge-get' : 'badge-debug')}>
                     {connected(candidate.token) ? 'connected' : 'signed out'}
@@ -90,17 +97,25 @@ export default function BackendsDialog({ onClose }: { onClose: () => void }) {
                     {active ? 'Current' : 'Switch'}
                   </button>
                   {' '}
+                  {/*
+                    * Icons rather than labels for the two secondary actions —
+                    * three text buttons per row made the table wider than the
+                    * dialog, and the whole thing scrolled sideways.
+                    */}
                   <button
                     className="btn btn-secondary btn-small"
+                    aria-label="Copy link to this backend"
                     title="A link that opens the dashboard against this backend"
                     onClick={() => copyToClipboard(
                       window.location.origin + '?backend=' + encodeURIComponent(candidate.url),
                       'The link')}>
-                    Copy link
+                    <CopyIcon />
                   </button>
                   {' '}
                   <button
                     className="btn btn-danger btn-small"
+                    aria-label="Forget this backend"
+                    title="Forget this backend"
                     onClick={async () => {
                       if (await confirm({
                         title: 'Forget ' + candidate.url + '?',
@@ -112,7 +127,7 @@ export default function BackendsDialog({ onClose }: { onClose: () => void }) {
                         removeBackend(candidate.url);
                       }
                     }}>
-                    Forget
+                    <TrashIcon />
                   </button>
                 </td>
               </tr>
