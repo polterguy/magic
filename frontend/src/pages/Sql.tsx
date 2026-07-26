@@ -48,6 +48,13 @@ export default function Sql() {
   const [types, setTypes] = useState<string[]>([]);
   const [type, setType] = useState('');
   const [connectionStrings, setConnectionStrings] = useState<string[]>([]);
+  /*
+   * Whether the connection strings for the current type have been fetched.
+   * The type arrives a round trip before they do, so without this the "none
+   * configured" notice shows during that gap and then disappears, shoving
+   * the page down behind it.
+   */
+  const [connectionsLoaded, setConnectionsLoaded] = useState(false);
   const [connectionString, setConnectionString] = useState('');
   const [databasesMeta, setDatabasesMeta] = useState<any[]>([]);
   const [database, setDatabase] = useState('');
@@ -167,9 +174,11 @@ export default function Sql() {
     if (!type) {
       return;
     }
+    setConnectionsLoaded(false);
     http.get<Record<string, string>>(
       '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type))
       .then(response => {
+        setConnectionsLoaded(true);
         const names = Object.keys(response ?? {});
         setConnectionStrings(names);
         const wanted = deepLink.current.connectionString;
@@ -183,6 +192,7 @@ export default function Sql() {
       .catch(() => {
         // A database type with no configured connection strings (e.g. the
         // config has it as null) — clear the selection, no scary error.
+        setConnectionsLoaded(true);
         setConnectionStrings([]);
         setConnectionString('');
         setDatabasesMeta([]);
@@ -353,7 +363,7 @@ export default function Sql() {
         ]}
         active={view}
         onChange={id => setView(id as 'sql' | 'tables')} />
-      {type && connectionStrings.length === 0 && (
+      {connectionsLoaded && connectionStrings.length === 0 && (
         <div className="info-box" style={{ marginBottom: 12 }}>
           No connection strings are configured for {type}. Add one under Databases → External.
         </div>
