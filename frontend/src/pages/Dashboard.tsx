@@ -21,6 +21,8 @@ import {
   openaiIsConfigured,
 } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
+import { openSupport } from '../lib/support';
+import { SparkIcon } from '../components/Icons';
 import { copyToClipboard, showToast } from '../lib/toast';
 
 /*
@@ -286,11 +288,16 @@ export default function Dashboard() {
       {openaiConfigured === true && (
         <CreateChatbot notify={(text, isError) => showToast(text, isError)} />
       )}
-      <div className="card" style={{ marginBottom: 16 }}>
-        <h2 style={{ marginTop: 0 }}>Welcome</h2>
-        <p className="muted" style={{ marginTop: 0 }}>
-          Everything your cloudlet can do, and where to do it.
-        </p>
+      {/*
+        * Folded away rather than always open. It restates the navigation for
+        * somebody seeing the dashboard for the first time, which is worth a
+        * click to reach and not worth scrolling past every day after that.
+        */}
+      <details className="card guide-details" style={{ marginBottom: 16 }}>
+        <summary>
+          <span className="guide-summary-title">What everything does</span>
+          <span className="muted">Every part of your cloudlet, and where to find it.</span>
+        </summary>
         <div className="guide-grid">
           {SECTIONS.filter(section => section.description).map(section => (
             <Link className="guide-card" key={section.to} to={section.to}>
@@ -301,8 +308,24 @@ export default function Dashboard() {
               </span>
             </Link>
           ))}
+          {/*
+            * Last card, and the only one that isn't a route - the support bot
+            * is a widget that opens over whatever you are looking at, so this
+            * is a button wearing the same clothes as its neighbours.
+            */}
+          <button className="guide-card" type="button" onClick={openSupport}>
+            <span className="guide-icon"><SparkIcon /></span>
+            <span>
+              <span className="guide-title">Ask Frank</span>
+              <span className="guide-text">
+                AINIRO's AI support agent, trained on the Hyperlambda and Magic
+                documentation. Ask it how something works and it answers with
+                code you can paste.
+              </span>
+            </span>
+          </button>
         </div>
-      </div>
+      </details>
       <TaskSection
         count={tasks}
         notify={(text, isError) => isError ? showToast(text, true) : showToast(text)} />
@@ -376,13 +399,13 @@ function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) =
         a chatbot you can embed. Takes a few minutes.
       </p>
       <form
-        className="form-grid columns"
         onSubmit={e => {
           e.preventDefault();
           if (url.trim() && !crawl) {
             setCrawl({ channel: 'create-bot-' + Date.now() });
           }
         }}>
+        <div className="form-grid columns">
         <label>Website URL
           <input
             type="text"
@@ -409,28 +432,28 @@ function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) =
             value={max}
             onChange={e => setMax(e.target.value)} />
         </label>
+        </div>
         {/*
-          * Same two-part shape as the fields beside it — an empty caption
-          * line, then a box the height of an input — so the checkbox lines up
-          * with them instead of floating against the bottom of the row.
+          * Below the captioned fields rather than inside them. A checkbox and
+          * a button have no caption, so sitting them in that grid meant
+          * faking one and forcing the height to match an input.
           */}
-        <label>
-          <span aria-hidden="true">&nbsp;</span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 8, height: 37 }}>
+        <div className="form-row">
+          <label className="checkbox-row">
             <input
               type="checkbox"
               checked={autoDestruct}
               onChange={e => setAutoDestruct(e.target.checked)} />
             Delete after 7 days
-          </span>
-        </label>
-        {/* Submits the form, so Enter in any field starts the crawl too. */}
-        <button
-          className="btn"
-          type="submit"
-          disabled={!url.trim() || !!crawl}>
-          Create chatbot
-        </button>
+          </label>
+          {/* Submits the form, so Enter in any field starts the crawl too. */}
+          <button
+            className="btn"
+            type="submit"
+            disabled={!url.trim() || !!crawl}>
+            Create chatbot
+          </button>
+        </div>
       </form>
       {selected?.description && (
         <p className="muted" style={{ fontSize: 13, marginBottom: 0 }}>

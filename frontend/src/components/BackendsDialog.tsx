@@ -85,7 +85,7 @@ export default function BackendsDialog({ onClose }: { onClose: () => void }) {
                   */}
                 <td className="mono" style={{ wordBreak: 'break-all' }}>{candidate.url}</td>
                 <td>
-                  <span className={'badge ' + (connected(candidate.token) ? 'badge-get' : 'badge-debug')}>
+                  <span className={'badge ' + (connected(candidate.token) ? 'badge-ok' : 'badge-idle')}>
                     {connected(candidate.token) ? 'connected' : 'signed out'}
                   </span>
                 </td>

@@ -11,13 +11,36 @@
   --bg: #f4f4f8;
   --surface: #ffffff;
   --text: #1e1e28;
-  --text-soft: #6a6a78;
+  /*
+   * Muted text, dark enough to still be text. The old #6a6a78 cleared the
+   * 4.5:1 contrast minimum by a hair, and it is used at 12-13px where that
+   * margin disappears on a dim screen.
+   */
+  --text-soft: #5c5c6a;
   --border: #e2e2ea;
   --danger: #d64550;
   --ok: #2e9e5b;
   --sidebar-bg: #17141f;
   --sidebar-text: #b8b3c7;
+
+  /*
+   * The type scale. Seven steps and nothing between them - this file used to
+   * carry twelve sizes, with 13, 14 and 15 all doing the same job and nobody
+   * able to tell them apart except the layout engine.
+   */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-display: 32px;
+
+  /* Corners: small controls, everything else, dialogs, and pills. */
+  --radius-sm: 6px;
   --radius: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
   --shadow: 0 1px 3px rgba(20, 16, 41, 0.08), 0 4px 16px rgba(20, 16, 41, 0.06);
 }
 
@@ -30,7 +53,7 @@ html, body, #root {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--text);
   background: var(--bg);
 }
@@ -54,7 +77,7 @@ body {
   padding: 0;
   border: 1px solid var(--border);
   border-left: none;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 var(--radius) var(--radius) 0;
   background: var(--surface);
   color: var(--text-soft);
   cursor: pointer;
@@ -92,13 +115,13 @@ body {
 
 .brand-magic {
   color: #fff;
-  font-size: 22px;
+  font-size: var(--text-xl);
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .brand-version {
-  font-size: 11px;
+  font-size: var(--text-xs);
   opacity: 0.6;
 }
 
@@ -114,7 +137,7 @@ body {
   align-items: center;
   gap: 10px;
   padding: 9px 10px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   color: var(--sidebar-text);
   text-decoration: none;
   font-weight: 500;
@@ -133,7 +156,7 @@ body {
 .nav-icon {
   width: 18px;
   text-align: center;
-  font-size: 15px;
+  font-size: var(--text-md);
 }
 
 .sidebar-footer {
@@ -148,7 +171,7 @@ body {
 .backend-info {
   display: block;
   padding: 6px 10px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   overflow: hidden;
 }
 
@@ -162,7 +185,7 @@ body {
 }
 
 .backend-url {
-  font-size: 12px;
+  font-size: var(--text-xs);
   opacity: 0.6;
   white-space: nowrap;
   overflow: hidden;
@@ -180,7 +203,7 @@ body {
 /* ---------- Common elements ---------- */
 
 h1 {
-  font-size: 22px;
+  font-size: var(--text-xl);
   margin: 0 0 4px 0;
 }
 
@@ -213,9 +236,9 @@ h1 {
 /* inline-flex so a button can carry an icon beside its label. */
 .btn {
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 8px 16px;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
   background: var(--accent);
@@ -274,7 +297,7 @@ h1 {
 
 .btn-small {
   padding: 4px 10px;
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
 
 /*
@@ -287,9 +310,9 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="s
 select,
 textarea {
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 8px 12px;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-family: inherit;
   background: var(--surface);
   color: var(--text);
@@ -328,7 +351,7 @@ input:focus, select:focus, textarea:focus {
   background: none;
   border: none;
   padding: 10px 16px;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-soft);
   cursor: pointer;
@@ -355,7 +378,7 @@ table {
 
 th {
   text-align: left;
-  font-size: 12px;
+  font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   color: var(--text-soft);
@@ -377,9 +400,9 @@ tr.clickable:hover td { background: var(--accent-soft); }
 
 .badge {
   display: inline-block;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 2px 8px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -392,6 +415,15 @@ tr.clickable:hover td { background: var(--accent-soft); }
 .badge-error, .badge-fatal { background: #fbeaec; color: #b23440; }
 .badge-info { background: #e7effd; color: #2a5bbf; }
 .badge-debug { background: #eee; color: #666; }
+
+/*
+ * State, as opposed to the verb and log-level badges above. They happen to
+ * share colours today, but borrowing badge-get to mean "connected" tied the
+ * two together for whoever next changes the verb palette.
+ */
+.badge-ok { background: #e3f2e9; color: #23744a; }
+
+.badge-idle { background: #eee; color: #666; }
 
 /* ---------- Login ---------- */
 
@@ -406,7 +438,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 .login-card {
   width: 380px;
   background: var(--surface);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   padding: 34px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
   display: flex;
@@ -424,27 +456,27 @@ tr.clickable:hover td { background: var(--accent-soft); }
   flex-direction: column;
   gap: 6px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .error-box {
   background: #fbeaec;
   color: #b23440;
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 10px 14px;
 }
 
 .success-box {
   background: #e3f2e9;
   color: #23744a;
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 10px 14px;
 }
 
 .info-box {
   background: var(--accent-soft);
   color: var(--accent-dark);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 10px 14px;
 }
 
@@ -496,7 +528,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 
 .code-editor .CodeMirror {
   height: 100%;
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 /* Alt-M fullscreen must sit above the sidebar and nav toggle. */
@@ -527,7 +559,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .editor-pane-title {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -557,7 +589,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
   width: 5px;
   flex-shrink: 0;
   cursor: col-resize;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   margin: 0 -2px;
 }
 
@@ -582,10 +614,10 @@ tr.clickable:hover td { background: var(--accent-soft); }
   gap: 4px;
   height: 24px;
   padding: 0 4px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .tree-row:hover { background: var(--accent-soft); }
@@ -668,7 +700,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
   border: none;
   background: transparent;
   padding: 4px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -701,15 +733,21 @@ tr.clickable:hover td { background: var(--accent-soft); }
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  /*
+   * Narrow enough that all five fit on one row on a laptop - at 220px the
+   * fifth card dropped onto a row of its own with a field of white beside it.
+   */
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
 
 .kpi-value {
-  font-size: 30px;
+  font-size: var(--text-display);
   font-weight: 700;
   color: var(--accent-dark);
+  /* Same-width digits, so a row of counts lines up instead of drifting. */
+  font-variant-numeric: tabular-nums;
 }
 
 .kpi-label {
@@ -724,7 +762,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 pre.result-json {
@@ -734,7 +772,7 @@ pre.result-json {
   padding: 14px;
   overflow: auto;
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .pagination {
@@ -758,7 +796,7 @@ pre.result-json {
 
 .modal-box {
   background: var(--surface);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 26px 28px;
   width: fit-content;
   min-width: 420px;
@@ -771,7 +809,7 @@ pre.result-json {
 
 .modal-box h2 {
   margin: 0 0 10px 0;
-  font-size: 18px;
+  font-size: var(--text-lg);
 }
 
 .modal-box p {
@@ -785,7 +823,7 @@ pre.result-json {
   flex-direction: column;
   gap: 6px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--text-sm);
   margin-top: 8px;
 }
 
@@ -806,6 +844,23 @@ pre.result-json {
  * Wide forms — controls flow into as many columns as fit rather than one per
  * row, so a form of short fields doesn't run the height of the page.
  */
+/* Controls that carry no caption: checkboxes, and the button that submits. */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
 .form-grid.columns {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -817,7 +872,7 @@ pre.result-json {
   flex-direction: column;
   gap: 6px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--text-sm);
 }
 
 .chip {
@@ -826,9 +881,9 @@ pre.result-json {
   gap: 6px;
   background: var(--accent-soft);
   color: var(--accent-dark);
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   padding: 3px 12px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   margin: 2px;
 }
@@ -838,7 +893,7 @@ pre.result-json {
   background: none;
   color: inherit;
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--text-sm);
   padding: 0;
 }
 
@@ -850,14 +905,14 @@ pre.result-json {
 }
 
 .markdown-body {
-  font-size: 14px;
+  font-size: var(--text-base);
   line-height: 1.6;
 }
 
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3 {
-  font-size: 15px;
+  font-size: var(--text-md);
   margin: 16px 0 6px;
 }
 
@@ -869,14 +924,14 @@ pre.result-json {
 
 .markdown-body code {
   background: var(--accent-soft);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 1px 5px;
-  font-size: 12.5px;
+  font-size: var(--text-xs);
 }
 
 .markdown-body pre {
   background: var(--accent-soft);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 10px 12px;
   overflow-x: auto;
 }
@@ -906,10 +961,10 @@ pre.result-json {
   align-items: center;
   gap: 4px;
   padding: 5px 6px 5px 12px;
-  border-radius: 8px 8px 0 0;
+  border-radius: var(--radius) var(--radius) 0 0;
   background: transparent;
   color: var(--text-soft);
-  font-size: 13px;
+  font-size: var(--text-sm);
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
@@ -943,10 +998,10 @@ pre.result-json {
   border: none;
   background: none;
   color: inherit;
-  font-size: 15px;
+  font-size: var(--text-md);
   line-height: 1;
   padding: 1px 5px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -973,11 +1028,11 @@ pre.result-json {
   gap: 10px;
   max-width: 420px;
   padding: 12px 14px 12px 18px;
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--ok);
   color: #fff;
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--text-base);
   box-shadow: 0 8px 30px rgba(20, 16, 41, 0.3);
   animation: toast-in 0.18s ease-out;
 }
@@ -990,10 +1045,10 @@ pre.result-json {
   border: none;
   background: none;
   color: inherit;
-  font-size: 17px;
+  font-size: var(--text-md);
   line-height: 1;
   padding: 2px 6px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -1024,10 +1079,10 @@ pre.result-json {
   border: none;
   background: none;
   color: inherit;
-  font-size: 16px;
+  font-size: var(--text-md);
   line-height: 1;
   padding: 1px 5px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -1115,15 +1170,61 @@ pre.result-json {
 
 .btn-large {
   padding: 14px 28px;
-  font-size: 15px;
+  font-size: var(--text-md);
 }
 
 /* Linked guide to the dashboard's sections, on the Welcome card. */
+/* The collapsed guide. Its summary reads as a card heading, not a disclosure. */
+.guide-details > summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  /*
+   * Laying the summary out as a flex row drops the browser's own disclosure
+   * triangle, so it is drawn back in below - without it nothing says the
+   * heading opens.
+   */
+  list-style: none;
+}
+
+.guide-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.guide-details > summary::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 6px solid var(--text-soft);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  transition: transform 0.12s;
+}
+
+.guide-details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.guide-summary-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
 .guide-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 10px;
   margin-top: 14px;
+}
+
+/* The one guide card that opens a widget rather than a route. */
+button.guide-card {
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
 }
 
 .guide-card {
@@ -1152,10 +1253,10 @@ pre.result-json {
   flex-shrink: 0;
   width: 34px;
   height: 34px;
-  border-radius: 9px;
+  border-radius: var(--radius);
   background: var(--accent-soft);
   color: var(--accent-dark);
-  font-size: 16px;
+  font-size: var(--text-md);
 }
 
 .guide-title {
@@ -1171,7 +1272,7 @@ pre.result-json {
 .guide-text {
   display: block;
   color: var(--text-soft);
-  font-size: 13px;
+  font-size: var(--text-sm);
   line-height: 1.5;
 }
 
@@ -1205,10 +1306,10 @@ tr.vss-irrelevant td {
   border: none;
   background: none;
   color: var(--text-soft);
-  font-size: 17px;
+  font-size: var(--text-md);
   line-height: 1;
   padding: 2px 5px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -1246,7 +1347,7 @@ tr.vss-irrelevant td {
   border-radius: 50%;
   background: #fbeaec;
   color: var(--danger);
-  font-size: 34px;
+  font-size: var(--text-display);
   font-weight: 700;
   line-height: 62px;
 }
@@ -1257,7 +1358,7 @@ tr.vss-irrelevant td {
   align-items: center;
   gap: 10px;
   color: var(--text-soft);
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
 
 .login-divider::before,
@@ -1293,7 +1394,7 @@ tr.vss-irrelevant td {
   display: flex;
   align-items: center;
   padding: 4px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
 }
 
 .combo-toggle:hover {
@@ -1327,7 +1428,7 @@ tr.vss-irrelevant td {
   overflow-y: auto;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 4px;
 }
@@ -1339,8 +1440,8 @@ tr.vss-irrelevant td {
   border: none;
   background: none;
   padding: 7px 10px;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   font-family: inherit;
   color: var(--text);
   cursor: pointer;
@@ -1364,7 +1465,7 @@ tr.vss-irrelevant td {
   border: none;
   background: none;
   color: var(--accent-dark);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-family: inherit;
   cursor: pointer;
   padding: 0;
@@ -1377,7 +1478,7 @@ tr.vss-irrelevant td {
 
 .forgot-box {
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 12px;
 }
 
@@ -1397,7 +1498,7 @@ tr.vss-irrelevant td {
  * what it is — a stream of log lines from a machine, not page content.
  */
 .terminal {
-  border-radius: 10px;
+  border-radius: var(--radius);
   overflow: hidden;
   background: #2c2c2c;
   border: 1px solid #1c1c1c;
@@ -1414,7 +1515,7 @@ tr.vss-irrelevant td {
 
 .terminal-title {
   color: #9a9a92;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-family: ui-monospace, Menlo, monospace;
   white-space: nowrap;
   overflow: hidden;
@@ -1427,7 +1528,7 @@ tr.vss-irrelevant td {
   padding: 12px 14px;
   color: #ffffec;
   font-family: ui-monospace, Menlo, monospace;
-  font-size: 12px;
+  font-size: var(--text-xs);
   line-height: 1.55;
   white-space: pre-wrap;
   word-break: break-word;
