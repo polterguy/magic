@@ -28,6 +28,7 @@ package_update: true
 
 packages:
   - docker.io
+  - docker-buildx
   - git
 
 runcmd:
@@ -43,10 +44,12 @@ runcmd:
     echo '/swapfile none swap sw 0 0' >> /etc/fstab
     systemctl enable --now docker
     git clone --depth 1 https://github.com/polterguy/magic.git /opt/magic
-    # BuildKit, because the Dockerfile is shared with the multi-arch CI build
-    # and uses $BUILDPLATFORM - the legacy builder leaves that empty, and the
-    # resulting "--platform=" fails to parse.
-    DOCKER_BUILDKIT=1 docker build -f /opt/magic/.do/Dockerfile.backend -t magic /opt/magic
+    # buildx, because the Dockerfile is shared with the multi-arch CI build and
+    # uses $BUILDPLATFORM. The legacy builder leaves that empty and the resulting
+    # "--platform=" fails to parse, so this must not fall back to it - hence the
+    # docker-buildx package above rather than DOCKER_BUILDKIT alone, which cannot
+    # help when the buildx component is missing.
+    docker buildx build --load -f /opt/magic/.do/Dockerfile.backend -t magic /opt/magic
     docker network create magicnet
     docker run -d --name caddy --restart unless-stopped --network magicnet \
       -p 80:80 -p 443:443 \
