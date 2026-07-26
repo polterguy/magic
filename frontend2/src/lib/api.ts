@@ -865,6 +865,52 @@ export interface OidcProvider {
  * Providers the backend has configured — there may be none at all, or
  * several, so the login screen renders whatever comes back.
  */
+/*
+ * Whether the backend can email a sign in link, which needs SMTP. Answers
+ * false rather than throwing, so a backend without the endpoint simply
+ * doesn't offer the option.
+ */
+export async function canResetPassword(backendUrl: string) {
+  try {
+    const response = await fetch(
+      backendUrl.replace(/\/+$/, '') + '/magic/system/auth/can-reset-password');
+    if (!response.ok) {
+      return false;
+    }
+    return (await response.json()).result === true;
+  } catch {
+    return false;
+  }
+}
+
+/*
+ * Asks the backend to email a sign in link. The answer is deliberately the
+ * same whether or not the account exists, so it says nothing about who does.
+ */
+export async function sendResetPasswordLink(backendUrl: string, user: string) {
+  const response = await fetch(
+    backendUrl.replace(/\/+$/, '') + '/magic/system/auth/send-reset-password-link',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user }),
+    });
+  if (!response.ok) {
+    throw new ApiError(response.status, response.statusText);
+  }
+  return await response.json() as { result: string };
+}
+
+/*
+ * Whether the configured token is accepted by the backend. Used after a
+ * magnetic link hands us a token, to find out whether it is any good before
+ * showing the dashboard.
+ */
+export async function verifyTicket() {
+  const response = await http.get<{ result: string }>('/magic/system/auth/verify-ticket');
+  return response.result === 'success';
+}
+
 export async function openidProviders(backendUrl: string) {
   const response = await fetch(
     backendUrl.replace(/\/+$/, '') +

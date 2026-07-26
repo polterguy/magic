@@ -201,10 +201,9 @@ export function tokenRoles(token: string): string[] {
 
 /*
  * Whether a token can actually use the dashboard. Every dashboard endpoint
- * verifies root, so anything less is signed in but unable to do anything —
- * regardless of how the user signed in.
+ * verifies root and nothing else, so anything less is signed in but unable to
+ * do anything — regardless of how the user signed in.
  */
-export function isAdminToken(token: string): boolean {
-  const roles = tokenRoles(token);
-  return roles.includes('root') || roles.includes('admin');
+export function isRootToken(token: string): boolean {
+  return tokenRoles(token).includes('root');
 }

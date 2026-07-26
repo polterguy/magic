@@ -21,7 +21,7 @@ import {
   loadBackends,
   saveBackend,
   clearBackend,
-  isAdminToken,
+  isRootToken,
   tokenUsername,
   tokenExpiration,
   tokenExpired,
@@ -33,10 +33,10 @@ interface AuthState {
   authenticated: boolean;
   /*
    * Whether the signed-in user can actually use the dashboard. Every
-   * dashboard endpoint verifies root, so a user without root or admin is
-   * authenticated but unable to do anything — however they signed in.
+   * dashboard endpoint verifies root, so anyone else is authenticated but
+   * unable to do anything — however they signed in.
    */
-  isAdmin: boolean;
+  isRoot: boolean;
   /*
    * Whether the backend still needs its first-run setup. Null until the
    * status has been fetched — the endpoint requires root, so this can only
@@ -81,14 +81,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [setupNeeded, setSetupNeeded] = useState<boolean | null>(null);
 
   /*
-   * Checked on every load that has an admin token, not just after signing
+   * Checked on every load that has a root token, not just after signing
    * in — the old dashboard only asked at login, so reloading with a stored
    * token skipped setup entirely.
    */
   const token = backend?.token ?? null;
-  const isAdmin = !!token && isAdminToken(token);
+  const isRoot = !!token && isRootToken(token);
   useEffect(() => {
-    if (!isAdmin) {
+    if (!isRoot) {
       setSetupNeeded(null);
       return;
     }
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // An unreachable or older backend shouldn't trap anyone on setup.
       .catch(() => { if (!cancelled) { setSetupNeeded(false); } });
     return () => { cancelled = true; };
-  }, [isAdmin, token]);
+  }, [isRoot, token]);
 
   const applyBackend = useCallback((value: StoredBackend | null) => {
     configureApi(value?.url ?? '', value?.token ?? null);
@@ -219,7 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{
       backend,
       authenticated: !!backend?.token,
-      isAdmin,
+      isRoot,
       setupNeeded,
       setupCompleted: () => setSetupNeeded(false),
       login,

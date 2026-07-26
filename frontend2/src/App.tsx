@@ -1,9 +1,10 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from './lib/AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import NoAccess from './pages/NoAccess';
 import NotFound from './pages/NotFound';
+import MagicLink, { MAGIC_LINK_PATH } from './pages/MagicLink';
 import Setup from './pages/Setup';
 import Dashboard from './pages/Dashboard';
 import Playground from './pages/Playground';
@@ -22,7 +23,22 @@ import Log from './pages/Log';
 
 export default function App() {
 
-  const { authenticated, isAdmin, setupNeeded } = useAuth();
+  const { authenticated, isRoot, setupNeeded } = useAuth();
+  /*
+   * Through the router rather than window.location, so this re-renders when
+   * a page navigates — the magnetic link screen sends you to the dashboard
+   * once the token checks out, and nothing else would notice the change.
+   */
+  const { pathname } = useLocation();
+
+  /*
+   * Ahead of every gate: a sign in link has to work whether or not somebody
+   * is already signed in, and to a different cloudlet than the one they are
+   * looking at.
+   */
+  if (pathname === MAGIC_LINK_PATH) {
+    return <MagicLink />;
+  }
 
   if (!authenticated) {
     return <Login />;
@@ -30,9 +46,9 @@ export default function App() {
 
   /*
    * Gate before the layout mounts — the layout opens a socket and the pages
-   * fetch on mount, and every one of those would fail for a non-admin.
+   * fetch on mount, and every one of those would fail without root.
    */
-  if (!isAdmin) {
+  if (!isRoot) {
     return <NoAccess />;
   }
 

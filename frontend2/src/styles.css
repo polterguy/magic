@@ -1345,3 +1345,25 @@ tr.vss-irrelevant td {
   font-weight: 600;
   color: var(--accent-dark);
 }
+
+/* A button that reads as a link — "Forgot your password?" on the login card. */
+.link-like {
+  border: none;
+  background: none;
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  align-self: center;
+}
+
+.link-like:hover {
+  text-decoration: underline;
+}
+
+.forgot-box {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}

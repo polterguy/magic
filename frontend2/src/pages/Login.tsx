@@ -8,7 +8,13 @@ import {
   rememberPendingOidc,
   takePendingOidc,
 } from '../lib/backend';
-import { OidcProvider, openidLogin, openidProviders } from '../lib/api';
+import {
+  OidcProvider,
+  canResetPassword,
+  openidLogin,
+  openidProviders,
+  sendResetPasswordLink,
+} from '../lib/api';
 
 /*
  * Where providers send the user back to. This has to match what's registered
@@ -45,6 +51,10 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const [providers, setProviders] = useState<OidcProvider[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [canReset, setCanReset] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotUser, setForgotUser] = useState('');
+  const [forgotSent, setForgotSent] = useState('');
   const pickerRef = useRef<HTMLDivElement>(null);
 
   // Clicking anywhere else closes the backend dropdown.
@@ -87,6 +97,13 @@ export default function Login() {
       .catch(err => setError(err.message ?? 'Could not complete sign-in'))
       .finally(() => setBusy(false));
   }, [loginWithTicket, navigate]);
+
+  // Only offer a link the backend can actually send.
+  useEffect(() => {
+    let cancelled = false;
+    canResetPassword(url).then(value => { if (!cancelled) { setCanReset(value); } });
+    return () => { cancelled = true; };
+  }, [url]);
 
   /*
    * Which providers the backend has configured — there may be none, in which
@@ -210,6 +227,54 @@ export default function Login() {
         <button className="btn" type="submit" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
         </button>
+        {canReset && !forgotOpen && (
+          <button
+            type="button"
+            className="link-like"
+            onClick={() => { setForgotOpen(true); setForgotSent(''); }}>
+            Forgot your password?
+          </button>
+        )}
+        {forgotOpen && (
+          <div className="forgot-box">
+            {forgotSent ? (
+              <p className="muted" style={{ margin: 0 }}>{forgotSent}</p>
+            ) : (
+              <>
+                <p className="muted" style={{ margin: '0 0 8px 0', fontSize: 13 }}>
+                  Your username or email, and we'll send a link that signs you
+                  in and lets you set a new password.
+                </p>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <input
+                    type="text"
+                    autoFocus
+                    placeholder="Username or email"
+                    value={forgotUser}
+                    onChange={e => setForgotUser(e.target.value)}
+                    style={{ flex: 1, minWidth: 0 }} />
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    disabled={busy || !forgotUser.trim()}
+                    onClick={async () => {
+                      setBusy(true);
+                      try {
+                        const response = await sendResetPasswordLink(url, forgotUser.trim());
+                        setForgotSent(response.result);
+                      } catch (err: any) {
+                        setError(err.message);
+                      } finally {
+                        setBusy(false);
+                      }
+                    }}>
+                    Send
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
         {providers.length > 0 && (
           <>
             <div className="login-divider"><span>or</span></div>

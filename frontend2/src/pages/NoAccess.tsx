@@ -25,8 +25,8 @@ export default function NoAccess() {
           account cannot use the dashboard.
         </p>
         <p className="muted" style={{ margin: 0 }}>
-          The dashboard requires the <strong>root</strong> or <strong>admin</strong>{' '}
-          role. This account has{' '}
+          The dashboard requires the <strong>root</strong> role. This account
+          has{' '}
           {roles.length > 0
             ? <>only <strong>{roles.join(', ')}</strong></>
             : <strong>no roles at all</strong>}.
