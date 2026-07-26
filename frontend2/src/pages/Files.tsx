@@ -461,19 +461,19 @@ export default function Files() {
 
   /*
    * Whatever is selected is the specification, and nothing else is sent —
-   * no surrounding code, no arguments. The generated code replaces the
-   * selection, as one undoable edit.
+   * no surrounding code, no arguments. The generator answers with a whole
+   * file, so its answer becomes the whole file: replacing only the selection
+   * would leave the old code sitting around it, duplicated.
    */
   async function generateFromSelection() {
-    const editor = editorRef.current;
-    const selection = editor?.getSelection() ?? '';
-    if (!editor || selection.trim() === '') {
+    const selection = editorRef.current?.getSelection() ?? '';
+    if (selection.trim() === '') {
       return;
     }
     setGenerating(true);
     try {
       const response = await aiQuery(selection, 'hl');
-      editor.replaceSelection(response.result);
+      updateContent(response.result);
     } catch (err: any) {
       show(err.message, true);
     } finally {
