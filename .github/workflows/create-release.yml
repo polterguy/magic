@@ -23,7 +23,7 @@ jobs:
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       # ==========================
-      # Build Angular ONCE (native runner)
+      # Build the dashboard ONCE (native runner)
       # ==========================
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -32,11 +32,11 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Build Angular frontend
+      - name: Build dashboard frontend
         run: |
           cd frontend
           npm ci
-          npm run build-prod
+          npm run build
           cd ..
 
       # ==========================
@@ -83,7 +83,7 @@ jobs:
       # Build & Push All-In-One (multi-arch)
       # Frontend + backend in ONE image - used by droplet,
       # marketplace, and other single-container deployments.
-      # Builds Angular inside the image (self-contained),
+      # Builds the dashboard inside the image (self-contained),
       # identical artifact to .do/Dockerfile.backend.
       # ==========================
       - name: Build and push all-in-one (multi-arch)
