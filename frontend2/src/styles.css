@@ -1254,3 +1254,94 @@ tr.vss-irrelevant td {
   height: 1px;
   background: var(--border);
 }
+
+/* ---------- Text field with a dropdown of known values ---------- */
+
+.combo {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.combo input {
+  flex: 1;
+  min-width: 0;
+  /* Room for the toggle sitting inside the field. */
+  padding-right: 34px;
+}
+
+.combo-toggle {
+  position: absolute;
+  right: 6px;
+  border: none;
+  background: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.combo-toggle:hover {
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+}
+
+/*
+ * The chevron points right by default — turned down when the list is shut
+ * and up when it is open. Rotated here rather than through the icon's own
+ * "open" prop, whose inline style would win over this rule.
+ */
+.combo-toggle svg {
+  width: 14px;
+  height: 14px;
+  transform: rotate(90deg);
+  transition: transform 0.12s;
+}
+
+.combo-toggle.open svg {
+  transform: rotate(-90deg);
+}
+
+.combo-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 4px;
+}
+
+.combo-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.combo-option:hover {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.combo-option.active {
+  font-weight: 600;
+  color: var(--accent-dark);
+}

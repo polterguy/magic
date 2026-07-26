@@ -1,6 +1,7 @@
 import Banner from '../components/Banner';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ChevronIcon } from '../components/Icons';
 import { useAuth } from '../lib/AuthContext';
 import {
   backendUrls,
@@ -43,6 +44,22 @@ export default function Login() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [providers, setProviders] = useState<OidcProvider[]>([]);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  // Clicking anywhere else closes the backend dropdown.
+  useEffect(() => {
+    if (!pickerOpen) {
+      return;
+    }
+    const handler = (event: MouseEvent) => {
+      if (!pickerRef.current?.contains(event.target as Node)) {
+        setPickerOpen(false);
+      }
+    };
+    window.addEventListener('mousedown', handler);
+    return () => window.removeEventListener('mousedown', handler);
+  }, [pickerOpen]);
 
   /*
    * Coming back from a provider — swap its id_token for a Magic ticket, using
@@ -136,16 +153,41 @@ export default function Login() {
         {error && <Banner onClose={() => setError('')}>{error}</Banner>}
         <label>
           Backend URL
-          <input
-            type="text"
-            value={url}
-            onChange={e => setUrl(e.target.value)}
-            placeholder="http://localhost:5000"
-            list="previous-backends"
-            required />
-          <datalist id="previous-backends">
-            {previousUrls.map(candidate => <option key={candidate} value={candidate} />)}
-          </datalist>
+          {/*
+            * A plain input with its own dropdown rather than a datalist —
+            * a datalist filters its options by whatever is already typed,
+            * so picking a different backend meant clearing the field first.
+            */}
+          <div className="combo" ref={pickerRef}>
+            <input
+              type="text"
+              value={url}
+              onChange={e => setUrl(e.target.value)}
+              placeholder="http://localhost:5000"
+              required />
+            {previousUrls.length > 0 && (
+              <button
+                type="button"
+                className={'combo-toggle' + (pickerOpen ? ' open' : '')}
+                title="Backends you have signed in to"
+                onClick={() => setPickerOpen(!pickerOpen)}>
+                <ChevronIcon />
+              </button>
+            )}
+            {pickerOpen && (
+              <div className="combo-list">
+                {previousUrls.map(candidate => (
+                  <button
+                    type="button"
+                    key={candidate}
+                    className={'combo-option' + (candidate === url ? ' active' : '')}
+                    onClick={() => { setUrl(candidate); setPickerOpen(false); }}>
+                    {candidate}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </label>
         <label>
           Username
