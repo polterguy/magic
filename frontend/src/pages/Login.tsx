@@ -42,9 +42,18 @@ export default function Login() {
   const { backend, login, loginWithTicket } = useAuth();
   const navigate = useNavigate();
   const [previousUrls] = useState(backendUrls);
-  // The stored ones are offered by the datalist rather than pre-filled,
-  // so adding another backend starts from a clean field.
-  const [url, setUrl] = useState(backend?.url ?? 'http://localhost:5000');
+  /*
+   * Nothing signed in and nothing stored means a first visit, and the
+   * dashboard is served BY the backend in the all-in-one deployment - so the
+   * domain it was loaded from is the backend. A literal default sent the
+   * login screen probing localhost from a public page, which the browser
+   * rightly asks the visitor about.
+   *
+   * With backends already stored the field starts empty instead: the only way
+   * to get here is adding another one, and the dropdown offers the rest.
+   */
+  const [url, setUrl] = useState(() =>
+    backend?.url ?? (previousUrls.length === 0 ? window.location.origin : ''));
   const [username, setUsername] = useState(backend?.username ?? 'root');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
