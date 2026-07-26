@@ -39,6 +39,7 @@ import {
   getFunctionDeclaration,
   getHyperlambdaArguments,
   getOpenApiSpec,
+  aiQuery,
   installModule,
   listEndpoints,
   listFilesRecursively,
@@ -157,6 +158,59 @@ function nameOf(path: string) {
 }
 
 /*
+ * The comment block the cursor sits in — either a run of "//" lines or a
+ * "/* … *" + "/" block — returned with the comment markers stripped, together
+ * with the range it occupies so the generated code can take its place.
+ */
+function commentBlockAt(editor: import('codemirror').Editor) {
+  const line = editor.getCursor().line;
+  const text = (n: number) => editor.getLine(n) ?? '';
+  const lastLine = editor.lineCount() - 1;
+
+  // A block comment: scan out to its delimiters.
+  let start = line;
+  while (start >= 0 && !text(start).includes('/*')) {
+    if (text(start).includes('*/') && start !== line) {
+      start = -1;
+      break;
+    }
+    start--;
+  }
+  if (start >= 0) {
+    let end = line;
+    while (end <= lastLine && !text(end).includes('*/')) {
+      end++;
+    }
+    if (end <= lastLine) {
+      const body = [];
+      for (let n = start; n <= end; n++) {
+        body.push(text(n).replace(/\/\*/, '').replace(/\*\//, '').replace(/^\s*\*/, '').trim());
+      }
+      return { from: start, to: end, prompt: body.join('\n').trim() };
+    }
+  }
+
+  // Otherwise a run of line comments around the cursor.
+  const isLineComment = (n: number) => /^\s*\/\//.test(text(n));
+  if (!isLineComment(line)) {
+    return null;
+  }
+  let from = line;
+  let to = line;
+  while (from > 0 && isLineComment(from - 1)) {
+    from--;
+  }
+  while (to < lastLine && isLineComment(to + 1)) {
+    to++;
+  }
+  const body = [];
+  for (let n = from; n <= to; n++) {
+    body.push(text(n).replace(/^\s*\/\/\s?/, ''));
+  }
+  return { from, to, prompt: body.join('\n').trim() };
+}
+
+/*
  * Whether a file is served as an HTTP endpoint, mirroring what the backend
  * itself enforces (magic.endpoint's Utilities.IsLegalAPIRequest and
  * ListEndpoints):
@@ -234,6 +288,7 @@ export default function Files() {
   const [executeResult, setExecuteResult] = useState<InvokeResult | null>(null);
   // Set when the result came from invoking an endpoint rather than evaluating.
   const [resultWasHttp, setResultWasHttp] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
   // The endpoint whose invoker dialog is open, when executing an endpoint file.
   const [invokeTarget, setInvokeTarget] = useState<Endpoint | null>(null);
@@ -450,6 +505,36 @@ export default function Files() {
       setExecuteResult(await evaluateWithArgs(code, args));
     } catch (err: any) {
       show(err.message, true);
+    }
+  }
+
+  /*
+   * Comment-driven development: the comment under the cursor is the whole
+   * specification. Only that comment goes to the Hyperlambda generator — no
+   * surrounding code, no arguments — and the generated code takes its place,
+   * as one undoable edit.
+   */
+  async function generateFromComment() {
+    const editor = editorRef.current;
+    if (!editor) {
+      return;
+    }
+    const block = commentBlockAt(editor);
+    if (!block || block.prompt === '') {
+      show('Put the cursor in a comment describing what you want, then generate', true);
+      return;
+    }
+    setGenerating(true);
+    try {
+      const response = await aiQuery(block.prompt, 'hl');
+      editor.replaceRange(
+        response.result,
+        { line: block.from, ch: 0 },
+        { line: block.to, ch: (editor.getLine(block.to) ?? '').length });
+    } catch (err: any) {
+      show(err.message, true);
+    } finally {
+      setGenerating(false);
     }
   }
 
@@ -742,6 +827,16 @@ export default function Files() {
             onClick={() => showOpenApi(selectedFile)}>
             <BracesIcon />
             OpenAPI
+          </button>
+        )}
+        {selectedFile.endsWith('.hl') && (
+          <button
+            className="btn btn-secondary btn-small"
+            title="Run the comment under the cursor through the Hyperlambda generator"
+            onClick={generateFromComment}
+            disabled={generating}>
+            <SparkIcon />
+            {generating ? 'Generating…' : 'Generate'}
           </button>
         )}
         {selectedFile.endsWith('.hl') && (
