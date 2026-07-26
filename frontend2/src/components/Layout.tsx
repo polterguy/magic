@@ -5,12 +5,15 @@ import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
+import { DatabaseIcon } from './Icons';
 import { ChevronIcon } from './Icons';
+import BackendsDialog from './BackendsDialog';
 import { SECTIONS } from './sections';
 
 export default function Layout({ children }: { children: ReactNode }) {
 
-  const { backend, logout } = useAuth();
+  const { backend, logout, backends } = useAuth();
+  const [switching, setSwitching] = useState(false);
   const navigate = useNavigate();
   const [version, setVersion] = useState('');
   const [collapsed, setCollapsed] = useState(
@@ -132,9 +135,23 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="backend-user">{backend?.username}</div>
             <div className="backend-url">{backend?.url.replace(/^https?:\/\//, '')}</div>
           </NavLink>
-          <button className="btn btn-ghost" onClick={logout}>Logout</button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              className="btn btn-ghost"
+              style={{ flex: 1 }}
+              onClick={logout}>
+              Logout
+            </button>
+            <button
+              className="btn btn-ghost"
+              title={'Switch cloudlet — ' + backends.length + ' signed in'}
+              onClick={() => setSwitching(true)}>
+              <DatabaseIcon />
+            </button>
+          </div>
         </div>
       </aside>}
+      {switching && <BackendsDialog onClose={() => setSwitching(false)} />}
       <button
         className="nav-toggle"
         style={{ left: collapsed ? 0 : 220 }}

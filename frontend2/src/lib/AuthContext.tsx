@@ -14,12 +14,15 @@ import {
 } from 'react';
 import {
   StoredBackend,
+  activateBackend,
+  deactivateBackend,
+  forgetBackend,
   loadBackend,
+  loadBackends,
   saveBackend,
   clearBackend,
   isAdminToken,
   tokenUsername,
-  rememberBackendUrl,
   tokenExpiration,
   tokenExpired,
 } from './backend';
@@ -46,6 +49,12 @@ interface AuthState {
   // Signs in with a ticket the backend already issued, as OpenID login does.
   loginWithTicket: (url: string, ticket: string) => void;
   logout: () => void;
+  // Every backend signed into, so the user can move between cloudlets.
+  backends: StoredBackend[];
+  switchBackend: (url: string) => void;
+  removeBackend: (url: string) => void;
+  // Shows the login screen without disturbing the backends already stored.
+  addBackend: () => void;
 }
 
 const AuthContext = createContext<AuthState>(null!);
@@ -68,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return stored;
   });
   const refreshTimer = useRef<number | null>(null);
+  const [backends, setBackends] = useState<StoredBackend[]>(loadBackends);
   const [setupNeeded, setSetupNeeded] = useState<boolean | null>(null);
 
   /*
@@ -102,7 +112,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       clearBackend();
     }
     setBackend(value);
+    setBackends(loadBackends());
   }, []);
+
+  // Moves to another backend already signed into, token and all.
+  const switchBackend = useCallback((url: string) => {
+    const stored = activateBackend(url);
+    if (!stored) {
+      return;
+    }
+    // An expired token is no better than none — fall through to the login.
+    const next = stored.token && tokenExpired(stored.token)
+      ? { ...stored, token: null }
+      : stored;
+    configureApi(next.url, next.token);
+    setBackend(next);
+    setBackends(loadBackends());
+  }, []);
+
+  const removeBackend = useCallback((url: string) => {
+    const next = forgetBackend(url);
+    configureApi(next?.url ?? '', next?.token ?? null);
+    setBackend(next);
+    setBackends(loadBackends());
+  }, []);
+
+  const addBackend = useCallback(() => {
+    deactivateBackend();
+    configureApi('', null);
+    setBackend(null);
+  }, []);
+
+  /*
+   * A "?backend=<url>" link points the dashboard at a particular cloudlet.
+   * When that backend is already signed in, its token is reused and the
+   * switch is silent; otherwise it becomes the active one and the login
+   * screen opens against it. Either way the parameter is stripped, so a
+   * reload doesn't repeat the switch.
+   */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get('backend');
+    if (!target) {
+      return;
+    }
+    params.delete('backend');
+    const query = params.toString();
+    window.history.replaceState(
+      null, '', window.location.pathname + (query ? '?' + query : ''));
+    const url = target.replace(/\/+$/, '');
+    if (loadBackends().some(candidate => candidate.url === url)) {
+      switchBackend(url);
+    } else {
+      applyBackend({ url, username: '', token: null });
+    }
+  }, [switchBackend, applyBackend]);
 
   // Refreshes the JWT token one minute before it expires.
   useEffect(() => {
@@ -136,13 +200,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (url: string, username: string, password: string) => {
     url = url.replace(/\/+$/, '');
     const response = await authenticate(url, username, password);
-    rememberBackendUrl(url);
     applyBackend({ url, username, token: response.ticket });
   }, [applyBackend]);
 
   const loginWithTicket = useCallback((url: string, ticket: string) => {
     url = url.replace(/\/+$/, '');
-    rememberBackendUrl(url);
     // Whoever the ticket belongs to — the caller has no better source.
     applyBackend({ url, username: tokenUsername(ticket), token: ticket });
   }, [applyBackend]);
@@ -163,6 +225,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       loginWithTicket,
       logout,
+      backends,
+      switchBackend,
+      removeBackend,
+      addBackend,
     }}>
       {children}
     </AuthContext.Provider>

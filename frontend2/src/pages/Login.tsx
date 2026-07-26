@@ -35,7 +35,9 @@ export default function Login() {
   const { backend, login, loginWithTicket } = useAuth();
   const navigate = useNavigate();
   const [previousUrls] = useState(backendUrls);
-  const [url, setUrl] = useState(previousUrls[0] ?? backend?.url ?? 'http://localhost:5000');
+  // The stored ones are offered by the datalist rather than pre-filled,
+  // so adding another backend starts from a clean field.
+  const [url, setUrl] = useState(backend?.url ?? 'http://localhost:5000');
   const [username, setUsername] = useState(backend?.username ?? 'root');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');

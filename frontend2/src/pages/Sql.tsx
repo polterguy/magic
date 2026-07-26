@@ -321,7 +321,7 @@ export default function Sql() {
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div>
           <h1>SQL Studio</h1>
-          <p>Execute SQL towards your databases</p>
+          <p>Execute SQL towards your databases, and design them</p>
         </div>
         <span style={{ flex: 1 }} />
         <select value={type} onChange={e => setType(e.target.value)}>
@@ -349,7 +349,7 @@ export default function Sql() {
       <Tabs
         tabs={[
           { id: 'sql', label: 'SQL' },
-          { id: 'tables', label: 'Tables' },
+          { id: 'tables', label: 'Designer' },
         ]}
         active={view}
         onChange={id => setView(id as 'sql' | 'tables')} />

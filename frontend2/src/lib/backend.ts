@@ -10,39 +10,118 @@ export interface StoredBackend {
   token: string | null;
 }
 
-const STORAGE_KEY = 'magic2.backend';
+/*
+ * Several cloudlets can be signed into at once, each with its own token —
+ * one of them is active at any time, and that's the one every request goes
+ * to. The list survives switching, so moving between them doesn't mean
+ * signing in again.
+ */
+const BACKENDS_KEY = 'magic2.backends';
+const ACTIVE_KEY = 'magic2.active-backend';
 
+// Where a single backend used to live, before several were supported.
+const LEGACY_KEY = 'magic2.backend';
+
+export function loadBackends(): StoredBackend[] {
+  const raw = localStorage.getItem(BACKENDS_KEY);
+  if (raw) {
+    return JSON.parse(raw);
+  }
+  // First run after the upgrade — carry the one backend across.
+  const legacy = localStorage.getItem(LEGACY_KEY);
+  if (!legacy) {
+    return [];
+  }
+  const backend: StoredBackend = JSON.parse(legacy);
+  localStorage.setItem(BACKENDS_KEY, JSON.stringify([backend]));
+  localStorage.setItem(ACTIVE_KEY, backend.url);
+  localStorage.removeItem(LEGACY_KEY);
+  return [backend];
+}
+
+function persist(list: StoredBackend[]) {
+  localStorage.setItem(BACKENDS_KEY, JSON.stringify(list));
+}
+
+// The backend every request currently goes to.
 export function loadBackend(): StoredBackend | null {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
+  const list = loadBackends();
+  const active = localStorage.getItem(ACTIVE_KEY);
+  /*
+   * An empty string means "none deliberately", which is how adding another
+   * backend gets to the login screen without disturbing the stored ones. A
+   * missing key is different — it just predates this and falls back.
+   */
+  if (active === '') {
     return null;
   }
-  return JSON.parse(raw);
+  return list.find(candidate => candidate.url === active) ?? list[0] ?? null;
 }
 
+// Stores a backend and makes it the active one.
 export function saveBackend(backend: StoredBackend) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(backend));
-}
-
-export function clearBackend() {
-  localStorage.removeItem(STORAGE_KEY);
+  const list = loadBackends().filter(candidate => candidate.url !== backend.url);
+  persist([backend, ...list]);
+  localStorage.setItem(ACTIVE_KEY, backend.url);
 }
 
 /*
- * List of all backend URLs the user has successfully signed in to,
- * most recently used first. Only URLs are persisted — usernames and
- * passwords are left to the browser's own credential manager.
+ * Signing out clears the active backend's token but keeps the backend, so
+ * it stays in the list to sign back into.
  */
-const URLS_KEY = 'magic2.backend-urls';
-
-export function backendUrls(): string[] {
-  const raw = localStorage.getItem(URLS_KEY);
-  return raw ? JSON.parse(raw) : [];
+export function clearBackend() {
+  const active = loadBackend();
+  if (!active) {
+    return;
+  }
+  persist(loadBackends().map(candidate =>
+    candidate.url === active.url ? { ...candidate, token: null } : candidate));
 }
 
-export function rememberBackendUrl(url: string) {
-  const urls = [url, ...backendUrls().filter(candidate => candidate !== url)];
-  localStorage.setItem(URLS_KEY, JSON.stringify(urls));
+// Switches to another backend already in the list.
+export function activateBackend(url: string): StoredBackend | null {
+  const match = loadBackends().find(candidate => candidate.url === url);
+  if (match) {
+    localStorage.setItem(ACTIVE_KEY, url);
+  }
+  return match ?? null;
+}
+
+/*
+ * Forgets a backend entirely. Removing the active one falls back to whatever
+ * else is signed in, so the app doesn't end up pointing at nothing while
+ * other backends are still available.
+ */
+export function forgetBackend(url: string): StoredBackend | null {
+  const list = loadBackends().filter(candidate => candidate.url !== url);
+  persist(list);
+  if (localStorage.getItem(ACTIVE_KEY) === url) {
+    const next = list.find(candidate => !!candidate.token) ?? list[0] ?? null;
+    if (next) {
+      localStorage.setItem(ACTIVE_KEY, next.url);
+    } else {
+      localStorage.removeItem(ACTIVE_KEY);
+    }
+    return next;
+  }
+  return loadBackend();
+}
+
+/*
+ * Signals that the user wants to add another backend — the app shows the
+ * login screen without touching any of the stored ones.
+ */
+export function deactivateBackend() {
+  localStorage.setItem(ACTIVE_KEY, '');
+}
+
+/*
+ * Backend URLs for the login screen's autocomplete, most recent first.
+ * Only URLs are suggested — usernames and passwords are left to the
+ * browser's own credential manager.
+ */
+export function backendUrls(): string[] {
+  return loadBackends().map(backend => backend.url);
 }
 
 /*

@@ -1,8 +1,9 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { useAuth } from './lib/AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import NoAccess from './pages/NoAccess';
+import NotFound from './pages/NotFound';
 import Setup from './pages/Setup';
 import Dashboard from './pages/Dashboard';
 import Playground from './pages/Playground';
@@ -61,7 +62,7 @@ export default function App() {
         <Route path="/machine-learning" element={<MachineLearning />} />
         <Route path="/plugins" element={<Plugins />} />
         <Route path="/log" element={<Log />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>
   );
