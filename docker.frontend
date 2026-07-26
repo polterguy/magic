@@ -1,14 +1,14 @@
 # =========================
 # Runtime-only frontend image
-# Angular is built in GitHub Actions before Docker runs
+# The dashboard is built in GitHub Actions before Docker runs
 # =========================
 FROM nginx:alpine
 
 # Remove default nginx config (optional but clean)
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy built Angular output
-COPY frontend/dist/magic /usr/share/nginx/html
+# Copy the built dashboard
+COPY frontend/dist /usr/share/nginx/html
 
 # Copy custom nginx config
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf

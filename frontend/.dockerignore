@@ -1,0 +1,6 @@
+# Installed inside the build stage by "npm ci", and host binaries would be
+# the wrong platform anyway.
+node_modules
+
+# Built inside the build stage too, so a local build must never leak in.
+dist
