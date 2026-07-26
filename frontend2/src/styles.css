@@ -494,6 +494,14 @@ tr.clickable:hover td { background: var(--accent-soft); }
   z-index: 60;
 }
 
+/*
+ * Hyper IDE only: the tab strip is docked to the editor's top edge, so that
+ * edge is square and only the bottom corners stay rounded.
+ */
+.file-editor .code-editor {
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
 .editor-split {
   display: flex;
   gap: 16px;
@@ -860,12 +868,13 @@ pre.result-json {
 }
 
 /* Open-file tabs above the Hyper IDE editor. */
+/* Sits directly on top of the editor — no gap, so the tabs read as part of
+   it rather than as a separate strip floating above. */
 .file-tabs {
   display: flex;
   overflow-x: auto;
   flex-shrink: 0;
   gap: 2px;
-  margin-bottom: 6px;
   scrollbar-width: thin;
 }
 
@@ -875,17 +884,23 @@ pre.result-json {
   gap: 4px;
   padding: 5px 6px 5px 12px;
   border-radius: 8px 8px 0 0;
-  background: var(--accent-soft);
-  color: var(--text-muted);
+  background: transparent;
+  color: var(--text-soft);
   font-size: 13px;
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
 }
 
+.file-tab:hover {
+  background: rgba(95, 56, 249, 0.08);
+}
+
+/* The open file, in the same soft accent as the secondary buttons. */
 .file-tab.active {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-weight: 600;
 }
 
 .file-tab-name {
