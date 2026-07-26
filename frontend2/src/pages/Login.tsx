@@ -130,6 +130,20 @@ export default function Login() {
     }
   }
 
+  async function sendLink(event: FormEvent) {
+    event.preventDefault();
+    setError('');
+    setBusy(true);
+    try {
+      const response = await sendResetPasswordLink(url, forgotUser.trim());
+      setForgotSent(response.result);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   // Hands off to the provider, having remembered which backend to come back to.
   function signInWith(provider: OidcProvider) {
     if (!provider.url || !provider.client_id) {
@@ -158,6 +172,46 @@ export default function Login() {
       nonce: provider.nonce ?? '',
     });
     window.location.href = provider.url + '?' + query.toString();
+  }
+
+  if (forgotOpen) {
+    return (
+      <div className="login-wrapper">
+        <form className="login-card" onSubmit={sendLink}>
+          <h1>magic</h1>
+          <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
+            {forgotSent
+              ? 'Check your inbox'
+              : "We'll email you a link that signs you in"}
+          </p>
+          {error && <Banner onClose={() => setError('')}>{error}</Banner>}
+          {forgotSent
+            ? <p style={{ textAlign: 'center', margin: 0 }}>{forgotSent}</p>
+            : (
+              <label>
+                Username or email
+                <input
+                  type="text"
+                  autoFocus
+                  value={forgotUser}
+                  onChange={e => setForgotUser(e.target.value)}
+                  required />
+              </label>
+            )}
+          {!forgotSent && (
+            <button className="btn" type="submit" disabled={busy || !forgotUser.trim()}>
+              {busy ? 'Sending…' : 'Send link'}
+            </button>
+          )}
+          <button
+            type="button"
+            className="link-like"
+            onClick={() => { setForgotOpen(false); setError(''); }}>
+            Back to sign in
+          </button>
+        </form>
+      </div>
+    );
   }
 
   return (
@@ -227,53 +281,19 @@ export default function Login() {
         <button className="btn" type="submit" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
         </button>
-        {canReset && !forgotOpen && (
+        {canReset && (
           <button
             type="button"
             className="link-like"
-            onClick={() => { setForgotOpen(true); setForgotSent(''); }}>
-            Forgot your password?
+            onClick={() => {
+              // Whatever they were signing in as is the obvious starting point.
+              setForgotUser(username);
+              setForgotSent('');
+              setError('');
+              setForgotOpen(true);
+            }}>
+            Get magnetic link
           </button>
-        )}
-        {forgotOpen && (
-          <div className="forgot-box">
-            {forgotSent ? (
-              <p className="muted" style={{ margin: 0 }}>{forgotSent}</p>
-            ) : (
-              <>
-                <p className="muted" style={{ margin: '0 0 8px 0', fontSize: 13 }}>
-                  Your username or email, and we'll send a link that signs you
-                  in and lets you set a new password.
-                </p>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <input
-                    type="text"
-                    autoFocus
-                    placeholder="Username or email"
-                    value={forgotUser}
-                    onChange={e => setForgotUser(e.target.value)}
-                    style={{ flex: 1, minWidth: 0 }} />
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    disabled={busy || !forgotUser.trim()}
-                    onClick={async () => {
-                      setBusy(true);
-                      try {
-                        const response = await sendResetPasswordLink(url, forgotUser.trim());
-                        setForgotSent(response.result);
-                      } catch (err: any) {
-                        setError(err.message);
-                      } finally {
-                        setBusy(false);
-                      }
-                    }}>
-                    Send
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
         )}
         {providers.length > 0 && (
           <>
