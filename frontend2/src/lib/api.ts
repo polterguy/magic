@@ -264,10 +264,14 @@ async function requestRaw(
     }
     throw new ApiError(response.status, message);
   }
+  // Every response header, so the invoker can show what the server sent.
+  const responseHeaders: Record<string, string> = {};
+  response.headers.forEach((value, name) => { responseHeaders[name] = value; });
   return {
     blob: await response.blob(),
     contentType: response.headers.get('Content-Type') ?? '',
     disposition: response.headers.get('Content-Disposition') ?? '',
+    headers: responseHeaders,
     status: response.status,
     elapsed: Math.round(performance.now() - started),
   };

@@ -12,6 +12,8 @@ export interface RawResult {
   blob: Blob;
   contentType: string;
   disposition: string;
+  // Every response header, lower-cased by fetch.
+  headers?: Record<string, string>;
   status: number;
 }
 
@@ -62,7 +64,8 @@ export function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-export default function ResultViewer({ result }: { result: RawResult }) {
+export default function ResultViewer(
+  { result, height = '55vh' }: { result: RawResult; height?: string }) {
 
   const [text, setText] = useState<string | null>(null);
   const [preview, setPreview] = useState(false);
@@ -132,7 +135,7 @@ export default function ResultViewer({ result }: { result: RawResult }) {
 
   const isHtml = contentType.includes('html');
   return (
-    <div style={{ height: '55vh', display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div style={{ height, display: 'flex', flexDirection: 'column', gap: 8 }}>
       {isHtml && (
         <div style={{ display: 'flex', gap: 8 }}>
           <button
