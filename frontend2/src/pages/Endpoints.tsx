@@ -202,7 +202,7 @@ export default function Endpoints() {
       ))}
       </div>
       {result !== null && (
-        <ResponseDialog result={result} onClose={() => setResult(null)} />
+        <ResponseDialog result={result} httpInvocation onClose={() => setResult(null)} />
       )}
       {openApiSpec !== null && (
         <OpenApiDialog

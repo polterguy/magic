@@ -58,6 +58,7 @@ function ArgumentField(props: {
   argument: { name: string; type?: string };
   value: string;
   onChange: (value: string) => void;
+  autoFocus?: boolean;
 }) {
   return (
     <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, fontWeight: 600 }}>
@@ -67,6 +68,7 @@ function ArgumentField(props: {
       </span>
       <input
         type="text"
+        autoFocus={props.autoFocus}
         value={props.value}
         onChange={e => props.onChange(e.target.value)} />
     </label>
@@ -189,12 +191,19 @@ export default function InvokePanel(props: {
   } as const;
 
   return (
-    <div>
+    /*
+     * A form rather than a div, so Enter in any argument field invokes —
+     * the payload editor is CodeMirror, which keeps its own Enter for
+     * newlines, so multi-line payloads are unaffected.
+     */
+    <form
+      onSubmit={e => { e.preventDefault(); if (canInvoke && !busy) { invoke(); } }}>
       {description && (
         <p style={{ marginTop: 0 }}>
           {fullDescription ? description : shortDescription}
           {period !== -1 && (
             <button
+              type="button"
               className="btn btn-secondary btn-small"
               style={{ marginLeft: 8 }}
               onClick={() => setFullDescription(!fullDescription)}>
@@ -209,10 +218,12 @@ export default function InvokePanel(props: {
       {invokeError && <Banner onClose={() => setInvokeError('')} style={{ marginBottom: 10 }}>{invokeError}</Banner>}
       {usesQuery && standardArgs.length > 0 && (
         <div style={argGrid}>
-          {standardArgs.map(argument => (
+          {standardArgs.map((argument, index) => (
             <ArgumentField
               key={argument.name}
               argument={argument}
+              // Typing can start straight away on the first argument.
+              autoFocus={index === 0}
               value={args[argument.name] ?? ''}
               onChange={value => setArgs({ ...args, [argument.name]: value })} />
           ))}
@@ -221,6 +232,7 @@ export default function InvokePanel(props: {
       {usesQuery && filterArgs.length > 0 && (
         <div style={{ marginBottom: 12 }}>
           <button
+            type="button"
             className="btn btn-secondary btn-small"
             onClick={() => setShowFilters(!showFilters)}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
@@ -320,7 +332,7 @@ export default function InvokePanel(props: {
       )}
       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
         {canInvoke ? (
-          <button className="btn" onClick={invoke} disabled={busy}>
+          <button className="btn" type="submit" disabled={busy}>
             {busy ? 'Invoking…' : '▷ Invoke'}
           </button>
         ) : (
@@ -328,6 +340,7 @@ export default function InvokePanel(props: {
         )}
         {verb !== 'socket' && (
           <button
+            type="button"
             className="btn btn-secondary"
             title="OpenAPI specification for this endpoint"
             onClick={props.onOpenApi}>
@@ -335,7 +348,7 @@ export default function InvokePanel(props: {
           </button>
         )}
       </div>
-    </div>
+    </form>
   );
 }
 

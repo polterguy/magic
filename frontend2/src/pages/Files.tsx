@@ -10,6 +10,7 @@ import {
   BracesIcon,
   ChevronIcon,
   DownloadIcon,
+  EyeIcon,
   ModuleUploadIcon,
   SparkIcon,
   FileIcon,
@@ -23,6 +24,7 @@ import {
 import { Modal, useDialog } from '../components/Dialogs';
 import OpenApiDialog from '../components/OpenApiDialog';
 import { useUnsavedGuard } from '../lib/navGuard';
+import { useAuth } from '../lib/AuthContext';
 import {
   Endpoint,
   createFolder,
@@ -179,6 +181,31 @@ function endpointOf(path: string): { path: string; verb: string } | null {
   return { path: 'magic/' + parts[0], verb: parts[1] };
 }
 
+/*
+ * Everything under /etc/www is served as the cloudlet's public website, so
+ * those files can be opened in a browser exactly as a visitor sees them —
+ * HTML through its Hyperlambda codebehind if it has one, images and the rest
+ * statically. Hyperlambda files and hidden paths are never served, matching
+ * the backend's own guard, so they get no preview.
+ */
+const WWW_ROOT = '/etc/www';
+
+function previewUrl(path: string): string | null {
+  if (!path.startsWith(WWW_ROOT + '/') || path.endsWith('.hl')) {
+    return null;
+  }
+  const relative = path.substring(WWW_ROOT.length);
+  /*
+   * Hidden paths are not served — except .well-known, which the backend
+   * exempts because discovery documents have to be publicly reachable.
+   */
+  if (relative.split('/').some(entity =>
+      entity.startsWith('.') && entity !== '.well-known')) {
+    return null;
+  }
+  return relative;
+}
+
 export default function Files() {
 
   // The entire tree, loaded recursively the way the old dashboard does it —
@@ -202,6 +229,8 @@ export default function Files() {
   const [selectedFile, setSelectedFile] = useState('');
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [executeResult, setExecuteResult] = useState<InvokeResult | null>(null);
+  // Set when the result came from invoking an endpoint rather than evaluating.
+  const [resultWasHttp, setResultWasHttp] = useState(false);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
   // The endpoint whose invoker dialog is open, when executing an endpoint file.
   const [invokeTarget, setInvokeTarget] = useState<Endpoint | null>(null);
@@ -209,6 +238,7 @@ export default function Files() {
   const [aiFunctionTarget, setAiFunctionTarget] = useState<string | null>(null);
   const editorRef = useRef<import('codemirror').Editor | null>(null);
   const { confirm, prompt, form, choice } = useDialog();
+  const { backend } = useAuth();
 
   const current = openFiles.find(file => file.path === selectedFile) ?? null;
   const content = current?.content ?? '';
@@ -413,6 +443,7 @@ export default function Files() {
           args[name] = convertArgument(value, argSpec[name].type);
         }
       }
+      setResultWasHttp(false);
       setExecuteResult(await evaluateWithArgs(code, args));
     } catch (err: any) {
       show(err.message, true);
@@ -644,6 +675,12 @@ export default function Files() {
             <span className="tree-icon"><FileIcon /></span>
             <span className="tree-name">{nameOf(file)}</span>
             <FileActions
+              onPreview={previewUrl(file)
+                ? e => {
+                    e.stopPropagation();
+                    window.open(backend!.url + previewUrl(file), '_blank', 'noopener');
+                  }
+                : undefined}
               onAiFunction={file.endsWith('.hl')
                 ? e => { e.stopPropagation(); setAiFunctionTarget(file); }
                 : undefined}
@@ -902,7 +939,11 @@ export default function Files() {
           </h2>
           <InvokePanel
             endpoint={invokeTarget}
-            onResult={result => { setInvokeTarget(null); setExecuteResult(result); }}
+            onResult={result => {
+              setInvokeTarget(null);
+              setResultWasHttp(true);
+              setExecuteResult(result);
+            }}
             onOpenApi={() => showOpenApi(selectedFile)} />
           <div className="modal-actions">
             <button className="btn btn-secondary" onClick={() => setInvokeTarget(null)}>
@@ -912,7 +953,10 @@ export default function Files() {
         </Modal>
       )}
       {executeResult !== null && (
-        <ResponseDialog result={executeResult} onClose={() => setExecuteResult(null)} />
+        <ResponseDialog
+          result={executeResult}
+          httpInvocation={resultWasHttp}
+          onClose={() => setExecuteResult(null)} />
       )}
     </>
   );
@@ -949,12 +993,21 @@ function FolderActions(props: {
 }
 
 function FileActions(props: {
+  onPreview?: (e: React.MouseEvent) => void;
   onAiFunction?: (e: React.MouseEvent) => void;
   onRename: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
 }) {
   return (
     <span className="row-actions">
+      {props.onPreview && (
+        <button
+          className="icon-btn"
+          title="Open in a browser, as a visitor sees it"
+          onClick={props.onPreview}>
+          <EyeIcon />
+        </button>
+      )}
       {props.onAiFunction && (
         <button
           className="icon-btn"

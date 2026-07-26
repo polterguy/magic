@@ -257,3 +257,13 @@ export function ProfileIcon() {
     </svg>
   );
 }
+
+// An eye — previewing a file the way a visitor to the website sees it.
+export function EyeIcon() {
+  return (
+    <svg {...base}>
+      <path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6z" />
+      <circle cx="12" cy="12" r="2.6" />
+    </svg>
+  );
+}
