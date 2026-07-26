@@ -267,3 +267,24 @@ export function EyeIcon() {
     </svg>
   );
 }
+
+// Two stacked sheets — copying something to the clipboard.
+export function CopyIcon() {
+  return (
+    <svg {...base}>
+      <rect x="9" y="9" width="12" height="12" rx="2" />
+      <path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+// A floppy disk — saving the open file.
+export function SaveIcon() {
+  return (
+    <svg {...base}>
+      <path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" />
+      <path d="M8 4v5h7" />
+      <rect x="8" y="14" width="8" height="7" />
+    </svg>
+  );
+}

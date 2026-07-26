@@ -73,6 +73,19 @@ const DialogContext = createContext<{
 const modalStack: symbol[] = [];
 
 /*
+ * Stacking follows the order modals were OPENED, not the order they happen to
+ * sit in the JSX — a dialog opened from inside another must cover it, and the
+ * page has no say in which of its modal blocks it wrote first.
+ *
+ * The counter only ever climbs. Resetting it when the last modal closes looks
+ * tidier but breaks under StrictMode, whose mount/unmount/remount empties the
+ * stack mid-flight and hands two live modals the same z-index. Climbing costs
+ * nothing: z-index runs to 2147483647, and this moves by one per modal opened.
+ */
+const OVERLAY_BASE_Z = 100;
+let modalSeq = 0;
+
+/*
  * Shared modal shell — every dialog in the app renders through this, so
  * Escape and backdrop-click always close.
  */
@@ -83,6 +96,7 @@ export function Modal(props: {
 }) {
 
   const idRef = useRef(Symbol('modal'));
+  const [zIndex] = useState(() => OVERLAY_BASE_Z + ++modalSeq);
 
   useEffect(() => {
     modalStack.push(idRef.current);
@@ -118,6 +132,7 @@ export function Modal(props: {
   return (
     <div
       className="overlay"
+      style={{ zIndex }}
       onMouseDown={event => {
         if (event.target === event.currentTarget) {
           props.onClose();

@@ -210,6 +210,7 @@ h1 {
 
 .toolbar .spacer { flex: 1; }
 
+/* inline-flex so a button can carry an icon beside its label. */
 .btn {
   border: none;
   border-radius: 8px;
@@ -220,6 +221,21 @@ h1 {
   background: var(--accent);
   color: #fff;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.btn-small svg {
+  width: 13px;
+  height: 13px;
 }
 
 .btn:hover { background: var(--accent-dark); }
@@ -1045,7 +1061,8 @@ pre.result-json {
 /* CodeMirror renders its autocomplete popup into document.body at z-index 10,
    which puts it behind modals — lift it above every layer we use. */
 .CodeMirror-hints {
-  z-index: 300;
+  /* Far above any modal, whose z-index climbs as dialogs stack. */
+  z-index: 2000000;
 }
 
 /* Dashboard prompt for installing the AI-agent plugins. */

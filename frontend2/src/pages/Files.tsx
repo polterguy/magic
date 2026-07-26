@@ -9,6 +9,7 @@ import ResponseDialog from '../components/ResponseDialog';
 import {
   BracesIcon,
   ChevronIcon,
+  CopyIcon,
   DownloadIcon,
   EyeIcon,
   ModuleUploadIcon,
@@ -18,6 +19,8 @@ import {
   FolderIcon,
   FolderPlusIcon,
   PencilIcon,
+  PlayIcon,
+  SaveIcon,
   TrashIcon,
   UploadIcon,
 } from '../components/Icons';
@@ -711,6 +714,7 @@ export default function Files() {
               onClick={() => {
                 copyToClipboard(selectedFile, 'The path');
               }}>
+              <CopyIcon />
               Copy path
             </button>
             <button
@@ -726,21 +730,28 @@ export default function Files() {
                   show(err.message, true);
                 }
               }}>
+              <DownloadIcon />
               Download
             </button>
           </>
         )}
-        {/\.(get|post|put|delete|patch)\.hl$/.test(selectedFile) && (
+        {endpointOf(selectedFile) && (
           <button
             className="btn btn-secondary btn-small"
             title="OpenAPI specification for this endpoint"
             onClick={() => showOpenApi(selectedFile)}>
+            <BracesIcon />
             OpenAPI
           </button>
         )}
-        {selectedFile.endsWith('.hl') &&
-          <button className="btn btn-secondary btn-small" onClick={execute}>▷ Execute</button>}
+        {selectedFile.endsWith('.hl') && (
+          <button className="btn btn-secondary btn-small" onClick={execute}>
+            <PlayIcon />
+            Execute
+          </button>
+        )}
         <button className="btn btn-small" onClick={save} disabled={!selectedFile || !dirty}>
+          <SaveIcon />
           Save
         </button>
       </div>
@@ -939,15 +950,19 @@ export default function Files() {
           </h2>
           <InvokePanel
             endpoint={invokeTarget}
+            /*
+             * The invoker stays mounted behind the response, so closing the
+             * response returns to the same form with its arguments still
+             * filled in — tweak one and invoke again.
+             */
             onResult={result => {
-              setInvokeTarget(null);
               setResultWasHttp(true);
               setExecuteResult(result);
             }}
             onOpenApi={() => showOpenApi(selectedFile)} />
           <div className="modal-actions">
             <button className="btn btn-secondary" onClick={() => setInvokeTarget(null)}>
-              Cancel
+              Close
             </button>
           </div>
         </Modal>
