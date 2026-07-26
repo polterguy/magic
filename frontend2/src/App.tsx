@@ -3,6 +3,7 @@ import { useAuth } from './lib/AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import NoAccess from './pages/NoAccess';
+import Setup from './pages/Setup';
 import Dashboard from './pages/Dashboard';
 import Playground from './pages/Playground';
 import Files from './pages/Files';
@@ -20,7 +21,7 @@ import Log from './pages/Log';
 
 export default function App() {
 
-  const { authenticated, isAdmin } = useAuth();
+  const { authenticated, isAdmin, setupNeeded } = useAuth();
 
   if (!authenticated) {
     return <Login />;
@@ -32,6 +33,15 @@ export default function App() {
    */
   if (!isAdmin) {
     return <NoAccess />;
+  }
+
+  /*
+   * A backend that hasn't been set up has a placeholder JWT secret and
+   * accepts root/root, so nothing behind this is trustworthy until the
+   * account has a real password.
+   */
+  if (setupNeeded) {
+    return <Setup />;
   }
 
   return (

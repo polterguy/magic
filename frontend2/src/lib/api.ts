@@ -113,6 +113,37 @@ export function getStatus() {
   return http.get<{ result: string }>('/magic/system/config/status');
 }
 
+/*
+ * First-run setup: the backend generates its own JWT secret, ensures the
+ * magic database exists and creates or re-passwords root, answering with a
+ * ticket signed by the new secret. It deliberately sleeps a couple of
+ * seconds on the way, so this is a slow call.
+ */
+export function setupSystem(payload: {
+  password: string;
+  name: string;
+  email: string;
+  subscribe: boolean;
+}) {
+  return http.post<{ ticket: string }>('/magic/system/config/setup', payload);
+}
+
+/*
+ * Writes an extra field, adding it when the user hasn't got one yet. Setup
+ * only stores name and email when it CREATES root — on an install where root
+ * already exists it takes the change-password branch and drops them — so
+ * they have to be written separately to be sure they stick.
+ */
+export async function saveUserExtra(user: string, type: string, value: string) {
+  const existing = await listUsers(user, 0, 1);
+  const match = existing.find(candidate => candidate.username === user);
+  const has = match?.extra?.some(entry => entry.type === type) ?? false;
+  if (value === '') {
+    return has ? deleteUserExtra(user, type) : Promise.resolve();
+  }
+  return has ? updateUserExtra(user, type, value) : addUserExtra(user, type, value);
+}
+
 export function getVersion() {
   return http.get<{ version: string }>('/magic/system/version');
 }

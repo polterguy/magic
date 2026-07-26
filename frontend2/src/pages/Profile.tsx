@@ -1,8 +1,8 @@
 import { copyToClipboard } from '../lib/toast';
 import Banner from '../components/Banner';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from '../components/Dialogs';
-import { changePassword, http, listRoles } from '../lib/api';
+import { changePassword, http, listRoles, listUsers, saveUserExtra } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
 
 export default function Profile() {
@@ -12,6 +12,36 @@ export default function Profile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [tokenOpen, setTokenOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [savingDetails, setSavingDetails] = useState(false);
+
+  // Name and email live as extra fields on the user, not on the account row.
+  useEffect(() => {
+    if (!backend?.username) {
+      return;
+    }
+    listUsers(backend.username, 0, 1)
+      .then(users => {
+        const me = users.find(user => user.username === backend.username);
+        setName(me?.extra?.find(entry => entry.type === 'name')?.value ?? '');
+        setEmail(me?.extra?.find(entry => entry.type === 'email')?.value ?? '');
+      })
+      .catch(err => setFeedback({ text: err.message, isError: true }));
+  }, [backend?.username]);
+
+  async function saveDetails() {
+    setSavingDetails(true);
+    try {
+      await saveUserExtra(backend!.username, 'name', name.trim());
+      await saveUserExtra(backend!.username, 'email', email.trim());
+      setFeedback({ text: 'Your details were saved', isError: false });
+    } catch (err: any) {
+      setFeedback({ text: err.message, isError: true });
+    } finally {
+      setSavingDetails(false);
+    }
+  }
 
   async function submitPassword() {
     if (password.length < 12) {
@@ -46,6 +76,32 @@ export default function Profile() {
         </Banner>
       )}
       <div className="editor-split" style={{ flex: 'unset', alignItems: 'flex-start' }}>
+        <div className="card">
+          <h2 style={{ marginTop: 0 }}>Your details</h2>
+          <div className="form-grid">
+            <label>Full name
+              <input
+                type="text"
+                autoComplete="name"
+                value={name}
+                onChange={e => setName(e.target.value)} />
+            </label>
+            <label>Email
+              <input
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)} />
+            </label>
+          </div>
+          <button
+            className="btn"
+            style={{ marginTop: 12 }}
+            onClick={saveDetails}
+            disabled={savingDetails}>
+            {savingDetails ? 'Saving…' : 'Save details'}
+          </button>
+        </div>
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Change password</h2>
           <div className="form-grid">

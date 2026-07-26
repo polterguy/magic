@@ -288,3 +288,14 @@ export function SaveIcon() {
     </svg>
   );
 }
+
+// The eye, struck through — the password is currently visible.
+export function EyeOffIcon() {
+  return (
+    <svg {...base}>
+      <path d="M2 12s3.6-6 10-6c1.6 0 3 .37 4.24.95M22 12s-3.6 6-10 6c-1.6 0-3-.37-4.24-.95" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+      <line x1="3" y1="21" x2="21" y2="3" />
+    </svg>
+  );
+}

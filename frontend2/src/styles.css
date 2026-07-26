@@ -275,7 +275,15 @@ h1 {
   font-size: 12px;
 }
 
-input[type="text"], input[type="password"], input[type="number"], input[type="date"], input[type="datetime-local"], select, textarea {
+/*
+ * Every text-like input, by exclusion rather than by listing the types we
+ * happen to use today. Enumerating them meant each new type — date, then
+ * email — silently fell back to the browser's own styling until someone
+ * noticed. Only the types that are not text boxes are excluded.
+ */
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="range"]):not([type="color"]),
+select,
+textarea {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 12px;

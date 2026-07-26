@@ -23,7 +23,7 @@ import {
   tokenExpiration,
   tokenExpired,
 } from './backend';
-import { authenticate, configureApi, refreshTicket } from './api';
+import { authenticate, configureApi, getStatus, refreshTicket } from './api';
 
 interface AuthState {
   backend: StoredBackend | null;
@@ -34,6 +34,14 @@ interface AuthState {
    * authenticated but unable to do anything — however they signed in.
    */
   isAdmin: boolean;
+  /*
+   * Whether the backend still needs its first-run setup. Null until the
+   * status has been fetched — the endpoint requires root, so this can only
+   * be asked once signed in.
+   */
+  setupNeeded: boolean | null;
+  // Called when setup completes, so the app stops showing the setup screen.
+  setupCompleted: () => void;
   login: (url: string, username: string, password: string) => Promise<void>;
   // Signs in with a ticket the backend already issued, as OpenID login does.
   loginWithTicket: (url: string, ticket: string) => void;
@@ -60,6 +68,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return stored;
   });
   const refreshTimer = useRef<number | null>(null);
+  const [setupNeeded, setSetupNeeded] = useState<boolean | null>(null);
+
+  /*
+   * Checked on every load that has an admin token, not just after signing
+   * in — the old dashboard only asked at login, so reloading with a stored
+   * token skipped setup entirely.
+   */
+  const token = backend?.token ?? null;
+  const isAdmin = !!token && isAdminToken(token);
+  useEffect(() => {
+    if (!isAdmin) {
+      setSetupNeeded(null);
+      return;
+    }
+    let cancelled = false;
+    getStatus()
+      .then(response => {
+        if (!cancelled) {
+          setSetupNeeded(!response.result);
+        }
+      })
+      // An unreachable or older backend shouldn't trap anyone on setup.
+      .catch(() => { if (!cancelled) { setSetupNeeded(false); } });
+    return () => { cancelled = true; };
+  }, [isAdmin, token]);
 
   const applyBackend = useCallback((value: StoredBackend | null) => {
     configureApi(value?.url ?? '', value?.token ?? null);
@@ -124,7 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{
       backend,
       authenticated: !!backend?.token,
-      isAdmin: !!backend?.token && isAdminToken(backend.token),
+      isAdmin,
+      setupNeeded,
+      setupCompleted: () => setSetupNeeded(false),
       login,
       loginWithTicket,
       logout,
