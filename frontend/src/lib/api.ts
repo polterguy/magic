@@ -1185,6 +1185,37 @@ export function openaiThemesSearch() {
   return http.get<string[]>('/magic/system/openai/themes-search');
 }
 
+/*
+ * Crawls a website and builds a chatbot from it — the "chatbot wizard" as one
+ * call. Long running: progress is published on [channel] over the socket, and
+ * the answer only arrives once the crawl is done.
+ *
+ * [flavor] is the persona's template, stored as the model's system message.
+ * [instruction] is what makes the backend hand that template to OpenAI to be
+ * filled in from the crawled site — without it the placeholders stay literal.
+ */
+export function createBot(args: {
+  url: string;
+  model: string;
+  flavor: string;
+  instruction: string;
+  max: number;
+  autoDestruct: boolean;
+  channel: string;
+}) {
+  return http.post<any>('/magic/system/openai/create-bot', {
+    url: args.url,
+    model: args.model,
+    flavor: args.flavor,
+    instruction: args.instruction,
+    max: args.max,
+    auto_destruct: args.autoDestruct,
+    vectorize: true,
+    autocrawl: false,
+    'feedback-channel': args.channel,
+  });
+}
+
 export function openaiSystemMessages() {
   return http.get<any[]>('/magic/system/openai/system-messages');
 }

@@ -799,6 +799,16 @@ pre.result-json {
   gap: 12px;
 }
 
+/*
+ * Wide forms — controls flow into as many columns as fit rather than one per
+ * row, so a form of short fields doesn't run the height of the page.
+ */
+.form-grid.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  align-items: end;
+}
+
 .form-grid label {
   display: flex;
   flex-direction: column;
@@ -1376,3 +1386,66 @@ tr.vss-irrelevant td {
 }
 
 .tree-row.active-folder .tree-icon { color: var(--accent-dark); }
+
+/* ---------- Terminal ---------- */
+
+/*
+ * Server output while a long job runs. Styled as a terminal because that is
+ * what it is — a stream of log lines from a machine, not page content.
+ */
+.terminal {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #2c2c2c;
+  border: 1px solid #1c1c1c;
+}
+
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  background: #232323;
+  border-bottom: 1px solid #1c1c1c;
+}
+
+.terminal-title {
+  color: #9a9a92;
+  font-size: 12px;
+  font-family: ui-monospace, Menlo, monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.terminal-body {
+  height: 45vh;
+  overflow: auto;
+  padding: 12px 14px;
+  color: #ffffec;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.terminal-line.error { color: #ff8a8a; }
+.terminal-line.warning { color: #ffcf7a; }
+.terminal-line.success { color: #7be0a2; }
+.terminal-line.waiting { color: #9a9a92; }
+
+/* Blinks while the job is still sending, so a pause never reads as finished. */
+.terminal-caret {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  background: #7be0a2;
+  vertical-align: text-bottom;
+  animation: terminal-blink 1.1s step-end infinite;
+}
+
+@keyframes terminal-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}

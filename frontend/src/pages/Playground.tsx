@@ -8,10 +8,22 @@ import { evaluate, listFiles, loadFile, saveFile } from '../lib/api';
 import { useUnsavedGuard } from '../lib/navGuard';
 
 const DEFAULT_CODE = `/*
- * Executes on your server, and returns the result.
+ * Executes on your server. The result is the lambda itself once it has run,
+ * so nothing needs returning.
+ *
+ * Reads the 5 most recent entries from your log.
  */
-.foo:Hello from the playground
-return:x:@.foo
+data.connect:magic
+   data.read
+      table:log_entries
+      columns
+         id
+         created
+         type
+         content
+      order:created
+      direction:desc
+      limit:5
 `;
 
 export default function Playground() {

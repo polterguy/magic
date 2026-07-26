@@ -56,6 +56,13 @@ interface CodeEditorProps {
    * Hyperlambda, so it is the caller that decides whether it applies.
    */
   onHelp?: (selection: string) => void;
+  /*
+   * Wraps long lines instead of scrolling sideways. Defaults to on for
+   * markdown and off for everything else: prose has no meaningful line
+   * breaks, so scrolling sideways to read a paragraph is nonsense, while
+   * code reads better unwrapped.
+   */
+  lineWrapping?: boolean;
   // Table → columns map feeding SQL autocomplete.
   hintTables?: Record<string, string[]>;
   // Gives the parent access to the CodeMirror instance (selection etc.).
@@ -90,6 +97,7 @@ export default function CodeEditor(props: CodeEditorProps) {
       theme: 'ainiro',
       lineNumbers: true,
       readOnly: callbacks.current.readOnly ?? false,
+      lineWrapping: callbacks.current.lineWrapping ?? wrapsByDefault(callbacks.current.mode),
       tabSize: 3,
       indentUnit: 3,
       indentWithTabs: false,
@@ -155,7 +163,9 @@ export default function CodeEditor(props: CodeEditorProps) {
 
   useEffect(() => {
     editor.current?.setOption('mode', props.mode);
-  }, [props.mode]);
+    editor.current?.setOption(
+      'lineWrapping', props.lineWrapping ?? wrapsByDefault(props.mode));
+  }, [props.mode, props.lineWrapping]);
 
   useEffect(() => {
     if (props.hintTables) {
@@ -166,6 +176,11 @@ export default function CodeEditor(props: CodeEditorProps) {
   }, [props.hintTables]);
 
   return <div className="code-editor" ref={host} />;
+}
+
+// Markdown is prose, and prose wraps.
+function wrapsByDefault(mode: string) {
+  return mode === 'markdown';
 }
 
 /*

@@ -3,9 +3,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal, useDialog } from '../components/Dialogs';
 import { SECTIONS } from '../components/sections';
+import SocketFeedback from '../components/SocketFeedback';
 import {
   availablePlugins,
   Task,
+  createBot,
+  openaiSystemMessages,
   countLog,
   countTasks,
   countUsers,
@@ -280,6 +283,9 @@ export default function Dashboard() {
           </button>
         </div>
       )}
+      {openaiConfigured === true && (
+        <CreateChatbot notify={(text, isError) => showToast(text, isError)} />
+      )}
       <div className="card" style={{ marginBottom: 16 }}>
         <h2 style={{ marginTop: 0 }}>Welcome</h2>
         <p className="muted" style={{ marginTop: 0 }}>
@@ -310,5 +316,146 @@ export default function Dashboard() {
           }} />
       )}
     </>
+  );
+}
+
+/*
+ * The chatbot wizard, as one card: point it at a website, pick a model and a
+ * persona, and the backend crawls the site and builds a machine learning
+ * model from what it finds.
+ *
+ * The crawl takes minutes and reports progress over a socket channel, so the
+ * feedback window opens BEFORE the endpoint is invoked - the socket has to be
+ * listening or the first messages are lost. Closing it only stops watching;
+ * the crawl carries on regardless.
+ */
+
+/*
+ * The chat models worth choosing from, newest first. The models endpoint
+ * returns everything OpenAI has - embeddings, codex, fine tunes - which is
+ * noise here, and these are spelled exactly as models.get.hl knows them, so
+ * the backend can look up each one's token limit.
+ */
+const BOT_MODELS = [
+  'gpt-5.5',
+  'gpt-5.5-pro',
+  'gpt-5.4',
+  'gpt-5.4-pro',
+  'gpt-5.4-mini',
+  'gpt-5-chat-latest',
+  'gpt-4.1-2025-04-14',
+  'gpt-4.1-mini-2025-04-14',
+];
+
+function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) => void }) {
+
+  const [url, setUrl] = useState('');
+  const [model, setModel] = useState(BOT_MODELS[2]);
+  const [flavors, setFlavors] = useState<any[]>([]);
+  const [flavor, setFlavor] = useState('');
+  const [max, setMax] = useState('25');
+  const [autoDestruct, setAutoDestruct] = useState(true);
+  const [crawl, setCrawl] = useState<{ channel: string } | null>(null);
+
+  useEffect(() => {
+    openaiSystemMessages()
+      .then(list => {
+        setFlavors(list ?? []);
+        setFlavor((list ?? [])[0]?.name ?? '');
+      })
+      .catch(() => {});
+  }, []);
+
+  const selected = flavors.find(candidate => candidate.name === flavor);
+
+  return (
+    <div className="card" style={{ marginBottom: 16 }}>
+      <h2 style={{ marginTop: 0 }}>Chatbot Wizard</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        Crawls the site, turns what it finds into training data, and gives you
+        a chatbot you can embed. Takes a few minutes.
+      </p>
+      <form
+        className="form-grid columns"
+        onSubmit={e => {
+          e.preventDefault();
+          if (url.trim() && !crawl) {
+            setCrawl({ channel: 'create-bot-' + Date.now() });
+          }
+        }}>
+        <label>Website URL
+          <input
+            type="text"
+            placeholder="https://example.com"
+            value={url}
+            onChange={e => setUrl(e.target.value)} />
+        </label>
+        <label>Model
+          <select value={model} onChange={e => setModel(e.target.value)}>
+            {BOT_MODELS.map(option => <option key={option} value={option}>{option}</option>)}
+          </select>
+        </label>
+        <label>Persona
+          <select value={flavor} onChange={e => setFlavor(e.target.value)}>
+            {flavors.map(candidate => (
+              <option key={candidate.name} value={candidate.name}>{candidate.name}</option>
+            ))}
+          </select>
+        </label>
+        <label>Max pages
+          <input
+            type="number"
+            min="1"
+            value={max}
+            onChange={e => setMax(e.target.value)} />
+        </label>
+        {/*
+          * Same two-part shape as the fields beside it — an empty caption
+          * line, then a box the height of an input — so the checkbox lines up
+          * with them instead of floating against the bottom of the row.
+          */}
+        <label>
+          <span aria-hidden="true">&nbsp;</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 8, height: 37 }}>
+            <input
+              type="checkbox"
+              checked={autoDestruct}
+              onChange={e => setAutoDestruct(e.target.checked)} />
+            Delete after 7 days
+          </span>
+        </label>
+        {/* Submits the form, so Enter in any field starts the crawl too. */}
+        <button
+          className="btn"
+          type="submit"
+          disabled={!url.trim() || !!crawl}>
+          Create chatbot
+        </button>
+      </form>
+      {selected?.description && (
+        <p className="muted" style={{ fontSize: 13, marginBottom: 0 }}>
+          {selected.description}
+        </p>
+      )}
+      {crawl && (
+        <SocketFeedback
+          title={'Creating a chatbot from ' + url}
+          channel={crawl.channel}
+          onReady={() => {
+            createBot({
+              url: url.trim(),
+              model,
+              // The persona's template, and the instruction that has OpenAI
+              // fill its placeholders from the crawled site.
+              flavor: selected?.prefix ?? '',
+              instruction: selected?.instruction ?? '',
+              max: Number(max) || 25,
+              autoDestruct,
+              channel: crawl.channel,
+            }).catch(err => notify(err.message, true));
+          }}
+          onClose={() => setCrawl(null)} />
+      )}
+    </div>
   );
 }

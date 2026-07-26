@@ -50,47 +50,56 @@ export default function SocketFeedback(props: {
       });
     });
 
+    /*
+     * StrictMode mounts effects twice, so the first connection is stopped
+     * while it is still negotiating - which rejects its start() with "Failed
+     * to start the HttpConnection before stop() was called". That belongs to
+     * a connection nobody is using any more, so a torn down run is not
+     * allowed to report anything.
+     */
+    let cancelled = false;
+
     connection.start()
       .then(() => {
+        if (cancelled) {
+          return;
+        }
         if (!readyFired.current) {
           readyFired.current = true;
           props.onReady();
         }
       })
-      .catch(err => setError(String(err)));
+      .catch(err => {
+        if (!cancelled) {
+          setError(String(err));
+        }
+      });
 
     return () => {
-      connection.stop();
+      cancelled = true;
+      // Stopping mid-negotiation rejects; nothing is listening either way.
+      connection.stop().catch(() => {});
     };
   }, [props.channel]);
 
   return (
-    <Modal width={700} onClose={props.onClose}>
-      <h2>{props.title}</h2>
+    <Modal width={760} onClose={props.onClose}>
+      <h2 style={{ marginTop: 0 }}>{props.title}</h2>
       {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
-      <div
-        ref={listRef}
-        className="result-json"
-        style={{
-          height: '45vh',
-          overflow: 'auto',
-          fontFamily: 'ui-monospace, Menlo, monospace',
-          fontSize: 12,
-          whiteSpace: 'pre-wrap',
-        }}>
-        {messages.length === 0
-          ? 'Waiting for feedback from your server…'
-          : messages.map((message, index) => (
-            <div
-              key={index}
-              style={{
-                color: message.type === 'error' ? '#ff8a8a'
-                  : message.type === 'success' ? '#7be0a2'
-                  : undefined,
-              }}>
-              {message.message}
-            </div>
-          ))}
+      <div className="terminal">
+        <div className="terminal-bar">
+          <span className="terminal-title">{props.channel}</span>
+        </div>
+        <div ref={listRef} className="terminal-body">
+          {messages.length === 0
+            ? <div className="terminal-line waiting">Waiting for your server…</div>
+            : messages.map((message, index) => (
+              <div key={index} className={'terminal-line ' + message.type}>
+                {message.message}
+              </div>
+            ))}
+          <span className="terminal-caret" />
+        </div>
       </div>
       <div className="modal-actions">
         <button className="btn" onClick={props.onClose}>Close</button>
