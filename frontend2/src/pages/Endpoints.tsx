@@ -502,7 +502,13 @@ function InvokePanel(props: {
                       }} />
                   </label>
                   {selected.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      // Or a text-only chip stretches to an image chip's height.
+                      alignItems: 'flex-start',
+                      gap: 4,
+                    }}>
                       {selected.map((file, index) => (
                         <FileChip
                           key={index}
@@ -619,25 +625,35 @@ function FileChip({ file, onRemove }: { file: File; onRemove: () => void }) {
   }, [file]);
 
   return (
-    <span className="chip" style={{ gap: 8 }}>
+    /*
+     * With a thumbnail the chip turns into a small card — same background,
+     * so the name and its image read as one item rather than two.
+     */
+    <span
+      className="chip"
+      style={thumbnail
+        ? { flexDirection: 'column', alignItems: 'stretch', borderRadius: 12, padding: 8, gap: 6 }
+        : undefined}>
+      <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {file.name}
+        <span className="muted" style={{ fontWeight: 400 }}>
+          {Math.ceil(file.size / 1024)} KB
+        </span>
+        <button title="Remove" onClick={onRemove}>×</button>
+      </span>
       {thumbnail && (
         <img
           src={thumbnail}
           alt=""
           style={{
-            width: 34,
-            height: 34,
+            width: 150,
+            height: 150,
             objectFit: 'cover',
-            borderRadius: 6,
+            borderRadius: 8,
             display: 'block',
             background: 'var(--surface)',
           }} />
       )}
-      {file.name}
-      <span className="muted" style={{ fontWeight: 400 }}>
-        {Math.ceil(file.size / 1024)} KB
-      </span>
-      <button title="Remove" onClick={onRemove}>×</button>
     </span>
   );
 }
