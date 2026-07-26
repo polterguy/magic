@@ -201,6 +201,22 @@ export function takePendingOidc(): PendingOidc | null {
 }
 
 /*
+ * Whether the dashboard is being served by the backend it is talking to, as
+ * it is in the all-in-one deployment where both come out of /etc/www.
+ *
+ * That folder then holds the dashboard itself, which is why a frontend
+ * installed into it would land on top of the dashboard - and why the same
+ * install is perfectly safe when the two are on separate hosts.
+ */
+export function servedByBackend(): boolean {
+  const url = loadBackend()?.url;
+  if (!url) {
+    return false;
+  }
+  return new URL(url).origin === window.location.origin;
+}
+
+/*
  * Returns the exp claim of a JWT token as a UNIX timestamp in seconds,
  * or null if the token can't be parsed.
  */

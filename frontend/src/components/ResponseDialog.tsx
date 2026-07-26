@@ -8,21 +8,7 @@ import { useState } from 'react';
 import { Modal } from './Dialogs';
 import ResultViewer from './ResultViewer';
 import { InvokeResult } from './InvokePanel';
-import { loadBackend } from '../lib/backend';
-
-/*
- * Whether the dashboard and the backend are on different origins. When they
- * are, the browser hands JavaScript only the CORS-safelisted response headers
- * unless the backend sends Access-Control-Expose-Headers — so the header list
- * is a subset of what the server actually sent, and says so.
- */
-function isCrossOrigin() {
-  const url = loadBackend()?.url;
-  if (!url) {
-    return false;
-  }
-  return new URL(url).origin !== window.location.origin;
-}
+import { servedByBackend } from '../lib/backend';
 
 export default function ResponseDialog(props: {
   result: InvokeResult;
@@ -45,7 +31,7 @@ export default function ResponseDialog(props: {
         </span>
       </h2>
       <ResponseHeaders headers={result.headers} />
-      {props.httpInvocation && isCrossOrigin() && (
+      {props.httpInvocation && !servedByBackend() && (
         <p className="muted" style={{ fontSize: 12, margin: '0 0 8px 0' }}>
           The dashboard and this backend are on different domains, so the
           browser only exposes some of the response headers — the server may
