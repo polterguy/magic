@@ -4,7 +4,8 @@ import Banner from '../components/Banner';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import CodeEditor, { modeForFile } from '../components/CodeEditor';
-import ResultViewer, { RawResult } from '../components/ResultViewer';
+import InvokePanel, { InvokeResult } from '../components/InvokePanel';
+import ResponseDialog from '../components/ResponseDialog';
 import {
   BracesIcon,
   ChevronIcon,
@@ -23,6 +24,7 @@ import { Modal, useDialog } from '../components/Dialogs';
 import OpenApiDialog from '../components/OpenApiDialog';
 import { useUnsavedGuard } from '../lib/navGuard';
 import {
+  Endpoint,
   createFolder,
   deleteFile,
   deleteFolder,
@@ -33,6 +35,7 @@ import {
   getHyperlambdaArguments,
   getOpenApiSpec,
   installModule,
+  listEndpoints,
   listFilesRecursively,
   listFoldersRecursively,
   loadFile,
@@ -148,6 +151,34 @@ function nameOf(path: string) {
   return trimmed.substring(trimmed.lastIndexOf('/') + 1);
 }
 
+/*
+ * Whether a file is served as an HTTP endpoint, mirroring what the backend
+ * itself enforces (magic.endpoint's Utilities.IsLegalAPIRequest and
+ * ListEndpoints):
+ *
+ *   - the relative path splits into exactly three dot-separated parts, so
+ *     "modules/x/foo.get.hl" qualifies but "modules/x.y/foo.get.hl" does not
+ *     — a dot anywhere outside the filename makes the URL unroutable
+ *   - the middle part is an HTTP verb (socket files are listed but can't be
+ *     invoked over HTTP, so they're excluded here)
+ *   - it lives under modules/ or system/; everything else answers 401
+ *
+ * Its route is the path with ".<verb>.hl" stripped, under "magic/".
+ */
+const ENDPOINT_VERBS = ['get', 'post', 'put', 'patch', 'delete'];
+
+function endpointOf(path: string): { path: string; verb: string } | null {
+  const relative = path.replace(/^\/+/, '');
+  if (!relative.startsWith('modules/') && !relative.startsWith('system/')) {
+    return null;
+  }
+  const parts = relative.split('.');
+  if (parts.length !== 3 || parts[2] !== 'hl' || !ENDPOINT_VERBS.includes(parts[1])) {
+    return null;
+  }
+  return { path: 'magic/' + parts[0], verb: parts[1] };
+}
+
 export default function Files() {
 
   // The entire tree, loaded recursively the way the old dashboard does it —
@@ -170,8 +201,10 @@ export default function Files() {
   const [openFiles, setOpenFiles] = useState<{ path: string; content: string; saved: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState('');
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
-  const [executeResult, setExecuteResult] = useState<RawResult | null>(null);
+  const [executeResult, setExecuteResult] = useState<InvokeResult | null>(null);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
+  // The endpoint whose invoker dialog is open, when executing an endpoint file.
+  const [invokeTarget, setInvokeTarget] = useState<Endpoint | null>(null);
   // File or folder awaiting a model choice for AI-function generation.
   const [aiFunctionTarget, setAiFunctionTarget] = useState<string | null>(null);
   const editorRef = useRef<import('codemirror').Editor | null>(null);
@@ -212,14 +245,16 @@ export default function Files() {
   useUnsavedGuard(!!dirtyPaths, dirtyPaths + ' has unsaved changes.');
 
   /*
-   * When a filter is active, a file shows if its name matches, and a folder
-   * shows if its name matches or it has a visible descendant — with every
-   * visible folder force-expanded.
+   * When a filter is active, anything whose full path contains it shows —
+   * matching on the path rather than the name alone, so filtering on a folder
+   * ("file-system") also brings up everything inside it. Folders additionally
+   * show when they have a visible descendant, and every visible folder is
+   * force-expanded.
    */
   const query = filter.trim().toLowerCase();
 
   const visibleFiles = useMemo(() =>
-    query ? files.filter(file => nameOf(file).toLowerCase().includes(query)) : files,
+    query ? files.filter(file => file.toLowerCase().includes(query)) : files,
     [files, query]);
 
   const visibleFolders = useMemo(() => {
@@ -234,7 +269,7 @@ export default function Files() {
       }
     };
     for (const folder of folders) {
-      if (nameOf(folder).toLowerCase().includes(query)) {
+      if (folder.toLowerCase().includes(query)) {
         addWithAncestors(folder);
       }
     }
@@ -334,12 +369,18 @@ export default function Files() {
   }
 
   /*
-   * Executes the open file the way the old Hyper IDE does: extract its
-   * [.arguments] collection, let the user parametrise the invocation, then
-   * run it through evaluate-with-args — which also handles endpoint files.
+   * Executes the open file. An endpoint file is invoked as the endpoint it
+   * is, through real HTTP — that's the only way to reach one that takes
+   * files or returns them, since the evaluator's body is JSON. Everything
+   * else runs through evaluate-with-args on the editor's current text.
    */
   async function execute() {
     if (!selectedFile.endsWith('.hl')) {
+      return;
+    }
+    const endpoint = endpointOf(selectedFile);
+    if (endpoint) {
+      await invokeAsEndpoint(endpoint);
       return;
     }
     try {
@@ -373,6 +414,40 @@ export default function Files() {
         }
       }
       setExecuteResult(await evaluateWithArgs(code, args));
+    } catch (err: any) {
+      show(err.message, true);
+    }
+  }
+
+  /*
+   * Invoking hits the server, which knows only what was last saved — so an
+   * unsaved buffer would be silently ignored. Offer to save first rather
+   * than testing yesterday's code.
+   */
+  async function invokeAsEndpoint(endpoint: { path: string; verb: string }) {
+    if (current && current.content !== current.saved) {
+      const answer = await confirm({
+        title: 'Save before invoking?',
+        message: selectedFile + ' has unsaved changes. Invoking runs the file ' +
+          'as it is on the server, so unsaved changes are not included.',
+        confirmText: 'Save and invoke',
+      });
+      if (!answer) {
+        return;
+      }
+      await save();
+    }
+    try {
+      const all = await listEndpoints();
+      const meta = all.find((candidate: Endpoint) =>
+        candidate.path === endpoint.path &&
+        candidate.verb.toLowerCase() === endpoint.verb);
+      if (!meta) {
+        show('The server does not list ' + endpoint.verb.toUpperCase() + ' ' +
+          endpoint.path + ' as an endpoint', true);
+        return;
+      }
+      setInvokeTarget(meta);
     } catch (err: any) {
       show(err.message, true);
     }
@@ -820,14 +895,24 @@ export default function Files() {
           onClose={() => setOpenApiSpec(null)}
           onNotify={show} />
       )}
-      {executeResult !== null && (
-        <Modal width={860} onClose={() => setExecuteResult(null)}>
-          <h2>Execution result</h2>
-          <ResultViewer result={executeResult} />
+      {invokeTarget && (
+        <Modal width={860} onClose={() => setInvokeTarget(null)}>
+          <h2 style={{ marginTop: 0 }}>
+            {invokeTarget.verb.toUpperCase()} {invokeTarget.path}
+          </h2>
+          <InvokePanel
+            endpoint={invokeTarget}
+            onResult={result => { setInvokeTarget(null); setExecuteResult(result); }}
+            onOpenApi={() => showOpenApi(selectedFile)} />
           <div className="modal-actions">
-            <button className="btn" onClick={() => setExecuteResult(null)}>Close</button>
+            <button className="btn btn-secondary" onClick={() => setInvokeTarget(null)}>
+              Cancel
+            </button>
           </div>
         </Modal>
+      )}
+      {executeResult !== null && (
+        <ResponseDialog result={executeResult} onClose={() => setExecuteResult(null)} />
       )}
     </>
   );
