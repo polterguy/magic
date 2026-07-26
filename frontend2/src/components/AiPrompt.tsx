@@ -6,6 +6,7 @@
  * Renders nothing when OpenAI isn't configured on the backend.
  */
 
+import AiWaiter from './AiWaiter';
 import { CSSProperties, FormEvent, useEffect, useState } from 'react';
 import { aiQuery, openaiIsConfigured } from '../lib/api';
 
@@ -84,13 +85,7 @@ export default function AiPrompt(props: {
           {busy ? 'Asking…' : 'Ask'}
         </button>
       </form>
-      {busy && (
-        <div className="ai-waiter">
-          <div className="ai-waiter-dots">
-            <span /><span /><span />
-          </div>
-        </div>
-      )}
+      {busy && <AiWaiter />}
     </>
   );
 }

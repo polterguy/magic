@@ -1,9 +1,10 @@
 import SearchInput from '../components/SearchInput';
-import { copyToClipboard } from '../lib/toast';
+import { copyToClipboard, showToast } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import CodeEditor, { modeForFile } from '../components/CodeEditor';
+import AiWaiter from '../components/AiWaiter';
 import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
 import {
@@ -158,59 +159,6 @@ function nameOf(path: string) {
 }
 
 /*
- * The comment block the cursor sits in — either a run of "//" lines or a
- * "/* … *" + "/" block — returned with the comment markers stripped, together
- * with the range it occupies so the generated code can take its place.
- */
-function commentBlockAt(editor: import('codemirror').Editor) {
-  const line = editor.getCursor().line;
-  const text = (n: number) => editor.getLine(n) ?? '';
-  const lastLine = editor.lineCount() - 1;
-
-  // A block comment: scan out to its delimiters.
-  let start = line;
-  while (start >= 0 && !text(start).includes('/*')) {
-    if (text(start).includes('*/') && start !== line) {
-      start = -1;
-      break;
-    }
-    start--;
-  }
-  if (start >= 0) {
-    let end = line;
-    while (end <= lastLine && !text(end).includes('*/')) {
-      end++;
-    }
-    if (end <= lastLine) {
-      const body = [];
-      for (let n = start; n <= end; n++) {
-        body.push(text(n).replace(/\/\*/, '').replace(/\*\//, '').replace(/^\s*\*/, '').trim());
-      }
-      return { from: start, to: end, prompt: body.join('\n').trim() };
-    }
-  }
-
-  // Otherwise a run of line comments around the cursor.
-  const isLineComment = (n: number) => /^\s*\/\//.test(text(n));
-  if (!isLineComment(line)) {
-    return null;
-  }
-  let from = line;
-  let to = line;
-  while (from > 0 && isLineComment(from - 1)) {
-    from--;
-  }
-  while (to < lastLine && isLineComment(to + 1)) {
-    to++;
-  }
-  const body = [];
-  for (let n = from; n <= to; n++) {
-    body.push(text(n).replace(/^\s*\/\/\s?/, ''));
-  }
-  return { from, to, prompt: body.join('\n').trim() };
-}
-
-/*
  * Whether a file is served as an HTTP endpoint, mirroring what the backend
  * itself enforces (magic.endpoint's Utilities.IsLegalAPIRequest and
  * ListEndpoints):
@@ -284,11 +232,12 @@ export default function Files() {
    */
   const [openFiles, setOpenFiles] = useState<{ path: string; content: string; saved: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState('');
-  const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [executeResult, setExecuteResult] = useState<InvokeResult | null>(null);
   // Set when the result came from invoking an endpoint rather than evaluating.
   const [resultWasHttp, setResultWasHttp] = useState(false);
   const [generating, setGenerating] = useState(false);
+  // Generating needs something selected to send, so the button follows it.
+  const [hasSelection, setHasSelection] = useState(false);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
   // The endpoint whose invoker dialog is open, when executing an endpoint file.
   const [invokeTarget, setInvokeTarget] = useState<Endpoint | null>(null);
@@ -320,7 +269,7 @@ export default function Files() {
       setFolders(folderList ?? []);
       setFiles(fileList ?? []);
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     }
   }, []);
 
@@ -367,11 +316,13 @@ export default function Files() {
     return set;
   }, [folders, visibleFiles, query]);
 
+  /*
+   * Toasts rather than an inline banner: a banner is part of the layout, so
+   * showing one pushed the editor down and made it jump under the cursor.
+   * Toasts float over the page and leave the editor where it is.
+   */
   function show(text: string, isError = false) {
-    setFeedback({ text, isError });
-    if (!isError) {
-      setTimeout(() => setFeedback(null), 3000);
-    }
+    showToast(text, isError);
   }
 
   function toggle(path: string) {
@@ -509,28 +460,20 @@ export default function Files() {
   }
 
   /*
-   * Comment-driven development: the comment under the cursor is the whole
-   * specification. Only that comment goes to the Hyperlambda generator — no
-   * surrounding code, no arguments — and the generated code takes its place,
-   * as one undoable edit.
+   * Whatever is selected is the specification, and nothing else is sent —
+   * no surrounding code, no arguments. The generated code replaces the
+   * selection, as one undoable edit.
    */
-  async function generateFromComment() {
+  async function generateFromSelection() {
     const editor = editorRef.current;
-    if (!editor) {
-      return;
-    }
-    const block = commentBlockAt(editor);
-    if (!block || block.prompt === '') {
-      show('Put the cursor in a comment describing what you want, then generate', true);
+    const selection = editor?.getSelection() ?? '';
+    if (!editor || selection.trim() === '') {
       return;
     }
     setGenerating(true);
     try {
-      const response = await aiQuery(block.prompt, 'hl');
-      editor.replaceRange(
-        response.result,
-        { line: block.from, ch: 0 },
-        { line: block.to, ch: (editor.getLine(block.to) ?? '').length });
+      const response = await aiQuery(selection, 'hl');
+      editor.replaceSelection(response.result);
     } catch (err: any) {
       show(err.message, true);
     } finally {
@@ -832,9 +775,9 @@ export default function Files() {
         {selectedFile.endsWith('.hl') && (
           <button
             className="btn btn-secondary btn-small"
-            title="Run the comment under the cursor through the Hyperlambda generator"
-            onClick={generateFromComment}
-            disabled={generating}>
+            title="Run the selected text through the Hyperlambda generator"
+            onClick={generateFromSelection}
+            disabled={generating || !hasSelection}>
             <SparkIcon />
             {generating ? 'Generating…' : 'Generate'}
           </button>
@@ -850,14 +793,6 @@ export default function Files() {
           Save
         </button>
       </div>
-      {feedback && (
-        <Banner
-          isError={feedback.isError}
-          onClose={() => setFeedback(null)}
-          style={{ marginBottom: 12 }}>
-          {feedback.text}
-        </Banner>
-      )}
       <div className="files-layout">
         <div className="file-tree" style={{ width: treeWidth }}>
           <SearchInput
@@ -998,7 +933,15 @@ export default function Files() {
               mode={modeForFile(selectedFile)}
               onSave={save}
               onExecute={execute}
-              onInstance={instance => { editorRef.current = instance; }}
+              onInstance={instance => {
+                if (editorRef.current === instance) {
+                  return;
+                }
+                editorRef.current = instance;
+                setHasSelection(instance.somethingSelected());
+                instance.on('cursorActivity', () =>
+                  setHasSelection(instance.somethingSelected()));
+              }}
               onAction={action => {
                 switch (action) {
                   case 'newFile': newFile(activeFolder); break;
@@ -1038,6 +981,7 @@ export default function Files() {
           onClose={() => setOpenApiSpec(null)}
           onNotify={show} />
       )}
+      {generating && <AiWaiter />}
       {invokeTarget && (
         <Modal width={860} onClose={() => setInvokeTarget(null)}>
           <h2 style={{ marginTop: 0 }}>
