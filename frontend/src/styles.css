@@ -763,6 +763,9 @@ pre.result-json {
   width: fit-content;
   min-width: 420px;
   max-width: min(90vw, 560px);
+  /* Long content scrolls inside the dialog rather than off the screen. */
+  max-height: 88vh;
+  overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
