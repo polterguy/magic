@@ -1,0 +1,187 @@
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
+import { useAuth } from '../lib/AuthContext';
+import { getVersion } from '../lib/api';
+import { getNavGuard, setNavGuard } from '../lib/navGuard';
+import { setToastListener } from '../lib/toast';
+import { DatabaseIcon } from './Icons';
+import { ChevronIcon } from './Icons';
+import BackendsDialog from './BackendsDialog';
+import { SECTIONS } from './sections';
+
+export default function Layout({ children }: { children: ReactNode }) {
+
+  const { backend, logout, backends } = useAuth();
+  const [switching, setSwitching] = useState(false);
+  const navigate = useNavigate();
+  const [version, setVersion] = useState('');
+  const [collapsed, setCollapsed] = useState(
+    () => localStorage.getItem('magic2.navCollapsed') === 'true');
+
+  function toggleCollapsed() {
+    localStorage.setItem('magic2.navCollapsed', String(!collapsed));
+    setCollapsed(!collapsed);
+  }
+
+  /*
+   * Pages with unsaved state register a guard — intercept nav clicks and
+   * ask before leaving.
+   */
+  function onNavClick(event: React.MouseEvent, to: string) {
+    const guard = getNavGuard();
+    if (!guard) {
+      return;
+    }
+    event.preventDefault();
+    guard().then(proceed => {
+      if (proceed) {
+        setNavGuard(null);
+        navigate(to);
+      }
+    });
+  }
+
+  useEffect(() => {
+    getVersion().then(response => setVersion(response.version)).catch(() => {});
+  }, []);
+
+  /*
+   * App-wide socket channel the backend pushes notifications through —
+   * plugin installed, training done, vectorising done, etc. Same channel
+   * and payload as the old dashboard: {type: 'success'|'error', message}.
+   * Each message becomes its own toast so several can stack.
+   */
+  const [toasts, setToasts] = useState<{ id: number; text: string; isError: boolean }[]>([]);
+  const nextToastId = useRef(0);
+  const timers = useRef<number[]>([]);
+  const backendUrl = backend?.url;
+  const backendToken = backend?.token;
+
+  function dismissToast(id: number) {
+    setToasts(current => current.filter(toast => toast.id !== id));
+  }
+
+  const pushToast = useCallback((text: string, isError: boolean) => {
+    const id = ++nextToastId.current;
+    setToasts(current => [...current, { id, text, isError }]);
+    timers.current.push(window.setTimeout(
+      () => setToasts(current => current.filter(toast => toast.id !== id)),
+      isError ? 10000 : 5000));
+  }, []);
+
+  // Toasts raised from anywhere in the app — clipboard copies, and so on.
+  useEffect(() => {
+    setToastListener(toast => pushToast(toast.text, toast.isError));
+    return () => {
+      setToastListener(null);
+      timers.current.forEach(clearTimeout);
+    };
+  }, [pushToast]);
+
+  useEffect(() => {
+    if (!backendUrl || !backendToken) {
+      return;
+    }
+    const connection = new HubConnectionBuilder()
+      .withUrl(backendUrl + '/sockets', {
+        accessTokenFactory: () => backendToken,
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets,
+      })
+      .withAutomaticReconnect()
+      .build();
+    connection.on('magic.backend.message', (raw: string) => {
+      const args = JSON.parse(raw);
+      switch (args.type) {
+        case 'success':
+        case 'error':
+          pushToast(args.message, args.type === 'error');
+          break;
+      }
+    });
+    connection.start().catch(() => {});
+    return () => {
+      connection.stop();
+    };
+  }, [backendUrl, backendToken, pushToast]);
+
+  return (
+    <div className="shell">
+      {!collapsed && <aside className="sidebar">
+        <div className="brand">
+          <span className="brand-magic">magic</span>
+          <span className="brand-version">{version}</span>
+        </div>
+        <nav>
+          {SECTIONS.map(section => (
+            <NavLink
+              key={section.to}
+              to={section.to}
+              end={section.to === '/'}
+              onClick={event => onNavClick(event, section.to)}
+              className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              <span className="nav-icon"><section.Icon /></span>
+              {section.label}
+            </NavLink>
+          ))}
+        </nav>
+        <div className="sidebar-footer">
+          <NavLink
+            to="/user-profile"
+            className="backend-info"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+            title="Your profile">
+            <div className="backend-user">{backend?.username}</div>
+            <div className="backend-url">{backend?.url.replace(/^https?:\/\//, '')}</div>
+          </NavLink>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              className="btn btn-ghost"
+              style={{ flex: 1 }}
+              onClick={logout}>
+              Logout
+            </button>
+            <button
+              className="btn btn-ghost"
+              title={'Switch cloudlet — ' + backends.length + ' signed in'}
+              onClick={() => setSwitching(true)}>
+              <DatabaseIcon />
+            </button>
+          </div>
+        </div>
+      </aside>}
+      {switching && <BackendsDialog onClose={() => setSwitching(false)} />}
+      <button
+        className="nav-toggle"
+        style={{ left: collapsed ? 0 : 220 }}
+        title={collapsed ? 'Show navigation' : 'Hide navigation'}
+        onClick={toggleCollapsed}>
+        <span style={{
+          display: 'flex',
+          transform: collapsed ? undefined : 'rotate(180deg)',
+        }}>
+          <ChevronIcon />
+        </span>
+      </button>
+      <main className="content">
+        {children}
+      </main>
+      {toasts.length > 0 && (
+        <div className="toast-stack">
+          {toasts.map(toast => (
+            <div key={toast.id} className={'toast' + (toast.isError ? ' error' : '')}>
+              <span>{toast.text}</span>
+              <button
+                className="toast-close"
+                title="Dismiss"
+                onClick={() => dismissToast(toast.id)}>
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

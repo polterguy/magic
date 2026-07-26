@@ -127,9 +127,9 @@ In addition to the AI agent in its dashboard, which generates entire full stack 
 
 Below is a screenshot from Hyper IDE.
 
-![Hyper IDE](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-generated-code.png)
+![Hyper IDE, with the AI prompt bar below the code editor](images/hyper-ide.png)
 
-The above illustrates how Magic facilitates _"comment driven development"_ - provide natural language instructions as a declarative comment, and have the system implement the code using the built-in AI code generator.
+Notice the prompt bar below the editor, where _"the Machine Creates the Code"_. Describe what you want in plain English, and the built-in AI code generator writes it for you, directly into the file you are editing. The same bar follows you into the Playground and SQL Studio, generating Hyperlambda, SQL, HTML, or whatever else fits the file you have open.
 
 ## Also a Web Server
 

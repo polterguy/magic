@@ -1,0 +1,1369 @@
+/*
+ * Global styles for the Magic dashboard, React edition.
+ * Look and feel loosely mirrors the Angular Material dashboard:
+ * light content surface, dark violet accents.
+ */
+
+:root {
+  --accent: #5f38f9;
+  --accent-dark: #4527be;
+  --accent-soft: #efeafe;
+  --bg: #f4f4f8;
+  --surface: #ffffff;
+  --text: #1e1e28;
+  --text-soft: #6a6a78;
+  --border: #e2e2ea;
+  --danger: #d64550;
+  --ok: #2e9e5b;
+  --sidebar-bg: #17141f;
+  --sidebar-text: #b8b3c7;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(20, 16, 41, 0.08), 0 4px 16px rgba(20, 16, 41, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* ---------- Shell ---------- */
+
+.shell {
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+/* Collapses/expands the navigation sidebar. */
+.nav-toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  width: 18px;
+  height: 52px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  background: var(--surface);
+  color: var(--text-soft);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-toggle:hover {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.nav-toggle svg {
+  width: 12px;
+  height: 12px;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 10px 18px 10px;
+}
+
+.brand-magic {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.brand-version {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.nav-link.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.nav-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.sidebar-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Links to the profile page, so it highlights on hover like a navigation item. */
+.backend-info {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.backend-info:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.backend-user {
+  color: #fff;
+  font-weight: 600;
+}
+
+.backend-url {
+  font-size: 12px;
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Common elements ---------- */
+
+h1 {
+  font-size: 22px;
+  margin: 0 0 4px 0;
+}
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.toolbar .spacer { flex: 1; }
+
+/* inline-flex so a button can carry an icon beside its label. */
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--accent);
+  color: #fff;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.btn-small svg {
+  width: 13px;
+  height: 13px;
+}
+
+.btn:hover { background: var(--accent-dark); }
+
+/* The class covers labels acting as buttons, which can't be :disabled. */
+.btn:disabled, .btn.disabled {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+.btn-secondary {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.btn-secondary:hover { background: #e2d8fd; }
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-danger:hover { filter: brightness(0.9); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--sidebar-text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.btn-small {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+/*
+ * Every text-like input, by exclusion rather than by listing the types we
+ * happen to use today. Enumerating them meant each new type — date, then
+ * email — silently fell back to the browser's own styling until someone
+ * noticed. Only the types that are not text boxes are excluded.
+ */
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="range"]):not([type="color"]),
+select,
+textarea {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--surface);
+  color: var(--text);
+}
+
+/*
+ * Secrets that belong to someone or something else — API keys, SMTP
+ * passwords, reCAPTCHA secrets, and passwords being set for other users.
+ * None of them are the signed-in user's own credentials, so type="password"
+ * is wrong: the browser's password manager engages with any password field,
+ * offers to save it against this origin, and can then autofill an OpenAI key
+ * or another user's password where the user's own belongs. Masking with CSS
+ * keeps them hidden on screen while leaving them ordinary text fields the
+ * password manager ignores. Only signing in and changing your own password
+ * use real password fields.
+ */
+.secret {
+  -webkit-text-security: disc;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* ---------- Tabs ---------- */
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-soft);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab:hover {
+  color: var(--accent-dark);
+}
+
+.tab.active {
+  color: var(--accent-dark);
+  border-bottom-color: var(--accent);
+}
+
+/* ---------- Tables ---------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+}
+
+th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-soft);
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--border);
+}
+
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+tr.clickable { cursor: pointer; }
+
+tr.clickable:hover td { background: var(--accent-soft); }
+
+/* ---------- Badges ---------- */
+
+.badge {
+  display: inline-block;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-get { background: #e3f2e9; color: #23744a; }
+.badge-post { background: #e7effd; color: #2a5bbf; }
+.badge-put { background: #fdf3e0; color: #9a6a12; }
+.badge-delete { background: #fbeaec; color: #b23440; }
+.badge-patch { background: #f2e8fd; color: #6d2fbf; }
+.badge-error, .badge-fatal { background: #fbeaec; color: #b23440; }
+.badge-info { background: #e7effd; color: #2a5bbf; }
+.badge-debug { background: #eee; color: #666; }
+
+/* ---------- Login ---------- */
+
+.login-wrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #17141f 0%, #2b2149 60%, #4527be 100%);
+}
+
+.login-card {
+  width: 380px;
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 34px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login-card h1 {
+  margin: 0;
+  text-align: center;
+}
+
+.login-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.error-box {
+  background: #fbeaec;
+  color: #b23440;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.success-box {
+  background: #e3f2e9;
+  color: #23744a;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.info-box {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+/* ---------- Spinner ---------- */
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spinner-rotate 0.9s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  to { transform: rotate(360deg); }
+}
+
+.spinner-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 12px;
+  text-align: center;
+}
+
+.spinner-dots::after {
+  content: '';
+  animation: spinner-dots 1.4s steps(4, end) infinite;
+}
+
+@keyframes spinner-dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+}
+
+/* ---------- Editors ---------- */
+
+.code-editor {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+.code-editor .CodeMirror {
+  height: 100%;
+  font-size: 13px;
+}
+
+/* Alt-M fullscreen must sit above the sidebar and nav toggle. */
+.CodeMirror-fullscreen {
+  z-index: 60;
+}
+
+/*
+ * Hyper IDE only: the tab strip is docked to the editor's top edge, so that
+ * edge is square and only the bottom corners stay rounded.
+ */
+.file-editor .code-editor {
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.editor-split {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-split > * {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.editor-pane-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-soft);
+  margin-bottom: 6px;
+}
+
+/* ---------- Files page ---------- */
+
+.files-layout {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.file-tree {
+  flex-shrink: 0;
+  overflow: auto;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px;
+}
+
+.splitter {
+  width: 5px;
+  flex-shrink: 0;
+  cursor: col-resize;
+  border-radius: 3px;
+  margin: 0 -2px;
+}
+
+.splitter:hover {
+  background: var(--accent-soft);
+}
+
+.file-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tree-node {
+  user-select: none;
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.tree-row:hover { background: var(--accent-soft); }
+
+.tree-row.selected {
+  background: var(--accent);
+  color: #fff;
+}
+
+.tree-chevron {
+  width: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+}
+
+.tree-chevron svg {
+  width: 10px;
+  height: 10px;
+}
+
+.tree-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-soft);
+}
+
+.tree-icon.folder { color: var(--accent); }
+
+.tree-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tree-row.selected .tree-chevron,
+.tree-row.selected .tree-icon { color: #fff; }
+
+/* Column drop button appears only on row hover. */
+.col-drop { opacity: 0; }
+.col-row:hover .col-drop { opacity: 1; }
+
+/* System folders are tinted red like the old dashboard. */
+.tree-row.system .tree-name,
+.tree-row.system .tree-icon { color: var(--danger); }
+
+.tree-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-children {
+  margin-left: 9px;
+  padding-left: 4px;
+  border-left: 1px solid var(--border);
+}
+
+/* Root level gets no indentation at all. */
+.tree-children.root {
+  margin-left: 0;
+  padding-left: 0;
+  border-left: none;
+}
+
+/* Row actions stay invisible until the row is hovered. */
+.row-actions {
+  display: flex;
+  gap: 1px;
+  opacity: 0;
+}
+
+.tree-row:hover .row-actions {
+  opacity: 1;
+}
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  padding: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--text-soft);
+}
+
+.icon-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.icon-btn:hover {
+  background: rgba(95, 56, 249, 0.14);
+  color: var(--accent-dark);
+}
+
+.icon-btn.danger:hover {
+  background: #fbeaec;
+  color: var(--danger);
+}
+
+.tree-row.selected .icon-btn { color: rgba(255, 255, 255, 0.85); }
+
+.tree-row.selected .icon-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* ---------- Dashboard ---------- */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.kpi-label {
+  color: var(--text-soft);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* ---------- Misc ---------- */
+
+.muted { color: var(--text-soft); }
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+
+pre.result-json {
+  background: #17141f;
+  color: #e8e6f0;
+  border-radius: var(--radius);
+  padding: 14px;
+  overflow: auto;
+  margin: 0;
+  font-size: 13px;
+}
+
+.pagination {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 12px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 16, 41, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-box {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 26px 28px;
+  width: fit-content;
+  min-width: 420px;
+  max-width: min(90vw, 560px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.modal-box h2 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.modal-box p {
+  margin: 0 0 6px 0;
+  color: var(--text-soft);
+  overflow-wrap: break-word;
+}
+
+.modal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  border-radius: 20px;
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 2px;
+}
+
+.chip button {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+}
+
+.line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.markdown-body {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  font-size: 15px;
+  margin: 16px 0 6px;
+}
+
+.markdown-body p,
+.markdown-body ul,
+.markdown-body ol {
+  margin: 8px 0;
+}
+
+.markdown-body code {
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 12.5px;
+}
+
+.markdown-body pre {
+  background: var(--accent-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+  overflow-x: auto;
+}
+
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.markdown-body img {
+  max-width: 100%;
+}
+
+/* Open-file tabs above the Hyper IDE editor. */
+/* Sits directly on top of the editor — no gap, so the tabs read as part of
+   it rather than as a separate strip floating above. */
+.file-tabs {
+  display: flex;
+  overflow-x: auto;
+  flex-shrink: 0;
+  gap: 2px;
+  scrollbar-width: thin;
+}
+
+.file-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 6px 5px 12px;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.file-tab:hover {
+  background: rgba(95, 56, 249, 0.08);
+}
+
+/* The open file, in the same soft accent as the secondary buttons. */
+.file-tab.active {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+
+.file-tab-name {
+  display: inline-flex;
+  align-items: center;
+}
+
+.file-tab-dirty {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-left: 7px;
+}
+
+.file-tab-close {
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 15px;
+  line-height: 1;
+  padding: 1px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.file-tab-close:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Global notifications pushed from the backend over the socket channel —
+   newest at the bottom, older ones stack upwards. */
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  padding: 12px 14px 12px 18px;
+  border-radius: 10px;
+  background: var(--ok);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 8px 30px rgba(20, 16, 41, 0.3);
+  animation: toast-in 0.18s ease-out;
+}
+
+.toast.error {
+  background: var(--danger);
+}
+
+.toast-close {
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 17px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.toast-close:hover {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dismissible variant of the feedback boxes. */
+.error-box.closable,
+.success-box.closable {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.banner-close {
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  padding: 1px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.banner-close:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Full-screen waiter shown while the AI generates code — bouncing dots,
+   like the old dashboard's openai-prompt backdrop. */
+.ai-waiter {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(20, 16, 41, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-waiter-dots span {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin: 0 7px;
+  background: #9a8afd;
+  animation: ai-bounce 1.2s infinite;
+}
+
+.ai-waiter-dots span:nth-child(2) { animation-delay: 0.2s; }
+.ai-waiter-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes ai-bounce {
+  0%, 100% {
+    transform: translateY(6px);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* Collapsible module sections on the Endpoints screen. */
+.module-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.module-header:hover {
+  background: var(--accent-soft);
+}
+
+.module-header.system strong {
+  color: var(--danger);
+}
+
+/* Single-line cell content, with the full text available on hover. */
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* CodeMirror renders its autocomplete popup into document.body at z-index 10,
+   which puts it behind modals — lift it above every layer we use. */
+.CodeMirror-hints {
+  /* Far above any modal, whose z-index climbs as dialogs stack. */
+  z-index: 2000000;
+}
+
+/* Dashboard prompt for installing the AI-agent plugins. */
+.agent-prompt {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--accent);
+}
+
+.btn-large {
+  padding: 14px 28px;
+  font-size: 15px;
+}
+
+/* Linked guide to the dashboard's sections, on the Welcome card. */
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.guide-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface);
+  transition: border-color 0.12s, box-shadow 0.12s, transform 0.12s;
+}
+
+.guide-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 18px rgba(95, 56, 249, 0.12);
+  transform: translateY(-2px);
+}
+
+.guide-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 16px;
+}
+
+.guide-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.guide-card:hover .guide-title {
+  color: var(--accent-dark);
+}
+
+.guide-text {
+  display: block;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Vector-search results, coloured by whether they'd reach the model's
+   context — the model's threshold decides where that line falls. */
+tr.vss-relevant td {
+  color: #305030;
+}
+
+tr.vss-irrelevant td {
+  color: #909090;
+}
+
+/* Filter box with a clear button, shown once there's text to clear. */
+.search-input {
+  position: relative;
+  display: inline-flex;
+  width: 260px;
+}
+
+.search-input input {
+  width: 100%;
+  padding-right: 30px;
+}
+
+.search-input button {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  color: var(--text-soft);
+  font-size: 17px;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-input button:hover {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+/* Dashboard task tiles — a guide card with an action on the right. */
+.task-card {
+  align-items: center;
+  gap: 14px;
+}
+
+.task-card .guide-text {
+  margin-top: 2px;
+}
+
+/* Section icons are SVG now, sized here rather than by font-size. */
+.nav-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.guide-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* The no-access warning's exclamation mark. */
+.no-access-mark {
+  align-self: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #fbeaec;
+  color: var(--danger);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 62px;
+}
+
+/* "or" separator between password login and the OpenID providers. */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ---------- Text field with a dropdown of known values ---------- */
+
+.combo {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.combo input {
+  flex: 1;
+  min-width: 0;
+  /* Room for the toggle sitting inside the field. */
+  padding-right: 34px;
+}
+
+.combo-toggle {
+  position: absolute;
+  right: 6px;
+  border: none;
+  background: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.combo-toggle:hover {
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+}
+
+/*
+ * The chevron points right by default — turned down when the list is shut
+ * and up when it is open. Rotated here rather than through the icon's own
+ * "open" prop, whose inline style would win over this rule.
+ */
+.combo-toggle svg {
+  width: 14px;
+  height: 14px;
+  transform: rotate(90deg);
+  transition: transform 0.12s;
+}
+
+.combo-toggle.open svg {
+  transform: rotate(-90deg);
+}
+
+.combo-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 4px;
+}
+
+.combo-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.combo-option:hover {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.combo-option.active {
+  font-weight: 600;
+  color: var(--accent-dark);
+}
+
+/* A button that reads as a link — "Forgot your password?" on the login card. */
+.link-like {
+  border: none;
+  background: none;
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  align-self: center;
+}
+
+.link-like:hover {
+  text-decoration: underline;
+}
+
+.forgot-box {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}

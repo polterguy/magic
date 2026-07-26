@@ -1,0 +1,314 @@
+import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Modal, useDialog } from '../components/Dialogs';
+import { SECTIONS } from '../components/sections';
+import {
+  availablePlugins,
+  Task,
+  countLog,
+  countTasks,
+  countUsers,
+  executeTask,
+  getVersion,
+  installPlugin,
+  listEndpoints,
+  listFolders,
+  listTasks,
+  openaiIsConfigured,
+} from '../lib/api';
+import { useAuth } from '../lib/AuthContext';
+import { copyToClipboard, showToast } from '../lib/toast';
+
+/*
+ * Plugins that turn the cloudlet into an AI-agent endpoint — MCP exposes its
+ * endpoints as tools, OAuth secures them.
+ */
+const AGENT_PLUGINS = ['mcp', 'oauth'];
+
+/*
+ * The first handful of tasks, runnable straight from the dashboard. Editing
+ * and scheduling stay in the Task Manager — this is only for firing one off.
+ */
+const TASK_PAGE_SIZE = 6;
+
+function TaskSection(props: {
+  // Total task count, so paging knows where the list ends.
+  count: number | null;
+  notify: (text: string, isError: boolean) => void;
+}) {
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [page, setPage] = useState(0);
+  const [running, setRunning] = useState<string | null>(null);
+  const { confirm } = useDialog();
+
+  useEffect(() => {
+    listTasks(page * TASK_PAGE_SIZE, TASK_PAGE_SIZE)
+      .then(list => setTasks(list ?? []))
+      .catch(() => setTasks([]));
+  }, [page]);
+
+  async function execute(task: Task) {
+    if (!await confirm({
+      title: 'Execute task?',
+      message: task.id + ' will run on your server right now.',
+      confirmText: 'Execute',
+    })) {
+      return;
+    }
+    setRunning(task.id);
+    try {
+      await executeTask(task.id);
+      props.notify('Task ' + task.id + ' executed', false);
+    } catch (err: any) {
+      props.notify(err.message, true);
+    } finally {
+      setRunning(null);
+    }
+  }
+
+  // Hidden only when there genuinely are no tasks, not while paging.
+  if (props.count === 0) {
+    return null;
+  }
+
+  const pageCount = props.count === null
+    ? 1
+    : Math.max(1, Math.ceil(props.count / TASK_PAGE_SIZE));
+
+  return (
+    <div className="card">
+      <h2 style={{ marginTop: 0 }}>Tasks</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        Run one of your tasks now. <Link to="/task-manager">Task Manager</Link> is
+        where you write and schedule them.
+      </p>
+      <div className="guide-grid">
+        {tasks.map(task => (
+          <div className="guide-card task-card" key={task.id}>
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <span className="guide-title">{task.id}</span>
+              <span className="guide-text line-clamp">
+                {task.description || 'No description'}
+              </span>
+            </span>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={running === task.id}
+              title={'Run ' + task.id + ' on your server now'}
+              onClick={() => execute(task)}>
+              {running === task.id ? 'Running…' : '▷ Execute'}
+            </button>
+          </div>
+        ))}
+      </div>
+      {pageCount > 1 && (
+        <div className="pagination" style={{ marginTop: 14 }}>
+          <button
+            className="btn btn-secondary btn-small"
+            disabled={page === 0}
+            onClick={() => setPage(page - 1)}>
+            ‹ Prev
+          </button>
+          <span className="muted">{page + 1} / {pageCount}</span>
+          <button
+            className="btn btn-secondary btn-small"
+            disabled={page >= pageCount - 1}
+            onClick={() => setPage(page + 1)}>
+            Next ›
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Dashboard() {
+
+  const { backend } = useAuth();
+  const [version, setVersion] = useState('…');
+  const [endpoints, setEndpoints] = useState<number | null>(null);
+  const [users, setUsers] = useState<number | null>(null);
+  const [tasks, setTasks] = useState<number | null>(null);
+  const [logItems, setLogItems] = useState<number | null>(null);
+  const [missingPlugins, setMissingPlugins] = useState<string[]>([]);
+  const [installing, setInstalling] = useState(false);
+  // Null until we know — the prompt stays hidden while the answer is pending.
+  const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(null);
+  const [configuringOpenai, setConfiguringOpenai] = useState(false);
+
+  // The endpoint an AI agent connects to for tool discovery.
+  const mcpUrl = backend?.url + '/magic/modules/mcp/mcp';
+
+  /*
+   * A plugin counts as installed when its module folder exists — checking
+   * Bazar manifests instead would miss modules built by hand, which carry
+   * no manifest.
+   */
+  const checkPlugins = useCallback(async () => {
+    try {
+      const folders = await listFolders('/modules/') ?? [];
+      setMissingPlugins(
+        AGENT_PLUGINS.filter(name => !folders.includes('/modules/' + name + '/')));
+    } catch {
+      // Without a folder listing we can't tell — say nothing rather than nag.
+      setMissingPlugins([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    getVersion().then(r => setVersion(r.version)).catch(e => showToast(e.message, true));
+    listEndpoints().then(r => setEndpoints(r.length)).catch(() => {});
+    countUsers('').then(r => setUsers(r.count)).catch(() => {});
+    countTasks().then(r => setTasks(r.count)).catch(() => {});
+    countLog().then(r => setLogItems(r.count)).catch(() => {});
+    checkPlugins();
+    openaiIsConfigured()
+      .then(response => setOpenaiConfigured(response.result))
+      .catch(() => setOpenaiConfigured(null));
+  }, [checkPlugins]);
+
+  async function installAgentPlugins() {
+    setInstalling(true);
+        try {
+      const available = await availablePlugins() ?? [];
+      for (const name of missingPlugins) {
+        const app = available.find((candidate: any) => candidate.name === name);
+        if (!app) {
+          throw new Error(name + ' is not available in the Bazar');
+        }
+        await installPlugin(app);
+      }
+      showToast('Installing ' + missingPlugins.join(' and ') + " — you'll be notified when it completes.");
+      /*
+       * Installation continues on a background thread, so the module folders
+       * won't exist yet — flip the card now rather than leaving it asking
+       * for something already on its way.
+       */
+      setMissingPlugins([]);
+    } catch (err: any) {
+      showToast(err.message, true);
+    } finally {
+      setInstalling(false);
+    }
+  }
+
+  return (
+    <>
+      <div className="page-header">
+        <h1>Dashboard</h1>
+        <p>Connected to {backend?.url} as {backend?.username}</p>
+      </div>
+      <div className="kpi-grid">
+        <div className="card">
+          <div className="kpi-value">{version}</div>
+          <div className="kpi-label">Magic version</div>
+        </div>
+        <div className="card">
+          <div className="kpi-value">{endpoints ?? '…'}</div>
+          <div className="kpi-label">Endpoints</div>
+        </div>
+        <div className="card">
+          <div className="kpi-value">{users ?? '…'}</div>
+          <div className="kpi-label">Users</div>
+        </div>
+        <div className="card">
+          <div className="kpi-value">{tasks ?? '…'}</div>
+          <div className="kpi-label">Tasks</div>
+        </div>
+        <div className="card">
+          <div className="kpi-value">{logItems ?? '…'}</div>
+          <div className="kpi-label">Log items</div>
+        </div>
+      </div>
+      {missingPlugins.length > 0 ? (
+        <div className="card agent-prompt">
+          <div style={{ flex: 1 }}>
+            <h2 style={{ margin: '0 0 6px 0' }}>Turn this cloudlet into an AI agent</h2>
+            <p className="muted" style={{ margin: 0 }}>
+              The <strong>MCP</strong> plugin exposes your endpoints as tools AI agents
+              can invoke, and the <strong>OAuth</strong> plugin secures them. You're
+              missing {missingPlugins.join(' and ')}.
+            </p>
+          </div>
+          <button
+            className="btn btn-large"
+            onClick={installAgentPlugins}
+            disabled={installing}>
+            {installing
+              ? 'Installing…'
+              : 'Install ' + missingPlugins.join(' + ')}
+          </button>
+        </div>
+      ) : (
+        <div className="card agent-prompt">
+          <div style={{ flex: 1 }}>
+            <h2 style={{ margin: '0 0 6px 0' }}>This cloudlet is an AI agent</h2>
+            <p className="muted" style={{ margin: 0 }}>
+              MCP and OAuth are installed. Give an AI agent the URL below to let it
+              discover and invoke your endpoints as tools.
+            </p>
+            <div className="mono" style={{ marginTop: 8, overflowWrap: 'anywhere' }}>
+              {mcpUrl}
+            </div>
+          </div>
+          <button
+            className="btn btn-large"
+            onClick={() => copyToClipboard(mcpUrl, 'The MCP URL')}>
+            Copy MCP URL
+          </button>
+        </div>
+      )}
+      {openaiConfigured === false && (
+        <div className="card agent-prompt">
+          <div style={{ flex: 1 }}>
+            <h2 style={{ margin: '0 0 6px 0' }}>Add your OpenAI API key</h2>
+            <p className="muted" style={{ margin: 0 }}>
+              Machine Learning needs an OpenAI API key before you can train models,
+              crawl content, or run chatbots. You can get one{' '}
+              <a
+                href="https://platform.openai.com/account/api-keys"
+                target="_blank"
+                rel="noreferrer">
+                here
+              </a>.
+            </p>
+          </div>
+          <button className="btn btn-large" onClick={() => setConfiguringOpenai(true)}>
+            OpenAI API key
+          </button>
+        </div>
+      )}
+      <div className="card" style={{ marginBottom: 16 }}>
+        <h2 style={{ marginTop: 0 }}>Welcome</h2>
+        <p className="muted" style={{ marginTop: 0 }}>
+          Everything your cloudlet can do, and where to do it.
+        </p>
+        <div className="guide-grid">
+          {SECTIONS.filter(section => section.description).map(section => (
+            <Link className="guide-card" key={section.to} to={section.to}>
+              <span className="guide-icon"><section.Icon /></span>
+              <span>
+                <span className="guide-title">{section.label}</span>
+                <span className="guide-text">{section.description}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+      <TaskSection
+        count={tasks}
+        notify={(text, isError) => isError ? showToast(text, true) : showToast(text)} />
+      {configuringOpenai && (
+        <OpenAiKeyDialog
+          onClose={() => setConfiguringOpenai(false)}
+          onSaved={() => {
+            setConfiguringOpenai(false);
+            setOpenaiConfigured(true);
+            showToast('Your OpenAI API key was saved to your configuration');
+          }} />
+      )}
+    </>
+  );
+}

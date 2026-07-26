@@ -1,0 +1,301 @@
+/*
+ * Inline SVG icons for the file tree — stroke follows currentColor so
+ * they inherit whatever text color their container has.
+ */
+
+const base = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 2,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+};
+
+export function ChevronIcon({ open }: { open?: boolean }) {
+  return (
+    <svg {...base} style={{
+      transform: open ? 'rotate(90deg)' : undefined,
+      transition: 'transform 0.12s',
+    }}>
+      <polyline points="9 6 15 12 9 18" />
+    </svg>
+  );
+}
+
+export function FolderIcon() {
+  return (
+    <svg {...base}>
+      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    </svg>
+  );
+}
+
+export function FileIcon() {
+  return (
+    <svg {...base}>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 3 14 8 19 8" />
+    </svg>
+  );
+}
+
+export function FilePlusIcon() {
+  return (
+    <svg {...base}>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 3 14 8 19 8" />
+      <line x1="12" y1="12" x2="12" y2="16" />
+      <line x1="10" y1="14" x2="14" y2="14" />
+    </svg>
+  );
+}
+
+export function FolderPlusIcon() {
+  return (
+    <svg {...base}>
+      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <line x1="12" y1="10" x2="12" y2="16" />
+      <line x1="9" y1="13" x2="15" y2="13" />
+    </svg>
+  );
+}
+
+export function UploadIcon() {
+  return (
+    <svg {...base}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 8 12 3 17 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
+
+export function DownloadIcon() {
+  return (
+    <svg {...base}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  );
+}
+
+// A folder with an upload arrow — installing a module from an archive.
+export function ModuleUploadIcon() {
+  return (
+    <svg {...base}>
+      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9 14 12 11 15 14" />
+      <line x1="12" y1="11" x2="12" y2="18" />
+    </svg>
+  );
+}
+
+export function SparkIcon() {
+  return (
+    <svg {...base}>
+      <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18" />
+    </svg>
+  );
+}
+
+export function BracesIcon() {
+  return (
+    <svg {...base}>
+      <path d="M8 4H7a2 2 0 0 0-2 2v3a2 2 0 0 1-2 2 2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h1" />
+      <path d="M16 4h1a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2 2 2 0 0 0-2 2v3a2 2 0 0 1-2 2h-1" />
+    </svg>
+  );
+}
+
+export function PencilIcon() {
+  return (
+    <svg {...base}>
+      <path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z" />
+    </svg>
+  );
+}
+
+export function TrashIcon() {
+  return (
+    <svg {...base}>
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+      <path d="M10 11v6M14 11v6" />
+      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+    </svg>
+  );
+}
+
+/*
+ * Icons for the dashboard's sections, used by both the navigation and the
+ * Welcome guide. Same stroke weight as the rest of the set, and they inherit
+ * currentColor so the active nav item turns them white.
+ */
+
+export function HomeIcon() {
+  return (
+    <svg {...base}>
+      <path d="M3 11l9-7 9 7" />
+      <path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9" />
+    </svg>
+  );
+}
+
+export function CodeFileIcon() {
+  return (
+    <svg {...base}>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 3 14 8 19 8" />
+      <polyline points="10 12 8 14.5 10 17" />
+      <polyline points="14 12 16 14.5 14 17" />
+    </svg>
+  );
+}
+
+export function PlayIcon() {
+  return (
+    <svg {...base}>
+      <path d="M7 4l13 8-13 8z" />
+    </svg>
+  );
+}
+
+export function TerminalIcon() {
+  return (
+    <svg {...base}>
+      <polyline points="4 7 8 12 4 17" />
+      <line x1="12" y1="17" x2="20" y2="17" />
+    </svg>
+  );
+}
+
+export function DatabaseIcon() {
+  return (
+    <svg {...base}>
+      <ellipse cx="12" cy="6" rx="8" ry="3" />
+      <path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6" />
+      <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
+    </svg>
+  );
+}
+
+export function BoltIcon() {
+  return (
+    <svg {...base}>
+      <path d="M13 2L4 14h7l-1 8 10-12h-7z" />
+    </svg>
+  );
+}
+
+export function ExchangeIcon() {
+  return (
+    <svg {...base}>
+      <path d="M4 9h16l-4-4" />
+      <path d="M20 15H4l4 4" />
+    </svg>
+  );
+}
+
+export function UserIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" />
+    </svg>
+  );
+}
+
+export function ClockIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="12" cy="12" r="9" />
+      <polyline points="12 7 12 12 16 14" />
+    </svg>
+  );
+}
+
+export function PuzzleIcon() {
+  return (
+    <svg {...base}>
+      <path d="M5 5h5V4a2 2 0 1 1 4 0v1h5v5h1a2 2 0 1 1 0 4h-1v5h-5v-1a2 2 0 1 0-4 0v1H5z" />
+    </svg>
+  );
+}
+
+/*
+ * Sliders rather than a gear — a spoked gear collapses into the same
+ * sunburst as SparkIcon at navigation size.
+ */
+export function SlidersIcon() {
+  return (
+    <svg {...base}>
+      <path d="M5 20v-6M5 10V4M12 20v-9M12 7V4M19 20v-4M19 12V4" />
+      <path d="M2.5 14h5M9.5 7h5M16.5 16h5" />
+    </svg>
+  );
+}
+
+export function ListIcon() {
+  return (
+    <svg {...base}>
+      <line x1="4" y1="7" x2="20" y2="7" />
+      <line x1="4" y1="12" x2="20" y2="12" />
+      <line x1="4" y1="17" x2="14" y2="17" />
+    </svg>
+  );
+}
+
+// A person inside a circle — distinct from UserIcon, which means "users".
+export function ProfileIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="10" r="3" />
+      <path d="M6.2 18.6a6 6 0 0 1 11.6 0" />
+    </svg>
+  );
+}
+
+// An eye — previewing a file the way a visitor to the website sees it.
+export function EyeIcon() {
+  return (
+    <svg {...base}>
+      <path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6z" />
+      <circle cx="12" cy="12" r="2.6" />
+    </svg>
+  );
+}
+
+// Two stacked sheets — copying something to the clipboard.
+export function CopyIcon() {
+  return (
+    <svg {...base}>
+      <rect x="9" y="9" width="12" height="12" rx="2" />
+      <path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+// A floppy disk — saving the open file.
+export function SaveIcon() {
+  return (
+    <svg {...base}>
+      <path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" />
+      <path d="M8 4v5h7" />
+      <rect x="8" y="14" width="8" height="7" />
+    </svg>
+  );
+}
+
+// The eye, struck through — the password is currently visible.
+export function EyeOffIcon() {
+  return (
+    <svg {...base}>
+      <path d="M2 12s3.6-6 10-6c1.6 0 3 .37 4.24.95M22 12s-3.6 6-10 6c-1.6 0-3-.37-4.24-.95" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+      <line x1="3" y1="21" x2="21" y2="3" />
+    </svg>
+  );
+}

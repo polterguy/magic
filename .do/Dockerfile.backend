@@ -8,10 +8,9 @@ FROM --platform=$BUILDPLATFORM node:20-alpine AS frontend
 WORKDIR /app
 COPY frontend/ ./
 
-# Rewrite backend URL to same-origin (relative) inside the BUILD container only.
-# The repo file is never modified - this mirrors the existing CI pipeline transformation.
-RUN sed -i 's|http://localhost:4444||' src/environments/environment.prod.json && \
-    npm ci && npm run build-prod
+# The dashboard has no compiled-in backend URL - it asks at sign in and keeps
+# the answer in localStorage - so there is nothing to rewrite here.
+RUN npm ci && npm run build
 
 # =========================
 # Backend build stage
@@ -105,11 +104,11 @@ RUN mkdir -p /magic/files/data \
              /magic/files/config \
              /magic/files/modules
 
-# Stash the compiled Angular frontend as pristine payload. The entrypoint overwrites
+# Stash the compiled dashboard as pristine payload. The entrypoint overwrites
 # it into /magic/files/etc/www (a persistent volume) on every container start -
 # overwrite ONLY, user-created web files are never deleted.
 # Magic's backend serves /magic/files/etc/www at the root (see magic.endpoint HttpFileExecutorAsync).
-COPY --from=frontend /app/dist/magic /magic/do-payload/www
+COPY --from=frontend /app/dist /magic/do-payload/www
 
 COPY .do/do-entrypoint.sh /magic/do-entrypoint.sh
 RUN chmod 755 /magic/do-entrypoint.sh
