@@ -22,6 +22,13 @@ const ACTIVE_KEY = 'magic2.active-backend';
 // Where a single backend used to live, before several were supported.
 const LEGACY_KEY = 'magic2.backend';
 
+/*
+ * Where the previous dashboard kept its backends. Same domain, so upgrading a
+ * cloudlet leaves that key sitting in localStorage - importing it keeps the
+ * user signed in to every cloudlet they had, instead of starting from nothing.
+ */
+const ANGULAR_KEY = 'magic.backends';
+
 export function loadBackends(): StoredBackend[] {
   const raw = localStorage.getItem(BACKENDS_KEY);
   if (raw) {
@@ -29,14 +36,54 @@ export function loadBackends(): StoredBackend[] {
   }
   // First run after the upgrade — carry the one backend across.
   const legacy = localStorage.getItem(LEGACY_KEY);
-  if (!legacy) {
+  if (legacy) {
+    const backend: StoredBackend = JSON.parse(legacy);
+    localStorage.setItem(BACKENDS_KEY, JSON.stringify([backend]));
+    localStorage.setItem(ACTIVE_KEY, backend.url);
+    localStorage.removeItem(LEGACY_KEY);
+    return [backend];
+  }
+  return importFromPreviousDashboard();
+}
+
+/*
+ * Takes over the backends the previous dashboard stored, on the first load
+ * after a cloudlet is upgraded. Its entries are {url, username?, password?,
+ * token?} - the password is deliberately dropped, since credentials belong in
+ * the browser's own manager rather than in ours.
+ *
+ * The old key is left where it is, so downgrading finds it untouched, and it
+ * is read only this once - afterwards our own key answers first.
+ */
+function importFromPreviousDashboard(): StoredBackend[] {
+  const raw = localStorage.getItem(ANGULAR_KEY);
+  if (!raw) {
     return [];
   }
-  const backend: StoredBackend = JSON.parse(legacy);
-  localStorage.setItem(BACKENDS_KEY, JSON.stringify([backend]));
-  localStorage.setItem(ACTIVE_KEY, backend.url);
-  localStorage.removeItem(LEGACY_KEY);
-  return [backend];
+  let previous: any[];
+  try {
+    previous = JSON.parse(raw);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(previous)) {
+    return [];
+  }
+  const list: StoredBackend[] = previous
+    .filter(candidate => typeof candidate?.url === 'string' && candidate.url !== '')
+    .map(candidate => ({
+      url: candidate.url.replace(/\/+$/, ''),
+      username: typeof candidate.username === 'string' ? candidate.username : '',
+      token: typeof candidate.token === 'string' ? candidate.token : null,
+    }));
+  if (list.length === 0) {
+    return [];
+  }
+  persist(list);
+  // Whichever is still signed in, so the user lands where they left off.
+  const active = list.find(candidate => !!candidate.token) ?? list[0];
+  localStorage.setItem(ACTIVE_KEY, active.url);
+  return list;
 }
 
 function persist(list: StoredBackend[]) {
