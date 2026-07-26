@@ -1367,3 +1367,12 @@ tr.vss-irrelevant td {
   border-radius: 8px;
   padding: 12px;
 }
+
+/* The folder that new-file, upload and download-folder act on. */
+.tree-row.active-folder {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+
+.tree-row.active-folder .tree-icon { color: var(--accent-dark); }
