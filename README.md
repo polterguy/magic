@@ -11,15 +11,13 @@ No additional _"backend connectors"_ or _"database connectors"_ required - **zer
 
 ## Open Source _"Vibe Coding"_ Platform
 
-Below is an app that was created with the following prompt;
+This is the dashboard you get after installing Magic - every part of your cloudlet from one place.
 
-> Create me a full stack app to manage VIP customer for a car dealership
+![The Magic dashboard, showing the Chatbot Wizard and the cloudlet's MCP URL](images/dashboard.png)
 
-The whole process took about 30 minutes in total, with less than a handful of errors, correcting the LLM or giving feedback some 5 to 10 times during the process. All bugs were easily tracked down and eliminated by a seasoned software developer during the process.
+The sidebar is the whole platform: **Hyper IDE** for editing and running any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing your databases, **Generator** for turning tables into secured CRUD endpoints, plus users and roles, scheduled tasks, machine learning, and the Bazar plugins.
 
-![CRM system for car dealership](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/vip-crm.png)
-
-Magic asked a handful of control questions, before it automatically generated the database, created the backend code using the integrated Hyperlambda Generator, and finally assembled the frontend based upon the API - complete with authentication and authorization. Everything was deployed locally, on the integrated and built-in web server.
+Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at the top hands any MCP-capable agent your endpoints as tools - so Claude, or anything else speaking MCP, can discover and invoke them directly. The **Chatbot Wizard** goes the other way: give it a website, and it crawls the site, turns what it finds into training data, and gives you an embeddable chatbot grounded in your own content.
 
 **Once you save the code, you can test it! No _"deployment"_ or _"publish"_ required to test code.**
 
