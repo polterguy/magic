@@ -667,7 +667,9 @@ function CrudTab() {
               </div>
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(3, minmax(150px, max-content))',
+                // auto-fit so it collapses to fewer columns on a phone instead
+                // of forcing a fixed 3-wide minimum that overflows.
+                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
                 gap: '6px 20px',
               }}>
                 <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>

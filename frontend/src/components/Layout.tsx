@@ -19,6 +19,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [version, setVersion] = useState('');
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem('magic2.navCollapsed') === 'true');
+  // Separate from the desktop collapse: the phone drawer, closed by default.
+  const [mobileNav, setMobileNav] = useState(false);
 
   function toggleCollapsed() {
     localStorage.setItem('magic2.navCollapsed', String(!collapsed));
@@ -108,8 +110,24 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, [backendUrl, backendToken, pushToast]);
 
   return (
-    <div className="shell">
-      {!collapsed && <aside className="sidebar">
+    <div className={'shell' + (mobileNav ? ' nav-open' : '')}>
+      {/* Phone-only top bar: the hamburger opens the drawer. Hidden on desktop. */}
+      <div className="mobile-topbar">
+        <button
+          className="hamburger"
+          aria-label="Open navigation"
+          onClick={() => setMobileNav(true)}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <span className="brand-magic">magic</span>
+      </div>
+      {/* Dims the page behind the open drawer; tapping it closes the drawer. */}
+      <div className="nav-backdrop" onClick={() => setMobileNav(false)} />
+      <aside className={'sidebar' + (collapsed ? ' collapsed' : '') + (mobileNav ? ' open' : '')}>
         <div className="brand">
           <span className="brand-magic">magic</span>
           <span className="brand-version">{version}</span>
@@ -120,7 +138,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               key={section.to}
               to={section.to}
               end={section.to === '/'}
-              onClick={event => onNavClick(event, section.to)}
+              onClick={event => { onNavClick(event, section.to); setMobileNav(false); }}
               className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               <span className="nav-icon"><section.Icon /></span>
               {section.label}
@@ -132,7 +150,8 @@ export default function Layout({ children }: { children: ReactNode }) {
             to="/user-profile"
             className="backend-info"
             style={{ textDecoration: 'none', color: 'inherit' }}
-            title="Your profile">
+            title="Your profile"
+            onClick={() => setMobileNav(false)}>
             <div className="backend-user">{backend?.username}</div>
             <div className="backend-url">{backend?.url.replace(/^https?:\/\//, '')}</div>
           </NavLink>
@@ -146,18 +165,18 @@ export default function Layout({ children }: { children: ReactNode }) {
             <button
               className="btn btn-ghost"
               title="Ask AINIRO's AI about Hyperlambda and Magic"
-              onClick={openSupport}>
+              onClick={() => { openSupport(); setMobileNav(false); }}>
               <SparkIcon />
             </button>
             <button
               className="btn btn-ghost"
               title={'Switch cloudlet — ' + backends.length + ' signed in'}
-              onClick={() => setSwitching(true)}>
+              onClick={() => { setSwitching(true); setMobileNav(false); }}>
               <DatabaseIcon />
             </button>
           </div>
         </div>
-      </aside>}
+      </aside>
       {switching && <BackendsDialog onClose={() => setSwitching(false)} />}
       <button
         className="nav-toggle"

@@ -1553,3 +1553,140 @@ tr.vss-irrelevant td {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
+
+/* ---------- Responsive / mobile ---------- */
+
+/*
+ * The phone chrome — top bar, hamburger and drawer backdrop — is invisible on
+ * desktop, where the sidebar keeps its normal fixed column. Collapsing the
+ * sidebar removes it entirely, exactly as the old unmount did.
+ */
+.mobile-topbar { display: none; }
+.nav-backdrop { display: none; }
+.sidebar.collapsed { display: none; }
+
+@media (max-width: 768px) {
+  /* Stack the shell so the top bar sits above the scrolling content. */
+  .shell { flex-direction: column; }
+
+  .mobile-topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--sidebar-bg);
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .mobile-topbar .brand-magic { font-size: var(--text-lg); }
+
+  .hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius);
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+  }
+  .hamburger:hover { background: rgba(255, 255, 255, 0.1); }
+
+  /* The sidebar becomes an off-canvas drawer, shown by the .open class. */
+  .sidebar,
+  .sidebar.collapsed {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 82vw;
+    max-width: 300px;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    overflow-y: auto;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+  .shell.nav-open .nav-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* The desktop collapse chevron has no place on a phone. */
+  .nav-toggle { display: none; }
+
+  /* Tighter gutters, and dialogs that fit a narrow screen. */
+  .content { padding: 16px 14px; }
+  .modal-box { min-width: 0; max-width: 94vw; padding: 20px 18px; }
+  .login-card { max-width: 94vw; }
+
+  /* Toasts stretch across the bottom instead of clinging to a corner. */
+  .toast-stack { left: 14px; right: 14px; bottom: 14px; align-items: stretch; }
+  .toast { max-width: none; }
+}
+
+/* ---------- Responsive: per-screen fixes ---------- */
+@media (max-width: 768px) {
+  /* Dashboard — the agent banners stack instead of squeezing the heading. */
+  .agent-prompt {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .agent-prompt .btn-large {
+    width: 100%;
+  }
+
+  /* Page header rows (title + action buttons) wrap instead of overflowing. */
+  .page-header { flex-wrap: wrap; }
+
+  /* Hyper IDE — stack the file tree above the editor; drop the drag splitter. */
+  .files-layout { flex-direction: column; }
+  .file-tree { width: auto !important; max-height: 38vh; }
+  .splitter { display: none; }
+  .file-editor { min-height: 55vh; }
+
+  /* Playground & SQL Studio — stack the two editor panes vertically. */
+  .editor-split { flex-direction: column; }
+  /* Only the editor panes need the tall min-height, not cards (Profile
+     reuses .editor-split for its card row). */
+  .editor-split > *:not(.card) { min-height: 42vh; }
+
+  /*
+   * Data tables scroll inside their own box rather than stretching the page.
+   * display:block lets the element scroll; the browser keeps the columns
+   * aligned via an anonymous table wrapper, so it still reads as a table.
+   */
+  .content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /*
+   * Fixed multi-column inline grids (1fr 1fr, repeat(3, ...), repeat(2,
+   * max-content)) collapse to a single column on a phone. Targets only the
+   * hardcoded ones by their inline value; the responsive auto-fit / auto-fill
+   * grids don't contain these patterns and are left to size themselves.
+   */
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="grid-template-columns: repeat(3"],
+  [style*="grid-template-columns: repeat(2, max-content"] {
+    grid-template-columns: 1fr !important;
+  }
+}
