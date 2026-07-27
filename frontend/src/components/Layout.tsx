@@ -103,9 +103,12 @@ export default function Layout({ children }: { children: ReactNode }) {
           break;
       }
     });
-    connection.start().catch(() => {});
+    // Only stop once start() has settled — calling stop() while start() is
+    // still pending (React StrictMode's double-invoke does exactly that) logs
+    // "Failed to start the HttpConnection before stop() was called."
+    const started = connection.start().catch(() => {});
     return () => {
-      connection.stop();
+      started.finally(() => connection.stop().catch(() => {}));
     };
   }, [backendUrl, backendToken, pushToast]);
 

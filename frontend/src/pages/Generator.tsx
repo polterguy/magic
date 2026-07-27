@@ -522,8 +522,8 @@ function CrudTab() {
         </div>
       ) : (
       <div className="editor-split" style={{ flex: 'unset', alignItems: 'flex-start' }}>
-        <div className="card" style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}>
-          <table>
+        <div className="card gen-table-card" style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}>
+          <table className="compact-table">
             <thead>
               <tr>
                 <th style={{ width: 40 }}>

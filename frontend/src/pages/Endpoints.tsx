@@ -170,8 +170,8 @@ export default function Endpoints() {
                             {endpoint.verb}
                           </span>
                         </td>
-                        <td className="mono">{endpoint.path}</td>
-                        <td style={{ textAlign: 'right' }}>
+                        <td className="mono" data-label="Path">{endpoint.path}</td>
+                        <td style={{ textAlign: 'right' }} data-label="Auth">
                           {(endpoint.auth ?? []).map(role =>
                             <span className="chip" key={role}>{role}</span>)}
                         </td>

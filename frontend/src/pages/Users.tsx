@@ -171,15 +171,15 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
             {users.map(user => (
               <tr key={user.username}>
                 <td><strong>{user.username}</strong></td>
-                <td>{userExtra(user, 'name') || <span className="muted">—</span>}</td>
-                <td>{userExtra(user, 'email') || <span className="muted">—</span>}</td>
-                <td>
+                <td data-label="Name">{userExtra(user, 'name') || <span className="muted">—</span>}</td>
+                <td data-label="Email">{userExtra(user, 'email') || <span className="muted">—</span>}</td>
+                <td data-label="Roles">
                   {(user.roles ?? []).length > 0
                     ? (user.roles ?? []).map(role =>
                         <span className="chip" key={role}>{role}</span>)
                     : <span className="muted">no roles</span>}
                 </td>
-                <td className="muted">
+                <td className="muted" data-label="Created">
                   {user.created ? user.created.substring(0, 10) : ''}
                 </td>
                 <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -627,7 +627,7 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void; notify: Notify 
             {visible.map(role => (
               <tr key={role.name}>
                 <td><strong>{role.name}</strong></td>
-                <td>
+                <td data-label="Description">
                   {role.description || <span className="muted">no description</span>}
                 </td>
                 <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>

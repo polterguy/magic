@@ -187,10 +187,11 @@ export default function Tasks() {
                 <td
                   className="truncate"
                   title={task.description}
-                  style={{ maxWidth: 0 }}>
+                  style={{ maxWidth: 0 }}
+                  data-label="Description">
                   {task.description || <span className="muted">—</span>}
                 </td>
-                <td>
+                <td data-label="Schedules">
                   {(task.schedules ?? []).length === 0 ? (
                     <span className="muted">not scheduled</span>
                   ) : (
@@ -208,7 +209,7 @@ export default function Tasks() {
                     </div>
                   )}
                 </td>
-                <td className="muted">
+                <td className="muted" data-label="Created">
                   {task.created ? task.created.substring(0, 10) : ''}
                 </td>
                 <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>

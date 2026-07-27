@@ -582,7 +582,7 @@ function ResultTable({ rows }: { rows: any[] }) {
   }
   const columns = Object.keys(rows[0]);
   return (
-    <table>
+    <table className="sql-result">
       <thead>
         <tr>{columns.map(column => <th key={column}>{column}</th>)}</tr>
       </thead>
@@ -590,7 +590,7 @@ function ResultTable({ rows }: { rows: any[] }) {
         {rows.map((row, index) => (
           <tr key={index}>
             {columns.map(column => (
-              <td className="mono" key={column}>{formatCell(row[column])}</td>
+              <td className="mono" key={column} data-label={column}>{formatCell(row[column])}</td>
             ))}
           </tr>
         ))}

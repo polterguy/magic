@@ -181,7 +181,7 @@ function InternalTab() {
             {databases.map(database => (
               <tr key={database.name}>
                 <td><strong>{database.name}</strong></td>
-                <td>{database.tables?.length ?? 0}</td>
+                <td data-label="Tables">{database.tables?.length ?? 0}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                     <Link
@@ -444,10 +444,10 @@ function ExternalTab() {
             )}
             {rows.map(row => (
               <tr key={row.type + '/' + row.name}>
-                <td>{row.type}</td>
-                <td><strong>{row.name}</strong></td>
-                <td className="mono">{row.connectionString}</td>
-                <td>
+                <td data-label="Type">{row.type}</td>
+                <td data-label="Name"><strong>{row.name}</strong></td>
+                <td className="mono" data-label="Connection">{row.connectionString}</td>
+                <td data-label="Status">
                   <span className={'badge ' +
                     (row.status === 'live' ? 'badge-get'
                       : row.status === 'down' ? 'badge-error' : 'badge-debug')}>
@@ -500,7 +500,7 @@ function ExternalTab() {
                 {catalogs.list.map(catalog => (
                   <tr key={catalog.name}>
                     <td><strong>{catalog.name}</strong></td>
-                    <td>{catalog.tables?.length ?? 0}</td>
+                    <td data-label="Tables">{catalog.tables?.length ?? 0}</td>
                     <td>
                       <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                         <Link

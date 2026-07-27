@@ -173,8 +173,8 @@ function TypesTab(props: {
             {props.types.map(type => (
               <tr key={type.type}>
                 <td><strong>{type.type}</strong></td>
-                <td className="mono">{type.model}</td>
-                <td>{type.use_embeddings ? 'yes' : 'no'}</td>
+                <td className="mono" data-label="Model">{type.model}</td>
+                <td data-label="Embeddings">{type.use_embeddings ? 'yes' : 'no'}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                     <button
@@ -1665,15 +1665,15 @@ function TrainingTab(props: {
                 }}>
                   {snippet.prompt}
                 </td>
-                <td>{snippet.tokens}</td>
+                <td data-label="Tokens">{snippet.tokens}</td>
                 {searchingByVector && (
-                  <td className="mono">
+                  <td className="mono" data-label="Distance">
                     {typeof snippet.distance === 'number'
                       ? snippet.distance.toFixed(3)
                       : <span className="muted">—</span>}
                   </td>
                 )}
-                <td>{snippet.embedding_vss ? 'yes' : 'no'}</td>
+                <td data-label="Embedded">{snippet.embedding_vss ? 'yes' : 'no'}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                     <button
@@ -1797,6 +1797,9 @@ function EditSnippetDialog(props: {
         </div>
       </div>
       <div className="modal-actions">
+        {props.existing?.meta && (
+          <span className="snippet-meta">{props.existing.meta}</span>
+        )}
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
         <button className="btn" onClick={save} disabled={!prompt}>Save</button>
       </div>
@@ -1997,8 +2000,8 @@ function RequestRow(props: { request: any; expanded: boolean; onToggle: () => vo
   return (
     <>
       <tr className="clickable" onClick={props.onToggle}>
-        <td className="mono">{new Date(props.request.created).toLocaleString()}</td>
-        <td style={{
+        <td className="mono" data-label="When">{new Date(props.request.created).toLocaleString()}</td>
+        <td data-label="Prompt" style={{
           maxWidth: 620,
           overflow: 'hidden',
           textOverflow: 'ellipsis',

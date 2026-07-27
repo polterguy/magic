@@ -104,11 +104,11 @@ function LogRow(props: { item: LogItem; expanded: boolean; onToggle: () => void 
   return (
     <>
       <tr className="clickable" onClick={props.onToggle}>
-        <td className="mono">{new Date(item.created).toLocaleString()}</td>
-        <td>
+        <td className="mono" data-label="When">{new Date(item.created).toLocaleString()}</td>
+        <td data-label="Type">
           <span className={'badge badge-' + item.type.toLowerCase()}>{item.type}</span>
         </td>
-        <td>{item.content}</td>
+        <td data-label="Content">{item.content}</td>
       </tr>
       {props.expanded && item.exception && (
         <tr>

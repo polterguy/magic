@@ -130,6 +130,13 @@ body {
   flex-direction: column;
   gap: 2px;
   flex: 1;
+  /*
+   * The nav list scrolls when the links don't fit (short or zoomed windows),
+   * so the brand stays pinned at the top and the footer at the bottom instead
+   * of the footer overflowing below the sidebar.
+   */
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .nav-link {
@@ -333,9 +340,10 @@ textarea {
   -webkit-text-security: disc;
 }
 
-input:focus, select:focus, textarea:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: -1px;
+/* No focus rings anywhere — inputs, buttons, links, nav items, etc. */
+*:focus,
+*:focus-visible {
+  outline: none;
 }
 
 /* ---------- Tabs ---------- */
@@ -733,11 +741,8 @@ tr.clickable:hover td { background: var(--accent-soft); }
 
 .kpi-grid {
   display: grid;
-  /*
-   * Narrow enough that all five fit on one row on a laptop - at 220px the
-   * fifth card dropped onto a row of its own with a field of white beside it.
-   */
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  /* All five KPI cards share the row equally and fill the available width. */
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -829,9 +834,18 @@ pre.result-json {
 
 .modal-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 22px;
+}
+
+/* Snippet meta (e.g. FUNCTION_INVOCATION target) — gray, small, far left. */
+.snippet-meta {
+  margin-right: auto;
+  font-size: 12px;
+  color: var(--text-soft);
+  overflow-wrap: anywhere;
 }
 
 .form-grid {
@@ -851,6 +865,8 @@ pre.result-json {
   gap: 16px;
   flex-wrap: wrap;
   margin-top: 14px;
+  /* Checkbox + Create button sit at the right, on every screen size. */
+  justify-content: flex-end;
 }
 
 .checkbox-row {
@@ -1050,6 +1066,12 @@ pre.result-json {
   padding: 2px 6px;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  /*
+   * Pinned to the right edge. On a content-width desktop toast this sits
+   * flush after the text as before; on a full-width phone toast it moves the
+   * close button to the far right instead of hugging the message.
+   */
+  margin-left: auto;
 }
 
 .toast-close:hover {
@@ -1642,6 +1664,9 @@ tr.vss-irrelevant td {
 
 /* ---------- Responsive: per-screen fixes ---------- */
 @media (max-width: 768px) {
+  /* KPI cards keep the compact two-up wrap on a phone. */
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+
   /* Dashboard — the agent banners stack instead of squeezing the heading. */
   .agent-prompt {
     flex-direction: column;
@@ -1652,8 +1677,29 @@ tr.vss-irrelevant td {
     width: 100%;
   }
 
-  /* Page header rows (title + action buttons) wrap instead of overflowing. */
+  /*
+   * Page header rows (title + toolbar) always stack on a phone: the title
+   * block takes the full first row, and the toolbar drops to its own strip
+   * below — so it never wraps around the heading or "jumps" as buttons come
+   * and go (Hyper IDE). The flex:1 spacer that pushes the toolbar right on
+   * desktop is removed so it doesn't eat the second row.
+   */
   .page-header { flex-wrap: wrap; }
+  .page-header > *:first-child { flex-basis: 100%; }
+  .page-header > span[style*="flex: 1"] { display: none; }
+
+  /*
+   * Hyper IDE header on a phone: hide the (variable-length) file path that made
+   * the row jump, and collapse the toolbar to icon-only buttons so the strip
+   * stays short and stable. The titles keep them identifiable.
+   */
+  .ide-path { display: none; }
+  .ide-header .btn {
+    font-size: 0;
+    gap: 0;
+    padding: 8px;
+  }
+  .ide-header .btn svg { width: 17px; height: 17px; }
 
   /* Hyper IDE — stack the file tree above the editor; drop the drag splitter. */
   .files-layout { flex-direction: column; }
@@ -1661,22 +1707,124 @@ tr.vss-irrelevant td {
   .splitter { display: none; }
   .file-editor { min-height: 55vh; }
 
-  /* Playground & SQL Studio — stack the two editor panes vertically. */
-  .editor-split { flex-direction: column; }
-  /* Only the editor panes need the tall min-height, not cards (Profile
-     reuses .editor-split for its card row). */
-  .editor-split > *:not(.card) { min-height: 42vh; }
+  /* Playground & SQL Studio — stack the two editor panes vertically. The split
+     sizes to its content (not flex:1) so the Ask bar below stays in flow rather
+     than being overlapped by an editor that spilled past its box. */
+  .editor-split { flex-direction: column; flex: none; align-items: stretch !important; }
+  /* Editor panes get a fixed height so CodeMirror fills exactly; cards
+     (Profile/Generator reuse .editor-split) keep their content height. */
+  .editor-split > *:not(.card) { height: 44vh; min-height: 0; flex: none; }
+  .editor-split > .card { flex: none; }
 
   /*
-   * Data tables scroll inside their own box rather than stretching the page.
-   * display:block lets the element scroll; the browser keeps the columns
-   * aligned via an anonymous table wrapper, so it still reads as a table.
+   * Data tables become stacked cards on a phone: each row is a card and each
+   * cell a labelled line (the label comes from the cell's data-label), so
+   * nothing has to scroll sideways. The header row is hidden since every cell
+   * now carries its own label.
    */
-  .content table {
+  .content thead { display: none; }
+  .content table,
+  .content tbody,
+  .content tr,
+  .content td {
     display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    width: 100%;
   }
+  .content tr {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 6px 14px;
+    margin-bottom: 10px;
+  }
+  .content td {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 14px;
+    padding: 5px 0;
+    border: none !important;
+    text-align: right;
+    /* Overrides desktop cells that clip/nowrap so values wrap fully in a card. */
+    white-space: normal !important;
+    overflow: visible !important;
+    /* Long unbroken values (connection strings, tokens) wrap instead of overflowing. */
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .content td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-soft);
+    text-align: left;
+    white-space: nowrap;
+  }
+  /* First cell is the card title; last unlabelled cell holds the actions. */
+  .content td:first-child { font-size: var(--text-md); padding-top: 3px; }
+  .content td:not([data-label]) { justify-content: flex-start; text-align: left; }
+  .content td:last-child:not([data-label]) {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    padding-top: 8px;
+  }
+  /* Full-width detail rows (log/history/endpoint expansions) are plain blocks. */
+  .content td[colspan] { display: block; text-align: left; }
+  .content td[colspan]::before { content: none; }
+  /* Code never inherits the card's right-alignment. */
+  .content pre,
+  .content code,
+  .content .result-json,
+  .content .CodeMirror { text-align: left; }
+  /* SQL result: dynamic columns, so left-align every "column: value" line. */
+  .content table.sql-result td {
+    justify-content: flex-start;
+    text-align: left;
+    gap: 8px;
+  }
+  .content table.sql-result td::before { color: var(--accent-dark); }
+  /* Cells that truncate or cap their width on desktop expand fully in a card. */
+  .content td { max-width: none !important; }
+  .content td.truncate {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  /*
+   * Narrow tables that already fit a phone opt out of card-stacking and stay
+   * a normal (full-width) table. The Generator's table picker is one.
+   */
+  .gen-table-card { max-width: none !important; }
+  .content table.compact-table { display: table; width: 100%; }
+  .content table.compact-table thead { display: table-header-group; }
+  .content table.compact-table tbody { display: table-row-group; }
+  .content table.compact-table tr {
+    display: table-row;
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+  }
+  .content table.compact-table td {
+    display: table-cell;
+    text-align: left;
+    vertical-align: middle;
+    padding: 8px 10px;
+    overflow-wrap: normal;
+    white-space: normal !important;
+  }
+  .content table.compact-table td::before { content: none; }
+  /*
+   * Column sizing: checkbox fixed, count column shrinks to its content on the
+   * right, and the table-name column (width:100%) absorbs all the space that
+   * remains so it fills the row instead of floating in the middle.
+   */
+  .content table.compact-table th:first-child,
+  .content table.compact-table td:first-child { width: 44px; text-align: center; }
+  .content table.compact-table th:nth-child(2),
+  .content table.compact-table td:nth-child(2) { width: 100%; text-align: left; }
+  .content table.compact-table th:last-child,
+  .content table.compact-table td:last-child { width: 1%; white-space: nowrap; }
 
   /*
    * Fixed multi-column inline grids (1fr 1fr, repeat(3, ...), repeat(2,
