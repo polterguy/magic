@@ -473,10 +473,13 @@ export function exportDdl(
  * DDL mutations — create/drop tables, columns, foreign keys, indexes.
  * Every mutation invalidates the cached schema for the connection.
  */
-function bustSchemaCache(databaseType: string, connectionString: string) {
+export function flushSchemaCache(databaseType: string, connectionString: string) {
   return http.delete<any>('/magic/system/cache/delete?id=' +
-    encodeURIComponent('magic.sql.databases.' + databaseType + '.' + connectionString + '.*'))
-    .catch(() => {});
+    encodeURIComponent('magic.sql.databases.' + databaseType + '.' + connectionString + '.*'));
+}
+
+function bustSchemaCache(databaseType: string, connectionString: string) {
+  return flushSchemaCache(databaseType, connectionString).catch(() => {});
 }
 
 export async function addTable(

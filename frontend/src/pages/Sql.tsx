@@ -17,6 +17,7 @@ import {
   dropTable,
   executeSql,
   exportDdl,
+  flushSchemaCache,
   http,
   listDatabases,
   listFiles,
@@ -80,6 +81,24 @@ export default function Sql() {
     try {
       const response = await listDatabases(type, connectionString);
       setDatabasesMeta(response.databases ?? []);
+    } catch (err: any) {
+      setFeedback({ text: err.message, isError: true });
+    }
+  }
+
+  async function flushCache() {
+    if (!await confirm({
+      title: 'Flush server-side cache?',
+      message: 'This clears the cached database schema on the server, then reloads the ' +
+        'page so the dashboard picks up the fresh schema everywhere. Any unsaved changes ' +
+        'in the editor will be lost.',
+      confirmText: 'Flush and reload',
+    })) {
+      return;
+    }
+    try {
+      await flushSchemaCache(type, connectionString);
+      window.location.reload();
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
     }
@@ -375,6 +394,13 @@ export default function Sql() {
             <span className="spacer" />
             <button className="btn btn-secondary btn-small" onClick={() => setNewTable(true)}>
               + New table
+            </button>
+            <button
+              className="btn btn-secondary btn-small"
+              title="Flush the server-side schema cache and reload"
+              disabled={!connectionString}
+              onClick={flushCache}>
+              Flush cache
             </button>
             <button
               className="btn btn-secondary btn-small"
