@@ -822,10 +822,16 @@ export default function Files() {
                 onChange={e => setSystemFiles(e.target.checked)} />
               Show system files
             </label>
-            <button className="icon-btn" title="New file in /" onClick={() => newFile('/')}>
+            <button
+              className="icon-btn"
+              title={'New file in ' + activeFolder}
+              onClick={() => newFile(activeFolder)}>
               <FilePlusIcon />
             </button>
-            <button className="icon-btn" title="New folder in /" onClick={() => newFolder('/')}>
+            <button
+              className="icon-btn"
+              title={'New folder in ' + activeFolder}
+              onClick={() => newFolder(activeFolder)}>
               <FolderPlusIcon />
             </button>
             <label className="icon-btn" title={'Upload files to ' + activeFolder}>

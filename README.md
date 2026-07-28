@@ -287,16 +287,17 @@ Contributions are welcome - bug reports, feature requests, documentation, and co
 | `plugins/` | The Hyperlambda plugins (C#), many with their own unit-test project. |
 | `docs/` | Long-form guides, such as the DigitalOcean deployment walk-through. |
 | `scripts/` | Helper scripts. |
-| `magic.sln` | The .NET solution tying the backend and plugins together. |
 
 ### Building and testing
 
 ```bash
-# Build the whole .NET solution
-dotnet build magic.sln
+# Run the backend — builds and starts the API on http://localhost:5000
+cd backend
+dotnet run
 
-# Run the backend test suite
-dotnet test magic.sln
+# Run a plugin's unit tests (each plugin's tests live in its *.tests project)
+cd plugins/<plugin>/<plugin>.tests
+dotnet test
 
 # Type-check and build the dashboard
 cd frontend && npm install && npm run build
