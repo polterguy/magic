@@ -1,6 +1,12 @@
 
 # Magic Cloud - Fully Autonomous AI-based Software Development Assistant
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-10-512BD4.svg)](https://dotnet.microsoft.com/)
+[![Dashboard](https://img.shields.io/badge/dashboard-React%20%2B%20Vite-61DAFB.svg)](frontend/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/servergardens/magic-backend.svg)](https://hub.docker.com/r/servergardens/magic-backend)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+
 > Magic is an open-source, self-hostable AI software development platform that generates and runs full-stack business applications and AI agents from natural language.
 
 Magic is built on top of [OpenAI](https://openai.com) and [Hyperlambda](https://ainiro.io/hyperlambda/), a DSL specifically created to solve anything related to backend software development, and to be _"The AI agent programming language"_. Create full stack apps, in an open source environment, resembling Lovable, Bolt, or Replit. Use natural language as input, and host it on your own hardware if you wish.
@@ -8,6 +14,25 @@ Magic is built on top of [OpenAI](https://openai.com) and [Hyperlambda](https://
 No additional _"backend connectors"_ or _"database connectors"_ required - **zero lock-in**. Everything is 100% integrated, thanks to SQLite, with optional MySQL, PostgreSQL, and Microsoft SQL Server capabilities. You can run the whole thing on your own hardware if you wish.
 
 **Note:** The Hyperlambda code generator is currently free. Future pricing: $49 per 1,000 requests (no payment wall today).
+
+## Table of contents
+
+- [Open source "vibe coding" platform](#open-source-vibe-coding-platform)
+- [Getting started](#getting-started)
+- [The LLM that cannot hallucinate functions](#the-llm-that-cannot-hallucinate-functions)
+- [AI agents](#ai-agents)
+- [Also a web server](#also-a-web-server)
+- [MCP support](#mcp-support)
+- [Headless browser](#headless-browser)
+- [Git integration](#git-integration)
+- [Python, terminal, and C# integration](#python-terminal-and-c-integration)
+- [AI chatbots and expert systems](#ai-chatbots-and-expert-systems)
+- [Performance](#performance)
+- [LLM](#llm)
+- [Unique security model](#unique-security-model)
+- [Technology](#technology)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Open Source _"Vibe Coding"_ Platform
 
@@ -75,6 +100,23 @@ volumes:
 Save it somewhere, execute `docker compose up`, visit `localhost:5555`, login with _"root"_ / _"root"_, and configure the system. You can [read more here](https://docs.ainiro.io/getting-started/) for alternatives, such as running the codebase directly on your own machine.
 
 You can also watch me [guide you through the setup process here](https://www.youtube.com/watch?v=k6eSKxc6oM8).
+
+### Run from source
+
+If you want to hack on Magic itself, clone the repo and run the backend and frontend directly. You'll need [.NET 10](https://dotnet.microsoft.com/) and [Node.js](https://nodejs.org/) (latest LTS).
+
+```bash
+# Backend — starts the API on http://localhost:5000
+cd backend
+dotnet run
+
+# Frontend (in a second terminal) — dashboard on http://localhost:4201
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:4201`, and login using `http://localhost:5000` as your backend URL, with _"root"_ / _"root"_.
 
 ### Bring your own OpenAI API key
 
@@ -221,7 +263,7 @@ This makes Hyperlambda uniquely fit for AI agents that need to _"generate tools 
 
 ## Technology
 
-Magic Cloud is built in .Net Core 10, and its dashboard is Angular. Hyperlambda was entirely invented and created by yours truly, and you can find some articles about its unique technology below.
+Magic Cloud is built in .Net Core 10, and its dashboard is a React and Vite single-page application. Hyperlambda was entirely invented and created by yours truly, and you can find some articles about its unique technology below.
 
 * [Make C# more Dynamic with Hyperlambda](https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/june/csharp-make-csharp-more-dynamic-with-hyperlambda)
 * [Active events, one design pattern instead of a dozen](https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/march/patterns-active-events-one-design-pattern-instead-of-a-dozen)
@@ -232,14 +274,46 @@ This design pattern, combined with Hyperlambda, is what facilitates the security
 
 > I'm so confident in the codebase quality, I'll give you $100 if you can find a severe security-related bug in its backend code!
 
+## Contributing
+
+Contributions are welcome - bug reports, feature requests, documentation, and code.
+
+### Repository structure
+
+| Path | What lives here |
+| --- | --- |
+| `backend/` | The ASP.NET Core backend - the API and the Hyperlambda runtime. Entry point is `Program.cs`. |
+| `frontend/` | The dashboard - a React, Vite, and TypeScript single-page app. |
+| `plugins/` | The Hyperlambda plugins (C#), many with their own unit-test project. |
+| `docs/` | Long-form guides, such as the DigitalOcean deployment walk-through. |
+| `scripts/` | Helper scripts. |
+| `magic.sln` | The .NET solution tying the backend and plugins together. |
+
+### Building and testing
+
+```bash
+# Build the whole .NET solution
+dotnet build magic.sln
+
+# Run the backend test suite
+dotnet test magic.sln
+
+# Type-check and build the dashboard
+cd frontend && npm install && npm run build
+```
+
+### Submitting changes
+
+1. Fork the repo and create a feature branch.
+2. Make your change, and make sure `dotnet test` and the frontend build both pass.
+3. Open a pull request with a clear description of what changed and why.
+
+Found a security issue? Please read [SECURITY.md](SECURITY.md) and report it privately, rather than opening a public issue.
+
 ## Maintenance
 
-Magic Cloud and Hyperlambda are developed and maintained by [AINIRO.IO](https://ainiro.io). We offer hosting, support, and software development services on top of Magic Cloud, in addition to delivering AI agents, chatbots, and AI solutions.
+Magic Cloud and Hyperlambda are developed and professionally maintained by [AINIRO.IO](https://ainiro.io), copyright Thomas Hansen 2019 - 2026. We offer hosting, support, and software development services on top of Magic Cloud, in addition to delivering AI agents, chatbots, and AI solutions.
 
 ## License
 
-This project, and all of its satellite projects, is licensed under the terms of the MIT license, as published by the Open Source Initiative. See the LICENSE file for details. For licensing inquiries you can contact Thomas Hansen thomas@ainiro.io.
-
-## Copyright and Maintenance
-
-The project is copyright Thomas Hansen 2019 - 2026, and professionally maintained by [AINIRO.IO](https://ainiro.io).
+This project, and all of its satellite projects, is licensed under the terms of the MIT license, as published by the Open Source Initiative. See the [LICENSE](LICENSE) file for details. For licensing inquiries you can contact Thomas Hansen thomas@ainiro.io.
