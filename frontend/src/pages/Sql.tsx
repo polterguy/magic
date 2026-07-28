@@ -19,6 +19,7 @@ import {
   exportDdl,
   flushSchemaCache,
   http,
+  importCsvFile,
   listDatabases,
   listFiles,
   loadFile,
@@ -99,6 +100,18 @@ export default function Sql() {
     try {
       await flushSchemaCache(type, connectionString);
       window.location.reload();
+    } catch (err: any) {
+      setFeedback({ text: err.message, isError: true });
+    }
+  }
+
+  async function importCsv(file: File) {
+    try {
+      await importCsvFile(type, connectionString, database, file);
+      setFeedback({
+        text: 'Importing ' + file.name + ' — you\'ll be notified when it completes',
+        isError: false,
+      });
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
     }
@@ -395,6 +408,23 @@ export default function Sql() {
             <button className="btn btn-secondary btn-small" onClick={() => setNewTable(true)}>
               + New table
             </button>
+            <label
+              className={'btn btn-secondary btn-small' + (database ? '' : ' disabled')}
+              style={{ cursor: database ? 'pointer' : 'not-allowed' }}
+              title="Create a table from a CSV file, named after the file">
+              Import .csv
+              <input
+                type="file"
+                accept=".csv"
+                disabled={!database}
+                style={{ display: 'none' }}
+                onChange={e => {
+                  if (e.target.files?.[0]) {
+                    importCsv(e.target.files[0]);
+                    e.target.value = '';
+                  }
+                }} />
+            </label>
             <button
               className="btn btn-secondary btn-small"
               title="Flush the server-side schema cache and reload"

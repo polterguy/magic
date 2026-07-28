@@ -478,6 +478,22 @@ export function flushSchemaCache(databaseType: string, connectionString: string)
     encodeURIComponent('magic.sql.databases.' + databaseType + '.' + connectionString + '.*'));
 }
 
+/*
+ * Imports a CSV file, creating a table named after the file with one column per
+ * CSV column. The backend runs the import on a background thread and announces
+ * completion over the magic.backend.message socket, so this resolves as soon as
+ * the import has started, not when it finishes.
+ */
+export function importCsvFile(
+  databaseType: string, connectionString: string, databaseName: string, file: File) {
+  const formData = new FormData();
+  formData.append('databaseType', databaseType);
+  formData.append('connectionString', connectionString);
+  formData.append('databaseName', databaseName);
+  formData.append('file', file, file.name);
+  return http.post<any>('/magic/system/sql/import-csv-file', formData);
+}
+
 function bustSchemaCache(databaseType: string, connectionString: string) {
   return flushSchemaCache(databaseType, connectionString).catch(() => {});
 }

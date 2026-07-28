@@ -248,6 +248,7 @@ h1 {
   font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
   background: var(--accent);
   color: #fff;
   white-space: nowrap;
@@ -898,6 +899,7 @@ pre.result-json {
   background: var(--accent-soft);
   color: var(--accent-dark);
   border-radius: var(--radius-pill);
+  text-decoration: none;
   padding: 3px 12px;
   font-size: var(--text-xs);
   font-weight: 600;
