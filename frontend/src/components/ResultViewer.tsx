@@ -65,10 +65,15 @@ export function downloadBlob(blob: Blob, filename: string) {
 }
 
 export default function ResultViewer(
-  { result, height = '55vh' }: { result: RawResult; height?: string }) {
+  { result, height = '55vh', onText }:
+  { result: RawResult; height?: string; onText?: (text: string | null) => void }) {
 
   const [text, setText] = useState<string | null>(null);
   const [preview, setPreview] = useState(false);
+
+  // Surface the displayed text (null for binaries/images) so a parent can offer
+  // a "Copy response" action without re-reading and re-formatting the blob.
+  useEffect(() => { onText?.(text); }, [text]);
 
   const contentType = result.contentType.split(';')[0].trim().toLowerCase();
   const attachment = result.disposition.includes('attachment');

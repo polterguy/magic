@@ -1283,7 +1283,7 @@ export function createSystemMessage(
 }
 
 export function openaiCompletionSlots() {
-  return http.get<{ slots: string[] }>('/magic/system/openai/completion-slots');
+  return http.get<{ llms: string[] }>('/magic/system/openai/completion-slots');
 }
 
 /*

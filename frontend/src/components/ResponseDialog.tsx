@@ -9,6 +9,7 @@ import { Modal } from './Dialogs';
 import ResultViewer from './ResultViewer';
 import { InvokeResult } from './InvokePanel';
 import { servedByBackend } from '../lib/backend';
+import { copyToClipboard } from '../lib/toast';
 
 export default function ResponseDialog(props: {
   result: InvokeResult;
@@ -18,6 +19,9 @@ export default function ResponseDialog(props: {
 }) {
 
   const { result, onClose } = props;
+  // The displayed body, when textual — null for images/binaries, which have
+  // nothing to copy. Kept here so the Copy button can sit beside Close.
+  const [body, setBody] = useState<string | null>(null);
 
   return (
     <Modal width={860} onClose={onClose}>
@@ -38,8 +42,15 @@ export default function ResponseDialog(props: {
           have sent more.
         </p>
       )}
-      <ResultViewer result={result} height="42vh" />
+      <ResultViewer result={result} height="42vh" onText={setBody} />
       <div className="modal-actions">
+        {body !== null && (
+          <button
+            className="btn btn-secondary"
+            onClick={() => copyToClipboard(body, 'The response')}>
+            Copy response
+          </button>
+        )}
         <button className="btn" onClick={onClose}>Close</button>
       </div>
     </Modal>

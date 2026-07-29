@@ -859,7 +859,9 @@ function EditTypeDialog(props: {
     max_session_items: existing?.max_session_items ?? 15,
     completion_slot: existing?.completion_slot ?? 'magic.ai.chat',
     vector_model: existing?.vector_model ?? 'text-embedding-ada-002',
-    recaptcha: existing?.recaptcha ?? 0,
+    // A null captcha value ("no captcha") is shown as -1, the sentinel the field
+    // maps back to null on save — so the three modes round-trip.
+    recaptcha: existing?.recaptcha ?? -1,
   });
 
   function setField(key: string, value: any) {
@@ -878,7 +880,7 @@ function EditTypeDialog(props: {
       .catch(() => {});
     openaiCompletionSlots()
       .then(response => setCompletionSlots(
-        Array.isArray(response) ? response : response?.slots ?? []))
+        Array.isArray(response) ? response : response?.llms ?? []))
       .catch(() => {});
   }, []);
 
@@ -907,7 +909,9 @@ function EditTypeDialog(props: {
       max_requests: Number(extra.max_requests),
       max_function_invocations: Number(extra.max_function_invocations),
       max_session_items: Number(extra.max_session_items),
-      recaptcha: Number(extra.recaptcha),
+      // Negative is the UI's "no captcha" — persist it as null, which is what
+      // the backend reads as "no captcha".
+      recaptcha: Number(extra.recaptcha) < 0 ? null : Number(extra.recaptcha),
     };
     try {
       if (existing) {
@@ -959,11 +963,15 @@ function EditTypeDialog(props: {
                 value={temperature}
                 onChange={e => setTemperature(e.target.value)} />
             </label>
-            <label>Threshold
+            {/* Threshold only applies to the embeddings search, so it is dead
+                weight when embeddings are off. */}
+            <label style={useEmbeddings ? undefined : { opacity: 0.45 }}>Threshold
               <input
                 type="number"
                 step="0.1"
                 value={threshold}
+                disabled={!useEmbeddings}
+                title={useEmbeddings ? undefined : 'Only used when "Use embeddings" is on'}
                 onChange={e => setThreshold(e.target.value)} />
             </label>
             <label>Max tokens
@@ -972,10 +980,14 @@ function EditTypeDialog(props: {
                 value={maxTokens}
                 onChange={e => setMaxTokens(e.target.value)} />
             </label>
-            <label>Max context tokens
+            {/* Context tokens bound how much retrieved (embedded) material is
+                injected, so it too is irrelevant without embeddings. */}
+            <label style={useEmbeddings ? undefined : { opacity: 0.45 }}>Max context tokens
               <input
                 type="number"
                 value={maxContextTokens}
+                disabled={!useEmbeddings}
+                title={useEmbeddings ? undefined : 'Only used when "Use embeddings" is on'}
                 onChange={e => setMaxContextTokens(e.target.value)} />
             </label>
             <label>Max request tokens
@@ -1094,10 +1106,16 @@ function EditTypeDialog(props: {
                 value={extra.no_requests}
                 onChange={e => setField('no_requests', e.target.value)} />
             </label>
-            <label>reCAPTCHA threshold (0 = off)
+            {/* The single recaptcha value overloads three modes (verified in
+                openai/answer.post.hl): > 0 → Google reCAPTCHA with that minimum
+                score, 0 → Magic's built-in captcha, and null → no captcha. The
+                field uses a negative number as the reachable "no captcha"
+                sentinel, mapped to null on save (and back on load). */}
+            <label>Captcha (&lt;0 none · 0 Magic · &gt;0 reCAPTCHA score)
               <input
                 type="number"
                 step="0.1"
+                title="Below 0: no captcha. 0: Magic's built-in captcha. Above 0: Google reCAPTCHA, using this as the minimum score (0–1)."
                 value={extra.recaptcha}
                 onChange={e => setField('recaptcha', e.target.value)} />
             </label>
@@ -1105,9 +1123,14 @@ function EditTypeDialog(props: {
         </div>
         <div className="form-grid" style={{ display: dialogTab === 'integrations' ? 'flex' : 'none' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <label>Base URL (alternative API)
+            {/* base_url is the site the daily "ainiro-crawl-machine-learning-models"
+                task re-crawls to keep the model's training data fresh — not an
+                LLM API base. */}
+            <label>Auto-crawl URL
               <input
                 type="text"
+                placeholder="https://example.com"
+                title="If set, this site is re-crawled once a day to add new pages to the model"
                 value={extra.base_url}
                 onChange={e => setField('base_url', e.target.value)} />
             </label>
@@ -1119,9 +1142,12 @@ function EditTypeDialog(props: {
                 value={extra.api_key}
                 onChange={e => setField('api_key', e.target.value)} />
             </label>
-            <label>Vector model
+            {/* Only relevant when embeddings are on — it's the model used to
+                vectorise the training snippets. */}
+            <label style={useEmbeddings ? undefined : { opacity: 0.45 }}>Vector model
               <Select
                 value={extra.vector_model}
+                disabled={!useEmbeddings}
                 onChange={value => setField('vector_model', value)}>
                 {!models.some(candidate => candidate.id === extra.vector_model) && (
                   <option value={extra.vector_model}>{extra.vector_model}</option>

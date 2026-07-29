@@ -604,7 +604,13 @@ export default function Files() {
     }
     const newPath = parentOf(path) + name + (isFolder ? '/' : '');
     try {
-      await renamePath(path, newPath);
+      /*
+       * The rename endpoint is asymmetric: for a folder it moves to [newName]
+       * verbatim (needs the full path), but for a file it rebuilds the target as
+       * folder(oldName) + [newName] — so a file must pass ONLY its new bare name,
+       * or the old folder gets concatenated twice into a non-existent path.
+       */
+      await renamePath(path, isFolder ? newPath : name);
       // Remap open files affected by the rename — the file itself, or
       // everything inside a renamed folder.
       const remap = (candidate: string) => isFolder

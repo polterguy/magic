@@ -473,24 +473,37 @@ export default function Sql() {
                     key={column.name}
                     className="col-row"
                     style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, padding: '2px 0' }}>
-                    <span style={{ width: 14 }}>
+                    <span style={{ width: 14, flexShrink: 0 }}>
                       {column.primary ? '🔑' : ''}
                     </span>
-                    <span style={{ flex: 1 }} className={column.primary ? '' : 'muted'}>
+                    <span
+                      style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}
+                      className={column.primary ? '' : 'muted'}>
                       {column.name}
                     </span>
                     <span className="muted mono" style={{ fontSize: 12 }}>
-                      {column.db}{column.nullable ? '' : ' •'}
+                      {column.db}
                     </span>
-                    {!column.primary && (
-                      <button
-                        className="icon-btn danger col-drop"
-                        title="Drop column"
-                        onClick={() => dropColumnConfirmed(table.name, column.name)}
-                        style={{ padding: 2 }}>
-                        <span style={{ fontSize: 12 }}>✕</span>
-                      </button>
-                    )}
+                    {/* Not-null marker in its own fixed slot, so the dots line up. */}
+                    <span
+                      className="mono"
+                      title={column.nullable ? 'Nullable' : 'Not null'}
+                      style={{ width: 8, textAlign: 'center', flexShrink: 0, fontSize: 12, color: 'var(--text-soft)' }}>
+                      {column.nullable ? '' : '•'}
+                    </span>
+                    {/* Drop control always reserves its slot — empty for the primary
+                        key — so every row's type column ends at the same place. */}
+                    <span style={{ width: 18, flexShrink: 0, display: 'inline-flex', justifyContent: 'center' }}>
+                      {!column.primary && (
+                        <button
+                          className="icon-btn danger col-drop"
+                          title="Drop column"
+                          onClick={() => dropColumnConfirmed(table.name, column.name)}
+                          style={{ padding: 2 }}>
+                          <span style={{ fontSize: 12 }}>✕</span>
+                        </button>
+                      )}
+                    </span>
                   </div>
                 ))}
                 {(table.foreign_keys ?? []).length > 0 && (
