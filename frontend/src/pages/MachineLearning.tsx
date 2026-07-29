@@ -1,4 +1,5 @@
 import SearchInput from '../components/SearchInput';
+import Select from '../components/Select';
 import { dispositionFilename, downloadBlob } from '../components/ResultViewer';
 import { copyToClipboard, showToast } from '../lib/toast';
 import Banner from '../components/Banner';
@@ -499,13 +500,13 @@ function ImportDialog(props: {
         {tab === 'upload' && (
           <div className="form-grid">
             <label>File category
-              <select
+              <Select
                 value={category}
-                onChange={e => setCategory(e.target.value as keyof typeof UPLOAD_CATEGORIES)}>
+                onChange={value => setCategory(value as keyof typeof UPLOAD_CATEGORIES)}>
                 {Object.entries(UPLOAD_CATEGORIES).map(([key, value]) => (
                   <option key={key} value={key}>{value.label}</option>
                 ))}
-              </select>
+              </Select>
             </label>
             <p className="muted" style={{ margin: 0, fontSize: 13 }}>
               {UPLOAD_CATEGORIES[category].help}
@@ -718,12 +719,12 @@ function EmbedDialog(props: { type: string; onClose: () => void }) {
       <div style={{ maxHeight: '55vh', overflow: 'auto', paddingRight: 6 }}>
         <div className="form-grid">
             <label>Theme
-              <select value={modernTheme} onChange={e => setModernTheme(e.target.value)}>
+              <Select value={modernTheme} onChange={value => setModernTheme(value)}>
                 {modernThemes.length === 0 && <option value="modern-square">modern-square</option>}
                 {modernThemes.map(theme => (
                   <option key={theme} value={theme}>{theme}</option>
                 ))}
-              </select>
+              </Select>
             </label>
             <label>Header
               <input type="text" value={header} onChange={e => setHeader(e.target.value)} />
@@ -736,18 +737,18 @@ function EmbedDialog(props: { type: string; onClose: () => void }) {
                 <input type="text" value={placeholder} onChange={e => setPlaceholder(e.target.value)} />
               </label>
               <label>Position
-                <select value={position} onChange={e => setPosition(e.target.value)}>
+                <Select value={position} onChange={value => setPosition(value)}>
                   <option value="right">right</option>
                   <option value="left">left</option>
-                </select>
+                </Select>
               </label>
               <label>Animation
-                <select value={animation} onChange={e => setAnimation(e.target.value)}>
+                <Select value={animation} onChange={value => setAnimation(value)}>
                   <option value="none">none</option>
                   <option value="scaleUp">scaleUp</option>
                   <option value="slideInBottom">slideInBottom</option>
                   <option value="fadeIn">fadeIn</option>
-                </select>
+                </Select>
               </label>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10 }}>
@@ -939,7 +940,7 @@ function EditTypeDialog(props: {
             </label>
           )}
           <label>Model
-            <select value={model} onChange={e => setModel(e.target.value)}>
+            <Select value={model} onChange={value => setModel(value)}>
               <option value="">Select model…</option>
               {model && !models.some(candidate => candidate.id === model) && (
                 <option value={model}>{model}</option>
@@ -947,7 +948,7 @@ function EditTypeDialog(props: {
               {models.map(candidate => (
                 <option key={candidate.id} value={candidate.id}>{candidate.id}</option>
               ))}
-            </select>
+            </Select>
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             <label>Temperature
@@ -1057,16 +1058,16 @@ function EditTypeDialog(props: {
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             <label>Completion slot
-              <select
+              <Select
                 value={extra.completion_slot}
-                onChange={e => setField('completion_slot', e.target.value)}>
+                onChange={value => setField('completion_slot', value)}>
                 {!completionSlots.includes(extra.completion_slot) && (
                   <option value={extra.completion_slot}>{extra.completion_slot}</option>
                 )}
                 {completionSlots.map(slot => (
                   <option key={slot} value={slot}>{slot}</option>
                 ))}
-              </select>
+              </Select>
             </label>
             <label>Max requests (-1 = unlimited)
               <input
@@ -1118,9 +1119,9 @@ function EditTypeDialog(props: {
                 onChange={e => setField('api_key', e.target.value)} />
             </label>
             <label>Vector model
-              <select
+              <Select
                 value={extra.vector_model}
-                onChange={e => setField('vector_model', e.target.value)}>
+                onChange={value => setField('vector_model', value)}>
                 {!models.some(candidate => candidate.id === extra.vector_model) && (
                   <option value={extra.vector_model}>{extra.vector_model}</option>
                 )}
@@ -1129,7 +1130,7 @@ function EditTypeDialog(props: {
                   .map(candidate => (
                     <option key={candidate.id} value={candidate.id}>{candidate.id}</option>
                   ))}
-              </select>
+              </Select>
             </label>
           </div>
         </div>
@@ -1144,10 +1145,10 @@ function EditTypeDialog(props: {
             <h2 style={{ margin: 0, flex: 1 }}>
               System instruction — {type || 'new model'}
             </h2>
-            <select
+            <Select
               value=""
-              onChange={e => {
-                const flavor = flavors.find(candidate => candidate.name === e.target.value);
+              onChange={value => {
+                const flavor = flavors.find(candidate => candidate.name === value);
                 if (!flavor?.prefix) {
                   return;
                 }
@@ -1183,7 +1184,7 @@ function EditTypeDialog(props: {
               {flavors.map(flavor => (
                 <option key={flavor.name} value={flavor.name}>{flavor.name}</option>
               ))}
-            </select>
+            </Select>
           </div>
           <div style={{ height: '65vh', display: 'flex', flexDirection: 'column' }}>
             <CodeEditor
@@ -1572,11 +1573,11 @@ function TrainingTab(props: {
   return (
     <>
       <div className="toolbar">
-        <select value={type} onChange={e => { setType(e.target.value); setPage(0); }}>
+        <Select value={type} onChange={value => { setType(value); setPage(0); }}>
           {props.types.map(candidate => (
             <option key={candidate.type} value={candidate.type}>{candidate.type}</option>
           ))}
-        </select>
+        </Select>
         <SearchInput
           placeholder={vectorSearch ? 'Search meaning…' : 'Filter prompts…'}
           value={filter}
@@ -1947,11 +1948,11 @@ function HistoryTab(props: {
   return (
     <>
       <div className="toolbar">
-        <select value={type} onChange={e => { setType(e.target.value); setPage(0); }}>
+        <Select value={type} onChange={value => { setType(value); setPage(0); }}>
           {props.types.map(candidate => (
             <option key={candidate.type} value={candidate.type}>{candidate.type}</option>
           ))}
-        </select>
+        </Select>
         <span className="spacer" />
         <button
           className="btn btn-secondary btn-small"

@@ -5,23 +5,27 @@
  */
 
 :root {
-  --accent: #5f38f9;
-  --accent-dark: #4527be;
-  --accent-soft: #efeafe;
-  --bg: #f4f4f8;
-  --surface: #ffffff;
-  --text: #1e1e28;
   /*
-   * Muted text, dark enough to still be text. The old #6a6a78 cleared the
-   * 4.5:1 contrast minimum by a hair, and it is used at 12-13px where that
-   * margin disappears on a dim screen.
+   * Terminal / brutalist theme, grounded in hyperlambda.dev — violet on a
+   * near-black violet-tinted canvas, monospace-first, hard edges, visible
+   * borders instead of soft shadows.
    */
-  --text-soft: #5c5c6a;
-  --border: #e2e2ea;
-  --danger: #d64550;
-  --ok: #2e9e5b;
-  --sidebar-bg: #17141f;
-  --sidebar-text: #b8b3c7;
+  --accent: #7c5cff;
+  --accent-dark: #5f38f9;
+  --accent-soft: rgba(124, 92, 255, 0.16);
+  --bg: #0b0910;
+  --surface: #14111d;
+  /* Slightly lifted surface for inputs and elevated blocks. */
+  --surface-2: #1c1728;
+  --text: #e9e7f3;
+  /* Muted text — still clears 4.5:1 on the dark canvas. */
+  --text-soft: #968faa;
+  --border: #2b2440;
+  --border-strong: #3d3557;
+  --danger: #ff5d6a;
+  --ok: #35d07f;
+  --sidebar-bg: #08060d;
+  --sidebar-text: #8b83a0;
 
   /*
    * The type scale. Seven steps and nothing between them - this file used to
@@ -36,12 +40,27 @@
   --text-xl: 22px;
   --text-display: 32px;
 
-  /* Corners: small controls, everything else, dialogs, and pills. */
-  --radius-sm: 6px;
-  --radius: 10px;
-  --radius-lg: 16px;
-  --radius-pill: 999px;
-  --shadow: 0 1px 3px rgba(20, 16, 41, 0.08), 0 4px 16px rgba(20, 16, 41, 0.06);
+  /* Brutalist corners — near-square, hard edges. */
+  --radius-sm: 2px;
+  --radius: 3px;
+  --radius-lg: 4px;
+  --radius-pill: 3px;
+  /* Borders carry structure here, not shadows. Hard offset for accents only. */
+  --shadow: none;
+  --shadow-hard: 4px 4px 0 rgba(124, 92, 255, 0.25);
+
+  /* Monospace-first: the terminal voice. Sans kept for long-form prose. */
+  --font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /*
+   * Render native browser UI dark: the datetime-local calendar popup and its
+   * picker icon, scrollbars, and dropdowns. Without this they render as a
+   * white OS control on the dark canvas. accent-color tints the selected day
+   * and native controls violet instead of the browser-default blue.
+   */
+  color-scheme: dark;
+  accent-color: var(--accent);
 }
 
 * { box-sizing: border-box; }
@@ -52,10 +71,11 @@ html, body, #root {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-mono);
   font-size: var(--text-base);
   color: var(--text);
   background: var(--bg);
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ---------- Shell ---------- */
@@ -120,6 +140,10 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* Bracket the wordmark: reads as "[ magic ]" — the hyperlambda.dev signature. */
+.brand-magic::before { content: '['; color: var(--accent); margin-right: 5px; }
+.brand-magic::after { content: ']'; color: var(--accent); margin-left: 5px; }
+
 .brand-version {
   font-size: var(--text-xs);
   opacity: 0.6;
@@ -145,18 +169,23 @@ body {
   gap: 10px;
   padding: 9px 10px;
   border-radius: var(--radius);
+  border-left: 2px solid transparent;
   color: var(--sidebar-text);
   text-decoration: none;
   font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   color: #fff;
 }
 
+/* Selected item — a hard accent bar and a violet-tinted block, like a
+   highlighted line in a terminal file picker. */
 .nav-link.active {
-  background: var(--accent);
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
   color: #fff;
 }
 
@@ -212,10 +241,19 @@ body {
 h1 {
   font-size: var(--text-xl);
   margin: 0 0 4px 0;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .page-header {
   margin-bottom: 20px;
+}
+
+/* Terminal prompt in front of every page title: reads as "~/ dashboard". */
+.page-header h1::before {
+  content: '~/ ';
+  color: var(--accent);
+  font-weight: 500;
 }
 
 .page-header p {
@@ -223,10 +261,24 @@ h1 {
   color: var(--text-soft);
 }
 
+/*
+ * Hyperlinks: no underline anywhere. The accent colour carries the "this is a
+ * link" affordance instead. Component classes (.btn, .nav-link, .chip, …) set
+ * their own colour and win on specificity, so this only touches plain links.
+ */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-dark);
+}
+
 .card {
   background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
   padding: 20px;
 }
 
@@ -242,11 +294,13 @@ h1 {
 
 /* inline-flex so a button can carry an icon beside its label. */
 .btn {
-  border: none;
+  border: 1px solid var(--accent);
   border-radius: var(--radius);
   padding: 8px 16px;
-  font-size: var(--text-base);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   font-weight: 600;
+  letter-spacing: 0.3px;
   cursor: pointer;
   text-decoration: none;
   background: var(--accent);
@@ -256,6 +310,7 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 6px;
+  transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.06s;
 }
 
 .btn svg {
@@ -269,28 +324,37 @@ h1 {
   height: 13px;
 }
 
-.btn:hover { background: var(--accent-dark); }
+.btn:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+.btn:active { transform: translateY(1px); }
 
 /* The class covers labels acting as buttons, which can't be :disabled. */
 .btn:disabled, .btn.disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: default;
   pointer-events: none;
 }
 
+/* Secondary — outlined, transparent, inverts to a violet tint on hover. */
 .btn-secondary {
-  background: var(--accent-soft);
-  color: var(--accent-dark);
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--text);
 }
 
-.btn-secondary:hover { background: #e2d8fd; }
-
-.btn-danger {
-  background: var(--danger);
+.btn-secondary:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
   color: #fff;
 }
 
-.btn-danger:hover { filter: brightness(0.9); }
+.btn-danger {
+  background: transparent;
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn-danger:hover { background: var(--danger); color: #fff; }
 
 .btn-ghost {
   background: transparent;
@@ -322,9 +386,24 @@ textarea {
   padding: 8px 12px;
   font-size: var(--text-base);
   font-family: inherit;
-  background: var(--surface);
+  background: var(--surface-2);
   color: var(--text);
 }
+
+/* No focus ring (removed globally), so the border carries the focus signal. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent);
+}
+
+/* Native controls (checkboxes, date pickers) render in the accent, not white. */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+::placeholder { color: var(--text-soft); opacity: 0.7; }
 
 /*
  * Secrets that belong to someone or something else — API keys, SMTP
@@ -346,6 +425,91 @@ textarea {
 *:focus-visible {
   outline: none;
 }
+
+/* ---------- Custom select (replaces the un-themable native one) ---------- */
+
+.select {
+  position: relative;
+  display: inline-block;
+}
+
+.select-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  cursor: pointer;
+  text-align: left;
+}
+
+.select-trigger:hover { border-color: var(--border-strong); }
+.select-trigger[aria-expanded="true"] { border-color: var(--accent); }
+
+.select.disabled .select-trigger {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+.select-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-caret {
+  color: var(--text-soft);
+  font-size: 0.8em;
+  flex-shrink: 0;
+}
+
+.select-menu {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  background: #0c0a14;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  max-height: 320px;
+  overflow-y: auto;
+  /* Above modals (100) and CodeMirror hints (2000000). */
+  z-index: 2000002;
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+}
+
+.select-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.select-option.active { background: var(--accent-soft); }
+.select-option.selected { color: var(--accent); }
+.select-option.disabled { opacity: 0.4; cursor: default; }
+
+.select-check {
+  display: inline-block;
+  width: 1em;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.select-option-label { flex: 1; }
 
 /* ---------- Tabs ---------- */
 
@@ -369,11 +533,11 @@ textarea {
 }
 
 .tab:hover {
-  color: var(--accent-dark);
+  color: var(--text);
 }
 
 .tab.active {
-  color: var(--accent-dark);
+  color: var(--accent);
   border-bottom-color: var(--accent);
 }
 
@@ -416,23 +580,24 @@ tr.clickable:hover td { background: var(--accent-soft); }
   text-transform: uppercase;
 }
 
-.badge-get { background: #e3f2e9; color: #23744a; }
-.badge-post { background: #e7effd; color: #2a5bbf; }
-.badge-put { background: #fdf3e0; color: #9a6a12; }
-.badge-delete { background: #fbeaec; color: #b23440; }
-.badge-patch { background: #f2e8fd; color: #6d2fbf; }
-.badge-error, .badge-fatal { background: #fbeaec; color: #b23440; }
-.badge-info { background: #e7effd; color: #2a5bbf; }
-.badge-debug { background: #eee; color: #666; }
+/* Verb / log-level badges — translucent tints on the dark canvas, bordered. */
+.badge-get { background: rgba(53, 208, 127, 0.14); color: #5fe0a0; }
+.badge-post { background: rgba(85, 150, 255, 0.16); color: #7fb2ff; }
+.badge-put { background: rgba(240, 175, 60, 0.16); color: #f0b13c; }
+.badge-delete { background: rgba(255, 93, 106, 0.16); color: #ff8a93; }
+.badge-patch { background: rgba(124, 92, 255, 0.18); color: #b7a5ff; }
+.badge-error, .badge-fatal { background: rgba(255, 93, 106, 0.16); color: #ff8a93; }
+.badge-info { background: rgba(85, 150, 255, 0.16); color: #7fb2ff; }
+.badge-debug { background: rgba(255, 255, 255, 0.08); color: var(--text-soft); }
 
 /*
  * State, as opposed to the verb and log-level badges above. They happen to
  * share colours today, but borrowing badge-get to mean "connected" tied the
  * two together for whoever next changes the verb palette.
  */
-.badge-ok { background: #e3f2e9; color: #23744a; }
+.badge-ok { background: rgba(53, 208, 127, 0.14); color: #5fe0a0; }
 
-.badge-idle { background: #eee; color: #666; }
+.badge-idle { background: rgba(255, 255, 255, 0.08); color: var(--text-soft); }
 
 /* ---------- Login ---------- */
 
@@ -469,22 +634,25 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .error-box {
-  background: #fbeaec;
-  color: #b23440;
+  background: rgba(255, 93, 106, 0.12);
+  border: 1px solid rgba(255, 93, 106, 0.4);
+  color: #ff8a93;
   border-radius: var(--radius);
   padding: 10px 14px;
 }
 
 .success-box {
-  background: #e3f2e9;
-  color: #23744a;
+  background: rgba(53, 208, 127, 0.12);
+  border: 1px solid rgba(53, 208, 127, 0.4);
+  color: #5fe0a0;
   border-radius: var(--radius);
   padding: 10px 14px;
 }
 
 .info-box {
   background: var(--accent-soft);
-  color: var(--accent-dark);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
   border-radius: var(--radius);
   padding: 10px 14px;
 }
@@ -589,8 +757,8 @@ tr.clickable:hover td { background: var(--accent-soft); }
   flex-shrink: 0;
   overflow: auto;
   background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
   padding: 12px;
 }
 
@@ -727,7 +895,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .icon-btn.danger:hover {
-  background: #fbeaec;
+  background: rgba(255, 93, 106, 0.16);
   color: var(--danger);
 }
 
@@ -740,31 +908,78 @@ tr.clickable:hover td { background: var(--accent-soft); }
 
 /* ---------- Dashboard ---------- */
 
+/*
+ * Terminal status strip: the five counts sit in one bordered bar, divided by
+ * hairlines like columns in a readout, rather than five floating metric cards.
+ * Still a responsive grid, so it wraps to 2-3 columns on narrow screens.
+ */
 .kpi-grid {
   display: grid;
-  /* All five KPI cards share the row equally and fill the available width. */
   grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  gap: 0;
   margin-bottom: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  /*
+   * No overflow:hidden here — this strip is a flex-column child, and a
+   * non-visible overflow makes its min-height:auto compute to 0, so flex
+   * collapses the whole strip to its borders and clips the cells.
+   */
+  flex-shrink: 0;
 }
 
+/* The card wrapper per cell — flat, divided by a left hairline. */
+.kpi-grid > .card {
+  border: none;
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  padding: 16px 18px;
+}
+
+.kpi-grid > .card:first-child { border-left: none; }
+
 .kpi-value {
-  font-size: var(--text-display);
+  font-size: var(--text-xl);
   font-weight: 700;
-  color: var(--accent-dark);
+  color: var(--accent);
+  letter-spacing: -0.5px;
   /* Same-width digits, so a row of counts lines up instead of drifting. */
   font-variant-numeric: tabular-nums;
 }
 
 .kpi-label {
   color: var(--text-soft);
-  font-weight: 600;
-  margin-top: 4px;
+  font-weight: 500;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 6px;
 }
 
 /* ---------- Misc ---------- */
 
 .muted { color: var(--text-soft); }
+
+/*
+ * Log "When" cell: the timestamp and its expand caret travel together as one
+ * unit. The caret trails the date, so it never shifts the timestamps out of
+ * column alignment on desktop, and on the phone card it rides on the right
+ * with the date instead of being flung to the middle by space-between.
+ */
+.log-when {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+/* Expand caret — only shown on rows that carry a stack trace. */
+.log-caret {
+  color: var(--accent);
+  font-size: var(--text-xs);
+  flex-shrink: 0;
+}
 
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -802,6 +1017,7 @@ pre.result-json {
 
 .modal-box {
   background: var(--surface);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   padding: 26px 28px;
   width: fit-content;
@@ -810,7 +1026,7 @@ pre.result-json {
   /* Long content scrolls inside the dialog rather than off the screen. */
   max-height: 88vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
 }
 
 .modal-box h2 {
@@ -897,7 +1113,8 @@ pre.result-json {
   align-items: center;
   gap: 6px;
   background: var(--accent-soft);
-  color: var(--accent-dark);
+  border: 1px solid var(--border-strong);
+  color: var(--accent);
   border-radius: var(--radius-pill);
   text-decoration: none;
   padding: 3px 12px;
@@ -913,6 +1130,18 @@ pre.result-json {
   cursor: pointer;
   font-size: var(--text-sm);
   padding: 0;
+}
+
+/*
+ * Keeps a set of role chips clustered together (right-aligned) as one unit,
+ * rather than each chip becoming its own space-between item when the row
+ * turns into a flex card on phones.
+ */
+.role-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
 }
 
 .line-clamp {
@@ -995,7 +1224,7 @@ pre.result-json {
 /* The open file, in the same soft accent as the secondary buttons. */
 .file-tab.active {
   background: var(--accent-soft);
-  color: var(--accent-dark);
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -1024,7 +1253,7 @@ pre.result-json {
 }
 
 .file-tab-close:hover {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Global notifications pushed from the backend over the socket channel —
@@ -1045,18 +1274,34 @@ pre.result-json {
   align-items: center;
   gap: 10px;
   max-width: 420px;
-  padding: 12px 14px 12px 18px;
+  padding: 12px 14px 12px 14px;
   border-radius: var(--radius);
-  background: var(--ok);
-  color: #fff;
-  font-weight: 600;
-  font-size: var(--text-base);
-  box-shadow: 0 8px 30px rgba(20, 16, 41, 0.3);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--ok);
+  color: var(--text);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   animation: toast-in 0.18s ease-out;
 }
 
+/* Mono status tag in the status colour: "ok" / "err". */
+.toast::before {
+  content: 'ok';
+  color: var(--ok);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .toast.error {
-  background: var(--danger);
+  border-left-color: var(--danger);
+}
+
+.toast.error::before {
+  content: 'err';
+  color: var(--danger);
 }
 
 .toast-close {
@@ -1077,7 +1322,7 @@ pre.result-json {
 }
 
 .toast-close:hover {
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 @keyframes toast-in {
@@ -1111,7 +1356,7 @@ pre.result-json {
 }
 
 .banner-close:hover {
-  background: rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* Full-screen waiter shown while the AI generates code — bouncing dots,
@@ -1150,6 +1395,14 @@ pre.result-json {
   }
 }
 
+/*
+ * Verb badge cell on the Endpoints screen. 38px left padding lines the verb up
+ * under the module name above it (module-header padding 16 + chevron 12 + gap
+ * 10). On phones the card's `.content td` padding out-specifies this, so the
+ * badge stays at the card's left edge there.
+ */
+.verb-cell { padding-left: 38px; }
+
 /* Collapsible module sections on the Endpoints screen. */
 .module-header {
   display: flex;
@@ -1178,23 +1431,48 @@ pre.result-json {
 /* CodeMirror renders its autocomplete popup into document.body at z-index 10,
    which puts it behind modals — lift it above every layer we use. */
 .CodeMirror-hints {
-  /* Far above any modal, whose z-index climbs as dialogs stack. */
+  /* Far above any modal, whose z-index climbs as dialogs stack.
+     Visual styling lives in ainiro.css so it loads after show-hint.css. */
   z-index: 2000000;
 }
 
-/* Dashboard prompt for installing the AI-agent plugins. */
+/* Dashboard hero — the "this cloudlet is an AI agent" / MCP block. The most
+   differentiating thing Magic does, so it reads as the anchor: violet-tinted
+   surface, a thick accent bar, and a hard offset shadow. */
 .agent-prompt {
   display: flex;
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+  border: 1px solid var(--border-strong);
   border-left: 4px solid var(--accent);
+  background:
+    linear-gradient(90deg, var(--accent-soft), transparent 60%),
+    var(--surface);
+  box-shadow: var(--shadow-hard);
+}
+
+/* The MCP URL, rendered as a terminal command line with a $ prompt. */
+.agent-prompt .mono {
+  display: block;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: #0a0810;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+}
+
+.agent-prompt .mono::before {
+  content: '$ ';
+  color: var(--accent);
+  font-weight: 700;
 }
 
 .btn-large {
   padding: 14px 28px;
-  font-size: var(--text-md);
+  font-size: var(--text-base);
 }
 
 /* Linked guide to the dashboard's sections, on the Welcome card. */
@@ -1279,7 +1557,7 @@ button.guide-card {
   height: 34px;
   border-radius: var(--radius);
   background: var(--accent-soft);
-  color: var(--accent-dark);
+  color: var(--accent);
   font-size: var(--text-md);
 }
 
@@ -1303,11 +1581,11 @@ button.guide-card {
 /* Vector-search results, coloured by whether they'd reach the model's
    context — the model's threshold decides where that line falls. */
 tr.vss-relevant td {
-  color: #305030;
+  color: #5fe0a0;
 }
 
 tr.vss-irrelevant td {
-  color: #909090;
+  color: #7a7488;
 }
 
 /* Filter box with a clear button, shown once there's text to clear. */
@@ -1451,9 +1729,9 @@ tr.vss-irrelevant td {
   max-height: 240px;
   overflow-y: auto;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   padding: 4px;
 }
 
@@ -1497,7 +1775,7 @@ tr.vss-irrelevant td {
 }
 
 .link-like:hover {
-  text-decoration: underline;
+  color: var(--accent);
 }
 
 .forgot-box {
@@ -1689,6 +1967,14 @@ tr.vss-irrelevant td {
   .page-header { flex-wrap: wrap; }
   .page-header > *:first-child { flex-basis: 100%; }
   .page-header > span[style*="flex: 1"] { display: none; }
+  /*
+   * Phones: drop the page title and its subtitle to reclaim vertical space.
+   * Descendant selectors so this works whether they sit directly in the
+   * header or inside a wrapper div — and header controls (buttons, path,
+   * filters) are left untouched.
+   */
+  .page-header h1,
+  .page-header p { display: none; }
 
   /*
    * Hyper IDE header on a phone: hide the (variable-length) file path that made
@@ -1761,6 +2047,13 @@ tr.vss-irrelevant td {
     text-align: left;
     white-space: nowrap;
   }
+  /*
+   * Cells with no data-label (the card title, the actions cell) still generate
+   * an empty ::before, and the flex gap then indents their content past the
+   * labelled rows. Drop the pseudo entirely so e.g. the database name lines up
+   * with the "Tables" label beneath it.
+   */
+  .content td:not([data-label])::before { content: none; }
   /* First cell is the card title; last unlabelled cell holds the actions. */
   .content td:first-child { font-size: var(--text-md); padding-top: 3px; }
   .content td:not([data-label]) { justify-content: flex-start; text-align: left; }
@@ -1769,6 +2062,9 @@ tr.vss-irrelevant td {
     flex-wrap: wrap;
     padding-top: 8px;
   }
+  /* Log's rightmost caret cell: on non-expandable rows it's empty, so drop it
+     from the phone card instead of leaving a blank line. */
+  .content td.log-caret-cell:empty { display: none; }
   /* Full-width detail rows (log/history/endpoint expansions) are plain blocks. */
   .content td[colspan] { display: block; text-align: left; }
   .content td[colspan]::before { content: none; }

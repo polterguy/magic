@@ -1,4 +1,5 @@
 import { copyToClipboard, showToast } from '../lib/toast';
+import Select from '../components/Select';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -399,11 +400,11 @@ function ExternalTab() {
   return (
     <>
       <div className="toolbar">
-        <select value={type} onChange={e => setType(e.target.value)}>
+        <Select value={type} onChange={value => setType(value)}>
           {EXTERNAL_TYPES.map(entry => (
             <option key={entry.type} value={entry.type}>{entry.name}</option>
           ))}
-        </select>
+        </Select>
         <input
           type="text"
           placeholder="Name…"

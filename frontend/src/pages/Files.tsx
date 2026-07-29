@@ -1,4 +1,5 @@
 import SearchInput from '../components/SearchInput';
+import Select from '../components/Select';
 import { copyToClipboard, showToast } from '../lib/toast';
 import { explainHyperlambda } from '../lib/support';
 import Banner from '../components/Banner';
@@ -98,11 +99,11 @@ function SelectModelDialog(props: {
       {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
       <label className="modal-label">
         Model
-        <select value={type} onChange={e => setType(e.target.value)}>
+        <Select value={type} onChange={value => setType(value)}>
           {types.map(candidate => (
             <option key={candidate.type} value={candidate.type}>{candidate.type}</option>
           ))}
-        </select>
+        </Select>
       </label>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>

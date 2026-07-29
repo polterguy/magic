@@ -1,4 +1,5 @@
 import { showToast } from '../lib/toast';
+import Select from '../components/Select';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronIcon } from '../components/Icons';
 import { useSearchParams } from 'react-router-dom';
@@ -288,23 +289,23 @@ function useDatabaseSelection() {
 function DatabaseSelectors({ selection }: { selection: any }) {
   return (
     <>
-      <select value={selection.type} onChange={e => selection.setType(e.target.value)}>
+      <Select value={selection.type} onChange={value => selection.setType(value)}>
         {selection.types.map((option: string) => (
           <option key={option} value={option}>{option}</option>
         ))}
-      </select>
-      <select
+      </Select>
+      <Select
         value={selection.connectionString}
-        onChange={e => selection.setConnectionString(e.target.value)}>
+        onChange={value => selection.setConnectionString(value)}>
         {selection.connectionStrings.map((option: string) => (
           <option key={option} value={option}>{option}</option>
         ))}
-      </select>
-      <select value={selection.database} onChange={e => selection.setDatabase(e.target.value)}>
+      </Select>
+      <Select value={selection.database} onChange={value => selection.setDatabase(value)}>
         {selection.databasesMeta.map((db: any) => (
           <option key={db.name} value={db.name}>{db.name}</option>
         ))}
-      </select>
+      </Select>
       {selection.type && selection.connectionStrings.length === 0 && (
         <span className="muted">
           No connection strings configured for {selection.type}.
@@ -566,7 +567,12 @@ function CrudTab() {
                   </tr>
                   {expandedTables.has(table.name) && (
                     <tr>
-                      <td colSpan={3} style={{ padding: '4px 14px 12px 46px' }}>
+                      {/*
+                        * 80px left padding lines the column names up directly
+                        * under the table name above: 40px checkbox column +
+                        * cell padding + the expand chevron and its gap.
+                        */}
+                      <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
                         {(table.columns ?? []).map((column: any) => (
                           <div
                             key={column.name}
@@ -853,11 +859,11 @@ function SqlEndpointTab() {
       )}
       <div className="toolbar">
         <DatabaseSelectors selection={selection} />
-        <select value={verb} onChange={e => setVerb(e.target.value)}>
+        <Select value={verb} onChange={value => setVerb(value)}>
           {['get', 'post', 'put', 'delete', 'patch'].map(option => (
             <option key={option} value={option}>{option.toUpperCase()}</option>
           ))}
-        </select>
+        </Select>
         <input
           type="text"
           placeholder="Module name…"
@@ -897,14 +903,14 @@ function SqlEndpointTab() {
               onChange={e => setArgs(args.map((candidate, i) =>
                 i === index ? { ...candidate, name: e.target.value } : candidate))}
               style={{ width: 120 }} />
-            <select
+            <Select
               value={argument.type}
-              onChange={e => setArgs(args.map((candidate, i) =>
-                i === index ? { ...candidate, type: e.target.value } : candidate))}>
+              onChange={value => setArgs(args.map((candidate, i) =>
+                i === index ? { ...candidate, type: value } : candidate))}>
               {['string', 'long', 'int', 'decimal', 'double', 'bool', 'date'].map(type => (
                 <option key={type} value={type}>{type}</option>
               ))}
-            </select>
+            </Select>
             <button
               className="btn btn-danger btn-small"
               onClick={() => setArgs(args.filter((_, i) => i !== index))}>

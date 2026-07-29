@@ -1,4 +1,5 @@
 import { showToast } from '../lib/toast';
+import Select from '../components/Select';
 import SearchInput from '../components/SearchInput';
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
@@ -438,16 +439,16 @@ function ScheduleDialog(props: {
         </label>
         {mode === 'repeat' && (
           <div style={{ display: 'flex', gap: 8 }}>
-            <select value={number} onChange={e => setNumber(Number(e.target.value))}>
+            <Select value={String(number)} onChange={value => setNumber(Number(value))}>
               {REPEAT_NUMBERS.map(option => (
                 <option key={option} value={option}>{option}</option>
               ))}
-            </select>
-            <select value={period} onChange={e => setPeriod(e.target.value)}>
+            </Select>
+            <Select value={period} onChange={value => setPeriod(value)}>
               {REPEAT_PERIODS.map(option => (
                 <option key={option} value={option}>{option}</option>
               ))}
-            </select>
+            </Select>
           </div>
         )}
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>

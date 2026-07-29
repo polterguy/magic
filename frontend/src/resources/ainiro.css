@@ -1,38 +1,64 @@
 /****************************************************************/
-/*   Based on ainironaci's Brackets ainiro theme                      */
-/*   https://github.com/ainironaci/global/blob/master/ainiro.tmTheme  */
-/*   Create your own: http://tmtheme-editor.herokuapp.com       */
+/*   Magic "ainiro" CodeMirror theme — terminal / brutalist.    */
+/*   Violet-black canvas, violet keywords, green strings, amber  */
+/*   numbers, blue properties, coral types. Tuned to match the   */
+/*   dashboard's dark terminal look and feel.                    */
 /****************************************************************/
 
-.cm-s-ainiro.CodeMirror { background: #2c2c2c; color: #ffffec; }
-.cm-s-ainiro div.CodeMirror-selected { background: #716C62; }
-.cm-s-ainiro .CodeMirror-line::selection, .cm-s-ainiro .CodeMirror-line > span::selection, .cm-s-ainiro .CodeMirror-line > span > span::selection { background: rgba(113, 108, 98, .99); }
-.cm-s-ainiro .CodeMirror-line::-moz-selection, .cm-s-ainiro .CodeMirror-line > span::-moz-selection, .cm-s-ainiro .CodeMirror-line > span > span::-moz-selection { background: rgba(113, 108, 98, .99); }
-.cm-s-ainiro .CodeMirror-gutters { background: #4e4e4e; border-right: 0px; }
-.cm-s-ainiro .CodeMirror-guttermarker { color: white; }
-.cm-s-ainiro .CodeMirror-guttermarker-subtle { color: grey; }
-.cm-s-ainiro .CodeMirror-linenumber { color: #dadada; }
-.cm-s-ainiro .CodeMirror-cursor { border-left: 1px solid #ffffec; }
+.cm-s-ainiro.CodeMirror { background: #0c0a14; color: #d9d5e8; }
+.cm-s-ainiro div.CodeMirror-selected { background: rgba(124, 92, 255, 0.22); }
+.cm-s-ainiro .CodeMirror-line::selection, .cm-s-ainiro .CodeMirror-line > span::selection, .cm-s-ainiro .CodeMirror-line > span > span::selection { background: rgba(124, 92, 255, 0.22); }
+.cm-s-ainiro .CodeMirror-line::-moz-selection, .cm-s-ainiro .CodeMirror-line > span::-moz-selection, .cm-s-ainiro .CodeMirror-line > span > span::-moz-selection { background: rgba(124, 92, 255, 0.22); }
+.cm-s-ainiro .CodeMirror-gutters { background: #0c0a14; border-right: 1px solid #221c33; }
+.cm-s-ainiro .CodeMirror-guttermarker { color: #7c5cff; }
+.cm-s-ainiro .CodeMirror-guttermarker-subtle { color: #565073; }
+.cm-s-ainiro .CodeMirror-linenumber { color: #565073; }
+.cm-s-ainiro .CodeMirror-cursor { border-left: 2px solid #7c5cff; }
 
-.cm-s-ainiro span.cm-comment { color: #95958a; }
-.cm-s-ainiro span.cm-atom { color: #00a8c6; }
-.cm-s-ainiro span.cm-number { color: #00a8c6; }
+.cm-s-ainiro span.cm-comment { color: #6f6885; font-style: italic; }
+.cm-s-ainiro span.cm-atom { color: #f0b13c; }
+.cm-s-ainiro span.cm-number { color: #f0b13c; }
 
-.cm-s-ainiro span.cm-property, .cm-s-ainiro span.cm-attribute { color: #9ddfe9; }
-.cm-s-ainiro span.cm-keyword { color: #ffb928; }
-.cm-s-ainiro span.cm-string { color: #9ddfe9; }
-.cm-s-ainiro span.cm-string.cm-property { color: #ffffec; }
+.cm-s-ainiro span.cm-property, .cm-s-ainiro span.cm-attribute { color: #8fb8ff; }
+/* Non-dotted slots ([if], [add], [while]) — the important control keywords: yellow. */
+.cm-s-ainiro span.cm-keyword { color: #f5c451; }
+.cm-s-ainiro span.cm-string { color: #5fe0a0; }
+.cm-s-ainiro span.cm-string.cm-property { color: #d9d5e8; }
 
-.cm-s-ainiro span.cm-type { color: #fffffc; }
-.cm-s-ainiro span.cm-variable { color: #00a8c6; }
-.cm-s-ainiro span.cm-variable-2 { color: #ffb928; }
-.cm-s-ainiro span.cm-def { color: #00c6a8; }
-.cm-s-ainiro span.cm-bracket { color: #fffffc; font-weight: bold; }
-.cm-s-ainiro span.cm-tag { color: #9ddfe9; }
-.cm-s-ainiro span.cm-link { color: #f54b07; }
-.cm-s-ainiro span.cm-error { color: #ff0000; }
-.cm-s-ainiro span.cm-qualifier { color: #ffffec; }
+.cm-s-ainiro span.cm-type { color: #ff9aa2; }
+.cm-s-ainiro span.cm-variable { color: #d9d5e8; }
+/* Dotted slots / Active Event invocations (log.error, data.connect): purple. */
+.cm-s-ainiro span.cm-variable-2 { color: #b8a4ff; }
+.cm-s-ainiro span.cm-def { color: #5fe0a0; }
+.cm-s-ainiro span.cm-bracket { color: #b7a5ff; font-weight: bold; }
+.cm-s-ainiro span.cm-tag { color: #8fb8ff; }
+.cm-s-ainiro span.cm-link { color: #7c5cff; }
+.cm-s-ainiro span.cm-error { color: #ff5d6a; }
+.cm-s-ainiro span.cm-qualifier { color: #d9d5e8; }
 
-.cm-s-ainiro .CodeMirror-activeline-background { background: #494b41; }
-.cm-s-ainiro .CodeMirror-matchingbracket { color: #ffb928 !important; }
-.cm-s-ainiro .CodeMirror-matchingtag { background: rgba(255, 255, 255, .37); }
+.cm-s-ainiro .CodeMirror-activeline-background { background: rgba(124, 92, 255, 0.06); }
+.cm-s-ainiro .CodeMirror-matchingbracket { color: #7c5cff !important; font-weight: bold; }
+.cm-s-ainiro .CodeMirror-matchingtag { background: rgba(124, 92, 255, 0.25); }
+
+/*
+ * Autocomplete popup. Defined here (not in styles.css) and with tag-qualified
+ * selectors, because CodeMirror's own show-hint.css is imported after
+ * styles.css and would otherwise win the white default on a specificity tie.
+ */
+ul.CodeMirror-hints {
+  background: #0c0a14;
+  border: 1px solid #3d3557;
+  border-radius: 3px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.CodeMirror-hints li.CodeMirror-hint {
+  color: #d9d5e8;
+  border-radius: 2px;
+}
+
+.CodeMirror-hints li.CodeMirror-hint-active {
+  background: #7c5cff;
+  color: #ffffff;
+}

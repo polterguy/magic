@@ -1,4 +1,5 @@
 import { showToast } from '../lib/toast';
+import Select from '../components/Select';
 import { explainHyperlambda } from '../lib/support';
 import { useEffect, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
@@ -126,14 +127,14 @@ export default function Playground() {
           <p>Execute Hyperlambda on your server — F5 or the Run button executes</p>
         </div>
         <span style={{ flex: 1 }} />
-        <select value={selectedSnippet} onChange={e => openSnippet(e.target.value)}>
+        <Select value={selectedSnippet} onChange={value => openSnippet(value)}>
           <option value="">Load snippet…</option>
           {snippets.map(snippet => (
             <option key={snippet} value={snippet}>
               {snippet.substring(snippet.lastIndexOf('/') + 1)}
             </option>
           ))}
-        </select>
+        </Select>
         <button className="btn btn-secondary" onClick={save}>Save snippet</button>
         <button className="btn" onClick={execute} disabled={busy}>
           {busy ? 'Running…' : '▷ Run'}

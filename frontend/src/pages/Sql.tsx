@@ -7,6 +7,7 @@ import type CodeMirror from 'codemirror';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
 import Tabs from '../components/Tabs';
+import Select from '../components/Select';
 import { FIELD_TYPES, PK_TYPES } from '../lib/dbTypes';
 import {
   addColumn,
@@ -366,17 +367,17 @@ export default function Sql() {
           <p>Execute SQL towards your databases, and design them</p>
         </div>
         <span style={{ flex: 1 }} />
-        <select value={type} onChange={e => setType(e.target.value)}>
+        <Select value={type} onChange={setType}>
           {types.map(option => <option key={option} value={option}>{option}</option>)}
-        </select>
-        <select value={connectionString} onChange={e => setConnectionString(e.target.value)}>
+        </Select>
+        <Select value={connectionString} onChange={setConnectionString}>
           {connectionStrings.map(option => <option key={option} value={option}>{option}</option>)}
-        </select>
-        <select value={database} onChange={e => setDatabase(e.target.value)}>
+        </Select>
+        <Select value={database} onChange={setDatabase}>
           {databasesMeta.map((db: any) => (
             <option key={db.name} value={db.name}>{db.name}</option>
           ))}
-        </select>
+        </Select>
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input
             type="checkbox"
@@ -566,14 +567,14 @@ export default function Sql() {
       )}
       {view === 'sql' && <>
       <div className="toolbar">
-        <select value="" onChange={e => openSnippet(e.target.value)}>
+        <Select value="" onChange={value => openSnippet(value)}>
           <option value="">Load snippet…</option>
           {snippets.map(snippet => (
             <option key={snippet} value={snippet}>
               {snippet.substring(snippet.lastIndexOf('/') + 1)}
             </option>
           ))}
-        </select>
+        </Select>
         <button className="btn btn-secondary btn-small" onClick={saveSnippet}>
           Save snippet
         </button>
@@ -700,11 +701,11 @@ function NewTableDialog(props: {
           <input type="text" value={pkName} onChange={e => setPkName(e.target.value)} />
         </label>
         <label>Primary key type
-          <select value={pkType} onChange={e => setPkType(e.target.value)}>
+          <Select value={pkType} onChange={value => setPkType(value)}>
             {PK_TYPES.map(option => (
               <option key={option.value} value={option.value}>{option.name}</option>
             ))}
-          </select>
+          </Select>
         </label>
         {pkType === 'varchar' && (
           <label>Primary key length
@@ -806,10 +807,10 @@ function AddColumnDialog(props: {
         {mode === 'field' ? (
           <>
             <label>Type
-              <select
+              <Select
                 value={fieldType.name}
-                onChange={e => {
-                  const next = fieldTypes.find(candidate => candidate.name === e.target.value)!;
+                onChange={value => {
+                  const next = fieldTypes.find(candidate => candidate.name === value)!;
                   setFieldType(next);
                   if (next.varcharDefault) {
                     setColumnLength(String(next.varcharDefault));
@@ -818,7 +819,7 @@ function AddColumnDialog(props: {
                 {fieldTypes.map(candidate => (
                   <option key={candidate.name} value={candidate.name}>{candidate.name}</option>
                 ))}
-              </select>
+              </Select>
             </label>
             {fieldType.size && (
               <label>Length
@@ -838,14 +839,14 @@ function AddColumnDialog(props: {
         ) : (
           <>
             <label>References table
-              <select value={foreignTable} onChange={e => setForeignTable(e.target.value)}>
+              <Select value={foreignTable} onChange={value => setForeignTable(value)}>
                 <option value="">Select table…</option>
                 {props.tables
                   .filter((table: any) => (table.columns ?? []).some((c: any) => c.primary))
                   .map((table: any) => (
                     <option key={table.name} value={table.name}>{table.name}</option>
                   ))}
-              </select>
+              </Select>
             </label>
             {foreignPk && (
               <div className="muted" style={{ fontSize: 13 }}>

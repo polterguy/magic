@@ -78,9 +78,11 @@ export default function Log() {
         <table>
           <thead>
             <tr>
-              <th style={{ width: 170 }}>When</th>
+              <th style={{ width: 150 }}>When</th>
+              <th style={{ width: 200 }}>Timestamp</th>
               <th style={{ width: 80 }}>Type</th>
               <th>Content</th>
+              <th style={{ width: 36 }} aria-hidden="true"></th>
             </tr>
           </thead>
           <tbody>
@@ -98,21 +100,55 @@ export default function Log() {
   );
 }
 
+/* "11 seconds ago", "3 minutes ago", … up through years. */
+function timeAgo(created: string): string {
+  const diff = Math.max(0, Date.now() - new Date(created).getTime());
+  const s = Math.round(diff / 1000);
+  const fmt = (n: number, unit: string) => n + ' ' + unit + (n === 1 ? '' : 's') + ' ago';
+  if (s < 60) return fmt(s, 'second');
+  const m = Math.round(s / 60);
+  if (m < 60) return fmt(m, 'minute');
+  const h = Math.round(m / 60);
+  if (h < 24) return fmt(h, 'hour');
+  const d = Math.round(h / 24);
+  if (d < 7) return fmt(d, 'day');
+  const w = Math.round(d / 7);
+  if (w < 5) return fmt(w, 'week');
+  const mo = Math.round(d / 30);
+  if (mo < 12) return fmt(mo, 'month');
+  return fmt(Math.round(d / 365), 'year');
+}
+
+/* Exact time as ISO 8601 (UTC), milliseconds trimmed. */
+function isoDate(created: string): string {
+  return new Date(created).toISOString().replace(/\.\d{3}Z$/, 'Z');
+}
+
 function LogRow(props: { item: LogItem; expanded: boolean; onToggle: () => void }) {
 
   const { item } = props;
+  // Only rows carrying a stack trace have anything to reveal.
+  const canExpand = !!item.exception;
   return (
     <>
-      <tr className="clickable" onClick={props.onToggle}>
-        <td className="mono" data-label="When">{new Date(item.created).toLocaleString()}</td>
+      <tr
+        className={canExpand ? 'clickable' : ''}
+        onClick={canExpand ? props.onToggle : undefined}>
+        <td className="mono" data-label="When">{timeAgo(item.created)}</td>
+        <td className="mono muted" data-label="Timestamp">{isoDate(item.created)}</td>
         <td data-label="Type">
           <span className={'badge badge-' + item.type.toLowerCase()}>{item.type}</span>
         </td>
         <td data-label="Content">{item.content}</td>
+        <td className="log-caret-cell" style={{ textAlign: 'right' }}>
+          {canExpand && (
+            <span className="log-caret">{props.expanded ? '▾' : '▸'}</span>
+          )}
+        </td>
       </tr>
       {props.expanded && item.exception && (
         <tr>
-          <td colSpan={3}>
+          <td colSpan={5}>
             <pre className="result-json">{item.exception}</pre>
           </td>
         </tr>

@@ -1,4 +1,5 @@
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
+import Select from '../components/Select';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -414,16 +415,16 @@ function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) =
             onChange={e => setUrl(e.target.value)} />
         </label>
         <label>Model
-          <select value={model} onChange={e => setModel(e.target.value)}>
+          <Select value={model} onChange={value => setModel(value)}>
             {BOT_MODELS.map(option => <option key={option} value={option}>{option}</option>)}
-          </select>
+          </Select>
         </label>
         <label>Persona
-          <select value={flavor} onChange={e => setFlavor(e.target.value)}>
+          <Select value={flavor} onChange={value => setFlavor(value)}>
             {flavors.map(candidate => (
               <option key={candidate.name} value={candidate.name}>{candidate.name}</option>
             ))}
-          </select>
+          </Select>
         </label>
         <label>Max pages
           <input

@@ -165,15 +165,17 @@ export default function Endpoints() {
                   return (
                     <Fragment key={key}>
                       <tr className="clickable" onClick={() => setExpanded(expanded === key ? null : key)}>
-                        <td style={{ width: 90 }}>
+                        <td className="verb-cell" style={{ width: 90 }}>
                           <span className={'badge badge-' + endpoint.verb.toLowerCase()}>
                             {endpoint.verb}
                           </span>
                         </td>
                         <td className="mono" data-label="Path">{endpoint.path}</td>
                         <td style={{ textAlign: 'right' }} data-label="Auth">
-                          {(endpoint.auth ?? []).map(role =>
-                            <span className="chip" key={role}>{role}</span>)}
+                          <span className="role-chips">
+                            {(endpoint.auth ?? []).map(role =>
+                              <span className="chip" key={role}>{role}</span>)}
+                          </span>
                         </td>
                       </tr>
                       {expanded === key && (

@@ -53,6 +53,8 @@ function setFeedback(value: { text: string; isError: boolean } | null) {
 export default function Plugins() {
 
   const [available, setAvailable] = useState<any[]>([]);
+  // The Bazar listing is a slow remote call, so we show a spinner until it lands.
+  const [loading, setLoading] = useState(true);
   const [installed, setInstalled] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState('');
   const [installing, setInstalling] = useState<string | null>(null);
@@ -73,7 +75,8 @@ export default function Plugins() {
   useEffect(() => {
     availablePlugins()
       .then(list => setAvailable(list ?? []))
-      .catch(err => setFeedback({ text: err.message, isError: true }));
+      .catch(err => setFeedback({ text: err.message, isError: true }))
+      .finally(() => setLoading(false));
     installedPlugins()
       // A manifest's module_name is the folder it installed into, which is
       // what the Bazar calls the plugin — its name is a friendlier label.
@@ -197,8 +200,14 @@ export default function Plugins() {
           style={{ width: 300 }} />
         <span className="muted">{visible.length} shown</span>
       </div>
+      {loading && (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <span className="muted">Loading plugins from the Bazar…</span>
+        </div>
+      )}
       <div style={{
-        display: 'grid',
+        display: loading ? 'none' : 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
         gap: 14,
       }}>
