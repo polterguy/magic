@@ -1044,9 +1044,30 @@ export function aiContextForFile(path: string, content: string) {
     "solves the user' problem";
 }
 
+export interface OpenAiModel {
+  id: string;
+  chat?: boolean;
+  vector?: boolean;
+  tokens?: number;
+  // USD per 1,000,000 tokens, when the backend knows the model's price.
+  input_price?: number;
+  output_price?: number;
+}
+
 export function openaiModels() {
-  return http.get<{ id: string; chat?: boolean; vector?: boolean }[]>(
-    '/magic/system/openai/models');
+  return http.get<OpenAiModel[]>('/magic/system/openai/models');
+}
+
+/*
+ * A compact "  ·  $2.50 in / $15 out per 1M" suffix for a model dropdown
+ * option — empty when the backend doesn't publish a price for that model.
+ */
+export function modelPriceLabel(model?: { input_price?: number; output_price?: number }): string {
+  if (!model || model.input_price == null || model.output_price == null) {
+    return '';
+  }
+  const usd = (n: number) => '$' + Number(n).toFixed(2);
+  return `  ·  ${usd(model.input_price)} in / ${usd(model.output_price)} out per 1M`;
 }
 
 export function gibberish() {

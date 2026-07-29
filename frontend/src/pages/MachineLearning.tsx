@@ -35,6 +35,7 @@ import {
   openaiCompletionSlots,
   openaiIsConfigured,
   openaiModels,
+  modelPriceLabel,
   openaiSystemMessages,
   openaiThemes,
   uploadCsvFile,
@@ -955,7 +956,9 @@ function EditTypeDialog(props: {
                 <option value={model}>{model}</option>
               )}
               {models.filter(candidate => (candidate as any).chat).map(candidate => (
-                <option key={candidate.id} value={candidate.id}>{candidate.id}</option>
+                <option key={candidate.id} value={candidate.id}>
+                  {candidate.id}{modelPriceLabel(candidate as any)}
+                </option>
               ))}
             </Select>
           </label>

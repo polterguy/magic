@@ -10,6 +10,9 @@ import {
   backendInfo,
   Task,
   createBot,
+  openaiModels,
+  modelPriceLabel,
+  OpenAiModel,
   openaiSystemMessages,
   countLog,
   countTasks,
@@ -362,6 +365,9 @@ export default function Dashboard() {
  * the backend can look up each one's token limit.
  */
 const BOT_MODELS = [
+  'gpt-5.6-terra',
+  'gpt-5.6-sol',
+  'gpt-5.6-luna',
   'gpt-5.5',
   'gpt-5.5-pro',
   'gpt-5.4',
@@ -372,10 +378,15 @@ const BOT_MODELS = [
   'gpt-4.1-mini-2025-04-14',
 ];
 
+// The balanced, cost-sensible default, matching the "default" model type.
+const DEFAULT_BOT_MODEL = 'gpt-5.6-terra';
+
 function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) => void }) {
 
   const [url, setUrl] = useState('');
-  const [model, setModel] = useState(BOT_MODELS[2]);
+  const [model, setModel] = useState(DEFAULT_BOT_MODEL);
+  // Model id → its pricing, so the dropdown can show cost next to each option.
+  const [prices, setPrices] = useState<Record<string, OpenAiModel>>({});
   const [flavors, setFlavors] = useState<any[]>([]);
   const [flavor, setFlavor] = useState('');
   const [max, setMax] = useState('25');
@@ -388,6 +399,9 @@ function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) =
         setFlavors(list ?? []);
         setFlavor((list ?? [])[0]?.name ?? '');
       })
+      .catch(() => {});
+    openaiModels()
+      .then(list => setPrices(Object.fromEntries((list ?? []).map(m => [m.id, m]))))
       .catch(() => {});
   }, []);
 
@@ -417,7 +431,9 @@ function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) =
         </label>
         <label>Model
           <Select value={model} onChange={value => setModel(value)}>
-            {BOT_MODELS.map(option => <option key={option} value={option}>{option}</option>)}
+            {BOT_MODELS.map(option => (
+              <option key={option} value={option}>{option}{modelPriceLabel(prices[option])}</option>
+            ))}
           </Select>
         </label>
         <label>Persona

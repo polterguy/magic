@@ -21,7 +21,7 @@ try
                table:ml_types
                values
                   type:default
-                  model:gpt-5.4
+                  model:gpt-5.6-terra
                   max_tokens:int:12000
                   max_context_tokens:int:5000
                   max_request_tokens:int:24000
@@ -48,7 +48,7 @@ try
          data.update
             table:ml_types
             values
-               model:gpt-5.4
+               model:gpt-5.6-terra
                max_tokens:int:12000
                max_context_tokens:int:5000
                max_request_tokens:int:24000
