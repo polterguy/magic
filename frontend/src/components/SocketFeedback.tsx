@@ -6,7 +6,7 @@
  */
 
 import Banner from './Banner';
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { backendInfo } from '../lib/api';
 import { Modal } from './Dialogs';
@@ -22,6 +22,10 @@ export default function SocketFeedback(props: {
   // Invoked once the socket listens — the caller starts the backend job here.
   onReady: () => void;
   onClose: () => void;
+  // Marks the terminal message (e.g. the "Done!" line). Once one arrives,
+  // `renderDone` is shown in the action bar — used for a follow-up link.
+  isComplete?: (message: FeedbackMessage) => boolean;
+  renderDone?: (messages: FeedbackMessage[]) => ReactNode;
 }) {
 
   const [messages, setMessages] = useState<FeedbackMessage[]>([]);
@@ -102,6 +106,7 @@ export default function SocketFeedback(props: {
         </div>
       </div>
       <div className="modal-actions">
+        {props.isComplete && messages.some(props.isComplete) && props.renderDone?.(messages)}
         <button className="btn" onClick={props.onClose}>Close</button>
       </div>
     </Modal>

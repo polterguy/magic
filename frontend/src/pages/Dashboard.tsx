@@ -7,6 +7,7 @@ import { SECTIONS } from '../components/sections';
 import SocketFeedback from '../components/SocketFeedback';
 import {
   availablePlugins,
+  backendInfo,
   Task,
   createBot,
   openaiSystemMessages,
@@ -477,6 +478,31 @@ function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) =
               autoDestruct,
               channel: crawl.channel,
             }).catch(err => notify(err.message, true));
+          }}
+          isComplete={message => message.message.trim() === 'Done!'}
+          renderDone={messages => {
+            /*
+             * The wizard builds a landing page named after the model and
+             * announces it: "Creating default landing page for <model> by
+             * copying <url>". The page lives at the backend URL + that name.
+             * Fall back to the vectorised model name if the wording changes.
+             */
+            const text = messages.map(m => m.message).join('\n');
+            const model = /landing page for (\S+)/.exec(text)?.[1]
+              ?? /model '([^']+)'/.exec(text)?.[1];
+            if (!model) {
+              return null;
+            }
+            const href = backendInfo().url.replace(/\/+$/, '') + '/' + model;
+            return (
+              <a
+                className="btn btn-secondary"
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer">
+                Open chatbot ↗
+              </a>
+            );
           }}
           onClose={() => setCrawl(null)} />
       )}
