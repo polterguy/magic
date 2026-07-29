@@ -5,6 +5,7 @@ import { copyToClipboard, showToast } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
+import AiPrompt from '../components/AiPrompt';
 import { Modal, useDialog } from '../components/Dialogs';
 import SocketFeedback from '../components/SocketFeedback';
 import CreateSystemMessageDialog from '../components/CreateSystemMessageDialog';
@@ -1764,6 +1765,44 @@ function EditSnippetDialog(props: {
   const [prompt, setPrompt] = useState(props.existing?.prompt ?? '');
   const [completion, setCompletion] = useState(props.existing?.completion ?? '');
 
+  /*
+   * System message forcing the model to hand back a clean {prompt, completion}
+   * JSON object, so an instruction like "remove all redundant facts" can rewrite
+   * a messy snippet (e.g. one pasted out of a PDF) in place. It replaces the
+   * type's own system message via [system_message_override], and the existing
+   * snippet is embedded here so the model has the material to transform.
+   */
+  const transformInstruction = () =>
+    'You are a data-cleaning assistant for a machine-learning training set. You are ' +
+    'given an existing training snippet and, in the user message, an instruction ' +
+    'describing how to transform it. Apply the instruction, then respond with ONLY a ' +
+    'raw JSON object containing exactly two string fields:\n' +
+    '  "prompt": a single sentence, with no carriage returns, summarising the completion.\n' +
+    '  "completion": the transformed content.\n' +
+    'Do not wrap the JSON in markdown fences, and add no commentary before or after it.\n\n' +
+    '--- EXISTING SNIPPET ---\n' +
+    'Prompt: ' + prompt + '\n' +
+    'Completion:\n' + completion;
+
+  /*
+   * The model is asked for raw JSON, but tolerate fences and stray prose: pull the
+   * first {...} block, parse it, and on any failure just drop the whole answer into
+   * the completion so nothing the model produced is lost.
+   */
+  function applyTransform(result: string) {
+    const match = result.match(/\{[\s\S]*\}/);
+    try {
+      const parsed = JSON.parse(match ? match[0] : result);
+      if (typeof parsed.prompt === 'string') setPrompt(parsed.prompt);
+      if (typeof parsed.completion === 'string') setCompletion(parsed.completion);
+      if (typeof parsed.prompt !== 'string' && typeof parsed.completion !== 'string') {
+        setCompletion(result);
+      }
+    } catch {
+      setCompletion(result);
+    }
+  }
+
   async function save() {
     try {
       if (props.existing) {
@@ -1795,6 +1834,18 @@ function EditSnippetDialog(props: {
           <div style={{ height: '38vh', display: 'flex', flexDirection: 'column' }}>
             <CodeEditor value={completion} onChange={setCompletion} mode="markdown" />
           </div>
+          {/*
+            * Ask the Machine to transform the snippet — the typed instruction is
+            * the user message, the current snippet + JSON contract is the system
+            * override, and the returned {prompt, completion} is written back in.
+            */}
+          <AiPrompt
+            fileType={props.type}
+            getContext={transformInstruction}
+            session={'ml-snippet-transform.' + props.type}
+            onResult={applyTransform}
+            onError={message => props.notify({ text: message, isError: true })}
+            style={{ marginTop: 8 }} />
         </div>
       </div>
       <div className="modal-actions">

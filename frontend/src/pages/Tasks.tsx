@@ -3,6 +3,7 @@ import Select from '../components/Select';
 import SearchInput from '../components/SearchInput';
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
+import AiPrompt from '../components/AiPrompt';
 import { Modal, useDialog } from '../components/Dialogs';
 import {
   Task,
@@ -366,6 +367,13 @@ function TaskDialog(props: {
       <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
         <CodeEditor value={code} onChange={setCode} mode="hyperlambda" onSave={save} />
       </div>
+      <AiPrompt
+        fileType="hl"
+        getContext={() => code}
+        session="task-editor.editor"
+        onResult={setCode}
+        onError={message => showToast(message, true)}
+        style={{ marginTop: 8 }} />
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={close}>Close</button>
         <button className="btn" onClick={save} disabled={busy || (props.isNew && !id)}>

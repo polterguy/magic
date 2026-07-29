@@ -1441,7 +1441,9 @@ pre.result-json {
    surface, a thick accent bar, and a hard offset shadow. */
 .agent-prompt {
   display: flex;
-  align-items: center;
+  /* Button drops to the bottom-right corner of the card on desktop; the phone
+     layout resets this back to center in the media query below. */
+  align-items: flex-end;
   gap: 20px;
   flex-wrap: wrap;
   margin-bottom: 16px;
@@ -1975,6 +1977,9 @@ tr.vss-irrelevant td {
    */
   .page-header h1,
   .page-header p { display: none; }
+  /* Keep the MCP hero's button centered on phones — the desktop bottom-right
+     alignment is deliberately not applied here. */
+  .agent-prompt { align-items: center; }
 
   /*
    * Hyper IDE header on a phone: hide the (variable-length) file path that made

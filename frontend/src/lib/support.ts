@@ -34,19 +34,19 @@ const SCRIPT_SRC =
   '&copyButton=false' +
   '&popup=' +
   /*
-   * The dashboard's own palette, from the custom properties in styles.css:
-   * surface white fading into the page background, body text, accent links.
+   * The dashboard's terminal palette, from the custom properties in styles.css:
+   * light body text on a dark surface fading into the near-black page
+   * background, with violet accent links.
    *
-   * [end] tints the whole panel rather than just the bubbles, so it is the
-   * near-white --bg rather than --accent-soft - the soft accent turned the
-   * entire chatbot violet.
+   * [color] is the body text, [start] the panel/bubble surface, [end] tints the
+   * whole panel (the page background), [link] the accent.
    */
-  '&color=%231e1e28' +
-  '&start=%23ffffff' +
-  '&end=%23f4f4f8' +
-  '&link=%235f38f9' +
+  '&color=%23e9e7f3' +
+  '&start=%232c2447' +
+  '&end=%23221b34' +
+  '&link=%237c5cff' +
   '&hidden=true' +
-  '&v=zxcweq';
+  '&v=drkthm3';
 
 let loading: Promise<void> | null = null;
 
