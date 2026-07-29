@@ -945,12 +945,16 @@ function EditTypeDialog(props: {
             </label>
           )}
           <label>Model
+            {/* The models endpoint flags chat-capable models with [chat]; only
+                those belong here (the rest are embeddings, audio, realtime,
+                etc.), mirroring how Vector model filters on [vector]. The
+                current value is kept selectable even if it isn't flagged. */}
             <Select value={model} onChange={value => setModel(value)}>
               <option value="">Select model…</option>
-              {model && !models.some(candidate => candidate.id === model) && (
+              {model && !models.some(candidate => candidate.id === model && (candidate as any).chat) && (
                 <option value={model}>{model}</option>
               )}
-              {models.map(candidate => (
+              {models.filter(candidate => (candidate as any).chat).map(candidate => (
                 <option key={candidate.id} value={candidate.id}>{candidate.id}</option>
               ))}
             </Select>

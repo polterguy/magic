@@ -4,11 +4,13 @@ import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronIcon } from '../components/Icons';
 import { useSearchParams } from 'react-router-dom';
 import CodeEditor from '../components/CodeEditor';
+import AiPrompt from '../components/AiPrompt';
 import Tabs from '../components/Tabs';
 import {
   crudify,
   customSqlEndpoint,
   defaultDatabaseType,
+  exportDdl,
   http,
   listDatabases,
   listRoles,
@@ -818,6 +820,43 @@ function SqlEndpointTab() {
     return tables;
   }, [selection.selectedMeta]);
 
+  /*
+   * Context for the AI prompt bar — the same shape SQL Studio uses: the live
+   * schema DDL, the dialect, the current SQL, plus any declared endpoint
+   * arguments so the model knows it can reference them as @name.
+   */
+  async function createAiContext() {
+    const dialect = {
+      sqlite: 'SQLite',
+      mysql: 'MySQL',
+      mssql: 'Microsoft SQL Server',
+      pgsql: 'PostgreSQL',
+    }[selection.type ?? ''] ?? selection.type ?? '';
+    const tables = selection.selectedMeta?.tables ?? [];
+    let result = '';
+    if (tables.length > 0) {
+      const ddl = await exportDdl(
+        selection.type!, selection.connectionString!, selection.database!,
+        tables.map((table: any) => table.name), true);
+      result += 'Current schema:\n\n' + ddl.result + '\n\n';
+    }
+    result += 'SQL dialect: ' + dialect + '\n\n';
+    const declared = args.filter(argument => argument.name);
+    if (declared.length > 0) {
+      result += 'Declared endpoint arguments, reference them in the SQL as @name: ' +
+        declared.map(argument => argument.name + ' (' + argument.type + ')').join(', ') + '\n\n';
+    }
+    if (sql.length > 0) {
+      result += 'Current code: \n\n' + sql;
+    }
+    if (tables.length > 0) {
+      result += '\n\n**IMPORTANT** - Return ONLY SQL! No ``` characters, or explanations, ' +
+        'ONLY the SQL! In the next message you will be given a natural language query being ' +
+        "a request from the user. Return only the RAW SQL that solves the user' problem";
+    }
+    return result;
+  }
+
   async function generate() {
     if (!sql.trim() || !moduleName || !endpointName) {
       setFeedback({ text: 'Provide SQL, a module name, and an endpoint name', isError: true });
@@ -930,6 +969,13 @@ function SqlEndpointTab() {
       <div style={{ height: 280, display: 'flex', flexDirection: 'column' }}>
         <CodeEditor value={sql} onChange={setSql} mode="text/x-sql" hintTables={hintTables} />
       </div>
+      <AiPrompt
+        fileType="sql"
+        getContext={createAiContext}
+        session="generator-sql.editor"
+        onResult={setSql}
+        onError={message => setFeedback({ text: message, isError: true })}
+        style={{ marginTop: 8 }} />
     </>
   );
 }
