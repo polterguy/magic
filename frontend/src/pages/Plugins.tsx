@@ -215,7 +215,7 @@ export default function Plugins() {
           <div className="card" key={app.name} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
               <strong style={{ flex: 1 }}>{app.name}</strong>
-              <span className="badge badge-info">{app.type}</span>
+              <span className="badge badge-module">{app.type}</span>
             </div>
             <p className="muted line-clamp" style={{ flex: 1, marginTop: 8 }}>
               {intro(app.description)}

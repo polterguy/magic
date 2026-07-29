@@ -91,6 +91,11 @@ let modalSeq = 0;
  */
 export function Modal(props: {
   onClose: () => void;
+  // When set, Enter pressed inside a plain <input> confirms the dialog — the
+  // carriage-return behaviour every text field is expected to have. Textareas,
+  // the code editor, buttons and custom Selects are left alone, since they are
+  // not <input> elements and handle Enter themselves.
+  onSubmit?: () => void;
   width?: number;
   children: ReactNode;
 }) {
@@ -140,7 +145,20 @@ export function Modal(props: {
       }}>
       <div
         className="modal-box"
-        style={props.width ? { width: props.width, maxWidth: '90vw' } : undefined}>
+        style={props.width ? { width: props.width, maxWidth: '90vw' } : undefined}
+        onKeyDown={event => {
+          const target = event.target as HTMLElement;
+          if (props.onSubmit &&
+              event.key === 'Enter' &&
+              !event.shiftKey &&
+              target.tagName === 'INPUT' &&
+              // An input inside a nested <form> (e.g. the AiPrompt bar) owns its
+              // own Enter — don't hijack it to confirm the whole dialog.
+              !target.closest('form')) {
+            event.preventDefault();
+            props.onSubmit();
+          }
+        }}>
         {props.children}
       </div>
     </div>

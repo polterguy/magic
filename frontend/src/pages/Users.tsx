@@ -332,7 +332,10 @@ function NewUserDialog(props: {
   }
 
   return (
-    <Modal width={520} onClose={props.onClose}>
+    <Modal
+      width={520}
+      onClose={props.onClose}
+      onSubmit={() => { if (!busy && username && password) save(); }}>
       <h2>New user</h2>
       <div className="form-grid">
         <label>Username
@@ -462,7 +465,7 @@ function EditUserDialog(props: {
   }
 
   return (
-    <Modal width={620} onClose={props.onClose}>
+    <Modal width={620} onClose={props.onClose} onSubmit={() => { if (!busy) save(); }}>
       <h2>Edit {props.user.username}</h2>
       <div className="form-grid">
         <div>
@@ -542,7 +545,10 @@ function ChangePasswordDialog(props: {
   }
 
   return (
-    <Modal width={480} onClose={props.onClose}>
+    <Modal
+      width={480}
+      onClose={props.onClose}
+      onSubmit={() => { if (!busy && password) save(); }}>
       <h2>Change password for {props.user.username}</h2>
       <label className="modal-label">
         New password
@@ -697,7 +703,7 @@ function RoleDialog(props: {
   }
 
   return (
-    <Modal width={520} onClose={props.onClose}>
+    <Modal width={520} onClose={props.onClose} onSubmit={() => { if (!busy && name) save(); }}>
       <h2>{isEdit ? 'Edit role ' + props.role!.name : 'New role'}</h2>
       <div className="form-grid">
         <label>Name

@@ -691,7 +691,11 @@ function NewTableDialog(props: {
   }
 
   return (
-    <Modal onClose={props.onClose}>
+    <Modal
+      onClose={props.onClose}
+      onSubmit={() => {
+        if (tableName && pkName) props.onCreate(tableName, pkName, pkType, Number(pkLength));
+      }}>
       <h2>New table</h2>
       <div className="form-grid">
         <label>Table name
@@ -750,7 +754,12 @@ function AddColumnDialog(props: {
   const fieldTypes = FIELD_TYPES[props.databaseType] ?? FIELD_TYPES.sqlite;
   const [mode, setMode] = useState('field');
   const [columnName, setColumnName] = useState('');
-  const [fieldType, setFieldType] = useState(fieldTypes[0]);
+  // Default to a text column — the most common case — rather than the first
+  // (numeric) type: the exact `text` where a dialect has it, else varchar/nvarchar.
+  const [fieldType, setFieldType] = useState(
+    fieldTypes.find(t => t.name === 'text')
+      ?? fieldTypes.find(t => /char|text/.test(t.name))
+      ?? fieldTypes[0]);
   const [columnLength, setColumnLength] = useState('255');
   const [defaultValue, setDefaultValue] = useState('');
   const [nullable, setNullable] = useState(true);
@@ -791,7 +800,7 @@ function AddColumnDialog(props: {
   }
 
   return (
-    <Modal width={520} onClose={props.onClose}>
+    <Modal width={520} onClose={props.onClose} onSubmit={submit}>
       <h2>Add column to {props.tableName}</h2>
       <Tabs
         tabs={[

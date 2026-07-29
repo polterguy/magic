@@ -388,7 +388,7 @@ function ImportDialog(props: {
 
   return (
     <>
-      <Modal width={620} onClose={props.onClose}>
+      <Modal width={620} onClose={props.onClose} onSubmit={() => { if (url) crawl(); }}>
         <h2>Import into {props.type}</h2>
         <Tabs
           tabs={[
@@ -923,7 +923,7 @@ function EditTypeDialog(props: {
   }
 
   return (
-    <Modal width={640} onClose={props.onClose}>
+    <Modal width={640} onClose={props.onClose} onSubmit={save}>
       <h2>{existing ? 'Edit ' + existing.type : 'New model'}</h2>
       <Tabs
         tabs={[
@@ -1281,7 +1281,12 @@ function SpiceDialog(props: {
   const [code, setCode] = useState(true);
 
   return (
-    <Modal width={560} onClose={props.onClose}>
+    <Modal
+      width={560}
+      onClose={props.onClose}
+      onSubmit={() => {
+        if (url) props.onScrape({ url, threshold: Number(threshold), images, lists, code });
+      }}>
       <h2>Spice {props.type}</h2>
       <p className="muted" style={{ marginTop: 0 }}>
         Scrapes a single web page into this model, without crawling the rest of
@@ -1823,7 +1828,7 @@ function EditSnippetDialog(props: {
   }
 
   return (
-    <Modal width={820} onClose={props.onClose}>
+    <Modal width={820} onClose={props.onClose} onSubmit={() => { if (prompt) save(); }}>
       <h2>{props.existing ? 'Edit snippet' : 'New snippet'}</h2>
       <div className="form-grid">
         <label>Prompt

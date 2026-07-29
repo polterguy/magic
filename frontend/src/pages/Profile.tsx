@@ -1,6 +1,7 @@
 import { copyToClipboard, showToast } from '../lib/toast';
 import Banner from '../components/Banner';
 import { useEffect, useState } from 'react';
+import DateTimePicker from '../components/DateTimePicker';
 import { Modal } from '../components/Dialogs';
 import { changePassword, http, listRoles, listUsers, saveUserExtra } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
@@ -182,7 +183,10 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <Modal width={560} onClose={onClose}>
+    <Modal
+      width={560}
+      onClose={onClose}
+      onSubmit={() => { if (username && selectedRoles.length > 0) generate(); }}>
       <h2>Generate token</h2>
       {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
       <div className="form-grid">
@@ -216,11 +220,12 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
         </div>
         <label>Expires
           {/* A token that expired before it was issued is never what's wanted. */}
-          <input
-            type="date"
+          <DateTimePicker
+            dateOnly
             value={expires}
             min={new Date().toISOString().substring(0, 10)}
-            onChange={e => setExpires(e.target.value)} />
+            onChange={setExpires}
+            placeholder="Pick an expiry date" />
         </label>
         {token && (
           <div className="success-box mono" style={{ overflowWrap: 'anywhere', fontSize: 12 }}>

@@ -218,7 +218,7 @@ function SmtpDialog(props: {
   }
 
   return (
-    <Modal onClose={props.onClose}>
+    <Modal onClose={props.onClose} onSubmit={save}>
       <h2>SMTP settings</h2>
       <div className="form-grid">
         <label>Host
@@ -295,7 +295,7 @@ function RecaptchaDialog(props: {
   }
 
   return (
-    <Modal width={560} onClose={props.onClose}>
+    <Modal width={560} onClose={props.onClose} onSubmit={save}>
       <h2>reCAPTCHA settings</h2>
       <p className="muted" style={{ marginTop: 0 }}>
         Your Google reCAPTCHA v3 keys, from{' '}

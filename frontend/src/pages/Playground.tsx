@@ -3,9 +3,10 @@ import Select from '../components/Select';
 import { explainHyperlambda } from '../lib/support';
 import { useEffect, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
+import AiWaiter from '../components/AiWaiter';
 import CodeEditor from '../components/CodeEditor';
 import { useDialog } from '../components/Dialogs';
-import { evaluate, listFiles, loadFile, saveFile } from '../lib/api';
+import { aiContextForFile, evaluate, listFiles, loadFile, saveFile } from '../lib/api';
 import { useUnsavedGuard } from '../lib/navGuard';
 
 const DEFAULT_CODE = `/*
@@ -158,11 +159,13 @@ export default function Playground() {
       {/* Below the split rather than inside it, so both editors stay equally tall. */}
       <AiPrompt
         fileType="hl"
-        getContext={() => code}
+        getContext={() => aiContextForFile('/playground.hl', code)}
         session="hyperlambda-playground.editor"
         onResult={setCode}
         onError={message => showToast(message, true)}
         style={{ marginTop: 8 }} />
+      {/* Execution can be slow — cover the screen so the wait reads clearly. */}
+      {busy && <AiWaiter />}
     </>
   );
 }

@@ -34,19 +34,22 @@ const SCRIPT_SRC =
   '&copyButton=false' +
   '&popup=' +
   /*
-   * The dashboard's terminal palette, from the custom properties in styles.css:
-   * light body text on a dark surface fading into the near-black page
-   * background, with violet accent links.
+   * Frank wears the LIGHTER part of the dashboard's "This cloudlet is an AI
+   * agent" card — the warm surface (#1a1410) lifted by its white sheen
+   * (rgba(255,255,255,.10) ≈ #322b27). The widget paints that as a gradient, so
+   * Frank does too: [start]→[end] runs from the lit warm tone down to a slightly
+   * calmer warm brown, keeping the panel in the card's lighter register. Warm-
+   * white text and a white accent. No violet, no blue.
    *
-   * [color] is the body text, [start] the panel/bubble surface, [end] tints the
-   * whole panel (the page background), [link] the accent.
+   * [color] is the body text, [start] the panel/bubble surface (gradient top),
+   * [end] tints the whole panel (gradient bottom), [link] the accent.
    */
-  '&color=%23e9e7f3' +
-  '&start=%232c2447' +
-  '&end=%23221b34' +
-  '&link=%237c5cff' +
+  '&color=%23f5f5f4' +
+  '&start=%233a322c' +
+  '&end=%23262019' +
+  '&link=%23f5f5f4' +
   '&hidden=true' +
-  '&v=drkthm3';
+  '&v=drkthm5';
 
 let loading: Promise<void> | null = null;
 

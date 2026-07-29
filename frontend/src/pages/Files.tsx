@@ -43,6 +43,7 @@ import {
   getHyperlambdaArguments,
   getOpenApiSpec,
   aiQuery,
+  aiContextForFile,
   installModule,
   listEndpoints,
   listFilesRecursively,
@@ -113,28 +114,6 @@ function SelectModelDialog(props: {
       </div>
     </Modal>
   );
-}
-
-/*
- * AI context for the prompt bar, same rules as the old ide-editor: an empty
- * file gets a return-only-code system message, a non-empty file asks the AI
- * to modify the existing code.
- */
-function aiContextForFile(path: string, content: string) {
-  if (content.length > 0) {
-    return '\n\nChange or modify this code according to instructions in the next message:\n\n' +
-      content;
-  }
-  if (path.endsWith('.hl')) {
-    return 'You are a Hyperlambda software developer AI assistant and you will return ONLY ' +
-      'CODE! No ``` characters, or explanations, ONLY the code! In the next message you will ' +
-      'be given a natural language query being a request from the user. Return only the RAW ' +
-      "code that solves the user' problem";
-  }
-  return 'You are a software developer AI assistant and you will return ONLY CODE! No ``` ' +
-    'characters, or explanations, ONLY the code! In the next message you will be given a ' +
-    'natural language query being a request from the user. Return only the RAW code that ' +
-    "solves the user' problem";
 }
 
 /*
@@ -591,6 +570,17 @@ export default function Files() {
     }
     try {
       await deleteFolder(path);
+      /*
+       * Close every file open from the deleted folder — including any with
+       * unsaved changes. Deleting the folder already throws its contents away,
+       * so asking per dirty file would be nonsensical; the folder-level
+       * confirmation above is the one and only "are you sure".
+       */
+      const remaining = openFiles.filter(file => !file.path.startsWith(path));
+      setOpenFiles(remaining);
+      if (selectedFile.startsWith(path)) {
+        setSelectedFile(remaining.length > 0 ? remaining[remaining.length - 1].path : '');
+      }
       await loadTree(systemFiles);
     } catch (err: any) {
       show(err.message, true);
@@ -821,7 +811,7 @@ export default function Files() {
                 type="checkbox"
                 checked={systemFiles}
                 onChange={e => setSystemFiles(e.target.checked)} />
-              Show system files
+              System files
             </label>
             <button
               className="icon-btn"

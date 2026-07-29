@@ -6,26 +6,28 @@
 
 :root {
   /*
-   * Terminal / brutalist theme, grounded in hyperlambda.dev — violet on a
-   * near-black violet-tinted canvas, monospace-first, hard edges, visible
-   * borders instead of soft shadows.
+   * Monochrome warm-dark theme, matching hyperlambda.dev's homepage: a warm
+   * near-black canvas, pure/near-white text, neutral zinc for muted copy, and
+   * WHITE as the accent (primary buttons are white with dark text). No violet,
+   * no blue — colour lives only in imagery and semantic states. Borders are
+   * translucent white, corners are rounded, shadows are soft.
    */
-  --accent: #7c5cff;
-  --accent-dark: #5f38f9;
-  --accent-soft: rgba(124, 92, 255, 0.16);
-  --bg: #0b0910;
-  --surface: #14111d;
+  --accent: #ffffff;
+  --accent-dark: #d9d9d9;
+  --accent-soft: rgba(255, 255, 255, 0.10);
+  --bg: #120d0a;
+  --surface: #1a1410;
   /* Slightly lifted surface for inputs and elevated blocks. */
-  --surface-2: #1c1728;
-  --text: #e9e7f3;
-  /* Muted text — still clears 4.5:1 on the dark canvas. */
-  --text-soft: #968faa;
-  --border: #2b2440;
-  --border-strong: #3d3557;
+  --surface-2: #221a14;
+  --text: #f5f5f4;
+  /* Muted text — neutral zinc, matching the site's --muted. */
+  --text-soft: #a1a1aa;
+  --border: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.20);
   --danger: #ff5d6a;
   --ok: #35d07f;
-  --sidebar-bg: #08060d;
-  --sidebar-text: #8b83a0;
+  --sidebar-bg: #0d0a08;
+  --sidebar-text: #a1a1aa;
 
   /*
    * The type scale. Seven steps and nothing between them - this file used to
@@ -40,14 +42,14 @@
   --text-xl: 22px;
   --text-display: 32px;
 
-  /* Brutalist corners — near-square, hard edges. */
-  --radius-sm: 2px;
-  --radius: 3px;
-  --radius-lg: 4px;
-  --radius-pill: 3px;
-  /* Borders carry structure here, not shadows. Hard offset for accents only. */
+  /* Rounded, soft corners — premium and calm, like the site. */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  /* Soft, low-contrast elevation — no hard offset. */
   --shadow: none;
-  --shadow-hard: 4px 4px 0 rgba(124, 92, 255, 0.25);
+  --shadow-hard: 0 10px 30px rgba(0, 0, 0, 0.45);
 
   /* Monospace-first: the terminal voice. Sans kept for long-form prose. */
   --font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
@@ -304,7 +306,8 @@ a:hover {
   cursor: pointer;
   text-decoration: none;
   background: var(--accent);
-  color: #fff;
+  /* White button, dark label — the site's primary CTA. */
+  color: #120d0a;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
@@ -403,6 +406,24 @@ input[type="radio"] {
   accent-color: var(--accent);
 }
 
+/*
+ * The datetime/date/time picker icon ships as a near-black glyph that all but
+ * vanishes on the dark field. Inverting it to white pulls it onto the brand's
+ * accent; it sits muted and brightens on hover so it reads as a button.
+ */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.65;
+  cursor: pointer;
+}
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
 ::placeholder { color: var(--text-soft); opacity: 0.7; }
 
 /*
@@ -475,7 +496,7 @@ input[type="radio"] {
   list-style: none;
   margin: 0;
   padding: 4px;
-  background: #0c0a14;
+  background: #16110d;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
@@ -510,6 +531,133 @@ input[type="radio"] {
 }
 
 .select-option-label { flex: 1; }
+
+/* ---------- Date / time picker ---------- */
+
+.dtp { display: inline-block; width: 100%; }
+.dtp.disabled { opacity: 0.5; pointer-events: none; }
+
+.dtp-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  cursor: pointer;
+  text-align: left;
+}
+.dtp-trigger:hover { border-color: var(--border-strong); }
+.dtp-value.placeholder { color: var(--text-soft); }
+.dtp-icon { color: var(--text-soft); flex-shrink: 0; }
+
+.dtp-pop {
+  z-index: 2000002;
+  width: 288px;
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  padding: 12px;
+  background: #16110d;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+
+.dtp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.dtp-month { font-weight: 700; font-size: var(--text-base); }
+.dtp-nav {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  font-size: var(--text-lg);
+  line-height: 1;
+}
+.dtp-nav:hover { border-color: var(--accent); }
+
+.dtp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.dtp-dow { margin-bottom: 2px; }
+.dtp-dow-cell {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+  padding: 4px 0;
+}
+
+.dtp-day {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.dtp-day:hover:not(:disabled) { background: var(--accent-soft); }
+.dtp-day:disabled { opacity: 0.25; cursor: default; }
+.dtp-day.muted { color: var(--text-soft); opacity: 0.45; }
+.dtp-day.today { border-color: var(--border-strong); }
+/* Selected day — the brand's white pill with dark glyph, like primary buttons. */
+.dtp-day.selected {
+  background: var(--accent);
+  color: #120d0a;
+  font-weight: 700;
+  border-color: var(--accent);
+}
+
+.dtp-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.dtp-time-label { color: var(--text-soft); font-size: var(--text-sm); margin-right: auto; }
+.dtp-time .select { width: 68px; }
+.dtp-colon { color: var(--text-soft); }
+
+.dtp-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+.dtp-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.dtp-link:hover { color: var(--text); }
+.dtp-link.strong { color: var(--accent); font-weight: 700; margin-left: auto; }
 
 /* ---------- Tabs ---------- */
 
@@ -585,10 +733,13 @@ tr.clickable:hover td { background: var(--accent-soft); }
 .badge-post { background: rgba(85, 150, 255, 0.16); color: #7fb2ff; }
 .badge-put { background: rgba(240, 175, 60, 0.16); color: #f0b13c; }
 .badge-delete { background: rgba(255, 93, 106, 0.16); color: #ff8a93; }
-.badge-patch { background: rgba(124, 92, 255, 0.18); color: #b7a5ff; }
+.badge-patch { background: rgba(216, 185, 138, 0.16); color: #d8b98a; }
 .badge-error, .badge-fatal { background: rgba(255, 93, 106, 0.16); color: #ff8a93; }
 .badge-info { background: rgba(85, 150, 255, 0.16); color: #7fb2ff; }
 .badge-debug { background: rgba(255, 255, 255, 0.08); color: var(--text-soft); }
+
+/* Plugin category tag — warm light-brown, on brand, no blue. */
+.badge-module { background: rgba(216, 185, 138, 0.16); color: #d8b98a; }
 
 /*
  * State, as opposed to the verb and log-level badges above. They happen to
@@ -606,7 +757,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #17141f 0%, #2b2149 60%, #4527be 100%);
+  background: linear-gradient(135deg, #120d0a 0%, #1e1712 55%, #2a201a 100%);
 }
 
 .login-card {
@@ -800,7 +951,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 .tree-row:hover { background: var(--accent-soft); }
 
 .tree-row.selected {
-  background: var(--accent);
+  background: rgba(255, 255, 255, 0.14);
   color: #fff;
 }
 
@@ -890,8 +1041,8 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .icon-btn:hover {
-  background: rgba(95, 56, 249, 0.14);
-  color: var(--accent-dark);
+  background: var(--accent-soft);
+  color: var(--text);
 }
 
 .icon-btn.danger:hover {
@@ -987,8 +1138,8 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 pre.result-json {
-  background: #17141f;
-  color: #e8e6f0;
+  background: #1a1410;
+  color: #f0ede9;
   border-radius: var(--radius);
   padding: 14px;
   overflow: auto;
@@ -1007,7 +1158,8 @@ pre.result-json {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 16, 41, 0.45);
+  /* Warm near-black scrim — matches the brand canvas, no blue tint. */
+  background: rgba(10, 7, 4, 0.55);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -1218,7 +1370,7 @@ pre.result-json {
 }
 
 .file-tab:hover {
-  background: rgba(95, 56, 249, 0.08);
+  background: var(--accent-soft);
 }
 
 /* The open file, in the same soft accent as the secondary buttons. */
@@ -1365,7 +1517,7 @@ pre.result-json {
   position: fixed;
   inset: 0;
   z-index: 150;
-  background: rgba(20, 16, 41, 0.4);
+  background: rgba(10, 7, 4, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1377,7 +1529,7 @@ pre.result-json {
   height: 16px;
   border-radius: 50%;
   margin: 0 7px;
-  background: #9a8afd;
+  background: var(--accent);
   animation: ai-bounce 1.2s infinite;
 }
 
@@ -1460,7 +1612,7 @@ pre.result-json {
   display: block;
   margin-top: 10px;
   padding: 10px 12px;
-  background: #0a0810;
+  background: #0d0a08;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text);
@@ -1546,7 +1698,7 @@ button.guide-card {
 
 .guide-card:hover {
   border-color: var(--accent);
-  box-shadow: 0 6px 18px rgba(95, 56, 249, 0.12);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   transform: translateY(-2px);
 }
 

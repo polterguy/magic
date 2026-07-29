@@ -1,5 +1,6 @@
 import { showToast } from '../lib/toast';
 import Select from '../components/Select';
+import DateTimePicker from '../components/DateTimePicker';
 import SearchInput from '../components/SearchInput';
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
@@ -343,7 +344,10 @@ function TaskDialog(props: {
   }
 
   return (
-    <Modal width={1100} onClose={close}>
+    <Modal
+      width={1100}
+      onClose={close}
+      onSubmit={() => { if (!busy && (!props.isNew || id)) save(); }}>
       <h2>{props.isNew ? 'New task' : 'Edit ' + props.task.id}</h2>
       <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
         <input
@@ -422,7 +426,7 @@ function ScheduleDialog(props: {
   }
 
   return (
-    <Modal onClose={props.onClose}>
+    <Modal onClose={props.onClose} onSubmit={save}>
       <h2>Schedule {props.taskId}</h2>
       <div className="form-grid">
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -433,10 +437,10 @@ function ScheduleDialog(props: {
           Once, at a fixed date
         </label>
         {mode === 'fixed' && (
-          <input
-            type="datetime-local"
+          <DateTimePicker
             value={due}
-            onChange={e => setDue(e.target.value)} />
+            onChange={setDue}
+            placeholder="Pick a date and time" />
         )}
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <input

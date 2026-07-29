@@ -145,15 +145,21 @@ function InternalTab() {
   return (
     <>
       <div className="toolbar">
-        <input
-          type="text"
-          placeholder="New database name…"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          style={{ width: 260 }} />
-        <button className="btn" onClick={create} disabled={busy || !name}>
-          Create
-        </button>
+        {/* A form, so Enter in the name field creates the database. display:contents
+            keeps the input and button as direct flex children of the toolbar. */}
+        <form
+          style={{ display: 'contents' }}
+          onSubmit={e => { e.preventDefault(); if (!busy && name) create(); }}>
+          <input
+            type="text"
+            placeholder="New database name…"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            style={{ width: 260 }} />
+          <button className="btn" type="submit" disabled={busy || !name}>
+            Create
+          </button>
+        </form>
         <span className="spacer" />
         <label className="btn btn-secondary" style={{ cursor: 'pointer' }}>
           Upload backup

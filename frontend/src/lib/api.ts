@@ -1021,6 +1021,29 @@ export async function aiQuery(
   return http.post<{ result: string }>('/magic/system/openai/chat', payload);
 }
 
+/*
+ * Builds the system message for the AI prompt bar, same rules as the old
+ * ide-editor: a non-empty editor asks the AI to modify the existing code, an
+ * empty one gets a return-only-code instruction. Shared by every host that
+ * embeds AiPrompt (Hyper IDE, Playground, …) so the framing stays identical.
+ */
+export function aiContextForFile(path: string, content: string) {
+  if (content.length > 0) {
+    return '\n\nChange or modify this code according to instructions in the next message:\n\n' +
+      content;
+  }
+  if (path.endsWith('.hl')) {
+    return 'You are a Hyperlambda software developer AI assistant and you will return ONLY ' +
+      'CODE! No ``` characters, or explanations, ONLY the code! In the next message you will ' +
+      'be given a natural language query being a request from the user. Return only the RAW ' +
+      "code that solves the user' problem";
+  }
+  return 'You are a software developer AI assistant and you will return ONLY CODE! No ``` ' +
+    'characters, or explanations, ONLY the code! In the next message you will be given a ' +
+    'natural language query being a request from the user. Return only the RAW code that ' +
+    "solves the user' problem";
+}
+
 export function openaiModels() {
   return http.get<{ id: string; chat?: boolean; vector?: boolean }[]>(
     '/magic/system/openai/models');
