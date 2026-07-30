@@ -1978,6 +1978,15 @@ tr.vss-irrelevant td {
   text-overflow: ellipsis;
 }
 
+/* Progress readout for jobs that report per-item, pinned to the bar's right. */
+.terminal-progress {
+  margin-left: auto;
+  color: #ffffec;
+  font-size: var(--text-xs);
+  font-family: ui-monospace, Menlo, monospace;
+  white-space: nowrap;
+}
+
 .terminal-body {
   height: 45vh;
   overflow: auto;

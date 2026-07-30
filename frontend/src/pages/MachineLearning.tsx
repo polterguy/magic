@@ -25,6 +25,7 @@ import {
   mlSnippetDelete,
   mlSnippets,
   mlSnippetsCount,
+  mlUnvectorisedCount,
   mlSnippetsDeleteAll,
   mlSnippetsExportRaw,
   mlSnippetUpdate,
@@ -119,7 +120,8 @@ function TypesTab(props: {
 }) {
 
   const [editing, setEditing] = useState<any | null | 'new'>(null);
-  const [vectorising, setVectorising] = useState<{ type: string; channel: string } | null>(null);
+  const [vectorising, setVectorising] =
+    useState<{ type: string; channel: string; total: number } | null>(null);
   const [importing, setImporting] = useState<string | null>(null);
   const [embedding, setEmbedding] = useState<string | null>(null);
   const { prompt } = useDialog();
@@ -148,8 +150,12 @@ function TypesTab(props: {
 
   async function vectorise(type: string) {
     try {
-      const channel = (await gibberish()).result;
-      setVectorising({ type, channel });
+      // Snippets without embeddings are exactly the ones about to be vectorised.
+      const [channel, total] = await Promise.all([
+        gibberish().then(result => result.result),
+        mlUnvectorisedCount(type).then(result => result.count),
+      ]);
+      setVectorising({ type, channel, total });
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
     }
@@ -223,6 +229,11 @@ function TypesTab(props: {
         <SocketFeedback
           title={'Vectorising ' + vectorising.type}
           channel={vectorising.channel}
+          progress={{
+            total: vectorising.total,
+            // The vectoriser announces every snippet it embeds with this prefix.
+            counts: message => message.message.startsWith('Vectorizing:'),
+          }}
           onReady={() => {
             vectoriseType(vectorising.type, vectorising.channel)
               .catch(err => props.notify({ text: err.message, isError: true }));

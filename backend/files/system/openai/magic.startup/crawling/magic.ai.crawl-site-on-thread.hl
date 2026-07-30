@@ -202,7 +202,7 @@ slots.create:magic.ai.crawl-site-on-thread
                // Adding spacer.
                sockets.signal:x:@.arguments/*/feedback-channel
                   args
-                     message:------------------------------------------------------------------------------------------------------------------------
+                     message:------------------------------------------------------------------------------------------
                      type:info
                sleep:100
                sockets.signal:x:@.arguments/*/feedback-channel
@@ -230,7 +230,7 @@ slots.create:magic.ai.crawl-site-on-thread
                // Adding spacer.
                sockets.signal:x:@.arguments/*/feedback-channel
                   args
-                     message:------------------------------------------------------------------------------------------------------------------------
+                     message:------------------------------------------------------------------------------------------
                      type:info
                sleep:100
 
@@ -293,7 +293,7 @@ slots.create:magic.ai.crawl-site-on-thread
          // Adding spacer.
          sockets.signal:x:@.arguments/*/feedback-channel
             args
-               message:------------------------------------------------------------------------------------------------------------------------
+               message:------------------------------------------------------------------------------------------
                type:info
          sleep:100
 
@@ -367,7 +367,7 @@ slots.create:magic.ai.crawl-site-on-thread
             // Adding spacer.
             sockets.signal:x:@.arguments/*/feedback-channel
                args
-                  message:------------------------------------------------------------------------------------------------------------------------
+                  message:------------------------------------------------------------------------------------------
                   type:info
             sleep:100
 
@@ -434,7 +434,7 @@ slots.create:magic.ai.crawl-site-on-thread
       // Adding spacer.
       sockets.signal:x:@.arguments/*/feedback-channel
          args
-            message:------------------------------------------------------------------------------------------------------------------------
+            message:------------------------------------------------------------------------------------------
             type:info
       sleep:100
 

@@ -838,6 +838,16 @@ export function mlSnippetsCount(type: string, filter: string, vectorSearch = fal
 }
 
 /*
+ * How many snippets in the type still lack embeddings — the exact set the
+ * vectoriser is about to work through, so it gives us the "of y" to count towards.
+ */
+export function mlUnvectorisedCount(type: string) {
+  return http.get<{ count: number }>(
+    '/magic/system/magic/ml_training_snippets-count' +
+    '?not_embedded=true&ml_training_snippets.type.eq=' + encodeURIComponent(type));
+}
+
+/*
  * Deletes every snippet matching the current filter, rather than one at a
  * time — the filter is passed exactly as the listing uses it.
  */

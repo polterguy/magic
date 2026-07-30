@@ -379,7 +379,7 @@ const BOT_MODELS = [
 ];
 
 // The balanced, cost-sensible default, matching the "default" model type.
-const DEFAULT_BOT_MODEL = 'gpt-5.6-terra';
+const DEFAULT_BOT_MODEL = 'gpt-5.6-luna';
 
 function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) => void }) {
 

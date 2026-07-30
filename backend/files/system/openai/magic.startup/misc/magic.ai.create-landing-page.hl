@@ -43,7 +43,7 @@ slots.create:magic.ai.create-landing-page
    // Adding spacer.
    sockets.signal:x:@.arguments/*/feedback-channel
       args
-         message:------------------------------------------------------------------------------------------------------------------------
+         message:------------------------------------------------------------------------------------------
          type:info
    sleep:100
 

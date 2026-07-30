@@ -42,11 +42,13 @@ export default function Endpoints() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [result, setResult] = useState<InvokeResult | null>(null);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     listEndpoints()
       .then(setEndpoints)
-      .catch(err => showToast(err.message, true));
+      .catch(err => showToast(err.message, true))
+      .finally(() => setLoading(false));
   }, []);
 
   const query = filter.trim().toLowerCase();
@@ -132,6 +134,12 @@ export default function Endpoints() {
           onChange={setFilter}
           style={{ width: 300 }} />
       </div>
+      {loading && (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <span className="muted">Loading endpoints…</span>
+        </div>
+      )}
       <div>
       {groups.map(group => (
         <div

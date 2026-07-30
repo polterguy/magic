@@ -26,6 +26,16 @@ export default function SocketFeedback(props: {
   // `renderDone` is shown in the action bar — used for a follow-up link.
   isComplete?: (message: FeedbackMessage) => boolean;
   renderDone?: (messages: FeedbackMessage[]) => ReactNode;
+  /*
+   * Turns the terminal bar into a progress readout. `total` is how many items
+   * the job will work through, and `counts` picks out the one message the job
+   * emits per item — the vectoriser announces every snippet it embeds, so
+   * counting those tells us how far it has come.
+   */
+  progress?: {
+    total: number;
+    counts: (message: FeedbackMessage) => boolean;
+  };
 }) {
 
   const [messages, setMessages] = useState<FeedbackMessage[]>([]);
@@ -93,6 +103,11 @@ export default function SocketFeedback(props: {
       <div className="terminal">
         <div className="terminal-bar">
           <span className="terminal-title">{props.channel}</span>
+          {props.progress && (
+            <span className="terminal-progress">
+              Processing snippet {messages.filter(props.progress.counts).length} of {props.progress.total}
+            </span>
+          )}
         </div>
         <div ref={listRef} className="terminal-body">
           {messages.length === 0
