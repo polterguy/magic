@@ -1097,6 +1097,16 @@ export function vectoriseType(type: string, channel: string) {
 }
 
 /*
+ * Resets every embedding in the type back to null. The vectoriser only picks
+ * up snippets without embeddings, so this is what makes a re-vectorisation of
+ * an already vectorised model actually do something.
+ */
+export function deleteVectors(type: string) {
+  return http.delete<any>(
+    '/magic/system/openai/vectors?type=' + encodeURIComponent(type));
+}
+
+/*
  * Prompts the model — stream=false, so the completion comes back in the
  * response instead of over the socket.
  */

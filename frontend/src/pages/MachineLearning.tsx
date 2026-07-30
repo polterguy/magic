@@ -24,6 +24,7 @@ import {
   mlSnippetCreate,
   mlSnippetDelete,
   mlSnippets,
+  deleteVectors,
   mlSnippetsCount,
   mlUnvectorisedCount,
   mlSnippetsDeleteAll,
@@ -124,7 +125,7 @@ function TypesTab(props: {
     useState<{ type: string; channel: string; total: number } | null>(null);
   const [importing, setImporting] = useState<string | null>(null);
   const [embedding, setEmbedding] = useState<string | null>(null);
-  const { prompt } = useDialog();
+  const { confirm, prompt } = useDialog();
 
   async function remove(type: string) {
     const typed = await prompt({
@@ -151,10 +152,35 @@ function TypesTab(props: {
   async function vectorise(type: string) {
     try {
       // Snippets without embeddings are exactly the ones about to be vectorised.
-      const [channel, total] = await Promise.all([
-        gibberish().then(result => result.result),
-        mlUnvectorisedCount(type).then(result => result.count),
-      ]);
+      let total = (await mlUnvectorisedCount(type)).count;
+
+      /*
+       * Nothing left to vectorise means the model is already fully vectorised,
+       * and the vectoriser would do nothing at all. Re-vectorising is still a
+       * legitimate thing to want - a changed vector model, or suspect vectors -
+       * but it means throwing away every existing embedding first, so the user
+       * has to agree to that before we reset them.
+       */
+      if (total === 0) {
+        const all = (await mlSnippetsCount(type, '')).count;
+        if (all === 0) {
+          props.notify({ text: 'No training snippets in ' + type + ' to vectorise', isError: true });
+          return;
+        }
+        if (!await confirm({
+          title: 'Re-vectorise ' + type + '?',
+          message: 'Every snippet in ' + type + ' is already vectorised. Continuing ' +
+            'deletes all ' + all + ' existing vectors and creates ' + all + ' new embeddings, ' +
+            'which costs OpenAI credits.',
+          confirmText: 'Delete vectors and re-vectorise',
+          danger: true,
+        })) {
+          return;
+        }
+        await deleteVectors(type);
+        total = all;
+      }
+      const channel = (await gibberish()).result;
       setVectorising({ type, channel, total });
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
@@ -921,9 +947,9 @@ function EditTypeDialog(props: {
       max_requests: Number(extra.max_requests),
       max_function_invocations: Number(extra.max_function_invocations),
       max_session_items: Number(extra.max_session_items),
-      // Negative is the UI's "no captcha" — persist it as null, which is what
-      // the backend reads as "no captcha".
-      recaptcha: Number(extra.recaptcha) < 0 ? null : Number(extra.recaptcha),
+      // Stored as-is, negatives included — ml_types.recaptcha is NOT NULL, so
+      // a negative number is how "no captcha" is persisted, not null.
+      recaptcha: Number(extra.recaptcha),
     };
     try {
       if (existing) {
@@ -1124,11 +1150,11 @@ function EditTypeDialog(props: {
                 value={extra.no_requests}
                 onChange={e => setField('no_requests', e.target.value)} />
             </label>
-            {/* The single recaptcha value overloads three modes (verified in
-                openai/answer.post.hl): > 0 → Google reCAPTCHA with that minimum
-                score, 0 → Magic's built-in captcha, and null → no captcha. The
-                field uses a negative number as the reachable "no captcha"
-                sentinel, mapped to null on save (and back on load). */}
+            {/* The single value carries three modes: negative → no captcha,
+                0 → Magic's built-in captcha, above 0 → Google reCAPTCHA using
+                this as the minimum score. It is persisted exactly as typed —
+                ml_types.recaptcha is NOT NULL, so "no captcha" is a negative
+                number rather than null. */}
             <label>Captcha (&lt;0 none · 0 Magic · &gt;0 reCAPTCHA score)
               <input
                 type="number"

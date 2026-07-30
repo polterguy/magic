@@ -6,11 +6,11 @@
 /*   strings, amber numbers, gold slots) but carry ZERO violet.  */
 /****************************************************************/
 
-.cm-s-ainiro.CodeMirror { background: #120d0a; color: #e8e2d8; }
+.cm-s-ainiro.CodeMirror { background: #221a14; color: #e8e2d8; }
 .cm-s-ainiro div.CodeMirror-selected { background: rgba(255, 255, 255, 0.14); }
 .cm-s-ainiro .CodeMirror-line::selection, .cm-s-ainiro .CodeMirror-line > span::selection, .cm-s-ainiro .CodeMirror-line > span > span::selection { background: rgba(255, 255, 255, 0.14); }
 .cm-s-ainiro .CodeMirror-line::-moz-selection, .cm-s-ainiro .CodeMirror-line > span::-moz-selection, .cm-s-ainiro .CodeMirror-line > span > span::-moz-selection { background: rgba(255, 255, 255, 0.14); }
-.cm-s-ainiro .CodeMirror-gutters { background: #120d0a; border-right: 1px solid rgba(255, 255, 255, 0.08); }
+.cm-s-ainiro .CodeMirror-gutters { background: #221a14; border-right: 1px solid rgba(255, 255, 255, 0.08); }
 .cm-s-ainiro .CodeMirror-guttermarker { color: #a1a1aa; }
 .cm-s-ainiro .CodeMirror-guttermarker-subtle { color: #6b625a; }
 .cm-s-ainiro .CodeMirror-linenumber { color: #6b625a; }
