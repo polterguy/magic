@@ -899,7 +899,8 @@ function EditTypeDialog(props: {
     vector_model: existing?.vector_model ?? 'text-embedding-ada-002',
     // A null captcha value ("no captcha") is shown as -1, the sentinel the field
     // maps back to null on save — so the three modes round-trip.
-    recaptcha: existing?.recaptcha ?? -1,
+    // Magic's own captcha is the default for new models — 0 in this field.
+    recaptcha: existing?.recaptcha ?? 0,
   });
 
   function setField(key: string, value: any) {
