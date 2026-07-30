@@ -114,25 +114,26 @@ export default function Endpoints() {
   return (
     <>
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div>
+        <div className="page-title">
           <h1>Endpoints</h1>
           <p>
             {shown} of {endpoints.length} endpoints · {groups.length} modules
           </p>
         </div>
-        <span style={{ flex: 1 }} />
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <input
-            type="checkbox"
-            checked={showSystem}
-            onChange={e => setShowSystem(e.target.checked)} />
-          Show system endpoints
-        </label>
-        <SearchInput
-          placeholder="Filter endpoints…"
-          value={filter}
-          onChange={setFilter}
-          style={{ width: 300 }} />
+        <div className="page-tools">
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input
+              type="checkbox"
+              checked={showSystem}
+              onChange={e => setShowSystem(e.target.checked)} />
+            Show system endpoints
+          </label>
+          <SearchInput
+            placeholder="Filter endpoints…"
+            value={filter}
+            onChange={setFilter}
+            style={{ width: 300 }} />
+        </div>
       </div>
       {loading && (
         <div className="spinner-panel">

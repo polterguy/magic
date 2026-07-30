@@ -362,32 +362,33 @@ export default function Sql() {
   return (
     <>
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div>
+        <div className="page-title">
           <h1>SQL Studio</h1>
           <p>Execute SQL towards your databases, and design them</p>
         </div>
-        <span style={{ flex: 1 }} />
-        <Select value={type} onChange={setType}>
-          {types.map(option => <option key={option} value={option}>{option}</option>)}
-        </Select>
-        <Select value={connectionString} onChange={setConnectionString}>
-          {connectionStrings.map(option => <option key={option} value={option}>{option}</option>)}
-        </Select>
-        <Select value={database} onChange={setDatabase}>
-          {databasesMeta.map((db: any) => (
-            <option key={db.name} value={db.name}>{db.name}</option>
-          ))}
-        </Select>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <input
-            type="checkbox"
-            checked={safeMode}
-            onChange={e => setSafeMode(e.target.checked)} />
-          Safe mode
-        </label>
-        <button className="btn" onClick={execute} disabled={busy || !database}>
-          {busy ? 'Running…' : '▷ Run'}
-        </button>
+        <div className="page-tools">
+          <Select value={type} onChange={setType}>
+            {types.map(option => <option key={option} value={option}>{option}</option>)}
+          </Select>
+          <Select value={connectionString} onChange={setConnectionString}>
+            {connectionStrings.map(option => <option key={option} value={option}>{option}</option>)}
+          </Select>
+          <Select value={database} onChange={setDatabase}>
+            {databasesMeta.map((db: any) => (
+              <option key={db.name} value={db.name}>{db.name}</option>
+            ))}
+          </Select>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input
+              type="checkbox"
+              checked={safeMode}
+              onChange={e => setSafeMode(e.target.checked)} />
+            Safe mode
+          </label>
+          <button className="btn" onClick={execute} disabled={busy || !database}>
+            {busy ? 'Running…' : '▷ Run'}
+          </button>
+        </div>
       </div>
       <Tabs
         tabs={[

@@ -735,7 +735,7 @@ export default function Files() {
   return (
     <>
       <div className="page-header ide-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div className="ide-title">
+        <div className="page-title ide-title">
           <h1>Hyper IDE</h1>
           {/*
             * The subtitle is guidance for an empty IDE, and once a file is open

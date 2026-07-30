@@ -264,16 +264,31 @@ h1 {
 }
 
 /*
- * Hyper IDE header. Opening a file adds a path and five buttons to this row,
- * and without these rules the title is the flex item that gives way: it gets
- * squeezed under its natural width, wraps onto two or three lines, and grows
- * the header — shoving the tree and editor down the page by up to 146px.
- * So the title keeps its width, and the path is the part that gives, ellipsing
- * rather than pushing.
+ * Any page header that puts controls beside its title is a flex row, and by
+ * default the title is the item that gives way: it gets squeezed under its
+ * natural width, wraps onto two or three lines, and grows the header — moving
+ * everything below it. Whenever the controls change width (a toolbar appearing,
+ * a select populating, "Run" becoming "Running…") that turns into a visible
+ * jump. So the title keeps its width and the controls take the pressure.
  */
-.ide-header .ide-title {
+.page-header {
+  flex-wrap: wrap;
+}
+
+.page-header .page-title {
   flex: 0 0 auto;
   white-space: nowrap;
+}
+
+/*
+ * The controls travel together as one flex item, so when they no longer fit
+ * beside the title they drop to a line of their own rather than being clipped
+ * off the end of the row. On a wide screen this is still a single row.
+ */
+.page-header .page-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .ide-path {
@@ -284,11 +299,11 @@ h1 {
 }
 
 /*
- * Reserves the subtitle's line, so the row is the same height whether or not a
- * file is open — otherwise opening one shrinks the header by that line and
- * nudges everything below it upwards. The title is pinned to the top rather
- * than centred, so it stays put too; the reserved line is simply empty space
- * beneath it once a file is open.
+ * Hyper IDE alone drops its subtitle once a file is open, so it reserves that
+ * line to keep the row the same height either way — otherwise opening a file
+ * shrinks the header by one line and nudges everything below it upwards. The
+ * title is pinned to the top rather than centred, so it stays put too; the
+ * reserved line is simply empty space beneath it once a file is open.
  */
 .ide-header .ide-title {
   display: flex;

@@ -172,33 +172,34 @@ export default function Plugins() {
   return (
     <>
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div>
+        <div className="page-title">
           <h1>Plugins</h1>
           <p>Install plugins and modules from the Bazar, or your own from a ZIP file</p>
         </div>
-        <span style={{ flex: 1 }} />
-        <label className={'btn btn-secondary' + (uploading ? ' disabled' : '')}>
-          {uploading ? 'Installing…' : 'Install from file…'}
-          <input
-            type="file"
-            accept=".zip"
-            style={{ display: 'none' }}
-            disabled={uploading}
-            onChange={e => {
-              const file = e.target.files?.[0];
-              // Cleared so picking the same archive twice fires again.
-              e.target.value = '';
-              if (file) {
-                installFromFile(file);
-              }
-            }} />
-        </label>
-        <SearchInput
-          placeholder="Search plugins…"
-          value={filter}
-          onChange={setFilter}
-          style={{ width: 300 }} />
-        <span className="muted">{visible.length} shown</span>
+        <div className="page-tools">
+          <label className={'btn btn-secondary' + (uploading ? ' disabled' : '')}>
+            {uploading ? 'Installing…' : 'Install from file…'}
+            <input
+              type="file"
+              accept=".zip"
+              style={{ display: 'none' }}
+              disabled={uploading}
+              onChange={e => {
+                const file = e.target.files?.[0];
+                // Cleared so picking the same archive twice fires again.
+                e.target.value = '';
+                if (file) {
+                  installFromFile(file);
+                }
+              }} />
+          </label>
+          <SearchInput
+            placeholder="Search plugins…"
+            value={filter}
+            onChange={setFilter}
+            style={{ width: 300 }} />
+          <span className="muted">{visible.length} shown</span>
+        </div>
       </div>
       {loading && (
         <div className="spinner-panel">

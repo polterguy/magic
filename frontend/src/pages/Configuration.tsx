@@ -95,46 +95,47 @@ export default function Configuration() {
   return (
     <>
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div>
+        <div className="page-title">
           <h1>Configuration</h1>
           <p>Your appsettings.json — be careful, this configures everything</p>
         </div>
-        <span style={{ flex: 1 }} />
-        <button className="btn btn-secondary" onClick={() => setSmtpOpen(true)}>
-          SMTP…
-        </button>
-        <button className="btn btn-secondary" onClick={() => setOpenaiOpen(true)}>
-          OpenAI…
-        </button>
-        <button className="btn btn-secondary" onClick={() => setRecaptchaOpen(true)}>
-          reCAPTCHA…
-        </button>
-        <button className="btn btn-secondary" onClick={downloadBackup} title="Download a backup of your configuration">
-          Download
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => uploadInput.current?.click()}
-          disabled={busy}
-          title="Restore your configuration from a backup">
-          Upload
-        </button>
-        <input
-          ref={uploadInput}
-          type="file"
-          accept=".json"
-          style={{ display: 'none' }}
-          onChange={e => {
-            const file = e.target.files?.[0];
-            // Cleared so picking the same file twice fires onChange again.
-            e.target.value = '';
-            if (file) {
-              uploadBackup(file);
-            }
-          }} />
-        <button className="btn" onClick={() => save()} disabled={busy || !config}>
-          Save
-        </button>
+        <div className="page-tools">
+          <button className="btn btn-secondary" onClick={() => setSmtpOpen(true)}>
+            SMTP…
+          </button>
+          <button className="btn btn-secondary" onClick={() => setOpenaiOpen(true)}>
+            OpenAI…
+          </button>
+          <button className="btn btn-secondary" onClick={() => setRecaptchaOpen(true)}>
+            reCAPTCHA…
+          </button>
+          <button className="btn btn-secondary" onClick={downloadBackup} title="Download a backup of your configuration">
+            Download
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={() => uploadInput.current?.click()}
+            disabled={busy}
+            title="Restore your configuration from a backup">
+            Upload
+          </button>
+          <input
+            ref={uploadInput}
+            type="file"
+            accept=".json"
+            style={{ display: 'none' }}
+            onChange={e => {
+              const file = e.target.files?.[0];
+              // Cleared so picking the same file twice fires onChange again.
+              e.target.value = '';
+              if (file) {
+                uploadBackup(file);
+              }
+            }} />
+          <button className="btn" onClick={() => save()} disabled={busy || !config}>
+            Save
+          </button>
+        </div>
       </div>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         <CodeEditor
