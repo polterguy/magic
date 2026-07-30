@@ -735,9 +735,14 @@ export default function Files() {
   return (
     <>
       <div className="page-header ide-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div>
+        <div className="ide-title">
           <h1>Hyper IDE</h1>
-          <p>Browse and edit any file on your server</p>
+          {/*
+            * The subtitle is guidance for an empty IDE, and once a file is open
+            * it only competes with the toolbar for horizontal space — which is
+            * what used to wrap the header onto extra lines.
+            */}
+          {!selectedFile && <p>Browse and edit any file on your server</p>}
         </div>
         <span className="spacer" style={{ flex: 1 }} />
         <span className="mono ide-path">

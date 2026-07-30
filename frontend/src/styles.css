@@ -264,6 +264,54 @@ h1 {
 }
 
 /*
+ * Hyper IDE header. Opening a file adds a path and five buttons to this row,
+ * and without these rules the title is the flex item that gives way: it gets
+ * squeezed under its natural width, wraps onto two or three lines, and grows
+ * the header — shoving the tree and editor down the page by up to 146px.
+ * So the title keeps its width, and the path is the part that gives, ellipsing
+ * rather than pushing.
+ */
+.ide-header .ide-title {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.ide-path {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/*
+ * Reserves the subtitle's line, so the row is the same height whether or not a
+ * file is open — otherwise opening one shrinks the header by that line and
+ * nudges everything below it upwards. The title is pinned to the top rather
+ * than centred, so it stays put too; the reserved line is simply empty space
+ * beneath it once a file is open.
+ */
+.ide-header .ide-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 45px;
+}
+
+/*
+ * Below this the labelled toolbar no longer fits beside the title once a file
+ * is open, and the buttons start getting clipped off the end of the row — so
+ * they collapse to icons, keeping their titles for identification.
+ */
+@media (max-width: 1200px) {
+  .ide-header .btn {
+    font-size: 0;
+    gap: 0;
+    padding: 8px;
+  }
+  .ide-header .btn svg { width: 17px; height: 17px; }
+}
+
+/*
  * Hyperlinks: no underline anywhere. The accent colour carries the "this is a
  * link" affordance instead. Component classes (.btn, .nav-link, .chip, …) set
  * their own colour and win on specificity, so this only touches plain links.
@@ -2142,18 +2190,9 @@ tr.vss-irrelevant td {
      alignment is deliberately not applied here. */
   .agent-prompt { align-items: center; }
 
-  /*
-   * Hyper IDE header on a phone: hide the (variable-length) file path that made
-   * the row jump, and collapse the toolbar to icon-only buttons so the strip
-   * stays short and stable. The titles keep them identifiable.
-   */
+  /* Hyper IDE header on a phone: drop the path entirely. The toolbar is already
+     icon-only from 1200px down — see that breakpoint. */
   .ide-path { display: none; }
-  .ide-header .btn {
-    font-size: 0;
-    gap: 0;
-    padding: 8px;
-  }
-  .ide-header .btn svg { width: 17px; height: 17px; }
 
   /* Hyper IDE — stack the file tree above the editor; drop the drag splitter. */
   .files-layout { flex-direction: column; }
