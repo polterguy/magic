@@ -17,7 +17,7 @@ curl -fsSL https://hyperlambda.dev/docker-compose.yaml | docker compose -f - up
 
 Then open **`localhost:5555`**, point it at **`localhost:4444`**, and log in with `root` / `root`.
 
-![Editing a Hyperlambda endpoint in Hyper IDE and executing it, returning JSON in 9 milliseconds](images/magic-demo.gif)
+![Editing a Hyperlambda endpoint in Hyper IDE and executing it, returning JSON in 8 milliseconds](images/magic-demo.gif)
 
 *Open any file on your server, execute it without a build or deploy step, and get the response back — parametrised, in milliseconds.*
 
