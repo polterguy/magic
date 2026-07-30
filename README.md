@@ -263,7 +263,6 @@ Contributions are welcome — bug reports, feature requests, documentation, and 
 | `frontend/` | The dashboard — a React, Vite, and TypeScript single-page app. |
 | `plugins/` | The Hyperlambda plugins (C#), many with their own unit-test project. |
 | `docs/` | Long-form guides, such as the DigitalOcean deployment walk-through. |
-| `scripts/` | Helper scripts. |
 
 ### Building and testing
 
