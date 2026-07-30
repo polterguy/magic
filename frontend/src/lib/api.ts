@@ -474,8 +474,13 @@ export function exportDdl(
  * Every mutation invalidates the cached schema for the connection.
  */
 export function flushSchemaCache(databaseType: string, connectionString: string) {
+  /*
+   * The schema is cached under this EXACT key (no suffix) — see
+   * system/sql/databases.get.hl. A trailing ".*" wildcard silently matches
+   * nothing, since the wildcard filter keeps the trailing dot.
+   */
   return http.delete<any>('/magic/system/cache/delete?id=' +
-    encodeURIComponent('magic.sql.databases.' + databaseType + '.' + connectionString + '.*'));
+    encodeURIComponent('magic.sql.databases.' + databaseType + '.' + connectionString));
 }
 
 /*

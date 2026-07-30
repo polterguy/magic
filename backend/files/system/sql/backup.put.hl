@@ -27,5 +27,14 @@ io.stream.save-file:x:@.full-path
 
 // Flushing SQLite, and returning success to caller.
 sqlite.connections.flush
+
+/*
+ * Flushing the databases schema cache for all SQLite connection strings,
+ * such that the uploaded database shows up immediately — same invalidation
+ * the DDL endpoints do, but for every connection string since backups
+ * always land in the generic /data/ folder.
+ */
+cache.clear
+   filter:magic.sql.databases.sqlite.
 return
    result:success
