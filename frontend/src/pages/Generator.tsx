@@ -13,7 +13,9 @@ import {
   exportDdl,
   http,
   listDatabases,
+  listFiles,
   listRoles,
+  loadFile,
 } from '../lib/api';
 
 /*
@@ -799,12 +801,40 @@ function SqlEndpointTab() {
   const [sql, setSql] = useState('');
   const [overwrite, setOverwrite] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [snippets, setSnippets] = useState<string[]>([]);
 
   useEffect(() => {
     listRoles()
       .then(list => setRoles((list ?? []).map(role => role.name)))
       .catch(() => {});
   }, []);
+
+  // The same saved-snippets folder SQL Studio reads and writes.
+  useEffect(() => {
+    if (!selection.type) {
+      return;
+    }
+    listFiles('/etc/' + selection.type + '/templates/')
+      .then(files => setSnippets((files ?? []).filter(file => file.endsWith('.sql'))))
+      .catch(() => setSnippets([]));
+  }, [selection.type]);
+
+  async function openSnippet(filename: string) {
+    if (!filename) {
+      return;
+    }
+    try {
+      setSql(await loadFile(filename));
+    } catch (err: any) {
+      showToast(err.message, true);
+    }
+  }
+
+  function importSqlFile(file: File) {
+    const reader = new FileReader();
+    reader.onload = () => setSql(String(reader.result ?? ''));
+    reader.readAsText(file);
+  }
 
   useEffect(() => {
     if (selection.database) {
@@ -965,6 +995,28 @@ function SqlEndpointTab() {
         <span className="muted" style={{ fontSize: 12 }}>
           Reference arguments in SQL as @name
         </span>
+        <span className="spacer" />
+        <Select value="" onChange={value => openSnippet(value)}>
+          <option value="">Load snippet…</option>
+          {snippets.map(snippet => (
+            <option key={snippet} value={snippet}>
+              {snippet.substring(snippet.lastIndexOf('/') + 1)}
+            </option>
+          ))}
+        </Select>
+        <label className="btn btn-secondary btn-small" style={{ cursor: 'pointer' }}>
+          Import .sql
+          <input
+            type="file"
+            accept=".sql"
+            style={{ display: 'none' }}
+            onChange={e => {
+              if (e.target.files?.[0]) {
+                importSqlFile(e.target.files[0]);
+                e.target.value = '';
+              }
+            }} />
+        </label>
       </div>
       <div style={{ height: 280, display: 'flex', flexDirection: 'column' }}>
         <CodeEditor value={sql} onChange={setSql} mode="text/x-sql" hintTables={hintTables} />
