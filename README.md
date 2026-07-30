@@ -1,64 +1,100 @@
+# Magic Cloud — Open Source, Self-Hosted AI App Builder and AI Agent Platform
 
-# Magic Cloud - Fully Autonomous AI-based Software Development Assistant
+Turn plain English into a working full-stack app — database, secure API, business logic, and frontend — running on **your own hardware**, with **zero lock-in**. An open-source alternative to Lovable, Bolt, and Replit that gives you the whole backend, plus an MCP server that turns every endpoint into a tool for Claude, Cursor, or Codex.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/polterguy/magic?style=flat&logo=github)](https://github.com/polterguy/magic/stargazers)
 [![.NET](https://img.shields.io/badge/.NET-10-512BD4.svg)](https://dotnet.microsoft.com/)
 [![Dashboard](https://img.shields.io/badge/dashboard-React%20%2B%20Vite-61DAFB.svg)](frontend/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/servergardens/magic-backend.svg)](https://hub.docker.com/r/servergardens/magic-backend)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
-> Magic is an open-source, self-hostable AI software development platform that generates and runs full-stack business applications and AI agents from natural language.
+## Run it in 60 seconds
 
-Magic is built on top of [OpenAI](https://openai.com) and [Hyperlambda](https://ainiro.io/hyperlambda/), a DSL specifically created to solve anything related to backend software development, and to be _"The AI agent programming language"_. Create full stack apps, in an open source environment, resembling Lovable, Bolt, or Replit. Use natural language as input, and host it on your own hardware if you wish.
+```bash
+curl -fsSL https://hyperlambda.dev/docker-compose.yaml | docker compose -f - up
+```
 
-No additional _"backend connectors"_ or _"database connectors"_ required - **zero lock-in**. Everything is 100% integrated, thanks to SQLite, with optional MySQL, PostgreSQL, and Microsoft SQL Server capabilities. You can run the whole thing on your own hardware if you wish.
+Then open **`localhost:5555`**, point it at **`localhost:4444`**, and log in with `root` / `root`.
 
-**Note:** The Hyperlambda code generator is currently free. Future pricing: $49 per 1,000 requests (no payment wall today).
+![Editing a Hyperlambda endpoint in Hyper IDE and executing it, returning JSON in 9 milliseconds](images/magic-demo.gif)
 
-## Table of contents
+*Open any file on your server, execute it without a build or deploy step, and get the response back — parametrised, in milliseconds.*
 
-- [Open source "vibe coding" platform](#open-source-vibe-coding-platform)
-- [Getting started](#getting-started)
-- [The LLM that cannot hallucinate functions](#the-llm-that-cannot-hallucinate-functions)
-- [AI agents](#ai-agents)
-- [Also a web server](#also-a-web-server)
-- [MCP support](#mcp-support)
-- [Headless browser](#headless-browser)
-- [Git integration](#git-integration)
-- [Python, terminal, and C# integration](#python-terminal-and-c-integration)
-- [AI chatbots and expert systems](#ai-chatbots-and-expert-systems)
-- [Performance](#performance)
-- [LLM](#llm)
-- [Unique security model](#unique-security-model)
-- [Technology](#technology)
-- [Contributing](#contributing)
-- [License](#license)
+⭐ **If this saves you time, star the repo** — it's the main way other developers find it.
 
-## Open Source _"Vibe Coding"_ Platform
+## What you can build
 
-This is the dashboard you get after installing Magic - every part of your cloudlet from one place.
+* **Full-stack business apps** — CRM systems, admin panels, booking systems, internal tools; database, secure API and frontend generated from natural language
+* **Database-driven AI agents** — agents that query and update *your* database and invoke *your* endpoints, behind your own role-based access control
+* **AI chatbots and expert systems** — crawl a website, get an embeddable chatbot grounded in your own content
+* **Secure APIs over legacy databases** — point it at an existing MySQL, PostgreSQL, SQL Server or MariaDB schema and get a CRUD API in seconds
+* **MCP tool servers** — expose your endpoints to Claude, Cursor, Codex, Qoder or any MCP client
+* **Background jobs and automation** — scheduled tasks written in Hyperlambda, or generated from a plain English description
+* **Static sites and SPAs** — your cloudlet serves files directly, next to the APIs powering them
+
+## How it compares
+
+| | **Magic Cloud** | Lovable / Bolt | n8n / Zapier / Make |
+| --- | --- | --- | --- |
+| License | MIT, fully open source | Proprietary | Mixed |
+| Self-hostable | Yes — your hardware, your data | No | Partly |
+| Backend included | Database, API, auth, RBAC, jobs | Frontend + third-party BaaS | Workflows only |
+| Deploy step before you can test | **None** — save and run | Deploy to third parties first | Publish step |
+| Execution model | Compiled .NET runtime | — | Interprets JSON/YAML workflows |
+| MCP server | Built in | No | No |
+| Vendor lock-in | None | Yes | Yes |
+
+## The LLM that cannot hallucinate functions
+
+Magic runs Hyperlambda, which can be generated by our own proprietary LLM. Because we generate an **AST rather than text**, the output is analysed and rejected if it contains functions that don't exist. The Hyperlambda Generator **cannot return hallucinated function invocations** — like any LLM it can still write logically wrong code, but every function it invokes is guaranteed to exist.
+
+Combined with the ability to restrict the vocabulary, this lets you ship AI agents that **grow their own tool space on demand**, without widening your attack surface.
+
+## Unique security model
+
+Hyperlambda runs sandboxed, with no file system access outside its sandbox, and can **whitelist individual functions** through its RBAC system — so your server can accept code as input and execute it safely without knowing where it came from. Restricting invocations at the *execution* level makes Hyperlambda, as far as we know, the only language that currently does this.
+
+> I'm so confident in the codebase quality, I'll give you **$100** if you can find a severe security-related bug in its backend code — and another **$100** if you can exploit the [natural language API](https://ainiro.io/natural-language-api), which has accepted arbitrary public input for 3 months with nobody succeeding.
+
+## MCP support — and an 80% token saving
+
+Install the `mcp` plugin, point Claude Code, Cowork, or OpenAI's Codex at your cloudlet, and every HTTP endpoint in your `modules` folder becomes a tool the agent can invoke. In our measurements this also **cuts token consumption by roughly 80%**. Calculate your own savings [here](https://hyperlambda.dev/savings-calculator).
+
+![Saving 80% of your token costs on Claude](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/claude-savings.png)
+
+## Performance
+
+In our measurements Hyperlambda is roughly **20× faster than FastAPI or Flask**, around **50× faster than LangChain**, and **100–1,000× faster than** graphical workflow tools such as n8n, Zapier and Make — because it runs a real compiled runtime instead of interpreting logic out of JSON, XML or YAML. Hyperlambda solutions are broadly on par with C# and Entity Framework on both performance and scalability.
+
+![Python versus Hyperlambda](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyperlambda-performance.png)
+
+## The dashboard
 
 ![The Magic dashboard, showing the Chatbot Wizard and the cloudlet's MCP URL](images/dashboard.png)
 
-The sidebar is the whole platform: **Hyper IDE** for editing and running any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing your databases, **Generator** for turning tables into secured CRUD endpoints, plus users and roles, scheduled tasks, machine learning, and the Bazar plugins.
+The sidebar is the whole platform: **Hyper IDE** for editing and running any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing databases, **Generator** for turning tables into secured CRUD endpoints, plus users and roles, scheduled tasks, machine learning, and the plugin store.
 
-Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at the top hands any MCP-capable agent your endpoints as tools - so Claude, or anything else speaking MCP, can discover and invoke them directly. The **Chatbot Wizard** goes the other way: give it a website, and it crawls the site, turns what it finds into training data, and gives you an embeddable chatbot grounded in your own content.
+Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at the top hands any MCP-capable agent your endpoints as tools. The **Chatbot Wizard** goes the other way: give it a website, and it crawls the site, turns what it finds into training data, and hands you an embeddable chatbot grounded in your own content.
 
-**Once you save the code, you can test it! No _"deployment"_ or _"publish"_ required to test code.**
+**Once you save the code, you can test it — no deployment or publish step required.**
 
-## Getting Started
+![Hyper IDE, with the AI prompt bar below the code editor](images/hyper-ide.png)
 
-### Deploy to DigitalOcean (Recommended)
+Notice the prompt bar below the editor, where *"the Machine Creates the Code"*. Describe what you want in plain English and the built-in generator writes it straight into the file you're editing. The same bar follows you into the Playground and SQL Studio, generating Hyperlambda, SQL, HTML, or whatever fits the file you have open.
 
-The fastest way to get Magic running is a single DigitalOcean droplet — one container running the full stack, with persistent volumes for your data, configuration, and modules:
+## Getting started
 
-**[Create your droplet](https://cloud.digitalocean.com/droplets/new)** — edit the one `DOMAIN=` line in [`.do/cloud-init.yaml`](.do/cloud-init.yaml) and paste it into the *User Data* field during creation. HTTPS is automatic (Caddy + Let's Encrypt). Full guide: **[DigitalOcean deployment guide](docs/deploy-digitalocean.md)**
+### Deploy to DigitalOcean (recommended)
 
-Connect to SQLite or any external database (MySQL, PostgreSQL, MSSQL).
+One droplet running the full stack, with persistent volumes for your data, configuration and modules. **[Create your droplet](https://cloud.digitalocean.com/droplets/new)** — edit the single `DOMAIN=` line in [`.do/cloud-init.yaml`](.do/cloud-init.yaml) and paste it into the *User Data* field. HTTPS is automatic through Caddy and Let's Encrypt. Full guide: **[DigitalOcean deployment guide](docs/deploy-digitalocean.md)**
 
-### Docker Compose (Self-Hosted)
+### Docker Compose (self-hosted)
 
-Alternatively, run Magic locally or on your own hardware using Docker Compose:
+The one-liner at the top of this README is the fastest route. If you'd rather keep the file around:
+
+<details>
+<summary>Full <code>docker-compose.yml</code></summary>
 
 ```yaml
 version: "3.8"
@@ -97,13 +133,13 @@ volumes:
   magic_files_modules:
 ```
 
-Save it somewhere, execute `docker compose up`, visit `localhost:5555`, login with _"root"_ / _"root"_, and configure the system. You can [read more here](https://docs.ainiro.io/getting-started/) for alternatives, such as running the codebase directly on your own machine.
+</details>
 
-You can also watch me [guide you through the setup process here](https://www.youtube.com/watch?v=k6eSKxc6oM8).
+Run `docker compose up`, visit `localhost:5555`, log in with `root` / `root`, and configure the system. [More installation options here](https://docs.ainiro.io/getting-started/).
 
 ### Run from source
 
-If you want to hack on Magic itself, clone the repo and run the backend and frontend directly. You'll need [.NET 10](https://dotnet.microsoft.com/) and [Node.js](https://nodejs.org/) (latest LTS).
+You'll need [.NET 10](https://dotnet.microsoft.com/) and [Node.js](https://nodejs.org/) (latest LTS).
 
 ```bash
 # Backend — starts the API on http://localhost:5000
@@ -116,174 +152,115 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:4201`, and login using `http://localhost:5000` as your backend URL, with _"root"_ / _"root"_.
+Open `http://localhost:4201` and log in using `http://localhost:5000` as your backend URL, with `root` / `root`.
 
 ### Bring your own OpenAI API key
 
-To use the system you'll need an OpenAI API key. You can create one [here](https://platform.openai.com/api-keys).
+Magic uses OpenAI by default — create a key [here](https://platform.openai.com/api-keys). If you'd rather not use OpenAI, there are **Ollama** and **HuggingFace** plugins that override the inference functions, though embeddings still require OpenAI's API. And if you drive Magic through the **MCP server**, you don't need an OpenAI key at all.
 
-**NOTICE** - To gain access to `gpt-5.4`, you might have to deposit $51 into your OpenAI API account. Magic depends upon OpenAI, and without depositing money into OpenAI, you won't get access to gpt-5.4, which is the default model in Magic for _"vibe coding"_. You might get GPT-4.1 to work during vibe coding, but 5.4 is _much_ better.
+## AI agents
 
-If you don't want to use OpenAI, there are Ollama and HuggingFace plugins for the system, allowing you to _"override"_ the inference functions with Ollama or HuggingFace models and endpoints - but embeddings can only be created with OpenAI's APIs.
+Below is Magic's AI agent autonomously browsing the web and filling out a *"contact us"* form, using the integrated headless browser that lets your agent *see* the web and solve tasks on it.
 
-**Notice** - You can also use Magic through the MCP server, at which point you don't need an OpenAI API key.
+![Headless browser in Magic filling out a form](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/headless-browser-magic.png)
 
-### DIY Home Cloud
+You can vibe code AI agents integrated with your CRM, ERP, or legacy databases. Magic fundamentally *is* an AI agent for building software and AI agents — what you use it for is up to you.
 
-Magic easily installs on for instance a Mac Mini, using the Docker images. By combining it with a CloudFlare tunnel, you can set up a web server in a couple of minutes, serving applications and data out of your home. The link below is running out of my house in Larnaca, Cyprus, through a CloudFlare tunnel. We've tested it from the US, Norway, and a whole range of countries, and it's surprisingly responsive considering the connection it's being served over.
+### Headless browser
 
-* [CRM dashboard served from DIY web server](https://home.ainiro.io/analytics-crm)
+Magic embeds PuppeteerSharp, so agents can browse like a human — filling forms, clicking buttons. An example prompt: *"Go to xyz website, identify their contact us form and change URLs if required, and fill out their contact us form."* The screenshot above is the result of exactly that prompt.
 
-Below is a screenshot of the system.
+### Python, terminal, and C# integration
+
+Generate and execute Python on the fly and let the LLM use it as a tool, use Bash and the underlying terminal, and create Hyperlambda keywords in C#. Persisted Python scripts can be referenced later as tools, permanently widening your agents' capabilities.
+
+![Executing Python from Magic Cloud](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/assets/images/executing-python-code.png)
+
+**Notice** — you must be logged in as root to generate and execute Python or terminal scripts, or create C# extensions. Magic's security model eliminates entire *classes* of holes, but it is not a magic pill; don't expose endpoints that let third parties execute arbitrary code.
+
+### AI chatbots and expert systems
+
+Deliver your agents as password-protected AI expert systems, or as embeddable chatbots on any website. Try ours [here](https://ainiro.io).
+
+![Embeddable AI chatbot](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-chatbot.png)
+
+## Also a web server
+
+Magic serves your frontend itself, so there's no compilation, build process or pipeline between writing code and testing it:
+
+1. Create your prompt
+2. Press enter
+3. Test
+
+This is in stark contrast to tools such as Lovable and Bolt, which require deploying into two different third-party providers before you can even test. It also ships pre-built frontends, such as the [AI Expert System](https://ainiro.io/ai-expert-system) for serving password-protected agents or entire SaaS AI solutions.
+
+## Git integration
+
+Magic was built for software developers from day one, so Git is integrated as part of the platform. Create a project, vibe code your tools and even your GitHub workflows, then commit and push.
+
+![A comparison between Lovable, Bolt and Magic Cloud](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/lovable-bolt44-versus-magic-cloud.png)
+
+## DIY home cloud
+
+Magic installs happily on something like a Mac Mini using the Docker images. Combined with a CloudFlare tunnel you can serve applications and data out of your home in minutes. The link below runs out of a house in Larnaca, Cyprus, through such a tunnel — tested from the US, Norway and elsewhere, and surprisingly responsive for the connection it's served over.
+
+* [CRM dashboard served from a DIY web server](https://home.ainiro.io/analytics-crm)
 
 ![Analytics CRM Dashboard](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/analytics-crm-screenshot.png)
 
 A setup like this keeps your applications and your data entirely under your own control, on hardware you own.
 
-## The LLM that Cannot Hallucinate Functions
+## The LLM
 
-Magic runs Hyperlambda. Hyperlambda can be generated with our own proprietary LLM. Because we're not generating code, but rather an AST, we can analyse the generated code and reject it if it contains hallucinated functions. The result is that the Hyperlambda Generator **cannot return hallucinated functions or constructs** - hallucinated code is rejected before it's ever returned to the caller. Like any LLM it can still produce logically wrong code - but every single function it invokes is guaranteed to actually exist.
-
-Combined with the ability to also restrict the vocabulary, this allows you to deliver AI agents that dynamically grow their tool space on demand - **without** security risks.
-
-## AI Agents
-
-Below is the AI agent in Magic autonomously browsing the web and filling out a _"contact us"_ form. This particular example is using the integrated headless browser, which allows your AI agent to _"see"_ the web, autonomously browse it, and solve tasks.
-
-![Headless browser in Magic filling out a form](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/headless-browser-magic.png)
-
-You can also vibe code AI agents integrated with your CRM system, ERP system, legacy databases - _"whatever"_. Magic fundamentally _is_ an AI agent, for building software and AI agents. What you use it for is up to you.
-
-In addition to the AI agent in its dashboard, which generates entire full stack apps using nothing but natural language input, there's a whole range of additional components in the system allowing you to automate software development, such as;
-
-* CRUD generator, creating API endpoints using database meta information
-* SQL Studio, allowing you to visually design and manage your SQL databases
-* Built-in RBAC
-* Hyper IDE, for manually editing code in a VS Code-like environment
-* Task manager for administrating and scheduling tasks
-* Machine Learning component allowing you to manage AI agents and chatbots
-* Plugin repository for installing both frontend websites and backend code
-* Plus many more ...
-
-Below is a screenshot from Hyper IDE.
-
-![Hyper IDE, with the AI prompt bar below the code editor](images/hyper-ide.png)
-
-Notice the prompt bar below the editor, where _"the Machine Creates the Code"_. Describe what you want in plain English, and the built-in AI code generator writes it for you, directly into the file you are editing. The same bar follows you into the Playground and SQL Studio, generating Hyperlambda, SQL, HTML, or whatever else fits the file you have open.
-
-## Also a Web Server
-
-Magic is also a web server, allowing you to _instantly deploy_ everything, without compilation, build processes, or complex pipeline connectors. The process is as follows;
-
-1. Create your prompt
-2. Press enter
-3. Test!
-
-... or use the integrated headless browser to automatically generate AI workflows that _test your system automatically once done_.
-
-This is in stark contrast to other tools, such as Lovable and Bolt, which require you to deploy into two different 3rd party providers before you can even test your code. For most practical concerns, the development model in Magic is therefore dramatically faster.
-
-In addition to generating pure JS, CSS, and HTML frontends that are immediately served without any deployment pipelines, the system also comes with several pre-built frontend systems out of the box, such as the [AI Expert System](https://ainiro.io/ai-expert-system), which allows you to serve password protected AI agents, and/or deliver entire SaaS AI solutions.
-
-The system is particularly well suited for creating AI agents.
-
-## MCP Support
-
-Magic comes with MCP support out of the box. Install the plugin called _"mcp"_, and configure Claude Cowork/Code or OpenAI's Codex to use Magic Cloud as an MCP server, and Claude/Codex is automagically extended with all HTTP endpoint files you've got in your _"modules"_ folder. Not only does this unlock new capabilities for both Claude and Codex, it also reduces your token consumption by roughly 80% in our measurements. You can calculate your own savings [here](https://hyperlambda.dev/savings-calculator).
-
-![Saving 80% of your token costs on Claude](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/claude-savings.png)
-
-## Headless Browser
-
-Magic contains a headless browser - PuppeteerSharp specifically - that allows your AI agents to browse the web as a human being would; fill out forms, click buttons, etc. An example prompt;
-
-* _"Go to xyz website, identify their contact us form and change URLs if required, and fill out their contact us form"_
-
-You can see the result of that exact prompt in the screenshot in the AI Agents section above.
-
-## Git Integration
-
-Contrary to other vibe coding tools, Magic Cloud was built for software developers from day 1. Among other things, that means it's got Git integrated as an integral part of the platform. This allows you to set up any amount of pipelines you wish, using Git for code, or GitHub workflows for deployments.
-
-1. Create a new project
-2. Vibe code all the tools, and even your GitHub workflows if you wish
-3. Commit and push
-
-Below is how the integrated AI agent compares Magic Cloud to Lovable and Bolt.
-
-![A comparison between Lovable, Bolt and Magic Cloud](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/lovable-bolt44-versus-magic-cloud.png)
-
-## Python, Terminal, and C# Integration
-
-Generate and execute Python scripts on the fly, and have the LLM use these as _"tools"_. In addition, you can use Bash and the underlying terminal, and you can create Hyperlambda extension keywords using C#.
-
-Since Magic runs in a protected service account by default, this is quite safe - but obviously do _not_ open up endpoints allowing 3rd party users to generate and execute arbitrary Python code.
-
-You can also persist Python scripts and reference these later as _"tools"_, permanently widening the capabilities of your AI agents, or integrate Python execution into your endpoints and services.
-
-![Executing Python from Magic Cloud](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/assets/images/executing-python-code.png)
-
-**NOTICE** - You have to be logged in as root to generate and execute Python scripts and terminal scripts, and to create C# extensions. Magic has a unique security model that eliminates entire _axioms_ of security-related _"holes"_ - but you still need to keep your brain. Magic is not (pun!) a _"magic pill"_.
-
-## AI Chatbots and Expert Systems
-
-If you choose to create AI agents instead of full stack apps - something the system is particularly well suited for - you can deliver these as password protected AI expert systems, or as embeddable AI chatbots on any website. Below is our AI chatbot. You can try it [here](https://ainiro.io).
-
-![Embeddable AI chatbot](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-chatbot.png)
-
-## Performance
-
-In our measurements, Hyperlambda and Magic Cloud are roughly 20 times faster than similar solutions built in Python, such as FastAPI or Flask, and around 50 times faster than LangChain - in addition to making it much easier to create workflows, since you create backend code using English instead of _"drag and drop WYSIWYG hell"_. Hyperlambda solutions are in general on par with C# combined with Entity Framework, on both scalability and performance. Below is Hyperlambda versus FastAPI and Flask.
-
-![Python versus Hyperlambda](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyperlambda-performance.png)
-
-Compared to _"graphical workflow solutions"_ such as N8N, Zapier, and Make, Magic is typically 100 to 1,000 times faster, since it relies upon an actual programming language instead of parsing _"dynamic logic"_ from JSON, XML, or YAML based workflow files.
-
-Magic Cloud is built in C# and .Net Core 10, and Hyperlambda is almost on par with pure C# code.
-
-## LLM
-
-The system internally uses OpenAI's gpt-5.4, with minimum reasoning turned on - but everything is tunable, and you can with a little bit of effort exchange the integrated defaults with Ollama or Hugging Face models. However, the Hyperlambda Generator's training dataset is _not_ made public, and we have no plans to change that. Worst case scenario, you're still running your already generated systems perfectly fine, without the ability to generate new systems - even if you were to lose the Hyperlambda Generator for some reason.
-
-The Hyperlambda Generator is however a fairly unique thing, due to Hyperlambda's integrated security model, which allows for dynamically generating tools on the fly, and securely executing the generated code on the backend. Something demonstrated in our [natural language API](https://ainiro.io/natural-language-api).
-
-The following is a screenshot from a publicly available page (the natural language API), where we accept input from any random visitor. The input is transformed into Hyperlambda using our LLM, and then executed __in-process__ behind our DMZ. The endpoint has now been publicly available for 3 months, with a standing offer of $100 to anyone who can exploit it to access PII or extract information - so far nobody has succeeded.
+Internally the system defaults to OpenAI's `gpt-5.6-terra`, with minimum reasoning turned on — everything is tunable, and with some effort you can swap the defaults for Ollama or HuggingFace models. The Hyperlambda Generator's training dataset is *not* public and won't be. Worst case, you keep running everything you've already generated; you'd only lose the ability to generate new code.
 
 ![Natural Language API](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/natural-language-api.png)
 
-If you can hack the above API endpoint, the $100 is yours!
-
-## Unique Security Model
-
-Hyperlambda runs in a sandbox environment, so it doesn't have access to the file system outside of its own sandbox. In addition, it's got the ability to whitelist individual functions, according to its built-in RBAC system, allowing your server to accept code as input and still securely execute it - without even knowing its origin.
-
-This is only possible by restricting function invocations at the execution level, which as far as I know makes Hyperlambda the _only_ programming language in the world that currently does this.
-
-This makes Hyperlambda uniquely fit for AI agents that need to _"generate tools on demand"_, since it allows the owner of the solution to specify a subset of the server's vocabulary as _"legal functions"_, while no other functions are allowed. You can deliver AI agents that create their own tools __on demand__ - without widening your attack surface or creating security holes.
+The screenshot above is a publicly available page accepting input from any visitor. That input is transformed into Hyperlambda by our LLM and executed **in-process** behind our DMZ — with a standing $100 bounty for anyone who can exploit it to reach PII. Nobody has.
 
 ## Technology
 
-Magic Cloud is built in .Net Core 10, and its dashboard is a React and Vite single-page application. Hyperlambda was entirely invented and created by yours truly, and you can find some articles about its unique technology below.
+Magic Cloud is built in .NET 10, with a React, Vite and TypeScript dashboard. Hyperlambda is built on a design pattern called **Active Events** (*"slots and signals"*), an in-process model for executing dynamic functions that eliminates cross-project dependencies and yields extreme encapsulation. That pattern is what makes the security model possible: AI-generated code can be trusted because it simply lacks permission to do anything harmful unless you granted it.
 
 * [Make C# more Dynamic with Hyperlambda](https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/june/csharp-make-csharp-more-dynamic-with-hyperlambda)
 * [Active events, one design pattern instead of a dozen](https://learn.microsoft.com/en-us/archive/msdn-magazine/2017/march/patterns-active-events-one-design-pattern-instead-of-a-dozen)
 
-Hyperlambda, and hence Magic Cloud by association, is built on a unique design pattern called _"Active Events"_, or _"Slots and Signals"_, which is an in-process model for executing _"dynamic functions"_. Active Events is at the core of Hyperlambda, and eliminates cross-project dependencies, resulting in extreme levels of encapsulation and cohesion.
+## FAQ
 
-This design pattern, combined with Hyperlambda, is what facilitates the security model in Magic Cloud, where we can confidently trust that AI-generated code does nothing harmful - simply because it doesn't have _permissions to do something malicious_, unless somebody explicitly gave it such permissions.
+**Is it really free?**
+Yes — MIT licensed, self-hostable, no feature gates. The hosted Hyperlambda code generator is currently free to use; future pricing is expected at $49 per 1,000 requests, and there is no payment wall today.
 
-> I'm so confident in the codebase quality, I'll give you $100 if you can find a severe security-related bug in its backend code!
+**Do I need an OpenAI API key?**
+For AI code generation and embeddings, yes. If you drive Magic over MCP from Claude or Codex, no. Ollama and HuggingFace plugins can replace inference, but embeddings still need OpenAI.
+
+**Can I run it completely on my own hardware?**
+Yes. Everything — database, API, frontend, scheduler, chatbots — runs in your own containers, on your own machine.
+
+**How is this different from Lovable or Bolt?**
+They generate a frontend and hand the backend to a third-party service. Magic generates and *runs* the whole backend, needs no deployment step before you can test, and is yours to self-host under MIT.
+
+**What database does it use?**
+SQLite out of the box, with full support for MySQL, PostgreSQL, MariaDB and SQL Server. No connectors required.
+
+**Do I have to learn Hyperlambda?**
+No. The generator writes it from plain English, and the dashboard's prompt bars cover most workflows. Reading Hyperlambda is much easier than writing it.
+
+**What happens if AINIRO disappears?**
+Everything you've generated keeps running — it's MIT-licensed code on your hardware. You'd only lose the ability to generate *new* code with the hosted generator.
+
+**Is AI-generated code safe to execute?**
+That's the point of the security model: Hyperlambda is sandboxed and its vocabulary can be whitelisted per role, so generated code can only invoke functions you explicitly allowed.
 
 ## Contributing
 
-Contributions are welcome - bug reports, feature requests, documentation, and code.
+Contributions are welcome — bug reports, feature requests, documentation, and code.
 
 ### Repository structure
 
 | Path | What lives here |
 | --- | --- |
-| `backend/` | The ASP.NET Core backend - the API and the Hyperlambda runtime. Entry point is `Program.cs`. |
-| `frontend/` | The dashboard - a React, Vite, and TypeScript single-page app. |
+| `backend/` | The ASP.NET Core backend — the API and the Hyperlambda runtime. Entry point is `Program.cs`. |
+| `frontend/` | The dashboard — a React, Vite, and TypeScript single-page app. |
 | `plugins/` | The Hyperlambda plugins (C#), many with their own unit-test project. |
 | `docs/` | Long-form guides, such as the DigitalOcean deployment walk-through. |
 | `scripts/` | Helper scripts. |
@@ -309,12 +286,12 @@ cd frontend && npm install && npm run build
 2. Make your change, and make sure `dotnet test` and the frontend build both pass.
 3. Open a pull request with a clear description of what changed and why.
 
-Found a security issue? Please read [SECURITY.md](SECURITY.md) and report it privately, rather than opening a public issue.
+Found a security issue? Please read [SECURITY.md](SECURITY.md) and report it privately rather than opening a public issue.
 
 ## Maintenance
 
-Magic Cloud and Hyperlambda are developed and professionally maintained by [AINIRO.IO](https://ainiro.io), copyright Thomas Hansen 2019 - 2026. We offer hosting, support, and software development services on top of Magic Cloud, in addition to delivering AI agents, chatbots, and AI solutions.
+Magic Cloud and Hyperlambda are developed and professionally maintained by [AINIRO.IO](https://ainiro.io), copyright Thomas Hansen 2019 – 2026. We offer hosting, support, and software development services on top of Magic Cloud, in addition to delivering AI agents, chatbots, and AI solutions.
 
 ## License
 
-This project, and all of its satellite projects, is licensed under the terms of the MIT license, as published by the Open Source Initiative. See the [LICENSE](LICENSE) file for details. For licensing inquiries you can contact Thomas Hansen thomas@ainiro.io.
+MIT, as published by the Open Source Initiative — see [LICENSE](LICENSE). For licensing inquiries contact Thomas Hansen, thomas@ainiro.io.
