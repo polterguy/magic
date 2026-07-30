@@ -171,6 +171,23 @@ export default function Tasks() {
         <span className="muted">{count} tasks</span>
         <span className="spacer" />
         <button className="btn" onClick={openNew}>+ New task</button>
+        {pageCount > 1 && (
+          <>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={page === 0}
+              onClick={() => setPage(page - 1)}>
+              ‹ Prev
+            </button>
+            <span className="muted">{page + 1} / {pageCount}</span>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={page >= pageCount - 1}
+              onClick={() => setPage(page + 1)}>
+              Next ›
+            </button>
+          </>
+        )}
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
@@ -245,23 +262,6 @@ export default function Tasks() {
             ))}
           </tbody>
         </table>
-        {pageCount > 1 && (
-          <div className="pagination" style={{ padding: 12 }}>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page === 0}
-              onClick={() => setPage(page - 1)}>
-              ‹ Prev
-            </button>
-            <span className="muted">{page + 1} / {pageCount}</span>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page >= pageCount - 1}
-              onClick={() => setPage(page + 1)}>
-              Next ›
-            </button>
-          </div>
-        )}
       </div>
       {editing && (
         <TaskDialog

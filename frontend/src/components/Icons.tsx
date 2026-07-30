@@ -299,3 +299,73 @@ export function EyeOffIcon() {
     </svg>
   );
 }
+
+/*
+ * Configuration. A cog rather than sliders, because sliders read as "tweak a
+ * few values" and this screen is the whole appsettings.json.
+ */
+export function GearIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="12" cy="12" r="3.1" />
+      <path d="M12 2.2v2.7M12 19.1v2.7M21.8 12h-2.7M4.9 12H2.2M18.9 5.1l-1.9 1.9M7 17l-1.9 1.9M18.9 18.9 17 17M7 7 5.1 5.1" />
+      <circle cx="12" cy="12" r="8.4" strokeDasharray="2.2 3.1" />
+    </svg>
+  );
+}
+
+/*
+ * Frank, the support agent. He is a chatbot you talk to, so he gets a face —
+ * the spark this used to be is the "AI generated this" mark used elsewhere,
+ * and meant nothing as a person.
+ */
+export function RobotIcon() {
+  return (
+    <svg {...base}>
+      <rect x="3.6" y="8" width="16.8" height="11.4" rx="3.4" />
+      <path d="M12 8V4.9" />
+      <circle cx="12" cy="3.4" r="1.4" />
+      <path d="M1.4 12.6v2.9M22.6 12.6v2.9" />
+      <circle cx="9.2" cy="12.9" r="1.15" fill="currentColor" stroke="none" />
+      <circle cx="14.8" cy="12.9" r="1.15" fill="currentColor" stroke="none" />
+      <path d="M9.6 16.4h4.8" />
+    </svg>
+  );
+}
+
+/*
+ * Machine Learning — nodes and the edges between them. Embeddings and
+ * retrieval are a graph, which a starburst never said.
+ */
+export function NeuralIcon() {
+  return (
+    <svg {...base}>
+      <path d="M6.7 10.6 10.3 7.4M6.7 13.4l3.6 3.2M13.7 7.4l3.6 3.2M13.7 16.6l3.6-3.2" />
+      <circle cx="4.8" cy="12" r="2.1" />
+      <circle cx="12" cy="5.8" r="2.1" />
+      <circle cx="12" cy="18.2" r="2.1" />
+      <circle cx="19.2" cy="12" r="2.1" />
+    </svg>
+  );
+}
+
+// An enabled boolean in a table cell.
+export function CheckIcon() {
+  return (
+    <svg {...base} strokeWidth={2.6}>
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+/*
+ * The off half of the pair. A dash rather than a cross, because "not enabled"
+ * is a setting rather than a failure, and a red-looking × reads as one.
+ */
+export function DashIcon() {
+  return (
+    <svg {...base}>
+      <line x1="6" y1="12" x2="18" y2="12" />
+    </svg>
+  );
+}

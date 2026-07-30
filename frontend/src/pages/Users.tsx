@@ -149,6 +149,23 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
         <span className="muted">{count} users</span>
         <span className="spacer" />
         <button className="btn" onClick={() => setCreating(true)}>+ New user</button>
+        {pageCount > 1 && (
+          <>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={page === 0}
+              onClick={() => setPage(page - 1)}>
+              ‹ Prev
+            </button>
+            <span className="muted">{page + 1} / {pageCount}</span>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={page >= pageCount - 1}
+              onClick={() => setPage(page + 1)}>
+              Next ›
+            </button>
+          </>
+        )}
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
@@ -207,23 +224,6 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
             ))}
           </tbody>
         </table>
-        {pageCount > 1 && (
-          <div className="pagination" style={{ padding: 12 }}>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page === 0}
-              onClick={() => setPage(page - 1)}>
-              ‹ Prev
-            </button>
-            <span className="muted">{page + 1} / {pageCount}</span>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page >= pageCount - 1}
-              onClick={() => setPage(page + 1)}>
-              Next ›
-            </button>
-          </div>
-        )}
       </div>
       {creating && (
         <NewUserDialog

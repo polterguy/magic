@@ -68,6 +68,7 @@ export default function Sql() {
   const [result, setResult] = useState<any[][] | null>(null);
   const [busy, setBusy] = useState(false);
   const [snippets, setSnippets] = useState<string[]>([]);
+  const [selectedSnippet, setSelectedSnippet] = useState('');
   const [view, setView] = useState<'sql' | 'tables'>('sql');
   const [ddl, setDdl] = useState<{ title: string; sql: string } | null>(null);
   const [newTable, setNewTable] = useState(false);
@@ -301,6 +302,7 @@ export default function Sql() {
   }
 
   async function openSnippet(filename: string) {
+    setSelectedSnippet(filename);
     if (!filename) {
       return;
     }
@@ -314,7 +316,16 @@ export default function Sql() {
   }
 
   async function saveSnippet() {
-    const name = await prompt({ title: 'Save SQL snippet', label: 'Snippet name' });
+    // Saving over the snippet you loaded is the common case, so its name is
+    // suggested — the dialog selects it, so typing replaces it outright.
+    const suggestion = selectedSnippet
+      ? selectedSnippet.substring(selectedSnippet.lastIndexOf('/') + 1).replace(/\.sql$/, '')
+      : '';
+    const name = await prompt({
+      title: 'Save SQL snippet',
+      label: 'Snippet name',
+      initial: suggestion,
+    });
     if (!name) {
       return;
     }
@@ -323,6 +334,7 @@ export default function Sql() {
     try {
       await saveFile(filename, sql);
       setSavedSql(sql);
+      setSelectedSnippet(filename);
       setFeedback({ text: 'Saved ' + filename, isError: false });
       if (!snippets.includes(filename)) {
         setSnippets([...snippets, filename].sort());
@@ -581,7 +593,7 @@ export default function Sql() {
       )}
       {view === 'sql' && <>
       <div className="toolbar">
-        <Select value="" onChange={value => openSnippet(value)}>
+        <Select value={selectedSnippet} onChange={value => openSnippet(value)}>
           <option value="">Load snippet…</option>
           {snippets.map(snippet => (
             <option key={snippet} value={snippet}>
@@ -605,9 +617,6 @@ export default function Sql() {
               }
             }} />
         </label>
-        <span className="muted">
-          Ctrl+Space autocompletes tables and columns — selection executes alone
-        </span>
       </div>
       <div style={{ height: 260, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
         <CodeEditor

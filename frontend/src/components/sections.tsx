@@ -10,13 +10,13 @@ import {
   CodeFileIcon,
   DatabaseIcon,
   ExchangeIcon,
-  SlidersIcon,
+  GearIcon,
   HomeIcon,
   ListIcon,
   PlayIcon,
   ProfileIcon,
   PuzzleIcon,
-  SparkIcon,
+  NeuralIcon,
   TerminalIcon,
   UserIcon,
 } from './Icons';
@@ -93,7 +93,7 @@ export const SECTIONS: Section[] = [
   {
     to: '/machine-learning',
     label: 'Machine Learning',
-    Icon: SparkIcon,
+    Icon: NeuralIcon,
     description: 'Train AI models on your own content by crawling a site or ' +
       'uploading files, then embed them as chatbots.',
   },
@@ -107,7 +107,7 @@ export const SECTIONS: Section[] = [
   {
     to: '/configuration',
     label: 'Configuration',
-    Icon: SlidersIcon,
+    Icon: GearIcon,
     description: 'Edit your appsettings.json directly — connection strings, SMTP, ' +
       'authentication and everything else your server runs on.',
   },

@@ -27,7 +27,7 @@ import {
 } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
 import { openSupport } from '../lib/support';
-import { SparkIcon } from '../components/Icons';
+import { RobotIcon } from '../components/Icons';
 import { copyToClipboard, showToast } from '../lib/toast';
 
 /*
@@ -319,7 +319,7 @@ export default function Dashboard() {
             * is a button wearing the same clothes as its neighbours.
             */}
           <button className="guide-card" type="button" onClick={openSupport}>
-            <span className="guide-icon"><SparkIcon /></span>
+            <span className="guide-icon"><RobotIcon /></span>
             <span>
               <span className="guide-title">Ask Frank</span>
               <span className="guide-text">

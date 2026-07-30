@@ -5,7 +5,7 @@ import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
-import { DatabaseIcon, SparkIcon } from './Icons';
+import { DatabaseIcon, RobotIcon } from './Icons';
 import { ChevronIcon } from './Icons';
 import BackendsDialog from './BackendsDialog';
 import { openSupport } from '../lib/support';
@@ -167,9 +167,9 @@ export default function Layout({ children }: { children: ReactNode }) {
             </button>
             <button
               className="btn btn-ghost"
-              title="Ask AINIRO's AI about Hyperlambda and Magic"
+              title="Ask Frank — AINIRO's AI, about Hyperlambda and Magic"
               onClick={() => { openSupport(); setMobileNav(false); }}>
-              <SparkIcon />
+              <RobotIcon />
             </button>
             <button
               className="btn btn-ghost"

@@ -185,6 +185,16 @@ export function DialogProvider({ children }: { children: ReactNode }) {
       setActive({ kind: 'prompt', options, resolve });
     }), []);
 
+  /*
+   * A prompt that suggests a value selects it as it opens, so typing replaces
+   * the suggestion outright while leaving it there for anyone who wants to
+   * keep or edit it. The callback identity is stable so React runs it once, on
+   * mount — an inline one would re-select the text on every keystroke.
+   */
+  const selectSuggestion = useCallback((input: HTMLInputElement | null) => {
+    input?.select();
+  }, []);
+
   const form = useCallback((options: FormOptions) =>
     new Promise<Record<string, string> | null>(resolve => {
       setFormDraft({});
@@ -226,6 +236,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
                 {active.options.label}
                 <input
                   autoFocus
+                  ref={selectSuggestion}
                   type={active.options.password ? 'password' : 'text'}
                   // Keeps the browser from autofilling saved credentials into
                   // a prompt that merely happens to mask its input.

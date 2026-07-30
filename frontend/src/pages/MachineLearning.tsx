@@ -10,6 +10,7 @@ import { Modal, useDialog } from '../components/Dialogs';
 import SocketFeedback from '../components/SocketFeedback';
 import CreateSystemMessageDialog from '../components/CreateSystemMessageDialog';
 import Tabs from '../components/Tabs';
+import { CheckIcon, DashIcon } from '../components/Icons';
 import SortHeader, { SortState, useSort } from '../components/SortHeader';
 import {
   availableWidgets,
@@ -209,7 +210,17 @@ function TypesTab(props: {
               <tr key={type.type}>
                 <td><strong>{type.type}</strong></td>
                 <td className="mono" data-label="Model">{type.model}</td>
-                <td data-label="Embeddings">{type.use_embeddings ? 'yes' : 'no'}</td>
+                <td data-label="Embeddings">
+                  <span
+                    className={'state-icon ' + (type.use_embeddings ? 'on' : 'off')}
+                    role="img"
+                    aria-label={type.use_embeddings ? 'Embeddings on' : 'Embeddings off'}
+                    title={type.use_embeddings
+                      ? 'This model retrieves from its vectorised training data'
+                      : 'This model answers without retrieving training data'}>
+                    {type.use_embeddings ? <CheckIcon /> : <DashIcon />}
+                  </span>
+                </td>
                 <td>
                   <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                     <button
@@ -1709,6 +1720,23 @@ function TrainingTab(props: {
           + AI function
         </button>
         <button className="btn" onClick={() => setEditing('new')}>+ New snippet</button>
+        {pageCount > 1 && (
+          <>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={page === 0}
+              onClick={() => setPage(page - 1)}>
+              ‹ Prev
+            </button>
+            <span className="muted">{page + 1} / {pageCount}</span>
+            <button
+              className="btn btn-secondary btn-small"
+              disabled={page >= pageCount - 1}
+              onClick={() => setPage(page + 1)}>
+              Next ›
+            </button>
+          </>
+        )}
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
@@ -1751,7 +1779,15 @@ function TrainingTab(props: {
                       : <span className="muted">—</span>}
                   </td>
                 )}
-                <td data-label="Embedded">{snippet.embedding_vss ? 'yes' : 'no'}</td>
+                <td data-label="Embedded">
+                  <span
+                    className={'status-dot ' + (snippet.embedding_vss ? 'ok' : 'pending')}
+                    role="img"
+                    aria-label={snippet.embedding_vss ? 'Embedded' : 'Not embedded'}
+                    title={snippet.embedding_vss
+                      ? 'Embedded — this snippet is vectorised and searchable'
+                      : 'Not embedded — vectorise this model to include it'} />
+                </td>
                 <td>
                   <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                     <button
@@ -1770,23 +1806,6 @@ function TrainingTab(props: {
             ))}
           </tbody>
         </table>
-        {pageCount > 1 && (
-          <div className="pagination" style={{ padding: 12 }}>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page === 0}
-              onClick={() => setPage(page - 1)}>
-              ‹ Prev
-            </button>
-            <span className="muted">{page + 1} / {pageCount}</span>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page >= pageCount - 1}
-              onClick={() => setPage(page + 1)}>
-              Next ›
-            </button>
-          </div>
-        )}
       </div>
       {editing !== null && (
         <EditSnippetDialog

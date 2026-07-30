@@ -26,6 +26,7 @@
   --border-strong: rgba(255, 255, 255, 0.20);
   --danger: #ff5d6a;
   --ok: #35d07f;
+  --warn: #ffcf7a;
   --sidebar-bg: #0d0a08;
   --sidebar-text: #a1a1aa;
 
@@ -812,6 +813,40 @@ tr.clickable:hover td { background: var(--accent-soft); }
 .badge-ok { background: rgba(53, 208, 127, 0.14); color: #5fe0a0; }
 
 .badge-idle { background: rgba(255, 255, 255, 0.08); color: var(--text-soft); }
+
+/*
+ * A done/not-done state in a narrow column, where a colour is read faster than
+ * a word. The title carries the same meaning for anyone who can't rely on the
+ * colour, since a dot on its own says nothing to a screen reader.
+ */
+.status-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+.status-dot.ok { background: var(--ok); }
+
+.status-dot.pending { background: var(--warn); }
+
+/*
+ * An on/off setting, as opposed to the done/not-done state above. The icons
+ * are 15px so they sit on the same optical weight as the surrounding text.
+ */
+.state-icon {
+  display: inline-flex;
+}
+
+.state-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.state-icon.on { color: var(--ok); }
+
+.state-icon.off { color: var(--text-soft); opacity: 0.55; }
 
 /* ---------- Login ---------- */
 
