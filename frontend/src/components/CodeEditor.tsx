@@ -134,7 +134,16 @@ export default function CodeEditor(props: CodeEditorProps) {
         'Cmd-S': () => callbacks.current.onSave?.(),
         F5: () => callbacks.current.onExecute?.(),
         F1: (cm: CodeMirror.Editor) => callbacks.current.onHelp?.(cm.getSelection()),
-        Tab: (cm: CodeMirror.Editor) => cm.execCommand('insertSoftTab'),
+        /*
+         * With a selection, Tab shifts the whole block one level right and
+         * Shift-Tab shifts it back, as the old dashboard did — indentUnit is
+         * 3, so a level is Hyperlambda's three spaces. Without a selection Tab
+         * just types those spaces; insertSoftTab on a selection would have
+         * replaced the code with spaces rather than indenting it.
+         */
+        Tab: (cm: CodeMirror.Editor) =>
+          cm.execCommand(cm.somethingSelected() ? 'indentMore' : 'insertSoftTab'),
+        'Shift-Tab': (cm: CodeMirror.Editor) => cm.execCommand('indentLess'),
       },
     });
     instance.setSize('100%', callbacks.current.height ?? '100%');
