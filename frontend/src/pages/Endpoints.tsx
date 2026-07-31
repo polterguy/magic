@@ -2,6 +2,7 @@ import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Modal } from '../components/Dialogs';
+import AiWaiter from '../components/AiWaiter';
 import OpenApiDialog from '../components/OpenApiDialog';
 import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
@@ -43,6 +44,7 @@ export default function Endpoints() {
   const [result, setResult] = useState<InvokeResult | null>(null);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [waiting, setWaiting] = useState(false);
 
   useEffect(() => {
     listEndpoints()
@@ -103,11 +105,14 @@ export default function Endpoints() {
 
   // Shows the spec for a module folder or a single endpoint's .hl file.
   async function showOpenApi(target: string) {
+    setWaiting(true);
     try {
       const spec = await getOpenApiSpec(target);
       setOpenApiSpec({ json: JSON.stringify(spec, null, 2), target });
     } catch (err: any) {
       showToast(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -219,6 +224,7 @@ export default function Endpoints() {
           target={openApiSpec.target}
           onClose={() => setOpenApiSpec(null)} />
       )}
+      {waiting && <AiWaiter />}
     </>
   );
 }

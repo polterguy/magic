@@ -5,6 +5,7 @@
  */
 
 import Banner from './Banner';
+import AiWaiter from './AiWaiter';
 import { useEffect, useState } from 'react';
 import CodeEditor from './CodeEditor';
 import { ChevronIcon } from './Icons';
@@ -348,6 +349,7 @@ export default function InvokePanel(props: {
           </button>
         )}
       </div>
+      {busy && <AiWaiter />}
     </form>
   );
 }

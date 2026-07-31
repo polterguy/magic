@@ -219,6 +219,9 @@ export default function Files() {
   // Set when the result came from invoking an endpoint rather than evaluating.
   const [resultWasHttp, setResultWasHttp] = useState(false);
   const [generating, setGenerating] = useState(false);
+  // Slow backend round-trips outside generation — argument retrieval,
+  // endpoint meta lookups, OpenAPI specs and evaluation.
+  const [waiting, setWaiting] = useState(false);
   // Generating needs something selected to send, so the button follows it.
   const [hasSelection, setHasSelection] = useState(false);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
@@ -416,7 +419,10 @@ export default function Files() {
       // Executing a selection runs just the selected code, like the old IDE.
       const selection = editorRef.current?.getSelection() ?? '';
       const code = selection !== '' ? selection : content;
+      setWaiting(true);
       const argSpec = await getHyperlambdaArguments(code) ?? {};
+      // Waiter off while the parametrise form awaits the user.
+      setWaiting(false);
       const names = Object.keys(argSpec);
       let args: any = null;
       if (names.length > 0) {
@@ -443,9 +449,12 @@ export default function Files() {
         }
       }
       setResultWasHttp(false);
+      setWaiting(true);
       setExecuteResult(await evaluateWithArgs(code, args));
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -489,6 +498,7 @@ export default function Files() {
       }
       await save();
     }
+    setWaiting(true);
     try {
       const all = await listEndpoints();
       const meta = all.find((candidate: Endpoint) =>
@@ -502,6 +512,8 @@ export default function Files() {
       setInvokeTarget(meta);
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -663,11 +675,14 @@ export default function Files() {
 
   // Shows the OpenAPI specification for a file (single endpoint) or folder (all endpoints inside it).
   async function showOpenApi(target: string) {
+    setWaiting(true);
     try {
       const spec = await getOpenApiSpec(target);
       setOpenApiSpec({ json: JSON.stringify(spec, null, 2), target });
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -1003,7 +1018,7 @@ export default function Files() {
           onClose={() => setOpenApiSpec(null)}
           onNotify={show} />
       )}
-      {generating && <AiWaiter />}
+      {(generating || waiting) && <AiWaiter />}
       {invokeTarget && (
         <Modal width={860} onClose={() => setInvokeTarget(null)}>
           <h2 style={{ marginTop: 0 }}>
