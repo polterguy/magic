@@ -141,4 +141,40 @@ jobs:
             -F "file=@magic.zip" \
             "https://ainiro.io/magic/system/file-system/file"
 
+  # ==========================
+  # Publish to the official MCP Registry.
+  # Runs AFTER the Docker images are pushed, because the registry pulls
+  # the magic-aio image and verifies its io.modelcontextprotocol.server.name
+  # label against server.json.
+  # ==========================
+  publish-mcp:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for OIDC authentication against the registry
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+      # server.json in git is a template; stamp the released version and
+      # the matching Docker Hub image tag into it before publishing.
+      - name: Stamp version into server.json
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          VERSION=${TAG#v}
+          jq --arg v "$VERSION" --arg tag "$TAG" \
+            '.version = $v | .packages[0].identifier = "docker.io/servergardens/magic-aio:" + $tag' \
+            server.json > server.tmp && mv server.tmp server.json
+
+      - name: Authenticate to MCP Registry
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish server to MCP Registry
+        run: ./mcp-publisher publish
+
 

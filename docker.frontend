@@ -4,6 +4,9 @@
 # =========================
 FROM nginx:alpine
 
+# MCP Registry ownership verification (matches name in server.json)
+LABEL io.modelcontextprotocol.server.name="io.github.polterguy/magic"
+
 # Remove default nginx config (optional but clean)
 RUN rm /etc/nginx/conf.d/default.conf
 

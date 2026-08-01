@@ -21,6 +21,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /magic
 COPY --from=build /magic ./
 
+# MCP Registry ownership verification (matches name in server.json)
+LABEL io.modelcontextprotocol.server.name="io.github.polterguy/magic"
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Minimal runtime dependencies only
