@@ -58,6 +58,7 @@ export default function Sql() {
    * the page down behind it.
    */
   const [connectionsLoaded, setConnectionsLoaded] = useState(false);
+  const [schemaLoading, setSchemaLoading] = useState(true);
   const [connectionString, setConnectionString] = useState('');
   const [databasesMeta, setDatabasesMeta] = useState<any[]>([]);
   const [database, setDatabase] = useState('');
@@ -241,7 +242,14 @@ export default function Sql() {
     if (!type || !connectionString) {
       return;
     }
+    /*
+     * This is the slowest fetch on the screen — it carries every database
+     * plus its tables and columns, which feed the Designer and autocomplete —
+     * and it is the third in a chain, so it is worth saying something.
+     */
+    setSchemaLoading(true);
     listDatabases(type, connectionString).then(response => {
+      setSchemaLoading(false);
       const meta = response.databases ?? [];
       setDatabasesMeta(meta);
       const names = meta.map((db: any) => db.name);
@@ -253,6 +261,7 @@ export default function Sql() {
         setDatabase(names.includes('magic') ? 'magic' : names[0] ?? '');
       }
     }).catch(() => {
+      setSchemaLoading(false);
       setDatabasesMeta([]);
       setDatabase('');
     });
@@ -414,7 +423,13 @@ export default function Sql() {
           No connection strings are configured for {type}. Add one under Databases → External.
         </div>
       )}
-      {view === 'tables' && (
+      {schemaLoading && (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <span className="muted">Loading databases and schema…</span>
+        </div>
+      )}
+      {view === 'tables' && !schemaLoading && (
         <>
           <div className="toolbar">
             <span className="muted">{tables.length} tables in {database}</span>
