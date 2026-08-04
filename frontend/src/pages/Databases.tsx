@@ -66,6 +66,7 @@ function InternalTab() {
   const [databases, setDatabases] = useState<any[]>([]);
   const [name, setName] = useState('');
   const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { prompt } = useDialog();
 
   const refresh = useCallback(async () => {
@@ -74,6 +75,8 @@ function InternalTab() {
       setDatabases(response.databases ?? []);
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -175,6 +178,13 @@ function InternalTab() {
             }} />
         </label>
       </div>
+      {loading && (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <span className="muted">Loading databases…</span>
+        </div>
+      )}
+      {!loading && (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
           <thead>
@@ -215,6 +225,7 @@ function InternalTab() {
           </tbody>
         </table>
       </div>
+      )}
     </>
   );
 }
@@ -237,6 +248,8 @@ function ExternalTab() {
   const [name, setName] = useState('');
   const [connectionString, setConnectionString] = useState('');
   const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [managing, setManaging] = useState<string | null>(null);
   const [catalogs, setCatalogs] = useState<{ row: ConnectionRow; list: any[] } | null>(null);
   const { confirm, prompt } = useDialog();
 
@@ -263,6 +276,8 @@ function ExternalTab() {
       }
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -374,11 +389,14 @@ function ExternalTab() {
   }
 
   async function manageCatalogs(row: ConnectionRow) {
+    setManaging(row.type + '/' + row.name);
     try {
       const response = await listDatabases(row.type, row.name);
       setCatalogs({ row, list: response.databases ?? [] });
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setManaging(null);
     }
   }
 
@@ -430,6 +448,13 @@ function ExternalTab() {
           Connect
         </button>
       </div>
+      {loading && (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <span className="muted">Loading connections…</span>
+        </div>
+      )}
+      {!loading && (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
           <thead>
@@ -465,9 +490,9 @@ function ExternalTab() {
                   <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                     <button
                       className="btn btn-secondary btn-small"
-                      disabled={row.status !== 'live'}
+                      disabled={row.status !== 'live' || managing !== null}
                       onClick={() => manageCatalogs(row)}>
-                      Manage
+                      {managing === row.type + '/' + row.name ? 'Loading…' : 'Manage'}
                     </button>
                     <button
                       className="btn btn-secondary btn-small"
@@ -495,6 +520,7 @@ function ExternalTab() {
           </tbody>
         </table>
       </div>
+      )}
       {catalogs && (
         <Modal width={700} onClose={() => setCatalogs(null)}>
           <h2>Catalogs — {catalogs.row.name} ({catalogs.row.type})</h2>

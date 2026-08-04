@@ -225,18 +225,23 @@ function useDatabaseSelection() {
   const [databasesMeta, setDatabasesMeta] = useState<any[]>([]);
   const [database, setDatabase] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     defaultDatabaseType().then(response => {
       setTypes(response.options);
       setType(deepLink.current.type ?? response.default);
-    }).catch(err => setError(err.message));
+    }).catch(err => {
+      setError(err.message);
+      setLoading(false);
+    });
   }, []);
 
   useEffect(() => {
     if (!type) {
       return;
     }
+    setLoading(true);
     http.get<Record<string, string>>(
       '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type))
       .then(response => {
@@ -249,6 +254,9 @@ function useDatabaseSelection() {
         } else {
           setConnectionString(names.includes('generic') ? 'generic' : names[0] ?? '');
         }
+        if (names.length === 0) {
+          setLoading(false);
+        }
       })
       .catch(() => {
         // Database type with no configured connection strings — clear it.
@@ -256,6 +264,7 @@ function useDatabaseSelection() {
         setConnectionString('');
         setDatabasesMeta([]);
         setDatabase('');
+        setLoading(false);
       });
   }, [type]);
 
@@ -263,6 +272,7 @@ function useDatabaseSelection() {
     if (!type || !connectionString) {
       return;
     }
+    setLoading(true);
     listDatabases(type, connectionString).then(response => {
       const meta = response.databases ?? [];
       setDatabasesMeta(meta);
@@ -277,6 +287,8 @@ function useDatabaseSelection() {
     }).catch(() => {
       setDatabasesMeta([]);
       setDatabase('');
+    }).finally(() => {
+      setLoading(false);
     });
   }, [type, connectionString]);
 
@@ -286,7 +298,7 @@ function useDatabaseSelection() {
     types, type, setType,
     connectionStrings, connectionString, setConnectionString,
     databasesMeta, database, setDatabase,
-    selectedMeta, error,
+    selectedMeta, error, loading,
   };
 }
 
@@ -310,7 +322,8 @@ function DatabaseSelectors({ selection }: { selection: any }) {
           <option key={db.name} value={db.name}>{db.name}</option>
         ))}
       </Select>
-      {selection.type && selection.connectionStrings.length === 0 && (
+      {selection.loading && <div className="spinner" />}
+      {!selection.loading && selection.type && selection.connectionStrings.length === 0 && (
         <span className="muted">
           No connection strings configured for {selection.type}.
         </span>
@@ -521,7 +534,12 @@ function CrudTab() {
       <div className="toolbar">
         <DatabaseSelectors selection={selection} />
       </div>
-      {!selection.database ? (
+      {selection.loading ? (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <span className="muted">Loading databases…</span>
+        </div>
+      ) : !selection.database ? (
         <div className="info-box">
           Select a database with tables to generate a CRUD backend.
         </div>
