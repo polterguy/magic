@@ -1185,6 +1185,8 @@ tr.clickable:hover td { background: var(--accent-soft); }
   border-radius: 0;
   background: transparent;
   padding: 16px 18px;
+  /* Anchors the warning badge a cell can pin to its corner. */
+  position: relative;
 }
 
 .kpi-grid > .card:first-child { border-left: none; }
@@ -1196,6 +1198,31 @@ tr.clickable:hover td { background: var(--accent-soft); }
   letter-spacing: -0.5px;
   /* Same-width digits, so a row of counts lines up instead of drifting. */
   font-variant-numeric: tabular-nums;
+}
+
+/* Endpoint count past what MCP clients cope with. */
+.kpi-value.warn { color: var(--danger); }
+
+/*
+ * The clickable "!" badge opening the explanation, pinned to the cell's
+ * top-right corner — the cells are the positioning context below.
+ */
+.kpi-warn-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #fbeaec;
+  color: var(--danger);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  cursor: pointer;
 }
 
 .kpi-label {

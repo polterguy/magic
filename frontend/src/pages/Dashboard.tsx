@@ -37,6 +37,12 @@ import { copyToClipboard, showToast } from '../lib/toast';
 const AGENT_PLUGINS = ['mcp', 'oauth'];
 
 /*
+ * Most MCP clients degrade badly past roughly this many tools — the agent
+ * drowns in its own tool list and picks poorly, or refuses to connect at all.
+ */
+const MCP_ENDPOINT_WARNING = 300;
+
+/*
  * The first handful of tasks, runnable straight from the dashboard. Editing
  * and scheduling stay in the Task Manager — this is only for firing one off.
  */
@@ -144,6 +150,7 @@ export default function Dashboard() {
   const [logItems, setLogItems] = useState<number | null>(null);
   const [missingPlugins, setMissingPlugins] = useState<string[]>([]);
   const [installing, setInstalling] = useState(false);
+  const [showEndpointWarning, setShowEndpointWarning] = useState(false);
   // Null until we know — the prompt stays hidden while the answer is pending.
   const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(null);
   const [configuringOpenai, setConfiguringOpenai] = useState(false);
@@ -216,8 +223,20 @@ export default function Dashboard() {
           <div className="kpi-label">Magic version</div>
         </div>
         <div className="card">
-          <div className="kpi-value">{endpoints ?? '…'}</div>
+          <div className={endpoints !== null && endpoints > MCP_ENDPOINT_WARNING
+            ? 'kpi-value warn'
+            : 'kpi-value'}>
+            {endpoints ?? '…'}
+          </div>
           <div className="kpi-label">Endpoints</div>
+          {endpoints !== null && endpoints > MCP_ENDPOINT_WARNING && (
+            <button
+              className="kpi-warn-btn"
+              title="Too many endpoints for MCP clients — click for details"
+              onClick={() => setShowEndpointWarning(true)}>
+              !
+            </button>
+          )}
         </div>
         <div className="card">
           <div className="kpi-value">{users ?? '…'}</div>
@@ -334,6 +353,24 @@ export default function Dashboard() {
       <TaskSection
         count={tasks}
         notify={(text, isError) => isError ? showToast(text, true) : showToast(text)} />
+      {showEndpointWarning && (
+        <Modal width={560} onClose={() => setShowEndpointWarning(false)}>
+          <h2>Too many endpoints for MCP</h2>
+          <p className="muted" style={{ marginTop: 0 }}>
+            This cloudlet has {endpoints} HTTP endpoints. Most MCP clients cannot
+            deal effectively with much more than {MCP_ENDPOINT_WARNING} — AI
+            agents drown in the tool list, making tool discovery and selection
+            slow and unreliable, and some clients refuse to connect at all.
+            Consider deleting endpoints you don't need, or restricting how many
+            your MCP plugin exposes.
+          </p>
+          <div className="modal-actions">
+            <button className="btn" onClick={() => setShowEndpointWarning(false)}>
+              Close
+            </button>
+          </div>
+        </Modal>
+      )}
       {configuringOpenai && (
         <OpenAiKeyDialog
           onClose={() => setConfiguringOpenai(false)}
