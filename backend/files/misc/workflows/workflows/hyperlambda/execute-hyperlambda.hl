@@ -1,8 +1,7 @@
 
 /*
- * Executes the specified [hyperlambda] with the specified [arguments].
- * 
- * Returns result of execution to caller.
+ * Executes the specified [hyperlambda] with the specified [arguments], and returns the result of
+ * the execution.
  */
 .arguments
 

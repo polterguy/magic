@@ -1,8 +1,6 @@
 
 /*
- * Executable Hyperlambda file that deletes an SQLite database.
- * 
- * Deletes the database specified as [database].
+ * Deletes the specified [database] SQLite database.
  */
 .arguments
 

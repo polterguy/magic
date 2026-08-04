@@ -1,8 +1,6 @@
 
 /*
- * Executable Hyperlambda file that creates a backup of an existing SQLite database.
- * 
- * Pass in the name of the database as [database].
+ * Creates a backup of the specified [database] SQLite database.
  */
 .arguments
 

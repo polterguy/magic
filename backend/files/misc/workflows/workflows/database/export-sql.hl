@@ -1,9 +1,7 @@
 
 /*
- * Executable Hyperlambda file that executes the specified [sql] and exports it as a CSV file
- * 
- * Connects to [database] database, and executes the specified [sql], and exports the file as a CSV file,
- * for then to signal frontend with a download link using SignalR.
+ * Connects to the specified [database], executes the specified [sql], exports the result as a CSV
+ * file, and returns the [filename] of the exported CSV file.
  */
 .arguments
 
@@ -95,4 +93,5 @@ data.connect:x:-
    // Returning result to caller.
    yield
       result:success
+      filename:x:@.path
       message:You should be able to download your file now.

@@ -1,8 +1,6 @@
 
 /*
- * List users in system
- * 
- * Optionally apply [limit] and [offset] to page.
+ * Lists users in the system, optionally paged with [limit] and [offset].
  */
 .arguments
 

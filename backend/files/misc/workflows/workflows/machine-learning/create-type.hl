@@ -1,8 +1,6 @@
 
 /*
- * Creates a new machine learning type.
- * 
- * You can later populate the type with RAG data.
+ * Creates a new machine learning type, which can later be populated with RAG data.
  */
 .arguments
 

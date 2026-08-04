@@ -1,7 +1,5 @@
 /*
- * Lists all modules in system.
- *
- * Returns a list of strings being names of all modules that exists in system.
+ * Lists all modules in the system, returned as a list of strings.
  */
 .arguments
 

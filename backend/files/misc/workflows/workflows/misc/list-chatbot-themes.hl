@@ -1,8 +1,6 @@
 
 /*
- * Lists all available AI chatbot themes in the system
- * 
- * Returns a list of valid values to caller.
+ * Lists all available AI chatbot themes in the system.
  */
 .arguments
 

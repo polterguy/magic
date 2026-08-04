@@ -1,8 +1,6 @@
 
 /*
  * Creates a new role with the specified [name] and [description].
- * 
- * Will insert a new record into the "roles" table.
  */
 .arguments
 

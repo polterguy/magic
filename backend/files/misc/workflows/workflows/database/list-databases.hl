@@ -1,8 +1,6 @@
 
 /*
- * Executable Hyperlambda file that lists all databases in system
- * 
- * Lists all databases in the system and returns as a list of strings.
+ * Lists all databases in the system, returned as a list of strings.
  */
 .arguments
 

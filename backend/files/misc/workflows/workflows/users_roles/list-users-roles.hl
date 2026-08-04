@@ -1,8 +1,6 @@
 
 /*
- * List roles for user
- * 
- * Returns all roles the specified user belongs to.
+ * Returns all roles the specified [username] user belongs to.
  */
 .arguments
 

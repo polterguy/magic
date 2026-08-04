@@ -1,9 +1,6 @@
 
 /*
- * Executable Hyperlambda file that executes the specified [sql] and returns the result
- * 
- * Connects to [database] database, and executes the specified [sql],
- * and returns all rows to caller.
+ * Connects to the specified [database], executes the specified [sql], and returns all rows.
  */
 .arguments
 

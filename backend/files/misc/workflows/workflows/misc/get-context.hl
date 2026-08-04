@@ -1,8 +1,8 @@
 
 /*
- * Searches through your training snippets using RAG / VSS search for the specified query
- *
- * This function will use VSS to search through your RAG database for training snippets matching the specified [query] that are within the specified [threshold] of similarity and return the first [max_tokens] training snippets as Markdown context data.
+ * Uses VSS to search through your RAG database for training snippets matching the specified
+ * [query] within the specified [threshold] of similarity, and returns the first [max_tokens]
+ * training snippets as Markdown context data.
  */
 .arguments
 

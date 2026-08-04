@@ -1,8 +1,7 @@
 
 /*
- * Crawls a website for RAG training data and inserts into the specified machine learning type.
- *
- * This will not vectorize the type.
+ * Crawls a website for RAG training data and inserts it into the specified machine learning type,
+ * without vectorizing the type.
  */
 .arguments
 

@@ -1,8 +1,7 @@
 
 /*
- * Schedules the specified [id] task such that it's being automatically executed in the future.
- *
- * You can schedule the task to execute once in the future, or according to a repetition value.
+ * Schedules the specified [id] task for automatic execution in the future, either once at a
+ * specified [due] date or according to a [repeats] repetition pattern.
  */
 .arguments
 

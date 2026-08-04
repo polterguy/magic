@@ -1,7 +1,5 @@
 /*
- * Lists all folders in the specified [folder].
- *
- * Returns a list of strings being folders found inside the specified folder.
+ * Lists all folders inside the specified [folder], returned as a list of strings.
  */
 .arguments
 

@@ -1,8 +1,6 @@
 
 /*
- * Lists all tasks in system
- *
- * Lists all tasks and returns to caller
+ * Lists all tasks in the system.
  */
 .arguments
 

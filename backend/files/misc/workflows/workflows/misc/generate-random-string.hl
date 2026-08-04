@@ -1,8 +1,7 @@
 
 /*
- * Generates a cryptographically secured random string
- * 
- * The string will always be at least 20 characters long and it can be used as a password for instance.
+ * Generates a cryptographically secured random string, always at least 20 characters long, usable
+ * for instance as a password.
  */
 .arguments
 

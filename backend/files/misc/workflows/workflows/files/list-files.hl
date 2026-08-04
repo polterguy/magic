@@ -1,7 +1,5 @@
 /*
- * Lists all files in the specified folder.
- *
- * Returns a list of strings being filenames found inside the specified folder.
+ * Lists all files in the specified [folder], returned as a list of strings.
  */
 .arguments
 

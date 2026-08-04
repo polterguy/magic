@@ -1,8 +1,6 @@
 
 /*
- * Lists all plugins that can be installed
- * 
- * Lists all available backend plugins from the Magic bazar repository
+ * Lists all available backend plugins from the Magic bazar repository.
  */
 .arguments
 

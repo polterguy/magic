@@ -1,8 +1,7 @@
 
 /*
- * Creates a new user with the specified username, password, and optionally name and email.
- * 
- * Will insert a new user into the "users" table.
+ * Creates a new user with the specified [username] and [password], and optionally [name] and
+ * [email].
  */
 .arguments
 

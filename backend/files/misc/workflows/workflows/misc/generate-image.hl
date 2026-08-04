@@ -1,11 +1,9 @@
 /*
- * Creates an image
- *
  * Creates an image using OpenAI's GPT Image 2 model according to the specified [prompt], [size],
  * and [quality], saves it to [filename] on the server, and returns the filename and URL of the
- * image to caller. The URL is only returned if the image is saved inside the publicly served
- * '/etc/www/' folder, and [filename] defaults to a randomly named PNG file inside of
- * '/etc/www/assets/images/' if omitted.
+ * image. The URL is only returned if the image is saved inside the publicly served '/etc/www/'
+ * folder, and [filename] defaults to a randomly named PNG file inside of '/etc/www/assets/images/'
+ * if omitted.
  */
 .arguments
 

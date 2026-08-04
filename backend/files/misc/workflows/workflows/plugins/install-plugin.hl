@@ -1,7 +1,5 @@
 
 /*
- * Installs a plugin
- * 
  * Installs the specified [name] plugin into your Magic Cloud backend.
  */
 .arguments

@@ -1,8 +1,6 @@
 
 /*
- * Lists all machine learning types in the system
- * 
- * Returns all machine learning types in the system.
+ * Lists all machine learning types in the system.
  */
 .arguments
 

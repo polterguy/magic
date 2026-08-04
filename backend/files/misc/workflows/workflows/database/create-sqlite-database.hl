@@ -1,8 +1,6 @@
 
 /*
- * Executable Hyperlambda file that creates a new SQLite database.
- * 
- * Creates the SQLite database specified as [database].
+ * Creates a new SQLite database with the specified [database] name.
  */
 .arguments
 

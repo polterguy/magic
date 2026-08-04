@@ -1,8 +1,6 @@
 
 /*
- * Creates a PDF file from the specified [html] input argument.
- * 
- * The resulting PDF file will be saved to the file specified by the [filename] argument.
+ * Creates a PDF file from the specified [html] and saves it to the specified [filename].
  */
 .arguments
 

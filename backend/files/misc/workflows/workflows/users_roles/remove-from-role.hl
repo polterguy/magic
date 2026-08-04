@@ -1,8 +1,6 @@
 
 /*
- * Removes the specified role from the specified user
- * 
- * Returns success if deletion was successful.
+ * Removes the specified [role] from the specified [username] user.
  */
 .arguments
 

@@ -1,8 +1,6 @@
 
 /*
- * Adds the specified [username] to the specified [role].
- * 
- * Will insert a new record into the "users_roles" table.
+ * Adds the specified [username] user to the specified [role].
  */
 .arguments
 

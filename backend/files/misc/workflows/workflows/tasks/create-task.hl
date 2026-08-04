@@ -1,8 +1,6 @@
 
 /*
- * Creates a new task
- *
- * Create and persists a new task that can be executed or scheduled later
+ * Creates and persists a new task that can be executed or scheduled later.
  */
 .arguments
 

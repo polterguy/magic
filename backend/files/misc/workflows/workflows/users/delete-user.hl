@@ -1,8 +1,6 @@
 
 /*
- * Deletes the specified user
- * 
- * Returns success if deletion was successful.
+ * Deletes the specified [username] user.
  */
 .arguments
 

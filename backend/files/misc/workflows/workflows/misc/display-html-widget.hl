@@ -1,8 +1,7 @@
 
 /*
- * Sends the specified HTML to the frontend
- * 
- * Either [html] or [filename] is required (supply exactly one, not both).
+ * Sends the specified HTML to the frontend. Either [html] or [filename] is required (supply
+ * exactly one, not both).
  */
 .arguments
 

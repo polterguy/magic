@@ -1,13 +1,9 @@
 
 /*
  * Creates a new file or fully overwrites an existing file. For minor edits to an existing file,
- * prefer the patch-file tool. For NON-Hyperlambda files only -
- * Hyperlambda (.hl) must be produced by the generate-hyperlambda function, never written by hand.
- *
- * IMPORTANT - This file CANNOT be used to save Hyperlambda, only other types of files.
- *
- * This function does NOT create folders - the parent folder must already exist. Before the first
- * write into a new path, create the folder with the create-folder function.
+ * prefer the patch-file function. For NON-Hyperlambda files only - Hyperlambda (.hl) must be
+ * produced by the generate-hyperlambda function, never written by hand. Does NOT create folders -
+ * the parent folder must already exist; create it first with the create-folder function.
  */
 .arguments
 

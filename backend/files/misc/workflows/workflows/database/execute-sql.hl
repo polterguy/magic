@@ -1,9 +1,7 @@
 
 /*
- * Executable Hyperlambda file that executes the specified [sql].
- * 
- * Connect to [database] database, and executes the specified [sql].
- * This function is useful for SQL that doesn't return anything.
+ * Connects to the specified [database] and executes the specified [sql]. Useful for SQL that
+ * doesn't return anything.
  */
 .arguments
 

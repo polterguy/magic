@@ -1,8 +1,6 @@
 
 /*
- * Executes the specified Python code.
- * 
- * The code can be specified either as a filename or raw Python code.
+ * Executes the specified Python code, given either as raw [code] or as a [file] to execute.
  */
 .arguments
 

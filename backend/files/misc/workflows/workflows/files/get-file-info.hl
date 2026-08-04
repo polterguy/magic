@@ -1,10 +1,7 @@
 
 /*
- * Returns meta information about a specific Hyperlambda file,
- * specifically its description being the file level comment if it has one.
- *
- * Returns the description as taken from the file comment, in addition to a list of arguments
- * the file can handle in name/type format.
+ * Returns meta information about the specified Hyperlambda file; its description as taken from the
+ * file level comment, and the arguments the file accepts in name/type format.
  */
 .arguments
 

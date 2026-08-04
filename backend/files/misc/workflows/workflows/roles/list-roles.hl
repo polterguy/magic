@@ -1,8 +1,6 @@
 
 /*
- * List roles in system
- * 
- * Optionally apply [limit] and [offset] to page.
+ * Lists roles in the system, optionally paged with [limit] and [offset].
  */
 .arguments
 

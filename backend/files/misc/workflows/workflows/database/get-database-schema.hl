@@ -1,8 +1,6 @@
 
 /*
- * Executable Hyperlambda file that retrieves the schema of the specified [database]
- *
- * Pass in the name of the database you want to retrieve the schema (DDL) for as [database].
+ * Returns the schema (DDL) of the specified [database].
  */
 .arguments
 
