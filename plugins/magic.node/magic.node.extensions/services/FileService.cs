@@ -60,12 +60,8 @@ namespace magic.node.services
             string extension)
         {
             var files = ListAll(folder, extension);
-            var result = new List<(string Filename, byte[] Content)>();
-            foreach (var idx in files)
-            {
-                result.Add((idx, await LoadBinaryAsync(idx)));
-            }
-            return result;
+            return await Task.WhenAll(
+                files.Select(async x => (Filename: x, Content: await LoadBinaryAsync(x))));
         }
 
         /// <inheritdoc/>

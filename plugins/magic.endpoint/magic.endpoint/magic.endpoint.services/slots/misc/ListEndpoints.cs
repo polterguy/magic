@@ -46,7 +46,7 @@ namespace magic.endpoint.services.slots.misc
 
         readonly IRootResolver _rootResolver;
         readonly IFileService _fileService;
-        IEnumerable<(string Filename, string Content)> _content;
+        Dictionary<string, string> _content;
 
         /// <summary>
         /// Creates an instance of your object
@@ -74,7 +74,7 @@ namespace magic.endpoint.services.slots.misc
                 .LoadAllAsync(_rootResolver.AbsolutePath("system/"), ".hl"))
                 .Concat(await _fileService
                     .LoadAllAsync(_rootResolver.AbsolutePath("modules/"), ".hl"))
-                .Select(x => (x.Filename, Encoding.UTF8.GetString(x.Content)));
+                .ToDictionary(x => x.Filename, x => Encoding.UTF8.GetString(x.Content));
 
             input.AddRange(
                 HandleFiles(
@@ -111,7 +111,7 @@ namespace magic.endpoint.services.slots.misc
             var result = new List<Node>();
 
             // Looping through each file in current folder.
-            foreach (var idxFile in _content.Where(x => x.Filename.StartsWith(folder)).Select(x => x.Filename))
+            foreach (var idxFile in _content.Keys.Where(x => x.StartsWith(folder)))
             {
                 // Removing the root folder, to return only relativ filename back to caller.
                 var filename = idxFile.Substring(rootFolder.Length);
@@ -160,7 +160,7 @@ namespace magic.endpoint.services.slots.misc
                  * We need to inspect content of file to retrieve meta information about it,
                  * such as authorization, description, etc.
                  */
-                var lambda = HyperlambdaParser.Parse(_content.FirstOrDefault(x => x.Filename == filename).Content, true);
+                var lambda = HyperlambdaParser.Parse(_content[filename], true);
 
                 // Extracting components from file.
                 var args = GetInputArguments(lambda, verb);
