@@ -69,8 +69,11 @@ namespace magic.endpoint.services.slots.misc
         /// <returns>Awaitable task</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
+            // Endpoints can only exist under system/ and modules/, so we only load those folders.
             _content = (await _fileService
-                .LoadAllAsync(_rootResolver.AbsolutePath("/"), ".hl"))
+                .LoadAllAsync(_rootResolver.AbsolutePath("system/"), ".hl"))
+                .Concat(await _fileService
+                    .LoadAllAsync(_rootResolver.AbsolutePath("modules/"), ".hl"))
                 .Select(x => (x.Filename, Encoding.UTF8.GetString(x.Content)));
 
             input.AddRange(
