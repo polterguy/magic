@@ -161,21 +161,22 @@ for-each:x:@http.get/*/content/*/data/*
                input_price:decimal:5
                output_price:decimal:30
 
+      // Terra and Luna prices are the July 30, 2026 cuts; Sol never moved.
       case:gpt-5.6-terra
          add:x:@.dp/#
             .
                tokens:int:1050000
                chat:bool:true
-               input_price:decimal:2.5
-               output_price:decimal:15
+               input_price:decimal:2
+               output_price:decimal:12
 
       case:gpt-5.6-luna
          add:x:@.dp/#
             .
                tokens:int:1050000
                chat:bool:true
-               input_price:decimal:1
-               output_price:decimal:6
+               input_price:decimal:0.2
+               output_price:decimal:1.2
 
 /*
  * Applying some HTTP caching to avoid invoking OpenAI again with
