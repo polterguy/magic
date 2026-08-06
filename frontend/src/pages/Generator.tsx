@@ -1,6 +1,7 @@
 import { showToast } from '../lib/toast';
 import Select from '../components/Select';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import AiWaiter from '../components/AiWaiter';
 import { ChevronIcon } from '../components/Icons';
 import { useSearchParams } from 'react-router-dom';
 import CodeEditor from '../components/CodeEditor';
@@ -803,6 +804,7 @@ function CrudTab() {
         </div>
       </div>
       )}
+      {busy && <AiWaiter />}
     </>
   );
 }
@@ -1046,6 +1048,7 @@ function SqlEndpointTab() {
         onResult={setSql}
         onError={message => setFeedback({ text: message, isError: true })}
         style={{ marginTop: 8 }} />
+      {busy && <AiWaiter />}
     </>
   );
 }
