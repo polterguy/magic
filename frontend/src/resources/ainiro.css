@@ -4,62 +4,111 @@
 /*   near-black background with a white cursor/selection and     */
 /*   neutral chrome. Syntax tokens keep functional hues (green   */
 /*   strings, amber numbers, gold slots) but carry ZERO violet.  */
+/*   All colours live in the --cm-* variables below, so the      */
+/*   light theme flips them without touching the rules — the     */
+/*   theme name stays 'ainiro' in both modes.                    */
 /****************************************************************/
 
-.cm-s-ainiro.CodeMirror { background: #221a14; color: #e8e2d8; }
-.cm-s-ainiro div.CodeMirror-selected { background: rgba(255, 255, 255, 0.14); }
-.cm-s-ainiro .CodeMirror-line::selection, .cm-s-ainiro .CodeMirror-line > span::selection, .cm-s-ainiro .CodeMirror-line > span > span::selection { background: rgba(255, 255, 255, 0.14); }
-.cm-s-ainiro .CodeMirror-line::-moz-selection, .cm-s-ainiro .CodeMirror-line > span::-moz-selection, .cm-s-ainiro .CodeMirror-line > span > span::-moz-selection { background: rgba(255, 255, 255, 0.14); }
-.cm-s-ainiro .CodeMirror-gutters { background: #221a14; border-right: 1px solid rgba(255, 255, 255, 0.08); }
-.cm-s-ainiro .CodeMirror-guttermarker { color: #a1a1aa; }
-.cm-s-ainiro .CodeMirror-guttermarker-subtle { color: #6b625a; }
-.cm-s-ainiro .CodeMirror-linenumber { color: #6b625a; }
-.cm-s-ainiro .CodeMirror-cursor { border-left: 2px solid #f5f5f4; }
+:root {
+  --cm-bg: #221a14;
+  --cm-text: #e8e2d8;
+  --cm-selection: rgba(255, 255, 255, 0.14);
+  --cm-gutter-border: rgba(255, 255, 255, 0.08);
+  --cm-guttermarker: #a1a1aa;
+  --cm-linenumber: #6b625a;
+  --cm-cursor: #f5f5f4;
+  --cm-comment: #857c72;
+  --cm-number: #f0b13c;
+  --cm-property: #d8b98a;
+  --cm-keyword: #f5c451;
+  --cm-string: #5fe0a0;
+  --cm-type: #ff9aa2;
+  --cm-variable-2: #e6c98f;
+  --cm-link: #f5f5f4;
+  --cm-error: #ff5d6a;
+  --cm-matchingbracket: #ffd479;
+  --cm-matchingtag: rgba(255, 255, 255, 0.18);
+  --cm-activeline: rgba(255, 255, 255, 0.04);
+}
 
-.cm-s-ainiro span.cm-comment { color: #857c72; font-style: italic; }
-.cm-s-ainiro span.cm-atom { color: #f0b13c; }
-.cm-s-ainiro span.cm-number { color: #f0b13c; }
+/* Dark inks on a warm paper canvas — same hues, printed instead of lit. */
+html[data-theme="light"] {
+  --cm-bg: #fdfbf7;
+  --cm-text: #2a2118;
+  --cm-selection: rgba(23, 18, 14, 0.12);
+  --cm-gutter-border: rgba(23, 18, 14, 0.08);
+  --cm-guttermarker: #6b6560;
+  --cm-linenumber: #b0a698;
+  --cm-cursor: #17120e;
+  --cm-comment: #948a7d;
+  --cm-number: #9a6207;
+  --cm-property: #7d6434;
+  --cm-keyword: #8f6a00;
+  --cm-string: #157a49;
+  --cm-type: #c04858;
+  --cm-variable-2: #6d5a2e;
+  --cm-link: #17120e;
+  --cm-error: #d63644;
+  --cm-matchingbracket: #8f6a00;
+  --cm-matchingtag: rgba(23, 18, 14, 0.14);
+  --cm-activeline: rgba(23, 18, 14, 0.04);
+}
 
-.cm-s-ainiro span.cm-property, .cm-s-ainiro span.cm-attribute { color: #d8b98a; }
+.cm-s-ainiro.CodeMirror { background: var(--cm-bg); color: var(--cm-text); }
+.cm-s-ainiro div.CodeMirror-selected { background: var(--cm-selection); }
+.cm-s-ainiro .CodeMirror-line::selection, .cm-s-ainiro .CodeMirror-line > span::selection, .cm-s-ainiro .CodeMirror-line > span > span::selection { background: var(--cm-selection); }
+.cm-s-ainiro .CodeMirror-line::-moz-selection, .cm-s-ainiro .CodeMirror-line > span::-moz-selection, .cm-s-ainiro .CodeMirror-line > span > span::-moz-selection { background: var(--cm-selection); }
+.cm-s-ainiro .CodeMirror-gutters { background: var(--cm-bg); border-right: 1px solid var(--cm-gutter-border); }
+.cm-s-ainiro .CodeMirror-guttermarker { color: var(--cm-guttermarker); }
+.cm-s-ainiro .CodeMirror-guttermarker-subtle { color: var(--cm-linenumber); }
+.cm-s-ainiro .CodeMirror-linenumber { color: var(--cm-linenumber); }
+.cm-s-ainiro .CodeMirror-cursor { border-left: 2px solid var(--cm-cursor); }
+
+.cm-s-ainiro span.cm-comment { color: var(--cm-comment); font-style: italic; }
+.cm-s-ainiro span.cm-atom { color: var(--cm-number); }
+.cm-s-ainiro span.cm-number { color: var(--cm-number); }
+
+.cm-s-ainiro span.cm-property, .cm-s-ainiro span.cm-attribute { color: var(--cm-property); }
 /* Non-dotted slots ([if], [add], [while]) — the important control keywords: yellow. */
-.cm-s-ainiro span.cm-keyword { color: #f5c451; }
-.cm-s-ainiro span.cm-string { color: #5fe0a0; }
-.cm-s-ainiro span.cm-string.cm-property { color: #e8e2d8; }
+.cm-s-ainiro span.cm-keyword { color: var(--cm-keyword); }
+.cm-s-ainiro span.cm-string { color: var(--cm-string); }
+.cm-s-ainiro span.cm-string.cm-property { color: var(--cm-text); }
 
-.cm-s-ainiro span.cm-type { color: #ff9aa2; }
-.cm-s-ainiro span.cm-variable { color: #e8e2d8; }
+.cm-s-ainiro span.cm-type { color: var(--cm-type); }
+.cm-s-ainiro span.cm-variable { color: var(--cm-text); }
 /* Dotted slots / Active Event invocations (log.error, data.connect): warm gold. */
-.cm-s-ainiro span.cm-variable-2 { color: #e6c98f; }
-.cm-s-ainiro span.cm-def { color: #5fe0a0; }
-.cm-s-ainiro span.cm-bracket { color: #e8e2d8; font-weight: bold; }
-.cm-s-ainiro span.cm-tag { color: #d8b98a; }
-.cm-s-ainiro span.cm-link { color: #f5f5f4; }
-.cm-s-ainiro span.cm-error { color: #ff5d6a; }
-.cm-s-ainiro span.cm-qualifier { color: #e8e2d8; }
+.cm-s-ainiro span.cm-variable-2 { color: var(--cm-variable-2); }
+.cm-s-ainiro span.cm-def { color: var(--cm-string); }
+.cm-s-ainiro span.cm-bracket { color: var(--cm-text); font-weight: bold; }
+.cm-s-ainiro span.cm-tag { color: var(--cm-property); }
+.cm-s-ainiro span.cm-link { color: var(--cm-link); }
+.cm-s-ainiro span.cm-error { color: var(--cm-error); }
+.cm-s-ainiro span.cm-qualifier { color: var(--cm-text); }
 
-.cm-s-ainiro .CodeMirror-activeline-background { background: rgba(255, 255, 255, 0.04); }
-.cm-s-ainiro .CodeMirror-matchingbracket { color: #ffd479 !important; font-weight: bold; }
-.cm-s-ainiro .CodeMirror-matchingtag { background: rgba(255, 255, 255, 0.18); }
+.cm-s-ainiro .CodeMirror-activeline-background { background: var(--cm-activeline); }
+.cm-s-ainiro .CodeMirror-matchingbracket { color: var(--cm-matchingbracket) !important; font-weight: bold; }
+.cm-s-ainiro .CodeMirror-matchingtag { background: var(--cm-matchingtag); }
 
 /*
  * Autocomplete popup. Defined here (not in styles.css) and with tag-qualified
  * selectors, because CodeMirror's own show-hint.css is imported after
  * styles.css and would otherwise win the white default on a specificity tie.
+ * Chrome colours come from the dashboard's global variables.
  */
 ul.CodeMirror-hints {
-  background: #120d0a;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 24px var(--shadow-color);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 .CodeMirror-hints li.CodeMirror-hint {
-  color: #e8e2d8;
+  color: var(--cm-text);
   border-radius: 5px;
 }
 
 .CodeMirror-hints li.CodeMirror-hint-active {
-  background: #f5f5f4;
-  color: #120d0a;
+  background: var(--accent);
+  color: var(--accent-contrast);
 }

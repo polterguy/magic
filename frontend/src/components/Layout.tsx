@@ -5,8 +5,9 @@ import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
-import { DatabaseIcon, RobotIcon } from './Icons';
+import { DatabaseIcon, LogoutIcon, MoonIcon, RobotIcon, SunIcon } from './Icons';
 import { ChevronIcon } from './Icons';
+import { applyTheme, getTheme } from '../lib/theme';
 import BackendsDialog from './BackendsDialog';
 import { openSupport } from '../lib/support';
 import { SECTIONS } from './sections';
@@ -25,6 +26,14 @@ export default function Layout({ children }: { children: ReactNode }) {
   function toggleCollapsed() {
     localStorage.setItem('magic2.navCollapsed', String(!collapsed));
     setCollapsed(!collapsed);
+  }
+
+  const [theme, setTheme] = useState(getTheme);
+
+  function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    setTheme(next);
   }
 
   /*
@@ -160,19 +169,25 @@ export default function Layout({ children }: { children: ReactNode }) {
           </NavLink>
           <div style={{ display: 'flex', gap: 8 }}>
             <button
-              className="btn btn-ghost"
-              style={{ flex: 1 }}
+              className="btn btn-ghost btn-small"
+              title="Logout"
               onClick={logout}>
-              Logout
+              <LogoutIcon />
             </button>
             <button
-              className="btn btn-ghost"
+              className="btn btn-ghost btn-small"
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              onClick={toggleTheme}>
+              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+            </button>
+            <button
+              className="btn btn-ghost btn-small"
               title="Ask Frank — AINIRO's AI, about Hyperlambda and Magic"
               onClick={() => { openSupport(); setMobileNav(false); }}>
               <RobotIcon />
             </button>
             <button
-              className="btn btn-ghost"
+              className="btn btn-ghost btn-small"
               title={'Switch cloudlet — ' + backends.length + ' signed in'}
               onClick={() => { setSwitching(true); setMobileNav(false); }}>
               <DatabaseIcon />

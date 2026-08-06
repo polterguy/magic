@@ -27,8 +27,43 @@
   --danger: #ff5d6a;
   --ok: #35d07f;
   --warn: #ffcf7a;
-  --sidebar-bg: #0d0a08;
-  --sidebar-text: #a1a1aa;
+  /* Text sitting ON the accent — the dark glyph inside white buttons. */
+  --accent-contrast: #120d0a;
+  /* Floating popups (menus, date picker) — a step below the canvas. */
+  --surface-3: #16110d;
+  /* Translucent hover/selection washes over arbitrary surfaces. */
+  --overlay: rgba(255, 255, 255, 0.12);
+  --overlay-strong: rgba(255, 255, 255, 0.2);
+  --overlay-faint: rgba(255, 255, 255, 0.05);
+  /* Selected rows (file tree) — stronger than a hover, carries its own text. */
+  --selection-bg: rgba(255, 255, 255, 0.14);
+  --selection-text: #fff;
+  /* Modal/backdrop scrim — warm near-black, no blue tint. */
+  --scrim: rgba(10, 7, 4, 0.55);
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --login-bg: linear-gradient(135deg, #120d0a 0%, #1e1712 55%, #2a201a 100%);
+  /* The near-black native calendar glyph needs inverting on the dark field. */
+  --picker-filter: invert(1);
+  /* A step below the canvas — the nav column and terminal-style command lines. */
+  --bg-deep: #0d0a08;
+
+  /*
+   * Semantic tints — badge/box backgrounds and their readable text colours.
+   * Bright pastels on the dark canvas; the light theme swaps in darker inks.
+   */
+  --tint-green-bg: rgba(53, 208, 127, 0.14);
+  --tint-green-text: #5fe0a0;
+  --tint-green-border: rgba(53, 208, 127, 0.4);
+  --tint-blue-bg: rgba(85, 150, 255, 0.16);
+  --tint-blue-text: #7fb2ff;
+  --tint-amber-bg: rgba(240, 175, 60, 0.16);
+  --tint-amber-text: #f0b13c;
+  --tint-red-bg: rgba(255, 93, 106, 0.14);
+  --tint-red-text: #ff8a93;
+  --tint-red-border: rgba(255, 93, 106, 0.4);
+  --tint-tan-bg: rgba(216, 185, 138, 0.16);
+  --tint-tan-text: #d8b98a;
+  --tint-neutral-bg: rgba(255, 255, 255, 0.08);
 
   /*
    * The type scale. Seven steps and nothing between them - this file used to
@@ -50,7 +85,7 @@
   --radius-pill: 999px;
   /* Soft, low-contrast elevation — no hard offset. */
   --shadow: none;
-  --shadow-hard: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-hard: 0 10px 30px var(--shadow-color);
 
   /* Monospace-first: the terminal voice. Sans kept for long-form prose. */
   --font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
@@ -64,6 +99,55 @@
    */
   color-scheme: dark;
   accent-color: var(--accent);
+}
+
+/*
+ * Light theme — the same warm monochrome, inverted: a near-black accent on a
+ * warm paper canvas. Activated by lib/theme.ts stamping data-theme on <html>.
+ */
+html[data-theme="light"] {
+  --accent: #17120e;
+  --accent-dark: #3d332a;
+  --accent-soft: rgba(23, 18, 14, 0.08);
+  --bg: #faf7f2;
+  --surface: #ffffff;
+  --surface-2: #f4efe7;
+  --text: #1c1611;
+  --text-soft: #6b6560;
+  --border: rgba(23, 18, 14, 0.12);
+  --border-strong: rgba(23, 18, 14, 0.25);
+  --danger: #d63644;
+  --ok: #1a9a5c;
+  --warn: #e0a52e;
+  --bg-deep: #f1ece3;
+  --accent-contrast: #ffffff;
+  --surface-3: #ffffff;
+  --overlay: rgba(23, 18, 14, 0.07);
+  --overlay-strong: rgba(23, 18, 14, 0.12);
+  --overlay-faint: rgba(23, 18, 14, 0.05);
+  --selection-bg: rgba(23, 18, 14, 0.12);
+  --selection-text: #1c1611;
+  --scrim: rgba(28, 22, 17, 0.35);
+  --shadow-color: rgba(28, 22, 17, 0.16);
+  --login-bg: linear-gradient(135deg, #faf7f2 0%, #f2ece2 55%, #e8ded0 100%);
+  /* The native calendar glyph is already near-black — leave it alone. */
+  --picker-filter: none;
+
+  --tint-green-bg: rgba(26, 154, 92, 0.12);
+  --tint-green-text: #157a49;
+  --tint-green-border: rgba(26, 154, 92, 0.45);
+  --tint-blue-bg: rgba(39, 97, 196, 0.10);
+  --tint-blue-text: #2761c4;
+  --tint-amber-bg: rgba(161, 98, 7, 0.12);
+  --tint-amber-text: #9a6207;
+  --tint-red-bg: rgba(214, 54, 68, 0.10);
+  --tint-red-text: #c02e3c;
+  --tint-red-border: rgba(214, 54, 68, 0.45);
+  --tint-tan-bg: rgba(138, 106, 59, 0.12);
+  --tint-tan-text: #7d6434;
+  --tint-neutral-bg: rgba(23, 18, 14, 0.06);
+
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -122,8 +206,8 @@ body {
 .sidebar {
   width: 220px;
   flex-shrink: 0;
-  background: var(--sidebar-bg);
-  color: var(--sidebar-text);
+  background: var(--bg-deep);
+  color: var(--text-soft);
   display: flex;
   flex-direction: column;
   padding: 18px 12px;
@@ -137,7 +221,7 @@ body {
 }
 
 .brand-magic {
-  color: #fff;
+  color: var(--text);
   font-size: var(--text-xl);
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -173,15 +257,15 @@ body {
   padding: 9px 10px;
   border-radius: var(--radius);
   border-left: 2px solid transparent;
-  color: var(--sidebar-text);
+  color: var(--text-soft);
   text-decoration: none;
   font-weight: 500;
   letter-spacing: 0.2px;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  background: var(--overlay-faint);
+  color: var(--text);
 }
 
 /* Selected item — a hard accent bar and a violet-tinted block, like a
@@ -189,7 +273,7 @@ body {
 .nav-link.active {
   background: var(--accent-soft);
   border-left-color: var(--accent);
-  color: #fff;
+  color: var(--text);
 }
 
 .nav-icon {
@@ -199,7 +283,7 @@ body {
 }
 
 .sidebar-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--border);
   padding-top: 12px;
   display: flex;
   flex-direction: column;
@@ -215,11 +299,11 @@ body {
 }
 
 .backend-info:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--overlay-faint);
 }
 
 .backend-user {
-  color: #fff;
+  color: var(--text);
   font-weight: 600;
 }
 
@@ -370,8 +454,8 @@ a:hover {
   cursor: pointer;
   text-decoration: none;
   background: var(--accent);
-  /* White button, dark label — the site's primary CTA. */
-  color: #120d0a;
+  /* Accent button, contrasting label — the site's primary CTA. */
+  color: var(--accent-contrast);
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
@@ -412,7 +496,7 @@ a:hover {
 .btn-secondary:hover {
   background: var(--accent-soft);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--text);
 }
 
 .btn-danger {
@@ -425,13 +509,13 @@ a:hover {
 
 .btn-ghost {
   background: transparent;
-  color: var(--sidebar-text);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-soft);
+  border: 1px solid var(--border-strong);
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  background: var(--overlay-faint);
+  color: var(--text);
 }
 
 .btn-small {
@@ -478,7 +562,7 @@ input[type="radio"] {
 input[type="datetime-local"]::-webkit-calendar-picker-indicator,
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
+  filter: var(--picker-filter);
   opacity: 0.65;
   cursor: pointer;
 }
@@ -560,10 +644,10 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   list-style: none;
   margin: 0;
   padding: 4px;
-  background: #16110d;
+  background: var(--surface-3);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  box-shadow: var(--shadow-hard);
   max-height: 320px;
   overflow-y: auto;
   /* Above modals (100) and CodeMirror hints (2000000). */
@@ -627,10 +711,10 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   max-height: calc(100vh - 16px);
   overflow-y: auto;
   padding: 12px;
-  background: #16110d;
+  background: var(--surface-3);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  box-shadow: var(--shadow-hard);
   font-family: var(--font-mono);
   color: var(--text);
 }
@@ -685,10 +769,10 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 .dtp-day:disabled { opacity: 0.25; cursor: default; }
 .dtp-day.muted { color: var(--text-soft); opacity: 0.45; }
 .dtp-day.today { border-color: var(--border-strong); }
-/* Selected day — the brand's white pill with dark glyph, like primary buttons. */
+/* Selected day — the brand's accent pill with contrasting glyph, like primary buttons. */
 .dtp-day.selected {
   background: var(--accent);
-  color: #120d0a;
+  color: var(--accent-contrast);
   font-weight: 700;
   border-color: var(--accent);
 }
@@ -792,27 +876,27 @@ tr.clickable:hover td { background: var(--accent-soft); }
   text-transform: uppercase;
 }
 
-/* Verb / log-level badges — translucent tints on the dark canvas, bordered. */
-.badge-get { background: rgba(53, 208, 127, 0.14); color: #5fe0a0; }
-.badge-post { background: rgba(85, 150, 255, 0.16); color: #7fb2ff; }
-.badge-put { background: rgba(240, 175, 60, 0.16); color: #f0b13c; }
-.badge-delete { background: rgba(255, 93, 106, 0.16); color: #ff8a93; }
-.badge-patch { background: rgba(216, 185, 138, 0.16); color: #d8b98a; }
-.badge-error, .badge-fatal { background: rgba(255, 93, 106, 0.16); color: #ff8a93; }
-.badge-info { background: rgba(85, 150, 255, 0.16); color: #7fb2ff; }
-.badge-debug { background: rgba(255, 255, 255, 0.08); color: var(--text-soft); }
+/* Verb / log-level badges — translucent tints on the canvas, bordered. */
+.badge-get { background: var(--tint-green-bg); color: var(--tint-green-text); }
+.badge-post { background: var(--tint-blue-bg); color: var(--tint-blue-text); }
+.badge-put { background: var(--tint-amber-bg); color: var(--tint-amber-text); }
+.badge-delete { background: var(--tint-red-bg); color: var(--tint-red-text); }
+.badge-patch { background: var(--tint-tan-bg); color: var(--tint-tan-text); }
+.badge-error, .badge-fatal { background: var(--tint-red-bg); color: var(--tint-red-text); }
+.badge-info { background: var(--tint-blue-bg); color: var(--tint-blue-text); }
+.badge-debug { background: var(--tint-neutral-bg); color: var(--text-soft); }
 
 /* Plugin category tag — warm light-brown, on brand, no blue. */
-.badge-module { background: rgba(216, 185, 138, 0.16); color: #d8b98a; }
+.badge-module { background: var(--tint-tan-bg); color: var(--tint-tan-text); }
 
 /*
  * State, as opposed to the verb and log-level badges above. They happen to
  * share colours today, but borrowing badge-get to mean "connected" tied the
  * two together for whoever next changes the verb palette.
  */
-.badge-ok { background: rgba(53, 208, 127, 0.14); color: #5fe0a0; }
+.badge-ok { background: var(--tint-green-bg); color: var(--tint-green-text); }
 
-.badge-idle { background: rgba(255, 255, 255, 0.08); color: var(--text-soft); }
+.badge-idle { background: var(--tint-neutral-bg); color: var(--text-soft); }
 
 /*
  * A done/not-done state in a narrow column, where a colour is read faster than
@@ -824,7 +908,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 3px var(--overlay-faint);
 }
 
 .status-dot.ok { background: var(--ok); }
@@ -855,7 +939,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #120d0a 0%, #1e1712 55%, #2a201a 100%);
+  background: var(--login-bg);
 }
 
 .login-card {
@@ -863,7 +947,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
   background: var(--surface);
   border-radius: var(--radius-lg);
   padding: 34px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 20px 60px var(--shadow-color);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -883,17 +967,17 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .error-box {
-  background: rgba(255, 93, 106, 0.12);
-  border: 1px solid rgba(255, 93, 106, 0.4);
-  color: #ff8a93;
+  background: var(--tint-red-bg);
+  border: 1px solid var(--tint-red-border);
+  color: var(--tint-red-text);
   border-radius: var(--radius);
   padding: 10px 14px;
 }
 
 .success-box {
-  background: rgba(53, 208, 127, 0.12);
-  border: 1px solid rgba(53, 208, 127, 0.4);
-  color: #5fe0a0;
+  background: var(--tint-green-bg);
+  border: 1px solid var(--tint-green-border);
+  color: var(--tint-green-text);
   border-radius: var(--radius);
   padding: 10px 14px;
 }
@@ -1049,8 +1133,8 @@ tr.clickable:hover td { background: var(--accent-soft); }
 .tree-row:hover { background: var(--accent-soft); }
 
 .tree-row.selected {
-  background: rgba(255, 255, 255, 0.14);
-  color: #fff;
+  background: var(--selection-bg);
+  color: var(--selection-text);
 }
 
 .tree-chevron {
@@ -1082,7 +1166,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .tree-row.selected .tree-chevron,
-.tree-row.selected .tree-icon { color: #fff; }
+.tree-row.selected .tree-icon { color: var(--selection-text); }
 
 /* Column drop button appears only on row hover. */
 .col-drop { opacity: 0; }
@@ -1144,15 +1228,15 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .icon-btn.danger:hover {
-  background: rgba(255, 93, 106, 0.16);
+  background: var(--tint-red-bg);
   color: var(--danger);
 }
 
-.tree-row.selected .icon-btn { color: rgba(255, 255, 255, 0.85); }
+.tree-row.selected .icon-btn { color: var(--selection-text); }
 
 .tree-row.selected .icon-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background: var(--overlay-strong);
+  color: var(--selection-text);
 }
 
 /* ---------- Dashboard ---------- */
@@ -1263,8 +1347,8 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 pre.result-json {
-  background: #1a1410;
-  color: #f0ede9;
+  background: var(--surface);
+  color: var(--text);
   border-radius: var(--radius);
   padding: 14px;
   overflow: auto;
@@ -1284,7 +1368,7 @@ pre.result-json {
   position: fixed;
   inset: 0;
   /* Warm near-black scrim — matches the brand canvas, no blue tint. */
-  background: rgba(10, 7, 4, 0.55);
+  background: var(--scrim);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -1303,7 +1387,7 @@ pre.result-json {
   /* Long content scrolls inside the dialog rather than off the screen. */
   max-height: 88vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 60px var(--shadow-color);
 }
 
 .modal-box h2 {
@@ -1530,7 +1614,7 @@ pre.result-json {
 }
 
 .file-tab-close:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--overlay);
 }
 
 /* Global notifications pushed from the backend over the socket channel —
@@ -1559,7 +1643,7 @@ pre.result-json {
   color: var(--text);
   font-weight: 500;
   font-size: var(--text-sm);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-hard);
   animation: toast-in 0.18s ease-out;
 }
 
@@ -1599,7 +1683,7 @@ pre.result-json {
 }
 
 .toast-close:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--overlay);
 }
 
 @keyframes toast-in {
@@ -1633,7 +1717,7 @@ pre.result-json {
 }
 
 .banner-close:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--overlay);
 }
 
 /* Full-screen waiter shown while the AI generates code — bouncing dots,
@@ -1642,7 +1726,7 @@ pre.result-json {
   position: fixed;
   inset: 0;
   z-index: 150;
-  background: rgba(10, 7, 4, 0.5);
+  background: var(--scrim);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1737,7 +1821,7 @@ pre.result-json {
   display: block;
   margin-top: 10px;
   padding: 10px 12px;
-  background: #0d0a08;
+  background: var(--bg-deep);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text);
@@ -1823,7 +1907,7 @@ button.guide-card {
 
 .guide-card:hover {
   border-color: var(--accent);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 6px 18px var(--shadow-color);
   transform: translateY(-2px);
 }
 
@@ -1860,7 +1944,7 @@ button.guide-card {
 /* Vector-search results, coloured by whether they'd reach the model's
    context — the model's threshold decides where that line falls. */
 tr.vss-relevant td {
-  color: #5fe0a0;
+  color: var(--tint-green-text);
 }
 
 tr.vss-irrelevant td {
@@ -2010,7 +2094,7 @@ tr.vss-irrelevant td {
   background: var(--surface);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 24px var(--shadow-color);
   padding: 4px;
 }
 
@@ -2164,8 +2248,8 @@ tr.vss-irrelevant td {
     align-items: center;
     gap: 12px;
     padding: 10px 14px;
-    background: var(--sidebar-bg);
-    color: #fff;
+    background: var(--bg-deep);
+    color: var(--text);
     flex-shrink: 0;
   }
   .mobile-topbar .brand-magic { font-size: var(--text-lg); }
@@ -2180,10 +2264,10 @@ tr.vss-irrelevant td {
     border: none;
     border-radius: var(--radius);
     background: transparent;
-    color: #fff;
+    color: var(--text);
     cursor: pointer;
   }
-  .hamburger:hover { background: rgba(255, 255, 255, 0.1); }
+  .hamburger:hover { background: var(--overlay); }
 
   /* The sidebar becomes an off-canvas drawer, shown by the .open class. */
   .sidebar,
@@ -2207,7 +2291,7 @@ tr.vss-irrelevant td {
     position: fixed;
     inset: 0;
     z-index: 150;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--scrim);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.22s ease;
