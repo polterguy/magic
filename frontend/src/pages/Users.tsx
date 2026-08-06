@@ -1,4 +1,5 @@
 import { showToast } from '../lib/toast';
+import AiWaiter from '../components/AiWaiter';
 import SearchInput from '../components/SearchInput';
 import { useCallback, useEffect, useState } from 'react';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -90,6 +91,7 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
   const [editing, setEditing] = useState<User | null>(null);
   const [changingPassword, setChangingPassword] = useState<User | null>(null);
   const [creating, setCreating] = useState(false);
+  const [waiting, setWaiting] = useState(false);
   const { prompt } = useDialog();
 
   const refresh = useCallback(async () => {
@@ -128,12 +130,15 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
       props.notify({ text: 'Name did not match — nothing deleted', isError: true });
       return;
     }
+    setWaiting(true);
     try {
       await deleteUser(username);
       props.notify({ text: username + ' deleted', isError: false });
       await refresh();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -258,6 +263,7 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
           }}
           onError={message => props.notify({ text: message, isError: true })} />
       )}
+      {waiting && <AiWaiter />}
     </>
   );
 }
@@ -401,15 +407,18 @@ function EditUserDialog(props: {
    * the form's Save.
    */
   async function toggleRole(role: string, isMember: boolean) {
+    // Optimistic — the checkbox moves with the click; a failed call reverts it.
+    setMemberRoles(isMember
+      ? memberRoles.filter(candidate => candidate !== role)
+      : [...memberRoles, role]);
     try {
       if (isMember) {
         await removeUserFromRole(props.user.username, role);
-        setMemberRoles(memberRoles.filter(candidate => candidate !== role));
       } else {
         await addUserToRole(props.user.username, role);
-        setMemberRoles([...memberRoles, role]);
       }
     } catch (err: any) {
+      setMemberRoles(memberRoles);
       props.onError(err.message);
     }
   }
@@ -435,6 +444,7 @@ function EditUserDialog(props: {
     })) {
       return;
     }
+    setBusy(true);
     try {
       // Only fields that exist server-side need deleting.
       if (saved.some(field => field.type === type)) {
@@ -443,6 +453,8 @@ function EditUserDialog(props: {
       setFields(fields.filter(field => field.type !== type));
     } catch (err: any) {
       props.onError(err.message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -577,6 +589,7 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void; notify: Notify 
   const [filter, setFilter] = useState('');
   const [editing, setEditing] = useState<Role | null>(null);
   const [creating, setCreating] = useState(false);
+  const [waiting, setWaiting] = useState(false);
   const { prompt } = useDialog();
 
   const query = filter.trim().toLowerCase();
@@ -600,12 +613,15 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void; notify: Notify 
       props.notify({ text: 'Name did not match — nothing deleted', isError: true });
       return;
     }
+    setWaiting(true);
     try {
       await deleteRole(role.name);
       props.notify({ text: 'Role ' + role.name + ' deleted', isError: false });
       props.onChanged();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -670,6 +686,7 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void; notify: Notify 
           }}
           onError={message => props.notify({ text: message, isError: true })} />
       )}
+      {waiting && <AiWaiter />}
     </>
   );
 }

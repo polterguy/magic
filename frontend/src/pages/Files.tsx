@@ -220,8 +220,10 @@ export default function Files() {
   const [resultWasHttp, setResultWasHttp] = useState(false);
   const [generating, setGenerating] = useState(false);
   // Slow backend round-trips outside generation — argument retrieval,
-  // endpoint meta lookups, OpenAPI specs and evaluation.
+  // endpoint meta lookups, OpenAPI specs, evaluation, and tree mutations.
   const [waiting, setWaiting] = useState(false);
+  // Save-in-flight — guards the Save button and Ctrl-S against re-submits.
+  const [saving, setSaving] = useState(false);
   // Generating needs something selected to send, so the button follows it.
   const [hasSelection, setHasSelection] = useState(false);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
@@ -333,12 +335,15 @@ export default function Files() {
       setSelectedFile(path);
       return;
     }
+    setWaiting(true);
     try {
       const text = await loadFile(path);
       setOpenFiles(current => [...current, { path, content: text, saved: text }]);
       setSelectedFile(path);
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -349,9 +354,10 @@ export default function Files() {
 
   async function save() {
     const file = openFiles.find(candidate => candidate.path === selectedFile);
-    if (!file) {
+    if (!file || saving) {
       return;
     }
+    setSaving(true);
     try {
       await saveFile(file.path, file.content);
       setOpenFiles(files => files.map(candidate =>
@@ -359,6 +365,8 @@ export default function Files() {
       show('Saved ' + file.path);
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -385,11 +393,14 @@ export default function Files() {
         return;
       }
       if (answer === 'save') {
+        setWaiting(true);
         try {
           await saveFile(path, file.content);
         } catch (err: any) {
           show(err.message, true);
           return;
+        } finally {
+          setWaiting(false);
         }
       }
     }
@@ -496,6 +507,7 @@ export default function Files() {
       if (!answer) {
         return;
       }
+      setWaiting(true);
       await save();
     }
     setWaiting(true);
@@ -523,12 +535,15 @@ export default function Files() {
       return;
     }
     const path = folder + name;
+    setWaiting(true);
     try {
       await saveFile(path, '');
       await loadTree(systemFiles);
       await openFile(path);
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -537,11 +552,14 @@ export default function Files() {
     if (!name) {
       return;
     }
+    setWaiting(true);
     try {
       await createFolder(folder + name + '/');
       await loadTree(systemFiles);
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -554,6 +572,7 @@ export default function Files() {
     })) {
       return;
     }
+    setWaiting(true);
     try {
       await deleteFile(path);
       const remaining = openFiles.filter(candidate => candidate.path !== path);
@@ -564,6 +583,8 @@ export default function Files() {
       await loadTree(systemFiles);
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -580,6 +601,7 @@ export default function Files() {
     })) {
       return;
     }
+    setWaiting(true);
     try {
       await deleteFolder(path);
       /*
@@ -596,6 +618,8 @@ export default function Files() {
       await loadTree(systemFiles);
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -615,6 +639,7 @@ export default function Files() {
       return;
     }
     const newPath = parentOf(path) + name + (isFolder ? '/' : '');
+    setWaiting(true);
     try {
       /*
        * The rename endpoint is asymmetric: for a folder it moves to [newName]
@@ -633,6 +658,8 @@ export default function Files() {
       await loadTree(systemFiles);
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -644,6 +671,7 @@ export default function Files() {
    */
   async function createAiFunctions(target: string, type: string) {
     setAiFunctionTarget(null);
+    setWaiting(true);
     try {
       const targets = target.endsWith('.hl')
         ? [target]
@@ -670,6 +698,8 @@ export default function Files() {
           : ''));
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -778,6 +808,7 @@ export default function Files() {
               className="btn btn-secondary btn-small"
               title="Download file"
               onClick={async () => {
+                setWaiting(true);
                 try {
                   const raw = await downloadFileRaw(selectedFile);
                   downloadBlob(
@@ -785,6 +816,8 @@ export default function Files() {
                     dispositionFilename(raw.disposition) ?? nameOf(selectedFile));
                 } catch (err: any) {
                   show(err.message, true);
+                } finally {
+                  setWaiting(false);
                 }
               }}>
               <DownloadIcon />
@@ -817,9 +850,9 @@ export default function Files() {
             Execute
           </button>
         )}
-        <button className="btn btn-small" onClick={save} disabled={!selectedFile || !dirty}>
+        <button className="btn btn-small" onClick={save} disabled={!selectedFile || !dirty || saving}>
           <SaveIcon />
-          Save
+          {saving ? 'Saving…' : 'Save'}
         </button>
       </div>
       <div className="files-layout">
@@ -860,6 +893,7 @@ export default function Files() {
                 onChange={async e => {
                   const files = Array.from(e.target.files ?? []);
                   e.target.value = '';
+                  setWaiting(true);
                   try {
                     for (const file of files) {
                       await uploadFile(activeFolder, file);
@@ -868,6 +902,8 @@ export default function Files() {
                     await loadTree(systemFiles);
                   } catch (err: any) {
                     show(err.message, true);
+                  } finally {
+                    setWaiting(false);
                   }
                 }} />
             </label>
@@ -895,12 +931,15 @@ export default function Files() {
                       true);
                     return;
                   }
+                  setWaiting(true);
                   try {
                     await installModule(file);
                     show('Module ' + file.name.replace(/\.zip$/, '') + ' installed');
                     await loadTree(systemFiles);
                   } catch (err: any) {
                     show(err.message, true);
+                  } finally {
+                    setWaiting(false);
                   }
                 }} />
             </label>
@@ -908,6 +947,7 @@ export default function Files() {
               className="icon-btn"
               title={'Download ' + activeFolder + ' as zip'}
               onClick={async () => {
+                setWaiting(true);
                 try {
                   const raw = await downloadFolderRaw(activeFolder);
                   downloadBlob(
@@ -915,6 +955,8 @@ export default function Files() {
                     dispositionFilename(raw.disposition) ?? 'folder.zip');
                 } catch (err: any) {
                   show(err.message, true);
+                } finally {
+                  setWaiting(false);
                 }
               }}>
               <DownloadIcon />

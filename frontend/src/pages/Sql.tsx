@@ -1,6 +1,7 @@
 import { copyToClipboard, showToast } from '../lib/toast';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
+import AiWaiter from '../components/AiWaiter';
 import { useUnsavedGuard } from '../lib/navGuard';
 import { useSearchParams } from 'react-router-dom';
 import type CodeMirror from 'codemirror';
@@ -68,6 +69,9 @@ export default function Sql() {
   const [safeMode, setSafeMode] = useState(true);
   const [result, setResult] = useState<any[][] | null>(null);
   const [busy, setBusy] = useState(false);
+  // Click-triggered round-trips outside Run — DDL exports, schema changes,
+  // imports and snippet I/O.
+  const [waiting, setWaiting] = useState(false);
   const [snippets, setSnippets] = useState<string[]>([]);
   const [selectedSnippet, setSelectedSnippet] = useState('');
   const [view, setView] = useState<'sql' | 'tables'>('sql');
@@ -100,15 +104,18 @@ export default function Sql() {
     })) {
       return;
     }
+    setWaiting(true);
     try {
       await flushSchemaCache(type, connectionString);
       window.location.reload();
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+      setWaiting(false);
     }
   }
 
   async function importCsv(file: File) {
+    setWaiting(true);
     try {
       await importCsvFile(type, connectionString, database, file);
       setFeedback({
@@ -117,6 +124,8 @@ export default function Sql() {
       });
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -133,12 +142,15 @@ export default function Sql() {
       }
       return;
     }
+    setWaiting(true);
     try {
       await dropTable(type, connectionString, database, tableName);
       setFeedback({ text: 'Table ' + tableName + ' dropped', isError: false });
       await reloadSchema();
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -151,12 +163,15 @@ export default function Sql() {
     })) {
       return;
     }
+    setWaiting(true);
     try {
       await dropColumn(type, connectionString, database, tableName, columnName);
       setFeedback({ text: 'Column ' + columnName + ' dropped', isError: false });
       await reloadSchema();
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -190,11 +205,14 @@ export default function Sql() {
   }
 
   async function viewDdl(tables: string[], full: boolean, title: string) {
+    setWaiting(true);
     try {
       const response = await exportDdl(type, connectionString, database, tables, full);
       setDdl({ title, sql: response.result });
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -315,12 +333,15 @@ export default function Sql() {
     if (!filename) {
       return;
     }
+    setWaiting(true);
     try {
       const text = await loadFile(filename);
       setSql(text);
       setSavedSql(text);
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -340,6 +361,7 @@ export default function Sql() {
     }
     const filename = '/etc/' + type + '/templates/' + name +
       (name.endsWith('.sql') ? '' : '.sql');
+    setWaiting(true);
     try {
       await saveFile(filename, sql);
       setSavedSql(sql);
@@ -350,6 +372,8 @@ export default function Sql() {
       }
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -551,6 +575,7 @@ export default function Sql() {
               databaseType={type}
               onClose={() => setNewTable(false)}
               onCreate={async (tableName, pkName, pkType, pkLength) => {
+                setWaiting(true);
                 try {
                   await addTable(type, connectionString, database, tableName, pkName, pkType, pkLength);
                   setNewTable(false);
@@ -558,6 +583,8 @@ export default function Sql() {
                   await reloadSchema();
                 } catch (err: any) {
                   setFeedback({ text: err.message, isError: true });
+                } finally {
+                  setWaiting(false);
                 }
               }} />
           )}
@@ -568,6 +595,7 @@ export default function Sql() {
               tables={tables}
               onClose={() => setAddingColumn(null)}
               onSubmit={async payload => {
+                setWaiting(true);
                 try {
                   if (payload.foreignTable) {
                     await addForeignKey(
@@ -585,6 +613,8 @@ export default function Sql() {
                   await reloadSchema();
                 } catch (err: any) {
                   setFeedback({ text: err.message, isError: true });
+                } finally {
+                  setWaiting(false);
                 }
               }} />
           )}
@@ -667,6 +697,7 @@ export default function Sql() {
           </div>
         </div>
       ))}
+      {waiting && <AiWaiter />}
     </>
   );
 }

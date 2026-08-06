@@ -41,11 +41,14 @@ export default function Configuration() {
   }
 
   async function downloadBackup() {
+    setBusy(true);
     try {
       const result = await downloadFileRaw(CONFIG_FOLDER + CONFIG_FILE);
       downloadBlob(result.blob, CONFIG_FILE);
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setBusy(false);
     }
   }
 

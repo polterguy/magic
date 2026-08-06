@@ -5,6 +5,7 @@ import SearchInput from '../components/SearchInput';
 import { useCallback, useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import AiPrompt from '../components/AiPrompt';
+import AiWaiter from '../components/AiWaiter';
 import { Modal, useDialog } from '../components/Dialogs';
 import {
   Task,
@@ -53,6 +54,8 @@ export default function Tasks() {
   const [filter, setFilter] = useState('');
   const [editing, setEditing] = useState<{ task: Task; isNew: boolean } | null>(null);
   const [scheduling, setScheduling] = useState<Task | null>(null);
+  // Backend round-trips triggered by clicks — edit-fetch, execute, deletes.
+  const [waiting, setWaiting] = useState(false);
   const { confirm, prompt } = useDialog();
 
   const refresh = useCallback(async () => {
@@ -74,10 +77,13 @@ export default function Tasks() {
 
   // The list doesn't carry the Hyperlambda, so editing fetches the full task.
   async function openEdit(task: Task) {
+    setWaiting(true);
     try {
       setEditing({ task: await getTask(task.id), isNew: false });
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -100,11 +106,14 @@ export default function Tasks() {
     })) {
       return;
     }
+    setWaiting(true);
     try {
       await executeTask(task.id);
       setFeedback({ text: 'Task ' + task.id + ' executed', isError: false });
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -123,21 +132,27 @@ export default function Tasks() {
       setFeedback({ text: 'Name did not match — nothing deleted', isError: true });
       return;
     }
+    setWaiting(true);
     try {
       await deleteTask(task.id);
       setFeedback({ text: 'Task ' + task.id + ' deleted', isError: false });
       await refresh();
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
   async function removeSchedule(id: number) {
+    setWaiting(true);
     try {
       await deleteSchedule(id);
       await refresh();
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -145,6 +160,7 @@ export default function Tasks() {
     if (!scheduling) {
       return;
     }
+    setWaiting(true);
     try {
       await scheduleTask(scheduling.id, due, repeats);
       setScheduling(null);
@@ -152,6 +168,8 @@ export default function Tasks() {
       await refresh();
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -284,6 +302,7 @@ export default function Tasks() {
           onClose={() => setScheduling(null)}
           onSave={addSchedule} />
       )}
+      {waiting && <AiWaiter />}
     </>
   );
 }

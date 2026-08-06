@@ -6,6 +6,7 @@ import Banner from '../components/Banner';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import AiPrompt from '../components/AiPrompt';
+import AiWaiter from '../components/AiWaiter';
 import { Modal, useDialog } from '../components/Dialogs';
 import SocketFeedback from '../components/SocketFeedback';
 import CreateSystemMessageDialog from '../components/CreateSystemMessageDialog';
@@ -126,6 +127,8 @@ function TypesTab(props: {
     useState<{ type: string; channel: string; total: number } | null>(null);
   const [importing, setImporting] = useState<string | null>(null);
   const [embedding, setEmbedding] = useState<string | null>(null);
+  // Round-trips before a dialog/terminal appears — counts, vector resets, deletes.
+  const [waiting, setWaiting] = useState(false);
   const { confirm, prompt } = useDialog();
 
   async function remove(type: string) {
@@ -141,16 +144,20 @@ function TypesTab(props: {
       }
       return;
     }
+    setWaiting(true);
     try {
       await mlTypeDelete(type);
       props.notify({ text: 'Model ' + type + ' deleted', isError: false });
       props.onChanged();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
   async function vectorise(type: string) {
+    setWaiting(true);
     try {
       // Snippets without embeddings are exactly the ones about to be vectorised.
       let total = (await mlUnvectorisedCount(type)).count;
@@ -168,6 +175,8 @@ function TypesTab(props: {
           props.notify({ text: 'No training snippets in ' + type + ' to vectorise', isError: true });
           return;
         }
+        // Waiter off while the confirm dialog awaits the user.
+        setWaiting(false);
         if (!await confirm({
           title: 'Re-vectorise ' + type + '?',
           message: 'Every snippet in ' + type + ' is already vectorised. Continuing ' +
@@ -178,6 +187,7 @@ function TypesTab(props: {
         })) {
           return;
         }
+        setWaiting(true);
         await deleteVectors(type);
         total = all;
       }
@@ -185,6 +195,8 @@ function TypesTab(props: {
       setVectorising({ type, channel, total });
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -286,6 +298,7 @@ function TypesTab(props: {
       {embedding && (
         <EmbedDialog type={embedding} onClose={() => setEmbedding(null)} />
       )}
+      {waiting && <AiWaiter />}
     </>
   );
 }
@@ -371,14 +384,19 @@ function ImportDialog(props: {
   const [pdfMassage, setPdfMassage] = useState('');
 
   async function crawl() {
-    if (!url) {
+    // The uploading guard doubles as a re-entry lock — a second click while
+    // the channel is being created would discard the first crawl's terminal.
+    if (!url || uploading) {
       return;
     }
+    setUploading(true);
     try {
       const channel = (await gibberish()).result;
       setCrawling(channel);
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -388,11 +406,14 @@ function ImportDialog(props: {
      * so it takes the feedback-channel route rather than a plain upload.
      */
     if (category === 'urls') {
+      setUploading(true);
       try {
         setUrlListFile(files[0]);
         setScraping((await gibberish()).result);
       } catch (err: any) {
         props.notify({ text: err.message, isError: true });
+      } finally {
+        setUploading(false);
       }
       return;
     }
@@ -543,7 +564,9 @@ function ImportDialog(props: {
             </div>
             <div className="modal-actions">
               <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-              <button className="btn" onClick={crawl} disabled={!url}>Start crawling</button>
+              <button className="btn" onClick={crawl} disabled={!url || uploading}>
+                {uploading ? 'Starting…' : 'Start crawling'}
+              </button>
             </div>
           </div>
         )}
@@ -887,6 +910,7 @@ function EditTypeDialog(props: {
     'You are a helpful assistant, and you will answer the users questions ' +
     'based upon the information found in your context');
   const [dialogTab, setDialogTab] = useState('general');
+  const [busy, setBusy] = useState(false);
   const [flavors, setFlavors] = useState<any[]>([]);
   const [completionSlots, setCompletionSlots] = useState<string[]>([]);
   const [largeEditor, setLargeEditor] = useState(false);
@@ -935,6 +959,9 @@ function EditTypeDialog(props: {
   }, []);
 
   async function save() {
+    if (busy) {
+      return;
+    }
     if (type.length < 2) {
       props.notify({ text: 'Give the model a type name', isError: true });
       return;
@@ -963,6 +990,7 @@ function EditTypeDialog(props: {
       // a negative number is how "no captcha" is persisted, not null.
       recaptcha: Number(extra.recaptcha),
     };
+    setBusy(true);
     try {
       if (existing) {
         await mlTypeUpdate(payload);
@@ -973,6 +1001,8 @@ function EditTypeDialog(props: {
       props.onSaved();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -1220,7 +1250,9 @@ function EditTypeDialog(props: {
       </div>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-        <button className="btn" onClick={save}>Save</button>
+        <button className="btn" onClick={save} disabled={busy}>
+          {busy ? 'Saving…' : 'Save'}
+        </button>
       </div>
       {largeEditor && (
         <Modal width={1100} onClose={() => setLargeEditor(false)}>
@@ -1442,11 +1474,15 @@ function AddWidgetDialog(props: {
   const [widgets, setWidgets] = useState<any[]>([]);
   const [filter, setFilter] = useState('');
   const [error, setError] = useState('');
+  // Distinguishes "still fetching the list" from a genuinely empty result.
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     availableWidgets()
       .then(list => setWidgets(list ?? []))
-      .catch(err => setError(err.message));
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   async function install(widget: any) {
@@ -1454,6 +1490,10 @@ function AddWidgetDialog(props: {
       'this function, then responds with the following in the same message:\n' +
       '\n___\nFUNCTION_INVOCATION[' + WIDGET_WORKFLOW + ']:\n{\n  "filename":' +
       widget.file + '\n}\n___';
+    if (busy) {
+      return;
+    }
+    setBusy(true);
     try {
       await mlSnippetCreate({
         prompt: 'WRITE YOUR PROMPT HERE',
@@ -1468,6 +1508,8 @@ function AddWidgetDialog(props: {
       props.onAdded();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -1501,12 +1543,16 @@ function AddWidgetDialog(props: {
               <strong>{widget.name}</strong>
               {widget.description && <div className="muted">{widget.description}</div>}
             </div>
-            <button className="btn btn-secondary btn-small" onClick={() => install(widget)}>
+            <button
+              className="btn btn-secondary btn-small"
+              onClick={() => install(widget)}
+              disabled={busy}>
               Add
             </button>
           </div>
         ))}
-        {visible.length === 0 && <div className="muted">No widgets available.</div>}
+        {loading && <div className="spinner-panel"><div className="spinner" /></div>}
+        {!loading && visible.length === 0 && <div className="muted">No widgets available.</div>}
       </div>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Close</button>
@@ -1537,6 +1583,9 @@ function TrainingTab(props: {
   const [vectorSearch, setVectorSearch] = useState(false);
   const [sort, setSort] = useSort();
   const latestRequest = useRef(0);
+  // Slow round-trips with nothing else on screen to show for them — deletes,
+  // exports, scrape channel setup, and vector searches.
+  const [waiting, setWaiting] = useState(false);
   const { confirm, prompt } = useDialog();
 
   // Vector search only means anything once there's something to search for.
@@ -1570,6 +1619,11 @@ function TrainingTab(props: {
      * in the box.
      */
     const request = ++latestRequest.current;
+    // Vector search embeds the query through OpenAI first, so unlike the
+    // text filter it's slow enough to need a waiter.
+    if (searchingByVector) {
+      setWaiting(true);
+    }
     try {
       const [list, total] = await Promise.all([
         mlSnippets(type, filter, page * PAGE_SIZE, PAGE_SIZE, sort, searchingByVector),
@@ -1583,6 +1637,10 @@ function TrainingTab(props: {
     } catch (err: any) {
       if (request === latestRequest.current) {
         props.notify({ text: err.message, isError: true });
+      }
+    } finally {
+      if (request === latestRequest.current) {
+        setWaiting(false);
       }
     }
   }, [type, filter, page, sort, searchingByVector]);
@@ -1600,11 +1658,14 @@ function TrainingTab(props: {
     })) {
       return;
     }
+    setWaiting(true);
     try {
       await mlSnippetDelete(snippet.id);
       await refresh();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -1627,6 +1688,7 @@ function TrainingTab(props: {
       props.notify({ text: 'Number did not match — nothing deleted', isError: true });
       return;
     }
+    setWaiting(true);
     try {
       await mlSnippetsDeleteAll(type, filter);
       props.notify({ text: count + ' snippet(s) deleted', isError: false });
@@ -1634,25 +1696,33 @@ function TrainingTab(props: {
       await refresh();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
   // Scraping runs on a background thread, so it reports over a socket channel.
   async function spice(options: any) {
     setSpicing(false);
+    setWaiting(true);
     try {
       setScraping({ channel: (await gibberish()).result, options });
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
   async function exportSnippets() {
+    setWaiting(true);
     try {
       const raw = await mlSnippetsExportRaw(type, filter);
       downloadBlob(raw.blob, dispositionFilename(raw.disposition) ?? type + '.csv');
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
     }
   }
 
@@ -1845,6 +1915,7 @@ function TrainingTab(props: {
           }}
           onClose={() => { setScraping(null); refresh(); }} />
       )}
+      {waiting && <AiWaiter />}
     </>
   );
 }
@@ -1859,6 +1930,7 @@ function EditSnippetDialog(props: {
 
   const [prompt, setPrompt] = useState(props.existing?.prompt ?? '');
   const [completion, setCompletion] = useState(props.existing?.completion ?? '');
+  const [busy, setBusy] = useState(false);
 
   /*
    * System message forcing the model to hand back a clean {prompt, completion}
@@ -1899,6 +1971,10 @@ function EditSnippetDialog(props: {
   }
 
   async function save() {
+    if (busy) {
+      return;
+    }
+    setBusy(true);
     try {
       if (props.existing) {
         await mlSnippetUpdate({
@@ -1914,6 +1990,8 @@ function EditSnippetDialog(props: {
       props.onSaved();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -1948,7 +2026,9 @@ function EditSnippetDialog(props: {
           <span className="snippet-meta">{props.existing.meta}</span>
         )}
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-        <button className="btn" onClick={save} disabled={!prompt}>Save</button>
+        <button className="btn" onClick={save} disabled={!prompt || busy}>
+          {busy ? 'Saving…' : 'Save'}
+        </button>
       </div>
     </Modal>
   );
@@ -1973,14 +2053,22 @@ function AddFunctionDialog(props: {
   const [workflows, setWorkflows] = useState<any[]>([]);
   const [filter, setFilter] = useState('');
   const [error, setError] = useState('');
+  // Distinguishes "still fetching the list" from a genuinely empty result.
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     availableWorkflows()
       .then(list => setWorkflows(list ?? []))
-      .catch(err => setError(err.message));
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   async function install(workflow: any) {
+    if (busy) {
+      return;
+    }
+    setBusy(true);
     try {
       let declaration = await getFunctionDeclaration(workflow.file);
       if (!declaration) {
@@ -2015,6 +2103,8 @@ function AddFunctionDialog(props: {
       props.onInstalled();
     } catch (err: any) {
       props.notify({ text: err.message, isError: true });
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -2048,12 +2138,16 @@ function AddFunctionDialog(props: {
               <div className="muted" style={{ fontSize: 13 }}>{workflow.description}</div>
               <div className="mono muted" style={{ fontSize: 11 }}>{workflow.file}</div>
             </div>
-            <button className="btn btn-secondary btn-small" onClick={() => install(workflow)}>
+            <button
+              className="btn btn-secondary btn-small"
+              onClick={() => install(workflow)}
+              disabled={busy}>
               Install
             </button>
           </div>
         ))}
-        {visible.length === 0 && <div className="muted">No functions found.</div>}
+        {loading && <div className="spinner-panel"><div className="spinner" /></div>}
+        {!loading && visible.length === 0 && <div className="muted">No functions found.</div>}
       </div>
       <div className="modal-actions">
         <button className="btn" onClick={props.onClose}>Close</button>

@@ -26,6 +26,7 @@ export default function Profile() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [savingDetails, setSavingDetails] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
 
   // Name and email live as extra fields on the user, not on the account row.
   useEffect(() => {
@@ -63,12 +64,14 @@ export default function Profile() {
       setFeedback({ text: 'Passwords do not match', isError: true });
       return;
     }
+    setChangingPassword(true);
     try {
       await changePassword(password);
       setFeedback({ text: 'Password changed — sign in again with your new password', isError: false });
       setTimeout(logout, 2000);
     } catch (err: any) {
       setFeedback({ text: err.message, isError: true });
+      setChangingPassword(false);
     }
   }
 
@@ -127,9 +130,9 @@ export default function Profile() {
             <div>
               <button
                 className="btn"
-                disabled={!password}
+                disabled={!password || changingPassword}
                 onClick={submitPassword}>
-                Change password
+                {changingPassword ? 'Changing…' : 'Change password'}
               </button>
             </div>
           </div>
@@ -162,6 +165,7 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
   });
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
 
   useState(() => {
     listRoles()
@@ -170,7 +174,11 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
   });
 
   async function generate() {
+    if (busy) {
+      return;
+    }
     setError('');
+    setBusy(true);
     try {
       const response = await http.get<{ ticket: string }>(
         '/magic/system/auth/generate-token?username=' + encodeURIComponent(username) +
@@ -179,6 +187,8 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
       setToken(response.ticket);
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -242,8 +252,11 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
           </button>
         )}
         <button className="btn btn-secondary" onClick={onClose}>Close</button>
-        <button className="btn" onClick={generate} disabled={!username || selectedRoles.length === 0}>
-          Generate
+        <button
+          className="btn"
+          onClick={generate}
+          disabled={!username || selectedRoles.length === 0 || busy}>
+          {busy ? 'Generating…' : 'Generate'}
         </button>
       </div>
     </Modal>

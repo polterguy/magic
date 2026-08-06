@@ -1,4 +1,5 @@
 import { copyToClipboard, showToast } from '../lib/toast';
+import AiWaiter from '../components/AiWaiter';
 import Select from '../components/Select';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -119,12 +120,15 @@ function InternalTab() {
       }
       return;
     }
+    setBusy(true);
     try {
       await dropDatabase('sqlite', 'generic', database);
       show('Database ' + database + ' deleted');
       await refresh();
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -226,6 +230,7 @@ function InternalTab() {
         </table>
       </div>
       )}
+      {busy && <AiWaiter />}
     </>
   );
 }
@@ -357,12 +362,15 @@ function ExternalTab() {
       }
       return;
     }
+    setBusy(true);
     try {
       await deleteConnectionString(row.type, row.name);
       show('Connection ' + row.name + ' deleted');
       await refresh();
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -380,11 +388,14 @@ function ExternalTab() {
       show('Catalog names accept alphanumeric characters and _', true);
       return;
     }
+    setBusy(true);
     try {
       await createDatabase(row.type, row.name, catalogName);
       show('Catalog ' + catalogName + ' created');
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -413,11 +424,14 @@ function ExternalTab() {
       }
       return;
     }
+    setBusy(true);
     try {
       await dropDatabase(row.type, row.name, catalog);
       await manageCatalogs(row);
     } catch (err: any) {
       show(err.message, true);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -561,6 +575,7 @@ function ExternalTab() {
           </div>
         </Modal>
       )}
+      {busy && <AiWaiter />}
     </>
   );
 }

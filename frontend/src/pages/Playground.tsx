@@ -86,12 +86,15 @@ export default function Playground() {
     if (!filename) {
       return;
     }
+    setBusy(true);
     try {
       const text = await loadFile(filename);
       setCode(text);
       setSavedCode(text);
     } catch (err: any) {
       showToast(err.message, true);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -108,6 +111,7 @@ export default function Playground() {
       return;
     }
     const filename = '/etc/snippets/' + name + (name.endsWith('.hl') ? '' : '.hl');
+    setBusy(true);
     try {
       await saveFile(filename, code);
       setSavedCode(code);
@@ -115,8 +119,11 @@ export default function Playground() {
       if (!snippets.includes(filename)) {
         setSnippets([...snippets, filename].sort());
       }
+      showToast('Saved ' + filename, false);
     } catch (err: any) {
       showToast(err.message, true);
+    } finally {
+      setBusy(false);
     }
   }
 

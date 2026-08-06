@@ -13,8 +13,12 @@ export default function Log() {
   const [expanded, setExpanded] = useState<number | null>(null);
   // Stack of "from" ids used to page backwards through the log.
   const [fromStack, setFromStack] = useState<number[]>([]);
+  // Disables the pagers while a page is in flight, so rapid clicks can't
+  // push several "from" ids and race their responses.
+  const [loading, setLoading] = useState(false);
 
   const load = useCallback(async (from: number | null, filter: string) => {
+    setLoading(true);
     try {
       const [logItems, logCount] = await Promise.all([
         listLog(from, PAGE_SIZE, filter || undefined),
@@ -24,6 +28,8 @@ export default function Log() {
       setCount(logCount.count);
     } catch (err: any) {
       showToast(err.message, true);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -63,13 +69,13 @@ export default function Log() {
         <span className="spacer" />
         <button
           className="btn btn-secondary btn-small"
-          disabled={fromStack.length === 0}
+          disabled={fromStack.length === 0 || loading}
           onClick={previousPage}>
           ‹ Newer
         </button>
         <button
           className="btn btn-secondary btn-small"
-          disabled={items.length < PAGE_SIZE}
+          disabled={items.length < PAGE_SIZE || loading}
           onClick={nextPage}>
           Older ›
         </button>
