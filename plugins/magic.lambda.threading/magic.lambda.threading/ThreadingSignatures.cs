@@ -45,6 +45,49 @@ namespace magic.lambda.threading.signatures
         };
     }
 
+    public class ThrottleSignature : ISlotSignature
+    {
+        public IEnumerable<SlotChild> Children => new[]
+        {
+            new SlotChild
+            {
+                Name = "limit",
+                Type = "int",
+                Description = "Maximum number of invocations allowed per window; mandatory when creating a throttle, while invoking the slot without any arguments deletes the throttle instead",
+                Required = false,
+                Mode = SlotChildMode.ValueOrExpression,
+                Cardinality = SlotChildCardinality.ZeroOrOne,
+                Role = SlotChildRole.Option,
+                Projection = SlotChildProjection.Value,
+            },
+            new SlotChild
+            {
+                Name = "window",
+                Type = "int",
+                Kind = "duration-seconds",
+                Description = "Window length in seconds",
+                Required = false,
+                DefaultValue = "60",
+                Mode = SlotChildMode.ValueOrExpression,
+                Cardinality = SlotChildCardinality.ZeroOrOne,
+                Role = SlotChildRole.Option,
+                Projection = SlotChildProjection.Value,
+            },
+            new SlotChild
+            {
+                Name = "per",
+                Type = "string",
+                Description = "How to partition the limit; 'user' partitions per authenticated username, 'ip' per client IP address, and 'global' shares one limit between all callers",
+                Required = false,
+                DefaultValue = "user when authenticated, otherwise ip",
+                Mode = SlotChildMode.ValueOrExpression,
+                Cardinality = SlotChildCardinality.ZeroOrOne,
+                Role = SlotChildRole.Option,
+                Projection = SlotChildProjection.Value,
+            },
+        };
+    }
+
     public class JoinSignature : ISlotSignature
     {
         public IEnumerable<SlotChild> Children => new[]

@@ -133,7 +133,7 @@ namespace magic.endpoint.controller
                 URL = WebUtility.UrlDecode(url ?? ""),
                 Verb = verb,
                 Query = Request.Query.ToDictionary(x => x.Key, x => x.Value.ToString()),
-                Headers = Request.Headers.ToDictionary(x => x.Key, x => x.Value.ToString()),
+                Headers = Request.Headers.ToDictionary(x => x.Key, x => x.Value.ToString(), StringComparer.OrdinalIgnoreCase),
                 Cookies = Request.Cookies.ToDictionary(x => x.Key, x => x.Value.ToString()),
                 Host = Request.Host.Value,
                 Scheme = Request.Scheme,
