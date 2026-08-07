@@ -31,7 +31,13 @@
   --cm-activeline: rgba(255, 255, 255, 0.04);
 }
 
-/* Dark inks on a warm paper canvas — same hues, printed instead of lit. */
+/*
+ * Distinct inks on a warm paper canvas. Unlike the dark theme, light mode
+ * spreads the token roles across genuinely different hues — on paper the
+ * warm-monochrome variants all blur into brown, so each role gets its own
+ * color instead: blue keywords, gold slot invocations, green strings,
+ * orange numbers, teal properties, crimson types. Still zero violet.
+ */
 html[data-theme="light"] {
   --cm-bg: #fdfbf7;
   --cm-text: #2a2118;
@@ -40,16 +46,16 @@ html[data-theme="light"] {
   --cm-guttermarker: #6b6560;
   --cm-linenumber: #b0a698;
   --cm-cursor: #17120e;
-  --cm-comment: #948a7d;
-  --cm-number: #9a6207;
-  --cm-property: #7d6434;
-  --cm-keyword: #8f6a00;
-  --cm-string: #157a49;
-  --cm-type: #c04858;
-  --cm-variable-2: #6d5a2e;
+  --cm-comment: #8f8577;
+  --cm-number: #c2410c;
+  --cm-property: #0e7490;
+  --cm-keyword: #1e50c0;
+  --cm-string: #0a8043;
+  --cm-type: #c81e3c;
+  --cm-variable-2: #8a6500;
   --cm-link: #17120e;
   --cm-error: #d63644;
-  --cm-matchingbracket: #8f6a00;
+  --cm-matchingbracket: #1e50c0;
   --cm-matchingtag: rgba(23, 18, 14, 0.14);
   --cm-activeline: rgba(23, 18, 14, 0.04);
 }
