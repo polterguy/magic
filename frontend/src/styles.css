@@ -366,14 +366,16 @@ h1 {
 }
 
 /*
- * The controls travel together as one flex item, so when they no longer fit
- * beside the title they drop to a line of their own rather than being clipped
- * off the end of the row. On a wide screen this is still a single row.
+ * The controls travel together as one flex item, right-aligned in the header,
+ * so when they no longer fit beside the title they drop to a line of their own
+ * rather than being clipped off the end of the row. On a wide screen this is
+ * still a single row.
  */
 .page-header .page-tools {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-left: auto;
 }
 
 .ide-path {

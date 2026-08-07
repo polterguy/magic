@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import { Modal } from '../components/Dialogs';
+import { MenuIcon } from '../components/Icons';
 import { downloadBlob } from '../components/ResultViewer';
 import { downloadFileRaw, loadConfig, saveConfig, uploadFile } from '../lib/api';
 
@@ -28,6 +29,8 @@ export default function Configuration() {
   const [smtpOpen, setSmtpOpen] = useState(false);
   const [openaiOpen, setOpenaiOpen] = useState(false);
   const [recaptchaOpen, setRecaptchaOpen] = useState(false);
+  const [gitOpen, setGitOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const uploadInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -103,25 +106,48 @@ export default function Configuration() {
           <p>Your appsettings.json — be careful, this configures everything</p>
         </div>
         <div className="page-tools">
-          <button className="btn btn-secondary" onClick={() => setSmtpOpen(true)}>
-            SMTP…
-          </button>
-          <button className="btn btn-secondary" onClick={() => setOpenaiOpen(true)}>
-            OpenAI…
-          </button>
-          <button className="btn btn-secondary" onClick={() => setRecaptchaOpen(true)}>
-            reCAPTCHA…
-          </button>
-          <button className="btn btn-secondary" onClick={downloadBackup} title="Download a backup of your configuration">
-            Download
-          </button>
-          <button
-            className="btn btn-secondary"
-            onClick={() => uploadInput.current?.click()}
-            disabled={busy}
-            title="Restore your configuration from a backup">
-            Upload
-          </button>
+          {/*
+            * The individual settings dialogs and backup actions live in one
+            * hamburger menu — six buttons crowded the header.
+            */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className="btn btn-secondary"
+              aria-haspopup="menu"
+              aria-expanded={toolsOpen}
+              title="Settings dialogs and backup"
+              onClick={() => setToolsOpen(!toolsOpen)}>
+              <MenuIcon />
+            </button>
+            {toolsOpen && (
+              <>
+                <div
+                  style={{ position: 'fixed', inset: 0, zIndex: 2000001 }}
+                  onClick={() => setToolsOpen(false)} />
+                <ul
+                  className="select-menu"
+                  role="menu"
+                  style={{ position: 'absolute', right: 0, top: '100%', marginTop: 4, minWidth: 220 }}>
+                  {[
+                    { label: 'SMTP…', act: () => setSmtpOpen(true) },
+                    { label: 'OpenAI…', act: () => setOpenaiOpen(true) },
+                    { label: 'reCAPTCHA…', act: () => setRecaptchaOpen(true) },
+                    { label: 'Git…', act: () => setGitOpen(true) },
+                    { label: 'Download backup', act: downloadBackup },
+                    { label: 'Upload backup', act: () => uploadInput.current?.click() },
+                  ].map(item => (
+                    <li
+                      key={item.label}
+                      className="select-option"
+                      role="menuitem"
+                      onClick={() => { setToolsOpen(false); item.act(); }}>
+                      {item.label}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
           <input
             ref={uploadInput}
             type="file"
@@ -158,6 +184,12 @@ export default function Configuration() {
           config={config}
           onClose={() => setRecaptchaOpen(false)}
           onSave={next => { setRecaptchaOpen(false); save(next); }} />
+      )}
+      {gitOpen && (
+        <GitDialog
+          config={config}
+          onClose={() => setGitOpen(false)}
+          onSave={next => { setGitOpen(false); save(next); }} />
       )}
       {/*
         * Unlike the others this writes its own key through the OpenAI
@@ -256,6 +288,94 @@ function SmtpDialog(props: {
           <input type="text" value={fromAddress} onChange={e => setFromAddress(e.target.value)} />
         </label>
       </div>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button className="btn" onClick={save}>Save</button>
+      </div>
+    </Modal>
+  );
+}
+
+/*
+ * Patches magic.git.github in the configuration — the credentials Hyper IDE's
+ * Git support authenticates with towards GitHub.
+ */
+function GitDialog(props: {
+  config: string;
+  onClose: () => void;
+  onSave: (config: string) => void;
+}) {
+
+  const existing = (() => {
+    try {
+      return JSON.parse(props.config)?.magic?.git?.github ?? {};
+    } catch {
+      return {};
+    }
+  })();
+
+  const [username, setUsername] = useState(existing.username ?? '');
+  const [token, setToken] = useState(existing.token ?? '');
+  const [host, setHost] = useState(existing.host ?? 'github.com');
+  const [apiBase, setApiBase] = useState(existing['api-base'] ?? '');
+
+  function save() {
+    let parsed: any;
+    try {
+      parsed = JSON.parse(props.config);
+    } catch {
+      return;
+    }
+    parsed.magic = parsed.magic ?? {};
+    parsed.magic.git = parsed.magic.git ?? {};
+    const github: any = { username, token, host };
+    if (apiBase) {
+      github['api-base'] = apiBase;
+    }
+    parsed.magic.git.github = github;
+    props.onSave(JSON.stringify(parsed, null, 2));
+  }
+
+  return (
+    <Modal width={560} onClose={props.onClose} onSubmit={save}>
+      <h2>Git settings</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        GitHub credentials for Hyper IDE's Git support. Create a{' '}
+        <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noreferrer">
+          fine-grained personal access token
+        </a>{' '}
+        with <em>Contents</em> read and write access to the repositories your
+        cloudlet manages. The token only authenticates transport — commits are
+        authored as the signed-in user's profile name and email.
+      </p>
+      <label className="modal-label">Username
+        <input
+          type="text"
+          autoComplete="off"
+          value={username}
+          onChange={e => setUsername(e.target.value)} />
+      </label>
+      <label className="modal-label">Token
+        <input
+          type="text"
+          className="secret"
+          autoComplete="off"
+          value={token}
+          onChange={e => setToken(e.target.value)} />
+      </label>
+      <label className="modal-label">Host
+        <input
+          type="text"
+          value={host}
+          onChange={e => setHost(e.target.value)} />
+      </label>
+      <label className="modal-label">API base (optional, for GitHub Enterprise)
+        <input
+          type="text"
+          placeholder="https://api.github.com"
+          value={apiBase}
+          onChange={e => setApiBase(e.target.value)} />
+      </label>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
         <button className="btn" onClick={save}>Save</button>
