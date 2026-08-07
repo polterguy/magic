@@ -108,10 +108,13 @@ export default function GitPanel(props: {
               Clone into folder
             </button>
             <button
-              className="btn"
+              className="btn btn-secondary"
               disabled={busy}
               onClick={() => run(() => gitInit(props.path), 'Repository initialized', true)}>
               Initialize repository
+            </button>
+            <button className="btn" onClick={props.onClose}>
+              Close
             </button>
           </div>
         </>
@@ -170,13 +173,16 @@ export default function GitPanel(props: {
               Add remote
             </button>
             <button
-              className="btn"
+              className="btn btn-secondary"
               disabled={busy || !message.trim() || changes.length === 0}
               onClick={() => run(async () => {
                 await gitCommit(props.path, message.trim());
                 setMessage('');
               }, 'Changes committed')}>
               Commit
+            </button>
+            <button className="btn" onClick={props.onClose}>
+              Close
             </button>
           </div>
         </>
