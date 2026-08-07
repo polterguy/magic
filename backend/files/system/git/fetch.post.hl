@@ -1,0 +1,45 @@
+/*
+ * Fetches updates from a remote into a Git repository.
+ */
+.arguments
+
+   // Mandatory folder to where Git repo is locally on disk.
+   path:string
+
+   // Optional argument being a named remote. Defaults to 'origin'.
+   remote:string
+
+   // Optional argument being the refspec.
+   refspec:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/path
+validators.default:x:@.arguments
+   remote:origin
+
+// Sanity checking invocation.
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/modules/
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/etc/
+   .lambda
+      throw:"Git repos must be in folders inside of either '/etc/' or '/modules/'"
+
+// Parametrising slot.
+add:x:./*/git.fetch
+   get-nodes:x:@.arguments/*/remote
+   get-nodes:x:@.arguments/*/refspec
+
+// Invoking slot.
+git.fetch:x:@.arguments/*/path
+
+// Returning result to caller.
+yield
+   result:x:@git.fetch

@@ -403,3 +403,15 @@ export function LogoutIcon() {
     </svg>
   );
 }
+
+export function GitBranchIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="6" cy="6" r="2.5" />
+      <circle cx="6" cy="18" r="2.5" />
+      <circle cx="18" cy="8" r="2.5" />
+      <line x1="6" y1="8.5" x2="6" y2="15.5" />
+      <path d="M18 10.5c0 3-3 4.5-6 4.5H9" />
+    </svg>
+  );
+}

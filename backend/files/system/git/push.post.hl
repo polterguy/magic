@@ -1,0 +1,46 @@
+/*
+ * Pushes all commits in a Git repository to a remote.
+ */
+.arguments
+
+   // Mandatory folder to where Git repo is locally on disk.
+   path:string
+
+   // Optional remote value. Defaults to 'origin'.
+   remote:string
+
+   // Optional branch to push. Defaults to the currently checked out branch.
+   branch:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/path
+validators.default:x:@.arguments
+   remote:origin
+
+// Sanity checking invocation.
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/modules/
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/etc/
+   .lambda
+      throw:"Git repos must be in folders inside of either '/etc/' or '/modules/'"
+
+// Parametrising slot.
+add:x:./*/git.push
+   get-nodes:x:@.arguments/*/remote
+   get-nodes:x:@.arguments/*/branch
+
+// Invoking slot.
+git.push:x:@.arguments/*/path
+   set-upstream:true
+
+// Returning result to caller.
+yield
+   result:x:@git.push

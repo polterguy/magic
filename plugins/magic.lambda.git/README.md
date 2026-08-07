@@ -26,6 +26,10 @@ All slots use the Git CLI under the hood. Paths are always resolved **inside** y
 **Notice** - The primary argument to all slots is always the node value. Optional arguments must be provided
 as child nodes. Folder paths are required to start with `/` and end with `/`.
 
+**Notice** - The given folder must itself be the repository root. Git's normal upward repository discovery
+is disabled, implying a folder that isn't itself a repo throws instead of silently resolving to an
+enclosing ancestor repository.
+
 ## GitHub authentication (HTTPS)
 
 If you use HTTPS for GitHub, the slots will inject a per-command `Authorization` header using values from
@@ -98,6 +102,8 @@ Optional arguments:
 
 * __[all]__ - Boolean, default true, runs `git add -A` before commit
 * __[amend]__ - Boolean, amends the previous commit
+* __[name]__ - Author name for the commit, falling back to git's configured identity when omitted
+* __[email]__ - Author email for the commit, falling back to git's configured identity when omitted
 
 ```
 git.commit:/modules/stripe/

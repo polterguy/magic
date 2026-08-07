@@ -1,0 +1,45 @@
+/*
+ * Checks out a branch in a Git repository, optionally creating the
+ * branch if it does not already exist.
+ */
+.arguments
+
+   // Mandatory folder to where Git repo is locally on disk.
+   path:string
+
+   // Mandatory branch to checkout.
+   branch:string
+
+   // Optional boolean indicating whether to create the branch.
+   create:bool
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/path
+validators.mandatory:x:@.arguments/*/branch
+
+// Sanity checking invocation.
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/modules/
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/etc/
+   .lambda
+      throw:"Git repos must be in folders inside of either '/etc/' or '/modules/'"
+
+// Parametrising slot.
+add:x:./*/git.checkout
+   get-nodes:x:@.arguments/*/branch
+   get-nodes:x:@.arguments/*/create
+
+// Invoking slot.
+git.checkout:x:@.arguments/*/path
+
+// Returning result to caller.
+yield
+   result:x:@git.checkout

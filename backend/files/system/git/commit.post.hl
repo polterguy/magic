@@ -1,0 +1,72 @@
+/*
+ * Commits all changes in a Git repository, attributing the commit to the
+ * authenticated user's name and email from the users_extra table.
+ */
+.arguments
+
+   // Mandatory folder to where Git repo is locally on disk.
+   path:string
+
+   // Mandatory message for commit.
+   message:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/path
+validators.mandatory:x:@.arguments/*/message
+
+// Sanity checking invocation.
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/modules/
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/etc/
+   .lambda
+      throw:"Git repos must be in folders inside of either '/etc/' or '/modules/'"
+
+// Reading the user's name and email from the users_extra table.
+auth.ticket.get
+.name
+.email
+data.connect:magic
+   data.read
+      table:users_extra
+      columns
+         type
+         value
+      where
+         and
+            user.eq:x:@auth.ticket.get
+   for-each:x:@data.read/*
+      switch:x:@.dp/#/*/type
+         case:name
+            set-value:x:@.name
+               get-value:x:@.dp/#/*/value
+         case:email
+            set-value:x:@.email
+               get-value:x:@.dp/#/*/value
+
+// Commit identity is mandatory.
+if
+   or
+      null:x:@.name
+      null:x:@.email
+   .lambda
+      throw:Set your name and email in your profile before committing
+         public:bool:true
+         status:int:400
+
+// Invoking slot.
+git.commit:x:@.arguments/*/path
+   message:x:@.arguments/*/message
+   name:x:@.name
+   email:x:@.email
+
+// Returning result to caller.
+yield
+   result:x:@git.commit

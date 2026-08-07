@@ -3,6 +3,7 @@
  */
 
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
@@ -52,15 +53,28 @@ namespace magic.lambda.git
             if (args.Amend)
                 gitArgs.Add("--amend");
 
+            // Author identity injected per invocation, keeping the plugin free of filesystem git config.
+            var extraArgs = new List<string>(GitSlotHelpers.GetGitHubAuthArgs(_configuration));
+            if (!string.IsNullOrWhiteSpace(args.Name))
+            {
+                extraArgs.Add("-c");
+                extraArgs.Add($"user.name={args.Name}");
+            }
+            if (!string.IsNullOrWhiteSpace(args.Email))
+            {
+                extraArgs.Add("-c");
+                extraArgs.Add($"user.email={args.Email}");
+            }
+
             input.Value = await GitSlotHelpers.RunGitAsync(
                 repoPath,
                 gitArgs,
-                GitSlotHelpers.GetGitHubAuthArgs(_configuration));
+                extraArgs);
         }
 
         #region [ -- Private helper methods -- ]
 
-        (string Path, string Message, bool AddAll, bool Amend) GetArgs(Node input)
+        (string Path, string Message, bool AddAll, bool Amend, string Name, string Email) GetArgs(Node input)
         {
             var path = GitSlotHelpers.GetRequiredPrimaryValue(input);
             var message = GitSlotHelpers.GetOptionalChild(input, "message");
@@ -69,11 +83,13 @@ namespace magic.lambda.git
 
             var addAll = GitSlotHelpers.GetOptionalBool(input, "all", true);
             var amend = GitSlotHelpers.GetOptionalBool(input, "amend", false);
+            var name = GitSlotHelpers.GetOptionalChild(input, "name");
+            var email = GitSlotHelpers.GetOptionalChild(input, "email");
 
             input.Clear();
             input.Value = null;
 
-            return (path, message, addAll, amend);
+            return (path, message, addAll, amend, name, email);
         }
 
         #endregion

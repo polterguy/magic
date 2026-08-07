@@ -103,6 +103,8 @@ namespace magic.lambda.git.signatures
             Option("message", "string", "Commit message", true, kind: "commit-message"),
             Option("all", "bool", "Stage all changed files before committing", defaultValue: "true"),
             Option("amend", "bool", "Amend the previous commit", defaultValue: "false"),
+            Option("name", "string", "Author name for the commit; omitted falls back to git's configured identity"),
+            Option("email", "string", "Author email for the commit; omitted falls back to git's configured identity"),
         };
     }
 

@@ -22,6 +22,7 @@ import {
   FolderIcon,
   FolderPlusIcon,
   PencilIcon,
+  GitBranchIcon,
   PlayIcon,
   SaveIcon,
   TrashIcon,
@@ -29,6 +30,7 @@ import {
 } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
 import OpenApiDialog from '../components/OpenApiDialog';
+import GitPanel from '../components/GitPanel';
 import { useUnsavedGuard } from '../lib/navGuard';
 import { useAuth } from '../lib/AuthContext';
 import {
@@ -127,6 +129,16 @@ function convertArgument(value: string, type: string) {
     return value === 'true' || value === '1' || value === 'yes';
   }
   return value;
+}
+
+/*
+ * Resolves the Git repository root for a path — the top-level folder under
+ * /modules/ or /etc/, since that's where repos live and modules each carry
+ * their own repository.
+ */
+function gitRootOf(path: string): string | null {
+  const match = path.match(/^\/(modules|etc)\/([^/]+)\//);
+  return match ? '/' + match[1] + '/' + match[2] + '/' : null;
 }
 
 function parentOf(path: string) {
@@ -231,6 +243,8 @@ export default function Files() {
   const [invokeTarget, setInvokeTarget] = useState<Endpoint | null>(null);
   // File or folder awaiting a model choice for AI-function generation.
   const [aiFunctionTarget, setAiFunctionTarget] = useState<string | null>(null);
+  // Repository root the Git panel is open for.
+  const [gitTarget, setGitTarget] = useState<string | null>(null);
   const editorRef = useRef<import('codemirror').Editor | null>(null);
   const { confirm, prompt, form, choice } = useDialog();
   const { backend } = useAuth();
@@ -739,6 +753,10 @@ export default function Files() {
               <FolderActions
                 onNewFile={() => newFile(folder)}
                 onNewFolder={() => newFolder(folder)}
+                // Git operates on repo roots, i.e. top-level folders under /modules/ and /etc/.
+                onGit={gitRootOf(folder) === folder
+                  ? () => setGitTarget(folder)
+                  : undefined}
                 onOpenApi={() => showOpenApi(folder)}
                 // Only modules hold endpoints worth exposing as AI functions.
                 onAiFunctions={folder.startsWith('/modules/')
@@ -1060,6 +1078,12 @@ export default function Files() {
           onClose={() => setOpenApiSpec(null)}
           onNotify={show} />
       )}
+      {gitTarget !== null && (
+        <GitPanel
+          path={gitTarget}
+          onClose={() => setGitTarget(null)}
+          onChanged={() => loadTree(systemFiles)} />
+      )}
       {(generating || waiting) && <AiWaiter />}
       {invokeTarget && (
         <Modal width={860} onClose={() => setInvokeTarget(null)}>
@@ -1098,6 +1122,7 @@ export default function Files() {
 function FolderActions(props: {
   onNewFile: () => void;
   onNewFolder: () => void;
+  onGit?: () => void;
   onOpenApi?: () => void;
   onAiFunctions?: () => void;
   onRename?: () => void;
@@ -1107,6 +1132,8 @@ function FolderActions(props: {
     <span className="row-actions" onClick={e => e.stopPropagation()}>
       <button className="icon-btn" title="New file" onClick={props.onNewFile}><FilePlusIcon /></button>
       <button className="icon-btn" title="New folder" onClick={props.onNewFolder}><FolderPlusIcon /></button>
+      {props.onGit &&
+        <button className="icon-btn" title="Git" onClick={props.onGit}><GitBranchIcon /></button>}
       {props.onOpenApi &&
         <button className="icon-btn" title="OpenAPI specification" onClick={props.onOpenApi}><BracesIcon /></button>}
       {props.onAiFunctions && (

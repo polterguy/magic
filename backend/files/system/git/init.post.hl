@@ -1,0 +1,41 @@
+/*
+ * Initializes a folder as a new Git repository.
+ */
+.arguments
+
+   // Mandatory folder to initialize as a Git repo.
+   path:string
+
+   // Optional default branch. Defaults to 'main'.
+   branch:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/path
+validators.default:x:@.arguments
+   branch:main
+
+// Sanity checking invocation.
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/modules/
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/etc/
+   .lambda
+      throw:"Git repos must be in folders inside of either '/etc/' or '/modules/'"
+
+// Parametrising slot.
+add:x:./*/git.create-repo
+   get-nodes:x:@.arguments/*/branch
+
+// Invoking slot.
+git.create-repo:x:@.arguments/*/path
+
+// Returning result to caller.
+yield
+   result:x:@git.create-repo

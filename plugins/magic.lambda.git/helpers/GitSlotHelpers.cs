@@ -101,6 +101,16 @@ namespace magic.lambda.git
             startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
             startInfo.Environment["GIT_ASKPASS"] = "echo";
 
+            /*
+             * Stopping git's upward repository discovery at the given folder's parent,
+             * such that a folder that isn't itself a repo never resolves to an enclosing
+             * ancestor repository - e.g. the Magic repo itself on a developer machine.
+             */
+            var parent = Path.GetDirectoryName(
+                Path.GetFullPath(workingDirectory).TrimEnd(Path.DirectorySeparatorChar));
+            if (!string.IsNullOrEmpty(parent))
+                startInfo.Environment["GIT_CEILING_DIRECTORIES"] = parent;
+
             if (extraArgs != null)
             {
                 foreach (var arg in extraArgs)

@@ -1459,3 +1459,47 @@ export function countLog(query?: string) {
   }
   return http.get<{ count: number }>(url);
 }
+
+/*
+ * Git.
+ */
+
+export function gitStatus(path: string) {
+  return http.get<string[]>('/magic/system/git/status?path=' + encodeURIComponent(path));
+}
+
+export function gitBranches(path: string) {
+  return http.get<string[]>('/magic/system/git/branches?path=' + encodeURIComponent(path));
+}
+
+export function gitCommit(path: string, message: string) {
+  return http.post<MagicResponse>('/magic/system/git/commit', { path, message });
+}
+
+export function gitPush(path: string, branch?: string) {
+  return http.post<MagicResponse>('/magic/system/git/push', branch ? { path, branch } : { path });
+}
+
+export function gitPull(path: string, branch?: string) {
+  return http.post<MagicResponse>('/magic/system/git/pull', branch ? { path, branch } : { path });
+}
+
+export function gitFetch(path: string) {
+  return http.post<MagicResponse>('/magic/system/git/fetch', { path });
+}
+
+export function gitCheckout(path: string, branch: string, create = false) {
+  return http.post<MagicResponse>('/magic/system/git/checkout', { path, branch, create });
+}
+
+export function gitInit(path: string) {
+  return http.post<MagicResponse>('/magic/system/git/init', { path });
+}
+
+export function gitClone(path: string, url: string) {
+  return http.post<MagicResponse>('/magic/system/git/clone', { path, url });
+}
+
+export function gitRemoteAdd(path: string, url: string) {
+  return http.post<MagicResponse>('/magic/system/git/remote', { path, url });
+}
