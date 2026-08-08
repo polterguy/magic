@@ -1,0 +1,28 @@
+/*
+ * Creates a new GitHub repository, returning its HTTPS clone URL.
+ */
+.arguments
+
+   // Mandatory name of the repository to create.
+   name:string
+
+   // Optional boolean indicating if the repository should be private.
+   private:bool
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/name
+
+// Parametrising slot.
+add:x:./*/github.repo.create
+   get-nodes:x:@.arguments/*/private
+
+// Invoking slot.
+github.repo.create:x:@.arguments/*/name
+
+// Returning the new repository's clone URL to caller.
+unwrap:x:+/*
+return
+   url:x:@github.repo.create/*/clone_url

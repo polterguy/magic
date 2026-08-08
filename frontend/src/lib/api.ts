@@ -1503,3 +1503,7 @@ export function gitClone(path: string, url: string) {
 export function gitRemoteAdd(path: string, url: string) {
   return http.post<MagicResponse>('/magic/system/git/remote', { path, url });
 }
+
+export function gitGithubCreate(name: string) {
+  return http.post<{ url: string }>('/magic/system/git/github-create', { name, private: true });
+}

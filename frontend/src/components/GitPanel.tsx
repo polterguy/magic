@@ -8,8 +8,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { Modal, useDialog } from './Dialogs';
 import { showToast } from '../lib/toast';
 import {
-  gitBranches, gitCheckout, gitClone, gitCommit, gitFetch, gitInit,
-  gitPull, gitPush, gitRemoteAdd, gitStatus,
+  gitBranches, gitCheckout, gitClone, gitCommit, gitFetch, gitGithubCreate,
+  gitInit, gitPull, gitPush, gitRemoteAdd, gitStatus, listFiles, listFolders,
 } from '../lib/api';
 
 export default function GitPanel(props: {
@@ -26,6 +26,8 @@ export default function GitPanel(props: {
   const [branches, setBranches] = useState<string[]>([]);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  // Whether the folder has any contents — git refuses cloning into a non-empty folder.
+  const [empty, setEmpty] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
@@ -36,6 +38,11 @@ export default function GitPanel(props: {
       setMode('repo');
     } catch {
       // Status failing means the folder is not a repository (yet).
+      const [files, folders] = await Promise.all([
+        listFiles(props.path).catch(() => []),
+        listFolders(props.path).catch(() => []),
+      ]);
+      setEmpty((files ?? []).length === 0 && (folders ?? []).length === 0);
       setMode('norepo');
     }
   }, [props.path]);
@@ -65,6 +72,14 @@ export default function GitPanel(props: {
    * first commit there's nothing to fetch, pull or push, so those are disabled.
    */
   const unborn = branchLine.startsWith('No commits yet on ');
+  /*
+   * Push is a no-op when an upstream exists and we're not ahead of it. With
+   * NO upstream it stays enabled — the first push is what creates one. Pull
+   * deliberately has no mirror rule, since "behind" is only as fresh as the
+   * last fetch, while "ahead" is local knowledge and always current.
+   */
+  const hasUpstream = branchLine.includes('...');
+  const nothingToPush = hasUpstream && !branchLine.includes('[ahead');
   const currentBranch = unborn
     ? branchLine.substring('No commits yet on '.length)
     : branchLine.split('...')[0].split(' ')[0];
@@ -96,6 +111,24 @@ export default function GitPanel(props: {
     await run(() => gitRemoteAdd(props.path, url), 'Remote added');
   }
 
+  // Creates a private GitHub repository, wires it up as origin, and pushes.
+  async function publish() {
+    const name = await prompt({
+      title: 'Publish to GitHub',
+      message: 'Creates a private GitHub repository and pushes ' + props.path,
+      label: 'Repository name',
+      initial: props.path.split('/').filter(Boolean).pop(),
+    });
+    if (!name) {
+      return;
+    }
+    await run(async () => {
+      const created = await gitGithubCreate(name);
+      await gitRemoteAdd(props.path, created.url);
+      await gitPush(props.path, currentBranch || undefined);
+    }, 'Published to ' + name + ' on GitHub');
+  }
+
   return (
     <Modal width={640} onClose={props.onClose}>
       <h2>Git — {props.path}</h2>
@@ -104,7 +137,13 @@ export default function GitPanel(props: {
         <>
           <p>This folder is not a Git repository.</p>
           <div className="modal-actions">
-            <button className="btn btn-secondary" disabled={busy} onClick={clone}>
+            <button
+              className="btn btn-secondary"
+              disabled={busy || !empty}
+              title={empty
+                ? 'Clones a remote repository into this folder'
+                : 'Requires an empty folder'}
+              onClick={clone}>
               Clone into folder
             </button>
             <button
@@ -150,7 +189,8 @@ export default function GitPanel(props: {
             </button>
             <button
               className="btn btn-secondary btn-small"
-              disabled={busy || unborn}
+              disabled={busy || unborn || nothingToPush}
+              title={nothingToPush ? 'Nothing to push' : undefined}
               onClick={() => run(() => gitPush(props.path, currentBranch || undefined), 'Pushed to remote')}>
               Push
             </button>
@@ -169,6 +209,13 @@ export default function GitPanel(props: {
             style={{ width: '100%' }}
             onChange={e => setMessage(e.target.value)} />
           <div className="modal-actions">
+            <button
+              className="btn btn-secondary"
+              disabled={busy || unborn}
+              title="Creates a private GitHub repository and pushes this module to it"
+              onClick={publish}>
+              Publish to GitHub…
+            </button>
             <button className="btn btn-secondary" disabled={busy} onClick={addRemote}>
               Add remote
             </button>
