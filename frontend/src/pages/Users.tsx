@@ -142,6 +142,41 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
     }
   }
 
+  /*
+   * Exports every user matching the current filter — not just the visible
+   * page — by fetching with limit -1, which the backend treats as unlimited.
+   */
+  async function exportCsv() {
+    setWaiting(true);
+    try {
+      const all = await listUsers(filter, 0, -1, sort) ?? [];
+      const escape = (value: any) => {
+        const text = value === null || value === undefined ? '' : String(value);
+        return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+      };
+      const csv = ['username,name,email,roles,created']
+        .concat(all.map(user => [
+          user.username,
+          userExtra(user, 'name'),
+          userExtra(user, 'email'),
+          (user.roles ?? []).join(', '),
+          user.created ?? '',
+        ].map(escape).join(',')))
+        .join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'users.csv';
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      props.notify({ text: err.message, isError: true });
+    } finally {
+      setWaiting(false);
+    }
+  }
+
   const pageCount = Math.ceil(count / PAGE_SIZE);
 
   return (
@@ -153,6 +188,13 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
           onChange={value => { setFilter(value); setPage(0); }} />
         <span className="muted">{count} users</span>
         <span className="spacer" />
+        <button
+          className="btn btn-secondary"
+          disabled={count === 0}
+          title="Download every user matching the current filter as CSV"
+          onClick={exportCsv}>
+          Export CSV
+        </button>
         <button className="btn" onClick={() => setCreating(true)}>+ New user</button>
         {pageCount > 1 && (
           <>
