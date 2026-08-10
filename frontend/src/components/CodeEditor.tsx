@@ -50,6 +50,12 @@ function ensureVocabulary() {
     // The hint helper reads _slots to offer [execute:...] completions
     // for dynamic slots.
     (window as any)._slots = slots;
+  }).catch(err => {
+    // A failed fetch must not stay cached, or highlighting silently stays
+    // broken until reload — clearing lets the next editor mount try again.
+    vocabularyPromise = null;
+    vocabularyFrom = null;
+    throw err;
   });
   return vocabularyPromise;
 }

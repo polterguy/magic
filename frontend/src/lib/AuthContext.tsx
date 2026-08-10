@@ -26,7 +26,15 @@ import {
   tokenExpiration,
   tokenExpired,
 } from './backend';
-import { authenticate, configureApi, getStatus, refreshTicket, verifyTicket } from './api';
+import {
+  authenticate,
+  configureApi,
+  getStatus,
+  refreshTicket,
+  setUnauthorizedHandler,
+  verifyTicket,
+} from './api';
+import { showToast } from './toast';
 
 interface AuthState {
   backend: StoredBackend | null;
@@ -103,6 +111,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .catch(() => { if (!cancelled) { setSetupNeeded(false); } });
     return () => { cancelled = true; };
   }, [isRoot, token]);
+
+  /*
+   * When the backend answers 401 to a request that carried the token, the
+   * session is dead — the secret rotated, or the token aged out. Dropping
+   * the token here, once, sends the user to the login screen instead of
+   * every page raining its own 401 toasts.
+   */
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      setBackend(current => {
+        if (!current?.token) {
+          return current;
+        }
+        const next = { ...current, token: null };
+        configureApi(next.url, null);
+        saveBackend(next);
+        showToast('Your session is no longer valid — please sign in again', true);
+        return next;
+      });
+    });
+    return () => setUnauthorizedHandler(null);
+  }, []);
 
   const applyBackend = useCallback((value: StoredBackend | null) => {
     configureApi(value?.url ?? '', value?.token ?? null);
@@ -215,15 +245,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!exp) {
       return;
     }
-    const millisecondsUntilRefresh = Math.max(0, (exp - 60) * 1000 - Date.now());
-    refreshTimer.current = window.setTimeout(async () => {
+    const refresh = async () => {
       try {
         const response = await refreshTicket();
         applyBackend({ ...backend, token: response.ticket });
       } catch {
-        applyBackend({ ...backend, token: null });
+        /*
+         * Only an answer from the backend invalidates a session — a laptop
+         * waking from sleep or a restarting server is a network hiccup, not
+         * a verdict on the token. A definitive 401 already dropped the token
+         * app-wide (the unauthorized handler above); anything else retries
+         * while the token still works.
+         */
+        if (!tokenExpired(backend.token!)) {
+          refreshTimer.current = window.setTimeout(refresh, 10000);
+        }
       }
-    }, millisecondsUntilRefresh);
+    };
+    const millisecondsUntilRefresh = Math.max(0, (exp - 60) * 1000 - Date.now());
+    refreshTimer.current = window.setTimeout(refresh, millisecondsUntilRefresh);
     return () => {
       if (refreshTimer.current) {
         clearTimeout(refreshTimer.current);

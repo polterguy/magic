@@ -1,68 +1,36 @@
 import { copyToClipboard, showToast } from '../lib/toast';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
 import { useUnsavedGuard } from '../lib/navGuard';
-import { useSearchParams } from 'react-router-dom';
 import type CodeMirror from 'codemirror';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
 import Tabs from '../components/Tabs';
 import Select from '../components/Select';
 import { FIELD_TYPES, PK_TYPES } from '../lib/dbTypes';
+import { exportCsv } from '../lib/download';
+import { buildSqlAiContext, sqlHintTables, useDatabaseSelection, useSqlSnippets } from '../lib/sql';
 import {
   addColumn,
   addForeignKey,
   addTable,
-  defaultDatabaseType,
   dropColumn,
   dropTable,
   executeSql,
   exportDdl,
   flushSchemaCache,
-  http,
   importCsvFile,
-  listDatabases,
-  listFiles,
   loadFile,
   saveFile,
 } from '../lib/api';
 
-/*
- * Notifications go to the toast stack. An inline banner is part of the page,
- * so showing one pushed everything below it down — the editors and grids
- * jumped under the pointer. Toasts float above the page instead.
- */
-function setFeedback(value: { text: string; isError: boolean } | null) {
-  if (value) {
-    showToast(value.text, value.isError);
-  }
-}
-
 export default function Sql() {
 
-  const [searchParams] = useSearchParams();
-  // Deep-link parameters from e.g. the Databases screen, consumed once.
-  const deepLink = useRef({
-    type: searchParams.get('dbType'),
-    connectionString: searchParams.get('dbCString'),
-    database: searchParams.get('dbName'),
-  });
-
-  const [types, setTypes] = useState<string[]>([]);
-  const [type, setType] = useState('');
-  const [connectionStrings, setConnectionStrings] = useState<string[]>([]);
-  /*
-   * Whether the connection strings for the current type have been fetched.
-   * The type arrives a round trip before they do, so without this the "none
-   * configured" notice shows during that gap and then disappears, shoving
-   * the page down behind it.
-   */
-  const [connectionsLoaded, setConnectionsLoaded] = useState(false);
-  const [schemaLoading, setSchemaLoading] = useState(true);
-  const [connectionString, setConnectionString] = useState('');
-  const [databasesMeta, setDatabasesMeta] = useState<any[]>([]);
-  const [database, setDatabase] = useState('');
+  // Prefers magic — the SQL editor's most common target, unlike the
+  // generators which deliberately avoid it.
+  const selection = useDatabaseSelection({ preferMagic: true });
+  const { type, connectionString, database } = selection;
   const [sql, setSql] = useState('');
   // What the editor last loaded or saved — differing content means unsaved changes.
   const [savedSql, setSavedSql] = useState('');
@@ -72,27 +40,19 @@ export default function Sql() {
   // Click-triggered round-trips outside Run — DDL exports, schema changes,
   // imports and snippet I/O.
   const [waiting, setWaiting] = useState(false);
-  const [snippets, setSnippets] = useState<string[]>([]);
+  const { snippets, setSnippets } = useSqlSnippets(type);
   const [selectedSnippet, setSelectedSnippet] = useState('');
   const [view, setView] = useState<'sql' | 'tables'>('sql');
   const [ddl, setDdl] = useState<{ title: string; sql: string } | null>(null);
   const [newTable, setNewTable] = useState(false);
   const [addingColumn, setAddingColumn] = useState<string | null>(null);
   const editorRef = useRef<CodeMirror.Editor | null>(null);
-  const { prompt, confirm } = useDialog();
+  const { prompt, confirm, confirmTyped } = useDialog();
 
   useUnsavedGuard(sql !== savedSql, 'Your SQL has unsaved changes.');
 
-  const tables = databasesMeta.find(db => db.name === database)?.tables ?? [];
-
-  async function reloadSchema() {
-    try {
-      const response = await listDatabases(type, connectionString);
-      setDatabasesMeta(response.databases ?? []);
-    } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
-    }
-  }
+  const tables = selection.selectedMeta?.tables ?? [];
+  const reloadSchema = selection.reloadSchema;
 
   async function flushCache() {
     if (!await confirm({
@@ -109,7 +69,7 @@ export default function Sql() {
       await flushSchemaCache(type, connectionString);
       window.location.reload();
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
       setWaiting(false);
     }
   }
@@ -118,37 +78,32 @@ export default function Sql() {
     setWaiting(true);
     try {
       await importCsvFile(type, connectionString, database, file);
-      setFeedback({
-        text: 'Importing ' + file.name + ' — you\'ll be notified when it completes',
-        isError: false,
-      });
+      showToast('Importing ' + file.name + ' — you\'ll be notified when it completes');
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
   }
 
   async function dropTableConfirmed(tableName: string) {
-    const typed = await prompt({
+    if (!await confirmTyped({
       title: 'Drop table?',
       message: 'This permanently deletes ' + tableName + '. Type the table name to confirm.',
       label: 'Table name',
+      expected: tableName,
       confirmText: 'Drop',
-    });
-    if (typed !== tableName) {
-      if (typed !== null) {
-        setFeedback({ text: 'Name did not match — nothing dropped', isError: true });
-      }
+      mismatch: 'Name did not match — nothing dropped',
+    })) {
       return;
     }
     setWaiting(true);
     try {
       await dropTable(type, connectionString, database, tableName);
-      setFeedback({ text: 'Table ' + tableName + ' dropped', isError: false });
+      showToast('Table ' + tableName + ' dropped');
       await reloadSchema();
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -166,42 +121,17 @@ export default function Sql() {
     setWaiting(true);
     try {
       await dropColumn(type, connectionString, database, tableName, columnName);
-      setFeedback({ text: 'Column ' + columnName + ' dropped', isError: false });
+      showToast('Column ' + columnName + ' dropped');
       await reloadSchema();
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
   }
 
-  /*
-   * AI context for the prompt bar, same as the old sql-view: the full schema
-   * DDL when tables exist, the SQL dialect, and the current editor code.
-   */
-  async function createAiContext() {
-    const dialect = {
-      sqlite: 'SQLite',
-      mysql: 'MySQL',
-      mssql: 'Microsoft SQL Server',
-      pgsql: 'PostgreSQL',
-    }[type] ?? type;
-    let result = '';
-    if (tables.length > 0) {
-      const ddl = await exportDdl(
-        type, connectionString, database, tables.map((table: any) => table.name), true);
-      result += 'Current schema:\n\n' + ddl.result + '\n\n';
-    }
-    result += 'SQL dialect: ' + dialect + '\n\n';
-    if (sql.length > 0) {
-      result += 'Current code: \n\n' + sql;
-    }
-    if (tables.length > 0) {
-      result += '\n\n**IMPORTANT** - Return ONLY SQL! No ``` characters, or explanations, ' +
-        'ONLY the SQL! In the next message you will be given a natural language query being ' +
-        "a request from the user. Return only the RAW SQL that solves the user' problem";
-    }
-    return result;
+  function createAiContext() {
+    return buildSqlAiContext({ type, connectionString, database, tables, sql });
   }
 
   async function viewDdl(tables: string[], full: boolean, title: string) {
@@ -210,118 +140,39 @@ export default function Sql() {
       const response = await exportDdl(type, connectionString, database, tables, full);
       setDdl({ title, sql: response.result });
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
   }
 
-  useEffect(() => {
-    defaultDatabaseType().then(response => {
-      setTypes(response.options);
-      setType(deepLink.current.type ?? response.default);
-    }).catch(err => setFeedback({ text: err.message, isError: true }));
-  }, []);
-
-  useEffect(() => {
-    if (!type) {
-      return;
-    }
-    setConnectionsLoaded(false);
-    http.get<Record<string, string>>(
-      '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type))
-      .then(response => {
-        setConnectionsLoaded(true);
-        const names = Object.keys(response ?? {});
-        setConnectionStrings(names);
-        const wanted = deepLink.current.connectionString;
-        deepLink.current.connectionString = null;
-        if (wanted && names.includes(wanted)) {
-          setConnectionString(wanted);
-        } else {
-          setConnectionString(names.includes('generic') ? 'generic' : names[0] ?? '');
-        }
-      })
-      .catch(() => {
-        // A database type with no configured connection strings (e.g. the
-        // config has it as null) — clear the selection, no scary error.
-        setConnectionsLoaded(true);
-        setConnectionStrings([]);
-        setConnectionString('');
-        setDatabasesMeta([]);
-        setDatabase('');
-      });
-    listFiles('/etc/' + type + '/templates/')
-      .then(files => setSnippets((files ?? []).filter(file => file.endsWith('.sql'))))
-      .catch(() => setSnippets([]));
-  }, [type]);
-
-  useEffect(() => {
-    if (!type || !connectionString) {
-      return;
-    }
-    /*
-     * This is the slowest fetch on the screen — it carries every database
-     * plus its tables and columns, which feed the Designer and autocomplete —
-     * and it is the third in a chain, so it is worth saying something.
-     */
-    setSchemaLoading(true);
-    listDatabases(type, connectionString).then(response => {
-      setSchemaLoading(false);
-      const meta = response.databases ?? [];
-      setDatabasesMeta(meta);
-      const names = meta.map((db: any) => db.name);
-      const wanted = deepLink.current.database;
-      deepLink.current.database = null;
-      if (wanted && names.includes(wanted)) {
-        setDatabase(wanted);
-      } else {
-        setDatabase(names.includes('magic') ? 'magic' : names[0] ?? '');
-      }
-    }).catch(() => {
-      setSchemaLoading(false);
-      setDatabasesMeta([]);
-      setDatabase('');
-    });
-  }, [type, connectionString]);
-
-  /*
-   * Table → columns map for Ctrl-Space SQL autocomplete.
-   */
-  const hintTables = useMemo(() => {
-    const tables: Record<string, string[]> = {};
-    const meta = databasesMeta.find(db => db.name === database);
-    for (const table of meta?.tables ?? []) {
-      tables[table.name] = (table.columns ?? []).map((column: any) => column.name);
-    }
-    return tables;
-  }, [databasesMeta, database]);
+  // Table → columns map for Ctrl-Space SQL autocomplete.
+  const hintTables = useMemo(
+    () => sqlHintTables(selection.selectedMeta), [selection.selectedMeta]);
 
   async function execute() {
-    const selection = editorRef.current?.getSelection() ?? '';
-    const toExecute = selection !== '' ? selection : sql;
+    const selected = editorRef.current?.getSelection() ?? '';
+    const toExecute = selected !== '' ? selected : sql;
     if (!toExecute.trim()) {
-      setFeedback({ text: 'Write some SQL first', isError: true });
+      showToast('Write some SQL first', true);
       return;
     }
     setBusy(true);
-    setFeedback(null);
     try {
-      const batch = type === 'mssql' && toExecute.includes('go');
+      // Batch mode only when a line actually IS a GO statement — merely
+      // containing the letters "go" (category, algorithm…) doesn't count.
+      const batch = type === 'mssql' && /^\s*go\s*;?\s*$/im.test(toExecute);
       const response = await executeSql(
         type, '[' + connectionString + '|' + database + ']', toExecute, safeMode, batch);
       setResult(response ?? []);
       const count = (response ?? []).reduce((total, set) => total + (set?.length ?? 0), 0);
-      setFeedback({
-        text: response === null
-          ? 'SQL executed successfully, no result'
-          : count === 200 && safeMode
-            ? 'First 200 records returned. Turn off safe mode to return all records.'
-            : count + ' records returned',
-        isError: false,
-      });
+      showToast(response === null
+        ? 'SQL executed successfully, no result'
+        : count === 200 && safeMode
+          ? 'First 200 records returned. Turn off safe mode to return all records.'
+          : count + ' records returned');
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
       setResult(null);
     } finally {
       setBusy(false);
@@ -329,17 +180,28 @@ export default function Sql() {
   }
 
   async function openSnippet(filename: string) {
-    setSelectedSnippet(filename);
     if (!filename) {
       return;
     }
+    // Loading over unsaved work destroys it — the navigation guard can't see
+    // this, so ask the same question it would.
+    if (sql !== savedSql && !await confirm({
+      title: 'Discard unsaved changes?',
+      message: 'Your SQL has unsaved changes. Loading ' +
+        filename.substring(filename.lastIndexOf('/') + 1) + ' replaces them.',
+      confirmText: 'Discard',
+      danger: true,
+    })) {
+      return;
+    }
+    setSelectedSnippet(filename);
     setWaiting(true);
     try {
       const text = await loadFile(filename);
       setSql(text);
       setSavedSql(text);
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -366,12 +228,12 @@ export default function Sql() {
       await saveFile(filename, sql);
       setSavedSql(sql);
       setSelectedSnippet(filename);
-      setFeedback({ text: 'Saved ' + filename, isError: false });
+      showToast('Saved ' + filename);
       if (!snippets.includes(filename)) {
         setSnippets([...snippets, filename].sort());
       }
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -383,27 +245,6 @@ export default function Sql() {
     reader.readAsText(file);
   }
 
-  function exportCsv(rows: any[]) {
-    if (rows.length === 0) {
-      return;
-    }
-    const columns = Object.keys(rows[0]);
-    const escape = (value: any) => {
-      const text = value === null || value === undefined ? '' : String(value);
-      return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
-    };
-    const csv = [columns.join(',')]
-      .concat(rows.map(row => columns.map(column => escape(row[column])).join(',')))
-      .join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = 'sql-export.csv';
-    anchor.click();
-    URL.revokeObjectURL(url);
-  }
-
   return (
     <>
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -412,14 +253,15 @@ export default function Sql() {
           <p>Execute SQL towards your databases, and design them</p>
         </div>
         <div className="page-tools">
-          <Select value={type} onChange={setType}>
-            {types.map(option => <option key={option} value={option}>{option}</option>)}
+          <Select value={type} onChange={selection.setType}>
+            {selection.types.map(option => <option key={option} value={option}>{option}</option>)}
           </Select>
-          <Select value={connectionString} onChange={setConnectionString}>
-            {connectionStrings.map(option => <option key={option} value={option}>{option}</option>)}
+          <Select value={connectionString} onChange={selection.setConnectionString}>
+            {selection.connectionStrings.map(option =>
+              <option key={option} value={option}>{option}</option>)}
           </Select>
-          <Select value={database} onChange={setDatabase}>
-            {databasesMeta.map((db: any) => (
+          <Select value={database} onChange={selection.setDatabase}>
+            {selection.databasesMeta.map((db: any) => (
               <option key={db.name} value={db.name}>{db.name}</option>
             ))}
           </Select>
@@ -442,18 +284,18 @@ export default function Sql() {
         ]}
         active={view}
         onChange={id => setView(id as 'sql' | 'tables')} />
-      {connectionsLoaded && connectionStrings.length === 0 && (
+      {selection.connectionsLoaded && selection.connectionStrings.length === 0 && (
         <div className="info-box" style={{ marginBottom: 12 }}>
           No connection strings are configured for {type}. Add one under Databases → External.
         </div>
       )}
-      {schemaLoading && (
+      {selection.schemaLoading && (
         <div className="spinner-panel">
           <div className="spinner" />
           <span className="muted">Loading databases and schema…</span>
         </div>
       )}
-      {view === 'tables' && !schemaLoading && (
+      {view === 'tables' && !selection.schemaLoading && (
         <>
           <div className="toolbar">
             <span className="muted">{tables.length} tables in {database}</span>
@@ -579,10 +421,10 @@ export default function Sql() {
                 try {
                   await addTable(type, connectionString, database, tableName, pkName, pkType, pkLength);
                   setNewTable(false);
-                  setFeedback({ text: 'Table ' + tableName + ' created', isError: false });
+                  showToast('Table ' + tableName + ' created');
                   await reloadSchema();
                 } catch (err: any) {
-                  setFeedback({ text: err.message, isError: true });
+                  showToast(err.message, true);
                 } finally {
                   setWaiting(false);
                 }
@@ -609,10 +451,10 @@ export default function Sql() {
                       payload.nullable, payload.columnLength);
                   }
                   setAddingColumn(null);
-                  setFeedback({ text: 'Column ' + payload.columnName + ' added', isError: false });
+                  showToast('Column ' + payload.columnName + ' added');
                   await reloadSchema();
                 } catch (err: any) {
-                  setFeedback({ text: err.message, isError: true });
+                  showToast(err.message, true);
                 } finally {
                   setWaiting(false);
                 }
@@ -677,7 +519,7 @@ export default function Sql() {
         getContext={createAiContext}
         session="sql-studio.editor"
         onResult={setSql}
-        onError={message => setFeedback({ text: message, isError: true })}
+        onError={message => showToast(message, true)}
         style={{ marginTop: 8 }} />
       </>}
       {view === 'sql' && result?.map((resultSet, index) => (
@@ -688,7 +530,7 @@ export default function Sql() {
             <button
               className="btn btn-secondary btn-small"
               disabled={(resultSet ?? []).length === 0}
-              onClick={() => exportCsv(resultSet ?? [])}>
+              onClick={() => exportCsv(resultSet ?? [], 'sql-export.csv')}>
               Export as CSV
             </button>
           </div>
@@ -702,26 +544,42 @@ export default function Sql() {
   );
 }
 
+/*
+ * With safe mode off a query can answer with hundreds of thousands of rows,
+ * and rendering them all freezes the tab — the data is all still there for
+ * the CSV export, only the DOM is capped.
+ */
+const MAX_RENDERED_ROWS = 1000;
+
 function ResultTable({ rows }: { rows: any[] }) {
   if (rows.length === 0) {
     return <div className="muted" style={{ padding: 16 }}>Empty result set</div>;
   }
   const columns = Object.keys(rows[0]);
+  const visible = rows.length > MAX_RENDERED_ROWS ? rows.slice(0, MAX_RENDERED_ROWS) : rows;
   return (
-    <table className="sql-result">
-      <thead>
-        <tr>{columns.map(column => <th key={column}>{column}</th>)}</tr>
-      </thead>
-      <tbody>
-        {rows.map((row, index) => (
-          <tr key={index}>
-            {columns.map(column => (
-              <td className="mono" key={column} data-label={column}>{formatCell(row[column])}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <>
+      <table className="sql-result">
+        <thead>
+          <tr>{columns.map(column => <th key={column}>{column}</th>)}</tr>
+        </thead>
+        <tbody>
+          {visible.map((row, index) => (
+            <tr key={index}>
+              {columns.map(column => (
+                <td className="mono" key={column} data-label={column}>{formatCell(row[column])}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {rows.length > MAX_RENDERED_ROWS && (
+        <div className="muted" style={{ padding: 12 }}>
+          Showing the first {MAX_RENDERED_ROWS} of {rows.length} rows — export as CSV to
+          get all of them.
+        </div>
+      )}
+    </>
   );
 }
 

@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronIcon } from '../components/Icons';
 import { useAuth } from '../lib/AuthContext';
+import { useDebounced } from '../lib/usePagedList';
 import {
   backendUrls,
   rememberPendingOidc,
@@ -107,12 +108,18 @@ export default function Login() {
       .finally(() => setBusy(false));
   }, [loginWithTicket, navigate]);
 
+  /*
+   * Debounced — these probe the backend URL as it is being typed, and firing
+   * one request per keystroke means probing half-typed hostnames.
+   */
+  const probeUrl = useDebounced(url, 500);
+
   // Only offer a link the backend can actually send.
   useEffect(() => {
     let cancelled = false;
-    canResetPassword(url).then(value => { if (!cancelled) { setCanReset(value); } });
+    canResetPassword(probeUrl).then(value => { if (!cancelled) { setCanReset(value); } });
     return () => { cancelled = true; };
-  }, [url]);
+  }, [probeUrl]);
 
   /*
    * Which providers the backend has configured — there may be none, in which
@@ -120,11 +127,11 @@ export default function Login() {
    */
   useEffect(() => {
     let cancelled = false;
-    openidProviders(url)
+    openidProviders(probeUrl)
       .then(list => { if (!cancelled) { setProviders(list); } })
       .catch(() => { if (!cancelled) { setProviders([]); } });
     return () => { cancelled = true; };
-  }, [url]);
+  }, [probeUrl]);
 
   async function submit(event: FormEvent) {
     event.preventDefault();

@@ -12,10 +12,7 @@ import Banner from '../components/Banner';
 import { FormEvent, useState } from 'react';
 import { EyeIcon, EyeOffIcon } from '../components/Icons';
 import { useAuth } from '../lib/AuthContext';
-import { ApiError, saveUserExtra, setupSystem } from '../lib/api';
-
-// Same minimum the old dashboard enforced.
-const MIN_PASSWORD = 12;
+import { ApiError, MIN_PASSWORD, saveUserExtra, setupSystem } from '../lib/api';
 
 export default function Setup() {
 

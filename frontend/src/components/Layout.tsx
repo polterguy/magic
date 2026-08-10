@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
+import { createSocket } from '../lib/socket';
 import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
@@ -66,20 +66,27 @@ export default function Layout({ children }: { children: ReactNode }) {
    */
   const [toasts, setToasts] = useState<{ id: number; text: string; isError: boolean }[]>([]);
   const nextToastId = useRef(0);
-  const timers = useRef<number[]>([]);
+  // Auto-dismiss timer per toast, so dismissing by hand also stops its timer.
+  const timers = useRef(new Map<number, number>());
   const backendUrl = backend?.url;
   const backendToken = backend?.token;
 
   function dismissToast(id: number) {
+    const timer = timers.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      timers.current.delete(id);
+    }
     setToasts(current => current.filter(toast => toast.id !== id));
   }
 
   const pushToast = useCallback((text: string, isError: boolean) => {
     const id = ++nextToastId.current;
     setToasts(current => [...current, { id, text, isError }]);
-    timers.current.push(window.setTimeout(
-      () => setToasts(current => current.filter(toast => toast.id !== id)),
-      isError ? 10000 : 5000));
+    timers.current.set(id, window.setTimeout(() => {
+      timers.current.delete(id);
+      setToasts(current => current.filter(toast => toast.id !== id));
+    }, isError ? 10000 : 5000));
   }, []);
 
   // Toasts raised from anywhere in the app — clipboard copies, and so on.
@@ -88,6 +95,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     return () => {
       setToastListener(null);
       timers.current.forEach(clearTimeout);
+      timers.current.clear();
     };
   }, [pushToast]);
 
@@ -95,14 +103,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     if (!backendUrl || !backendToken) {
       return;
     }
-    const connection = new HubConnectionBuilder()
-      .withUrl(backendUrl + '/sockets', {
-        accessTokenFactory: () => backendToken,
-        skipNegotiation: true,
-        transport: HttpTransportType.WebSockets,
-      })
-      .withAutomaticReconnect()
-      .build();
+    const connection = createSocket({ reconnect: true });
     connection.on('magic.backend.message', (raw: string) => {
       const args = JSON.parse(raw);
       switch (args.type) {
@@ -212,9 +213,16 @@ export default function Layout({ children }: { children: ReactNode }) {
         {children}
       </main>
       {toasts.length > 0 && (
-        <div className="toast-stack">
+        /*
+         * The app's only feedback channel, so screen readers must hear it —
+         * polite for successes, and role=alert (assertive) per error toast.
+         */
+        <div className="toast-stack" role="status" aria-live="polite">
           {toasts.map(toast => (
-            <div key={toast.id} className={'toast' + (toast.isError ? ' error' : '')}>
+            <div
+              key={toast.id}
+              className={'toast' + (toast.isError ? ' error' : '')}
+              role={toast.isError ? 'alert' : undefined}>
               <span>{toast.text}</span>
               <button
                 className="toast-close"

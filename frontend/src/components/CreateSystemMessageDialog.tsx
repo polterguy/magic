@@ -7,9 +7,9 @@
 
 import Banner from './Banner';
 import { useRef, useState } from 'react';
-import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
-import { Modal } from './Dialogs';
-import { backendInfo, createSystemMessage } from '../lib/api';
+import { createSocket } from '../lib/socket';
+import { Modal, useDialog } from './Dialogs';
+import { createSystemMessage, gibberish } from '../lib/api';
 
 export default function CreateSystemMessageDialog(props: {
   instruction: string;
@@ -22,23 +22,26 @@ export default function CreateSystemMessageDialog(props: {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const connectionRef = useRef<any>(null);
+  const { confirm } = useDialog();
 
-  function generate() {
+  async function generate() {
     if (!url) {
       return;
     }
     setBusy(true);
     setError('');
 
-    const backend = backendInfo();
-    const channel = 'c_' + new Date().toISOString();
-    const connection = new HubConnectionBuilder()
-      .withUrl(backend.url + '/sockets', {
-        accessTokenFactory: () => backend.token ?? '',
-        skipNegotiation: true,
-        transport: HttpTransportType.WebSockets,
-      })
-      .build();
+    // Channel names come from the server's random-string endpoint, like every
+    // other socket consumer — a timestamp is guessable and can collide.
+    let channel: string;
+    try {
+      channel = 'c_' + (await gibberish()).result;
+    } catch (err: any) {
+      setBusy(false);
+      setError(err?.message ?? 'Could not create a feedback channel');
+      return;
+    }
+    const connection = createSocket();
     connectionRef.current = connection;
 
     connection.on(channel, (raw: string) => {
@@ -61,10 +64,19 @@ export default function CreateSystemMessageDialog(props: {
       });
   }
 
-  function close() {
-    // Don't allow closing (Escape / backdrop / Cancel) while a generation is
-    // in flight — the crawl can take minutes and must not be interrupted.
-    if (busy) {
+  /*
+   * The crawl takes minutes and shouldn't be dismissed by a stray Escape —
+   * but a user must never be trapped if the answer never arrives, so leaving
+   * mid-generation is allowed after a confirmation. The crawl itself carries
+   * on server-side either way; only the result is lost.
+   */
+  async function close() {
+    if (busy && !await confirm({
+      title: 'Stop waiting?',
+      message: 'The generation continues on the server, but its result will be lost.',
+      confirmText: 'Stop waiting',
+      danger: true,
+    })) {
       return;
     }
     connectionRef.current?.stop();

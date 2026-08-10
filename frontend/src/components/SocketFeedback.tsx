@@ -7,8 +7,7 @@
 
 import Banner from './Banner';
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { backendInfo } from '../lib/api';
+import { createSocket } from '../lib/socket';
 import { Modal } from './Dialogs';
 
 interface FeedbackMessage {
@@ -44,14 +43,7 @@ export default function SocketFeedback(props: {
   const readyFired = useRef(false);
 
   useEffect(() => {
-    const backend = backendInfo();
-    const connection: HubConnection = new HubConnectionBuilder()
-      .withUrl(backend.url + '/sockets', {
-        accessTokenFactory: () => backend.token ?? '',
-        skipNegotiation: true,
-        transport: HttpTransportType.WebSockets,
-      })
-      .build();
+    const connection = createSocket();
 
     connection.on(props.channel, (args: string) => {
       const parsed = JSON.parse(args);

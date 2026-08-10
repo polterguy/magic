@@ -26,17 +26,6 @@ const EXTERNAL_TYPES = [
   { name: 'SQL Server', type: 'mssql' },
 ];
 
-/*
- * Notifications go to the toast stack. An inline banner is part of the page,
- * so showing one pushed everything below it down — the editors and grids
- * jumped under the pointer. Toasts float above the page instead.
- */
-function setFeedback(value: { text: string; isError: boolean } | null) {
-  if (value) {
-    showToast(value.text, value.isError);
-  }
-}
-
 export default function Databases() {
 
   const [tab, setTab] = useState<'internal' | 'external'>('internal');
@@ -75,7 +64,7 @@ function InternalTab() {
       const response = await listDatabases('sqlite', 'generic');
       setDatabases(response.databases ?? []);
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setLoading(false);
     }
@@ -86,7 +75,7 @@ function InternalTab() {
   }, [refresh]);
 
   function show(text: string, isError = false) {
-    setFeedback({ text, isError });
+    showToast(text, isError);
   }
 
   async function create() {
@@ -280,7 +269,7 @@ function ExternalTab() {
           .catch(() => updateStatus(row, 'down'));
       }
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setLoading(false);
     }
@@ -298,7 +287,7 @@ function ExternalTab() {
   }, [refresh]);
 
   function show(text: string, isError = false) {
-    setFeedback({ text, isError });
+    showToast(text, isError);
   }
 
   async function testOrConnect(connectAfter: boolean) {

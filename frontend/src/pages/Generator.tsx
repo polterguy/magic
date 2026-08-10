@@ -1,20 +1,22 @@
 import { showToast } from '../lib/toast';
 import Select from '../components/Select';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import AiWaiter from '../components/AiWaiter';
 import { ChevronIcon } from '../components/Icons';
-import { useSearchParams } from 'react-router-dom';
 import CodeEditor from '../components/CodeEditor';
 import AiPrompt from '../components/AiPrompt';
+import RoleChips from '../components/RoleChips';
 import Tabs from '../components/Tabs';
+import {
+  DatabaseSelection,
+  buildSqlAiContext,
+  sqlHintTables,
+  useDatabaseSelection,
+  useSqlSnippets,
+} from '../lib/sql';
 import {
   crudify,
   customSqlEndpoint,
-  defaultDatabaseType,
-  exportDdl,
-  http,
-  listDatabases,
-  listFiles,
   listRoles,
   loadFile,
 } from '../lib/api';
@@ -176,17 +178,6 @@ function canGenerate(payload: any, verb: string) {
   }
 }
 
-/*
- * Notifications go to the toast stack. An inline banner is part of the page,
- * so showing one pushed everything below it down — the editors and grids
- * jumped under the pointer. Toasts float above the page instead.
- */
-function setFeedback(value: { text: string; isError: boolean } | null) {
-  if (value) {
-    showToast(value.text, value.isError);
-  }
-}
-
 export default function Generator() {
 
   const [tab, setTab] = useState('crud');
@@ -208,102 +199,7 @@ export default function Generator() {
   );
 }
 
-/*
- * Shared database-selection state for both generator tabs.
- */
-function useDatabaseSelection() {
-
-  const [searchParams] = useSearchParams();
-  const deepLink = useRef({
-    type: searchParams.get('dbType'),
-    connectionString: searchParams.get('dbCString'),
-    database: searchParams.get('dbName'),
-  });
-  const [types, setTypes] = useState<string[]>([]);
-  const [type, setType] = useState('');
-  const [connectionStrings, setConnectionStrings] = useState<string[]>([]);
-  const [connectionString, setConnectionString] = useState('');
-  const [databasesMeta, setDatabasesMeta] = useState<any[]>([]);
-  const [database, setDatabase] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    defaultDatabaseType().then(response => {
-      setTypes(response.options);
-      setType(deepLink.current.type ?? response.default);
-    }).catch(err => {
-      setError(err.message);
-      setLoading(false);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!type) {
-      return;
-    }
-    setLoading(true);
-    http.get<Record<string, string>>(
-      '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type))
-      .then(response => {
-        const names = Object.keys(response ?? {});
-        setConnectionStrings(names);
-        const wanted = deepLink.current.connectionString;
-        deepLink.current.connectionString = null;
-        if (wanted && names.includes(wanted)) {
-          setConnectionString(wanted);
-        } else {
-          setConnectionString(names.includes('generic') ? 'generic' : names[0] ?? '');
-        }
-        if (names.length === 0) {
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        // Database type with no configured connection strings — clear it.
-        setConnectionStrings([]);
-        setConnectionString('');
-        setDatabasesMeta([]);
-        setDatabase('');
-        setLoading(false);
-      });
-  }, [type]);
-
-  useEffect(() => {
-    if (!type || !connectionString) {
-      return;
-    }
-    setLoading(true);
-    listDatabases(type, connectionString).then(response => {
-      const meta = response.databases ?? [];
-      setDatabasesMeta(meta);
-      const names = meta.map((db: any) => db.name);
-      const wanted = deepLink.current.database;
-      deepLink.current.database = null;
-      if (wanted && names.includes(wanted)) {
-        setDatabase(wanted);
-      } else {
-        setDatabase(names.filter((name: string) => name !== 'magic')[0] ?? names[0] ?? '');
-      }
-    }).catch(() => {
-      setDatabasesMeta([]);
-      setDatabase('');
-    }).finally(() => {
-      setLoading(false);
-    });
-  }, [type, connectionString]);
-
-  const selectedMeta = databasesMeta.find(db => db.name === database);
-
-  return {
-    types, type, setType,
-    connectionStrings, connectionString, setConnectionString,
-    databasesMeta, database, setDatabase,
-    selectedMeta, error, loading,
-  };
-}
-
-function DatabaseSelectors({ selection }: { selection: any }) {
+function DatabaseSelectors({ selection }: { selection: DatabaseSelection }) {
   return (
     <>
       <Select value={selection.type} onChange={value => selection.setType(value)}>
@@ -330,32 +226,6 @@ function DatabaseSelectors({ selection }: { selection: any }) {
         </span>
       )}
     </>
-  );
-}
-
-function RoleChips(props: { roles: string[]; selected: string[]; onChange: (roles: string[]) => void }) {
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-      {props.roles.map(role => (
-        <label
-          key={role}
-          className="chip"
-          style={{
-            display: 'inline-flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            cursor: 'pointer',
-          }}>
-          <input
-            type="checkbox"
-            checked={props.selected.includes(role)}
-            onChange={e => props.onChange(e.target.checked
-              ? [...props.selected, role]
-              : props.selected.filter(candidate => candidate !== role))} />
-          {role}
-        </label>
-      ))}
-    </div>
   );
 }
 
@@ -479,11 +349,10 @@ function CrudTab() {
   async function generate() {
     const targets = tables.filter((table: any) => selectedTables.has(table.name));
     if (targets.length === 0 || verbs.size === 0) {
-      setFeedback({ text: 'Select at least one table and one verb', isError: true });
+      showToast('Select at least one table and one verb', true);
       return;
     }
     setBusy(true);
-    setFeedback(null);
     const options = {
       auth,
       logging,
@@ -508,18 +377,26 @@ function CrudTab() {
           if (!canGenerate(payload, verb)) {
             continue;
           }
-          const response = await crudify(payload);
-          loc += response.loc ?? 0;
-          generated += endpointsForVerb(verb, options);
+          try {
+            const response = await crudify(payload);
+            loc += response.loc ?? 0;
+            generated += endpointsForVerb(verb, options);
+          } catch (err: any) {
+            /*
+             * One crudify call per verb per table — a failure mid-loop must
+             * say WHERE it stopped, and how much had already been generated,
+             * or there's no telling which endpoints exist.
+             */
+            throw new Error(
+              verb.toUpperCase() + ' for ' + table.name + ' failed after ' +
+              generated + ' endpoints were generated: ' + err.message);
+          }
         }
       }
-      setFeedback({
-        text: `Generated ${generated} endpoints (${loc} lines of code) in /modules/` +
-          (moduleName || selection.database) + '/',
-        isError: false,
-      });
+      showToast(`Generated ${generated} endpoints (${loc} lines of code) in /modules/` +
+        (moduleName || selection.database) + '/');
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -686,7 +563,12 @@ function CrudTab() {
               </div>
               {authOpen && (
                 <div style={{ marginTop: 8 }}>
-                  <RoleChips roles={roles} selected={auth} onChange={setAuth} />
+                  <RoleChips
+                    roles={roles}
+                    selected={auth}
+                    onToggle={(role, selected) => setAuth(selected
+                      ? [...auth, role]
+                      : auth.filter(candidate => candidate !== role))} />
                 </div>
               )}
             </div>
@@ -821,23 +703,14 @@ function SqlEndpointTab() {
   const [sql, setSql] = useState('');
   const [overwrite, setOverwrite] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [snippets, setSnippets] = useState<string[]>([]);
+  // The same saved-snippets folder SQL Studio reads and writes.
+  const { snippets } = useSqlSnippets(selection.type);
 
   useEffect(() => {
     listRoles()
       .then(list => setRoles((list ?? []).map(role => role.name)))
       .catch(() => {});
   }, []);
-
-  // The same saved-snippets folder SQL Studio reads and writes.
-  useEffect(() => {
-    if (!selection.type) {
-      return;
-    }
-    listFiles('/etc/' + selection.type + '/templates/')
-      .then(files => setSnippets((files ?? []).filter(file => file.endsWith('.sql'))))
-      .catch(() => setSnippets([]));
-  }, [selection.type]);
 
   async function openSnippet(filename: string) {
     if (!filename) {
@@ -862,54 +735,23 @@ function SqlEndpointTab() {
     }
   }, [selection.database]);
 
-  const hintTables = useMemo(() => {
-    const tables: Record<string, string[]> = {};
-    for (const table of selection.selectedMeta?.tables ?? []) {
-      tables[table.name] = (table.columns ?? []).map((column: any) => column.name);
-    }
-    return tables;
-  }, [selection.selectedMeta]);
+  const hintTables = useMemo(
+    () => sqlHintTables(selection.selectedMeta), [selection.selectedMeta]);
 
-  /*
-   * Context for the AI prompt bar — the same shape SQL Studio uses: the live
-   * schema DDL, the dialect, the current SQL, plus any declared endpoint
-   * arguments so the model knows it can reference them as @name.
-   */
-  async function createAiContext() {
-    const dialect = {
-      sqlite: 'SQLite',
-      mysql: 'MySQL',
-      mssql: 'Microsoft SQL Server',
-      pgsql: 'PostgreSQL',
-    }[selection.type ?? ''] ?? selection.type ?? '';
-    const tables = selection.selectedMeta?.tables ?? [];
-    let result = '';
-    if (tables.length > 0) {
-      const ddl = await exportDdl(
-        selection.type!, selection.connectionString!, selection.database!,
-        tables.map((table: any) => table.name), true);
-      result += 'Current schema:\n\n' + ddl.result + '\n\n';
-    }
-    result += 'SQL dialect: ' + dialect + '\n\n';
-    const declared = args.filter(argument => argument.name);
-    if (declared.length > 0) {
-      result += 'Declared endpoint arguments, reference them in the SQL as @name: ' +
-        declared.map(argument => argument.name + ' (' + argument.type + ')').join(', ') + '\n\n';
-    }
-    if (sql.length > 0) {
-      result += 'Current code: \n\n' + sql;
-    }
-    if (tables.length > 0) {
-      result += '\n\n**IMPORTANT** - Return ONLY SQL! No ``` characters, or explanations, ' +
-        'ONLY the SQL! In the next message you will be given a natural language query being ' +
-        "a request from the user. Return only the RAW SQL that solves the user' problem";
-    }
-    return result;
+  function createAiContext() {
+    return buildSqlAiContext({
+      type: selection.type,
+      connectionString: selection.connectionString,
+      database: selection.database,
+      tables: selection.selectedMeta?.tables ?? [],
+      sql,
+      args,
+    });
   }
 
   async function generate() {
     if (!sql.trim() || !moduleName || !endpointName) {
-      setFeedback({ text: 'Provide SQL, a module name, and an endpoint name', isError: true });
+      showToast('Provide SQL, a module name, and an endpoint name', true);
       return;
     }
     setBusy(true);
@@ -928,12 +770,9 @@ function SqlEndpointTab() {
           .join('\n'),
         overwrite,
       });
-      setFeedback({
-        text: 'Endpoint magic/' + moduleName + '/' + endpointName + ' created',
-        isError: false,
-      });
+      showToast('Endpoint magic/' + moduleName + '/' + endpointName + ' created');
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -972,7 +811,12 @@ function SqlEndpointTab() {
       </div>
       <div className="toolbar">
         <div style={{ fontWeight: 600, fontSize: 13 }}>Authorisation:</div>
-        <RoleChips roles={roles} selected={auth} onChange={setAuth} />
+        <RoleChips
+          roles={roles}
+          selected={auth}
+          onToggle={(role, selected) => setAuth(selected
+            ? [...auth, role]
+            : auth.filter(candidate => candidate !== role))} />
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input
             type="checkbox"
@@ -1046,7 +890,7 @@ function SqlEndpointTab() {
         getContext={createAiContext}
         session="generator-sql.editor"
         onResult={setSql}
-        onError={message => setFeedback({ text: message, isError: true })}
+        onError={message => showToast(message, true)}
         style={{ marginTop: 8 }} />
       {busy && <AiWaiter />}
     </>

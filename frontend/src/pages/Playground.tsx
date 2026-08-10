@@ -38,7 +38,7 @@ export default function Playground() {
   const [busy, setBusy] = useState(false);
   const [snippets, setSnippets] = useState<string[]>([]);
   const [selectedSnippet, setSelectedSnippet] = useState('');
-  const { prompt } = useDialog();
+  const { confirm, prompt } = useDialog();
 
   useUnsavedGuard(code !== savedCode, 'Your Hyperlambda has unsaved changes.');
 
@@ -82,10 +82,21 @@ export default function Playground() {
   }
 
   async function openSnippet(filename: string) {
-    setSelectedSnippet(filename);
     if (!filename) {
       return;
     }
+    // Loading over unsaved work destroys it — the navigation guard can't see
+    // this, so ask the same question it would.
+    if (code !== savedCode && !await confirm({
+      title: 'Discard unsaved changes?',
+      message: 'Your Hyperlambda has unsaved changes. Loading ' +
+        filename.substring(filename.lastIndexOf('/') + 1) + ' replaces them.',
+      confirmText: 'Discard',
+      danger: true,
+    })) {
+      return;
+    }
+    setSelectedSnippet(filename);
     setBusy(true);
     try {
       const text = await loadFile(filename);

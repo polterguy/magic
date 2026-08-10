@@ -2,6 +2,7 @@ import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import Select from '../components/Select';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Pagination from '../components/Pagination';
 import { Modal, useDialog } from '../components/Dialogs';
 import { SECTIONS } from '../components/sections';
 import SocketFeedback from '../components/SocketFeedback';
@@ -51,7 +52,6 @@ const TASK_PAGE_SIZE = 6;
 function TaskSection(props: {
   // Total task count, so paging knows where the list ends.
   count: number | null;
-  notify: (text: string, isError: boolean) => void;
 }) {
 
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -76,9 +76,9 @@ function TaskSection(props: {
     setRunning(task.id);
     try {
       await executeTask(task.id);
-      props.notify('Task ' + task.id + ' executed', false);
+      showToast('Task ' + task.id + ' executed');
     } catch (err: any) {
-      props.notify(err.message, true);
+      showToast(err.message, true);
     } finally {
       setRunning(null);
     }
@@ -121,19 +121,7 @@ function TaskSection(props: {
       </div>
       {pageCount > 1 && (
         <div className="pagination" style={{ marginTop: 14 }}>
-          <button
-            className="btn btn-secondary btn-small"
-            disabled={page === 0}
-            onClick={() => setPage(page - 1)}>
-            ‹ Prev
-          </button>
-          <span className="muted">{page + 1} / {pageCount}</span>
-          <button
-            className="btn btn-secondary btn-small"
-            disabled={page >= pageCount - 1}
-            onClick={() => setPage(page + 1)}>
-            Next ›
-          </button>
+          <Pagination page={page} pageCount={pageCount} onPage={setPage} />
         </div>
       )}
     </div>
@@ -156,7 +144,7 @@ export default function Dashboard() {
   const [configuringOpenai, setConfiguringOpenai] = useState(false);
 
   // The endpoint an AI agent connects to for tool discovery.
-  const mcpUrl = backend?.url + '/magic/modules/mcp/mcp';
+  const mcpUrl = (backend?.url ?? '') + '/magic/modules/mcp/mcp';
 
   /*
    * A plugin counts as installed when its module folder exists — checking
@@ -309,9 +297,7 @@ export default function Dashboard() {
           </button>
         </div>
       )}
-      {openaiConfigured === true && (
-        <CreateChatbot notify={(text, isError) => showToast(text, isError)} />
-      )}
+      {openaiConfigured === true && <CreateChatbot />}
       {/*
         * Folded away rather than always open. It restates the navigation for
         * somebody seeing the dashboard for the first time, which is worth a
@@ -350,9 +336,7 @@ export default function Dashboard() {
           </button>
         </div>
       </details>
-      <TaskSection
-        count={tasks}
-        notify={(text, isError) => isError ? showToast(text, true) : showToast(text)} />
+      <TaskSection count={tasks} />
       {showEndpointWarning && (
         <Modal width={560} onClose={() => setShowEndpointWarning(false)}>
           <h2>Too many endpoints for MCP</h2>
@@ -418,7 +402,7 @@ const BOT_MODELS = [
 // The balanced, cost-sensible default, matching the "default" model type.
 const DEFAULT_BOT_MODEL = 'gpt-5.6-luna';
 
-function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) => void }) {
+function CreateChatbot() {
 
   const [url, setUrl] = useState('');
   const [model, setModel] = useState(DEFAULT_BOT_MODEL);
@@ -530,7 +514,7 @@ function CreateChatbot({ notify }: { notify: (text: string, isError?: boolean) =
               max: Number(max) || 25,
               autoDestruct,
               channel: crawl.channel,
-            }).catch(err => notify(err.message, true));
+            }).catch(err => showToast(err.message, true));
           }}
           isComplete={message => message.message.trim() === 'Done!'}
           renderDone={messages => {

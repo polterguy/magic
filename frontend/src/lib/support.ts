@@ -9,6 +9,7 @@
  */
 
 import { showToast } from './toast';
+import { getTheme } from './theme';
 
 const SCRIPT_ID = 'ainiro-support-chatbot';
 
@@ -16,40 +17,49 @@ const SCRIPT_ID = 'ainiro-support-chatbot';
  * Included with hidden=true, so nothing renders until show() is called - the
  * dashboard has its own button for that. The rest is presentation, and [v] is
  * a manual cache-buster for when the widget itself changes.
+ *
+ * The palette follows the dashboard theme at LOAD time — the widget bakes its
+ * colors in when its script runs, so a theme toggle after first use keeps
+ * Frank as he was until the next full reload. That covers the common case:
+ * the theme is almost always set before anyone asks for support.
  */
-const SCRIPT_SRC =
-  'https://ainiro.io/magic/system/openai/include-chatbot.js' +
-  '?type=magic-documentation' +
-  '&header=Ask%20about%20Hyperlambda%20or%20Magic' +
-  '&placeholder=Ask%20me%20about%20Hyperlambda%20...' +
-  '&button=AI%20Chatbot' +
-  '&theme=modern-square' +
-  '&position=right' +
-  '&follow_up=true' +
-  '&code=true' +
-  '&new_tab=true' +
-  '&references=false' +
-  '&rtl=false' +
-  '&clear_button=false' +
-  '&copyButton=false' +
-  '&popup=' +
-  /*
-   * Frank wears the LIGHTER part of the dashboard's "This cloudlet is an AI
-   * agent" card — the warm surface (#1a1410) lifted by its white sheen
-   * (rgba(255,255,255,.10) ≈ #322b27). The widget paints that as a gradient, so
-   * Frank does too: [start]→[end] runs from the lit warm tone down to a slightly
-   * calmer warm brown, keeping the panel in the card's lighter register. Warm-
-   * white text and a white accent. No violet, no blue.
-   *
-   * [color] is the body text, [start] the panel/bubble surface (gradient top),
-   * [end] tints the whole panel (gradient bottom), [link] the accent.
-   */
-  '&color=%23f5f5f4' +
-  '&start=%233a322c' +
-  '&end=%23262019' +
-  '&link=%23f5f5f4' +
-  '&hidden=true' +
-  '&v=drkthm5';
+function scriptSrc() {
+  const dark = getTheme() === 'dark';
+  return 'https://ainiro.io/magic/system/openai/include-chatbot.js' +
+    '?type=magic-documentation' +
+    '&header=Ask%20about%20Hyperlambda%20or%20Magic' +
+    '&placeholder=Ask%20me%20about%20Hyperlambda%20...' +
+    '&button=AI%20Chatbot' +
+    '&theme=modern-square' +
+    '&position=right' +
+    '&follow_up=true' +
+    '&code=true' +
+    '&new_tab=true' +
+    '&references=false' +
+    '&rtl=false' +
+    '&clear_button=false' +
+    '&copyButton=false' +
+    '&popup=' +
+    /*
+     * Dark: Frank wears the LIGHTER part of the dashboard's "This cloudlet is
+     * an AI agent" card — the warm surface (#1a1410) lifted by its white sheen
+     * (rgba(255,255,255,.10) ≈ #322b27). The widget paints that as a gradient,
+     * so Frank does too: [start]→[end] runs from the lit warm tone down to a
+     * slightly calmer warm brown, keeping the panel in the card's lighter
+     * register. Warm-white text and a white accent. No violet, no blue.
+     *
+     * Light: the same warm register flipped — paper-white surfaces and the
+     * dashboard's near-black warm text.
+     *
+     * [color] is the body text, [start] the panel/bubble surface (gradient
+     * top), [end] tints the whole panel (gradient bottom), [link] the accent.
+     */
+    (dark
+      ? '&color=%23f5f5f4&start=%233a322c&end=%23262019&link=%23f5f5f4'
+      : '&color=%231c1917&start=%23ffffff&end=%23f0eeea&link=%231c1917') +
+    '&hidden=true' +
+    '&v=' + (dark ? 'drkthm5' : 'lgtthm1');
+}
 
 let loading: Promise<void> | null = null;
 
@@ -65,7 +75,7 @@ function load(): Promise<void> {
   loading ??= new Promise<void>((resolve, reject) => {
     const script = document.createElement('script');
     script.id = SCRIPT_ID;
-    script.src = SCRIPT_SRC;
+    script.src = scriptSrc();
     script.async = true;
     script.onload = () => resolve();
     script.onerror = () => {

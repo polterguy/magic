@@ -154,7 +154,17 @@ export default function Endpoints() {
           style={{ padding: 0, overflow: 'hidden', marginBottom: 10 }}>
           <div
             className={'module-header' + (group.system ? ' system' : '')}
-            onClick={() => toggleModule(group.key)}>
+            tabIndex={0}
+            role="button"
+            aria-expanded={isOpen(group.key)}
+            onClick={() => toggleModule(group.key)}
+            onKeyDown={event => {
+              if (event.target === event.currentTarget &&
+                  (event.key === 'Enter' || event.key === ' ')) {
+                event.preventDefault();
+                toggleModule(group.key);
+              }
+            }}>
             <span className="tree-chevron">
               <ChevronIcon open={isOpen(group.key)} />
             </span>
@@ -178,7 +188,17 @@ export default function Endpoints() {
                   const key = endpoint.verb + ' ' + endpoint.path;
                   return (
                     <Fragment key={key}>
-                      <tr className="clickable" onClick={() => setExpanded(expanded === key ? null : key)}>
+                      <tr
+                        className="clickable"
+                        tabIndex={0}
+                        onClick={() => setExpanded(expanded === key ? null : key)}
+                        onKeyDown={event => {
+                          if (event.target === event.currentTarget &&
+                              (event.key === 'Enter' || event.key === ' ')) {
+                            event.preventDefault();
+                            setExpanded(expanded === key ? null : key);
+                          }
+                        }}>
                         <td className="verb-cell" style={{ width: 90 }}>
                           <span className={'badge badge-' + endpoint.verb.toLowerCase()}>
                             {endpoint.verb}
@@ -228,7 +248,3 @@ export default function Endpoints() {
     </>
   );
 }
-
-
-
-

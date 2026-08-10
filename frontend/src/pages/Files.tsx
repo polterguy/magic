@@ -1,8 +1,6 @@
 import SearchInput from '../components/SearchInput';
-import Select from '../components/Select';
 import { copyToClipboard, showToast } from '../lib/toast';
 import { explainHyperlambda } from '../lib/support';
-import Banner from '../components/Banner';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import CodeEditor, { modeForFile } from '../components/CodeEditor';
@@ -11,21 +9,14 @@ import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
 import {
   BracesIcon,
-  ChevronIcon,
   CopyIcon,
   DownloadIcon,
-  EyeIcon,
   ModuleUploadIcon,
   SparkIcon,
-  FileIcon,
   FilePlusIcon,
-  FolderIcon,
   FolderPlusIcon,
-  PencilIcon,
-  GitBranchIcon,
   PlayIcon,
   SaveIcon,
-  TrashIcon,
   UploadIcon,
 } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -52,71 +43,18 @@ import {
   listFoldersRecursively,
   loadFile,
   mlSnippetCreate,
-  mlTypes,
+  moduleNameFromZip,
   renamePath,
   saveFile,
   uploadFile,
 } from '../lib/api';
 import { dispositionFilename, downloadBlob } from '../components/ResultViewer';
-
-/*
- * Paths the backend treats as system content — rename/delete-blocked, and
- * tinted red in the tree, like the old dashboard.
- */
-function isSystemPath(path: string) {
-  return ['/system/', '/misc/', '/data/', '/config/'].some(prefix =>
-    path === prefix || path.startsWith(prefix));
-}
+import FileTabs from './files/FileTabs';
+import FileTree from './files/FileTree';
+import SelectModelDialog from './files/SelectModelDialog';
+import { nameOf, parentOf } from './files/paths';
 
 const PROTECTED_FOLDERS = ['/', '/system/', '/misc/', '/data/', '/config/', '/etc/', '/modules/'];
-
-/*
- * Lets the user pick which AI model a generated function should be added to,
- * the way the old dashboard's select-model dialog does.
- */
-function SelectModelDialog(props: {
-  target: string;
-  onClose: () => void;
-  onSelected: (type: string) => void;
-}) {
-
-  const [types, setTypes] = useState<any[]>([]);
-  const [type, setType] = useState('');
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    mlTypes()
-      .then(list => {
-        setTypes(list ?? []);
-        setType(list?.[0]?.type ?? '');
-      })
-      .catch(err => setError(err.message));
-  }, []);
-
-  return (
-    <Modal width={520} onClose={props.onClose}>
-      <h2>Create AI function</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Adds {props.target} as an AI function to the model you select.
-      </p>
-      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
-      <label className="modal-label">
-        Model
-        <Select value={type} onChange={value => setType(value)}>
-          {types.map(candidate => (
-            <option key={candidate.type} value={candidate.type}>{candidate.type}</option>
-          ))}
-        </Select>
-      </label>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-        <button className="btn" onClick={() => props.onSelected(type)} disabled={!type}>
-          Create
-        </button>
-      </div>
-    </Modal>
-  );
-}
 
 /*
  * Converts a form value to the argument type the Hyperlambda expects.
@@ -129,26 +67,6 @@ function convertArgument(value: string, type: string) {
     return value === 'true' || value === '1' || value === 'yes';
   }
   return value;
-}
-
-/*
- * Resolves the Git repository root for a path — the top-level folder under
- * /modules/ or /etc/, since that's where repos live and modules each carry
- * their own repository.
- */
-function gitRootOf(path: string): string | null {
-  const match = path.match(/^\/(modules|etc)\/([^/]+)\//);
-  return match ? '/' + match[1] + '/' + match[2] + '/' : null;
-}
-
-function parentOf(path: string) {
-  const trimmed = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
-  return trimmed.substring(0, trimmed.lastIndexOf('/') + 1);
-}
-
-function nameOf(path: string) {
-  const trimmed = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
-  return trimmed.substring(trimmed.lastIndexOf('/') + 1);
 }
 
 /*
@@ -177,31 +95,6 @@ function endpointOf(path: string): { path: string; verb: string } | null {
     return null;
   }
   return { path: 'magic/' + parts[0], verb: parts[1] };
-}
-
-/*
- * Everything under /etc/www is served as the cloudlet's public website, so
- * those files can be opened in a browser exactly as a visitor sees them —
- * HTML through its Hyperlambda codebehind if it has one, images and the rest
- * statically. Hyperlambda files and hidden paths are never served, matching
- * the backend's own guard, so they get no preview.
- */
-const WWW_ROOT = '/etc/www';
-
-function previewUrl(path: string): string | null {
-  if (!path.startsWith(WWW_ROOT + '/') || path.endsWith('.hl')) {
-    return null;
-  }
-  const relative = path.substring(WWW_ROOT.length);
-  /*
-   * Hidden paths are not served — except .well-known, which the backend
-   * exempts because discovery documents have to be publicly reachable.
-   */
-  if (relative.split('/').some(entity =>
-      entity.startsWith('.') && entity !== '.well-known')) {
-    return null;
-  }
-  return relative;
 }
 
 export default function Files() {
@@ -246,7 +139,7 @@ export default function Files() {
   // Repository root the Git panel is open for.
   const [gitTarget, setGitTarget] = useState<string | null>(null);
   const editorRef = useRef<import('codemirror').Editor | null>(null);
-  const { confirm, prompt, form, choice } = useDialog();
+  const { confirm, confirmTyped, prompt, form, choice } = useDialog();
   const { backend } = useAuth();
 
   const current = openFiles.find(file => file.path === selectedFile) ?? null;
@@ -366,10 +259,12 @@ export default function Files() {
       file.path === selectedFile ? { ...file, content: value } : file));
   }
 
+  // Returns whether the save actually happened, for callers whose next step
+  // only makes sense against the saved file.
   async function save() {
     const file = openFiles.find(candidate => candidate.path === selectedFile);
     if (!file || saving) {
-      return;
+      return false;
     }
     setSaving(true);
     try {
@@ -377,8 +272,10 @@ export default function Files() {
       setOpenFiles(files => files.map(candidate =>
         candidate.path === file.path ? { ...candidate, saved: file.content } : candidate));
       show('Saved ' + file.path);
+      return true;
     } catch (err: any) {
       show(err.message, true);
+      return false;
     } finally {
       setSaving(false);
     }
@@ -522,7 +419,12 @@ export default function Files() {
         return;
       }
       setWaiting(true);
-      await save();
+      // A failed save means the server still runs yesterday's code — the
+      // exact situation this dialog exists to prevent, so stop here.
+      if (!await save()) {
+        setWaiting(false);
+        return;
+      }
     }
     setWaiting(true);
     try {
@@ -607,11 +509,18 @@ export default function Files() {
       show('You cannot delete the ' + path + ' folder', true);
       return;
     }
-    if (!await confirm({
+    /*
+     * Deleting a folder recursively deletes everything inside it, so a plain
+     * confirm is too easy to click through — the user types the folder's
+     * name back before anything happens.
+     */
+    if (!await confirmTyped({
       title: 'Delete folder?',
-      message: path + ' and everything in it will be deleted.',
+      message: path + ' and everything inside it will be permanently deleted.',
+      label: 'Folder name',
+      expected: nameOf(path),
       confirmText: 'Delete',
-      danger: true,
+      mismatch: 'Name did not match — nothing deleted',
     })) {
       return;
     }
@@ -728,71 +637,6 @@ export default function Files() {
     } finally {
       setWaiting(false);
     }
-  }
-
-  function renderChildren(path: string): JSX.Element {
-    const childFolders = folders.filter(folder =>
-      parentOf(folder) === path && (!visibleFolders || visibleFolders.has(folder)));
-    const childFiles = visibleFiles.filter(file => parentOf(file) === path);
-    const isOpen = (folder: string) => query ? true : expanded.has(folder);
-    return (
-      <div className={'tree-children' + (path === '/' ? ' root' : '')}>
-        {childFolders.map(folder => (
-          <div className="tree-node" key={folder}>
-            <div
-              className={'tree-row'
-                + (isSystemPath(folder) ? ' system' : '')
-                + (folder === activeFolder ? ' active-folder' : '')}
-              title={folder}
-              onClick={() => { toggle(folder); setOpenFolder(folder); }}>
-              <span className="tree-chevron">
-                <ChevronIcon open={isOpen(folder)} />
-              </span>
-              <span className="tree-icon folder"><FolderIcon /></span>
-              <span className="tree-name">{nameOf(folder)}</span>
-              <FolderActions
-                onNewFile={() => newFile(folder)}
-                onNewFolder={() => newFolder(folder)}
-                // Git operates on repo roots, i.e. top-level folders under /modules/ and /etc/.
-                onGit={gitRootOf(folder) === folder
-                  ? () => setGitTarget(folder)
-                  : undefined}
-                onOpenApi={() => showOpenApi(folder)}
-                // Only modules hold endpoints worth exposing as AI functions.
-                onAiFunctions={folder.startsWith('/modules/')
-                  ? () => setAiFunctionTarget(folder)
-                  : undefined}
-                onRename={() => rename(folder, true)}
-                onDelete={() => removeFolder(folder)} />
-            </div>
-            {isOpen(folder) && renderChildren(folder)}
-          </div>
-        ))}
-        {childFiles.map(file => (
-          <div
-            className={'tree-row' + (file === selectedFile ? ' selected' : '')}
-            key={file}
-            title={file}
-            onClick={() => { setOpenFolder(null); openFile(file); }}>
-            <span className="tree-chevron" />
-            <span className="tree-icon"><FileIcon /></span>
-            <span className="tree-name">{nameOf(file)}</span>
-            <FileActions
-              onPreview={previewUrl(file)
-                ? e => {
-                    e.stopPropagation();
-                    window.open(backend!.url + previewUrl(file), '_blank', 'noopener');
-                  }
-                : undefined}
-              onAiFunction={file.endsWith('.hl')
-                ? e => { e.stopPropagation(); setAiFunctionTarget(file); }
-                : undefined}
-              onRename={e => { e.stopPropagation(); rename(file, false); }}
-              onDelete={e => { e.stopPropagation(); removeFile(file); }} />
-          </div>
-        ))}
-      </div>
-    );
   }
 
   return (
@@ -941,7 +785,8 @@ export default function Files() {
                    * The archive's name becomes the module's folder name, so
                    * the backend rejects anything but "<name>.zip".
                    */
-                  if (!/^[a-z0-9_-]+\.zip$/.test(file.name)) {
+                  const moduleName = moduleNameFromZip(file);
+                  if (!moduleName) {
                     show(
                       file.name + ' cannot be a module name — it must be ' +
                       '<name>.zip, using only lowercase letters, digits, ' +
@@ -952,7 +797,7 @@ export default function Files() {
                   setWaiting(true);
                   try {
                     await installModule(file);
-                    show('Module ' + file.name.replace(/\.zip$/, '') + ' installed');
+                    show('Module ' + moduleName + ' installed');
                     await loadTree(systemFiles);
                   } catch (err: any) {
                     show(err.message, true);
@@ -980,7 +825,25 @@ export default function Files() {
               <DownloadIcon />
             </button>
           </div>
-          {renderChildren('/')}
+          <FileTree
+            folders={folders}
+            visibleFiles={visibleFiles}
+            visibleFolders={visibleFolders}
+            query={query}
+            expanded={expanded}
+            activeFolder={activeFolder}
+            selectedFile={selectedFile}
+            backendUrl={backend!.url}
+            onToggleFolder={folder => { toggle(folder); setOpenFolder(folder); }}
+            onOpenFile={file => { setOpenFolder(null); openFile(file); }}
+            onNewFile={newFile}
+            onNewFolder={newFolder}
+            onGit={setGitTarget}
+            onOpenApi={showOpenApi}
+            onAiFunctions={setAiFunctionTarget}
+            onRename={rename}
+            onDeleteFolder={removeFolder}
+            onDeleteFile={removeFile} />
         </div>
         <div
           className="splitter"
@@ -999,26 +862,11 @@ export default function Files() {
           }} />
         <div className="file-editor">
           {openFiles.length > 0 && (
-            <div className="file-tabs">
-              {openFiles.map(file => (
-                <div
-                  key={file.path}
-                  className={'file-tab' + (file.path === selectedFile ? ' active' : '')}
-                  title={file.path}
-                  onClick={() => setSelectedFile(file.path)}>
-                  <span className="file-tab-name">
-                    {nameOf(file.path)}
-                    {file.content !== file.saved && <span className="file-tab-dirty" />}
-                  </span>
-                  <button
-                    className="file-tab-close"
-                    title="Close"
-                    onClick={event => { event.stopPropagation(); closeFile(file.path); }}>
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
+            <FileTabs
+              openFiles={openFiles}
+              selectedFile={selectedFile}
+              onSelect={setSelectedFile}
+              onClose={closeFile} />
           )}
           {current ? (
             <CodeEditor
@@ -1116,68 +964,5 @@ export default function Files() {
           onClose={() => setExecuteResult(null)} />
       )}
     </>
-  );
-}
-
-function FolderActions(props: {
-  onNewFile: () => void;
-  onNewFolder: () => void;
-  onGit?: () => void;
-  onOpenApi?: () => void;
-  onAiFunctions?: () => void;
-  onRename?: () => void;
-  onDelete?: () => void;
-}) {
-  return (
-    <span className="row-actions" onClick={e => e.stopPropagation()}>
-      <button className="icon-btn" title="New file" onClick={props.onNewFile}><FilePlusIcon /></button>
-      <button className="icon-btn" title="New folder" onClick={props.onNewFolder}><FolderPlusIcon /></button>
-      {props.onGit &&
-        <button className="icon-btn" title="Git" onClick={props.onGit}><GitBranchIcon /></button>}
-      {props.onOpenApi &&
-        <button className="icon-btn" title="OpenAPI specification" onClick={props.onOpenApi}><BracesIcon /></button>}
-      {props.onAiFunctions && (
-        <button
-          className="icon-btn"
-          title="Create AI functions for all Hyperlambda files in folder…"
-          onClick={props.onAiFunctions}>
-          <SparkIcon />
-        </button>
-      )}
-      {props.onRename &&
-        <button className="icon-btn" title="Rename" onClick={props.onRename}><PencilIcon /></button>}
-      {props.onDelete &&
-        <button className="icon-btn danger" title="Delete" onClick={props.onDelete}><TrashIcon /></button>}
-    </span>
-  );
-}
-
-function FileActions(props: {
-  onPreview?: (e: React.MouseEvent) => void;
-  onAiFunction?: (e: React.MouseEvent) => void;
-  onRename: (e: React.MouseEvent) => void;
-  onDelete: (e: React.MouseEvent) => void;
-}) {
-  return (
-    <span className="row-actions">
-      {props.onPreview && (
-        <button
-          className="icon-btn"
-          title="Open in a browser, as a visitor sees it"
-          onClick={props.onPreview}>
-          <EyeIcon />
-        </button>
-      )}
-      {props.onAiFunction && (
-        <button
-          className="icon-btn"
-          title="Create AI function for this file…"
-          onClick={props.onAiFunction}>
-          <SparkIcon />
-        </button>
-      )}
-      <button className="icon-btn" title="Rename" onClick={props.onRename}><PencilIcon /></button>
-      <button className="icon-btn danger" title="Delete" onClick={props.onDelete}><TrashIcon /></button>
-    </span>
   );
 }

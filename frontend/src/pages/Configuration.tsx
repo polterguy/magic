@@ -1,26 +1,16 @@
-import { showToast } from '../lib/toast';
+import { copyToClipboard, showToast } from '../lib/toast';
 import { useEffect, useRef, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
+import Select from '../components/Select';
 import { Modal } from '../components/Dialogs';
 import { MenuIcon } from '../components/Icons';
 import { downloadBlob } from '../components/ResultViewer';
-import { downloadFileRaw, loadConfig, saveConfig, uploadFile } from '../lib/api';
+import { downloadFileRaw, http, loadConfig, saveConfig, uploadFile } from '../lib/api';
 
 // Where appsettings.json lives, for the backup download and upload.
 const CONFIG_FOLDER = '/config/';
 const CONFIG_FILE = 'appsettings.json';
-
-/*
- * Notifications go to the toast stack. An inline banner is part of the page,
- * so showing one pushed everything below it down — the editors and grids
- * jumped under the pointer. Toasts float above the page instead.
- */
-function setFeedback(value: { text: string; isError: boolean } | null) {
-  if (value) {
-    showToast(value.text, value.isError);
-  }
-}
 
 export default function Configuration() {
 
@@ -30,6 +20,7 @@ export default function Configuration() {
   const [openaiOpen, setOpenaiOpen] = useState(false);
   const [recaptchaOpen, setRecaptchaOpen] = useState(false);
   const [gitOpen, setGitOpen] = useState(false);
+  const [openidOpen, setOpenidOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const uploadInput = useRef<HTMLInputElement>(null);
 
@@ -40,7 +31,7 @@ export default function Configuration() {
   function reload() {
     loadConfig()
       .then(response => setConfig(JSON.stringify(response, null, 2)))
-      .catch(err => setFeedback({ text: err.message, isError: true }));
+      .catch(err => showToast(err.message, true));
   }
 
   async function downloadBackup() {
@@ -49,7 +40,7 @@ export default function Configuration() {
       const result = await downloadFileRaw(CONFIG_FOLDER + CONFIG_FILE);
       downloadBlob(result.blob, CONFIG_FILE);
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -62,16 +53,16 @@ export default function Configuration() {
    */
   async function uploadBackup(file: File) {
     if (file.name !== CONFIG_FILE) {
-      setFeedback({ text: 'The file has to be named ' + CONFIG_FILE, isError: true });
+      showToast('The file has to be named ' + CONFIG_FILE, true);
       return;
     }
     setBusy(true);
     try {
       await uploadFile(CONFIG_FOLDER, file);
       reload();
-      setFeedback({ text: 'Configuration restored from ' + CONFIG_FILE, isError: false });
+      showToast('Configuration restored from ' + CONFIG_FILE);
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -83,16 +74,16 @@ export default function Configuration() {
     try {
       parsed = JSON.parse(text);
     } catch (err: any) {
-      setFeedback({ text: 'Invalid JSON: ' + err.message, isError: true });
+      showToast('Invalid JSON: ' + err.message, true);
       return;
     }
     setBusy(true);
     try {
       await saveConfig(parsed);
       setConfig(JSON.stringify(parsed, null, 2));
-      setFeedback({ text: 'Configuration saved', isError: false });
+      showToast('Configuration saved');
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -129,10 +120,11 @@ export default function Configuration() {
                   role="menu"
                   style={{ position: 'absolute', right: 0, top: '100%', marginTop: 4, minWidth: 220 }}>
                   {[
-                    { label: 'SMTP…', act: () => setSmtpOpen(true) },
-                    { label: 'OpenAI…', act: () => setOpenaiOpen(true) },
-                    { label: 'reCAPTCHA…', act: () => setRecaptchaOpen(true) },
-                    { label: 'Git…', act: () => setGitOpen(true) },
+                    { label: 'SMTP', act: () => setSmtpOpen(true) },
+                    { label: 'OpenAI', act: () => setOpenaiOpen(true) },
+                    { label: 'reCAPTCHA', act: () => setRecaptchaOpen(true) },
+                    { label: 'OpenID', act: () => setOpenidOpen(true) },
+                    { label: 'Git', act: () => setGitOpen(true) },
                     { label: 'Download backup', act: downloadBackup },
                     { label: 'Upload backup', act: () => uploadInput.current?.click() },
                   ].map(item => (
@@ -191,6 +183,12 @@ export default function Configuration() {
           onClose={() => setGitOpen(false)}
           onSave={next => { setGitOpen(false); save(next); }} />
       )}
+      {openidOpen && (
+        <OpenIdDialog
+          config={config}
+          onClose={() => setOpenidOpen(false)}
+          onSave={next => { setOpenidOpen(false); save(next); }} />
+      )}
       {/*
         * Unlike the others this writes its own key through the OpenAI
         * endpoint rather than patching the JSON, so the editor is reloaded
@@ -202,7 +200,7 @@ export default function Configuration() {
           onSaved={() => {
             setOpenaiOpen(false);
             reload();
-            setFeedback({ text: 'OpenAI API key saved', isError: false });
+            showToast('OpenAI API key saved');
           }} />
       )}
     </>
@@ -445,6 +443,173 @@ function RecaptchaDialog(props: {
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
         <button className="btn" onClick={save}>Save</button>
+      </div>
+    </Modal>
+  );
+}
+
+/*
+ * The path OIDC providers send the id_token back to — must match what Login
+ * registers with the provider, character for character.
+ */
+const OIDC_CALLBACK_PATH = '/authentication/oidc-callback';
+
+/*
+ * Patches magic.oidc in the configuration — the client IDs OpenID sign-in
+ * runs on.
+ *
+ * The dropdown is NOT hard-coded: the backend supports any provider for
+ * which a slot named [magic.openid.providers.<name>] exists (Google ships
+ * with the system), and those are dynamic slots, so the evaluator's slot
+ * list tells us every provider the backend COULD use — configured or not.
+ * Each provider slot hard-codes its own issuer, URL and scopes, leaving the
+ * client ID as the one thing to configure; clearing it turns the provider's
+ * sign-in button off.
+ */
+const OIDC_SLOT_PREFIX = 'magic.openid.providers.';
+
+// Where to create a client ID, for the providers we know the console URL of.
+const OIDC_CONSOLES: Record<string, string> = {
+  google: 'https://console.cloud.google.com/apis/credentials',
+};
+
+function OpenIdDialog(props: {
+  config: string;
+  onClose: () => void;
+  onSave: (config: string) => void;
+}) {
+
+  const existing: Record<string, any> = (() => {
+    try {
+      return JSON.parse(props.config)?.magic?.oidc ?? {};
+    } catch {
+      return {};
+    }
+  })();
+
+  // Null until the slot list answers, so loading and "none" look different.
+  const [providers, setProviders] = useState<string[] | null>(null);
+  const [provider, setProvider] = useState('');
+  // Client ID per provider — edits accumulate here, and one Save writes all.
+  const [clientIds, setClientIds] = useState<Record<string, string>>(() =>
+    Object.fromEntries(Object.keys(existing).map(name =>
+      [name, existing[name]?.['client-id'] ?? ''])));
+
+  useEffect(() => {
+    http.get<string[]>('/magic/system/evaluator/slots')
+      .then(slots => {
+        const found = (slots ?? [])
+          .filter(name => name.startsWith(OIDC_SLOT_PREFIX))
+          .map(name => name.substring(OIDC_SLOT_PREFIX.length))
+          .sort();
+        setProviders(found);
+        setProvider(found[0] ?? '');
+      })
+      .catch(err => {
+        showToast(err.message, true);
+        setProviders([]);
+      });
+  }, []);
+
+  const callbackUrl = window.location.origin + OIDC_CALLBACK_PATH;
+
+  function save() {
+    let parsed: any;
+    try {
+      parsed = JSON.parse(props.config);
+    } catch {
+      return;
+    }
+    parsed.magic = parsed.magic ?? {};
+    const oidc = { ...(parsed.magic.oidc ?? {}) };
+    for (const [name, clientId] of Object.entries(clientIds)) {
+      if (clientId.trim()) {
+        // Preserving whatever else might live on the provider's entry.
+        oidc[name] = { ...(oidc[name] ?? {}), 'client-id': clientId.trim() };
+      } else if (oidc[name]) {
+        delete oidc[name]['client-id'];
+        if (Object.keys(oidc[name]).length === 0) {
+          delete oidc[name];
+        }
+      }
+    }
+    if (Object.keys(oidc).length === 0) {
+      delete parsed.magic.oidc;
+    } else {
+      parsed.magic.oidc = oidc;
+    }
+    props.onSave(JSON.stringify(parsed, null, 2));
+  }
+
+  return (
+    <Modal width={560} onClose={props.onClose} onSubmit={save}>
+      <h2>OpenID sign-in</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        Providers users can sign in to the dashboard with. A provider is on
+        when it has a client ID, and its sign-in button disappears when the
+        field is cleared. Register this redirect URI with the provider:
+      </p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        <span className="mono" style={{ fontSize: 13, overflowWrap: 'anywhere' }}>
+          {callbackUrl}
+        </span>
+        <button
+          className="btn btn-secondary btn-small"
+          onClick={() => copyToClipboard(callbackUrl, 'The redirect URI')}>
+          Copy
+        </button>
+      </div>
+      {providers === null ? (
+        <div className="spinner-panel">
+          <div className="spinner" />
+        </div>
+      ) : providers.length === 0 ? (
+        <div className="info-box">
+          No OpenID providers are registered. The backend supports any
+          provider for which a slot named{' '}
+          <span className="mono">magic.openid.providers.&lt;name&gt;</span>{' '}
+          exists — see the Google slot under{' '}
+          <span className="mono">/system/auth/magic.startup/</span> for the
+          pattern.
+        </div>
+      ) : (
+        <>
+          <label className="modal-label">Provider
+            <Select value={provider} onChange={setProvider}>
+              {providers.map(name => (
+                <option key={name} value={name}>
+                  {name + (clientIds[name]?.trim() ? ' — configured' : '')}
+                </option>
+              ))}
+            </Select>
+          </label>
+          <label className="modal-label">Client ID
+            <input
+              type="text"
+              autoComplete="off"
+              placeholder="Empty — sign-in with this provider is off"
+              value={clientIds[provider] ?? ''}
+              onChange={e =>
+                setClientIds({ ...clientIds, [provider]: e.target.value })} />
+          </label>
+          {OIDC_CONSOLES[provider] && (
+            <p className="muted" style={{ fontSize: 13, marginTop: 6 }}>
+              Create an OAuth client ID (application type "Web application") in{' '}
+              <a href={OIDC_CONSOLES[provider]} target="_blank" rel="noreferrer">
+                the Google Cloud console
+              </a>, with the redirect URI above as an authorised redirect URI.
+            </p>
+          )}
+        </>
+      )}
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button
+          className="btn"
+          disabled={providers === null || providers.length === 0}
+          onClick={save}>
+          Save
+        </button>
       </div>
     </Modal>
   );

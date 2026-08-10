@@ -39,10 +39,24 @@ export default function SortHeader(props: {
   const active = props.sort.column === props.column;
   const arrow = !active ? '' : props.sort.direction === 'asc' ? ' ↑' : ' ↓';
 
+  function advance() {
+    props.onSort(nextSort(props.sort, props.column));
+  }
+
   return (
     <th
       style={{ cursor: 'pointer', userSelect: 'none', ...props.style }}
-      onClick={() => props.onSort(nextSort(props.sort, props.column))}>
+      tabIndex={0}
+      role="button"
+      aria-sort={!active ? undefined
+        : props.sort.direction === 'asc' ? 'ascending' : 'descending'}
+      onClick={advance}
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          advance();
+        }
+      }}>
       {props.label}
       <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{arrow}</span>
     </th>

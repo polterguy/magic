@@ -110,13 +110,23 @@ export default function DateTimePicker(props: {
       const t = e.target as Node;
       if (!triggerRef.current?.contains(t) && !popRef.current?.contains(t)) setOpen(false);
     };
+    /*
+     * Capture phase, so a picker inside a Modal wins Escape — the Modal's own
+     * Escape handler yields while a .dtp-pop is on the page, so one press
+     * closes the calendar rather than the whole dialog.
+     */
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
     window.addEventListener('scroll', reflow, true);
     window.addEventListener('resize', reflow);
     document.addEventListener('mousedown', onDown);
+    window.addEventListener('keydown', onKey, true);
     return () => {
       window.removeEventListener('scroll', reflow, true);
       window.removeEventListener('resize', reflow);
       document.removeEventListener('mousedown', onDown);
+      window.removeEventListener('keydown', onKey, true);
     };
   }, [open]);
 

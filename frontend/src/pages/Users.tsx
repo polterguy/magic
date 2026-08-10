@@ -4,8 +4,13 @@ import SearchInput from '../components/SearchInput';
 import { useCallback, useEffect, useState } from 'react';
 import { Modal, useDialog } from '../components/Dialogs';
 import SortHeader, { useSort } from '../components/SortHeader';
+import Pagination from '../components/Pagination';
+import RoleChips from '../components/RoleChips';
 import Tabs from '../components/Tabs';
+import { usePagedList } from '../lib/usePagedList';
+import { exportCsv } from '../lib/download';
 import {
+  MIN_PASSWORD,
   Role,
   User,
   UserExtra,
@@ -28,19 +33,9 @@ import {
 
 const PAGE_SIZE = 15;
 
-// Roles the backend depends on, and which therefore can't be deleted.
+// Accounts and roles the backend depends on, and which therefore can't be deleted.
 const PROTECTED_ROLES = ['root'];
-
-/*
- * Notifications go to the toast stack. An inline banner is part of the page,
- * so showing one pushed everything below it down — the editors and grids
- * jumped under the pointer. Toasts float above the page instead.
- */
-function setFeedback(value: { text: string; isError: boolean } | null) {
-  if (value) {
-    showToast(value.text, value.isError);
-  }
-}
+const PROTECTED_USERS = ['root'];
 
 export default function Users() {
 
@@ -51,7 +46,7 @@ export default function Users() {
     try {
       setRoles(await listRoles() ?? []);
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     }
   }, []);
 
@@ -73,70 +68,56 @@ export default function Users() {
         active={tab}
         onChange={setTab} />
       {tab === 'users'
-        ? <UsersTab roles={roles} notify={setFeedback} />
-        : <RolesTab roles={roles} onChanged={loadRoles} notify={setFeedback} />}
+        ? <UsersTab roles={roles} />
+        : <RolesTab roles={roles} onChanged={loadRoles} />}
     </>
   );
 }
 
-type Notify = (feedback: { text: string; isError: boolean } | null) => void;
+function UsersTab(props: { roles: Role[] }) {
 
-function UsersTab(props: { roles: Role[]; notify: Notify }) {
-
-  const [users, setUsers] = useState<User[]>([]);
-  const [count, setCount] = useState(0);
-  const [page, setPage] = useState(0);
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useSort();
   const [editing, setEditing] = useState<User | null>(null);
   const [changingPassword, setChangingPassword] = useState<User | null>(null);
   const [creating, setCreating] = useState(false);
   const [waiting, setWaiting] = useState(false);
-  const { prompt } = useDialog();
+  const { confirmTyped } = useDialog();
 
-  const refresh = useCallback(async () => {
-    try {
-      const [userList, userCount] = await Promise.all([
-        listUsers(filter, page * PAGE_SIZE, PAGE_SIZE, sort),
+  const list = usePagedList<User>({
+    load: async (offset, limit) => {
+      const [rows, count] = await Promise.all([
+        listUsers(filter, offset, limit, sort),
         countUsers(filter),
       ]);
-      setUsers(userList ?? []);
-      setCount(userCount.count);
-    } catch (err: any) {
-      props.notify({ text: err.message, isError: true });
-    }
-  }, [filter, page, sort]);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
+      return { rows: rows ?? [], count: count.count };
+    },
+    pageSize: PAGE_SIZE,
+    filter,
+    deps: [sort],
+  });
 
   /*
    * Deleting a user is permanent, so it follows the old dashboard's rule of
    * having the user type the username to confirm.
    */
   async function removeUser(username: string) {
-    const typed = await prompt({
+    if (!await confirmTyped({
       title: 'Delete user?',
       message: 'This permanently deletes ' + username +
         '. Type the username to confirm.',
       label: 'Username',
-      confirmText: 'Delete',
-    });
-    if (typed === null) {
-      return;
-    }
-    if (typed !== username) {
-      props.notify({ text: 'Name did not match — nothing deleted', isError: true });
+      expected: username,
+    })) {
       return;
     }
     setWaiting(true);
     try {
       await deleteUser(username);
-      props.notify({ text: username + ' deleted', isError: false });
-      await refresh();
+      showToast(username + ' deleted');
+      list.refresh();
     } catch (err: any) {
-      props.notify({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -146,74 +127,49 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
    * Exports every user matching the current filter — not just the visible
    * page — by fetching with limit -1, which the backend treats as unlimited.
    */
-  async function exportCsv() {
+  async function exportUsers() {
     setWaiting(true);
     try {
       const all = await listUsers(filter, 0, -1, sort) ?? [];
-      const escape = (value: any) => {
-        const text = value === null || value === undefined ? '' : String(value);
-        return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
-      };
-      const csv = ['username,name,email,roles,created']
-        .concat(all.map(user => [
-          user.username,
-          userExtra(user, 'name'),
-          userExtra(user, 'email'),
-          (user.roles ?? []).join(', '),
-          user.created ?? '',
-        ].map(escape).join(',')))
-        .join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = 'users.csv';
-      anchor.click();
-      URL.revokeObjectURL(url);
+      exportCsv(all.map(user => ({
+        username: user.username,
+        name: userExtra(user, 'name'),
+        email: userExtra(user, 'email'),
+        roles: (user.roles ?? []).join(', '),
+        created: user.created ?? '',
+      })), 'users.csv');
     } catch (err: any) {
-      props.notify({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
   }
 
-  const pageCount = Math.ceil(count / PAGE_SIZE);
-
   return (
     <>
       <div className="toolbar">
         <SearchInput
-          placeholder="Filter users…"
+          placeholder="Filter by username…"
           value={filter}
-          onChange={value => { setFilter(value); setPage(0); }} />
-        <span className="muted">{count} users</span>
+          onChange={setFilter} />
+        <span className="muted">{list.count} users</span>
         <span className="spacer" />
         <button
           className="btn btn-secondary"
-          disabled={count === 0}
+          disabled={list.count === 0}
           title="Download every user matching the current filter as CSV"
-          onClick={exportCsv}>
+          onClick={exportUsers}>
           Export CSV
         </button>
         <button className="btn" onClick={() => setCreating(true)}>+ New user</button>
-        {pageCount > 1 && (
-          <>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page === 0}
-              onClick={() => setPage(page - 1)}>
-              ‹ Prev
-            </button>
-            <span className="muted">{page + 1} / {pageCount}</span>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page >= pageCount - 1}
-              onClick={() => setPage(page + 1)}>
-              Next ›
-            </button>
-          </>
-        )}
+        <Pagination page={list.page} pageCount={list.pageCount} onPage={list.setPage} />
       </div>
+      {list.rows === null ? (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <span className="muted">Loading users…</span>
+        </div>
+      ) : (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
           <thead>
@@ -232,7 +188,14 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
+            {list.rows.length === 0 && (
+              <tr>
+                <td colSpan={6} className="muted" style={{ textAlign: 'center', padding: 24 }}>
+                  {filter ? 'No users match your filter' : 'No users'}
+                </td>
+              </tr>
+            )}
+            {list.rows.map(user => (
               <tr key={user.username}>
                 <td><strong>{user.username}</strong></td>
                 <td data-label="Name">{userExtra(user, 'name') || <span className="muted">—</span>}</td>
@@ -261,8 +224,10 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
                   {' '}
                   <button
                     className="btn btn-danger btn-small"
-                    disabled={user.username === 'root'}
-                    title={user.username === 'root' ? 'The root user cannot be deleted' : 'Delete user'}
+                    disabled={PROTECTED_USERS.includes(user.username)}
+                    title={PROTECTED_USERS.includes(user.username)
+                      ? 'The ' + user.username + ' user cannot be deleted'
+                      : 'Delete user'}
                     onClick={() => removeUser(user.username)}>
                     Delete
                   </button>
@@ -272,28 +237,27 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
           </tbody>
         </table>
       </div>
+      )}
       {creating && (
         <NewUserDialog
           roles={props.roles}
           onClose={() => setCreating(false)}
-          onCreated={async username => {
+          onCreated={username => {
             setCreating(false);
-            props.notify({ text: 'User ' + username + ' created', isError: false });
-            await refresh();
-          }}
-          onError={message => props.notify({ text: message, isError: true })} />
+            showToast('User ' + username + ' created');
+            list.refresh();
+          }} />
       )}
       {editing && (
         <EditUserDialog
           user={editing}
           roles={props.roles}
           onClose={() => setEditing(null)}
-          onSaved={async () => {
+          onSaved={() => {
             setEditing(null);
-            props.notify({ text: 'User updated', isError: false });
-            await refresh();
-          }}
-          onError={message => props.notify({ text: message, isError: true })} />
+            showToast('User updated');
+            list.refresh();
+          }} />
       )}
       {changingPassword && (
         <ChangePasswordDialog
@@ -301,45 +265,11 @@ function UsersTab(props: { roles: Role[]; notify: Notify }) {
           onClose={() => setChangingPassword(null)}
           onSaved={() => {
             setChangingPassword(null);
-            props.notify({ text: 'Password changed', isError: false });
-          }}
-          onError={message => props.notify({ text: message, isError: true })} />
+            showToast('Password changed');
+          }} />
       )}
       {waiting && <AiWaiter />}
     </>
-  );
-}
-
-function RoleChecklist(props: {
-  roles: Role[];
-  selected: string[];
-  onToggle: (role: string, isMember: boolean) => void;
-}) {
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-      {props.roles.map(role => {
-        const isMember = props.selected.includes(role.name);
-        return (
-          <label
-            key={role.name}
-            className="chip"
-            title={role.description}
-            style={{
-              display: 'inline-flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              cursor: 'pointer',
-              userSelect: 'none',
-            }}>
-            <input
-              type="checkbox"
-              checked={isMember}
-              onChange={() => props.onToggle(role.name, isMember)} />
-            {role.name}
-          </label>
-        );
-      })}
-    </div>
   );
 }
 
@@ -347,7 +277,6 @@ function NewUserDialog(props: {
   roles: Role[];
   onClose: () => void;
   onCreated: (username: string) => void;
-  onError: (message: string) => void;
 }) {
 
   const [username, setUsername] = useState('');
@@ -358,6 +287,10 @@ function NewUserDialog(props: {
   const [busy, setBusy] = useState(false);
 
   async function save() {
+    if (password.length < MIN_PASSWORD) {
+      showToast('Passwords must be at least ' + MIN_PASSWORD + ' characters', true);
+      return;
+    }
     setBusy(true);
     try {
       await createUser(username, password);
@@ -373,7 +306,7 @@ function NewUserDialog(props: {
       }
       props.onCreated(username);
     } catch (err: any) {
-      props.onError(err.message);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -394,7 +327,7 @@ function NewUserDialog(props: {
             value={username}
             onChange={e => setUsername(e.target.value)} />
         </label>
-        <label>Password
+        <label>Password (min {MIN_PASSWORD} characters)
           <input
             type="text"
             // Someone else's password, so it is masked with CSS rather than
@@ -412,12 +345,12 @@ function NewUserDialog(props: {
         </label>
         <div>
           <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles (optional)</div>
-          <RoleChecklist
+          <RoleChips
             roles={props.roles}
             selected={selectedRoles}
-            onToggle={(role, isMember) => setSelectedRoles(isMember
-              ? selectedRoles.filter(candidate => candidate !== role)
-              : [...selectedRoles, role])} />
+            onToggle={(role, selected) => setSelectedRoles(selected
+              ? [...selectedRoles, role]
+              : selectedRoles.filter(candidate => candidate !== role))} />
         </div>
       </div>
       <div className="modal-actions">
@@ -435,7 +368,6 @@ function EditUserDialog(props: {
   roles: Role[];
   onClose: () => void;
   onSaved: () => void;
-  onError: (message: string) => void;
 }) {
 
   const [memberRoles, setMemberRoles] = useState<string[]>(props.user.roles ?? []);
@@ -448,20 +380,20 @@ function EditUserDialog(props: {
    * Role membership is applied immediately — it's a relation, not part of
    * the form's Save.
    */
-  async function toggleRole(role: string, isMember: boolean) {
+  async function toggleRole(role: string, member: boolean) {
     // Optimistic — the checkbox moves with the click; a failed call reverts it.
-    setMemberRoles(isMember
-      ? memberRoles.filter(candidate => candidate !== role)
-      : [...memberRoles, role]);
+    setMemberRoles(member
+      ? [...memberRoles, role]
+      : memberRoles.filter(candidate => candidate !== role));
     try {
-      if (isMember) {
-        await removeUserFromRole(props.user.username, role);
-      } else {
+      if (member) {
         await addUserToRole(props.user.username, role);
+      } else {
+        await removeUserFromRole(props.user.username, role);
       }
     } catch (err: any) {
       setMemberRoles(memberRoles);
-      props.onError(err.message);
+      showToast(err.message, true);
     }
   }
 
@@ -471,7 +403,7 @@ function EditUserDialog(props: {
       return;
     }
     if (fields.some(field => field.type === type)) {
-      props.onError('The user already has a field named ' + type);
+      showToast('The user already has a field named ' + type, true);
       return;
     }
     setFields([...fields, { type, value: '' }]);
@@ -494,7 +426,7 @@ function EditUserDialog(props: {
       }
       setFields(fields.filter(field => field.type !== type));
     } catch (err: any) {
-      props.onError(err.message);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -512,7 +444,7 @@ function EditUserDialog(props: {
       }
       props.onSaved();
     } catch (err: any) {
-      props.onError(err.message);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -524,7 +456,7 @@ function EditUserDialog(props: {
       <div className="form-grid">
         <div>
           <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles</div>
-          <RoleChecklist roles={props.roles} selected={memberRoles} onToggle={toggleRole} />
+          <RoleChips roles={props.roles} selected={memberRoles} onToggle={toggleRole} />
         </div>
         <div>
           <div style={{
@@ -567,7 +499,7 @@ function EditUserDialog(props: {
         </div>
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Close</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
         <button className="btn" onClick={save} disabled={busy}>
           {busy ? 'Saving…' : 'Save'}
         </button>
@@ -580,19 +512,22 @@ function ChangePasswordDialog(props: {
   user: User;
   onClose: () => void;
   onSaved: () => void;
-  onError: (message: string) => void;
 }) {
 
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
 
   async function save() {
+    if (password.length < MIN_PASSWORD) {
+      showToast('Passwords must be at least ' + MIN_PASSWORD + ' characters', true);
+      return;
+    }
     setBusy(true);
     try {
       await changeUserPassword(props.user.username, password);
       props.onSaved();
     } catch (err: any) {
-      props.onError(err.message);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -605,7 +540,7 @@ function ChangePasswordDialog(props: {
       onSubmit={() => { if (!busy && password) save(); }}>
       <h2>Change password for {props.user.username}</h2>
       <label className="modal-label">
-        New password
+        New password (min {MIN_PASSWORD} characters)
         <input
           type="text"
           autoFocus
@@ -626,13 +561,13 @@ function ChangePasswordDialog(props: {
   );
 }
 
-function RolesTab(props: { roles: Role[]; onChanged: () => void; notify: Notify }) {
+function RolesTab(props: { roles: Role[]; onChanged: () => void }) {
 
   const [filter, setFilter] = useState('');
   const [editing, setEditing] = useState<Role | null>(null);
   const [creating, setCreating] = useState(false);
   const [waiting, setWaiting] = useState(false);
-  const { prompt } = useDialog();
+  const { confirmTyped } = useDialog();
 
   const query = filter.trim().toLowerCase();
   const visible = props.roles.filter(role =>
@@ -641,27 +576,22 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void; notify: Notify 
     (role.description ?? '').toLowerCase().includes(query));
 
   async function removeRole(role: Role) {
-    const typed = await prompt({
+    if (!await confirmTyped({
       title: 'Delete role?',
       message: 'This permanently deletes ' + role.name +
         ' and removes it from every user. Type the role name to confirm.',
       label: 'Role name',
-      confirmText: 'Delete',
-    });
-    if (typed === null) {
-      return;
-    }
-    if (typed !== role.name) {
-      props.notify({ text: 'Name did not match — nothing deleted', isError: true });
+      expected: role.name,
+    })) {
       return;
     }
     setWaiting(true);
     try {
       await deleteRole(role.name);
-      props.notify({ text: 'Role ' + role.name + ' deleted', isError: false });
+      showToast('Role ' + role.name + ' deleted');
       props.onChanged();
     } catch (err: any) {
-      props.notify({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -688,6 +618,13 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void; notify: Notify 
             </tr>
           </thead>
           <tbody>
+            {visible.length === 0 && (
+              <tr>
+                <td colSpan={3} className="muted" style={{ textAlign: 'center', padding: 24 }}>
+                  No roles match your filter
+                </td>
+              </tr>
+            )}
             {visible.map(role => (
               <tr key={role.name}>
                 <td><strong>{role.name}</strong></td>
@@ -723,10 +660,9 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void; notify: Notify 
           onSaved={name => {
             setCreating(false);
             setEditing(null);
-            props.notify({ text: 'Role ' + name + ' saved', isError: false });
+            showToast('Role ' + name + ' saved');
             props.onChanged();
-          }}
-          onError={message => props.notify({ text: message, isError: true })} />
+          }} />
       )}
       {waiting && <AiWaiter />}
     </>
@@ -737,7 +673,6 @@ function RoleDialog(props: {
   role: Role | null;
   onClose: () => void;
   onSaved: (name: string) => void;
-  onError: (message: string) => void;
 }) {
 
   const [name, setName] = useState(props.role?.name ?? '');
@@ -755,7 +690,7 @@ function RoleDialog(props: {
       }
       props.onSaved(name);
     } catch (err: any) {
-      props.onError(err.message);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }

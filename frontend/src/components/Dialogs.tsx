@@ -14,12 +14,25 @@ import {
   FormEvent,
   ReactNode,
 } from 'react';
+import { showToast } from '../lib/toast';
 
 export interface ConfirmOptions {
   title: string;
   message?: string;
   confirmText?: string;
   danger?: boolean;
+}
+
+export interface TypedConfirmOptions {
+  title: string;
+  message: string;
+  // Label of the input, e.g. "Username" or "Table name".
+  label: string;
+  // The name the user must type back before the action runs.
+  expected: string;
+  confirmText?: string;
+  // Toast shown when the typed name doesn't match.
+  mismatch?: string;
 }
 
 export interface PromptOptions {
@@ -64,6 +77,7 @@ interface ActiveDialog {
 
 const DialogContext = createContext<{
   confirm: (options: ConfirmOptions) => Promise<boolean>;
+  confirmTyped: (options: TypedConfirmOptions) => Promise<boolean>;
   prompt: (options: PromptOptions) => Promise<string | null>;
   form: (options: FormOptions) => Promise<Record<string, string> | null>;
   choice: (options: ChoiceOptions) => Promise<string | null>;
@@ -102,6 +116,10 @@ export function Modal(props: {
 
   const idRef = useRef(Symbol('modal'));
   const [zIndex] = useState(() => OVERLAY_BASE_Z + ++modalSeq);
+  const boxRef = useRef<HTMLDivElement>(null);
+  // Through a ref so the mount-only effects below never see a stale closure.
+  const onCloseRef = useRef(props.onClose);
+  onCloseRef.current = props.onClose;
 
   useEffect(() => {
     modalStack.push(idRef.current);
@@ -113,6 +131,42 @@ export function Modal(props: {
     };
   }, []);
 
+  /*
+   * Focus lives inside the dialog while it is open, and goes back to
+   * whatever opened it when it closes — without this, Tab walks out into
+   * the inert page behind the overlay.
+   */
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
+    // Fields with autoFocus have already claimed focus by now — only move
+    // it when nothing inside the dialog took it.
+    if (boxRef.current && !boxRef.current.contains(document.activeElement)) {
+      boxRef.current.focus();
+    }
+    return () => opener?.focus();
+  }, []);
+
+  function trapTab(event: React.KeyboardEvent) {
+    if (event.key !== 'Tab' || !boxRef.current) {
+      return;
+    }
+    const focusable = boxRef.current.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), ' +
+      'textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    if (focusable.length === 0) {
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' ||
@@ -122,17 +176,18 @@ export function Modal(props: {
       /*
        * CodeMirror handles Escape for its autocomplete popup and for
        * fullscreen mode, but lets the event keep bubbling — so while either
-       * is up, Escape belongs to the editor rather than to us. This runs in
-       * the capture phase, while both are still in the DOM to be seen.
+       * is up, Escape belongs to the editor rather than to us. Same for an
+       * open date-picker popover. This runs in the capture phase, while all
+       * of them are still in the DOM to be seen.
        */
-      if (document.querySelector('.CodeMirror-hints, .CodeMirror-fullscreen')) {
+      if (document.querySelector('.CodeMirror-hints, .CodeMirror-fullscreen, .dtp-pop')) {
         return;
       }
-      props.onClose();
+      onCloseRef.current();
     };
     window.addEventListener('keydown', handler, true);
     return () => window.removeEventListener('keydown', handler, true);
-  });
+  }, []);
 
   return (
     <div
@@ -144,9 +199,14 @@ export function Modal(props: {
         }
       }}>
       <div
+        ref={boxRef}
         className="modal-box"
+        role="dialog"
+        aria-modal="true"
+        tabIndex={-1}
         style={props.width ? { width: props.width, maxWidth: '90vw' } : undefined}
         onKeyDown={event => {
+          trapTab(event);
           const target = event.target as HTMLElement;
           if (props.onSubmit &&
               event.key === 'Enter' &&
@@ -178,6 +238,27 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   const confirm = useCallback((options: ConfirmOptions) =>
     new Promise<boolean>(resolve =>
       setActive({ kind: 'confirm', options, resolve })), []);
+
+  /*
+   * Deleting something irreversible follows the old dashboard's rule of
+   * having the user type its name back before anything happens.
+   */
+  const confirmTyped = useCallback(async (options: TypedConfirmOptions) => {
+    const typed = await prompt({
+      title: options.title,
+      message: options.message,
+      label: options.label,
+      confirmText: options.confirmText ?? 'Delete',
+    });
+    if (typed === null) {
+      return false;
+    }
+    if (typed !== options.expected) {
+      showToast(options.mismatch ?? 'Name did not match — nothing deleted', true);
+      return false;
+    }
+    return true;
+  }, []);
 
   const prompt = useCallback((options: PromptOptions) =>
     new Promise<string | null>(resolve => {
@@ -224,7 +305,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <DialogContext.Provider value={{ confirm, prompt, form, choice }}>
+    <DialogContext.Provider value={{ confirm, confirmTyped, prompt, form, choice }}>
       {children}
       {active && (
         <Modal onClose={dismiss}>

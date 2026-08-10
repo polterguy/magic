@@ -3,19 +3,8 @@ import Banner from '../components/Banner';
 import { useEffect, useState } from 'react';
 import DateTimePicker from '../components/DateTimePicker';
 import { Modal } from '../components/Dialogs';
-import { changePassword, http, listRoles, listUsers, saveUserExtra } from '../lib/api';
+import { MIN_PASSWORD, changePassword, http, listRoles, listUsers, saveUserExtra } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
-
-/*
- * Notifications go to the toast stack. An inline banner is part of the page,
- * so showing one pushed everything below it down — the editors and grids
- * jumped under the pointer. Toasts float above the page instead.
- */
-function setFeedback(value: { text: string; isError: boolean } | null) {
-  if (value) {
-    showToast(value.text, value.isError);
-  }
-}
 
 export default function Profile() {
 
@@ -39,7 +28,7 @@ export default function Profile() {
         setName(me?.extra?.find(entry => entry.type === 'name')?.value ?? '');
         setEmail(me?.extra?.find(entry => entry.type === 'email')?.value ?? '');
       })
-      .catch(err => setFeedback({ text: err.message, isError: true }));
+      .catch(err => showToast(err.message, true));
   }, [backend?.username]);
 
   async function saveDetails() {
@@ -47,30 +36,30 @@ export default function Profile() {
     try {
       await saveUserExtra(backend!.username, 'name', name.trim());
       await saveUserExtra(backend!.username, 'email', email.trim());
-      setFeedback({ text: 'Your details were saved', isError: false });
+      showToast('Your details were saved');
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setSavingDetails(false);
     }
   }
 
   async function submitPassword() {
-    if (password.length < 12) {
-      setFeedback({ text: 'Passwords must be at least 12 characters', isError: true });
+    if (password.length < MIN_PASSWORD) {
+      showToast('Passwords must be at least ' + MIN_PASSWORD + ' characters', true);
       return;
     }
     if (password !== confirmPassword) {
-      setFeedback({ text: 'Passwords do not match', isError: true });
+      showToast('Passwords do not match', true);
       return;
     }
     setChangingPassword(true);
     try {
       await changePassword(password);
-      setFeedback({ text: 'Password changed — sign in again with your new password', isError: false });
+      showToast('Password changed — sign in again with your new password');
       setTimeout(logout, 2000);
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
       setChangingPassword(false);
     }
   }
@@ -111,7 +100,7 @@ export default function Profile() {
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Change password</h2>
           <div className="form-grid">
-            <label>New password (min 12 characters)
+            <label>New password (min {MIN_PASSWORD} characters)
               <input
                 type="password"
                 // Tells the browser this sets a password rather than logging
@@ -167,11 +156,11 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  useState(() => {
+  useEffect(() => {
     listRoles()
       .then(list => setRoles((list ?? []).map(role => role.name)))
       .catch(() => {});
-  });
+  }, []);
 
   async function generate() {
     if (busy) {

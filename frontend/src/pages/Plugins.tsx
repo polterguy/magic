@@ -39,17 +39,6 @@ function intro(description: string) {
   return sentence.length > 150 ? sentence.substring(0, 150) + '…' : sentence;
 }
 
-/*
- * Notifications go to the toast stack. An inline banner is part of the page,
- * so showing one pushed everything below it down — the editors and grids
- * jumped under the pointer. Toasts float above the page instead.
- */
-function setFeedback(value: { text: string; isError: boolean } | null) {
-  if (value) {
-    showToast(value.text, value.isError);
-  }
-}
-
 export default function Plugins() {
 
   const [available, setAvailable] = useState<any[]>([]);
@@ -75,7 +64,7 @@ export default function Plugins() {
   useEffect(() => {
     availablePlugins()
       .then(list => setAvailable(list ?? []))
-      .catch(err => setFeedback({ text: err.message, isError: true }))
+      .catch(err => showToast(err.message, true))
       .finally(() => setLoading(false));
     installedPlugins()
       // A manifest's module_name is the folder it installed into, which is
@@ -101,12 +90,9 @@ export default function Plugins() {
   async function installFromFile(file: File) {
     const name = moduleNameFromZip(file);
     if (!name) {
-      setFeedback({
-        text: file.name + ' cannot be a module — the archive must be named ' +
-          '<name>.zip, using only lowercase letters, digits, hyphens or ' +
-          'underscores, and no further dots',
-        isError: true,
-      });
+      showToast(file.name + ' cannot be a module — the archive must be named ' +
+        '<name>.zip, using only lowercase letters, digits, hyphens or ' +
+        'underscores, and no further dots', true);
       return;
     }
     if (installed.has(name) && !await confirm({
@@ -121,11 +107,11 @@ export default function Plugins() {
     setUploading(true);
     try {
       await installModule(file);
-      setFeedback({ text: 'Module ' + name + ' installed', isError: false });
+      showToast('Module ' + name + ' installed');
       const list = await installedPlugins();
       setInstalled(new Set((list ?? []).map((app: any) => app.module_name)));
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setUploading(false);
     }
@@ -157,13 +143,10 @@ export default function Plugins() {
     setInstalling(app.name);
     try {
       await installPlugin(app);
-      setFeedback({
-        text: app.name + ' is installing — you will be notified when it completes',
-        isError: false,
-      });
+      showToast(app.name + ' is installing — you will be notified when it completes');
       setInstalled(current => new Set(current).add(app.name));
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setInstalling(null);
     }

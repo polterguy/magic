@@ -2,11 +2,13 @@ import { showToast } from '../lib/toast';
 import Select from '../components/Select';
 import DateTimePicker from '../components/DateTimePicker';
 import SearchInput from '../components/SearchInput';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
+import Pagination from '../components/Pagination';
 import { Modal, useDialog } from '../components/Dialogs';
+import { usePagedList } from '../lib/usePagedList';
 import {
   Task,
   countTasks,
@@ -35,45 +37,26 @@ function scheduleLabel(schedule: { due: string; repeats?: string }) {
     : new Date(schedule.due).toLocaleString();
 }
 
-/*
- * Notifications go to the toast stack. An inline banner is part of the page,
- * so showing one pushed everything below it down — the editors and grids
- * jumped under the pointer. Toasts float above the page instead.
- */
-function setFeedback(value: { text: string; isError: boolean } | null) {
-  if (value) {
-    showToast(value.text, value.isError);
-  }
-}
-
 export default function Tasks() {
 
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [count, setCount] = useState(0);
-  const [page, setPage] = useState(0);
   const [filter, setFilter] = useState('');
   const [editing, setEditing] = useState<{ task: Task; isNew: boolean } | null>(null);
   const [scheduling, setScheduling] = useState<Task | null>(null);
   // Backend round-trips triggered by clicks — edit-fetch, execute, deletes.
   const [waiting, setWaiting] = useState(false);
-  const { confirm, prompt } = useDialog();
+  const { confirm, confirmTyped } = useDialog();
 
-  const refresh = useCallback(async () => {
-    try {
-      const [taskList, taskCount] = await Promise.all([
-        listTasks(page * PAGE_SIZE, PAGE_SIZE, filter),
+  const list = usePagedList<Task>({
+    load: async (offset, limit) => {
+      const [rows, count] = await Promise.all([
+        listTasks(offset, limit, filter),
         countTasks(filter),
       ]);
-      setTasks(taskList ?? []);
-      setCount(taskCount.count);
-    } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
-    }
-  }, [page, filter]);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
+      return { rows: rows ?? [], count: count.count };
+    },
+    pageSize: PAGE_SIZE,
+    filter,
+  });
 
   // The list doesn't carry the Hyperlambda, so editing fetches the full task.
   async function openEdit(task: Task) {
@@ -81,7 +64,7 @@ export default function Tasks() {
     try {
       setEditing({ task: await getTask(task.id), isNew: false });
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -109,48 +92,55 @@ export default function Tasks() {
     setWaiting(true);
     try {
       await executeTask(task.id);
-      setFeedback({ text: 'Task ' + task.id + ' executed', isError: false });
+      showToast('Task ' + task.id + ' executed');
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
   }
 
   async function remove(task: Task) {
-    const typed = await prompt({
+    if (!await confirmTyped({
       title: 'Delete task?',
       message: 'This permanently deletes ' + task.id +
         ' and its Hyperlambda. Type the task name to confirm.',
       label: 'Task name',
-      confirmText: 'Delete',
-    });
-    if (typed === null) {
-      return;
-    }
-    if (typed !== task.id) {
-      setFeedback({ text: 'Name did not match — nothing deleted', isError: true });
+      expected: task.id,
+    })) {
       return;
     }
     setWaiting(true);
     try {
       await deleteTask(task.id);
-      setFeedback({ text: 'Task ' + task.id + ' deleted', isError: false });
-      await refresh();
+      showToast('Task ' + task.id + ' deleted');
+      list.refresh();
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
   }
 
-  async function removeSchedule(id: number) {
+  /*
+   * Removing a schedule silently unschedules a possibly-production job, and
+   * the schedule itself is gone for good — so it's confirmed first.
+   */
+  async function removeSchedule(task: Task, schedule: { id: number; due: string; repeats?: string }) {
+    if (!await confirm({
+      title: 'Remove schedule?',
+      message: task.id + ' will no longer run ' + scheduleLabel(schedule) + '.',
+      confirmText: 'Remove',
+      danger: true,
+    })) {
+      return;
+    }
     setWaiting(true);
     try {
-      await deleteSchedule(id);
-      await refresh();
+      await deleteSchedule(schedule.id);
+      list.refresh();
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -164,16 +154,14 @@ export default function Tasks() {
     try {
       await scheduleTask(scheduling.id, due, repeats);
       setScheduling(null);
-      setFeedback({ text: 'Schedule added to ' + scheduling.id, isError: false });
-      await refresh();
+      showToast('Schedule added to ' + scheduling.id);
+      list.refresh();
     } catch (err: any) {
-      setFeedback({ text: err.message, isError: true });
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
   }
-
-  const pageCount = Math.ceil(count / PAGE_SIZE);
 
   return (
     <>
@@ -185,28 +173,18 @@ export default function Tasks() {
         <SearchInput
           placeholder="Filter tasks…"
           value={filter}
-          onChange={value => { setFilter(value); setPage(0); }} />
-        <span className="muted">{count} tasks</span>
+          onChange={setFilter} />
+        <span className="muted">{list.count} tasks</span>
         <span className="spacer" />
         <button className="btn" onClick={openNew}>+ New task</button>
-        {pageCount > 1 && (
-          <>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page === 0}
-              onClick={() => setPage(page - 1)}>
-              ‹ Prev
-            </button>
-            <span className="muted">{page + 1} / {pageCount}</span>
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={page >= pageCount - 1}
-              onClick={() => setPage(page + 1)}>
-              Next ›
-            </button>
-          </>
-        )}
+        <Pagination page={list.page} pageCount={list.pageCount} onPage={list.setPage} />
       </div>
+      {list.rows === null ? (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <span className="muted">Loading tasks…</span>
+        </div>
+      ) : (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
           <thead>
@@ -219,7 +197,14 @@ export default function Tasks() {
             </tr>
           </thead>
           <tbody>
-            {tasks.map(task => (
+            {list.rows.length === 0 && (
+              <tr>
+                <td colSpan={5} className="muted" style={{ textAlign: 'center', padding: 24 }}>
+                  {filter ? 'No tasks match your filter' : 'No tasks yet'}
+                </td>
+              </tr>
+            )}
+            {list.rows.map(task => (
               <tr key={task.id}>
                 <td><strong>{task.id}</strong></td>
                 <td
@@ -239,7 +224,7 @@ export default function Tasks() {
                           {scheduleLabel(schedule)}
                           <button
                             title="Remove schedule"
-                            onClick={() => removeSchedule(schedule.id)}>
+                            onClick={() => removeSchedule(task, schedule)}>
                             ×
                           </button>
                         </span>
@@ -281,20 +266,17 @@ export default function Tasks() {
           </tbody>
         </table>
       </div>
+      )}
       {editing && (
         <TaskDialog
           task={editing.task}
           isNew={editing.isNew}
           onClose={() => setEditing(null)}
-          onSaved={async (id, wasNew) => {
+          onSaved={(id, wasNew) => {
             setEditing(null);
-            setFeedback({
-              text: 'Task ' + id + (wasNew ? ' created' : ' updated'),
-              isError: false,
-            });
-            await refresh();
-          }}
-          onError={message => setFeedback({ text: message, isError: true })} />
+            showToast('Task ' + id + (wasNew ? ' created' : ' updated'));
+            list.refresh();
+          }} />
       )}
       {scheduling && (
         <ScheduleDialog
@@ -312,7 +294,6 @@ function TaskDialog(props: {
   isNew: boolean;
   onClose: () => void;
   onSaved: (id: string, wasNew: boolean) => void;
-  onError: (message: string) => void;
 }) {
 
   const [id, setId] = useState(props.task.id);
@@ -343,7 +324,7 @@ function TaskDialog(props: {
 
   async function save() {
     if (props.isNew && !id) {
-      props.onError('Give the task a name');
+      showToast('Give the task a name', true);
       return;
     }
     setBusy(true);
@@ -356,7 +337,7 @@ function TaskDialog(props: {
       setSaved({ description, code });
       props.onSaved(id, props.isNew);
     } catch (err: any) {
-      props.onError(err.message);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -426,20 +407,26 @@ function ScheduleDialog(props: {
   const [period, setPeriod] = useState('minutes');
   const [pattern, setPattern] = useState('');
 
+  // The active mode's value, present or not — the Schedule button follows it,
+  // rather than silently doing nothing when clicked with an empty value.
+  const valid =
+    mode === 'repeat' ||
+    (mode === 'fixed' && !!due) ||
+    (mode === 'custom' && !!pattern);
+
   function save() {
+    if (!valid) {
+      return;
+    }
     switch (mode) {
       case 'fixed':
-        if (due) {
-          props.onSave(new Date(due).toISOString(), undefined);
-        }
+        props.onSave(new Date(due).toISOString(), undefined);
         break;
       case 'repeat':
         props.onSave(undefined, number + '.' + period);
         break;
       case 'custom':
-        if (pattern) {
-          props.onSave(undefined, pattern);
-        }
+        props.onSave(undefined, pattern);
         break;
     }
   }
@@ -525,7 +512,7 @@ function ScheduleDialog(props: {
       </div>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-        <button className="btn" onClick={save}>Schedule</button>
+        <button className="btn" onClick={save} disabled={!valid}>Schedule</button>
       </div>
     </Modal>
   );

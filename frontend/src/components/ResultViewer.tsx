@@ -7,6 +7,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import CodeEditor from './CodeEditor';
+import { dispositionFilename, downloadBlob } from '../lib/download';
+
+// Long-standing import site for these two — they now live in lib/download.
+export { dispositionFilename, downloadBlob };
 
 export interface RawResult {
   blob: Blob;
@@ -15,17 +19,6 @@ export interface RawResult {
   // Every response header, lower-cased by fetch.
   headers?: Record<string, string>;
   status: number;
-}
-
-/*
- * Returns the filename of a Content-Disposition header, or null.
- */
-export function dispositionFilename(disposition: string): string | null {
-  const match = /filename\*?=(?:"([^"]+)"|([^;]+))/.exec(disposition);
-  if (!match) {
-    return null;
-  }
-  return (match[1] ?? match[2]).trim().replace(/^UTF-8''/, '');
 }
 
 function editorMode(contentType: string) {
@@ -53,15 +46,6 @@ function isText(contentType: string) {
     contentType.includes('xml') ||
     contentType.includes('hyperlambda') ||
     contentType.includes('javascript');
-}
-
-export function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  URL.revokeObjectURL(url);
 }
 
 export default function ResultViewer(

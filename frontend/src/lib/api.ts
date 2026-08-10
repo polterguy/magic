@@ -27,6 +27,31 @@ export class ApiError extends Error {
   }
 }
 
+/*
+ * Called when the backend rejects the bearer token — the session is dead,
+ * and whoever owns the token (the auth context) should discard it once,
+ * centrally, instead of every page raining its own 401 toasts.
+ */
+let unauthorizedHandler: (() => void) | null = null;
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  unauthorizedHandler = handler;
+}
+
+/*
+ * Turns a non-2xx response into a thrown ApiError, using the backend's JSON
+ * error message when there is one.
+ */
+async function throwApiError(response: Response): Promise<never> {
+  let message = response.statusText;
+  try {
+    message = (await response.json()).message ?? message;
+  } catch {
+    // Non-JSON error body, statusText is the best we have.
+  }
+  throw new ApiError(response.status, message);
+}
+
 async function request<T>(
   method: string,
   url: string,
@@ -50,14 +75,10 @@ async function request<T>(
     body: payload,
   });
   if (!response.ok) {
-    let message = response.statusText;
-    try {
-      const err = await response.json();
-      message = err.message ?? message;
-    } catch {
-      // Non-JSON error body, statusText is the best we have.
+    if (response.status === 401 && headers['Authorization']) {
+      unauthorizedHandler?.();
     }
-    throw new ApiError(response.status, message);
+    await throwApiError(response);
   }
   if (response.status === 204) {
     return null as T;
@@ -109,6 +130,9 @@ export function refreshTicket() {
 export function changePassword(password: string) {
   return http.put<MagicResponse>('/magic/system/auth/change-password', { password });
 }
+
+// Minimum password length, enforced everywhere a password can be set.
+export const MIN_PASSWORD = 12;
 
 /*
  * Status and version.
@@ -186,11 +210,6 @@ export function listFilesRecursively(folder: string, sysFiles: boolean) {
     encodeURIComponent(folder) + '&sys=' + sysFiles);
 }
 
-/*
- * Installs a module from a ZIP file into /modules/. The backend takes the
- * archive's name as the module name, so it must be "<name>.zip" with no
- * further dots and only lowercase letters, digits, hyphens or underscores.
- */
 /*
  * The module name a ZIP would install as, or null when the archive can't be
  * one. The backend takes the folder name straight from the filename, so it
@@ -302,13 +321,10 @@ async function requestRaw(
   const started = performance.now();
   const response = await fetch(baseUrl + url, { method, headers, body });
   if (!response.ok && !allowErrors) {
-    let message = response.statusText;
-    try {
-      message = (await response.json()).message ?? message;
-    } catch {
-      // Non-JSON error body.
+    if (response.status === 401 && headers['Authorization']) {
+      unauthorizedHandler?.();
     }
-    throw new ApiError(response.status, message);
+    await throwApiError(response);
   }
   // Every response header, so the invoker can show what the server sent.
   const responseHeaders: Record<string, string> = {};
@@ -885,6 +901,11 @@ export function mlRequests(type: string, offset: number, limit: number) {
     '&order=created&direction=desc&ml_requests.type.eq=' + encodeURIComponent(type));
 }
 
+export function mlRequestsCount(type: string) {
+  return http.get<{ count: number }>(
+    '/magic/system/magic/ml_requests-count?ml_requests.type.eq=' + encodeURIComponent(type));
+}
+
 /*
  * OpenID Connect. Both of these run before the user is signed in, and
  * against a backend that isn't configured yet, so they take the URL
@@ -967,13 +988,7 @@ export async function openidLogin(backendUrl: string, token: string) {
     backendUrl.replace(/\/+$/, '') +
     '/magic/system/auth/openid-login?token=' + encodeURIComponent(token));
   if (!response.ok) {
-    let message = response.statusText;
-    try {
-      message = (await response.json()).message ?? message;
-    } catch {
-      // Non-JSON error body, statusText is the best we have.
-    }
-    throw new ApiError(response.status, message);
+    await throwApiError(response);
   }
   return await response.json() as { ticket: string };
 }
@@ -1016,13 +1031,7 @@ export async function aiQuery(
       GENERATOR_URL + '/magic/modules/hyperlambda-generator/chat',
       { method: 'POST', body: payload });
     if (!response.ok) {
-      let message = response.statusText;
-      try {
-        message = (await response.json()).message ?? message;
-      } catch {
-        // Non-JSON error body, statusText is the best we have.
-      }
-      throw new ApiError(response.status, message);
+      await throwApiError(response);
     }
     return await response.json();
   }

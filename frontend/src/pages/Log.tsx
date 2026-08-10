@@ -1,13 +1,15 @@
 import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { LogItem, countLog, listLog } from '../lib/api';
+import { useDebounced } from '../lib/usePagedList';
 
 const PAGE_SIZE = 20;
 
 export default function Log() {
 
-  const [items, setItems] = useState<LogItem[]>([]);
+  // Null until the first response, so loading and "no items" look different.
+  const [items, setItems] = useState<LogItem[] | null>(null);
   const [count, setCount] = useState(0);
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -16,42 +18,54 @@ export default function Log() {
   // Disables the pagers while a page is in flight, so rapid clicks can't
   // push several "from" ids and race their responses.
   const [loading, setLoading] = useState(false);
+  // Only the newest request may paint — typing fires one per (debounced)
+  // change, and whichever answers last would win otherwise.
+  const seq = useRef(0);
+  const debouncedQuery = useDebounced(query);
 
   const load = useCallback(async (from: number | null, filter: string) => {
+    const current = ++seq.current;
     setLoading(true);
     try {
       const [logItems, logCount] = await Promise.all([
         listLog(from, PAGE_SIZE, filter || undefined),
         countLog(filter || undefined),
       ]);
+      if (current !== seq.current) {
+        return;
+      }
       setItems(logItems ?? []);
       setCount(logCount.count);
     } catch (err: any) {
-      showToast(err.message, true);
+      if (current === seq.current) {
+        showToast(err.message, true);
+      }
     } finally {
-      setLoading(false);
+      if (current === seq.current) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    load(null, query);
+    load(null, debouncedQuery);
     setFromStack([]);
-  }, [load, query]);
+  }, [load, debouncedQuery]);
 
   function nextPage() {
-    if (items.length === 0) {
+    if (!items || items.length === 0) {
       return;
     }
     const last = items[items.length - 1].id;
     setFromStack([...fromStack, last]);
-    load(last, query);
+    load(last, debouncedQuery);
   }
 
   function previousPage() {
     const stack = [...fromStack];
     stack.pop();
     setFromStack(stack);
-    load(stack.length > 0 ? stack[stack.length - 1] : null, query);
+    load(stack.length > 0 ? stack[stack.length - 1] : null, debouncedQuery);
   }
 
   return (
@@ -75,11 +89,17 @@ export default function Log() {
         </button>
         <button
           className="btn btn-secondary btn-small"
-          disabled={items.length < PAGE_SIZE || loading}
+          disabled={(items ?? []).length < PAGE_SIZE || loading}
           onClick={nextPage}>
           Older ›
         </button>
       </div>
+      {items === null ? (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <span className="muted">Loading log…</span>
+        </div>
+      ) : (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
           <thead>
@@ -92,6 +112,13 @@ export default function Log() {
             </tr>
           </thead>
           <tbody>
+            {items.length === 0 && (
+              <tr>
+                <td colSpan={5} className="muted" style={{ textAlign: 'center', padding: 24 }}>
+                  {query ? 'No log items match your filter' : 'The log is empty'}
+                </td>
+              </tr>
+            )}
             {items.map(item => (
               <LogRow
                 key={item.id}
@@ -102,6 +129,7 @@ export default function Log() {
           </tbody>
         </table>
       </div>
+      )}
     </>
   );
 }
@@ -139,7 +167,16 @@ function LogRow(props: { item: LogItem; expanded: boolean; onToggle: () => void 
     <>
       <tr
         className={canExpand ? 'clickable' : ''}
-        onClick={canExpand ? props.onToggle : undefined}>
+        tabIndex={canExpand ? 0 : undefined}
+        aria-expanded={canExpand ? props.expanded : undefined}
+        onClick={canExpand ? props.onToggle : undefined}
+        onKeyDown={canExpand ? event => {
+          if (event.target === event.currentTarget &&
+              (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            props.onToggle();
+          }
+        } : undefined}>
         <td className="mono" data-label="When">{timeAgo(item.created)}</td>
         <td className="mono muted" data-label="Timestamp">{isoDate(item.created)}</td>
         <td data-label="Type">
