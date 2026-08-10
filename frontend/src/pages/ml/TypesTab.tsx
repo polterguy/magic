@@ -113,6 +113,7 @@ export default function TypesTab(props: {
             <tr>
               <th>Type</th>
               <th>Model</th>
+              <th style={{ width: 110 }}>Tokens</th>
               <th style={{ width: 110 }}>Embeddings</th>
               <th style={{ width: 330 }}></th>
             </tr>
@@ -122,6 +123,16 @@ export default function TypesTab(props: {
               <tr key={type.type}>
                 <td><strong>{type.type}</strong></td>
                 <td className="mono" data-label="Model">{type.model}</td>
+                {/* Tokenised server-side by the backend (the endpoint runs the
+                    system message through its GPT tokenizer per row). */}
+                <td
+                  className="mono"
+                  data-label="Tokens"
+                  title="Size of this model's system instruction, in tokens">
+                  {typeof type.system_message_token_count === 'number'
+                    ? type.system_message_token_count.toLocaleString()
+                    : <span className="muted">—</span>}
+                </td>
                 <td data-label="Embeddings">
                   <span
                     className={'state-icon ' + (type.use_embeddings ? 'on' : 'off')}

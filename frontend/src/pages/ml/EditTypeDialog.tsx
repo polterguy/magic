@@ -41,6 +41,7 @@ export default function EditTypeDialog(props: {
   const [maxRequestTokens, setMaxRequestTokens] =
     useState(String(existing?.max_request_tokens ?? 1000));
   const [auth, setAuth] = useState<string[]>(existing?.auth ? existing.auth.split(',') : []);
+  const [authOpen, setAuthOpen] = useState(false);
   const [supervised, setSupervised] = useState(existing ? existing.supervised === 1 : true);
   const [useEmbeddings, setUseEmbeddings] =
     useState(existing ? existing.use_embeddings === 1 : true);
@@ -165,22 +166,47 @@ export default function EditTypeDialog(props: {
               <input type="text" value={type} onChange={e => setType(e.target.value)} />
             </label>
           )}
-          <label>Model
-            {/* The models endpoint flags chat-capable models with [chat]; only
-                those belong here (the rest are embeddings, audio, realtime,
-                etc.), mirroring how Vector model filters on [vector]. The
-                current value is kept selectable even if it isn't flagged. */}
-            <Select value={model} onChange={value => setModel(value)}>
-              <option value="">Select model…</option>
-              {model && !models.some(candidate => candidate.id === model && (candidate as any).chat) && (
-                <option value={model}>{model}</option>
-              )}
-              {models.filter(candidate => (candidate as any).chat).map(candidate => (
-                <option key={candidate.id} value={candidate.id}>
-                  {candidate.id}{modelPriceLabel(candidate as any)}
-                </option>
-              ))}
-            </Select>
+          {/*
+            * Model and its instruction share the first row — together they ARE
+            * the model, and at the old bottom position the instruction button
+            * sat below the fold on common window heights. The greeting follows
+            * directly: it's the model's voice, not a tuning knob.
+            */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, alignItems: 'end' }}>
+            {/* minWidth 0, or the model name's intrinsic width keeps the 1fr
+                column from shrinking and pushes the button out of the modal. */}
+            <label style={{ minWidth: 0 }}>Model
+              {/* The models endpoint flags chat-capable models with [chat]; only
+                  those belong here (the rest are embeddings, audio, realtime,
+                  etc.), mirroring how Vector model filters on [vector]. The
+                  current value is kept selectable even if it isn't flagged. */}
+              <Select value={model} onChange={value => setModel(value)}>
+                <option value="">Select model…</option>
+                {model && !models.some(candidate => candidate.id === model && (candidate as any).chat) && (
+                  <option value={model}>{model}</option>
+                )}
+                {models.filter(candidate => (candidate as any).chat).map(candidate => (
+                  <option key={candidate.id} value={candidate.id}>
+                    {candidate.id}{modelPriceLabel(candidate as any)}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ padding: '12px 16px' }}
+              onClick={() => setLargeEditor(true)}>
+              ✎ System instruction
+            </button>
+          </div>
+          {instructionChanged && (
+            <div className="success-box">
+              System instruction changed — remember to save your model.
+            </div>
+          )}
+          <label>Greeting
+            <input type="text" value={greeting} onChange={e => setGreeting(e.target.value)} />
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             <label>Temperature
@@ -224,16 +250,31 @@ export default function EditTypeDialog(props: {
                 onChange={e => setMaxRequestTokens(e.target.value)} />
             </label>
           </div>
+          {/* Collapsed behind a summary, same as the Generator's auth section —
+              ten role chips earn their space only while being edited. */}
           <div>
-            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
-              Authorisation (empty = public)
+            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Authorisation</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <span>
+                {auth.length > 0 ? auth.join(', ') : <em className="muted">public — no roles</em>}
+              </span>
+              <button
+                type="button"
+                className="btn btn-secondary btn-small"
+                onClick={() => setAuthOpen(!authOpen)}>
+                {authOpen ? 'Done' : 'Edit'}
+              </button>
             </div>
-            <RoleChips
-              roles={roles}
-              selected={auth}
-              onToggle={(role, selected) => setAuth(selected
-                ? [...auth, role]
-                : auth.filter(candidate => candidate !== role))} />
+            {authOpen && (
+              <div style={{ marginTop: 8 }}>
+                <RoleChips
+                  roles={roles}
+                  selected={auth}
+                  onToggle={(role, selected) => setAuth(selected
+                    ? [...auth, role]
+                    : auth.filter(candidate => candidate !== role))} />
+              </div>
+            )}
           </div>
           <div style={{ display: 'flex', gap: 16 }}>
             <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -258,21 +299,6 @@ export default function EditTypeDialog(props: {
               Cached
             </label>
           </div>
-          <label>Greeting
-            <input type="text" value={greeting} onChange={e => setGreeting(e.target.value)} />
-          </label>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            style={{ padding: '12px 16px' }}
-            onClick={() => setLargeEditor(true)}>
-            ✎ Edit system instruction…
-          </button>
-          {instructionChanged && (
-            <div className="success-box">
-              System instruction changed — remember to save your model.
-            </div>
-          )}
         </div>
         <div className="form-grid" style={{ display: dialogTab === 'behaviour' ? 'flex' : 'none' }}>
           <label>Conversation starters (markdown list)
