@@ -7,6 +7,25 @@ using magic.signals.contracts;
 
 namespace magic.lambda.openai.signatures
 {
+    public class TokenizeSignature : ISlotSignature
+    {
+        public IEnumerable<SlotChild> Children => new[]
+        {
+            new SlotChild
+            {
+                Name = "model",
+                Type = "string",
+                Kind = "model-name",
+                Description = "OpenAI model whose encoding to count with - defaults to o200k_base when omitted or unknown",
+                Required = false,
+                Mode = SlotChildMode.ValueOrExpression,
+                Cardinality = SlotChildCardinality.ZeroOrOne,
+                Role = SlotChildRole.Option,
+                Projection = SlotChildProjection.Value,
+            },
+        };
+    }
+
     public class WhisperSignature : ISlotSignature
     {
         public IEnumerable<SlotChild> Children => new[]
