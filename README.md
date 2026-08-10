@@ -83,6 +83,10 @@ Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at
 
 Notice the prompt bar below the editor, where *"the Machine Creates the Code"*. Describe what you want in plain English and the built-in generator writes it straight into the file you're editing. The same bar follows you into the Playground and SQL Studio, generating Hyperlambda, SQL, HTML, or whatever fits the file you have open.
 
+## OIDC sign-in
+
+The dashboard signs in over OpenID Connect against **Google, GitHub, LinkedIn, Microsoft Entra ID, Okta, Auth0, Keycloak and Slack** — configured from the Configuration screen with a client ID (and, where the provider requires it, a secret) per provider. Code-flow exchanges run server-side with PKCE, only provider-verified email addresses are trusted, and identities are provider-scoped so a sign-in can never collide with another account. A provider is a single Hyperlambda file — drop in a new one and the login screen picks it up automatically.
+
 ## Getting started
 
 ### Deploy to DigitalOcean (recommended)
