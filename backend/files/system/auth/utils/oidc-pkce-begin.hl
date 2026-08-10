@@ -1,0 +1,102 @@
+
+/*
+ * Begins an authorization-code + PKCE sign-in towards the specified provider.
+ *
+ * Generates the state and the PKCE verifier, stores the transaction in cache for
+ * 60 minutes keyed on the state — which is also what prevents CSRF and replay,
+ * the same way the implicit flow stores its nonce — and answers with the
+ * authorization URL and the S256 challenge the login screen's redirect needs.
+ *
+ * Notice, the verifier deliberately never leaves the server: the code exchange
+ * happens server-side in openid-exchange.post.hl.
+ */
+.arguments
+   provider:string
+   issuer:string
+   pkce:bool
+
+// Sanity checks invocation.
+validators.mandatory:x:@.arguments/*/provider
+validators.mandatory:x:@.arguments/*/issuer
+
+/*
+ * PKCE is on unless the provider says otherwise — some (LinkedIn) reject
+ * token requests carrying PKCE parameters they never asked for, answering
+ * with a misleading invalid_client.
+ */
+validators.default:x:@.arguments
+   pkce:bool:true
+
+// Finding the issuer's authorization endpoint.
+unwrap:x:+/*
+execute-file:/system/auth/utils/oidc-discovery.hl
+   issuer:x:@.arguments/*/issuer
+
+// Creating a unique state.
+.state
+set-value:x:@.state
+   crypto.random
+      min:30
+      max:40
+
+/*
+ * Creating the PKCE verifier and its S256 challenge — base64url(sha256(verifier)),
+ * hashing to raw bytes, base64 encoding, then swapping to the URL-safe alphabet
+ * and dropping the padding. Skipped entirely for non-PKCE providers, leaving the
+ * verifier null so the exchange sends no code_verifier either.
+ */
+.verifier
+.challenge
+if
+   eq:x:@.arguments/*/pkce
+      .:bool:true
+   .lambda
+      set-value:x:@.verifier
+         crypto.random
+            min:60
+            max:64
+      set-value:x:@.challenge
+         crypto.hash:x:@.verifier
+            format:raw
+      set-value:x:@.challenge
+         convert:x:@.challenge
+            type:base64
+      set-value:x:@.challenge
+         strings.replace:x:@.challenge
+            .:+
+            .:-
+      set-value:x:@.challenge
+         strings.replace:x:@.challenge
+            .:/
+            .:_
+      set-value:x:@.challenge
+         strings.trim-end:x:@.challenge
+            .:=
+
+// Storing the transaction, keyed on the state.
+.transaction
+   provider
+   issuer
+   verifier
+set-value:x:@.transaction/*/provider
+   get-value:x:@.arguments/*/provider
+set-value:x:@.transaction/*/issuer
+   get-value:x:@.arguments/*/issuer
+set-value:x:@.transaction/*/verifier
+   get-value:x:@.verifier
+lambda2hyper:x:@.transaction/*
+.cache-key
+set-value:x:@.cache-key
+   strings.concat
+      .:oidc.state.
+      get-value:x:@.state
+cache.set:x:@.cache-key
+   value:x:@lambda2hyper
+   expiration:3600
+
+// Returning what the login screen's redirect needs.
+unwrap:x:+/*
+return
+   url:x:@execute-file/*/authorization_endpoint
+   state:x:@.state
+   code_challenge:x:@.challenge

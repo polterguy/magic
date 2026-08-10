@@ -1,0 +1,153 @@
+
+/*
+ * Logs in the specified externally verified OpenID user, creating the user on
+ * first login, and returns an application JWT ticket plus the user's extra fields.
+ *
+ * Shared between the implicit flow (openid-login.get.hl) and the authorization-code
+ * flow (openid-exchange.post.hl) — verifying the user's identity is the caller's
+ * job, this file trusts the email and provider it is given.
+ *
+ * Notice, the username is the email SCOPED BY PROVIDER ("github:foo@bar.com"),
+ * never the bare email. Matching on the bare email meant any provider vouching
+ * for an address logged straight into whatever account carried it — so changing
+ * your email at one provider to collide with an existing (root) account took
+ * that account over. A scoped username can only ever reach the account the same
+ * provider created, and roles are granted per identity by an administrator.
+ */
+.arguments
+   provider:string
+   email:string
+   name:string
+
+// Sanity checks invocation.
+validators.mandatory:x:@.arguments/*/provider
+validators.mandatory:x:@.arguments/*/email
+
+// The provider-scoped username the user is known as locally.
+.username
+set-value:x:@.username
+   strings.concat
+      get-value:x:@.arguments/*/provider
+      .:":"
+      get-value:x:@.arguments/*/email
+
+// Buffer for extra information.
+.extra
+
+// External OpenID provider has been verified, now we need to check to see if user exists in local database.
+data.connect:magic
+
+   // Checking if user exists.
+   data.read
+      table:users
+      where
+         and
+            username.eq:x:@.username
+   if
+      exists:x:@data.read/*
+      .lambda
+
+         /*
+          * User has been previously created.
+          *
+          * Invoking [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
+          * making sure we return that token to caller.
+          *
+          * Notice, we ignore the password!
+          */
+         execute:magic.auth.authenticate
+            password-check:bool:false
+            username:x:@.username
+
+         // Retrieving extra information.
+         data.connect:magic
+            data.read
+               table:users_extra
+               where
+                  and
+                     user.eq:x:@.username
+                     or
+                        type.eq:name
+                        type.eq:email
+            for-each:x:@data.read/*
+               set-name:x:./*/add/*/*
+                  get-value:x:@.dp/#/*/type
+               set-value:x:./*/add/*/*
+                  get-value:x:@.dp/#/*/value
+               add:x:@.extra
+                  .
+                     .
+
+         // Returns the authentication JWT ticket created above to caller.
+         yield
+            ticket:x:@execute/*/ticket
+            extra:x:@.extra/*
+
+   // First time login, creating a new user named by provider and email address.
+   data.create
+      table:users
+      values
+         username:x:@.username
+         password:openid-connect
+
+   // Associating user with "guest" role.
+   data.create
+      table:users_roles
+      values
+         user:x:@.username
+         role:guest
+
+   // Storing email as extra field.
+   data.create
+      table:users_extra
+      values
+         user:x:@.username
+         type:email
+         value:x:@.arguments/*/email
+
+   // Checking to see if we've got a name value, and if we do we associate it with the user we create.
+   if
+      and
+         exists:x:@.arguments/*/name
+         not-null:x:@.arguments/*/name
+      .lambda
+
+         // We've got name, storing it.
+         data.create
+            table:users_extra
+            values
+               user:x:@.username
+               type:name
+               value:x:@.arguments/*/name
+
+   // Retrieving extra information.
+   data.connect:magic
+      data.read
+         table:users_extra
+         where
+            and
+               user.eq:x:@.username
+               or
+                  type.eq:name
+                  type.eq:email
+      for-each:x:@data.read/*
+         set-name:x:./*/add/*/*
+            get-value:x:@.dp/#/*/type
+         set-value:x:./*/add/*/*
+            get-value:x:@.dp/#/*/value
+         add:x:@.extra
+            .
+               .
+
+/*
+ * Invoking [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
+ * making sure we return that token to caller.
+ */
+execute:magic.auth.authenticate
+   username:x:@.username
+   password-check:bool:false
+
+// Returns the authentication JWT ticket created above to caller.
+yield
+   ticket:x:@execute/*/ticket
+   extra:x:@.extra/*

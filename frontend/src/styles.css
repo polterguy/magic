@@ -669,6 +669,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   white-space: nowrap;
 }
 
+.select-option:hover { background: var(--accent-soft); }
 .select-option.active { background: var(--accent-soft); }
 .select-option.selected { color: var(--accent); }
 .select-option.disabled { opacity: 0.4; cursor: default; }

@@ -40,8 +40,9 @@ if
 // Removing nonce from cache to avoid replay attacks.
 cache.set:x:@auth.token.verify/*/nonce
 
-// Verifying issuer is active.
+// Verifying issuer is active, capturing the provider's name as we find it.
 .active:bool:false
+.provider
 execute-file:/system/auth/openid-providers.get.hl
    createNonce:bool:false
 for-each:x:@execute-file/*
@@ -51,6 +52,8 @@ for-each:x:@execute-file/*
       .lambda
          set-value:x:@.active
             .:bool:true
+         set-value:x:@.provider
+            strings.to-lower:x:@.dp/#/*/name
 if
    eq:x:@.active
       .:bool:false
@@ -61,121 +64,14 @@ if
          status:400
          public:bool:true
 
-// Buffer for extra information.
-.extra
-
-// External OpenID provider has been verified, now we need to check to see if user exists in local database.
-data.connect:magic
-
-   // Checking if user exists.
-   data.read
-      table:users
-      where
-         and
-            username.eq:x:@auth.token.verify/*/email
-   if
-      exists:x:@data.read/*
-      .lambda
-
-         /*
-          * User has been previously created.
-          *
-          * Invoking [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
-          * making sure we return that token to caller.
-          *
-          * Notice, we ignore the password!
-          */
-         execute:magic.auth.authenticate
-            password-check:bool:false
-            username:x:@auth.token.verify/*/email
-
-         // Retrieving extra information.
-         data.connect:magic
-            data.read
-               table:users_extra
-               where
-                  and
-                     user.eq:x:@auth.token.verify/*/email
-                     or
-                        type.eq:name
-                        type.eq:email
-            for-each:x:@data.read/*
-               set-name:x:./*/add/*/*
-                  get-value:x:@.dp/#/*/type
-               set-value:x:./*/add/*/*
-                  get-value:x:@.dp/#/*/value
-               add:x:@.extra
-                  .
-                     .
-
-         // Returns the authentication JWT ticket created above to caller.
-         yield
-            ticket:x:@execute/*/ticket
-            extra:x:@.extra/*
-
-   // First time login, creating a new user with username being email address.
-   data.create
-      table:users
-      values
-         username:x:@auth.token.verify/*/email
-         password:openid-connect
-
-   // Associating user with "guest" role.
-   data.create
-      table:users_roles
-      values
-         user:x:@auth.token.verify/*/email
-         role:guest
-
-   // Storing email as extra field.
-   data.create
-      table:users_extra
-      values
-         user:x:@auth.token.verify/*/email
-         type:email
-         value:x:@auth.token.verify/*/email
-
-   // Checking to see if we've got a name value, and if we do we associate it with the user we create.
-   if
-      exists:x:@auth.token.verify/*/name
-      .lambda
-
-         // We've got name, storing it.
-         data.create
-            table:users_extra
-            values
-               user:x:@auth.token.verify/*/email
-               type:name
-               value:x:@auth.token.verify/*/name
-
-   // Retrieving extra information.
-   data.connect:magic
-      data.read
-         table:users_extra
-         where
-            and
-               user.eq:x:@auth.token.verify/*/email
-               or
-                  type.eq:name
-                  type.eq:email
-      for-each:x:@data.read/*
-         set-name:x:./*/add/*/*
-            get-value:x:@.dp/#/*/type
-         set-value:x:./*/add/*/*
-            get-value:x:@.dp/#/*/value
-         add:x:@.extra
-            .
-               .
-
 /*
- * Invoking [magic.auth.authenticate] that does the heavy lifting, and creates our JWT token,
- * making sure we return that token to caller.
+ * External OpenID provider has been verified — logging the user in, creating
+ * them on first login. The user-login half lives in a shared file, since the
+ * authorization-code flow (openid-exchange.post.hl) ends the exact same way.
  */
-execute:magic.auth.authenticate
-   username:x:@auth.token.verify/*/email
-   password-check:bool:false
-
-// Returns the authentication JWT ticket created above to caller.
-yield
-   ticket:x:@execute/*/ticket
-   extra:x:@.extra/*
+unwrap:x:+/*
+execute-file:/system/auth/utils/oidc-login-user.hl
+   provider:x:@.provider
+   email:x:@auth.token.verify/*/email
+   name:x:@auth.token.verify/*/name
+return-nodes:x:@execute-file/*

@@ -1,0 +1,79 @@
+
+/*
+ * This slot returns the Keycloak OpenID provider.
+ *
+ * Configured through [magic:oidc:keycloak:client-id] and
+ * [magic:oidc:keycloak:issuer] — the issuer being the realm's issuer URL, e.g.
+ * "https://keycloak.example.com/realms/master". An optional
+ * [magic:oidc:keycloak:client-secret] is sent during the code exchange when
+ * present — leave it out for public clients.
+ *
+ * Unlike the Google provider this one signs in with the authorization-code +
+ * PKCE flow — the code the provider redirects back with is exchanged
+ * server-side by "openid-exchange.post.hl".
+ */
+
+slots.create:magic.openid.providers.keycloak
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/createNonce
+
+   // Getting configuration for Keycloak.
+   .client-id
+   set-value:x:@.client-id
+      config.get:"magic:oidc:keycloak:client-id"
+   .issuer
+   set-value:x:@.issuer
+      config.get:"magic:oidc:keycloak:issuer"
+
+   // Checking to see if we've got Keycloak configured.
+   if
+      and
+         not-null:x:@.client-id
+         not-null:x:@.issuer
+      .lambda
+
+         // Buffers for the redirect parts the sign-in needs.
+         .url
+         .state
+         .challenge
+
+         // Checking if caller wants us to begin a sign-in.
+         if
+            eq:x:@.arguments/*/createNonce
+               .:bool:true
+            .lambda
+
+               // Creating the PKCE transaction, and finding the authorization endpoint.
+               unwrap:x:+/*
+               execute-file:/system/auth/utils/oidc-pkce-begin.hl
+                  provider:keycloak
+                  issuer:x:@.issuer
+               set-value:x:@.url
+                  get-value:x:@execute-file/*/url
+               set-value:x:@.state
+                  get-value:x:@execute-file/*/state
+               set-value:x:@.challenge
+                  get-value:x:@execute-file/*/code_challenge
+
+               // Making sure we return the redirect parts to caller.
+               add:x:@.lambda/@.lambda/*/add/*/*
+                  .
+                     url:x:@.url
+                     client_id:x:@.client-id
+                     response_type:code
+                     scope:openid email profile
+                     state:x:@.state
+                     code_challenge:x:@.challenge
+                     code_challenge_method:S256
+
+         // Returning providers to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:Keycloak
+                  issuer:x:@.issuer
+
+   // Returning result to caller.
+   return

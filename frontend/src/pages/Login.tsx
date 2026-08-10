@@ -12,6 +12,7 @@ import {
 import {
   OidcProvider,
   canResetPassword,
+  openidExchange,
   openidLogin,
   openidProviders,
   sendResetPasswordLink,
@@ -36,6 +37,37 @@ function takeIdTokenFromUrl() {
   // Strip the token from the address bar; the route is set below by the router.
   window.history.replaceState(null, '', window.location.pathname);
   return token;
+}
+
+/*
+ * A provider that refuses the sign-in outright bounces back with
+ * ?error=...&error_description=... instead of a code — surfaced rather than
+ * silently dropped, or a refused redirect just looks like nothing happened.
+ */
+function takeOidcErrorFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const error = params.get('error');
+  if (!error) {
+    return null;
+  }
+  const description = params.get('error_description');
+  window.history.replaceState(null, '', window.location.pathname);
+  return description ? error + ' — ' + description : error;
+}
+
+/*
+ * Code-flow providers answer with ?code=...&state=... in the query string
+ * instead. Reads both, then strips them from the address bar the same way.
+ */
+function takeCodeFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const state = params.get('state');
+  if (!code || !state) {
+    return null;
+  }
+  window.history.replaceState(null, '', window.location.pathname);
+  return { code, state };
 }
 
 export default function Login() {
@@ -82,15 +114,25 @@ export default function Login() {
   }, [pickerOpen]);
 
   /*
-   * Coming back from a provider — swap its id_token for a Magic ticket, using
-   * the backend we remembered before redirecting away.
+   * Coming back from a provider — swap what it sent for a Magic ticket, using
+   * the backend we remembered before redirecting away. Implicit providers
+   * answer with an id_token in the fragment, code providers with ?code&state
+   * the backend exchanges server-side.
    */
   useEffect(() => {
-    const idToken = takeIdTokenFromUrl();
-    if (!idToken) {
+    const providerError = takeOidcErrorFromUrl();
+    if (providerError) {
+      // The redirect is over — consume the pending entry so it can't go stale.
+      takePendingOidc();
+      setError('The provider refused the sign-in: ' + providerError);
       return;
     }
-    // Only consumed once there's a token to exchange, so an ordinary page
+    const code = takeCodeFromUrl();
+    const idToken = code ? null : takeIdTokenFromUrl();
+    if (!code && !idToken) {
+      return;
+    }
+    // Only consumed once there's something to exchange, so an ordinary page
     // load can't throw away a redirect that's still in flight.
     const pending = takePendingOidc();
     if (!pending) {
@@ -98,7 +140,11 @@ export default function Login() {
       return;
     }
     setBusy(true);
-    openidLogin(pending.backendUrl, idToken)
+    const exchange = code
+      ? openidExchange(pending.backendUrl, code.code, code.state,
+          window.location.origin + OIDC_CALLBACK_PATH)
+      : openidLogin(pending.backendUrl, idToken!);
+    exchange
       .then(response => {
         // Back to whatever the user was trying to reach before signing in.
         navigate(pending.returnPath, { replace: true });
@@ -185,8 +231,22 @@ export default function Login() {
        * string exactly against what's registered.
        */
       redirect_uri: window.location.origin + OIDC_CALLBACK_PATH,
-      nonce: provider.nonce ?? '',
     });
+    /*
+     * Implicit providers bind the sign-in through a nonce, code providers
+     * through their state + PKCE challenge — each redirect carries only what
+     * its flow needs.
+     */
+    if (provider.nonce) {
+      query.set('nonce', provider.nonce);
+    }
+    if (provider.state) {
+      query.set('state', provider.state);
+    }
+    if (provider.code_challenge) {
+      query.set('code_challenge', provider.code_challenge);
+      query.set('code_challenge_method', 'S256');
+    }
     window.location.href = provider.url + '?' + query.toString();
   }
 

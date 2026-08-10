@@ -1,0 +1,72 @@
+
+/*
+ * This slot returns the Slack OpenID provider ("Sign in with Slack").
+ *
+ * Configured through [magic:oidc:slack:client-id] and
+ * [magic:oidc:slack:client-secret] — Slack requires the secret during the
+ * code exchange.
+ *
+ * Unlike the Google provider this one signs in with the authorization-code
+ * flow — the code the provider redirects back with is exchanged server-side
+ * by "openid-exchange.post.hl". Slack ignores the PKCE parameters, but they
+ * do no harm, so the shared begin file is used as-is.
+ */
+
+slots.create:magic.openid.providers.slack
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/createNonce
+
+   // Getting configuration for Slack.
+   .client-id
+   set-value:x:@.client-id
+      config.get:"magic:oidc:slack:client-id"
+
+   // Checking to see if we've got Slack configured.
+   if
+      not-null:x:@.client-id
+      .lambda
+
+         // Buffers for the redirect parts the sign-in needs.
+         .url
+         .state
+         .challenge
+
+         // Checking if caller wants us to begin a sign-in.
+         if
+            eq:x:@.arguments/*/createNonce
+               .:bool:true
+            .lambda
+
+               // Creating the PKCE transaction, and finding the authorization endpoint.
+               execute-file:/system/auth/utils/oidc-pkce-begin.hl
+                  provider:slack
+                  issuer:"https://slack.com"
+               set-value:x:@.url
+                  get-value:x:@execute-file/*/url
+               set-value:x:@.state
+                  get-value:x:@execute-file/*/state
+               set-value:x:@.challenge
+                  get-value:x:@execute-file/*/code_challenge
+
+               // Making sure we return the redirect parts to caller.
+               add:x:@.lambda/@.lambda/*/add/*/*
+                  .
+                     url:x:@.url
+                     client_id:x:@.client-id
+                     response_type:code
+                     scope:openid email profile
+                     state:x:@.state
+                     code_challenge:x:@.challenge
+                     code_challenge_method:S256
+
+         // Returning providers to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:Slack
+                  issuer:"https://slack.com"
+
+   // Returning result to caller.
+   return

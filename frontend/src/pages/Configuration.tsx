@@ -469,8 +469,65 @@ const OIDC_CALLBACK_PATH = '/authentication/oidc-callback';
 const OIDC_SLOT_PREFIX = 'magic.openid.providers.';
 
 // Where to create a client ID, for the providers we know the console URL of.
-const OIDC_CONSOLES: Record<string, string> = {
-  google: 'https://console.cloud.google.com/apis/credentials',
+const OIDC_CONSOLES: Record<string, { url: string; name: string }> = {
+  google: { url: 'https://console.cloud.google.com/apis/credentials', name: 'the Google Cloud console' },
+  microsoft: { url: 'https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade', name: 'the Microsoft Entra admin center' },
+  github: { url: 'https://github.com/settings/developers', name: 'GitHub developer settings' },
+  linkedin: { url: 'https://www.linkedin.com/developers/apps', name: 'the LinkedIn developer portal' },
+  slack: { url: 'https://api.slack.com/apps', name: 'the Slack API dashboard' },
+};
+
+/*
+ * The configuration each provider needs beyond its client ID. Every value
+ * lives under magic.oidc.<provider>.<key> — the provider's startup slot is
+ * the authority on what it reads. Providers absent here (google) take a
+ * client ID only.
+ */
+interface OidcField {
+  key: string;
+  label: string;
+  secret?: boolean;
+  placeholder?: string;
+}
+
+const OIDC_FIELDS: Record<string, OidcField[]> = {
+  microsoft: [
+    { key: 'tenant', label: 'Directory (tenant) ID' },
+    { key: 'client-secret', label: 'Client secret', secret: true },
+  ],
+  okta: [
+    {
+      key: 'issuer',
+      label: 'Issuer URL',
+      placeholder: 'https://dev-123456.okta.com/oauth2/default',
+    },
+    { key: 'client-secret', label: 'Client secret (optional)', secret: true },
+  ],
+  auth0: [
+    {
+      key: 'issuer',
+      label: 'Issuer URL — exactly as Auth0 reports it, trailing slash included',
+      placeholder: 'https://your-tenant.eu.auth0.com/',
+    },
+    { key: 'client-secret', label: 'Client secret (optional)', secret: true },
+  ],
+  keycloak: [
+    {
+      key: 'issuer',
+      label: 'Realm issuer URL',
+      placeholder: 'https://keycloak.example.com/realms/master',
+    },
+    { key: 'client-secret', label: 'Client secret (optional)', secret: true },
+  ],
+  linkedin: [
+    { key: 'client-secret', label: 'Client secret', secret: true },
+  ],
+  slack: [
+    { key: 'client-secret', label: 'Client secret', secret: true },
+  ],
+  github: [
+    { key: 'client-secret', label: 'Client secret', secret: true },
+  ],
 };
 
 function OpenIdDialog(props: {
@@ -490,10 +547,27 @@ function OpenIdDialog(props: {
   // Null until the slot list answers, so loading and "none" look different.
   const [providers, setProviders] = useState<string[] | null>(null);
   const [provider, setProvider] = useState('');
-  // Client ID per provider — edits accumulate here, and one Save writes all.
-  const [clientIds, setClientIds] = useState<Record<string, string>>(() =>
+  /*
+   * Every provider's settings, keyed provider → config key → value — edits
+   * accumulate across providers, and one Save writes all of them.
+   */
+  const [values, setValues] = useState<Record<string, Record<string, string>>>(() =>
     Object.fromEntries(Object.keys(existing).map(name =>
-      [name, existing[name]?.['client-id'] ?? ''])));
+      [name, Object.fromEntries(Object.entries(existing[name] ?? {})
+        .map(([key, value]) => [key, String(value ?? '')]))])));
+
+  // The selected provider's fields — client ID first, then whatever else it needs.
+  const fields: OidcField[] = [
+    { key: 'client-id', label: 'Client ID' },
+    ...(OIDC_FIELDS[provider] ?? []),
+  ];
+
+  function setValue(key: string, value: string) {
+    setValues({
+      ...values,
+      [provider]: { ...(values[provider] ?? {}), [key]: value },
+    });
+  }
 
   useEffect(() => {
     http.get<string[]>('/magic/system/evaluator/slots')
@@ -522,15 +596,19 @@ function OpenIdDialog(props: {
     }
     parsed.magic = parsed.magic ?? {};
     const oidc = { ...(parsed.magic.oidc ?? {}) };
-    for (const [name, clientId] of Object.entries(clientIds)) {
-      if (clientId.trim()) {
-        // Preserving whatever else might live on the provider's entry.
-        oidc[name] = { ...(oidc[name] ?? {}), 'client-id': clientId.trim() };
-      } else if (oidc[name]) {
-        delete oidc[name]['client-id'];
-        if (Object.keys(oidc[name]).length === 0) {
-          delete oidc[name];
+    for (const [name, settings] of Object.entries(values)) {
+      const entry = { ...(oidc[name] ?? {}) };
+      for (const [key, value] of Object.entries(settings)) {
+        if (value.trim()) {
+          entry[key] = value.trim();
+        } else {
+          delete entry[key];
         }
+      }
+      if (Object.keys(entry).length === 0) {
+        delete oidc[name];
+      } else {
+        oidc[name] = entry;
       }
     }
     if (Object.keys(oidc).length === 0) {
@@ -578,26 +656,31 @@ function OpenIdDialog(props: {
             <Select value={provider} onChange={setProvider}>
               {providers.map(name => (
                 <option key={name} value={name}>
-                  {name + (clientIds[name]?.trim() ? ' — configured' : '')}
+                  {name + (values[name]?.['client-id']?.trim() ? ' — configured' : '')}
                 </option>
               ))}
             </Select>
           </label>
-          <label className="modal-label">Client ID
-            <input
-              type="text"
-              autoComplete="off"
-              placeholder="Empty — sign-in with this provider is off"
-              value={clientIds[provider] ?? ''}
-              onChange={e =>
-                setClientIds({ ...clientIds, [provider]: e.target.value })} />
-          </label>
+          {fields.map((field, index) => (
+            <label className="modal-label" key={provider + '.' + field.key}>
+              {field.label}
+              <input
+                type="text"
+                className={field.secret ? 'secret' : undefined}
+                autoComplete="off"
+                placeholder={field.placeholder ??
+                  (index === 0 ? 'Empty — sign-in with this provider is off' : undefined)}
+                value={values[provider]?.[field.key] ?? ''}
+                onChange={e => setValue(field.key, e.target.value)} />
+            </label>
+          ))}
           {OIDC_CONSOLES[provider] && (
             <p className="muted" style={{ fontSize: 13, marginTop: 6 }}>
-              Create an OAuth client ID (application type "Web application") in{' '}
-              <a href={OIDC_CONSOLES[provider]} target="_blank" rel="noreferrer">
-                the Google Cloud console
-              </a>, with the redirect URI above as an authorised redirect URI.
+              Create an OAuth client (web application type) in{' '}
+              <a href={OIDC_CONSOLES[provider].url} target="_blank" rel="noreferrer">
+                {OIDC_CONSOLES[provider].name}
+              </a>, with the redirect URI above registered as an authorised
+              redirect URI.
             </p>
           )}
         </>

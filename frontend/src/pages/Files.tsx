@@ -99,12 +99,37 @@ function endpointOf(path: string): { path: string; verb: string } | null {
 
 export default function Files() {
 
+  const { backend } = useAuth();
+
+  /*
+   * The remembered workspace shape — open-file paths in tab order, the
+   * selection, expanded folders and the sys toggle — kept per backend, since
+   * every cloudlet has its own files. Read once at mount; the persist effect
+   * below keeps it current. File CONTENTS are deliberately not remembered:
+   * restored tabs re-load fresh from the server, so a restored workspace
+   * never resurrects stale edits, and a file deleted server-side simply
+   * doesn't come back.
+   */
+  const workspaceKey = 'magic2.ide.workspace.' + (backend?.url ?? '');
+  const [workspace] = useState<{
+    open?: string[];
+    selected?: string;
+    expanded?: string[];
+    sys?: boolean;
+  }>(() => {
+    try {
+      return JSON.parse(localStorage.getItem(workspaceKey) ?? '{}');
+    } catch {
+      return {};
+    }
+  });
+
   // The entire tree, loaded recursively the way the old dashboard does it —
   // the backend excludes /system/, /misc/, /data/ and /config/ unless sys is true.
   const [folders, setFolders] = useState<string[]>([]);
   const [files, setFiles] = useState<string[]>([]);
-  const [systemFiles, setSystemFiles] = useState(false);
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [systemFiles, setSystemFiles] = useState(!!workspace.sys);
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(workspace.expanded ?? []));
   const [filter, setFilter] = useState('');
   const [treeWidth, setTreeWidth] = useState(
     () => Number(localStorage.getItem('magic2.treeWidth')) || 340);
@@ -140,7 +165,6 @@ export default function Files() {
   const [gitTarget, setGitTarget] = useState<string | null>(null);
   const editorRef = useRef<import('codemirror').Editor | null>(null);
   const { confirm, confirmTyped, prompt, form, choice } = useDialog();
-  const { backend } = useAuth();
 
   const current = openFiles.find(file => file.path === selectedFile) ?? null;
   const content = current?.content ?? '';
@@ -161,6 +185,52 @@ export default function Files() {
   useEffect(() => {
     document.querySelector('.file-tab.active')?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   }, [selectedFile]);
+
+  /*
+   * Restores the remembered tabs by loading every file fresh off the server.
+   * A file that no longer loads is silently dropped, and anything the user
+   * opened while the restore was in flight keeps its place.
+   */
+  const restoredTabs = useRef(false);
+  useEffect(() => {
+    if (restoredTabs.current) {
+      return;
+    }
+    restoredTabs.current = true;
+    const paths = workspace.open ?? [];
+    if (paths.length === 0) {
+      return;
+    }
+    Promise.all(paths.map(path =>
+      loadFile(path)
+        .then(text => ({ path, content: text, saved: text }))
+        .catch(() => null)))
+      .then(loaded => {
+        const tabs = loaded.filter(Boolean) as { path: string; content: string; saved: string }[];
+        if (tabs.length === 0) {
+          return;
+        }
+        setOpenFiles(current => [
+          ...tabs.filter(tab => !current.some(file => file.path === tab.path)),
+          ...current,
+        ]);
+        setSelectedFile(current => current !== ''
+          ? current
+          : tabs.some(tab => tab.path === workspace.selected)
+            ? workspace.selected!
+            : tabs[tabs.length - 1].path);
+      });
+  }, []);
+
+  // Remembers the workspace shape — file contents deliberately excluded.
+  useEffect(() => {
+    localStorage.setItem(workspaceKey, JSON.stringify({
+      open: openFiles.map(file => file.path),
+      selected: selectedFile,
+      expanded: [...expanded],
+      sys: systemFiles,
+    }));
+  }, [workspaceKey, openFiles, selectedFile, expanded, systemFiles]);
 
   const loadTree = useCallback(async (sys: boolean) => {
     try {

@@ -919,6 +919,9 @@ export interface OidcProvider {
   client_id?: string;
   response_type?: string;
   scope?: string;
+  // Present on authorization-code + PKCE providers.
+  state?: string;
+  code_challenge?: string;
 }
 
 /*
@@ -987,6 +990,26 @@ export async function openidLogin(backendUrl: string, token: string) {
   const response = await fetch(
     backendUrl.replace(/\/+$/, '') +
     '/magic/system/auth/openid-login?token=' + encodeURIComponent(token));
+  if (!response.ok) {
+    await throwApiError(response);
+  }
+  return await response.json() as { ticket: string };
+}
+
+/*
+ * Exchanges an authorization code for a Magic JWT — the code-flow sibling of
+ * openidLogin. The backend does the actual exchange with the provider, so the
+ * PKCE verifier and any client secret never reach the browser.
+ */
+export async function openidExchange(
+  backendUrl: string, code: string, state: string, redirectUri: string) {
+  const response = await fetch(
+    backendUrl.replace(/\/+$/, '') + '/magic/system/auth/openid-exchange',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, state, redirect_uri: redirectUri }),
+    });
   if (!response.ok) {
     await throwApiError(response);
   }

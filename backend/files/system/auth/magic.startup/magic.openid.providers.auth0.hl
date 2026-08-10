@@ -1,0 +1,79 @@
+
+/*
+ * This slot returns the Auth0 OpenID provider.
+ *
+ * Configured through [magic:oidc:auth0:client-id] and [magic:oidc:auth0:issuer] —
+ * the issuer being your tenant's issuer URL exactly as Auth0 reports it,
+ * INCLUDING the trailing slash, e.g. "https://your-tenant.eu.auth0.com/".
+ * An optional [magic:oidc:auth0:client-secret] is sent during the code
+ * exchange when present.
+ *
+ * Unlike the Google provider this one signs in with the authorization-code +
+ * PKCE flow — the code the provider redirects back with is exchanged
+ * server-side by "openid-exchange.post.hl".
+ */
+
+slots.create:magic.openid.providers.auth0
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/createNonce
+
+   // Getting configuration for Auth0.
+   .client-id
+   set-value:x:@.client-id
+      config.get:"magic:oidc:auth0:client-id"
+   .issuer
+   set-value:x:@.issuer
+      config.get:"magic:oidc:auth0:issuer"
+
+   // Checking to see if we've got Auth0 configured.
+   if
+      and
+         not-null:x:@.client-id
+         not-null:x:@.issuer
+      .lambda
+
+         // Buffers for the redirect parts the sign-in needs.
+         .url
+         .state
+         .challenge
+
+         // Checking if caller wants us to begin a sign-in.
+         if
+            eq:x:@.arguments/*/createNonce
+               .:bool:true
+            .lambda
+
+               // Creating the PKCE transaction, and finding the authorization endpoint.
+               unwrap:x:+/*
+               execute-file:/system/auth/utils/oidc-pkce-begin.hl
+                  provider:auth0
+                  issuer:x:@.issuer
+               set-value:x:@.url
+                  get-value:x:@execute-file/*/url
+               set-value:x:@.state
+                  get-value:x:@execute-file/*/state
+               set-value:x:@.challenge
+                  get-value:x:@execute-file/*/code_challenge
+
+               // Making sure we return the redirect parts to caller.
+               add:x:@.lambda/@.lambda/*/add/*/*
+                  .
+                     url:x:@.url
+                     client_id:x:@.client-id
+                     response_type:code
+                     scope:openid email profile
+                     state:x:@.state
+                     code_challenge:x:@.challenge
+                     code_challenge_method:S256
+
+         // Returning providers to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:Auth0
+                  issuer:x:@.issuer
+
+   // Returning result to caller.
+   return

@@ -1,0 +1,89 @@
+
+/*
+ * This slot returns the Microsoft Entra ID (Azure AD) OpenID provider.
+ *
+ * Configured through [magic:oidc:microsoft:client-id] and
+ * [magic:oidc:microsoft:tenant] — the tenant being your directory (tenant) ID,
+ * which has to be a concrete tenant rather than "common", since the issuer of
+ * the tokens Entra creates embeds the tenant, and the issuer is verified
+ * exactly. [magic:oidc:microsoft:client-secret] is required for app
+ * registrations using the "Web" platform, which is what a server-side code
+ * exchange is.
+ *
+ * Unlike the Google provider this one signs in with the authorization-code +
+ * PKCE flow — the code the provider redirects back with is exchanged
+ * server-side by "openid-exchange.post.hl".
+ */
+
+slots.create:magic.openid.providers.microsoft
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/createNonce
+
+   // Getting configuration for Microsoft.
+   .client-id
+   set-value:x:@.client-id
+      config.get:"magic:oidc:microsoft:client-id"
+   .tenant
+   set-value:x:@.tenant
+      config.get:"magic:oidc:microsoft:tenant"
+
+   // Checking to see if we've got Microsoft configured.
+   if
+      and
+         not-null:x:@.client-id
+         not-null:x:@.tenant
+      .lambda
+
+         // The issuer embeds the tenant.
+         .issuer
+         set-value:x:@.issuer
+            strings.concat
+               .:"https://login.microsoftonline.com/"
+               get-value:x:@.tenant
+               .:/v2.0
+
+         // Buffers for the redirect parts the sign-in needs.
+         .url
+         .state
+         .challenge
+
+         // Checking if caller wants us to begin a sign-in.
+         if
+            eq:x:@.arguments/*/createNonce
+               .:bool:true
+            .lambda
+
+               // Creating the PKCE transaction, and finding the authorization endpoint.
+               unwrap:x:+/*
+               execute-file:/system/auth/utils/oidc-pkce-begin.hl
+                  provider:microsoft
+                  issuer:x:@.issuer
+               set-value:x:@.url
+                  get-value:x:@execute-file/*/url
+               set-value:x:@.state
+                  get-value:x:@execute-file/*/state
+               set-value:x:@.challenge
+                  get-value:x:@execute-file/*/code_challenge
+
+               // Making sure we return the redirect parts to caller.
+               add:x:@.lambda/@.lambda/*/add/*/*
+                  .
+                     url:x:@.url
+                     client_id:x:@.client-id
+                     response_type:code
+                     scope:openid email profile
+                     state:x:@.state
+                     code_challenge:x:@.challenge
+                     code_challenge_method:S256
+
+         // Returning providers to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:Microsoft
+                  issuer:x:@.issuer
+
+   // Returning result to caller.
+   return

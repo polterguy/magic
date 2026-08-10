@@ -7,7 +7,7 @@ import AiWaiter from '../components/AiWaiter';
 import CodeEditor from '../components/CodeEditor';
 import { useDialog } from '../components/Dialogs';
 import { aiContextForFile, evaluate, listFiles, loadFile, saveFile } from '../lib/api';
-import { useUnsavedGuard } from '../lib/navGuard';
+import { useSessionState } from '../lib/useSessionState';
 
 const DEFAULT_CODE = `/*
  * Executes on your server. The result is the lambda itself once it has run,
@@ -30,17 +30,18 @@ data.connect:magic
 
 export default function Playground() {
 
-  const [code, setCode] = useState(DEFAULT_CODE);
+  // The editor's buffer outlives the page — leaving and coming back restores
+  // it, instead of a discard-changes dialog standing in the way.
+  const [code, setCode] = useSessionState('magic2.playground.code', DEFAULT_CODE);
   // What the editor last loaded or saved — differing content means unsaved changes.
-  const [savedCode, setSavedCode] = useState(DEFAULT_CODE);
+  const [savedCode, setSavedCode] = useSessionState('magic2.playground.saved', DEFAULT_CODE);
   const [result, setResult] = useState('');
   const [resultMode, setResultMode] = useState('hyperlambda');
   const [busy, setBusy] = useState(false);
   const [snippets, setSnippets] = useState<string[]>([]);
-  const [selectedSnippet, setSelectedSnippet] = useState('');
+  const [selectedSnippet, setSelectedSnippet] =
+    useSessionState('magic2.playground.snippet', '');
   const { confirm, prompt } = useDialog();
-
-  useUnsavedGuard(code !== savedCode, 'Your Hyperlambda has unsaved changes.');
 
   useEffect(() => {
     listFiles('/etc/snippets/')

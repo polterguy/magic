@@ -10,6 +10,10 @@ import 'codemirror/addon/display/fullscreen.js';
 import 'codemirror/addon/display/fullscreen.css';
 import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/addon/hint/sql-hint.js';
+import 'codemirror/addon/dialog/dialog.js';
+import 'codemirror/addon/dialog/dialog.css';
+import 'codemirror/addon/search/searchcursor.js';
+import 'codemirror/addon/search/search.js';
 import 'codemirror/mode/sql/sql';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/htmlmixed/htmlmixed';
@@ -129,6 +133,12 @@ export default function CodeEditor(props: CodeEditorProps) {
           }
         },
         'Ctrl-Space': 'autocomplete',
+        /*
+         * Search, like the old dashboard — persistent so every match stays
+         * highlighted while the dialog is up; Enter cycles, Escape closes.
+         */
+        'Ctrl-F': 'findPersistent',
+        'Cmd-F': 'findPersistent',
         'Alt-A': () => callbacks.current.onAction?.('newFile'),
         'Alt-B': () => callbacks.current.onAction?.('newFolder'),
         'Alt-R': () => callbacks.current.onAction?.('renameFile'),

@@ -1,0 +1,87 @@
+
+/*
+ * This slot returns the GitHub sign-in provider.
+ *
+ * Configured through [magic:oidc:github:client-id] and
+ * [magic:oidc:github:client-secret] — GitHub requires the secret during the
+ * code exchange.
+ *
+ * GitHub is plain OAuth2 with no id_tokens and no discovery document, so this
+ * slot differs from the OIDC providers: every URL is declared here, the
+ * [issuer] is a synthetic identity used only for the transaction binding, and
+ * the [user-url]/[email-url] entries tell "openid-exchange.post.hl" to ask
+ * GitHub's user API who the access token belongs to instead of verifying an
+ * id_token.
+ */
+
+slots.create:magic.openid.providers.github
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/createNonce
+
+   // Getting configuration for GitHub.
+   .client-id
+   set-value:x:@.client-id
+      config.get:"magic:oidc:github:client-id"
+
+   // Checking to see if we've got GitHub configured.
+   if
+      not-null:x:@.client-id
+      .lambda
+
+         // Buffer for the state identifying the sign-in.
+         .state
+
+         // Checking if caller wants us to begin a sign-in.
+         if
+            eq:x:@.arguments/*/createNonce
+               .:bool:true
+            .lambda
+
+               // Creating a unique state.
+               set-value:x:@.state
+                  crypto.random
+                     min:30
+                     max:40
+
+               /*
+                * Storing the transaction, keyed on the state — same shape the
+                * PKCE begin file stores, minus the verifier GitHub has no use
+                * for.
+                */
+               .transaction
+                  provider:github
+                  issuer:"https://github.com"
+                  verifier
+               lambda2hyper:x:@.transaction/*
+               .cache-key
+               set-value:x:@.cache-key
+                  strings.concat
+                     .:oidc.state.
+                     get-value:x:@.state
+               cache.set:x:@.cache-key
+                  value:x:@lambda2hyper
+                  expiration:3600
+
+               // Making sure we return the redirect parts to caller.
+               add:x:@.lambda/@.lambda/*/add/*/*
+                  .
+                     url:"https://github.com/login/oauth/authorize"
+                     client_id:x:@.client-id
+                     response_type:code
+                     scope:"read:user user:email"
+                     state:x:@.state
+
+         // Returning providers to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:GitHub
+                  issuer:"https://github.com"
+                  token-url:"https://github.com/login/oauth/access_token"
+                  user-url:"https://api.github.com/user"
+                  email-url:"https://api.github.com/user/emails"
+
+   // Returning result to caller.
+   return

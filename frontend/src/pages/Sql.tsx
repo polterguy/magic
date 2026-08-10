@@ -2,7 +2,7 @@ import { copyToClipboard, showToast } from '../lib/toast';
 import { useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
-import { useUnsavedGuard } from '../lib/navGuard';
+import { useSessionState } from '../lib/useSessionState';
 import type CodeMirror from 'codemirror';
 import CodeEditor from '../components/CodeEditor';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -31,9 +31,11 @@ export default function Sql() {
   // generators which deliberately avoid it.
   const selection = useDatabaseSelection({ preferMagic: true });
   const { type, connectionString, database } = selection;
-  const [sql, setSql] = useState('');
+  // The editor's buffer outlives the page — leaving and coming back restores
+  // it, instead of a discard-changes dialog standing in the way.
+  const [sql, setSql] = useSessionState('magic2.sql-studio.sql', '');
   // What the editor last loaded or saved — differing content means unsaved changes.
-  const [savedSql, setSavedSql] = useState('');
+  const [savedSql, setSavedSql] = useSessionState('magic2.sql-studio.saved', '');
   const [safeMode, setSafeMode] = useState(true);
   const [result, setResult] = useState<any[][] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -41,15 +43,14 @@ export default function Sql() {
   // imports and snippet I/O.
   const [waiting, setWaiting] = useState(false);
   const { snippets, setSnippets } = useSqlSnippets(type);
-  const [selectedSnippet, setSelectedSnippet] = useState('');
+  const [selectedSnippet, setSelectedSnippet] =
+    useSessionState('magic2.sql-studio.snippet', '');
   const [view, setView] = useState<'sql' | 'tables'>('sql');
   const [ddl, setDdl] = useState<{ title: string; sql: string } | null>(null);
   const [newTable, setNewTable] = useState(false);
   const [addingColumn, setAddingColumn] = useState<string | null>(null);
   const editorRef = useRef<CodeMirror.Editor | null>(null);
   const { prompt, confirm, confirmTyped } = useDialog();
-
-  useUnsavedGuard(sql !== savedSql, 'Your SQL has unsaved changes.');
 
   const tables = selection.selectedMeta?.tables ?? [];
   const reloadSchema = selection.reloadSchema;

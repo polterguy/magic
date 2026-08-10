@@ -1,0 +1,78 @@
+
+/*
+ * This slot returns the Okta OpenID provider.
+ *
+ * Configured through [magic:oidc:okta:client-id] and [magic:oidc:okta:issuer] —
+ * the issuer being your authorization server's issuer URL, e.g.
+ * "https://dev-123456.okta.com/oauth2/default". An optional
+ * [magic:oidc:okta:client-secret] is sent during the code exchange when present.
+ *
+ * Unlike the Google provider this one signs in with the authorization-code +
+ * PKCE flow — the code the provider redirects back with is exchanged
+ * server-side by "openid-exchange.post.hl".
+ */
+
+slots.create:magic.openid.providers.okta
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/createNonce
+
+   // Getting configuration for Okta.
+   .client-id
+   set-value:x:@.client-id
+      config.get:"magic:oidc:okta:client-id"
+   .issuer
+   set-value:x:@.issuer
+      config.get:"magic:oidc:okta:issuer"
+
+   // Checking to see if we've got Okta configured.
+   if
+      and
+         not-null:x:@.client-id
+         not-null:x:@.issuer
+      .lambda
+
+         // Buffers for the redirect parts the sign-in needs.
+         .url
+         .state
+         .challenge
+
+         // Checking if caller wants us to begin a sign-in.
+         if
+            eq:x:@.arguments/*/createNonce
+               .:bool:true
+            .lambda
+
+               // Creating the PKCE transaction, and finding the authorization endpoint.
+               unwrap:x:+/*
+               execute-file:/system/auth/utils/oidc-pkce-begin.hl
+                  provider:okta
+                  issuer:x:@.issuer
+               set-value:x:@.url
+                  get-value:x:@execute-file/*/url
+               set-value:x:@.state
+                  get-value:x:@execute-file/*/state
+               set-value:x:@.challenge
+                  get-value:x:@execute-file/*/code_challenge
+
+               // Making sure we return the redirect parts to caller.
+               add:x:@.lambda/@.lambda/*/add/*/*
+                  .
+                     url:x:@.url
+                     client_id:x:@.client-id
+                     response_type:code
+                     scope:openid email profile
+                     state:x:@.state
+                     code_challenge:x:@.challenge
+                     code_challenge_method:S256
+
+         // Returning providers to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:Okta
+                  issuer:x:@.issuer
+
+   // Returning result to caller.
+   return

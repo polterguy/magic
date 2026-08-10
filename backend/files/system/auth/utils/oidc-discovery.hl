@@ -1,0 +1,74 @@
+
+/*
+ * Returns the authorization and token endpoints for the specified OpenID Connect
+ * issuer, from the issuer's discovery document.
+ *
+ * The document is cached for an hour per issuer — it changes roughly never, and
+ * this file runs both when the login screen asks for its providers and when a
+ * code is exchanged.
+ */
+.arguments
+   issuer:string
+
+// Sanity checks invocation.
+validators.mandatory:x:@.arguments/*/issuer
+
+// Cache key for the issuer's discovery document.
+.cache-key
+set-value:x:@.cache-key
+   strings.concat
+      .:oidc.discovery.
+      get-value:x:@.arguments/*/issuer
+
+/*
+ * The cache-miss lambda below is cloned before it executes, so it cannot see
+ * this file's nodes — the URL is injected into it instead.
+ */
+.discovery-url
+set-value:x:@.discovery-url
+   strings.concat
+      strings.trim-end:x:@.arguments/*/issuer
+         .:/
+      .:"/.well-known/openid-configuration"
+set-value:x:../*/cache.try-get/*/.lambda/*/.url
+   get-value:x:@.discovery-url
+
+cache.try-get:x:@.cache-key
+   expiration:3600
+   .lambda
+
+      // Cache miss, fetching the document from the issuer.
+      .url
+      http.get:x:@.url
+         convert:true
+
+      // Making sure invocation was a success.
+      if
+         or
+            lt:x:@http.get
+               .:int:200
+            mt:x:@http.get
+               .:int:299
+         .lambda
+
+            // Oops ...!!
+            throw:Could not fetch the OpenID provider's discovery document
+               status:int:502
+               public:bool:true
+
+      // Returning the two endpoints we need, as Hyperlambda since the cache stores strings.
+      .result
+         authorization_endpoint
+         token_endpoint
+      set-value:x:@.result/*/authorization_endpoint
+         get-value:x:@http.get/*/content/*/authorization_endpoint
+      set-value:x:@.result/*/token_endpoint
+         get-value:x:@http.get/*/content/*/token_endpoint
+      lambda2hyper:x:@.result/*
+      return:x:@lambda2hyper
+
+// Parsing the cached document and returning the endpoints to caller.
+hyper2lambda:x:@cache.try-get
+add:x:../*/return
+   get-nodes:x:@hyper2lambda/*
+return

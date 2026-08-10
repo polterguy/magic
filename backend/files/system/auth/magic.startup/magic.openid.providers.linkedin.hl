@@ -1,0 +1,70 @@
+
+/*
+ * This slot returns the LinkedIn OpenID provider.
+ *
+ * Configured through [magic:oidc:linkedin:client-id] and
+ * [magic:oidc:linkedin:client-secret] — LinkedIn requires the secret during
+ * the code exchange. Uses "Sign In with LinkedIn using OpenID Connect", which
+ * must be added as a product on your LinkedIn app.
+ *
+ * Unlike the Google provider this one signs in with the authorization-code
+ * flow — the code the provider redirects back with is exchanged server-side
+ * by "openid-exchange.post.hl". Notice, PKCE is turned OFF: LinkedIn's token
+ * endpoint rejects requests carrying a code_verifier with a misleading
+ * "invalid_client" error, so the begin file only creates the state.
+ */
+
+slots.create:magic.openid.providers.linkedin
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/createNonce
+
+   // Getting configuration for LinkedIn.
+   .client-id
+   set-value:x:@.client-id
+      config.get:"magic:oidc:linkedin:client-id"
+
+   // Checking to see if we've got LinkedIn configured.
+   if
+      not-null:x:@.client-id
+      .lambda
+
+         // Buffers for the redirect parts the sign-in needs.
+         .url
+         .state
+
+         // Checking if caller wants us to begin a sign-in.
+         if
+            eq:x:@.arguments/*/createNonce
+               .:bool:true
+            .lambda
+
+               // Creating the sign-in transaction, and finding the authorization endpoint.
+               execute-file:/system/auth/utils/oidc-pkce-begin.hl
+                  provider:linkedin
+                  issuer:"https://www.linkedin.com/oauth"
+                  pkce:bool:false
+               set-value:x:@.url
+                  get-value:x:@execute-file/*/url
+               set-value:x:@.state
+                  get-value:x:@execute-file/*/state
+
+               // Making sure we return the redirect parts to caller.
+               add:x:@.lambda/@.lambda/*/add/*/*
+                  .
+                     url:x:@.url
+                     client_id:x:@.client-id
+                     response_type:code
+                     scope:openid profile email
+                     state:x:@.state
+
+         // Returning providers to caller.
+         unwrap:x:+/*/*/*
+         add:x:../*/return
+            .
+               .
+                  name:LinkedIn
+                  issuer:"https://www.linkedin.com/oauth"
+
+   // Returning result to caller.
+   return

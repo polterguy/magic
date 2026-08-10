@@ -1,0 +1,288 @@
+
+/*
+ * Exchanges an authorization code for the user's identity and returns a valid
+ * application JWT token accordingly.
+ *
+ * This is the authorization-code + PKCE sibling of "openid-login.get.hl": the
+ * login screen posts the code and state the provider redirected back with, we
+ * pop the transaction the provider's slot cached when the sign-in began, and
+ * exchange the code at the provider's token endpoint — the PKCE verifier and
+ * the client secret, when one is configured, never leave the server.
+ *
+ * OIDC providers answer the exchange with an id_token which is verified the
+ * same way the implicit flow verifies its token. Providers without id_tokens
+ * (GitHub) declare a [user-url] on their provider entry instead, and the
+ * access token is asked who it belongs to.
+ */
+.arguments
+   code:string
+   state:string
+   redirect_uri:string
+
+.description:Exchanges an OpenID Connect authorization code for an application JWT token
+.type:public
+
+// Sanity checks invocation.
+validators.mandatory:x:@.arguments/*/code
+validators.mandatory:x:@.arguments/*/state
+validators.mandatory:x:@.arguments/*/redirect_uri
+
+/*
+ * Popping the transaction cached when the sign-in began. One shot — deleting
+ * it immediately prevents replaying the same state, exactly like the implicit
+ * flow's nonce.
+ */
+.cache-key
+set-value:x:@.cache-key
+   strings.concat
+      .:oidc.state.
+      get-value:x:@.arguments/*/state
+cache.get:x:@.cache-key
+if
+   null:x:@cache.get
+   .lambda
+
+      // Oops ...!!
+      throw:State is not valid!
+         status:int:400
+         public:bool:true
+cache.set:x:@.cache-key
+hyper2lambda:x:@cache.get
+
+/*
+ * Verifying the transaction's issuer is (still) an active provider, and
+ * picking up the provider's entry — providers without OIDC id_tokens carry
+ * their token and user endpoints on it.
+ */
+.provider-entry
+execute-file:/system/auth/openid-providers.get.hl
+   createNonce:bool:false
+for-each:x:@execute-file/*
+   if
+      eq:x:@.dp/#/*/issuer
+         get-value:x:@hyper2lambda/*/issuer
+      .lambda
+         add:x:@.provider-entry
+            get-nodes:x:@.dp/#/*
+if
+   not-exists:x:@.provider-entry/*
+   .lambda
+
+      // Oops ...!
+      throw:Not a recognized OpenID provider
+         status:int:400
+         public:bool:true
+
+// Reading the provider's configuration.
+.config-key
+set-value:x:@.config-key
+   strings.concat
+      .:"magic:oidc:"
+      get-value:x:@hyper2lambda/*/provider
+      .:":client-id"
+.client-id
+set-value:x:@.client-id
+   config.get:x:@.config-key
+set-value:x:@.config-key
+   strings.concat
+      .:"magic:oidc:"
+      get-value:x:@hyper2lambda/*/provider
+      .:":client-secret"
+.client-secret
+set-value:x:@.client-secret
+   config.get:x:@.config-key
+
+// Finding the token endpoint — from the provider entry when it declares one, else through discovery.
+.token-url
+if
+   exists:x:@.provider-entry/*/token-url
+   .lambda
+      set-value:x:@.token-url
+         get-value:x:@.provider-entry/*/token-url
+else
+   unwrap:x:+/*
+   execute-file:/system/auth/utils/oidc-discovery.hl
+      issuer:x:@hyper2lambda/*/issuer
+   set-value:x:@.token-url
+      get-value:x:@execute-file/*/token_endpoint
+
+// Building the form body for the exchange.
+.payload
+set-value:x:@.payload
+   strings.concat
+      .:grant_type=authorization_code
+      .:&code=
+      strings.url-encode:x:@.arguments/*/code
+      .:&redirect_uri=
+      strings.url-encode:x:@.arguments/*/redirect_uri
+      .:&client_id=
+      strings.url-encode:x:@.client-id
+if
+   and
+      not-null:x:@hyper2lambda/*/verifier
+      neq:x:@hyper2lambda/*/verifier
+         .:
+   .lambda
+      set-value:x:@.payload
+         strings.concat
+            get-value:x:@.payload
+            .:&code_verifier=
+            get-value:x:@hyper2lambda/*/verifier
+if
+   not-null:x:@.client-secret
+   .lambda
+      set-value:x:@.payload
+         strings.concat
+            get-value:x:@.payload
+            .:&client_secret=
+            strings.url-encode:x:@.client-secret
+
+// Exchanging the code at the provider's token endpoint.
+http.post:x:@.token-url
+   headers
+      Content-Type:application/x-www-form-urlencoded
+      Accept:application/json
+   payload:x:@.payload
+   convert:true
+
+// Making sure the exchange was a success.
+if
+   or
+      lt:x:@http.post
+         .:int:200
+      mt:x:@http.post
+         .:int:299
+   .lambda
+
+      // Oops ...!! Logging the details, but not returning them to an anonymous caller.
+      log.error:OpenID Connect code exchange failed
+         provider:x:@hyper2lambda/*/provider
+         status:x:@http.post
+      throw:Could not exchange the code with the OpenID provider
+         status:int:400
+         public:bool:true
+
+// Checking if this is a provider without OIDC id_tokens, such as GitHub.
+if
+   exists:x:@.provider-entry/*/user-url
+   .lambda
+
+      // Asking the provider's user API who the access token belongs to.
+      .authorization
+      set-value:x:@.authorization
+         strings.concat
+            .:"Bearer "
+            get-value:x:@http.post/*/content/*/access_token
+      set-value:x:./*/http.get/*/headers/*/Authorization
+         get-value:x:@.authorization
+      http.get:x:@.provider-entry/*/user-url
+         headers
+            Authorization
+            Accept:application/json
+            User-Agent:magic-cloud
+         convert:true
+      if
+         or
+            lt:x:@http.get
+               .:int:200
+            mt:x:@http.get
+               .:int:299
+         .lambda
+
+            // Oops ...!!
+            throw:Could not retrieve the user from the OpenID provider
+               status:int:400
+               public:bool:true
+      .name
+      set-value:x:@.name
+         get-value:x:@http.get/*/content/*/name
+
+      /*
+       * The email is the account key, so it must come from the emails API,
+       * and only entries the provider has VERIFIED count — the profile's
+       * public email and unverified entries are attacker-chosen text: anyone
+       * can add someone else's address to their account without proving
+       * ownership, and it would link them straight into that user here.
+       */
+      .email
+      if
+         exists:x:@.provider-entry/*/email-url
+         .lambda
+            set-value:x:./*/http.get/*/headers/*/Authorization
+               get-value:x:@.authorization
+            http.get:x:@.provider-entry/*/email-url
+               headers
+                  Authorization
+                  Accept:application/json
+                  User-Agent:magic-cloud
+               convert:true
+
+            // Preferring the verified primary address, else any verified one.
+            for-each:x:@http.get/*/content/*
+               if
+                  and
+                     eq:x:@.dp/#/*/verified
+                        .:bool:true
+                     or
+                        null:x:@.email
+                        eq:x:@.dp/#/*/primary
+                           .:bool:true
+                  .lambda
+                     set-value:x:@.email
+                        get-value:x:@.dp/#/*/email
+      if
+         null:x:@.email
+         .lambda
+
+            // Oops ...!!
+            throw:The OpenID provider did not supply a verified email address
+               status:int:400
+               public:bool:true
+
+      // Logging the user in, creating them on first login.
+      unwrap:x:+/*
+      execute-file:/system/auth/utils/oidc-login-user.hl
+         provider:x:@hyper2lambda/*/provider
+         email:x:@.email
+         name:x:@.name
+      return-nodes:x:@execute-file/*
+
+// OIDC provider — verifying the id_token the exchange answered with.
+.id-token
+set-value:x:@.id-token
+   get-value:x:@http.post/*/content/*/id_token
+if
+   null:x:@.id-token
+   .lambda
+
+      // Oops ...!!
+      throw:The OpenID provider did not answer with an id_token
+         status:int:400
+         public:bool:true
+
+/*
+ * Verifying token.
+ *
+ * Notice, this will throw an exception if token is not valid.
+ */
+auth.token.verify
+   token:x:@.id-token
+
+// Binding the token to the transaction — the issuer must be the one the sign-in began with.
+if
+   neq:x:@auth.token.verify/*/issuer
+      get-value:x:@hyper2lambda/*/issuer
+   .lambda
+
+      // Oops ...!!
+      throw:Token issuer does not match
+         status:int:400
+         public:bool:true
+
+// Logging the user in, creating them on first login.
+unwrap:x:+/*
+execute-file:/system/auth/utils/oidc-login-user.hl
+   provider:x:@hyper2lambda/*/provider
+   email:x:@auth.token.verify/*/email
+   name:x:@auth.token.verify/*/name
+return-nodes:x:@execute-file/*
