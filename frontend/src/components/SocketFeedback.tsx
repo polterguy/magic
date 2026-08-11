@@ -2,13 +2,12 @@
  * Streams server feedback over SignalR while a long-running backend job
  * (vectorise, crawl, import) executes. The job is started by the caller with
  * a feedback-channel name; every message published on that channel renders
- * as a line in this modal.
+ * as a line in the shared terminal-styled ProgressDialog.
  */
 
-import Banner from './Banner';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { createSocket } from '../lib/socket';
-import { Modal } from './Dialogs';
+import ProgressDialog from './ProgressDialog';
 
 interface FeedbackMessage {
   type: string;
@@ -39,7 +38,6 @@ export default function SocketFeedback(props: {
 
   const [messages, setMessages] = useState<FeedbackMessage[]>([]);
   const [error, setError] = useState('');
-  const listRef = useRef<HTMLDivElement>(null);
   const readyFired = useRef(false);
 
   useEffect(() => {
@@ -51,9 +49,6 @@ export default function SocketFeedback(props: {
         type: parsed.type ?? 'information',
         message: parsed.message ?? args,
       }]);
-      requestAnimationFrame(() => {
-        listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
-      });
     });
 
     /*
@@ -89,33 +84,19 @@ export default function SocketFeedback(props: {
   }, [props.channel]);
 
   return (
-    <Modal width={760} onClose={props.onClose}>
-      <h2 style={{ marginTop: 0 }}>{props.title}</h2>
-      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
-      <div className="terminal">
-        <div className="terminal-bar">
-          <span className="terminal-title">{props.channel}</span>
-          {props.progress && (
-            <span className="terminal-progress">
-              Processing snippet {messages.filter(props.progress.counts).length} of {props.progress.total}
-            </span>
-          )}
-        </div>
-        <div ref={listRef} className="terminal-body">
-          {messages.length === 0
-            ? <div className="terminal-line waiting">Waiting for your server…</div>
-            : messages.map((message, index) => (
-              <div key={index} className={'terminal-line ' + message.type}>
-                {message.message}
-              </div>
-            ))}
-          <span className="terminal-caret" />
-        </div>
-      </div>
-      <div className="modal-actions">
-        {props.isComplete && messages.some(props.isComplete) && props.renderDone?.(messages)}
-        <button className="btn" onClick={props.onClose}>Close</button>
-      </div>
-    </Modal>
+    <ProgressDialog
+      title={props.title}
+      label={props.channel}
+      lines={messages}
+      error={error}
+      onDismissError={() => setError('')}
+      progress={props.progress
+        ? 'Processing snippet ' + messages.filter(props.progress.counts).length +
+          ' of ' + props.progress.total
+        : undefined}
+      actions={props.isComplete && messages.some(props.isComplete)
+        ? props.renderDone?.(messages)
+        : undefined}
+      onClose={props.onClose} />
   );
 }

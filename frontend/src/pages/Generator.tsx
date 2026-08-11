@@ -1,7 +1,8 @@
 import { showToast } from '../lib/toast';
 import Select from '../components/Select';
 import { Link } from 'react-router-dom';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import ProgressDialog, { ProgressLine } from '../components/ProgressDialog';
 import AiWaiter from '../components/AiWaiter';
 import { ChevronIcon } from '../components/Icons';
 import CodeEditor from '../components/CodeEditor';
@@ -302,6 +303,13 @@ function CrudTab(props: { guided: boolean }) {
   const [busy, setBusy] = useState(false);
   // The guided flow's third step: what generation produced, and where it lives.
   const [done, setDone] = useState<{ generated: number; loc: number; module: string } | null>(null);
+  // The generation terminal — null while closed, one line per table/verb while open.
+  const [feed, setFeed] = useState<ProgressLine[] | null>(null);
+  const [progressText, setProgressText] = useState('');
+  // Checked between crudify calls — Cancel keeps what was already generated.
+  const cancelRequested = useRef(false);
+  // Guided mode's done panel, revealed once the finished terminal is closed.
+  const pendingDone = useRef<{ generated: number; loc: number; module: string } | null>(null);
 
   useEffect(() => {
     listRoles()
@@ -385,13 +393,29 @@ function CrudTab(props: { guided: boolean }) {
     setVerbs(next);
   }
 
+  // Closing a running terminal means "stop" — the loop notices between calls.
+  function closeFeed() {
+    if (busy) {
+      cancelRequested.current = true;
+      return;
+    }
+    setFeed(null);
+    if (pendingDone.current) {
+      setDone(pendingDone.current);
+      pendingDone.current = null;
+    }
+  }
+
   async function generate() {
     const targets = tables.filter((table: any) => selectedTables.has(table.name));
-    if (targets.length === 0 || verbs.size === 0) {
+    const active = ALL_VERBS.filter(candidate => verbs.has(candidate));
+    if (targets.length === 0 || active.length === 0) {
       showToast('Select at least one table and one verb', true);
       return;
     }
     setBusy(true);
+    cancelRequested.current = false;
+    pendingDone.current = null;
     const options = {
       auth,
       logging,
@@ -406,43 +430,74 @@ function CrudTab(props: { guided: boolean }) {
       moduleName,
       moduleUrl: singleTable ? componentUrl : null,
     };
+    /*
+     * Every unit of progress is a resolved promise in this very loop, so the
+     * terminal is fed directly — no socket channel, nothing to fake.
+     */
+    const lines: ProgressLine[] = [];
+    const push = (type: string, message: string) => {
+      lines.push({ type, message });
+      setFeed([...lines]);
+    };
+    setFeed([]);
+    const total = targets.length * active.length;
+    const started = Date.now();
+    let step = 0;
     let loc = 0;
     let generated = 0;
-    try {
-      for (const table of targets) {
-        for (const verb of ALL_VERBS.filter(candidate => verbs.has(candidate))) {
-          const payload = buildCrudifyPayload(
-            selection.type, selection.connectionString, selection.database, table, verb, options);
-          if (!canGenerate(payload, verb)) {
-            continue;
-          }
-          try {
-            const response = await crudify(payload);
-            loc += response.loc ?? 0;
-            generated += endpointsForVerb(verb, options);
-          } catch (err: any) {
-            /*
-             * One crudify call per verb per table — a failure mid-loop must
-             * say WHERE it stopped, and how much had already been generated,
-             * or there's no telling which endpoints exist.
-             */
-            throw new Error(
-              verb.toUpperCase() + ' for ' + table.name + ' failed after ' +
-              generated + ' endpoints were generated: ' + err.message);
-          }
+    let failed = false;
+    outer:
+    for (const table of targets) {
+      for (const verb of active) {
+        if (cancelRequested.current) {
+          push('warning',
+            'Cancelled — the ' + generated + ' endpoints generated so far are kept.');
+          break outer;
+        }
+        step++;
+        setProgressText(step + ' of ' + total);
+        const payload = buildCrudifyPayload(
+          selection.type, selection.connectionString, selection.database, table, verb, options);
+        if (!canGenerate(payload, verb)) {
+          // Surfacing what used to be silently skipped — the answer to "why
+          // did I get fewer endpoints than tables × verbs?".
+          push('warning', verb.toUpperCase() + ' ' + table.name + ' — skipped, ' +
+            (payload.args.primary.length === 0 && (verb === 'put' || verb === 'delete')
+              ? 'no primary key'
+              : 'no columns for this verb'));
+          continue;
+        }
+        try {
+          const response = await crudify(payload);
+          const count = endpointsForVerb(verb, options);
+          loc += response.loc ?? 0;
+          generated += count;
+          push('information', verb.toUpperCase() + ' ' + table.name + ' — ' +
+            count + (count === 1 ? ' endpoint, ' : ' endpoints, ') +
+            (response.loc ?? 0) + ' lines');
+        } catch (err: any) {
+          /*
+           * One crudify call per verb per table — a failure mid-loop must
+           * say WHERE it stopped, and how much had already been generated,
+           * or there's no telling which endpoints exist.
+           */
+          failed = true;
+          push('error', verb.toUpperCase() + ' ' + table.name + ' — ' + err.message);
+          push('warning', generated + ' endpoints were generated before the failure.');
+          break outer;
         }
       }
-      if (props.guided) {
-        setDone({ generated, loc, module: moduleName || selection.database });
-      } else {
-        showToast(`Generated ${generated} endpoints (${loc} lines of code) in /modules/` +
-          (moduleName || selection.database) + '/');
-      }
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
-    } finally {
-      setBusy(false);
     }
+    if (!failed && !cancelRequested.current) {
+      const elapsed = ((Date.now() - started) / 1000).toFixed(1);
+      push('success', 'Done — ' + generated + ' endpoints, ' + loc +
+        ' lines of Hyperlambda, in ' + elapsed + 's → /magic/' +
+        (moduleName || selection.database) + '/');
+      if (props.guided) {
+        pendingDone.current = { generated, loc, module: moduleName || selection.database };
+      }
+    }
+    setBusy(false);
   }
 
   // Done panel showing after generation — the guided flow's final step.
@@ -774,7 +829,21 @@ function CrudTab(props: { guided: boolean }) {
         </div>
       </div>
       )}
-      {busy && <AiWaiter />}
+      {feed !== null && (
+        <ProgressDialog
+          title="Generating your backend"
+          label={'/modules/' + (moduleName || selection.database) + '/'}
+          lines={feed}
+          progress={busy ? progressText : undefined}
+          actions={busy && (
+            <button
+              className="btn btn-secondary"
+              onClick={() => { cancelRequested.current = true; }}>
+              Cancel
+            </button>
+          )}
+          onClose={closeFeed} />
+      )}
     </>
   );
 }
