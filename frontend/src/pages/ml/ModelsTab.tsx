@@ -16,11 +16,11 @@ import {
   vectoriseType,
 } from '../../lib/api';
 import { showToast } from '../../lib/toast';
-import EditTypeDialog from './EditTypeDialog';
+import EditModelDialog from './EditModelDialog';
 import EmbedDialog from './EmbedDialog';
 import ImportDialog from './ImportDialog';
 
-export default function TypesTab(props: {
+export default function ModelsTab(props: {
   types: any[];
   onChanged: () => void;
 }) {
@@ -179,7 +179,7 @@ export default function TypesTab(props: {
         </table>
       </div>
       {editing !== null && (
-        <EditTypeDialog
+        <EditModelDialog
           existing={editing === 'new' ? null : editing}
           onClose={() => setEditing(null)}
           onSaved={() => { setEditing(null); props.onChanged(); }} />

@@ -133,8 +133,8 @@ export default function Plugins() {
      */
     if (again && app.type !== 'frontend' && !await confirm({
       title: 'Reinstall ' + app.name + '?',
-      message: 'This overwrites the files in the module with the Bazar\'s current ' +
-        'version. Any changes you have made to them are lost.',
+      message: 'This overwrites the files in the module with the plugin ' +
+        'repository\'s current version. Any changes you have made to them are lost.',
       confirmText: 'Yes, reinstall',
       danger: true,
     })) {
@@ -157,7 +157,7 @@ export default function Plugins() {
       <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div className="page-title">
           <h1>Plugins</h1>
-          <p>Install plugins and modules from the Bazar, or your own from a ZIP file</p>
+          <p>Install plugins from the plugin repository, or your own module from a ZIP file</p>
         </div>
         <div className="page-tools">
           <label className={'btn btn-secondary' + (uploading ? ' disabled' : '')}>
@@ -187,7 +187,7 @@ export default function Plugins() {
       {loading && (
         <div className="spinner-panel">
           <div className="spinner" />
-          <span className="muted">Loading plugins from the Bazar…</span>
+          <span className="muted">Loading plugins from the plugin repository…</span>
         </div>
       )}
       <div style={{
@@ -217,7 +217,7 @@ export default function Plugins() {
                 title={frontendsBlocked && app.type === 'frontend'
                   ? blockedReason
                   : installed.has(app.name)
-                    ? 'Install the Bazar\'s current version over the one you have'
+                    ? 'Install the plugin repository\'s current version over the one you have'
                     : undefined}
                 onClick={() => install(app)}>
                 {installing === app.name

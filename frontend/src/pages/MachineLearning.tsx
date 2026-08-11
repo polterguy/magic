@@ -14,7 +14,7 @@ import { mlTypes, openaiIsConfigured } from '../lib/api';
 import { showToast } from '../lib/toast';
 import HistoryTab from './ml/HistoryTab';
 import TrainingTab from './ml/TrainingTab';
-import TypesTab from './ml/TypesTab';
+import ModelsTab from './ml/ModelsTab';
 
 type Tab = 'types' | 'training' | 'history';
 
@@ -60,7 +60,7 @@ export default function MachineLearning() {
         </div>
       )}
       {tab === 'types' &&
-        <TypesTab types={types} onChanged={refreshTypes} />}
+        <ModelsTab types={types} onChanged={refreshTypes} />}
       {tab === 'training' &&
         <TrainingTab types={types} />}
       {tab === 'history' &&

@@ -181,7 +181,7 @@ export default function Dashboard() {
       for (const name of missingPlugins) {
         const app = available.find((candidate: any) => candidate.name === name);
         if (!app) {
-          throw new Error(name + ' is not available in the Bazar');
+          throw new Error(name + ' is not available in the plugin repository');
         }
         await installPlugin(app);
       }
@@ -469,7 +469,7 @@ function CreateChatbot() {
             value={url}
             onChange={e => setUrl(e.target.value)} />
         </label>
-        <label>Model
+        <label>OpenAI model
           <Select value={model} onChange={value => setModel(value)}>
             {BOT_MODELS.map(option => (
               <option key={option} value={option}>{option}{modelPriceLabel(prices[option])}</option>

@@ -22,7 +22,7 @@ import {
 import { showToast } from '../../lib/toast';
 import AddFunctionDialog from './AddFunctionDialog';
 
-export default function EditTypeDialog(props: {
+export default function EditModelDialog(props: {
   existing: any | null;
   onClose: () => void;
   onSaved: () => void;
@@ -175,7 +175,7 @@ export default function EditTypeDialog(props: {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, alignItems: 'end' }}>
             {/* minWidth 0, or the model name's intrinsic width keeps the 1fr
                 column from shrinking and pushes the button out of the modal. */}
-            <label style={{ minWidth: 0 }}>Model
+            <label style={{ minWidth: 0 }}>OpenAI model
               {/* The models endpoint flags chat-capable models with [chat]; only
                   those belong here (the rest are embeddings, audio, realtime,
                   etc.), mirroring how Vector model filters on [vector]. The

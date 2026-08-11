@@ -204,7 +204,8 @@ body {
 }
 
 .sidebar {
-  width: 220px;
+  /* Wide enough that no nav label ("Endpoint Generator") wraps. */
+  width: 256px;
   flex-shrink: 0;
   background: var(--bg-deep);
   color: var(--text-soft);

@@ -64,7 +64,7 @@ export const SECTIONS: Section[] = [
   },
   {
     to: '/generator',
-    label: 'Generator',
+    label: 'Endpoint Generator',
     Icon: BoltIcon,
     description: 'Generate complete CRUD APIs from your database tables, or wrap ' +
       'a custom SQL statement in an endpoint of its own.',
@@ -101,7 +101,7 @@ export const SECTIONS: Section[] = [
     to: '/plugins',
     label: 'Plugins',
     Icon: PuzzleIcon,
-    description: 'Install modules and frontends from the Bazar to extend what ' +
+    description: 'Install plugins from the plugin repository to extend what ' +
       'your cloudlet can do.',
   },
   {

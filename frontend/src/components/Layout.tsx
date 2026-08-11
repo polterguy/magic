@@ -199,7 +199,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       {switching && <BackendsDialog onClose={() => setSwitching(false)} />}
       <button
         className="nav-toggle"
-        style={{ left: collapsed ? 0 : 220 }}
+        style={{ left: collapsed ? 0 : 256 }}
         title={collapsed ? 'Show navigation' : 'Hide navigation'}
         onClick={toggleCollapsed}>
         <span style={{
