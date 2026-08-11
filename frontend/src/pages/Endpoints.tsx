@@ -1,6 +1,7 @@
 import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
 import { Fragment, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Modal } from '../components/Dialogs';
 import AiWaiter from '../components/AiWaiter';
@@ -53,6 +54,20 @@ export default function Endpoints() {
       .catch(err => showToast(err.message, true, err.logId))
       .finally(() => setLoading(false));
   }, []);
+
+  /*
+   * ?filter= deep links — the Generator's done panel lands here filtered to
+   * the module it just created. Consumed once into the filter box, so the
+   * URL doesn't go stale when the user types their own filter.
+   */
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const target = searchParams.get('filter');
+    if (target !== null) {
+      setFilter(target);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const query = filter.trim().toLowerCase();
 

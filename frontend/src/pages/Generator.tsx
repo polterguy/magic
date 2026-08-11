@@ -1,5 +1,6 @@
 import { showToast } from '../lib/toast';
 import Select from '../components/Select';
+import { Link } from 'react-router-dom';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import AiWaiter from '../components/AiWaiter';
 import { ChevronIcon } from '../components/Icons';
@@ -181,20 +182,34 @@ function canGenerate(payload: any, verb: string) {
 export default function Generator() {
 
   const [tab, setTab] = useState('crud');
+  /*
+   * ?guided=1 — the Dashboard's "API from your data" flow: the same CRUD
+   * generator wearing a step header, with every table preselected and a
+   * done panel instead of a toast. Kept in the URL so a refresh stays in
+   * the guided flow.
+   */
+  const [guided] = useState(
+    () => new URLSearchParams(window.location.search).get('guided') === '1');
   return (
     <>
       <div className="page-header">
-        <h1>Generator</h1>
-        <p>Generate CRUD backends and custom SQL endpoints from your databases</p>
+        <h1>{guided ? 'API from your data' : 'Generator'}</h1>
+        <p>
+          {guided
+            ? 'Turn a database into secured REST endpoints'
+            : 'Generate CRUD backends and custom SQL endpoints from your databases'}
+        </p>
       </div>
-      <Tabs
-        tabs={[
-          { id: 'crud', label: 'CRUD backend' },
-          { id: 'sql', label: 'SQL endpoint' },
-        ]}
-        active={tab}
-        onChange={setTab} />
-      {tab === 'crud' ? <CrudTab /> : <SqlEndpointTab />}
+      {!guided && (
+        <Tabs
+          tabs={[
+            { id: 'crud', label: 'CRUD backend' },
+            { id: 'sql', label: 'SQL endpoint' },
+          ]}
+          active={tab}
+          onChange={setTab} />
+      )}
+      {guided || tab === 'crud' ? <CrudTab guided={guided} /> : <SqlEndpointTab />}
     </>
   );
 }
@@ -231,6 +246,22 @@ function DatabaseSelectors({ selection }: { selection: DatabaseSelection }) {
 
 const ALL_VERBS = ['post', 'get', 'put', 'delete'];
 
+// The guided flow's progress header: choose data, generate, done.
+function WizardSteps({ step }: { step: number }) {
+  return (
+    <div className="wizard-steps">
+      {['Choose data', 'Generate', 'Done'].map((label, index) => (
+        <Fragment key={label}>
+          {index > 0 && <span className="wizard-arrow">→</span>}
+          <span className={'step' + (step >= index + 1 ? ' active' : '')}>
+            {index + 1} · {label}
+          </span>
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
 /*
  * One crudify invocation creates several endpoint files: GET always produces
  * the read + count endpoints, and the aggregate, distinct and search options
@@ -248,7 +279,7 @@ function endpointsForVerb(
       (options.search ? 1 : 0);
 }
 
-function CrudTab() {
+function CrudTab(props: { guided: boolean }) {
 
   const selection = useDatabaseSelection();
   const [selectedTables, setSelectedTables] = useState<Set<string>>(new Set());
@@ -269,6 +300,8 @@ function CrudTab() {
   const [distinct, setDistinct] = useState(false);
   const [search, setSearch] = useState(false);
   const [busy, setBusy] = useState(false);
+  // The guided flow's third step: what generation produced, and where it lives.
+  const [done, setDone] = useState<{ generated: number; loc: number; module: string } | null>(null);
 
   useEffect(() => {
     listRoles()
@@ -276,12 +309,18 @@ function CrudTab() {
       .catch(() => {});
   }, []);
 
-  // Reset selection, details and URL overrides when the database changes.
+  /*
+   * Reset selection, details and URL overrides when the database changes.
+   * The guided flow preselects every table instead — its user's answer to
+   * "which tables?" is almost always "all of them".
+   */
   useEffect(() => {
-    setSelectedTables(new Set());
+    setSelectedTables(props.guided
+      ? new Set<string>((selection.selectedMeta?.tables ?? []).map((table: any) => table.name))
+      : new Set<string>());
     setExpandedTables(new Set());
     setModuleName(selection.database);
-  }, [selection.database]);
+  }, [selection.database, selection.selectedMeta, props.guided]);
 
   const tables = selection.selectedMeta?.tables ?? [];
   const allSelected = tables.length > 0 && selectedTables.size === tables.length;
@@ -393,8 +432,12 @@ function CrudTab() {
           }
         }
       }
-      showToast(`Generated ${generated} endpoints (${loc} lines of code) in /modules/` +
-        (moduleName || selection.database) + '/');
+      if (props.guided) {
+        setDone({ generated, loc, module: moduleName || selection.database });
+      } else {
+        showToast(`Generated ${generated} endpoints (${loc} lines of code) in /modules/` +
+          (moduleName || selection.database) + '/');
+      }
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     } finally {
@@ -402,11 +445,56 @@ function CrudTab() {
     }
   }
 
+  // Done panel showing after generation — the guided flow's final step.
+  if (props.guided && done) {
+    return (
+      <>
+        <WizardSteps step={3} />
+        <div className="card" style={{ maxWidth: 640 }}>
+          <h2 style={{ marginTop: 0 }}>Your API is live</h2>
+          <p className="muted" style={{ marginTop: 0 }}>
+            {done.generated} endpoints ({done.loc} lines of Hyperlambda) were
+            generated under <span className="mono">/magic/{done.module}/</span>,
+            secured for {auth.length > 0
+              ? <strong>{auth.join(', ')}</strong>
+              : <em>everyone — no roles required</em>}.
+          </p>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <Link className="btn" to={'/endpoints?filter=' + encodeURIComponent(done.module)}>
+              Try your endpoints
+            </Link>
+            <Link className="btn btn-secondary" to="/user-roles-management">
+              Manage users and roles
+            </Link>
+            <button className="btn btn-secondary" onClick={() => setDone(null)}>
+              Generate more
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
+      {props.guided && (
+        <WizardSteps step={selectedTables.size > 0 ? 2 : 1} />
+      )}
       {selection.error && (
         <div className="error-box" style={{ marginBottom: 12 }}>
           {selection.error}
+        </div>
+      )}
+      {/*
+        * Guided visitors without a database of their own have nothing useful
+        * to generate from — send them to create one first, without blocking
+        * the screen for those who want Magic's internal database anyway.
+        */}
+      {props.guided && !selection.loading &&
+        !selection.databasesMeta.some((db: any) => db.name !== 'magic') && (
+        <div className="info-box" style={{ marginBottom: 12 }}>
+          No database of your own yet — <Link to="/databases">create or
+          connect one</Link> first, then come back here.
         </div>
       )}
       <div className="toolbar">
@@ -602,21 +690,21 @@ function CrudTab() {
                     type="checkbox"
                     checked={aggregate}
                     onChange={e => setAggregate(e.target.checked)} />
-                  Aggregate endpoint
+                  Aggregate
                 </label>
                 <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <input
                     type="checkbox"
                     checked={distinct}
                     onChange={e => setDistinct(e.target.checked)} />
-                  Distinct endpoint
+                  Distinct
                 </label>
                 <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <input
                     type="checkbox"
                     checked={search}
                     onChange={e => setSearch(e.target.checked)} />
-                  Search endpoint
+                  Search
                 </label>
               </div>
             </div>

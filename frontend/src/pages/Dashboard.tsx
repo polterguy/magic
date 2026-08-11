@@ -298,6 +298,20 @@ export default function Dashboard() {
         </div>
       )}
       {openaiConfigured === true && <CreateChatbot />}
+      <div className="card agent-prompt">
+        <div style={{ flex: 1 }}>
+          <h2 style={{ margin: '0 0 6px 0' }}>Create an API from your data</h2>
+          <p className="muted" style={{ margin: 0 }}>
+            Point the Generator at one of your databases and it turns every
+            table into secured REST endpoints — a complete backend in a couple
+            of minutes. No database yet?{' '}
+            <Link to="/databases">Connect or create one first</Link>.
+          </p>
+        </div>
+        <Link className="btn btn-large" to="/generator?guided=1">
+          Create API
+        </Link>
+      </div>
       {/*
         * Folded away rather than always open. It restates the navigation for
         * somebody seeing the dashboard for the first time, which is worth a
@@ -429,7 +443,12 @@ function CreateChatbot() {
   const selected = flavors.find(candidate => candidate.name === flavor);
 
   return (
-    <div className="card" style={{ marginBottom: 16 }}>
+    /*
+     * Same action-card chrome as its dashboard siblings — the inner wrapper
+     * is the card's single flex child, so the form keeps its block layout.
+     */
+    <div className="card agent-prompt">
+      <div style={{ flex: 1, minWidth: 0 }}>
       <h2 style={{ marginTop: 0 }}>Chatbot Wizard</h2>
       <p className="muted" style={{ marginTop: 0 }}>
         Crawls the site, turns what it finds into training data, and gives you
@@ -543,6 +562,7 @@ function CreateChatbot() {
           }}
           onClose={() => setCrawl(null)} />
       )}
+      </div>
     </div>
   );
 }

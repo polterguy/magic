@@ -1100,7 +1100,7 @@ semaphore:crudifier
          io.file.exists:x:@strings.replace
       .lambda
          throw:Module already exists
-            status:int:401
+            status:int:409
             public:bool:true
 
    /*
@@ -1219,7 +1219,7 @@ semaphore:crudifier
                io.file.exists:x:@strings.replace
             .lambda
                throw:Module already exists
-                  status:int:401
+                  status:int:409
                   public:bool:true
 
          /*
@@ -1330,7 +1330,7 @@ semaphore:crudifier
                   io.file.exists:x:@strings.replace
                .lambda
                   throw:Module already exists
-                     status:int:401
+                     status:int:409
                      public:bool:true
 
             /*
@@ -1457,7 +1457,7 @@ semaphore:crudifier
                   io.file.exists:x:@strings.replace
                .lambda
                   throw:Module already exists
-                     status:int:401
+                     status:int:409
                      public:bool:true
 
             /*
@@ -1571,7 +1571,7 @@ semaphore:crudifier
                   io.file.exists:x:@strings.replace
                .lambda
                   throw:Module already exists
-                     status:int:401
+                     status:int:409
                      public:bool:true
 
             /*
@@ -1658,7 +1658,7 @@ semaphore:crudifier
                   io.file.exists:x:@strings.replace
                .lambda
                   throw:Module already exists
-                     status:int:401
+                     status:int:409
                      public:bool:true
 
             /*
@@ -1750,7 +1750,7 @@ semaphore:crudifier
                         io.file.exists:x:@strings.replace
                      .lambda
                         throw:Module already exists
-                           status:int:401
+                           status:int:409
                            public:bool:true
 
                   /*

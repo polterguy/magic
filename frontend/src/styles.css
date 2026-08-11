@@ -509,6 +509,15 @@ a:hover {
 
 .btn-danger:hover { background: var(--danger); color: #fff; }
 
+/*
+ * Links wearing button classes: a:hover outranks .btn (pseudo-class beats
+ * plain class), which painted accent-dark labels onto accent-dark primary
+ * buttons — so each variant's label colour is restated at anchor specificity.
+ */
+a.btn:hover { color: var(--accent-contrast); }
+a.btn-secondary:hover, a.btn-ghost:hover { color: var(--text); }
+a.btn-danger:hover { color: #fff; }
+
 .btn-ghost {
   background: transparent;
   color: var(--text-soft);
@@ -1695,6 +1704,26 @@ pre.result-json {
   display: block;
   margin-top: 4px;
   color: inherit;
+}
+
+/* Step header for the Dashboard's "API from your data" guided flow. */
+.wizard-steps {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.wizard-steps .step,
+.wizard-steps .wizard-arrow {
+  opacity: 0.4;
+}
+
+.wizard-steps .step.active {
+  opacity: 1;
 }
 
 /* The log entry an error toast deep-linked to. */
