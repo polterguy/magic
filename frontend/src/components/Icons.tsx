@@ -207,6 +207,25 @@ export function UserIcon() {
   );
 }
 
+export function SearchIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="11" cy="11" r="7" />
+      <line x1="21" y1="21" x2="16" y2="16" />
+    </svg>
+  );
+}
+
+export function KeyboardIcon() {
+  return (
+    <svg {...base}>
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M9 13h6" />
+      <path d="M8 16.5h8" />
+    </svg>
+  );
+}
+
 export function ClockIcon() {
   return (
     <svg {...base}>

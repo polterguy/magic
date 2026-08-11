@@ -22,6 +22,7 @@ import 'codemirror/mode/markdown/markdown';
 import defineHyperlambda from '../resources/hyperlambda.js';
 import '../resources/ainiro.css';
 import { http, apiBaseUrl } from '../lib/api.js';
+import { SHORTCUTS } from '../lib/shortcuts';
 
 defineHyperlambda(CodeMirror);
 
@@ -178,6 +179,50 @@ export default function CodeEditor(props: CodeEditorProps) {
         createEditor();
       });
 
+    /*
+     * The keymap is built from the shared shortcut registry, so every
+     * binding is documented in the shortcuts overlay by construction. This
+     * table resolves the registry's action ids into what CodeMirror runs —
+     * a named command or a callback.
+     *
+     * Notes that shaped some of these: search is `findPersistent` so every
+     * match stays highlighted while the dialog is up (Enter cycles, Escape
+     * closes). Tab indents the SELECTION as a block — indentUnit is 3, so a
+     * level is Hyperlambda's three spaces — and just types the spaces
+     * without one; insertSoftTab on a selection would have replaced the
+     * code with spaces rather than indenting it.
+     */
+    const handlers: Record<string, string | ((cm: CodeMirror.Editor) => void)> = {
+      autocomplete: 'autocomplete',
+      findPersistent: 'findPersistent',
+      fullscreen: cm => cm.setOption('fullScreen', !cm.getOption('fullScreen')),
+      exitFullscreen: cm => {
+        if (cm.getOption('fullScreen')) {
+          cm.setOption('fullScreen', false);
+        }
+      },
+      indent: cm => cm.execCommand(cm.somethingSelected() ? 'indentMore' : 'insertSoftTab'),
+      outdent: cm => cm.execCommand('indentLess'),
+      save: () => callbacks.current.onSave?.(),
+      execute: () => callbacks.current.onExecute?.(),
+      help: cm => callbacks.current.onHelp?.(cm.getSelection()),
+      newFile: () => callbacks.current.onAction?.('newFile'),
+      newFolder: () => callbacks.current.onAction?.('newFolder'),
+      renameFile: () => callbacks.current.onAction?.('renameFile'),
+      deleteFile: () => callbacks.current.onAction?.('deleteFile'),
+      deleteFolder: () => callbacks.current.onAction?.('deleteFolder'),
+      close: () => callbacks.current.onAction?.('close'),
+    };
+    const extraKeys: Record<string, string | ((cm: CodeMirror.Editor) => void)> = {};
+    for (const shortcut of SHORTCUTS) {
+      if (!shortcut.action || !shortcut.keys) {
+        continue;
+      }
+      for (const key of shortcut.keys) {
+        extraKeys[key] = handlers[shortcut.action];
+      }
+    }
+
     function createEditor() {
     const instance = CodeMirror(host.current!, {
       value: callbacks.current.value,
@@ -189,45 +234,7 @@ export default function CodeEditor(props: CodeEditorProps) {
       tabSize: 3,
       indentUnit: 3,
       indentWithTabs: false,
-      // Same shortcut map as the old dashboard: Alt-M fullscreen,
-      // Alt-S save, F5 execute. Ctrl-S/Cmd-S kept as aliases for save.
-      extraKeys: {
-        'Alt-M': (cm: CodeMirror.Editor) =>
-          cm.setOption('fullScreen', !cm.getOption('fullScreen')),
-        Esc: (cm: CodeMirror.Editor) => {
-          if (cm.getOption('fullScreen')) {
-            cm.setOption('fullScreen', false);
-          }
-        },
-        'Ctrl-Space': 'autocomplete',
-        /*
-         * Search, like the old dashboard — persistent so every match stays
-         * highlighted while the dialog is up; Enter cycles, Escape closes.
-         */
-        'Ctrl-F': 'findPersistent',
-        'Cmd-F': 'findPersistent',
-        'Alt-A': () => callbacks.current.onAction?.('newFile'),
-        'Alt-B': () => callbacks.current.onAction?.('newFolder'),
-        'Alt-R': () => callbacks.current.onAction?.('renameFile'),
-        'Alt-D': () => callbacks.current.onAction?.('deleteFile'),
-        'Alt-X': () => callbacks.current.onAction?.('deleteFolder'),
-        'Alt-C': () => callbacks.current.onAction?.('close'),
-        'Alt-S': () => callbacks.current.onSave?.(),
-        'Ctrl-S': () => callbacks.current.onSave?.(),
-        'Cmd-S': () => callbacks.current.onSave?.(),
-        F5: () => callbacks.current.onExecute?.(),
-        F1: (cm: CodeMirror.Editor) => callbacks.current.onHelp?.(cm.getSelection()),
-        /*
-         * With a selection, Tab shifts the whole block one level right and
-         * Shift-Tab shifts it back, as the old dashboard did — indentUnit is
-         * 3, so a level is Hyperlambda's three spaces. Without a selection Tab
-         * just types those spaces; insertSoftTab on a selection would have
-         * replaced the code with spaces rather than indenting it.
-         */
-        Tab: (cm: CodeMirror.Editor) =>
-          cm.execCommand(cm.somethingSelected() ? 'indentMore' : 'insertSoftTab'),
-        'Shift-Tab': (cm: CodeMirror.Editor) => cm.execCommand('indentLess'),
-      },
+      extraKeys,
     });
     instance.setSize('100%', callbacks.current.height ?? '100%');
     if (callbacks.current.hintTables) {

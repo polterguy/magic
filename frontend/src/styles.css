@@ -1712,6 +1712,54 @@ pre.result-json {
   color: inherit;
 }
 
+/* The sidebar footer's icon row — compact enough for six on one line. */
+.footer-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.footer-actions .btn-small {
+  padding: 6px 8px;
+}
+
+/* Key chips — the shortcuts overlay and the sidebar's palette hint. */
+kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.shortcuts-group {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.shortcuts-list {
+  display: grid;
+  gap: 6px;
+}
+
+.shortcut-row {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 12px;
+  align-items: baseline;
+  font-size: var(--text-sm);
+}
+
+.shortcut-keys {
+  white-space: nowrap;
+}
+
 /* The command palette — Ctrl/Cmd+K. */
 .palette-backdrop {
   position: fixed;

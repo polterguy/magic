@@ -5,11 +5,12 @@ import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
-import { DatabaseIcon, LogoutIcon, MoonIcon, RobotIcon, SunIcon } from './Icons';
+import { DatabaseIcon, KeyboardIcon, LogoutIcon, MoonIcon, RobotIcon, SearchIcon, SunIcon } from './Icons';
 import { ChevronIcon } from './Icons';
 import { applyTheme, getTheme } from '../lib/theme';
 import BackendsDialog from './BackendsDialog';
 import CommandPalette from './CommandPalette';
+import ShortcutsDialog from './ShortcutsDialog';
 import { openSupport } from '../lib/support';
 import { SECTIONS } from './sections';
 
@@ -72,12 +73,17 @@ export default function Layout({ children }: { children: ReactNode }) {
    * anything.
    */
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         event.stopPropagation();
         setPaletteOpen(open => !open);
+      } else if ((event.metaKey || event.ctrlKey) && event.key === '/') {
+        event.preventDefault();
+        event.stopPropagation();
+        setShortcutsOpen(open => !open);
       }
     }
     window.addEventListener('keydown', onKey, true);
@@ -198,18 +204,23 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="backend-user">{backend?.username}</div>
             <div className="backend-url">{backend?.url.replace(/^https?:\/\//, '')}</div>
           </NavLink>
-          <div style={{ display: 'flex', gap: 8 }}>
+          {/*
+            * Tools (find, learn, ask), then environment (theme, cloudlet),
+            * and logout isolated last — the one session-ending button never
+            * sits between two casually-clicked ones.
+            */}
+          <div className="footer-actions">
             <button
               className="btn btn-ghost btn-small"
-              title="Logout"
-              onClick={logout}>
-              <LogoutIcon />
+              title="Command palette — jump to any page, file or endpoint (Ctrl+K / Cmd+K)"
+              onClick={() => { setPaletteOpen(true); setMobileNav(false); }}>
+              <SearchIcon />
             </button>
             <button
               className="btn btn-ghost btn-small"
-              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              onClick={toggleTheme}>
-              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+              title="Keyboard shortcuts (Ctrl+/ / Cmd+/)"
+              onClick={() => { setShortcutsOpen(true); setMobileNav(false); }}>
+              <KeyboardIcon />
             </button>
             <button
               className="btn btn-ghost btn-small"
@@ -219,9 +230,21 @@ export default function Layout({ children }: { children: ReactNode }) {
             </button>
             <button
               className="btn btn-ghost btn-small"
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              onClick={toggleTheme}>
+              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+            </button>
+            <button
+              className="btn btn-ghost btn-small"
               title={'Switch cloudlet — ' + backends.length + ' signed in'}
               onClick={() => { setSwitching(true); setMobileNav(false); }}>
               <DatabaseIcon />
+            </button>
+            <button
+              className="btn btn-ghost btn-small"
+              title="Logout"
+              onClick={logout}>
+              <LogoutIcon />
             </button>
           </div>
         </div>
@@ -235,9 +258,11 @@ export default function Layout({ children }: { children: ReactNode }) {
             { label: 'Switch cloudlet', action: () => setSwitching(true) },
             { label: 'Ask Frank for help', action: openSupport },
             { label: 'Create an API from your data', action: () => go('/generator?guided=1') },
+            { label: 'Keyboard shortcuts', action: () => setShortcutsOpen(true) },
           ]}
           onClose={() => setPaletteOpen(false)} />
       )}
+      {shortcutsOpen && <ShortcutsDialog onClose={() => setShortcutsOpen(false)} />}
       <button
         className="nav-toggle"
         style={{ left: collapsed ? 0 : 256 }}
