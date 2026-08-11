@@ -47,12 +47,14 @@ html[data-theme="light"] {
   --cm-linenumber: #b0a698;
   --cm-cursor: #17120e;
   --cm-comment: #8f8577;
-  --cm-number: #c2410c;
+  /* Slot invocations wear navy, expressions the quieter bronze — the old
+     assignment (bronze invocations, red expressions) read wrong in light mode. */
+  --cm-number: #8a6500;
   --cm-property: #0e7490;
   --cm-keyword: #1e50c0;
   --cm-string: #0a8043;
   --cm-type: #c81e3c;
-  --cm-variable-2: #8a6500;
+  --cm-variable-2: #1e3a8a;
   --cm-link: #17120e;
   --cm-error: #d63644;
   --cm-matchingbracket: #1e50c0;

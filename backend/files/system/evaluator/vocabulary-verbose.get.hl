@@ -1,0 +1,27 @@
+
+/*
+ * Returns every static slot registered in the system as a name to description
+ * map — the vocabulary with its documentation attached, feeding hover-docs in
+ * the dashboard's editor and similar consumers. Slots without a declared
+ * description map to null.
+ */
+.description:Returns every static slot registered in the system as a name to description map
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Retrieving all system slots, decorating each with its description.
+vocabulary
+for-each:x:@vocabulary/*
+   slot.description:x:@.dp/#
+   set-name:x:./*/add/*/*
+      get-value:x:@.dp/#
+   set-value:x:./*/add/*/*
+      get-value:x:@slot.description
+   add:x:../*/return
+      .
+         .
+
+// Returning results of the above to caller.
+return

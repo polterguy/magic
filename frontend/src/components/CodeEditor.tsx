@@ -36,9 +36,18 @@ defineHyperlambda(CodeMirror);
 let vocabularyPromise: Promise<void> | null = null;
 let vocabularyFrom: string | null = null;
 
+/*
+ * Slot name → description, powering hover-docs in Hyperlambda editors.
+ * Fetched alongside the vocabulary but deliberately NOT part of its promise:
+ * an older backend without the endpoint just means no hover-docs, never a
+ * broken editor.
+ */
+let slotDocs: Record<string, string | null> = {};
+
 function ensureVocabulary() {
   if (vocabularyFrom !== apiBaseUrl()) {
     vocabularyPromise = null;
+    slotDocs = {};
     delete (window as any)._vocabulary;
     delete (window as any)._slots;
   }
@@ -46,6 +55,9 @@ function ensureVocabulary() {
     return Promise.resolve();
   }
   vocabularyFrom = apiBaseUrl();
+  http.get<Record<string, string | null>>('/magic/system/evaluator/vocabulary-verbose')
+    .then(docs => { slotDocs = docs ?? {}; })
+    .catch(() => { slotDocs = {}; });
   vocabularyPromise ??= Promise.all([
     http.get<string[]>('/magic/system/evaluator/vocabulary'),
     http.get<string[]>('/magic/system/evaluator/slots'),
@@ -62,6 +74,61 @@ function ensureVocabulary() {
     throw err;
   });
   return vocabularyPromise;
+}
+
+/*
+ * The hover-doc tooltip — one shared element for every editor on the page,
+ * shown when the pointer rests on a token the vocabulary knows.
+ */
+let slotDocTip: HTMLDivElement | null = null;
+
+function showSlotDoc(anchor: HTMLElement, name: string, description: string) {
+  if (!slotDocTip) {
+    slotDocTip = document.createElement('div');
+    slotDocTip.className = 'slot-doc';
+    document.body.appendChild(slotDocTip);
+  }
+  slotDocTip.innerHTML = '';
+  const title = document.createElement('div');
+  title.className = 'slot-doc-name';
+  title.textContent = '[' + name + ']';
+  const body = document.createElement('div');
+  body.textContent = description;
+  slotDocTip.append(title, body);
+  const rect = anchor.getBoundingClientRect();
+  slotDocTip.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 340)) + 'px';
+  slotDocTip.style.top = (rect.bottom + 6) + 'px';
+  slotDocTip.style.display = 'block';
+}
+
+function hideSlotDoc() {
+  if (slotDocTip) {
+    slotDocTip.style.display = 'none';
+  }
+}
+
+/*
+ * Wires hover-docs onto an editor: resting the pointer on a slot invocation
+ * shows what the slot does, using the descriptions the backend declares.
+ * Slot tokens render as cm-keyword (dotless names) or cm-variable-2 (dotted).
+ */
+function attachSlotDocs(wrapper: HTMLElement) {
+  wrapper.addEventListener('mouseover', event => {
+    const target = event.target as HTMLElement;
+    if (!target.classList ||
+        (!target.classList.contains('cm-keyword') && !target.classList.contains('cm-variable-2'))) {
+      hideSlotDoc();
+      return;
+    }
+    const name = (target.textContent ?? '').trim();
+    const description = slotDocs[name];
+    if (description) {
+      showSlotDoc(target, name, description);
+    } else {
+      hideSlotDoc();
+    }
+  });
+  wrapper.addEventListener('mouseleave', hideSlotDoc);
 }
 
 interface CodeEditorProps {
@@ -169,6 +236,9 @@ export default function CodeEditor(props: CodeEditorProps) {
         { tables: callbacks.current.hintTables, completeSingle: false });
     }
     callbacks.current.onInstance?.(instance);
+    if (callbacks.current.mode === 'hyperlambda') {
+      attachSlotDocs(instance.getWrapperElement());
+    }
     instance.on('change', (_, change) => {
       // Programmatic setValue (e.g. opening a file) is not a user edit.
       if (change.origin === 'setValue') {
