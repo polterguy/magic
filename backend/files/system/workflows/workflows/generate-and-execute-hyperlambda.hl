@@ -276,5 +276,5 @@ try
       lambda2hyper:x:@hyper2lambda/*
       .:```
    throw:x:-
-      status:int:401
+      status:int:400
       public:bool:true

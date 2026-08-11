@@ -1707,6 +1707,104 @@ pre.result-json {
   color: inherit;
 }
 
+/* The command palette — Ctrl/Cmd+K. */
+.palette-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+}
+
+.palette {
+  width: min(640px, 92vw);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hard);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.palette input {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 15px 18px;
+  font: inherit;
+  font-size: var(--text-md);
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.palette-list {
+  max-height: 46vh;
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.palette-group {
+  padding: 8px 12px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+}
+
+.palette-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.palette-row.selected {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.palette-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette-hint {
+  color: var(--text-soft);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette-row.selected .palette-hint {
+  color: inherit;
+  opacity: 0.75;
+}
+
+.palette-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-soft);
+}
+
+.palette-footer {
+  display: flex;
+  gap: 16px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
 /* KPI cards that navigate — the number is the link. */
 a.kpi-link {
   color: inherit;

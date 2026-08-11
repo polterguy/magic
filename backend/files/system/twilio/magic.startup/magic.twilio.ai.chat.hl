@@ -37,8 +37,8 @@ slots.create:magic.twilio.ai.chat
          .lambda
 
             // No such type.
-            throw:Not authorised
-               status:int:401
+            throw:No such type
+               status:int:404
 
       // Storing type for invocation towards callback slot.
       set-value:x:@.type

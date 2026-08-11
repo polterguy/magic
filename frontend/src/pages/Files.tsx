@@ -235,17 +235,16 @@ export default function Files() {
 
   /*
    * "?open=/path/file.hl" deep-links straight into a file — how the Endpoints
-   * screen jumps from an endpoint to its source. Consumed once per mount, and
-   * the tree expands down to the file so it is visible where it lives.
+   * screen and the command palette jump to source. Consumed and cleared each
+   * time it appears, so a second jump while already here works too, and the
+   * tree expands down to the file so it is visible where it lives.
    */
-  const [searchParams] = useSearchParams();
-  const openedFromLink = useRef(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
     const target = searchParams.get('open');
-    if (!target || openedFromLink.current) {
+    if (!target) {
       return;
     }
-    openedFromLink.current = true;
     const ancestors: string[] = [];
     let ancestor = '/';
     for (const part of target.split('/').filter(part => part !== '').slice(0, -1)) {
@@ -254,7 +253,8 @@ export default function Files() {
     }
     setExpanded(current => new Set([...current, ...ancestors]));
     openFile(target);
-  }, []);
+    setSearchParams({}, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   const loadTree = useCallback(async (sys: boolean) => {
     try {
@@ -339,7 +339,10 @@ export default function Files() {
     setWaiting(true);
     try {
       const text = await loadFile(path);
-      setOpenFiles(current => [...current, { path, content: text, saved: text }]);
+      // Two concurrent opens of the same file must not become two tabs.
+      setOpenFiles(current => current.some(file => file.path === path)
+        ? current
+        : [...current, { path, content: text, saved: text }]);
       setSelectedFile(path);
     } catch (err: any) {
       show(err.message, true);

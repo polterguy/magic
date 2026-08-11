@@ -9,6 +9,7 @@ import { DatabaseIcon, LogoutIcon, MoonIcon, RobotIcon, SunIcon } from './Icons'
 import { ChevronIcon } from './Icons';
 import { applyTheme, getTheme } from '../lib/theme';
 import BackendsDialog from './BackendsDialog';
+import CommandPalette from './CommandPalette';
 import { openSupport } from '../lib/support';
 import { SECTIONS } from './sections';
 
@@ -37,22 +38,51 @@ export default function Layout({ children }: { children: ReactNode }) {
   }
 
   /*
-   * Pages with unsaved state register a guard — intercept nav clicks and
-   * ask before leaving.
+   * Guard-aware navigation: pages with unsaved state register a guard, and
+   * every programmatic jump — nav clicks and palette picks alike — asks it
+   * before leaving.
    */
-  function onNavClick(event: React.MouseEvent, to: string) {
+  const go = useCallback((to: string) => {
     const guard = getNavGuard();
     if (!guard) {
+      navigate(to);
       return;
     }
-    event.preventDefault();
     guard().then(proceed => {
       if (proceed) {
         setNavGuard(null);
         navigate(to);
       }
     });
+  }, [navigate]);
+
+  function onNavClick(event: React.MouseEvent, to: string) {
+    // Without a guard the NavLink's own SPA navigation is fine as it is.
+    if (!getNavGuard()) {
+      return;
+    }
+    event.preventDefault();
+    go(to);
   }
+
+  /*
+   * The command palette. Captured at window level in the CAPTURE phase, so
+   * Ctrl/Cmd+K opens it even while CodeMirror has focus — CodeMirror stops
+   * propagation of key events it handles, but capture runs before it sees
+   * anything.
+   */
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        event.stopPropagation();
+        setPaletteOpen(open => !open);
+      }
+    }
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  }, []);
 
   useEffect(() => {
     getVersion().then(response => setVersion(response.version)).catch(() => {});
@@ -197,6 +227,17 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       </aside>
       {switching && <BackendsDialog onClose={() => setSwitching(false)} />}
+      {paletteOpen && (
+        <CommandPalette
+          go={go}
+          actions={[
+            { label: 'Toggle light/dark theme', action: toggleTheme },
+            { label: 'Switch cloudlet', action: () => setSwitching(true) },
+            { label: 'Ask Frank for help', action: openSupport },
+            { label: 'Create an API from your data', action: () => go('/generator?guided=1') },
+          ]}
+          onClose={() => setPaletteOpen(false)} />
+      )}
       <button
         className="nav-toggle"
         style={{ left: collapsed ? 0 : 256 }}

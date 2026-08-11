@@ -95,7 +95,7 @@ semaphore:crudifier
       .lambda
          throw:"You can't use the name 'system' as your module's name"
             public:true
-            status:401
+            status:int:400
 
    // Sanity checking module name, to make sure it has a name at all.
    if
@@ -109,7 +109,7 @@ semaphore:crudifier
       .lambda
          throw:"You can't use an empty string as your module's name. Your module must have a name."
             public:true
-            status:401
+            status:int:400
 
    // Creating a log entry explaining roughly what we're about to do.
    log.info:Generating CRUD backend
@@ -283,7 +283,7 @@ semaphore:crudifier
                // Cannot have a DELETE endpoint without primary keys.
                throw:There are no actual primary keys declared for your DELETE endpoint.
                   public:true
-                  status:401
+                  status:int:400
 
          /*
           * Applying DELETE arguments.
@@ -358,7 +358,7 @@ semaphore:crudifier
                // Cannot have a GET endpoint returning no actual columns.
                throw:There are no actual columns declared for your GET endpoint.
                   public:true
-                  status:401
+                  status:int:400
 
          // Checking if we have an [.arguments]/[args]/[cache] value.
          if
@@ -727,7 +727,7 @@ semaphore:crudifier
                // Cannot have a POST endpoint without any actual data to POST.
                throw:There are no actual columns declared for your POST endpoint.
                   public:true
-                  status:401
+                  status:int:400
 
          /*
           * Applying POST arguments, which are basically the [values] that
@@ -809,7 +809,7 @@ semaphore:crudifier
                 */
                throw:There are no actual columns, and/or primary keys declared for your PUT endpoint.
                   public:true
-                  status:401
+                  status:int:400
 
          /*
           * Applying PUT arguments.

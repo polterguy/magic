@@ -65,6 +65,11 @@ export default function Endpoints() {
     const target = searchParams.get('filter');
     if (target !== null) {
       setFilter(target);
+      // A deep link into a system endpoint must also reveal system endpoints,
+      // or the filter matches an empty list.
+      if (target.startsWith('magic/system/')) {
+        setShowSystem(true);
+      }
       setSearchParams({}, { replace: true });
     }
   }, [searchParams, setSearchParams]);

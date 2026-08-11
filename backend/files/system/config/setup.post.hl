@@ -42,7 +42,7 @@ if
 
       // System has been setup before
       throw:Your system has already been setup
-         status:401
+         status:int:409
          public:true
 
 // Loading our appsettings.json file now.

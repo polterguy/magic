@@ -37,7 +37,7 @@ slots.create:magic.openai.chat-interceptor.avoid-abuse
                   log.info:Potential abuse, user has been permanently blocked
                   throw:Sorry, you have been permanently blocked from accessing this AI chatbot because of abuse. Send an email to team@ainiro.io if you think this is not correct.
                      public:bool:true
-                     status:int:401
+                     status:int:403
 
             // True if we should block IP address.
             .block:bool:false
@@ -89,5 +89,5 @@ slots.create:magic.openai.chat-interceptor.avoid-abuse
                log.info:IP address was permanently blocked
                throw:Sorry, you have been permanently blocked from accessing this AI chatbot because of abuse. Send an email to team@ainiro.io if you think this is not correct.
                   public:bool:true
-                  status:int:401
+                  status:int:403
 
