@@ -973,7 +973,7 @@ export async function sendResetPasswordLink(backendUrl: string, user: string) {
 
 /*
  * Whether the configured token is accepted by the backend. Used after a
- * magnetic link hands us a token, to find out whether it is any good before
+ * magic link hands us a token, to find out whether it is any good before
  * showing the dashboard.
  */
 export async function verifyTicket() {

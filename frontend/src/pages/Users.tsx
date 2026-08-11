@@ -9,6 +9,7 @@ import RoleChips from '../components/RoleChips';
 import Tabs from '../components/Tabs';
 import { usePagedList } from '../lib/usePagedList';
 import { exportCsv } from '../lib/download';
+import { useAuth } from '../lib/AuthContext';
 import {
   MIN_PASSWORD,
   Role,
@@ -25,6 +26,8 @@ import {
   deleteUserExtra,
   listRoles,
   listUsers,
+  loadConfig,
+  sendResetPasswordLink,
   removeUserFromRole,
   updateRole,
   updateUserExtra,
@@ -81,8 +84,20 @@ function UsersTab(props: { roles: Role[] }) {
   const [editing, setEditing] = useState<User | null>(null);
   const [changingPassword, setChangingPassword] = useState<User | null>(null);
   const [creating, setCreating] = useState(false);
+  const [inviting, setInviting] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const { confirmTyped } = useDialog();
+
+  /*
+   * Inviting emails a sign-in link, which needs a configured SMTP server —
+   * null until the answer arrives, so the button doesn't flicker.
+   */
+  const [smtpReady, setSmtpReady] = useState<boolean | null>(null);
+  useEffect(() => {
+    loadConfig()
+      .then(config => setSmtpReady(!!config?.magic?.smtp?.host))
+      .catch(() => setSmtpReady(false));
+  }, []);
 
   const list = usePagedList<User>({
     load: async (offset, limit) => {
@@ -160,6 +175,15 @@ function UsersTab(props: { roles: Role[] }) {
           title="Download every user matching the current filter as CSV"
           onClick={exportUsers}>
           Export CSV
+        </button>
+        <button
+          className="btn btn-secondary"
+          disabled={smtpReady !== true}
+          title={smtpReady === false
+            ? 'Sending invites needs an SMTP server — configure one under Configuration first'
+            : 'Create a user and email them a sign-in link'}
+          onClick={() => setInviting(true)}>
+          ✉ Invite user
         </button>
         <button className="btn" onClick={() => setCreating(true)}>+ New user</button>
         <Pagination page={list.page} pageCount={list.pageCount} onPage={list.setPage} />
@@ -248,6 +272,16 @@ function UsersTab(props: { roles: Role[] }) {
             list.refresh();
           }} />
       )}
+      {inviting && (
+        <InviteUserDialog
+          roles={props.roles}
+          onClose={() => setInviting(false)}
+          onInvited={email => {
+            setInviting(false);
+            showToast('Invite sent — ' + email + ' has 20 minutes to use the link');
+            list.refresh();
+          }} />
+      )}
       {editing && (
         <EditUserDialog
           user={editing}
@@ -270,6 +304,94 @@ function UsersTab(props: { roles: Role[] }) {
       )}
       {waiting && <AiWaiter />}
     </>
+  );
+}
+
+/*
+ * Invites someone by email: creates the account with a random password
+ * nobody knows, and mails a magic sign-in link — they pick their own
+ * password once they arrive. The email doubles as the username.
+ */
+function InviteUserDialog(props: {
+  roles: Role[];
+  onClose: () => void;
+  onInvited: (email: string) => void;
+}) {
+
+  const { backend } = useAuth();
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
+
+  async function invite() {
+    setBusy(true);
+    try {
+      // A throwaway password satisfying the policy — the invitee never
+      // learns it, and changes it after following the link.
+      const random = new Uint8Array(24);
+      crypto.getRandomValues(random);
+      const password = btoa(String.fromCharCode(...random));
+      await createUser(email, password);
+      await addUserExtra(email, 'email', email);
+      if (name) {
+        await addUserExtra(email, 'name', name);
+      }
+      for (const role of selectedRoles) {
+        await addUserToRole(email, role);
+      }
+      await sendResetPasswordLink(backend?.url ?? '', email);
+      props.onInvited(email);
+    } catch (err: any) {
+      showToast(err.message, true, err.logId);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Modal
+      width={520}
+      onClose={props.onClose}
+      onSubmit={() => { if (!busy && email) invite(); }}>
+      <h2>Invite user</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        Creates the account and emails a sign-in link. The link works once and
+        expires after 20 minutes — the invitee sets their own password after
+        arriving.
+      </p>
+      <div className="form-grid">
+        <label>Email — also becomes the username
+          <input
+            type="text"
+            autoFocus
+            autoComplete="off"
+            value={email}
+            onChange={e => setEmail(e.target.value)} />
+        </label>
+        <label>Full name (optional)
+          <input type="text" value={name} onChange={e => setName(e.target.value)} />
+        </label>
+        <div>
+          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles (optional)</div>
+          <RoleChips
+            roles={props.roles}
+            selected={selectedRoles}
+            onToggle={(role, selected) => setSelectedRoles(selected
+              ? [...selectedRoles, role]
+              : selectedRoles.filter(candidate => candidate !== role))} />
+        </div>
+      </div>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button
+          className="btn"
+          onClick={invite}
+          disabled={busy || !email.includes('@')}>
+          {busy ? 'Inviting…' : 'Send invite'}
+        </button>
+      </div>
+    </Modal>
   );
 }
 

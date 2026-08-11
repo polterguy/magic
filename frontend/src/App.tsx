@@ -34,7 +34,7 @@ export default function App() {
   const { authenticated, isRoot, setupNeeded, backend } = useAuth();
   /*
    * Through the router rather than window.location, so this re-renders when
-   * a page navigates — the magnetic link screen sends you to the dashboard
+   * a page navigates — the magic link screen sends you to the dashboard
    * once the token checks out, and nothing else would notice the change.
    */
   const { pathname } = useLocation();

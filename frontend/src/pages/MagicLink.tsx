@@ -51,6 +51,13 @@ export default function MagicLink() {
     verifyTicket()
       .then(valid => {
         if (valid) {
+          /*
+           * Whoever follows an emailed link has no password they know —
+           * either a fresh invite or a reset. The dashboard sees this flag
+           * and opens the set-password dialog. OIDC and password sign-ins
+           * never pass through this screen, so they never see it.
+           */
+          sessionStorage.setItem('magic2.magic-link-arrival', '1');
           navigate('/', { replace: true });
         } else {
           // Not a token worth keeping.

@@ -7,9 +7,11 @@ import { Modal, useDialog } from '../components/Dialogs';
 import { SECTIONS } from '../components/sections';
 import SocketFeedback from '../components/SocketFeedback';
 import {
+  MIN_PASSWORD,
   availablePlugins,
   backendInfo,
   Task,
+  changePassword,
   createBot,
   openaiModels,
   modelPriceLabel,
@@ -143,6 +145,20 @@ export default function Dashboard() {
   const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(null);
   const [configuringOpenai, setConfiguringOpenai] = useState(false);
 
+  /*
+   * Arriving through an emailed sign-in link — an invite or a password
+   * reset — means the user has no password they know, so the set-password
+   * dialog opens by itself. The flag is set by the magic-link screen only,
+   * which OIDC and password sign-ins never pass through.
+   */
+  const [mustSetPassword, setMustSetPassword] = useState(false);
+  useEffect(() => {
+    if (sessionStorage.getItem('magic2.magic-link-arrival') === '1') {
+      sessionStorage.removeItem('magic2.magic-link-arrival');
+      setMustSetPassword(true);
+    }
+  }, []);
+
   // The endpoint an AI agent connects to for tool discovery.
   const mcpUrl = (backend?.url ?? '') + '/magic/modules/mcp/mcp';
 
@@ -210,7 +226,7 @@ export default function Dashboard() {
           <div className="kpi-value">{version}</div>
           <div className="kpi-label">Magic version</div>
         </div>
-        <div className="card">
+        <Link className="card kpi-link" to="/endpoints">
           <div className={endpoints !== null && endpoints > MCP_ENDPOINT_WARNING
             ? 'kpi-value warn'
             : 'kpi-value'}>
@@ -221,23 +237,28 @@ export default function Dashboard() {
             <button
               className="kpi-warn-btn"
               title="Too many endpoints for MCP clients — click for details"
-              onClick={() => setShowEndpointWarning(true)}>
+              onClick={event => {
+                // The card is a link now — the warning must not navigate.
+                event.preventDefault();
+                event.stopPropagation();
+                setShowEndpointWarning(true);
+              }}>
               !
             </button>
           )}
-        </div>
-        <div className="card">
+        </Link>
+        <Link className="card kpi-link" to="/user-roles-management">
           <div className="kpi-value">{users ?? '…'}</div>
           <div className="kpi-label">Users</div>
-        </div>
-        <div className="card">
+        </Link>
+        <Link className="card kpi-link" to="/task-manager">
           <div className="kpi-value">{tasks ?? '…'}</div>
           <div className="kpi-label">Tasks</div>
-        </div>
-        <div className="card">
+        </Link>
+        <Link className="card kpi-link" to="/log">
           <div className="kpi-value">{logItems ?? '…'}</div>
           <div className="kpi-label">Log items</div>
-        </div>
+        </Link>
       </div>
       {missingPlugins.length > 0 ? (
         <div className="card agent-prompt">
@@ -369,6 +390,9 @@ export default function Dashboard() {
           </div>
         </Modal>
       )}
+      {mustSetPassword && (
+        <SetPasswordDialog onClose={() => setMustSetPassword(false)} />
+      )}
       {configuringOpenai && (
         <OpenAiKeyDialog
           onClose={() => setConfiguringOpenai(false)}
@@ -415,6 +439,66 @@ const BOT_MODELS = [
 
 // The balanced, cost-sensible default, matching the "default" model type.
 const DEFAULT_BOT_MODEL = 'gpt-5.6-luna';
+
+/*
+ * Opens by itself after a magic-link sign-in: the user just arrived through
+ * an emailed one-shot link, so they have no password they know. Dismissable —
+ * the next emailed link works just as well.
+ */
+function SetPasswordDialog(props: { onClose: () => void }) {
+
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  async function save() {
+    if (password.length < MIN_PASSWORD) {
+      showToast('Passwords must be at least ' + MIN_PASSWORD + ' characters', true);
+      return;
+    }
+    setBusy(true);
+    try {
+      await changePassword(password);
+      showToast('Your password is set');
+      props.onClose();
+    } catch (err: any) {
+      showToast(err.message, true, err.logId);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Modal
+      width={460}
+      onClose={props.onClose}
+      onSubmit={() => { if (!busy && password) save(); }}>
+      <h2>Set your password</h2>
+      <p className="muted" style={{ marginTop: 0 }}>
+        You signed in through an emailed link, which only works once. Set a
+        password so you can sign in normally next time.
+      </p>
+      <div className="form-grid">
+        <label>New password (min {MIN_PASSWORD} characters)
+          <input
+            type="password"
+            autoFocus
+            autoComplete="new-password"
+            value={password}
+            onChange={e => setPassword(e.target.value)} />
+        </label>
+      </div>
+      <div className="modal-actions">
+        <button className="btn btn-secondary" onClick={props.onClose}>Not now</button>
+        <button
+          className="btn"
+          onClick={save}
+          disabled={busy || password.length < MIN_PASSWORD}>
+          {busy ? 'Saving…' : 'Set password'}
+        </button>
+      </div>
+    </Modal>
+  );
+}
 
 function CreateChatbot() {
 

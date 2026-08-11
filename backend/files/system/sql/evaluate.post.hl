@@ -83,4 +83,4 @@ data.connect:x:@.arguments/*/database
       // Notice, throwing exceptions as public now.
       throw:x:@.arguments/*/message
          public:bool:true
-         status:int:401
+         status:int:400

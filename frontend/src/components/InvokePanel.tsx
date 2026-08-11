@@ -10,7 +10,8 @@ import { useEffect, useState } from 'react';
 import CodeEditor from './CodeEditor';
 import { ChevronIcon } from './Icons';
 import { RawResult } from './ResultViewer';
-import { Endpoint, invokeEndpoint } from '../lib/api';
+import { copyToClipboard } from '../lib/toast';
+import { Endpoint, apiBaseUrl, invokeEndpoint } from '../lib/api';
 
 export interface InvokeResult extends RawResult {
   elapsed: number;
@@ -87,7 +88,24 @@ export default function InvokePanel(props: {
   const usesQuery = verb === 'get' || verb === 'delete';
   const isMultipart = endpoint.consumes?.includes('multipart/form-data') ?? false;
   const consumesJson = !endpoint.consumes || endpoint.consumes.includes('json');
-  const [args, setArgs] = useState<Record<string, string>>({});
+  /*
+   * Arguments survive collapsing the panel and coming back — re-testing an
+   * endpoint shouldn't mean retyping the same values. Session-scoped, keyed
+   * per endpoint, gone when the browser tab closes.
+   */
+  const storageKey = 'magic2.invoke.' + endpoint.verb + ':' + endpoint.path;
+  const [args, setArgs] = useState<Record<string, string>>(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem(storageKey) ?? '{}');
+    } catch {
+      return {};
+    }
+  });
+  useEffect(() => {
+    if (Object.keys(args).length > 0) {
+      sessionStorage.setItem(storageKey, JSON.stringify(args));
+    }
+  }, [args, storageKey]);
   const [files, setFiles] = useState<Record<string, File[]>>({});
   const [payload, setPayload] = useState(() => samplePayload(endpoint));
   const [busy, setBusy] = useState(false);
@@ -122,6 +140,54 @@ export default function InvokePanel(props: {
     (usesQuery || isMultipart || consumesJson ||
       endpoint.consumes?.includes('hyperlambda') || endpoint.consumes?.startsWith('text/'));
 
+  // The path plus the current arguments as a query string — what a GET or
+  // DELETE invocation actually requests.
+  function queryUrl() {
+    let url = endpoint.path;
+    const parts: string[] = [];
+    for (const argument of inputs) {
+      const value = args[argument.name];
+      if (value === undefined || value === '') {
+        continue;
+      }
+      const encoded = argument.type === 'date'
+        ? new Date(value).toISOString()
+        : value;
+      parts.push(encodeURIComponent(argument.name) + '=' + encodeURIComponent(encoded));
+    }
+    if (parts.length > 0) {
+      url += '?' + parts.join('&');
+    }
+    return url;
+  }
+
+  /*
+   * The current invocation as a runnable curl command — auth left as $TOKEN
+   * so the command is safe to paste into scripts and share.
+   */
+  function copyCurl() {
+    const lines = [
+      'curl -X ' + endpoint.verb.toUpperCase() + ' "' +
+        apiBaseUrl() + '/' + (usesQuery ? queryUrl() : endpoint.path) + '"',
+      '-H "Authorization: Bearer $TOKEN"',
+    ];
+    if (isMultipart) {
+      for (const argument of formFields) {
+        const value = args[argument.name];
+        if (value !== undefined && value !== '') {
+          lines.push('-F "' + argument.name + '=' + value + '"');
+        }
+      }
+      for (const argument of fileArgs) {
+        lines.push('-F "' + argument.name + '=@/path/to/file"');
+      }
+    } else if (!usesQuery) {
+      lines.push('-H "Content-Type: ' + (endpoint.consumes ?? 'application/json') + '"');
+      lines.push("-d '" + payload.replace(/'/g, "'\\''") + "'");
+    }
+    copyToClipboard(lines.join(' \\\n  '), 'The cURL command');
+  }
+
   async function invoke() {
     setBusy(true);
     setInvokeError('');
@@ -129,20 +195,7 @@ export default function InvokePanel(props: {
       let url = endpoint.path;
       let body: string | FormData | undefined = undefined;
       if (usesQuery) {
-        const parts: string[] = [];
-        for (const argument of inputs) {
-          const value = args[argument.name];
-          if (value === undefined || value === '') {
-            continue;
-          }
-          const encoded = argument.type === 'date'
-            ? new Date(value).toISOString()
-            : value;
-          parts.push(encodeURIComponent(argument.name) + '=' + encodeURIComponent(encoded));
-        }
-        if (parts.length > 0) {
-          url += '?' + parts.join('&');
-        }
+        url = queryUrl();
       } else if (isMultipart) {
         const form = new FormData();
         for (const argument of formFields) {
@@ -346,6 +399,15 @@ export default function InvokePanel(props: {
             title="OpenAPI specification for this endpoint"
             onClick={props.onOpenApi}>
             OpenAPI
+          </button>
+        )}
+        {canInvoke && (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            title="Copy this invocation as a curl command, with $TOKEN standing in for your bearer token"
+            onClick={copyCurl}>
+            Copy as cURL
           </button>
         )}
       </div>

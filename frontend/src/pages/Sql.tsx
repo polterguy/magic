@@ -151,6 +151,44 @@ export default function Sql() {
   const hintTables = useMemo(
     () => sqlHintTables(selection.selectedMeta), [selection.selectedMeta]);
 
+  /*
+   * The last 20 executed statements, newest first — failures included, since
+   * the query you want back is often the one that just broke. Session-scoped:
+   * a scratch log, not a snippet collection.
+   */
+  const [history, setHistory] = useState<{ sql: string; when: string }[]>(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem('magic2.sql-studio.history') ?? '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  function pushHistory(statement: string) {
+    setHistory(current => {
+      // Re-running a statement moves it to the top instead of duplicating it.
+      const next = [
+        { sql: statement, when: new Date().toISOString() },
+        ...current.filter(entry => entry.sql !== statement),
+      ].slice(0, 20);
+      sessionStorage.setItem('magic2.sql-studio.history', JSON.stringify(next));
+      return next;
+    });
+  }
+
+  /*
+   * No discard-confirmation here, unlike snippets: everything in history was
+   * executed, so the statement being replaced is either already in history
+   * itself or a few keystrokes of scratch — the dialog would cost more than
+   * the loss it prevents.
+   */
+  function openHistory(index: number) {
+    const entry = history[index];
+    if (entry) {
+      setSql(entry.sql);
+    }
+  }
+
   async function execute() {
     const selected = editorRef.current?.getSelection() ?? '';
     const toExecute = selected !== '' ? selected : sql;
@@ -158,6 +196,7 @@ export default function Sql() {
       showToast('Write some SQL first', true);
       return;
     }
+    pushHistory(toExecute);
     setBusy(true);
     try {
       // Batch mode only when a line actually IS a GO statement — merely
@@ -489,6 +528,17 @@ export default function Sql() {
             </option>
           ))}
         </Select>
+        {history.length > 0 && (
+          <Select value="" onChange={value => openHistory(Number(value))}>
+            <option value="">History…</option>
+            {history.map((entry, index) => (
+              <option key={entry.when + index} value={String(index)}>
+                {new Date(entry.when).toTimeString().substring(0, 5) + ' — ' +
+                  entry.sql.replace(/\s+/g, ' ').substring(0, 60)}
+              </option>
+            ))}
+          </Select>
+        )}
         <button className="btn btn-secondary btn-small" onClick={saveSnippet}>
           Save snippet
         </button>

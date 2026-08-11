@@ -360,7 +360,7 @@ export default function Login() {
         {canReset && (
           <button
             type="button"
-            className="link-like"
+            className="btn btn-secondary"
             onClick={() => {
               // Whatever they were signing in as is the obvious starting point.
               setForgotUser(username);
@@ -368,7 +368,7 @@ export default function Login() {
               setError('');
               setForgotOpen(true);
             }}>
-            Get magnetic link
+            Login using magic link
           </button>
         )}
         {providers.length > 0 && (

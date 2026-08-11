@@ -1707,6 +1707,22 @@ pre.result-json {
   color: inherit;
 }
 
+/* KPI cards that navigate — the number is the link. */
+a.kpi-link {
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.12s, transform 0.06s;
+}
+
+a.kpi-link:hover {
+  color: inherit;
+  border-color: var(--accent);
+}
+
+a.kpi-link:active {
+  transform: translateY(1px);
+}
+
 /* Step header for the Dashboard's "API from your data" guided flow. */
 .wizard-steps {
   display: flex;
