@@ -183,7 +183,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             </button>
             <button
               className="btn btn-ghost btn-small"
-              title="Ask Frank — AINIRO's AI, about Hyperlambda and Magic"
+              title="Ask Frank about Hyperlambda and Magic"
               onClick={() => { openSupport(); setMobileNav(false); }}>
               <RobotIcon />
             </button>

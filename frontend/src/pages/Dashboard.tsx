@@ -328,7 +328,7 @@ export default function Dashboard() {
             <span>
               <span className="guide-title">Ask Frank</span>
               <span className="guide-text">
-                AINIRO's AI support agent, trained on the Hyperlambda and Magic
+                Magic's AI support agent, trained on the Hyperlambda and Magic
                 documentation. Ask it how something works and it answers with
                 code you can paste.
               </span>
