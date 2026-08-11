@@ -541,7 +541,7 @@ a.btn-danger:hover { color: #fff; }
  * email — silently fell back to the browser's own styling until someone
  * noticed. Only the types that are not text boxes are excluded.
  */
-input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="range"]):not([type="color"]),
+input:where(:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="range"]):not([type="color"])),
 select,
 textarea {
   border: 1px solid var(--border);
@@ -553,8 +553,13 @@ textarea {
   color: var(--text);
 }
 
-/* No focus ring (removed globally), so the border carries the focus signal. */
-input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+/*
+ * No focus ring (removed globally), so the border carries the focus signal.
+ * :where keeps the exclusion chains above and here from carrying pseudo-class
+ * specificity — without it these base rules beat every component-level
+ * override (and silently ate .search-input's and .combo's padding).
+ */
+input:where(:not([type="checkbox"]):not([type="radio"]):not([type="file"])):focus,
 select:focus,
 textarea:focus {
   border-color: var(--accent);
@@ -1730,45 +1735,70 @@ pre.result-json {
   overflow: hidden;
 }
 
-.palette input {
+/* Flat input sharing the sheet, fronted by a terminal-style prompt glyph. */
+.palette-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.palette-prompt {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Beats the global input chrome — the palette's input IS the sheet. */
+.palette .palette-input input,
+.palette .palette-input input:focus {
+  flex: 1;
   border: none;
   outline: none;
   background: transparent;
-  padding: 15px 18px;
+  padding: 13px 0;
   font: inherit;
   font-size: var(--text-md);
   color: var(--text);
-  border-bottom: 1px solid var(--border);
   border-radius: 0;
+  box-shadow: none;
 }
 
 .palette-list {
-  max-height: 46vh;
+  max-height: 50vh;
   overflow-y: auto;
   padding: 6px;
 }
 
+/* Same voice as the terminal-bar label. */
 .palette-group {
-  padding: 8px 12px 4px;
+  padding: 8px 10px 3px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--text-soft);
 }
 
 .palette-row {
   display: flex;
-  gap: 10px;
-  align-items: baseline;
-  padding: 8px 12px;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 10px;
   border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   cursor: pointer;
 }
 
+/* Active means a tint and an edge bar, like everywhere else in the app. */
 .palette-row.selected {
-  background: var(--accent);
-  color: var(--accent-contrast);
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.palette-row .badge {
+  font-size: 10px;
+  flex-shrink: 0;
 }
 
 .palette-label {
@@ -1777,17 +1807,26 @@ pre.result-json {
   white-space: nowrap;
 }
 
+/* The matched characters — why this row is in the list. */
+.palette-label b {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.palette-file-dir {
+  color: var(--text-soft);
+}
+
+.palette-file-name {
+  font-weight: 600;
+}
+
 .palette-hint {
   color: var(--text-soft);
   font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.palette-row.selected .palette-hint {
-  color: inherit;
-  opacity: 0.75;
 }
 
 .palette-empty {

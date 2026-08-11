@@ -1,6 +1,6 @@
 import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Modal } from '../components/Dialogs';
@@ -60,6 +60,8 @@ export default function Endpoints() {
    * the module it just created. Consumed once into the filter box, so the
    * URL doesn't go stale when the user types their own filter.
    */
+  // The row key to bring into view when it appears — consumed by its ref.
+  const scrollTarget = useRef<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
     const target = searchParams.get('filter');
@@ -69,6 +71,16 @@ export default function Endpoints() {
       // or the filter matches an empty list.
       if (target.startsWith('magic/system/')) {
         setShowSystem(true);
+      }
+      /*
+       * The command palette names the exact verb too — that row opens its
+       * invoke panel by itself and scrolls into view once rendered.
+       */
+      const verb = searchParams.get('expand');
+      if (verb !== null) {
+        const key = verb + ' ' + target;
+        setExpanded(key);
+        scrollTarget.current = key;
       }
       setSearchParams({}, { replace: true });
     }
@@ -212,6 +224,13 @@ export default function Endpoints() {
                       <tr
                         className="clickable"
                         tabIndex={0}
+                        ref={element => {
+                          // One-shot: the palette's deep link lands here.
+                          if (element && scrollTarget.current === key) {
+                            scrollTarget.current = null;
+                            element.scrollIntoView({ block: 'center' });
+                          }
+                        }}
                         onClick={() => setExpanded(expanded === key ? null : key)}
                         onKeyDown={event => {
                           if (event.target === event.currentTarget &&

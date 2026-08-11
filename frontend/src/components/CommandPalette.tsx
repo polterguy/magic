@@ -21,6 +21,8 @@ export interface PaletteCommand {
   label: string;
   // Extra text the query also matches against, shown dimmed after the label.
   hint?: string;
+  // HTTP verb, rendered as the Endpoints page's coloured badge.
+  verb?: string;
   action: () => void;
 }
 
@@ -33,6 +35,8 @@ interface DynamicCommand {
   group: string;
   label: string;
   hint?: string;
+  // HTTP verb, rendered as the Endpoints page's coloured badge.
+  verb?: string;
   to: string;
 }
 
@@ -52,8 +56,12 @@ async function loadDynamic(): Promise<DynamicCommand[]> {
   const commands = [
     ...endpoints.map(endpoint => ({
       group: 'Endpoints',
-      label: endpoint.verb.toUpperCase() + ' ' + endpoint.path,
-      to: '/endpoints?filter=' + encodeURIComponent(endpoint.path),
+      label: endpoint.path,
+      verb: endpoint.verb.toUpperCase(),
+      // The verb travels along, so the Endpoints page can expand and scroll
+      // to the exact row rather than just filtering to it.
+      to: '/endpoints?filter=' + encodeURIComponent(endpoint.path) +
+        '&expand=' + encodeURIComponent(endpoint.verb),
     })),
     ...[...moduleFiles, ...wwwFiles].map(file => ({
       group: 'Files',
@@ -79,9 +87,11 @@ async function loadDynamic(): Promise<DynamicCommand[]> {
 /*
  * Subsequence scorer: every query character must appear in order. Word
  * starts and adjacent matches score higher, earlier matches break ties.
+ * Whitespace separates terms rather than matching literally, so
+ * "get log list" finds "GET magic/system/log/list".
  */
 function score(query: string, candidate: string): number {
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().replace(/\s+/g, '');
   const c = candidate.toLowerCase();
   let total = 0;
   let index = 0;
@@ -99,6 +109,34 @@ function score(query: string, candidate: string): number {
     index = at + 1;
   }
   return total - c.length / 100;
+}
+
+/*
+ * The character positions the query greedily matches inside the text — the
+ * same walk the scorer takes — so results can show WHY they matched.
+ * Characters the text doesn't carry are skipped rather than failing, since
+ * the query may have matched partly against the verb or hint.
+ */
+function highlight(text: string, query: string) {
+  if (!query.trim()) {
+    return text;
+  }
+  const positions = new Set<number>();
+  const lower = text.toLowerCase();
+  let index = 0;
+  for (const char of query.toLowerCase().replace(/\s+/g, '')) {
+    const at = lower.indexOf(char, index);
+    if (at === -1) {
+      continue;
+    }
+    positions.add(at);
+    index = at + 1;
+  }
+  if (positions.size === 0) {
+    return text;
+  }
+  return [...text].map((char, at) =>
+    positions.has(at) ? <b key={at}>{char}</b> : char);
 }
 
 export default function CommandPalette(props: {
@@ -139,6 +177,7 @@ export default function CommandPalette(props: {
       group: entry.group,
       label: entry.label,
       hint: entry.hint,
+      verb: entry.verb,
       action: () => props.go(entry.to),
     })),
   ], [dynamic, props.go, props.actions]);
@@ -152,7 +191,10 @@ export default function CommandPalette(props: {
     const ranked = commands
       .map(command => ({
         command,
-        rank: score(query, command.label + ' ' + (command.hint ?? '')),
+        rank: score(
+          query,
+          (command.verb ? command.verb + ' ' : '') +
+            command.label + ' ' + (command.hint ?? '')),
       }))
       .filter(entry => entry.rank >= 0)
       .sort((left, right) => right.rank - left.rank)
@@ -215,13 +257,16 @@ export default function CommandPalette(props: {
         role="dialog"
         aria-label="Command palette"
         onMouseDown={event => event.stopPropagation()}>
-        <input
-          autoFocus
-          type="text"
-          placeholder="Jump to a page, file, endpoint, task or model…"
-          value={query}
-          onChange={event => { setQuery(event.target.value); setSelected(0); }}
-          onKeyDown={onKeyDown} />
+        <div className="palette-input">
+          <span className="palette-prompt" aria-hidden="true">&gt;</span>
+          <input
+            autoFocus
+            type="text"
+            placeholder="Jump to a page, file, endpoint, task or model…"
+            value={query}
+            onChange={event => { setQuery(event.target.value); setSelected(0); }}
+            onKeyDown={onKeyDown} />
+        </div>
         <div className="palette-list" ref={listRef}>
           {matches.length === 0 && (
             <div className="palette-empty">Nothing matches</div>
@@ -236,7 +281,26 @@ export default function CommandPalette(props: {
                   className={'palette-row' + (index === selected ? ' selected' : '')}
                   onMouseMove={() => setSelected(index)}
                   onClick={() => run(command)}>
-                  <span className="palette-label">{command.label}</span>
+                  {command.verb && (
+                    <span className={'badge badge-' + command.verb.toLowerCase()}>
+                      {command.verb}
+                    </span>
+                  )}
+                  {command.group === 'Files' && command.label.includes('/')
+                    ? (
+                      // The directory whispers, the filename talks.
+                      <span className="palette-label">
+                        <span className="palette-file-dir">
+                          {command.label.substring(0, command.label.lastIndexOf('/') + 1)}
+                        </span>
+                        <span className="palette-file-name">
+                          {highlight(
+                            command.label.substring(command.label.lastIndexOf('/') + 1),
+                            query)}
+                        </span>
+                      </span>
+                    )
+                    : <span className="palette-label">{highlight(command.label, query)}</span>}
                   {command.hint && <span className="palette-hint">{command.hint}</span>}
                 </div>
               </div>
