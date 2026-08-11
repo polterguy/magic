@@ -300,7 +300,7 @@ export default function Dashboard() {
       {openaiConfigured === true && <CreateChatbot />}
       <div className="card agent-prompt">
         <div style={{ flex: 1 }}>
-          <h2 style={{ margin: '0 0 6px 0' }}>Create an API from your data</h2>
+          <h2 style={{ margin: '0 0 6px 0' }}>API Wizard</h2>
           <p className="muted" style={{ margin: 0 }}>
             Point the Generator at one of your databases and it turns every
             table into secured REST endpoints — a complete backend in a couple

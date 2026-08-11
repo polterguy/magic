@@ -193,7 +193,7 @@ export default function Generator() {
   return (
     <>
       <div className="page-header">
-        <h1>{guided ? 'API from your data' : 'Endpoint Generator'}</h1>
+        <h1>{guided ? 'API Wizard' : 'Endpoint Generator'}</h1>
         <p>
           {guided
             ? 'Turn a database into secured REST endpoints'

@@ -17,9 +17,9 @@ curl -fsSL https://hyperlambda.dev/docker-compose.yaml | docker compose -f - up
 
 Then open **`localhost:5555`**, point it at **`localhost:4444`**, and log in with `root` / `root`.
 
-![Editing a Hyperlambda endpoint in Hyper IDE and executing it, returning JSON in 8 milliseconds](images/magic-demo.gif)
+![The API Wizard turning the chinook database into 54 secured REST endpoints, invoking one, and extending it with AI](images/api-wizard-demo.gif)
 
-*Open any file on your server, execute it without a build or deploy step, and get the response back — parametrised, in milliseconds.*
+*Point the API Wizard at your database, and it generates a complete, secured REST API — then extend it in plain English, without a build or deploy step.*
 
 ⭐ **If this saves you time, star the repo** — it's the main way other developers find it.
 
