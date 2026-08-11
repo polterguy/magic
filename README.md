@@ -17,7 +17,7 @@ curl -fsSL https://hyperlambda.dev/docker-compose.yaml | docker compose -f - up
 
 Then open **`localhost:5555`**, point it at **`localhost:4444`**, and log in with `root` / `root`.
 
-![The API Wizard turning the chinook database into 54 secured REST endpoints, invoking one, and extending it with AI](images/api-wizard-demo.gif)
+![The API Wizard turning the chinook database into 54 secured REST endpoints, invoking one, and extending it with AI](images/api-wizard-walkthrough.gif)
 
 *Point the API Wizard at your database, and it generates a complete, secured REST API — then extend it in plain English, without a build or deploy step.*
 
@@ -73,7 +73,7 @@ In our measurements Hyperlambda is roughly **20× faster than FastAPI or Flask**
 
 ![The Magic dashboard, showing the Chatbot Wizard and the cloudlet's MCP URL](images/dashboard.png)
 
-The sidebar is the whole platform: **Hyper IDE** for editing and running any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing databases, **Generator** for turning tables into secured CRUD endpoints, plus users and roles, scheduled tasks, machine learning, and the plugin store.
+The sidebar is the whole platform: **Hyper IDE** for editing and running any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing databases, **Endpoint Generator** for turning tables into secured CRUD endpoints, plus users and roles, scheduled tasks, machine learning, and the plugin store.
 
 Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at the top hands any MCP-capable agent your endpoints as tools. The **Chatbot Wizard** goes the other way: give it a website, and it crawls the site, turns what it finds into training data, and hands you an embeddable chatbot grounded in your own content.
 
