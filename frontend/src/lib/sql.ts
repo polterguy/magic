@@ -139,7 +139,7 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
       const response = await listDatabases(type, connectionString);
       setDatabasesMeta(response.databases ?? []);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     }
   }, [type, connectionString]);
 

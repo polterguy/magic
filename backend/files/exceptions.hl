@@ -12,6 +12,13 @@ log.error:x:@.arguments/*/message
    exception:x:@.arguments/*/stack
 
 /*
+ * [log.error] returns the id of the entry it created, and returning it
+ * as [log-id] lets frontends deep link the error to its log entry.
+ */
+set-value:x:../*/return/*/log-id
+   get-value:x:@log.error
+
+/*
  * Notice, unless the [public] argument exists, and is true,
  * we return a "generic" error to caller to make sure we don't
  * disclose any security information originating from exceptions.
@@ -37,3 +44,4 @@ add:x:+
    get-nodes:x:@.arguments/*/field
 return
    message:Guru meditation, come back when Universe is in order!
+   log-id

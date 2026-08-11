@@ -70,7 +70,7 @@ export default function Sql() {
       await flushSchemaCache(type, connectionString);
       window.location.reload();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
       setWaiting(false);
     }
   }
@@ -81,7 +81,7 @@ export default function Sql() {
       await importCsvFile(type, connectionString, database, file);
       showToast('Importing ' + file.name + ' — you\'ll be notified when it completes');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -104,7 +104,7 @@ export default function Sql() {
       showToast('Table ' + tableName + ' dropped');
       await reloadSchema();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -125,7 +125,7 @@ export default function Sql() {
       showToast('Column ' + columnName + ' dropped');
       await reloadSchema();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -141,7 +141,7 @@ export default function Sql() {
       const response = await exportDdl(type, connectionString, database, tables, full);
       setDdl({ title, sql: response.result });
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -173,7 +173,7 @@ export default function Sql() {
           ? 'First 200 records returned. Turn off safe mode to return all records.'
           : count + ' records returned');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
       setResult(null);
     } finally {
       setBusy(false);
@@ -202,7 +202,7 @@ export default function Sql() {
       setSql(text);
       setSavedSql(text);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -234,7 +234,7 @@ export default function Sql() {
         setSnippets([...snippets, filename].sort());
       }
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -425,7 +425,7 @@ export default function Sql() {
                   showToast('Table ' + tableName + ' created');
                   await reloadSchema();
                 } catch (err: any) {
-                  showToast(err.message, true);
+                  showToast(err.message, true, err.logId);
                 } finally {
                   setWaiting(false);
                 }
@@ -455,7 +455,7 @@ export default function Sql() {
                   showToast('Column ' + payload.columnName + ' added');
                   await reloadSchema();
                 } catch (err: any) {
-                  showToast(err.message, true);
+                  showToast(err.message, true, err.logId);
                 } finally {
                   setWaiting(false);
                 }

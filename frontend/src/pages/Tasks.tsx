@@ -64,7 +64,7 @@ export default function Tasks() {
     try {
       setEditing({ task: await getTask(task.id), isNew: false });
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -94,7 +94,7 @@ export default function Tasks() {
       await executeTask(task.id);
       showToast('Task ' + task.id + ' executed');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -116,7 +116,7 @@ export default function Tasks() {
       showToast('Task ' + task.id + ' deleted');
       list.refresh();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -140,7 +140,7 @@ export default function Tasks() {
       await deleteSchedule(schedule.id);
       list.refresh();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -157,7 +157,7 @@ export default function Tasks() {
       showToast('Schedule added to ' + scheduling.id);
       list.refresh();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -337,7 +337,7 @@ function TaskDialog(props: {
       setSaved({ description, code });
       props.onSaved(id, props.isNew);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }

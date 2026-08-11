@@ -46,7 +46,7 @@ export default function Users() {
     try {
       setRoles(await listRoles() ?? []);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     }
   }, []);
 
@@ -117,7 +117,7 @@ function UsersTab(props: { roles: Role[] }) {
       showToast(username + ' deleted');
       list.refresh();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -139,7 +139,7 @@ function UsersTab(props: { roles: Role[] }) {
         created: user.created ?? '',
       })), 'users.csv');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -306,7 +306,7 @@ function NewUserDialog(props: {
       }
       props.onCreated(username);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
@@ -393,7 +393,7 @@ function EditUserDialog(props: {
       }
     } catch (err: any) {
       setMemberRoles(memberRoles);
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     }
   }
 
@@ -426,7 +426,7 @@ function EditUserDialog(props: {
       }
       setFields(fields.filter(field => field.type !== type));
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
@@ -444,7 +444,7 @@ function EditUserDialog(props: {
       }
       props.onSaved();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
@@ -527,7 +527,7 @@ function ChangePasswordDialog(props: {
       await changeUserPassword(props.user.username, password);
       props.onSaved();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
@@ -591,7 +591,7 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void }) {
       showToast('Role ' + role.name + ' deleted');
       props.onChanged();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -690,7 +690,7 @@ function RoleDialog(props: {
       }
       props.onSaved(name);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }

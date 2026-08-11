@@ -19,18 +19,18 @@ namespace magic.lambda.strings.tests
     {
         private class NullLogger : ILogger
         {
-            public Task DebugAsync(string content) => Task.CompletedTask;
-            public Task DebugAsync(string content, Dictionary<string, string> meta) => Task.CompletedTask;
-            public Task InfoAsync(string content) => Task.CompletedTask;
-            public Task InfoAsync(string content, Dictionary<string, string> meta) => Task.CompletedTask;
-            public Task ErrorAsync(string content) => Task.CompletedTask;
-            public Task ErrorAsync(string content, Dictionary<string, string> meta) => Task.CompletedTask;
-            public Task ErrorAsync(string content, string stackTrace) => Task.CompletedTask;
-            public Task ErrorAsync(string content, Dictionary<string, string> meta, string stackTrace) => Task.CompletedTask;
-            public Task FatalAsync(string content) => Task.CompletedTask;
-            public Task FatalAsync(string content, Dictionary<string, string> meta) => Task.CompletedTask;
-            public Task FatalAsync(string content, string stackTrace) => Task.CompletedTask;
-            public Task FatalAsync(string content, Dictionary<string, string> meta, string stackTrace) => Task.CompletedTask;
+            public Task<object> DebugAsync(string content) => Task.FromResult<object>(null);
+            public Task<object> DebugAsync(string content, Dictionary<string, string> meta) => Task.FromResult<object>(null);
+            public Task<object> InfoAsync(string content) => Task.FromResult<object>(null);
+            public Task<object> InfoAsync(string content, Dictionary<string, string> meta) => Task.FromResult<object>(null);
+            public Task<object> ErrorAsync(string content) => Task.FromResult<object>(null);
+            public Task<object> ErrorAsync(string content, Dictionary<string, string> meta) => Task.FromResult<object>(null);
+            public Task<object> ErrorAsync(string content, string stackTrace) => Task.FromResult<object>(null);
+            public Task<object> ErrorAsync(string content, Dictionary<string, string> meta, string stackTrace) => Task.FromResult<object>(null);
+            public Task<object> FatalAsync(string content) => Task.FromResult<object>(null);
+            public Task<object> FatalAsync(string content, Dictionary<string, string> meta) => Task.FromResult<object>(null);
+            public Task<object> FatalAsync(string content, string stackTrace) => Task.FromResult<object>(null);
+            public Task<object> FatalAsync(string content, Dictionary<string, string> meta, string stackTrace) => Task.FromResult<object>(null);
         }
 
         static public Node Evaluate(string hl)

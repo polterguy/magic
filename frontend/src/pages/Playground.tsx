@@ -75,7 +75,7 @@ export default function Playground() {
       setResult(display);
       setResultMode(mode);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
       setResult('');
     } finally {
       setBusy(false);
@@ -104,7 +104,7 @@ export default function Playground() {
       setCode(text);
       setSavedCode(text);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
@@ -133,7 +133,7 @@ export default function Playground() {
       }
       showToast('Saved ' + filename, false);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }

@@ -101,7 +101,7 @@ export default function TrainingTab(props: {
       await mlSnippetDelete(snippet.id);
       list.refresh();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -130,7 +130,7 @@ export default function TrainingTab(props: {
       list.setPage(0);
       list.refresh();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -143,7 +143,7 @@ export default function TrainingTab(props: {
     try {
       setScraping({ channel: (await gibberish()).result, options });
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -155,7 +155,7 @@ export default function TrainingTab(props: {
       const raw = await mlSnippetsExportRaw(type, filter);
       downloadBlob(raw.blob, dispositionFilename(raw.disposition) ?? type + '.csv');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -336,7 +336,7 @@ export default function TrainingTab(props: {
           channel={scraping.channel}
           onReady={() => {
             importPage({ ...scraping.options, type, channel: scraping.channel })
-              .catch(err => showToast(err.message, true));
+              .catch(err => showToast(err.message, true, err.logId));
           }}
           onClose={() => { setScraping(null); list.refresh(); }} />
       )}

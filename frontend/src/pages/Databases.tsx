@@ -64,7 +64,7 @@ function InternalTab() {
       const response = await listDatabases('sqlite', 'generic');
       setDatabases(response.databases ?? []);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setLoading(false);
     }
@@ -269,7 +269,7 @@ function ExternalTab() {
           .catch(() => updateStatus(row, 'down'));
       }
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setLoading(false);
     }

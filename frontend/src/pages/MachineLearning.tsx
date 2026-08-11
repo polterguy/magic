@@ -28,7 +28,7 @@ export default function MachineLearning() {
     try {
       setTypes(await mlTypes() ?? []);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     }
   }, []);
 

@@ -43,73 +43,73 @@ namespace magic.lambda.logging.services
         #region [ -- ILogger interface implementation -- ]
 
         /// <inheritdoc/>
-        public Task DebugAsync(string content)
+        public Task<object> DebugAsync(string content)
         {
             return InsertLogEntryAsync(_signaler, "debug", content, null, null);
         }
 
         /// <inheritdoc/>
-        public Task DebugAsync(string content, Dictionary<string, string> meta)
+        public Task<object> DebugAsync(string content, Dictionary<string, string> meta)
         {
             return InsertLogEntryAsync(_signaler, "debug", content, meta, null);
         }
 
         /// <inheritdoc/>
-        public Task InfoAsync(string content)
+        public Task<object> InfoAsync(string content)
         {
             return InsertLogEntryAsync(_signaler, "info", content, null, null);
         }
 
         /// <inheritdoc/>
-        public Task InfoAsync(string content, Dictionary<string, string> meta)
+        public Task<object> InfoAsync(string content, Dictionary<string, string> meta)
         {
             return InsertLogEntryAsync(_signaler, "info", content, meta, null);
         }
 
         /// <inheritdoc/>
-        public Task ErrorAsync(string content)
+        public Task<object> ErrorAsync(string content)
         {
             return InsertLogEntryAsync(_signaler, "error", content, null, null);
         }
 
         /// <inheritdoc/>
-        public Task ErrorAsync(string content, Dictionary<string, string> meta)
+        public Task<object> ErrorAsync(string content, Dictionary<string, string> meta)
         {
             return InsertLogEntryAsync(_signaler, "error", content, meta, null);
         }
 
         /// <inheritdoc/>
-        public Task ErrorAsync(string content, string stackTrace)
+        public Task<object> ErrorAsync(string content, string stackTrace)
         {
             return InsertLogEntryAsync(_signaler, "error", content, null, stackTrace);
         }
 
         /// <inheritdoc/>
-        public Task ErrorAsync(string content, Dictionary<string, string> meta, string stackTrace)
+        public Task<object> ErrorAsync(string content, Dictionary<string, string> meta, string stackTrace)
         {
             return InsertLogEntryAsync(_signaler, "error", content, meta, stackTrace);
         }
 
         /// <inheritdoc/>
-        public Task FatalAsync(string content)
+        public Task<object> FatalAsync(string content)
         {
             return InsertLogEntryAsync(_signaler, "fatal", content, null, null);
         }
 
         /// <inheritdoc/>
-        public Task FatalAsync(string content, Dictionary<string, string> meta)
+        public Task<object> FatalAsync(string content, Dictionary<string, string> meta)
         {
             return InsertLogEntryAsync(_signaler, "fatal", content, meta, null);
         }
 
         /// <inheritdoc/>
-        public Task FatalAsync(string content, string stackTrace)
+        public Task<object> FatalAsync(string content, string stackTrace)
         {
             return InsertLogEntryAsync(_signaler, "fatal", content, null, stackTrace);
         }
 
         /// <inheritdoc/>
-        public Task FatalAsync(string content, Dictionary<string, string> meta, string stackTrace)
+        public Task<object> FatalAsync(string content, Dictionary<string, string> meta, string stackTrace)
         {
             return InsertLogEntryAsync(_signaler, "fatal", content, meta, stackTrace);
         }
@@ -340,7 +340,7 @@ namespace magic.lambda.logging.services
 
         #region [ -- Private helper methods and properties -- ]
 
-        async Task InsertLogEntryAsync(
+        async Task<object> InsertLogEntryAsync(
             ISignaler signaler,
             string type,
             string content,
@@ -369,23 +369,24 @@ namespace magic.lambda.logging.services
             }
 
             // Verifying we're supposed to log.
-            if (shouldLog)
-            {
-                var dbNode = new Node();
-                using (var shutdownLock = new ShutdownLock())
-                {
-                    await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode);
-                    using (var connection = dbNode.Get<DbConnection>())
-                    {
-                        // Opening database connection.
-                        connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
-                        await connection.OpenAsync();
+            if (!shouldLog)
+                return null;
 
-                        // Creating our insert commend.
-                        using (var cmd = CreateCommand(signaler, connection, _dataSettings.DefaultDatabaseType, type, content, meta, stackTrace))
-                        {
-                            await cmd.ExecuteNonQueryAsync();
-                        }
+            var dbNode = new Node();
+            using (var shutdownLock = new ShutdownLock())
+            {
+                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode);
+                using (var connection = dbNode.Get<DbConnection>())
+                {
+                    // Opening database connection.
+                    connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
+                    await connection.OpenAsync();
+
+                    // Creating our insert commend.
+                    using (var cmd = CreateCommand(signaler, connection, _dataSettings.DefaultDatabaseType, type, content, meta, stackTrace))
+                    {
+                        // The command selects the id of the entry it inserts.
+                        return await cmd.ExecuteScalarAsync();
                     }
                 }
             }
@@ -417,6 +418,26 @@ namespace magic.lambda.logging.services
             if (meta != null && meta.Count > 0)
                 builder.Append(", @meta");
             builder.Append(")");
+
+            // Returning the id of the inserted entry, allowing callers to reference it.
+            switch (dbType)
+            {
+                case "mysql":
+                    builder.Append("; select last_insert_id()");
+                    break;
+
+                case "mssql":
+                    builder.Append("; select scope_identity()");
+                    break;
+
+                case "pgsql":
+                    builder.Append(" returning id");
+                    break;
+
+                case "sqlite":
+                    builder.Append("; select last_insert_rowid()");
+                    break;
+            }
             command.CommandText = builder.ToString();
 
             // Adding arguments to invocation.

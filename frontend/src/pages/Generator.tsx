@@ -396,7 +396,7 @@ function CrudTab() {
       showToast(`Generated ${generated} endpoints (${loc} lines of code) in /modules/` +
         (moduleName || selection.database) + '/');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
@@ -719,7 +719,7 @@ function SqlEndpointTab() {
     try {
       setSql(await loadFile(filename));
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     }
   }
 
@@ -772,7 +772,7 @@ function SqlEndpointTab() {
       });
       showToast('Endpoint magic/' + moduleName + '/' + endpointName + ' created');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }

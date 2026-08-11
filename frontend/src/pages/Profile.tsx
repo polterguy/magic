@@ -28,7 +28,7 @@ export default function Profile() {
         setName(me?.extra?.find(entry => entry.type === 'name')?.value ?? '');
         setEmail(me?.extra?.find(entry => entry.type === 'email')?.value ?? '');
       })
-      .catch(err => showToast(err.message, true));
+      .catch(err => showToast(err.message, true, err.logId));
   }, [backend?.username]);
 
   async function saveDetails() {
@@ -38,7 +38,7 @@ export default function Profile() {
       await saveUserExtra(backend!.username, 'email', email.trim());
       showToast('Your details were saved');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setSavingDetails(false);
     }
@@ -59,7 +59,7 @@ export default function Profile() {
       showToast('Password changed — sign in again with your new password');
       setTimeout(logout, 2000);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
       setChangingPassword(false);
     }
   }

@@ -1,5 +1,6 @@
 import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
+import { useSearchParams } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LogItem, countLog, listLog } from '../lib/api';
 import { useDebounced } from '../lib/usePagedList';
@@ -22,6 +23,8 @@ export default function Log() {
   // change, and whichever answers last would win otherwise.
   const seq = useRef(0);
   const debouncedQuery = useDebounced(query);
+  // The entry a ?id= deep link pointed at, marked in the list.
+  const [highlight, setHighlight] = useState<number | null>(null);
 
   const load = useCallback(async (from: number | null, filter: string) => {
     const current = ++seq.current;
@@ -38,7 +41,7 @@ export default function Log() {
       setCount(logCount.count);
     } catch (err: any) {
       if (current === seq.current) {
-        showToast(err.message, true);
+        showToast(err.message, true, err.logId);
       }
     } finally {
       if (current === seq.current) {
@@ -51,6 +54,35 @@ export default function Log() {
     load(null, debouncedQuery);
     setFromStack([]);
   }, [load, debouncedQuery]);
+
+  /*
+   * ?id= deep links — error toasts link here with the id of the log entry
+   * behind the error. Paging starts just above that id so the entry is the
+   * top row, and "‹ Newer" walks back to the head of the log. Consumed
+   * once, and declared after the initial load so this request wins.
+   */
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const target = searchParams.get('id');
+    if (target !== null) {
+      const from = Number(target) + 1;
+      setFromStack([from]);
+      setHighlight(Number(target));
+      load(from, '');
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams, load]);
+
+  // Deep-linked entries open expanded — the stack trace is what you came for.
+  useEffect(() => {
+    if (highlight === null || items === null) {
+      return;
+    }
+    const hit = items.find(item => Number(item.id) === highlight);
+    if (hit?.exception) {
+      setExpanded(hit.id);
+    }
+  }, [items, highlight]);
 
   function nextPage() {
     if (!items || items.length === 0) {
@@ -123,6 +155,7 @@ export default function Log() {
               <LogRow
                 key={item.id}
                 item={item}
+                highlighted={Number(item.id) === highlight}
                 expanded={expanded === item.id}
                 onToggle={() => setExpanded(expanded === item.id ? null : item.id)} />
             ))}
@@ -158,7 +191,13 @@ function isoDate(created: string): string {
   return new Date(created).toISOString().replace(/\.\d{3}Z$/, 'Z');
 }
 
-function LogRow(props: { item: LogItem; expanded: boolean; onToggle: () => void }) {
+function LogRow(props: {
+  item: LogItem;
+  // The entry a deep link pointed at, marked so the visitor can spot it.
+  highlighted: boolean;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
 
   const { item } = props;
   // Only rows carrying a stack trace have anything to reveal.
@@ -166,7 +205,7 @@ function LogRow(props: { item: LogItem; expanded: boolean; onToggle: () => void 
   return (
     <>
       <tr
-        className={canExpand ? 'clickable' : ''}
+        className={(canExpand ? 'clickable' : '') + (props.highlighted ? ' log-target' : '')}
         tabIndex={canExpand ? 0 : undefined}
         aria-expanded={canExpand ? props.expanded : undefined}
         onClick={canExpand ? props.onToggle : undefined}

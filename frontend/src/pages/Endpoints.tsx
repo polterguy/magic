@@ -50,7 +50,7 @@ export default function Endpoints() {
   useEffect(() => {
     listEndpoints()
       .then(setEndpoints)
-      .catch(err => showToast(err.message, true))
+      .catch(err => showToast(err.message, true, err.logId))
       .finally(() => setLoading(false));
   }, []);
 
@@ -111,7 +111,7 @@ export default function Endpoints() {
       const spec = await getOpenApiSpec(target);
       setOpenApiSpec({ json: JSON.stringify(spec, null, 2), target });
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }

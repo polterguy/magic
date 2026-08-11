@@ -8,6 +8,9 @@ export interface Toast {
   id: number;
   text: string;
   isError: boolean;
+  // Id of the log entry the backend wrote for an API error, when it
+  // returned one — lets the toast link straight to the log.
+  logId?: number;
 }
 
 type Listener = (toast: Toast) => void;
@@ -19,8 +22,8 @@ export function setToastListener(value: Listener | null) {
   listener = value;
 }
 
-export function showToast(text: string, isError = false) {
-  listener?.({ id: ++nextId, text, isError });
+export function showToast(text: string, isError = false, logId?: number) {
+  listener?.({ id: ++nextId, text, isError, logId });
 }
 
 /*

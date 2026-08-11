@@ -50,7 +50,7 @@ export default function TypesTab(props: {
       showToast('Model ' + type + ' deleted');
       props.onChanged();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -94,7 +94,7 @@ export default function TypesTab(props: {
       const channel = (await gibberish()).result;
       setVectorising({ type, channel, total });
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
@@ -195,7 +195,7 @@ export default function TypesTab(props: {
           }}
           onReady={() => {
             vectoriseType(vectorising.type, vectorising.channel)
-              .catch(err => showToast(err.message, true));
+              .catch(err => showToast(err.message, true, err.logId));
           }}
           onClose={() => setVectorising(null)} />
       )}

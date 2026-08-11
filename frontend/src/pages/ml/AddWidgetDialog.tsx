@@ -52,7 +52,7 @@ export default function AddWidgetDialog(props: {
         'Widget added to ' + props.type + ' — edit its prompt to describe when to use it');
       props.onAdded();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }

@@ -78,7 +78,7 @@ function TaskSection(props: {
       await executeTask(task.id);
       showToast('Task ' + task.id + ' executed');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setRunning(null);
     }
@@ -193,7 +193,7 @@ export default function Dashboard() {
        */
       setMissingPlugins([]);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setInstalling(false);
     }
@@ -514,7 +514,7 @@ function CreateChatbot() {
               max: Number(max) || 25,
               autoDestruct,
               channel: crawl.channel,
-            }).catch(err => showToast(err.message, true));
+            }).catch(err => showToast(err.message, true, err.logId));
           }}
           isComplete={message => message.message.trim() === 'Done!'}
           renderDone={messages => {

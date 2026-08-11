@@ -20,7 +20,9 @@ namespace magic.lambda.logging.slots
         ValueDescription = "Log message to write",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
-        ReturnsMode = SlotReturnsMode.None,
+        ReturnsMode = SlotReturnsMode.Value,
+        ReturnsKind = "log-entry-id",
+        ReturnsDescription = "Id of the log entry created, or null if the configured log level filtered it out",
         SignatureType = typeof(global::magic.lambda.logging.signatures.LogWriteSignature))]
     public class LogInfo : ISlotAsync
     {
@@ -44,11 +46,11 @@ namespace magic.lambda.logging.slots
         {
             // Retrieving log content and logging data.
             var args = Utilities.GetLogContent(input, signaler);
-            await _logger.InfoAsync(args.Content, args.Meta);
+            var id = await _logger.InfoAsync(args.Content, args.Meta);
 
-            // House cleaning.
+            // House cleaning, returning id of created log entry.
             input.Clear();
-            input.Value = null;
+            input.Value = id;
         }
     }
 }

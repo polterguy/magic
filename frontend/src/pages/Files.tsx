@@ -265,7 +265,7 @@ export default function Files() {
       setFolders(folderList ?? []);
       setFiles(fileList ?? []);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     }
   }, []);
 

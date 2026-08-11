@@ -21,9 +21,13 @@ export function apiBaseUrl() {
 
 export class ApiError extends Error {
   status: number;
-  constructor(status: number, message: string) {
+  // Id of the log entry the backend wrote for this error, when its
+  // exception handler returned one — the toast turns it into a deep link.
+  logId?: number;
+  constructor(status: number, message: string, logId?: number) {
     super(message);
     this.status = status;
+    this.logId = logId;
   }
 }
 
@@ -44,12 +48,15 @@ export function setUnauthorizedHandler(handler: (() => void) | null) {
  */
 async function throwApiError(response: Response): Promise<never> {
   let message = response.statusText;
+  let logId: number | undefined;
   try {
-    message = (await response.json()).message ?? message;
+    const payload = await response.json();
+    message = payload.message ?? message;
+    logId = payload['log-id'];
   } catch {
     // Non-JSON error body, statusText is the best we have.
   }
-  throw new ApiError(response.status, message);
+  throw new ApiError(response.status, message, logId);
 }
 
 async function request<T>(

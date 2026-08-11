@@ -78,7 +78,7 @@ export default function EditSnippetDialog(props: {
       showToast('Snippet saved');
       props.onSaved();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }

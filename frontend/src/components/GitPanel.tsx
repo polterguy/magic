@@ -60,7 +60,7 @@ export default function GitPanel(props: {
         props.onChanged();
       }
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }

@@ -1690,6 +1690,22 @@ pre.result-json {
   color: var(--danger);
 }
 
+/* "View log entry →" on backend-error toasts. */
+.toast a {
+  display: block;
+  margin-top: 4px;
+  color: inherit;
+}
+
+/* The log entry an error toast deep-linked to. */
+tr.log-target > td {
+  background: var(--overlay);
+}
+
+tr.log-target > td:first-child {
+  box-shadow: inset 3px 0 0 var(--danger);
+}
+
 .toast-close {
   border: none;
   background: none;

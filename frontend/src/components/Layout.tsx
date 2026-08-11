@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { createSocket } from '../lib/socket';
 import { useAuth } from '../lib/AuthContext';
 import { getVersion } from '../lib/api';
@@ -64,7 +64,7 @@ export default function Layout({ children }: { children: ReactNode }) {
    * and payload as the old dashboard: {type: 'success'|'error', message}.
    * Each message becomes its own toast so several can stack.
    */
-  const [toasts, setToasts] = useState<{ id: number; text: string; isError: boolean }[]>([]);
+  const [toasts, setToasts] = useState<{ id: number; text: string; isError: boolean; logId?: number }[]>([]);
   const nextToastId = useRef(0);
   // Auto-dismiss timer per toast, so dismissing by hand also stops its timer.
   const timers = useRef(new Map<number, number>());
@@ -80,9 +80,9 @@ export default function Layout({ children }: { children: ReactNode }) {
     setToasts(current => current.filter(toast => toast.id !== id));
   }
 
-  const pushToast = useCallback((text: string, isError: boolean) => {
+  const pushToast = useCallback((text: string, isError: boolean, logId?: number) => {
     const id = ++nextToastId.current;
-    setToasts(current => [...current, { id, text, isError }]);
+    setToasts(current => [...current, { id, text, isError, logId }]);
     timers.current.set(id, window.setTimeout(() => {
       timers.current.delete(id);
       setToasts(current => current.filter(toast => toast.id !== id));
@@ -91,7 +91,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   // Toasts raised from anywhere in the app — clipboard copies, and so on.
   useEffect(() => {
-    setToastListener(toast => pushToast(toast.text, toast.isError));
+    setToastListener(toast => pushToast(toast.text, toast.isError, toast.logId));
     return () => {
       setToastListener(null);
       timers.current.forEach(clearTimeout);
@@ -223,7 +223,17 @@ export default function Layout({ children }: { children: ReactNode }) {
               key={toast.id}
               className={'toast' + (toast.isError ? ' error' : '')}
               role={toast.isError ? 'alert' : undefined}>
-              <span>{toast.text}</span>
+              <span>
+                {toast.text}
+                {toast.logId && (
+                  // Backend errors carry the id of the log entry they wrote.
+                  <Link
+                    to={'/log?id=' + toast.logId}
+                    onClick={() => dismissToast(toast.id)}>
+                    View log entry →
+                  </Link>
+                )}
+              </span>
               <button
                 className="toast-close"
                 title="Dismiss"

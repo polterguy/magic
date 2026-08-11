@@ -64,7 +64,7 @@ export default function Plugins() {
   useEffect(() => {
     availablePlugins()
       .then(list => setAvailable(list ?? []))
-      .catch(err => showToast(err.message, true))
+      .catch(err => showToast(err.message, true, err.logId))
       .finally(() => setLoading(false));
     installedPlugins()
       // A manifest's module_name is the folder it installed into, which is
@@ -111,7 +111,7 @@ export default function Plugins() {
       const list = await installedPlugins();
       setInstalled(new Set((list ?? []).map((app: any) => app.module_name)));
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setUploading(false);
     }
@@ -146,7 +146,7 @@ export default function Plugins() {
       showToast(app.name + ' is installing — you will be notified when it completes');
       setInstalled(current => new Set(current).add(app.name));
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setInstalling(null);
     }

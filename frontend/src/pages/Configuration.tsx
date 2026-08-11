@@ -31,7 +31,7 @@ export default function Configuration() {
   function reload() {
     loadConfig()
       .then(response => setConfig(JSON.stringify(response, null, 2)))
-      .catch(err => showToast(err.message, true));
+      .catch(err => showToast(err.message, true, err.logId));
   }
 
   async function downloadBackup() {
@@ -40,7 +40,7 @@ export default function Configuration() {
       const result = await downloadFileRaw(CONFIG_FOLDER + CONFIG_FILE);
       downloadBlob(result.blob, CONFIG_FILE);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
@@ -62,7 +62,7 @@ export default function Configuration() {
       reload();
       showToast('Configuration restored from ' + CONFIG_FILE);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
@@ -83,7 +83,7 @@ export default function Configuration() {
       setConfig(JSON.stringify(parsed, null, 2));
       showToast('Configuration saved');
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
@@ -580,7 +580,7 @@ function OpenIdDialog(props: {
         setProvider(found[0] ?? '');
       })
       .catch(err => {
-        showToast(err.message, true);
+        showToast(err.message, true, err.logId);
         setProviders([]);
       });
   }, []);

@@ -104,7 +104,7 @@ export default function ImportDialog(props: {
       const channel = (await gibberish()).result;
       setCrawling(channel);
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setUploading(false);
     }
@@ -121,7 +121,7 @@ export default function ImportDialog(props: {
         setUrlListFile(files[0]);
         setScraping((await gibberish()).result);
       } catch (err: any) {
-        showToast(err.message, true);
+        showToast(err.message, true, err.logId);
       } finally {
         setUploading(false);
       }
@@ -160,7 +160,7 @@ export default function ImportDialog(props: {
       showToast(count + ' ' + noun);
       props.onClose();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setUploading(false);
     }
@@ -404,7 +404,7 @@ export default function ImportDialog(props: {
               code,
               meta,
               channel: crawling,
-            }).catch(err => showToast(err.message, true));
+            }).catch(err => showToast(err.message, true, err.logId));
           }}
           onClose={() => { setCrawling(null); props.onClose(); }} />
       )}
@@ -414,7 +414,7 @@ export default function ImportDialog(props: {
           channel={scraping}
           onReady={() => {
             uploadUrlList(props.type, urlListFile, scraping, urlListVectorize)
-              .catch(err => showToast(err.message, true));
+              .catch(err => showToast(err.message, true, err.logId));
           }}
           onClose={() => { setScraping(null); props.onClose(); }} />
       )}

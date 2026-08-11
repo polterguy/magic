@@ -84,7 +84,7 @@ export function usePagedList<T>(options: {
       })
       .catch(err => {
         if (current === seq.current) {
-          showToast(err.message, true);
+          showToast(err.message, true, err.logId);
         }
       })
       .finally(() => {

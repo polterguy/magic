@@ -69,7 +69,7 @@ export default function AddFunctionDialog(props: {
       showToast('AI function ' + workflow.name + ' added to ' + props.type);
       props.onInstalled();
     } catch (err: any) {
-      showToast(err.message, true);
+      showToast(err.message, true, err.logId);
     } finally {
       setBusy(false);
     }
