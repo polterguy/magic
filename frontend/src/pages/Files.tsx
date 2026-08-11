@@ -1,4 +1,5 @@
 import SearchInput from '../components/SearchInput';
+import { useSearchParams } from 'react-router-dom';
 import { copyToClipboard, showToast } from '../lib/toast';
 import { explainHyperlambda } from '../lib/support';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -231,6 +232,29 @@ export default function Files() {
       sys: systemFiles,
     }));
   }, [workspaceKey, openFiles, selectedFile, expanded, systemFiles]);
+
+  /*
+   * "?open=/path/file.hl" deep-links straight into a file — how the Endpoints
+   * screen jumps from an endpoint to its source. Consumed once per mount, and
+   * the tree expands down to the file so it is visible where it lives.
+   */
+  const [searchParams] = useSearchParams();
+  const openedFromLink = useRef(false);
+  useEffect(() => {
+    const target = searchParams.get('open');
+    if (!target || openedFromLink.current) {
+      return;
+    }
+    openedFromLink.current = true;
+    const ancestors: string[] = [];
+    let ancestor = '/';
+    for (const part of target.split('/').filter(part => part !== '').slice(0, -1)) {
+      ancestor += part + '/';
+      ancestors.push(ancestor);
+    }
+    setExpanded(current => new Set([...current, ...ancestors]));
+    openFile(target);
+  }, []);
 
   const loadTree = useCallback(async (sys: boolean) => {
     try {

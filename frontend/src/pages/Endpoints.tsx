@@ -1,12 +1,13 @@
 import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
 import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Modal } from '../components/Dialogs';
 import AiWaiter from '../components/AiWaiter';
 import OpenApiDialog from '../components/OpenApiDialog';
 import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
-import { BracesIcon, ChevronIcon } from '../components/Icons';
+import { BracesIcon, ChevronIcon, CodeFileIcon } from '../components/Icons';
 import { Endpoint, getOpenApiSpec, listEndpoints } from '../lib/api';
 
 
@@ -211,10 +212,26 @@ export default function Endpoints() {
                               <span className="chip" key={role}>{role}</span>)}
                           </span>
                         </td>
+                        <td style={{ width: 44, textAlign: 'right' }}>
+                          {/*
+                            * The endpoint IS a file — this jump teaches that
+                            * better than any documentation could. Same path
+                            * derivation the OpenAPI action below uses.
+                            */}
+                          <Link
+                            className="icon-btn"
+                            title="Open this endpoint's source file in Hyper IDE"
+                            to={'/hyper-ide?open=' + encodeURIComponent(
+                              '/' + endpoint.path.substring('magic/'.length) +
+                              '.' + endpoint.verb.toLowerCase() + '.hl')}
+                            onClick={event => event.stopPropagation()}>
+                            <CodeFileIcon />
+                          </Link>
+                        </td>
                       </tr>
                       {expanded === key && (
                         <tr>
-                          <td colSpan={3} style={{ background: 'var(--accent-soft)', padding: 12 }}>
+                          <td colSpan={4} style={{ background: 'var(--accent-soft)', padding: 12 }}>
                             <div className="card" style={{ padding: 16 }}>
                               <InvokePanel
                                 endpoint={endpoint}
