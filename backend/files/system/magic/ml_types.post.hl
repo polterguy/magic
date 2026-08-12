@@ -15,6 +15,7 @@
    use_embeddings:int
    threshold:decimal
    vector_model:string
+   retrieval:string
    greeting:string
    base_url:string
    contact_us:string
@@ -56,6 +57,7 @@ validators.integer:x:@.arguments/*/max_tokens
 // Applying sane defaults.
 validators.default:x:@.arguments
    vector_model:text-embedding-3-small
+   retrieval:embeddings
    model:gpt-5-chat-latest
    threshold:decimal:0.3
 

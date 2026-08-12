@@ -52,6 +52,12 @@ export default function EditModelDialog(props: {
   const [supervised, setSupervised] = useState(existing ? existing.supervised === 1 : true);
   const [useEmbeddings, setUseEmbeddings] =
     useState(existing ? existing.use_embeddings === 1 : true);
+  /*
+   * How get-context finds snippets: semantic (cosine over embeddings),
+   * keyword (BM25 over an FTS index, needing no OpenAI key), or both merged
+   * with reciprocal rank fusion.
+   */
+  const [retrieval, setRetrieval] = useState(existing?.retrieval ?? 'embeddings');
   const [cached, setCached] = useState(existing?.cached === 1);
   const [greeting, setGreeting] =
     useState(existing?.greeting ?? 'Hi there, how can I help you?');
@@ -139,6 +145,7 @@ export default function EditModelDialog(props: {
       system_message: systemMessage,
       greeting,
       use_embeddings: useEmbeddings ? 1 : 0,
+      retrieval,
       ...extra,
       api_key: extra.api_key?.length > 0 ? extra.api_key : null,
       no_requests: Number(extra.no_requests),
@@ -236,15 +243,20 @@ export default function EditModelDialog(props: {
                 value={temperature}
                 onChange={e => setTemperature(e.target.value)} />
             </label>
-            {/* Threshold only applies to the embeddings search, so it is dead
-                weight when embeddings are off. */}
-            <label style={useEmbeddings ? undefined : { opacity: 0.45 }}>Threshold
+            {/* Threshold is dead weight when embeddings are off — and for pure
+                keyword retrieval, which takes BM25 rank order as it comes. In
+                mixed mode it doubles as the keyword leg's relative cutoff. */}
+            <label style={useEmbeddings && retrieval !== 'bm25' ? undefined : { opacity: 0.45 }}>Threshold
               <input
                 type="number"
                 step="0.1"
                 value={threshold}
-                disabled={!useEmbeddings}
-                title={useEmbeddings ? undefined : 'Only used when "Use embeddings" is on'}
+                disabled={!useEmbeddings || retrieval === 'bm25'}
+                title={!useEmbeddings
+                  ? 'Only used when "Use embeddings" is on'
+                  : retrieval === 'bm25'
+                    ? 'Keyword retrieval has no threshold — BM25 rank order decides'
+                    : undefined}
                 onChange={e => setThreshold(e.target.value)} />
             </label>
             <label>Max tokens
@@ -427,12 +439,27 @@ export default function EditModelDialog(props: {
                 ))}
               </Select>
             </label>
-            {/* Only relevant when embeddings are on — it's the model used to
-                vectorise the training snippets. */}
-            <label style={useEmbeddings ? undefined : { opacity: 0.45 }}>Vector model
+            {/* How snippets are found for a question. Keyword (BM25) needs no
+                OpenAI key at all; Hybrid merges both with rank fusion. "Use
+                embeddings" is the master switch for retrieval as such, so
+                without it there is nothing here to choose between. */}
+            <label style={useEmbeddings ? undefined : { opacity: 0.45 }}>Retrieval
+              <Select
+                value={retrieval}
+                disabled={!useEmbeddings}
+                title={useEmbeddings ? undefined : 'Only used when "Use embeddings" is on'}
+                onChange={value => setRetrieval(value)}>
+                <option value="embeddings">Semantic (embeddings)</option>
+                <option value="bm25">Keyword (BM25)</option>
+                <option value="mixed">Hybrid (mixed)</option>
+              </Select>
+            </label>
+            {/* Only relevant when embeddings are involved — it's the model
+                used to vectorise the training snippets. */}
+            <label style={useEmbeddings && retrieval !== 'bm25' ? undefined : { opacity: 0.45 }}>Vector model
               <Select
                 value={extra.vector_model}
-                disabled={!useEmbeddings}
+                disabled={!useEmbeddings || retrieval === 'bm25'}
                 onChange={value => setField('vector_model', value)}>
                 {!models.some(candidate => candidate.id === extra.vector_model) && (
                   <option value={extra.vector_model}>{extra.vector_model}</option>

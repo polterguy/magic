@@ -70,6 +70,7 @@ data.connect:[generic|magic]
          ml_types.use_embeddings
          ml_types.threshold
          ml_types.vector_model
+         ml_types.retrieval
          ml_types.greeting
          ml_types.base_url
          ml_types.contact_us

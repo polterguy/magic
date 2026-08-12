@@ -13,18 +13,24 @@ slots.create:magic.ai.get-context
    validators.string:x:@.arguments/*/prompt
       min:1
 
-   // Finding vector model for type.
+   // Finding vector model and retrieval mode for type.
    .embeddings-model
+   .retrieval
    data.connect:[generic|magic]
       data.read
          table:ml_types
          columns
             vector_model
+            retrieval
          where
             and
                type.eq:x:@.arguments/*/type
       set-value:x:@.embeddings-model
          get-value:x:@data.read/*/*/vector_model
+      set-value:x:@.retrieval
+         get-first-value
+            get-value:x:@data.read/*/*/retrieval
+            .:embeddings
 
    // Converting threshold in case we're given the wrong type.
    set-value:x:@.arguments/*/threshold
@@ -42,14 +48,7 @@ slots.create:magic.ai.get-context
                .:int:0
                .:int:16000
 
-   // Retrieving embeddings.
-   .token
-   set-value:x:@.token
-      strings.concat
-         .:"Bearer "
-         config.get:"magic:openai:key"
-
-   // Text value we're passing on to OpenAI to create embeddings for prompt.
+   // Text value we're searching with, for embeddings and keyword search alike.
    .prompt
    if
       and
@@ -71,34 +70,113 @@ slots.create:magic.ai.get-context
       set-value:x:@.prompt
          get-value:x:@.arguments/*/prompt
 
-   // Retrieving embedding for prompt.
-   http.post:"https://api.openai.com/v1/embeddings"
-      headers
-         Authorization:x:@.token
-         Content-Type:application/json
-      payload
-         input:x:@.prompt
-         model:x:@.embeddings-model
-      convert:true
-
-   // Sanity checking above invocation.
+   /*
+    * Retrieving embedding for prompt, unless this is a keyword only type -
+    * pure BM25 retrieval needs no OpenAI invocation at all.
+    */
+   .embedding
    if
-      not
-         and
-            mte:x:@http.post
-               .:int:200
-            lt:x:@http.post
-               .:int:300
+      neq:x:@.retrieval
+         .:bm25
       .lambda
 
-         // Oops, error - Logging error and returning OpenAI's HTTP status code to caller.
-         lambda2hyper:x:@http.post
-         log.error:Something went wrong while invoking OpenAI
-            message:x:@http.post/*/content/*/error/*/message
-            error:x:@lambda2hyper
-         throw:x:@http.post/*/content/*/error/*/message
-            public:bool:true
-            status:x:@http.post
+         // Retrieving embeddings.
+         .token
+         set-value:x:@.token
+            strings.concat
+               .:"Bearer "
+               config.get:"magic:openai:key"
+
+         // Retrieving embedding for prompt.
+         http.post:"https://api.openai.com/v1/embeddings"
+            headers
+               Authorization:x:@.token
+               Content-Type:application/json
+            payload
+               input:x:@.prompt
+               model:x:@.embeddings-model
+            convert:true
+
+         // Sanity checking above invocation.
+         if
+            not
+               and
+                  mte:x:@http.post
+                     .:int:200
+                  lt:x:@http.post
+                     .:int:300
+            .lambda
+
+               // Oops, error - Logging error and returning OpenAI's HTTP status code to caller.
+               lambda2hyper:x:@http.post
+               log.error:Something went wrong while invoking OpenAI
+                  message:x:@http.post/*/content/*/error/*/message
+                  error:x:@lambda2hyper
+               throw:x:@http.post/*/content/*/error/*/message
+                  public:bool:true
+                  status:x:@http.post
+
+         // Converting embedding to the string format SQLite stores vectors in.
+         set-value:x:@.embedding
+            strings.concat
+               .:[
+               strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
+                  .:,
+               .:]
+
+   /*
+    * Building the FTS5 MATCH query for keyword retrieval - every token
+    * quoted, joined with OR, punctuation stripped, since raw prompts break
+    * FTS5's query syntax.
+    */
+   .query
+   if
+      neq:x:@.retrieval
+         .:embeddings
+      .lambda
+         .tokens
+         set-value:x:@.tokens
+            strings.to-lower:x:@.prompt
+         set-value:x:@.tokens
+            strings.replace-not-of:x:@.tokens
+               .:"abcdefghijklmnopqrstuvwxyz0123456789 "
+               .:" "
+         strings.split:x:@.tokens
+            .:" "
+         for-each:x:@strings.split/*
+            if
+               neq:x:@.dp/#
+                  .:
+               .lambda
+                  if
+                     null:x:@.query
+                     .lambda
+                        set-value:x:@.query
+                           strings.concat
+                              .:"\""
+                              get-value:x:@.dp/#
+                              .:"\""
+                  else
+                     set-value:x:@.query
+                        strings.concat
+                           get-value:x:@.query
+                           .:" OR \""
+                           get-value:x:@.dp/#
+                           .:"\""
+
+         /*
+          * A prompt of pure punctuation yields no tokens at all - falling
+          * back to embeddings for mixed retrieval, since its other leg can
+          * still answer, while pure keyword retrieval simply finds nothing.
+          */
+         if
+            and
+               null:x:@.query
+               eq:x:@.retrieval
+                  .:mixed
+            .lambda
+               set-value:x:@.retrieval
+                  .:embeddings
 
    // Making sure we actually have a [session] argument before we try to create a tal for our SQL.
    .tail:
@@ -141,7 +219,7 @@ slots.create:magic.ai.get-context
             strings.concat
                get-value:x:@.tail
                .:" and (ts.meta is null or ts.meta like @meta)"
-         add:x:../*/data.connect/*/data.select
+         add:x:../*/data.connect/**/data.select
             .
                @meta:x:@.arguments/*/meta
 
@@ -150,23 +228,112 @@ slots.create:magic.ai.get-context
    set-value:x:@.begin
       date.now
 
-   // Connecting to database to retrieve embeddings that are related to prompt.
+   // Connecting to database to retrieve snippets that are related to prompt.
    .scan
    data.connect:[generic|magic]
 
-      // Initializing ml_training_snippets.
-      sqlite.load-extension
-         file:sqlite-plugins/vector
-         proc:sqlite3_vector_init
-      data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine')"
+      // Initializing vector search, unless this is a keyword only type.
+      if
+         neq:x:@.retrieval
+            .:bm25
+         .lambda
+            sqlite.load-extension
+               file:sqlite-plugins/vector
+               proc:sqlite3_vector_init
+            data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine')"
 
-
-      // Converting embeddings to a byte array of floats, since this is how we store embeddings in SQLite.
+      // Converting distance threshold, since what we store is 1 - threshold.
       math.subtract
          .:float:1
          get-value:x:@.arguments/*/threshold
-      strings.concat
-         .:@"
+
+      if
+         eq:x:@.retrieval
+            .:bm25
+         .lambda
+
+            /*
+             * Pure keyword retrieval - BM25 rank order, no threshold, the
+             * packing below decides how much of it fits. Notice, a prompt
+             * without a single alphanumeric token cannot match anything,
+             * at which point we return zero snippets.
+             */
+            if
+               not-null:x:@.query
+               .lambda
+                  strings.concat
+                     .:@"
+select f.rank as distance, f.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cached
+   from ml_training_snippets_fts(@query) as f
+   inner join ml_training_snippets ts on ts.id = f.rowid
+   where ts.type = @type"
+                     get-value:x:@.tail
+                     .:" order by f.rank limit 25"
+                  data.select:x:@strings.concat
+                     query:x:@.query
+                     type:x:@.arguments/*/type
+                  add:x:@.scan
+                     get-nodes:x:@data.select/*
+
+      else-if
+         eq:x:@.retrieval
+            .:mixed
+         .lambda
+
+            /*
+             * Both retrievals, merged with reciprocal rank fusion.
+             *
+             * The vector leg applies [threshold] as its usual cosine distance
+             * cutoff. The keyword leg applies it as a relative cutoff instead,
+             * keeping candidates scoring at least [threshold] times the best
+             * BM25 hit - keyword scores are corpus dependent, so an absolute
+             * cutoff means nothing, while closeness to the best hit does.
+             * BM25 scores are negative with better matches more negative,
+             * which is what makes the score / best ratio land between 0 and 1.
+             *
+             * The fused score is returned as [distance] to keep the result
+             * shape identical - notice, unlike a distance, higher is better.
+             */
+            strings.concat
+               .:@"
+with fts as (
+    select f.rowid as id, f.rank as score, min(f.rank) over () as best,
+           row_number() over (order by f.rank) as r
+      from ml_training_snippets_fts(@query) as f
+      inner join ml_training_snippets ts on ts.id = f.rowid
+     where ts.type = @type"
+               get-value:x:@.tail
+               .:@" limit 25
+), vss as (
+    select vss.rowid as id, row_number() over (order by vss.distance) as r
+      from vector_full_scan_stream('ml_training_snippets', 'embeddings', vector_as_f32(@embedding)) as vss
+      inner join ml_training_snippets ts on ts.id = vss.rowid
+     where ts.type = @type and ts.embeddings is not null and vss.distance < @threshold"
+               get-value:x:@.tail
+               .:@" limit 25
+), rrf as (
+    select id, sum(1.0 / (60 + r)) as score
+      from (select id, r from fts where score / best >= @rthreshold union all select id, r from vss)
+     group by id
+)
+select rrf.score as distance, ts.id, ts.prompt, ts.completion, ts.uri, ts.cached
+  from rrf
+  inner join ml_training_snippets ts on ts.id = rrf.id
+ order by rrf.score desc limit 25"
+            data.select:x:@strings.concat
+               query:x:@.query
+               embedding:x:@.embedding
+               type:x:@.arguments/*/type
+               threshold:x:@math.subtract
+               rthreshold:x:@.arguments/*/threshold
+            add:x:@.scan
+               get-nodes:x:@data.select/*
+
+      else
+
+         // Semantic retrieval - cosine distance over embeddings, as always.
+         strings.concat
+            .:@"
 select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cached
 	from vector_full_scan_stream('ml_training_snippets', 'embeddings', vector_as_f32(@embedding)) as vss
     	inner join ml_training_snippets ts on ts.id = vss.rowid
@@ -174,19 +341,14 @@ select vss.distance, vss.rowid as id, ts.prompt, ts.completion, ts.uri, ts.cache
       ts.type = @type and
       ts.embeddings is not null and
       vss.distance < @threshold"
-         get-value:x:@.tail
-         .:" order by vss.distance limit 25"
-      strings.concat
-         .:[
-         strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
-            .:,
-         .:]
-      data.select:x:@strings.concat/@strings.concat
-         embedding:x:@strings.concat
-         type:x:@.arguments/*/type
-         threshold:x:@math.subtract
-      add:x:@.scan
-         get-nodes:x:@data.select/*
+            get-value:x:@.tail
+            .:" order by vss.distance limit 25"
+         data.select:x:@strings.concat
+            embedding:x:@.embedding
+            type:x:@.arguments/*/type
+            threshold:x:@math.subtract
+         add:x:@.scan
+            get-nodes:x:@data.select/*
 
    // Measuring how much time we spent looping through snippets.
    .time

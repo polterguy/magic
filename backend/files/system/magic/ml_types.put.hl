@@ -15,6 +15,7 @@
    use_embeddings:int
    threshold:decimal
    vector_model:string
+   retrieval:string
    greeting:string
    base_url:string
    contact_us:string
