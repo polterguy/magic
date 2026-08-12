@@ -135,7 +135,8 @@ slots.create:magic.ai.url.scrape
                 */
                .max-size
                .api-key
-               .model
+               .target-size
+               .system-prompt
                data.connect:[generic|magic]
 
                   // Retrieving maximum context tokens for type from database.
@@ -144,7 +145,6 @@ slots.create:magic.ai.url.scrape
                      columns
                         max_context_tokens
                         api_key
-                        model
                      where
                         and
                            type.eq:x:@.arguments/*/type
@@ -160,8 +160,36 @@ slots.create:magic.ai.url.scrape
                         type:int
                   set-value:x:@.api-key
                      get-value:x:@data.read/*/*/api_key
-                  set-value:x:@.model
-                     get-value:x:@data.read/*/*/model
+
+               /*
+                * The length we ask the model to aim for, deliberately below the hard
+                * ceiling above.
+                *
+                * Asking for exactly the ceiling means the answer stops when it runs
+                * out of tokens rather than when it is finished, and a summary cut off
+                * mid-sentence is stored and vectorised as though it were complete.
+                */
+               set-value:x:@.target-size
+                  math.multiply
+                     convert:x:@.max-size
+                        type:decimal
+                     .:decimal:0.75
+
+               /*
+                * The instruction telling the model how to compress a snippet.
+                *
+                * It lives in a file rather than inline so it can be tuned without
+                * touching code, and it is loaded per invocation, so an edit applies
+                * to the next crawl without restarting.
+                */
+               set-value:x:@.system-prompt
+                  io.file.load:/system/openai/summarize-system-message.md
+               set-value:x:@.system-prompt
+                  strings.concat
+                     get-value:x:@.system-prompt
+                     .:"\r\n\r\nStay under "
+                     get-value:x:@.target-size
+                     .:" tokens."
 
                // Looping through all snippets to check their size.
                for-each:x:@.snippets/*
@@ -211,18 +239,19 @@ slots.create:magic.ai.url.scrape
 
                                  // Invoking OpenAI to summarize snippet.
                                  unwrap:x:+/**
-                                 http.post:"https://api.openai.com/v1/chat/completions"
+                                 http.post:"https://api.openai.com/v1/responses"
                                     headers
                                        Authorization:x:@.token
                                        Content-Type:application/json
                                     payload
-                                       model:x:@.model
-                                       max_tokens:x:@.max-size
-                                       temperature:decimal:0.3
-                                       messages
+                                       model:gpt-5.6-luna
+                                       max_output_tokens:x:@.max-size
+                                       reasoning
+                                          effort:low
+                                       input
                                           .
                                              role:system
-                                             content:Create a summary of the following information
+                                             content:x:@.system-prompt
                                           .
                                              role:user
                                              content:x:@.dp/#/*/completion
@@ -265,9 +294,21 @@ slots.create:magic.ai.url.scrape
                                              type:info
                                        sleep:100
 
-                                       // Updating completion.
+                                       /*
+                                        * Updating completion.
+                                        *
+                                        * The Responses API returns its answer as an "output_text" part
+                                        * inside the "message" item, which is not necessarily the first
+                                        * item in the output - reasoning models put their reasoning item
+                                        * before it.
+                                        */
+                                       .summary
+                                       set-value:x:@.summary
+                                          get-first-value
+                                             get-value:x:@http.post/*/content/*/output/*/*/type/=message/./*/content/*/*/type/=output_text/./*/text
+                                             get-value:x:@http.post/*/content/*/output/0/*/content/0/*/text
                                        set-value:x:@.dp/#/*/completion
-                                          strings.trim:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                          strings.trim:x:@.summary
                                              .:"\r\n\t "
 
                                        // Updating prompt.
