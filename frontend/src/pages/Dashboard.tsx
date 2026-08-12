@@ -393,7 +393,13 @@ export default function Dashboard() {
           Create API
         </Link>
       </div>
-      {rootServed === false && (
+      {/*
+        * Offered only once there's an OpenAI API key, since the Expert System
+        * is a chat client and has nothing to talk to without one — the same
+        * flag that decides between asking for the key and showing the
+        * Chatbot Wizard above.
+        */}
+      {rootServed === false && openaiConfigured === true && (
         <div className="card agent-prompt">
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>AI Expert System</h2>
