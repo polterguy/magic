@@ -137,6 +137,14 @@ slots.create:magic.ai.url.scrape
                .api-key
                .target-size
                .system-prompt
+
+               /*
+                * Snippets split out of oversized snippets below.
+                *
+                * They are collected here rather than added directly, since a
+                * collection cannot be added to while it is being iterated.
+                */
+               .extra-snippets
                data.connect:[generic|magic]
 
                   // Retrieving maximum context tokens for type from database.
@@ -187,7 +195,7 @@ slots.create:magic.ai.url.scrape
                set-value:x:@.system-prompt
                   strings.concat
                      get-value:x:@.system-prompt
-                     .:"\r\n\r\nStay under "
+                     .:"\r\n\r\nEach section must stay under "
                      get-value:x:@.target-size
                      .:" tokens."
 
@@ -211,12 +219,32 @@ slots.create:magic.ai.url.scrape
                         get-value:x:@.max-size
                      .lambda
 
-                        // Informing frontend of that we're about to summarize snippet.
+                        // Informing frontend of that we're about to split snippet.
                         sockets.signal:x:@.arguments/*/feedback-channel
                            args
-                              message:Summarizing snippet since it is larger than 80% of maximum context size for type
+                              message:Splitting snippet by subject since it is larger than 80% of maximum context size for type
                               type:info
                         sleep:100
+
+                        /*
+                         * Room for the answer.
+                         *
+                         * Splitting keeps everything rather than shortening it, so the
+                         * answer is roughly the size of the snippet we send - and we are
+                         * only here because that is larger than [.max-size]. Sizing the
+                         * ceiling off the snippet itself, with room for the subject
+                         * headings and separators the model adds.
+                         */
+                        .output-size
+                        openai.tokenize:x:@.tmp
+                        set-value:x:@.output-size
+                           math.multiply
+                              convert:x:@openai.tokenize
+                                 type:decimal
+                              .:decimal:1.5
+                        set-value:x:@.output-size
+                           convert:x:@.output-size
+                              type:int
 
                         // Creating our bearer token.
                         .token
@@ -245,7 +273,7 @@ slots.create:magic.ai.url.scrape
                                        Content-Type:application/json
                                     payload
                                        model:gpt-5.6-luna
-                                       max_output_tokens:x:@.max-size
+                                       max_output_tokens:x:@.output-size
                                        reasoning
                                           effort:low
                                        input
@@ -287,37 +315,60 @@ slots.create:magic.ai.url.scrape
                                           .:int:300
                                     .lambda
 
-                                       // Success creating summary.
+                                       // Success splitting snippet.
                                        sockets.signal:x:@.arguments/*/feedback-channel
                                           args
-                                             message:Successfully created summary of snippet
+                                             message:Successfully split snippet by subject
                                              type:info
                                        sleep:100
 
                                        /*
-                                        * Updating completion.
+                                        * Retrieving the answer.
                                         *
-                                        * The Responses API returns its answer as an "output_text" part
-                                        * inside the "message" item, which is not necessarily the first
-                                        * item in the output - reasoning models put their reasoning item
-                                        * before it.
+                                        * The Responses API returns it as an "output_text" part inside
+                                        * the "message" item, which is not necessarily the first item in
+                                        * the output - reasoning models put their reasoning item before it.
                                         */
                                        .summary
                                        set-value:x:@.summary
                                           get-first-value
                                              get-value:x:@http.post/*/content/*/output/*/*/type/=message/./*/content/*/*/type/=output_text/./*/text
                                              get-value:x:@http.post/*/content/*/output/0/*/content/0/*/text
-                                       set-value:x:@.dp/#/*/completion
-                                          strings.trim:x:@.summary
-                                             .:"\r\n\t "
 
-                                       // Updating prompt.
-                                       set-value:x:@.dp/#/*/prompt
-                                          strings.concat
-                                             .:"Summary; "
-                                             strings.substring:x:@.dp/#/*/prompt
-                                                .:int:0
-                                                .:int:150
+                                       /*
+                                        * Normalising line endings before splitting, since the separator
+                                        * never matches if the model answers with CRLF.
+                                        */
+                                       set-value:x:@.summary
+                                          strings.replace:x:@.summary
+                                             .:"\r\n"
+                                             .:"\n"
+
+                                       // One section per subject the model found in the snippet.
+                                       strings.split:x:@.summary
+                                          .:"\n---\n"
+
+                                       /*
+                                        * The first section replaces the snippet we started from, and
+                                        * every additional subject becomes a snippet of its own, keeping
+                                        * the prompt of the snippet it was split out of.
+                                        */
+                                       .parent-prompt
+                                       set-value:x:@.parent-prompt
+                                          get-value:x:@.dp/#/*/prompt
+                                       set-value:x:@.dp/#/*/completion
+                                          strings.trim:x:@strings.split/0
+                                             .:"\r\n\t "
+                                       remove-nodes:x:@strings.split/0
+                                       for-each:x:@strings.split/*
+                                          strings.trim:x:@.dp/#
+                                             .:"\r\n\t "
+                                          unwrap:x:+/*/*/*
+                                          add:x:@.extra-snippets
+                                             .
+                                                .
+                                                   prompt:x:@.parent-prompt
+                                                   completion:x:@strings.trim
 
                                        // Making sure we don't try again.
                                        set-value:x:@.no
@@ -344,6 +395,16 @@ slots.create:magic.ai.url.scrape
 
                                  // Decrementing [.no] such that we don't end up in an infinite loop.
                                  math.decrement:x:@.no
+
+               /*
+                * Adding the snippets we split out of oversized snippets above.
+                *
+                * This happens after the loop, since [.snippets] is what the loop
+                * is iterating, and it happens before the count below, so the
+                * numbers reported to the user include them.
+                */
+               add:x:@.snippets
+                  get-nodes:x:@.extra-snippets/*
 
          // Number of snippets that are below threshold and hence won't be imported.
          .below-threshold:int:0
