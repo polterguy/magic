@@ -146,6 +146,22 @@ select prompt, max(completion) as completion
    set-value:x:@.fixed
       get-count:x:@.session/*
 
+   /*
+    * How many leading messages must never be written back to the session cache.
+    *
+    * That is the fixed messages above - which are re-created from the type and
+    * the database on every request - plus this request's context if we have
+    * any, since context is retrieved fresh for every question too. Caching the
+    * context would stack one stale context block per message, until the session
+    * is nothing but old context.
+    *
+    * Kept apart from [.fixed] because the two answer different questions:
+    * [.fixed] is what pruning may not touch, this is what caching must drop.
+    */
+   .no-cache
+   set-value:x:@.no-cache
+      get-value:x:@.fixed
+
    // Checking if we've got context.
    if
       not-null:x:@.context-buffer/*/context
@@ -158,21 +174,25 @@ select prompt, max(completion) as completion
                .
                   role:system
                   content:x:@.context-buffer/*/context
+         math.increment:x:@.no-cache
 
-   else
+   /*
+    * Retrieving session items.
+    *
+    * Notice, this used to be an [else] to the context check above, making
+    * history and context mutually exclusive - a type with embeddings finds
+    * context for practically every question, and therefore never remembered
+    * anything the user had said earlier in the session.
+    */
+   cache.get:x:@.arguments/*/session
+   if
+      not-null:x:@cache.get
+      .lambda
 
-      /*
-       * Retrieving session items.
-       */
-      cache.get:x:@.arguments/*/session
-      if
-         not-null:x:@cache.get
-         .lambda
-
-            // We've got existing session items.
-            hyper2lambda:x:@cache.get
-            add:x:@.session
-               get-nodes:x:@hyper2lambda/*
+         // We've got existing session items.
+         hyper2lambda:x:@cache.get
+         add:x:@.session
+            get-nodes:x:@hyper2lambda/*
 
    // Checking if we've got a [data] argument, and if so, making sure we accommodate for token size.
    .extra-tokens:int:0
@@ -898,6 +918,7 @@ select prompt, max(completion) as completion
       get-nodes:x:@.session
       get-nodes:x:@.token
       get-nodes:x:@.fixed
+      get-nodes:x:@.no-cache
       get-nodes:x:@.only-prompt
    .invoke
 
@@ -1236,7 +1257,7 @@ select prompt, max(completion) as completion
                      get-nodes:x:@.session/*
                   .tmp
                   set-value:x:@.tmp
-                     get-value:x:@.fixed
+                     get-value:x:@.no-cache
                   while
                      mt:x:@.tmp
                         .:int:0
@@ -1511,14 +1532,16 @@ select prompt, max(completion) as completion
                   eval:x:@.exe
 
       /*
-       * Pruning out all our fixed messages before we start calculating if we should "dream" or "compress context".
+       * Pruning out all our non-cacheable messages - the fixed messages and
+       * this request's context - before we start calculating if we should
+       * "dream" or "compress context".
        */
       while
-         mt:x:@.fixed
+         mt:x:@.no-cache
             .:int:0
          .lambda
             remove-nodes:x:@.session/0
-            math.decrement:x:@.fixed
+            math.decrement:x:@.no-cache
 
       /*
        * Checking if we're at 100% of accepted messages, at which point
