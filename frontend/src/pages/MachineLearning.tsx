@@ -15,8 +15,9 @@ import { showToast } from '../lib/toast';
 import HistoryTab from './ml/HistoryTab';
 import TrainingTab from './ml/TrainingTab';
 import ModelsTab from './ml/ModelsTab';
+import QuestionnairesTab from './ml/QuestionnairesTab';
 
-type Tab = 'types' | 'training' | 'history';
+type Tab = 'types' | 'training' | 'history' | 'questionnaires';
 
 export default function MachineLearning() {
 
@@ -49,6 +50,7 @@ export default function MachineLearning() {
         tabs={[
           { id: 'types', label: 'Models' },
           { id: 'training', label: 'Training data' },
+          { id: 'questionnaires', label: 'Questionnaires' },
           { id: 'history', label: 'History' },
         ]}
         active={tab}
@@ -63,6 +65,8 @@ export default function MachineLearning() {
         <ModelsTab types={types} onChanged={refreshTypes} />}
       {tab === 'training' &&
         <TrainingTab types={types} />}
+      {tab === 'questionnaires' &&
+        <QuestionnairesTab />}
       {tab === 'history' &&
         <HistoryTab types={types} />}
     </>

@@ -89,6 +89,7 @@ data.connect:[generic|magic]
          ml_types.conversation_starters
          ml_types.max_function_invocations
          ml_types.max_session_items
+         ml_types.session_timeout
          ml_types.completion_slot
       where
          and

@@ -1928,6 +1928,15 @@ a.kpi-link:active {
   opacity: 1;
 }
 
+/* The selected row in a master/detail list. */
+tr.row-selected > td {
+  background: var(--accent-soft);
+}
+
+tr.row-selected > td:first-child {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
 /* The log entry an error toast deep-linked to. */
 tr.log-target > td {
   background: var(--overlay);

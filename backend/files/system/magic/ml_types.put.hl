@@ -34,6 +34,7 @@
    search_postfix:string
    max_function_invocations:int
    max_session_items:int
+   session_timeout:int
    completion_slot:string
 .description:CRUD update endpoint updating one record in your ml_types table in your magic database filtering which item to update with type updating model, max_tokens, temperature fields with authentication and authorisation for root roles
 .type:crud-update

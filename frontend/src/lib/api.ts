@@ -813,6 +813,74 @@ export function mlTypeDelete(type: string) {
 }
 
 /*
+ * Questionnaires — the question set a model can open a conversation with,
+ * and the questions belonging to one. A model points at a questionnaire
+ * through its initial_questionnaire setting.
+ */
+
+export interface Questionnaire {
+  name: string;
+  type: string;
+  action?: string | null;
+}
+
+export interface Question {
+  question_id: number;
+  question: string;
+  questionnaire: string;
+  type: string;
+  context: number;
+  name?: string | null;
+}
+
+export function listQuestionnaires() {
+  return http.get<Questionnaire[]>(
+    '/magic/system/magic/questionnaires?limit=-1&order=questionnaires.name');
+}
+
+export function createQuestionnaire(item: Questionnaire) {
+  return http.post<any>('/magic/system/magic/questionnaires', item);
+}
+
+export function updateQuestionnaire(item: Questionnaire) {
+  return http.put<any>('/magic/system/magic/questionnaires', item);
+}
+
+export function deleteQuestionnaire(name: string) {
+  return http.delete<any>(
+    '/magic/system/magic/questionnaires?name=' + encodeURIComponent(name));
+}
+
+export function listQuestions(questionnaire: string) {
+  return http.get<Question[]>(
+    '/magic/system/magic/questions?limit=-1&order=questions.question_id' +
+    '&questions.questionnaire.eq=' + encodeURIComponent(questionnaire));
+}
+
+export function createQuestion(item: {
+  question: string;
+  questionnaire: string;
+  type: string;
+  name?: string | null;
+}) {
+  return http.post<any>('/magic/system/magic/questions', item);
+}
+
+export function updateQuestion(item: {
+  question_id: number;
+  question: string;
+  questionnaire: string;
+  type: string;
+  name?: string | null;
+}) {
+  return http.put<any>('/magic/system/magic/questions', item);
+}
+
+export function deleteQuestion(id: number) {
+  return http.delete<any>('/magic/system/magic/questions?question_id=' + id);
+}
+
+/*
  * Search text matches against prompt, completion or uri — the endpoints nest
  * these three inside an [or], so they widen the search rather than narrowing
  * it, while the type stays ANDed. The uri match is a prefix, since URIs start

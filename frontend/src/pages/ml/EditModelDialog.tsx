@@ -11,6 +11,8 @@ import RoleChips from '../../components/RoleChips';
 import Select from '../../components/Select';
 import Tabs from '../../components/Tabs';
 import {
+  Questionnaire,
+  listQuestionnaires,
   listRoles,
   mlTypeCreate,
   mlTypeUpdate,
@@ -62,8 +64,9 @@ export default function EditModelDialog(props: {
   const [addingFunction, setAddingFunction] = useState(false);
   const [initialSystemMessage] = useState(() => systemMessage);
   const instructionChanged = systemMessage !== initialSystemMessage;
-  // Twilio, webhooks, lead-gen, questionnaires, prefix and search-postfix
-  // are legacy — dropped from the UI and no longer sent.
+  const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
+  // Twilio, webhooks, lead-gen, prefix and search-postfix are legacy —
+  // dropped from the UI and no longer sent.
   const [extra, setExtra] = useState<any>({
     base_url: existing?.base_url ?? '',
     conversation_starters: existing?.conversation_starters ?? '',
@@ -73,6 +76,12 @@ export default function EditModelDialog(props: {
     max_function_invocations: existing?.max_function_invocations ?? 5,
     max_session_items: existing?.max_session_items ?? 15,
     completion_slot: existing?.completion_slot ?? 'magic.ai.chat',
+    session_timeout: existing?.session_timeout ?? 1200,
+    /*
+     * Empty string is this field's "no questionnaire", mapped back to null on
+     * save — the column is a nullable foreign key into questionnaires.
+     */
+    initial_questionnaire: existing?.initial_questionnaire ?? '',
     vector_model: existing?.vector_model ?? 'text-embedding-ada-002',
     // A null captcha value ("no captcha") is shown as -1, the sentinel the field
     // maps back to null on save — so the three modes round-trip.
@@ -97,6 +106,9 @@ export default function EditModelDialog(props: {
     openaiCompletionSlots()
       .then(response => setCompletionSlots(
         Array.isArray(response) ? response : response?.llms ?? []))
+      .catch(() => {});
+    listQuestionnaires()
+      .then(list => setQuestionnaires(list ?? []))
       .catch(() => {});
   }, []);
 
@@ -128,6 +140,9 @@ export default function EditModelDialog(props: {
       max_requests: Number(extra.max_requests),
       max_function_invocations: Number(extra.max_function_invocations),
       max_session_items: Number(extra.max_session_items),
+      session_timeout: Number(extra.session_timeout),
+      // Empty select means "no questionnaire", which the column stores as null.
+      initial_questionnaire: extra.initial_questionnaire || null,
       // Stored as-is, negatives included — ml_types.recaptcha is NOT NULL, so
       // a negative number is how "no captcha" is persisted, not null.
       recaptcha: Number(extra.recaptcha),
@@ -338,9 +353,18 @@ export default function EditModelDialog(props: {
                 value={extra.max_session_items}
                 onChange={e => setField('max_session_items', e.target.value)} />
             </label>
+            <label>Session timeout
+              <input
+                type="number"
+                min="0"
+                title="Seconds a conversation's history is remembered between questions. Defaults to 1200, twenty minutes."
+                value={extra.session_timeout}
+                onChange={e => setField('session_timeout', e.target.value)} />
+            </label>
             <label>No requests served
               <input
                 type="number"
+                title="How many requests this model has answered so far"
                 value={extra.no_requests}
                 onChange={e => setField('no_requests', e.target.value)} />
             </label>
@@ -349,11 +373,11 @@ export default function EditModelDialog(props: {
                 this as the minimum score. It is persisted exactly as typed —
                 ml_types.recaptcha is NOT NULL, so "no captcha" is a negative
                 number rather than null. */}
-            <label>Captcha (&lt;0 none · 0 Magic · &gt;0 reCAPTCHA score)
+            <label>Captcha
               <input
                 type="number"
                 step="0.1"
-                title="Below 0: no captcha. 0: Magic's built-in captcha. Above 0: Google reCAPTCHA, using this as the minimum score (0–1)."
+                title="Below 0: no captcha. 0: Magic's built-in captcha. Above 0: Google reCAPTCHA, using this as the minimum score (0-1)."
                 value={extra.recaptcha}
                 onChange={e => setField('recaptcha', e.target.value)} />
             </label>
@@ -379,6 +403,24 @@ export default function EditModelDialog(props: {
                 autoComplete="off"
                 value={extra.api_key}
                 onChange={e => setField('api_key', e.target.value)} />
+            </label>
+            <label>Initial questionnaire
+              <Select
+                value={extra.initial_questionnaire}
+                onChange={value => setField('initial_questionnaire', value)}>
+                <option value="">No questionnaire</option>
+                {/* A questionnaire that has since been deleted still shows,
+                    so saving doesn't silently drop it. */}
+                {extra.initial_questionnaire !== '' &&
+                  !questionnaires.some(q => q.name === extra.initial_questionnaire) && (
+                  <option value={extra.initial_questionnaire}>
+                    {extra.initial_questionnaire}
+                  </option>
+                )}
+                {questionnaires.map(item => (
+                  <option key={item.name} value={item.name}>{item.name}</option>
+                ))}
+              </Select>
             </label>
             {/* Only relevant when embeddings are on — it's the model used to
                 vectorise the training snippets. */}
