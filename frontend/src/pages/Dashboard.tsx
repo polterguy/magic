@@ -24,6 +24,7 @@ import {
   getVersion,
   installPlugin,
   listEndpoints,
+  listFiles,
   listFolders,
   listTasks,
   openaiIsConfigured,
@@ -44,6 +45,27 @@ const AGENT_PLUGINS = ['mcp', 'oauth'];
  * drowns in its own tool list and picks poorly, or refuses to connect at all.
  */
 const MCP_ENDPOINT_WARNING = 300;
+
+/*
+ * The AI Expert System is a frontend plugin rather than a module: installing
+ * it unzips a complete chat client into /etc/www/, which the cloudlet serves
+ * at its root URL.
+ */
+const EXPERT_SYSTEM_PLUGIN = 'xpert-system';
+
+// Roughly a minute of two-second polls, which is ample for a download and unzip.
+const EXPERT_SYSTEM_POLLS = 30;
+
+/*
+ * Whether anything at all is being served at the cloudlet's root URL. Any
+ * frontend owns /etc/www/index.html, so this can't tell the Expert System
+ * apart from some other app — which is the right question anyway, since
+ * either way the root URL is taken.
+ */
+async function rootIsServed() {
+  const files = await listFiles('/etc/www/') ?? [];
+  return files.includes('/etc/www/index.html');
+}
 
 /*
  * The first handful of tasks, runnable straight from the dashboard. Editing
@@ -144,6 +166,9 @@ export default function Dashboard() {
   // Null until we know — the prompt stays hidden while the answer is pending.
   const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(null);
   const [configuringOpenai, setConfiguringOpenai] = useState(false);
+  // Same again — neither the install nor the open button shows until we know.
+  const [rootServed, setRootServed] = useState<boolean | null>(null);
+  const [installingExpertSystem, setInstallingExpertSystem] = useState(false);
 
   /*
    * Arriving through an emailed sign-in link — an invite or a password
@@ -188,6 +213,7 @@ export default function Dashboard() {
     openaiIsConfigured()
       .then(response => setOpenaiConfigured(response.result))
       .catch(() => setOpenaiConfigured(null));
+    rootIsServed().then(setRootServed).catch(() => setRootServed(null));
   }, [checkPlugins]);
 
   async function installAgentPlugins() {
@@ -212,6 +238,40 @@ export default function Dashboard() {
       showToast(err.message, true, err.logId);
     } finally {
       setInstalling(false);
+    }
+  }
+
+  async function installExpertSystem() {
+    setInstallingExpertSystem(true);
+    try {
+      const available = await availablePlugins() ?? [];
+      const app = available.find(
+        (candidate: any) => candidate.name === EXPERT_SYSTEM_PLUGIN);
+      if (!app) {
+        throw new Error('The AI Expert System is not available in the plugin repository');
+      }
+      await installPlugin(app);
+      /*
+       * The backend downloads and unzips on a background thread, so the files
+       * are not there yet when the call returns. Wait for them instead of
+       * flipping the card straight away — offering to open a root URL that
+       * nothing is serving yet would just hand the user a 404.
+       */
+      for (let attempt = 0; attempt < EXPERT_SYSTEM_POLLS; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        if (await rootIsServed()) {
+          setRootServed(true);
+          showToast('The AI Expert System is installed');
+          return;
+        }
+      }
+      showToast(
+        'The AI Expert System is taking longer than expected to install — check your log',
+        true);
+    } catch (err: any) {
+      showToast(err.message, true, err.logId);
+    } finally {
+      setInstallingExpertSystem(false);
     }
   }
 
@@ -333,6 +393,45 @@ export default function Dashboard() {
           Create API
         </Link>
       </div>
+      {rootServed === false && (
+        <div className="card agent-prompt">
+          <div style={{ flex: 1 }}>
+            <h2 style={{ margin: '0 0 6px 0' }}>AI Expert System</h2>
+            <p className="muted" style={{ margin: 0 }}>
+              A complete chat client for your cloudlet — streaming answers from
+              your own models, AI functions that actually do things, logins,
+              and your own branding. Installing it serves the app from your
+              cloudlet's root URL.
+            </p>
+          </div>
+          <button
+            className="btn btn-large"
+            onClick={installExpertSystem}
+            disabled={installingExpertSystem}>
+            {installingExpertSystem ? 'Installing…' : 'Install Expert System'}
+          </button>
+        </div>
+      )}
+      {rootServed === true && (
+        <div className="card agent-prompt">
+          <div style={{ flex: 1 }}>
+            <h2 style={{ margin: '0 0 6px 0' }}>Your frontend</h2>
+            <p className="muted" style={{ margin: 0 }}>
+              Your cloudlet is serving an application at its root URL.
+            </p>
+            <div className="mono" style={{ marginTop: 8, overflowWrap: 'anywhere' }}>
+              {backend?.url}
+            </div>
+          </div>
+          <a
+            className="btn btn-large"
+            href={backend?.url}
+            target="_blank"
+            rel="noreferrer">
+            Open
+          </a>
+        </div>
+      )}
       {/*
         * Folded away rather than always open. It restates the navigation for
         * somebody seeing the dashboard for the first time, which is worth a
