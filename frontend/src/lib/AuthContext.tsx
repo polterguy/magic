@@ -30,6 +30,7 @@ import {
   authenticate,
   configureApi,
   getStatus,
+  getVersion,
   refreshTicket,
   setUnauthorizedHandler,
   verifyTicket,
@@ -53,6 +54,13 @@ interface AuthState {
   setupNeeded: boolean | null;
   // Called when setup completes, so the app stops showing the setup screen.
   setupCompleted: () => void;
+  /*
+   * The connected backend's Magic version. Owned here because two unrelated
+   * places want it — the sidebar and the dashboard's KPI card — and asking
+   * the backend once per interested component meant fetching the same
+   * unchanging string twice on every dashboard visit.
+   */
+  version: string;
   login: (url: string, username: string, password: string) => Promise<void>;
   // Signs in with a ticket the backend already issued, as OpenID login does.
   loginWithTicket: (url: string, ticket: string) => void;
@@ -87,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshTimer = useRef<number | null>(null);
   const [backends, setBackends] = useState<StoredBackend[]>(loadBackends);
   const [setupNeeded, setSetupNeeded] = useState<boolean | null>(null);
+  const [version, setVersion] = useState('…');
 
   /*
    * Checked on every load that has a root token, not just after signing
@@ -111,6 +120,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .catch(() => { if (!cancelled) { setSetupNeeded(false); } });
     return () => { cancelled = true; };
   }, [isRoot, token]);
+
+  /*
+   * The backend's version, fetched once per backend rather than once per
+   * component that displays it. Keyed on the URL rather than the token,
+   * since the answer belongs to the cloudlet, not to the session.
+   */
+  useEffect(() => {
+    if (!token) {
+      setVersion('…');
+      return;
+    }
+    let cancelled = false;
+    getVersion()
+      .then(response => { if (!cancelled) { setVersion(response.version); } })
+      .catch(() => { if (!cancelled) { setVersion('?'); } });
+    return () => { cancelled = true; };
+  }, [backend?.url, token]);
 
   /*
    * When the backend answers 401 to a request that carried the token, the
@@ -296,6 +322,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isRoot,
       setupNeeded,
       setupCompleted: () => setSetupNeeded(false),
+      version,
       login,
       loginWithTicket,
       logout,

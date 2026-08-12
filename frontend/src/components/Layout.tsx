@@ -16,10 +16,9 @@ import { SECTIONS } from './sections';
 
 export default function Layout({ children }: { children: ReactNode }) {
 
-  const { backend, logout, backends } = useAuth();
+  const { backend, logout, backends, version } = useAuth();
   const [switching, setSwitching] = useState(false);
   const navigate = useNavigate();
-  const [version, setVersion] = useState('');
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem('magic2.navCollapsed') === 'true');
   // Separate from the desktop collapse: the phone drawer, closed by default.
@@ -88,10 +87,6 @@ export default function Layout({ children }: { children: ReactNode }) {
     }
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
-  }, []);
-
-  useEffect(() => {
-    getVersion().then(response => setVersion(response.version)).catch(() => {});
   }, []);
 
   /*

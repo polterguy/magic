@@ -614,6 +614,14 @@ export function listEndpoints() {
 }
 
 /*
+ * Just how many endpoints there are. The full list is around 100KB, which is
+ * a great deal of traffic for somewhere that only shows the number.
+ */
+export function countEndpoints() {
+  return http.get<{ count: number }>('/magic/system/endpoints/count');
+}
+
+/*
  * Users and roles.
  */
 

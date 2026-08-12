@@ -1,0 +1,20 @@
+
+/*
+ * Returns the number of endpoints in the system.
+ *
+ * The list of endpoints is roughly 100KB on a cloudlet of any size, which is
+ * a lot to transfer for something that only wants to display how many there
+ * are - hence this sibling of "list.get.hl" that counts them server side.
+ */
+.description:Returns the number of endpoints in the system
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Counting endpoints and returning the result to caller.
+endpoints.list
+get-count:x:@endpoints.list/*
+unwrap:x:+/*
+return
+   count:x:@get-count

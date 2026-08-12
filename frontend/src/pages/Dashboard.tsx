@@ -1,6 +1,6 @@
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import Select from '../components/Select';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Pagination from '../components/Pagination';
 import { Modal, useDialog } from '../components/Dialogs';
@@ -18,12 +18,11 @@ import {
   OpenAiModel,
   openaiSystemMessages,
   countLog,
+  countEndpoints,
   countTasks,
   countUsers,
   executeTask,
-  getVersion,
   installPlugin,
-  listEndpoints,
   listFiles,
   listFolders,
   listTasks,
@@ -154,8 +153,7 @@ function TaskSection(props: {
 
 export default function Dashboard() {
 
-  const { backend } = useAuth();
-  const [version, setVersion] = useState('…');
+  const { backend, version } = useAuth();
   const [endpoints, setEndpoints] = useState<number | null>(null);
   const [users, setUsers] = useState<number | null>(null);
   const [tasks, setTasks] = useState<number | null>(null);
@@ -204,8 +202,7 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    getVersion().then(r => setVersion(r.version)).catch(e => showToast(e.message, true));
-    listEndpoints().then(r => setEndpoints(r.length)).catch(() => {});
+    countEndpoints().then(r => setEndpoints(r.count)).catch(() => {});
     countUsers('').then(r => setUsers(r.count)).catch(() => {});
     countTasks().then(r => setTasks(r.count)).catch(() => {});
     countLog().then(r => setLogItems(r.count)).catch(() => {});
@@ -617,7 +614,19 @@ function CreateChatbot() {
   const [autoDestruct, setAutoDestruct] = useState(true);
   const [crawl, setCrawl] = useState<{ channel: string } | null>(null);
 
-  useEffect(() => {
+  /*
+   * The personas and the model prices only matter to somebody actually
+   * filling this in, so they're fetched on the first touch of the form
+   * rather than on every dashboard visit. Focus reaches here from any
+   * field, including the dropdowns, so whichever one is used first pays
+   * for it - and only once.
+   */
+  const loaded = useRef(false);
+  function loadOptions() {
+    if (loaded.current) {
+      return;
+    }
+    loaded.current = true;
     openaiSystemMessages()
       .then(list => {
         setFlavors(list ?? []);
@@ -627,7 +636,7 @@ function CreateChatbot() {
     openaiModels()
       .then(list => setPrices(Object.fromEntries((list ?? []).map(m => [m.id, m]))))
       .catch(() => {});
-  }, []);
+  }
 
   const selected = flavors.find(candidate => candidate.name === flavor);
 
@@ -644,6 +653,7 @@ function CreateChatbot() {
         a chatbot you can embed. Takes a few minutes.
       </p>
       <form
+        onFocus={loadOptions}
         onSubmit={e => {
           e.preventDefault();
           if (url.trim() && !crawl) {
