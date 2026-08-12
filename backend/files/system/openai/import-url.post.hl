@@ -10,11 +10,8 @@
    delay:int
    max:int
    threshold:int
-   summarize:bool
    insert_url:bool
    images:bool
-   lists:bool
-   code:bool
    feedback-channel:string
    vectorize:bool
    meta:string
@@ -25,8 +22,6 @@ auth.ticket.verify:root
 // Applying defaults.
 validators.default:x:@.arguments
    images:bool:true
-   lists:bool:true
-   code:bool:true
    insert_url:bool:false
    meta:AINIRO-Website-Crawler
 
@@ -65,8 +60,6 @@ validators.integer:x:@.arguments/*/max
    max:5000
 validators.integer:x:@.arguments/*/threshold
    min:25
-validators.default:x:@.arguments
-   summarize:bool:false
 
 // Doing some basic logging.
 log.info:Crawling URL generating OpenAI training snippets

@@ -129,29 +129,25 @@ try
             .
                base_url:x:@.arguments/*/url
 
-      // Figuring out max tokens to use, which varies according to base model.
-      .max-tokens:int:4000
-      .max-context-tokens:int:4000
-      if
-         not
-            strings.starts-with:x:@.arguments/*/model
-               .:gpt-4
-         .lambda
-
-            // Not GPT4, hence reducing tokens to 1000.
-            set-value:x:@.max-context-tokens
-               .:int:1000
-            set-value:x:@.max-tokens
-               .:int:1000
-
-      // Creating our type.
+      /*
+       * Creating our type.
+       *
+       * Every model offered for selection is a large context model, so no
+       * model-dependent token budgets - [max_context_tokens] doubles as the
+       * split threshold during crawling (snippets above 80% of it are split
+       * by subject), and 2000 keeps the corpus fine-grained while giving
+       * each answer room for a handful of retrieved sections.
+       *
+       * [max_tokens] is the answer budget, and on reasoning models the
+       * reasoning tokens count against it, which is why it is not smaller.
+       */
       data.create
          table:ml_types
          values
             type:x:@.type
             model:x:@.arguments/*/model
-            max_tokens:x:@.max-tokens
-            max_context_tokens:x:@.max-context-tokens
+            max_tokens:int:4000
+            max_context_tokens:int:2000
             max_request_tokens:int:1000
             temperature:decimal:0.3
             recaptcha:decimal:0.0
@@ -184,7 +180,6 @@ try
    signal:magic.ai.crawl-site
       delay:int:1000
       threshold:int:150
-      summarize:bool:true
       type:x:@.type
       .onerror
 

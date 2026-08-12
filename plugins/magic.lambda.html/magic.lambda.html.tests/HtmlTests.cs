@@ -83,6 +83,59 @@ html2lambda:x:-");
         }
 
         [Fact]
+        public void Html2MarkdownKeepsSummaryAsHeading()
+        {
+            var result = Common.Evaluate(@"
+html2markdown:@""<html><body><details><summary>Can I self-host?</summary><p>Yes you can.</p></details></body></html>""");
+            var markdown = result.Children.First().GetEx<string>();
+            Assert.Contains("### Can I self-host?", markdown);
+            Assert.Contains("Yes you can.", markdown);
+        }
+
+        [Fact]
+        public void Html2MarkdownKeepsInlineCode()
+        {
+            var result = Common.Evaluate(@"
+html2markdown:@""<html><body><p>Run <code>npm install</code> now</p></body></html>""");
+            var markdown = result.Children.First().GetEx<string>();
+            Assert.Contains("Run `npm install` now", markdown);
+        }
+
+        [Fact]
+        public void Html2MarkdownKeepsTextOfUnknownElements()
+        {
+            var result = Common.Evaluate(@"
+html2markdown:@""<html><body><table><tr><td>Cell one</td><td>Cell two</td></tr></table><figure><figcaption>A caption</figcaption></figure><p>Hello <u>world</u> again</p></body></html>""");
+            var markdown = result.Children.First().GetEx<string>();
+            Assert.Contains("Cell one", markdown);
+            Assert.Contains("Cell two", markdown);
+            Assert.Contains("A caption", markdown);
+            Assert.Contains("Hello world again", markdown);
+        }
+
+        [Fact]
+        public void Html2MarkdownSuppressesScriptAndStyle()
+        {
+            var result = Common.Evaluate(@"
+html2markdown:@""<html><body><p>Content</p><script>var secret = 10;</script><style>.a { color: red; }</style></body></html>""");
+            var markdown = result.Children.First().GetEx<string>();
+            Assert.Contains("Content", markdown);
+            Assert.DoesNotContain("secret", markdown);
+            Assert.DoesNotContain("color", markdown);
+        }
+
+        [Fact]
+        public void Html2MarkdownSuppressesFormMachinery()
+        {
+            var result = Common.Evaluate(@"
+html2markdown:@""<html><body><p>Pick a country</p><select><option>Norway</option><option>Sweden</option></select><button>Submit</button></body></html>""");
+            var markdown = result.Children.First().GetEx<string>();
+            Assert.Contains("Pick a country", markdown);
+            Assert.DoesNotContain("Norway", markdown);
+            Assert.DoesNotContain("Submit", markdown);
+        }
+
+        [Fact]
         public void RoundTrip()
         {
             var result = Common.Evaluate(@"

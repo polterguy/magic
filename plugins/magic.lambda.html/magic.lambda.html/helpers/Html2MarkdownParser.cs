@@ -97,6 +97,25 @@ namespace magic.lambda.html.slots.helpers
             {"span", DivElementHandler},
 
             {"head", HeadElementHandler},
+
+            // The disclosure element's caption, rendered as a heading such that FAQ
+            // style details/summary constructs keep their questions.
+            {"summary", (self, node, baseUrl, builder)      =>   HeaderElementHandler(self, node, baseUrl, builder, "### ")},
+
+            /*
+             * Elements whose text is not prose. These must be suppressed explicitly,
+             * since the #text fallback in ParseNode would otherwise import scripts,
+             * styling and form machinery as content.
+             */
+            {"script", (self, node, baseUrl, builder)       =>   false},
+            {"style", (self, node, baseUrl, builder)        =>   false},
+            {"noscript", (self, node, baseUrl, builder)     =>   false},
+            {"template", (self, node, baseUrl, builder)     =>   false},
+            {"svg", (self, node, baseUrl, builder)          =>   false},
+            {"select", (self, node, baseUrl, builder)       =>   false},
+            {"option", (self, node, baseUrl, builder)       =>   false},
+            {"button", (self, node, baseUrl, builder)       =>   false},
+            {"textarea", (self, node, baseUrl, builder)     =>   false},
         };
 
         /// <summary>
@@ -145,6 +164,23 @@ namespace magic.lambda.html.slots.helpers
          */
         void ParseNode(StringBuilder builder, HtmlNode htmlNode)
         {
+            /*
+             * Making sure text is never dropped, even inside elements we have no
+             * handler for. Handlers decide formatting, never whether text survives -
+             * elements whose text is not prose (script, style, form machinery) are
+             * explicitly suppressed in the handlers dictionary instead.
+             */
+            if (htmlNode.Name == "#text")
+            {
+                var txt = HttpUtility.HtmlDecode(TrimText(htmlNode.InnerText));
+                if (!string.IsNullOrEmpty(txt))
+                {
+                    EnsureSpace(builder);
+                    builder.Append(txt);
+                }
+                return;
+            }
+
             // Defaulting continuing to since we might not have a handler.
             var cont = true;
 
@@ -573,6 +609,31 @@ namespace magic.lambda.html.slots.helpers
 
                     case "a":
                         AnchorElementHandler(this, idxChild, baseUrl, builder);
+                        break;
+
+                    case "code":
+                        RenderElement(idxChild, builder, _code ? "`" : null);
+                        break;
+
+                    // Same suppression as the handlers dictionary - not prose.
+                    case "script":
+                    case "style":
+                    case "noscript":
+                    case "template":
+                    case "svg":
+                    case "select":
+                    case "option":
+                    case "button":
+                    case "textarea":
+                        break;
+
+                    default:
+
+                        /*
+                         * Unknown element inside a block - its formatting is unknown,
+                         * but its text is kept, since text is never dropped.
+                         */
+                        RenderElement(idxChild, builder);
                         break;
                 }
             }

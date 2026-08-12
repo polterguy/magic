@@ -526,17 +526,17 @@ export default function Dashboard() {
  * the backend can look up each one's token limit.
  */
 const BOT_MODELS = [
+  'gpt-5.6-luna',
   'gpt-5.6-terra',
   'gpt-5.6-sol',
-  'gpt-5.6-luna',
-  'gpt-5.5',
   'gpt-5.5-pro',
+  'gpt-5.5',
+  'gpt-5.4-mini',
   'gpt-5.4',
   'gpt-5.4-pro',
-  'gpt-5.4-mini',
   'gpt-5-chat-latest',
-  'gpt-4.1-2025-04-14',
   'gpt-4.1-mini-2025-04-14',
+  'gpt-4.1-2025-04-14',
 ];
 
 // The balanced, cost-sensible default, matching the "default" model type.

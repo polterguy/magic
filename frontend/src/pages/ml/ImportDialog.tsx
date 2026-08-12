@@ -68,13 +68,9 @@ export default function ImportDialog(props: {
   const [url, setUrl] = useState('');
   const [delay, setDelay] = useState('1');
   const [max, setMax] = useState('25');
-  const [threshold, setThreshold] = useState('150');
   const [meta, setMeta] = useState('');
-  const [summarize, setSummarize] = useState(true);
   const [insertUrl, setInsertUrl] = useState(false);
   const [images, setImages] = useState(true);
-  const [lists, setLists] = useState(true);
-  const [code, setCode] = useState(true);
 
   // URL-list tab: a single-column CSV of URLs to scrape.
   const [urlListFile, setUrlListFile] = useState<File | null>(null);
@@ -210,14 +206,6 @@ export default function ImportDialog(props: {
                   value={delay}
                   onChange={e => setDelay(e.target.value)} />
               </label>
-              <label>Text threshold
-                <input
-                  type="number"
-                  min={25}
-                  title="Minimum character count for a page to become a training snippet"
-                  value={threshold}
-                  onChange={e => setThreshold(e.target.value)} />
-              </label>
             </div>
             <label>Meta value
               <input
@@ -234,15 +222,6 @@ export default function ImportDialog(props: {
             }}>
               <label
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                title="Summarize snippets too long to be used effectively">
-                <input
-                  type="checkbox"
-                  checked={summarize}
-                  onChange={e => setSummarize(e.target.checked)} />
-                Summarize pages
-              </label>
-              <label
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
                 title="Insert the source URL into the completion of each snippet">
                 <input
                   type="checkbox"
@@ -256,20 +235,6 @@ export default function ImportDialog(props: {
                   checked={images}
                   onChange={e => setImages(e.target.checked)} />
                 Import images
-              </label>
-              <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <input
-                  type="checkbox"
-                  checked={lists}
-                  onChange={e => setLists(e.target.checked)} />
-                Import lists
-              </label>
-              <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <input
-                  type="checkbox"
-                  checked={code}
-                  onChange={e => setCode(e.target.checked)} />
-                Import code segments
               </label>
             </div>
             <div className="modal-actions">
@@ -396,12 +361,8 @@ export default function ImportDialog(props: {
               // The backend wants milliseconds, the field asks for seconds.
               delay: Math.round(Number(delay) * 1000),
               max: Number(max),
-              threshold: Number(threshold),
-              summarize,
               insert_url: insertUrl,
               images,
-              lists,
-              code,
               meta,
               channel: crawling,
             }).catch(err => showToast(err.message, true, err.logId));

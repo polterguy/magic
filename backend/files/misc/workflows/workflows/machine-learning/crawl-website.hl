@@ -31,14 +31,11 @@ set-value:x:@.arguments/*/max
 
 // Applying defaults.
 validators.default:x:@.arguments
-   code:bool:true
    delay:int:1000
    feedback-channel:IRRELEVANT
    images:bool:true
    insert_url:bool:false
-   lists:bool:true
    max:int:25
-   summarize:bool:true
    threshold:int:150
 
 // Making sure machine learning type exists.

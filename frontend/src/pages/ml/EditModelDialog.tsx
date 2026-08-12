@@ -38,8 +38,13 @@ export default function EditModelDialog(props: {
   const [temperature, setTemperature] = useState(String(existing?.temperature ?? 0.3));
   const [threshold, setThreshold] = useState(String(existing?.threshold ?? 0.3));
   const [maxTokens, setMaxTokens] = useState(String(existing?.max_tokens ?? 4000));
+  /*
+   * 2000 matches what the Chatbot Wizard creates — the value doubles as the
+   * split threshold during crawling (snippets above 80% of it are split by
+   * subject), so it decides corpus granularity as much as answer grounding.
+   */
   const [maxContextTokens, setMaxContextTokens] =
-    useState(String(existing?.max_context_tokens ?? 12000));
+    useState(String(existing?.max_context_tokens ?? 2000));
   const [maxRequestTokens, setMaxRequestTokens] =
     useState(String(existing?.max_request_tokens ?? 1000));
   const [auth, setAuth] = useState<string[]>(existing?.auth ? existing.auth.split(',') : []);

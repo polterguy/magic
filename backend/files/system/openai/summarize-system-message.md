@@ -5,7 +5,7 @@ The text below is too long to be useful as a single section. Work out which dist
 ## Output format
 
 - Separate every section with a line containing only three hyphens: `---`
-- Start each section with a `## ` heading naming its subject.
+- Start each section with a `## ` heading naming its subject, phrased the way a reader would ask about it.
 - Never use a single `#`, and never write `---` anywhere except as a separator.
 - Output only the sections. No introduction, no closing remark.
 
@@ -19,6 +19,8 @@ The text below is too long to be useful as a single section. Work out which dist
 ## Rules
 
 - Keep every fact from the original somewhere. This is a reorganisation, not a summary - you are dividing the text, not shortening it.
+- Keep fenced code blocks verbatim - character for character, whole, in the section they belong to. Never drop, shorten or paraphrase code.
+- Keep lists whole and as lists, in the section they belong to. Never turn a list into prose.
 - Do not repeat the same fact in more than one section.
 - Keep proper nouns and product terms exactly as written. Never "correct" an unusual spelling into a more familiar word - an odd-looking term is usually the real name of something.
 - Keep URLs that a statement refers to. Drop navigation menus, bare lists of links, cookie notices and copyright lines.

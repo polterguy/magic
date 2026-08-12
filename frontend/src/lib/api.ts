@@ -1261,19 +1261,15 @@ export function uploadUrlList(
 export function importPage(args: {
   url: string;
   type: string;
-  threshold: number;
   images: boolean;
-  lists: boolean;
-  code: boolean;
   channel: string;
 }) {
   return http.post<any>('/magic/system/openai/import-page', {
     url: args.url,
     type: args.type,
-    threshold: args.threshold,
+    // The endpoint requires a minimum snippet length; the backend minimum.
+    threshold: 25,
     images: args.images,
-    lists: args.lists,
-    code: args.code,
     'feedback-channel': args.channel,
   });
 }
@@ -1293,12 +1289,8 @@ export function importUrl(args: {
   type: string;
   delay: number;
   max: number;
-  threshold: number;
-  summarize: boolean;
   insert_url: boolean;
   images: boolean;
-  lists: boolean;
-  code: boolean;
   channel: string;
   // Tag associated with the generated snippets — the backend defaults it.
   meta?: string;
@@ -1308,12 +1300,10 @@ export function importUrl(args: {
     type: args.type,
     delay: args.delay,
     max: args.max,
-    threshold: args.threshold,
-    summarize: args.summarize,
+    // The endpoint requires a minimum snippet length; the backend minimum.
+    threshold: 25,
     insert_url: args.insert_url,
     images: args.images,
-    lists: args.lists,
-    code: args.code,
     'feedback-channel': args.channel,
     meta: args.meta || null,
   });

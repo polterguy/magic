@@ -1,17 +1,18 @@
 
 /*
- * Scrapes specified [url] and creates machine learning training snippets from page,
- * by semantically chopping up page into training snippets.
+ * Scrapes specified [url] and creates machine learning training snippets from page.
+ *
+ * The page becomes one training snippet, unless it is larger than 80% of the
+ * type's max_context_tokens, at which point it is split by subject into
+ * multiple snippets - guaranteeing nothing larger than 80% of the context
+ * window is ever inserted into the database.
  *
  * Arguments:
  *
  * - [url] - What URL to scrape.
  * - [type] - What type to import training snippets into.
- * - [summarize] - If true will summarize all training snippets that are larger than 1,000 tokens.
  * - [headers] - Optional collection of HTTML headers we should associate with HTTP request.
  * - [images] - If true will import images
- * - [lists] - If true will import lists
- * - [code] - If true will import code
  */
 slots.create:magic.ai.url.scrape
 
@@ -22,10 +23,7 @@ slots.create:magic.ai.url.scrape
 
    // Ensuring defaults.
    validators.default:x:@.arguments
-      summarize:bool:true
       images:bool:true
-      lists:bool:true
-      code:bool:true
 
    // Signaling frontend.
    .msg
@@ -61,8 +59,6 @@ slots.create:magic.ai.url.scrape
          url:x:@.arguments/*/url
          feedback-channel:x:@.arguments/*/feedback-channel
          images:x:@.arguments/*/images
-         lists:x:@.arguments/*/lists
-         code:x:@.arguments/*/code
 
       // URLs we return to caller.
       .urls
@@ -116,295 +112,324 @@ slots.create:magic.ai.url.scrape
       else
 
          /*
-          * Checking if caller wants to summarize snippets that are too long, and if
-          * yes, we invoke OpenAI to have it summarize all training snippets that
-          * are too long to be useful as training snippets.
+          * Figuring out max size of snippets, which is max_context_tokens * 0.80,
+          * such that any snippet larger than that can be split by subject below.
+          *
+          * This ensures that a text context will almost always have extra room for images.
           */
-         if
-            and
-               exists:x:@.arguments/*/summarize
-               eq:x:@.arguments/*/summarize
-                  .:bool:true
-            .lambda
+         .max-size
+         .api-key
+         .target-size
+         .system-prompt
 
-               /*
-                * Caller wants to summarize long snippets, figuring out max size of snippets,
-                * which are max_context_tokens * 0.80.
-                *
-                * This ensures that a text context will almost always have extra room for images.
-                */
-               .max-size
-               .api-key
-               .target-size
-               .system-prompt
+         /*
+          * Snippets split out of oversized snippets below.
+          *
+          * They are collected here rather than added directly, since a
+          * collection cannot be added to while it is being iterated.
+          */
+         .extra-snippets
+         data.connect:[generic|magic]
 
-               /*
-                * Snippets split out of oversized snippets below.
-                *
-                * They are collected here rather than added directly, since a
-                * collection cannot be added to while it is being iterated.
-                */
-               .extra-snippets
-               data.connect:[generic|magic]
+            // Retrieving maximum context tokens for type from database.
+            data.read
+               table:ml_types
+               columns
+                  max_context_tokens
+                  api_key
+               where
+                  and
+                     type.eq:x:@.arguments/*/type
 
-                  // Retrieving maximum context tokens for type from database.
-                  data.read
-                     table:ml_types
-                     columns
-                        max_context_tokens
-                        api_key
-                     where
-                        and
-                           type.eq:x:@.arguments/*/type
+            // Making sure we use 80% of max context tokens as maximum size for snippets.
+            set-value:x:@.max-size
+               math.multiply
+                  convert:x:@data.read/*/*/max_context_tokens
+                     type:decimal
+                  .:decimal:0.8
+            set-value:x:@.max-size
+               convert:x:@.max-size
+                  type:int
+            set-value:x:@.api-key
+               get-value:x:@data.read/*/*/api_key
 
-                  // Making sure we use 80% of max context tokens as maximum size for snippets.
-                  set-value:x:@.max-size
+         /*
+          * The length we ask the model to aim for, deliberately below the hard
+          * ceiling above.
+          *
+          * Asking for exactly the ceiling means the answer stops when it runs
+          * out of tokens rather than when it is finished, and a summary cut off
+          * mid-sentence is stored and vectorised as though it were complete.
+          */
+         set-value:x:@.target-size
+            math.multiply
+               convert:x:@.max-size
+                  type:decimal
+               .:decimal:0.75
+
+         /*
+          * The instruction telling the model how to compress a snippet.
+          *
+          * It lives in a file rather than inline so it can be tuned without
+          * touching code, and it is loaded per invocation, so an edit applies
+          * to the next crawl without restarting.
+          */
+         set-value:x:@.system-prompt
+            io.file.load:/system/openai/summarize-system-message.md
+         set-value:x:@.system-prompt
+            strings.concat
+               get-value:x:@.system-prompt
+               .:"\r\n\r\nEach section must stay under "
+               get-value:x:@.target-size
+               .:" tokens."
+
+         // Looping through all snippets to check their size.
+         for-each:x:@.snippets/*
+
+            // Concatenating prompt and completion.
+            .tmp
+            set-value:x:@.tmp
+               strings.concat
+                  get-value:x:@.dp/#/*/prompt
+                  .:"\r\n"
+                  .:"\r\n"
+                  get-value:x:@.dp/#/*/completion
+
+
+            // Checking if there are too many tokens in snippet.
+            if
+               mt
+                  openai.tokenize:x:@.tmp
+                  get-value:x:@.max-size
+               .lambda
+
+                  // Informing frontend of that we're about to split snippet.
+                  sockets.signal:x:@.arguments/*/feedback-channel
+                     args
+                        message:Splitting snippet by subject since it is larger than 80% of maximum context size for type
+                        type:info
+                  sleep:100
+
+                  /*
+                   * Room for the answer.
+                   *
+                   * Splitting keeps everything rather than shortening it, so the
+                   * answer is roughly the size of the snippet we send - and we are
+                   * only here because that is larger than [.max-size]. Sizing the
+                   * ceiling off the snippet itself, with room for the subject
+                   * headings and separators the model adds.
+                   */
+                  .output-size
+                  openai.tokenize:x:@.tmp
+                  set-value:x:@.output-size
                      math.multiply
-                        convert:x:@data.read/*/*/max_context_tokens
+                        convert:x:@openai.tokenize
                            type:decimal
-                        .:decimal:0.8
-                  set-value:x:@.max-size
-                     convert:x:@.max-size
+                        .:decimal:1.5
+                  set-value:x:@.output-size
+                     convert:x:@.output-size
                         type:int
-                  set-value:x:@.api-key
-                     get-value:x:@data.read/*/*/api_key
 
-               /*
-                * The length we ask the model to aim for, deliberately below the hard
-                * ceiling above.
-                *
-                * Asking for exactly the ceiling means the answer stops when it runs
-                * out of tokens rather than when it is finished, and a summary cut off
-                * mid-sentence is stored and vectorised as though it were complete.
-                */
-               set-value:x:@.target-size
-                  math.multiply
-                     convert:x:@.max-size
-                        type:decimal
-                     .:decimal:0.75
-
-               /*
-                * The instruction telling the model how to compress a snippet.
-                *
-                * It lives in a file rather than inline so it can be tuned without
-                * touching code, and it is loaded per invocation, so an edit applies
-                * to the next crawl without restarting.
-                */
-               set-value:x:@.system-prompt
-                  io.file.load:/system/openai/summarize-system-message.md
-               set-value:x:@.system-prompt
-                  strings.concat
-                     get-value:x:@.system-prompt
-                     .:"\r\n\r\nEach section must stay under "
-                     get-value:x:@.target-size
-                     .:" tokens."
-
-               // Looping through all snippets to check their size.
-               for-each:x:@.snippets/*
-
-                  // Concatenating prompt and completion.
-                  .tmp
-                  set-value:x:@.tmp
+                  // Creating our bearer token.
+                  .token
+                  set-value:x:@.token
                      strings.concat
-                        get-value:x:@.dp/#/*/prompt
-                        .:"\r\n"
-                        .:"\r\n"
-                        get-value:x:@.dp/#/*/completion
+                        .:"Bearer "
+                        get-first-value
+                           get-value:x:@.api-key
+                           config.get:"magic:openai:key"
 
-
-                  // Checking if there are too many tokens in snippet.
-                  if
-                     mt
-                        openai.tokenize:x:@.tmp
-                        get-value:x:@.max-size
+                  // Making sure we try to summarize snippet 3 times before giving up.
+                  .no:int:3
+                  while
+                     mt:x:@.no
+                        .:int:0
                      .lambda
 
-                        // Informing frontend of that we're about to split snippet.
-                        sockets.signal:x:@.arguments/*/feedback-channel
-                           args
-                              message:Splitting snippet by subject since it is larger than 80% of maximum context size for type
-                              type:info
-                        sleep:100
+                        // Making sure we catch exceptions.
+                        try
 
-                        /*
-                         * Room for the answer.
-                         *
-                         * Splitting keeps everything rather than shortening it, so the
-                         * answer is roughly the size of the snippet we send - and we are
-                         * only here because that is larger than [.max-size]. Sizing the
-                         * ceiling off the snippet itself, with room for the subject
-                         * headings and separators the model adds.
-                         */
-                        .output-size
-                        openai.tokenize:x:@.tmp
-                        set-value:x:@.output-size
-                           math.multiply
-                              convert:x:@openai.tokenize
-                                 type:decimal
-                              .:decimal:1.5
-                        set-value:x:@.output-size
-                           convert:x:@.output-size
-                              type:int
+                           // Invoking OpenAI to summarize snippet.
+                           unwrap:x:+/**
+                           http.post:"https://api.openai.com/v1/responses"
+                              timeout:180
+                              headers
+                                 Authorization:x:@.token
+                                 Content-Type:application/json
+                              payload
+                                 model:gpt-5.6-luna
+                                 max_output_tokens:x:@.output-size
+                                 reasoning
+                                    effort:low
+                                 input
+                                    .
+                                       role:system
+                                       content:x:@.system-prompt
+                                    .
+                                       role:user
+                                       content:x:@.dp/#/*/completion
+                              convert:true
 
-                        // Creating our bearer token.
-                        .token
-                        set-value:x:@.token
-                           strings.concat
-                              .:"Bearer "
-                              get-first-value
-                                 get-value:x:@.api-key
-                                 config.get:"magic:openai:key"
+                           // Checking that above invocation returned success.
+                           if
+                              eq:x:@http.post
+                                 .:int:400
+                              .lambda
 
-                        // Making sure we try to summarize snippet 3 times before giving up.
-                        .no:int:3
-                        while
-                           mt:x:@.no
-                              .:int:0
-                           .lambda
+                                 // Probably too many tokens to summarize.
+                                 sockets.signal:x:@.arguments/*/feedback-channel
+                                    args
+                                       message:Could not summarize snippet, check your log for details
+                                       type:warning
+                                 sleep:100
+                                 lambda2hyper:x:@http.post
+                                 log.error:Something went wrong while invoking OpenAI
+                                    message:x:@http.post/*/content/*/error/*/message
+                                    status:x:@http.post
+                                    error:x:@lambda2hyper
 
-                              // Making sure we catch exceptions.
-                              try
+                                 // Making sure we don't try again.
+                                 set-value:x:@.no
+                                    .:int:0
 
-                                 // Invoking OpenAI to summarize snippet.
-                                 unwrap:x:+/**
-                                 http.post:"https://api.openai.com/v1/responses"
-                                    headers
-                                       Authorization:x:@.token
-                                       Content-Type:application/json
-                                    payload
-                                       model:gpt-5.6-luna
-                                       max_output_tokens:x:@.output-size
-                                       reasoning
-                                          effort:low
-                                       input
-                                          .
-                                             role:system
-                                             content:x:@.system-prompt
-                                          .
-                                             role:user
-                                             content:x:@.dp/#/*/completion
-                                    convert:true
+                           else-if
+                              and
+                                 mte:x:@http.post
+                                    .:int:200
+                                 lt:x:@http.post
+                                    .:int:300
+                              .lambda
 
-                                 // Checking that above invocation returned success.
-                                 if
-                                    eq:x:@http.post
-                                       .:int:400
-                                    .lambda
+                                 // Success splitting snippet.
+                                 sockets.signal:x:@.arguments/*/feedback-channel
+                                    args
+                                       message:Successfully split snippet by subject
+                                       type:info
+                                 sleep:100
 
-                                       // Probably too many tokens to summarize.
-                                       sockets.signal:x:@.arguments/*/feedback-channel
-                                          args
-                                             message:Could not summarize snippet, check your log for details
-                                             type:warning
-                                       sleep:100
-                                       lambda2hyper:x:@http.post
-                                       log.error:Something went wrong while invoking OpenAI
-                                          message:x:@http.post/*/content/*/error/*/message
-                                          status:x:@http.post
-                                          error:x:@lambda2hyper
+                                 /*
+                                  * Retrieving the answer.
+                                  *
+                                  * The Responses API returns it as an "output_text" part inside
+                                  * the "message" item, which is not necessarily the first item in
+                                  * the output - reasoning models put their reasoning item before it.
+                                  */
+                                 .summary
+                                 set-value:x:@.summary
+                                    get-first-value
+                                       get-value:x:@http.post/*/content/*/output/*/*/type/=message/./*/content/*/*/type/=output_text/./*/text
+                                       get-value:x:@http.post/*/content/*/output/0/*/content/0/*/text
 
-                                       // Making sure we don't try again.
-                                       set-value:x:@.no
-                                          .:int:0
+                                 /*
+                                  * Normalising line endings before splitting, since the separator
+                                  * never matches if the model answers with CRLF.
+                                  */
+                                 set-value:x:@.summary
+                                    strings.replace:x:@.summary
+                                       .:"\r\n"
+                                       .:"\n"
 
-                                 else-if
-                                    and
-                                       mte:x:@http.post
-                                          .:int:200
-                                       lt:x:@http.post
-                                          .:int:300
-                                    .lambda
+                                 // One section per subject the model found in the snippet.
+                                 strings.split:x:@.summary
+                                    .:"\n---\n"
 
-                                       // Success splitting snippet.
-                                       sockets.signal:x:@.arguments/*/feedback-channel
-                                          args
-                                             message:Successfully split snippet by subject
-                                             type:info
-                                       sleep:100
+                                 /*
+                                  * The first section replaces the snippet we started from, and
+                                  * every additional subject becomes a snippet of its own.
+                                  */
+                                 .parent-prompt
+                                 set-value:x:@.parent-prompt
+                                    get-value:x:@.dp/#/*/prompt
 
-                                       /*
-                                        * Retrieving the answer.
-                                        *
-                                        * The Responses API returns it as an "output_text" part inside
-                                        * the "message" item, which is not necessarily the first item in
-                                        * the output - reasoning models put their reasoning item before it.
-                                        */
-                                       .summary
-                                       set-value:x:@.summary
-                                          get-first-value
-                                             get-value:x:@http.post/*/content/*/output/*/*/type/=message/./*/content/*/*/type/=output_text/./*/text
-                                             get-value:x:@http.post/*/content/*/output/0/*/content/0/*/text
-
-                                       /*
-                                        * Normalising line endings before splitting, since the separator
-                                        * never matches if the model answers with CRLF.
-                                        */
-                                       set-value:x:@.summary
-                                          strings.replace:x:@.summary
-                                             .:"\r\n"
+                                 /*
+                                  * Parsing each section into a prompt and a completion.
+                                  *
+                                  * Sections open with a "## " heading naming their subject,
+                                  * which becomes the snippet's prompt - and since the prompt
+                                  * is embedded together with the completion, each snippet gets
+                                  * its own retrieval signal instead of every sibling sharing
+                                  * the page's title. A section without a heading inherits the
+                                  * prompt of the snippet it was split out of.
+                                  */
+                                 .parsed
+                                 for-each:x:@strings.split/*
+                                    .title
+                                    set-value:x:@.title
+                                       get-value:x:@.parent-prompt
+                                    .body
+                                    set-value:x:@.body
+                                       strings.trim:x:@.dp/#
+                                          .:"\r\n\t "
+                                    if
+                                       strings.starts-with:x:@.body
+                                          .:"## "
+                                       .lambda
+                                          strings.split:x:@.body
                                              .:"\n"
+                                          set-value:x:@.title
+                                             strings.substring:x:@strings.split/0
+                                                .:int:3
+                                          set-value:x:@.title
+                                             strings.trim:x:@.title
+                                                .:"\r\n\t #"
+                                          remove-nodes:x:@strings.split/0
+                                          set-value:x:@.body
+                                             strings.join:x:@strings.split/*
+                                                .:"\n"
+                                          set-value:x:@.body
+                                             strings.trim:x:@.body
+                                                .:"\r\n\t "
+                                    unwrap:x:+/*/*/*
+                                    add:x:@.parsed
+                                       .
+                                          .
+                                             prompt:x:@.title
+                                             completion:x:@.body
 
-                                       // One section per subject the model found in the snippet.
-                                       strings.split:x:@.summary
-                                          .:"\n---\n"
+                                 // First section replaces the snippet we started from.
+                                 set-value:x:@.dp/#/*/prompt
+                                    get-value:x:@.parsed/0/*/prompt
+                                 set-value:x:@.dp/#/*/completion
+                                    get-value:x:@.parsed/0/*/completion
+                                 remove-nodes:x:@.parsed/0
+                                 add:x:@.extra-snippets
+                                    get-nodes:x:@.parsed/*
 
-                                       /*
-                                        * The first section replaces the snippet we started from, and
-                                        * every additional subject becomes a snippet of its own, keeping
-                                        * the prompt of the snippet it was split out of.
-                                        */
-                                       .parent-prompt
-                                       set-value:x:@.parent-prompt
-                                          get-value:x:@.dp/#/*/prompt
-                                       set-value:x:@.dp/#/*/completion
-                                          strings.trim:x:@strings.split/0
-                                             .:"\r\n\t "
-                                       remove-nodes:x:@strings.split/0
-                                       for-each:x:@strings.split/*
-                                          strings.trim:x:@.dp/#
-                                             .:"\r\n\t "
-                                          unwrap:x:+/*/*/*
-                                          add:x:@.extra-snippets
-                                             .
-                                                .
-                                                   prompt:x:@.parent-prompt
-                                                   completion:x:@strings.trim
+                                 // Making sure we don't try again.
+                                 set-value:x:@.no
+                                    .:int:0
 
-                                       // Making sure we don't try again.
-                                       set-value:x:@.no
-                                          .:int:0
+                           else
 
-                                 else
+                              // Oops, could not summarize snippet.
+                              sockets.signal:x:@.arguments/*/feedback-channel
+                                 args
+                                    message:Could not summarize snippet, check your log for details. Trying again in 3 seconds.
+                                    type:warning
+                              sleep:3000
+                              lambda2hyper:x:@http.post
+                              log.error:Something went wrong while invoking OpenAI
+                                 message:x:@http.post/*/content/*/error/*/message
+                                 status:x:@http.post
+                                 error:x:@lambda2hyper
 
-                                    // Oops, could not summarize snippet.
-                                    sockets.signal:x:@.arguments/*/feedback-channel
-                                       args
-                                          message:Could not summarize snippet, check your log for details. Trying again in 3 seconds.
-                                          type:warning
-                                    sleep:3000
-                                    lambda2hyper:x:@http.post
-                                    log.error:Something went wrong while invoking OpenAI
-                                       message:x:@http.post/*/content/*/error/*/message
-                                       status:x:@http.post
-                                       error:x:@lambda2hyper
+                              // Decrementing [.no] such that we don't end up in an infinite loop.
+                              math.decrement:x:@.no
 
-                                    // Decrementing [.no] such that we don't end up in an infinite loop.
-                                    math.decrement:x:@.no
+                        .catch
 
-                              .catch
+                           // Decrementing [.no] such that we don't end up in an infinite loop.
+                           math.decrement:x:@.no
 
-                                 // Decrementing [.no] such that we don't end up in an infinite loop.
-                                 math.decrement:x:@.no
-
-               /*
-                * Adding the snippets we split out of oversized snippets above.
-                *
-                * This happens after the loop, since [.snippets] is what the loop
-                * is iterating, and it happens before the count below, so the
-                * numbers reported to the user include them.
-                */
-               add:x:@.snippets
-                  get-nodes:x:@.extra-snippets/*
+         /*
+          * Adding the snippets we split out of oversized snippets above.
+          *
+          * This happens after the loop, since [.snippets] is what the loop
+          * is iterating, and it happens before the count below, so the
+          * numbers reported to the user include them.
+          */
+         add:x:@.snippets
+            get-nodes:x:@.extra-snippets/*
 
          // Number of snippets that are below threshold and hence won't be imported.
          .below-threshold:int:0

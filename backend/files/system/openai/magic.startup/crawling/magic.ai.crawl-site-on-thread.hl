@@ -4,10 +4,6 @@
  */
 slots.create:magic.ai.crawl-site-on-thread
 
-   // Ensuring defaults.
-   validators.default:x:@.arguments
-      summarize:bool:true
-
    /*
     * Loading robots.txt from specified [url].
     */
@@ -240,11 +236,8 @@ slots.create:magic.ai.crawl-site-on-thread
                   url:x:@.dp/#
                   type:x:@.arguments/*/type
                   threshold:x:@.arguments/*/threshold
-                  summarize:x:@.arguments/*/summarize
                   feedback-channel:x:@.arguments/*/feedback-channel
                   images:x:@.arguments/*/images
-                  lists:x:@.arguments/*/lists
-                  code:x:@.arguments/*/code
                   insert_url:x:@.arguments/*/insert_url
                   meta:x:@.arguments/*/meta
 
@@ -380,12 +373,7 @@ slots.create:magic.ai.crawl-site-on-thread
                url:x:@.urls/0
                type:x:@.arguments/*/type
                images:bool:true
-               code:bool:true
-               lists:bool:true
-               main:bool:true
-               empty-completion:bool:false
                threshold:x:@.arguments/*/threshold
-               summarize:x:@.arguments/*/summarize
                feedback-channel:x:@.arguments/*/feedback-channel
 
             /*

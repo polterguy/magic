@@ -6,10 +6,7 @@
    url:string
    type:string
    threshold:int
-   summarize:bool
    images:bool
-   lists:bool
-   code:bool
    feedback-channel:string
    meta:string
 
@@ -36,10 +33,7 @@ validators.mandatory:x:@.arguments/*/type
 validators.integer:x:@.arguments/*/threshold
    min:25
 validators.default:x:@.arguments
-   summarize:bool:true
    images:bool:true
-   lists:bool:true
-   code:bool:true
    meta:AINIRO-Website-Crawler
 
 // Doing some basic logging.
@@ -66,10 +60,7 @@ fork
          type:x:@.arguments/*/type
          feedback-channel:x:@.arguments/*/feedback-channel
          threshold:x:@.arguments/*/threshold
-         summarize:x:@.arguments/*/summarize
-         lists:x:@.arguments/*/lists
          images:x:@.arguments/*/images
-         code:x:@.arguments/*/code
          meta:x:@.arguments/*/meta
 
       /*
