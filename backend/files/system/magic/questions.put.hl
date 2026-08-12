@@ -6,6 +6,7 @@
    questionnaire:string
    type:string
    name:string
+   context:int
 .description:CRUD update endpoint updating one record in your questions table in your magic database filtering which item to update with question_id updating question, questionnaire fields with authentication and authorisation for root,admin roles
 .type:crud-update
 

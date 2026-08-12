@@ -901,6 +901,14 @@ td {
   vertical-align: top;
 }
 
+/*
+ * Every table row lights up under the pointer, so the eye can follow a row
+ * across wide tables. Rows that actually DO something on click get the
+ * stronger accent tint plus a pointer, keeping "you can click this" distinct
+ * from "this is the row you are on".
+ */
+tbody tr:hover > td { background: var(--overlay-faint); }
+
 tr.clickable { cursor: pointer; }
 
 tr.clickable:hover td { background: var(--accent-soft); }
@@ -1493,6 +1501,17 @@ pre.result-json {
   gap: 8px;
   font-weight: 600;
   font-size: var(--text-sm);
+}
+
+/*
+ * A checkbox belongs BESIDE its label, but .form-grid stacks every label as a
+ * caption above its control — and wins on specificity. So the row direction is
+ * restated here, scoped tightly enough to beat it.
+ */
+.form-grid label.checkbox-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .form-grid.columns {

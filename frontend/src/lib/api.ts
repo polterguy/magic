@@ -862,6 +862,8 @@ export function createQuestion(item: {
   questionnaire: string;
   type: string;
   name?: string | null;
+  // 1 replays this answer as context in the user's later conversations.
+  context: number;
 }) {
   return http.post<any>('/magic/system/magic/questions', item);
 }
@@ -872,6 +874,7 @@ export function updateQuestion(item: {
   questionnaire: string;
   type: string;
   name?: string | null;
+  context: number;
 }) {
   return http.put<any>('/magic/system/magic/questions', item);
 }
