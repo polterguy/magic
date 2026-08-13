@@ -160,7 +160,7 @@ Open `http://localhost:4201` and log in using `http://localhost:5000` as your ba
 
 ### Bring your own OpenAI API key
 
-Magic uses OpenAI by default — create a key [here](https://platform.openai.com/api-keys). If you'd rather not use OpenAI, there are **Ollama** and **HuggingFace** plugins that override the inference functions, though embeddings still require OpenAI's API. And if you drive Magic through the **MCP server**, you don't need an OpenAI key at all.
+Magic uses OpenAI by default — create a key [here](https://platform.openai.com/api-keys). If you'd rather not use OpenAI, there are **Ollama** and **HuggingFace** plugins that override the inference functions, and chatbots can use **BM25 keyword retrieval** instead of embeddings — full-text search over your training data, running entirely inside SQLite, needing no OpenAI key and no vectorisation. Semantic and hybrid retrieval still use OpenAI's embeddings API. And if you drive Magic through the **MCP server**, you don't need an OpenAI key at all.
 
 ## AI agents
 
@@ -185,6 +185,8 @@ Generate and execute Python on the fly and let the LLM use it as a tool, use Bas
 ### AI chatbots and expert systems
 
 Deliver your agents as password-protected AI expert systems, or as embeddable chatbots on any website. Try ours [here](https://ainiro.io).
+
+Chatbots are grounded in your own content through RAG, with three retrieval modes per model: **semantic** (cosine similarity over OpenAI embeddings), **keyword** (BM25 full-text search — built on SQLite's FTS5, no OpenAI key and no vectorise step needed), or **hybrid**, fusing both rankings so paraphrased questions and exact terms such as product names each find the right training snippet. The crawler splits pages into subject-scoped snippets titled as the questions users actually ask, which is what makes retrieval precise in the first place.
 
 ![Embeddable AI chatbot](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/ai-chatbot.png)
 
@@ -235,7 +237,7 @@ Magic Cloud is built in .NET 10, with a React, Vite and TypeScript dashboard. Hy
 Yes — MIT licensed, self-hostable, no feature gates. The hosted Hyperlambda code generator is currently free to use; future pricing is expected at $49 per 1,000 requests, and there is no payment wall today.
 
 **Do I need an OpenAI API key?**
-For AI code generation and embeddings, yes. If you drive Magic over MCP from Claude or Codex, no. Ollama and HuggingFace plugins can replace inference, but embeddings still need OpenAI.
+For AI code generation and semantic (embeddings) retrieval, yes. If you drive Magic over MCP from Claude or Codex, no. Ollama and HuggingFace plugins can replace inference, and chatbots configured for BM25 keyword retrieval search your training data with SQLite full-text search — no OpenAI involved.
 
 **Can I run it completely on my own hardware?**
 Yes. Everything — database, API, frontend, scheduler, chatbots — runs in your own containers, on your own machine.

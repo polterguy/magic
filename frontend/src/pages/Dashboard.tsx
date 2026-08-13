@@ -361,7 +361,9 @@ export default function Dashboard() {
             <h2 style={{ margin: '0 0 6px 0' }}>Add your OpenAI API key</h2>
             <p className="muted" style={{ margin: 0 }}>
               Machine Learning needs an OpenAI API key before you can train models,
-              crawl content, or run chatbots. You can get one{' '}
+              crawl content, or run chatbots — retrieval itself can run without one
+              using keyword (BM25) search, but answers still come from a model.
+              You can get one{' '}
               <a
                 href="https://platform.openai.com/account/api-keys"
                 target="_blank"
