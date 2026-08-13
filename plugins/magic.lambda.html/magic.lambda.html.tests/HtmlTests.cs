@@ -136,6 +136,39 @@ html2markdown:@""<html><body><p>Pick a country</p><select><option>Norway</option
         }
 
         [Fact]
+        public void Html2MarkdownRendersDataTable()
+        {
+            var result = Common.Evaluate(@"
+html2markdown:@""<html><body><table><caption>Pricing</caption><tr><th>Plan</th><th>Price</th></tr><tr><td>Users</td><td>$100/mo</td></tr><tr><td>Developers</td><td>$200/mo</td></tr></table></body></html>""");
+            var markdown = result.Children.First().GetEx<string>();
+            Assert.Contains("**Pricing**", markdown);
+            Assert.Contains("| Plan | Price |", markdown);
+            Assert.Contains("| --- | --- |", markdown);
+            Assert.Contains("| Users | $100/mo |", markdown);
+            Assert.Contains("| Developers | $200/mo |", markdown);
+        }
+
+        [Fact]
+        public void Html2MarkdownEscapesPipesInTableCells()
+        {
+            var result = Common.Evaluate(@"
+html2markdown:@""<html><body><table><tr><th>Name</th><th>Syntax</th></tr><tr><td>Or</td><td>a|b</td></tr></table></body></html>""");
+            var markdown = result.Children.First().GetEx<string>();
+            Assert.Contains("| Or | a\\|b |", markdown);
+        }
+
+        [Fact]
+        public void Html2MarkdownFlattensLayoutTable()
+        {
+            var result = Common.Evaluate(@"
+html2markdown:@""<html><body><table><tr><td>This is a layout table cell holding an entire paragraph of content, going on and on for long enough that no sane person would ever call it tabular data, since it is really just page layout from the old days of the web.</td></tr><tr><td>Sidebar</td></tr></table></body></html>""");
+            var markdown = result.Children.First().GetEx<string>();
+            Assert.Contains("layout table cell", markdown);
+            Assert.Contains("Sidebar", markdown);
+            Assert.DoesNotContain("| --- |", markdown);
+        }
+
+        [Fact]
         public void RoundTrip()
         {
             var result = Common.Evaluate(@"

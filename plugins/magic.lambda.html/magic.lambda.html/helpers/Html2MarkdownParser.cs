@@ -102,6 +102,8 @@ namespace magic.lambda.html.slots.helpers
             // style details/summary constructs keep their questions.
             {"summary", (self, node, baseUrl, builder)      =>   HeaderElementHandler(self, node, baseUrl, builder, "### ")},
 
+            {"table", TableElementHandler},
+
             /*
              * Elements whose text is not prose. These must be suppressed explicitly,
              * since the #text fallback in ParseNode would otherwise import scripts,
@@ -337,6 +339,122 @@ namespace magic.lambda.html.slots.helpers
             EnsureSingleNewLine(builder);
             builder.Append("```\r\n\r\n");
             return false;
+        }
+
+        /*
+         * TABLE HTML element handler.
+         *
+         * Renders data tables as Markdown pipe tables, keeping the row and
+         * column associations facts live in. Layout tables - the ones old
+         * sites build whole pages out of - would become unreadable pipe soup,
+         * so anything that does not look like data (nested tables, essay
+         * length cells, fewer than two rows or columns) returns true instead,
+         * falling through to the default traversal that keeps its text as
+         * prose.
+         */
+        static bool TableElementHandler(
+            Html2MarkdownParser self,
+            HtmlNode htmlNode,
+            (string DocBaseUrl, string DocUrl) baseUrl,
+            StringBuilder builder)
+        {
+            // Nested tables cannot be expressed in Markdown.
+            if (htmlNode.Descendants().Any(x => x.Name == "table"))
+                return true;
+
+            // Collecting this table's rows, whether sectioned or not.
+            var trNodes = new List<HtmlNode>();
+            foreach (var child in htmlNode.ChildNodes)
+            {
+                if (child.Name == "tr")
+                    trNodes.Add(child);
+                else if (child.Name == "thead" || child.Name == "tbody" || child.Name == "tfoot")
+                    trNodes.AddRange(child.ChildNodes.Where(x => x.Name == "tr"));
+            }
+            if (trNodes.Count < 2)
+                return true;
+
+            // Rendering every cell, deciding as we go whether this is data at all.
+            var rows = new List<List<(string Text, bool Header)>>();
+            var maxCols = 0;
+            foreach (var tr in trNodes)
+            {
+                var row = new List<(string Text, bool Header)>();
+                foreach (var cell in tr.ChildNodes.Where(x => x.Name == "td" || x.Name == "th"))
+                {
+                    var tmpBuilder = new StringBuilder();
+                    self.RenderChildren(cell, tmpBuilder, baseUrl);
+                    var text = TrimText(tmpBuilder.ToString()).Replace("|", "\\|");
+
+                    // Cells of essay length mean layout, not data.
+                    if (text.Length > 150)
+                        return true;
+                    row.Add((text, cell.Name == "th"));
+
+                    // Approximating colspan by padding, since Markdown cannot merge cells.
+                    if (int.TryParse(cell.GetAttributeValue("colspan", "1"), out var span))
+                    {
+                        for (var idx = 1; idx < span; idx++)
+                            row.Add((string.Empty, cell.Name == "th"));
+                    }
+                }
+                rows.Add(row);
+                maxCols = Math.Max(maxCols, row.Count);
+            }
+            if (maxCols < 2)
+                return true;
+
+            EnsureDoubleNewLine(builder);
+
+            // Caption becomes an emphasized line above the table.
+            var caption = htmlNode.ChildNodes.FirstOrDefault(x => x.Name == "caption");
+            if (caption != null)
+            {
+                var tmpBuilder = new StringBuilder();
+                self.RenderChildren(caption, tmpBuilder, baseUrl);
+                var captionText = TrimText(tmpBuilder.ToString());
+                if (!string.IsNullOrEmpty(captionText))
+                {
+                    builder
+                        .Append("**")
+                        .Append(captionText)
+                        .Append("**\r\n\r\n");
+                }
+            }
+
+            /*
+             * Markdown requires a header row - the first row counts as one when
+             * it contains header cells, otherwise an empty header is synthesized.
+             */
+            var hasHeader = rows[0].Any(x => x.Header);
+            RenderTableRow(builder, hasHeader ? rows[0] : new List<(string Text, bool Header)>(), maxCols);
+            builder.Append('|');
+            for (var idx = 0; idx < maxCols; idx++)
+                builder.Append(" --- |");
+            builder.Append("\r\n");
+            foreach (var row in hasHeader ? rows.Skip(1) : rows)
+                RenderTableRow(builder, row, maxCols);
+            builder.Append("\r\n");
+            return false;
+        }
+
+        /*
+         * Renders a single pipe table row, padded to the table's column count.
+         */
+        static void RenderTableRow(
+            StringBuilder builder,
+            List<(string Text, bool Header)> row,
+            int maxCols)
+        {
+            builder.Append('|');
+            for (var idx = 0; idx < maxCols; idx++)
+            {
+                builder
+                    .Append(' ')
+                    .Append(idx < row.Count ? row[idx].Text : string.Empty)
+                    .Append(" |");
+            }
+            builder.Append("\r\n");
         }
 
         /*
