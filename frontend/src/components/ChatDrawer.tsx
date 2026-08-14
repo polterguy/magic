@@ -263,7 +263,7 @@ export default function ChatDrawer(props: {
       if (chunk.function_result || chunk.function_error) {
         const state = chunk.function_error ? 'error' : 'success';
         // Trimmed — the server's payloads arrive with leading whitespace.
-        const detail = [chunk.invocation, chunk.function_error]
+        const detail = [prettyJson(chunk.invocation), chunk.function_error]
           .map(part => part?.trim())
           .filter(Boolean).join('\n\n');
         const waiting = segments.findIndex(
@@ -606,6 +606,37 @@ function FileTile(props: { name: string; size: number; url?: string; onRemove?: 
   );
 }
 
+/*
+ * Invocations arrive as a single line. Re-indent them for reading, and hand
+ * anything that is not JSON straight back — the same field carries plain text
+ * on some of the server's error paths, and that is worth showing verbatim.
+ */
+function prettyJson(text?: string): string | undefined {
+  if (!text) {
+    return undefined;
+  }
+  try {
+    return JSON.stringify(JSON.parse(text), null, 2);
+  } catch {
+    return text;
+  }
+}
+
+/*
+ * The server names the function differently depending on how the invocation
+ * ended: a bare name when it succeeded, but the raw first line of the
+ * invocation — "FUNCTION_INVOCATION[/path/to/name.hl]:" — when it failed,
+ * because the catch cannot read the name off a call that threw. Both reduce to
+ * the same thing, so the pill reads the same either way.
+ */
+function functionName(file?: string): string | undefined {
+  if (!file) {
+    return undefined;
+  }
+  const path = file.match(/\[([^\]]+)\]/)?.[1] ?? file;
+  return path.trim().replace(/\.hl$/i, '').split('/').pop() || undefined;
+}
+
 function ChatSegment({ segment, markdown }: { segment: Segment; markdown: boolean }) {
 
   // Collapsed by default — the pill is the summary, the payload one click away.
@@ -644,8 +675,8 @@ function ChatSegment({ segment, markdown }: { segment: Segment; markdown: boolea
             title={expandable ? 'Show the invocation' : undefined}
             onClick={() => setShowDetail(current => !current)}>
             {segment.state === 'waiting' && <>Executing function<span className="spinner-dots" /></>}
-            {segment.state === 'success' && <>✓ {segment.file ?? 'Function executed'}</>}
-            {segment.state === 'error' && <>✕ {segment.file ?? 'Function failed'}</>}
+            {segment.state === 'success' && <>✓ {functionName(segment.file) ?? 'Function executed'}</>}
+            {segment.state === 'error' && <>✕ {functionName(segment.file) ?? 'Function failed'}</>}
             {expandable && (
               <span className="chat-pill-caret" aria-hidden="true">
                 {showDetail ? '▾' : '▸'}

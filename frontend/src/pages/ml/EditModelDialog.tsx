@@ -93,7 +93,13 @@ export default function EditModelDialog(props: {
      * save — the column is a nullable foreign key into questionnaires.
      */
     initial_questionnaire: existing?.initial_questionnaire ?? '',
-    vector_model: existing?.vector_model ?? 'text-embedding-ada-002',
+    /*
+     * Matches the backend's own default in ml_types.post.hl, and what the
+     * chatbot wizard writes in create-bot.post.hl — a new model created here
+     * must not end up on a different embedding model than one created anywhere
+     * else, since embeddings from two models are not comparable.
+     */
+    vector_model: existing?.vector_model ?? 'text-embedding-3-small',
     // A null captcha value ("no captcha") is shown as -1, the sentinel the field
     // maps back to null on save — so the three modes round-trip.
     // Magic's own captcha is the default for new models — 0 in this field.
@@ -123,12 +129,20 @@ export default function EditModelDialog(props: {
       .catch(() => {});
   }, []);
 
+  /*
+   * A name and an LLM are the only two fields without a working default, so
+   * they gate saving. The dialog submits on Enter as well as through the
+   * button, so [save] checks the same condition rather than trusting the
+   * button's disabled state.
+   */
+  const canSave = type.trim().length >= 2 && model.length > 0;
+
   async function save() {
     if (busy) {
       return;
     }
-    if (type.length < 2) {
-      showToast('Give the model a type name', true);
+    if (!canSave) {
+      showToast('Give the model a name, and select an LLM', true);
       return;
     }
     const payload: any = {
@@ -476,7 +490,11 @@ export default function EditModelDialog(props: {
       </div>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-        <button className="btn" onClick={save} disabled={busy}>
+        <button
+          className="btn"
+          onClick={save}
+          disabled={busy || !canSave}
+          title={canSave ? undefined : 'Give the model a name, and select an LLM'}>
           {busy ? 'Saving…' : 'Save'}
         </button>
       </div>

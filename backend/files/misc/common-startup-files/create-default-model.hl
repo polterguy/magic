@@ -48,26 +48,7 @@ try
          data.update
             table:ml_types
             values
-               model:gpt-5.6-luna
-               max_tokens:int:12000
-               max_context_tokens:int:5000
-               max_request_tokens:int:24000
-               max_function_invocations:int:100
-               temperature:decimal:0.1
-               supervised:int:1
-               vector_model:text-embedding-3-small
-               cached:int:0
-               auth:root
-               greeting:Where the Machine Creates the Code
-               threshold:decimal:0.3
-               max_session_items:int:50
                system_message:x:@io.file.load
-               use_embeddings:int:0
-               conversation_starters:@"* What can you do?
-* I want to SEO analyse my website
-* Create me a full stack app with a database and an API
-* Help me design and create an SQL database for a CRM system
-* I want to create an AI agent"
             where
                and
                   type.eq:default

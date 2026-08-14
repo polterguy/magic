@@ -150,7 +150,7 @@ try
          remove-nodes:x:@try/*/yield/*/code
          add:x:@try/*/yield
             .
-               system_instruction:"The generated code verified before it was saved, so do not report defects in it from reading it - Hyperlambda resembles no other language, and reading it has repeatedly produced reports of bugs that did not exist. To check whether the file behaves correctly, invoke it with the `execute-file` function, or the `invoke-endpoint` function if it is an endpoint, and read the exception with the `read-log` function if it fails. To re-check that it is valid, use the `verify-hyperlambda` function. To change it, describe the change to the `generate-hyperlambda` function, or read it with the `read-file` function and save a targeted edit with the `create-file` function."
+               system_instruction:"This code verified before it was saved, so do not report defects in it from reading it - test it by invoking it, and use the `read-log` function if it fails."
    yield
       code:x:@http.post/*/content/*/result
       time_spent:x:@.total
