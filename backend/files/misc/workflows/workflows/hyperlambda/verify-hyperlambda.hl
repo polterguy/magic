@@ -1,0 +1,108 @@
+
+/*
+ * Verifies Hyperlambda without executing it, and returns a verdict of whether it is valid.
+ *
+ * Supply the code directly as [hyperlambda], or point at an existing file with [filename]. The
+ * verdict is machine checked - the code is parsed, and every slot referenced in executable position
+ * is checked to actually exist on this instance.
+ *
+ * This is the only admissible way to conclude that Hyperlambda is broken. Hyperlambda resembles no
+ * other programming language, and reading it is not sufficient grounds for reporting a defect. If
+ * this function returns valid, treat the code as correct and do not report bugs in it. To find out
+ * whether it does the right thing, execute it and read the log instead of reading the code.
+ */
+.arguments
+
+   // Optional Hyperlambda to verify. Supply either this or [filename].
+   hyperlambda:string
+
+   // Optional existing Hyperlambda file to verify. Supply either this or [hyperlambda].
+   filename:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Resolving the code to verify from whichever argument the caller supplied.
+.code
+if
+   and
+      exists:x:@.arguments/*/filename
+      not-null:x:@.arguments/*/filename
+   .lambda
+
+      // Prepending slash unless specified by caller.
+      if
+         not
+            strings.starts-with:x:@.arguments/*/filename
+               .:/
+         .lambda
+            set-value:x:@.arguments/*/filename
+               strings.concat
+                  .:/
+                  get-value:x:@.arguments/*/filename
+      if
+         not
+            io.file.exists:x:@.arguments/*/filename
+         .lambda
+            throw:No such file
+               public:bool:true
+               status:int:404
+      set-value:x:@.code
+         io.file.load:x:@.arguments/*/filename
+else-if
+   and
+      exists:x:@.arguments/*/hyperlambda
+      not-null:x:@.arguments/*/hyperlambda
+   .lambda
+      set-value:x:@.code
+         get-value:x:@.arguments/*/hyperlambda
+else
+   throw:"Supply either [hyperlambda] or [filename]"
+      public:bool:true
+      status:int:400
+
+// Verdict returned to caller.
+.result
+   valid:bool:true
+   errors
+
+// Syntax check, implying the code must survive being parsed and serialised back out again.
+try
+   hyper2lambda:x:@.code
+      comments:true
+   lambda2hyper:x:@hyper2lambda/*
+      comments:true
+.catch
+   set-value:x:@.result/*/valid
+      .:bool:false
+   strings.concat
+      .:"Syntax error: "
+      get-value:x:@.arguments/*/message
+   unwrap:x:+/*/*
+   add:x:@.result/*/errors
+      .
+         .:x:@strings.concat
+
+// Slot check, which is only meaningful for code that parsed.
+if
+   eq:x:@.result/*/valid
+      .:bool:true
+   .lambda
+      hyperlambda.verify-slots:x:@.code
+      if
+         eq:x:@hyperlambda.verify-slots
+            .:bool:false
+         .lambda
+            set-value:x:@.result/*/valid
+               .:bool:false
+            for-each:x:@hyperlambda.verify-slots/*
+               strings.concat
+                  .:"Slot does not exist on this instance: "
+                  get-value:x:@.dp/#
+               unwrap:x:+/*/*
+               add:x:@.result/*/errors
+                  .
+                     .:x:@strings.concat
+
+// Returning verdict to caller.
+return-nodes:x:@.result/*

@@ -1,9 +1,11 @@
 
 /*
  * Creates a new file or fully overwrites an existing file. For minor edits to an existing file,
- * prefer the patch-file function. For NON-Hyperlambda files only - Hyperlambda (.hl) must be
- * produced by the generate-hyperlambda function, never written by hand. Does NOT create folders -
- * the parent folder must already exist; create it first with the create-folder function.
+ * prefer the `patch-file` function. Hyperlambda files are verified before they are saved, so broken
+ * Hyperlambda never reaches disk - prefer the `generate-hyperlambda` function for writing Hyperlambda
+ * from a description, and use this function for targeted edits to code that already exists. Does
+ * NOT create folders - the parent folder must already exist; create it first with the `create-folder`
+ * function.
  */
 .arguments
 
@@ -57,15 +59,27 @@ if
    .lambda
       io.folder.create:/etc/tmp/
 
-// Hyperlambda is never hand-written - it can only be produced by the generate-hyperlambda function,
-// which validates and saves it itself. Refusing any direct attempt to save a Hyperlambda file.
+// Hyperlambda is verified before it is saved, so code that does not parse, or that references a slot
+// which does not exist, is rejected instead of reaching disk. Notice, we compare lowercased to also
+// catch ".HL" style filenames on case-insensitive file systems.
+strings.to-lower:x:@.arguments/*/filename
 if
-   strings.ends-with:x:@.arguments/*/filename
+   strings.ends-with:x:@strings.to-lower
       .:.hl
    .lambda
-      throw:"Hyperlambda files cannot be written directly. Use the generate-hyperlambda function - it produces correct Hyperlambda and saves it through its [filename] argument. Never hand-write Hyperlambda."
-         public:bool:true
-         status:int:400
+      execute-file:/misc/workflows/workflows/hyperlambda/verify-hyperlambda.hl
+         hyperlambda:x:@.arguments/*/content
+      if
+         eq:x:@execute-file/*/valid
+            .:bool:false
+         .lambda
+            strings.concat
+               .:"Hyperlambda did not verify, and was not saved: "
+               strings.join:x:@execute-file/*/errors/*
+                  .:"; "
+            throw:x:@strings.concat
+               public:bool:true
+               status:int:400
 
 // Verifying the parent folder exists, since [io.file.save] cannot create it.
 strings.split:x:@.arguments/*/filename

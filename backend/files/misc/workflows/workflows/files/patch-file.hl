@@ -54,7 +54,7 @@ if
    strings.ends-with:x:@strings.to-lower
       .:.hl
    .lambda
-      throw:"Hyperlambda files cannot be patched directly. Re-create the file with the generate-hyperlambda function instead of hand-editing Hyperlambda."
+      throw:"Hyperlambda files cannot be patched with this function, since a diff cannot be verified before it is applied. Use the `create-file` function to save the whole file, or the `generate-hyperlambda` function to re-create it from a description. Both verify the Hyperlambda before saving it."
          public:bool:true
          status:int:400
 

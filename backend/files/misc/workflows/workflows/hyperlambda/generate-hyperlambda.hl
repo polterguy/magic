@@ -1,6 +1,6 @@
 
 /*
- * The ONLY supported way to create or change Hyperlambda - never author Hyperlambda by hand.
+ * The preferred way to create or change Hyperlambda - reach for this before writing any by hand.
  * Generates correct Hyperlambda code according to the specified [prompt], and saves it directly
  * when [filename] is supplied.
  *
@@ -110,18 +110,12 @@ try
                saved:bool:true
                filename:x:@.arguments/*/filename
 
-         // If the generated code declares arguments, returning the file's signature to caller.
-         if
-            exists:x:@hyper2lambda/*/.arguments
-            .lambda
-               unwrap:x:+/*
-               execute-file:/misc/workflows/workflows/files/get-file-info.hl
-                  filename:x:@.arguments/*/filename
-               add:x:+/*/*
-                  get-nodes:x:@execute-file/*
-               add:x:@try/*/yield
-                  .
-                     signature
+         // Returning the arguments the generated file accepts, since the caller does not get the code.
+         add:x:@try/*/yield
+            .
+               signature
+         add:x:@try/*/yield/*/signature
+            get-nodes:x:@hyper2lambda/*/.arguments/*
 
    // Signaling frontend
    sockets.signal:x:@.arguments/*/_session
@@ -156,7 +150,7 @@ try
          remove-nodes:x:@try/*/yield/*/code
          add:x:@try/*/yield
             .
-               system_instruction:DO NOT try to debug this function. You have been empirically proven to be an IMBECILE on understanding Hyperlambda, since it resembkes NOTHING you have ever seen before! If you want to debug Hyperlambda endpoints you use HTTP invoke! Or you retrieve the OpenAPI specification!
+               system_instruction:"The generated code verified before it was saved, so do not report defects in it from reading it - Hyperlambda resembles no other language, and reading it has repeatedly produced reports of bugs that did not exist. To check whether the file behaves correctly, invoke it with the `execute-file` function, or the `invoke-endpoint` function if it is an endpoint, and read the exception with the `read-log` function if it fails. To re-check that it is valid, use the `verify-hyperlambda` function. To change it, describe the change to the `generate-hyperlambda` function, or read it with the `read-file` function and save a targeted edit with the `create-file` function."
    yield
       code:x:@http.post/*/content/*/result
       time_spent:x:@.total
