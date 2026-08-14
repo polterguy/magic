@@ -86,11 +86,25 @@ async function loadDynamic(): Promise<DynamicCommand[]> {
       to: '/task-manager?edit=' + encodeURIComponent(task.id) +
         '&filter=' + encodeURIComponent(task.id),
     })),
-    ...(models ?? []).map(model => ({
-      group: 'Models',
-      label: model.type,
-      to: '/machine-learning?edit=' + encodeURIComponent(model.type),
-    })),
+    /*
+     * Two ways in per model, told apart by their group rather than by a
+     * decorated label — the name you are searching for stays the thing you
+     * read, under a heading that says what happens when you pick it.
+     */
+    ...(models ?? []).flatMap(model => [
+      {
+        group: 'Models',
+        label: model.type,
+        hint: 'Edit model',
+        to: '/machine-learning?tab=types&edit=' + encodeURIComponent(model.type),
+      },
+      {
+        group: 'Training data',
+        label: model.type,
+        hint: 'Training snippets for this model',
+        to: '/machine-learning?tab=training&type=' + encodeURIComponent(model.type),
+      },
+    ]),
   ];
   dynamicCache = { from: apiBaseUrl(), commands };
   return commands;

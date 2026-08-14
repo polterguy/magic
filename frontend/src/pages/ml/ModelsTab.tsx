@@ -3,7 +3,6 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import AiWaiter from '../../components/AiWaiter';
 import { useDialog } from '../../components/Dialogs';
 import { CheckIcon, DashIcon } from '../../components/Icons';
@@ -24,32 +23,33 @@ import ImportDialog from './ImportDialog';
 export default function ModelsTab(props: {
   types: any[];
   onChanged: () => void;
+  // A model the command palette asked to open, resolved by the page above.
+  editOnOpen?: string | null;
 }) {
 
   const [editing, setEditing] = useState<any | null | 'new'>(null);
-  const [params, setParams] = useSearchParams();
 
   /*
-   * The command palette links straight at one model. The types are already
-   * loaded by the page above, so this waits for them rather than fetching, and
-   * drops the parameter once used so a refresh does not reopen the dialog.
+   * The types are loaded by the page above, so this waits for them to arrive
+   * rather than fetching. Consumed per model rather than per mount, so a
+   * second palette jump to a different model still opens - closing the dialog
+   * must not reopen it, but arriving at another one must work.
    */
-  const deepLinked = useRef(false);
+  const consumed = useRef<string | null>(null);
   useEffect(() => {
-    const type = params.get('edit');
-    if (!type || deepLinked.current || props.types.length === 0) {
+    if (!props.editOnOpen
+      || props.types.length === 0
+      || consumed.current === props.editOnOpen) {
       return;
     }
-    const match = props.types.find(candidate => candidate.type === type);
-    deepLinked.current = true;
-    params.delete('edit');
-    setParams(params, { replace: true });
+    consumed.current = props.editOnOpen;
+    const match = props.types.find(candidate => candidate.type === props.editOnOpen);
     if (match) {
       setEditing(match);
     } else {
-      showToast('No model named ' + type, true);
+      showToast('No model named ' + props.editOnOpen, true);
     }
-  }, [params, setParams, props.types]);
+  }, [props.editOnOpen, props.types]);
   const [vectorising, setVectorising] =
     useState<{ type: string; channel: string; total: number } | null>(null);
   const [importing, setImporting] = useState<string | null>(null);

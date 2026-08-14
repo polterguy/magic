@@ -29,10 +29,19 @@ import SpiceDialog from './SpiceDialog';
 
 export default function TrainingTab(props: {
   types: any[];
+  // A model the command palette asked to filter by, resolved by the page above.
+  initialType?: string | null;
 }) {
 
   const PAGE_SIZE = 12;
-  const [type, setType] = useState('');
+  const [type, setType] = useState(props.initialType ?? '');
+
+  // The page stays mounted between palette jumps, so a later link still lands.
+  useEffect(() => {
+    if (props.initialType) {
+      setType(props.initialType);
+    }
+  }, [props.initialType]);
   const [filter, setFilter] = useState('');
   const [editing, setEditing] = useState<any | null | 'new'>(null);
   const [pickingFunction, setPickingFunction] = useState(false);
