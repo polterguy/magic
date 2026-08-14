@@ -1147,6 +1147,21 @@ tr.clickable:hover td { background: var(--accent-soft); }
   padding: 1px 5px;
 }
 
+/*
+ * Links keep the global accent colour and hover, but get their underline
+ * back — the palette is monochrome, so in dark mode the accent IS the text
+ * colour and an undecorated link is invisible inside a paragraph.
+ */
+.chat-markdown a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.chat-markdown a:hover {
+  color: var(--accent-dark);
+}
+
 .chat-markdown pre code {
   background: none;
   padding: 0;

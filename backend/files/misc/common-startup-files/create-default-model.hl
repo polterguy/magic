@@ -32,7 +32,7 @@ try
                   cached:int:0
                   auth:root
                   threshold:decimal:0.3
-                  max_session_items:int:25
+                  max_session_items:int:50
                   greeting:Where the Machine Creates the Code
                   system_message:x:@io.file.load
                   use_embeddings:int:0
@@ -60,7 +60,7 @@ try
                auth:root
                greeting:Where the Machine Creates the Code
                threshold:decimal:0.3
-               max_session_items:int:25
+               max_session_items:int:50
                system_message:x:@io.file.load
                use_embeddings:int:0
                conversation_starters:@"* What can you do?
