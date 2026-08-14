@@ -1,0 +1,25 @@
+
+/*
+ * Returns the most recent entries from the log, newest first.
+ *
+ * Execute this after an endpoint or a Hyperlambda file fails, to see what actually went wrong
+ * instead of guessing. Error entries carry the full exception, and a Hyperlambda exception names
+ * the file and the exact position in the lambda object where execution stopped.
+ */
+.arguments
+
+   // Optional number of entries to return. Defaults to 10.
+   max:int
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Parametrising invocation.
+add:x:./*/log.query
+   get-nodes:x:@.arguments/*/max
+
+// Retrieving the most recent log entries.
+log.query
+
+// Returning result to caller.
+return-nodes:x:@log.query/*
