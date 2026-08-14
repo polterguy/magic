@@ -5,9 +5,6 @@ This function allows the user to download a file from his server. This function 
 
 **IMPORTANT** - Using this function is necessary due to authorization requirements, and this function will associate a "download token" with the URL of the button it renders, allowing the user to download it as if authorized over a plain HTTP GET request by simply clicking the button created by this function in the UI.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/files/download-file.hl]:

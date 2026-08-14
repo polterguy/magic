@@ -3,9 +3,6 @@ FUNCTION ==> schedule-task
 
 The following function can be used to schedule a specific task. If the user wants to schedule a task for periodically repeating, or to be executed some time in the future, you can use this function.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/tasks/schedule-task.hl]:

@@ -3,9 +3,6 @@ FUNCTION ==> download-from-web
 
 This function allows a user to download a file from some URL and save it into some folder in his or her cloudlet.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/files/download-from-web.hl]:

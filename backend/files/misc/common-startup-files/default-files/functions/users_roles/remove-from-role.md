@@ -3,9 +3,6 @@ FUNCTION ==> remove-from-role
 
 This function removes the association between the specified [username] user and the specified [role].
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/users_roles/remove-from-role.hl]:

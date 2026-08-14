@@ -3,9 +3,6 @@ FUNCTION ==> create-task
 
 The following function can be used to create a new task. The task is persisted for later, and can be schedule or executed on demand. If the user asks you to create a task, you can use this function to save Hyperlambda into the task scheduler.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/tasks/create-task.hl]:

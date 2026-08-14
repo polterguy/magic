@@ -3,9 +3,6 @@ FUNCTION ==> create-file
 
 Creates a new file or fully overwrites an existing file with the specified [content]. Use this function when creating new files or when replacing entire file content.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/files/create-file.hl]:

@@ -3,9 +3,6 @@ FUNCTION ==> execute-terminal-command
 
 The following function can be used to execute a terminal command.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/misc/execute-terminal-command.hl]:

@@ -1,7 +1,7 @@
 # Function; Dream prompt compress memory
 FUNCTION ==> dream-prompt-compress-memory
 
-This function will compress the working context memory by summarizing all facts using GPT-4.1-mini. Below is the exact function signature and JSON invocation format for this function.
+This function will compress the working context memory by summarizing all facts using GPT-4.1-mini.
 
 ```plaintext
 ___

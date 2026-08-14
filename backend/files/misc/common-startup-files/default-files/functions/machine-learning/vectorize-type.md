@@ -3,9 +3,6 @@ FUNCTION ==> vectorize-type
 
 This function can be used to create embeddings for a machine learning type.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/vectorize-type.hl]:

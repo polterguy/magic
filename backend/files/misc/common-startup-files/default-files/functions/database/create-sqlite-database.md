@@ -3,9 +3,6 @@ FUNCTION ==> create-sqlite-database
 
 Creates the SQLite database specified as [database].
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/database/create-sqlite-database.hl]:

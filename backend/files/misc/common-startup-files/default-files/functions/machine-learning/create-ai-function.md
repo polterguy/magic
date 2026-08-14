@@ -2,9 +2,6 @@
 FUNCTION ==> create-ai-function
 
 The following function can be used to create an AI function for a machine learning type, allowing the LLM to have access to it as a tool in its RAG/VSS database, or as a part of its system instruction.
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/create-ai-function.hl]:

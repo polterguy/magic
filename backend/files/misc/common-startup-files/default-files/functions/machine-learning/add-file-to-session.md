@@ -3,9 +3,6 @@ FUNCTION ==> add-file-to-session
 
 You can use this function to attach a file to the current conversation, allowing you to analyse existing images, screenshots, PDF files, Excel files, etc.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/add-file-to-session.hl]:

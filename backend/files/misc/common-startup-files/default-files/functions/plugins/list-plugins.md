@@ -5,9 +5,6 @@ List all plugins that are available to install into the backend allowing the use
 
 If the user wants to see all available plugins, you must end your response with the following;
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/plugins/list-plugins.hl]

@@ -3,9 +3,6 @@ FUNCTION ==> list-users
 
 This function lists a slice of existing users in the system.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/users/list-users.hl]:

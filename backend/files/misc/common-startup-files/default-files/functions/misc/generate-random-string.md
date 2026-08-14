@@ -3,9 +3,6 @@ FUNCTION ==> generate-random-string
 
 The following function can be used to create a series of cryptographically secure random characters, such as a password, etc.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/misc/generate-random-string.hl]

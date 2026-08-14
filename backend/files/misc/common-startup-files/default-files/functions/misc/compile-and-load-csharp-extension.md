@@ -4,9 +4,6 @@ FUNCTION ==> compile-and-load-csharp-extension
 This function compiles C# code into a DLL byte array and loads it into the AppDomain as a Hyperlambda extension.
 Your code must include a class that implements `ISlot` (or `ISlotAsync`) and is decorated with the `[Slot]` attribute.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/misc/compile-and-load-csharp-extension.hl]:

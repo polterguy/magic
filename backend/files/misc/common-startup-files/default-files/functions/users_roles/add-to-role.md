@@ -3,9 +3,6 @@ FUNCTION ==> add-to-role
 
 This function associates an existing user with an existing role.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/users_roles/add-to-role.hl]:

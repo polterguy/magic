@@ -3,9 +3,6 @@ FUNCTION ==> create-rag-training-snippet
 
 The following function can be used to create RAG training data for a machine learning type. If the user wants you to create RAG or VSS data for a specific machine learning type, AI chatbot, or AI agent, then you must end your response with the following;
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/create-training-snippet.hl]:

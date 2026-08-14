@@ -3,9 +3,6 @@ FUNCTION ==> list-files
 
 Lists all files in the specified directory.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/files/list-files.hl]:

@@ -3,9 +3,6 @@ FUNCTION ==> scrape-url
 
 This function will scrape the specified `url` and return its content as Markdown, in addition to a list of all URLs found inside of the section that was transformed. 
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/system/workflows/workflows/scrape-url.hl]:

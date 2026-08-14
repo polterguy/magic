@@ -6,9 +6,6 @@ for then to allow the frontend to download it as a CSV file.
 Use this function if the user tells you to export some database table,
 and/or specific SQL queries as a CSV file.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/database/export-sql.hl]:

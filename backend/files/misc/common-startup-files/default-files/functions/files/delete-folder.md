@@ -3,9 +3,6 @@ FUNCTION ==> delete-folder
 
 Deletes the specified [folder] folder.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/files/delete-folder.hl]:

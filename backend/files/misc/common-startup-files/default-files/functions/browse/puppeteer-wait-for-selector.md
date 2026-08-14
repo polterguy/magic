@@ -3,9 +3,6 @@ FUNCTION ==> puppeteer-wait-for-selector
 
 Waits until a selector appears in the DOM.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/browse/puppeteer-wait-for-selector.hl]:

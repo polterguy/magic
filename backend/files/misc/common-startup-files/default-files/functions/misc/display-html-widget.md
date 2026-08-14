@@ -3,9 +3,6 @@ FUNCTION ==> display-html-widget
 
 This function sends the specified [html] to the frontend to display it as is. Use it if the user asks you to show widget, display widget, render HTML, or something similar, and you either have some partial HTML snippet from before in your context, or the user has asked you to create HTML. It can deal with any HTML, such as HTML for rendering forms, etc.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/misc/display-html-widget.hl]:

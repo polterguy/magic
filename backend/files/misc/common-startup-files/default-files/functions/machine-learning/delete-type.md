@@ -3,9 +3,6 @@ FUNCTION ==> delete-type
 
 The following function can be used to delete an existing machine learning type. If the user wants you to delete a machine learning type then you must end your response with the following;
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/delete-type.hl]:

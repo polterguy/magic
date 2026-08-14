@@ -5,9 +5,6 @@ Applies a unified diff patch to an existing file.
 
 This is the preferred function for editing, updating, or modifying an existing file when the change only touches a small part of it - changing a line, a value, a CSS selector, a paragraph, or similar targeted edits. Read the file first, then produce the patch from the exact current content. Use `create-file` only when creating a new file, when replacing an entire file, or for large rewrites that restructure most of the file.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/files/patch-file.hl]:

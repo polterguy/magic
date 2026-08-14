@@ -3,9 +3,6 @@ FUNCTION ==> create-pdf-from-html
 
 This function allows you to create a PDF file from HTML.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/misc/create-pdf-file-from-html.hl]:

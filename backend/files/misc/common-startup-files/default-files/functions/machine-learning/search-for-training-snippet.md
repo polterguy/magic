@@ -3,9 +3,6 @@ FUNCTION ==> search-for-training-snippet
 
 This function allows you to search for training snippets using VSS search. The distance is the similarity score, implying the smaller the number the closer match.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/search-for-training-snippet.hl]:

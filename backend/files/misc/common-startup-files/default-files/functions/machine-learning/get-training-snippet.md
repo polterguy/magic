@@ -3,9 +3,6 @@ FUNCTION ==> get-training-snippet
 
 This function returns a single training snippet from your RAG/VSS database, and can be used if the user asks to see the details for a specific snippet, or if you need it for some reason.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/get-training-snippet.hl]:

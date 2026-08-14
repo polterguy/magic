@@ -3,9 +3,6 @@ FUNCTION ==> execute-python
 
 This function allows you to execute Python code. Either raw code, or a Python file.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/misc/execute-python.hl]:

@@ -3,9 +3,6 @@ FUNCTION ==> git-commit
 
 Commits all changes to the local Git repository.
 
-
-Below is the exact function signature and JSON invocation format for this function.
-
 ```plaintext
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/git/git-commit.hl]:
