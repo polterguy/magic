@@ -1,4 +1,5 @@
-import { showToast } from '../lib/toast';
+import { copyToClipboard, showToast } from '../lib/toast';
+import { CopyIcon } from '../components/Icons';
 import SearchInput from '../components/SearchInput';
 import { useSearchParams } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -250,7 +251,20 @@ function LogRow(props: {
               </div>
             )}
             {item.exception && (
-              <pre className="result-json">{item.exception}</pre>
+              <div style={{ position: 'relative' }}>
+                <button
+                  className="icon-btn"
+                  title="Copy exception"
+                  style={{ position: 'absolute', top: 6, right: 6 }}
+                  onClick={() => copyToClipboard(item.exception!, 'Exception')}>
+                  <CopyIcon />
+                </button>
+                <pre
+                  className="result-json"
+                  style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', paddingRight: 44 }}>
+                  {item.exception}
+                </pre>
+              </div>
             )}
           </td>
         </tr>
