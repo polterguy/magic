@@ -15,19 +15,41 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { HubConnection } from '@microsoft/signalr';
 import { createSocket } from '../lib/socket';
 import { getTheme } from '../lib/theme';
-import { ChatChunk, chatDownloadUrl, chatPrompt, gibberish, killExecution } from '../lib/api';
+import {
+  ChatChunk, MAX_CHAT_FILES, chatDownloadUrl, chatPrompt, gibberish, killExecution,
+} from '../lib/api';
 import { copyToClipboard, showToast } from '../lib/toast';
-import { CopyIcon, DownloadIcon, FilePlusIcon } from './Icons';
+import { CopyIcon, DownloadIcon, FilePlusIcon, PaperclipIcon } from './Icons';
 
 type Segment =
   | { kind: 'text'; text: string }
-  | { kind: 'function'; state: 'waiting' | 'success' | 'error'; label?: string; detail?: string }
+  | {
+      kind: 'function';
+      state: 'waiting' | 'success' | 'error';
+      // The invoked file, named on the pill, and its arguments or the
+      // exception it threw, behind the toggler.
+      file?: string;
+      detail?: string;
+    }
   | { kind: 'html'; html: string }
   | { kind: 'download'; url: string; filename: string };
+
+/*
+ * A file on its way out, or already sent. [url] is an object URL for images
+ * only, and outlives the send so a message keeps its thumbnail — every one
+ * created is revoked when the conversation is cleared or the drawer unmounts.
+ */
+interface Attachment {
+  name: string;
+  size: number;
+  url?: string;
+}
 
 interface ChatMessage {
   role: 'user' | 'assistant';
   segments: Segment[];
+  // Files sent along with a user message.
+  files?: Attachment[];
 }
 
 /*
@@ -58,7 +80,7 @@ renderer.code = ({ text, lang }) => {
       '<div class="chat-mermaid-placeholder muted">Rendering diagram…</div></div>';
   }
   const language = lang || 'plaintext';
-  return '<div class="chat-code">' +
+  return '<div class="chat-code chat-hl">' +
     '<div class="chat-code-header"><span>' + escapeHtml(language) + '</span>' +
     '<button type="button" class="chat-copy-btn" title="Copy code" data-code="' +
     encodeURIComponent(text) + '">' + COPY_SVG + '</button></div>' +
@@ -130,6 +152,18 @@ export default function ChatDrawer(props: {
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [executionId, setExecutionId] = useState<string | null>(null);
+  const [files, setFiles] = useState<{ file: File; url?: string }[]>([]);
+  // Every object URL handed out, so none of them leak.
+  const objectUrls = useRef<string[]>([]);
+  /*
+   * On by default: analysing is the only mode that puts the file contents in
+   * front of the model. Uploading merely saves them on the cloudlet and tells
+   * the model where they landed, which is the right choice when a function is
+   * meant to read them — and the only one that works on localhost, since
+   * analysing needs a host the model can fetch from.
+   */
+  const [analyse, setAnalyse] = useState(true);
+  const fileRef = useRef<HTMLInputElement>(null);
   // Session id doubles as the socket channel name; null until the first send.
   const sessionRef = useRef<string | null>(null);
   const connectionRef = useRef<HubConnection | null>(null);
@@ -182,6 +216,8 @@ export default function ChatDrawer(props: {
   useEffect(() => {
     return () => {
       connectionRef.current?.stop().catch(() => {});
+      objectUrls.current.forEach(URL.revokeObjectURL);
+      objectUrls.current = [];
     };
   }, []);
 
@@ -226,18 +262,18 @@ export default function ChatDrawer(props: {
       }
       if (chunk.function_result || chunk.function_error) {
         const state = chunk.function_error ? 'error' : 'success';
-        // The server sends a short label; the payload rides in [invocation]/[file].
-        const label = chunk.function_error
-          ? truncate(chunk.function_error, 48)
-          : chunk.function_result;
-        const detail = [
-          chunk.file,
-          chunk.invocation,
-          chunk.function_error,
-        ].filter(Boolean).join('\n\n');
+        // Trimmed — the server's payloads arrive with leading whitespace.
+        const detail = [chunk.invocation, chunk.function_error]
+          .map(part => part?.trim())
+          .filter(Boolean).join('\n\n');
         const waiting = segments.findIndex(
           segment => segment.kind === 'function' && segment.state === 'waiting');
-        const resolved: Segment = { kind: 'function', state, label, detail: detail || undefined };
+        const resolved: Segment = {
+          kind: 'function',
+          state,
+          file: chunk.file?.trim(),
+          detail: detail || undefined,
+        };
         if (waiting === -1) {
           segments.push(resolved);
         } else {
@@ -258,10 +294,10 @@ export default function ChatDrawer(props: {
         // A spinner must not outlive the conversation — resolve dangling pills.
         segments.forEach((segment, index) => {
           if (segment.kind === 'function' && segment.state === 'waiting') {
+            // The name never arrived, so the pill keeps its generic wording.
             segments[index] = {
               kind: 'function',
               state: chunk.error ? 'error' : 'success',
-              label: chunk.error ? 'Interrupted' : 'Done',
             };
           }
         });
@@ -294,17 +330,59 @@ export default function ChatDrawer(props: {
     return session;
   }
 
+  function addFiles(picked: FileList | null) {
+    if (!picked || picked.length === 0) {
+      return;
+    }
+    if (files.length + picked.length > MAX_CHAT_FILES) {
+      showToast('At most ' + MAX_CHAT_FILES + ' files per message', true);
+      return;
+    }
+    const added = Array.from(picked).map(file => {
+      if (!file.type.startsWith('image/')) {
+        return { file };
+      }
+      const url = URL.createObjectURL(file);
+      objectUrls.current.push(url);
+      return { file, url };
+    });
+    setFiles([...files, ...added]);
+  }
+
+  function removeFile(index: number) {
+    const url = files[index].url;
+    if (url) {
+      URL.revokeObjectURL(url);
+      objectUrls.current = objectUrls.current.filter(current => current !== url);
+    }
+    setFiles(files.filter((_, i) => i !== index));
+  }
+
   async function send() {
     const prompt = input.trim();
     if (!prompt || streaming) {
       return;
     }
+    const attached = files;
     setInput('');
-    setMessages(current => [...current, { role: 'user', segments: [{ kind: 'text', text: prompt }] }]);
+    setFiles([]);
+    setMessages(current => [...current, {
+      role: 'user',
+      segments: [{ kind: 'text', text: prompt }],
+      // Object URLs carry over to the sent message rather than being revoked.
+      files: attached.length > 0
+        ? attached.map(entry => ({ name: entry.file.name, size: entry.file.size, url: entry.url }))
+        : undefined,
+    }]);
     setStreaming(true);
     try {
       const session = await ensureSession();
-      const response = await chatPrompt(session, prompt, props.userId);
+      const response = await chatPrompt(
+        session,
+        prompt,
+        props.userId,
+        attached.length > 0 ? attached.map(entry => entry.file) : undefined,
+        attached.length > 0 && !analyse);
       setExecutionId(response?.execution_id ?? null);
     } catch (err: any) {
       setStreaming(false);
@@ -335,6 +413,10 @@ export default function ChatDrawer(props: {
     }
     sessionRef.current = null;
     setMessages([]);
+    setFiles([]);
+    // Every thumbnail belonged to the conversation being thrown away.
+    objectUrls.current.forEach(URL.revokeObjectURL);
+    objectUrls.current = [];
     inputRef.current?.focus();
   }
 
@@ -397,6 +479,13 @@ export default function ChatDrawer(props: {
                   segment={segment}
                   markdown={message.role === 'assistant'} />
               ))}
+              {message.files && (
+                <div className="chat-tiles" style={{ marginTop: 10 }}>
+                  {message.files.map((file, fileIndex) => (
+                    <FileTile key={fileIndex} name={file.name} size={file.size} url={file.url} />
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
@@ -406,7 +495,50 @@ export default function ChatDrawer(props: {
           </div>
         )}
       </div>
+      {files.length > 0 && (
+        <div className="chat-attachments">
+          <div className="chat-tiles">
+            {files.map((entry, index) => (
+              <FileTile
+                key={index}
+                name={entry.file.name}
+                size={entry.file.size}
+                url={entry.url}
+                onRemove={() => removeFile(index)} />
+            ))}
+          </div>
+          <div className="chat-mode" role="group" aria-label="How the model should treat the files">
+            <button
+              type="button"
+              className={analyse ? '' : 'active'}
+              title="Saves the files on the cloudlet and tells the model where they landed. Works anywhere."
+              onClick={() => setAnalyse(false)}>
+              Upload
+            </button>
+            <button
+              type="button"
+              className={analyse ? 'active' : ''}
+              title="Exposes the files over HTTP for the model to read — needs a publicly reachable backend, so not localhost."
+              onClick={() => setAnalyse(true)}>
+              Analyse
+            </button>
+          </div>
+        </div>
+      )}
       <div className="chat-composer">
+        <input
+          ref={fileRef}
+          type="file"
+          multiple
+          style={{ display: 'none' }}
+          onChange={event => { addFiles(event.target.files); event.target.value = ''; }} />
+        <button
+          className="btn btn-secondary chat-attach"
+          title={'Attach files (max ' + MAX_CHAT_FILES + ')'}
+          disabled={streaming || files.length >= MAX_CHAT_FILES}
+          onClick={() => fileRef.current?.click()}>
+          <PaperclipIcon />
+        </button>
         <textarea
           ref={inputRef}
           placeholder="Ask the default model…"
@@ -433,14 +565,64 @@ export default function ChatDrawer(props: {
   );
 }
 
-function truncate(text: string, max: number): string {
-  return text.length > max ? text.slice(0, max) + '…' : text;
+function formatSize(bytes: number): string {
+  if (bytes >= 1024 * 1024) {
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+  if (bytes >= 1024) {
+    return Math.round(bytes / 1024) + ' KB';
+  }
+  return bytes + ' B';
+}
+
+/*
+ * One attached file — a thumbnail for images, the extension otherwise.
+ * Removable while pending, read-only once the message has been sent.
+ */
+function FileTile(props: { name: string; size: number; url?: string; onRemove?: () => void }) {
+
+  const extension = props.name.includes('.')
+    ? props.name.split('.').pop()!.toUpperCase().slice(0, 4)
+    : 'FILE';
+  return (
+    <div className="chat-tile" title={props.name}>
+      <div className="chat-tile-preview">
+        {props.url
+          ? <img src={props.url} alt={props.name} />
+          : <span className="chat-tile-ext">{extension}</span>}
+        {props.onRemove && (
+          <button
+            type="button"
+            className="chat-tile-remove"
+            title={'Remove ' + props.name}
+            onClick={props.onRemove}>
+            ×
+          </button>
+        )}
+      </div>
+      <span className="chat-tile-name">{props.name}</span>
+      <span className="chat-tile-size">{formatSize(props.size)}</span>
+    </div>
+  );
 }
 
 function ChatSegment({ segment, markdown }: { segment: Segment; markdown: boolean }) {
 
   // Collapsed by default — the pill is the summary, the payload one click away.
   const [showDetail, setShowDetail] = useState(false);
+  const detailRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * The invocation is JSON, so it gets the same treatment as code in answers.
+   * Highlighting happens here rather than in the drawer's pass, since opening
+   * a pill is local state the drawer never sees.
+   */
+  useEffect(() => {
+    const root = detailRef.current;
+    if (showDetail && root) {
+      import('../lib/chatHighlight').then(module => module.highlightUnder(root));
+    }
+  }, [showDetail]);
   const html = useMemo(
     () => segment.kind === 'text' && markdown ? marked.parse(segment.text) as string : '',
     [segment, markdown]);
@@ -450,25 +632,34 @@ function ChatSegment({ segment, markdown }: { segment: Segment; markdown: boolea
       return markdown
         ? <div className="chat-text chat-markdown" dangerouslySetInnerHTML={{ __html: html }} />
         : <div className="chat-text">{segment.text}</div>;
-    case 'function':
+    case 'function': {
+      const expandable = !!segment.detail;
       return (
         <div className="chat-function">
           <button
             type="button"
             className={'chat-pill chat-pill-' + segment.state}
-            disabled={!segment.detail}
-            aria-expanded={segment.detail ? showDetail : undefined}
-            title={segment.detail ? 'Show invocation' : undefined}
+            disabled={!expandable}
+            aria-expanded={expandable ? showDetail : undefined}
+            title={expandable ? 'Show the invocation' : undefined}
             onClick={() => setShowDetail(current => !current)}>
             {segment.state === 'waiting' && <>Executing function<span className="spinner-dots" /></>}
-            {segment.state === 'success' && <>✓ {segment.label ?? 'Function executed'}</>}
-            {segment.state === 'error' && <>✕ {segment.label ?? 'Function failed'}</>}
+            {segment.state === 'success' && <>✓ {segment.file ?? 'Function executed'}</>}
+            {segment.state === 'error' && <>✕ {segment.file ?? 'Function failed'}</>}
+            {expandable && (
+              <span className="chat-pill-caret" aria-hidden="true">
+                {showDetail ? '▾' : '▸'}
+              </span>
+            )}
           </button>
           {showDetail && segment.detail && (
-            <pre className="result-json chat-function-detail">{segment.detail}</pre>
+            <div className="chat-function-detail chat-hl" ref={detailRef}>
+              <pre><code className="language-json">{segment.detail}</code></pre>
+            </div>
           )}
         </div>
       );
+    }
     case 'html':
       return <div className="chat-html" dangerouslySetInnerHTML={{ __html: segment.html }} />;
     case 'download':

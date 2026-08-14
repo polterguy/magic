@@ -297,6 +297,15 @@ export function CopyIcon() {
   );
 }
 
+// A paperclip — attaching files to a message.
+export function PaperclipIcon() {
+  return (
+    <svg {...base}>
+      <path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" />
+    </svg>
+  );
+}
+
 // A question mark in a circle — asking for help.
 export function HelpIcon() {
   return (

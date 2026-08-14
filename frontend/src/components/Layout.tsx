@@ -5,6 +5,7 @@ import { useAuth } from '../lib/AuthContext';
 import { getVersion, openaiIsConfigured } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
+import { setShellActions } from '../lib/shellActions';
 import { DatabaseIcon, HelpIcon, KeyboardIcon, LogoutIcon, MoonIcon, RobotIcon, SearchIcon, SunIcon } from './Icons';
 import { ChevronIcon } from './Icons';
 import { applyTheme, getTheme } from '../lib/theme';
@@ -104,6 +105,15 @@ export default function Layout({ children }: { children: ReactNode }) {
     }
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
+  }, []);
+
+  // Lets the pages below open the overlays this component owns.
+  useEffect(() => {
+    setShellActions({
+      openPalette: () => setPaletteOpen(true),
+      openChatOps: () => setChatOpen(true),
+    });
+    return () => setShellActions(null);
   }, []);
 
   /*

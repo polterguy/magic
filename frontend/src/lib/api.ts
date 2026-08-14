@@ -1231,7 +1231,22 @@ export interface ChatChunk {
   file?: string;
 }
 
-export function chatPrompt(session: string, prompt: string, userId: string) {
+/*
+ * Files ride along as [file], [file1], [file2] … — at most five, which is
+ * what the backend's chat pipeline consumes. With [upload_file_only] the
+ * backend saves them and tells the model where they landed; without it, the
+ * files are exposed over HTTP and handed to the model for analysis, which
+ * needs a publicly reachable host.
+ */
+export const MAX_CHAT_FILES = 5;
+
+export function chatPrompt(
+  session: string,
+  prompt: string,
+  userId: string,
+  files?: File[],
+  uploadOnly?: boolean) {
+
   const formData = new FormData();
   formData.append('prompt', prompt);
   formData.append('type', 'default');
@@ -1240,6 +1255,12 @@ export function chatPrompt(session: string, prompt: string, userId: string) {
   formData.append('references', 'false');
   formData.append('session', session);
   formData.append('user_id', userId);
+  if (uploadOnly) {
+    formData.append('upload_file_only', 'true');
+  }
+  files?.slice(0, MAX_CHAT_FILES).forEach((file, index) => {
+    formData.append('file' + (index === 0 ? '' : index), file);
+  });
   return http.post<{ execution_id?: string }>('/magic/system/openai/chat', formData);
 }
 

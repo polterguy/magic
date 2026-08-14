@@ -30,7 +30,8 @@ import {
 } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
 import { openSupport } from '../lib/support';
-import { RobotIcon } from '../components/Icons';
+import { RobotIcon, SearchIcon } from '../components/Icons';
+import { openChatOps, openPalette } from '../lib/shellActions';
 import { copyToClipboard, showToast } from '../lib/toast';
 
 /*
@@ -458,10 +459,35 @@ export default function Dashboard() {
             </Link>
           ))}
           {/*
-            * Last card, and the only one that isn't a route - the support bot
-            * is a widget that opens over whatever you are looking at, so this
-            * is a button wearing the same clothes as its neighbours.
+            * The last cards are the ones that aren't routes — overlays that
+            * open over whatever you are looking at, wearing the same clothes
+            * as their neighbours.
             */}
+          {openaiConfigured === true && (
+            <button className="guide-card" type="button" onClick={openChatOps}>
+              <span className="guide-icon"><RobotIcon /></span>
+              <span>
+                <span className="guide-title">Chat Ops</span>
+                <span className="guide-text">
+                  Talk to your cloudlet from any screen — generate endpoints,
+                  query your databases, or ask what your backend can do. It runs
+                  AI functions on your behalf and stays open as you navigate.
+                  Ctrl+. / Cmd+.
+                </span>
+              </span>
+            </button>
+          )}
+          <button className="guide-card" type="button" onClick={openPalette}>
+            <span className="guide-icon"><SearchIcon /></span>
+            <span>
+              <span className="guide-title">Command palette</span>
+              <span className="guide-text">
+                One box that finds anything — pages, files, endpoints, tasks and
+                models — plus quick actions like switching cloudlet or theme.
+                Ctrl+K / Cmd+K
+              </span>
+            </span>
+          </button>
           <button className="guide-card" type="button" onClick={openSupport}>
             <span className="guide-icon"><RobotIcon /></span>
             <span>

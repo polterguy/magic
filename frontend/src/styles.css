@@ -1202,51 +1202,51 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 /*
- * Token colors for highlighted chat code — the same --cm-* variables the
- * Hyper IDE editor theme resolves, so chat code matches editor code in
- * both light and dark mode.
+ * Token colors wherever chat highlights something — code blocks in answers
+ * and the JSON behind a function pill. The same --cm-* variables the Hyper
+ * IDE editor theme resolves, so both match editor code in light and dark.
  */
-.chat-code .hljs-keyword,
-.chat-code .hljs-built_in,
-.chat-code .hljs-selector-tag,
-.chat-code .hljs-name {
+.chat-hl .hljs-keyword,
+.chat-hl .hljs-built_in,
+.chat-hl .hljs-selector-tag,
+.chat-hl .hljs-name {
   color: var(--cm-keyword);
 }
 
-.chat-code .hljs-string,
-.chat-code .hljs-regexp {
+.chat-hl .hljs-string,
+.chat-hl .hljs-regexp {
   color: var(--cm-string);
 }
 
-.chat-code .hljs-symbol,
-.chat-code .hljs-variable,
-.chat-code .hljs-params {
+.chat-hl .hljs-symbol,
+.chat-hl .hljs-variable,
+.chat-hl .hljs-params {
   color: var(--cm-text, var(--text));
 }
 
-.chat-code .hljs-meta {
+.chat-hl .hljs-meta {
   color: var(--cm-variable-2);
 }
 
-.chat-code .hljs-type,
-.chat-code .hljs-selector-class {
+.chat-hl .hljs-type,
+.chat-hl .hljs-selector-class {
   color: var(--cm-type);
 }
 
-.chat-code .hljs-number,
-.chat-code .hljs-literal {
+.chat-hl .hljs-number,
+.chat-hl .hljs-literal {
   color: var(--cm-number);
 }
 
-.chat-code .hljs-comment {
+.chat-hl .hljs-comment {
   color: var(--cm-comment);
   font-style: italic;
 }
 
-.chat-code .hljs-title,
-.chat-code .hljs-attr,
-.chat-code .hljs-attribute,
-.chat-code .hljs-property {
+.chat-hl .hljs-title,
+.chat-hl .hljs-attr,
+.chat-hl .hljs-attribute,
+.chat-hl .hljs-property {
   color: var(--cm-property);
 }
 
@@ -1305,9 +1305,29 @@ tr.clickable:hover td { background: var(--accent-soft); }
   color: var(--cm-error, #ff5d6a);
 }
 
+/* The expand/collapse marker on pills that carry an invocation. */
+.chat-pill-caret {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* The invocation behind a pill — supporting detail, so quiet and small. */
 .chat-function-detail {
   margin-top: 6px;
-  max-height: 220px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  max-height: 260px;
+  overflow: auto;
+}
+
+.chat-function-detail pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--muted);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -1328,12 +1348,128 @@ tr.clickable:hover td { background: var(--accent-soft); }
   margin: 6px 0;
 }
 
+/* Files waiting to be sent, and how the model should treat them. */
+.chat-attachments {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 16px 0;
+}
+
+.chat-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chat-tile {
+  width: 76px;
+}
+
+.chat-tile-preview {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.chat-tile-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chat-tile-ext {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.5px;
+  color: var(--text-soft);
+}
+
+/* Pinned over the thumbnail, so a long filename can never clip it away. */
+.chat-tile-remove {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chat-tile-remove:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.chat-tile-name,
+.chat-tile-size {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-xs);
+}
+
+.chat-tile-name {
+  margin-top: 5px;
+}
+
+.chat-tile-size {
+  color: var(--muted);
+}
+
+/* Upload versus analyse — one switch for the whole message. */
+.chat-mode {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-left: auto;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.chat-mode button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 5px 14px;
+  cursor: pointer;
+}
+
+.chat-mode button.active {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
 .chat-composer {
   display: flex;
   gap: 8px;
   align-items: flex-end;
   padding: 12px 16px;
   border-top: 1px solid var(--border);
+}
+
+.chat-attach {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 9px 12px;
 }
 
 .chat-composer textarea {

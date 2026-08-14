@@ -42,6 +42,13 @@ interface DynamicCommand {
 
 let dynamicCache: { from: string; commands: DynamicCommand[] } | null = null;
 
+/*
+ * The last filter, kept for the session so reopening the palette resumes
+ * where it left off — the second visit to a long file path is the one that
+ * hurts. The text opens selected, so typing still replaces it outright.
+ */
+let lastQuery = '';
+
 async function loadDynamic(): Promise<DynamicCommand[]> {
   if (dynamicCache && dynamicCache.from === apiBaseUrl()) {
     return dynamicCache.commands;
@@ -147,10 +154,20 @@ export default function CommandPalette(props: {
   onClose: () => void;
 }) {
 
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(lastQuery);
   const [selected, setSelected] = useState(0);
   const [dynamic, setDynamic] = useState<DynamicCommand[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    lastQuery = query;
+  }, [query]);
+
+  // Opens with the remembered filter selected, so typing replaces it.
+  useEffect(() => {
+    inputRef.current?.select();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -260,6 +277,7 @@ export default function CommandPalette(props: {
         <div className="palette-input">
           <span className="palette-prompt" aria-hidden="true">&gt;</span>
           <input
+            ref={inputRef}
             autoFocus
             type="text"
             placeholder="Jump to a page, file, endpoint, task or model…"
