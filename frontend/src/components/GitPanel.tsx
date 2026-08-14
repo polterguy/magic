@@ -49,6 +49,14 @@ export default function GitPanel(props: {
 
   useEffect(() => { refresh(); }, [refresh]);
 
+  // While an operation runs the dialog must stay open — Escape, backdrop
+  // clicks and the Close button all funnel through here.
+  function close() {
+    if (!busy) {
+      props.onClose();
+    }
+  }
+
   // Runs one git operation with busy-state, toast and refresh handled.
   async function run(action: () => Promise<any>, done: string, changesTree = false) {
     setBusy(true);
@@ -130,10 +138,15 @@ export default function GitPanel(props: {
   }
 
   return (
-    <Modal width={640} onClose={props.onClose}>
+    <Modal width={640} onClose={close}>
       <h2>Git — {props.path}</h2>
-      {mode === 'loading' && <p>Loading…</p>}
-      {mode === 'norepo' && (
+      {(mode === 'loading' || busy) && (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          {busy && <div>Running Git operation<span className="spinner-dots" /></div>}
+        </div>
+      )}
+      {!busy && mode === 'norepo' && (
         <>
           <p>This folder is not a Git repository.</p>
           <div className="modal-actions">
@@ -152,13 +165,13 @@ export default function GitPanel(props: {
               onClick={() => run(() => gitInit(props.path), 'Repository initialized', true)}>
               Initialize repository
             </button>
-            <button className="btn" onClick={props.onClose}>
+            <button className="btn" onClick={close}>
               Close
             </button>
           </div>
         </>
       )}
-      {mode === 'repo' && (
+      {!busy && mode === 'repo' && (
         <>
           <p className="mono" title="Branch and tracking status">{branchLine}</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
@@ -228,7 +241,7 @@ export default function GitPanel(props: {
               }, 'Changes committed')}>
               Commit
             </button>
-            <button className="btn" onClick={props.onClose}>
+            <button className="btn" onClick={close}>
               Close
             </button>
           </div>
