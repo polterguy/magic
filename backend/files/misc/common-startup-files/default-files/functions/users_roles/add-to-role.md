@@ -18,4 +18,4 @@ Arguments:
 * `username` is mandatory
 * `role` is mandatory
 
-Notice, both the role and the user must exist from before. If you're not sure if they do, you can use the "list-roles" function and the "list-users" function to check.
+Notice, both the role and the user must exist from before. If you're not sure if they do, you can use the `list-roles` function and the `list-users` function to check.

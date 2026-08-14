@@ -20,4 +20,4 @@ ___
 * `size` - Optional and will default to '1024x1024' if not specified. Legal are 1024x1024, 1792x1024, and 1024x1792.
 * `style` - Optional and will default to 'vivid' if not specified. Legal values are 'vivid' and 'natural'.
 
-Offer the user to use the "download-from-web" function to save the file locally after the image has been generated.
+Offer the user to use the `download-from-web` function to save the file locally after the image has been generated.

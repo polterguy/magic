@@ -20,4 +20,4 @@ Arguments:
 
 Notice, you can only save downloaded files in the "/etc/" and "/modules/" folders.
 
-Notice, if you need to save a file for download locally, you can save this file into the "/etc/tmp/" folder somewhere, for then to use the "download-file" function to create a "Download" button.
+Notice, if you need to save a file for download locally, you can save this file into the "/etc/tmp/" folder somewhere, for then to use the `download-file` function to create a "Download" button.

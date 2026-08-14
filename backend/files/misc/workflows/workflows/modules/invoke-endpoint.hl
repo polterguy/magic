@@ -1,0 +1,78 @@
+
+/*
+ * Invokes one of this backend's own HTTP endpoints, addressed by its relative [url] and [verb]
+ * exactly as the list-endpoints function reports them, passing in the optional [arguments], and
+ * returns whatever the endpoint returns.
+ *
+ * Use it to test an endpoint you just generated, without assembling a URL or a token. The endpoint
+ * executes as the currently authenticated user.
+ */
+.arguments
+
+   // Mandatory relative URL of endpoint to invoke, e.g. 'magic/modules/chinook/albums'.
+   url:string
+
+   // Mandatory HTTP verb of endpoint to invoke. Can be either 'get', 'post', 'put', 'delete' or 'patch'.
+   verb:string
+
+   // Optional key/value arguments passed into the endpoint as it is invoked.
+   arguments:*
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/url
+validators.mandatory:x:@.arguments/*/verb
+
+// Resolving the Hyperlambda file backing the endpoint.
+.path
+set-value:x:@.path
+   strings.replace:x:@.arguments/*/url
+      .:magic/
+      .:
+if
+   not
+      strings.starts-with:x:@.path
+         .:modules/
+   .lambda
+      throw:"You can only invoke endpoints inside your '/modules/' folder"
+         public:bool:true
+         status:int:400
+.file
+set-value:x:@.file
+   strings.concat
+      .:/
+      get-value:x:@.path
+      .:.
+      get-value:x:@.arguments/*/verb
+      .:.hl
+
+// Verifying the endpoint exists, naming the file we resolved to if it does not.
+if
+   not
+      io.file.exists:x:@.file
+   .lambda
+      strings.concat
+         .:"No such endpoint, resolved to "
+         get-value:x:@.file
+      throw:x:@strings.concat
+         public:bool:true
+         status:int:404
+
+// Invoking endpoint.
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*/arguments/*
+execute-file:x:@.file
+
+// Returning whatever the endpoint returned.
+if
+   not-null:x:@execute-file
+   .lambda
+      return-value:x:@execute-file
+else-if
+   exists:x:@execute-file/*
+   .lambda
+      return-nodes:x:@execute-file/*
+return
+   message:Endpoint did not return anything!

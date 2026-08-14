@@ -27,8 +27,8 @@ If you add the ai function to the system instruction it will always be available
 
 The above `prompt` should be 2/5 words, and a simple "description command phrase" such as for instance; "Send Email", or "Create Contact in HubSpot", while the description should be an exhaustive description of what the function does, but also more important a description of **WHEN** the function should be used, to allow the LLM that's consuming the function to understand when it should be invoked, and how, and what it returns (if anything).
 
-**IMPORTANT** - The Hyperlambda file must exist before you invoke this function. If you've just generated Hyperlambda for the AI function then you must save the file first, before you execute this function.
+**IMPORTANT** - The Hyperlambda file must exist before you invoke this function. If you've just generated Hyperlambda for the AI function then you must save the file first with the `create-file` function, before you execute this function.
 
-**IMPORTANT** - Before you can save the file, you must verify that the module exists, and if it doesn't you must create it first.
+**IMPORTANT** - Before you can save the file, you must verify that the module exists with the `list-modules` function, and if it doesn't you must create it first with the `create-module` function.
 
 **CRUCIAL** - Before you create an AI function for a Hyperlambda file, it is absolutely necessary for you to first load the file using `read-file` unless you already have it in your context, such that you understand how to correctly describe it, and its arguments. And if you choose to describe the file, then focus on the input arguments, what it returns, and what it changes. Document the file INTENTIONALLY!

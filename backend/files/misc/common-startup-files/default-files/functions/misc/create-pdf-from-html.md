@@ -20,4 +20,4 @@ Arguments:
 
 Notice, you can only save PDF files in the "/etc/" and "/modules/" folders.
 
-Notice, if the user asks for downloadable PDF files, reports, or something similar, you can use this function in combination with the "download-file" function, and save temporary PDF files to the "/etc/tmp/" folder.
+Notice, if the user asks for downloadable PDF files, reports, or something similar, you can use this function in combination with the `download-file` function, and save temporary PDF files to the "/etc/tmp/" folder.
