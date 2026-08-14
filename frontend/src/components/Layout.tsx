@@ -2,13 +2,14 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { createSocket } from '../lib/socket';
 import { useAuth } from '../lib/AuthContext';
-import { getVersion } from '../lib/api';
+import { getVersion, openaiIsConfigured } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
-import { DatabaseIcon, KeyboardIcon, LogoutIcon, MoonIcon, RobotIcon, SearchIcon, SunIcon } from './Icons';
+import { DatabaseIcon, HelpIcon, KeyboardIcon, LogoutIcon, MoonIcon, RobotIcon, SearchIcon, SunIcon } from './Icons';
 import { ChevronIcon } from './Icons';
 import { applyTheme, getTheme } from '../lib/theme';
 import BackendsDialog from './BackendsDialog';
+import ChatDrawer from './ChatDrawer';
 import CommandPalette from './CommandPalette';
 import ShortcutsDialog from './ShortcutsDialog';
 import { openSupport } from '../lib/support';
@@ -73,6 +74,18 @@ export default function Layout({ children }: { children: ReactNode }) {
    */
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  /*
+   * The chat drawer only exists when the backend has an OpenAI API key —
+   * without one the "default" model cannot answer, so the whole surface
+   * (button, shortcut and palette entry) stays hidden.
+   */
+  const [chatAvailable, setChatAvailable] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  useEffect(() => {
+    openaiIsConfigured()
+      .then(response => setChatAvailable(!!response.result))
+      .catch(() => {});
+  }, []);
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -83,6 +96,10 @@ export default function Layout({ children }: { children: ReactNode }) {
         event.preventDefault();
         event.stopPropagation();
         setShortcutsOpen(open => !open);
+      } else if ((event.metaKey || event.ctrlKey) && event.key === '.') {
+        event.preventDefault();
+        event.stopPropagation();
+        setChatOpen(open => !open);
       }
     }
     window.addEventListener('keydown', onKey, true);
@@ -205,6 +222,14 @@ export default function Layout({ children }: { children: ReactNode }) {
             * sits between two casually-clicked ones.
             */}
           <div className="footer-actions">
+            {chatAvailable && (
+              <button
+                className="btn btn-ghost btn-small"
+                title="Chat Ops — talk to your cloudlet (Ctrl+. / Cmd+.)"
+                onClick={() => { setChatOpen(open => !open); setMobileNav(false); }}>
+                <RobotIcon />
+              </button>
+            )}
             <button
               className="btn btn-ghost btn-small"
               title="Command palette — jump to any page, file or endpoint (Ctrl+K / Cmd+K)"
@@ -221,7 +246,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               className="btn btn-ghost btn-small"
               title="Ask Frank about Hyperlambda and Magic"
               onClick={() => { openSupport(); setMobileNav(false); }}>
-              <RobotIcon />
+              <HelpIcon />
             </button>
             <button
               className="btn btn-ghost btn-small"
@@ -249,6 +274,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         <CommandPalette
           go={go}
           actions={[
+            ...(chatAvailable
+              ? [{ label: 'Chat with your cloudlet', action: () => setChatOpen(true) }]
+              : []),
             { label: 'Toggle light/dark theme', action: toggleTheme },
             { label: 'Switch cloudlet', action: () => setSwitching(true) },
             { label: 'Ask Frank for help', action: openSupport },
@@ -273,6 +301,13 @@ export default function Layout({ children }: { children: ReactNode }) {
       <main className="content">
         {children}
       </main>
+      {/* Mounted while closed too — the conversation survives closing it. */}
+      {chatAvailable && (
+        <ChatDrawer
+          open={chatOpen}
+          userId={backend?.username ?? 'root'}
+          onClose={() => setChatOpen(false)} />
+      )}
       {toasts.length > 0 && (
         /*
          * The app's only feedback channel, so screen readers must hear it —

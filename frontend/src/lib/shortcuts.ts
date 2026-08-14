@@ -37,6 +37,12 @@ export const SHORTCUTS: Shortcut[] = [
   },
   {
     group: 'Global',
+    display: 'Ctrl + .',
+    mac: 'Cmd + .',
+    description: 'Toggle the chat drawer — talk to your cloudlet (requires an OpenAI API key)',
+  },
+  {
+    group: 'Global',
     display: 'Esc',
     description: 'Close the open dialog',
   },

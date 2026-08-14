@@ -297,6 +297,17 @@ export function CopyIcon() {
   );
 }
 
+// A question mark in a circle — asking for help.
+export function HelpIcon() {
+  return (
+    <svg {...base}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.2 9.2a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4" />
+      <path d="M12 17.5h.01" />
+    </svg>
+  );
+}
+
 // A floppy disk — saving the open file.
 export function SaveIcon() {
   return (

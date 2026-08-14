@@ -1207,6 +1207,52 @@ export function gibberish() {
   return http.get<{ result: string }>('/magic/system/misc/gibberish?min=20&max=30');
 }
 
+/*
+ * AI chat against the "default" code-generation model. Responses stream over
+ * the /sockets hub on a channel named after the chat session, one JSON encoded
+ * chunk per push. AI functions execute server-side inside the chat pipeline —
+ * the chunks merely report their progress.
+ */
+export interface ChatChunk {
+  message?: string;
+  error?: boolean;
+  finished?: boolean;
+  type?: string;
+  filename?: string;
+  ticket?: string;
+  html?: string;
+  floating_message?: string;
+  floating_state?: 'success' | 'error';
+  function_waiting?: boolean;
+  function_result?: string;
+  function_error?: string;
+  // Ride along with function_result/function_error — the invoked file and its arguments.
+  invocation?: string;
+  file?: string;
+}
+
+export function chatPrompt(session: string, prompt: string, userId: string) {
+  const formData = new FormData();
+  formData.append('prompt', prompt);
+  formData.append('type', 'default');
+  formData.append('chat', 'true');
+  formData.append('stream', 'true');
+  formData.append('references', 'false');
+  formData.append('session', session);
+  formData.append('user_id', userId);
+  return http.post<{ execution_id?: string }>('/magic/system/openai/chat', formData);
+}
+
+export function killExecution(executionId: string) {
+  return http.post<any>('/magic/system/misc/kill-execution', { execution_id: executionId });
+}
+
+// Short-lived download link for a file an AI function produced during chat.
+export function chatDownloadUrl(ticket: string, file: string) {
+  return backendInfo().url + '/magic/system/file-system/file-with-token?access_token=' +
+    encodeURIComponent(ticket) + '&file=' + encodeURIComponent(file);
+}
+
 export function vectoriseType(type: string, channel: string) {
   return http.post<any>('/magic/system/openai/vectorise', {
     type,
