@@ -219,6 +219,7 @@ export default function GitPanel(props: {
             placeholder="Commit message…"
             value={message}
             rows={2}
+            disabled={busy || changes.length === 0}
             style={{ width: '100%' }}
             onChange={e => setMessage(e.target.value)} />
           <div className="modal-actions">
