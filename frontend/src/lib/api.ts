@@ -1547,6 +1547,8 @@ export interface LogItem {
   type: string;
   content: string;
   exception?: string;
+  // Key/value pairs the log invocation attached through its [meta] argument.
+  meta?: Record<string, string>;
 }
 
 export function listLog(from: number | null, max: number, query?: string) {

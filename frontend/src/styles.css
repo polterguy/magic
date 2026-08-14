@@ -1382,11 +1382,52 @@ tr.clickable:hover td { background: var(--accent-soft); }
   gap: 6px;
 }
 
-/* Expand caret — only shown on rows that carry a stack trace. */
+/* Expand caret — only shown on rows that carry a stack trace or meta. */
 .log-caret {
   color: var(--accent);
   font-size: var(--text-xs);
   flex-shrink: 0;
+}
+
+/* Count of meta values on a log row, shown next to the expand caret. */
+.log-meta-pill {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 6px;
+  margin-right: 6px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+/* Key/value grid for a log item's meta information. */
+.log-meta {
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 0 0 10px;
+  font-size: var(--text-sm);
+}
+
+.log-meta-row {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) 1fr;
+  gap: 16px;
+  padding: 8px 14px;
+}
+
+.log-meta-row + .log-meta-row {
+  border-top: 1px solid var(--border);
+}
+
+.log-meta-key {
+  color: var(--accent);
+}
+
+.log-meta-value {
+  word-break: break-word;
 }
 
 .mono {

@@ -73,13 +73,13 @@ export default function Log() {
     }
   }, [searchParams, setSearchParams, load]);
 
-  // Deep-linked entries open expanded — the stack trace is what you came for.
+  // Deep-linked entries open expanded — the details are what you came for.
   useEffect(() => {
     if (highlight === null || items === null) {
       return;
     }
     const hit = items.find(item => Number(item.id) === highlight);
-    if (hit?.exception) {
+    if (hit && (hit.exception || hit.meta)) {
       setExpanded(hit.id);
     }
   }, [items, highlight]);
@@ -200,8 +200,9 @@ function LogRow(props: {
 }) {
 
   const { item } = props;
-  // Only rows carrying a stack trace have anything to reveal.
-  const canExpand = !!item.exception;
+  const meta = Object.entries(item.meta ?? {});
+  // Rows carrying a stack trace and/or meta information have something to reveal.
+  const canExpand = !!item.exception || meta.length > 0;
   return (
     <>
       <tr
@@ -222,16 +223,35 @@ function LogRow(props: {
           <span className={'badge badge-' + item.type.toLowerCase()}>{item.type}</span>
         </td>
         <td data-label="Content">{item.content}</td>
-        <td className="log-caret-cell" style={{ textAlign: 'right' }}>
+        <td className="log-caret-cell" style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+          {meta.length > 0 && (
+            <span
+              className="log-meta-pill"
+              title={meta.length + ' meta value' + (meta.length === 1 ? '' : 's')}>
+              {meta.length}
+            </span>
+          )}
           {canExpand && (
             <span className="log-caret">{props.expanded ? '▾' : '▸'}</span>
           )}
         </td>
       </tr>
-      {props.expanded && item.exception && (
+      {props.expanded && (
         <tr>
           <td colSpan={5}>
-            <pre className="result-json">{item.exception}</pre>
+            {meta.length > 0 && (
+              <div className="log-meta">
+                {meta.map(([key, value]) => (
+                  <div key={key} className="log-meta-row">
+                    <span className="log-meta-key mono">{key}</span>
+                    <span className="log-meta-value">{value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {item.exception && (
+              <pre className="result-json">{item.exception}</pre>
+            )}
           </td>
         </tr>
       )}
