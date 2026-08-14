@@ -331,6 +331,19 @@ export default function Files() {
     setExpanded(next);
   }
 
+  /*
+   * Cycles the open tabs, wrapping at both ends. Bound to Ctrl+Tab through
+   * the editor's keymap, so it only fires while the editor has focus.
+   */
+  function switchTab(delta: number) {
+    if (openFiles.length < 2) {
+      return;
+    }
+    const index = openFiles.findIndex(file => file.path === selectedFile);
+    const next = (index + delta + openFiles.length) % openFiles.length;
+    setSelectedFile(openFiles[next].path);
+  }
+
   async function openFile(path: string) {
     if (openFiles.some(file => file.path === path)) {
       setSelectedFile(path);
@@ -983,6 +996,13 @@ export default function Files() {
                 setHasSelection(instance.somethingSelected());
                 instance.on('cursorActivity', () =>
                   setHasSelection(instance.somethingSelected()));
+                /*
+                 * The editor is keyed on the open file, so this runs for every
+                 * open, tab switch and restored workspace — the moments where
+                 * the editor becomes the thing you are looking at. Focusing it
+                 * makes Ctrl+S, Ctrl+Space and F5 work without a click first.
+                 */
+                instance.focus();
               }}
               onAction={action => {
                 switch (action) {
@@ -992,6 +1012,8 @@ export default function Files() {
                   case 'deleteFile': removeFile(selectedFile); break;
                   case 'deleteFolder': removeFolder(activeFolder); break;
                   case 'close': closeFile(selectedFile); break;
+                  case 'nextTab': switchTab(1); break;
+                  case 'previousTab': switchTab(-1); break;
                 }
               }} />
           ) : (

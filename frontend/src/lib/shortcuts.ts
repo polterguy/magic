@@ -163,6 +163,33 @@ export const SHORTCUTS: Shortcut[] = [
     keys: ['Alt-C'],
     action: 'close',
   },
+  /*
+   * Not Ctrl+Tab, even though CodeMirror binds it happily (its keyNames maps
+   * keyCode 9 to "Tab"): Chrome has reserved Ctrl+Tab for its own tab cycling
+   * since Chrome 4 and never delivers it to the page, and Ctrl+PageUp,
+   * Ctrl+PageDown and Ctrl+1..9 are gone for the same reason. Only the
+   * fullscreen-only Keyboard Lock API can claim those back.
+   *
+   * And not Alt+N for "next", which is the obvious pick: on macOS Option+N is
+   * the tilde dead key — like Option+E, I, U and ` — so the OS swallows the
+   * keystroke waiting for the character to accent. F for "forward" instead.
+   */
+  {
+    group: 'Hyper IDE',
+    display: 'Alt + F',
+    mac: 'Opt + F',
+    description: 'Switch to the next open file',
+    keys: ['Alt-F'],
+    action: 'nextTab',
+  },
+  {
+    group: 'Hyper IDE',
+    display: 'Alt + P',
+    mac: 'Opt + P',
+    description: 'Switch to the previous open file',
+    keys: ['Alt-P'],
+    action: 'previousTab',
+  },
 ];
 
 // macOS reports as Mac (or an iDevice) — decides which combo to display.

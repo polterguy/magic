@@ -15,31 +15,34 @@ const GROUPS: { id: string; title: string; note?: string }[] = [
 
 export default function ShortcutsDialog(props: { onClose: () => void }) {
   return (
-    <Modal width={640} onClose={props.onClose}>
+    <Modal width={1040} onClose={props.onClose}>
       <h2 style={{ marginTop: 0 }}>Keyboard shortcuts</h2>
-      {GROUPS.map(group => (
-        <div key={group.id} style={{ marginBottom: 18 }}>
-          <div className="shortcuts-group">
-            {group.title}
-            {group.note && <span className="muted"> — {group.note}</span>}
+      {/* One column per group — the list is short enough to read without scrolling. */}
+      <div className="shortcuts-columns">
+        {GROUPS.map(group => (
+          <div key={group.id}>
+            <div className="shortcuts-group">
+              {group.title}
+              {group.note && <span className="muted"> — {group.note}</span>}
+            </div>
+            <div className="shortcuts-list">
+              {SHORTCUTS.filter(shortcut => shortcut.group === group.id).map(shortcut => (
+                <div className="shortcut-row" key={group.id + shortcut.display}>
+                  <span className="shortcut-keys">
+                    {shortcutDisplay(shortcut).split(' + ').map((key, index) => (
+                      <span key={index}>
+                        {index > 0 && <span className="muted"> + </span>}
+                        <kbd>{key}</kbd>
+                      </span>
+                    ))}
+                  </span>
+                  <span className="muted">{shortcut.description}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="shortcuts-list">
-            {SHORTCUTS.filter(shortcut => shortcut.group === group.id).map(shortcut => (
-              <div className="shortcut-row" key={group.id + shortcut.display}>
-                <span className="shortcut-keys">
-                  {shortcutDisplay(shortcut).split(' + ').map((key, index) => (
-                    <span key={index}>
-                      {index > 0 && <span className="muted"> + </span>}
-                      <kbd>{key}</kbd>
-                    </span>
-                  ))}
-                </span>
-                <span className="muted">{shortcut.description}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
       <div className="modal-actions" style={{ marginBottom: 10 }}>
         <button className="btn" onClick={props.onClose}>Close</button>
       </div>

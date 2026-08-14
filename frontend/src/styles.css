@@ -2277,12 +2277,40 @@ kbd {
   gap: 6px;
 }
 
+/*
+ * The three groups side by side rather than stacked — the whole list then
+ * fits one screen instead of scrolling. Rows stack their keys above the
+ * description, since a third of the dialog is too narrow for both.
+ */
+.shortcuts-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  align-items: start;
+  margin-bottom: 18px;
+}
+
 .shortcut-row {
   display: grid;
   grid-template-columns: 170px 1fr;
   gap: 12px;
   align-items: baseline;
   font-size: var(--text-sm);
+}
+
+.shortcuts-columns .shortcut-row {
+  grid-template-columns: 1fr;
+  gap: 1px;
+}
+
+.shortcuts-columns .shortcuts-list {
+  gap: 10px;
+}
+
+@media (max-width: 860px) {
+  .shortcuts-columns {
+    grid-template-columns: 1fr;
+  }
 }
 
 .shortcut-keys {

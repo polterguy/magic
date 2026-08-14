@@ -212,6 +212,8 @@ export default function CodeEditor(props: CodeEditorProps) {
       deleteFile: () => callbacks.current.onAction?.('deleteFile'),
       deleteFolder: () => callbacks.current.onAction?.('deleteFolder'),
       close: () => callbacks.current.onAction?.('close'),
+      nextTab: () => callbacks.current.onAction?.('nextTab'),
+      previousTab: () => callbacks.current.onAction?.('previousTab'),
     };
     const extraKeys: Record<string, string | ((cm: CodeMirror.Editor) => void)> = {};
     for (const shortcut of SHORTCUTS) {
