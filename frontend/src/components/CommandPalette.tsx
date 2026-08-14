@@ -75,16 +75,21 @@ async function loadDynamic(): Promise<DynamicCommand[]> {
       label: file,
       to: '/hyper-ide?open=' + encodeURIComponent(file),
     })),
+    // Both of these open their editor on arrival, the same way endpoints
+    // expand their row — picking a name here means you wanted that one thing,
+    // not the list it lives in. Tasks also filter, so closing the editor
+    // leaves the row you came for on screen rather than page one.
     ...(tasks ?? []).map(task => ({
       group: 'Tasks',
       label: task.id,
       hint: task.description ?? undefined,
-      to: '/task-manager',
+      to: '/task-manager?edit=' + encodeURIComponent(task.id) +
+        '&filter=' + encodeURIComponent(task.id),
     })),
     ...(models ?? []).map(model => ({
       group: 'Models',
       label: model.type,
-      to: '/machine-learning',
+      to: '/machine-learning?edit=' + encodeURIComponent(model.type),
     })),
   ];
   dynamicCache = { from: apiBaseUrl(), commands };

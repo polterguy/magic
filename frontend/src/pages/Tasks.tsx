@@ -2,7 +2,8 @@ import { showToast } from '../lib/toast';
 import Select from '../components/Select';
 import DateTimePicker from '../components/DateTimePicker';
 import SearchInput from '../components/SearchInput';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import CodeEditor from '../components/CodeEditor';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
@@ -39,7 +40,8 @@ function scheduleLabel(schedule: { due: string; repeats?: string }) {
 
 export default function Tasks() {
 
-  const [filter, setFilter] = useState('');
+  const [params, setParams] = useSearchParams();
+  const [filter, setFilter] = useState(params.get('filter') ?? '');
   const [editing, setEditing] = useState<{ task: Task; isNew: boolean } | null>(null);
   const [scheduling, setScheduling] = useState<Task | null>(null);
   // Backend round-trips triggered by clicks — edit-fetch, execute, deletes.
@@ -59,16 +61,33 @@ export default function Tasks() {
   });
 
   // The list doesn't carry the Hyperlambda, so editing fetches the full task.
-  async function openEdit(task: Task) {
+  async function openEdit(id: string) {
     setWaiting(true);
     try {
-      setEditing({ task: await getTask(task.id), isNew: false });
+      setEditing({ task: await getTask(id), isNew: false });
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     } finally {
       setWaiting(false);
     }
   }
+
+  /*
+   * The command palette links straight at one task. Opening it is a one-shot —
+   * the parameters are dropped once used, so a refresh, or closing the editor
+   * and navigating back, does not reopen the dialog.
+   */
+  const deepLinked = useRef(false);
+  useEffect(() => {
+    const id = params.get('edit');
+    if (!id || deepLinked.current) {
+      return;
+    }
+    deepLinked.current = true;
+    openEdit(id);
+    params.delete('edit');
+    setParams(params, { replace: true });
+  }, [params, setParams]);
 
   function openNew() {
     setEditing({
@@ -245,7 +264,7 @@ export default function Tasks() {
                   {' '}
                   <button
                     className="btn btn-secondary btn-small"
-                    onClick={() => openEdit(task)}>
+                    onClick={() => openEdit(task.id)}>
                     Edit
                   </button>
                   {' '}

@@ -2,7 +2,8 @@
  * Models tab — the ml_types registry.
  */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import AiWaiter from '../../components/AiWaiter';
 import { useDialog } from '../../components/Dialogs';
 import { CheckIcon, DashIcon } from '../../components/Icons';
@@ -26,6 +27,29 @@ export default function ModelsTab(props: {
 }) {
 
   const [editing, setEditing] = useState<any | null | 'new'>(null);
+  const [params, setParams] = useSearchParams();
+
+  /*
+   * The command palette links straight at one model. The types are already
+   * loaded by the page above, so this waits for them rather than fetching, and
+   * drops the parameter once used so a refresh does not reopen the dialog.
+   */
+  const deepLinked = useRef(false);
+  useEffect(() => {
+    const type = params.get('edit');
+    if (!type || deepLinked.current || props.types.length === 0) {
+      return;
+    }
+    const match = props.types.find(candidate => candidate.type === type);
+    deepLinked.current = true;
+    params.delete('edit');
+    setParams(params, { replace: true });
+    if (match) {
+      setEditing(match);
+    } else {
+      showToast('No model named ' + type, true);
+    }
+  }, [params, setParams, props.types]);
   const [vectorising, setVectorising] =
     useState<{ type: string; channel: string; total: number } | null>(null);
   const [importing, setImporting] = useState<string | null>(null);
