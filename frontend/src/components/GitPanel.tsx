@@ -224,12 +224,18 @@ export default function GitPanel(props: {
           <div className="modal-actions">
             <button
               className="btn btn-secondary"
-              disabled={busy || unborn}
-              title="Creates a private GitHub repository and pushes this module to it"
+              disabled={busy || unborn || hasUpstream}
+              title={hasUpstream
+                ? 'Already has a remote'
+                : 'Creates a private GitHub repository and pushes this module to it'}
               onClick={publish}>
               Publish to GitHub…
             </button>
-            <button className="btn btn-secondary" disabled={busy} onClick={addRemote}>
+            <button
+              className="btn btn-secondary"
+              disabled={busy || hasUpstream}
+              title={hasUpstream ? 'Already has a remote' : undefined}
+              onClick={addRemote}>
               Add remote
             </button>
             <button
