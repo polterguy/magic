@@ -829,14 +829,28 @@ function CreateChatbot(props: { onTour: () => void }) {
               return null;
             }
             const href = backendInfo().url.replace(/\/+$/, '') + '/' + model;
+            /*
+             * Seeing the result comes before tuning it, so opening the chatbot
+             * leads. Editing is offered next to it because everything the
+             * wizard chose - persona, greeting, temperature, thresholds - is a
+             * default, and the model page is not somewhere you would think to
+             * look for a chatbot you just made.
+             */
             return (
-              <a
-                className="btn btn-secondary"
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer">
-                Open chatbot ↗
-              </a>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <a
+                  className="btn"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  Open chatbot ↗
+                </a>
+                <Link
+                  className="btn btn-secondary"
+                  to={'/machine-learning?edit=' + encodeURIComponent(model)}>
+                  Edit model
+                </Link>
+              </div>
             );
           }}
           onClose={() => setCrawl(null)} />
