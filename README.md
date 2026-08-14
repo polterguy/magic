@@ -83,6 +83,20 @@ Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at
 
 Notice the prompt bar below the editor, where *"the Machine Creates the Code"*. Describe what you want in plain English and the built-in generator writes it straight into the file you're editing. The same bar follows you into the Playground and SQL Studio, generating Hyperlambda, SQL, HTML, or whatever fits the file you have open.
 
+## Chat Ops
+
+![Chat Ops — asking the cloudlet what it can do, and watching it run an AI function to answer](images/chat-ops.png)
+
+**Ctrl+. anywhere in the dashboard** opens Chat Ops: a conversation with your cloudlet that slides in over whatever screen you are on, and stays there while you navigate. Ask it to generate an endpoint from Hyper IDE and the file lands in the tree behind you — the conversation is still open when you turn round to look at it.
+
+It talks to the **default** model, the developer-tools model, and it does not merely answer. It **executes AI functions on your behalf**: crawl a site, query a database, generate a CRUD API, scrape a URL, run a Hyperlambda snippet. Each invocation appears as a pill — amber while it runs, green when it succeeds, red when it throws — and clicking one opens the exact file and JSON arguments the model sent, so you can see what it actually did rather than trust a summary.
+
+The whole loop is enforced server-side. A function the model tries to invoke that is not declared on the type is rejected before it executes, every function file carries its own `auth.ticket.verify`, and the invocation runs under **your** JWT — so Chat Ops can never do anything you could not do yourself from the dashboard.
+
+Answers stream in as Markdown with syntax-highlighted code (Hyperlambda included), Mermaid diagrams render inline, and you can attach up to five files — either uploaded to the cloudlet for a function to work on, or handed to the model to read. Copy any code block, or the whole response, with one click.
+
+Chat Ops appears only when an OpenAI API key is configured, and the key dialog is where you pick which model `default` runs.
+
 ## OIDC sign-in
 
 The dashboard signs in over OpenID Connect against **Google, GitHub, LinkedIn, Microsoft Entra ID, Okta, Auth0, Keycloak and Slack** — configured from the Configuration screen with a client ID (and, where the provider requires it, a secret) per provider. Code-flow exchanges run server-side with PKCE, only provider-verified email addresses are trusted, and identities are provider-scoped so a sign-in can never collide with another account. A provider is a single Hyperlambda file — drop in a new one and the login screen picks it up automatically.
