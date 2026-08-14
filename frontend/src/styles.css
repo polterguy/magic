@@ -1038,6 +1038,117 @@ tr.clickable:hover td { background: var(--accent-soft); }
   padding: 10px 14px;
 }
 
+/* A button that reads as a link — inline inside a paragraph. */
+.link-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  color: var(--accent-dark);
+}
+
+/* ---------- Guided tour ---------- */
+
+/*
+ * Only the card takes clicks — the scrim and the spotlight let them through,
+ * so the reader can use the button the tour is pointing at without losing
+ * their place.
+ */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 350;
+  pointer-events: none;
+}
+
+.tour-card {
+  pointer-events: auto;
+}
+
+.tour-scrim {
+  position: absolute;
+  inset: 0;
+}
+
+/* Same cover as the spotlight's shadow, for steps that spotlight nothing. */
+.tour-scrim.dim {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/*
+ * The hole: a transparent box over the target whose enormous box-shadow
+ * dims the rest of the page. No clip-path, and the target renders normally.
+ */
+.tour-spotlight {
+  position: absolute;
+  border-radius: var(--radius);
+  border: 2px solid var(--accent);
+  /*
+   * Real black rather than --scrim: the modal scrim is a warm near-black at
+   * 0.55, which over this theme's near-black canvas dims by almost nothing —
+   * and a spotlight is only as good as the contrast between hole and cover.
+   *
+   * No transition either: the step change smooth-scrolls the target into
+   * view, and an animated hole lags behind the scroll it is chasing, dragging
+   * a bright rectangle across the page on the way.
+   */
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.tour-card {
+  position: absolute;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+}
+
+.tour-step-count {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.tour-card h3 {
+  margin: 0 0 8px;
+  font-size: var(--text-md);
+  line-height: 1.35;
+}
+
+.tour-card p {
+  margin: 0 0 14px;
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+}
+
+.tour-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  /* Anchoring to a stacked widget leaves no room — centre it instead. */
+  .tour-card {
+    top: auto !important;
+    bottom: 16px !important;
+    left: 16px !important;
+    transform: none !important;
+  }
+}
+
 /* ---------- Chat drawer ---------- */
 
 .chat-drawer {

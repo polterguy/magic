@@ -5,7 +5,7 @@ import { useAuth } from '../lib/AuthContext';
 import { getVersion, openaiIsConfigured } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
-import { setShellActions } from '../lib/shellActions';
+import { canRunDashboardTour, runDashboardTour, setShellActions } from '../lib/shellActions';
 import { DatabaseIcon, HelpIcon, KeyboardIcon, LogoutIcon, MoonIcon, RobotIcon, SearchIcon, SunIcon } from './Icons';
 import { ChevronIcon } from './Icons';
 import { applyTheme, getTheme } from '../lib/theme';
@@ -286,6 +286,10 @@ export default function Layout({ children }: { children: ReactNode }) {
           actions={[
             ...(chatAvailable
               ? [{ label: 'Chat with your cloudlet', action: () => setChatOpen(true) }]
+              : []),
+            // Only offered while the Dashboard is mounted to receive it.
+            ...(canRunDashboardTour()
+              ? [{ label: 'Show the dashboard tour', action: runDashboardTour }]
               : []),
             { label: 'Toggle light/dark theme', action: toggleTheme },
             { label: 'Switch cloudlet', action: () => setSwitching(true) },

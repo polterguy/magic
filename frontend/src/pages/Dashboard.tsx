@@ -31,7 +31,9 @@ import {
 import { useAuth } from '../lib/AuthContext';
 import { openSupport } from '../lib/support';
 import { RobotIcon, SearchIcon } from '../components/Icons';
-import { openChatOps, openPalette } from '../lib/shellActions';
+import { openChatOps, openPalette, setDashboardTourRunner } from '../lib/shellActions';
+import Tour from '../components/Tour';
+import { CHATBOT_TOUR, DASHBOARD_TOUR } from '../lib/tourSteps';
 import { copyToClipboard, showToast } from '../lib/toast';
 
 /*
@@ -168,7 +170,6 @@ export default function Dashboard() {
   // Same again — neither the install nor the open button shows until we know.
   const [rootServed, setRootServed] = useState<boolean | null>(null);
   const [installingExpertSystem, setInstallingExpertSystem] = useState(false);
-
   /*
    * Arriving through an emailed sign-in link — an invite or a password
    * reset — means the user has no password they know, so the set-password
@@ -181,6 +182,40 @@ export default function Dashboard() {
       sessionStorage.removeItem('magic2.magic-link-arrival');
       setMustSetPassword(true);
     }
+  }, []);
+
+  /*
+   * The guided tour. Runs itself once per cloudlet — a different backend is a
+   * different setup, and worth the tour again. It waits for the async flags
+   * above to resolve, since the widgets it points at are conditional on them
+   * and half of them do not exist yet while those are null. Declared after
+   * [mustSetPassword] because it defers to the set-password dialog.
+   */
+  const [tour, setTour] = useState<'dashboard' | 'chatbot' | null>(null);
+  const tourKey = 'magic2.tourSeen.' + (backend?.url ?? '');
+  /*
+   * Acting on a widget mid-tour changes the flags below, which would otherwise
+   * re-enter this effect and restart the tour under the reader.
+   */
+  const tourOffered = useRef(false);
+  useEffect(() => {
+    if (!backend?.url || mustSetPassword || tourOffered.current) {
+      return;
+    }
+    if (openaiConfigured === null || rootServed === null) {
+      return;
+    }
+    if (localStorage.getItem(tourKey) === '1') {
+      return;
+    }
+    tourOffered.current = true;
+    setTour('dashboard');
+  }, [backend?.url, tourKey, openaiConfigured, rootServed, mustSetPassword]);
+
+  // Re-runnable on demand, from the command palette.
+  useEffect(() => {
+    setDashboardTourRunner(() => setTour('dashboard'));
+    return () => setDashboardTourRunner(null);
   }, []);
 
   // The endpoint an AI agent connects to for tool discovery.
@@ -275,6 +310,20 @@ export default function Dashboard() {
 
   return (
     <>
+      {tour && (
+        <Tour
+          steps={tour === 'chatbot' ? CHATBOT_TOUR : DASHBOARD_TOUR}
+          onClose={completed => {
+            /*
+             * Only a tour the reader saw through counts as given. Escaping out
+             * of it leaves it to run again on the next visit.
+             */
+            if (completed) {
+              localStorage.setItem(tourKey, '1');
+            }
+            setTour(null);
+          }} />
+      )}
       <div className="page-header">
         <h1>Dashboard</h1>
         <p>Connected to {backend?.url} as {backend?.username}</p>
@@ -319,7 +368,7 @@ export default function Dashboard() {
         </Link>
       </div>
       {missingPlugins.length > 0 ? (
-        <div className="card agent-prompt">
+        <div className="card agent-prompt" data-tour="mcp">
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>Turn this cloudlet into an AI agent</h2>
             <p className="muted" style={{ margin: 0 }}>
@@ -338,7 +387,7 @@ export default function Dashboard() {
           </button>
         </div>
       ) : (
-        <div className="card agent-prompt">
+        <div className="card agent-prompt" data-tour="mcp">
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>This cloudlet is an AI agent</h2>
             <p className="muted" style={{ margin: 0 }}>
@@ -357,7 +406,7 @@ export default function Dashboard() {
         </div>
       )}
       {openaiConfigured === false && (
-        <div className="card agent-prompt">
+        <div className="card agent-prompt" data-tour="openai-key">
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>Add your OpenAI API key</h2>
             <p className="muted" style={{ margin: 0 }}>
@@ -378,8 +427,8 @@ export default function Dashboard() {
           </button>
         </div>
       )}
-      {openaiConfigured === true && <CreateChatbot />}
-      <div className="card agent-prompt">
+      {openaiConfigured === true && <CreateChatbot onTour={() => setTour('chatbot')} />}
+      <div className="card agent-prompt" data-tour="api-wizard">
         <div style={{ flex: 1 }}>
           <h2 style={{ margin: '0 0 6px 0' }}>API Wizard</h2>
           <p className="muted" style={{ margin: 0 }}>
@@ -394,13 +443,13 @@ export default function Dashboard() {
         </Link>
       </div>
       {/*
-        * Offered only once there's an OpenAI API key, since the Expert System
-        * is a chat client and has nothing to talk to without one — the same
-        * flag that decides between asking for the key and showing the
-        * Chatbot Wizard above.
+        * Offered whenever the cloudlet's root URL is free, regardless of
+        * whether an OpenAI key exists yet. Installing the frontend and
+        * configuring a key are separate steps, and gating the offer on the
+        * key hid it from exactly the people who have not set anything up.
         */}
-      {rootServed === false && openaiConfigured === true && (
-        <div className="card agent-prompt">
+      {rootServed === false && (
+        <div className="card agent-prompt" data-tour="expert-system">
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>AI Expert System</h2>
             <p className="muted" style={{ margin: 0 }}>
@@ -419,7 +468,7 @@ export default function Dashboard() {
         </div>
       )}
       {rootServed === true && (
-        <div className="card agent-prompt">
+        <div className="card agent-prompt" data-tour="frontend">
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>Your frontend</h2>
             <p className="muted" style={{ margin: 0 }}>
@@ -630,7 +679,7 @@ function SetPasswordDialog(props: { onClose: () => void }) {
   );
 }
 
-function CreateChatbot() {
+function CreateChatbot(props: { onTour: () => void }) {
 
   const [url, setUrl] = useState('');
   const [model, setModel] = useState(DEFAULT_BOT_MODEL);
@@ -673,12 +722,15 @@ function CreateChatbot() {
      * Same action-card chrome as its dashboard siblings — the inner wrapper
      * is the card's single flex child, so the form keeps its block layout.
      */
-    <div className="card agent-prompt">
+    <div className="card agent-prompt" data-tour="chatbot-wizard">
       <div style={{ flex: 1, minWidth: 0 }}>
       <h2 style={{ marginTop: 0 }}>Chatbot Wizard</h2>
       <p className="muted" style={{ marginTop: 0 }}>
         Crawls the site, turns what it finds into training data, and gives you
-        a chatbot you can embed. Takes a few minutes.
+        a chatbot you can embed. Takes a few minutes.{' '}
+        <button type="button" className="link-btn" onClick={props.onTour}>
+          What do these fields do?
+        </button>
       </p>
       <form
         onFocus={loadOptions}
@@ -689,28 +741,28 @@ function CreateChatbot() {
           }
         }}>
         <div className="form-grid columns">
-        <label>Website URL
+        <label data-tour="chatbot-url">Website URL
           <input
             type="text"
             placeholder="https://example.com"
             value={url}
             onChange={e => setUrl(e.target.value)} />
         </label>
-        <label>OpenAI model
+        <label data-tour="chatbot-model">OpenAI model
           <Select value={model} onChange={value => setModel(value)}>
             {BOT_MODELS.map(option => (
               <option key={option} value={option}>{option}{modelPriceLabel(prices[option])}</option>
             ))}
           </Select>
         </label>
-        <label>Persona
+        <label data-tour="chatbot-persona">Persona
           <Select value={flavor} onChange={value => setFlavor(value)}>
             {flavors.map(candidate => (
               <option key={candidate.name} value={candidate.name}>{candidate.name}</option>
             ))}
           </Select>
         </label>
-        <label>Max pages
+        <label data-tour="chatbot-pages">Max pages
           <input
             type="number"
             min="1"
@@ -723,7 +775,7 @@ function CreateChatbot() {
           * a button have no caption, so sitting them in that grid meant
           * faking one and forcing the height to match an input.
           */}
-        <div className="form-row">
+        <div className="form-row" data-tour="chatbot-create">
           <label className="checkbox-row">
             <input
               type="checkbox"

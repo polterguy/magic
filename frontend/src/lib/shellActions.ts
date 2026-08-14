@@ -7,6 +7,20 @@
 
 let paletteOpener: (() => void) | null = null;
 let chatOpsOpener: (() => void) | null = null;
+// Registered by the Dashboard while it is mounted, for the palette entry.
+let dashboardTourRunner: (() => void) | null = null;
+
+export function setDashboardTourRunner(runner: (() => void) | null) {
+  dashboardTourRunner = runner;
+}
+
+export function canRunDashboardTour() {
+  return dashboardTourRunner !== null;
+}
+
+export function runDashboardTour() {
+  dashboardTourRunner?.();
+}
 
 export function setShellActions(actions: {
   openPalette: () => void;
