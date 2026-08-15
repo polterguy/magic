@@ -116,12 +116,6 @@ if
             .:" on the upstream API"
 
 /*
- * Query parameters are passed through as one collection rather than declared one by one, so a
- * parameter this parser did not see - a [$ref], or one declared on the path rather than the
- * operation - can still be sent. Their names are recorded here, and end up in the comment above
- * the [query] argument, which is where a caller finds out what the upstream API accepts.
- */
-/*
  * A query parameter becomes a named, typed argument of the endpoint itself rather than a member of
  * one anonymous collection, so it carries its own type, its own validator and its own description -
  * which is what an MCP client reads when deciding how to call the tool. Only the parameters the
@@ -269,6 +263,36 @@ if
    .lambda
       set-value:x:@.raw-body
          .:bool:true
+
+/*
+ * A form encoded body is a flat list of name/value pairs - the HTTP slots refuse a payload with any
+ * nesting in it - so its fields become named arguments of the endpoint exactly the way query
+ * parameters do, each with its own type, validator and description.
+ *
+ * Not always, though. A nested object has to be flattened into bracketed keys to survive form
+ * encoding - "components[account_management][enabled]" - and that is not a name an argument can
+ * carry. An operation with any such field keeps the [payload] collection, where a caller writes
+ * those keys out itself.
+ */
+.flat-body:bool:false
+if
+   and
+      eq:x:@.arguments/*/operation/*/has-body
+         .:bool:true
+      not-null:x:@.arguments/*/operation/*/content-type
+      strings.contains:x:@.arguments/*/operation/*/content-type
+         .:urlencoded
+      exists:x:@.arguments/*/operation/*/body-fields/*
+   .lambda
+      set-value:x:@.flat-body
+         .:bool:true
+      for-each:x:@.arguments/*/operation/*/body-fields/*
+         if
+            strings.contains:x:@.dp/#/*/name
+               .:"["
+            .lambda
+               set-value:x:@.flat-body
+                  .:bool:false
 
 // Payload fields, as far as the specification declares them.
 .body-names
@@ -439,6 +463,9 @@ if
       not
          eq:x:@.raw-body
             .:bool:true
+      not
+         eq:x:@.flat-body
+            .:bool:true
    .lambda
       set-value:x:@.args-hl
          strings.concat
@@ -446,6 +473,44 @@ if
             .:"/*\n * "
             get-value:x:@.body-names
             .:"\n */\npayload:*\n"
+else-if
+   eq:x:@.flat-body
+      .:bool:true
+   .lambda
+      for-each:x:@.arguments/*/operation/*/body-fields/*
+         execute-file:/system/openapi/utils/field-line.hl
+            name:x:@.dp/#/*/name
+            type:x:@.dp/#/*/type
+            item-type:x:@.dp/#/*/item-type
+            required:x:@.dp/#/*/required
+            description:x:@.dp/#/*/description
+            default:x:@.dp/#/*/default
+            enum:x:@.dp/#/*/enum
+         .line
+         set-value:x:@.line
+            get-value:x:@execute-file
+         execute-file:/system/openapi/utils/map-type.hl
+            type:x:@.dp/#/*/type
+         set-value:x:@.args-hl
+            strings.concat
+               get-value:x:@.args-hl
+               .:"// Payload field: "
+               get-value:x:@.line
+               .:"\n"
+               get-value:x:@.dp/#/*/name
+               .:":"
+               get-value:x:@execute-file
+               .:"\n"
+         if
+            eq:x:@.dp/#/*/required
+               .:bool:true
+            .lambda
+               set-value:x:@.query-mandatory
+                  strings.concat
+                     get-value:x:@.query-mandatory
+                     .:"validators.mandatory:x:@.arguments/*/"
+                     get-value:x:@.dp/#/*/name
+                     .:"\n"
 else-if
    eq:x:@.raw-body
       .:bool:true
@@ -604,6 +669,9 @@ if
       not
          eq:x:@.raw-body
             .:bool:true
+      not
+         eq:x:@.flat-body
+            .:bool:true
    .lambda
       .body-hl
       set-value:x:@.body-hl
@@ -611,6 +679,28 @@ if
             .:"add:x:../*/"
             get-value:x:@.slot
             .:"/*/payload\n   get-nodes:x:@.arguments/*/payload/*\n"
+      hyper2lambda:x:@.body-hl
+      insert-before:x:@apply/*/http.invoke
+         get-nodes:x:@hyper2lambda/*
+      set-value:x:@.keep-payload
+         .:bool:true
+else-if
+   eq:x:@.flat-body
+      .:bool:true
+   .lambda
+      .body-hl
+      set-value:x:@.body-hl
+         strings.concat
+            .:"add:x:../*/"
+            get-value:x:@.slot
+            .:"/*/payload\n"
+      for-each:x:@.arguments/*/operation/*/body-fields/*
+         set-value:x:@.body-hl
+            strings.concat
+               get-value:x:@.body-hl
+               .:"   get-nodes:x:@.arguments/*/"
+               get-value:x:@.dp/#/*/name
+               .:"\n"
       hyper2lambda:x:@.body-hl
       insert-before:x:@apply/*/http.invoke
          get-nodes:x:@hyper2lambda/*
@@ -696,18 +786,41 @@ else-if
  * [.accept] is metadata rather than a gate - Magic reads the incoming Content-Type to decide how to
  * parse a request, and exposes [.accept] when something introspects the endpoint. Stating it means
  * whatever reads this endpoint's meta data learns what it consumes.
+ *
+ * What it consumes is not always what it forwards. A file upload arrives here as multipart, and a
+ * binary body arrives as its own content type, so those two are stated as they arrive. A form
+ * encoded upstream API is different: this endpoint receives JSON and merely encodes it as a form on
+ * the way out, so the outbound encoding is left to the Content-Type header and the arguments' own
+ * comments.
+ *
+ * JSON is what an endpoint accepts unless it says otherwise, so it is never written out - stating
+ * it would only repeat the default.
  */
+.accept-type
+set-value:x:@.accept-type
+   .:application/json
+if
+   or
+      eq:x:@.multipart
+         .:bool:true
+      eq:x:@.raw-body
+         .:bool:true
+   .lambda
+      set-value:x:@.accept-type
+         get-value:x:@.arguments/*/operation/*/content-type
 if
    and
       eq:x:@.arguments/*/operation/*/has-body
          .:bool:true
       not-null:x:@.arguments/*/operation/*/content-type
+      neq:x:@.accept-type
+         .:application/json
    .lambda
       .accept-hl
       set-value:x:@.accept-hl
          strings.concat
             .:".accept:"
-            get-value:x:@.arguments/*/operation/*/content-type
+            get-value:x:@.accept-type
       hyper2lambda:x:@.accept-hl
       insert-after:x:@apply/*/.arguments
          get-nodes:x:@hyper2lambda/*
