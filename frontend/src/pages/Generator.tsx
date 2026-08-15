@@ -9,6 +9,7 @@ import CodeEditor from '../components/CodeEditor';
 import AiPrompt from '../components/AiPrompt';
 import RoleChips from '../components/RoleChips';
 import Tabs from '../components/Tabs';
+import ImportApiTab from '../components/ImportApiTab';
 import {
   DatabaseSelection,
   buildSqlAiContext,
@@ -206,11 +207,15 @@ export default function Generator() {
           tabs={[
             { id: 'crud', label: 'CRUD backend' },
             { id: 'sql', label: 'SQL endpoint' },
+            { id: 'import', label: 'Import API' },
           ]}
           active={tab}
           onChange={setTab} />
       )}
-      {guided || tab === 'crud' ? <CrudTab guided={guided} /> : <SqlEndpointTab />}
+      {guided && <CrudTab guided={guided} />}
+      {!guided && tab === 'crud' && <CrudTab guided={guided} />}
+      {!guided && tab === 'sql' && <SqlEndpointTab />}
+      {!guided && tab === 'import' && <ImportApiTab />}
     </>
   );
 }

@@ -461,6 +461,60 @@ export function deleteConnectionString(databaseType: string, name: string) {
 /*
  * Backend generator — one invocation per verb per table.
  */
+export interface OpenApiParameter {
+  name: string;
+  in: string;
+  required: boolean;
+  type: string;
+}
+
+export interface OpenApiOperation {
+  id: string;
+  verb: string;
+  path: string;
+  summary: string | null;
+  tag: string | null;
+  parameters: OpenApiParameter[] | null;
+  'has-body'?: boolean;
+}
+
+export interface OpenApiSpec {
+  title: string | null;
+  version: string | null;
+  servers: string[] | null;
+  'security-schemes': {
+    name: string;
+    type: string;
+    in: string | null;
+    'header-name': string | null;
+    scheme: string | null;
+  }[] | null;
+  operations: OpenApiOperation[] | null;
+}
+
+// Reads an OpenAPI specification without importing anything from it.
+export function parseOpenApi(url: string) {
+  return http.post<OpenApiSpec>('/magic/system/openapi/parse', { url });
+}
+
+// Generates endpoints wrapping the selected operations.
+export function importOpenApi(payload: {
+  url: string;
+  moduleName: string;
+  baseUrl: string;
+  operations: string[];
+  authScheme: string;
+  authName?: string;
+  configKey?: string;
+  auth?: string;
+  overwrite?: boolean;
+  // Feedback channel the importer announces each generated endpoint on.
+  channel?: string;
+}) {
+  return http.post<{ created: string[] | null; skipped: string[] | null; loc: number }>(
+    '/magic/system/openapi/import', payload);
+}
+
 export function crudify(payload: any) {
   return http.post<{ loc: number; result: string }>(
     '/magic/system/crudifier/crudify', payload);

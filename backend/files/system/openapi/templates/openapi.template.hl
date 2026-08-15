@@ -1,0 +1,24 @@
+
+/*
+ * {summary}
+ */
+.arguments
+
+auth.ticket.verify:{auth}
+
+.token
+set-value:x:@.token
+   strings.concat
+      .:{auth-prefix}
+      config.get:{config-key}
+
+// Invoking the upstream API.
+http.invoke:{url}
+   convert:bool:true
+   headers
+   url-params
+   query
+   payload
+
+// Returning whatever the upstream API returned.
+return-nodes:x:-/*/content/*

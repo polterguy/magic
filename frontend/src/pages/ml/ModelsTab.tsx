@@ -213,6 +213,7 @@ export default function ModelsTab(props: {
           title={'Vectorising ' + vectorising.type}
           channel={vectorising.channel}
           progress={{
+            noun: 'snippet',
             total: vectorising.total,
             // The vectoriser announces every snippet it embeds with this prefix.
             counts: message => message.message.startsWith('Vectorizing:'),

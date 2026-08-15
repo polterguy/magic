@@ -1,0 +1,169 @@
+
+/*
+ * Turns a resolved request body schema into the flat list of fields it accepts, which the generator
+ * writes into the endpoint's file level comment.
+ *
+ * Nested objects are traversed and reported as the key a caller actually has to send, rather than
+ * as "object" - bracketed for form encoded APIs, since that is the notation they expect, and dotted
+ * for JSON where the caller nests the payload for real.
+ *
+ * Invokes itself for each nested object, which is what bounds the work: [depth] stops the descent,
+ * and a property that is a [$ref] is reported as an object rather than followed, since following
+ * references across a specification can recurse forever.
+ *
+ * Returns [body-fields] with one child per field.
+ */
+.arguments
+
+   // Properties of the schema being described.
+   schema:*
+
+   // Prefix each field is nested beneath, empty for the top level.
+   prefix:string
+
+   // How many levels of nesting are left before we stop descending.
+   depth:int
+
+   // Either 'bracket' or 'dotted', deciding how a nested field's key is written.
+   style:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+validators.default:x:@.arguments
+   depth:int:4
+   style:bracket
+   prefix:
+
+.result
+   body-fields
+
+for-each:x:@.arguments/*/schema/*/properties/*
+
+   .name
+   set-value:x:@.name
+      get-name:x:@.dp/#
+
+   // The key a caller sends for this field, which is the prefix and the property name joined.
+   .key
+   if
+      eq:x:@.arguments/*/prefix
+         .:
+      .lambda
+         set-value:x:@.key
+            get-value:x:@.name
+   else-if
+      eq:x:@.arguments/*/style
+         .:dotted
+      .lambda
+         set-value:x:@.key
+            strings.concat
+               get-value:x:@.arguments/*/prefix
+               .:.
+               get-value:x:@.name
+   else
+      set-value:x:@.key
+         strings.concat
+            get-value:x:@.arguments/*/prefix
+            .:"["
+            get-value:x:@.name
+            .:"]"
+
+   /*
+    * A nested object is descended into, so the comment names the leaves a caller sends rather than
+    * an "object" they would have to go and look up elsewhere.
+    */
+   if
+      and
+         exists:x:@.dp/#/*/properties/*
+         mt:x:@.arguments/*/depth
+            .:int:0
+      .lambda
+         math.subtract
+            get-value:x:@.arguments/*/depth
+            .:int:1
+         add:x:+/*/schema
+            get-nodes:x:@.dp/#/*
+         execute-file:/system/openapi/utils/body-fields.hl
+            prefix:x:@.key
+            depth:x:@math.subtract
+            style:x:@.arguments/*/style
+            schema
+         add:x:@.result/*/body-fields
+            get-nodes:x:@execute-file/*/body-fields/*
+   else
+
+      .field
+         name
+         type
+         required:bool:false
+         item-type
+         description
+         default
+         enum
+
+         // Whether this field carries a file rather than a value, which decides how it is sent.
+         binary:bool:false
+      set-value:x:@.field/*/name
+         get-value:x:@.key
+
+      // The type in the specification's own vocabulary, since this documents the upstream API.
+      set-value:x:@.field/*/type
+         get-value:x:@.dp/#/*/type
+      if
+         null:x:@.field/*/type
+         .lambda
+            if
+               exists:x:@.dp/#/*/\$ref
+               .lambda
+                  set-value:x:@.field/*/type
+                     .:object
+            else
+               set-value:x:@.field/*/type
+                  .:any
+
+      /*
+       * A file is declared as "type: file" by Swagger 2.0, and as a string with "format: binary"
+       * by OpenAPI 3 - both mean the part carries bytes rather than a value.
+       */
+      if
+         or
+            eq:x:@.field/*/type
+               .:file
+            eq:x:@.dp/#/*/format
+               .:binary
+         .lambda
+            set-value:x:@.field/*/binary
+               .:bool:true
+
+      set-value:x:@.field/*/item-type
+         get-value:x:@.dp/#/*/items/*/type
+      set-value:x:@.field/*/description
+         get-value:x:@.dp/#/*/description
+      set-value:x:@.field/*/default
+         get-value:x:@.dp/#/*/default
+      if
+         exists:x:@.dp/#/*/enum/*
+         .lambda
+            set-value:x:@.field/*/enum
+               strings.join:x:@.dp/#/*/enum/*
+                  .:", "
+
+      // Fields the schema declares as required.
+      for-each:x:@.arguments/*/schema/*/required/*
+         if
+            eq
+               get-value:x:@.dp/#
+               get-value:x:@.name
+            .lambda
+               set-value:x:@.field/*/required
+                  .:bool:true
+
+      add:x:@.result/*/body-fields
+         .
+            .
+      add:x:@.result/*/body-fields/0/-
+         get-nodes:x:@.field/*
+
+// Returning result to caller.
+return-nodes:x:@.result/*

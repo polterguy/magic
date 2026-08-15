@@ -1,0 +1,200 @@
+
+/*
+ * Generates Hyperlambda endpoints wrapping the operations you select from an OpenAPI specification.
+ *
+ * The specification is re-parsed here rather than trusted from the caller, and only the operations
+ * named in [operations] are generated. Each generated endpoint invokes the upstream API server-side,
+ * reading its credential from configuration at invocation time - so the credential is never written
+ * into the generated file, and never reaches whoever invokes the endpoint.
+ *
+ * Generated endpoints are ordinary endpoints, which means they immediately become MCP tools and can
+ * be added as AI functions, gated by the roles given in [auth].
+ */
+.arguments
+   url:string
+   spec:string
+   moduleName:string
+   baseUrl:string
+   operations:*
+   authScheme:string
+   authName:string
+   configKey:string
+   auth:string
+   overwrite:bool
+   channel:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/moduleName
+validators.mandatory:x:@.arguments/*/baseUrl
+validators.mandatory:x:@.arguments/*/operations
+validators.default:x:@.arguments
+   authScheme:none
+
+   // Refusing to replace an endpoint that already exists is the safe default.
+   overwrite:bool:false
+validators.enum:x:@.arguments/*/authScheme
+   .:none
+   .:bearer
+   .:header
+   .:query
+   .:basic
+
+// Rejecting module names that would escape the modules folder.
+if
+   or
+      strings.contains:x:@.arguments/*/moduleName
+         .:/
+      strings.contains:x:@.arguments/*/moduleName
+         .:..
+   .lambda
+      throw:Module name cannot contain slashes or dots
+         public:bool:true
+         status:int:400
+
+// Re-parsing the specification rather than trusting operation details from the caller.
+unwrap:x:+/*
+execute-file:/system/openapi/parse.post.hl
+   url:x:@.arguments/*/url
+   spec:x:@.arguments/*/spec
+
+// Making sure the module folder exists.
+.folder
+set-value:x:@.folder
+   strings.concat
+      .:/modules/
+      get-value:x:@.arguments/*/moduleName
+      .:/
+if
+   not
+      io.folder.exists:x:@.folder
+   .lambda
+      io.folder.create:x:@.folder
+
+// The prefix prepended to the credential, which is what differs between the auth schemes.
+.auth-prefix
+   .:
+switch:x:@.arguments/*/authScheme
+   case:bearer
+      set-value:x:@.auth-prefix
+         .:"Bearer "
+   case:basic
+      set-value:x:@.auth-prefix
+         .:"Basic "
+
+// Loading the template once, rather than once per operation.
+.template
+set-value:x:@.template
+   io.file.load:/system/openapi/templates/openapi.template.hl
+
+// Files created and operations skipped, both returned to caller.
+.created
+.skipped
+
+// Lines of Hyperlambda generated across every endpoint, reported back the way crudification does.
+.loc:int:0
+
+for-each:x:@.arguments/*/operations/*
+
+   .id
+   set-value:x:@.id
+      get-value:x:@.dp/#
+
+   // Locating the operation in the freshly parsed specification.
+   .op
+   for-each:x:@execute-file/*/operations/*
+      if
+         eq:x:@.dp/#/*/id
+            get-value:x:@.id
+         .lambda
+            add:x:@.op
+               get-nodes:x:@.dp/#/*
+   if
+      exists:x:@.op/*
+      .lambda
+         add:x:+/*/operation
+            get-nodes:x:@.op/*
+         execute-file:/system/openapi/utils/generate-endpoint.hl
+            template:x:@.template
+            folder:x:@.folder
+            base-url:x:@.arguments/*/baseUrl
+            auth:x:@.arguments/*/auth
+            auth-scheme:x:@.arguments/*/authScheme
+            auth-name:x:@.arguments/*/authName
+            config-key:x:@.arguments/*/configKey
+            auth-prefix:x:@.auth-prefix
+            overwrite:x:@.arguments/*/overwrite
+            operation
+         unwrap:x:+/*/*
+         add:x:@.created
+            .
+               .:x:@execute-file/*/filename
+         set-value:x:@.loc
+            math.add
+               get-value:x:@.loc
+               get-value:x:@execute-file/*/loc
+         if
+            and
+               exists:x:@.arguments/*/channel
+               not-null:x:@.arguments/*/channel
+            .lambda
+               .message
+               set-value:x:@.message
+                  strings.concat
+                     .:"Generated "
+                     get-value:x:@execute-file/*/filename
+                     .:" - "
+                     get-value:x:@execute-file/*/loc
+                     .:" lines"
+               unwrap:x:+/*/*
+               sockets.signal:x:@.arguments/*/channel
+                  args
+                     message:x:@.message
+   else
+      unwrap:x:+/*/*
+      add:x:@.skipped
+         .
+            .:x:@.id
+      if
+         and
+            exists:x:@.arguments/*/channel
+            not-null:x:@.arguments/*/channel
+         .lambda
+            .message
+            set-value:x:@.message
+               strings.concat
+                  .:"Skipped "
+                  get-value:x:@.id
+                  .:" - not found in the specification"
+            unwrap:x:+/*/*
+            sockets.signal:x:@.arguments/*/channel
+               args
+                  message:x:@.message
+
+// The line the caller's progress dialog treats as the end of the job.
+if
+   and
+      exists:x:@.arguments/*/channel
+      not-null:x:@.arguments/*/channel
+   .lambda
+      get-count:x:@.created/*
+      .message
+      set-value:x:@.message
+         strings.concat
+            .:"Done! "
+            get-value:x:@get-count
+            .:" endpoints, "
+            get-value:x:@.loc
+            .:" lines of Hyperlambda, live as endpoints and MCP tools straight away."
+      unwrap:x:+/*/*
+      sockets.signal:x:@.arguments/*/channel
+         args
+            message:x:@.message
+
+// Returning result to caller.
+yield
+   created:x:@.created/*
+   skipped:x:@.skipped/*
+   loc:x:@.loc

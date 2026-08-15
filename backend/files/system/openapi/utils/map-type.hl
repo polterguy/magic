@@ -1,0 +1,49 @@
+
+/*
+ * Maps an OpenAPI schema type and format onto the Hyperlambda type used in a generated
+ * endpoint's [.arguments] declaration. Used for parameters - path, query and header - which is
+ * why arrays and objects land on string along with everything else unrecognised: a parameter is
+ * carried in the URL as text whatever its schema says, so string is what actually crosses the
+ * wire. How a particular API wants that text laid out is its own business, and is left to the
+ * argument's description rather than guessed at here.
+ *
+ * Anything we do not recognise becomes a string too, which is the safe fallback - it survives the
+ * round-trip to the upstream API unchanged, where a wrong numeric type would not.
+ */
+.arguments
+   type:string
+   format:string
+
+// Formats are more specific than types, so they decide first.
+switch:x:@.arguments/*/format
+
+   case:date-time
+      return:date
+
+   case:date
+      return:date
+
+   case:int64
+      return:long
+
+   case:int32
+      return:int
+
+   case:double
+      return:double
+
+   case:float
+      return:double
+
+switch:x:@.arguments/*/type
+
+   case:integer
+      return:long
+
+   case:number
+      return:decimal
+
+   case:boolean
+      return:bool
+
+return:string

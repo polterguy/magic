@@ -120,6 +120,18 @@ namespace magic.lambda.mime.helpers
          */
         static async Task CreateContentObjectFromObjectAsync(Node contentNode, MimePart part)
         {
+            /*
+             * An uploaded file reaches Hyperlambda as an open Stream rather than as text - see the
+             * multipart handler in magic.endpoint - so a Stream is attached as the part's content
+             * directly. Letting it fall through to the string logic below would stringify the Stream
+             * object itself, and the part would contain the type's name instead of the file.
+             */
+            if (contentNode.GetEx<object>() is Stream streamContent)
+            {
+                part.Content = new MimeContent(streamContent, ContentEncoding.Default);
+                return;
+            }
+
             var stream = new MemoryBlockStream();
             var content = contentNode.GetEx<string>() ??
                 throw new HyperlambdaException("No actual [content] supplied to message");

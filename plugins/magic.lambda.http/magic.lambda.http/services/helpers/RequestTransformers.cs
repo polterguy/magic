@@ -109,18 +109,18 @@ namespace magic.lambda.http.services.helpers
                     headers[idxHeader.Field] = idxHeader.Value;
                 }
 
-                // Serialising MIME entity without its headers and returning it to caller, making sure we get CR/LF sequence correctly applied.
-                using (var stream = new MemoryStream())
-                {
-                    entity.WriteTo(new FormatOptions { MaxLineLength = 100, NewLineFormat = NewLineFormat.Dos }, stream, true);
-                    stream.Position = 0;
-
-                    // Returning string wrapping entire MIME entity to caller.
-                    using (var reader = new StreamReader(stream))
-                    {
-                        return reader.ReadToEnd();
-                    }
-                }
+                /*
+                 * Serialising MIME entity without its headers, making sure we get CR/LF sequence correctly applied.
+                 *
+                 * Notice, the stream is returned as a stream rather than being read into a string, since reading
+                 * it as text runs every byte through UTF-8 - which substitutes U+FFFD for anything that is not
+                 * valid UTF-8, silently destroying every binary part in the entity. The caller wraps whatever we
+                 * return into a StreamContent object, and disposes it once the request has been transmitted.
+                 */
+                var stream = new MemoryStream();
+                entity.WriteTo(new FormatOptions { MaxLineLength = 100, NewLineFormat = NewLineFormat.Dos }, stream, true);
+                stream.Position = 0;
+                return stream;
             }
         }
 

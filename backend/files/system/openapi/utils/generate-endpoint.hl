@@ -1,0 +1,854 @@
+
+/*
+ * Generates and saves one endpoint wrapping a single OpenAPI operation.
+ *
+ * The template supplies the skeleton, [apply] stamps the scalar values into it, and the parts that
+ * vary in length - arguments, validators, headers, URL parameters, query parameters and payload -
+ * are added to the resulting lambda afterwards, the same way the CRUD generator builds its endpoints.
+ *
+ * Returns the filename it created.
+ */
+.arguments
+   template:string
+   folder:string
+   base-url:string
+   auth:string
+   auth-scheme:string
+   auth-name:string
+   config-key:string
+   auth-prefix:string
+   overwrite:bool
+   operation:*
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// The verb decides both the slot we invoke and the filename's extension.
+.verb
+set-value:x:@.verb
+   get-value:x:@.arguments/*/operation/*/verb
+.slot
+set-value:x:@.slot
+   strings.concat
+      .:http.
+      get-value:x:@.verb
+
+/*
+ * Deriving the filename from the operation's path, since [operationId] is optional in the
+ * specification and frequently missing. "/pet/{petId}" becomes "pet-petId".
+ */
+.name
+set-value:x:@.name
+   get-value:x:@.arguments/*/operation/*/path
+set-value:x:@.name
+   strings.replace:x:@.name
+      .:"{"
+      .:
+set-value:x:@.name
+   strings.replace:x:@.name
+      .:"}"
+      .:
+set-value:x:@.name
+   strings.trim-start:x:@.name
+      .:/
+set-value:x:@.name
+   strings.replace:x:@.name
+      .:/
+      .:-
+
+/*
+ * Dots are stripped as well, since Magic reads the filename as "name.verb.hl" - a path such as
+ * Slack's "/chat.postMessage" would otherwise save a file that never resolves as an endpoint.
+ */
+set-value:x:@.name
+   strings.replace:x:@.name
+      .:.
+      .:-
+if
+   eq:x:@.name
+      .:
+   .lambda
+      set-value:x:@.name
+         .:index
+.filename
+set-value:x:@.filename
+   strings.concat
+      get-value:x:@.arguments/*/folder
+      get-value:x:@.name
+      .:.
+      get-value:x:@.verb
+      .:.hl
+
+// Refusing to overwrite an existing endpoint unless the caller asked for it.
+if
+   and
+      io.file.exists:x:@.filename
+      not
+         eq:x:@.arguments/*/overwrite
+            .:bool:true
+   .lambda
+      .msg
+      set-value:x:@.msg
+         strings.concat
+            .:"Endpoint already exists: "
+            get-value:x:@.filename
+            .:" - pass [overwrite] to replace it"
+      throw:x:@.msg
+         public:bool:true
+         status:int:409
+
+// The summary becomes the file level comment, which is what describes the endpoint.
+.summary
+set-value:x:@.summary
+   get-value:x:@.arguments/*/operation/*/summary
+if
+   or
+      null:x:@.summary
+      eq:x:@.summary
+         .:
+   .lambda
+      set-value:x:@.summary
+         strings.concat
+            .:"Invokes "
+            get-value:x:@.verb
+            .:" "
+            get-value:x:@.arguments/*/operation/*/path
+            .:" on the upstream API"
+
+/*
+ * Query parameters are passed through as one collection rather than declared one by one, so a
+ * parameter this parser did not see - a [$ref], or one declared on the path rather than the
+ * operation - can still be sent. Their names are recorded here, and end up in the comment above
+ * the [query] argument, which is where a caller finds out what the upstream API accepts.
+ */
+/*
+ * A query parameter becomes a named, typed argument of the endpoint itself rather than a member of
+ * one anonymous collection, so it carries its own type, its own validator and its own description -
+ * which is what an MCP client reads when deciding how to call the tool. Only the parameters the
+ * caller actually supplies reach the upstream request, since [add] copies nothing for an argument
+ * that was never sent.
+ *
+ * Arrays and objects are declared as strings along with everything else, because that is what a
+ * query string carries. The comment states the type the specification declared, so a caller laying
+ * out a list knows it is laying out a list - the layout that particular API expects is documented,
+ * never invented here.
+ */
+.query-args-hl
+set-value:x:@.query-args-hl
+   .:
+.query-adds
+set-value:x:@.query-adds
+   .:
+.query-mandatory
+set-value:x:@.query-mandatory
+   .:
+for-each:x:@.arguments/*/operation/*/parameters/*
+   if
+      eq:x:@.dp/#/*/in
+         .:query
+      .lambda
+         execute-file:/system/openapi/utils/field-line.hl
+            name:x:@.dp/#/*/name
+            type:x:@.dp/#/*/spec-type
+            item-type:x:@.dp/#/*/item-type
+            required:x:@.dp/#/*/required
+            description:x:@.dp/#/*/description
+            default:x:@.dp/#/*/default
+            enum:x:@.dp/#/*/enum
+         set-value:x:@.query-args-hl
+            strings.concat
+               get-value:x:@.query-args-hl
+               .:"// Query parameter: "
+               get-value:x:@execute-file
+               .:"\n"
+               get-value:x:@.dp/#/*/name
+               .:":"
+               get-value:x:@.dp/#/*/type
+               .:"\n"
+         set-value:x:@.query-adds
+            strings.concat
+               get-value:x:@.query-adds
+               .:"   get-nodes:x:@.arguments/*/"
+               get-value:x:@.dp/#/*/name
+               .:"\n"
+         if
+            eq:x:@.dp/#/*/required
+               .:bool:true
+            .lambda
+               set-value:x:@.query-mandatory
+                  strings.concat
+                     get-value:x:@.query-mandatory
+                     .:"validators.mandatory:x:@.arguments/*/"
+                     get-value:x:@.dp/#/*/name
+                     .:"\n"
+
+/*
+ * Header parameters. Passed as a collection like the query parameters are, and merged into the
+ * headers the endpoint already sends, so an API wanting its own header can be given one.
+ */
+.header-names
+set-value:x:@.header-names
+   .:
+for-each:x:@.arguments/*/operation/*/parameters/*
+   if
+      eq:x:@.dp/#/*/in
+         .:header
+      .lambda
+         execute-file:/system/openapi/utils/field-line.hl
+            name:x:@.dp/#/*/name
+            type:x:@.dp/#/*/spec-type
+            item-type:x:@.dp/#/*/item-type
+            required:x:@.dp/#/*/required
+            description:x:@.dp/#/*/description
+            default:x:@.dp/#/*/default
+            enum:x:@.dp/#/*/enum
+         set-value:x:@.header-names
+            strings.concat
+               get-value:x:@.header-names
+               .:"\n * - "
+               get-value:x:@execute-file
+
+/*
+ * A multipart body is not a collection of values but a sequence of MIME parts, and a file part
+ * carries an open stream rather than text - so it is declared and built quite differently from a
+ * JSON or form encoded body, and is decided here once for the whole file.
+ */
+.multipart:bool:false
+if
+   and
+      eq:x:@.arguments/*/operation/*/has-body
+         .:bool:true
+      not-null:x:@.arguments/*/operation/*/content-type
+      strings.contains:x:@.arguments/*/operation/*/content-type
+         .:multipart
+   .lambda
+      set-value:x:@.multipart
+         .:bool:true
+
+/*
+ * The name of the field the upstream API expects the file under, taken from the specification.
+ * Magic hands every upload to Hyperlambda as a node named [file] whatever the client called it, so
+ * this is what the generated endpoint has to write back into the part's Content-Disposition.
+ */
+.file-field
+if
+   eq:x:@.multipart
+      .:bool:true
+   .lambda
+      for-each:x:@.arguments/*/operation/*/body-fields/*
+         if
+            and
+               eq:x:@.dp/#/*/binary
+                  .:bool:true
+               null:x:@.file-field
+            .lambda
+               set-value:x:@.file-field
+                  get-value:x:@.dp/#/*/name
+
+/*
+ * A body that is neither JSON, form encoded nor multipart - an image, a PDF, plain text - is not a
+ * structure at all but a stream of bytes, and is forwarded exactly as it arrived. Magic hands the
+ * request stream to an endpoint as [body] whenever it has no specialised reader for the incoming
+ * content type, and the HTTP slots transmit a stream verbatim when it is the value of [payload].
+ */
+.raw-body:bool:false
+if
+   and
+      eq:x:@.arguments/*/operation/*/has-body
+         .:bool:true
+      not
+         eq:x:@.multipart
+            .:bool:true
+      not-null:x:@.arguments/*/operation/*/content-type
+      not
+         strings.contains:x:@.arguments/*/operation/*/content-type
+            .:json
+      not
+         strings.contains:x:@.arguments/*/operation/*/content-type
+            .:urlencoded
+   .lambda
+      set-value:x:@.raw-body
+         .:bool:true
+
+// Payload fields, as far as the specification declares them.
+.body-names
+set-value:x:@.body-names
+   .:
+if
+   exists:x:@.arguments/*/operation/*/body-fields/*
+   .lambda
+      /*
+       * Capped, since a traversed body can be large - Stripe's largest expands to more than a
+       * hundred fields, and a comment that long stops being read at all.
+       */
+      .shown:int:0
+      .omitted:int:0
+      for-each:x:@.arguments/*/operation/*/body-fields/*
+         if
+            mte:x:@.shown
+               .:int:40
+            .lambda
+               set-value:x:@.omitted
+                  math.add:x:@.omitted
+                     .:int:1
+         else
+            execute-file:/system/openapi/utils/field-line.hl
+               name:x:@.dp/#/*/name
+               type:x:@.dp/#/*/type
+               item-type:x:@.dp/#/*/item-type
+               required:x:@.dp/#/*/required
+               description:x:@.dp/#/*/description
+               default:x:@.dp/#/*/default
+               enum:x:@.dp/#/*/enum
+            set-value:x:@.body-names
+               strings.concat
+                  get-value:x:@.body-names
+                  .:"\n * - "
+                  get-value:x:@execute-file
+            set-value:x:@.shown
+               math.add:x:@.shown
+                  .:int:1
+      if
+         mt:x:@.omitted
+            .:int:0
+         .lambda
+            set-value:x:@.body-names
+               strings.concat
+                  get-value:x:@.body-names
+                  .:"\n * - ... and "
+                  get-value:x:@.omitted
+                  .:" more"
+      set-value:x:@.body-names
+         strings.concat
+            .:"Payload fields, sent as "
+            get-value:x:@.arguments/*/operation/*/content-type
+            .:":"
+            get-value:x:@.body-names
+else
+   set-value:x:@.body-names
+      strings.concat
+         .:"Payload sent to the upstream API, as "
+         get-value:x:@.arguments/*/operation/*/content-type
+         .:". The specification does not declare its fields."
+
+/*
+ * The file level comment is what an MCP client reads as the tool's description, so it states what
+ * the operation does and which upstream call it makes - the per-argument detail belongs on the
+ * arguments themselves, where clients read it as each argument's own description.
+ */
+.upper-verb
+set-value:x:@.upper-verb
+   strings.to-upper:x:@.verb
+set-value:x:@.summary
+   strings.concat
+      get-value:x:@.summary
+      .:"\n\nInvokes "
+      get-value:x:@.upper-verb
+      .:" "
+      get-value:x:@.arguments/*/base-url
+      get-value:x:@.arguments/*/operation/*/path
+      .:" on the upstream API, server side."
+if
+   and
+      not-null:x:@.arguments/*/auth
+      neq:x:@.arguments/*/auth
+         .:
+   .lambda
+      set-value:x:@.summary
+         strings.concat
+            get-value:x:@.summary
+            .:" Requires one of these roles: "
+            get-value:x:@.arguments/*/auth
+            .:"."
+
+// Stamping the scalar values into the template.
+hyper2lambda:x:@.arguments/*/template
+   comments:bool:true
+unwrap:x:+/*
+apply:x:@hyper2lambda
+   summary:x:@.summary
+   auth:x:@.arguments/*/auth
+   auth-prefix:x:@.arguments/*/auth-prefix
+   config-key:x:@.arguments/*/config-key
+   url:
+
+// Building the upstream URL, which keeps the specification's {placeholders} for [url-params].
+set-value:x:@apply/*/http.invoke
+   strings.concat
+      get-value:x:@.arguments/*/base-url
+      get-value:x:@.arguments/*/operation/*/path
+
+/*
+ * Declaring the endpoint's arguments, one per parameter, plus a [payload] for operations that
+ * carry a request body.
+ */
+.args-hl
+set-value:x:@.args-hl
+   .:
+
+/*
+ * Each argument carries its own comment, because that is what an MCP client reads as the
+ * argument's description - a path parameter gets the specification's own words, and each
+ * collection gets the list of fields it accepts.
+ */
+for-each:x:@.arguments/*/operation/*/parameters/*
+   if
+      eq:x:@.dp/#/*/in
+         .:path
+      .lambda
+         execute-file:/system/openapi/utils/field-line.hl
+            name:x:@.dp/#/*/name
+            type:x:@.dp/#/*/spec-type
+            item-type:x:@.dp/#/*/item-type
+            required:bool:true
+            description:x:@.dp/#/*/description
+            default:x:@.dp/#/*/default
+            enum:x:@.dp/#/*/enum
+         set-value:x:@.args-hl
+            strings.concat
+               get-value:x:@.args-hl
+               .:"// URL parameter: "
+               get-value:x:@execute-file
+               .:"\n"
+               get-value:x:@.dp/#/*/name
+               .:":"
+               get-value:x:@.dp/#/*/type
+               .:"\n"
+set-value:x:@.args-hl
+   strings.concat
+      get-value:x:@.args-hl
+      get-value:x:@.query-args-hl
+if
+   neq:x:@.header-names
+      .:
+   .lambda
+      set-value:x:@.args-hl
+         strings.concat
+            get-value:x:@.args-hl
+            .:"/*\n * HTTP headers passed on to the upstream API, merged with the ones this\n"
+            .:" * endpoint already sends.\n *"
+            get-value:x:@.header-names
+            .:"\n */\nheaders:*\n"
+if
+   and
+      eq:x:@.arguments/*/operation/*/has-body
+         .:bool:true
+      not
+         eq:x:@.multipart
+            .:bool:true
+      not
+         eq:x:@.raw-body
+            .:bool:true
+   .lambda
+      set-value:x:@.args-hl
+         strings.concat
+            get-value:x:@.args-hl
+            .:"/*\n * "
+            get-value:x:@.body-names
+            .:"\n */\npayload:*\n"
+else-if
+   eq:x:@.raw-body
+      .:bool:true
+   .lambda
+      set-value:x:@.args-hl
+         strings.concat
+            get-value:x:@.args-hl
+            .:"/*\n * The request body, forwarded to the upstream API exactly as it arrived, as "
+            get-value:x:@.arguments/*/operation/*/content-type
+            .:".\n * Post the bytes themselves to this endpoint rather than a structure - Magic hands\n"
+            .:" * the request stream straight to the endpoint as this argument.\n */\nbody:*\n"
+else-if
+   eq:x:@.multipart
+      .:bool:true
+   .lambda
+
+      /*
+       * Every part of the multipart body is its own argument, so each carries its own description -
+       * the value parts as plain strings, and the file as [file], which is the node Magic populates
+       * from an upload and which carries the uploaded file's name and its open stream.
+       */
+      for-each:x:@.arguments/*/operation/*/body-fields/*
+         execute-file:/system/openapi/utils/field-line.hl
+            name:x:@.dp/#/*/name
+            type:x:@.dp/#/*/type
+            item-type:x:@.dp/#/*/item-type
+            required:x:@.dp/#/*/required
+            description:x:@.dp/#/*/description
+            default:x:@.dp/#/*/default
+            enum:x:@.dp/#/*/enum
+         if
+            eq:x:@.dp/#/*/binary
+               .:bool:true
+            .lambda
+               if
+                  eq:x:@.dp/#/*/name
+                     get-value:x:@.file-field
+                  .lambda
+                     set-value:x:@.args-hl
+                        strings.concat
+                           get-value:x:@.args-hl
+                           .:"/*\n * The file to upload, sent to the upstream API as its \""
+                           get-value:x:@.file-field
+                           .:"\" part.\n *\n * "
+                           get-value:x:@execute-file
+                           .:"\n */\nfile:*\n"
+         else
+            set-value:x:@.args-hl
+               strings.concat
+                  get-value:x:@.args-hl
+                  .:"// Payload field: "
+                  get-value:x:@execute-file
+                  .:"\n"
+                  get-value:x:@.dp/#/*/name
+                  .:":string\n"
+if
+   neq:x:@.args-hl
+      .:
+   .lambda
+
+      // Comments are the payload here, since they become each argument's description over MCP.
+      hyper2lambda:x:@.args-hl
+         comments:bool:true
+      add:x:@apply/*/.arguments
+         get-nodes:x:@hyper2lambda/*
+
+// Path parameters are mandatory by definition, so they get a validator each.
+.validators-hl
+set-value:x:@.validators-hl
+   .:
+for-each:x:@.arguments/*/operation/*/parameters/*
+   if
+      eq:x:@.dp/#/*/in
+         .:path
+      .lambda
+         set-value:x:@.validators-hl
+            strings.concat
+               get-value:x:@.validators-hl
+               .:"validators.mandatory:x:@.arguments/*/"
+               get-value:x:@.dp/#/*/name
+               .:"\n"
+// Required query parameters are validated the same way path parameters are.
+set-value:x:@.validators-hl
+   strings.concat
+      get-value:x:@.validators-hl
+      get-value:x:@.query-mandatory
+if
+   neq:x:@.validators-hl
+      .:
+   .lambda
+      hyper2lambda:x:@.validators-hl
+      insert-after:x:@apply/*/.arguments
+         get-nodes:x:@hyper2lambda/*
+
+// Path parameters are substituted into the URL by the HTTP slot itself.
+for-each:x:@.arguments/*/operation/*/parameters/*
+   if
+      eq:x:@.dp/#/*/in
+         .:path
+      .lambda
+         .one
+         set-value:x:@.one
+            strings.concat
+               get-value:x:@.dp/#/*/name
+               .:":x:@.arguments/*/"
+               get-value:x:@.dp/#/*/name
+         hyper2lambda:x:@.one
+         add:x:@apply/*/http.invoke/*/url-params
+            get-nodes:x:@hyper2lambda/*
+
+/*
+ * Query parameters, and the payload, are added at invocation time rather than declared inline, so
+ * arguments the caller did not supply are left out of the upstream request entirely.
+ */
+.keep-query:bool:false
+.keep-payload:bool:false
+.keep-headers:bool:false
+if
+   neq:x:@.header-names
+      .:
+   .lambda
+      .headers-hl
+      set-value:x:@.headers-hl
+         strings.concat
+            .:"add:x:../*/"
+            get-value:x:@.slot
+            .:"/*/headers\n   get-nodes:x:@.arguments/*/headers/*\n"
+      hyper2lambda:x:@.headers-hl
+      insert-before:x:@apply/*/http.invoke
+         get-nodes:x:@hyper2lambda/*
+      set-value:x:@.keep-headers
+         .:bool:true
+.pass-hl
+if
+   neq:x:@.query-adds
+      .:
+   .lambda
+      set-value:x:@.pass-hl
+         strings.concat
+            .:"add:x:../*/"
+            get-value:x:@.slot
+            .:"/*/query\n"
+            get-value:x:@.query-adds
+      hyper2lambda:x:@.pass-hl
+      insert-before:x:@apply/*/http.invoke
+         get-nodes:x:@hyper2lambda/*
+      set-value:x:@.keep-query
+         .:bool:true
+if
+   and
+      eq:x:@.arguments/*/operation/*/has-body
+         .:bool:true
+      not
+         eq:x:@.multipart
+            .:bool:true
+      not
+         eq:x:@.raw-body
+            .:bool:true
+   .lambda
+      .body-hl
+      set-value:x:@.body-hl
+         strings.concat
+            .:"add:x:../*/"
+            get-value:x:@.slot
+            .:"/*/payload\n   get-nodes:x:@.arguments/*/payload/*\n"
+      hyper2lambda:x:@.body-hl
+      insert-before:x:@apply/*/http.invoke
+         get-nodes:x:@hyper2lambda/*
+      set-value:x:@.keep-payload
+         .:bool:true
+else-if
+   eq:x:@.raw-body
+      .:bool:true
+   .lambda
+
+      /*
+       * The stream becomes the value of [payload] rather than a child of it, since that is what
+       * makes the HTTP slots transmit it as the request body untouched - a structure underneath
+       * [payload] would be serialised instead, and binary content does not survive that.
+       */
+      remove-nodes:x:@apply/*/http.invoke/*/payload
+      hyper2lambda:"payload:x:@.arguments/*/body"
+      add:x:@apply/*/http.invoke
+         get-nodes:x:@hyper2lambda/*
+      set-value:x:@.keep-payload
+         .:bool:true
+else-if
+   eq:x:@.multipart
+      .:bool:true
+   .lambda
+
+      /*
+       * One MIME part per argument the caller actually supplied, since a part with no content makes
+       * the MIME builder throw, and an upstream API reading an empty part is worse still.
+       */
+      .body-hl
+      set-value:x:@.body-hl
+         .:
+      for-each:x:@.arguments/*/operation/*/body-fields/*
+         if
+            eq:x:@.dp/#/*/binary
+               .:bool:true
+            .lambda
+               if
+                  eq:x:@.dp/#/*/name
+                     get-value:x:@.file-field
+                  .lambda
+                     set-value:x:@.body-hl
+                        strings.concat
+                           get-value:x:@.body-hl
+                           .:"if\n   exists:x:@.arguments/*/file\n   .lambda\n      .disposition\n"
+                           .:"      set-value:x:@.disposition\n         strings.concat\n"
+                           .:"            .:@\"form-data; name=\"\""
+                           get-value:x:@.file-field
+                           .:"\"\"; filename=\"\"\"\n"
+                           .:"            get-value:x:@.arguments/*/file/*/name\n"
+                           .:"            .:\"\\\"\"\n"
+                           .:"      unwrap:x:+/*/*/**\n      add:x:../*/"
+                           get-value:x:@.slot
+                           .:"/*/payload\n         .\n            entity:application/octet-stream\n"
+                           .:"               headers\n                  Content-Disposition:x:@.disposition\n"
+                           .:"               content:x:@.arguments/*/file/*/stream\n"
+         else
+            set-value:x:@.body-hl
+               strings.concat
+                  get-value:x:@.body-hl
+                  .:"if\n   exists:x:@.arguments/*/"
+                  get-value:x:@.dp/#/*/name
+                  .:"\n   .lambda\n      unwrap:x:+/*/*/**\n      add:x:../*/"
+                  get-value:x:@.slot
+                  .:"/*/payload\n         .\n            entity:text/plain\n"
+                  .:"               headers\n                  Content-Disposition:@\"form-data; name=\"\""
+                  get-value:x:@.dp/#/*/name
+                  .:"\"\"\"\n               content:x:@.arguments/*/"
+                  get-value:x:@.dp/#/*/name
+                  .:"\n"
+      if
+         neq:x:@.body-hl
+            .:
+         .lambda
+            hyper2lambda:x:@.body-hl
+            insert-before:x:@apply/*/http.invoke
+               get-nodes:x:@hyper2lambda/*
+      set-value:x:@.keep-payload
+         .:bool:true
+
+/*
+ * [.accept] is metadata rather than a gate - Magic reads the incoming Content-Type to decide how to
+ * parse a request, and exposes [.accept] when something introspects the endpoint. Stating it means
+ * whatever reads this endpoint's meta data learns what it consumes.
+ */
+if
+   and
+      eq:x:@.arguments/*/operation/*/has-body
+         .:bool:true
+      not-null:x:@.arguments/*/operation/*/content-type
+   .lambda
+      .accept-hl
+      set-value:x:@.accept-hl
+         strings.concat
+            .:".accept:"
+            get-value:x:@.arguments/*/operation/*/content-type
+      hyper2lambda:x:@.accept-hl
+      insert-after:x:@apply/*/.arguments
+         get-nodes:x:@hyper2lambda/*
+
+/*
+ * Authorisation towards the upstream API, which is either a header, a query parameter, or nothing
+ * at all - and when it is nothing, the credential lookup is removed entirely.
+ */
+switch:x:@.arguments/*/auth-scheme
+
+   case:none
+      remove-nodes:x:@apply/*/.token
+      remove-nodes:x:@apply/*/set-value/={@apply/*/.token}
+
+   case:query
+      .q
+      set-value:x:@.q
+         strings.concat
+            get-value:x:@.arguments/*/auth-name
+            .:":x:@.token"
+      hyper2lambda:x:@.q
+      add:x:@apply/*/http.invoke/*/query
+         get-nodes:x:@hyper2lambda/*
+      set-value:x:@.keep-query
+         .:bool:true
+
+   default
+      .h
+      set-value:x:@.h
+         .:Authorization
+      if
+         eq:x:@.arguments/*/auth-scheme
+            .:header
+         .lambda
+            set-value:x:@.h
+               get-value:x:@.arguments/*/auth-name
+      set-value:x:@.h
+         strings.concat
+            get-value:x:@.h
+            .:":x:@.token"
+      hyper2lambda:x:@.h
+      add:x:@apply/*/http.invoke/*/headers
+         get-nodes:x:@hyper2lambda/*
+
+// An empty credential prefix would leave a pointless empty string in the generated concatenation.
+if
+   or
+      null:x:@.arguments/*/auth-prefix
+      eq:x:@.arguments/*/auth-prefix
+         .:
+   .lambda
+      remove-nodes:x:@apply/*/set-value/*/strings.concat/0
+
+/*
+ * The HTTP slots encode the payload according to the Content-Type header, defaulting to JSON, so a
+ * form encoded API needs that header stated explicitly or its body goes out as JSON and is rejected.
+ */
+if
+   and
+      eq:x:@.arguments/*/operation/*/has-body
+         .:bool:true
+      not-null:x:@.arguments/*/operation/*/content-type
+      neq:x:@.arguments/*/operation/*/content-type
+         .:application/json
+   .lambda
+      .ct
+      set-value:x:@.ct
+         strings.concat
+            .:"Content-Type:"
+            get-value:x:@.arguments/*/operation/*/content-type
+      hyper2lambda:x:@.ct
+      add:x:@apply/*/http.invoke/*/headers
+         get-nodes:x:@hyper2lambda/*
+
+// Endpoints without authorisation requirements do not need the verification.
+if
+   or
+      null:x:@.arguments/*/auth
+      eq:x:@.arguments/*/auth
+         .:
+   .lambda
+      remove-nodes:x:@apply/*/auth.ticket.verify
+
+// Removing the placeholders nothing was added to, so the generated file carries no dead nodes.
+if
+   and
+      not
+         exists:x:@apply/*/http.invoke/*/headers/*
+      neq:x:@.keep-headers
+         .:bool:true
+   .lambda
+      remove-nodes:x:@apply/*/http.invoke/*/headers
+if
+   not
+      exists:x:@apply/*/http.invoke/*/url-params/*
+   .lambda
+      remove-nodes:x:@apply/*/http.invoke/*/url-params
+if
+   and
+      not
+         exists:x:@apply/*/http.invoke/*/query/*
+      neq:x:@.keep-query
+         .:bool:true
+   .lambda
+      remove-nodes:x:@apply/*/http.invoke/*/query
+if
+   neq:x:@.keep-payload
+      .:bool:true
+   .lambda
+      remove-nodes:x:@apply/*/http.invoke/*/payload
+
+// Renaming the placeholder to the verb's own HTTP slot, which is the last thing done.
+set-name:x:@apply/*/http.invoke
+   get-value:x:@.slot
+
+// Transforming back to Hyperlambda, and refusing to save anything that does not verify.
+lambda2hyper:x:@apply/*
+   comments:bool:true
+execute-file:/misc/workflows/workflows/hyperlambda/verify-hyperlambda.hl
+   hyperlambda:x:@lambda2hyper
+if
+   eq:x:@execute-file/*/valid
+      .:bool:false
+   .lambda
+      strings.concat
+         .:"Generated endpoint did not verify: "
+         strings.join:x:@execute-file/*/errors/*
+            .:"; "
+      throw:x:@strings.concat
+         public:bool:true
+         status:int:500
+
+io.file.save:x:@.filename
+   get-value:x:@lambda2hyper
+
+/*
+ * Returning the filename, and how many lines of Hyperlambda it holds - one node per line, which is
+ * how the CRUD generator counts what it produced.
+ */
+get-count:x:@apply/**
+unwrap:x:+/*
+return
+   filename:x:@.filename
+   loc:x:@get-count

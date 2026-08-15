@@ -1,0 +1,644 @@
+
+/*
+ * Parses an OpenAPI specification and returns what can be imported from it.
+ *
+ * Supply the specification either as a [url] we fetch, or inline as [spec]. Returns the servers
+ * declared by the specification, its security schemes, and one entry per operation - which is what
+ * the caller picks from before importing.
+ *
+ * Handles OpenAPI 3 and Swagger 2.0, in JSON or YAML, since both versions and both formats are
+ * common in the wild. Their differences are resolved here, so everything downstream sees one shape.
+ */
+.arguments
+   url:string
+   spec:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Resolving the specification from whichever argument the caller supplied.
+.json
+if
+   and
+      exists:x:@.arguments/*/url
+      not-null:x:@.arguments/*/url
+      neq:x:@.arguments/*/url
+         .:
+   .lambda
+      http.get:x:@.arguments/*/url
+         convert:bool:false
+      if
+         not
+            and
+               mte:x:@http.get
+                  .:int:200
+               lt:x:@http.get
+                  .:int:300
+         .lambda
+            throw:Could not fetch the specification from the specified URL
+               public:bool:true
+               status:int:400
+      set-value:x:@.json
+         get-value:x:@http.get/*/content
+else-if
+   and
+      exists:x:@.arguments/*/spec
+      not-null:x:@.arguments/*/spec
+      neq:x:@.arguments/*/spec
+         .:
+   .lambda
+      set-value:x:@.json
+         get-value:x:@.arguments/*/spec
+else
+   throw:"Supply either [url] or [spec]"
+      public:bool:true
+      status:int:400
+
+/*
+ * Transforming the specification into a lambda object we can walk - as JSON first, and as YAML if
+ * that fails, since plenty of specifications are published as YAML.
+ */
+.doc
+try
+   json2lambda:x:@.json
+   add:x:@.doc
+      get-nodes:x:@json2lambda/*
+.catch
+   try
+      yaml2lambda:x:@.json
+      add:x:@.doc
+         get-nodes:x:@yaml2lambda/*
+   .catch
+      throw:"The specification could not be parsed as either JSON or YAML"
+         public:bool:true
+         status:int:400
+
+if
+   not
+      exists:x:@.doc/*/paths
+   .lambda
+      throw:"This does not look like an OpenAPI specification - it declares no paths"
+         public:bool:true
+         status:int:400
+
+/*
+ * Swagger 2.0 keeps almost everything somewhere other than OpenAPI 3 does, so the version decides
+ * where we look for servers, security schemes, shared parameters and schemas.
+ */
+.v2:bool:false
+if
+   exists:x:@.doc/*/swagger
+   .lambda
+      set-value:x:@.v2
+         .:bool:true
+
+// Shared parameter and schema declarations, which [$ref] points into.
+.param-defs
+.schema-defs
+if
+   eq:x:@.v2
+      .:bool:true
+   .lambda
+      add:x:@.param-defs
+         get-nodes:x:@.doc/*/parameters/*
+      add:x:@.schema-defs
+         get-nodes:x:@.doc/*/definitions/*
+else
+   add:x:@.param-defs
+      get-nodes:x:@.doc/*/components/*/parameters/*
+   add:x:@.schema-defs
+      get-nodes:x:@.doc/*/components/*/schemas/*
+
+// Result returned to caller.
+.result
+   title
+   version
+   servers
+   security-schemes
+   operations
+
+set-value:x:@.result/*/title
+   get-value:x:@.doc/*/info/*/title
+set-value:x:@.result/*/version
+   get-value:x:@.doc/*/info/*/version
+
+/*
+ * Servers. OpenAPI 3 declares them outright, Swagger 2.0 spreads the same information across
+ * [schemes], [host] and [basePath].
+ */
+if
+   eq:x:@.v2
+      .:bool:true
+   .lambda
+      .scheme
+      set-value:x:@.scheme
+         get-value:x:@.doc/*/schemes/0
+      if
+         null:x:@.scheme
+         .lambda
+            set-value:x:@.scheme
+               .:https
+      add:x:@.result/*/servers
+         .
+            .
+      set-value:x:@.result/*/servers/0
+         strings.concat
+            get-value:x:@.scheme
+            .:"://"
+            get-value:x:@.doc/*/host
+            get-value:x:@.doc/*/basePath
+else
+   for-each:x:@.doc/*/servers/*
+      unwrap:x:+/*/*
+      add:x:@.result/*/servers
+         .
+            .:x:@.dp/#/*/url
+
+/*
+ * A relative server URL - Swagger's own Petstore declares "/api/v3" - is relative to wherever the
+ * specification was served from, so it only becomes usable once joined with the URL we fetched it
+ * from. Nothing to join it with when the specification was supplied inline, so it is left alone.
+ */
+if
+   and
+      not-null:x:@.arguments/*/url
+      neq:x:@.arguments/*/url
+         .:
+   .lambda
+      .origin
+      .rest
+      strings.split:x:@.arguments/*/url
+         .:"://"
+      set-value:x:@.origin
+         get-value:x:@strings.split/0
+      set-value:x:@.rest
+         get-value:x:@strings.split/0/-
+      strings.split:x:@.rest
+         .:/
+      set-value:x:@.origin
+         strings.concat
+            get-value:x:@.origin
+            .:"://"
+            get-value:x:@strings.split/0
+      for-each:x:@.result/*/servers/*
+         if
+            not
+               strings.contains:x:@.dp/#
+                  .:"://"
+            .lambda
+               set-value:x:@.dp/#
+                  strings.concat
+                     get-value:x:@.origin
+                     get-value:x:@.dp/#
+
+// Security schemes, so the caller can pick how the generated endpoints authenticate.
+.schemes
+if
+   eq:x:@.v2
+      .:bool:true
+   .lambda
+      add:x:@.schemes
+         get-nodes:x:@.doc/*/securityDefinitions/*
+else
+   add:x:@.schemes
+      get-nodes:x:@.doc/*/components/*/securitySchemes/*
+for-each:x:@.schemes/*
+   .scheme
+      name
+      type
+      in
+      header-name
+      scheme
+   set-value:x:@.scheme/*/name
+      get-name:x:@.dp/#
+   set-value:x:@.scheme/*/type
+      get-value:x:@.dp/#/*/type
+   set-value:x:@.scheme/*/in
+      get-value:x:@.dp/#/*/in
+   set-value:x:@.scheme/*/header-name
+      get-value:x:@.dp/#/*/name
+   set-value:x:@.scheme/*/scheme
+      get-value:x:@.dp/#/*/scheme
+   add:x:@.result/*/security-schemes
+      .
+         .
+   add:x:@.result/*/security-schemes/0/-
+      get-nodes:x:@.scheme/*
+
+/*
+ * Walking every path, and every verb beneath it, building one operation entry each.
+ *
+ * The identifier is the verb and the path joined, rather than the specification's [operationId],
+ * since that field is optional and frequently missing - and we need something stable for the
+ * caller to select operations by.
+ */
+for-each:x:@.doc/*/paths/*
+   .path
+   set-value:x:@.path
+      get-name:x:@.dp/#
+
+   // Parameters declared once for the path apply to every verb beneath it.
+   .path-params
+   add:x:@.path-params
+      get-nodes:x:@.dp/#/*/parameters/*
+
+   for-each:x:@.dp/#/*
+      .verb
+      set-value:x:@.verb
+         get-name:x:@.dp/#
+      set-value:x:@.verb
+         strings.to-lower:x:@.verb
+
+      // Only verbs are operations - [parameters], [summary] and [$ref] live at this level too.
+      if
+         or
+            eq:x:@.verb
+               .:get
+            eq:x:@.verb
+               .:post
+            eq:x:@.verb
+               .:put
+            eq:x:@.verb
+               .:patch
+            eq:x:@.verb
+               .:delete
+         .lambda
+
+            .operation
+               id
+               verb
+               path
+               summary
+               tag
+               parameters
+            set-value:x:@.operation/*/verb
+               get-value:x:@.verb
+            set-value:x:@.operation/*/path
+               get-value:x:@.path
+            set-value:x:@.operation/*/id
+               strings.concat
+                  get-value:x:@.verb
+                  .:" "
+                  get-value:x:@.path
+            set-value:x:@.operation/*/summary
+               get-value:x:@.dp/#/*/summary
+
+            /*
+             * [summary] is optional, and specifications written without one - the OpenAPI project's
+             * own petstore-expanded is one - say the same thing in [description] instead. Taking the
+             * first line of it, since a description runs to paragraphs of markdown in places.
+             */
+            if
+               or
+                  null:x:@.operation/*/summary
+                  eq:x:@.operation/*/summary
+                     .:
+               .lambda
+                  if
+                     and
+                        not-null:x:@.dp/#/*/description
+                        neq:x:@.dp/#/*/description
+                           .:
+                     .lambda
+                        strings.split:x:@.dp/#/*/description
+                           .:"\n"
+                        set-value:x:@.operation/*/summary
+                           strings.trim:x:@strings.split/0
+            set-value:x:@.operation/*/tag
+               get-value:x:@.dp/#/*/tags/0
+
+            // Path level and operation level parameters together.
+            .raw-params
+            add:x:@.raw-params
+               get-nodes:x:@.path-params/*
+            add:x:@.raw-params
+               get-nodes:x:@.dp/#/*/parameters/*
+
+            // The body, which Swagger 2.0 declares as a parameter rather than as a [requestBody].
+            .body-schema
+            .content-type
+
+            for-each:x:@.raw-params/*
+
+               /*
+                * A parameter can be a reference into the specification's shared parameters, which
+                * is resolved here so everything downstream sees one shape. Specifications such as
+                * GitHub's declare thousands of their parameters this way.
+                */
+               .p
+               if
+                  exists:x:@.dp/#/*/\$ref
+                  .lambda
+                     .ref-name
+                     strings.split:x:@.dp/#/*/\$ref
+                        .:/
+                     set-value:x:@.ref-name
+                        get-value:x:@strings.split/0/-
+                     for-each:x:@.param-defs/*
+                        if
+                           eq
+                              get-name:x:@.dp/#
+                              get-value:x:@.ref-name
+                           .lambda
+                              add:x:@.p
+                                 get-nodes:x:@.dp/#/*
+               else
+                  add:x:@.p
+                     get-nodes:x:@.dp/#/*
+
+               if
+                  eq:x:@.p/*/in
+                     .:body
+                  .lambda
+
+                     // Swagger 2.0's body parameter.
+                     add:x:@.body-schema
+                        get-nodes:x:@.p/*/schema/*
+               else-if
+                  eq:x:@.p/*/in
+                     .:formData
+                  .lambda
+
+                     /*
+                      * Swagger 2.0's form parameters are fields of the request body rather than
+                      * parameters in their own right - Slack's API declares every one of its inputs
+                      * this way. They are assembled into the schema shape a [requestBody] would have
+                      * given us, so that everything downstream sees one shape regardless of which
+                      * version of the specification declared the body.
+                      */
+                     if
+                        not
+                           exists:x:@.body-schema/*
+                        .lambda
+                           add:x:@.body-schema
+                              .
+                                 type:object
+                                 properties
+                     add:x:@.body-schema/*/properties
+                        .
+                           .
+                     set-name:x:@.body-schema/*/properties/0/-
+                        get-value:x:@.p/*/name
+                     add:x:@.body-schema/*/properties/0/-
+                        get-nodes:x:@.p/*/type
+                        get-nodes:x:@.p/*/description
+                        get-nodes:x:@.p/*/default
+                        get-nodes:x:@.p/*/enum
+                        get-nodes:x:@.p/*/items
+                     if
+                        eq:x:@.p/*/required
+                           .:bool:true
+                        .lambda
+                           if
+                              not
+                                 exists:x:@.body-schema/*/required
+                              .lambda
+                                 add:x:@.body-schema
+                                    .
+                                       required
+                           unwrap:x:+/*/*
+                           add:x:@.body-schema/*/required
+                              .
+                                 .:x:@.p/*/name
+               else-if
+                  exists:x:@.p/*/name
+                  .lambda
+
+                     .parameter
+                        name
+                        in
+                        required:bool:false
+                        type
+                        spec-type
+                        item-type
+                        description
+                        default
+                        enum
+                     set-value:x:@.parameter/*/name
+                        get-value:x:@.p/*/name
+                     set-value:x:@.parameter/*/in
+                        get-value:x:@.p/*/in
+                     if
+                        eq:x:@.p/*/required
+                           .:bool:true
+                        .lambda
+                           set-value:x:@.parameter/*/required
+                              .:bool:true
+
+                     /*
+                      * OpenAPI 3 puts the type inside a [schema], Swagger 2.0 puts it directly on
+                      * the parameter.
+                      */
+                     .raw-type
+                     .raw-format
+                     if
+                        exists:x:@.p/*/schema
+                        .lambda
+                           set-value:x:@.raw-type
+                              get-value:x:@.p/*/schema/*/type
+                           set-value:x:@.raw-format
+                              get-value:x:@.p/*/schema/*/format
+                     else
+                        set-value:x:@.raw-type
+                           get-value:x:@.p/*/type
+                        set-value:x:@.raw-format
+                           get-value:x:@.p/*/format
+                     execute-file:/system/openapi/utils/map-type.hl
+                        type:x:@.raw-type
+                        format:x:@.raw-format
+                     set-value:x:@.parameter/*/type
+                        get-value:x:@execute-file
+                     set-value:x:@.parameter/*/spec-type
+                        get-value:x:@.raw-type
+                     if
+                        null:x:@.parameter/*/spec-type
+                        .lambda
+                           set-value:x:@.parameter/*/spec-type
+                              get-value:x:@.parameter/*/type
+
+                     /*
+                      * What the array holds, what the parameter is for, and whether it goes on the
+                      * wire as one key per element - all of which a bare type leaves out.
+                      */
+                     if
+                        exists:x:@.p/*/schema
+                        .lambda
+                           set-value:x:@.parameter/*/item-type
+                              get-value:x:@.p/*/schema/*/items/*/type
+                     else
+                        set-value:x:@.parameter/*/item-type
+                           get-value:x:@.p/*/items/*/type
+                     set-value:x:@.parameter/*/description
+                        get-value:x:@.p/*/description
+
+                     /*
+                      * What the API assumes when the parameter is omitted, and which values it
+                      * accepts - both declared inside [schema] in OpenAPI 3, and directly on the
+                      * parameter in Swagger 2.0.
+                      */
+                     .enum-values
+                     if
+                        exists:x:@.p/*/schema
+                        .lambda
+                           set-value:x:@.parameter/*/default
+                              get-value:x:@.p/*/schema/*/default
+                           add:x:@.enum-values
+                              get-nodes:x:@.p/*/schema/*/enum/*
+                     else
+                        set-value:x:@.parameter/*/default
+                           get-value:x:@.p/*/default
+                        add:x:@.enum-values
+                           get-nodes:x:@.p/*/enum/*
+                     if
+                        exists:x:@.enum-values/*
+                        .lambda
+                           set-value:x:@.parameter/*/enum
+                              strings.join:x:@.enum-values/*
+                                 .:", "
+
+                     add:x:@.operation/*/parameters
+                        .
+                           .
+                     add:x:@.operation/*/parameters/0/-
+                        get-nodes:x:@.parameter/*
+
+            /*
+             * OpenAPI 3's request body, honoured only for the verbs that can carry one - Stripe
+             * declares an empty body on every one of its GET operations.
+             */
+            if
+               and
+                  exists:x:@.dp/#/*/requestBody
+                  or
+                     eq:x:@.verb
+                        .:post
+                     eq:x:@.verb
+                        .:put
+                     eq:x:@.verb
+                        .:patch
+               .lambda
+
+                  /*
+                   * JSON is preferred where a body is offered in several encodings, form encoding
+                   * next, and otherwise whatever the specification lists first.
+                   */
+                  .chosen
+                  for-each:x:@.dp/#/*/requestBody/*/content/*
+                     .name
+                     set-value:x:@.name
+                        get-name:x:@.dp/#
+                     if
+                        and
+                           null:x:@.chosen
+                           strings.contains:x:@.name
+                              .:json
+                        .lambda
+                           set-value:x:@.chosen
+                              get-value:x:@.name
+                  if
+                     null:x:@.chosen
+                     .lambda
+                        for-each:x:@.dp/#/*/requestBody/*/content/*
+                           .name
+                           set-value:x:@.name
+                              get-name:x:@.dp/#
+                           if
+                              and
+                                 null:x:@.chosen
+                                 strings.contains:x:@.name
+                                    .:urlencoded
+                              .lambda
+                                 set-value:x:@.chosen
+                                    get-value:x:@.name
+                  if
+                     null:x:@.chosen
+                     .lambda
+                        set-value:x:@.chosen
+                           get-name:x:@.dp/#/*/requestBody/*/content/0
+                  set-value:x:@.content-type
+                     get-value:x:@.chosen
+                  for-each:x:@.dp/#/*/requestBody/*/content/*
+                     if
+                        eq
+                           get-name:x:@.dp/#
+                           get-value:x:@.content-type
+                        .lambda
+                           add:x:@.body-schema
+                              get-nodes:x:@.dp/#/*/schema/*
+
+            // Swagger 2.0 states the body's encoding in [consumes] rather than alongside the body.
+            if
+               and
+                  eq:x:@.v2
+                     .:bool:true
+                  exists:x:@.body-schema/*
+               .lambda
+                  set-value:x:@.content-type
+                     get-value:x:@.dp/#/*/consumes/0
+                  if
+                     null:x:@.content-type
+                     .lambda
+                        set-value:x:@.content-type
+                           get-value:x:@.doc/*/consumes/0
+                  if
+                     null:x:@.content-type
+                     .lambda
+                        set-value:x:@.content-type
+                           .:application/json
+
+            // Describing the body, resolving a reference into the specification's own schemas.
+            if
+               exists:x:@.body-schema/*
+               .lambda
+                  .resolved
+                  if
+                     exists:x:@.body-schema/*/\$ref
+                     .lambda
+                        .ref-name
+                        strings.split:x:@.body-schema/*/\$ref
+                           .:/
+                        set-value:x:@.ref-name
+                           get-value:x:@strings.split/0/-
+                        for-each:x:@.schema-defs/*
+                           if
+                              eq
+                                 get-name:x:@.dp/#
+                                 get-value:x:@.ref-name
+                              .lambda
+                                 add:x:@.resolved
+                                    get-nodes:x:@.dp/#/*
+                  else
+                     add:x:@.resolved
+                        get-nodes:x:@.body-schema/*
+
+                  unwrap:x:+/*/*
+                  add:x:@.operation
+                     .
+                        has-body:bool:true
+                        content-type:x:@.content-type
+
+                  .style
+                  set-value:x:@.style
+                     .:bracket
+                  if
+                     strings.contains:x:@.content-type
+                        .:json
+                     .lambda
+                        set-value:x:@.style
+                           .:dotted
+                  add:x:+/*/schema
+                     get-nodes:x:@.resolved/*
+                  execute-file:/system/openapi/utils/body-fields.hl
+                     style:x:@.style
+                     schema
+                  add:x:@.operation
+                     get-nodes:x:@execute-file/*
+
+            add:x:@.result/*/operations
+               .
+                  .
+            add:x:@.result/*/operations/0/-
+               get-nodes:x:@.operation/*
+
+// Returning result to caller.
+return-nodes:x:@.result/*

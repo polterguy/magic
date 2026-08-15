@@ -565,6 +565,27 @@ textarea:focus {
   border-color: var(--accent);
 }
 
+/*
+ * Disabled text fields looked identical to editable ones — same border, same
+ * background, same text — so the only way to discover a field was inert was to
+ * click it. Dimmed, flattened against the surface, and carrying the cursor that
+ * says so, matching how .btn:disabled already reads.
+ */
+input:where(:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="range"]):not([type="color"])):disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 0.45;
+  background: var(--surface);
+  cursor: not-allowed;
+}
+
+/* A disabled field's label should read as inactive too, not just the box. */
+label:has(> input:disabled),
+label:has(> textarea:disabled),
+label:has(> select:disabled) {
+  opacity: 0.65;
+}
+
 /* Native controls (checkboxes, date pickers) render in the accent, not white. */
 input[type="checkbox"],
 input[type="radio"] {

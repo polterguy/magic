@@ -1,0 +1,126 @@
+
+/*
+ * Formats one documentation line for a parameter or a payload field.
+ *
+ * A bare type is close to useless on its own - "expand array" tells a caller neither what the array
+ * holds nor what the parameter is for. So the line carries the parameter's name, the element type
+ * where there is one, and the specification's own description, and leaves the caller to lay the
+ * value out the way that API documents.
+ *
+ * Returns the formatted line, without its leading list marker.
+ */
+.arguments
+   name:string
+   type:string
+   item-type:string
+   required:bool
+   description:string
+   default:string
+   enum:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// "array of string" says more than "array".
+.type
+set-value:x:@.type
+   get-value:x:@.arguments/*/type
+if
+   and
+      eq:x:@.arguments/*/type
+         .:array
+      not-null:x:@.arguments/*/item-type
+      neq:x:@.arguments/*/item-type
+         .:
+   .lambda
+      set-value:x:@.type
+         strings.concat
+            .:"array of "
+            get-value:x:@.arguments/*/item-type
+
+.line
+set-value:x:@.line
+   strings.concat
+      get-value:x:@.arguments/*/name
+      .:" "
+      get-value:x:@.type
+/*
+ * Stated either way round rather than only when required, since a reader cannot tell an optional
+ * field from one this generator failed to describe when the absent case says nothing at all.
+ */
+if
+   eq:x:@.arguments/*/required
+      .:bool:true
+   .lambda
+      set-value:x:@.line
+         strings.concat
+            get-value:x:@.line
+            .:" (required)"
+else
+   set-value:x:@.line
+      strings.concat
+         get-value:x:@.line
+         .:" (optional)"
+
+// What the upstream API assumes when the field is left out.
+if
+   and
+      not-null:x:@.arguments/*/default
+      neq:x:@.arguments/*/default
+         .:
+   .lambda
+      set-value:x:@.line
+         strings.concat
+            get-value:x:@.line
+            .:" (default "
+            get-value:x:@.arguments/*/default
+            .:")"
+
+// The values it will accept, which is often the only thing a caller needs to know.
+if
+   and
+      not-null:x:@.arguments/*/enum
+      neq:x:@.arguments/*/enum
+         .:
+   .lambda
+      set-value:x:@.line
+         strings.concat
+            get-value:x:@.line
+            .:" (one of "
+            get-value:x:@.arguments/*/enum
+            .:")"
+
+/*
+ * The specification's description, first line only and clipped, since descriptions run to
+ * paragraphs in places and a comment that wide stops being read.
+ */
+if
+   and
+      not-null:x:@.arguments/*/description
+      neq:x:@.arguments/*/description
+         .:
+   .lambda
+      .text
+      strings.split:x:@.arguments/*/description
+         .:"\n"
+      set-value:x:@.text
+         strings.trim:x:@strings.split/0
+      if
+         mt
+            strings.length:x:@.text
+            .:int:100
+         .lambda
+            set-value:x:@.text
+               strings.concat
+                  strings.substring:x:@.text
+                     .:int:0
+                     .:int:97
+                  .:"..."
+      set-value:x:@.line
+         strings.concat
+            get-value:x:@.line
+            .:" - "
+            get-value:x:@.text
+
+// Returning result to caller.
+return:x:@.line

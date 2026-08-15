@@ -33,6 +33,8 @@ export default function SocketFeedback(props: {
   progress?: {
     total: number;
     counts: (message: FeedbackMessage) => boolean;
+    // What the job is working through, singular — "snippet", "endpoint".
+    noun: string;
   };
 }) {
 
@@ -91,8 +93,8 @@ export default function SocketFeedback(props: {
       error={error}
       onDismissError={() => setError('')}
       progress={props.progress
-        ? 'Processing snippet ' + messages.filter(props.progress.counts).length +
-          ' of ' + props.progress.total
+        ? 'Processing ' + props.progress.noun + ' ' +
+          messages.filter(props.progress.counts).length + ' of ' + props.progress.total
         : undefined}
       actions={props.isComplete && messages.some(props.isComplete)
         ? props.renderDone?.(messages)
