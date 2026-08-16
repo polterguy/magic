@@ -3,9 +3,11 @@
  * Executable Hyperlambda file that reads a third party OpenAPI or Swagger specification from a URL
  * and returns the operations it declares, so you can choose which of them to wrap. Understands
  * OpenAPI 3.x and Swagger 2.0, in either JSON or YAML. Call this before import-openapi, which needs
- * the operation ids returned here, and the base URL returned in [servers]. Large specifications
- * should be narrowed with [filter] - GitHub's declares more than a thousand operations - and the
- * result tells you how many operations matched and how many of them were returned.
+ * the operation ids returned here, and the base URL returned in [servers]. [filter] narrows what is
+ * returned, and the result tells you how many operations matched and how many were returned - but it
+ * is applied after the whole document has been fetched and parsed, so it makes the answer smaller,
+ * never the work cheaper. A specification of many megabytes may exceed the request budget whatever
+ * filter is given.
  */
 .arguments
 

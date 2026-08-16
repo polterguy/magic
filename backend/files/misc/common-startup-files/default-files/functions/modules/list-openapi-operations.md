@@ -20,6 +20,8 @@ Arguments:
 
 The function understands OpenAPI 3.x and Swagger 2.0, in either JSON or YAML. It returns the specification's `title` and `version`, the `servers` it declares, its `security-schemes`, and one record per operation with an `id`, `verb`, `path`, `summary` and `tag`.
 
-Specifications vary enormously in size - GitHub's declares more than a thousand operations - so use `filter` when the user is after a specific part of an API. The result tells you how many operations `matched` and how many were `returned`, and when those two numbers differ you must narrow the filter rather than assume you have seen everything.
+Specifications vary enormously in size, so use `filter` when the user is after a specific part of an API. The result tells you how many operations `matched` and how many were `returned`, and when those two numbers differ you must narrow the filter rather than assume you have seen everything.
+
+Note that `filter` is applied after the whole specification has been fetched and parsed, so it makes the answer smaller but not the work cheaper. A specification of many megabytes may fail to load whatever filter you give it, and no filter will rescue it.
 
 Use this function before the `import-openapi` function, which needs the operation ids and the base URL this one returns.

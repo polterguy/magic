@@ -127,6 +127,24 @@ if
  * out a list knows it is laying out a list - the layout that particular API expects is documented,
  * never invented here.
  */
+/*
+ * When the credential travels as a query parameter or a header, the specification usually declares
+ * that same parameter too - OpenFEC declares [api_key] on every operation. Declaring it as an
+ * argument as well would put two nodes of the same name into the upstream request, which throws,
+ * and would force the caller to supply a credential this endpoint reads from configuration. So the
+ * parameter carrying the credential is skipped entirely.
+ */
+.credential-param
+if
+   or
+      eq:x:@.arguments/*/auth-scheme
+         .:query
+      eq:x:@.arguments/*/auth-scheme
+         .:header
+   .lambda
+      set-value:x:@.credential-param
+         get-value:x:@.arguments/*/auth-name
+
 .query-args-hl
 set-value:x:@.query-args-hl
    .:
@@ -138,8 +156,11 @@ set-value:x:@.query-mandatory
    .:
 for-each:x:@.arguments/*/operation/*/parameters/*
    if
-      eq:x:@.dp/#/*/in
-         .:query
+      and
+         eq:x:@.dp/#/*/in
+            .:query
+         neq:x:@.dp/#/*/name
+            get-value:x:@.credential-param
       .lambda
          execute-file:/system/openapi/utils/field-line.hl
             name:x:@.dp/#/*/name
@@ -185,8 +206,11 @@ set-value:x:@.header-names
    .:
 for-each:x:@.arguments/*/operation/*/parameters/*
    if
-      eq:x:@.dp/#/*/in
-         .:header
+      and
+         eq:x:@.dp/#/*/in
+            .:header
+         neq:x:@.dp/#/*/name
+            get-value:x:@.credential-param
       .lambda
          execute-file:/system/openapi/utils/field-line.hl
             name:x:@.dp/#/*/name
@@ -936,6 +960,28 @@ if
       .:bool:true
    .lambda
       remove-nodes:x:@apply/*/http.invoke/*/payload
+
+/*
+ * Returning whatever the upstream API returned. A JSON object or array arrives as children of
+ * [content], while text, XML, CSV or anything else arrives as its value - so returning only the
+ * children would hand back nothing at all for those, which is what a caller sees as an endpoint
+ * that "did not return anything". Emitted here rather than in the template because it has to name
+ * the verb's own slot, and the template does not know the verb.
+ */
+.return-hl
+set-value:x:@.return-hl
+   strings.concat
+      .:"if\n   exists:x:@"
+      get-value:x:@.slot
+      .:"/*/content/*\n   .lambda\n      return-nodes:x:@"
+      get-value:x:@.slot
+      .:"/*/content/*\nreturn:x:@"
+      get-value:x:@.slot
+      .:"/*/content\n"
+hyper2lambda:x:@.return-hl
+   comments:bool:true
+add:x:@apply
+   get-nodes:x:@hyper2lambda/*
 
 // Renaming the placeholder to the verb's own HTTP slot, which is the last thing done.
 set-name:x:@apply/*/http.invoke

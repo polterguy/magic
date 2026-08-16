@@ -19,6 +19,3 @@ http.invoke:{url}
    url-params
    query
    payload
-
-// Returning whatever the upstream API returned.
-return-nodes:x:-/*/content/*

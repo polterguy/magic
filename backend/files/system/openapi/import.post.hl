@@ -73,6 +73,37 @@ if
    .lambda
       io.folder.create:x:@.folder
 
+/*
+ * Roles are compared by exact equality after being split on comma, so "root, admin" would grant
+ * root only - the space makes " admin" match no role at all, and the narrowing is silent. Writing
+ * the list with spaces is the natural way to write it, so it is normalised here rather than left
+ * as a trap.
+ */
+if
+   and
+      not-null:x:@.arguments/*/auth
+      neq:x:@.arguments/*/auth
+         .:
+   .lambda
+      .roles
+      strings.split:x:@.arguments/*/auth
+         .:,
+      for-each:x:@strings.split/*
+         .one
+         set-value:x:@.one
+            strings.trim:x:@.dp/#
+         if
+            neq:x:@.one
+               .:
+            .lambda
+               unwrap:x:+/*/*
+               add:x:@.roles
+                  .
+                     .:x:@.one
+      set-value:x:@.arguments/*/auth
+         strings.join:x:@.roles/*
+            .:,
+
 // The prefix prepended to the credential, which is what differs between the auth schemes.
 .auth-prefix
    .:
