@@ -29,6 +29,7 @@ Then open **`localhost:5555`**, point it at **`localhost:4444`**, and log in wit
 * **Database-driven AI agents** — agents that query and update *your* database and invoke *your* endpoints, behind your own role-based access control
 * **AI chatbots and expert systems** — crawl a website, get an embeddable chatbot grounded in your own content
 * **Secure APIs over legacy databases** — point it at an existing MySQL, PostgreSQL, SQL Server or MariaDB schema and get a CRUD API in seconds
+* **Wrappers around third-party APIs** — paste an OpenAPI or Swagger URL and get typed, documented endpoints wrapping Stripe, GitHub, Slack or anything else publishing a spec
 * **MCP tool servers** — expose your endpoints to Claude, Cursor, Codex, Qoder or any MCP client
 * **Background jobs and automation** — scheduled tasks written in Hyperlambda, or generated from a plain English description
 * **Static sites and SPAs** — your cloudlet serves files directly, next to the APIs powering them
@@ -73,7 +74,7 @@ In our measurements Hyperlambda is roughly **20× faster than FastAPI or Flask**
 
 ![The Magic dashboard, showing the Chatbot Wizard and the cloudlet's MCP URL](images/dashboard.png)
 
-The sidebar is the whole platform: **Hyper IDE** for editing and running any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing databases, **Endpoint Generator** for turning tables into secured CRUD endpoints, plus users and roles, scheduled tasks, machine learning, and the plugin store.
+The sidebar is the whole platform: **Hyper IDE** for editing and running any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing databases, **Endpoint Generator** for turning tables into secured CRUD endpoints and importing third-party APIs from their OpenAPI specifications, plus users and roles, scheduled tasks, machine learning, and the plugin store.
 
 Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at the top hands any MCP-capable agent your endpoints as tools. The **Chatbot Wizard** goes the other way: give it a website, and it crawls the site, turns what it finds into training data, and hands you an embeddable chatbot grounded in your own content.
 
@@ -96,6 +97,16 @@ The whole loop is enforced server-side. A function the model tries to invoke tha
 Answers stream in as Markdown with syntax-highlighted code (Hyperlambda included), Mermaid diagrams render inline, and you can attach up to five files — either uploaded to the cloudlet for a function to work on, or handed to the model to read. Copy any code block, or the whole response, with one click.
 
 Chat Ops appears only when an OpenAI API key is configured, and the key dialog is where you pick which model `default` runs.
+
+## Import any API
+
+![The Import API tab reading the Swagger Petstore specification and selecting which operations to wrap](images/import-api.png)
+
+Point the **Import API** tab at any OpenAPI or Swagger URL — OpenAPI 3.x or Swagger 2.0, JSON or YAML — and Magic generates Hyperlambda endpoints wrapping whichever operations you tick. Query parameters and form fields become named, typed arguments carrying the specification's own types, defaults, enums and descriptions, and required ones get validators, so a missing argument is refused before the upstream API is ever contacted.
+
+Because Magic publishes an endpoint's file comment as its MCP tool description and each argument's comment as that argument's description, an imported API arrives at your agent as a set of self-describing tools. Slack's `chat.postMessage` becomes fifteen individually typed, individually described arguments — not one of them written by hand.
+
+The upstream credential is never written into the generated files. It is read from your configuration at the moment the endpoint is invoked, so the files stay safe to commit, and you declare which of *your* roles are allowed to invoke the wrapper.
 
 ## OIDC sign-in
 
