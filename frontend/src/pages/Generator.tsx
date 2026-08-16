@@ -189,33 +189,38 @@ export default function Generator() {
    * generator wearing a step header, with every table preselected and a
    * done panel instead of a toast. Kept in the URL so a refresh stays in
    * the guided flow.
+   *
+   * The guided flow is a mode of the CRUD tab, not a separate page, so the
+   * tabs stay on screen throughout — somebody who arrives here to wrap a
+   * database and then realises they want to import an API, or wrap their own
+   * SQL, can simply switch, rather than being stuck in a flow with no visible
+   * way out. Switching away leaves the wizard chrome behind with the tab it
+   * belongs to.
    */
   const [guided] = useState(
     () => new URLSearchParams(window.location.search).get('guided') === '1');
+  const guiding = guided && tab === 'crud';
   return (
     <>
       <div className="page-header">
-        <h1>{guided ? 'API Wizard' : 'Endpoint Generator'}</h1>
+        <h1>{guiding ? 'API Wizard' : 'Endpoint Generator'}</h1>
         <p>
-          {guided
+          {guiding
             ? 'Turn a database into secured REST endpoints'
             : 'Generate CRUD backends and custom SQL endpoints from your databases'}
         </p>
       </div>
-      {!guided && (
-        <Tabs
-          tabs={[
-            { id: 'crud', label: 'CRUD backend' },
-            { id: 'sql', label: 'SQL endpoint' },
-            { id: 'import', label: 'Import API' },
-          ]}
-          active={tab}
-          onChange={setTab} />
-      )}
-      {guided && <CrudTab guided={guided} />}
-      {!guided && tab === 'crud' && <CrudTab guided={guided} />}
-      {!guided && tab === 'sql' && <SqlEndpointTab />}
-      {!guided && tab === 'import' && <ImportApiTab />}
+      <Tabs
+        tabs={[
+          { id: 'crud', label: 'CRUD backend' },
+          { id: 'sql', label: 'SQL endpoint' },
+          { id: 'import', label: 'Import API' },
+        ]}
+        active={tab}
+        onChange={setTab} />
+      {tab === 'crud' && <CrudTab guided={guiding} />}
+      {tab === 'sql' && <SqlEndpointTab />}
+      {tab === 'import' && <ImportApiTab />}
     </>
   );
 }
