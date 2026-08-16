@@ -730,6 +730,10 @@ else-if
       /*
        * One MIME part per argument the caller actually supplied, since a part with no content makes
        * the MIME builder throw, and an upstream API reading an empty part is worse still.
+       *
+       * The file part declares a binary transfer encoding, without which the MIME writer rewrites
+       * every line feed in the content as a carriage return and line feed pair - which is harmless
+       * in text and quietly corrupts every other kind of file.
        */
       .body-hl
       set-value:x:@.body-hl
@@ -757,6 +761,7 @@ else-if
                            get-value:x:@.slot
                            .:"/*/payload\n         .\n            entity:application/octet-stream\n"
                            .:"               headers\n                  Content-Disposition:x:@.disposition\n"
+                           .:"                  Content-Transfer-Encoding:binary\n"
                            .:"               content:x:@.arguments/*/file/*/stream\n"
          else
             set-value:x:@.body-hl
