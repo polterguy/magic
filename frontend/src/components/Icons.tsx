@@ -162,6 +162,16 @@ export function PlayIcon() {
   );
 }
 
+export function BugIcon() {
+  return (
+    <svg {...base}>
+      <rect x="8" y="7" width="8" height="12" rx="4" />
+      <path d="M9 7a3 3 0 0 1 6 0" />
+      <path d="M3 11h5M16 11h5M3 17h5M16 17h5M12 19v3" />
+    </svg>
+  );
+}
+
 export function TerminalIcon() {
   return (
     <svg {...base}>

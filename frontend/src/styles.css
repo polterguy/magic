@@ -3525,3 +3525,14 @@ tr.vss-irrelevant td {
   background: var(--selection-bg);
   box-shadow: inset 3px 0 0 var(--accent);
 }
+
+/* Rewind marks the statement that threw, in the step list and in the code. */
+.debug-steps tbody tr.failed td { color: var(--danger); }
+.debug-steps tbody tr.failed.current td { color: var(--selection-text); }
+.debug-steps tbody tr.failed.current td:first-child {
+  box-shadow: inset 3px 0 0 var(--danger);
+}
+.CodeMirror .cm-error-step {
+  background: color-mix(in srgb, var(--danger) 22%, transparent);
+  box-shadow: inset 3px 0 0 var(--danger);
+}

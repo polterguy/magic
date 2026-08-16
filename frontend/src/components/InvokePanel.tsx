@@ -81,6 +81,13 @@ export default function InvokePanel(props: {
   endpoint: Endpoint;
   onResult: (result: InvokeResult) => void;
   onOpenApi: () => void;
+  /*
+   * When supplied, the panel offers a Debug action alongside Invoke, handing
+   * back the arguments it collected instead of sending them. Hyper IDE uses it
+   * so debugging an endpoint is filled in through the same form as invoking it,
+   * rather than through a second dialog that merely looks similar.
+   */
+  onDebug?: (args: Record<string, any>) => void;
 }) {
 
   const { endpoint } = props;
@@ -130,6 +137,29 @@ export default function InvokePanel(props: {
   const standardArgs = declared.filter(argument => !argument.name.includes('.'));
   const filterArgs = declared.filter(argument => argument.name.includes('.'));
   const formFields = declared;
+
+  /*
+   * The declared arguments as an object. A body carrying endpoint keeps its
+   * fields in the payload editor rather than the form, so those are merged in -
+   * invalid JSON is simply left out, since the debugger validates nothing.
+   */
+  function collectedArgs() {
+    const collected: Record<string, any> = {};
+    for (const argument of formFields) {
+      const value = args[argument.name];
+      if (value !== undefined && value !== '') {
+        collected[argument.name] = value;
+      }
+    }
+    if (!usesQuery && consumesJson) {
+      try {
+        Object.assign(collected, JSON.parse(payload));
+      } catch {
+        // Payload is not valid JSON yet, so there is nothing to merge.
+      }
+    }
+    return collected;
+  }
 
   const description = endpoint.description ?? '';
   const period = description.indexOf('. ');
@@ -391,6 +421,15 @@ export default function InvokePanel(props: {
           </button>
         ) : (
           <span className="muted">This endpoint cannot be invoked from here.</span>
+        )}
+        {props.onDebug && (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            title="Run it while recording every slot, then step through what happened"
+            onClick={() => props.onDebug!(collectedArgs())}>
+            Debug
+          </button>
         )}
         {verb !== 'socket' && (
           <button

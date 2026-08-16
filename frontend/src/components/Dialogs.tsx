@@ -111,6 +111,12 @@ export function Modal(props: {
   // not <input> elements and handle Enter themselves.
   onSubmit?: () => void;
   width?: number;
+  /*
+   * Off for dialogs that are expensive to lose — the invoke form holds typed
+   * arguments, and closing it by reflex after dismissing a result on top of it
+   * throws that work away. Those dialogs close through their own controls.
+   */
+  closeOnEscape?: boolean;
   children: ReactNode;
 }) {
 
@@ -167,10 +173,14 @@ export function Modal(props: {
     }
   }
 
+  const escapeRef = useRef(props.closeOnEscape);
+  escapeRef.current = props.closeOnEscape;
+
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' ||
-          modalStack[modalStack.length - 1] !== idRef.current) {
+          modalStack[modalStack.length - 1] !== idRef.current ||
+          escapeRef.current === false) {
         return;
       }
       /*

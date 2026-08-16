@@ -145,6 +145,8 @@ interface CodeEditorProps {
    * show which statement a recorded step was executing.
    */
   highlightLine?: number;
+  // Class applied to the highlighted line, letting a caller mark a failure differently.
+  highlightClass?: string;
   onSave?: () => void;
   onExecute?: () => void;
   /*
@@ -322,12 +324,13 @@ export default function CodeEditor(props: CodeEditorProps) {
     if (line === undefined || line < 0 || line >= instance.lineCount()) {
       return;
     }
-    instance.addLineClass(line, 'background', 'cm-current-step');
+    const mark = props.highlightClass ?? 'cm-current-step';
+    instance.addLineClass(line, 'background', mark);
     instance.scrollIntoView({ line, ch: 0 }, 120);
     return () => {
-      instance.removeLineClass(line, 'background', 'cm-current-step');
+      instance.removeLineClass(line, 'background', mark);
     };
-  }, [props.highlightLine, props.value, ready]);
+  }, [props.highlightLine, props.highlightClass, props.value, ready]);
 
   useEffect(() => {
     editor.current?.setOption('readOnly', props.readOnly ?? false);

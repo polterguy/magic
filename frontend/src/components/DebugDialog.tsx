@@ -53,6 +53,12 @@ export default function DebugDialog(props: {
 
   const total = steps.reduce((sum, step) => sum + (step.elapsed ?? 0), 0);
 
+  /*
+   * The recorder writes its entry in a finally block, so when an execution threw
+   * the statement that threw is the last one recorded.
+   */
+  const errorIndex = error ? steps.length - 1 : -1;
+
   // Keeping the current step on screen, since stepping quickly outruns the list.
   const currentRow = useRef<HTMLTableRowElement>(null);
   useEffect(() => {
@@ -78,9 +84,13 @@ export default function DebugDialog(props: {
               {steps.length} step{steps.length === 1 ? '' : 's'} · {total} ms
             </span>
             {error && (
-              <span className="badge badge-error" title={error.type}>
+              <button
+                className="badge badge-error"
+                style={{ border: 0, cursor: 'pointer' }}
+                title={error.type + ' — click to jump to the statement that threw'}
+                onClick={() => setIndex(errorIndex)}>
                 {error.message}
-              </span>
+              </button>
             )}
             {props.recording.returned !== undefined
               && props.recording.returned !== null && (
@@ -137,7 +147,9 @@ export default function DebugDialog(props: {
                     <tr
                       key={idx}
                       ref={idx === index ? currentRow : undefined}
-                      className={'clickable' + (idx === index ? ' current' : '')}
+                      className={'clickable'
+                        + (idx === index ? ' current' : '')
+                        + (idx === errorIndex ? ' failed' : '')}
                       onClick={() => setIndex(idx)}>
                       <td className="mono muted">{idx + 1}</td>
                       <td className="mono">{step.slot}</td>
@@ -160,6 +172,7 @@ export default function DebugDialog(props: {
                 readOnly
                 lineNumbers={false}
                 highlightLine={verifiedLine(current.lambda ?? '', current.path, current.slot)}
+                highlightClass={index === errorIndex ? 'cm-error-step' : 'cm-current-step'}
                 height="420px" />
             </div>
           </div>

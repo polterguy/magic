@@ -10,18 +10,7 @@ import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
 import DebugDialog from '../components/DebugDialog';
 import type { DebugRecording } from '../lib/api';
-import {
-  BracesIcon,
-  CopyIcon,
-  DownloadIcon,
-  ModuleUploadIcon,
-  SparkIcon,
-  FilePlusIcon,
-  FolderPlusIcon,
-  PlayIcon,
-  SaveIcon,
-  UploadIcon,
-} from '../components/Icons';
+import { BracesIcon, CopyIcon, DownloadIcon, FilePlusIcon, FolderPlusIcon, ModuleUploadIcon, PlayIcon, SaveIcon, SparkIcon, UploadIcon } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
 import OpenApiDialog from '../components/OpenApiDialog';
 import GitPanel from '../components/GitPanel';
@@ -495,47 +484,13 @@ export default function Files() {
   }
 
   /*
-   * Same parametrise step as execute(), but run through the recorder, so what
-   * comes back is every slot the lambda invoked rather than only its result.
-   * Endpoint files are debugged as the Hyperlambda they are - the point is to
-   * watch the code run, not to exercise the HTTP layer.
+   * Records an execution of the open file. The code defaults to the editor's
+   * content, so the invoke panel can trigger it knowing only the arguments.
    */
-  async function debug() {
-    if (!selectedFile.endsWith('.hl')) {
-      return;
-    }
+  async function runDebug(args: any, code?: string) {
+    setWaiting(true);
     try {
-      const selection = editorRef.current?.getSelection() ?? '';
-      const code = selection !== '' ? selection : content;
-      setWaiting(true);
-      const argSpec = await getHyperlambdaArguments(code) ?? {};
-      setWaiting(false);
-      const names = Object.keys(argSpec);
-      let args: any = {};
-      if (names.length > 0) {
-        const values = await form({
-          title: 'Parametrise invocation',
-          message: selectedFile,
-          confirmText: 'Debug',
-          fields: names.map(name => ({
-            name,
-            type: argSpec[name].type,
-            mandatory: argSpec[name].mandatory,
-          })),
-        });
-        if (!values) {
-          return;
-        }
-        for (const name of names) {
-          const value = values[name];
-          if (value === undefined || value === '') {
-            continue;
-          }
-          args[name] = convertArgument(value, argSpec[name].type);
-        }
-      }
-      setWaiting(true);
-      setRecording(await debugHyperlambda(code, args));
+      setRecording(await debugHyperlambda(code ?? content, args));
     } catch (err: any) {
       show(err.message, true);
     } finally {
@@ -875,14 +830,6 @@ export default function Files() {
             Execute
           </button>
         )}
-        {selectedFile.endsWith('.hl') && (
-          <button
-            className="btn btn-secondary btn-small"
-            onClick={debug}
-            title="Run it while recording every slot, then step through what happened">
-            Debug
-          </button>
-        )}
         <button className="btn btn-small" onClick={save} disabled={!selectedFile || !dirty || saving}>
           <SaveIcon />
           {saving ? 'Saving…' : 'Save'}
@@ -1114,12 +1061,18 @@ export default function Files() {
       )}
       {(generating || waiting) && <AiWaiter />}
       {invokeTarget && (
-        <Modal width={860} onClose={() => setInvokeTarget(null)}>
+        <Modal width={860} closeOnEscape={false} onClose={() => setInvokeTarget(null)}>
           <h2 style={{ marginTop: 0 }}>
             {invokeTarget.verb.toUpperCase()} {invokeTarget.path}
           </h2>
           <InvokePanel
             endpoint={invokeTarget}
+            /*
+             * The invoker stays mounted behind the recording, exactly as it does
+             * behind a response — so closing the recording returns to the same
+             * form with its arguments still filled in.
+             */
+            onDebug={args => runDebug(args)}
             /*
              * The invoker stays mounted behind the response, so closing the
              * response returns to the same form with its arguments still
