@@ -8,6 +8,8 @@ import CodeEditor, { modeForFile } from '../components/CodeEditor';
 import AiWaiter from '../components/AiWaiter';
 import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
+import DebugDialog from '../components/DebugDialog';
+import type { DebugRecording } from '../lib/api';
 import {
   BracesIcon,
   CopyIcon,
@@ -32,6 +34,7 @@ import {
   deleteFolder,
   downloadFileRaw,
   downloadFolderRaw,
+  debugHyperlambda,
   evaluateWithArgs,
   getFunctionDeclaration,
   getHyperlambdaArguments,
@@ -147,6 +150,7 @@ export default function Files() {
   // Set by clicking a folder; null means "follow whichever file is open".
   const [openFolder, setOpenFolder] = useState<string | null>(null);
   const [executeResult, setExecuteResult] = useState<InvokeResult | null>(null);
+  const [recording, setRecording] = useState<DebugRecording | null>(null);
   // Set when the result came from invoking an endpoint rather than evaluating.
   const [resultWasHttp, setResultWasHttp] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -491,6 +495,55 @@ export default function Files() {
   }
 
   /*
+   * Same parametrise step as execute(), but run through the recorder, so what
+   * comes back is every slot the lambda invoked rather than only its result.
+   * Endpoint files are debugged as the Hyperlambda they are - the point is to
+   * watch the code run, not to exercise the HTTP layer.
+   */
+  async function debug() {
+    if (!selectedFile.endsWith('.hl')) {
+      return;
+    }
+    try {
+      const selection = editorRef.current?.getSelection() ?? '';
+      const code = selection !== '' ? selection : content;
+      setWaiting(true);
+      const argSpec = await getHyperlambdaArguments(code) ?? {};
+      setWaiting(false);
+      const names = Object.keys(argSpec);
+      let args: any = {};
+      if (names.length > 0) {
+        const values = await form({
+          title: 'Parametrise invocation',
+          message: selectedFile,
+          confirmText: 'Debug',
+          fields: names.map(name => ({
+            name,
+            type: argSpec[name].type,
+            mandatory: argSpec[name].mandatory,
+          })),
+        });
+        if (!values) {
+          return;
+        }
+        for (const name of names) {
+          const value = values[name];
+          if (value === undefined || value === '') {
+            continue;
+          }
+          args[name] = convertArgument(value, argSpec[name].type);
+        }
+      }
+      setWaiting(true);
+      setRecording(await debugHyperlambda(code, args));
+    } catch (err: any) {
+      show(err.message, true);
+    } finally {
+      setWaiting(false);
+    }
+  }
+
+  /*
    * Whatever is selected is the specification, and nothing else is sent —
    * no surrounding code, no arguments. The generator answers with a whole
    * file, so its answer becomes the whole file: replacing only the selection
@@ -822,6 +875,14 @@ export default function Files() {
             Execute
           </button>
         )}
+        {selectedFile.endsWith('.hl') && (
+          <button
+            className="btn btn-secondary btn-small"
+            onClick={debug}
+            title="Run it while recording every slot, then step through what happened">
+            Debug
+          </button>
+        )}
         <button className="btn btn-small" onClick={save} disabled={!selectedFile || !dirty || saving}>
           <SaveIcon />
           {saving ? 'Saving…' : 'Save'}
@@ -1075,6 +1136,12 @@ export default function Files() {
             </button>
           </div>
         </Modal>
+      )}
+      {recording !== null && (
+        <DebugDialog
+          filename={selectedFile}
+          recording={recording}
+          onClose={() => setRecording(null)} />
       )}
       {executeResult !== null && (
         <ResponseDialog

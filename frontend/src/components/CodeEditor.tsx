@@ -3,7 +3,7 @@
  * the Angular dashboard, plus SQL and JSON out of the box.
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/display/fullscreen.js';
@@ -138,6 +138,13 @@ interface CodeEditorProps {
   mode: string;
   readOnly?: boolean;
   height?: string;
+  // Off for read-only views where the gutter is noise rather than navigation.
+  lineNumbers?: boolean;
+  /*
+   * Zero based line to mark as the current one, and scroll to. Used by Rewind to
+   * show which statement a recorded step was executing.
+   */
+  highlightLine?: number;
   onSave?: () => void;
   onExecute?: () => void;
   /*
@@ -165,6 +172,12 @@ export default function CodeEditor(props: CodeEditorProps) {
 
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<CodeMirror.Editor | null>(null);
+  const resize = useRef<ResizeObserver | null>(null);
+  /*
+   * The editor is built after the vocabulary loads, so effects depending on it
+   * run before it exists. This lets them re-run once it does.
+   */
+  const [ready, setReady] = useState(false);
   const callbacks = useRef(props);
   callbacks.current = props;
 
@@ -177,6 +190,28 @@ export default function CodeEditor(props: CodeEditorProps) {
           return;
         }
         createEditor();
+
+        /*
+         * CodeMirror measures its container when it is created, so an editor
+         * created inside a dialog that has not been laid out yet measures zero
+         * and paints nothing. Watching the host for its first real size and
+         * refreshing then is what makes it appear - a single frame later is not
+         * enough, since the dialog may still be arriving.
+         */
+        if (host.current) {
+          const observer = new ResizeObserver(() => editor.current?.refresh());
+          observer.observe(host.current);
+          resize.current = observer;
+        }
+
+        /*
+         * The editor is created from an async callback, so it can land before the
+         * dialog hosting it has been laid out - and one that measured a zero sized
+         * container paints a single line no matter how much text it holds. The
+         * observer covers later resizes; this covers the first paint.
+         */
+        requestAnimationFrame(() => editor.current?.refresh());
+        setReady(true);
       });
 
     /*
@@ -230,7 +265,7 @@ export default function CodeEditor(props: CodeEditorProps) {
       value: callbacks.current.value,
       mode: callbacks.current.mode,
       theme: 'ainiro',
-      lineNumbers: true,
+      lineNumbers: callbacks.current.lineNumbers ?? true,
       readOnly: callbacks.current.readOnly ?? false,
       lineWrapping: callbacks.current.lineWrapping ?? wrapsByDefault(callbacks.current.mode),
       tabSize: 3,
@@ -260,6 +295,8 @@ export default function CodeEditor(props: CodeEditorProps) {
 
     return () => {
       cancelled = true;
+      resize.current?.disconnect();
+      resize.current = null;
       host.current?.replaceChildren();
       editor.current = null;
     };
@@ -269,8 +306,28 @@ export default function CodeEditor(props: CodeEditorProps) {
     const instance = editor.current;
     if (instance && props.value !== instance.getValue()) {
       instance.setValue(props.value);
+
+      // Same reason as above - a value swapped in while hidden needs remeasuring.
+      instance.refresh();
     }
   }, [props.value]);
+
+  useEffect(() => {
+    const instance = editor.current;
+    if (!instance) {
+      return;
+    }
+    instance.refresh();
+    const line = props.highlightLine;
+    if (line === undefined || line < 0 || line >= instance.lineCount()) {
+      return;
+    }
+    instance.addLineClass(line, 'background', 'cm-current-step');
+    instance.scrollIntoView({ line, ch: 0 }, 120);
+    return () => {
+      instance.removeLineClass(line, 'background', 'cm-current-step');
+    };
+  }, [props.highlightLine, props.value, ready]);
 
   useEffect(() => {
     editor.current?.setOption('readOnly', props.readOnly ?? false);

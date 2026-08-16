@@ -350,6 +350,33 @@ async function requestRaw(
  * Executes Hyperlambda decorated with the given arguments — this is how
  * endpoint files are executed, since plain evaluate refuses them.
  */
+/*
+ * One entry per slot the debugger recorded, [lambda] being the entire lambda
+ * object as it looked immediately after that slot was invoked.
+ */
+export interface DebugStep {
+  slot: string;
+  path: string;
+  elapsed: number;
+  lambda: string;
+}
+
+export interface DebugRecording {
+  steps: DebugStep[] | null;
+  returned?: any;
+  error?: { message: string; type: string };
+}
+
+/*
+ * Executes Hyperlambda through [system.debug], which records every slot it
+ * invokes. Wrapping happens server side, since indenting the source into a
+ * [system.debug] block here would corrupt multi-line strings.
+ */
+export function debugHyperlambda(hyperlambda: string, args: any) {
+  return http.post<DebugRecording>(
+    '/magic/system/evaluator/debug', { hyperlambda, args });
+}
+
 export function evaluateWithArgs(hyperlambda: string, args: any) {
   return requestRaw(
     'POST',

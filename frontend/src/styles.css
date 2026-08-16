@@ -3504,3 +3504,24 @@ tr.vss-irrelevant td {
     grid-template-columns: 1fr !important;
   }
 }
+
+/*
+ * Rewind's current step. A long recording scrolls, so the selected row has to be
+ * findable at a glance rather than merely different — hence the accent bar as
+ * well as the fill.
+ */
+.debug-steps tbody tr.current {
+  background: var(--selection-bg);
+  color: var(--selection-text);
+  font-weight: 700;
+}
+.debug-steps tbody tr.current td:first-child {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.debug-steps tbody tr.current .muted { color: var(--selection-text); opacity: 0.75; }
+
+/* Rewind marks the statement a recorded step was executing. */
+.CodeMirror .cm-current-step {
+  background: var(--selection-bg);
+  box-shadow: inset 3px 0 0 var(--accent);
+}

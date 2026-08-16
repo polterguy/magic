@@ -4,11 +4,14 @@
 
 using System;
 using System.Linq;
+using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.lambda.eval
 {
@@ -39,6 +42,16 @@ namespace magic.lambda.eval
             var terminate = signaler.Peek<Node>("slots.result");
             var whitelist = signaler.Peek<List<Node>>("whitelist");
 
+            /*
+             * Debug recorder, if any, retrieved once for the entire block instead of once per statement.
+             * Null unless [system.debug] is currently executing this lambda, at which point every
+             * invocation below is recorded together with the state of the entire lambda afterwards.
+             *
+             * Notice, the stack object is deliberately named with a leading dot, since that is the
+             * convention for context objects Hyperlambda itself must not be able to reach.
+             */
+            var recording = signaler.Peek<Node>(".debug.recorder");
+
             // Evaluating "scope".
             foreach (var idx in GetNodes(input))
             {
@@ -58,7 +71,28 @@ namespace magic.lambda.eval
                 signaler.ThrowIfCancelled();
 
                 // Invoking signal.
-                await signaler.SignalAsync(idx.Name, idx);
+                if (recording == null)
+                {
+                    await signaler.SignalAsync(idx.Name, idx);
+                }
+                else
+                {
+                    /*
+                     * Recording in a finally block, such that the statement that throws is the last
+                     * one in the recording - which is the entire point of recording an execution
+                     * that failed.
+                     */
+                    var timer = Stopwatch.StartNew();
+                    try
+                    {
+                        await signaler.SignalAsync(idx.Name, idx);
+                    }
+                    finally
+                    {
+                        timer.Stop();
+                        Record(recording, idx, timer.ElapsedMilliseconds);
+                    }
+                }
 
                 signaler.ThrowIfCancelled();
 
@@ -69,6 +103,68 @@ namespace magic.lambda.eval
         }
 
         #region [ -- Private helper methods -- ]
+
+        /*
+         * Maximum number of statements one recording will hold, preventing a runaway loop from
+         * exhausting memory. The recording declares its own truncation rather than silently
+         * stopping.
+         */
+        const int MAX_STEPS = 10000;
+
+        /*
+         * Appends one step to the recording, being the slot that was just invoked, and the state of
+         * the entire lambda object afterwards, serialised as Hyperlambda.
+         */
+        static void Record(Node recording, Node executed, long elapsed)
+        {
+            // The recording counts itself through its own value, since counting children is O(n).
+            var count = recording.Value == null ? 0 : (int)recording.Value;
+            if (count > MAX_STEPS)
+                return;
+            recording.Value = count + 1;
+            if (count == MAX_STEPS)
+            {
+                recording.Add(new Node(".", null, new Node[] { new Node("truncated", MAX_STEPS) }));
+                return;
+            }
+
+            // Finding the root of the lambda being executed, which is the whole program under debug.
+            var root = executed;
+            while (root.Parent != null)
+            {
+                root = root.Parent;
+            }
+
+            var step = new Node(".");
+            step.Add(new Node("slot", executed.Name));
+            step.Add(new Node("path", GetPath(executed)));
+            step.Add(new Node("elapsed", elapsed));
+            step.Add(new Node("lambda", HyperlambdaGenerator.GetHyperlambda(root.Children)));
+            recording.Add(step);
+        }
+
+        /*
+         * Returns the position of the specified node within its lambda as a dot separated list of
+         * indexes, allowing whatever renders the recording to highlight the executing node.
+         */
+        static string GetPath(Node node)
+        {
+            var path = new List<string>();
+            var current = node;
+            while (current.Parent != null)
+            {
+                var index = 0;
+                foreach (var idxSibling in current.Parent.Children)
+                {
+                    if (ReferenceEquals(idxSibling, current))
+                        break;
+                    index += 1;
+                }
+                path.Insert(0, index.ToString(CultureInfo.InvariantCulture));
+                current = current.Parent;
+            }
+            return string.Join(".", path);
+        }
 
         /*
          * Helper to retrieve execution nodes for slot.

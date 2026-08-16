@@ -1,0 +1,98 @@
+
+/*
+ * Evaluates the given [hyperlambda] while recording every slot it invokes, and returns the
+ * recording - one entry per invocation, each with the entire lambda object as it looked afterwards.
+ *
+ * Arguments are applied the same way [evaluate-with-args] applies them, so the lambda being recorded
+ * has the shape it would have had if it were invoked for real.
+ */
+.arguments
+   hyperlambda:string
+   args:*
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Transforms Hyperlambda 2 lambda object.
+hyper2lambda:x:@.arguments/*/hyperlambda
+
+// Converts all input arguments to their expected type.
+for-each:x:@.arguments/*/args/*
+
+   // Getting name of currently iterated argument.
+   get-name:x:@.dp/#
+
+   // Checking if this is a workflow type of argument declaration or an endpoint type of declaration.
+   if
+      exists:x:@hyper2lambda/*/.arguments/*/{@get-name}/*/type
+      .lambda
+
+         // Workflow type of argument declaration, converting argument value accordingly.
+         set-value:x:@.dp/#
+            convert:x:@.dp/#
+               type:x:@hyper2lambda/*/.arguments/*/{@get-name}/*/type
+   else-if
+      and
+         neq:x:@hyper2lambda/*/.arguments/*/{@get-name}
+            .:*
+         neq:x:@hyper2lambda/*/.arguments/*/{@get-name}
+            .:bool
+      .lambda
+
+         // Endpoint type of argument declaration, converting argument value accordingly.
+         set-value:x:@.dp/#
+            convert:x:@.dp/#
+               type:x:@hyper2lambda/*/.arguments/*/{@get-name}
+
+/*
+ * Replacing the declaration with the values the caller supplied, which is the shape the lambda would
+ * have had at runtime had it been invoked as an endpoint.
+ */
+remove-nodes:x:@hyper2lambda/*/.arguments/*
+add:x:@hyper2lambda/*/.arguments
+   get-nodes:x:@.arguments/*/args/*
+
+/*
+ * Moving the lambda into the debugger rather than wrapping the Hyperlambda as text, since indenting
+ * text would corrupt any multi line string the file happens to contain.
+ */
+add:x:./*/system.debug
+   get-nodes:x:@hyper2lambda/*
+system.debug
+
+/*
+ * Separating the recording's steps, which are named ".", from [returned] and [error] - a JSON object
+ * cannot hold several properties of the same name at one level.
+ */
+.result
+   steps
+for-each:x:@system.debug/*
+   get-name:x:@.dp/#
+   if
+      eq:x:@get-name
+         .:"."
+      .lambda
+         add:x:@.result/*/steps
+            get-nodes:x:@.dp/#
+   else-if
+      eq:x:@get-name
+         .:error
+      .lambda
+
+         /*
+          * The error carries its message as a value and its type as a child, and a JSON property
+          * cannot be both - so the message becomes a child of its own.
+          */
+         unwrap:x:+/*/*/*
+         add:x:@.result
+            .
+               error
+                  message:x:@.dp/#
+         add:x:@.result/*/error
+            get-nodes:x:@.dp/#/*
+   else
+      add:x:@.result
+         get-nodes:x:@.dp/#
+
+// Returning the recording to caller.
+return-nodes:x:@.result/*
