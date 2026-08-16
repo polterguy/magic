@@ -1,0 +1,81 @@
+
+/*
+ * Executable Hyperlambda file that wraps operations from a third party OpenAPI or Swagger
+ * specification as HTTP endpoints in your cloudlet, using the same importer the dashboard's
+ * Import API tab uses. Call list-openapi-operations first to discover the operation ids and the
+ * base URL. Query parameters and form fields become named, typed arguments carrying the types,
+ * defaults and descriptions the specification declares. The upstream credential is never written
+ * into the generated files - it is read from configuration when the endpoint is invoked - and the
+ * generated endpoints are instantly available as HTTP endpoints and MCP tools.
+ */
+.arguments
+
+   // Mandatory argument being URL of the OpenAPI or Swagger specification to wrap.
+   url:string
+
+   // Mandatory argument being name of the module to generate the endpoints inside of.
+   moduleName:string
+
+   // Mandatory argument being comma separated list of operation ids to wrap, exactly as returned by list-openapi-operations, e.g. 'get /pet/{petId},post /pet'.
+   operations:string
+
+   // Mandatory argument being base URL of the upstream API, typically the first entry list-openapi-operations returned in [servers].
+   baseUrl:string
+
+   // Optional argument being how the generated endpoints authenticate towards the upstream API. Can be either 'none', 'bearer', 'header', 'query' or 'basic', and defaults to 'none'.
+   authScheme:string
+
+   // Optional argument being name of the header or query parameter carrying the credential, required when [authScheme] is 'header' or 'query'.
+   authName:string
+
+   // Optional argument being the configuration key the generated endpoints read the upstream credential from, e.g. 'magic:integrations:stripe:key'.
+   configKey:string
+
+   // Optional argument being comma separated list of roles allowed to invoke the generated endpoints. Omitting it creates endpoints anyone can invoke.
+   auth:string
+
+   // Optional argument that if true will overwrite previously generated endpoint files.
+   overwrite:bool
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/url
+validators.mandatory:x:@.arguments/*/moduleName
+validators.mandatory:x:@.arguments/*/operations
+validators.mandatory:x:@.arguments/*/baseUrl
+
+/*
+ * The importer takes the operations as a list of nodes, while an MCP tool argument is a scalar -
+ * so the comma separated ids are split back into the list shape the importer expects.
+ */
+.ops
+strings.split:x:@.arguments/*/operations
+   .:,
+for-each:x:@strings.split/*
+   .one
+   set-value:x:@.one
+      strings.trim:x:@.dp/#
+   unwrap:x:+/*/*
+   add:x:@.ops
+      .
+         .:x:@.one
+
+// Passing everything through to the importer the dashboard uses.
+add:x:./*/execute-file/*/operations
+   get-nodes:x:@.ops/*
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*/url
+   get-nodes:x:@.arguments/*/moduleName
+   get-nodes:x:@.arguments/*/baseUrl
+   get-nodes:x:@.arguments/*/authScheme
+   get-nodes:x:@.arguments/*/authName
+   get-nodes:x:@.arguments/*/configKey
+   get-nodes:x:@.arguments/*/auth
+   get-nodes:x:@.arguments/*/overwrite
+execute-file:/system/openapi/import.post.hl
+   operations
+
+// Returning result to caller.
+return-nodes:x:@execute-file/*

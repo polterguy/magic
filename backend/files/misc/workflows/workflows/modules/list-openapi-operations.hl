@@ -1,0 +1,121 @@
+
+/*
+ * Executable Hyperlambda file that reads a third party OpenAPI or Swagger specification from a URL
+ * and returns the operations it declares, so you can choose which of them to wrap. Understands
+ * OpenAPI 3.x and Swagger 2.0, in either JSON or YAML. Call this before import-openapi, which needs
+ * the operation ids returned here, and the base URL returned in [servers]. Large specifications
+ * should be narrowed with [filter] - GitHub's declares more than a thousand operations - and the
+ * result tells you how many operations matched and how many of them were returned.
+ */
+.arguments
+
+   // Mandatory argument being URL of the OpenAPI or Swagger specification to read.
+   url:string
+
+   // Optional case insensitive substring, narrowing the result to operations whose id, summary or tag contains it.
+   filter:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/url
+
+// Outsourcing the parsing to the same file the dashboard's Import API tab uses.
+execute-file:/system/openapi/parse.post.hl
+   url:x:@.arguments/*/url
+
+.result
+   title
+   version
+   servers
+   security-schemes
+   matched:int:0
+   returned:int:0
+   operations
+set-value:x:@.result/*/title
+   get-value:x:@execute-file/*/title
+set-value:x:@.result/*/version
+   get-value:x:@execute-file/*/version
+add:x:@.result/*/servers
+   get-nodes:x:@execute-file/*/servers/*
+add:x:@.result/*/security-schemes
+   get-nodes:x:@execute-file/*/security-schemes/*
+
+/*
+ * Matching is done on the lowered needle, so the filter is case insensitive. Lowering only happens
+ * when a filter was actually supplied, since lowering nothing throws.
+ */
+.needle
+if
+   and
+      not-null:x:@.arguments/*/filter
+      neq:x:@.arguments/*/filter
+         .:
+   .lambda
+      set-value:x:@.needle
+         strings.to-lower:x:@.arguments/*/filter
+
+for-each:x:@execute-file/*/operations/*
+
+   .match:bool:true
+   if
+      and
+         not-null:x:@.needle
+         neq:x:@.needle
+            .:
+      .lambda
+         set-value:x:@.match
+            .:bool:false
+         .hay
+         set-value:x:@.hay
+            strings.concat
+               get-value:x:@.dp/#/*/id
+               .:" "
+               get-value:x:@.dp/#/*/summary
+               .:" "
+               get-value:x:@.dp/#/*/tag
+         set-value:x:@.hay
+            strings.to-lower:x:@.hay
+         unwrap:x:+/*
+         if
+            strings.contains:x:@.hay
+               .:x:@.needle
+            .lambda
+               set-value:x:@.match
+                  .:bool:true
+
+   if
+      eq:x:@.match
+         .:bool:true
+      .lambda
+         set-value:x:@.result/*/matched
+            math.add
+               get-value:x:@.result/*/matched
+               .:int:1
+
+         /*
+          * Only what a caller needs in order to choose an operation is returned, and only for the
+          * first 200 matches - a specification the size of GitHub's would otherwise return more
+          * than a megabyte. [matched] against [returned] tells the caller when to narrow [filter].
+          */
+         if
+            lt:x:@.result/*/returned
+               .:int:200
+            .lambda
+               unwrap:x:+/*/*/*
+               add:x:@.result/*/operations
+                  .
+                     .
+                        id:x:@.dp/#/*/id
+                        verb:x:@.dp/#/*/verb
+                        path:x:@.dp/#/*/path
+                        summary:x:@.dp/#/*/summary
+                        tag:x:@.dp/#/*/tag
+               set-value:x:@.result/*/returned
+                  math.add
+                     get-value:x:@.result/*/returned
+                     .:int:1
+
+// Returning result to caller.
+return-nodes:x:@.result/*

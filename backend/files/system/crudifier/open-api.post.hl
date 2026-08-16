@@ -6,9 +6,6 @@
    overwrite:bool
    baseUrl:string
 
-.description:Wraps the specified OpenAPI specification into Hyperlambda HTTP endpoints
-.type:internal
-
 // Sanity checks invocation.
 validators.mandatory:x:@.arguments/*/specification
 validators.mandatory:x:@.arguments/*/moduleName
