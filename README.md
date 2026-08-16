@@ -74,7 +74,7 @@ In our measurements Hyperlambda is roughly **20× faster than FastAPI or Flask**
 
 ![The Magic dashboard, showing the Chatbot Wizard and the cloudlet's MCP URL](images/dashboard.png)
 
-The sidebar is the whole platform: **Hyper IDE** for editing and running any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing databases, **Endpoint Generator** for turning tables into secured CRUD endpoints and importing third-party APIs from their OpenAPI specifications, plus users and roles, scheduled tasks, machine learning, and the plugin store.
+The sidebar is the whole platform: **Hyper IDE** for editing, running and *replaying* any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing databases, **Endpoint Generator** for turning tables into secured CRUD endpoints and importing third-party APIs from their OpenAPI specifications, plus users and roles, scheduled tasks, machine learning, and the plugin store.
 
 Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at the top hands any MCP-capable agent your endpoints as tools. The **Chatbot Wizard** goes the other way: give it a website, and it crawls the site, turns what it finds into training data, and hands you an embeddable chatbot grounded in your own content.
 
@@ -107,6 +107,18 @@ Point the **Import API** tab at any OpenAPI or Swagger URL — OpenAPI 3.x or Sw
 Because Magic publishes an endpoint's file comment as its MCP tool description and each argument's comment as that argument's description, an imported API arrives at your agent as a set of self-describing tools. Slack's `chat.postMessage` becomes fifteen individually typed, individually described arguments — not one of them written by hand.
 
 The upstream credential is never written into the generated files. It is read from your configuration at the moment the endpoint is invoked, so the files stay safe to commit, and you declare which of *your* roles are allowed to invoke the wrapper.
+
+## Rewind — step through an execution after it ran
+
+![Rewind stepping through a recorded execution, with the current statement highlighted](images/rewind.png)
+
+A stack trace tells you where your code died. It rarely tells you why, because the values are gone by the time you read it.
+
+Click **Execute** on any Hyperlambda file, fill in your arguments, then click **Debug** instead of **Invoke**. Magic runs the file while recording every slot it invokes, and hands you the recording. Each step carries your **entire program** as it looked immediately afterwards — so stepping through the list is watching your own state evolve, rather than guessing at it.
+
+Click a step and the code highlights the statement that was executing. Arrow keys step back and forward. When something throws, the statement that threw is marked in red and *everything that happened before it survives* — if a loop ran forty times and the forty-first line failed, you can see the state the loop had built up at the moment it broke.
+
+Recording happens only when you ask for it and lives only in memory. Nothing is written to disk, nothing leaves the server, and code running normally is unaffected — there is nothing switched on to slow it down.
 
 ## OIDC sign-in
 
