@@ -1061,7 +1061,7 @@ export default function Files() {
       )}
       {(generating || waiting) && <AiWaiter />}
       {invokeTarget && (
-        <Modal width={860} closeOnEscape={false} onClose={() => setInvokeTarget(null)}>
+        <Modal width={860} onClose={() => setInvokeTarget(null)}>
           <h2 style={{ marginTop: 0 }}>
             {invokeTarget.verb.toUpperCase()} {invokeTarget.path}
           </h2>
