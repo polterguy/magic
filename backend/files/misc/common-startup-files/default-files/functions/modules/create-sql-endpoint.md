@@ -7,8 +7,9 @@ The following function can be used to generate one HTTP endpoint executing a cus
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/modules/create-sql-endpoint.hl]:
 {
-  "databaseType": "[STRING_VALUE]",
   "database": "[STRING_VALUE]",
+  "database-type": "[STRING_VALUE]",
+  "connection-string": "[STRING_VALUE]",
   "moduleName": "[STRING_VALUE]",
   "endpointName": "[STRING_VALUE]",
   "verb": "[STRING_VALUE]",
@@ -22,8 +23,9 @@ ___
 
 Arguments:
 
-- `databaseType` is the mandatory database type, and can be either `mysql`, `pgsql`, `mssql` or `sqlite`.
-- `database` is the mandatory database to execute the SQL towards, on the format `[connection-string|database]`, e.g. `[generic|chinook]`.
+- `database` is the mandatory name of the database to execute the SQL towards, e.g. `chinook`. It can only contain a-z, 0-9, `_` and `-`.
+- `database-type` is optional and can be either `mysql`, `pgsql`, `mssql` or `sqlite`. Defaults to `sqlite`.
+- `connection-string` is optional and defaults to `generic`. It can only contain a-z, 0-9, `_` and `-`.
 - `moduleName` is the mandatory name of the module to generate the endpoint inside of.
 - `endpointName` is the mandatory name of the generated endpoint, without verb and extension. Its relative URL becomes `moduleName/endpointName`.
 - `verb` is the mandatory HTTP verb of the generated endpoint, and can be either `get`, `post`, `put`, `delete` or `patch`. Use `get` for endpoints reading data.

@@ -28,10 +28,16 @@ validators.default:x:@.arguments
    database-type:sqlite
    connection-string:generic
 
+// Connection strings name a configured connection, nothing more.
+validators.regex:x:@.arguments/*/connection-string
+   regex:^[a-z0-9_-]+$
+
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/sql
 validators.mandatory:x:@.arguments/*/_session
 validators.mandatory:x:@.arguments/*/database
+validators.regex:x:@.arguments/*/database
+   regex:^[a-z0-9_-]+$
 log.info:x:@.arguments/*/sql
    database:x:@.arguments/*/database
 

@@ -7,8 +7,9 @@ The following function can be used to generate one CRUD HTTP endpoint wrapping a
 ___
 FUNCTION_INVOCATION[/misc/workflows/workflows/modules/crudify.hl]:
 {
-  "databaseType": "[STRING_VALUE]",
   "database": "[STRING_VALUE]",
+  "database-type": "[STRING_VALUE]",
+  "connection-string": "[STRING_VALUE]",
   "table": "[STRING_VALUE]",
   "moduleName": "[STRING_VALUE]",
   "moduleUrl": "[STRING_VALUE]",
@@ -30,8 +31,9 @@ ___
 
 Arguments:
 
-- `databaseType` is the mandatory database type, and can be either `mysql`, `pgsql`, `mssql` or `sqlite`.
-- `database` is the mandatory database to wrap, on the format `[connection-string|database]`, e.g. `[generic|chinook]`.
+- `database` is the mandatory name of the database to wrap, e.g. `chinook`. It can only contain a-z, 0-9, `_` and `-`.
+- `database-type` is optional and can be either `mysql`, `pgsql`, `mssql` or `sqlite`. Defaults to `sqlite`.
+- `connection-string` is optional and defaults to `generic`.
 - `table` is the mandatory name of the table to wrap. For PostgreSQL tables outside the public schema use `schema.table`.
 - `moduleName` is the mandatory name of the module to generate the endpoint inside of.
 - `moduleUrl` is the mandatory relative URL of the generated endpoint, typically the name of the table.

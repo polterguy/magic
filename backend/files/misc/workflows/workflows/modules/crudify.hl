@@ -9,11 +9,14 @@
  */
 .arguments
 
-   // Mandatory argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'.
-   databaseType:string
-
-   // Mandatory argument being database to wrap, on the format '[connection-string|database]', e.g. '[generic|chinook]'.
+   // Mandatory argument being name of database to wrap, e.g. 'chinook'.
    database:string
+
+   // Optional argument being database type. Can be either 'mysql', 'pgsql', 'mssql' or 'sqlite'. Defaults to 'sqlite'.
+   database-type:string
+
+   // Optional connection string to use to connect. Defaults to 'generic'.
+   connection-string:string
 
    // Mandatory argument being name of table to wrap. For PostgreSQL tables outside the public schema use 'schema.table'.
    table:string
@@ -41,6 +44,45 @@
 
 // Ensuring user is root.
 auth.ticket.verify:root
+
+// Applying defaults.
+validators.default:x:@.arguments
+   database-type:sqlite
+   connection-string:generic
+
+// Connection strings name a configured connection, nothing more.
+validators.regex:x:@.arguments/*/connection-string
+   regex:^[a-z0-9_-]+$
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/database
+validators.regex:x:@.arguments/*/database
+   regex:^[a-z0-9_-]+$
+
+/*
+ * Assembling the '[connection-string|database]' reference the CRUD generator expects, the same way
+ * every other database workflow does it - the caller names the database, and this file builds the
+ * reference. Having callers assemble it themselves is what let unvalidated text through.
+ */
+strings.concat
+   .:[
+   get-value:x:@.arguments/*/connection-string
+   .:|
+   get-value:x:@.arguments/*/database
+   .:]
+set-value:x:@.arguments/*/database
+   get-value:x:@strings.concat
+
+/*
+ * The CRUD generator names the type argument [databaseType], and knows nothing of
+ * [connection-string], so translating before passing the arguments through.
+ */
+unwrap:x:+/*
+add:x:@.arguments
+   .
+      databaseType:x:@.arguments/*/database-type
+remove-nodes:x:@.arguments/*/database-type
+remove-nodes:x:@.arguments/*/connection-string
 
 // Deriving generator template from verb.
 strings.concat

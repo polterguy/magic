@@ -18,6 +18,10 @@ validators.default:x:@.arguments
    database-type:sqlite
    connection-string:generic
 
+// Connection strings name a configured connection, nothing more.
+validators.regex:x:@.arguments/*/connection-string
+   regex:^[a-z0-9_-]+$
+
 // Listing all tables in database.
 .slot_name
 set-value:x:@.slot_name
