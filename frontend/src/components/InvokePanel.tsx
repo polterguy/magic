@@ -88,6 +88,12 @@ export default function InvokePanel(props: {
    * rather than through a second dialog that merely looks similar.
    */
   onDebug?: (args: Record<string, any>) => void;
+  /*
+   * When supplied, the panel offers to open the endpoint's source file. Hyper
+   * IDE does not supply it — the file is already open there — so the action
+   * exists only where it leads somewhere new.
+   */
+  onEdit?: () => void;
 }) {
 
   const { endpoint } = props;
@@ -447,6 +453,16 @@ export default function InvokePanel(props: {
             title="Copy this invocation as a curl command, with $TOKEN standing in for your bearer token"
             onClick={copyCurl}>
             Copy as cURL
+          </button>
+        )}
+        {/* Last, since unlike the others it navigates away from this page. */}
+        {props.onEdit && (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            title="Open this endpoint's source file in Hyper IDE"
+            onClick={props.onEdit}>
+            Edit in Hyper IDE
           </button>
         )}
       </div>

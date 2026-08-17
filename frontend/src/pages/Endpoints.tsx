@@ -1,15 +1,23 @@
 import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Modal } from '../components/Dialogs';
 import AiWaiter from '../components/AiWaiter';
 import OpenApiDialog from '../components/OpenApiDialog';
 import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
+import DebugDialog from '../components/DebugDialog';
 import { BracesIcon, ChevronIcon, CodeFileIcon } from '../components/Icons';
-import { Endpoint, getOpenApiSpec, listEndpoints } from '../lib/api';
+import {
+  DebugRecording,
+  Endpoint,
+  debugHyperlambda,
+  getOpenApiSpec,
+  listEndpoints,
+  loadFile,
+} from '../lib/api';
 
 
 /*
@@ -25,6 +33,16 @@ function moduleOf(endpoint: Endpoint): { name: string; system: boolean } {
     return { name: parts[2] ?? 'modules', system: false };
   }
   return { name: parts[1] ?? endpoint.path, system: false };
+}
+
+
+/*
+ * The Hyperlambda file backing an endpoint — "magic/modules/foo/bar" invoked
+ * as GET is "/modules/foo/bar.get.hl" on disk.
+ */
+function sourceFile(endpoint: Endpoint) {
+  return '/' + endpoint.path.substring('magic/'.length)
+    + '.' + endpoint.verb.toLowerCase() + '.hl';
 }
 
 
@@ -45,8 +63,10 @@ export default function Endpoints() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [result, setResult] = useState<InvokeResult | null>(null);
   const [openApiSpec, setOpenApiSpec] = useState<{ json: string; target: string } | null>(null);
+  const [recording, setRecording] = useState<{ file: string; steps: DebugRecording } | null>(null);
   const [loading, setLoading] = useState(true);
   const [waiting, setWaiting] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     listEndpoints()
@@ -142,6 +162,23 @@ export default function Endpoints() {
     try {
       const spec = await getOpenApiSpec(target);
       setOpenApiSpec({ json: JSON.stringify(spec, null, 2), target });
+    } catch (err: any) {
+      showToast(err.message, true, err.logId);
+    } finally {
+      setWaiting(false);
+    }
+  }
+
+  /*
+   * Unlike Hyper IDE, which already has the file open in its editor, here the
+   * source has to be fetched before it can be recorded — the debugger takes
+   * Hyperlambda, not an endpoint URL.
+   */
+  async function runDebug(endpoint: Endpoint, args: Record<string, any>) {
+    const file = sourceFile(endpoint);
+    setWaiting(true);
+    try {
+      setRecording({ file, steps: await debugHyperlambda(await loadFile(file), args) });
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     } finally {
@@ -260,9 +297,7 @@ export default function Endpoints() {
                           <Link
                             className="icon-btn"
                             title="Open this endpoint's source file in Hyper IDE"
-                            to={'/hyper-ide?open=' + encodeURIComponent(
-                              '/' + endpoint.path.substring('magic/'.length) +
-                              '.' + endpoint.verb.toLowerCase() + '.hl')}
+                            to={'/hyper-ide?open=' + encodeURIComponent(sourceFile(endpoint))}
                             onClick={event => event.stopPropagation()}>
                             <CodeFileIcon />
                           </Link>
@@ -275,9 +310,10 @@ export default function Endpoints() {
                               <InvokePanel
                                 endpoint={endpoint}
                                 onResult={setResult}
-                                onOpenApi={() => showOpenApi(
-                                  '/' + endpoint.path.substring('magic/'.length) +
-                                  '.' + endpoint.verb.toLowerCase() + '.hl')} />
+                                onDebug={args => runDebug(endpoint, args)}
+                                onEdit={() => navigate(
+                                  '/hyper-ide?open=' + encodeURIComponent(sourceFile(endpoint)))}
+                                onOpenApi={() => showOpenApi(sourceFile(endpoint))} />
                             </div>
                           </td>
                         </tr>
@@ -293,6 +329,12 @@ export default function Endpoints() {
       </div>
       {result !== null && (
         <ResponseDialog result={result} httpInvocation onClose={() => setResult(null)} />
+      )}
+      {recording !== null && (
+        <DebugDialog
+          filename={recording.file}
+          recording={recording.steps}
+          onClose={() => setRecording(null)} />
       )}
       {openApiSpec !== null && (
         <OpenApiDialog
