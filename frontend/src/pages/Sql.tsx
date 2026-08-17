@@ -1,10 +1,11 @@
 import { copyToClipboard, showToast } from '../lib/toast';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
 import { useSessionState } from '../lib/useSessionState';
 import type CodeMirror from 'codemirror';
 import CodeEditor from '../components/CodeEditor';
+import { SparkIcon } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
 import Tabs from '../components/Tabs';
 import Select from '../components/Select';
@@ -15,6 +16,7 @@ import {
   addColumn,
   addForeignKey,
   addTable,
+  aiQuery,
   dropColumn,
   dropTable,
   executeSql,
@@ -22,6 +24,7 @@ import {
   flushSchemaCache,
   importCsvFile,
   loadFile,
+  openaiIsConfigured,
   saveFile,
 } from '../lib/api';
 
@@ -42,6 +45,16 @@ export default function Sql() {
   // Click-triggered round-trips outside Run — DDL exports, schema changes,
   // imports and snippet I/O.
   const [waiting, setWaiting] = useState(false);
+  // Generating is its own flag, so a CSV import in flight doesn't relabel the
+  // Generate button.
+  const [generating, setGenerating] = useState(false);
+  const [hasSelection, setHasSelection] = useState(false);
+  /*
+   * Generating SQL goes through the OpenAI proxy, unlike Hyper IDE's generator,
+   * which loads its own instruction — so without a key there is nothing to ask,
+   * and the button hides the same way the prompt bar below the editor does.
+   */
+  const [aiConfigured, setAiConfigured] = useState(false);
   const { snippets, setSnippets } = useSqlSnippets(type);
   const [selectedSnippet, setSelectedSnippet] =
     useSessionState('magic2.sql-studio.snippet', '');
@@ -54,6 +67,12 @@ export default function Sql() {
 
   const tables = selection.selectedMeta?.tables ?? [];
   const reloadSchema = selection.reloadSchema;
+
+  useEffect(() => {
+    openaiIsConfigured()
+      .then(response => setAiConfigured(response.result))
+      .catch(() => setAiConfigured(false));
+  }, []);
 
   async function flushCache() {
     if (!await confirm({
@@ -189,6 +208,30 @@ export default function Sql() {
     }
   }
 
+  /*
+   * Whatever is selected is the specification, and nothing else is sent. The
+   * answer is a whole statement, so it becomes the whole buffer — replacing only
+   * the selection would leave the description sitting around the SQL it asked
+   * for. Selecting text therefore means two things in this page: Run treats it
+   * as the fragment to execute, Generate as the request to fulfil.
+   */
+  async function generateFromSelection() {
+    const selected = editorRef.current?.getSelection() ?? '';
+    if (!selected.trim()) {
+      return;
+    }
+    setGenerating(true);
+    try {
+      const response = await aiQuery(
+        selected, 'sql', await createAiContext(), 'sql-studio.editor');
+      setSql(response.result);
+    } catch (err: any) {
+      showToast(err.message, true, err.logId);
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   async function execute() {
     const selected = editorRef.current?.getSelection() ?? '';
     const toExecute = selected !== '' ? selected : sql;
@@ -305,16 +348,43 @@ export default function Sql() {
               <option key={db.name} value={db.name}>{db.name}</option>
             ))}
           </Select>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <input
-              type="checkbox"
-              checked={safeMode}
-              onChange={e => setSafeMode(e.target.checked)} />
-            Safe mode
-          </label>
-          <button className="btn" onClick={execute} disabled={busy || !database}>
-            {busy ? 'Running…' : '▷ Run'}
-          </button>
+          {/*
+            * Executing is the SQL tab's business — the Designer has no buffer to
+            * run and no rows to cap. The database Selects stay, since the
+            * Designer needs them.
+            */}
+          {view === 'sql' && (
+            <>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <input
+                  type="checkbox"
+                  checked={safeMode}
+                  onChange={e => setSafeMode(e.target.checked)} />
+                Safe mode
+              </label>
+              {aiConfigured && (
+                <button
+                  className="btn btn-secondary btn-small"
+                  title="Run the selected text through the SQL generator"
+                  onClick={generateFromSelection}
+                  disabled={generating || !hasSelection}>
+                  <SparkIcon />
+                  {generating ? 'Generating…' : 'Generate'}
+                </button>
+              )}
+              {/*
+                * Empty buffer means nothing to run — and no selection either,
+                * since a selection is always a substring of [sql]. The keyboard
+                * shortcut bypasses this, so execute() keeps its own guard.
+                */}
+              <button
+                className="btn"
+                onClick={execute}
+                disabled={busy || !database || !sql.trim()}>
+                {busy ? 'Running…' : '▷ Run'}
+              </button>
+            </>
+          )}
         </div>
       </div>
       <Tabs
@@ -563,7 +633,15 @@ export default function Sql() {
           mode="text/x-sql"
           onExecute={execute}
           hintTables={hintTables}
-          onInstance={instance => { editorRef.current = instance; }} />
+          onInstance={instance => {
+            if (editorRef.current === instance) {
+              return;
+            }
+            editorRef.current = instance;
+            setHasSelection(instance.somethingSelected());
+            instance.on('cursorActivity', () =>
+              setHasSelection(instance.somethingSelected()));
+          }} />
       </div>
       <AiPrompt
         fileType="sql"
@@ -590,7 +668,7 @@ export default function Sql() {
           </div>
         </div>
       ))}
-      {waiting && <AiWaiter />}
+      {(waiting || generating) && <AiWaiter />}
     </>
   );
 }
