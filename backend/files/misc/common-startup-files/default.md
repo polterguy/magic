@@ -239,22 +239,26 @@ FUNCTION_INVOCATION[/misc/workflows/workflows/hyperlambda/generate-hyperlambda.h
 {
   "prompt": "[STRING_VALUE]",
   "filename": "[STRING_VALUE]",
-  "immediate_mode": [BOOLEAN_VALUE]
+  "immediate_mode": [BOOLEAN_VALUE],
+  "old_code": "[STRING_VALUE]"
 }
 ___
 ```
 
 Arguments:
 
-- `prompt` is mandatory and describes the Hyperlambda code to generate.
+- `prompt` is mandatory. For new code it describes the code to generate; when `old_code` is supplied it describes only the change to apply.
 - `filename` is optional and is the path where generated Hyperlambda should be saved.
 - `immediate_mode` is optional and defaults to `false`.
   - If `true`, the generator executes the Hyperlambda immediately and returns the result instead of the code.
   - If `true`, do not also pass `filename`.
+- `old_code` is optional and is the current contents of the file you are changing. Supply it whenever you modify existing Hyperlambda rather than creating new Hyperlambda. The generator then edits what you gave it, keeps the file's existing comment, and leaves everything you did not ask about alone. Read the file first so the change you describe matches what is actually there.
 
 Important rules:
 
-1. The Hyperlambda Generator can create only one function, file, or snippet at a time.
+1. The Hyperlambda Generator can create or change only one function, file, or snippet at a time.
+   Changing an existing file without passing `old_code` regenerates it from your prompt alone, and
+   silently discards everything the prompt did not mention.
 2. Provide all required task details in the prompt, including database names, table names, column names, recipients, subjects, arguments, and expected output fields when relevant.
 3. If you are generating Hyperlambda to be saved, pass a valid `filename`.
 4. If you only want the result and not the code, you MUST set `immediate_mode` to boolean `true`.
@@ -302,6 +306,14 @@ Use the following to reach a verdict instead:
 4. What does an existing file do, and what does it take? Ask `get-file-info` for its description and arguments.
 
 State a Hyperlambda defect only when one of these returned it. If you believe something is wrong but nothing above confirms it, say that you could not confirm it, and continue.
+
+Reading a file to understand it is fine, and is often necessary — you cannot write a good change request without knowing what the file already contains, what its arguments are called, and which conventions it follows. What is forbidden is treating what you read as a verdict. Look in order to describe a change accurately; do not look in order to find fault.
+
+### Changing existing Hyperlambda
+
+Never hand-edit Hyperlambda. Describe the change to `generate-hyperlambda` and pass the file's current contents as `old_code` — the generator writes the edit, keeps the file's existing comment, and leaves alone everything you did not ask about. Regenerating from a fresh prompt instead silently discards every part of the file the prompt did not mention.
+
+A change request must trace to something a user asked for, or to a failure one of the four checks above confirmed. It must never trace to something you noticed while reading. Code that verifies, executes correctly and does what was asked is finished, regardless of how it reads to you — rewriting it because it looks unusual is the single most expensive mistake you can make here, and the resulting edit will look entirely reasonable afterwards.
 
 To change Hyperlambda, use `generate-hyperlambda` to write it from a description, or `create-file` for a targeted edit to a file that already exists, reading it first with `read-file`. Both verify the Hyperlambda before writing it, and neither will save code that does not verify.
 

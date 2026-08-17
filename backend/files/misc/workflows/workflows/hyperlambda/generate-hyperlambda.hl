@@ -4,6 +4,10 @@
  * Generates correct Hyperlambda code according to the specified [prompt], and saves it directly
  * when [filename] is supplied.
  *
+ * To change an existing file rather than create one, pass its current contents as [old_code] and
+ * describe only the change in [prompt]. Without [old_code] the call regenerates the file from the
+ * prompt alone, discarding everything the prompt did not mention.
+ *
  * Describe WHAT you want in plain language — the operation, table/columns, database, and any
  * access restriction. Do NOT write Hyperlambda yourself or describe node structure or indentation;
  * the generator produces correct syntax. One focused task per call; overly complex multi-step
@@ -14,7 +18,10 @@
    // Injected by the framework.
    _session:string
 
-   // Mandatory argument describing the Hyperlambda code you want to generate.
+   /*
+    * Mandatory. For new code, describes the Hyperlambda you want generated. When [old_code] is
+    * supplied, describes only the change to apply to it - "add paging", not the whole endpoint.
+    */
    prompt:string
 
    // Optional filename of where to save the Hyperlambda. The parent folder must already exist - create it first with the create-folder function.
