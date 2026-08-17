@@ -20,6 +20,7 @@ import {
 } from '../lib/api';
 import { copyToClipboard, showToast } from '../lib/toast';
 import { CopyIcon, DownloadIcon, FilePlusIcon, PaperclipIcon } from './Icons';
+import WidgetDialog from './WidgetDialog';
 
 type Segment =
   | { kind: 'text'; text: string }
@@ -661,6 +662,24 @@ function functionName(file?: string): string | undefined {
   return path.trim().replace(/\.hl$/i, '').split('/').pop() || undefined;
 }
 
+/*
+ * A widget in the transcript is an invitation to open it, not the widget
+ * itself — it stays mounted here so closing the dialog and opening it again
+ * gives you the same widget rather than losing it.
+ */
+function WidgetButton({ html }: { html: string }) {
+
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button className="btn btn-secondary btn-small" onClick={() => setOpen(true)}>
+        Open widget
+      </button>
+      {open && <WidgetDialog html={html} onClose={() => setOpen(false)} />}
+    </>
+  );
+}
+
 function ChatSegment({ segment, markdown }: { segment: Segment; markdown: boolean }) {
 
   // Collapsed by default — the pill is the summary, the payload one click away.
@@ -716,7 +735,12 @@ function ChatSegment({ segment, markdown }: { segment: Segment; markdown: boolea
       );
     }
     case 'html':
-      return <div className="chat-html" dangerouslySetInnerHTML={{ __html: segment.html }} />;
+      /*
+       * Opened in a dialog rather than rendered into the transcript, since a
+       * widget needs an iframe to run its own JavaScript and an iframe inside a
+       * narrow scrolling column is a poor place to put an interactive thing.
+       */
+      return <WidgetButton html={segment.html} />;
     case 'download':
       return (
         <a

@@ -1523,15 +1523,6 @@ tr.clickable:hover td { background: var(--accent-soft); }
   word-break: break-word;
 }
 
-.chat-html {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px;
-  margin: 6px 0;
-  overflow: auto;
-  background: var(--surface);
-}
-
 .chat-download {
   display: inline-flex;
   align-items: center;
