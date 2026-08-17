@@ -2,7 +2,7 @@
 set -euo pipefail
 
 NAMESPACE="cloudlets"
-IMAGE="servergardens/magic-backend:v23.5.0"
+IMAGE="servergardens/magic-backend:v23.5.6"
 FSGROUP="999"
 
 echo "========================================="
