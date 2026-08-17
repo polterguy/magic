@@ -428,19 +428,28 @@ export default function Dashboard() {
         </div>
       )}
       {openaiConfigured === true && <CreateChatbot onTour={() => setTour('chatbot')} />}
-      <div className="card agent-prompt" data-tour="api-wizard">
-        <div style={{ flex: 1 }}>
+      <div className="card agent-prompt agent-prompt-stacked" data-tour="api-wizard">
+        <div>
           <h2 style={{ margin: '0 0 6px 0' }}>API Wizard</h2>
           <p className="muted" style={{ margin: 0 }}>
-            Point the Generator at one of your databases and it turns every
-            table into secured REST endpoints — a complete backend in a couple
-            of minutes. No database yet?{' '}
-            <Link to="/databases">Connect or create one first</Link>.
+            Three ways to get endpoints: turn every table in a database into
+            secured REST endpoints, publish your own SQL as an endpoint, or wrap
+            somebody else's API from its OpenAPI specification. Whatever you
+            generate is published to your AI agent as MCP tools. No database
+            yet? <Link to="/databases">Connect or create one first</Link>.
           </p>
         </div>
-        <Link className="btn btn-large" to="/generator?guided=1">
-          Create API
-        </Link>
+        <div className="agent-prompt-actions">
+          <Link className="btn btn-large" to="/generator?guided=1">
+            CRUD backend
+          </Link>
+          <Link className="btn btn-secondary btn-large" to="/generator?tab=sql">
+            SQL endpoint
+          </Link>
+          <Link className="btn btn-secondary btn-large" to="/generator?tab=import">
+            Import API
+          </Link>
+        </div>
       </div>
       {/*
         * Offered whenever the cloudlet's root URL is free, regardless of

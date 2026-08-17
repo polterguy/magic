@@ -183,7 +183,12 @@ function canGenerate(payload: any, verb: string) {
 
 export default function Generator() {
 
-  const [tab, setTab] = useState('crud');
+  /*
+   * ?tab= — which generator to open on, so the Dashboard can link straight to
+   * any one of the three rather than always landing on CRUD.
+   */
+  const [tab, setTab] = useState(
+    () => new URLSearchParams(window.location.search).get('tab') ?? 'crud');
   /*
    * ?guided=1 — the Dashboard's "API from your data" flow: the same CRUD
    * generator wearing a step header, with every table preselected and a
@@ -207,7 +212,8 @@ export default function Generator() {
         <p>
           {guiding
             ? 'Turn a database into secured REST endpoints'
-            : 'Generate CRUD backends and custom SQL endpoints from your databases'}
+            : 'Generate a CRUD backend from a database, publish your own SQL as an '
+              + 'endpoint, or wrap a third-party API from its OpenAPI specification'}
         </p>
       </div>
       <Tabs

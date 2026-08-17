@@ -2835,6 +2835,28 @@ tr.log-target > td:first-child {
   font-weight: 700;
 }
 
+/* A card offering several routes rather than one, as the API Wizard does. */
+.agent-prompt-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/*
+ * Three routes do not fit beside the text the way a single button does, so the
+ * description takes the full width and the routes form a toolbar beneath it -
+ * matching the Chatbot Wizard above, whose controls also sit in a bottom row.
+ * The description carries no flex of its own; the 100% basis is what breaks the
+ * row.
+ */
+.agent-prompt-stacked > :first-child {
+  flex-basis: 100%;
+}
+
+.agent-prompt-stacked .agent-prompt-actions {
+  margin-left: auto;
+}
+
 .btn-large {
   padding: 14px 28px;
   font-size: var(--text-base);
@@ -3328,6 +3350,11 @@ tr.vss-irrelevant td {
     gap: 14px;
   }
   .agent-prompt .btn-large {
+    width: 100%;
+  }
+  /* Several routes stack rather than sitting side by side on a phone. */
+  .agent-prompt-actions {
+    flex-direction: column;
     width: 100%;
   }
 

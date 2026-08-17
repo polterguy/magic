@@ -44,10 +44,11 @@ export const DASHBOARD_TOUR: TourStep[] = [
   },
   {
     target: 'api-wizard',
-    title: 'Turn a database into an API',
-    body: 'Point it at any database and every table becomes secured CRUD ' +
-      'endpoints — create, read, update, delete, with paging, sorting and ' +
-      'role checks. Generated in milliseconds, as files you can edit.',
+    title: 'Three ways to build an API',
+    body: 'Point it at a database and every table becomes secured CRUD ' +
+      'endpoints, with paging, sorting and role checks. Or publish your own ' +
+      'SQL as an endpoint. Or wrap somebody else\'s API from its OpenAPI ' +
+      'specification. All three produce files you can edit.',
   },
   {
     target: 'expert-system',
