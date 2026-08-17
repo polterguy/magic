@@ -11,6 +11,13 @@ import CodeEditor from './CodeEditor';
 import { Modal } from './Dialogs';
 import type { DebugRecording } from '../lib/api';
 
+/*
+ * Height of both panes. One constant rather than two numbers, since the step
+ * list and the code beside it are read as a single surface and any difference
+ * between them shows as a ragged edge.
+ */
+const PANE_HEIGHT = 460;
+
 export default function DebugDialog(props: {
   filename: string;
   recording: DebugRecording;
@@ -150,7 +157,7 @@ export default function DebugDialog(props: {
             {/* The steps themselves, newest work at the bottom, as they ran. */}
             <div
               className="card"
-              style={{ padding: 0, overflow: 'auto', maxHeight: 460, flex: '0 0 300px' }}>
+              style={{ padding: 0, overflow: 'auto', height: PANE_HEIGHT, flex: '0 0 300px' }}>
               <table className="compact-table debug-steps">
                 <thead>
                   <tr>
@@ -188,16 +195,13 @@ export default function DebugDialog(props: {
               </table>
             </div>
 
-            {/* The whole lambda, as it looked after the selected step ran. */}
+            {/*
+              * The whole lambda, as it looked after the selected step ran. No
+              * caption above it — the step list already says which step is
+              * selected, and the heading counts it, so a third statement of the
+              * same fact only cost the editor the height to say it.
+              */}
             <div style={{ flex: '1 1 auto', minWidth: 0 }}>
-              <div className="muted" style={{ fontSize: 13, marginBottom: 6 }}>
-                {onReturn ? 'What the execution returned' : (
-                  <>
-                    The whole lambda after step {index + 1},
-                    {' '}<span className="mono">{current.slot}</span>
-                  </>
-                )}
-              </div>
               <CodeEditor
                 /*
                  * The same pane in both modes rather than a second component -
@@ -214,7 +218,7 @@ export default function DebugDialog(props: {
                   ? -1
                   : verifiedLine(current.lambda ?? '', current.path, current.slot)}
                 highlightClass={index === errorIndex ? 'cm-error-step' : 'cm-current-step'}
-                height="420px" />
+                height={PANE_HEIGHT + 'px'} />
             </div>
           </div>
         </>
