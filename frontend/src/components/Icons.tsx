@@ -31,6 +31,19 @@ export function FolderIcon() {
   );
 }
 
+/*
+ * The same folder with its front panel tipped open, for a folder whose contents
+ * are showing. Drawn as one stroke like the closed one, so the two read as the
+ * same object in two states rather than two different icons.
+ */
+export function FolderOpenIcon() {
+  return (
+    <svg {...base}>
+      <path d="M6 14 7.5 11.1A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6A2 2 0 0 1 18.45 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" />
+    </svg>
+  );
+}
+
 export function FileIcon() {
   return (
     <svg {...base}>

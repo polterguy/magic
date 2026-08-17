@@ -6,6 +6,7 @@ import {
   FileIcon,
   FilePlusIcon,
   FolderIcon,
+  FolderOpenIcon,
   FolderPlusIcon,
   GitBranchIcon,
   PencilIcon,
@@ -150,7 +151,9 @@ export default function FileTree(props: {
               <span className="tree-chevron">
                 <ChevronIcon open={isOpen(folder)} />
               </span>
-              <span className="tree-icon folder"><FolderIcon /></span>
+              <span className="tree-icon folder">
+                {isOpen(folder) ? <FolderOpenIcon /> : <FolderIcon />}
+              </span>
               <span className="tree-name">{nameOf(folder)}</span>
               <FolderActions
                 onNewFile={() => props.onNewFile(folder)}
