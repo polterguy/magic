@@ -23,9 +23,16 @@ const TOOLTIPS: Record<string, string> = {
 
 export default function AiPrompt(props: {
   fileType: string;
-  // Context for the generation — editor content, schema, etc. May be async
+  // System message for the generation — schema, framing, etc. May be async
   // (SQL Studio exports the schema DDL on demand).
-  getContext?: () => string | Promise<string>;
+  getContext?: () => string | Promise<string> | undefined;
+  /*
+   * The code being changed, when there is any. Sent as its own field rather
+   * than folded into the system message, so the generator can tell a change
+   * request from a fresh one — it keeps the file's existing comment instead of
+   * replacing it with the instruction describing the change.
+   */
+  getOldCode?: () => string;
   session?: string;
   onResult: (snippet: string) => void;
   onError: (message: string) => void;
@@ -50,7 +57,8 @@ export default function AiPrompt(props: {
     setBusy(true);
     try {
       const context = await props.getContext?.();
-      const response = await aiQuery(prompt, props.fileType, context, props.session);
+      const response = await aiQuery(
+        prompt, props.fileType, context, props.session, props.getOldCode?.());
       props.onResult(response.result);
       setPrompt('');
     } catch (err: any) {

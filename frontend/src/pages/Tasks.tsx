@@ -392,7 +392,7 @@ function TaskDialog(props: {
       </div>
       <AiPrompt
         fileType="hl"
-        getContext={() => code}
+        getOldCode={() => code}
         session="task-editor.editor"
         onResult={setCode}
         onError={message => showToast(message, true)}

@@ -1209,14 +1209,22 @@ export async function aiQuery(
   prompt: string,
   fileType: string,
   contextOverride?: string,
-  session?: string): Promise<{ result: string }> {
+  session?: string,
+  oldCode?: string): Promise<{ result: string }> {
 
   const payload = new FormData();
   payload.append('prompt', prompt);
-  if (contextOverride) {
-    payload.append('system_message_override', contextOverride);
-  }
   if (fileType === 'hl') {
+    /*
+     * The generator takes no system message — it loads its own, which carries
+     * everything the model knows about Hyperlambda. Code being changed travels
+     * as [data], which the generator turns into [old_code]: it hands that to
+     * the model as its own message, and keeps the file's existing comment
+     * rather than replacing it with an instruction describing the change.
+     */
+    if (oldCode) {
+      payload.append('data', oldCode);
+    }
     const response = await fetch(
       GENERATOR_URL + '/magic/modules/hyperlambda-generator/chat',
       { method: 'POST', body: payload });
@@ -1224,6 +1232,13 @@ export async function aiQuery(
       await throwApiError(response);
     }
     return await response.json();
+  }
+  /*
+   * Only the OpenAI proxy takes a system message — it has no instruction of its
+   * own, so SQL Studio and the Endpoint Generator put the schema here.
+   */
+  if (contextOverride) {
+    payload.append('system_message_override', contextOverride);
   }
   payload.append('type', fileType);
   payload.append('user_id', loadBackend()?.username ?? '');
@@ -1236,21 +1251,25 @@ export async function aiQuery(
 }
 
 /*
- * Builds the system message for the AI prompt bar, same rules as the old
- * ide-editor: a non-empty editor asks the AI to modify the existing code, an
- * empty one gets a return-only-code instruction. Shared by every host that
- * embeds AiPrompt (Hyper IDE, Playground, …) so the framing stays identical.
+ * Builds the system message for the AI prompt bar.
+ *
+ * Hyperlambda gets none. It goes to the generator module, which loads its own
+ * system instruction — the one carrying everything the model knows about
+ * Hyperlambda — and overriding that with a generic "return only code" line, or
+ * with the file being edited, throws that training away. Existing code reaches
+ * the generator as [data] instead; see aiQuery.
+ *
+ * Every other file type goes through the backend's OpenAI proxy, which has no
+ * instruction of its own and no channel for existing code, so there the system
+ * message stays the only place to put either.
  */
-export function aiContextForFile(path: string, content: string) {
+export function aiContextForFile(path: string, content: string): string | undefined {
+  if (path.endsWith('.hl')) {
+    return undefined;
+  }
   if (content.length > 0) {
     return '\n\nChange or modify this code according to instructions in the next message:\n\n' +
       content;
-  }
-  if (path.endsWith('.hl')) {
-    return 'You are a Hyperlambda software developer AI assistant and you will return ONLY ' +
-      'CODE! No ``` characters, or explanations, ONLY the code! In the next message you will ' +
-      'be given a natural language query being a request from the user. Return only the RAW ' +
-      "code that solves the user' problem";
   }
   return 'You are a software developer AI assistant and you will return ONLY CODE! No ``` ' +
     'characters, or explanations, ONLY the code! In the next message you will be given a ' +

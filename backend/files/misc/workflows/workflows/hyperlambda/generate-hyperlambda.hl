@@ -23,6 +23,13 @@
    // Optional value. If true, executes code immediately and returns result instead of code.
    immediate_mode:bool
 
+   /*
+    * Optional existing code you want changed. Supply it when modifying a file rather than creating
+    * one, and describe only the change in [prompt] - the generator then keeps the comment the file
+    * already had instead of replacing it with a description of the change.
+    */
+   old_code:string
+
 // Ensuring user is root.
 auth.ticket.verify:root
 
@@ -32,6 +39,20 @@ validators.mandatory:x:@.arguments/*/prompt
 try
    add:x:./*/http.post/*/payload
       get-nodes:x:@.arguments/*/prompt
+
+   /*
+    * The generator takes existing code as [data], which it forwards as [old_code] - the argument
+    * that tells it this is a change rather than a fresh generation.
+    */
+   if
+      and
+         exists:x:@.arguments/*/old_code
+         not-null:x:@.arguments/*/old_code
+      .lambda
+         unwrap:x:+/*/*
+         add:x:../*/try/*/http.post/*/payload
+            .
+               data:x:@.arguments/*/old_code
    .start
    set-value:x:-
       date.now

@@ -180,6 +180,7 @@ export default function Playground() {
       <AiPrompt
         fileType="hl"
         getContext={() => aiContextForFile('/playground.hl', code)}
+        getOldCode={() => code}
         session="hyperlambda-playground.editor"
         onResult={setCode}
         onError={message => showToast(message, true)}

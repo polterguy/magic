@@ -1033,6 +1033,7 @@ export default function Files() {
             <AiPrompt
               fileType={selectedFile.substring(selectedFile.lastIndexOf('.') + 1)}
               getContext={() => aiContextForFile(selectedFile, content)}
+              getOldCode={() => content}
               session={selectedFile}
               onResult={updateContent}
               onError={message => show(message, true)}
