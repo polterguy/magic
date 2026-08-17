@@ -29,6 +29,12 @@ export interface Section {
   description?: string;
 }
 
+/*
+ * Ordered by the path through the product rather than by what each section is:
+ * connect data, explore it, generate an API from it, inspect that API, then make
+ * it intelligent. The hand-authoring tools sit below that run, since generating
+ * a backend is the normal way to get one and writing it by hand is the fallback.
+ */
 export const SECTIONS: Section[] = [
   {
     to: '/',
@@ -36,18 +42,10 @@ export const SECTIONS: Section[] = [
     Icon: HomeIcon,
   },
   {
-    to: '/hyper-ide',
-    label: 'Hyper IDE',
-    Icon: CodeFileIcon,
-    description: 'Edit any file on your server, execute Hyperlambda, and turn ' +
-      'your endpoints into AI functions.',
-  },
-  {
-    to: '/hyperlambda-playground',
-    label: 'Playground',
-    Icon: PlayIcon,
-    description: 'Execute Hyperlambda on your server and see what it returns, ' +
-      'without saving anything first.',
+    to: '/databases',
+    label: 'Databases',
+    Icon: DatabaseIcon,
+    description: 'Create new databases, connect to existing ones, and take backups.',
   },
   {
     to: '/sql-studio',
@@ -55,12 +53,6 @@ export const SECTIONS: Section[] = [
     Icon: TerminalIcon,
     description: 'Query your databases, and design them — create tables, add ' +
       'columns and foreign keys without writing the DDL yourself.',
-  },
-  {
-    to: '/databases',
-    label: 'Databases',
-    Icon: DatabaseIcon,
-    description: 'Create new databases, connect to existing ones, and take backups.',
   },
   {
     to: '/generator',
@@ -77,11 +69,25 @@ export const SECTIONS: Section[] = [
       'arguments, and grab their OpenAPI specification.',
   },
   {
-    to: '/user-roles-management',
-    label: 'Users & roles',
-    Icon: UserIcon,
-    description: 'Decide who can reach your backend, and which roles gate which ' +
-      'endpoints.',
+    to: '/machine-learning',
+    label: 'Machine Learning',
+    Icon: NeuralIcon,
+    description: 'Train AI models on your own content by crawling a site or ' +
+      'uploading files, then embed them as chatbots.',
+  },
+  {
+    to: '/hyper-ide',
+    label: 'Hyper IDE',
+    Icon: CodeFileIcon,
+    description: 'Edit any file on your server, execute Hyperlambda, and turn ' +
+      'your endpoints into AI functions.',
+  },
+  {
+    to: '/hyperlambda-playground',
+    label: 'Playground',
+    Icon: PlayIcon,
+    description: 'Execute Hyperlambda on your server and see what it returns, ' +
+      'without saving anything first.',
   },
   {
     to: '/task-manager',
@@ -91,11 +97,11 @@ export const SECTIONS: Section[] = [
       'pattern, or once at a fixed date.',
   },
   {
-    to: '/machine-learning',
-    label: 'Machine Learning',
-    Icon: NeuralIcon,
-    description: 'Train AI models on your own content by crawling a site or ' +
-      'uploading files, then embed them as chatbots.',
+    to: '/user-roles-management',
+    label: 'Users & roles',
+    Icon: UserIcon,
+    description: 'Decide who can reach your backend, and which roles gate which ' +
+      'endpoints.',
   },
   {
     to: '/plugins',
