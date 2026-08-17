@@ -21,8 +21,8 @@
    // Mandatory argument being name of module to generate the endpoint inside of.
    moduleName:string
 
-   // Mandatory argument being name of the generated endpoint, without verb and extension - its relative URL becomes 'moduleName/endpointName'.
-   endpointName:string
+   // Mandatory argument being relative URL of the generated endpoint, without verb and extension - its full URL becomes 'moduleName/moduleUrl'.
+   moduleUrl:string
 
    // Mandatory argument being HTTP verb of the generated endpoint. Can be either 'get', 'post', 'put', 'delete' or 'patch'. Use 'get' for endpoints reading data.
    verb:string
@@ -34,7 +34,7 @@
    arguments:string
 
    // Optional argument being comma separated list of roles allowed to invoke the endpoint. Omitting it creates an endpoint anyone can invoke.
-   authorization:string
+   auth:string
 
    // Optional argument that if true will overwrite a previously generated endpoint file.
    overwrite:bool
@@ -71,15 +71,20 @@ set-value:x:@.arguments/*/database
    get-value:x:@strings.concat
 
 /*
- * The generator names the type argument [databaseType], and knows nothing of [connection-string],
- * so translating before passing the arguments through.
+ * Translating to the names the generator declares. This file's arguments match crudify's, since
+ * the two are used one after the other and differing names for the same thing is a trap - but the
+ * generator underneath predates both and names three of them differently.
  */
 unwrap:x:+/*
 add:x:@.arguments
    .
       databaseType:x:@.arguments/*/database-type
+      endpointName:x:@.arguments/*/moduleUrl
+      authorization:x:@.arguments/*/auth
 remove-nodes:x:@.arguments/*/database-type
 remove-nodes:x:@.arguments/*/connection-string
+remove-nodes:x:@.arguments/*/moduleUrl
+remove-nodes:x:@.arguments/*/auth
 
 // Passing arguments through to the SQL endpoint generator.
 add:x:./*/execute-file
