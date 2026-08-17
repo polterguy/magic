@@ -66,6 +66,16 @@ export default function EditSnippetDialog(props: {
     setBusy(true);
     try {
       if (props.existing) {
+
+        /*
+         * Whether this snippet carried an embedding before the edit. The update
+         * clears it either way, since a vector describes the wording it was
+         * built from — but only a snippet that had one has anything to restore.
+         * One left unembedded on purpose stays that way, waiting for the next
+         * bulk vectorise exactly as a newly created one does.
+         */
+        const wasEmbedded = !!props.existing.embedding_vss;
+
         await mlSnippetUpdate({
           id: props.existing.id,
           prompt,
@@ -73,25 +83,24 @@ export default function EditSnippetDialog(props: {
           type: props.type,
         });
 
-        /*
-         * Re-embedding an edited snippet. The update clears the old vector,
-         * since it describes the wording being replaced, so doing this here is
-         * what puts the snippet straight back into use rather than leaving it
-         * waiting for the next bulk vectorise.
-         *
-         * Reported separately from the save, which has already succeeded by
-         * this point — saying "could not save" would be a lie, and saying
-         * nothing would leave the snippet quietly out of circulation.
-         */
-        try {
-          await vectoriseSnippet(props.existing.id);
+        if (!wasEmbedded) {
           showToast('Snippet saved');
-        } catch (err: any) {
-          showToast(
-            'Snippet saved, but re-embedding it failed — it will not be matched until you '
-              + 'vectorise the model. ' + err.message,
-            true,
-            err.logId);
+        } else {
+          /*
+           * Reported separately from the save, which has already succeeded by
+           * this point — saying "could not save" would be a lie, and saying
+           * nothing would leave the snippet quietly out of circulation.
+           */
+          try {
+            await vectoriseSnippet(props.existing.id);
+            showToast('Snippet saved and re-vectorised');
+          } catch (err: any) {
+            showToast(
+              'Snippet saved, but re-vectorising it failed — it will not be matched until you '
+                + 'vectorise the model. ' + err.message,
+              true,
+              err.logId);
+          }
         }
       } else {
         await mlSnippetCreate({ prompt, completion, type: props.type, meta: null, uri: null });
