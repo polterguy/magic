@@ -81,14 +81,6 @@ for-each:x:@http.get/*/content/*/data/*
             .
                vector:bool:true
 
-      case:gpt-5-chat-latest
-         add:x:@.dp/#
-            .
-               tokens:int:400000
-               chat:bool:true
-               input_price:decimal:1.25
-               output_price:decimal:10
-
       case:gpt-5.2
          add:x:@.dp/#
             .

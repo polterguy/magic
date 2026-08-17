@@ -58,7 +58,7 @@ validators.integer:x:@.arguments/*/max_tokens
 validators.default:x:@.arguments
    vector_model:text-embedding-3-small
    retrieval:embeddings
-   model:gpt-5-chat-latest
+   model:gpt-5.6-luna
    threshold:decimal:0.3
 
 // Opening up database connection.

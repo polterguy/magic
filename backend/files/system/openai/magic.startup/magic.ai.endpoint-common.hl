@@ -362,11 +362,6 @@ slots.create:magic.ai.endpoint-common
             .
                model_size:int:200000
 
-      case:gpt-5-chat-latest
-         add:x:@.model
-            .
-               model_size:int:400000
-
       case:gpt-5.2
          add:x:@.model
             .

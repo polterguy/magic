@@ -1,0 +1,41 @@
+
+/*
+ * Migrates machine learning types off models OpenAI has retired.
+ *
+ * OpenAI deprecated 'gpt-5-chat-latest', and it now answers 404 on both the chat completions and
+ * the responses endpoints - so a type still referencing it fails on its first prompt. Removing the
+ * model from the code cannot repair types that already exist, since those live in the database,
+ * hence this runs at startup and repoints them at the model the default type uses.
+ */
+try
+
+   // Connecting to Magic database.
+   data.connect:[generic|magic]
+
+      // Repointing any type still referencing the retired model.
+      data.update
+         table:ml_types
+         values
+            model:gpt-5.6-luna
+         where
+            and
+               model.eq:gpt-5-chat-latest
+
+      /*
+       * Only logging when something was actually changed - a silent rewrite of somebody's
+       * configuration is worse than a noisy one, and on every later startup this updates nothing.
+       */
+      if
+         mt:x:@data.update
+            .:int:0
+         .lambda
+            log.info:Migrated machine learning types off a model OpenAI has deprecated
+               count:x:@data.update
+               from:gpt-5-chat-latest
+               to:gpt-5.6-luna
+
+.catch
+
+   // Doing some basic logging.
+   log.info:Something went wrong as we tried to migrate deprecated machine learning models
+      message:x:@.arguments/*/message

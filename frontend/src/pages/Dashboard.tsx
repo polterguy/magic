@@ -620,7 +620,6 @@ const BOT_MODELS = [
   'gpt-5.4-mini',
   'gpt-5.4',
   'gpt-5.4-pro',
-  'gpt-5-chat-latest',
   'gpt-4.1-mini-2025-04-14',
   'gpt-4.1-2025-04-14',
 ];
