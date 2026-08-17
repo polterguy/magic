@@ -2613,16 +2613,38 @@ kbd {
   color: var(--text-soft);
 }
 
-/* KPI cards that navigate — the number is the link. */
+/*
+ * KPI cards that navigate — the number is the link.
+ *
+ * Four of the five cells go somewhere and one does not, and nothing said which
+ * was which: the only hover feedback was the left hairline changing colour,
+ * which the first cell does not even have. So the link cells carry an arrow
+ * after their label at rest, and tint the whole cell on hover.
+ */
 a.kpi-link {
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.12s, transform 0.06s;
+  transition: border-color 0.12s, background 0.12s, transform 0.06s;
+}
+
+a.kpi-link .kpi-label::after {
+  content: ' →';
+  opacity: 0.4;
+  transition: opacity 0.12s;
 }
 
 a.kpi-link:hover {
   color: inherit;
   border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+a.kpi-link:hover .kpi-label {
+  color: var(--accent);
+}
+
+a.kpi-link:hover .kpi-label::after {
+  opacity: 1;
 }
 
 a.kpi-link:active {
