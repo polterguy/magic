@@ -1355,6 +1355,15 @@ export function chatDownloadUrl(ticket: string, file: string) {
     encodeURIComponent(ticket) + '&file=' + encodeURIComponent(file);
 }
 
+/*
+ * Re-embeds a single snippet. The embedding is computed from prompt and
+ * completion together, so editing either one leaves the stored vector
+ * describing text that no longer exists.
+ */
+export function vectoriseSnippet(id: number) {
+  return http.post<any>('/magic/system/openai/vectorise-snippet', { id });
+}
+
 export function vectoriseType(type: string, channel: string) {
   return http.post<any>('/magic/system/openai/vectorise', {
     type,

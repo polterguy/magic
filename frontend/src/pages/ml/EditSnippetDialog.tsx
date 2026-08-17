@@ -7,7 +7,7 @@ import { useState } from 'react';
 import AiPrompt from '../../components/AiPrompt';
 import CodeEditor from '../../components/CodeEditor';
 import { Modal } from '../../components/Dialogs';
-import { mlSnippetCreate, mlSnippetUpdate } from '../../lib/api';
+import { mlSnippetCreate, mlSnippetUpdate, vectoriseSnippet } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 
 export default function EditSnippetDialog(props: {
@@ -72,10 +72,31 @@ export default function EditSnippetDialog(props: {
           completion,
           type: props.type,
         });
+
+        /*
+         * Re-embedding an edited snippet. The update clears the old vector,
+         * since it describes the wording being replaced, so doing this here is
+         * what puts the snippet straight back into use rather than leaving it
+         * waiting for the next bulk vectorise.
+         *
+         * Reported separately from the save, which has already succeeded by
+         * this point — saying "could not save" would be a lie, and saying
+         * nothing would leave the snippet quietly out of circulation.
+         */
+        try {
+          await vectoriseSnippet(props.existing.id);
+          showToast('Snippet saved');
+        } catch (err: any) {
+          showToast(
+            'Snippet saved, but re-embedding it failed — it will not be matched until you '
+              + 'vectorise the model. ' + err.message,
+            true,
+            err.logId);
+        }
       } else {
         await mlSnippetCreate({ prompt, completion, type: props.type, meta: null, uri: null });
+        showToast('Snippet saved');
       }
-      showToast('Snippet saved');
       props.onSaved();
     } catch (err: any) {
       showToast(err.message, true, err.logId);
