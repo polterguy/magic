@@ -869,6 +869,7 @@ function SqlEndpointTab() {
   const selection = useDatabaseSelection();
   const [roles, setRoles] = useState<string[]>([]);
   const [auth, setAuth] = useState<string[]>(['root', 'admin']);
+  const [authOpen, setAuthOpen] = useState(false);
   const [verb, setVerb] = useState('get');
   const [moduleName, setModuleName] = useState('');
   const [endpointName, setEndpointName] = useState('custom-sql');
@@ -982,14 +983,22 @@ function SqlEndpointTab() {
           {busy ? 'Generating…' : '⚙ Generate endpoint'}
         </button>
       </div>
+      {/*
+        * Authorisation reads the way it does on the CRUD tab: the roles as a
+        * summary, and the chips only once you ask to change them. The chips
+        * take a full flex basis so they break onto their own line rather than
+        * pushing the rest of the toolbar along.
+        */}
       <div className="toolbar">
         <div style={{ fontWeight: 600, fontSize: 13 }}>Authorisation:</div>
-        <RoleChips
-          roles={roles}
-          selected={auth}
-          onToggle={(role, selected) => setAuth(selected
-            ? [...auth, role]
-            : auth.filter(candidate => candidate !== role))} />
+        <span>
+          {auth.length > 0 ? auth.join(', ') : <em className="muted">public — no roles</em>}
+        </span>
+        <button
+          className="btn btn-secondary btn-small"
+          onClick={() => setAuthOpen(!authOpen)}>
+          {authOpen ? 'Done' : 'Edit'}
+        </button>
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input
             type="checkbox"
@@ -997,6 +1006,16 @@ function SqlEndpointTab() {
             onChange={e => setOverwrite(e.target.checked)} />
           Overwrite
         </label>
+        {authOpen && (
+          <div style={{ flexBasis: '100%' }}>
+            <RoleChips
+              roles={roles}
+              selected={auth}
+              onToggle={(role, selected) => setAuth(selected
+                ? [...auth, role]
+                : auth.filter(candidate => candidate !== role))} />
+          </div>
+        )}
       </div>
       <div className="toolbar">
         <div style={{ fontWeight: 600, fontSize: 13 }}>Arguments:</div>
