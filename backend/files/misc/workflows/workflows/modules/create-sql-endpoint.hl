@@ -75,7 +75,7 @@ set-value:x:@.arguments/*/database
  * the two are used one after the other and differing names for the same thing is a trap - but the
  * generator underneath predates both and names three of them differently.
  */
-unwrap:x:+/*
+unwrap:x:+/*/*
 add:x:@.arguments
    .
       databaseType:x:@.arguments/*/database-type

@@ -77,7 +77,7 @@ set-value:x:@.arguments/*/database
  * The CRUD generator names the type argument [databaseType], and knows nothing of
  * [connection-string], so translating before passing the arguments through.
  */
-unwrap:x:+/*
+unwrap:x:+/*/*
 add:x:@.arguments
    .
       databaseType:x:@.arguments/*/database-type
