@@ -45,6 +45,7 @@ function buildCrudifyPayload(
     aggregate: boolean;
     distinct: boolean;
     search: boolean;
+    verbose: boolean;
     // URL overrides — module defaults to the database name, component to the
     // table name (and is only overridable when one single table is selected,
     // like the old dashboard).
@@ -86,7 +87,7 @@ function buildCrudifyPayload(
     verb,
     returnId: columns.filter((c: any) => c.primary && !c.automatic).length === 0,
     overwrite: options.overwrite,
-    verbose: false,
+    verbose: options.verbose,
     join: true,
     cqrs: false,
     args: { columns: [], primary: [] },
@@ -316,6 +317,7 @@ function CrudTab(props: { guided: boolean }) {
   const [aggregate, setAggregate] = useState(false);
   const [distinct, setDistinct] = useState(false);
   const [search, setSearch] = useState(false);
+  const [verbose, setVerbose] = useState(false);
   const [busy, setBusy] = useState(false);
   // The guided flow's third step: what generation produced, and where it lives.
   const [done, setDone] = useState<{ generated: number; loc: number; module: string } | null>(null);
@@ -378,7 +380,7 @@ function CrudTab(props: { guided: boolean }) {
         const payload = buildCrudifyPayload(
           selection.type, selection.connectionString, selection.database, table, verb,
           { ...options, auth, logging, cache: Number(cache), publicCache, overwrite,
-            paging, sorting, moduleName, moduleUrl: null });
+            paging, sorting, verbose, moduleName, moduleUrl: null });
         if (canGenerate(payload, verb)) {
           total += endpointsForVerb(verb, options);
         }
@@ -387,7 +389,7 @@ function CrudTab(props: { guided: boolean }) {
     return total;
   }, [tables, selectedTables, verbs, aggregate, distinct, search, selection.type,
       selection.connectionString, selection.database, auth, logging, cache, publicCache,
-      overwrite, paging, sorting, moduleName]);
+      overwrite, paging, sorting, verbose, moduleName]);
 
   function toggleExpanded(name: string) {
     const next = new Set(expandedTables);
@@ -443,6 +445,7 @@ function CrudTab(props: { guided: boolean }) {
       aggregate,
       distinct,
       search,
+      verbose,
       moduleName,
       moduleUrl: singleTable ? componentUrl : null,
     };
@@ -776,6 +779,20 @@ function CrudTab(props: { guided: boolean }) {
                     checked={search}
                     onChange={e => setSearch(e.target.checked)} />
                   Search
+                </label>
+                {/*
+                  * Verbose adds the less common comparison operators (neq, mt, lt,
+                  * mteq, lteq) as filtering arguments, on top of the eq and like
+                  * arguments you always get.
+                  */}
+                <label
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                  title="Add neq, mt, lt, mteq and lteq filtering arguments for every column">
+                  <input
+                    type="checkbox"
+                    checked={verbose}
+                    onChange={e => setVerbose(e.target.checked)} />
+                  Verbose
                 </label>
               </div>
             </div>

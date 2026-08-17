@@ -422,12 +422,12 @@ semaphore:crudifier
              * endpoints.
              */
             .operators
-               mt
-               lt
-               mteq
-               lteq
-               neq
-               eq
+               mt:greater than
+               lt:less than
+               mteq:greater than or equal to
+               lteq:less than or equal to
+               neq:not equal to
+               eq:equal to
 
             // Checking if caller wants 'verbose' scaffolding.
             if
@@ -462,8 +462,14 @@ semaphore:crudifier
 
                            // String type of argument, appending ".like" to legal arguments.
                            .buffer
+                              ..
                               .name:x:@.dp/#/*/type
-                           unwrap:x:@.buffer/*
+                           set-value:x:@.buffer/0
+                              strings.concat
+                                 .:"Optional filtering argument matching "
+                                 get-value:x:@.dp/#/*/name
+                                 .:" column using fuzzy matching where % is a wildcard"
+                           unwrap:x:@.buffer/*/.name
                            set-name:x:@.buffer/*/.name
                               strings.concat
                                  get-value:x:@.arguments/*/table
@@ -485,8 +491,14 @@ semaphore:crudifier
 
                            // Boolean type of argument, removing everything but ".eq" type of arguments.
                            .buffer
+                              ..
                               .name:x:@.dp/#/*/type
-                           unwrap:x:@.buffer/*
+                           set-value:x:@.buffer/0
+                              strings.concat
+                                 .:"Optional filtering argument restricting the result to records where "
+                                 get-value:x:@.dp/#/*/name
+                                 .:" column is equal to the specified value"
+                           unwrap:x:@.buffer/*/.name
                            set-name:x:@.buffer/*/.name
                               strings.concat
                                  get-value:x:@.arguments/*/table
@@ -503,7 +515,15 @@ semaphore:crudifier
                          */
                         for-each:x:@.operators/*
                            .buffer
+                              ..
                               .name:x:@.dp/@.dp/#/*/type
+                           set-value:x:@.buffer/0
+                              strings.concat
+                                 .:"Optional filtering argument restricting the result to records where "
+                                 get-value:x:@.dp/@.dp/#/*/name
+                                 .:" column is "
+                                 get-value:x:@.dp/#
+                                 .:" the specified value"
                            unwrap:x:@.buffer/*/.name
                            set-name:x:@.buffer/*/.name
                               strings.concat
@@ -620,6 +640,16 @@ semaphore:crudifier
                                  as:x:@.display-name
 
                         // Then we need to add the eq and like query parameters for the referenced columns.
+                        set-value:x:+/+/+/+/*/0
+                           strings.concat
+                              .:"Optional filtering argument restricting the result to records where "
+                              get-value:x:@.display-col
+                              .:" column is equal to the specified value"
+                        set-value:x:+/+/+/*/2
+                           strings.concat
+                              .:"Optional filtering argument matching "
+                              get-value:x:@.display-col
+                              .:" column using fuzzy matching where % is a wildcard"
                         set-name:x:+/+/*/*/like
                            strings.concat
                               get-value:x:@.display-col
@@ -630,7 +660,9 @@ semaphore:crudifier
                               .:.eq
                         add:x:@apply/*/.arguments
                            .
+                              ..
                               eq:string
+                              ..
                               like:string
                         unwrap:x:+/*/*
                         add:x:@.temp-cols
@@ -644,7 +676,9 @@ semaphore:crudifier
                eq:x:@.arguments/*/paging
                   .:bool:false
             .lambda
+               remove-nodes:x:@apply/*/.arguments/*/limit/-
                remove-nodes:x:@apply/*/.arguments/*/limit
+               remove-nodes:x:@apply/*/.arguments/*/offset/-
                remove-nodes:x:@apply/*/.arguments/*/offset
 
          else
@@ -665,7 +699,9 @@ semaphore:crudifier
                eq:x:@.arguments/*/sorting
                   .:bool:false
             .lambda
+               remove-nodes:x:@apply/*/.arguments/*/order/-
                remove-nodes:x:@apply/*/.arguments/*/order
+               remove-nodes:x:@apply/*/.arguments/*/direction/-
                remove-nodes:x:@apply/*/.arguments/*/direction
 
          else
@@ -681,6 +717,7 @@ semaphore:crudifier
 
          // Removing [operator] argument if there are "locked" columns.
          if:x:@.arguments/*/args/*/columns/*/*/locked
+            remove-nodes:x:@apply/*/.arguments/*/operator/-
             remove-nodes:x:@apply/*/.arguments/*/operator
             remove-nodes:x:@apply/*/validators.enum/-
             remove-nodes:x:@apply/*/validators.enum
