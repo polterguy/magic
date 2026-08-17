@@ -1,8 +1,8 @@
 
 /*
- * Downloads the specified file to the client. Returns [url] being a short-lived
- * URL that downloads the file with a plain HTTP GET request, allowing you to download binary files,
- * images, etc.
+ * Downloads the specified file to the client by signalling the frontend, which renders a download
+ * button carrying a short-lived ticket. Works for binary files, images, etc. No URL is returned -
+ * the frontend already knows which backend it is attached to, and builds the link itself.
  */
 .arguments
 
@@ -64,17 +64,6 @@ sockets.signal:x:@.arguments/*/_session
       filename:x:@.arguments/*/filename
       ticket:x:@auth.ticket.create
 
-// Creating our URL.
-.url
-set-value:x:@.url
-   strings.concat
-      .:"https://"
-      request.host
-      .:"/magic/system/file-system/file-with-token?file="
-      strings.url-encode:x:@.arguments/*/filename
-      .:"&access_token="
-      get-value:x:@auth.ticket.create
-
 // Returning success
 crypto.random
    min:10
@@ -82,5 +71,4 @@ crypto.random
 yield
    download_id:x:@crypto.random
    filename:x:@.arguments/*/filename
-   url:x:@.url
    expires_utc:x:@math.add

@@ -152,6 +152,18 @@ html[data-theme="light"] {
 
 * { box-sizing: border-box; }
 
+/*
+ * No image overflows its column, wherever it came from. Chat answers and HTML
+ * widgets render images this app never sized and cannot size, so the cap has to
+ * be global rather than per-container. height:auto keeps the aspect ratio when
+ * the width is what gets clamped, and both are element selectors — anything
+ * that genuinely wants a fixed size says so with a class and still wins.
+ */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 html, body, #root {
   margin: 0;
   height: 100%;

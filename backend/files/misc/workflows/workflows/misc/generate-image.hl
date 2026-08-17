@@ -1,9 +1,10 @@
 /*
  * Creates an image using OpenAI's GPT Image 2 model according to the specified [prompt], [size],
  * and [quality], saves it to [filename] on the server, and returns the filename and URL of the
- * image. The URL is only returned if the image is saved inside the publicly served '/etc/www/'
- * folder, and [filename] defaults to a randomly named PNG file inside of '/etc/www/assets/images/'
- * if omitted.
+ * image. The URL is relative to the site root, and is only returned if the image is saved inside
+ * the publicly served '/etc/www/' folder. [filename] defaults to a randomly named PNG file inside
+ * of '/etc/www/assets/images/' if omitted. Self contained - invokes OpenAI directly, so it does not
+ * require the OpenAI module to be installed. Reads its API key from the 'magic:openai:key' setting.
  */
 .arguments
 
@@ -27,19 +28,51 @@ validators.default:x:@.arguments
    size:1024x1024
    quality:auto
 
+// Retrieving OpenAI API token from configuration settings.
+.token
+set-value:x:@.token
+   strings.concat
+      .:"Bearer "
+      config.get:"magic:openai:key"
+
 /*
- * Invokes OpenAI's image generation API with the specified [query] and [model].
+ * Invokes OpenAI's image generation API.
  *
- * Will use the default API key found from configurations.
+ * Inlined rather than delegated to the OpenAI module's action, since that module is a plugin that
+ * is not always installed, and this function should not depend on it being there.
  */
-execute:magic.workflows.actions.execute
-   name:openai-image-create
-   filename:/modules/openai/workflows/actions/openai-image-create.hl
-   arguments
+http.post:"https://api.openai.com/v1/images/generations"
+   convert:bool:true
+   headers
+      Authorization:x:@.token
+      Content-Type:application/json
+   payload
       model:gpt-image-2
+      prompt:x:@.arguments/*/prompt
+      n:int:1
       size:x:@.arguments/*/size
       quality:x:@.arguments/*/quality
-      query:x:@.arguments/*/prompt
+
+// Sanity checking above invocation.
+if
+   not
+      and
+         mte:x:@http.post
+            .:int:200
+         lt:x:@http.post
+            .:int:300
+   .lambda
+
+      // Oops, error - Logging error and returning status 500 to caller.
+      lambda2hyper:x:@http.post
+      log.error:Something went wrong while invoking OpenAI
+         message:x:@http.post/*/content/*/error/*/message
+         status:x:@http.post
+         error:x:@lambda2hyper
+      throw:Something went wrong while invoking OpenAI
+         message:x:@http.post/*/content/*/error/*/message
+         status:x:@http.post
+         error:x:@lambda2hyper
 
 // Figuring out what filename to save the image as.
 .filename
@@ -83,31 +116,31 @@ else
       max:20
    set-value:x:@.filename
       strings.concat
-         .:/etc/www/assets/images/
+         .:/etc/www/
          get-value:x:@crypto.random
          .:.png
 
-// Converting base64 encoded image returned from above action to raw bytes.
-convert:x:@execute/*/b64
+// Converting base64 encoded image returned from OpenAI to raw bytes.
+convert:x:@http.post/*/content/*/data/0/*/b64_json
    type:from-base64
 
 // Saving image to disk.
 io.file.save.binary:x:@.filename
    get-value:x:@convert
 
-// Creating our URL if file is publicly served.
+/*
+ * Creating our URL if file is publicly served, relative to the site root rather
+ * than absolute. This function executes on a separate thread, where there is no
+ * incoming request to read a host name from.
+ */
 .url
 if
    strings.starts-with:x:@.filename
       .:/etc/www/
    .lambda
-      strings.substring:x:@.filename
-         .:int:8
       set-value:x:@.url
-         strings.concat
-            .:"https://"
-            request.host
-            get-value:x:@strings.substring
+         strings.substring:x:@.filename
+            .:int:8
 
 // Signaling frontend
 sockets.signal:x:@.arguments/*/_session

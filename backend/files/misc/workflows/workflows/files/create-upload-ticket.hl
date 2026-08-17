@@ -1,8 +1,9 @@
 
 /*
  * Creates a short-lived upload ticket allowing the caller to upload a file using streamed
- * multipart/form-data content, without passing the file through the MCP channel. Returns [url],
- * [ticket] and [expires_utc]. Upload the file by POST'ing to [url] with an Authorization header
+ * multipart/form-data content, without passing the file through the MCP channel. Returns [url]
+ * relative to this server's root, [ticket] and [expires_utc]. Upload the file by POST'ing to [url]
+ * resolved against the server you invoked this on, with an Authorization header
  * being 'Bearer ' + [ticket], and multipart form fields [file] being the file content, [filename]
  * being the destination path on the server, and optionally [width] and/or [height] to resize
  * images - supplying only one of [width] or [height] preserves the aspect ratio of the image.
@@ -27,16 +28,8 @@ auth.ticket.create
    roles
       .:root
 
-// Creating our URL.
-.url
-set-value:x:@.url
-   strings.concat
-      .:"https://"
-      request.host
-      .:/magic/system/file-system/upload
-
 // Returning ticket to caller.
 yield
-   url:x:@.url
+   url:/magic/system/file-system/upload
    ticket:x:@auth.ticket.create
    expires_utc:x:@math.add

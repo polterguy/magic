@@ -168,6 +168,8 @@ export default function ChatDrawer(props: {
   const sessionRef = useRef<string | null>(null);
   const connectionRef = useRef<HubConnection | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  // Whether the transcript is following the newest content — see onListScroll.
+  const pinned = useRef(true);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // Escape closes — plain listener, so open dialogs above still get it first.
@@ -187,13 +189,33 @@ export default function ChatDrawer(props: {
   useEffect(() => {
     if (props.open) {
       inputRef.current?.focus();
+      // Reopening starts at the newest message, whatever the last visit ended on.
+      pinned.current = true;
     }
   }, [props.open]);
 
-  // Follow the stream — chat scrolls to the newest content on every change.
-  useEffect(() => {
+  /*
+   * Follow the stream, but only while the reader is actually at the bottom.
+   * Scrolling up during a long answer is deliberate — usually to re-read
+   * something the model already said — and yanking the view back down on the
+   * next token makes that impossible. Scrolling back to the bottom resumes
+   * following, and sending re-pins unconditionally.
+   */
+  function onListScroll() {
     const list = listRef.current;
     if (list) {
+      /*
+       * A few pixels of slack: sub-pixel line heights mean a list sitting at
+       * the bottom rarely reports scrollTop + clientHeight as exactly
+       * scrollHeight, and an exact test would unpin on its own.
+       */
+      pinned.current = list.scrollHeight - list.scrollTop - list.clientHeight < 40;
+    }
+  }
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (list && pinned.current) {
       list.scrollTop = list.scrollHeight;
     }
   }, [messages, streaming]);
@@ -364,6 +386,8 @@ export default function ChatDrawer(props: {
       return;
     }
     const attached = files;
+    // Sending is a request to see the answer, wherever they had scrolled to.
+    pinned.current = true;
     setInput('');
     setFiles([]);
     setMessages(current => [...current, {
@@ -450,7 +474,7 @@ export default function ChatDrawer(props: {
           ×
         </button>
       </div>
-      <div className="chat-messages" ref={listRef} onClick={onListClick}>
+      <div className="chat-messages" ref={listRef} onClick={onListClick} onScroll={onListScroll}>
         {messages.length === 0 && (
           <p className="muted" style={{ textAlign: 'center', marginTop: 48 }}>
             Talk to your cloudlet — generate endpoints, query your databases,
