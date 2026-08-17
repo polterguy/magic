@@ -3575,6 +3575,16 @@ tr.vss-irrelevant td {
   box-shadow: inset 3px 0 0 var(--accent);
 }
 
+/*
+ * The returned value, sitting at the end of the recording as a step of its own.
+ * Separated by a rule rather than a colour, since it is the outcome of the run
+ * rather than another thing that ran.
+ */
+.debug-steps tbody tr.returned td {
+  border-top: 2px solid var(--border-strong);
+  font-style: italic;
+}
+
 /* Rewind marks the statement that threw, in the step list and in the code. */
 .debug-steps tbody tr.failed td { color: var(--danger); }
 .debug-steps tbody tr.failed.current td { color: var(--selection-text); }

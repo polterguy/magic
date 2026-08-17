@@ -20,8 +20,22 @@ export default function DebugDialog(props: {
   const steps = props.recording.steps ?? [];
   const error = props.recording.error;
 
+  /*
+   * Whatever the lambda returned becomes one more entry after the slots that
+   * ran, rather than a panel of its own. The timeline already ends somewhere,
+   * and the returned value is simply what it ended at - so Next, the arrow keys
+   * and the scrubber all reach it without learning anything new. It also makes
+   * the two outcomes symmetric: a failed run ends at the statement that threw,
+   * a successful one ends at what came out.
+   */
+  const returned = props.recording.returned;
+  const hasReturn = returned !== undefined && returned !== null;
+  const returnIndex = hasReturn ? steps.length : -1;
+  const lastIndex = steps.length - 1 + (hasReturn ? 1 : 0);
+
   // Opening at the beginning, since stepping forward is how the story reads.
   const [index, setIndex] = useState(0);
+  const onReturn = index === returnIndex;
   const current = steps[index];
 
   /*
@@ -44,12 +58,12 @@ export default function DebugDialog(props: {
         setIndex(i => Math.max(0, i - 1));
       } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
         e.preventDefault();
-        setIndex(i => Math.min(steps.length - 1, i + 1));
+        setIndex(i => Math.min(lastIndex, i + 1));
       }
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [steps.length]);
+  }, [lastIndex]);
 
   const total = steps.reduce((sum, step) => sum + (step.elapsed ?? 0), 0);
 
@@ -92,11 +106,14 @@ export default function DebugDialog(props: {
                 {error.message}
               </button>
             )}
-            {props.recording.returned !== undefined
-              && props.recording.returned !== null && (
-              <span className="badge badge-get" title={preview(props.recording.returned, 400)}>
-                returned {preview(props.recording.returned, 40)}
-              </span>
+            {hasReturn && (
+              <button
+                className="badge badge-get"
+                style={{ border: 0, cursor: 'pointer' }}
+                title="Click to see what it returned"
+                onClick={() => setIndex(returnIndex)}>
+                returned {preview(returned, 40)}
+              </button>
             )}
             <span className="spacer" />
             <button
@@ -105,11 +122,11 @@ export default function DebugDialog(props: {
               disabled={index === 0}>
               ‹ Prev
             </button>
-            <span className="mono">{index + 1} / {steps.length}</span>
+            <span className="mono">{index + 1} / {lastIndex + 1}</span>
             <button
               className="btn btn-secondary btn-small"
-              onClick={() => setIndex(i => Math.min(steps.length - 1, i + 1))}
-              disabled={index >= steps.length - 1}>
+              onClick={() => setIndex(i => Math.min(lastIndex, i + 1))}
+              disabled={index >= lastIndex}>
               Next ›
             </button>
           </div>
@@ -117,7 +134,7 @@ export default function DebugDialog(props: {
           <input
             type="range"
             min={0}
-            max={steps.length - 1}
+            max={lastIndex}
             value={index}
             onChange={e => setIndex(Number(e.target.value))}
             style={{ width: '100%', marginBottom: 12 }}
@@ -156,6 +173,17 @@ export default function DebugDialog(props: {
                       <td className="mono muted">{step.elapsed}</td>
                     </tr>
                   ))}
+                  {/* The outcome, sitting where the execution actually ended. */}
+                  {hasReturn && (
+                    <tr
+                      ref={onReturn ? currentRow : undefined}
+                      className={'clickable returned' + (onReturn ? ' current' : '')}
+                      onClick={() => setIndex(returnIndex)}>
+                      <td className="mono muted">↩</td>
+                      <td className="mono">returned</td>
+                      <td />
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -163,15 +191,28 @@ export default function DebugDialog(props: {
             {/* The whole lambda, as it looked after the selected step ran. */}
             <div style={{ flex: '1 1 auto', minWidth: 0 }}>
               <div className="muted" style={{ fontSize: 13, marginBottom: 6 }}>
-                The whole lambda after step {index + 1},
-                {' '}<span className="mono">{current.slot}</span>
+                {onReturn ? 'What the execution returned' : (
+                  <>
+                    The whole lambda after step {index + 1},
+                    {' '}<span className="mono">{current.slot}</span>
+                  </>
+                )}
               </div>
               <CodeEditor
-                value={current.lambda ?? ''}
-                mode="hyperlambda"
+                /*
+                 * The same pane in both modes rather than a second component -
+                 * one keystroke separates the final lambda from the value it
+                 * produced, and comparing them is the point.
+                 */
+                value={onReturn
+                  ? JSON.stringify(returned, null, 2)
+                  : (current.lambda ?? '')}
+                mode={onReturn ? 'application/json' : 'hyperlambda'}
                 readOnly
                 lineNumbers={false}
-                highlightLine={verifiedLine(current.lambda ?? '', current.path, current.slot)}
+                highlightLine={onReturn
+                  ? -1
+                  : verifiedLine(current.lambda ?? '', current.path, current.slot)}
                 highlightClass={index === errorIndex ? 'cm-error-step' : 'cm-current-step'}
                 height="420px" />
             </div>
