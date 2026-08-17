@@ -956,7 +956,6 @@ select prompt, max(completion) as completion
       switch:x:@.arguments/*/model
          case:gpt-5.2
          case:gpt-5.2-pro
-         case:gpt-5.2-codex
          case:gpt-5.3-codex
          case:gpt-5.4
          case:gpt-5.4-mini
@@ -1015,8 +1014,6 @@ select prompt, max(completion) as completion
                      .:gpt-5.2
                   eq:x:@.arguments/*/model
                      .:gpt-5.2-pro
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.2-codex
                   eq:x:@.arguments/*/model
                      .:gpt-5.3-codex
                   eq:x:@.arguments/*/model

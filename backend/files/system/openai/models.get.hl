@@ -90,7 +90,6 @@ for-each:x:@http.get/*/content/*/data/*
                output_price:decimal:7
 
       case:gpt-5.2-pro
-      case:gpt-5.2-codex
          add:x:@.dp/#
             .
                tokens:int:400000

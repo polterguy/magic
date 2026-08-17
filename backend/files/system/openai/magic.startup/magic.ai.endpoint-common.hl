@@ -372,11 +372,6 @@ slots.create:magic.ai.endpoint-common
             .
                model_size:int:400000
 
-      case:gpt-5.2-codex
-         add:x:@.model
-            .
-               model_size:int:400000
-
       case:gpt-5.3-codex
          add:x:@.model
             .
