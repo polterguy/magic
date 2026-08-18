@@ -67,11 +67,17 @@ namespace magic.lambda.io.file
                 lambda = HyperlambdaParser.Parse(await _fileService.LoadAsync(codebehindFilename));
                 input.AddRange(lambda.Children);
 
-                // Executing all [.oninit] lambda objects
-                foreach (var idxInit in input.Children.Where(x => x.Name == ".oninit"))
+                /*
+                 * Executing all [.oninit] lambda objects, masking any debug recorder while doing
+                 * so - the codebehind file's statements are not part of the file being recorded.
+                 */
+                await signaler.ScopeAsync(".debug.recorder", null, async () =>
                 {
-                    await signaler.SignalAsync("eval", idxInit);
-                }
+                    foreach (var idxInit in input.Children.Where(x => x.Name == ".oninit"))
+                    {
+                        await signaler.SignalAsync("eval", idxInit);
+                    }
+                });
             }
 
             // Opening static file as a stream, and dynamically substituting content using "mixin logic".
@@ -179,8 +185,11 @@ namespace magic.lambda.io.file
                 // Storing original lambda object such that we can reset object after execution.
                 var clone = lambda.Clone();
 
-                // Executing lambda object.
-                await signaler.SignalAsync("eval", lambda);
+                // Executing lambda object, masking any debug recorder the same way [.oninit] does.
+                await signaler.ScopeAsync(".debug.recorder", null, async () =>
+                {
+                    await signaler.SignalAsync("eval", lambda);
+                });
 
                 // Making sure we put lambda object back to its original state after execution.
                 lambda.Clear();

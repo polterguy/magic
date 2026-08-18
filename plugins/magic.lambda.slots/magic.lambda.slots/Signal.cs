@@ -68,13 +68,20 @@ namespace magic.lambda.slots
             var result = new Node();
             await signaler.ScopeAsync("slots.result", result, async () =>
             {
-                // Evaluating lambda of slot, making sure we temporary clear any existing [whitelist] declarations.
+                /*
+                 * Evaluating lambda of slot, making sure we temporary clear any existing [whitelist]
+                 * declarations, and mask any debug recorder - the slot's lambda was declared
+                 * elsewhere, so it is not part of the lambda being recorded.
+                 */
                 var lambda = GetLambda(signaler, input, input.Name != "try-signal");
                 if (lambda != null)
                 {
                     await signaler.ScopeAsync("whitelist", null, async () =>
                     {
-                        await signaler.SignalAsync("eval", lambda);
+                        await signaler.ScopeAsync(".debug.recorder", null, async () =>
+                        {
+                            await signaler.SignalAsync("eval", lambda);
+                        });
                     });
                 }
 

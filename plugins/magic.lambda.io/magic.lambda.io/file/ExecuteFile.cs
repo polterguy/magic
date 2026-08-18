@@ -79,8 +79,15 @@ namespace magic.lambda.io.file
                 // Creating and parametrising our lambda object from argument + file's Hyperlambda content.
                 var lambda = GetLambda(input, hyperlambda, filename);
 
-                // Evaluating lambda of slot.
-                await signaler.SignalAsync("eval", lambda);
+                /*
+                 * Evaluating lambda of slot, masking any debug recorder while doing so - this
+                 * file's statements belong to this file, and a recording of whoever invoked us
+                 * would otherwise step into them.
+                 */
+                await signaler.ScopeAsync(".debug.recorder", null, async () =>
+                {
+                    await signaler.SignalAsync("eval", lambda);
+                });
 
                 // Applying result.
                 ApplyResult(input, result);
