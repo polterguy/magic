@@ -18,6 +18,26 @@ validators.mandatory:x:@.arguments/*/username
 validators.mandatory:x:@.arguments/*/password
 
 /*
+ * Throttling login attempts, protecting against brute force attacks. The declarations are
+ * idempotent, keeping existing counters as long as their configuration is unchanged, and the
+ * counters are kept in memory, implying a backend restart resets them.
+ *
+ * Notice, the [ip] throttle resolves the caller's IP from the CF-Connecting-IP header when
+ * present, which an attacker can rotate unless you're behind CloudFlare - hence the global
+ * throttle as a second line of defence.
+ */
+execution.throttle.create:auth.authenticate.ip
+   limit:10
+   window:60
+   per:ip
+execution.throttle:auth.authenticate.ip
+execution.throttle.create:auth.authenticate.global
+   limit:120
+   window:60
+   per:global
+execution.throttle:auth.authenticate.global
+
+/*
  * Checking if JWT secret has been changed, and if not, simply checking if username/password is
  * root/root, and if so returning a valid token allowing the user to setup his or her cloudlet.
  *
