@@ -20,7 +20,7 @@ namespace magic.backend.slots
     /// </summary>
     [Slot(
         Name = "auth.token.verify",
-        Description = "Verifies an externally created JWT token from the required [token] child node",
+        Description = "Verifies an externally created JWT token from the required [token] child node, against one or more trusted [issuer]/[issuers] supplied by the caller",
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "jwt-claims,text,lambda-tree",
         ReturnsDescription = "Returns token claims as child nodes such as [issuer], [email], and optional [name] and [nonce]",
@@ -38,11 +38,28 @@ namespace magic.backend.slots
             var token = input.Children.FirstOrDefault(x => x.Name == "token")?.GetEx<string>() ??
                 throw new HyperlambdaException("No [token] provided to [auth.token.verify]");
 
-            // Finding issuer.
+            /*
+             * Retrieving the issuers our caller trusts. Notice, we never fetch OpenID meta data
+             * from the token's own issuer before it has been matched against this list, since
+             * the issuer of an unverified token is by definition attacker controlled.
+             */
+            var trustedIssuers = input.Children
+                .Where(x => x.Name == "issuer" || x.Name == "issuers")
+                .SelectMany(x => GetIssuers(x))
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToList();
+            if (!trustedIssuers.Any())
+                throw new HyperlambdaException("[auth.token.verify] must be given one or more trusted [issuer] or [issuers] to verify the token against", true, 500);
+
+            // Reading issuer from token, without trusting it.
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadToken(token);
             var secToken = jsonToken as JwtSecurityToken;
             var issuer = secToken.Issuer;
+
+            // Refusing to proceed unless the token's issuer is explicitly trusted by our caller.
+            if (!trustedIssuers.Contains(issuer))
+                throw new HyperlambdaException($"Token issuer of '{issuer}' is not among the trusted issuers supplied to [auth.token.verify]", true, 401);
 
             // Creating our configuration.
             var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
@@ -77,6 +94,25 @@ namespace magic.backend.slots
         /*
          * Private helper methods.
          */
+
+        /*
+         * Returns all issuers carried by the given [issuer]/[issuers] node, supporting
+         * single values, child node lists, and expressions resolving to multiple nodes.
+         */
+        private static IEnumerable<string> GetIssuers(Node node)
+        {
+            // Expressions are evaluated allowing multiple results, e.g. [issuers:x:@.providers/*/issuer].
+            if (node.Value is Expression expression)
+                return expression.Evaluate(node).Select(x => x.GetEx<string>());
+
+            // Lists of issuers given as child nodes.
+            if (node.Children.Any())
+                return node.Children.Select(x => x.GetEx<string>());
+
+            // Single value.
+            return new[] { node.GetEx<string>() };
+        }
+
         private static JwtSecurityToken Validate(
             string token, 
             string issuer, 

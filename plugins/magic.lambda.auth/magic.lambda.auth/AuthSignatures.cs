@@ -140,6 +140,8 @@ namespace magic.lambda.auth.signatures
         public IEnumerable<SlotChild> Children => new[]
         {
             CreateTicketSignature.Option("token", "string", "External JWT token to verify", true, "jwt"),
+            CreateTicketSignature.Option("issuer", "string", "Trusted issuer the token's issuer must equal; meta data is never fetched from issuers not supplied by the caller"),
+            CreateTicketSignature.List("issuers", "string", "Trusted issuers, the token's issuer must equal one of them; meta data is never fetched from issuers not supplied by the caller"),
         };
     }
 }

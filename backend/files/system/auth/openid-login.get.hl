@@ -2,8 +2,9 @@
 /*
  * Verifies the specified OpenID Connect JWT Token and returns a valid application JWT token accordingly.
  *
- * This will automatically find the issuer from the JWT token, download any public keys to verify the
- * signature, and return the email, name and issuer from the token.
+ * This will verify the token towards the issuers of all OpenID providers registered in the system,
+ * refusing to fetch meta data from issuers we do not recognise, download any public keys to verify
+ * the signature, and return the email, name and issuer from the token.
  *
  * If it succeeds it will return a new application specific JWT token.
  * If it fails it will throw an exception.
@@ -16,12 +17,22 @@
    token:string
 
 /*
+ * Loading our registered OpenID providers, such that we can supply the verify slot below
+ * with the complete list of trusted issuers, preventing it from fetching meta data from
+ * issuers we have not registered ourselves.
+ */
+execute-file:/system/auth/openid-providers.get.hl
+   createNonce:bool:false
+
+/*
  * Verifying token.
  *
- * Notice, this will throw an exception if token is not valid.
+ * Notice, this will throw an exception if token is not valid, or its issuer is not
+ * among our registered providers supplied to it above.
  */
 auth.token.verify
    token:x:@.arguments/*/token
+   issuers:x:@execute-file/*/*/issuer
 
 /*
  * Verifying nonce from token to avoid replay attacks.
@@ -43,8 +54,6 @@ cache.set:x:@auth.token.verify/*/nonce
 // Verifying issuer is active, capturing the provider's name as we find it.
 .active:bool:false
 .provider
-execute-file:/system/auth/openid-providers.get.hl
-   createNonce:bool:false
 for-each:x:@execute-file/*
    if
       eq:x:@.dp/#/*/issuer

@@ -125,9 +125,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    * The backend's version, fetched once per backend rather than once per
    * component that displays it. Keyed on the URL rather than the token,
    * since the answer belongs to the cloudlet, not to the session.
+   *
+   * Root only — the endpoint verifies root, and non-root sign-ins land on
+   * the NoAccess screen, which deliberately calls nothing.
    */
   useEffect(() => {
-    if (!token) {
+    if (!token || !isRoot) {
       setVersion('…');
       return;
     }
@@ -136,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(response => { if (!cancelled) { setVersion(response.version); } })
       .catch(() => { if (!cancelled) { setVersion('?'); } });
     return () => { cancelled = true; };
-  }, [backend?.url, token]);
+  }, [backend?.url, token, isRoot]);
 
   /*
    * When the backend answers 401 to a request that carried the token, the

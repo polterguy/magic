@@ -95,9 +95,14 @@ namespace magic.lambda.auth.helpers
                 if (userRoles.Any(x => x.Get<string>() == "root"))
                     return;
 
-                // Checking if user belongs to at least one of the specified roles.
+                /*
+                 * Checking if user belongs to at least one of the specified roles.
+                 * Notice, an authenticated user lacking a role gets 403, since a 401
+                 * means "no valid session" to API clients, which would log a perfectly
+                 * valid session out because it asked for something it can't do.
+                 */
                 if (!string.IsNullOrEmpty(roles) && !roles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Any(x => userRoles.Any(x3 => x3.Get<string>() == x)))
-                    throw new HyperlambdaException("Access denied", true, 401);
+                    throw new HyperlambdaException("Access denied", true, 403);
 
                 return; // Success, found at least one roles in context.
             }
@@ -105,8 +110,10 @@ namespace magic.lambda.auth.helpers
             if (ticketProvider == null || !ticketProvider.IsHttp || !ticketProvider.IsAuthenticated())
                 throw new HyperlambdaException("Access denied", true, 401);
 
+            // Notice, lack of authentication is 401, while an authenticated user lacking
+            // the required roles is 403, such that clients can keep their session alive.
             if (!string.IsNullOrEmpty(roles) && !ticketProvider.InRole("root") && !roles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Any(x => ticketProvider.InRole(x)))
-                throw new HyperlambdaException("Access denied", true, 401);
+                throw new HyperlambdaException("Access denied", true, 403);
         }
 
         /// <summary>

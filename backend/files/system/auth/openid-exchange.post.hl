@@ -263,10 +263,13 @@ if
 /*
  * Verifying token.
  *
- * Notice, this will throw an exception if token is not valid.
+ * Notice, this will throw an exception if token is not valid. Also notice, we pin the issuer
+ * to the one the sign-in was begun with, to prevent the slot from fetching meta data from an
+ * attacker controlled issuer.
  */
 auth.token.verify
    token:x:@.id-token
+   issuer:x:@hyper2lambda/*/issuer
 
 // Binding the token to the transaction — the issuer must be the one the sign-in began with.
 if
