@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
@@ -70,6 +71,9 @@ namespace magic.library
 
             // Adding memory cache.
             services.AddMemoryCache();
+
+            // Wiring up our dynamic CORS policy provider, computing credentials support per request.
+            services.AddSingleton<ICorsPolicyProvider, MagicCorsPolicyProvider>();
 
             // Ensuring we're adding options.
             services.AddOptions();
@@ -366,19 +370,22 @@ namespace magic.library
                         /*
                          * If token exists in cookie, we default to using cookie instead of Authorization header.
                          * This allows individual installations to use cookies to transmit JWT tokens, which
-                         * arguably is more secure.
-                         *
-                         * Notice, we also need to allow for sockets requests to authenticate using QUERY parameters,
-                         * at which point we set token to value from 'access_token' QUERY param.
+                         * arguably is more secure. However, we only accept the cookie from same-site requests,
+                         * since a cross-site Origin carrying our cookie is by definition an attempt to abuse it -
+                         * legitimate cross-origin clients use the Authorization header instead.
                          */
+                        var origin = context.Request.Headers.Origin.FirstOrDefault() ?? "";
                         var cookie = context.Request.Cookies["ticket"];
-                        if (!string.IsNullOrEmpty(cookie))
+                        if (!string.IsNullOrEmpty(cookie) && (string.IsNullOrEmpty(origin) ||
+                            MagicCorsPolicyProvider.IsSameSite(origin, context.Request.Host.Host)))
                             context.Token = cookie;
-                        else if (context.Request.Query.ContainsKey("access_token"))
-                        {
-                            context.Token = context.Request.Query["access_token"];
-                        }
-                        else if (context.HttpContext.Request.Path.StartsWithSegments("/sockets") && context.Request.Query.ContainsKey("access_token"))
+
+                        /*
+                         * Notice, we also need to allow for sockets requests to authenticate using QUERY parameters,
+                         * at which point we set token to value from 'access_token' QUERY param - but only for the
+                         * sockets endpoint, to avoid leaking tokens into logs and referrers elsewhere.
+                         */
+                        else if (context.Request.Path.StartsWithSegments("/sockets") && context.Request.Query.ContainsKey("access_token"))
                             context.Token = context.Request.Query["access_token"];
                         return Task.CompletedTask;
                     },
@@ -566,34 +573,12 @@ namespace magic.library
             this IApplicationBuilder app,
             IConfiguration configuration)
         {
-            var originsConfig = configuration["magic:frontend:urls"];
-
-            // Parse configured origins (if any)
-            var configuredOrigins = string.IsNullOrWhiteSpace(originsConfig)
-               ? Array.Empty<string>()
-               : originsConfig
-                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                     .Select(o => o.Trim())
-                     .ToArray();
-
-            app.UseCors(policy =>
-            {
-               policy
-                     .AllowAnyHeader()
-                     .AllowAnyMethod()
-                     .AllowCredentials()
-                     .SetIsOriginAllowed(origin =>
-                     {
-                        if (string.IsNullOrEmpty(origin))
-                           return true;
-                        if (configuredOrigins.Length > 0)
-                        {
-                           return configuredOrigins.Any(o =>
-                                 string.Equals(o, origin, StringComparison.OrdinalIgnoreCase));
-                        }
-                        return true;
-                     });
-            });
+            /*
+             * Notice, the actual policy is computed per request by our MagicCorsPolicyProvider,
+             * allowing us to support credentials only towards origins we can trust, without
+             * having to know the origins of our frontends beforehand.
+             */
+            app.UseCors();
         }
 
 

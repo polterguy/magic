@@ -36,7 +36,7 @@ namespace magic.endpoint.tests
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Empty(result.Headers);
+            Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var j = result.Content as JObject;
             Assert.NotNull(j);
             Assert.Equal("hello world", j["result"].Value<string>());
@@ -237,7 +237,7 @@ namespace magic.endpoint.tests
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Empty(result.Headers);
+            Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var j = result.Content as string;
             Assert.NotNull(j);
             Assert.Equal("hello world", j);
@@ -262,7 +262,7 @@ namespace magic.endpoint.tests
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Empty(result.Headers);
+            Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var j = result.Content as JObject;
             Assert.NotNull(j);
             Assert.Equal("foo", j["input1"].Value<string>());
@@ -289,7 +289,7 @@ namespace magic.endpoint.tests
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Empty(result.Headers);
+            Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var j = result.Content as JObject;
             Assert.NotNull(j);
             Assert.Single(j);
@@ -336,7 +336,7 @@ namespace magic.endpoint.tests
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Empty(result.Headers);
+            Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var j = result.Content as JObject;
             Assert.NotNull(j);
             Assert.Equal("foo", j["inputXXX"].Value<string>());
@@ -381,7 +381,7 @@ namespace magic.endpoint.tests
                     Scheme = "http"
                 });
 
-            Assert.Single(result.Headers);
+            Assert.Single(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             Assert.Equal("bar", result.Headers["foo"]);
         }
 
@@ -404,7 +404,7 @@ namespace magic.endpoint.tests
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Empty(result.Headers);
+            Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var j = result.Content as JObject;
             Assert.NotNull(j);
             Assert.Equal("hello world", j["result"].Value<string>());
@@ -447,7 +447,7 @@ input5
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Empty(result.Headers);
+            Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var j = result.Content as JObject;
             Assert.NotNull(j);
             Assert.Equal("foo", j["input1"].Value<string>());
@@ -503,7 +503,7 @@ input5
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Empty(result.Headers);
+            Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var j = result.Content as JObject;
             Assert.NotNull(j);
             Assert.Equal("foo", j["input1"].Value<string>());
@@ -546,7 +546,7 @@ input2:int:5");
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Empty(result.Headers);
+            Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var j = result.Content as JObject;
             Assert.NotNull(j);
             Assert.Equal(2, j.Count);
@@ -573,7 +573,7 @@ input2:int:5");
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Single(result.Headers);
+            Assert.Single(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var hl = result.Content as string;
             Assert.NotNull(hl);
             var lambda = HyperlambdaParser.Parse(hl);
@@ -602,7 +602,7 @@ input2:int:5");
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Single(result.Headers);
+            Assert.Single(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var hl = result.Content as string;
             Assert.NotNull(hl);
             var lambda = HyperlambdaParser.Parse(hl);
@@ -632,7 +632,7 @@ input2:int:5");
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Single(result.Headers);
+            Assert.Single(result.Headers.Where(x => x.Key != "X-Execution-Id"));
             var hl = result.Content as string;
             Assert.NotNull(hl);
             var lambda = HyperlambdaParser.Parse(hl);
@@ -663,9 +663,9 @@ input2:int:5");
                 });
 
             Assert.Equal(200, result.Result);
-            Assert.Single(result.Headers);
-            Assert.Equal("Content-Type", result.Headers.First().Key);
-            Assert.Equal("text/plain", result.Headers.First().Value);
+            Assert.Single(result.Headers.Where(x => x.Key != "X-Execution-Id"));
+            Assert.Equal("Content-Type", result.Headers.First(x => x.Key != "X-Execution-Id").Key);
+            Assert.Equal("text/plain", result.Headers.First(x => x.Key != "X-Execution-Id").Value);
             Assert.Equal("http://localhost", result.Content);
         }
 

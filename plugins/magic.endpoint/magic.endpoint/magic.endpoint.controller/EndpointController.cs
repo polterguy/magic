@@ -250,6 +250,8 @@ namespace magic.endpoint.controller
                 };
                 if (!string.IsNullOrEmpty(idx.SameSite))
                     options.SameSite = (SameSiteMode)Enum.Parse(typeof(SameSiteMode), idx.SameSite, true);
+                else
+                    options.SameSite = SameSiteMode.Lax; // Defaulting to Lax to avoid cookies being attached cross-site
                 Response.Cookies.Append(idx.Name, idx.Value, options);
             }
 
