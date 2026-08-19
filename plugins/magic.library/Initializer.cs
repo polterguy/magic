@@ -480,7 +480,7 @@ namespace magic.library
         /// </summary>
         /// <param name="app">The application builder of your app.</param>
         /// <param name="configuration">The configuration for your app.</param>
-        public static async void UseMagic(this IApplicationBuilder app, IConfiguration configuration)
+        public static void UseMagic(this IApplicationBuilder app, IConfiguration configuration)
         {
             app.UseMagicExceptions();
             app.UseHttpsRedirection();
@@ -498,8 +498,8 @@ namespace magic.library
                 if (socketsUrl != null)
                     conf.MapHub<MagicHub>(socketsUrl);
             });
-            await app.UseMagicStartupFiles();
-            await app.UseMagicSchedulerAsync(configuration);
+            app.UseMagicStartupFiles().GetAwaiter().GetResult();
+            app.UseMagicSchedulerAsync(configuration).GetAwaiter().GetResult();
             Console.WriteLine("Magic has been fully initialised");
         }
 
