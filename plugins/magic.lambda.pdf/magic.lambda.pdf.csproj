@@ -7,6 +7,8 @@
   <ItemGroup>
     <PackageReference Include="itext" Version="9.5.0" />
     <PackageReference Include="itext.pdfhtml" Version="6.3.1" />
+    <!-- Pinned above the vulnerable 9.0.1 pulled in transitively by iText. -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="itext.bouncy-castle-adapter" Version="9.5.0" />
     <ProjectReference Include="..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
     <ProjectReference Include="..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />

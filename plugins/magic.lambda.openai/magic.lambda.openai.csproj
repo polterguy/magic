@@ -12,6 +12,8 @@
          GPT-4o/GPT-5 families, cl100k for GPT-3.5/GPT-4 era models. -->
     <PackageReference Include="Microsoft.ML.Tokenizers.Data.O200kBase" Version="2.0.0" />
     <PackageReference Include="Microsoft.ML.Tokenizers.Data.Cl100kBase" Version="2.0.0" />
+    <!-- Pinned above the vulnerable 9.0.4 pulled in transitively by Microsoft.ML.Tokenizers. -->
+    <PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.11" />
     <ProjectReference Include="..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
     <ProjectReference Include="..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
   </ItemGroup>

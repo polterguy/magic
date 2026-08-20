@@ -1,0 +1,38 @@
+
+/*
+ * Health check endpoint for container orchestration (Docker healthchecks,
+ * Kubernetes probes, load balancers, etc).
+ *
+ * Unlike [ping.get.hl], which only verifies the HTTP pipeline is up, this is a
+ * READINESS check that also verifies the magic database is reachable - the
+ * dependency practically everything else in the system hangs off of.
+ *
+ * Returns 200 when healthy, and 503 if the database cannot be reached, such
+ * that the container runtime can flag the container as unhealthy, and e.g.
+ * restart it. Deliberately public, since orchestrators have no JWT ticket.
+ */
+.description:Health check for container orchestration - returns 200 when the backend and its database are up, 503 otherwise
+.type:public
+
+/*
+ * Verifying the database is reachable. If connecting or reading fails, we
+ * catch the exception and explicitly throw a 503, such that orchestrators
+ * polling us flag the container as unhealthy.
+ */
+try
+   data.connect:[generic|magic]
+      data.read
+         table:users
+         columns
+            username
+         limit:long:1
+.catch
+
+   // Database is unreachable - service is not ready.
+   throw:Service unavailable, database is not reachable
+      status:int:503
+      public:bool:true
+
+// Backend is up and the database is reachable.
+return-nodes
+   status:ok

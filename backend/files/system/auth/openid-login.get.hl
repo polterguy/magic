@@ -17,6 +17,15 @@
    token:string
 
 /*
+ * Throttling token verification attempts - this endpoint fetches issuer meta data and
+ * verifies signatures, making it the most expensive unauthenticated endpoint we have.
+ * Declared at startup by /system/magic.startup/throttles.hl, and shared by every
+ * unauthenticated auth endpoint.
+ */
+execution.throttle:auth.ip
+execution.throttle:auth.global
+
+/*
  * Loading our registered OpenID providers, such that we can supply the verify slot below
  * with the complete list of trusted issuers, preventing it from fetching meta data from
  * issuers we have not registered ourselves.

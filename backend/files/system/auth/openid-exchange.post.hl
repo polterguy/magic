@@ -28,6 +28,15 @@ validators.mandatory:x:@.arguments/*/state
 validators.mandatory:x:@.arguments/*/redirect_uri
 
 /*
+ * Throttling code exchanges - each attempt posts to the provider's token endpoint, so
+ * unthrottled it is a free relay for hammering Google, GitHub, et al. Declared at
+ * startup by /system/magic.startup/throttles.hl, and shared by every unauthenticated
+ * auth endpoint.
+ */
+execution.throttle:auth.ip
+execution.throttle:auth.global
+
+/*
  * Popping the transaction cached when the sign-in began. One shot — deleting
  * it immediately prevents replaying the same state, exactly like the implicit
  * flow's nonce.

@@ -1,0 +1,22 @@
+
+/*
+ * Declares the throttles shared by Magic's unauthenticated auth endpoints.
+ *
+ * system/startup.hl executes every file it finds in a magic.startup folder when the
+ * backend boots, so this runs once at startup - endpoints then enforce the throttles
+ * by name with [execution.throttle] instead of declaring their own, keeping every
+ * brute force sensitive endpoint on the SAME budget, and the limits in ONE place: here.
+ *
+ * The [auth.ip] throttle resolves the caller's IP from the CF-Connecting-IP header when
+ * present, which an attacker can rotate unless you're behind CloudFlare - hence
+ * [auth.global] as a second line of defence. Counters live in memory, so a backend
+ * restart resets them.
+ */
+execution.throttle.create:auth.ip
+   limit:10
+   window:60
+   per:ip
+execution.throttle.create:auth.global
+   limit:120
+   window:60
+   per:global

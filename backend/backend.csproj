@@ -16,7 +16,7 @@
     <ProjectReference Include="..\plugins\magic.lambda.python\magic.lambda.python.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.system\magic.lambda.system.csproj" />
     <ProjectReference Include="..\plugins\magic.library\magic.library.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.0" />
   </ItemGroup>
 
 </Project>

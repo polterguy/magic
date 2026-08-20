@@ -233,10 +233,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.signals.tests", "plug
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.puppeteer", "plugins\magic.lambda.puppeteer\magic.lambda.puppeteer.csproj", "{117D4D04-924D-4C94-92B8-B3C42E4E58E3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.synthesizer", "magic.lambda.synthesizer", "{79E739EB-468C-4E0B-280F-B9B59169C66F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.synthesizer", "plugins\magic.lambda.synthesizer\magic.lambda.synthesizer\magic.lambda.synthesizer.csproj", "{2740B965-12DA-4B35-B968-F3A187522D8F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -546,10 +542,6 @@ Global
 		{117D4D04-924D-4C94-92B8-B3C42E4E58E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{117D4D04-924D-4C94-92B8-B3C42E4E58E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{117D4D04-924D-4C94-92B8-B3C42E4E58E3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2740B965-12DA-4B35-B968-F3A187522D8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2740B965-12DA-4B35-B968-F3A187522D8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2740B965-12DA-4B35-B968-F3A187522D8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2740B965-12DA-4B35-B968-F3A187522D8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{00511FC9-4A33-49B8-95D7-10E376DA25CF} = {A3694049-F12E-4E38-A3C2-4001F0C6EC04}
@@ -665,7 +657,5 @@ Global
 		{4D7DB8B0-59C3-438F-9C57-41C57C4B28FC} = {36C86FEA-1DEE-438F-AD4E-6FB9079F9A16}
 		{418BABDE-241D-474E-9FE3-9708A3DE04C9} = {36C86FEA-1DEE-438F-AD4E-6FB9079F9A16}
 		{117D4D04-924D-4C94-92B8-B3C42E4E58E3} = {A3694049-F12E-4E38-A3C2-4001F0C6EC04}
-		{79E739EB-468C-4E0B-280F-B9B59169C66F} = {A3694049-F12E-4E38-A3C2-4001F0C6EC04}
-		{2740B965-12DA-4B35-B968-F3A187522D8F} = {79E739EB-468C-4E0B-280F-B9B59169C66F}
 	EndGlobalSection
 EndGlobal

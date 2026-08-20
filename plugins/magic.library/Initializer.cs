@@ -588,6 +588,10 @@ namespace magic.library
 
         /*
          * Resolves the specified type and returns to caller.
+         *
+         * Throws when the type cannot be found - callers pass the result straight to the
+         * service collection, where a null type surfaces as an obscure ArgumentNullException
+         * far from the configuration value that caused it.
          */
         static Type GetType(string name)
         {
@@ -600,7 +604,7 @@ namespace magic.library
                 if (result != null)
                     return result;
             }
-            return null;
+            throw new ArgumentException($"The type '{name}' could not be found in any loaded assembly - check the appsettings.json value naming this service type", nameof(name));
         }
 
         /*

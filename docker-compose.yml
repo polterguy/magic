@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   backend:
     image: servergardens/magic-backend:latest
@@ -15,16 +13,47 @@ services:
       - magic_files_config:/magic/files/config
       - magic_files_modules:/magic/files/modules
 
+    # Docker polls the Hyperlambda health endpoint; unhealthy after 5 misses.
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:4444/magic/system/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    # Cap container logs so a chatty install cannot fill the disk.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   frontend:
     image: servergardens/magic-frontend:latest
     container_name: magic_frontend
     restart: unless-stopped
 
+    # Wait for the backend's health check, not just its container start.
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
     ports:
       - "5555:80"
+
+    # nginx:alpine has no curl, but busybox wget ships with it.
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   magic_files_etc:
