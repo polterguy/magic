@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
 import { useSessionState } from '../lib/useSessionState';
-import type CodeMirror from 'codemirror';
-import CodeEditor from '../components/CodeEditor';
+import type { EditorView } from '@codemirror/view';
+import CodeEditor, { editorSelection } from '../components/CodeEditor';
 import { SparkIcon } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
 import Tabs from '../components/Tabs';
@@ -62,7 +62,7 @@ export default function Sql() {
   const [ddl, setDdl] = useState<{ title: string; sql: string } | null>(null);
   const [newTable, setNewTable] = useState(false);
   const [addingColumn, setAddingColumn] = useState<string | null>(null);
-  const editorRef = useRef<CodeMirror.Editor | null>(null);
+  const editorRef = useRef<EditorView | null>(null);
   const { prompt, confirm, confirmTyped } = useDialog();
 
   const tables = selection.selectedMeta?.tables ?? [];
@@ -216,7 +216,7 @@ export default function Sql() {
    * as the fragment to execute, Generate as the request to fulfil.
    */
   async function generateFromSelection() {
-    const selected = editorRef.current?.getSelection() ?? '';
+    const selected = editorSelection(editorRef.current);
     if (!selected.trim()) {
       return;
     }
@@ -233,7 +233,7 @@ export default function Sql() {
   }
 
   async function execute() {
-    const selected = editorRef.current?.getSelection() ?? '';
+    const selected = editorSelection(editorRef.current);
     const toExecute = selected !== '' ? selected : sql;
     if (!toExecute.trim()) {
       showToast('Write some SQL first', true);
@@ -638,10 +638,8 @@ export default function Sql() {
               return;
             }
             editorRef.current = instance;
-            setHasSelection(instance.somethingSelected());
-            instance.on('cursorActivity', () =>
-              setHasSelection(instance.somethingSelected()));
-          }} />
+          }}
+          onSelectionChange={setHasSelection} />
       </div>
       <AiPrompt
         fileType="sql"

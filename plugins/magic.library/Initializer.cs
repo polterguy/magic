@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -482,6 +483,8 @@ namespace magic.library
         /// <param name="configuration">The configuration for your app.</param>
         public static void UseMagic(this IApplicationBuilder app, IConfiguration configuration)
         {
+            // Must run before everything else, especially UseHttpsRedirection below.
+            app.UseMagicForwardedHeaders(configuration);
             app.UseMagicExceptions();
             app.UseHttpsRedirection();
             app.UseMagicCors(configuration);
@@ -501,6 +504,52 @@ namespace magic.library
             app.UseMagicStartupFiles().GetAwaiter().GetResult();
             app.UseMagicSchedulerAsync(configuration).GetAwaiter().GetResult();
             Console.WriteLine("Magic has been fully initialised");
+        }
+
+        /// <summary>
+        /// Consumes the X-Forwarded-For and X-Forwarded-Proto headers set by a
+        /// reverse proxy, making RemoteIpAddress and Request.Scheme reflect the
+        /// original client. Enabled by default so existing cloudlets pick it up
+        /// when they upgrade - their persisted configuration files predate this
+        /// setting. Set "magic:forwarded-headers:enabled" to false when the app
+        /// is exposed directly to the internet without a reverse proxy.
+        /// </summary>
+        /// <param name="app">The application builder of your app.</param>
+        /// <param name="configuration">The configuration for your app.</param>
+        public static void UseMagicForwardedHeaders(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            // Opt-out only: deployments without a reverse proxy in front can
+            // disable the middleware, since the headers are then spoofable.
+            if (bool.TryParse(configuration["magic:forwarded-headers:enabled"], out var enabled) && !enabled)
+                return;
+
+            var options = new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+
+                /*
+                 * One hop by default: the right-most X-Forwarded-For entry is
+                 * used, which a trusted proxy appended from the TCP peer it
+                 * actually saw - so a client cannot spoof it by prepending
+                 * entries. Increase via "magic:forwarded-headers:forward-limit"
+                 * when there are several proxies in front (CDN, load balancer,
+                 * reverse proxy, ...).
+                 */
+                ForwardLimit = 1,
+            };
+            if (int.TryParse(configuration["magic:forwarded-headers:forward-limit"], out var limit) && limit > 0)
+                options.ForwardLimit = limit;
+
+            /*
+             * Trusting every hop - the deployment opting in is responsible for
+             * only exposing the app through a trusted reverse proxy. The proxy's
+             * IP inside a Docker network is dynamic, so it cannot be pinned down
+             * with KnownProxies/KnownIPNetworks.
+             */
+            options.KnownIPNetworks.Clear();
+            options.KnownProxies.Clear();
+
+            app.UseForwardedHeaders(options);
         }
 
         /// <summary>

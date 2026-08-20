@@ -4,7 +4,8 @@ import { copyToClipboard, showToast } from '../lib/toast';
 import { explainHyperlambda } from '../lib/support';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
-import CodeEditor, { modeForFile } from '../components/CodeEditor';
+import CodeEditor, { editorSelection, modeForFile } from '../components/CodeEditor';
+import type { EditorView } from '@codemirror/view';
 import AiWaiter from '../components/AiWaiter';
 import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
@@ -157,7 +158,7 @@ export default function Files() {
   const [aiFunctionTarget, setAiFunctionTarget] = useState<string | null>(null);
   // Repository root the Git panel is open for.
   const [gitTarget, setGitTarget] = useState<string | null>(null);
-  const editorRef = useRef<import('codemirror').Editor | null>(null);
+  const editorRef = useRef<EditorView | null>(null);
   const { confirm, confirmTyped, prompt, form, choice } = useDialog();
 
   const current = openFiles.find(file => file.path === selectedFile) ?? null;
@@ -442,7 +443,7 @@ export default function Files() {
     }
     try {
       // Executing a selection runs just the selected code, like the old IDE.
-      const selection = editorRef.current?.getSelection() ?? '';
+      const selection = editorSelection(editorRef.current);
       const code = selection !== '' ? selection : content;
       setWaiting(true);
       const argSpec = await getHyperlambdaArguments(code) ?? {};
@@ -505,7 +506,7 @@ export default function Files() {
    * would leave the old code sitting around it, duplicated.
    */
   async function generateFromSelection() {
-    const selection = editorRef.current?.getSelection() ?? '';
+    const selection = editorSelection(editorRef.current);
     if (selection.trim() === '') {
       return;
     }
@@ -1001,9 +1002,6 @@ export default function Files() {
                   return;
                 }
                 editorRef.current = instance;
-                setHasSelection(instance.somethingSelected());
-                instance.on('cursorActivity', () =>
-                  setHasSelection(instance.somethingSelected()));
                 /*
                  * The editor is keyed on the open file, so this runs for every
                  * open, tab switch and restored workspace — the moments where
@@ -1012,6 +1010,7 @@ export default function Files() {
                  */
                 instance.focus();
               }}
+              onSelectionChange={setHasSelection}
               onAction={action => {
                 switch (action) {
                   case 'newFile': newFile(activeFolder); break;

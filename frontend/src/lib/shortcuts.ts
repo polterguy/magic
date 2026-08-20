@@ -15,8 +15,10 @@ export interface Shortcut {
   // Fn dance macOS demands for Ctrl+Space and function keys.
   mac?: string;
   description: string;
-  // CodeMirror key identifiers bound to this action, when it is an editor
-  // shortcut — several combos may share one action.
+  // CodeMirror 6 key identifiers bound to this action, when it is an editor
+  // shortcut — several combos may share one action. CM6 spelling: single
+  // letters are lowercase, Escape is spelled out, and Mod- is Cmd on macOS
+  // and Ctrl everywhere else.
   keys?: string[];
   // Handler id CodeEditor resolves into a CodeMirror command or callback.
   action?: string;
@@ -59,7 +61,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Ctrl + F',
     mac: 'Cmd + F',
     description: 'Search inside the editor — Enter cycles matches, Esc closes',
-    keys: ['Ctrl-F', 'Cmd-F'],
+    keys: ['Mod-f', 'Ctrl-f'],
     action: 'findPersistent',
   },
   {
@@ -67,14 +69,14 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Alt + M',
     mac: 'Opt + M',
     description: 'Toggle fullscreen editing — Esc leaves fullscreen',
-    keys: ['Alt-M'],
+    keys: ['Alt-m'],
     action: 'fullscreen',
   },
   {
     group: 'Editor',
     display: 'Esc',
     description: 'Leave fullscreen editing',
-    keys: ['Esc'],
+    keys: ['Escape'],
     action: 'exitFullscreen',
   },
   {
@@ -96,7 +98,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Ctrl + S',
     mac: 'Cmd + S',
     description: 'Save the open file',
-    keys: ['Alt-S', 'Ctrl-S', 'Cmd-S'],
+    keys: ['Alt-s', 'Mod-s', 'Ctrl-s'],
     action: 'save',
   },
   {
@@ -120,7 +122,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Alt + A',
     mac: 'Opt + A',
     description: 'New file',
-    keys: ['Alt-A'],
+    keys: ['Alt-a'],
     action: 'newFile',
   },
   {
@@ -128,7 +130,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Alt + B',
     mac: 'Opt + B',
     description: 'New folder',
-    keys: ['Alt-B'],
+    keys: ['Alt-b'],
     action: 'newFolder',
   },
   {
@@ -136,7 +138,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Alt + R',
     mac: 'Opt + R',
     description: 'Rename the open file',
-    keys: ['Alt-R'],
+    keys: ['Alt-r'],
     action: 'renameFile',
   },
   {
@@ -144,7 +146,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Alt + D',
     mac: 'Opt + D',
     description: 'Delete the open file',
-    keys: ['Alt-D'],
+    keys: ['Alt-d'],
     action: 'deleteFile',
   },
   {
@@ -152,7 +154,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Alt + X',
     mac: 'Opt + X',
     description: 'Delete the active folder',
-    keys: ['Alt-X'],
+    keys: ['Alt-x'],
     action: 'deleteFolder',
   },
   {
@@ -160,7 +162,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Alt + C',
     mac: 'Opt + C',
     description: 'Close the open file',
-    keys: ['Alt-C'],
+    keys: ['Alt-c'],
     action: 'close',
   },
   /*
@@ -179,7 +181,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Alt + F',
     mac: 'Opt + F',
     description: 'Switch to the next open file',
-    keys: ['Alt-F'],
+    keys: ['Alt-f'],
     action: 'nextTab',
   },
   {
@@ -187,7 +189,7 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Alt + P',
     mac: 'Opt + P',
     description: 'Switch to the previous open file',
-    keys: ['Alt-P'],
+    keys: ['Alt-p'],
     action: 'previousTab',
   },
 ];

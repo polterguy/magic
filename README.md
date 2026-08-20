@@ -255,7 +255,7 @@ A setup like this keeps your applications and your data entirely under your own 
 
 ## The LLM
 
-Internally the system defaults to OpenAI's `gpt-5.6-terra`, with minimum reasoning turned on — everything is tunable, and with some effort you can swap the defaults for Ollama or HuggingFace models. The Hyperlambda Generator's training dataset is *not* public and won't be. Worst case, you keep running everything you've already generated; you'd only lose the ability to generate new code.
+Internally the system defaults to OpenAI's `gpt-5.6-luna`, but everything is tunable, and with some effort you can swap the defaults for Ollama or HuggingFace models. The Hyperlambda Generator's training dataset is *not* public and won't be. Worst case, you keep running everything you've already generated; you'd only lose the ability to generate new code.
 
 ![Natural Language API](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/natural-language-api.png)
 

@@ -175,13 +175,13 @@ export function Modal(props: {
       }
       /*
        * CodeMirror handles Escape for its autocomplete popup, its search
-       * dialog and for fullscreen mode, but lets the event keep bubbling —
+       * panel and for fullscreen mode, but lets the event keep bubbling —
        * so while any is up, Escape belongs to the editor rather than to us.
        * Same for an open date-picker popover. This runs in the capture
        * phase, while all of them are still in the DOM to be seen.
        */
       if (document.querySelector(
-          '.CodeMirror-hints, .CodeMirror-fullscreen, .CodeMirror-dialog, .dtp-pop')) {
+          '.cm-tooltip-autocomplete, .cm-fullscreen, .cm-panel.cm-search, .dtp-pop')) {
         return;
       }
       onCloseRef.current();

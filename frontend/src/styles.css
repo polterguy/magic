@@ -1711,14 +1711,26 @@ tr.clickable:hover td { background: var(--accent-soft); }
   min-height: 0;
 }
 
-.code-editor .CodeMirror {
+.code-editor .cm-editor {
   height: 100%;
   font-size: var(--text-sm);
+  /* CM5's base stylesheet supplied this; CM6's doesn't. */
+  font-family: var(--font-mono);
 }
 
-/* Alt-M fullscreen must sit above the sidebar and nav toggle. */
-.CodeMirror-fullscreen {
+/*
+ * Alt-M fullscreen must sit above the sidebar and nav toggle.
+ * CM6's injected base style declares `position: relative !important` on a
+ * generated class of the editor element, so plain `position: fixed` here
+ * silently loses the cascade - match the specificity and override it.
+ */
+.code-editor .cm-editor.cm-fullscreen.cm-fullscreen {
+  position: fixed !important;
+  inset: 0;
+  /* The layout rule above would otherwise pin it to the host's height. */
+  height: auto;
   z-index: 60;
+  background: var(--cm-bg);
 }
 
 /*
@@ -2816,11 +2828,11 @@ tr.log-target > td:first-child {
   text-overflow: ellipsis;
 }
 
-/* CodeMirror renders its autocomplete popup into document.body at z-index 10,
-   which puts it behind modals — lift it above every layer we use. */
-.CodeMirror-hints {
+/* CodeMirror renders its autocomplete popup into document.body, which would
+   put it behind modals — lift it above every layer we use. */
+.cm-tooltip.cm-tooltip-autocomplete {
   /* Far above any modal, whose z-index climbs as dialogs stack.
-     Visual styling lives in ainiro.css so it loads after show-hint.css. */
+     Visual styling lives in ainiro.css. */
   z-index: 2000000;
 }
 
@@ -3492,7 +3504,7 @@ tr.vss-irrelevant td {
   .content pre,
   .content code,
   .content .result-json,
-  .content .CodeMirror { text-align: left; }
+  .content .cm-editor { text-align: left; }
   /* SQL result: dynamic columns, so left-align every "column: value" line. */
   .content table.sql-result td {
     justify-content: flex-start;
@@ -3573,7 +3585,7 @@ tr.vss-irrelevant td {
 .debug-steps tbody tr.current .muted { color: var(--selection-text); opacity: 0.75; }
 
 /* Rewind marks the statement a recorded step was executing. */
-.CodeMirror .cm-current-step {
+.cm-editor .cm-current-step {
   background: var(--selection-bg);
   box-shadow: inset 3px 0 0 var(--accent);
 }
@@ -3594,7 +3606,7 @@ tr.vss-irrelevant td {
 .debug-steps tbody tr.failed.current td:first-child {
   box-shadow: inset 3px 0 0 var(--danger);
 }
-.CodeMirror .cm-error-step {
+.cm-editor .cm-error-step {
   background: color-mix(in srgb, var(--danger) 22%, transparent);
   box-shadow: inset 3px 0 0 var(--danger);
 }

@@ -5,8 +5,12 @@
 /*   neutral chrome. Syntax tokens keep functional hues (green   */
 /*   strings, amber numbers, gold slots) but carry ZERO violet.  */
 /*   All colours live in the --cm-* variables below, so the      */
-/*   light theme flips them without touching the rules — the     */
-/*   theme name stays 'ainiro' in both modes.                    */
+/*   light theme flips them without touching the rules.          */
+/*                                                               */
+/*   CodeMirror 6: the token rules still target the cm-* class   */
+/*   names the CM5 theme used, because the editor's              */
+/*   HighlightStyle maps CM6's highlight tags onto exactly       */
+/*   those classes (see CodeEditor.tsx).                         */
 /****************************************************************/
 
 :root {
@@ -62,16 +66,25 @@ html[data-theme="light"] {
   --cm-activeline: rgba(23, 18, 14, 0.04);
 }
 
-.cm-s-ainiro.CodeMirror { background: var(--cm-bg); color: var(--cm-text); }
-.cm-s-ainiro div.CodeMirror-selected { background: var(--cm-selection); }
-.cm-s-ainiro .CodeMirror-line::selection, .cm-s-ainiro .CodeMirror-line > span::selection, .cm-s-ainiro .CodeMirror-line > span > span::selection { background: var(--cm-selection); }
-.cm-s-ainiro .CodeMirror-line::-moz-selection, .cm-s-ainiro .CodeMirror-line > span::-moz-selection, .cm-s-ainiro .CodeMirror-line > span > span::-moz-selection { background: var(--cm-selection); }
-.cm-s-ainiro .CodeMirror-gutters { background: var(--cm-bg); border-right: 1px solid var(--cm-gutter-border); }
-.cm-s-ainiro .CodeMirror-guttermarker { color: var(--cm-guttermarker); }
-.cm-s-ainiro .CodeMirror-guttermarker-subtle { color: var(--cm-linenumber); }
-.cm-s-ainiro .CodeMirror-linenumber { color: var(--cm-linenumber); }
-.cm-s-ainiro .CodeMirror-cursor { border-left: 2px solid var(--cm-cursor); }
+/* Editor chrome — the .cm-s-ainiro scope class sits on the .cm-editor root. */
+.cm-s-ainiro.cm-editor { background: var(--cm-bg); color: var(--cm-text); }
+/* Doubled scope class: must out-specificy CM6's own focused-selection rule,
+   which loads after this sheet. */
+.cm-s-ainiro.cm-editor .cm-selectionBackground,
+.cm-s-ainiro.cm-editor .cm-content ::selection { background: var(--cm-selection); }
+.cm-s-ainiro .cm-gutters {
+  background: var(--cm-bg);
+  color: var(--cm-linenumber);
+  border-right: 1px solid var(--cm-gutter-border);
+}
+.cm-s-ainiro .cm-activeLineGutter {
+  background: transparent;
+  color: var(--cm-guttermarker);
+}
+.cm-s-ainiro .cm-cursor { border-left: 2px solid var(--cm-cursor); }
+.cm-s-ainiro .cm-activeLine { background: var(--cm-activeline); }
 
+/* Token colours — same class names the CM5 theme used. */
 .cm-s-ainiro span.cm-comment { color: var(--cm-comment); font-style: italic; }
 .cm-s-ainiro span.cm-atom { color: var(--cm-number); }
 .cm-s-ainiro span.cm-number { color: var(--cm-number); }
@@ -93,17 +106,42 @@ html[data-theme="light"] {
 .cm-s-ainiro span.cm-error { color: var(--cm-error); }
 .cm-s-ainiro span.cm-qualifier { color: var(--cm-text); }
 
-.cm-s-ainiro .CodeMirror-activeline-background { background: var(--cm-activeline); }
-.cm-s-ainiro .CodeMirror-matchingbracket { color: var(--cm-matchingbracket) !important; font-weight: bold; }
-.cm-s-ainiro .CodeMirror-matchingtag { background: var(--cm-matchingtag); }
+.cm-s-ainiro .cm-matchingBracket {
+  color: var(--cm-matchingbracket) !important;
+  font-weight: bold;
+  background: transparent;
+}
+
+/* Search matches and the search panel (CM6 renders it as a .cm-panel). */
+.cm-s-ainiro .cm-searchMatch {
+  background: var(--cm-matchingtag);
+  outline: 1px solid var(--cm-gutter-border);
+}
+.cm-s-ainiro .cm-searchMatch-selected {
+  background: var(--cm-selection);
+}
+.cm-s-ainiro .cm-panels {
+  background: var(--cm-bg);
+  color: var(--cm-text);
+  border-bottom: 1px solid var(--cm-gutter-border);
+}
+.cm-s-ainiro .cm-panel input,
+.cm-s-ainiro .cm-panel button {
+  color: var(--cm-text);
+  font-family: inherit;
+}
+.cm-s-ainiro .cm-panel button {
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  cursor: pointer;
+}
 
 /*
- * Autocomplete popup. Defined here (not in styles.css) and with tag-qualified
- * selectors, because CodeMirror's own show-hint.css is imported after
- * styles.css and would otherwise win the white default on a specificity tie.
- * Chrome colours come from the dashboard's global variables.
+ * Autocomplete popup. CM6 renders it as a body-parented tooltip, so there is
+ * no third-party stylesheet to fight for precedence anymore.
  */
-ul.CodeMirror-hints {
+.cm-tooltip.cm-tooltip-autocomplete {
   background: var(--surface-3);
   border: 1px solid var(--border-strong);
   border-radius: 8px;
@@ -111,12 +149,12 @@ ul.CodeMirror-hints {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-.CodeMirror-hints li.CodeMirror-hint {
+.cm-tooltip.cm-tooltip-autocomplete ul li {
   color: var(--cm-text);
   border-radius: 5px;
 }
 
-.CodeMirror-hints li.CodeMirror-hint-active {
+.cm-tooltip.cm-tooltip-autocomplete ul li[aria-selected] {
   background: var(--accent);
   color: var(--accent-contrast);
 }
