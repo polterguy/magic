@@ -130,6 +130,10 @@ The dashboard signs in over OpenID Connect against **Google, GitHub, LinkedIn, M
 
 One droplet running the full stack, with persistent volumes for your data, configuration and modules. **[Create your droplet](https://cloud.digitalocean.com/droplets/new)** — edit the single `DOMAIN=` line in [`.do/cloud-init.yaml`](.do/cloud-init.yaml) and paste it into the *User Data* field. HTTPS is automatic through Caddy and Let's Encrypt. Full guide: **[DigitalOcean deployment guide](docs/deploy-digitalocean.md)**
 
+### Kubernetes (own cluster)
+
+The root `docker.backend`/`docker.frontend` images run unmodified in your own cluster. To make `request.ip`/`request.scheme` resolve the true end user behind your ingress (and Cloudflare, if in front), follow **[the client-IP deployment note](docs/deploy-kubernetes.md)**.
+
 ### Docker Compose (self-hosted)
 
 The one-liner at the top of this README is the fastest route. If you'd rather keep the file around:

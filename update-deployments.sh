@@ -5,6 +5,12 @@ NAMESPACE="cloudlets"
 IMAGE="servergardens/magic-backend:v23.5.6"
 FSGROUP="999"
 
+# Forwarded-headers hop count: client → Cloudflare → ingress → pod.
+# Makes request.ip/request.scheme resolve the true end user (see
+# docs/deploy-kubernetes.md). The middleware itself is on by default.
+FWD_LIMIT="2"
+FWD_ENV="magic__forwarded-headers__forward-limit"
+
 echo "========================================="
 echo "Safe upgrade of deployments in $NAMESPACE"
 echo "Target image: $IMAGE"
@@ -55,6 +61,20 @@ spec:
     NEEDS_UPDATE=1
   else
     echo "fsGroup already correct."
+  fi
+
+  # ===============================
+  # 2.5) Check forwarded-headers limit
+  # ===============================
+  CURFWD=$(kubectl get deployment "$DEP" -n "$NAMESPACE" \
+    -o jsonpath="{.spec.template.spec.containers[0].env[?(@.name=='$FWD_ENV')].value}" 2>/dev/null || true)
+
+  if [[ "$CURFWD" != "$FWD_LIMIT" ]]; then
+    echo "Forwarded-headers limit needs update: '${CURFWD:-<unset>}' → $FWD_LIMIT"
+    kubectl set env deployment/"$DEP" -c "$DEP" -n "$NAMESPACE" "$FWD_ENV=$FWD_LIMIT"
+    NEEDS_UPDATE=1
+  else
+    echo "Forwarded-headers limit already correct."
   fi
 
   # ===============================
