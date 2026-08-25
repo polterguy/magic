@@ -455,7 +455,6 @@ slots.create:magic.ai.url.scrape
             data.read
                table:ml_types
                columns
-                  id
                where
                   and
                      type.eq:x:@.arguments/*/type
@@ -747,6 +746,7 @@ slots.create:magic.ai.url.scrape
    .catch
 
       // We might end up here if URL doesn't return HTML for instance
+      log.info:x:@.arguments/*/message
       strings.concat
          .:"Something went wrong as we tried to scrape URL, error was: '"
          get-value:x:@.arguments/*/message
