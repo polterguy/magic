@@ -1,7 +1,7 @@
 /*
  * Git panel for Hyper IDE — status, branches, commit, push/pull/fetch for one
- * repository root, i.e. a top-level folder under /modules/ or /etc/. A folder
- * that is not a repository yet gets initialize/clone actions instead.
+ * repository root, i.e. any folder inside /modules/ or /etc/. A folder that is
+ * not a repository yet gets initialize/clone actions instead.
  */
 
 import { useCallback, useEffect, useState } from 'react';

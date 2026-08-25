@@ -25,13 +25,11 @@ function isSystemPath(path: string) {
 }
 
 /*
- * Resolves the Git repository root for a path — the top-level folder under
- * /modules/ or /etc/, since that's where repos live and modules each carry
- * their own repository.
+ * Whether a folder can hold a Git repository, matching the backend's rule —
+ * anything inside /modules/ or /etc/, at any depth.
  */
-function gitRootOf(path: string): string | null {
-  const match = path.match(/^\/(modules|etc)\/([^/]+)\//);
-  return match ? '/' + match[1] + '/' + match[2] + '/' : null;
+function canBeGitRepo(path: string) {
+  return path.startsWith('/modules/') || path.startsWith('/etc/');
 }
 
 /*
@@ -158,8 +156,8 @@ export default function FileTree(props: {
               <FolderActions
                 onNewFile={() => props.onNewFile(folder)}
                 onNewFolder={() => props.onNewFolder(folder)}
-                // Git operates on repo roots, i.e. top-level folders under /modules/ and /etc/.
-                onGit={gitRootOf(folder) === folder
+                // Git repos can only live inside /modules/ and /etc/.
+                onGit={canBeGitRepo(folder)
                   ? () => props.onGit(folder)
                   : undefined}
                 onOpenApi={() => props.onOpenApi(folder)}
