@@ -37,7 +37,7 @@ This project provides file/folder slots for Magic. More specifically, it provide
 ## magic.lambda.io fundamentals
 
 magic.lambda.io can _only_ manipulate files and folders inside of your _"files"_ folder in your web server.
-This are normally files inside of the folder you have configured in your _"appsettings.json"_ file, with the
+These are normally files inside of the folder you have configured in your _"appsettings.json"_ file, with the
 key _"magic.io.root-folder"_. This implies that all paths are _relative_ to this path, and no files or folders
 from outside of this folder can in any ways be manipulated using these slots. These are the files you
 can see when you open Hyper IDE.
@@ -135,7 +135,7 @@ io.file.save:/misc/README2.md
 
 Applies a unified diff patch to the specified file on disc. The patch is provided as the first child argument.
 This slot evaluates its children before applying the patch, which allows you to dynamically create the patch
-using other slots. The patch must target a single file.
+using other slots.
 
 ```
 io.file.patch:/misc/README2.md
@@ -147,6 +147,21 @@ io.file.patch:/misc/README2.md
 +This is line 4
 "
 ```
+
+#### Patch format rules
+
+The patch parser accepts standard unified diff format, but still enforces some rules and will throw if the patch deviates.
+
+* The patch must target **exactly one file**.
+* Each hunk must start with a header line in this format: `@@ -a,b +c,d @@`.
+* Every line inside a hunk must begin with one of these characters:
+  * ` ` (space) for context lines
+  * `-` for deletions
+  * `+` for additions
+  * `\` for the `\ No newline at end of file` marker
+* Empty lines inside a hunk are allowed and treated as context lines.
+* Context lines must match the file content **exactly**, otherwise the patch will fail.
+* Hunk line counts are not enforced, but the starting line number must match.
 
 ### How to use [io.file.exists]
 
@@ -161,7 +176,7 @@ io.file.exists:/misc/README.md
 Deletes the specified file. Will throw an exception if the file doesn't exist.
 
 ```
-io.file.load:/misc/DOES-NOT-EXIST.md
+io.file.delete:/misc/README2.md
 ```
 
 ### How to use [io.file.copy]
@@ -178,7 +193,7 @@ io.file.copy:/misc/README.md
    .:/misc/backup/README-backup.md
 ```
 
-Notice, the folder parts of thye destination folder is _optional_, and if you don't supply a folder
+Notice, the folder parts of the destination folder is _optional_, and if you don't supply a folder
 as a part of the path, the source folder will be used by default.
 
 ### How to use [io.file.execute]
@@ -296,8 +311,8 @@ if any of the files exists from before.
 ### How to use [io.file.mixin]
 
 This slot takes a filename as its primary argument, and optionally any amount of lambda children objects.
-It allows for dynamically substituting for instance `{{ '{{' }}*/.name}}` segments in your original source file,
-by invoking lambda objects it can find by evaluating your `{{ '{{' }}xyz}}` segment as an expression
+It allows for dynamically substituting for instance `{{*/.name}}` segments in your original source file,
+by invoking lambda objects it can find by evaluating your `{{xyz}}` segment as an expression
 leading to some lambda object you want to execute. Below is an example of usage that assumes you've got a
 file named _"foo.html"_ at the root folder of your installation resembling the following.
 
@@ -311,7 +326,7 @@ file named _"foo.html"_ at the root folder of your installation resembling the f
     <body>
         <h1>Hello world</h1>
         <p>
-           Hello there {{ '{{' }}*/.name}}, 2 + 5 is {{ '{{' }}*/.add}}
+           Hello there {{*/.name}}, 2 + 5 is {{*/.add}}
         </p>
     </body>
 </html>
@@ -329,12 +344,12 @@ io.file.mixin:/foo.html
       return:x:-
 ```
 
-The above will substitute all your `{{xyz}}` segments and give you a result resembling the following.
+The above will substitute all your `{{xyz}}`segments and give you a result resembling the following.
 
 ```
 <html>
     <head>
-        <title>Hell world</title>
+        <title>Hello world</title>
     </head>
     <body>
         <h1>Hello world</h1>
@@ -360,7 +375,7 @@ slots. This slot is useful if you need to return zipped content as your HTTP res
 
 Notice, both the root arguments (lambda children) of this slot will be evaluated, in addition to
 its content nodes, evaluated once for each file declaration node. Notice also that the stream is
-a memory bases stream, and hence closing it, even in case of an exception, is not necessary.
+a memory based stream, and hence closing it, even in case of an exception, is not necessary.
 
 ```
 io.content.zip-stream
@@ -431,7 +446,7 @@ ownership over the stream, and ensures it is closed and disposed. However, for c
 still provided the ability to explicitly close a stream using the **[io.stream.close]** - Even though
 you would probably never really need to use it. Besides, opening streams for any other purpose but
 to return them over the HTTP response object, might also create leaks, since there is no means to
-guarantee that the stream is close in case of exceptions, etc - Unless you explicitly take care
+guarantee that the stream is closed in case of exceptions, etc - Unless you explicitly take care
 of such things manually.
 
 ```
@@ -439,8 +454,8 @@ io.stream.open-file:/foo/bar.txt
 io.stream.close:x:-
 ```
 
-After invoking the above, assuming **[.stream]** is a valid stream, the stream's raw
-`byte[]` content can be found in **[io.stream.read]**.
+After invoking the above, assuming the file exists, the stream previously opened
+by **[io.stream.open-file]** will be explicitly closed.
 
 ### How to use [.io.folder.root]
 
