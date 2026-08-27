@@ -2,17 +2,34 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.polterguy/magic",
   "title": "Magic Cloud",
-  "description": "Self-hosted low-code platform (Docker); its MCP endpoint runs on your own instance, not via npx.",
+  "description": "Generate secured CRUD APIs over your database, run SQL, manage files, tasks and a headless browser",
   "repository": {
     "url": "https://github.com/polterguy/magic",
     "source": "github"
   },
-  "version": "23.1.2",
-  "websiteUrl": "https://ainiro.io",
+  "version": "23.5.10",
+  "websiteUrl": "https://hyperlambda.dev",
+  "icons": [
+    {
+      "src": "https://docs.ainiro.io/icon-512.png",
+      "mimeType": "image/png",
+      "sizes": ["512x512"]
+    },
+    {
+      "src": "https://docs.ainiro.io/icon-192.png",
+      "mimeType": "image/png",
+      "sizes": ["192x192"]
+    },
+    {
+      "src": "https://docs.ainiro.io/assets/images/logo-yellow.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": ["any"]
+    }
+  ],
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "docker.io/servergardens/magic-aio:v23.1.2",
+      "identifier": "docker.io/servergardens/magic-aio:v23.5.10",
       "transport": {
         "type": "streamable-http",
         "url": "https://{magic_host}/magic/modules/mcp/mcp"
