@@ -141,13 +141,16 @@ function UsersTab(props: { roles: Role[] }) {
   /*
    * Exports every user matching the current filter — not just the visible
    * page — by fetching with limit -1, which the backend treats as unlimited.
+   *
+   * OIDC users are stored locally as "provider:email", so the username column
+   * drops everything through the first colon. Local usernames have no colon.
    */
   async function exportUsers() {
     setWaiting(true);
     try {
       const all = await listUsers(filter, 0, -1, sort) ?? [];
       exportCsv(all.map(user => ({
-        username: user.username,
+        username: user.username.replace(/^[^:]+:/, ''),
         name: userExtra(user, 'name'),
         email: userExtra(user, 'email'),
         roles: (user.roles ?? []).join(', '),
