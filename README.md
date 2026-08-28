@@ -1,4 +1,4 @@
-# Magic Cloud — Open Source, Self-Hosted AI App Builder and AI Agent Platform
+# Instant SECURE Full Stack Apps and AI Agents
 
 Turn plain English into a working full-stack app — database, secure API, business logic, and frontend — running on **your own hardware**, with **zero lock-in**. An open-source alternative to Lovable, Bolt, and Replit that gives you the whole backend, plus an MCP server that turns every endpoint into a tool for Claude, Cursor, or Codex.
 
