@@ -25,10 +25,27 @@ namespace magic.data.common.builders
          * identifiers such that '/*' can never form a comment sequence.
          */
         const string _aggregateCall =
-            @"(count|sum|avg|min|max|group_concat|string_agg)\s*\(\s*(distinct\s+)?(\*|[A-Za-z0-9_.]+)(\s*[-+*/]\s*[A-Za-z0-9_.]+)*\s*\)";
+            @"(?<fun>count|sum|avg|min|max|group_concat|string_agg)\s*\(\s*(?<distinct>distinct\s+)?(?<args>\*|[A-Za-z0-9_.]+(\s*[-+*/]\s*[A-Za-z0-9_.]+)*)\s*\)";
         readonly static Regex _aggregateFunction = new Regex(
-            $@"^({_aggregateCall}|cast\s*\(\s*{_aggregateCall}\s+as\s+[A-Za-z0-9_]+\s*\))$",
+            $"^{_aggregateCall}$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /*
+         * The 'cast(fun(col) as type)' variant, matched separately from the plain call such that the
+         * two never share capture group names, and the type name is captured on its own.
+         */
+        readonly static Regex _castedAggregate = new Regex(
+            $@"^cast\s*\(\s*{_aggregateCall}\s+as\s+(?<type>[A-Za-z0-9_]+)\s*\)$",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /*
+         * Splits an aggregate's argument list on its arithmetic operators, keeping the operators
+         * themselves as elements, such that operands land on the even indexes and can be escaped
+         * individually while the operators are passed through verbatim.
+         */
+        readonly static Regex _arithmeticOperator = new Regex(
+            @"(\s*[-+*/]\s*)",
+            RegexOptions.Compiled);
 
         /*
          * White list of allowed table and join alias names, constraining aliases to plain
@@ -69,6 +86,7 @@ namespace magic.data.common.builders
             // Starting build process.
             var builder = new StringBuilder();
             builder.Append("select ");
+            AppendDistinct(builder);
             AppendColumns(builder);
             builder.Append(" from ");
             AppendTableName(builder);
@@ -246,31 +264,63 @@ namespace magic.data.common.builders
         }
 
         /*
-         * Validates that the specified name is a white listed aggregate function expression,
-         * and returns it if it is. Throws an exception if not, to avoid SQL injection attacks
-         * through aggregate expressions being appended raw to the resulting SQL.
+         * Validates that the specified name is a white listed aggregate function expression, and
+         * returns it with every identifier operand escaped. Throws an exception if not, to avoid
+         * SQL injection attacks through aggregate expressions being appended raw to the resulting SQL.
+         *
+         * Escaping the operands matters beyond injection: every other identifier in the statement is
+         * escaped, and PostgreSQL folds unquoted identifiers to lower case - so an unescaped
+         * 'min(Album.Total)' cannot resolve against the escaped '"Album"' the from clause declares.
          */
-        static string EscapeAggregateName(string name)
+        string EscapeAggregateName(string name)
         {
-            if (!_aggregateFunction.IsMatch(name))
-                throw new HyperlambdaException($"'{name}' is not a supported aggregate function expression");
+            // The cast variant wraps an aggregate, and its type name is white listed but never an identifier.
+            var casted = _castedAggregate.Match(name);
+            if (casted.Success)
+                return $"cast({BuildAggregate(casted)} as {casted.Groups["type"].Value})";
 
-            // Validated aggregate, character set constrained by white list above.
-            return name;
+            var match = _aggregateFunction.Match(name);
+            if (!match.Success)
+                throw new HyperlambdaException($"'{name}' is not a supported aggregate function expression");
+            return BuildAggregate(match);
         }
 
         /*
-         * Validates that the specified alias is a plain identifier, and returns it if it is.
+         * Rebuilds an already validated aggregate expression, escaping each identifier operand, and
+         * leaving a lone '*' alone since it is a wildcard and not an identifier. Splitting the
+         * argument list keeps the arithmetic operators on the odd indexes, and those are appended
+         * verbatim, their character set constrained by the white list above.
+         */
+        string BuildAggregate(Match match)
+        {
+            var args = match.Groups["args"].Value;
+            if (args != "*")
+                args = string.Join(
+                    "",
+                    _arithmeticOperator
+                        .Split(args)
+                        .Select((x, idx) => idx % 2 == 0 ? EscapeTypeName(x) : x));
+
+            return $"{match.Groups["fun"].Value}({(match.Groups["distinct"].Success ? "distinct " : "")}{args})";
+        }
+
+        /*
+         * Validates that the specified alias is a plain identifier, and returns it escaped.
          * Throws an exception if not, to avoid SQL injection attacks through table and
          * join [as] alias arguments being appended raw to the resulting SQL.
+         *
+         * Escaping matters for the same reason it does for aggregate operands: the columns that
+         * reference an alias are escaped, and PostgreSQL folds unquoted identifiers to lower case -
+         * so an unescaped 'ArtistId' alias can never be resolved by the '"ArtistId"' references
+         * pointing at it.
          */
-        static string EscapeAliasName(string alias)
+        string EscapeAliasName(string alias)
         {
             if (!_aliasName.IsMatch(alias))
                 throw new HyperlambdaException($"'{alias}' is not a valid table alias name");
 
             // Validated alias, character set constrained by white list above.
-            return alias;
+            return EscapeColumnName(alias);
         }
 
         /// <summary>
@@ -298,6 +348,23 @@ namespace magic.data.common.builders
                     return EscapeAggregateName(x.Name); // Group by aggregate column.
                 return EscapeTypeName(x.Name);
             })));
+        }
+
+        /*
+         * Appends the distinct quantifier if caller supplied a truthy [distinct] argument.
+         */
+        void AppendDistinct(StringBuilder builder)
+        {
+            var distinctNodes = Root.Children.Where(x => x.Name == "distinct");
+            if (!distinctNodes.Any())
+                return;
+
+            // Sanity checking.
+            if (distinctNodes.Count() > 1)
+                throw new HyperlambdaException($"syntax error in '{GetType().FullName}', too many [distinct] nodes");
+
+            if (distinctNodes.First().GetEx<bool>())
+                builder.Append("distinct ");
         }
 
         /*

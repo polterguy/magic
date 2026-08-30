@@ -24,6 +24,7 @@ validators.mandatory:x:@.arguments/*/query
 // Apply defaults if not specified.
 validators.default:x:@.arguments
    limit:long:10
+   offset:long:0
 
 // Split the user's query into individual keywords, separated by spaces.
 .words
@@ -32,7 +33,6 @@ add:x:@.words
       .:' '
 
 // Enforce lower characters for each keyword, and guard against SQL injection.
-.no:int:0
 for-each:x:@.words/*
    set-value:x:@.dp/#
       strings.to-lower:x:@.dp/#
@@ -40,153 +40,209 @@ for-each:x:@.words/*
 // Specify which columns to search against.
 .columns
 
+// Database type this endpoint was generated for, deciding how the non-portable parts are spelled.
+.database-type:{database-type}
+
 // Connect to the specified database.
 data.connect:{database}
    database-type:{database-type}
 
-   // Start building our SQL.
-   .sql:"select *, ("
+   /*
+    * The two pieces of the scoring expression that are not spelled the same everywhere - the string
+    * length function, and the character type columns are cast to. SQL Server calls the function
+    * 'len' where the other three call it 'length', and each dialect names its character type
+    * differently.
+    */
+   .len:length
+   .chartype:text
+   if
+      eq:x:@.database-type
+         .:mssql
+      .lambda
+         set-value:x:@.len
+            .:len
+         set-value:x:@.chartype
+            .:"nvarchar(max)"
+   else-if
+      eq:x:@.database-type
+         .:mysql
+      .lambda
+         set-value:x:@.chartype
+            .:char
 
-   // 1) Dynamically create the full text by concatenating all columns we want to search.
-   .fields
+   /*
+    * Text expression per searchable column. Columns are cast to a character type so that columns
+    * which are not textual in the database still match - PostgreSQL refuses to coalesce a uuid
+    * with an empty string unless it is cast first.
+    */
+   .texts
    for-each:x:@.columns/*
       strings.concat
-         .:"coalesce("
+         .:"coalesce(cast("
          get-value:x:@.dp/#
-         .:", '')"
+         .:" as "
+         get-value:x:@.chartype
+         .:"), '')"
       unwrap:x:+/*/*
-      add:x:@.fields
+      add:x:@.texts
          .
             .:x:@strings.concat
-   set-value:x:@.fields
-      strings.join:x:@.fields/*
-         .:" || "
-   remove-nodes:x:@.fields/*
 
-   // 2) Keyword density calculation
+   /*
+    * Total length of all searchable columns, being the denominator of the keyword density. It is
+    * wrapped in 'nullif' below, since a row where every searchable column is empty would otherwise
+    * divide by zero, which is an error on PostgreSQL and SQL Server.
+    */
+   .total
+   for-each:x:@.texts/*
+      strings.concat
+         get-value:x:@.len
+         .:"("
+         get-value:x:@.dp/#
+         .:")"
+      unwrap:x:+/*/*
+      add:x:@.total
+         .
+            .:x:@strings.concat
+   set-value:x:@.total
+      strings.join:x:@.total/*
+         .:" + "
+   remove-nodes:x:@.total/*
+
+   /*
+    * Building one scoring expression per keyword, being how many times that keyword occurs across
+    * all searchable columns. Every column is scored on its own and the results summed with '+',
+    * rather than concatenating the columns first, since string concatenation is spelled differently
+    * in every dialect.
+    */
+   .terms
    .no:int:0
    for-each:x:@.words/*
 
-      // Adding SQL parameter.
-      set-name:x:+/+/*/*
+      // Adding the keyword as an SQL parameter.
+      .param
+      set-value:x:@.param
          strings.concat
             .:@p
             get-value:x:@.no
+      set-name:x:+/+/*/*
+         get-value:x:@.param
       unwrap:x:+/*/*
       add:x:@data.connect/*/data.select
          .
             .:x:@.dp/#
 
-      // Modifying our SQL.
-      if
-         eq:x:@.no
-            .:int:0
-         .lambda
-
-            // First keyword => no leading plus
-            set-value:x:@.sql
-               strings.concat:x:@.sql
-                  get-value:x:@.sql
-                  .:" (length("
-                  get-value:x:@.fields
-                  .:") - length(replace(lower("
-                  get-value:x:@.fields
-                  .:"), @p"
-                  get-value:x:@.no
-                  .:", ''))) / length(@p"
-                  get-value:x:@.no
-                  .:")"
-      else
-
-         set-value:x:@.sql
-            strings.concat:x:@.sql
-               get-value:x:@.sql
-               .:" + (length("
-               get-value:x:@.fields
-               .:") - length(replace(lower("
-               get-value:x:@.fields
-               .:"), @p"
-               get-value:x:@.no
-               .:", ''))) / length(@p"
-               get-value:x:@.no
-               .:")"
+      // Counting occurrences of the keyword in every searchable column.
+      .occurrences
+      for-each:x:@.texts/*
+         strings.concat
+            .:"("
+            get-value:x:@.len
+            .:"("
+            get-value:x:@.dp/#
+            .:") - "
+            get-value:x:@.len
+            .:"(replace(lower("
+            get-value:x:@.dp/#
+            .:"), "
+            get-value:x:@.param
+            .:", ''))) / "
+            get-value:x:@.len
+            .:"("
+            get-value:x:@.param
+            .:")"
+         unwrap:x:+/*/*
+         add:x:@.occurrences
+            .
+               .:x:@strings.concat
+      set-value:x:@.occurrences
+         strings.join:x:@.occurrences/*
+            .:" + "
+      unwrap:x:+/*/*
+      add:x:@.terms
+         .
+            .:x:@.occurrences
       math.increment:x:@.no
 
-   set-value:x:@.sql
-      strings.concat:x:@.sql
-         get-value:x:@.sql
-         .:") * 1.0 / length("
-         get-value:x:@.fields
-         .:") as keyword_density, ("
+   // Keyword density numerator, being every keyword's occurrence count summed.
+   .density
+   set-value:x:@.density
+      strings.join:x:@.terms/*
+         .:" + "
 
-   // 3) Distinct keyword count => For each keyword, 1 if present, 0 if not.
-   .no:int:0
-   for-each:x:@.words/*
-      if
-         eq:x:@.no
-            .:int:0
-         .lambda
+   // Distinct keyword count, being how many of the keywords matched at all.
+   .matches
+   for-each:x:@.terms/*
+      strings.concat
+         .:"case when ("
+         get-value:x:@.dp/#
+         .:") > 0 then 1 else 0 end"
+      unwrap:x:+/*/*
+      add:x:@.matches
+         .
+            .:x:@strings.concat
+   set-value:x:@.matches
+      strings.join:x:@.matches/*
+         .:" + "
+   remove-nodes:x:@.matches/*
 
-            // First keyword => no leading plus
-            set-value:x:@.sql
-               strings.concat:x:@.sql
-                  get-value:x:@.sql
-                  .:" CASE WHEN ((length("
-                  get-value:x:@.fields
-                  .:") - length(replace(lower("
-                  get-value:x:@.fields
-                  .:"), @p"
-                  get-value:x:@.no
-                  .:", ''))) / length(@p"
-                  get-value:x:@.no
-                  .:")) > 0 THEN 1 ELSE 0 END"
-      else
-
-         set-value:x:@.sql
-            strings.concat:x:@.sql
-               get-value:x:@.sql
-               .:" + CASE WHEN ((length("
-               get-value:x:@.fields
-               .:") - length(replace(lower("
-               get-value:x:@.fields
-               .:"), @p"
-               get-value:x:@.no
-               .:", ''))) / length(@p"
-               get-value:x:@.no
-               .:")) > 0 THEN 1 ELSE 0 END"
-      math.increment:x:@.no
-
-   // Finalize "keyword_count".
-   set-value:x:@.sql
-      strings.concat:x:@.sql
-         get-value:x:@.sql
-         .:") as keyword_count"
-
-   // 4) Finish SELECT + WHERE
-   set-value:x:@.sql
-      strings.concat:x:@.sql
-         get-value:x:@.sql
-         .:" from "
-         .:{table}
-         .:" where keyword_count > 0"
-
-   // 5) Order by distinct keyword_count (higher means more distinct keywords), then keyword_density.
-   set-value:x:@.sql
-      strings.concat:x:@.sql
-         get-value:x:@.sql
-         .:" order by keyword_count desc, keyword_density desc limit "
-         get-value:x:@.arguments/*/limit
-
-   // (Optional) offset => pagination
+   /*
+    * Resolving the limit, where -1 means "return every record". That is expressed as the largest
+    * possible limit rather than by omitting the clause, since MySQL and PostgreSQL both reject an
+    * offset that is not accompanied by a limit.
+    */
+   .limit
+   set-value:x:@.limit
+      get-value:x:@.arguments/*/limit
    if
-      exists:x:@.arguments/*/offset
+      lt:x:@.limit
+         .:long:0
       .lambda
+         set-value:x:@.limit
+            .:long:9223372036854775807
 
-         set-value:x:@.sql
-            strings.concat:x:@.sql
-               get-value:x:@.sql
+   /*
+    * Paging, being the other non-portable part of the statement - SQL Server spells it with
+    * 'offset/fetch', the other three with 'limit/offset'.
+    */
+   .paging
+   if
+      eq:x:@.database-type
+         .:mssql
+      .lambda
+         set-value:x:@.paging
+            strings.concat
                .:" offset "
                get-value:x:@.arguments/*/offset
+               .:" rows fetch next "
+               get-value:x:@.limit
+               .:" rows only"
+   else
+      set-value:x:@.paging
+         strings.concat
+            .:" limit "
+            get-value:x:@.limit
+            .:" offset "
+            get-value:x:@.arguments/*/offset
+
+   /*
+    * Assembling the statement. The scoring columns are computed inside a derived table and filtered
+    * outside of it, since referencing a select alias from the where clause is something only SQLite
+    * accepts. The derived table is always aliased, which PostgreSQL and SQL Server both require.
+    */
+   .sql
+   set-value:x:@.sql
+      strings.concat
+         .:"select * from (select *, ("
+         get-value:x:@.density
+         .:") * 1.0 / nullif("
+         get-value:x:@.total
+         .:", 0) as keyword_density, ("
+         get-value:x:@.matches
+         .:") as keyword_count from "
+         .:{escaped-table}
+         .:") magic_search where keyword_count > 0 order by keyword_count desc, keyword_density desc"
+         get-value:x:@.paging
 
    // Execute the SQL
    data.select:x:@.sql

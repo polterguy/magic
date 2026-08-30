@@ -257,5 +257,144 @@ namespace magic.data.common.tests.tests.read
             var sql = result.Get<string>();
             Assert.Equal("select 'bar'.'howdy' from 'foo' limit 25", sql);
         }
+
+        [Fact]
+        public void Distinct()
+        {
+            // Creating node hierarchy.
+            var node = new Node();
+            node.Add(new Node("table", "foo"));
+            node.Add(new Node("distinct", true));
+            var builder = new SqlReadBuilder(node, "'");
+
+            // Extracting SQL + params, and asserting correctness.
+            var result = builder.Build();
+            var sql = result.Get<string>();
+            Assert.Equal("select distinct * from 'foo' limit 25", sql);
+        }
+
+        [Fact]
+        public void DistinctWithColumns()
+        {
+            // Creating node hierarchy.
+            var node = new Node();
+            node.Add(new Node("table", "foo"));
+            node.Add(new Node("distinct", true));
+            var columns = new Node("columns");
+            columns.Add(new Node("bar"));
+            node.Add(columns);
+            var builder = new SqlReadBuilder(node, "'");
+
+            // Extracting SQL + params, and asserting correctness.
+            var result = builder.Build();
+            var sql = result.Get<string>();
+            Assert.Equal("select distinct 'bar' from 'foo' limit 25", sql);
+        }
+
+        [Fact]
+        public void DistinctFalse()
+        {
+            // Creating node hierarchy.
+            var node = new Node();
+            node.Add(new Node("table", "foo"));
+            node.Add(new Node("distinct", false));
+            var builder = new SqlReadBuilder(node, "'");
+
+            // Extracting SQL + params, and asserting correctness.
+            var result = builder.Build();
+            var sql = result.Get<string>();
+            Assert.Equal("select * from 'foo' limit 25", sql);
+        }
+
+        [Fact]
+        public void DistinctAsColumnFunctionThrows()
+        {
+            /*
+             * 'distinct' is a quantifier and not an aggregate function, so it must never be
+             * accepted as one - it is expressed with the [distinct] argument above instead.
+             */
+            var node = new Node();
+            node.Add(new Node("table", "foo"));
+            var columns = new Node("columns");
+            columns.Add(new Node("distinct(bar)"));
+            node.Add(columns);
+            var builder = new SqlReadBuilder(node, "'");
+
+            // Extracting SQL + params, and asserting correctness.
+            Assert.Throws<HyperlambdaException>(() => builder.Build());
+        }
+
+        [Fact]
+        public void AggregateDistinctOperandEscaped()
+        {
+            // Creating node hierarchy.
+            var node = new Node();
+            node.Add(new Node("table", "foo"));
+            var columns = new Node("columns");
+            var aggregate = new Node("count(distinct foo.bar)");
+            aggregate.Add(new Node("as", "count"));
+            columns.Add(aggregate);
+            node.Add(columns);
+            var builder = new SqlReadBuilder(node, "'");
+
+            // Extracting SQL + params, and asserting correctness.
+            var result = builder.Build();
+            var sql = result.Get<string>();
+            Assert.Equal("select count(distinct 'foo'.'bar') as 'count' from 'foo' limit 25", sql);
+        }
+
+        [Fact]
+        public void AggregateArithmeticOperandsEscaped()
+        {
+            // Creating node hierarchy.
+            var node = new Node();
+            node.Add(new Node("table", "foo"));
+            var columns = new Node("columns");
+            columns.Add(new Node("sum(foo.price * foo.quantity)"));
+            node.Add(columns);
+            var builder = new SqlReadBuilder(node, "'");
+
+            // Extracting SQL + params, and asserting correctness.
+            var result = builder.Build();
+            var sql = result.Get<string>();
+            Assert.Equal("select sum('foo'.'price' * 'foo'.'quantity') from 'foo' limit 25", sql);
+        }
+
+        [Fact]
+        public void AggregateCastOperandEscaped()
+        {
+            // Creating node hierarchy.
+            var node = new Node();
+            node.Add(new Node("table", "foo"));
+            var columns = new Node("columns");
+            columns.Add(new Node("cast(sum(foo.price) as decimal)"));
+            node.Add(columns);
+            var builder = new SqlReadBuilder(node, "'");
+
+            // Extracting SQL + params, and asserting correctness.
+            var result = builder.Build();
+            var sql = result.Get<string>();
+            Assert.Equal("select cast(sum('foo'.'price') as decimal) from 'foo' limit 25", sql);
+        }
+
+        [Fact]
+        public void AggregateWildcardNotEscaped()
+        {
+            // Creating node hierarchy.
+            var node = new Node();
+            node.Add(new Node("table", "foo"));
+            var group = new Node("group");
+            group.Add(new Node("bar"));
+            node.Add(group);
+            var columns = new Node("columns");
+            columns.Add(new Node("count(*)"));
+            node.Add(columns);
+            var builder = new SqlReadBuilder(node, "'");
+
+            // Extracting SQL + params, and asserting correctness.
+            var result = builder.Build();
+            var sql = result.Get<string>();
+            Assert.Equal("select count(*) from 'foo' group by 'bar' limit 25", sql);
+        }
     }
 }

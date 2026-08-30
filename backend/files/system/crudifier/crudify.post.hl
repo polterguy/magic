@@ -1539,17 +1539,16 @@ semaphore:crudifier
                   ..:"What direction to order, can be 'asc' or 'desc' implying ascending and descending"
                   direction:string
             set-value:x:@.apply/**/count(*)/0
-               .:.
             set-name:x:@.apply/**/count(*)
                .:distinct_functor
+            add:x:@.apply/*/data.connect/*/data.read
+               .
+                  distinct:bool:true
             insert-after:x:@.apply/*/data.connect/*/database-type
                .
-                  ..:Making sure we're using correct function.
+                  ..:Making sure we're returning the correct column.
                   set-name:x:./*/data.read/*/columns/*/distinct_functor
-                     strings.concat
-                        .:distinct(
-                        get-value:x:@.arguments/*/distinct_column
-                        .:)
+                     get-value:x:@.arguments/*/distinct_column
                   ..:Removing distinct argument to simplify adding other arguments.
                   remove-nodes:x:@.arguments/*/distinct_column
                   ..:Adding [limit] and [offset] arguments
@@ -1577,6 +1576,15 @@ semaphore:crudifier
                   get-value:x:@.apply/*/.arguments/*/distinct_column/-
                   .:" Argument is mandatory and must be in the format of TABLE_NAME.COLUMN_NAME"
             remove-nodes:x:@.apply/*/data.connect/*/data.read/*/limit
+
+            /*
+             * Returning rows instead of the single scalar the count endpoint this was derived from
+             * returns, since a distinct query yields one row per unique value.
+             */
+            remove-nodes:x:@.apply/*/data.connect/*/return-nodes
+            add:x:@.apply/*/data.connect
+               .
+                  return-nodes:x:@data.read/*
             lambda2hyper:x:@.apply/*
                comments:bool:true
             unwrap:x:+
@@ -1647,6 +1655,7 @@ semaphore:crudifier
             remove-nodes:x:@.apply/*/.arguments/*/order
             remove-nodes:x:@.apply/*/.arguments/*/direction/-
             remove-nodes:x:@.apply/*/.arguments/*/direction
+            remove-nodes:x:@.apply/*/data.connect/*/data.read/*/distinct
             remove-nodes:x:@.apply/*/data.connect/*/database-type/+/+/*
             add:x:@.apply/*/data.connect/*/database-type/+/+
                .
@@ -1664,6 +1673,12 @@ semaphore:crudifier
                get-nodes:x:@.temp-cols/*
             set-value:x:@.apply/**/distinct_functor/0
                .:count
+
+            // Counting yields a single scalar, unlike the distinct endpoint above.
+            remove-nodes:x:@.apply/*/data.connect/*/return-nodes
+            add:x:@.apply/*/data.connect
+               .
+                  return-nodes:x:@data.read/*/*
             lambda2hyper:x:@.apply/*
                comments:bool:true
             unwrap:x:+
@@ -1721,11 +1736,55 @@ semaphore:crudifier
                io.file.load:/system/crudifier/templates/search.template.get.hl
                hyper2lambda:x:-
                   comments:bool:true
+
+               /*
+                * The search endpoint assembles its own SQL instead of going through the SQL builders,
+                * so it has to escape its own identifiers - and it must, since PostgreSQL folds
+                * unquoted identifiers to lower case and would not resolve them against the quoted
+                * names the rest of the statement uses.
+                */
+               .escape:"\""
+               if
+                  eq:x:@.arguments/*/databaseType
+                     .:mysql
+                  .lambda
+                     set-value:x:@.escape
+                        .:"`"
+               .escape-doubled
+               set-value:x:@.escape-doubled
+                  strings.concat
+                     get-value:x:@.escape
+                     get-value:x:@.escape
+
+               /*
+                * Escaping the table name, split on '.' such that a PostgreSQL 'schema.table' gets
+                * both of its parts escaped individually, exactly like the SQL builders do it.
+                */
+               .escaped-table
+               strings.split:x:@.arguments/*/table
+                  .:.
+               for-each:x:@strings.split/*
+                  strings.concat
+                     get-value:x:@.escape
+                     strings.replace:x:@.dp/#
+                        get-value:x:@.escape
+                        get-value:x:@.escape-doubled
+                     get-value:x:@.escape
+                  unwrap:x:+/*/*
+                  add:x:@.escaped-table
+                     .
+                        .:x:@strings.concat
+               set-value:x:@.escaped-table
+                  strings.join:x:@.escaped-table/*
+                     .:.
+               remove-nodes:x:@.escaped-table/*
+
                unwrap:x:+/*
                apply:x:@hyper2lambda
                   database-type:x:@.arguments/*/databaseType
                   database:x:@.arguments/*/database
                   table:x:@.arguments/*/table
+                  escaped-table:x:@.escaped-table
 
                // Creating our file level comment.
                set-value:x:@apply/0
@@ -1737,7 +1796,7 @@ semaphore:crudifier
                      .:{database}
                      get-value:x:@.database-name
 
-               // Making sure we add columns to endpoint.
+               // Making sure we add columns to endpoint, escaped the same way as the table name.
                .has-columns:bool:false
                for-each:x:@.arguments/*/args/*/columns/*
                   if
@@ -1747,10 +1806,16 @@ semaphore:crudifier
 
                         set-value:x:@.has-columns
                            .:bool:true
+                        strings.concat
+                           get-value:x:@.escape
+                           strings.replace:x:@.dp/#/*/name
+                              get-value:x:@.escape
+                              get-value:x:@.escape-doubled
+                           get-value:x:@.escape
                         unwrap:x:+/*/*
                         add:x:@apply/*/.columns
                            .
-                              .:x:@.dp/#/*/name
+                              .:x:@strings.concat
 
                // Verifying we've actually got columns.
                if:x:@.has-columns

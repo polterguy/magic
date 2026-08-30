@@ -439,6 +439,7 @@ namespace magic.data.common.signatures
         public virtual IEnumerable<SlotChild> Children => new[]
         {
             SqlCreateSignature.Table(SlotChildCardinality.ExactlyOne, true),
+            Distinct(),
             Columns(),
             SqlCreateSignature.Where(),
             Group(),
@@ -483,6 +484,20 @@ namespace magic.data.common.signatures
                         Projection = SlotChildProjection.Value,
                     },
                 },
+            };
+        }
+
+        internal static SlotChild Distinct()
+        {
+            return new SlotChild
+            {
+                Name = "distinct",
+                Type = "bool",
+                Description = "Removes duplicate rows from the result set when true",
+                Required = false,
+                DefaultValue = "false",
+                Mode = SlotChildMode.ValueOrExpression,
+                Cardinality = SlotChildCardinality.ZeroOrOne,
             };
         }
 
@@ -700,6 +715,7 @@ namespace magic.data.common.signatures
         {
             DbCreateSignature.Generate(),
             SqlCreateSignature.Table(SlotChildCardinality.ExactlyOne, true),
+            Distinct(),
             Columns(),
             SqlCreateSignature.Where(),
             Group(),
@@ -828,6 +844,7 @@ namespace magic.data.common.signatures
             DataCreateSignature.DatabaseType(),
             DbCreateSignature.Generate(),
             SqlCreateSignature.Table(SlotChildCardinality.ExactlyOne, true),
+            Distinct(),
             Columns(),
             SqlCreateSignature.Where(),
             Group(),

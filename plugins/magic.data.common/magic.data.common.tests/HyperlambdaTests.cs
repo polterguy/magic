@@ -74,7 +74,8 @@ namespace magic.data.common.tests
          on
             and
                field1:t2.field2");
-            Assert.Equal("select * from 'table1' inner join 'table2' t2 on 'field1' = 't2'.'field2'", lambda.Children.First().Get<string>());
+            // Notice, the alias is escaped, matching the escaped references pointing at it.
+            Assert.Equal("select * from 'table1' inner join 'table2' 't2' on 'field1' = 't2'.'field2'", lambda.Children.First().Get<string>());
         }
 
         [Fact]

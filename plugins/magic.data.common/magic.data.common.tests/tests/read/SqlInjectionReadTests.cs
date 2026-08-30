@@ -182,7 +182,8 @@ namespace magic.data.common.tests.tests.read
             // Extracting SQL + params, and asserting correctness.
             var result = builder.Build();
             var sql = result.Get<string>();
-            Assert.Equal("select min(foo.field1) as 'result' from 'foo' limit 25", sql);
+            // Notice, the aggregate's operand is escaped just like every other identifier in the statement.
+            Assert.Equal("select min('foo'.'field1') as 'result' from 'foo' limit 25", sql);
         }
 
         [Fact]
@@ -212,7 +213,7 @@ namespace magic.data.common.tests.tests.read
             // Extracting SQL + params, and asserting correctness.
             var result = builder.Build();
             var sql = result.Get<string>();
-            Assert.Equal("select * from 'foo' t1 limit 25", sql);
+            Assert.Equal("select * from 'foo' 't1' limit 25", sql);
         }
 
         [Fact]
