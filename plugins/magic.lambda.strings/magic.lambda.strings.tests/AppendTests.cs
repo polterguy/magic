@@ -45,7 +45,7 @@ get-value:x:@strings.builder
             var body = children.Children.First();
             var output = signature.Children.First(x => x.Name == "output");
 
-            Assert.Equal("string", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("text", output.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("*", body.Name);
             Assert.Equal(SlotChildMode.ExecutableLambda.ToString(), body.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotChildRole.ExecutableBody.ToString(), body.Children.First(x => x.Name == "role").GetEx<string>());

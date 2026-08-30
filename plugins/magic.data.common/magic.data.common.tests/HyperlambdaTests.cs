@@ -115,7 +115,7 @@ sql.read
    table:table1
       as:t1
 ");
-            Assert.Equal("select * from 'table1' t1", lambda.Children.First().Get<string>());
+            Assert.Equal("select * from 'table1' 't1'", lambda.Children.First().Get<string>());
         }
 
         [Fact]

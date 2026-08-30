@@ -21,8 +21,9 @@ namespace magic.lambda.tests
    .:int:3
 map:x:@.src/*
    math.increment:x:@.dp/#
+   unwrap:x:+/*
    yield
-      .:x:-");
+      .:x:@math.increment");
 
             var map = lambda.Children.First(x => x.Name == "map");
             Assert.Equal(3, map.Children.Count());

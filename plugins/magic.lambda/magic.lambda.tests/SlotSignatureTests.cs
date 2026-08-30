@@ -19,12 +19,12 @@ namespace magic.lambda.tests
             var input = result.Children.First(x => x.Name == "input");
             var output = result.Children.First(x => x.Name == "output");
 
-            Assert.Equal("string", input.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("dynamic-slot-name", input.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Name of the compiled slot to inspect", input.Children.First(x => x.Name == "description").GetEx<string>());
             Assert.True(input.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Equal(SlotValueMode.ValueOrExpression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotReturnsMode.Value.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("string", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("slot-description,text", output.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Resolves to the description of the requested slot", output.Children.First(x => x.Name == "description").GetEx<string>());
         }
 
@@ -36,12 +36,12 @@ namespace magic.lambda.tests
             var input = result.Children.First(x => x.Name == "input");
             var output = result.Children.First(x => x.Name == "output");
 
-            Assert.Equal("string", input.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("dynamic-slot-name", input.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Name of the dynamic slot to invoke", input.Children.First(x => x.Name == "description").GetEx<string>());
             Assert.True(input.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Equal(SlotValueMode.ValueOrExpression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotReturnsMode.Both.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("object", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("lambda-result", output.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Resolves to the invoked slot's value result and any returned child nodes", output.Children.First(x => x.Name == "description").GetEx<string>());
         }
 
@@ -54,7 +54,7 @@ namespace magic.lambda.tests
 
             Assert.DoesNotContain(result.Children, x => x.Name == "input");
             Assert.Equal(SlotReturnsMode.Value.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("string", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("string", output.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Resolves to the constant string \"OK\"", output.Children.First(x => x.Name == "description").GetEx<string>());
         }
 
@@ -65,7 +65,7 @@ namespace magic.lambda.tests
             var result = lambda.Children.First();
             var input = result.Children.First(x => x.Name == "input");
 
-            Assert.Equal("lambda", input.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("lambda-object,lambda-tree", input.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Expression selecting the Hyperlambda nodes to evaluate", input.Children.First(x => x.Name == "description").GetEx<string>());
             Assert.True(input.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Equal(SlotValueMode.Expression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
@@ -123,7 +123,7 @@ namespace magic.lambda.tests
                 .Children
                 .First(x => x.Name == "*");
 
-            Assert.Equal("expression", input.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("template,lambda-tree", input.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal(SlotValueMode.Expression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotChildMode.Value.ToString(), argument.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotChildRole.Arguments.ToString(), argument.Children.First(x => x.Name == "role").GetEx<string>());
@@ -149,11 +149,11 @@ namespace magic.lambda.tests
 
             Assert.DoesNotContain(result.Children, x => x.Name == "input");
             Assert.Equal(SlotChildCardinality.ExactlyTwo.ToString(), operand.Children.First(x => x.Name == "cardinality").GetEx<string>());
-            Assert.Equal(SlotChildRole.Operand.ToString(), operand.Children.First(x => x.Name == "role").GetEx<string>());
+            Assert.Equal(SlotChildRole.OperandPaired.ToString(), operand.Children.First(x => x.Name == "role").GetEx<string>());
             Assert.Equal(SlotChildEvaluation.EvalSelf.ToString(), operand.Children.First(x => x.Name == "evaluation").GetEx<string>());
             Assert.Equal(SlotChildProjection.Value.ToString(), operand.Children.First(x => x.Name == "projection").GetEx<string>());
             Assert.Equal(SlotReturnsMode.Value.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("bool", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("boolean", output.Children.First(x => x.Name == "kind").GetEx<string>());
         }
 
         [Fact]
@@ -172,7 +172,6 @@ namespace magic.lambda.tests
             Assert.Equal(SlotChildMode.ExecutableLambda.ToString(), candidate.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotChildProjection.Value.ToString(), candidate.Children.First(x => x.Name == "projection").GetEx<string>());
             Assert.Equal(SlotReturnsMode.Value.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("object", output.Children.First(x => x.Name == "type").GetEx<string>());
         }
 
         [Fact]

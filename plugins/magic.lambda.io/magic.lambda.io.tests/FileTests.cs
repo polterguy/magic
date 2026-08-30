@@ -1334,7 +1334,7 @@ io.file.execute:foo.hl
                     loadInvoked = true;
                     return @"
 .arguments
-   foo:bar
+   input:string
 if
    not
       eq
@@ -1473,7 +1473,7 @@ io.file.execute:foo.hl
                     loadInvoked = true;
                     return @"
 .arguments
-   foo:bar
+   input:string
 if
    not
       eq

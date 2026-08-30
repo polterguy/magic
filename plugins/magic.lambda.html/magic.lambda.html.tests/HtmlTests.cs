@@ -47,7 +47,7 @@ html2lambda:@""<html>
             var output = result.Children.First(x => x.Name == "output");
 
             Assert.Equal(SlotReturnsMode.Lambda.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("lambda", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("html-tree", output.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Resolves to the parsed HTML hierarchy as child nodes", output.Children.First(x => x.Name == "description").GetEx<string>());
         }
 

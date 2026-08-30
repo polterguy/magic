@@ -51,9 +51,9 @@ namespace magic.lambda.mime.tests
             var output = lambda.Children.First().Children.First(x => x.Name == "output");
 
             Assert.Equal(SlotReturnsMode.Both.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("lambda", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("content-type,text", output.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal(
-                "Resolves to a MIME entity tree where the value is the entity content type and children contain headers, content, and nested entities",
+                "Resolves to the parsed MIME entity content type as the node value, and headers, content, and nested entities as child nodes",
                 output.Children.First(x => x.Name == "description").GetEx<string>());
         }
 

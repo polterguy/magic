@@ -46,9 +46,9 @@ namespace magic.lambda.image.tests
 
             Assert.Contains(children.Children, x => x.Name == "type");
             Assert.Contains(children.Children, x => x.Name == "dest");
-            Assert.Equal(SlotReturnsMode.Value.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("Stream", output.Children.First(x => x.Name == "type").GetEx<string>());
-            Assert.Equal("Resolves to the converted image stream unless [dest] is supplied, in which case the converted image is saved to disk", output.Children.First(x => x.Name == "description").GetEx<string>());
+            Assert.Equal(SlotReturnsMode.Both.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
+            Assert.Equal("image", output.Children.First(x => x.Name == "kind").GetEx<string>());
+            Assert.Equal("Resolves to the converted image stream unless [dest] is supplied, in which case the converted image is saved to disk and nothing is returned", output.Children.First(x => x.Name == "description").GetEx<string>());
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace magic.lambda.image.tests
             Assert.Contains(children.Children, x => x.Name == "dest");
             Assert.Contains(children.Children, x => x.Name == "width");
             Assert.Contains(children.Children, x => x.Name == "height");
-            Assert.Equal("Stream", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("image", output.Children.First(x => x.Name == "kind").GetEx<string>());
         }
 
         [Fact]

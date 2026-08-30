@@ -51,8 +51,7 @@ format:x:-
             var lambda = Common.Evaluate(@"slot.signature:format");
             var input = lambda.Children.First().Children.First(x => x.Name == "input");
 
-            Assert.Equal("object", input.Children.First(x => x.Name == "type").GetEx<string>());
-            Assert.Equal("formattable-value", input.Children.First(x => x.Name == "kind").GetEx<string>());
+            Assert.Equal("scalar", input.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal(SlotValueMode.ValueOrExpression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
         }
     }

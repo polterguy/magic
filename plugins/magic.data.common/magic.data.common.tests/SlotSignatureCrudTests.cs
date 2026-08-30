@@ -52,7 +52,9 @@ namespace magic.data.common.tests
             var on = join.Children.First(x => x.Name == "children").Children.First(x => x.Name == "on");
             var where = children.Children.First(x => x.Name == "where");
 
-            Assert.Equal(SlotChildCardinality.OneOrMore.ToString(), table.Children.First(x => x.Name == "cardinality").GetEx<string>());
+            // Notice, the signature deliberately declares a single [table]; the SQL builder still accepts
+            // multiple at runtime, but the comma-FROM shape is no longer taught through the signature.
+            Assert.Equal(SlotChildCardinality.ExactlyOne.ToString(), table.Children.First(x => x.Name == "cardinality").GetEx<string>());
             Assert.True(on.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Contains(where.Children.First(x => x.Name == "children").Children, x => x.Name == "and");
             // [@*] used to live on CRUD signatures, but it was misleading:

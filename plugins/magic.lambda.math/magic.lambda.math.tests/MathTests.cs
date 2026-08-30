@@ -353,7 +353,7 @@ math.dot
             Assert.Equal("*", operand.Name);
             Assert.Equal(SlotChildCardinality.TwoOrMore.ToString(), operand.Children.First(x => x.Name == "cardinality").GetEx<string>());
             Assert.Equal(SlotChildMode.ExecutableLambda.ToString(), operand.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal(SlotChildRole.Operand.ToString(), operand.Children.First(x => x.Name == "role").GetEx<string>());
+            Assert.Equal(SlotChildRole.OperandPaired.ToString(), operand.Children.First(x => x.Name == "role").GetEx<string>());
             Assert.Equal(SlotChildEvaluation.EvalSelf.ToString(), operand.Children.First(x => x.Name == "evaluation").GetEx<string>());
             Assert.Equal(SlotChildProjection.Value.ToString(), operand.Children.First(x => x.Name == "projection").GetEx<string>());
         }

@@ -34,9 +34,8 @@ namespace magic.lambda.io.tests
             Assert.Equal(SlotChildCardinality.ExactlyOne.ToString(), pattern.Children.First(x => x.Name == "cardinality").GetEx<string>());
             Assert.Equal("false", regex.Children.First(x => x.Name == "default").GetEx<string>());
             Assert.Equal("text-file-extension-list", extensions.Children.First(x => x.Name == "kind").GetEx<string>());
-            Assert.Equal("file-search-result-list", output.Children.First(x => x.Name == "kind").GetEx<string>());
-            Assert.Equal("lambda", output.Children.First(x => x.Name == "element-type").GetEx<string>());
-            Assert.Equal("file-search-result", output.Children.First(x => x.Name == "element-kind").GetEx<string>());
+            Assert.Equal("file-search-result-list,node-list", output.Children.First(x => x.Name == "kind").GetEx<string>());
+            Assert.Equal("file-search-result,lambda-tree", output.Children.First(x => x.Name == "element-kind").GetEx<string>());
             Assert.Equal("file-search-result", outputItem.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("file-path", file.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("line-number-list", lines.Children.First(x => x.Name == "kind").GetEx<string>());
@@ -69,7 +68,6 @@ namespace magic.lambda.io.tests
                 .Children
                 .First(x => x.Name == "output");
 
-            Assert.Equal("string", output.Children.First(x => x.Name == "type").GetEx<string>());
             Assert.Equal("text-file-content,text", output.Children.First(x => x.Name == "kind").GetEx<string>());
         }
 
@@ -127,7 +125,7 @@ namespace magic.lambda.io.tests
                 .First(x => x.Name == "output");
 
             Assert.Equal(SlotReturnsMode.Lambda.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("lambda", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("file-path-list,string-list", output.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Returns one unnamed child node per relative file path", output.Children.First(x => x.Name == "description").GetEx<string>());
         }
 
@@ -141,7 +139,7 @@ namespace magic.lambda.io.tests
                 .First(x => x.Name == "output");
 
             Assert.Equal(SlotReturnsMode.Lambda.ToString(), output.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.Equal("lambda", output.Children.First(x => x.Name == "type").GetEx<string>());
+            Assert.Equal("folder-path-list,string-list", output.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Returns one unnamed child node per relative folder path", output.Children.First(x => x.Name == "description").GetEx<string>());
         }
     }
