@@ -17,6 +17,12 @@ FUNCTION_INVOCATION[/misc/workflows/workflows/modules/crudify.hl]:
   "auth": "[STRING_VALUE]",
   "returnId": "[BOOLEAN_VALUE]",
   "overwrite": "[BOOLEAN_VALUE]",
+  "paging": "[BOOLEAN_VALUE]",
+  "sorting": "[BOOLEAN_VALUE]",
+  "aggregate": "[BOOLEAN_VALUE]",
+  "distinct": "[BOOLEAN_VALUE]",
+  "search": "[BOOLEAN_VALUE]",
+  "log": "[STRING_VALUE]",
   "args": {
     "columns": [
       {
@@ -41,6 +47,12 @@ Arguments:
 - `auth` is an optional comma separated list of roles allowed to invoke the endpoint, or `*` to allow any authenticated user. Omitting it creates an endpoint anyone can invoke.
 - `returnId` is optional, and if true makes the POST endpoint return the id of the created record.
 - `overwrite` is optional, and if true will overwrite previously generated endpoint files.
+- `paging` is optional and only applies to `get`. If false the `limit` and `offset` arguments are removed from the generated endpoint. Defaults to true.
+- `sorting` is optional and only applies to `get`. If false the `order` and `direction` arguments are removed from the generated endpoint. Defaults to true.
+- `aggregate` is optional and only applies to `get`. If true it additionally generates an `-aggregate` endpoint returning min, max, sum or avg of a column, and a `-group` endpoint returning the same grouped by another column. Defaults to false.
+- `distinct` is optional and only applies to `get`. If true it additionally generates a `-distinct` endpoint returning unique values of a column, and a `-count-distinct` endpoint counting them. Defaults to false.
+- `search` is optional and only applies to `get`. If true it additionally generates a `-search` endpoint doing keyword density search across the table's string columns. It is ignored for tables having no string columns. Defaults to false.
+- `log` is optional, and is a static message the generated endpoint logs on every invocation, together with the username of the caller and the arguments the endpoint was invoked with, e.g. `Album entry created`. Omitting it generates an endpoint that logs nothing.
 - `args` is the mandatory column declarations. Columns are declared as a list of objects, each with a `name` and a `type` field, where type is the Hyperlambda type of the column, being `long`, `string`, `decimal`, `double`, `date` or `bool`. For `get` provide `columns` being every column the endpoint returns. For `post` provide `columns` being the insertable columns. For `put` provide `columns` being the updatable non-key columns, plus `primary` being the primary key columns, both in that same format. For `delete` provide only `primary`, where each key is instead a single-field object using the column name as field and the type as value, e.g. `{"primary":[{"AlbumId":"long"}]}`.
 
-Retrieve the column names and types with the `get-database-schema` function first, and create the module with the `create-module` function unless it already exists. Generating a `get` endpoint also generates a record count endpoint, and `get` endpoints support paging, sorting and filtering, where filtering happens through arguments named `Table.Column.operator`, e.g. `Album.AlbumId.eq`. Generated endpoints are instantly available as HTTP endpoints and MCP tools, and can be tested with the `invoke-endpoint` function.
+Retrieve the column names and types with the `get-database-schema` function first, and create the module with the `create-module` function unless it already exists. Generating a `get` endpoint also generates a record count endpoint, and `get` endpoints support paging, sorting and filtering, where filtering happens through arguments named `Table.Column.operator`, e.g. `Album.AlbumId.eq`. Pass `aggregate`, `distinct` or `search` when the user wants reporting endpoints on top of the plain read endpoint. Generated endpoints are instantly available as HTTP endpoints and MCP tools, and can be tested with the `invoke-endpoint` function.

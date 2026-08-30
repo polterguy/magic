@@ -3,7 +3,9 @@
  * Executable Hyperlambda file that generates one CRUD HTTP endpoint wrapping a database table,
  * using the same battle tested CRUD generator the dashboard is using. Invoke once for each verb
  * you want to generate. GET also generates a record count endpoint, and GET endpoints support
- * paging, sorting and filtering. Retrieve column names and types with get-database-schema first,
+ * paging, sorting and filtering. Pass aggregate, distinct or search to additionally generate
+ * reporting endpoints for the GET verb, and log to have the generated endpoint log every
+ * invocation. Retrieve column names and types with get-database-schema first,
  * and create the module with create-module unless it already exists. Generated endpoints are
  * instantly available as HTTP endpoints and MCP tools.
  */
@@ -38,6 +40,24 @@
 
    // Optional argument that if true will overwrite previously generated endpoint files.
    overwrite:bool
+
+   // Optional argument for the 'get' verb that if false removes the 'limit' and 'offset' arguments from the generated endpoint. Defaults to true.
+   paging:bool
+
+   // Optional argument for the 'get' verb that if false removes the 'order' and 'direction' arguments from the generated endpoint. Defaults to true.
+   sorting:bool
+
+   // Optional argument for the 'get' verb that if true additionally generates an '-aggregate' endpoint returning min, max, sum or avg of a column, and a '-group' endpoint returning the same grouped by another column. Defaults to false.
+   aggregate:bool
+
+   // Optional argument for the 'get' verb that if true additionally generates a '-distinct' endpoint returning unique values of a column, and a '-count-distinct' endpoint counting them. Defaults to false.
+   distinct:bool
+
+   // Optional argument for the 'get' verb that if true additionally generates a '-search' endpoint doing keyword density search across the table's string columns. Ignored for tables having no string columns. Defaults to false.
+   search:bool
+
+   // Optional argument being a static message the generated endpoint logs on every invocation, together with the username of the caller and the arguments the endpoint was invoked with, e.g. 'Album entry created'. Omitting it generates an endpoint that logs nothing.
+   log:string
 
    // Mandatory argument being column declarations, as a JSON object. Columns are declared as a list of objects, each with a 'name' and a 'type' field, where type is the Hyperlambda type of the column - 'long', 'string', 'decimal', 'double', 'date' or 'bool'. For 'get' provide [columns] being every column the endpoint returns, e.g. {"columns":[{"name":"AlbumId","type":"long"},{"name":"Title","type":"string"}]}. For 'post' provide [columns] being the insertable columns, same format. For 'put' provide [columns] being the updatable non-key columns, plus [primary] being the primary key columns, both in that same format. For 'delete' provide only [primary], where each key is instead a single-field object using the column name as field and the type as value, e.g. {"primary":[{"AlbumId":"long"}]}. The generated GET endpoint filters through arguments named 'Table.Column.operator', e.g. 'Album.AlbumId.eq'.
    args:*
