@@ -15,6 +15,7 @@ import {
 import {
   StoredBackend,
   activateBackend,
+  backendFromUrl,
   deactivateBackend,
   forgetBackend,
   loadBackend,
@@ -82,7 +83,14 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: ReactNode }) {
 
   const [backend, setBackend] = useState<StoredBackend | null>(() => {
-    const stored = loadBackend();
+    /*
+     * A "?backend=" link wins over whatever was last active, since it is an
+     * explicit instruction to point at that cloudlet. Resolved here rather
+     * than from an effect because the login screen initialises its field on
+     * the first render - from an effect it would already have guessed the
+     * domain the dashboard itself was served from, and keep it.
+     */
+    const stored = backendFromUrl() ?? loadBackend();
     if (stored?.token && tokenExpired(stored.token)) {
       stored.token = null;
     }
@@ -203,29 +211,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   /*
-   * A "?backend=<url>" link points the dashboard at a particular cloudlet.
-   * When that backend is already signed in, its token is reused and the
-   * switch is silent; otherwise it becomes the active one and the login
-   * screen opens against it. Either way the parameter is stripped, so a
-   * reload doesn't repeat the switch.
+   * The "?backend=" parameter is consumed during initialisation above, so all
+   * that remains is taking it out of the address bar - a reload should not
+   * repeat the switch, and the address should not keep advertising it.
    */
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const target = params.get('backend');
-    if (!target) {
+    if (!params.has('backend')) {
       return;
     }
     params.delete('backend');
     const query = params.toString();
     window.history.replaceState(
       null, '', window.location.pathname + (query ? '?' + query : ''));
-    const url = target.replace(/\/+$/, '');
-    if (loadBackends().some(candidate => candidate.url === url)) {
-      switchBackend(url);
-    } else {
-      applyBackend({ url, username: '', token: null });
-    }
-  }, [switchBackend, applyBackend]);
+  }, []);
 
   /*
    * A stored token that has not expired is still not necessarily good: the

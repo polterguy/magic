@@ -135,6 +135,31 @@ export function activateBackend(url: string): StoredBackend | null {
 }
 
 /*
+ * Resolves the cloudlet named by a "?backend=<url>" link, or null when the
+ * link carries no such parameter.
+ *
+ * Reuses the stored entry when that cloudlet is already signed in, so following
+ * the link keeps its token, and remembers a cloudlet it has not seen before.
+ * Read during initialisation rather than from an effect - by the time an effect
+ * runs the login screen has already initialised its field, and would keep
+ * whatever it guessed instead of the cloudlet the link asked for.
+ */
+export function backendFromUrl(): StoredBackend | null {
+  const target = new URLSearchParams(window.location.search).get('backend');
+  if (!target) {
+    return null;
+  }
+  const url = target.replace(/\/+$/, '');
+  const stored = activateBackend(url);
+  if (stored) {
+    return stored;
+  }
+  const fresh: StoredBackend = { url, username: '', token: null };
+  saveBackend(fresh);
+  return fresh;
+}
+
+/*
  * Forgets a backend entirely. Removing the active one falls back to whatever
  * else is signed in, so the app doesn't end up pointing at nothing while
  * other backends are still available.
