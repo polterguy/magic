@@ -56,6 +56,14 @@ namespace magic.lambda.git.signatures
         };
     }
 
+    public class GitRestoreSignature : GitSignature
+    {
+        public override IEnumerable<SlotChild> Children => new[]
+        {
+            Option("file", "string", "Repository-relative path of one file to restore from HEAD; omitted resets the whole working tree to HEAD and removes untracked files", kind: "git-file-path"),
+        };
+    }
+
     public class GitPullSignature : GitSignature
     {
         public override IEnumerable<SlotChild> Children => new[]

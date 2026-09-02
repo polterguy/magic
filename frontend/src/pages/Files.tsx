@@ -358,6 +358,34 @@ export default function Files() {
     }
   }
 
+  /*
+   * Git operations rewrite files behind the editor's back. Every open tab under
+   * the folder is re-read so it shows what is on disk, and its saved baseline
+   * follows — otherwise a Save would put the discarded content straight back.
+   * A file that no longer exists loses its tab.
+   */
+  async function reloadOpenFiles(folder: string) {
+    const affected = openFiles.filter(file => file.path.startsWith(folder));
+    if (affected.length === 0) {
+      return;
+    }
+    const loaded = await Promise.all(affected.map(file =>
+      loadFile(file.path)
+        .then(text => ({ path: file.path, text: text as string | null }))
+        .catch(() => ({ path: file.path, text: null }))));
+    const gone = new Set(loaded.filter(file => file.text === null).map(file => file.path));
+    const remaining = openFiles
+      .filter(file => !gone.has(file.path))
+      .map(file => {
+        const fresh = loaded.find(candidate => candidate.path === file.path);
+        return fresh && fresh.text !== null ? { ...file, content: fresh.text, saved: fresh.text } : file;
+      });
+    setOpenFiles(remaining);
+    if (gone.has(selectedFile)) {
+      setSelectedFile(remaining[0]?.path ?? '');
+    }
+  }
+
   function updateContent(value: string) {
     setOpenFiles(files => files.map(file =>
       file.path === selectedFile ? { ...file, content: value } : file));
@@ -1057,7 +1085,10 @@ export default function Files() {
         <GitPanel
           path={gitTarget}
           onClose={() => setGitTarget(null)}
-          onChanged={() => loadTree(systemFiles)} />
+          onChanged={async () => {
+            await loadTree(systemFiles);
+            await reloadOpenFiles(gitTarget);
+          }} />
       )}
       {(generating || waiting) && <AiWaiter />}
       {invokeTarget && (

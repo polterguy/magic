@@ -1760,6 +1760,12 @@ export function gitDiff(path: string, file: string) {
     '/magic/system/git/diff?path=' + encodeURIComponent(path) + '&file=' + encodeURIComponent(file));
 }
 
+// Discards uncommitted changes — one file restored from HEAD, or the whole
+// working tree reset to HEAD with untracked files removed when file is omitted.
+export function gitRestore(path: string, file?: string) {
+  return http.post<MagicResponse>('/magic/system/git/restore', file ? { path, file } : { path });
+}
+
 export function gitBranches(path: string) {
   return http.get<string[]>('/magic/system/git/branches?path=' + encodeURIComponent(path));
 }

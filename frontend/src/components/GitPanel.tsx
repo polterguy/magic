@@ -6,11 +6,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Modal, useDialog } from './Dialogs';
-import { ChevronIcon } from './Icons';
+import { ChevronIcon, UndoIcon } from './Icons';
 import { showToast } from '../lib/toast';
 import {
   gitBranches, gitCheckout, gitClone, gitCommit, gitDiff, gitFetch, gitGithubCreate,
-  gitInit, gitPull, gitPush, gitRemoteAdd, gitStatus, listFiles, listFolders, loadFile,
+  gitInit, gitPull, gitPush, gitRemoteAdd, gitRestore, gitStatus, listFiles, listFolders, loadFile,
 } from '../lib/api';
 
 /*
@@ -51,7 +51,7 @@ export default function GitPanel(props: {
   onChanged: () => void;
 }) {
 
-  const { prompt } = useDialog();
+  const { prompt, confirm } = useDialog();
   const [mode, setMode] = useState<'loading' | 'repo' | 'norepo'>('loading');
   const [branchLine, setBranchLine] = useState('');
   const [changes, setChanges] = useState<string[]>([]);
@@ -151,6 +151,35 @@ export default function GitPanel(props: {
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     }
+  }
+
+  // Throws away one file's uncommitted changes, putting back what HEAD has.
+  async function restoreFile(change: ReturnType<typeof parseChange>) {
+    const ok = await confirm({
+      title: 'Reset to HEAD',
+      message: 'Discard all uncommitted changes to ' + change.path + '? This cannot be undone.',
+      confirmText: 'Reset',
+      danger: true,
+    });
+    if (!ok) {
+      return;
+    }
+    await run(() => gitRestore(props.path, change.path), 'Reset ' + change.path + ' to HEAD', true);
+  }
+
+  // Makes the working tree identical to HEAD — tracked changes gone, untracked files deleted.
+  async function restoreAll() {
+    const ok = await confirm({
+      title: 'Reset repository to HEAD',
+      message: 'Discard every uncommitted change in ' + props.path +
+        ' and delete all untracked files? This cannot be undone.',
+      confirmText: 'Reset everything',
+      danger: true,
+    });
+    if (!ok) {
+      return;
+    }
+    await run(() => gitRestore(props.path), 'Repository reset to HEAD', true);
   }
 
   async function newBranch() {
@@ -272,16 +301,28 @@ export default function GitPanel(props: {
               <div className="git-changes mono">
                 {changes.map(parseChange).map(change => (
                   <div key={change.line}>
-                    <button className="git-change-row" onClick={() => toggle(change)}>
-                      <ChevronIcon open={open[change.path]} />
-                      <span
-                        className={'git-status ' +
-                          (change.untracked || change.code.includes('A') ? 'add'
-                            : change.code.includes('D') ? 'del' : '')}>
-                        {change.code}
-                      </span>
-                      <span>{change.path}</span>
-                    </button>
+                    <div className="git-change-line">
+                      <button className="git-change-row" onClick={() => toggle(change)}>
+                        <ChevronIcon open={open[change.path]} />
+                        <span
+                          className={'git-status ' +
+                            (change.untracked || change.code.includes('A') ? 'add'
+                              : change.code.includes('D') ? 'del' : '')}>
+                          {change.code}
+                        </span>
+                        <span>{change.path}</span>
+                      </button>
+                      {/* Untracked files have no HEAD version to go back to. */}
+                      {!change.untracked && (
+                        <button
+                          className="icon-btn"
+                          title="Reset to HEAD"
+                          disabled={busy}
+                          onClick={() => restoreFile(change)}>
+                          <UndoIcon />
+                        </button>
+                      )}
+                    </div>
                     {open[change.path] && (
                       <pre className="git-diff">
                         {!(change.path in diffs)
@@ -305,6 +346,13 @@ export default function GitPanel(props: {
             style={{ width: '100%' }}
             onChange={e => setMessage(e.target.value)} />
           <div className="modal-actions">
+            <button
+              className="btn btn-secondary"
+              disabled={busy || unborn || changes.length === 0}
+              title="Discards every uncommitted change and deletes untracked files"
+              onClick={restoreAll}>
+              Reset to HEAD…
+            </button>
             <button
               className="btn btn-secondary"
               disabled={busy || unborn || hasUpstream}

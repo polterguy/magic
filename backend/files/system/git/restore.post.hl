@@ -1,0 +1,40 @@
+/*
+ * Discards uncommitted changes in a Git repository, restoring one file from
+ * HEAD, or resetting the whole working tree to HEAD when no file is given.
+ */
+.arguments
+
+   // Mandatory folder to where Git repo is locally on disk.
+   path:string
+
+   // Optional repository-relative path of the file to restore.
+   file:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/path
+
+// Sanity checking invocation.
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/modules/
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/etc/
+   .lambda
+      throw:"Git repos must be in folders inside of either '/etc/' or '/modules/'"
+
+// Parametrising slot.
+add:x:./*/git.restore
+   get-nodes:x:@.arguments/*/file
+
+// Invoking slot.
+git.restore:x:@.arguments/*/path
+
+// Returning result to caller.
+yield
+   result:x:@git.restore

@@ -476,6 +476,16 @@ export function MenuIcon() {
   );
 }
 
+// Counter-clockwise arrow — "put it back the way it was".
+export function UndoIcon() {
+  return (
+    <svg {...base}>
+      <polyline points="3 7 3 13 9 13" />
+      <path d="M3.5 13A9 9 0 1 1 6 18.5" />
+    </svg>
+  );
+}
+
 export function GitBranchIcon() {
   return (
     <svg {...base}>
