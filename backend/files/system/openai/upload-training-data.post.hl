@@ -230,17 +230,17 @@ switch:x:@strings.to-lower
             for-each:x:@.tmp-snippets/*
 
                // Structuring TXT content by invoking OpenAI to create a perfect RAG/VSS one liner to improve RAG quality.
-               http.post:"https://api.openai.com/v1/chat/completions"
+               http.post:"https://api.openai.com/v1/responses"
                   convert:bool:true
                   headers
                      Authorization:x:@.token
                      Content-Type:application/json
-                     Accept:text/event-stream
                   payload
-                     model:gpt-3.5-turbo
-                     max_tokens:int:1000
-                     temperature:decimal:0.3
-                     messages
+                     model:gpt-5.6-luna
+                     max_output_tokens:int:1000
+                     reasoning
+                        effort:low
+                     input
                         .
                            role:system
                            content:x:@.arguments/*/massagePrompt
@@ -269,7 +269,7 @@ switch:x:@strings.to-lower
 
                   // Updating our [.prompt].
                   set-value:x:@.dp/#/*/prompt
-                     get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+                     get-value:x:@http.post/*/content/*/output/*/*/type/=message/./[0,1]/*/content/0/*/text
 
       /*
        * Creating training snippets from PDF file's content.
@@ -361,17 +361,17 @@ if
             for-each:x:@signal/*
 
                // Structuring TXT content by invoking OpenAI to create a perfect RAG/VSS one liner to improve RAG quality.
-               http.post:"https://api.openai.com/v1/chat/completions"
+               http.post:"https://api.openai.com/v1/responses"
                   convert:bool:true
                   headers
                      Authorization:x:@.token
                      Content-Type:application/json
-                     Accept:text/event-stream
                   payload
-                     model:gpt-3.5-turbo
-                     max_tokens:int:1000
-                     temperature:decimal:0.3
-                     messages
+                     model:gpt-5.6-luna
+                     max_output_tokens:int:1000
+                     reasoning
+                        effort:low
+                     input
                         .
                            role:system
                            content:x:@.arguments/*/massagePrompt
@@ -400,7 +400,7 @@ if
 
                   // Updating our [.prompt].
                   set-value:x:@.dp/#/*/prompt
-                     get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+                     get-value:x:@http.post/*/content/*/output/*/*/type/=message/./[0,1]/*/content/0/*/text
 
       /*
        * Creating training snippets from text file's content.

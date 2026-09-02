@@ -1,5 +1,8 @@
 
-// Creating the default OpenAI machine learning model.
+/*
+ * Creating the default OpenAI machine learning type, or refreshing its system instruction from
+ * default.md if it already exists.
+ */
 try
 
    // Connecting to Magic database.
@@ -52,122 +55,6 @@ try
             where
                and
                   type.eq:default
-
-      /*
-       * Making sure we delete old imported data.
-       */
-      data.delete
-         table:ml_training_snippets
-         where
-            and
-               type.eq:default
-               meta.eq:system-imported-data
-
-      /*
-       * Importing all new snippets to type.
-       */
-      .training-data
-      io.file.list-recursively:/misc/common-startup-files/default-files/
-      for-each:x:@io.file.list-recursively/*
-         if
-            strings.ends-with:x:@.dp/#
-               .:.md
-            .lambda
-               .prompt
-               .meta
-               .completion
-               io.file.load:x:@.dp/#
-               strings.split:x:@io.file.load
-                  .:"\n"
-               set-value:x:@.prompt
-                  strings.trim:x:@strings.split/0
-               set-value:x:@.completion
-                  get-value:x:@io.file.load
-               set-value:x:@.completion
-                  strings.replace:x:@.completion
-                     get-value:x:@.prompt
-                     .:
-               if
-                  strings.starts-with:x:@strings.split/1
-                     .:WORKFLOW ==>
-                  .lambda
-                     set-value:x:@.meta
-                        strings.trim:x:@strings.split/1
-                     set-value:x:@.completion
-                        strings.replace:x:@.completion
-                           get-value:x:@.meta
-                           .:
-               else-if
-                  strings.starts-with:x:@strings.split/1
-                     .:FUNCTION ==>
-                  .lambda
-                     strings.split:x:@.completion
-                        .:"FUNCTION_INVOCATION["
-                     strings.split:x:-/0/-
-                        .:]
-                     set-value:x:@.meta
-                        strings.concat
-                           .:"FUNCTION_INVOCATION ==> "
-                           get-value:x:@strings.split/0
-               else
-                  set-value:x:@.meta
-                     strings.trim:system-imported-data
-                  set-value:x:@.prompt
-                     strings.trim:x:@.prompt
-                        .:"# "
-               set-value:x:@.completion
-                  strings.trim:x:@.completion
-               set-value:x:@.prompt
-                  strings.trim:x:@.prompt
-                     .:"# "
-               .embeddings
-               strings.concat
-                  get-value:x:@.dp/#
-                  .:.embeddings.vec_obj
-               if
-                  io.file.exists:x:@strings.concat
-                  .lambda
-                     set-value:x:@.embeddings
-                        io.file.load.binary:x:@strings.concat
-               unwrap:x:+/*/*/*
-               add:x:@.training-data
-                  .
-                     .
-                        prompt:x:@.prompt
-                        meta:x:@.meta
-                        completion:x:@.completion
-                        filename:x:@.dp/#
-                        embeddings:x:@.embeddings
-
-      // Looping through each new snippet and importing into type.
-      for-each:x:@.training-data/*
-
-         // Deleting previously imported similar snippets.
-         if
-            and
-               and
-                  neq:x:@.dp/#/*/meta
-                     .:
-                  not-null:x:@.dp/#/*/meta
-                  neq:x:@.dp/#/*/meta
-                     .:system-imported-data
-            .lambda
-               data.delete
-                  table:ml_training_snippets
-                  where
-                     and
-                        type.eq:default
-                        meta.eq:x:@.dp/#/*/meta
-
-         data.create
-            table:ml_training_snippets
-            values
-               type:default
-               meta:x:@.dp/#/*/meta
-               prompt:x:@.dp/#/*/prompt
-               completion:x:@.dp/#/*/completion
-               filename:x:@.dp/#/*/filename
-               embeddings:x:@.dp/#/*/embeddings
 
 .catch
 

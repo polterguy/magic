@@ -149,11 +149,11 @@ slots.create:magic.ai.endpoint-common
                eq
                   auth.ticket.get
                   .
+               not-null:x:@.model/*/recaptcha
                mt
                   convert:x:@.model/*/recaptcha
                      type:decimal
                   .:decimal:0
-               not-null:x:@.model/*/recaptcha
             .lambda
 
                // Verifying reCAPTCHA was supplied.
@@ -231,83 +231,6 @@ slots.create:magic.ai.endpoint-common
          set-value:x:@.model/*/system_message
             get-value:x:@strings.mixin
 
-   // Checking if we've configured integrations for incoming messages.
-   .incoming
-   set-value:x:@.incoming
-      get-first-value
-         get-value:x:@.model/*/webhook_incoming
-         config.get:"magic:openai:integrations:incoming:slot"
-   if
-      and
-         not-null:x:@.incoming
-         neq:x:@.incoming
-            .:
-      .lambda
-
-         // Invoking integration slot.
-         .exe
-
-            // Retrieving URL to invoke.
-            .hook-url
-            set-value:x:@.hook-url
-               get-first-value
-                  get-value:x:@.model/*/webhook_incoming_url
-                  config.get:"magic:openai:integrations:incoming:url"
-
-            // Invoking slot.
-            unwrap:x:./*/signal/*/url
-            signal:x:@.incoming
-               url:x:@.hook-url
-
-         // Parametrizing invocation to integration slot.
-         if
-            and
-               exists:x:@.arguments/*/to
-               exists:x:@.arguments/*/from
-               not-null:x:@.arguments/*/to
-               not-null:x:@.arguments/*/from
-               strings.contains:x:@.arguments/*/to
-                  .:":"
-               strings.contains:x:@.arguments/*/from
-                  .:":"
-            .lambda
-
-               // We have a channel to accommodate for.
-               .channel
-               .to
-               .from
-               strings.split:x:@.arguments/*/to
-                  .:":"
-               set-value:x:@.channel
-                  get-value:x:@strings.split/0
-               set-value:x:@.to
-                  get-value:x:@strings.split/1
-               strings.split:x:@.arguments/*/from
-                  .:":"
-               set-value:x:@.from
-                  get-value:x:@strings.split/1
-               add:x:@.exe/*/signal
-                  get-nodes:x:@.arguments/*/prompt
-                  get-nodes:x:@.arguments/*/session
-               unwrap:x:+/*/*
-               add:x:@.exe/*/signal
-                  .
-                     to:x:@.to
-                     from:x:@.from
-                     channel:x:@.channel
-
-         else
-
-            // No channel
-            add:x:@.exe/*/signal
-               get-nodes:x:@.arguments/*/to
-               get-nodes:x:@.arguments/*/from
-               get-nodes:x:@.arguments/*/prompt
-               get-nodes:x:@.arguments/*/session
-
-         // Invoking callback.
-         eval:x:@.exe
-
    // Doing some common conversions.
    set-value:x:@.model/*/threshold
       convert:x:@.model/*/threshold
@@ -322,45 +245,13 @@ slots.create:magic.ai.endpoint-common
       convert:x:@.model/*/max_request_tokens
          type:int
 
-   // Making sure se set max size of model
+   /*
+    * Making sure we set max size of model.
+    *
+    * Only models spoken to over the Responses API with reasoning are supported,
+    * which is gpt-5.2 and up - anything older is rejected here.
+    */
    switch:x:@.model/*/model
-
-      case:gpt-4o
-      case:gpt-4o-mini
-      case:gpt-4o-2024-05-13
-      case:gpt-4-turbo
-      case:gpt-4-turbo-2024-04-09
-      case:gpt-4.1-mini-2025-04-14
-      case:gpt-4.1-2025-04-14
-      case:gpt-4.1-mini
-      case:gpt-4.1
-         add:x:@.model
-            .
-               model_size:int:1000000
-
-      case:gpt-4
-      case:gpt-4-0613
-         add:x:@.model
-            .
-               model_size:int:8192
-
-      case:gpt-3.5-turbo
-      case:gpt-3.5-turbo-0125
-      case:gpt-3.5-turbo-1106
-      case:gpt-3.5-turbo-16k
-         add:x:@.model
-            .
-               model_size:int:16384
-
-      case:gpt-3.5-turbo-instruct
-         add:x:@.model
-            .
-               model_size:int:4096
-
-      case:o3-mini
-         add:x:@.model
-            .
-               model_size:int:200000
 
       case:gpt-5.2
          add:x:@.model
@@ -427,109 +318,15 @@ slots.create:magic.ai.endpoint-common
          null:x:@.model/*/max_request_tokens
       .lambda
 
-         /*
-          * Defaulting [max_request_tokens] and [max_context_tokens] according
-          * to what model we're using.
-          */
-         switch:x:@.model/*/model
-
-            case:text-davinci-003
-            case:gpt-3.5-turbo
-            case:gpt-3.5-turbo-0301
-            case:text-davinci-002
-
-               math.divide
-                  math.subtract:int:4096
-                     get-value:x:@.model/*/max_tokens
-                  .:int:2
-               set-value:x:@.model/*/max_context_tokens
-                  get-value:x:@math.divide
-               set-value:x:@.model/*/max_request_tokens
-                  get-value:x:@math.divide
-
-            case:code-davinci-002
-
-               math.divide
-                  math.subtract:int:8000
-                     get-value:x:@.model/*/max_tokens
-                  .:int:2
-               set-value:x:@.model/*/max_context_tokens
-                  get-value:x:@math.divide
-               set-value:x:@.model/*/max_request_tokens
-                  get-value:x:@math.divide
-
-            case:gpt-4
-            case:gpt-4-0314
-            case:gpt-4o
-            case:gpt-4o-2024-05-13
-            case:gpt-4.1-mini-2025-04-14
-            case:gpt-4.1-2025-04-14
-
-               math.divide
-                  math.subtract:int:8192
-                     get-value:x:@.model/*/max_tokens
-                  .:int:2
-               set-value:x:@.model/*/max_context_tokens
-                  get-value:x:@math.divide
-               set-value:x:@.model/*/max_request_tokens
-                  get-value:x:@math.divide
-
-            case:gpt-3.5-turbo-0125
-
-               math.divide
-                  math.subtract:int:16384
-                     get-value:x:@.model/*/max_tokens
-                  .:int:2
-               set-value:x:@.model/*/max_context_tokens
-                  get-value:x:@math.divide
-               set-value:x:@.model/*/max_request_tokens
-                  get-value:x:@math.divide
-
-            case:gpt-4-32k
-            case:gpt-4-32k-0314
-
-               math.divide
-                  math.subtract:int:32768
-                     get-value:x:@.model/*/max_tokens
-                  .:int:2
-               set-value:x:@.model/*/max_context_tokens
-                  get-value:x:@math.divide
-               set-value:x:@.model/*/max_request_tokens
-                  get-value:x:@math.divide
-
-            case:gpt-4-0125-preview
-            case:gpt-4-1106-preview
-
-               math.divide
-                  math.subtract:int:131072
-                     get-value:x:@.model/*/max_tokens
-                  .:int:2
-               set-value:x:@.model/*/max_context_tokens
-                  get-value:x:@math.divide
-               set-value:x:@.model/*/max_request_tokens
-                  get-value:x:@math.divide
-
-            case:o3-mini
-
-               math.divide
-                  math.subtract:int:200000
-                     get-value:x:@.model/*/max_tokens
-                  .:int:2
-               set-value:x:@.model/*/max_context_tokens
-                  get-value:x:@math.divide
-               set-value:x:@.model/*/max_request_tokens
-                  get-value:x:@math.divide
-
-            default
-
-               math.divide
-                  math.subtract:int:2049
-                     get-value:x:@.model/*/max_tokens
-                  .:int:2
-               set-value:x:@.model/*/max_context_tokens
-                  get-value:x:@math.divide
-               set-value:x:@.model/*/max_request_tokens
-                  get-value:x:@math.divide
+         // Defaulting both to half of what the model has left once [max_tokens] is reserved for the answer.
+         math.divide
+            math.subtract:x:@.model/*/model_size
+               get-value:x:@.model/*/max_tokens
+            .:int:2
+         set-value:x:@.model/*/max_context_tokens
+            get-value:x:@math.divide
+         set-value:x:@.model/*/max_request_tokens
+            get-value:x:@math.divide
 
    // Making sure prompt is not larger than [max_request_tokens].
    if

@@ -61,22 +61,11 @@ In the above Markdown code section you can find an example of a response and its
 
 ### Function instructions
 
-You can execute functions by ending your response with something resembling the following:
+The FUNCTION_INVOCATION blocks in this system message declare the functions you can execute. Each is available to you as a tool - execute a function with a tool call, never by writing a block as text.
 
-___
-FUNCTION_INVOCATION[/FOLDER/FILENAME.hl]:
-{
-  ""arg1"": ""value1"",
-  ""arg2"": 1234
-}
-___
-
-- The above is only provided as an example and not a function that actually exists.
-- If you are about to execute a function then DO NOT RETURN FOLLOW UP QUESTIONS, but instead end your response with a function invocation as illustrated above.
-- Determine the arguments required to correctly parametrise your function invocation.
-- Never invoke a function you cannot find in your context.
-- If the user does not provide you with all mandatory arguments required to invoke a function, then ask the user for these before responding with the a function invocation.
-- It is very important that you put the FUNCTION_INVOCATION parts and the JSON payload inside of two ___ lines separated by a carriage return character.
+- Determine the arguments required to correctly parametrise your tool call.
+- If the user does not provide you with all mandatory arguments required to execute a function, then ask the user for these before executing it.
+- If you are about to execute a function then DO NOT RETURN FOLLOW UP QUESTIONS.
 
 ### Conversation Stage Options
 

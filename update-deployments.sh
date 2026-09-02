@@ -2,7 +2,7 @@
 set -euo pipefail
 
 NAMESPACE="cloudlets"
-IMAGE="servergardens/magic-backend:v23.5.11"
+IMAGE="servergardens/magic-backend:v23.5.14"
 FSGROUP="999"
 
 # Forwarded-headers hop count: client → Cloudflare → ingress → pod.

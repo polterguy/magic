@@ -26,7 +26,7 @@ import {
   downloadFolderRaw,
   debugHyperlambda,
   evaluateWithArgs,
-  getFunctionDeclaration,
+  getFileDescription,
   getHyperlambdaArguments,
   getOpenApiSpec,
   aiQuery,
@@ -734,10 +734,9 @@ export default function Files() {
   }
 
   /*
-   * Turns a single Hyperlambda file, or every Hyperlambda file inside a
-   * folder, into AI functions on the chosen model. Files without an
-   * [.arguments] collection can't be invoked as functions, so they're
-   * skipped — the count reports what was actually generated.
+   * Declares a single Hyperlambda file, or every Hyperlambda file inside a
+   * folder, as AI functions on the chosen model. The declaration is the file
+   * path; the model reads each tool's description and arguments from the file.
    */
   async function createAiFunctions(target: string, type: string) {
     setAiFunctionTarget(null);
@@ -747,25 +746,15 @@ export default function Files() {
         ? [target]
         : (await listFilesRecursively(target, systemFiles) ?? [])
             .filter(file => file.endsWith('.hl'));
-      let generated = 0;
       for (const file of targets) {
-        const declaration = await getFunctionDeclaration(file);
-        if (!declaration) {
-          continue;
-        }
-        const lines = declaration.split('\n');
         await mlSnippetCreate({
-          prompt: lines[0].trim(),
-          completion: lines.slice(1).join('\n').trim(),
+          prompt: file.split('/').pop()!.replace(/\.hl$/, ''),
+          completion: await getFileDescription(file),
           type,
           meta: 'FUNCTION_INVOCATION ==> ' + file,
         });
-        generated++;
       }
-      show(generated + ' AI function(s) generated on ' + type +
-        (generated < targets.length
-          ? ' — ' + (targets.length - generated) + ' file(s) skipped, no [.arguments]'
-          : ''));
+      show(targets.length + ' AI function(s) declared on ' + type);
     } catch (err: any) {
       show(err.message, true);
     } finally {

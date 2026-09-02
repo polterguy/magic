@@ -1,13 +1,15 @@
 /*
- * "Create AI function" — lists installable functions, generates the
- * declaration for one, and saves it as a training snippet.
+ * "Create AI function" — lists installable functions and declares one on the
+ * type, either as a training snippet whose meta names the file, or by handing
+ * the file back for the system instruction. The tool's description and
+ * arguments come from the file, so nothing else is generated.
  */
 
 import { useEffect, useState } from 'react';
 import Banner from '../../components/Banner';
 import { Modal } from '../../components/Dialogs';
 import SearchInput from '../../components/SearchInput';
-import { availableWorkflows, getFunctionDeclaration, mlSnippetCreate } from '../../lib/api';
+import { availableWorkflows, mlSnippetCreate } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 
 export default function AddFunctionDialog(props: {
@@ -15,10 +17,10 @@ export default function AddFunctionDialog(props: {
   onClose: () => void;
   onInstalled: () => void;
   /*
-   * When given, the declaration is handed back rather than written as a
+   * When given, the function's file is handed back rather than written as a
    * training snippet — how a function gets added to a system instruction.
    */
-  onDeclaration?: (prompt: string, completion: string) => void;
+  onDeclaration?: (file: string) => void;
 }) {
 
   const [workflows, setWorkflows] = useState<any[]>([]);
@@ -41,27 +43,13 @@ export default function AddFunctionDialog(props: {
     }
     setBusy(true);
     try {
-      let declaration = await getFunctionDeclaration(workflow.file);
-      if (!declaration) {
-        showToast(
-          workflow.name + ' has no [.arguments] collection, so it cannot ' +
-            'be invoked as an AI function',
-          true);
-        return;
-      }
-      while (declaration.includes('YOUR_TYPE_NAME_HERE')) {
-        declaration = declaration.replace('YOUR_TYPE_NAME_HERE', props.type);
-      }
-      const lines = declaration.split('\n');
-      const prompt = lines[0].trim();
-      const completion = lines.slice(1).join('\n').trim();
       if (props.onDeclaration) {
-        props.onDeclaration(prompt, completion);
+        props.onDeclaration(workflow.file);
         return;
       }
       await mlSnippetCreate({
-        prompt,
-        completion,
+        prompt: workflow.name,
+        completion: workflow.description ?? '',
         type: props.type,
         meta: 'FUNCTION_INVOCATION ==> ' + workflow.file,
         uri: null,

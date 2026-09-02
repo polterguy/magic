@@ -1,6 +1,10 @@
 
 /*
- * Chat slot for having conversations with OpenAI's "gpt" type of models.
+ * Chat slot for having conversations with OpenAI's models over the Responses API.
+ *
+ * Every AI function the type declares is handed to the model as a native tool, and the slot
+ * executes the function calls the model returns, feeding their outputs back to the model until
+ * it answers with text.
  */
 slots.create:magic.ai.chat
 
@@ -30,59 +34,20 @@ slots.create:magic.ai.chat
          add:x:@.context-buffer
             get-nodes:x:@signal/*
 
-   // Checking if we've got a cached result.
-   if
-      exists:x:@.context-buffer/*/cached
-      .lambda
-
-         // Cached result, checking if type is "supervised".
-         if
-            and
-               exists:x:@.arguments/*/supervised
-               not-null:x:@.arguments/*/supervised
-               eq
-                  convert:x:@.arguments/*/supervised
-                     type:int
-                  .:int:1
-            .lambda
-
-               // Storing response to ml_requests to keep history.
-               data.connect:[generic|magic]
-                  data.create
-                     table:ml_requests
-                     values
-                        type:x:@.arguments/*/type
-                        prompt:x:@.arguments/*/prompt
-                        completion:x:@.context-buffer/*/cached
-                        finish_reason:cached
-                        session:x:@.arguments/*/session
-                        user_id:x:@.arguments/*/user_id
-                        referrer:x:@.arguments/*/referrer
-
-         // Returning cached result to caller.
-         unwrap:x:+/*
-         return
-            result:x:@.context-buffer/*/cached
-            finish_reason:cached
-            stream:bool:false
-
    /*
     * Session for user containing previous questions and answers,
     * in addition to context and system message.
     */
    .session
 
-   // Making sure user doesn't inject AI functions in system message override.
+   // Making sure user doesn't inject mixin logic in system message override.
    if
       and
          exists:x:@.arguments/*/system_message_override
-         or
-            strings.contains:x:@.arguments/*/system_message_override
-               .:FUNCTION_INVOCATION[
-            strings.contains:x:@.arguments/*/system_message_override
-               .:{{
+         strings.contains:x:@.arguments/*/system_message_override
+            .:{{
       .lambda
-         throw:System message override contains function invocations which is not allowed.
+         throw:System message override contains mixin logic which is not allowed.
             public:bool:true
             status:int:400
 
@@ -98,6 +63,21 @@ slots.create:magic.ai.chat
          neq:x:@.tmp_system
             .:
       .lambda
+
+         /*
+          * Function declarations are transport, not instructions. Every Markdown section holding
+          * one - its heading and everything up to the next heading - is removed from what the model
+          * reads, since the model gets the function as a tool instead, and so is any remaining line
+          * that still talks about the old text protocol. The stored text is untouched.
+          */
+         set-value:x:@.tmp_system
+            strings.regex-replace:x:@.tmp_system
+               .:"(?m)(?:^#|\\A)(?:(?!\\n#)[\\s\\S])*?FUNCTION_INVOCATION\\[(?:(?!\\n#)[\\s\\S])*"
+               .:
+         set-value:x:@.tmp_system
+            strings.regex-replace:x:@.tmp_system
+               .:"(?m)^.*FUNCTION_INVOCATION.*\\n?"
+               .:
 
          // Adding system message to [.session]
          unwrap:x:+/*/*/*/content
@@ -178,11 +158,6 @@ select prompt, max(completion) as completion
 
    /*
     * Retrieving session items.
-    *
-    * Notice, this used to be an [else] to the context check above, making
-    * history and context mutually exclusive - a type with embeddings finds
-    * context for practically every question, and therefore never remembered
-    * anything the user had said earlier in the session.
     */
    cache.get:x:@.arguments/*/session
    if
@@ -206,24 +181,6 @@ select prompt, max(completion) as completion
          set-value:x:@.extra-tokens
             openai.tokenize:x:@.arguments/*/data
 
-   // Checking if model is prefixed, at which point we prepend prefix to question.
-   .only-prompt
-   set-value:x:@.only-prompt
-      get-value:x:@.arguments/*/prompt
-   if
-      and
-         exists:x:@.arguments/*/prefix
-         not-null:x:@.arguments/*/prefix
-         neq:x:@.arguments/*/prefix
-            .:
-      .lambda
-
-         // Prefixing prompt.
-         set-value:x:@.arguments/*/prompt
-            strings.concat
-               get-value:x:@.arguments/*/prefix
-               get-value:x:@.arguments/*/prompt
-
    // Checking if we've got a [data] argument, and if so, adding it.
    if
       and
@@ -246,20 +203,6 @@ select prompt, max(completion) as completion
          .
             role:user
             content:x:@.arguments/*/prompt
-
-   // Checking if this is an o3 model.
-   if
-      eq:x:@.arguments/*/model
-         .:o3-mini
-      .lambda
-
-         // Modifying messages to make sure we conform to o3 structure.
-         set-value:x:@.session/**/role/=system
-            .:developer
-         set-value:x:@.session/**/role/=developer/[0,1]/./*/content
-            strings.concat:x:@.session/**/role/=developer/[0,1]/./*/content
-               .:"Formatting re-enabled\n\n"
-               get-value:x:@.session/**/role/=developer/[0,1]/./*/content
 
    /*
     * Pruning previous messages until size of context + max_tokens is less than whatever
@@ -288,14 +231,33 @@ select prompt, max(completion) as completion
           * We need to remove one of our previous messages to have OpenAI return max_tokens.
           * Notice, we only remove messages after our "fixed" messages, which are system message and
           * questionnaire messages.
+          *
+          * A function call and its output leave together, since OpenAI rejects an input holding
+          * one without the other - so if the oldest message is a function call, everything sharing
+          * its call_id goes with it.
           */
+         .call-id
          strings.concat
             .:@.session/
             get-value:x:@.fixed
-         set-x:x:./*/remove-nodes
+            .:/*/call_id
+         set-x:x:./*/set-value/*/get-value
             convert:x:@strings.concat
                type:x
-         remove-nodes
+         set-value:x:@.call-id
+            get-value
+         if
+            not-null:x:@.call-id
+            .lambda
+               remove-nodes:x:@.session/*/call_id/={@.call-id}/.
+         else
+            strings.concat
+               .:@.session/
+               get-value:x:@.fixed
+            set-x:x:./*/remove-nodes
+               convert:x:@strings.concat
+                  type:x
+            remove-nodes
 
    // Retrieving token used to invoke OpenAI.
    .token
@@ -423,8 +385,8 @@ select prompt, max(completion) as completion
                      strings.concat
                         .:/etc/www/tmp/
                         crypto.random
-                           min:10
-                           max:10
+                           min:25
+                           max:25
                         .:.
                         get-value:x:@strings.split/0/-
                   io.stream.save-file:x:@.filename
@@ -476,6 +438,9 @@ select prompt, max(completion) as completion
                      type:input_text
                      text:x:@.tail
 
+   // Tool names mapped to the files they execute. Function calls are resolved against this.
+   .functions
+
    /*
     * Checking if caller wants to stream tokens.
     *
@@ -494,6 +459,339 @@ select prompt, max(completion) as completion
             strings.concat
                .:"https://"
                request.host
+
+         /*
+          * Declaring every AI function on the type as a native tool.
+          *
+          * A function is declared by a training snippet whose meta names its file, or by a
+          * FUNCTION_INVOCATION reference in the type's system message, which are the two places the
+          * dashboard writes declarations to. A reference to a file that doesn't exist is documentation,
+          * such as the example found in the system message templates, and declares nothing. The default
+          * type is the agent for building on the cloudlet, and when root is the one talking to it, it
+          * additionally gets every workflow file as a tool - the same catalogue the MCP module hands
+          * to root callers.
+          *
+          * The tool's name is the file's name, its description is the file's leading comment, and its
+          * parameters come from the file's [.arguments] collection, with the comment above each
+          * argument as its description. Arguments the invoker supplies itself are not exposed.
+          *
+          * Every HTML widget on the type is a tool of its own: its name comes from the widget file, its
+          * description is the snippet's prompt and text, and its parameters are the [[placeholder]]
+          * tokens in the HTML. Calling it renders that file through render-html-widget.
+          */
+         .declarations
+         .widgets
+         data.connect:[generic|magic]
+            data.select:"select meta from ml_training_snippets where type = @type and meta like 'FUNCTION_INVOCATION ==> %'"
+               @type:x:@.arguments/*/type
+            for-each:x:@data.select/*
+               strings.split:x:@.dp/#/*/meta
+                  .:" ==> "
+               unwrap:x:+/*/*/*
+               add:x:@.declarations
+                  .
+                     .
+                        file:x:@strings.split/1
+            data.select:"select prompt, completion, meta from ml_training_snippets where type = @type and meta like 'WIDGET ==> %'"
+               @type:x:@.arguments/*/type
+            for-each:x:@data.select/*
+               strings.split:x:@.dp/#/*/meta
+                  .:" ==> "
+               unwrap:x:+/*/*/*
+               add:x:@.widgets
+                  .
+                     .
+                        file:x:@strings.split/1
+                        prompt:x:@.dp/#/*/prompt
+                        completion:x:@.dp/#/*/completion
+         if
+            not-null:x:@.arguments/*/system_message
+            .lambda
+               strings.split:x:@.arguments/*/system_message
+                  .:"FUNCTION_INVOCATION["
+               remove-nodes:x:@strings.split/0
+               for-each:x:@strings.split/*
+                  strings.split:x:@.dp/#
+                     .:]
+                  unwrap:x:+/*/*/*
+                  add:x:@.declarations
+                     .
+                        .
+                           file:x:@strings.split/0
+         if
+            and
+               auth.ticket.in-role:root
+               eq:x:@.arguments/*/type
+                  .:default
+            .lambda
+
+               /*
+                * Workflow files that are not Chat Ops tools. whoami answers with the MCP operating
+                * instructions, and reads the HTTP request, which the chat loop's thread doesn't have.
+                */
+               .excluded
+                  .:/misc/workflows/workflows/misc/whoami.hl
+               .folders
+                  .:/misc/workflows/workflows/
+                  .:/system/workflows/workflows/
+               for-each:x:@.folders/*
+                  io.file.list-recursively:x:@.dp/#
+                  for-each:x:@io.file.list-recursively/*
+                     if
+                        and
+                           strings.ends-with:x:@.dp/#
+                              .:.hl
+                           not
+                              exists:x:@.excluded/*/={@.dp/#}
+                        .lambda
+                           unwrap:x:+/*/*/*
+                           add:x:@.declarations
+                              .
+                                 .
+                                    file:x:@.dp/#
+
+         // Arguments the invoker supplies itself, and comment nodes, are not parameters.
+         .hidden
+            .:..
+            .:_session
+            .:_user-id
+            .:_type
+            .:_extra
+            .:_base_url
+         .tools
+         for-each:x:@.declarations/*
+            if
+               and
+                  io.file.exists:x:@.dp/#/*/file
+                  not
+                     exists:x:@.functions/*/*/file/={@.dp/#/*/file}
+               .lambda
+
+                  // The tool's name is the file's name, made legal for OpenAI by replacing dots with underscores.
+                  strings.split:x:@.dp/#/*/file
+                     .:/
+                  strings.replace:x:@strings.split/0/-
+                     .:.hl
+                     .:
+                  strings.replace:x:@strings.replace
+                     .:.
+                     .:_
+                  .name
+                  set-value:x:@.name
+                     get-value:x:@strings.replace
+                  if
+                     exists:x:@.functions/*/*/name/={@.name}
+                     .lambda
+                        strings.concat
+                           .:"Two AI functions on the type resolve to the same tool name: "
+                           get-value:x:@.name
+                        throw:x:@strings.concat
+                           public:bool:true
+                           status:int:400
+
+                  load-file:x:@.dp/#/*/file
+                  hyper2lambda:x:@load-file
+                     comments:true
+
+                  // The description is the file's own leading comment.
+                  .description
+                  if
+                     eq
+                        get-name:x:@hyper2lambda/0
+                        .:..
+                     .lambda
+                        set-value:x:@.description
+                           get-value:x:@hyper2lambda/0
+                  else
+                     set-value:x:@.description
+                        .:No description available
+
+                  .parameters
+                     type:object
+                  for-each:x:@hyper2lambda/*/.arguments/*
+                     get-name:x:@.dp/#
+                     if
+                        not
+                           exists:x:@.hidden/*/={@get-name}
+                        .lambda
+
+                           .jtype
+                           .jformat
+                           switch:x:@.dp/#
+                              case:short
+                              case:ushort
+                              case:int
+                              case:uint
+                              case:long
+                              case:ulong
+                              case:byte
+                              case:sbyte
+                                 set-value:x:@.jtype
+                                    .:integer
+                              case:decimal
+                              case:double
+                              case:single
+                              case:float
+                                 set-value:x:@.jtype
+                                    .:number
+                              case:bool
+                                 set-value:x:@.jtype
+                                    .:boolean
+                              case:date
+                                 set-value:x:@.jtype
+                                    .:string
+                                 set-value:x:@.jformat
+                                    .:date-time
+                              case:guid
+                                 set-value:x:@.jtype
+                                    .:string
+                                 set-value:x:@.jformat
+                                    .:uuid
+                              case:*
+                                 set-value:x:@.jtype
+                                    .:object
+                              default
+                                 set-value:x:@.jtype
+                                    .:string
+
+                           if
+                              not-exists:x:@.parameters/*/properties
+                              .lambda
+                                 add:x:@.parameters
+                                    .
+                                       properties
+                           unwrap:x:+/+/*/**
+                           set-name:x:+/*/*
+                              get-value:x:@get-name
+                           add:x:@.parameters/*/properties
+                              .
+                                 name
+                                    type:x:@.jtype
+                           if
+                              not-null:x:@.jformat
+                              .lambda
+                                 unwrap:x:+/*/*
+                                 add:x:@.parameters/*/properties/0/-
+                                    .
+                                       format:x:@.jformat
+                           if
+                              eq
+                                 get-name:x:@.dp/#/-
+                                 .:..
+                              .lambda
+                                 unwrap:x:+/*/*
+                                 add:x:@.parameters/*/properties/0/-
+                                    .
+                                       description:x:@.dp/#/-
+
+                  unwrap:x:+/*/*/*
+                  add:x:@.tools
+                     .
+                        .
+                           type:function
+                           name:x:@.name
+                           description:x:@.description
+                  add:x:@.tools/0/-
+                     get-nodes:x:@.parameters
+                  set-name:x:@.tools/0/-/*/.parameters
+                     .:parameters
+                  unwrap:x:+/*/*/*
+                  add:x:@.functions
+                     .
+                        .
+                           name:x:@.name
+                           file:x:@.dp/#/*/file
+
+         for-each:x:@.widgets/*
+            if
+               io.file.exists:x:@.dp/#/*/file
+               .lambda
+
+                  // The tool's name is the widget file's name, prefixed such that it cannot shadow a function.
+                  strings.split:x:@.dp/#/*/file
+                     .:/
+                  strings.replace:x:@strings.split/0/-
+                     .:.html
+                     .:
+                  strings.replace:x:@strings.replace
+                     .:.
+                     .:_
+                  .name
+                  set-value:x:@.name
+                     strings.concat
+                        .:widget_
+                        get-value:x:@strings.replace
+                  if
+                     exists:x:@.functions/*/*/name/={@.name}
+                     .lambda
+                        strings.concat
+                           .:"Two HTML widgets on the type resolve to the same tool name: "
+                           get-value:x:@.name
+                        throw:x:@strings.concat
+                           public:bool:true
+                           status:int:400
+
+                  .description
+                  set-value:x:@.description
+                     strings.concat
+                        get-value:x:@.dp/#/*/prompt
+                        .:"\n\n"
+                        get-value:x:@.dp/#/*/completion
+
+                  // Every [[placeholder]] in the HTML is a string parameter, declared once.
+                  .parameters
+                     type:object
+                  .names
+                  io.file.load:x:@.dp/#/*/file
+                  strings.split:x:@io.file.load
+                     .:[[
+                  remove-nodes:x:@strings.split/0
+                  for-each:x:@strings.split/*
+                     strings.split:x:@.dp/#
+                        .:]]
+                     if
+                        and
+                           exists:x:@strings.split/1
+                           not
+                              exists:x:@.names/*/={@strings.split/0}
+                        .lambda
+                           unwrap:x:+/*/*
+                           add:x:@.names
+                              .
+                                 .:x:@strings.split/0
+                           if
+                              not-exists:x:@.parameters/*/properties
+                              .lambda
+                                 add:x:@.parameters
+                                    .
+                                       properties
+                           set-name:x:+/*/*
+                              get-value:x:@strings.split/0
+                           add:x:@.parameters/*/properties
+                              .
+                                 name
+                                    type:string
+                                    description:Value for this placeholder in the widget.
+
+                  unwrap:x:+/*/*/*
+                  add:x:@.tools
+                     .
+                        .
+                           type:function
+                           name:x:@.name
+                           description:x:@.description
+                  add:x:@.tools/0/-
+                     get-nodes:x:@.parameters
+                  set-name:x:@.tools/0/-/*/.parameters
+                     .:parameters
+                  unwrap:x:+/*/*/*
+                  add:x:@.functions
+                     .
+                        .
+                           name:x:@.name
+                           file:/misc/workflows/workflows/machine-learning/render-html-widget.hl
+                           widget:x:@.dp/#/*/file
+
          unwrap:x:+/+/+/+/+/*/*/.sse/*/.base_url
          unwrap:x:+/+/+/+/*/*/.sse/*/.extra
          unwrap:x:+/+/+/*/*/.sse/*/.user-id
@@ -538,38 +836,64 @@ select prompt, max(completion) as completion
 
                         // Making sure OpenAI sent us something at all, and that it didn't send the "[DONE]" message.
                         if
-                           neq:x:@strings.trim
-                              .:
+                           and
+                              neq:x:@strings.trim
+                                 .:
+                              neq:x:@strings.trim
+                                 .:[DONE]
                            .lambda
 
-                              .converted:bool:false
                               .json
-                              if
-                                 neq:x:@strings.trim
-                                    .:[DONE]
-                                 .lambda
-                                    add:x:@.json
-                                       json2lambda:x:@strings.trim
-                                    set-value:x:@.converted
-                                       .:bool:true
-                              if
-                                 and
-                                    eq:x:@.invocations_handled
-                                       .:bool:false
-                                    or
-                                       eq:x:@strings.trim
-                                          .:[DONE]
-                                       and
-                                          eq:x:@.converted
-                                             .:bool:true
-                                          eq:x:@.json/*/type
-                                             .:response.completed
-                                       not-null:x:@.json/*/choices/0/*/finish_reason
-                                 .lambda
-                                 
-                                    // Avoiding double invocations.
-                                    set-value:x:@.invocations_handled
-                                       .:bool:true
+                              add:x:@.json
+                                 json2lambda:x:@strings.trim
+
+                              switch:x:@.json/*/type
+
+                                 // A token of text, appended to [.result] and streamed to the client.
+                                 case:response.output_text.delta
+
+                                    set-value:x:@.result
+                                       strings.concat
+                                          get-value:x:@.result
+                                          get-value:x:@.json/*/delta
+                                    unwrap:x:+/*/*
+                                    sockets.signal:x:@.session
+                                       args
+                                          message:x:@.json/*/delta
+
+                                 /*
+                                  * A finished output item. Text items already streamed token by token, so
+                                  * only function calls matter here - each one is queued for execution once
+                                  * the response completes, and the client is told a function is on its way.
+                                  */
+                                 case:response.output_item.done
+
+                                    if
+                                       eq:x:@.json/*/item/*/type
+                                          .:function_call
+                                       .lambda
+                                          add:x:@.calls
+                                             .
+                                                .
+                                                   type:function_call
+                                          add:x:@.calls/0/-
+                                             get-nodes:x:@.json/*/item/*/call_id
+                                             get-nodes:x:@.json/*/item/*/name
+                                             get-nodes:x:@.json/*/item/*/arguments
+                                          sockets.signal:x:@.session
+                                             args
+                                                function_waiting:bool:true
+
+                                 /*
+                                  * OpenAI is done with this response. Either it holds function calls, which are
+                                  * executed now such that the loop can invoke OpenAI again with their outputs,
+                                  * or it is the final answer and the client is told we're finished.
+                                  */
+                                 case:response.completed
+                                 case:response.incomplete
+
+                                    set-value:x:@.finish_reason
+                                       get-value:x:@.json/*/response/*/status
 
                                     // Checking if we're counting invocations.
                                     if
@@ -583,329 +907,220 @@ select prompt, max(completion) as completion
                                            */
                                           math.increment:x:@.no-invocation
 
-                                    // Checking if we've got function invocations.
                                     if
-                                       and
-                                          strings.contains:x:@.result
-                                             .:"___"
-                                          strings.contains:x:@.result
-                                             .:"FUNCTION_INVOCATION["
+                                       exists:x:@.calls/*
                                        .lambda
 
                                           /*
-                                           * We've got function invocations in response from OpenAI.
-                                           *
-                                           * Invoking functions and invoking ChatGPT afterwards with response from function invocations.
+                                           * Checking we're allowed to invoke OpenAI another time. If this was the
+                                           * last invocation the type allows, the calls are not executed, and the
+                                           * conversation ends here.
                                            */
                                           if
-                                             eq:x:@.no-invocation
-                                                .:int:0
+                                             lte:x:@.iterations
+                                                .:int:1
                                              .lambda
 
-                                                // Incrementing our invocation count initially.
-                                                math.increment:x:@.no-invocation
+                                                // Too many function invocations
+                                                log.error:Too many function invocations
+                                                sockets.signal:x:@.session
+                                                   args
+                                                      function_error:Too many function invocations
+                                                sockets.signal:x:@.session
+                                                   args
+                                                      error:bool:true
+                                                      status:int:500
+                                                      message:Too many function invocations. Configure your type to handle more invocations or change your prompt.
+                                                sockets.signal:x:@.session
+                                                   args
+                                                      finished:bool:true
 
-                                          // Iterating through all function invocations, in case there are more than one.
-                                          strings.split:x:@.result
-                                             .:"___"
-                                          for-each:x:@strings.split/*
+                                          else
 
-                                             /*
-                                              * Sometimes OpenAI returns additional information after a function invocation,
-                                              * even though we're explicitly telling it not to. Therefore we need to verify
-                                              * that this actually is a function invocation before attempting to invoke it.
-                                              */
                                              if
-                                                strings.contains:x:@.dp/#
-                                                   .:FUNCTION_INVOCATION[/
+                                                eq:x:@.no-invocation
+                                                   .:int:0
                                                 .lambda
 
-                                                   // Executing function such that we can catch exceptions and provide meaningful feedback.
-                                                   try
+                                                   // Incrementing our invocation count initially.
+                                                   math.increment:x:@.no-invocation
 
-                                                      // Checking we're allowed to invoke functions another time.
-                                                      if
-                                                         lte:x:@.iterations
-                                                            .:int:0
-                                                         .lambda
+                                             // Executing each function call, in case there are more than one.
+                                             for-each:x:@.calls/*
 
-                                                            // Too many function invocations
-                                                            log.error:Too many function invocations
-                                                            sockets.signal:x:@.session
-                                                               args
-                                                                  function_error:Too many function invocations
-                                                            sockets.signal:x:@.session
-                                                               args
-                                                                  function_waiting:bool:false
-                                                            sockets.signal:x:@.session
-                                                               args
-                                                                  error:bool:true
-                                                                  status:int:500
-                                                                  message:Too many function invocations. Configure your type to handle more invocations or change your prompt.
-                                                            if
-                                                               neq:x:@.finished_sent
-                                                                  .:bool:true
-                                                               .lambda
-                                                                  sockets.signal:x:@.session
-                                                                     args
-                                                                        finished:bool:true
-                                                                  set-value:x:@.finished_sent
-                                                                     .:bool:true
-                                                      else
+                                                /*
+                                                 * The call itself goes back to OpenAI ahead of its output,
+                                                 * since OpenAI rejects an output without the call it answers.
+                                                 */
+                                                add:x:@.function-items
+                                                   get-nodes:x:@.dp/#
 
-                                                         // Executing Hyperlambda function file.
-                                                         execute:magic.ai.functions.invoke
-                                                            type:x:@.type
-                                                            session:x:@.session
-                                                            user-id:x:@.user-id
-                                                            invocation:x:@.dp/#
-                                                            extra:x:@.extra
-                                                            base_url:x:@.base_url
+                                                // Resolving the tool name to its file, which verifies the type declares it.
+                                                .file
+                                                set-value:x:@.file
+                                                   get-value:x:@.functions/*/*/name/={@.dp/#/*/name}/./*/file
 
-                                                         // Transforming result to JSON.
-                                                         .content
+                                                /*
+                                                 * A widget tool renders a fixed file - the model's arguments are the
+                                                 * values for its placeholders, and the file is supplied here.
+                                                 */
+                                                .invocation-arguments
+                                                set-value:x:@.invocation-arguments
+                                                   get-value:x:@.dp/#/*/arguments
+                                                .widget
+                                                set-value:x:@.widget
+                                                   get-value:x:@.functions/*/*/name/={@.dp/#/*/name}/./*/widget
+                                                if
+                                                   not-null:x:@.widget
+                                                   .lambda
+                                                      .args
+                                                         filename
+                                                         arguments
+                                                      set-value:x:@.args/*/filename
+                                                         get-value:x:@.widget
+                                                      json2lambda:x:@.dp/#/*/arguments
+                                                      add:x:@.args/*/arguments
+                                                         get-nodes:x:@json2lambda/*
+                                                      set-value:x:@.invocation-arguments
+                                                         lambda2json:x:@.args/*
 
-                                                         // Checking if function returned a composite object.
-                                                         if
-                                                            exists:x:@execute/*/result/*
-                                                            .lambda
-                                                               set-value:x:@.content
-                                                                  lambda2json:x:@execute/*/result/*
-                                                                     format:true
-                                                         else
-                                                            set-value:x:@.content
-                                                               convert:x:@execute/*/result
-                                                                  type:string
+                                                // The output handed back to OpenAI for this call.
+                                                .output
 
-                                                         // Function file succeeded, returning result to caller.
-                                                         config.get:"magic:chat:functions:success-message"
-                                                            .:"Success!"
-                                                         unwrap:x:+/*/*
-                                                         sockets.signal:x:@.session
-                                                            args
-                                                               function_result:x:@config.get
-                                                               invocation:x:@execute/*/json
-                                                               file:x:@execute/*/workflow
+                                                // Executing function such that we can catch exceptions and provide meaningful feedback.
+                                                try
 
-                                                         // Adding result of function invocation to [.new-prompt] buffer.
-                                                         if
-                                                            not-null:x:@.content
-                                                            .lambda
+                                                   if
+                                                      null:x:@.file
+                                                      .lambda
+                                                         throw:That function doesn't exist on type
+                                                            public:bool:true
+                                                            status:int:400
 
-                                                               /*
-                                                                * We have a response from our function invocation and therefore we can
-                                                                * safely transform lambda to JSON for our next prompt.
-                                                                */
-                                                               set-value:x:@.new-prompt
-                                                                  strings.concat
-                                                                     get-value:x:@.new-prompt
-                                                                     .:"Response from '"
-                                                                     get-value:x:@execute/*/workflow
-                                                                     .:"' was:\n```\r\n"
-                                                                     get-value:x:@.content
-                                                                     .:"\n"
-                                                                     .:"```"
-                                                                     .:"\n"
-                                                                     .:"\n"
+                                                   // Executing Hyperlambda function file.
+                                                   execute:magic.ai.functions.invoke
+                                                      file:x:@.file
+                                                      arguments:x:@.invocation-arguments
+                                                      type:x:@.type
+                                                      session:x:@.session
+                                                      user-id:x:@.user-id
+                                                      extra:x:@.extra
+                                                      base_url:x:@.base_url
 
-                                                               // Storing result of function invocation such that we can store it in ml_requests.
-                                                               set-value:x:@.function-result
-                                                                  strings.concat
-                                                                     get-value:x:@.function-result
-                                                                     get-value:x:@.content
-                                                                     .:"\n"
+                                                   // Transforming result to JSON.
+                                                   .content
 
-                                                         else
+                                                   // Checking if function returned a composite object.
+                                                   if
+                                                      exists:x:@execute/*/result/*
+                                                      .lambda
+                                                         set-value:x:@.content
+                                                            lambda2json:x:@execute/*/result/*
+                                                               format:true
+                                                   else
+                                                      set-value:x:@.content
+                                                         convert:x:@execute/*/result
+                                                            type:string
 
-                                                            /*
-                                                             * We have no respone value from invocation but we still make sure our next prompt
-                                                             * knows it was a success invoking function.
-                                                             */
-                                                            set-value:x:@.new-prompt
-                                                               strings.concat
-                                                                  get-value:x:@.new-prompt
-                                                                  .:"Invocation of '"
-                                                                  get-value:x:@execute/*/workflow
-                                                                  .:"' was a success, but it returned nothing."
-                                                                  .:"\n"
-                                                                  .:"\n"
+                                                   // Function file succeeded, returning result to caller.
+                                                   config.get:"magic:chat:functions:success-message"
+                                                      .:"Success!"
+                                                   unwrap:x:+/*/*
+                                                   sockets.signal:x:@.session
+                                                      args
+                                                         function_result:x:@config.get
+                                                         invocation:x:@.dp/#/*/arguments
+                                                         file:x:@.file
 
-                                                            // Storing result of function invocation such that we can store it in ml_requests.
-                                                            set-value:x:@.function-result
-                                                               .:Function returned nothing!
+                                                   if
+                                                      not-null:x:@.content
+                                                      .lambda
+                                                         set-value:x:@.output
+                                                            get-value:x:@.content
 
-                                                   .catch
+                                                         // Storing result of function invocation such that we can store it in ml_requests.
+                                                         set-value:x:@.function-result
+                                                            strings.concat
+                                                               get-value:x:@.function-result
+                                                               get-value:x:@.content
+                                                               .:"\n"
+                                                   else
 
-                                                      // Function file failed.
-                                                      log.error:Could not execute AI function
-                                                         message:x:@.arguments/*/message
-                                                      strings.split:x:@.dp/#
-                                                         .:"\n"
-                                                      .name:x:-/0
-                                                      unwrap:x:-
-                                                      remove-nodes:x:@strings.split/0
-                                                      strings.join:x:@strings.split/*
-                                                         .:"\n"
-                                                      unwrap:x:+/*/*
-                                                      sockets.signal:x:@.session
-                                                         args
-                                                            function_error:x:@.arguments/*/message
-                                                            invocation:x:@strings.join
-                                                            file:x:@.name
+                                                      // No return value, but OpenAI still needs to know the invocation succeeded.
+                                                      set-value:x:@.output
+                                                         .:Invocation succeeded, but returned nothing.
+                                                      set-value:x:@.function-result
+                                                         .:Function returned nothing!
 
-                                                      // Updating buffer for prompt with failure information.
-                                                      set-value:x:@.new-prompt
-                                                         strings.concat
-                                                            get-value:x:@.new-prompt
-                                                            .:"Invocation failed, exception message was: '"
-                                                            get-value:x:@.arguments/*/message
-                                                            .:"'"
-                                                            .:"\n"
-                                                            .:"\n"
+                                                .catch
 
-                                          // Trimming new prompt.
-                                          set-value:x:@.new-prompt
-                                             strings.trim:x:@.new-prompt
+                                                   // Function file failed.
+                                                   log.error:Could not execute AI function
+                                                      message:x:@.arguments/*/message
+                                                   unwrap:x:+/*/*
+                                                   sockets.signal:x:@.session
+                                                      args
+                                                         function_error:x:@.arguments/*/message
+                                                         invocation:x:@.dp/#/*/arguments
+                                                         file:x:@.file
+                                                   set-value:x:@.output
+                                                      strings.concat
+                                                         .:"Invocation failed, exception message was: '"
+                                                         get-value:x:@.arguments/*/message
+                                                         .:"'"
+
+                                                unwrap:x:+/*/*/*
+                                                add:x:@.function-items
+                                                   .
+                                                      .
+                                                         type:function_call_output
+                                                         call_id:x:@.dp/#/*/call_id
+                                                         output:x:@.output
 
                                     else
 
                                        // OpenAI is done.
-                                       if
-                                          neq:x:@.finished_sent
-                                             .:bool:true
-                                          .lambda
-                                             sockets.signal:x:@.session
-                                                args
-                                                   finished:bool:true
-                                             set-value:x:@.finished_sent
-                                                .:bool:true
-                                             set-value:x:@.iterations
-                                                .:int:0
-
-                              else
-
-                                 // Updating finish reason if we were given a reason.
-                                 if
-                                    and
-                                       exists:x:@.json/*/choices/0/*/finish_reason
-                                       not-null:x:@.json/*/choices/0/*/finish_reason
-                                    .lambda
-
-                                       // OpenAI returned a [finish_reason].
-                                       set-value:x:@.finish_reason
-                                          get-value:x:@.json/*/choices/0/*/finish_reason
-
-                                       // Signaling client
-                                       unwrap:x:+/*/*
                                        sockets.signal:x:@.session
                                           args
-                                             finish_reason:x:@.finish_reason
+                                             finished:bool:true
+                                       set-value:x:@.iterations
+                                          .:int:0
 
-                                 else-if
-                                    eq:x:@.json/*/type
-                                       .:response.output_item.done
-                                    .lambda
+                                 // OpenAI failed. The client is told why, and the loop ends.
+                                 case:response.failed
+                                 case:error
 
-                                       // OpenAI returned a [finish_reason].
-                                       set-value:x:@.finish_reason
-                                          get-value:stop
-
-                                       // Signaling client
-                                       unwrap:x:+/*/*
-                                       sockets.signal:x:@.session
-                                          args
-                                             finish_reason:x:@.finish_reason
-
-                                 // Making sure we have a message.
-                                 .response_content
-                                 if
-                                    eq:x:@.json/*/type
-                                       .:response.output_text.delta
-                                    .lambda
-                                       set-value:x:@.response_content
-                                          get-value:x:@.json/*/delta
-                                 else-if
-                                    and
-                                       eq:x:@.json/*/type
-                                          .:response.output
-                                       exists:x:@.json/*/output
-                                    .lambda
-                                       for-each:x:@.json/*/output/*
-                                          if
-                                             and
-                                                eq:x:@.dp/#/*/type
-                                                   .:message
-                                                exists:x:@.dp/#/*/content/*
-                                             .lambda
-                                                for-each:x:@.dp/#/*/content/*
-                                                   if
-                                                      eq:x:@.dp/#/*/type
-                                                         .:output_text
-                                                      .lambda
-                                                         set-value:x:@.response_content
-                                                            strings.concat
-                                                               get-value:x:@.response_content
-                                                               get-value:x:@.dp/#/*/text
-                                 else-if
-                                    exists:x:@.json/*/choices/0/*/delta/*/content
-                                    .lambda
-                                       set-value:x:@.response_content
-                                          get-value:x:@.json/*/choices/0/*/delta/*/content
-
-                                 if
-                                    and
-                                       not-null:x:@.response_content
-                                       neq:x:@.response_content
-                                          .:
-                                    .lambda
-
-                                       // Appending content to above [.result].
-                                       set-value:x:@.result
-                                          strings.concat
-                                             get-value:x:@.result
-                                             get-value:x:@.response_content
-
-                                       /*
-                                        * Making sure we do NOT send FUNCTION_INVOCATION message parts to client.
-                                        *
-                                        * Notice, FUNCTION_INVOCATION parts are always supposed to be added at the
-                                        * end of the response, so this implies if we've got a function invocation, there
-                                        * should be no more relevant data after the function invocation.
-                                        */
-                                       if
-                                          not
-                                             strings.contains:x:@.result
-                                                .:"___"
-                                          .lambda
-
-                                             // Signaling client with the newly acquired data from OpenAI.
-                                             unwrap:x:+/*/*
-                                             sockets.signal:x:@.session
-                                                args
-                                                   message:x:@.response_content
-
-                                       else-if
-                                          and
-                                             strings.contains:x:@.result
-                                                .:"FUNCTION_INVOCATION["
-                                             neq:x:@.has-sent-waiting
-                                                .:bool:true
-                                          .lambda
-
-                                             // Signaling frontend that we're waiting for function invocation to respond.
-                                             sockets.signal:x:@.session
-                                                args
-                                                   function_waiting:bool:true
-                                             set-value:x:@.has-sent-waiting
-                                                .:bool:true
+                                    .message
+                                    set-value:x:@.message
+                                       get-first-value
+                                          get-value:x:@.json/*/response/*/error/*/message
+                                          get-value:x:@.json/*/message
+                                    log.error:OpenAI failed while streaming
+                                       message:x:@.message
+                                    unwrap:x:+/*/*
+                                    sockets.signal:x:@.session
+                                       args
+                                          error:bool:true
+                                          status:int:500
+                                          message:x:@.message
+                                    set-value:x:@.iterations
+                                       .:int:0
 
          /*
-          * Making sure we parametrise invocation to OpenAI
-          * such that it streams result.
+          * Making sure we parametrise invocation to OpenAI such that it streams result,
+          * and declares the type's functions as tools.
           */
          add:x:../*/.invoke/*/while/*/.lambda/*/.exe/*/http.post/*/payload
             .
                stream:bool:true
+         if
+            exists:x:@.tools/*
+            .lambda
+               add:x:../*/.invoke/*/while/*/.lambda/*/.exe/*/http.post/*/payload
+                  .
+                     tools
+               add:x:../*/.invoke/*/while/*/.lambda/*/.exe/*/http.post/*/payload/*/tools
+                  get-nodes:x:@.tools/*
 
    /*
     * Lambda object actually invoking OpenAI.
@@ -919,7 +1134,7 @@ select prompt, max(completion) as completion
       get-nodes:x:@.token
       get-nodes:x:@.fixed
       get-nodes:x:@.no-cache
-      get-nodes:x:@.only-prompt
+      get-nodes:x:@.functions
    .invoke
 
       /*
@@ -941,36 +1156,12 @@ select prompt, max(completion) as completion
        */
       .no-invocation:int:0
 
-      // Buffer prompt for next invocation.
-      .new-prompt
-
       // Contains result and finish reason from OpenAI.
       .result:
       .finish_reason
 
       // Contains result of function invocation.
       .function-result
-
-      // Making sure we get the right URL based upon model type.
-      .api_url
-      switch:x:@.arguments/*/model
-         case:gpt-5.2
-         case:gpt-5.2-pro
-         case:gpt-5.3-codex
-         case:gpt-5.4
-         case:gpt-5.4-mini
-         case:gpt-5.4-nano
-         case:gpt-5.4-pro
-         case:gpt-5.5
-         case:gpt-5.5-pro
-         case:gpt-5.6-sol
-         case:gpt-5.6-terra
-         case:gpt-5.6-luna
-            set-value:x:@.api_url
-               .:"https://api.openai.com/v1/responses"
-         default
-            set-value:x:@.api_url
-               .:"https://api.openai.com/v1/chat/completions"
 
       // Invoking OpenAI as longs as we have function invocations and have not invoked it more than a maximum of configured times.
       while
@@ -979,109 +1170,49 @@ select prompt, max(completion) as completion
          .lambda
 
             // Resetting buffers.
-            set-value:x:@.new-prompt
-               .:
             set-value:x:@.result
                .:
             set-value:x:@.finish_reason
                .:
 
-            // True if we've already sent a "waiting for function" message to client.
-            .has-sent-waiting:bool:false
-
-            // True if we already have sent the invocation result back to the client.
-            .invocations_handled:bool:false
+            // Function calls OpenAI returned in this response, and the items going back to it for them.
+            .calls
+            .function-items
 
             // Invoking OpenAI now with context being either training data or previous messages.
-            add:x:./*/.exe/*/http.post/*/payload/*/messages
+            add:x:./*/.exe/*/http.post/*/payload/*/input
                get-nodes:x:@.session/*
 
-            // Checking if this is an o3 model.
+            /*
+             * Reasoning effort defaults to "low". If the prompt contains "think hard" effort is
+             * raised to "high", and "think extra hard" raises it to "xhigh".
+             */
+            strings.to-lower:x:@.arguments/*/prompt
             if
-               eq:x:@.arguments/*/model
-                  .:o3-mini
+               strings.contains:x:@strings.to-lower
+                  .:think hard
                .lambda
-
-                  // Modifying request.
-                  set-name:x:@.lambda/@.lambda/*/.exe/*/http.post/*/payload/*/max_tokens
-                     .:max_completion_tokens
-                  remove-nodes:x:@.lambda/@.lambda/*/.exe/*/http.post/*/payload/*/temperature
-
-            // Checking if this is an gpt-5.2 type of model.
-            if
-               or
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.2
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.2-pro
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.3-codex
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.4
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.4-pro
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.4-mini
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.4-nano
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.5
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.5-pro
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.6-sol
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.6-terra
-                  eq:x:@.arguments/*/model
-                     .:gpt-5.6-luna
+                  set-value:x:@.lambda/././*/.exe/*/http.post/*/payload/*/reasoning/*/effort
+                     .:high
+            else-if
+               strings.contains:x:@strings.to-lower
+                  .:think extra hard
                .lambda
-
-                  // Modifying request.
-                  set-name:x:@.lambda/@.lambda/*/.exe/*/http.post/*/payload/*/max_tokens
-                     .:max_output_tokens
-                  set-name:x:@.lambda/././*/.exe/*/http.post/*/payload/*/messages
-                     .:input
-
-                  /*
-                   * If people are using GPT5.2 they probably want more "intelligence",
-                   * hence we turn up reasoning level to "low".
-                   */
-                  add:x:@.lambda/././*/.exe/*/http.post/*/payload
-                     .
-                        reasoning
-                           effort:low
-                  remove-nodes:x:@.lambda/././*/.exe/*/http.post/*/payload/*/temperature
-
-                  // Checking if prompt contains "think hard", at which point we increase effort to "high"
-                  strings.to-lower:x:@.arguments/*/prompt
-                  if
-                     strings.contains:x:@strings.to-lower
-                        .:think hard
-                     .lambda
-                        set-value:x:@.lambda/././*/.exe/*/http.post/*/payload/*/reasoning/*/effort
-                           .:high
-                  else-if
-                     strings.contains:x:@strings.to-lower
-                        .:think extra hard
-                     .lambda
-                        set-value:x:@.lambda/././*/.exe/*/http.post/*/payload/*/reasoning/*/effort
-                           .:xhigh
+                  set-value:x:@.lambda/././*/.exe/*/http.post/*/payload/*/reasoning/*/effort
+                     .:xhigh
 
             // Invoking OpenAI's API.
             .exe
 
-               // To avoid sending finish signal twice!
-               .finished_sent:bool:false
-
                // Making sure we transmit tokens to frontend.
-               lambda2json:x:./*/http.post/*/payload/*/[messages|input]/*
+               lambda2json:x:./*/http.post/*/payload/*/input/*
                openai.tokenize:x:-
                sockets.signal:x:@.arguments/*/session
                   args
                      type:input_tokens
                      value:x:@openai.tokenize
 
-               http.post:x:@.api_url
+               http.post:"https://api.openai.com/v1/responses"
                   convert:bool:true
                   timeout:180
                   headers
@@ -1092,9 +1223,10 @@ select prompt, max(completion) as completion
                      Connection:close
                   payload
                      model:x:@.arguments/*/model
-                     max_tokens:x:@.arguments/*/max_tokens
-                     temperature:x:@.arguments/*/temperature
-                     messages
+                     max_output_tokens:x:@.arguments/*/max_tokens
+                     reasoning
+                        effort:low
+                     input
 
             // Making sure we apply retry logic in case network flunks on us.
             .retry:int:3
@@ -1193,14 +1325,9 @@ select prompt, max(completion) as completion
                    * since it's not being streamed using SSE.
                    */
                   set-value:x:@.result
-                     get-first-value
-                        get-value:x:@.exe/*/http.post/*/content/*/choices/0/*/message/*/content
-                        get-value:x:@.exe/*/http.post/*/content/*/output/*/*/type/=message/./[0,1]/*/content/0/*/text
+                     get-value:x:@.exe/*/http.post/*/content/*/output/*/*/type/=message/./[0,1]/*/content/0/*/text
                   set-value:x:@.finish_reason
-                     get-first-value
-                        get-value:x:@.exe/*/http.post/*/content/*/choices/0/*/finish_reason
-                        get-value:x:@.exe/*/http.post/*/content/*/output/0/*/status
-                        .:unknown
+                     get-value:x:@.exe/*/http.post/*/content/*/status
 
                   // We only iterate if we're streaming response.
                   set-value:x:@.iterations
@@ -1235,18 +1362,10 @@ select prompt, max(completion) as completion
                               .
                                  role:assistant
                                  content:x:@.result
-                  if
-                     and
-                        not-null:x:@.new-prompt
-                        neq:x:@.new-prompt
-                           .:
-                     .lambda
-                        unwrap:x:+/*/*/*/content
-                        add:x:@.session
-                           .
-                              .
-                                 role:system
-                                 content:x:@.new-prompt
+
+                  // Function calls and their outputs go back to OpenAI on the next invocation.
+                  add:x:@.session
+                     get-nodes:x:@.function-items/*
 
                   // Removing everything but items that are supposed to be cached.
                   .cache-session
@@ -1310,20 +1429,21 @@ select prompt, max(completion) as completion
                               if
                                  not-exists:x:@data.read/*
                                  .lambda
-                                    http.post:"https://api.openai.com/v1/chat/completions"
+                                    http.post:"https://api.openai.com/v1/responses"
                                        timeout:60
                                        convert:bool:true
                                        headers
                                           Authorization:x:@.token
                                           Content-Type:application/json
                                        payload
-                                          model:gpt-4.1-2025-04-14
-                                          max_tokens:x:@.arguments/*/max_tokens
-                                          temperature:x:@.arguments/*/temperature
-                                          messages
+                                          model:x:@.arguments/*/model
+                                          max_output_tokens:int:1000
+                                          reasoning
+                                             effort:low
+                                          input
                                              .
                                                 role:system
-                                                content:Summarise the following text with 3 to 5 words an no punctuation
+                                                content:Summarise the following text with 3 to 5 words and no punctuation
                                              .
                                                 role:user
                                                 content:x:@.arguments/*/prompt
@@ -1333,7 +1453,7 @@ select prompt, max(completion) as completion
                                           username:x:@.username
                                           session_id:x:@.arguments/*/session
                                           content:x:@lambda2hyper
-                                          name:x:@http.post/*/content/*/choices/0/*/message/*/content
+                                          name:x:@http.post/*/content/*/output/*/*/type/=message/./[0,1]/*/content/0/*/text
                                     data.execute:delete from ml_history where session_id not in (select session_id from ml_history order by created desc limit 25)
                               else
                                  date.now
@@ -1374,12 +1494,12 @@ select prompt, max(completion) as completion
                                  .:[
                                  get-value:x:@.no-invocation
                                  .:"] - "
-                                 get-value:x:@.only-prompt
+                                 get-value:x:@.arguments/*/prompt
                      else
 
                         // Using prompt as was for history request.
                         set-value:x:@.prompt
-                           get-value:x:@.only-prompt
+                           get-value:x:@.arguments/*/prompt
 
                      // Storing response to ml_requests to keep history.
                      .tmp-completion
@@ -1410,15 +1530,9 @@ select prompt, max(completion) as completion
                         set-value:x:@.tmp-completion
                            get-value:x:@.result
 
-                     // Normalising finish reason across Chat Completions and Responses APIs.
+                     // Normalising the Responses API status to a finish reason.
                      .db-finish-reason
                      switch:x:@.finish_reason
-                        case:stop
-                           set-value:x:@.db-finish-reason
-                              .:stop
-                        case:length
-                           set-value:x:@.db-finish-reason
-                              .:length
                         case:cached
                            set-value:x:@.db-finish-reason
                               .:cached
@@ -1448,85 +1562,6 @@ select prompt, max(completion) as completion
                            session:x:@.arguments/*/session
                            user_id:x:@.arguments/*/user_id
                            referrer:x:@.arguments/*/referrer
-
-            // Checking if we've configured integrations for outgoing messages.
-            .outgoing
-            set-value:x:@.outgoing
-               get-first-value
-                  get-value:x:@.arguments/*/webhook_outgoing
-                  config.get:"magic:openai:integrations:outgoing:slot"
-            if
-               and
-                  not-null:x:@.outgoing
-                  neq:x:@.outgoing
-                     .:
-               .lambda
-
-                  // Invoking integration slot.
-                  .exe
-
-                     // Retrieving URL to invoke.
-                     .hook-url
-                     set-value:x:@.hook-url
-                        get-first-value
-                           get-value:x:@.arguments/*/webhook_outgoing_url
-                           config.get:"magic:openai:integrations:outgoing:url"
-
-                     // Invoking slot.
-                     unwrap:x:./*/signal/*/url
-                     signal:x:@.outgoing
-                        url:x:@.hook-url
-
-                  // Parametrizing invocation to integration slot.
-                  unwrap:x:+/*/*
-                  add:x:@.exe/*/signal
-                     .
-                        result:x:@.result
-                        session:x:@.arguments/*/session
-
-                  // Parametrizing invocation to integration slot.
-                  if
-                     and
-                        exists:x:@.arguments/*/to
-                        exists:x:@.arguments/*/from
-                        not-null:x:@.arguments/*/to
-                        not-null:x:@.arguments/*/from
-                        strings.contains:x:@.arguments/*/to
-                           .:":"
-                        strings.contains:x:@.arguments/*/from
-                           .:":"
-                     .lambda
-
-                        // We have a channel to accommodate for.
-                        .channel
-                        .to
-                        .from
-                        strings.split:x:@.arguments/*/to
-                           .:":"
-                        set-value:x:@.channel
-                           get-value:x:@strings.split/0
-                        set-value:x:@.to
-                           get-value:x:@strings.split/1
-                        strings.split:x:@.arguments/*/from
-                           .:":"
-                        set-value:x:@.from
-                           get-value:x:@strings.split/1
-                        unwrap:x:+/*/*
-                        add:x:@.exe/*/signal
-                           .
-                              to:x:@.from
-                              from:x:@.to
-                              channel:x:@.channel
-
-                  else
-
-                     // No channel
-                     add:x:@.exe/*/signal
-                        get-nodes:x:@.arguments/*/to
-                        get-nodes:x:@.arguments/*/from
-
-                  // Invoking callback.
-                  eval:x:@.exe
 
       /*
        * Pruning out all our non-cacheable messages - the fixed messages and
@@ -1575,7 +1610,14 @@ select prompt, max(completion) as completion
                      get-count:x:@.session/*
                      get-value:x:@convert
                   .lambda
-                     remove-nodes:x:@.session/0
+
+                     // A function call and its output leave together - see the token pruning further up.
+                     if
+                        not-null:x:@.session/0/*/call_id
+                        .lambda
+                           remove-nodes:x:@.session/*/call_id/={@.session/0/*/call_id}/.
+                     else
+                        remove-nodes:x:@.session/0
                lambda2hyper:x:@.session/*
                cache.set:x:@.arguments/*/session
                   expiration:x:@.arguments/*/session_timeout

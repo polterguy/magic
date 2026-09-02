@@ -1,0 +1,67 @@
+
+/*
+ * Migrates HTML widget snippets off the old text protocol.
+ *
+ * Older versions declared a widget as an AI function: a training snippet whose meta named the
+ * render-html-widget file, in one of two spellings, and whose completion held a FUNCTION_INVOCATION
+ * block carrying the widget's filename. Function snippets are no longer retrievable text - they
+ * only declare tools - so such a widget would be forgotten. Each of them is rewritten into a widget
+ * snippet, meta 'WIDGET ==> <widget file>', which the chat slot turns into a tool of its own, with
+ * the widget's [[placeholder]] tokens as its parameters.
+ *
+ * Only rows whose completion carries a "filename" are widgets - a bare declaration of the render
+ * function is left alone. On every later startup this finds nothing.
+ */
+try
+
+   // Connecting to Magic database.
+   data.connect:[generic|magic]
+
+      data.select:"select id, completion from ml_training_snippets where (meta = 'FUNCTION_INVOCATION ==> /misc/workflows/workflows/machine-learning/render-html-widget.hl' or meta = 'FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/render-html-widget.hl]') and completion like '%\"filename\"%'"
+      .count:int:0
+      for-each:x:@data.select/*
+
+         // The widget file is the value after "filename":, quoted or not, up to the end of its line.
+         strings.split:x:@.dp/#/*/completion
+            .:"\"filename\":"
+         strings.split:x:@strings.split/1
+            .:"\n"
+         .file
+         set-value:x:@.file
+            strings.trim:x:@strings.split/0
+               .:" \",\r"
+
+         // The snippet's text, shown in the training data and part of the tool's description.
+         .completion
+         set-value:x:@.completion
+            strings.concat
+               .:"HTML widget at "
+               get-value:x:@.file
+               .:.
+
+         strings.concat
+            .:"WIDGET ==> "
+            get-value:x:@.file
+         data.update
+            table:ml_training_snippets
+            values
+               meta:x:@strings.concat
+               completion:x:@.completion
+            where
+               and
+                  id.eq:x:@.dp/#/*/id
+         math.increment:x:@.count
+
+      // Only logging when something was actually changed.
+      if
+         mt:x:@.count
+            .:int:0
+         .lambda
+            log.info:Migrated HTML widget snippets off the old function declaration format
+               count:x:@.count
+
+.catch
+
+   // Doing some basic logging.
+   log.info:Something went wrong as we tried to migrate HTML widget snippets
+      message:x:@.arguments/*/message

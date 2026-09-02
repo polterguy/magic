@@ -1,3 +1,0 @@
-# INFO; Sending emails
-
-Magic can send emails using the Hyperlambda Generator. It can also send emails with attachments, and rich HTML emails, including emails with template fields. When sending emails or generating Hyperlambda that allows you to send emails, you should *not* specify a sender's email address, since by default, the system will use the values from the configuration file. So unless user specifically instructs the HL generator to use a "from" value, then do not ask for this if the user wants to send an email, or generate code that sends emails.

@@ -1,7 +1,8 @@
 
 /*
- * Adds the specified [filename] widget to the specified [type] as an HTML widget
- * with the specified [prompt].
+ * Adds the specified [filename] widget to the specified [type] as an HTML widget with the
+ * specified [prompt]. The widget becomes a tool of its own on the type, described by [prompt],
+ * whose parameters are the [[placeholder]] tokens in the widget's HTML.
  */
 .arguments
 
@@ -16,9 +17,6 @@
 
    // Mandatory widget file.
    filename:string
-
-   // Optional flat object of argument names; each name becomes a parameter in the generated render-html-widget invocation (values are ignored).
-   arguments:*
 
 // Ensuring user is root.
 auth.ticket.verify:root
@@ -60,56 +58,34 @@ if
          status:int:400
          public:bool:true
 
-// Creating our completion.
-.args:
-if
-   exists:x:@.arguments/*/arguments/*
-   .lambda
-      set-value:x:@.args
-         .:"  \"arguments\": {\n"
-      for-each:x:@.arguments/*/arguments/*
-         set-value:x:@.args
-            strings.concat
-               get-value:x:@.args
-               .:"    \""
-               get-name:x:@.dp/#
-               .:"\":\""
-               .:"[INPUT_VALUE]"
-               .:"\",\n"
-      set-value:x:@.args
-         strings.concat
-            strings.trim:x:@.args
-               .:"\n,"
-            .:"\n  }\n"
+// The snippet's text, shown in the training data and part of the tool's description.
 .completion
 set-value:x:@.completion
    strings.concat
-      .:"If the user is asking you to do perform an action associated with this function then respond with the following:\n\n"
-      .:"```plaintext\n___\n"
-      .:"FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/render-html-widget.hl]:\n{\n"
-      .:"  \"filename\":\""
+      .:"HTML widget at "
       get-value:x:@.arguments/*/filename
-      .:"\"\n"
-      get-value:x:@.args
-      .:"}\n___\n```\n"
+      .:.
 
 // Opening database.
 data.connect:magic
 
    // Inserting our item.
+   strings.concat
+      .:"WIDGET ==> "
+      get-value:x:@.arguments/*/filename
    data.create
       table:ml_training_snippets
       values
          type:x:@.arguments/*/type
          prompt:x:@.arguments/*/prompt
          completion:x:@.completion
-         meta:"FUNCTION_INVOCATION[/misc/workflows/workflows/machine-learning/render-html-widget.hl]"
+         meta:x:@strings.concat
 
    // Signaling frontend
    sockets.signal:x:@.arguments/*/_session
       args
          type:floating_message
-         floating_message:Widget successfully added to machine learning type as AI function
+         floating_message:Widget successfully added to machine learning type
          floating_state:success
 
    // Returning result to caller.

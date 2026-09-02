@@ -1,6 +1,12 @@
 
 /*
- * Creates an AI function for the specified [type] and [filename]
+ * Declares the Hyperlambda file [filename] as an AI function on the machine learning type [type],
+ * such that the type's model can execute it as a tool. The tool's description and arguments come
+ * from the file itself, so the file should carry a leading comment and a comment above each argument.
+ *
+ * By default the declaration is stored as a training snippet on the type, with [prompt] and
+ * [completion] as its human readable title and text. With [system_instruction] the declaration
+ * is instead appended to the type's system instruction, as a single line under a Functions heading.
  */
 .arguments
 
@@ -10,10 +16,10 @@
    // Mandatory name of type.
    type:string
 
-   // Mandatory prompt serving as a single-line description.
+   // Mandatory single-line title of the function, shown in the training data.
    prompt:string
 
-   // Mandatory completion serving as more detailed description.
+   // Mandatory human readable text about the function, shown in the training data.
    completion:string
 
    // Mandatory AI function file.
@@ -37,82 +43,6 @@ validators.regex:x:@.arguments/*/type
    regex:^[a-z0-9_-]+$
 validators.mandatory:x:@.arguments/*/filename
 
-// Retrieving arguments by letting another file doing the heavy lifting.
-execute-file:/system/workflows/get-hyperlambda-arguments.post.hl
-   path:x:@.arguments/*/filename
-
-// Check out signature determine what it does"
-.args
-add:x:@.args
-   get-nodes:x:@execute-file/*/args/*
-
-// Adding function invocation declaration to completion.
-.completion
-set-value:x:@.completion
-   strings.concat
-      get-value:x:@.arguments/*/completion
-      .:"\n\n```plaintext\n___\nFUNCTION_INVOCATION["
-      get-value:x:@.arguments/*/filename
-      .:]
-
-// Checking if function accepts arguments
-if
-   exists:x:@.args/*
-   .lambda
-
-      // Making sure we add arguments to function declaration.
-      set-value:x:@.completion
-         strings.concat
-            get-value:x:@.completion
-            .:":\n"
-      .obj
-      .tail:"Arguments:\n"
-      for-each:x:@.args/*
-         set-name:x:+/*/*
-            get-value:x:@.dp/#/*/name
-         add:x:@.obj
-            .
-               name
-         switch:x:@.dp/#/*/type
-            case:int
-            case:long
-               set-value:x:@.obj/0/-
-                  .:"[NUMERIC_VALUE]"
-            case:date
-               set-value:x:@.obj/0/-
-                  .:"[ISO_DATETIME_VALUE]"
-            default
-               set-value:x:@.obj/0/-
-                  .:"[STRING_VALUE]"
-         set-value:x:@.tail
-            strings.concat
-               get-value:x:@.tail
-               .:"\n - ["
-               get-value:x:@.dp/#/*/name
-               .:"] "
-               get-first-value
-                  get-value:x:@.dp/#/*/description
-                  .:"NO DESCRIPTION"
-      lambda2json:x:@.obj/*
-         format:true
-      set-value:x:@.completion
-         strings.concat
-            get-value:x:@.completion
-            get-value:x:@lambda2json
-            .:"\n___\n```"
-            .:"\n\n"
-            get-value:x:@.tail
-      set-value:x:@.completion
-         strings.trim:x:@.completion
-
-else
-
-   // File doesn't take arguments.
-   set-value:x:@.completion
-      strings.concat
-         get-value:x:@.completion
-         .:"\n___"
-
 // Checking if we're to add it to the system instruction or not.
 if
    neq:x:@.arguments/*/system_instruction
@@ -133,26 +63,24 @@ if
             values
                type:x:@.arguments/*/type
                prompt:x:@.arguments/*/prompt
-               completion:x:@.completion
+               completion:x:@.arguments/*/completion
                meta:x:@.meta
 
          // Signaling frontend
          sockets.signal:x:@.arguments/*/_session
             args
                type:floating_message
-               floating_message:AI function successfully created as RAG snippet
+               floating_message:AI function successfully declared on type
                floating_state:success
 
          // Returning result to caller.
          yield
             result:success
-            prompt:x:@.prompt
-            completion:x:@.completion
             id:x:@data.create
 
 else
 
-   // Adding it to the system instruction
+   // Adding it to the system instruction, under a Functions heading added the first time.
    data.connect:magic
       data.read
          table:ml_types
@@ -162,17 +90,27 @@ else
       if
          not-exists:x:@data.read/*
          .lambda
-            throw:No sych machine learning type
+            throw:No such machine learning type
                public:bool:true
                status:int:400
       .instruction
       set-value:x:@.instruction
+         strings.trim:x:@data.read/*/*/system_message
+      if
+         not
+            strings.contains:x:@.instruction
+               .:"## Functions"
+         .lambda
+            set-value:x:@.instruction
+               strings.concat
+                  get-value:x:@.instruction
+                  .:"\n\n## Functions\n"
+      set-value:x:@.instruction
          strings.concat
-            get-value:x:@data.read/*/*/system_message
-            .:"\n\n### "
-            get-value:x:@.arguments/*/prompt
-            .:"\n\n"
-            get-value:x:@.completion
+            get-value:x:@.instruction
+            .:"\nFUNCTION_INVOCATION["
+            get-value:x:@.arguments/*/filename
+            .:]
       data.update
          table:ml_types
          where
@@ -185,6 +123,9 @@ else
    sockets.signal:x:@.arguments/*/_session
       args
          type:floating_message
-         floating_message:
+         floating_message:AI function successfully declared in the system instruction
          floating_state:success
 
+   // Returning result to caller.
+   yield
+      result:success

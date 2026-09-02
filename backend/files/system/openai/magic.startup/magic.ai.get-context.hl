@@ -179,7 +179,10 @@ slots.create:magic.ai.get-context
                   .:embeddings
 
    // Making sure we actually have a [session] argument before we try to create a tal for our SQL.
-   .tail:
+   /*
+    * Function and widget snippets declare tools and are never returned as context.
+    */
+   .tail:" and (ts.meta is null or (ts.meta not like 'FUNCTION_INVOCATION ==> %' and ts.meta not like 'WIDGET ==> %'))"
    .next
    .cache-key
    if
@@ -203,6 +206,7 @@ slots.create:magic.ai.get-context
                // Adding our tail to our SQL contaning all IDs of items we've previously used.
                set-value:x:@.tail
                   strings.concat
+                     get-value:x:@.tail
                      .:" and ts.id not in("
                      get-value:x:@cache.get
                      .:)

@@ -52,15 +52,17 @@ data.connect:[generic|magic]
          get-first-value
             get-value:x:@.arguments/*/api_key
             config.get:"magic:openai:key"
-   http.post:"https://api.openai.com/v1/chat/completions"
+   http.post:"https://api.openai.com/v1/responses"
       convert:bool:true
       headers
          Authorization:x:@.token
          Content-Type:application/json
       payload
-         model:o3-mini
-         max_completion_tokens:int:1000
-         messages
+         model:gpt-5.6-luna
+         max_output_tokens:int:1000
+         reasoning
+            effort:low
+         input
             .
                role:system
                content:Create a small 5 to 10 word summary of the following content
@@ -89,7 +91,7 @@ data.connect:[generic|magic]
    .title2
    set-value:x:@.title2
       get-first-value
-         get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+         get-value:x:@http.post/*/content/*/output/*/*/type/=message/./[0,1]/*/content/0/*/text
          .:
    set-value:x:@.title2
       strings.trim:x:@.title2
@@ -100,15 +102,17 @@ data.connect:[generic|magic]
          .:"'"
 
    // Creating a description for the article by asking OpenAI to summarize conversation.
-   http.post:"https://api.openai.com/v1/chat/completions"
+   http.post:"https://api.openai.com/v1/responses"
       convert:bool:true
       headers
          Authorization:x:@.token
          Content-Type:application/json
       payload
-         model:o3-mini
-         max_completion_tokens:int:1000
-         messages
+         model:gpt-5.6-luna
+         max_output_tokens:int:1000
+         reasoning
+            effort:low
+         input
             .
                role:system
                content:Create a short and SEO optimised one sentence description of the following content intended to serve as a meta description for an HTML page with its content
@@ -137,7 +141,7 @@ data.connect:[generic|magic]
    .description2
    set-value:x:@.description2
       get-first-value
-         get-value:x:@http.post/*/content/*/choices/0/*/message/*/content
+         get-value:x:@http.post/*/content/*/output/*/*/type/=message/./[0,1]/*/content/0/*/text
          .:
    set-value:x:@.description2
       strings.trim:x:@.description2

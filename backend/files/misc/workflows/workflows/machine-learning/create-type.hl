@@ -64,11 +64,11 @@ else
 // Default system instruction
 .instruction:@"## General instructions
 
-* Always end your response with a `FUNCTION_INVOCATION` when executing functions, and return the `FUNCTION_INVOCATION` parts in the same message as the message you intend to execute the function in.
-* Never execute a function unless you know its exact filename and signature.
-* When executing one or more functions in the current response, no text is allowed after the final `FUNCTION_INVOCATION` block.
+* Your functions are available to you as tools. Execute a function with a tool call, never by writing it as text.
+* Never execute a function before you've got all the mandatory arguments or confirmed that defaults are acceptable.
 * If a function does not return anything then inform the user that the function didn't return anything.
-* If the user asks you what you can do then use the `list-functions` function and group its result into categories explaining each individual function and workflow.
+* If the user asks you what you can do then list your tools grouped into categories, explaining each.
+* If you experience repeated execution errors, stop and ask the user for help.
 * Today's date and time is {{
 date.now
 date.format:x:-
@@ -80,35 +80,7 @@ return:x:-
 
 * If you find relevant images in the context then return these images as follows to the user ![image_description](image_url).
 * ONLY display images you find in the context.
-* If you cannot find an image in the context then DO NOT MAKE UP IMAGE URLS.
-
-## Functions
-
-You can execute functions by ending your response with something resembling the following:
-
-```plaintext
-___
-FUNCTION_INVOCATION[/FOLDER/FILENAME.hl]:
-{
-  ""arg1"": ""value1"",
-  ""arg2"": 1234
-}
-___
-```
-
-The above is only an example and not a real function.
-
-`FUNCTION_INVOCATION` blocks must contain valid JSON arguments matching the function signature. The wrapper syntax (`___` and `FUNCTION_INVOCATION[...]`) is transport metadata and is not itself JSON.
-
-### Function execution instructions
-
-* Never execute a function before you've got all the mandatory arguments or confirmed that defaults are acceptable.
-* If you are about to execute a function, end your response with the invocation in the same message.
-* Wrap the entire `FUNCTION_INVOCATION` header and JSON payload inside a single block bounded by `___` at the top and bottom.
-* Each argument can only be supplied once.
-* Unless you know an argument's value, omit it entirely.
-* You may return multiple `FUNCTION_INVOCATION` blocks in the same response only when later invocations do not depend on earlier return values, side effects, or created resources.
-* If you experience repeated execution errors, stop and ask the user for help."
+* If you cannot find an image in the context then DO NOT MAKE UP IMAGE URLS."
 
 if
    eq:x:@.arguments/*/use_embeddings
@@ -123,48 +95,7 @@ if
 * YOU ARE UNDER NO CIRCUMSTANCES ALLOWED TO ANSWER QUESTIONS YOU CANNOT FIND THE ANSWER TO IN THE CONTEXT.
 * If the user asks you a question and you cannot find the answer to it in the context, or the question is irrelevant to the provided context, then inform the user that you don't know the answer, and encourage the user to provide some relevant keywords or stay on subject."
 
-else
-   set-value:x:@.instruction
-      strings.concat
-         get-value:x:@.instruction
-         .:"\n\n"
-         .:@"Below you can find some functions you can use to your benefit.
-
-### List all functions
-
-If the user asks you to list all functions or what you can do for them or help them with, then you must end your response with the following.
-
-```plaintext
-___
-FUNCTION_INVOCATION[/system/misc/workflows/list-functions.hl]
-___
-```
-
-This function will return RAG functions which are dynamically looked up using VSS based upon the specified prompt, in addition to system message functions which are always a part of the context allowing you to always execute these without a prompt matching based upon VSS.
-
-If you need to execute one of these functions and you don't know its exact FUNCTION_INVOCATION declaration, you can use the `get-context` function to retrieve its exact declaration and how to correctly parametrize and execute it.
-
-### Search for function, workflow, or information (`get-context`)
-
-If the user is asking you to search for a function, or you cannot find the required function or information required to perform some task, then use the following function to search for additional information, and/or functions, and/or workflows:
-
-```plaintext
-___
-FUNCTION_INVOCATION[/misc/workflows/workflows/misc/get-context.hl]:
-{
-  ""query"": ""[QUERY]"",
-  ""max_tokens"": 5000
-}
-___
-```
-
-The above can have a [QUERY] value being for instance ""Create module"", ""Delete file"", ""Workflow for how to create an AI chatbot embed script"", or ""Create CRUD API"", etc. The `max_tokens` argument is how many tokens to return. 5000 is a good number here, but if you cannot find anything, you can increase `max_tokens`, vary your prompt, and try again.
-
-The `get-context` function will return RAG records using VSS, and might return irrelevant information due to it searching using VSS. Records are returned as a string where each individual record is separated by a `---` line, and each new function, workflow, or information snippet starts with a markdown H1 title.
-
-If the user’s query is broad (e.g., “list companies,” “show users,” “find projects”) and you don’t know a direct function, call `get-context` with the query as-is to look for relevant workflows, information, or functions."
-
-// Making sure we add support for executing AI functions to the system instruction.
+// Appending the default instruction to the system instruction.
 set-value:x:@.arguments/*/system_message
    strings.concat
       get-value:x:@.arguments/*/system_message

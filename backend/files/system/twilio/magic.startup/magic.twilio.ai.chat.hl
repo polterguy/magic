@@ -118,34 +118,14 @@ slots.create:magic.twilio.ai.chat
                            twilio_account_id:x:@.twilio_account_id
                            twilio_account_sid:x:@.twilio_account_sid
 
-               // Checking what type of model this is, and invoking correct slot accordingly.
-               if
-                  strings.starts-with:x:@.arguments/*/model
-                     .:gpt
-                  .lambda
-
-                     // Invoking chat style of slot.
-                     add:x:./*/signal/[0,1]
-                        get-nodes:x:@.arguments/*
-                     signal:magic.ai.chat
-                     unwrap:x:+/*
-                     signal:magic.twilio.send-message
-                        body:x:@signal/@signal/*/result
-                        to:x:@.arguments/*/from
-                        from:x:@.arguments/*/to
-                        twilio_account_id:x:@.twilio_account_id
-                        twilio_account_sid:x:@.twilio_account_sid
-
-               else
-
-                  // Invoking chat style of slot.
-                  add:x:./*/signal/[0,1]
-                     get-nodes:x:@.arguments/*
-                  signal:magic.ai.completion
-                  unwrap:x:+/*
-                  signal:magic.twilio.send-message
-                     body:x:@signal/@signal/*/result
-                     to:x:@.arguments/*/from
-                     from:x:@.arguments/*/to
-                     twilio_account_id:x:@.twilio_account_id
-                     twilio_account_sid:x:@.twilio_account_sid
+               // Invoking chat slot.
+               add:x:./*/signal/[0,1]
+                  get-nodes:x:@.arguments/*
+               signal:magic.ai.chat
+               unwrap:x:+/*
+               signal:magic.twilio.send-message
+                  body:x:@signal/@signal/*/result
+                  to:x:@.arguments/*/from
+                  from:x:@.arguments/*/to
+                  twilio_account_id:x:@.twilio_account_id
+                  twilio_account_sid:x:@.twilio_account_sid

@@ -1651,66 +1651,16 @@ interface HyperlambdaArguments {
   args?: { name: string; type: string; description?: string }[];
 }
 
-// CRUD-generated filter suffixes, described once as a group rather than per argument.
-const FILTER_SUFFIXES = ['eq', 'neq', 'like', 'mt', 'lt', 'mteq', 'lteq'];
-
-const FILTER_LEGEND = `
-If any of the other arguments ends with:
-
-* lt it implies 'less than'
-* mt it implies 'more than'
-* lteq it implies 'less than or equal to'
-* mteq it implies 'more than or equal to'
-* eq it implies 'equals to'
-* neq it implies 'not equal to'
-* like it implies a LIKE SQL type of query, with % being wildcard character
-`;
-
 /*
- * Builds the AI-function declaration for a Hyperlambda file. The endpoint
- * returns the file's arguments and description — the declaration itself is
- * assembled here, exactly as the old dashboard assembled it.
+ * The leading comment of a Hyperlambda file. An AI function's declaration is
+ * just its file path - the model reads the tool's description and arguments
+ * from the file itself - so this is only used to give the training-data row
+ * a human readable text.
  */
-export async function getFunctionDeclaration(path: string) {
+export async function getFileDescription(path: string) {
   const result = await http.post<HyperlambdaArguments>(
     '/magic/system/workflows/get-hyperlambda-arguments', { path });
-
-  // Files without an [.arguments] collection can't be invoked as functions.
-  if (result.function !== true) {
-    return '';
-  }
-
-  let declaration = (result.description ?? '') + '\n\n___\n';
-  declaration += 'FUNCTION_INVOCATION[' + path + ']';
-  const args = result.args ?? [];
-  if (args.length === 0) {
-    return (declaration + '\n___').trim();
-  }
-
-  const example: Record<string, string> = {};
-  for (const argument of args) {
-    example[argument.name] = '[' + argument.type.toUpperCase() + '_VALUE]';
-  }
-  declaration += ':\n' + JSON.stringify(example, null, 2) +
-    '\n___\n\n### Description of arguments:\n\n';
-
-  let hasFilters = false;
-  for (const argument of args) {
-    const parts = argument.name.split('.');
-    if (FILTER_SUFFIXES.includes(parts[parts.length - 1])) {
-      hasFilters = true;
-      // Only the bare column name is described, not each filter variant.
-      if (parts.length > 1) {
-        continue;
-      }
-    }
-    declaration += '* ' + argument.name +
-      (argument.description ? ' - ' + argument.description : '') + '\n';
-  }
-  if (hasFilters) {
-    declaration += FILTER_LEGEND;
-  }
-  return declaration.trim();
+  return result.description ?? '';
 }
 
 /*

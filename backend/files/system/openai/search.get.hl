@@ -1,5 +1,5 @@
 
-// OpenAI chat endpoint, for having conversations using "gpt-xxx" models.
+// OpenAI AI search endpoint, returning only references to matching training snippets.
 .arguments
    prompt:string
    type:string

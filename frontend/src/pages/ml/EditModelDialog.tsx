@@ -565,16 +565,16 @@ export default function EditModelDialog(props: {
               type={type}
               onClose={() => setAddingFunction(false)}
               onInstalled={() => setAddingFunction(false)}
-              onDeclaration={(prompt, completion) => {
+              onDeclaration={file => {
                 /*
-                 * Appended as a markdown section, the way the old edit-type
-                 * dialog appends it — heading from the prompt, declaration
-                 * underneath, separated from whatever came before.
+                 * One line per function under a Functions heading, added the
+                 * first time. The line is the whole declaration - the model
+                 * reads the tool's description and arguments from the file.
                  */
                 setSystemMessage((current: string) => {
                   const trimmed = current.trimEnd();
-                  return (trimmed.length > 0 ? trimmed + '\n\n' : '') +
-                    '## ' + prompt + '\n\n' + fenceInvocation(completion);
+                  const heading = trimmed.includes('## Functions') ? '' : '\n\n## Functions\n';
+                  return trimmed + heading + '\nFUNCTION_INVOCATION[' + file + ']';
                 });
                 setAddingFunction(false);
                 showToast('AI function added to your system instruction');
@@ -597,24 +597,3 @@ export default function EditModelDialog(props: {
 }
 
 
-/*
- * Wraps the FUNCTION_INVOCATION block — everything between its two ___
- * markers — in a plaintext fence. A system instruction is markdown, and its
- * own "## Functions" section shows invocations fenced this way, so inserted
- * declarations have to match. Argument descriptions stay outside the fence,
- * since they are prose.
- */
-function fenceInvocation(completion: string) {
-  const lines = completion.split('\n');
-  const opening = lines.indexOf('___');
-  if (opening === -1) {
-    return completion;
-  }
-  const closing = lines.indexOf('___', opening + 1);
-  if (closing === -1) {
-    return completion;
-  }
-  lines.splice(closing + 1, 0, '```');
-  lines.splice(opening, 0, '```plaintext');
-  return lines.join('\n');
-}

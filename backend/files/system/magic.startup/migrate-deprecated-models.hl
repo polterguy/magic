@@ -1,61 +1,35 @@
 
 /*
- * Migrates machine learning types off models OpenAI has retired.
+ * Migrates machine learning types off models the chat slot no longer supports.
  *
- * OpenAI deprecated 'gpt-5-chat-latest' and 'gpt-5.2-codex', and both now answer 404 - so a type
- * still referencing either fails on its first prompt. Removing the models from the code cannot
- * repair types that already exist, since those live in the database, hence this runs at startup
- * and repoints them at the nearest surviving model.
- *
- * Each retired model is replaced by its closest equivalent rather than by one single fallback -
- * somebody who picked a codex model wanted a codex model.
+ * Only gpt-5.2 and newer are supported, spoken to over the Responses API with reasoning - the
+ * list below mirrors the one in magic.ai.endpoint-common.hl. A type still referencing anything
+ * else fails on its first prompt, and removing models from the code cannot repair types that
+ * already exist, since those live in the database - hence this runs at startup and repoints
+ * them at gpt-5.6-luna.
  */
 try
 
    // Connecting to Magic database.
    data.connect:[generic|magic]
 
-      // Repointing any type still referencing a retired model.
-      data.update
-         table:ml_types
-         values
-            model:gpt-5.6-luna
-         where
-            and
-               model.eq:gpt-5-chat-latest
+      // Repointing every type whose model is not supported.
+      data.execute:"update ml_types set model = 'gpt-5.6-luna' where model not in ('gpt-5.2', 'gpt-5.2-pro', 'gpt-5.3-codex', 'gpt-5.4', 'gpt-5.4-pro', 'gpt-5.4-mini', 'gpt-5.4-nano', 'gpt-5.5', 'gpt-5.5-pro', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna')"
 
       /*
        * Only logging when something was actually changed - a silent rewrite of somebody's
        * configuration is worse than a noisy one, and on every later startup this updates nothing.
        */
       if
-         mt:x:@data.update
+         mt:x:@data.execute
             .:int:0
          .lambda
-            log.info:Migrated machine learning types off a model OpenAI has deprecated
-               count:x:@data.update
-               from:gpt-5-chat-latest
+            log.info:Migrated machine learning types off models the chat slot no longer supports
+               count:x:@data.execute
                to:gpt-5.6-luna
-
-      // Same again for the retired codex model.
-      data.update
-         table:ml_types
-         values
-            model:gpt-5.3-codex
-         where
-            and
-               model.eq:gpt-5.2-codex
-      if
-         mt:x:@data.update
-            .:int:0
-         .lambda
-            log.info:Migrated machine learning types off a model OpenAI has deprecated
-               count:x:@data.update
-               from:gpt-5.2-codex
-               to:gpt-5.3-codex
 
 .catch
 
    // Doing some basic logging.
-   log.info:Something went wrong as we tried to migrate deprecated machine learning models
+   log.info:Something went wrong as we tried to migrate machine learning types off unsupported models
       message:x:@.arguments/*/message

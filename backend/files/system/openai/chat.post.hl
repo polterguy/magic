@@ -1,6 +1,6 @@
 
 /*
- * OpenAI chat endpoint, for having conversations using "gpt-xxx" models.
+ * OpenAI chat endpoint, for having conversations with OpenAI's models over the Responses API.
  *
  * Notice, if you set [stream] to true the endpoint will stream response tokens over the specified
  * [session] back to caller.
@@ -22,7 +22,7 @@
    upload_file_only:bool
    system_message_override:string
    meta:string
-.description:@"OpenAI chat endpoint, for having conversations using 'gpt-xxx' models"
+.description:@"OpenAI chat endpoint, for having conversations with OpenAI's models"
 .type:public
 
 // Forwarding to get Hyperlambda file.

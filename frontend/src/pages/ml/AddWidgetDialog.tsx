@@ -1,6 +1,8 @@
 /*
- * Adds an HTML widget to a model — a training snippet whose completion tells
- * the model to render the widget through the render-html-widget workflow.
+ * Adds an HTML widget to a model — a training snippet whose meta names the
+ * widget file. The chat pipeline turns it into a tool of its own, described
+ * by the snippet's prompt, with the widget's [[placeholder]] tokens as its
+ * parameters.
  */
 
 import { useEffect, useState } from 'react';
@@ -9,8 +11,6 @@ import { Modal } from '../../components/Dialogs';
 import SearchInput from '../../components/SearchInput';
 import { availableWidgets, mlSnippetCreate } from '../../lib/api';
 import { showToast } from '../../lib/toast';
-
-const WIDGET_WORKFLOW = '/misc/workflows/workflows/machine-learning/render-html-widget.hl';
 
 export default function AddWidgetDialog(props: {
   type: string;
@@ -33,10 +33,7 @@ export default function AddWidgetDialog(props: {
   }, []);
 
   async function install(widget: any) {
-    const completion = 'If the user asks you to perform an action associated with ' +
-      'this function, then responds with the following in the same message:\n' +
-      '\n___\nFUNCTION_INVOCATION[' + WIDGET_WORKFLOW + ']:\n{\n  "filename":' +
-      widget.file + '\n}\n___';
+    const completion = 'HTML widget at ' + widget.file + '.';
     if (busy) {
       return;
     }
@@ -46,7 +43,7 @@ export default function AddWidgetDialog(props: {
         prompt: 'WRITE YOUR PROMPT HERE',
         completion,
         type: props.type,
-        meta: 'FUNCTION_INVOCATION ==> ' + WIDGET_WORKFLOW,
+        meta: 'WIDGET ==> ' + widget.file,
       });
       showToast(
         'Widget added to ' + props.type + ' — edit its prompt to describe when to use it');

@@ -48,30 +48,14 @@ for-each:x:@http.get/*/content/*/data/*
    switch:x:@.dp/#/*/id
 
       /*
-       * gpt-4.1 is the oldest generation still worth offering; everything below
-       * it (gpt-4o, gpt-4, gpt-4-turbo, gpt-3.5, o-series) is deprecated and
-       * being retired from the API, so it is no longer offered for selection.
+       * gpt-5.2 is the oldest generation offered. The chat slot speaks only the
+       * Responses API with reasoning, which everything below it lacks, so older
+       * models are not offered for selection.
        *
        * [input_price] and [output_price] are USD per 1,000,000 tokens, surfaced
        * so the dashboard can show cost in the model dropdowns. A couple of
        * variants with no reliably published price simply omit them.
        */
-      case:gpt-4.1-2025-04-14
-         add:x:@.dp/#
-            .
-               tokens:int:1000000
-               chat:bool:true
-               input_price:decimal:2
-               output_price:decimal:8
-
-      case:gpt-4.1-mini-2025-04-14
-         add:x:@.dp/#
-            .
-               tokens:int:1000000
-               chat:bool:true
-               input_price:decimal:0.4
-               output_price:decimal:1.6
-
       // Only 1536-dimension embedding models are compatible with the fixed
       // vector_init('...dimension=1536...') index; text-embedding-3-large is
       // 3072-dim, so it is intentionally excluded.

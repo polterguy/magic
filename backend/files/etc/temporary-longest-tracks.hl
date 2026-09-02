@@ -1,0 +1,6 @@
+
+// Generate an executable Hyperlambda snippet that queries the SQLite database named chinook and returns the 5 longest tracks from the Track table. Return each row with the track Name and its length in minutes calculated from Milliseconds, rounded to exactly two decimal places and exposed as a decimal value. Sort by Milliseconds descending and limit the result to 5 rows. Execute the query immediately and return its result.
+.arguments
+data.connect:chinook
+   data.select:"SELECT Name, ROUND(CAST(Milliseconds AS REAL) / 60000, 2) AS LengthMinutes\nFROM Track\nORDER BY Milliseconds DESC\nLIMIT 5"
+   return-nodes:x:@data.select/*
