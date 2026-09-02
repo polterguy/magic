@@ -121,86 +121,75 @@ slots.create:magic.ai.endpoint-common
          add:x:@.model
             get-nodes:x:@data.read/*/*
 
-   /*
-    * Checking if model requires authentication and authorisation,
-    * unless caller explicitly informs us he wants to skip authentication.
-    */
+   // Checking if model requires authentication and authorisation.
    if
-      or
-         not-exists:x:@.arguments/*/skip-auth
-         eq:x:@.arguments/*/skip-auth
-            .:bool:false
+      and
+         not-null:x:@.model/*/auth
+         neq:x:@.model/*/auth
+            .:
       .lambda
 
-         // Caller wants default authentication logic, first checking if model requires authentication.
+         // Making sure user is authorised to using type.
+         auth.ticket.verify:x:@.model/*/auth
+
+   // Checking if model requires reCAPTCHA.
+   if
+      and
+         eq
+            auth.ticket.get
+            .
+         not-null:x:@.model/*/recaptcha
+         mt
+            convert:x:@.model/*/recaptcha
+               type:decimal
+            .:decimal:0
+      .lambda
+
+         // Verifying reCAPTCHA was supplied.
          if
-            and
-               not-null:x:@.model/*/auth
-               neq:x:@.model/*/auth
-                  .:
+            or
+               not-exists:x:@.arguments/*/recaptcha_response
+               null:x:@.arguments/*/recaptcha_response
             .lambda
 
-               // Making sure user is authorised to using type.
-               auth.ticket.verify:x:@.model/*/auth
+               // Endpoint invoked without reCAPTCHA, making sure we abort invocation.
+               response.status.set:499
+               return
+                  error:No reCAPTCHA supplied
 
-         // Checking if model requires reCAPTCHA.
-         if
-            and
-               eq
-                  auth.ticket.get
-                  .
-               not-null:x:@.model/*/recaptcha
-               mt
-                  convert:x:@.model/*/recaptcha
-                     type:decimal
-                  .:decimal:0
-            .lambda
+         // Retrieving reCAPTCHA site key.
+         .key
+         set-value:x:@.key
+            config.get:"magic:auth:recaptcha:key"
 
-               // Verifying reCAPTCHA was supplied.
-               if
-                  or
-                     not-exists:x:@.arguments/*/recaptcha_response
-                     null:x:@.arguments/*/recaptcha_response
-                  .lambda
+         // Retrieving reCAPTCHA secret.
+         .secret
+         set-value:x:@.secret
+            config.get:"magic:auth:recaptcha:secret"
 
-                     // Endpoint invoked without reCAPTCHA, making sure we abort invocation.
-                     response.status.set:499
-                     return
-                        error:No reCAPTCHA supplied
+         // Validating reCAPTCHA invocation confirms request originated from a human.
+         convert:x:@.model/*/recaptcha
+            type:decimal
+         validators.recaptcha:x:@.arguments/*/recaptcha_response
+            min:x:@convert
+            site-key:x:@.key
+            secret:x:@.secret
 
-               // Retrieving reCAPTCHA site key.
-               .key
-               set-value:x:@.key
-                  config.get:"magic:auth:recaptcha:key"
-
-               // Retrieving reCAPTCHA secret.
-               .secret
-               set-value:x:@.secret
-                  config.get:"magic:auth:recaptcha:secret"
-
-               // Validating reCAPTCHA invocation confirms request originated from a human.
+   else-if
+      and
+         eq
+            auth.ticket.get
+            .
+         not
+            lt
                convert:x:@.model/*/recaptcha
                   type:decimal
-               validators.recaptcha:x:@.arguments/*/recaptcha_response
-                  min:x:@convert
-                  site-key:x:@.key
-                  secret:x:@.secret
+               .:decimal:0
+      .lambda
 
-         else-if
-            and
-               eq
-                  auth.ticket.get
-                  .
-               not
-                  lt
-                     convert:x:@.model/*/recaptcha
-                        type:decimal
-                     .:decimal:0
-            .lambda
-
-               // Using built-in CAPTCHA.
-               execute:magic.auth.captcha-verify
-                  token:x:@.arguments/*/recaptcha_response
+         // Using built-in CAPTCHA.
+         execute:magic.auth.captcha-verify
+            token:x:@.arguments/*/recaptcha_response
 
    // Checking if we've reached [max_requests] on model.
    if
