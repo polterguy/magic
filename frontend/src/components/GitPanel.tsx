@@ -6,11 +6,43 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Modal, useDialog } from './Dialogs';
+import { ChevronIcon } from './Icons';
 import { showToast } from '../lib/toast';
 import {
-  gitBranches, gitCheckout, gitClone, gitCommit, gitFetch, gitGithubCreate,
-  gitInit, gitPull, gitPush, gitRemoteAdd, gitStatus, listFiles, listFolders,
+  gitBranches, gitCheckout, gitClone, gitCommit, gitDiff, gitFetch, gitGithubCreate,
+  gitInit, gitPull, gitPush, gitRemoteAdd, gitStatus, listFiles, listFolders, loadFile,
 } from '../lib/api';
+
+/*
+ * One porcelain status line is "XY path", where XY is the two-character status
+ * code and the path follows a single space. Renames read "R  old -> new", and
+ * paths with unusual characters arrive quoted.
+ */
+function parseChange(line: string) {
+  const code = line.substring(0, 2);
+  let path = line.substring(3);
+  if (path.includes(' -> ')) {
+    path = path.substring(path.indexOf(' -> ') + 4);
+  }
+  if (path.startsWith('"') && path.endsWith('"')) {
+    path = path.substring(1, path.length - 1);
+  }
+  return { line, code: code.trim(), path, untracked: code === '??' };
+}
+
+// Colour class for one unified diff line, keyed by its first character(s).
+function diffLineClass(line: string) {
+  if (line.startsWith('+++') || line.startsWith('---')) {
+    return 'meta';
+  }
+  switch (line[0]) {
+    case '+': return 'add';
+    case '-': return 'del';
+    case '@': return 'hunk';
+    case ' ': return '';
+    default: return 'meta';
+  }
+}
 
 export default function GitPanel(props: {
   path: string;
@@ -23,6 +55,9 @@ export default function GitPanel(props: {
   const [mode, setMode] = useState<'loading' | 'repo' | 'norepo'>('loading');
   const [branchLine, setBranchLine] = useState('');
   const [changes, setChanges] = useState<string[]>([]);
+  // Files whose diff is expanded, and the diffs fetched so far, both keyed by path.
+  const [open, setOpen] = useState<Record<string, boolean>>({});
+  const [diffs, setDiffs] = useState<Record<string, string>>({});
   const [branches, setBranches] = useState<string[]>([]);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
@@ -34,6 +69,9 @@ export default function GitPanel(props: {
       const lines = await gitStatus(props.path) ?? [];
       setBranchLine(lines.find(line => line.startsWith('## '))?.substring(3) ?? '');
       setChanges(lines.filter(line => !line.startsWith('## ')));
+      // Whatever was fetched describes the old working tree.
+      setOpen({});
+      setDiffs({});
       setBranches(await gitBranches(props.path) ?? []);
       setMode('repo');
     } catch {
@@ -95,6 +133,26 @@ export default function GitPanel(props: {
     ? branches
     : [currentBranch, ...branches];
 
+  /*
+   * Toggles one file's diff, fetching it the first time. Untracked files have
+   * no diff in git, so their whole content is shown as additions instead.
+   */
+  async function toggle(change: ReturnType<typeof parseChange>) {
+    const opening = !open[change.path];
+    setOpen({ ...open, [change.path]: opening });
+    if (!opening || change.path in diffs) {
+      return;
+    }
+    try {
+      const diff = change.untracked
+        ? (await loadFile(props.path + change.path)).split('\n').map(line => '+' + line).join('\n')
+        : await gitDiff(props.path, change.path);
+      setDiffs(current => ({ ...current, [change.path]: diff }));
+    } catch (err: any) {
+      showToast(err.message, true, err.logId);
+    }
+  }
+
   async function newBranch() {
     const name = await prompt({ title: 'New branch', message: props.path, label: 'Branch name' });
     if (!name) {
@@ -138,7 +196,7 @@ export default function GitPanel(props: {
   }
 
   return (
-    <Modal width={640} onClose={close}>
+    <Modal width={760} onClose={close}>
       <h2>Git — {props.path}</h2>
       {(mode === 'loading' || busy) && (
         <div className="spinner-panel">
@@ -211,9 +269,33 @@ export default function GitPanel(props: {
           {changes.length === 0
             ? <p>Working tree clean.</p>
             : (
-              <pre className="mono" style={{ maxHeight: 200, overflow: 'auto', margin: '0 0 12px' }}>
-                {changes.join('\n')}
-              </pre>
+              <div className="git-changes mono">
+                {changes.map(parseChange).map(change => (
+                  <div key={change.line}>
+                    <button className="git-change-row" onClick={() => toggle(change)}>
+                      <ChevronIcon open={open[change.path]} />
+                      <span
+                        className={'git-status ' +
+                          (change.untracked || change.code.includes('A') ? 'add'
+                            : change.code.includes('D') ? 'del' : '')}>
+                        {change.code}
+                      </span>
+                      <span>{change.path}</span>
+                    </button>
+                    {open[change.path] && (
+                      <pre className="git-diff">
+                        {!(change.path in diffs)
+                          ? <span className="meta">Loading…</span>
+                          : diffs[change.path] === ''
+                            ? <span className="meta">No changes</span>
+                            : diffs[change.path].split('\n').map((line, index) => (
+                              <span key={index} className={diffLineClass(line)}>{line}{'\n'}</span>
+                            ))}
+                      </pre>
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
           <textarea
             placeholder="Commit message…"

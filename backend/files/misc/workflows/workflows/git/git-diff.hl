@@ -1,0 +1,40 @@
+
+/*
+ * Shows working tree changes in a Git repository relative to HEAD
+ */
+.arguments
+
+   // Mandatory folder to where Git repo is locally on disk.
+   path:string
+
+   // Optional repository-relative file path, restricting the diff to one file.
+   file:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/path
+
+// Sanity checking invocation.
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/modules/
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/etc/
+   .lambda
+      throw:"Git repos must be in folders inside of either '/etc/' or '/modules/'"
+
+// Parametrising slot
+add:x:./*/git.diff
+   get-nodes:x:@.arguments/*/file
+
+// Invoking slot.
+git.diff:x:@.arguments/*/path
+
+// Returning diff
+yield
+   result:x:@git.diff

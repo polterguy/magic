@@ -1,0 +1,37 @@
+/*
+ * Returns the unified diff between the working tree and HEAD for one file
+ * in a Git repository.
+ */
+.arguments
+
+   // Mandatory folder to where Git repo is locally on disk.
+   path:string
+
+   // Mandatory repository-relative path of the file to diff.
+   file:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/path
+validators.mandatory:x:@.arguments/*/file
+
+// Sanity checking invocation.
+if
+   and
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/modules/
+      not
+         strings.starts-with:x:@.arguments/*/path
+            .:/etc/
+   .lambda
+      throw:"Git repos must be in folders inside of either '/etc/' or '/modules/'"
+
+// Invoking slot.
+git.diff:x:@.arguments/*/path
+   file:x:@.arguments/*/file
+
+// Returning diff to caller.
+return:x:@git.diff

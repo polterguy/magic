@@ -2074,6 +2074,63 @@ tr.clickable:hover td { background: var(--accent-soft); }
   font-size: var(--text-sm);
 }
 
+/* ---------- Git panel ---------- */
+
+.git-changes {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  max-height: 340px;
+  overflow: auto;
+  margin: 0 0 12px;
+}
+
+.git-change-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.git-change-row:hover { background: var(--accent-soft); }
+
+.git-change-row svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: var(--text-soft);
+}
+
+.git-change-row .git-status {
+  width: 2ch;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.git-change-row .git-status.add { color: var(--ok); }
+.git-change-row .git-status.del { color: var(--danger); }
+
+.git-diff {
+  margin: 0;
+  padding: 6px 8px 6px 28px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.git-diff .add { color: var(--ok); }
+.git-diff .del { color: var(--danger); }
+.git-diff .hunk,
+.git-diff .meta { color: var(--text-soft); }
+
 pre.result-json {
   background: var(--surface);
   color: var(--text);

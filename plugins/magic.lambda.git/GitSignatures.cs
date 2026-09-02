@@ -48,6 +48,14 @@ namespace magic.lambda.git.signatures
         };
     }
 
+    public class GitDiffSignature : GitSignature
+    {
+        public override IEnumerable<SlotChild> Children => new[]
+        {
+            Option("file", "string", "Repository-relative path of one file to diff; omitted diffs the whole repository", kind: "git-file-path"),
+        };
+    }
+
     public class GitPullSignature : GitSignature
     {
         public override IEnumerable<SlotChild> Children => new[]

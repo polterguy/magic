@@ -1754,6 +1754,12 @@ export function gitStatus(path: string) {
   return http.get<string[]>('/magic/system/git/status?path=' + encodeURIComponent(path));
 }
 
+// Unified diff of one repository-relative file against HEAD.
+export function gitDiff(path: string, file: string) {
+  return http.getText(
+    '/magic/system/git/diff?path=' + encodeURIComponent(path) + '&file=' + encodeURIComponent(file));
+}
+
 export function gitBranches(path: string) {
   return http.get<string[]>('/magic/system/git/branches?path=' + encodeURIComponent(path));
 }
