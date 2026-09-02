@@ -2106,17 +2106,13 @@ tr.clickable:hover td { background: var(--accent-soft); }
   color: var(--text-soft);
 }
 
-/* The row is a button itself, so the per-file action sits beside it and shows on hover. */
+/* The row is a button itself, so the per-file action sits beside it, always visible. */
 .git-change-line {
   display: flex;
   align-items: center;
 }
 
 .git-change-line .git-change-row { flex: 1; }
-
-.git-change-line .icon-btn { opacity: 0; }
-
-.git-change-line:hover .icon-btn { opacity: 1; }
 
 .git-change-line:hover .git-change-row { background: var(--accent-soft); }
 
