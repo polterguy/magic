@@ -2,5 +2,9 @@
 /*
  * Copies the default ".config" file to the /etc/www/ folder.
  */
-io.file.save:/etc/www/.config
-   io.file.load:/misc/common-startup-files/.config
+if
+   not
+      io.file.exists:/etc/www/.config
+   .lambda
+      io.file.save:/etc/www/.config
+         io.file.load:/misc/common-startup-files/.config
