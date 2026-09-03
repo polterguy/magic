@@ -35,7 +35,6 @@ export default function EditModelDialog(props: {
   const [roles, setRoles] = useState<string[]>([]);
   const [type, setType] = useState(existing?.type ?? '');
   const [model, setModel] = useState(existing?.model ?? '');
-  const [temperature, setTemperature] = useState(String(existing?.temperature ?? 0.3));
   const [threshold, setThreshold] = useState(String(existing?.threshold ?? 0.3));
   const [maxTokens, setMaxTokens] = useState(String(existing?.max_tokens ?? 4000));
   /*
@@ -151,7 +150,8 @@ export default function EditModelDialog(props: {
       max_context_tokens: Number(maxContextTokens),
       max_request_tokens: Number(maxRequestTokens),
       max_tokens: Number(maxTokens),
-      temperature: Number(temperature),
+      // Nothing reads temperature any more, but the column is NOT NULL - kept until the schema drops it.
+      temperature: existing?.temperature ?? 0.3,
       threshold: Number(threshold),
       supervised: supervised ? 1 : 0,
       auth: auth.length > 0 ? auth.join(',') : null,
@@ -250,13 +250,6 @@ export default function EditModelDialog(props: {
             <input type="text" value={greeting} onChange={e => setGreeting(e.target.value)} />
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <label>Temperature
-              <input
-                type="number"
-                step="0.1"
-                value={temperature}
-                onChange={e => setTemperature(e.target.value)} />
-            </label>
             {/* Threshold is dead weight when embeddings are off — and for pure
                 keyword retrieval, which takes BM25 rank order as it comes. In
                 mixed mode it doubles as the keyword leg's relative cutoff. */}

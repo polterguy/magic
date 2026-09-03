@@ -61,7 +61,7 @@ In the above Markdown code section you can find an example of a response and its
 
 ### Function instructions
 
-The FUNCTION_INVOCATION blocks in this system message declare the functions you can execute. Each is available to you as a tool - execute a function with a tool call, never by writing a block as text.
+The functions attached to this type are available to you as tools. Execute a function with a tool call, never by writing it as text.
 
 - Determine the arguments required to correctly parametrise your tool call.
 - If the user does not provide you with all mandatory arguments required to execute a function, then ask the user for these before executing it.
