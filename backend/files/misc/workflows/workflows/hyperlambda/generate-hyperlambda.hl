@@ -19,12 +19,25 @@
    _session:string
 
    /*
-    * Mandatory. For new code, describes the Hyperlambda you want generated. When [old_code] is
-    * supplied, describes only the change to apply to it - "add paging", not the whole endpoint.
+    * Mandatory. The docstring of the file the generator will write. The generator sees nothing but
+    * this text - not your database, not your files, not this conversation - so write it as the
+    * precise comment a maintainer would put at the top of the finished file: what the code does,
+    * stated as an action. Name the database and its type, every table and column, every argument
+    * with its exact type and default, the exact output shape with field names, the role required
+    * if any, and every literal - paths, URLs, email subjects, thresholds, sort orders. A fact that
+    * is not in this text does not exist; "some data from a database" produces garbage. Know the
+    * schema before prompting against a database. Describe the action, never the Hyperlambda.
+    * When [old_code] is supplied, describe only the change to apply to it - "add paging", not the
+    * whole endpoint.
+    *
+    * This argument must be enough by itself to 100% perfectly being able to reproduce the exact code.
     */
    prompt:string
 
-   // Optional filename of where to save the Hyperlambda. The parent folder must already exist - create it first with the create-folder function.
+   /*
+    * Optional filename of where to save the Hyperlambda. The parent folder must already exist - create it first with the 
+    * create-folder function.
+    */
    filename:string
 
    // Optional value. If true, executes code immediately and returns result instead of code.
@@ -42,6 +55,13 @@ auth.ticket.verify:root
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/prompt
+
+// Sanity checking filename, and removing it if it's empty.
+if
+   eq:x:@.arguments/*/filename
+      .:
+   .lambda
+      remove-nodex:x:@.arguments/*/filename
 
 try
    add:x:./*/http.post/*/payload
