@@ -1,0 +1,702 @@
+
+/*
+ * Bubbles modern chat CSS file.
+ *
+ * Making sure we use Montserrat on everything by default.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+/*
+ * Common CSS and variables.
+ */
+/* DYNAMICALLY_REPLACED */
+.common{opacity:0}
+
+/*
+ * Applying font for all elements.
+ */
+.ainiro,
+.ainiro *:not(.hljs_ignore):not(.hljs_ignore *) {
+  font-family: Montserrat;
+}
+
+/*
+ * Fade into view animation used for chatbot button and window.
+ */
+@keyframes ainiro_fade_into_view {
+  0% {
+    opacity: 0;
+    margin-right: -100px;
+  }
+  100% {
+    opacity: 1;
+    margin-right: 0;
+  }
+}
+
+/*
+ * Button to open chatbot.
+ */
+button.ainiro {
+  display: block !important;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  padding: 15px 35px;
+  font-size: 18px;
+  z-index: 1000000;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+  animation-name: ainiro_fade_into_view;
+  animation-duration: .4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  transition: color .1s ease-in-out;
+  border-radius: 10px;
+  background: linear-gradient(var(--ainiro-bg-start), var(--ainiro-bg-end));
+  color:var(--ainiro-color);
+  border: none;
+}
+button.ainiro.ainiro_left {
+  left: 10px;
+  right: unset;
+}
+button.ainiro:hover,
+button.ainiro:active,
+button.ainiro:focus {
+  transition: color .1s ease-in-out;
+  color:var(--ainiro-link);
+}
+button.ainiro>i.ainiro-icofont {
+  font-size: 24px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+/*
+ * Chat window itself.
+ */
+div.ainiro {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  animation-name: ainiro_fade_into_view;
+  animation-duration: .4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  z-index: 1000001;
+  width: 850px;
+  max-width: 100%;
+  height: 100vh;
+  overflow-y: hidden;
+  background: transparent;
+}
+.ainiro.ainiro_left {
+  left: 10px;
+  right: unset;
+}
+.ainiro.show_ainiro_chatbot {
+  display: block !important;
+  transition: all .25s ease-in-out;
+}
+.ainiro.show_ainiro_chatbot.ainiro_maximized {
+  width: 100%;
+  height: 100%;
+  transition: all .25s ease-in-out;
+}
+@keyframes ainiro_fade_in_backdrop {
+  0% {
+    background-color: rgba(0,0,0,0);
+  }
+  100% {
+    background-color: rgba(0,0,0,.75);
+  }
+}
+button.ainiro.ainiro_hide:after {
+  content: '';
+  position: fixed;
+  z-index: 1000000;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  animation-name: ainiro_fade_in_backdrop;
+  animation-duration: .4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  cursor: default;
+}
+@keyframes ainiro_hide_button {
+  0% {
+    height: auto;
+    bottom: 10px;
+  }
+  80% {
+    height: auto;
+    bottom: 10px;
+  }
+  100% {
+    height: 5px;
+    bottom: 20px;
+  }
+}
+button.ainiro.ainiro_hide {
+  animation-name: ainiro_hide_button;
+  animation-duration: .4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+/*
+ * Toolbar.
+ */
+.ainiro>.ainiro_toolbar {
+  display: flex !important;
+  flex-direction: row;
+  padding: 10px 15px;
+  margin-top: 15px;
+  border-radius: 10px;
+  background: linear-gradient(var(--ainiro-bg-start), var(--ainiro-bg-end));
+}
+.ainiro>.ainiro_toolbar>.ainiro_header {
+  width: 100%;
+  font-weight: bold;
+  font-size: 16px;
+  padding:7px 0 0 0;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color:var(--ainiro-color);
+}
+
+/*
+ * Action buttons, close and maximize.
+ */
+.ainiro_toolbar>.ainiro_action i {
+  color:var(--ainiro-color);
+  transition: color .1s ease-in-out;
+}
+
+.ainiro_toolbar>.ainiro_action:hover i,
+.ainiro_toolbar>.ainiro_action:active i,
+.ainiro_toolbar>.ainiro_action:focus i {
+  transition: color .1s ease-in-out;
+  color: var(--ainiro-link);
+}
+
+/*
+ * Chat window surface.
+ */
+.ainiro>.ainiro_chat_surface {
+  background-color: transparent;
+  height: calc(100% - 158px);
+  padding: 15px 35px;
+  overflow-y: auto;
+  box-sizing: initial;
+}
+
+/*
+ * Conversation starters.
+ */
+@keyframes ainiro_fade_full {
+  0% {
+    margin-left: -50px;
+    opacity:0;
+  }
+  100% {
+    margin-left: 0;
+    opacity:1;
+  }
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters {
+  margin-top: 55px;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter {
+  border: solid 1px rgb(0,0,0);
+  padding: 8px 15px;
+  margin: 0 15px 15px 0;
+  font-size: 14px;
+  opacity: 0;
+  animation-name: ainiro_fade_full;
+  animation-duration: .4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  color: inherit;
+  transition: color .1s ease-in-out;
+  text-align: left;
+  border-radius: 10px;
+  background: linear-gradient(var(--ainiro-bg-start), var(--ainiro-bg-end));
+  color: var(--ainiro-color);
+  cursor:pointer;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:hover,
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:active,
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:focus {
+  transition: color .1s ease-in-out;
+  color: var(--ainiro-link);
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:nth-child(1) {
+  animation-delay: .2s;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:nth-child(2) {
+  animation-delay: .3s;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:nth-child(3) {
+  animation-delay: .4s;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:nth-child(4) {
+  animation-delay: .5s;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:nth-child(5) {
+  animation-delay: .6s;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:nth-child(6) {
+  animation-delay: .7s;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:nth-child(7) {
+  animation-delay: .8s;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:nth-child(8) {
+  animation-delay: .9s;
+}
+.ainiro>.ainiro_chat_surface>.ainiro_starters>button.ainiro_starter:nth-child(9) {
+  animation-delay: 1s;
+}
+
+/*
+ * Watermark.
+ */
+.ainiro_watermark {
+  text-align: right;
+  margin-bottom: 10px;
+  margin-top: -10px;
+  font-size: 12px;
+  opacity: .75;
+  color:var(--ainiro-color);
+}
+
+.ainiro_watermark a {
+  font-size: 12px;
+  color:var(--ainiro-link);
+}
+
+/*
+ * Chat messages from human or machine.
+ */
+.ainiro_machine,
+.ainiro_human {
+  margin-bottom: 55px;
+  font-size: 18px;
+  line-height: 26px;
+  text-align: justify;
+  position: relative;
+  border-radius: 10px;
+  padding: 35px;
+  background: linear-gradient(var(--ainiro-bg-start), var(--ainiro-bg-end));
+  color: var(--ainiro-color);
+}
+/*.ainiro_machine:after,
+.ainiro_human:after {
+  content:'';
+  background-size: 40px 40px;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  filter: grayscale(80%);
+  border-radius: 50%;
+  bottom: -18px;
+  border: solid 1px rgb(0,0,0);
+}*/
+.ainiro_machine {
+  margin-right: 50px;
+}
+@keyframes ainiro_fade_in_left {
+  0% {
+    margin-left: -100px;
+    margin-right: 150px;
+    opacity:0;
+  }
+  100% {
+    margin-left: 0;
+    margin-right: 50px;
+    opacity:1;
+  }
+}
+.ainiro_machine.ainiro_question {
+  opacity: 0;
+  animation-name: ainiro_fade_in_left;
+  animation-duration: .4s;
+  animation-delay: .25s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+.ainiro_machine:after {
+  /*background-image: url('https://ainiro.io/assets/images/misc/frank-head.png');*/
+  left: -18px;
+}
+.ainiro_machine.integration:after {
+  /*background-image: url('https://ainiro.io/assets/images/misc/human5.png');*/
+}
+.ainiro_machine.integration.slack:after {
+  /*background-image: url('https://ainiro.io/assets/images/misc/slack2.png');*/
+}
+.ainiro_human {
+  margin-left: 50px;
+}
+.ainiro_human:after {
+  background-image: url('https://ainiro.io/assets/images/misc/human5.png');
+  right: -18px;
+}
+
+@keyframes ainiro_fade_from_right {
+  0% {
+    opacity: 0;
+    margin-right: -100px;
+    margin-left: 150px;
+  }
+  100% {
+    opacity: 1;
+    margin-right: 0;
+    margin-left: 50;
+  }
+}
+.ainiro_human.ainiro_just_added {
+  opacity: 0;
+  animation-name: ainiro_fade_from_right;
+  animation-duration: .4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+.ainiro_machine.ainiro_error {
+  background-color: rgba(255,0,0,.2);
+}
+@keyframes ainiro_fade_from_left {
+  0% {
+    opacity: 0;
+    margin-left: -100px;
+    margin-right: 150px;
+  }
+  100% {
+    opacity: 1;
+    margin-left: 0;
+    margin-right: 50px;
+  }
+}
+.ainiro_machine.ainiro_just_added {
+  opacity: 0;
+  animation-name: ainiro_fade_from_left;
+  animation-duration: .4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-delay: .400s;
+  margin-right: 50px;
+}
+
+/*
+ * Wait animation items shown while we're waiting for server to return data.
+ */
+@keyframes ainiro_jump {
+  0%   {
+    bottom: 0px;
+  }
+  20%  {
+    bottom: 5px;
+  }
+  40%  {
+    bottom: 0px;
+  }
+}
+.ainiro_machine>p>span.ainiro-dot {
+  position: relative;
+  animation: ainiro_jump 1s infinite;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 3px;
+  background-color: var(--ainiro-color);
+}
+.ainiro_machine>p>span.ainiro-dot.ainiro-dot-1 {
+  animation-delay: 150ms;
+}
+.ainiro_machine>p>span.ainiro-dot.ainiro-dot-2 {
+  animation-delay: 300ms;
+}
+.ainiro_machine>p>span.ainiro-dot.ainiro-dot-3 {
+  animation-delay: 450ms;
+}
+
+/*
+ * References.
+ */
+@keyframes ainiro_fade_in_left_full_width {
+  0% {
+    margin-left: -100px;
+    margin-right: 100px;
+    opacity:0;
+  }
+  100% {
+    margin-left: 0;
+    margin-right: 0;
+    opacity:1;
+  }
+}
+.ainiro_references {
+  display: block;
+  padding-left: 0;
+  margin-top: 25px;
+  padding-left: 30px;
+}
+.ainiro_references>li {
+  list-style-type:decimal;
+  color: #999 !important;
+  animation-name: ainiro_fade_in_left_full_width;
+  animation-duration: .4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  opacity: 0;
+  display: list-item;
+}
+.ainiro_references>li:nth-child(1) {
+  animation-delay: .1s;
+}
+.ainiro_references>li:nth-child(2) {
+  animation-delay: .2s;
+}
+.ainiro_references>li:nth-child(3) {
+  animation-delay: .3s;
+}
+.ainiro_references>li:nth-child(4) {
+  animation-delay: .4s;
+}
+.ainiro_references>li:nth-child(5) {
+  animation-delay: .5s;
+}
+.ainiro_references>li:nth-child(6) {
+  animation-delay: .6s;
+}
+.ainiro_references>li:nth-child(7) {
+  animation-delay: .7s;
+}
+.ainiro_references>li:nth-child(8) {
+  animation-delay: .8s;
+}
+.ainiro_references>li:nth-child(9) {
+  animation-delay: .9s;
+}
+.ainiro_references>li:nth-child(10) {
+  animation-delay: 1s;
+}
+.ainiro_references>li:nth-child(11) {
+  animation-delay: 1.1s;
+}
+.ainiro_references>li:nth-child(12) {
+  animation-delay: 1.2s;
+}
+.ainiro_references>li:nth-child(13) {
+  animation-delay: 1.3s;
+}
+.ainiro_references>li:nth-child(14) {
+  animation-delay: 1.4s;
+}
+.ainiro_references>li:nth-child(15) {
+  animation-delay: 1.5s;
+}
+.ainiro_references>li:nth-child(16) {
+  animation-delay: 1.6s;
+}
+.ainiro_references>li:nth-child(17) {
+  animation-delay: 1.7s;
+}
+.ainiro_references>li:nth-child(18) {
+  animation-delay: 1.8s;
+}
+.ainiro_references>li:nth-child(19) {
+  animation-delay: 1.9s;
+}
+.ainiro_references>li:nth-child(20) {
+  animation-delay: 2s;
+}
+.ainiro_references>li>a {
+  text-decoration: none;
+  padding: 5px 15px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  width: 100%;
+  border-radius:5px;
+  transition: background-color .1s ease-in-out;
+  box-sizing: border-box;
+  color: var(--ainiro-link);
+}
+.ainiro_references>li>a:hover,
+.ainiro_references>li>a:active,
+.ainiro_references>li>a:focus {
+  background-color: rgba(0,0,0,.2);
+  transition: background-color .1s ease-in-out;
+}
+
+/*
+ * Form elements.
+ */
+.ainiro_form {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  padding: 0 10px;
+}
+.ainiro_form>.ainiro_query {
+  display: block;
+  width: 100%;
+  padding: 8px 15px;
+  outline: none;
+  font-size: 20px;
+  color: #555 !important;
+  background-color: #fefefe;
+  box-sizing: border-box;
+  border: none;
+  font-family: inherit;
+  border-radius: 10px 0 0 10px;
+}
+.ainiro_form>.ainiro_query::placeholder {
+  color: rgb(180,180,180) !important;
+}
+.ainiro_form>.ainiro_send,
+.ainiro_form>.ainiro_attachments {
+  outline: none;
+  padding: 0 25px;
+  border: none;
+  font-size: 20px;
+  transition: color .4s ease-in-out;
+  cursor: pointer;
+  background: linear-gradient(var(--ainiro-bg-start), var(--ainiro-bg-end));
+}
+.ainiro_form>.ainiro_send {
+  border-radius: 0 10px 10px 0;
+  border-left: solid 1px rgba(0,0,0,.4);
+}
+.ainiro_form>.ainiro_send:disabled,
+.ainiro_form>.ainiro_attachments:disabled {
+  cursor: not-allowed !important;
+}
+.ainiro_form>.ainiro_send i,
+.ainiro_form>.ainiro_attachments i {
+  transition: color .4s ease-in-out, opacity .4s ease-in-out;
+  color: var(--ainiro-color);
+}
+.ainiro_form>.ainiro_send:hover i,
+.ainiro_form>.ainiro_send:active i,
+.ainiro_form>.ainiro_send:focus i,
+.ainiro_form>.ainiro_attachments:hover i,
+.ainiro_form>.ainiro_attachments:active i,
+.ainiro_form>.ainiro_attachments:focus i {
+  color: var(--ainiro-link);
+}
+.ainiro_form>.ainiro_send:disabled i,
+.ainiro_form>.ainiro_attachments:disabled i {
+  opacity: 0.1;
+  transition: color .4s ease-in-out, opacity .4s ease-in-out;
+  cursor: not-allowed !important;
+}
+
+/*
+ * Phone specific CSS.
+ */
+@keyframes ainiro_fade_in_left_2 {
+  0% {
+    margin-left: -100px;
+    margin-right: 100px;
+    opacity:0;
+  }
+  100% {
+    margin-left: 0;
+    margin-right: 0;
+    opacity:1;
+  }
+}
+@keyframes ainiro_fade_in_right_2 {
+  0% {
+    margin-right: -100px;
+    margin-left: 100px;
+    opacity:0;
+  }
+  100% {
+    margin-right: 0;
+    margin-left: 0;
+    opacity:1;
+  }
+}
+@media (max-width: 768px) {
+  .ainiro.show_ainiro_chatbot {
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .ainiro.show_ainiro_chatbot:not(.ainiro_maximized)>.ainiro_toolbar>.ainiro_maximize {
+    display: none;
+  }
+  .ainiro>.ainiro_chat_surface>.ainiro_machine,
+  .ainiro>.ainiro_chat_surface>.ainiro_human {
+    text-align: left;
+  }
+  .ainiro>.ainiro_chat_surface>.ainiro_machine {
+    margin-right: 0;
+  }
+  .ainiro>.ainiro_chat_surface>.ainiro_human.ainiro_just_added {
+    animation-name: ainiro_fade_in_right_2;
+  }
+  .ainiro>.ainiro_chat_surface>.ainiro_human {
+    margin-left: 0;
+  }
+  .ainiro>.ainiro_chat_surface>.ainiro_machine.ainiro_just_added {
+    animation-name: ainiro_fade_in_left_2;
+  }
+  .ainiro>.ainiro_chat_surface>.ainiro_machine.ainiro_just_added {
+    margin-right: 0;
+  }
+  .ainiro>.ainiro_chat_surface>.ainiro_human.ainiro_just_added {
+    margin-left: 0;
+  }
+  .ainiro>.ainiro_toolbar {
+    border-radius: 0;
+    margin-top: 0;
+  }
+}
+
+/*
+ * Copy response button.
+ */
+.ainiro_copy_response {
+  position:absolute !important;
+  bottom: 10px !important;
+  right: 10px !important;
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  opacity: .5 !important;
+  transition: opacity .1s ease-in-out !important;
+}
+.ainiro_copy_response:hover,
+.ainiro_copy_response:active,
+.ainiro_copy_response:focus {
+  opacity: 1 !important;
+  transition: opacity .1s ease-in-out !important;
+}
+.ainiro_copy_response i {
+  font-size: 20px !important;
+  color: var(--ainiro-color);
+}
+
+button.ainiro_hidden,
+button.ainiro_hidden {
+  display: none !important;
+}
