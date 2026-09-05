@@ -290,6 +290,7 @@ slots.create:magic.ai.endpoint-common
       case:gpt-5.6-sol
       case:gpt-5.6-terra
       case:gpt-5.6-luna
+      case:gpt-6-astra
          add:x:@.model
             .
                model_size:int:1050000
