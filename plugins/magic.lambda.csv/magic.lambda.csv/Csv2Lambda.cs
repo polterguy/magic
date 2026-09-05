@@ -96,7 +96,7 @@ namespace magic.lambda.csv
         (string CSV, Dictionary<string, string> Types, string NullableValue) GetArgs(Node input)
         {
             // Getting raw CSV text, and making sure we remove any expressions or value in identity node.
-            var csv = input.GetEx<string>();
+            var csv = input.GetEx<string>().TrimStart('\uFEFF');
             input.Value = null;
 
             // Creating our dictionary to hold type information.
