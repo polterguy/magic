@@ -1,0 +1,108 @@
+
+/*
+ * Migrates system messages off the old text protocol.
+ *
+ * Older system messages taught the model to end its response with a FUNCTION_INVOCATION block, and
+ * declared each function as such a block inside a Markdown section of prose about that protocol.
+ * The chat slot now declares functions as tools, and reads a system message only for its
+ * FUNCTION_INVOCATION[...] markers, so everything else in those sections is noise the model should
+ * not see. Every Markdown section holding a marker - its heading and everything up to the next
+ * heading - is removed, as is any other line mentioning FUNCTION_INVOCATION, and the markers are
+ * written back as bare lines under one '## Functions' heading at the end. The declarations survive,
+ * the protocol does not.
+ *
+ * A message whose only mention of FUNCTION_INVOCATION is bare marker lines is already in the new
+ * form and is left alone, which is what makes this safe to run on every startup.
+ */
+try
+
+   // Connecting to Magic database.
+   data.connect:[generic|magic]
+
+      data.read
+         table:ml_types
+         columns
+            type
+            system_message
+         where
+            and
+               system_message.like:%FUNCTION_INVOCATION%
+      .count:int:0
+      for-each:x:@data.read/*
+
+         // What remains once every bare marker line is gone. Anything left is old protocol text.
+         strings.regex-replace:x:@.dp/#/*/system_message
+            .:"(?m)^FUNCTION_INVOCATION\\[[^\\]]+\\]\\s*$"
+            .:
+         if
+            strings.contains:x:@strings.regex-replace
+               .:FUNCTION_INVOCATION
+            .lambda
+
+               // Every distinct marker in the message, in order of appearance.
+               .markers
+               strings.matches:x:@.dp/#/*/system_message
+                  .:"FUNCTION_INVOCATION\\[[^\\]]+\\]"
+               for-each:x:@strings.matches/*
+                  if
+                     not-exists:x:@.markers/*/={@.dp/#}
+                     .lambda
+                        unwrap:x:+/*/*
+                        add:x:@.markers
+                           .
+                              .:x:@.dp/#
+
+               // Removing every section holding a marker, then every other line still mentioning the protocol.
+               .message
+               set-value:x:@.message
+                  strings.regex-replace:x:@.dp/#/*/system_message
+                     .:"(?m)(?:^#|\\A)(?:(?!\\n#)[\\s\\S])*?FUNCTION_INVOCATION\\[(?:(?!\\n#)[\\s\\S])*"
+                     .:
+               set-value:x:@.message
+                  strings.regex-replace:x:@.message
+                     .:"(?m)^.*FUNCTION_INVOCATION.*\\n?"
+                     .:
+
+               // A heading left with nothing under it, and runs of blank lines, are removed too.
+               set-value:x:@.message
+                  strings.regex-replace:x:@.message
+                     .:"(?m)^#+[^\\n]*\\n+(?=#|\\z)"
+                     .:
+               set-value:x:@.message
+                  strings.regex-replace:x:@.message
+                     .:"\\n{3,}"
+                     .:"\n\n"
+               set-value:x:@.message
+                  strings.trim:x:@.message
+                     .:"\r\n "
+
+               // Writing the markers back as bare lines under one heading at the end.
+               strings.join:x:@.markers/*
+                  .:"\n"
+               set-value:x:@.message
+                  strings.concat
+                     get-value:x:@.message
+                     .:"\n\n## Functions\n\n"
+                     get-value:x:@strings.join
+               data.update
+                  table:ml_types
+                  values
+                     system_message:x:@.message
+                  where
+                     and
+                        type.eq:x:@.dp/#/*/type
+               math.increment:x:@.count
+
+      // Only logging when something was actually changed.
+      if
+         mt:x:@.count
+            .:int:0
+         .lambda
+            log.info:Migrated system messages off the old function declaration format
+               count:x:@.count
+
+.catch
+
+   // Doing some basic logging.
+   log.info:Something went wrong as we tried to migrate system messages off the old function declaration format
+      message:x:@.arguments/*/message

@@ -65,15 +65,11 @@ slots.create:magic.ai.chat
       .lambda
 
          /*
-          * Function declarations are transport, not instructions. Every Markdown section holding
-          * one - its heading and everything up to the next heading - is removed from what the model
-          * reads, since the model gets the function as a tool instead, and so is any remaining line
-          * that still talks about the old text protocol. The stored text is untouched.
+          * Function declarations are transport, not instructions. Each FUNCTION_INVOCATION[...] line
+          * was already read for the tool catalogue, and the model gets the function as a tool, so the
+          * lines themselves are dropped from what it reads. Old protocol prose around them is gone
+          * from the stored text since migrate-system-messages.hl ran at startup.
           */
-         set-value:x:@.tmp_system
-            strings.regex-replace:x:@.tmp_system
-               .:"(?m)(?:^#|\\A)(?:(?!\\n#)[\\s\\S])*?FUNCTION_INVOCATION\\[(?:(?!\\n#)[\\s\\S])*"
-               .:
          set-value:x:@.tmp_system
             strings.regex-replace:x:@.tmp_system
                .:"(?m)^.*FUNCTION_INVOCATION.*\\n?"
