@@ -46,6 +46,10 @@ validators.default:x:@.arguments
    parent_node:
    extra:
 
+// Preventing path traversal, [file] must be a plain filename without folder separators or parent references.
+validators.regex:x:@.arguments/*/file
+   regex:"^(?!.*\\.\\.)[^/\\\\]+$"
+
 // Checking if we've got a cached JavaScript file.
 strings.join:x:@.arguments/*
    .:,

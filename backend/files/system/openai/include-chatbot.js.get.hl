@@ -62,6 +62,10 @@ validators.default:x:@.arguments
    end:#142660
    link:#fe8464
 
+// Preventing path traversal, [file] must be a plain filename without folder separators or parent references.
+validators.regex:x:@.arguments/*/file
+   regex:"^(?!.*\\.\\.)[^/\\\\]+$"
+
 // Checking if custom JavaScript file exists.
 .filename
 strings.concat

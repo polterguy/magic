@@ -6,6 +6,10 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file
 
+// Preventing path traversal, [file] must be a plain filename without folder separators or parent references.
+validators.regex:x:@.arguments/*/file
+   regex:"^(?!.*\\.\\.)[^/\\\\]+$"
+
 // Checking if custom CSS file exists.
 .result
 strings.concat
