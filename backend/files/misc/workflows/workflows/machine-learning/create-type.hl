@@ -72,7 +72,7 @@ else
 * Today's date and time is {{
 date.now
 date.format:x:-
-   format:""yyyy-MM-ddTHH:mm:ssZ""
+   format:""yyyy-MM-dd""
 return:x:-
 }} UTC
 
