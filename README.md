@@ -8,6 +8,7 @@ Turn plain English into a working full-stack app — database, secure API, busin
 [![Dashboard](https://img.shields.io/badge/dashboard-React%20%2B%20Vite-61DAFB.svg)](frontend/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/servergardens/magic-backend.svg)](https://hub.docker.com/r/servergardens/magic-backend)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+[![polterguy/magic MCP server](https://glama.ai/mcp/servers/polterguy/magic/badges/score.svg)]
 
 ## Run it in 60 seconds
 
