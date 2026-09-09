@@ -7,8 +7,8 @@
  * when the system needs to know which OIDC providers are supported.
  *
  * This allows you to extend the system with additional OIDC providers according to your requirements.
- * Notice, the system only supports "id_token" types of providers at the moment, so any additional provider
- * you want to register must be of type "id_token".
+ * Google uses the implicit flow (response_type "id_token"); the other providers use the authorization
+ * code flow, see for instance [magic.openid.providers.okta] for a code + PKCE provider.
  */
 
 slots.create:magic.openid.providers.google
