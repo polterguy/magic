@@ -1,6 +1,6 @@
 # Instant SECURE Full Stack Apps and AI Agents
 
-Turn plain English into a working full-stack app — database, secure API, business logic, and frontend — running on **your own hardware**, with **zero lock-in**. An open-source alternative to Lovable, Bolt, and Replit that gives you the whole backend, plus an MCP server that turns every endpoint into a tool for Claude, Cursor, or Codex.
+Turn plain English into a working full-stack app — database, secure API, business logic, and frontend — running on **your own hardware**, with **zero lock-in**. An open-source alternative to Lovable, Bolt, and Replit that gives you the whole backend, plus an MCP server that turns every endpoint into a tool for Claude, Cursor, or Codex. Read more about [Hyperlambda](https://hyperlambda.dev).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/polterguy/magic?style=flat&logo=github)](https://github.com/polterguy/magic/stargazers)
