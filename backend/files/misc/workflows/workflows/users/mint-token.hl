@@ -1,0 +1,45 @@
+
+/*
+ * Issues a new signed JSON Web Token on behalf of [username], carrying [role] as its only role,
+ * and expiring after [minutes] minutes.
+ *
+ * Useful to test an API or a frontend as some other user, without knowing that user's password.
+ */
+.arguments
+
+   // Mandatory username to issue the token on behalf of.
+   username:string
+
+   // Mandatory single role the issued token should carry.
+   role:string
+
+   // Optional, defaults to 20 unless explicitly specified.
+   minutes:long
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/username
+validators.mandatory:x:@.arguments/*/role
+
+// Applying defaults.
+validators.default:x:@.arguments
+   minutes:long:20
+
+// Creating and signing the token.
+auth.ticket.create
+   username:x:@.arguments/*/username
+   roles
+      .:x:@.arguments/*/role
+   duration:x:@.arguments/*/minutes
+
+// Making sure issued impersonation tokens leave an audit trail.
+log.info:Impersonation token issued
+
+// Returning result to caller.
+yield
+   ticket:x:@auth.ticket.create
+   username:x:@.arguments/*/username
+   role:x:@.arguments/*/role
+   expires_minutes:x:@.arguments/*/minutes
