@@ -1,8 +1,10 @@
 
 /*
  * Applies a unified diff patch to an existing file - the preferred way to edit an existing file
- * when only changing a minor part of it. For NON-Hyperlambda files only - Hyperlambda (.hl) is
- * never hand-edited; re-create it with the generate-hyperlambda function instead.
+ * when only changing a minor part of it. Notice, a diff cannot be verified before it is applied,
+ * so unlike the create-file and replace-in-file functions this one does not guarantee that the
+ * Hyperlambda it leaves behind parses - verify the file afterwards with the verify-hyperlambda
+ * function when you patch a Hyperlambda file.
  */
 .arguments
 
@@ -45,18 +47,6 @@ if
       throw:"You can only patch files in the '/modules/' and '/etc/' folders"
          status:int:400
          public:bool:true
-
-// Hyperlambda is never hand-edited - regenerate the whole file with the generate-hyperlambda function
-// instead. Refusing any attempt to patch a Hyperlambda file. Notice, we compare lowercased to also
-// catch ".HL" style filenames on case-insensitive file systems.
-strings.to-lower:x:@.arguments/*/filename
-if
-   strings.ends-with:x:@strings.to-lower
-      .:.hl
-   .lambda
-      throw:"Hyperlambda files cannot be patched with this function, since a diff cannot be verified before it is applied. Use the `create-file` function to save the whole file, or the `generate-hyperlambda` function to re-create it from a description. Both verify the Hyperlambda before saving it."
-         public:bool:true
-         status:int:400
 
 // Ensuring file exists.
 if
