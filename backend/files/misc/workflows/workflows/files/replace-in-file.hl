@@ -1,0 +1,151 @@
+
+/*
+ * Replaces one exact occurrence of [find] with [replace] inside an existing text file - the preferred
+ * way to edit an existing file when only changing a small part of it. Both are treated as ordinary
+ * literal text, never as a regular expression or a diff, so there is no patch format to get wrong and
+ * no surrounding context to reproduce. [find] must occur exactly once in the file - if it occurs zero
+ * times, or more than once, nothing is written and the error tells you which, in which case you extend
+ * [find] with the lines above and below it until it identifies exactly one place. Omit [replace] to
+ * delete the text found. Hyperlambda files are verified before they are saved, so an edit that does not
+ * parse, or that references a slot which does not exist, is rejected instead of reaching disk.
+ */
+.arguments
+
+   // Injected by the framework.
+   _session:string
+
+   // Mandatory filename.
+   filename:string
+
+   // Mandatory exact text to find, which must occur exactly once in the file.
+   find:string
+
+   // Optional text to replace it with. Omit to delete the text found.
+   replace:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/filename
+validators.mandatory:x:@.arguments/*/find
+validators.string:x:@.arguments/*/find
+   min:int:1
+
+// Prepending slash unless specified by caller.
+if
+   not
+      strings.starts-with:x:@.arguments/*/filename
+         .:/
+   .lambda
+      set-value:x:@.arguments/*/filename
+         strings.concat
+            .:/
+            get-value:x:@.arguments/*/filename
+
+// Making sure we do not edit system files.
+if
+   not
+      or
+         strings.starts-with:x:@.arguments/*/filename
+            .:/etc/
+         strings.starts-with:x:@.arguments/*/filename
+            .:/modules/
+   .lambda
+      throw:"You can only replace text in files in the '/modules/' and '/etc/' folders"
+         status:int:400
+         public:bool:true
+
+// Ensuring file exists.
+if
+   not
+      io.file.exists:x:@.arguments/*/filename
+   .lambda
+      throw:File does not exist
+         status:int:404
+         public:bool:true
+
+// Loading the file we are about to edit.
+io.file.load:x:@.arguments/*/filename
+
+/*
+ * Counting how many times [find] occurs, by removing every occurrence of it and dividing the resulting
+ * drop in length by the length of [find]. Notice, [strings.split] cannot be used to count occurrences,
+ * since it discards empty entries, and would therefore miscount an anchor sitting at the very start or
+ * the very end of the file, or two occurrences sitting immediately next to each other.
+ */
+strings.replace:x:@io.file.load
+   .:x:@.arguments/*/find
+.occurrences
+set-value:x:@.occurrences
+   math.divide
+      math.subtract
+         strings.length:x:@io.file.load
+         strings.length:x:@strings.replace
+      strings.length:x:@.arguments/*/find
+
+// Refusing to write anything unless the anchor identifies exactly one place in the file.
+if
+   eq:x:@.occurrences
+      .:int:0
+   .lambda
+      throw:"The [find] text does not occur in the file. Read the file and copy the text you want to replace verbatim, including its indentation"
+         status:int:400
+         public:bool:true
+if
+   mt:x:@.occurrences
+      .:int:1
+   .lambda
+      strings.concat
+         .:"The [find] text occurs "
+         get-value:x:@.occurrences
+         .:" times in the file, and does not identify which occurrence to replace. Extend it with the lines above and below until it is unique"
+      throw:x:@strings.concat
+         status:int:400
+         public:bool:true
+
+// Applying the substitution.
+.patched
+set-value:x:@.patched
+   strings.replace:x:@io.file.load
+      .:x:@.arguments/*/find
+      .:x:@.arguments/*/replace
+
+/*
+ * Hyperlambda is verified before it is saved, so an edit that does not parse, or that references a slot
+ * which does not exist, is rejected instead of reaching disk. Notice, we compare lowercased to also
+ * catch ".HL" style filenames on case-insensitive file systems.
+ */
+strings.to-lower:x:@.arguments/*/filename
+if
+   strings.ends-with:x:@strings.to-lower
+      .:.hl
+   .lambda
+      execute-file:/misc/workflows/workflows/hyperlambda/verify-hyperlambda.hl
+         hyperlambda:x:@.patched
+      if
+         eq:x:@execute-file/*/valid
+            .:bool:false
+         .lambda
+            strings.concat
+               .:"Hyperlambda did not verify, and was not saved: "
+               strings.join:x:@execute-file/*/errors/*
+                  .:"; "
+            throw:x:@strings.concat
+               public:bool:true
+               status:int:400
+
+// Saving file.
+io.file.save:x:@.arguments/*/filename
+   get-value:x:@.patched
+
+// Signaling frontend
+sockets.signal:x:@.arguments/*/_session
+   args
+      type:floating_message
+      floating_message:Text successfully replaced in file
+      floating_state:success
+
+// Returning success
+yield
+   result:success
