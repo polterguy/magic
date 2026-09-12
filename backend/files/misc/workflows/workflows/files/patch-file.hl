@@ -1,10 +1,16 @@
 
 /*
- * Applies a unified diff patch to an existing file - the preferred way to edit an existing file
- * when only changing a minor part of it. Notice, a diff cannot be verified before it is applied,
- * so unlike the create-file and replace-in-file functions this one does not guarantee that the
- * Hyperlambda it leaves behind parses - verify the file afterwards with the verify-hyperlambda
- * function when you patch a Hyperlambda file.
+ * Applies a unified diff patch to an existing file - the way to edit a file when one edit spans
+ * several separate places in it. To replace a single exact passage prefer the replace-in-file
+ * function, which verifies its result before saving it.
+ *
+ * Only files inside the '/modules/' and '/etc/' folders can be patched, and the file has to exist
+ * from before.
+ *
+ * Notice, a diff cannot be verified before it is applied, so unlike the create-file and
+ * replace-in-file functions this one does not guarantee that the Hyperlambda it leaves behind
+ * parses - verify the file afterwards with the verify-hyperlambda function when you patch a
+ * Hyperlambda file.
  */
 .arguments
 

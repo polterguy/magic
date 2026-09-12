@@ -1,11 +1,12 @@
 
 /*
- * Creates a new file or fully overwrites an existing file. For minor edits to an existing file,
- * prefer the `patch-file` function. Hyperlambda files are verified before they are saved, so broken
- * Hyperlambda never reaches disk - prefer the `generate-hyperlambda` function for writing Hyperlambda
- * from a description, and use this function for targeted edits to code that already exists. Does
- * NOT create folders - the parent folder must already exist; create it first with the `create-folder`
- * function.
+ * Creates a new file or fully overwrites an existing file. To change a file that already exists,
+ * prefer the `replace-in-file` function for a single exact passage, or the `patch-file` function
+ * when one edit spans several separate places. Hyperlambda files are verified before they are
+ * saved, so broken Hyperlambda never reaches disk - prefer the `generate-hyperlambda` function for
+ * writing Hyperlambda from a description, and use this function for new files and for rewrites
+ * replacing most of the content. Does NOT create folders - the parent folder must already exist;
+ * create it first with the `create-folder` function.
  */
 .arguments
 
