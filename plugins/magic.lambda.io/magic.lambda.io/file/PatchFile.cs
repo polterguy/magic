@@ -29,6 +29,14 @@ namespace magic.lambda.io.file
         SignatureType = typeof(global::magic.lambda.io.signatures.PatchFileSignature))]
     public class PatchFile : ISlotAsync
     {
+        /*
+         * How far away from the position declared by a hunk header we are willing to look for the
+         * hunk's context. Generous enough to absorb realistic drift between the file the patch was
+         * created against and the file we are patching, bounded so that a weakly anchored hunk
+         * cannot match something unrelated at the other end of the file.
+         */
+        const int MaxFuzzRadius = 250;
+
         readonly IRootResolver _rootResolver;
         readonly IFileService _service;
         /// <summary>
@@ -131,7 +139,7 @@ namespace magic.lambda.io.file
                 if (!line.StartsWith("@@", StringComparison.InvariantCulture))
                     throw new HyperlambdaException("Invalid patch.");
 
-                ParseHunkHeader(line);
+                var header = ParseHunkHeader(line);
                 hasHunks = true;
 
                 patchIndex++;
@@ -151,7 +159,13 @@ namespace magic.lambda.io.file
                     patchIndex++;
                 }
 
-                var targetIndex = ResolveHunkTargetIndex(originalLines, originalIndex, hunkLines);
+                /*
+                 * The hunk header declares where the hunk belongs in the original file, and we use it
+                 * as our anchor. It is a hint and not a guarantee, since the file might have drifted
+                 * since the patch was created, so the resolver is allowed to search outwards from it.
+                 */
+                var expectedIndex = header.OldStart > 0 ? header.OldStart - 1 : 0;
+                var (targetIndex, whitespaceFuzz) = ResolveHunkTargetIndex(originalLines, originalIndex, hunkLines, expectedIndex);
 
                 // Copy unchanged lines before hunk.
                 while (originalIndex < targetIndex && originalIndex < originalLines.Count)
@@ -170,14 +184,18 @@ namespace magic.lambda.io.file
                     switch (tag)
                     {
                         case ' ':
-                            EnsureLineMatch(originalLines, originalIndex, text);
+                            EnsureLineMatch(originalLines, originalIndex, text, whitespaceFuzz);
+
+                            // Notice, we deliberately keep the ORIGINAL line rather than the patch's
+                            // version of it, so that a whitespace tolerant match cannot silently
+                            // rewrite trailing whitespace the file's author put there on purpose.
                             output.Add(originalLines[originalIndex]);
                             outputHasTrailingNewline = true;
                             originalIndex++;
                             break;
 
                         case '-':
-                            EnsureLineMatch(originalLines, originalIndex, text);
+                            EnsureLineMatch(originalLines, originalIndex, text, whitespaceFuzz);
                             originalIndex++;
                             break;
 
@@ -281,32 +299,105 @@ namespace magic.lambda.io.file
         /*
          * Ensures the current original line matches the expected line.
          */
-        static void EnsureLineMatch(IReadOnlyList<string> originalLines, int index, string expected)
+        /*
+         * Verifies that the original line we are about to consume is the line the hunk expects.
+         *
+         * This is the check that keeps patching safe - a hunk is never applied onto content it does
+         * not match - and it stays strict even when the hunk was LOCATED with a tolerant comparison.
+         */
+        static void EnsureLineMatch(
+            IReadOnlyList<string> originalLines,
+            int index,
+            string expected,
+            bool ignoreTrailingWhitespace)
         {
-            if (index >= originalLines.Count || !string.Equals(originalLines[index], expected, StringComparison.InvariantCulture))
-                throw new HyperlambdaException("Patch could not be applied.");
+            if (index >= originalLines.Count)
+                throw new HyperlambdaException(
+                    "Patch could not be applied. The hunk expected '" +
+                    Ellipsis(expected) +
+                    "' at line " +
+                    (index + 1).ToString(CultureInfo.InvariantCulture) +
+                    ", but the file has only " +
+                    originalLines.Count.ToString(CultureInfo.InvariantCulture) +
+                    " lines.");
+
+            if (!LinesMatch(originalLines[index], expected, ignoreTrailingWhitespace))
+                throw new HyperlambdaException(
+                    "Patch could not be applied. Line " +
+                    (index + 1).ToString(CultureInfo.InvariantCulture) +
+                    " is '" +
+                    Ellipsis(originalLines[index]) +
+                    "' but the hunk expected '" +
+                    Ellipsis(expected) +
+                    "'.");
         }
 
-        static int ResolveHunkTargetIndex(IReadOnlyList<string> originalLines, int originalIndex, IReadOnlyList<string> hunkLines)
+        /*
+         * Resolves the position in the original file where a hunk should be applied.
+         *
+         * The hunk header tells us where the hunk belonged in the file the patch was created
+         * against, so we start there and widen outwards, taking the NEAREST position whose content
+         * matches. Requiring the context to instead be unique across the whole file - which is what
+         * this method used to do - rejects most real patches, since repeated lines such as a closing
+         * brace, a blank line or a bare 'return' are entirely normal.
+         *
+         * Locating a hunk is therefore fuzzy, while applying one stays strict: EnsureLineMatch still
+         * verifies every context and removed line at the position we settle on.
+         *
+         * The search is run twice, first comparing lines exactly, and only if that finds nothing,
+         * comparing them ignoring trailing whitespace. The second pass exists for formats where
+         * trailing whitespace is meaningful but invisible, most notably Markdown, where two trailing
+         * spaces denote a hard line break and are routinely lost when a patch is written by hand.
+         */
+        static (int Index, bool WhitespaceFuzz) ResolveHunkTargetIndex(
+            IReadOnlyList<string> originalLines,
+            int originalIndex,
+            IReadOnlyList<string> hunkLines,
+            int expectedIndex)
         {
-            var minimumContextLines = hunkLines.Count(x => x.Length == 0 || x[0] == ' ');
-            if (minimumContextLines < 2)
-                throw new HyperlambdaException("Patch requires at least 2 context lines.");
+            // Hunks are applied in order, so we can never move backwards past what we already consumed.
+            if (expectedIndex < originalIndex)
+                expectedIndex = originalIndex;
+            if (expectedIndex > originalLines.Count)
+                expectedIndex = originalLines.Count;
 
-            var matches = new List<int>();
-            for (var candidate = originalIndex; candidate <= originalLines.Count; candidate++)
+            foreach (var ignoreTrailingWhitespace in new[] { false, true })
             {
-                if (HunkMatchesAt(originalLines, candidate, hunkLines))
-                    matches.Add(candidate);
+                if (HunkMatchesAt(originalLines, expectedIndex, hunkLines, ignoreTrailingWhitespace))
+                    return (expectedIndex, ignoreTrailingWhitespace);
+
+                for (var radius = 1; radius <= MaxFuzzRadius; radius++)
+                {
+                    var after = expectedIndex + radius;
+                    var before = expectedIndex - radius;
+                    var afterLegal = after <= originalLines.Count;
+                    var beforeLegal = before >= originalIndex;
+
+                    // Nothing left to search in either direction.
+                    if (!afterLegal && !beforeLegal)
+                        break;
+
+                    if (afterLegal && HunkMatchesAt(originalLines, after, hunkLines, ignoreTrailingWhitespace))
+                        return (after, ignoreTrailingWhitespace);
+
+                    if (beforeLegal && HunkMatchesAt(originalLines, before, hunkLines, ignoreTrailingWhitespace))
+                        return (before, ignoreTrailingWhitespace);
+                }
             }
 
-            if (matches.Count == 1)
-                return matches[0];
-
-            throw new HyperlambdaException("Patch could not be applied.");
+            throw new HyperlambdaException(
+                "Hunk could not be applied. No position matching its context was found within " +
+                MaxFuzzRadius.ToString(CultureInfo.InvariantCulture) +
+                " lines of line " +
+                (expectedIndex + 1).ToString(CultureInfo.InvariantCulture) +
+                ".");
         }
 
-        static bool HunkMatchesAt(IReadOnlyList<string> originalLines, int candidate, IReadOnlyList<string> hunkLines)
+        static bool HunkMatchesAt(
+            IReadOnlyList<string> originalLines,
+            int candidate,
+            IReadOnlyList<string> hunkLines,
+            bool ignoreTrailingWhitespace)
         {
             var index = candidate;
             foreach (var hunkLine in hunkLines)
@@ -321,7 +412,7 @@ namespace magic.lambda.io.file
                         if (index >= originalLines.Count)
                             return false;
                         var expected = hunkLine.Length > 1 ? hunkLine.Substring(1) : string.Empty;
-                        if (!string.Equals(originalLines[index], expected, StringComparison.InvariantCulture))
+                        if (!LinesMatch(originalLines[index], expected, ignoreTrailingWhitespace))
                             return false;
                         index++;
                         break;
@@ -334,6 +425,32 @@ namespace magic.lambda.io.file
             }
 
             return true;
+        }
+
+        /*
+         * Compares one original line against the line a hunk expects.
+         */
+        static bool LinesMatch(string actual, string expected, bool ignoreTrailingWhitespace)
+        {
+            if (string.Equals(actual, expected, StringComparison.InvariantCulture))
+                return true;
+
+            if (!ignoreTrailingWhitespace)
+                return false;
+
+            return string.Equals(actual.TrimEnd(), expected.TrimEnd(), StringComparison.InvariantCulture);
+        }
+
+        /*
+         * Keeps a single line short enough to be readable inside an exception message, since a
+         * minified or generated file can legally hold its entire content on one line.
+         */
+        static string Ellipsis(string value)
+        {
+            if (value == null)
+                return string.Empty;
+
+            return value.Length <= 120 ? value : value.Substring(0, 120) + "...";
         }
 
         static void ValidatePatchHeaders(string oldHeader, string newHeader, string targetPath)

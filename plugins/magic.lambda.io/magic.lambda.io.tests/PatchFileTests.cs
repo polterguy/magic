@@ -134,7 +134,9 @@ io.file.patch:/existing.txt
 "
 """, fileService));
 
-            Assert.Equal("Patch could not be applied.", exception.Message);
+            // The second hunk points backwards, and hunks are never applied out of order, so the
+            // resolver is only allowed to search forwards from what the first hunk already consumed.
+            Assert.Equal("Hunk could not be applied. No position matching its context was found within 250 lines of line 8.", exception.Message);
         }
 
         [Fact]
@@ -230,22 +232,28 @@ io.file.patch:/existing.txt
         [Fact]
         public void PatchFile_SupportsOmittedHunkCounts()
         {
+            var saveInvoked = false;
             var fileService = new FileService
             {
                 LoadAction = path => "line1\nline2\n",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called when context is insufficient.")
+                SaveAction = (path, content) =>
+                {
+                    saveInvoked = true;
+                    Assert.Equal("line1\nline2 updated\n", content);
+                }
             };
 
-            var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
+            // A hunk header can omit its line counts, and the hunk is applied where the header points.
+            Common.Evaluate("""
 io.file.patch:/existing.txt
    .:@"
 @@ -2 +2 @@
 -line2
 +line2 updated
 "
-""", fileService));
+""", fileService);
 
-            Assert.Equal("Patch requires at least 2 context lines.", exception.Message);
+            Assert.True(saveInvoked);
         }
 
         [Fact]
@@ -363,15 +371,25 @@ io.file.patch:/existing.txt
         }
 
         [Fact]
-        public void PatchFile_RejectsPatchWhenContextIsNotUniqueInFile()
+        public void PatchFile_AppliesRepeatedContextNearestTheHunkHeaderPosition()
         {
+            var saveInvoked = false;
             var fileService = new FileService
             {
                 LoadAction = path => "prefix\nline1\nline2\nline3\nmiddle\nline1\nline2\nline3\nsuffix\n",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for non-unique context.")
+                SaveAction = (path, content) =>
+                {
+                    saveInvoked = true;
+                    Assert.Equal("prefix\nline1\nline2\nline3\nmiddle\nline1\nline2 updated\nline3\nsuffix\n", content);
+                }
             };
 
-            var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
+            /*
+             * The context occurs twice in the file, so it is not unique. The hunk header points past
+             * the end of the file, making the SECOND occurrence the one nearest to where the hunk
+             * claims to belong, and that is the one that should be patched.
+             */
+            Common.Evaluate("""
 io.file.patch:/existing.txt
    .:@"
 @@ -99,3 +99,3 @@
@@ -380,21 +398,30 @@ io.file.patch:/existing.txt
 +line2 updated
  line3
 "
-""", fileService));
+""", fileService);
 
-            Assert.Equal("Patch could not be applied.", exception.Message);
+            Assert.True(saveInvoked);
         }
 
         [Fact]
-        public void PatchFile_RejectsAmbiguousNearbyContext()
+        public void PatchFile_AppliesRepeatedContextAtTheHunkHeaderPosition()
         {
+            var saveInvoked = false;
             var fileService = new FileService
             {
                 LoadAction = path => "line1\nline2\nline3\nline1\nline2\nline3\n",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for ambiguous patches.")
+                SaveAction = (path, content) =>
+                {
+                    saveInvoked = true;
+                    Assert.Equal("line1\nline2 updated\nline3\nline1\nline2\nline3\n", content);
+                }
             };
 
-            var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
+            /*
+             * Both blocks match the hunk's context equally well, and the hunk header is what tells
+             * them apart, so the FIRST block is the one that should be patched.
+             */
+            Common.Evaluate("""
 io.file.patch:/existing.txt
    .:@"
 @@ -1,3 +1,3 @@
@@ -403,9 +430,9 @@ io.file.patch:/existing.txt
 +line2 updated
  line3
 "
-""", fileService));
+""", fileService);
 
-            Assert.Equal("Patch could not be applied.", exception.Message);
+            Assert.True(saveInvoked);
         }
 
         [Fact]
@@ -596,24 +623,69 @@ io.file.patch:/existing.txt
         }
 
         [Fact]
-        public void PatchFile_KeepsWeakContextHunksStrict()
+        public void PatchFile_AppliesZeroContextHunkAtNearestMatchingLine()
         {
+            var saveInvoked = false;
             var fileService = new FileService
             {
                 LoadAction = path => "preface\nline1\n",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for weak-context drift.")
+                SaveAction = (path, content) =>
+                {
+                    saveInvoked = true;
+                    Assert.Equal("preface\nline1 updated\n", content);
+                }
             };
 
-            var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
+            /*
+             * The hunk carries no context lines whatsoever, and its header is off by one. The line it
+             * removes is therefore located by its content, one line below where the header pointed.
+             */
+            Common.Evaluate("""
 io.file.patch:/existing.txt
    .:@"
 @@ -1 +1 @@
 -line1
 +line1 updated
 "
-""", fileService));
+""", fileService);
 
-            Assert.Equal("Patch requires at least 2 context lines.", exception.Message);
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void PatchFile_AppliesHunkWhoseContextLostTrailingWhitespace()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService
+            {
+                LoadAction = path => "# Title\nfirst line  \nsecond line\n",
+                SaveAction = (path, content) =>
+                {
+                    saveInvoked = true;
+
+                    // The two trailing spaces are a Markdown hard line break, and must survive.
+                    Assert.Equal("# Title\nfirst line  \nsecond line updated\n", content);
+                }
+            };
+
+            /*
+             * The second line of the file ends with two spaces, which is a hard line break in
+             * Markdown, and is invisible to whoever wrote the patch. The hunk's context therefore
+             * does not match it exactly, and the hunk is located by comparing lines while ignoring
+             * trailing whitespace.
+             */
+            Common.Evaluate("""
+io.file.patch:/existing.txt
+   .:@"
+@@ -1,3 +1,3 @@
+ # Title
+ first line
+-second line
++second line updated
+"
+""", fileService);
+
+            Assert.True(saveInvoked);
         }
     }
 }
