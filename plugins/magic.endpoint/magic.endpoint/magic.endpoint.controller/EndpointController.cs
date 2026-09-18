@@ -258,7 +258,7 @@ namespace magic.endpoint.controller
             // Unless explicitly overridden by service, we default Content-Type to JSON / UTF8.
             if (!response.Headers.TryGetValue("Content-Type", out string value) || string.IsNullOrEmpty(value))
             {
-                Response.ContentType = "application/json; char-set=utf-8";
+                Response.ContentType = "application/json; charset=utf-8";
                 return "application/json";
             }
             else

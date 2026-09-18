@@ -77,7 +77,7 @@ namespace magic.endpoint.controller.utilities
             return request.ContentType?
                 .Split(';')
                 .Select(x => x.Trim())
-                .FirstOrDefault(x => x.StartsWith("char-set"))?
+                .FirstOrDefault(x => x.StartsWith("charset"))?
                 .Split('=')
                 .Skip(1)
                 .FirstOrDefault()?
