@@ -561,6 +561,24 @@ export function customSqlEndpoint(payload: {
   return http.post<MagicResponse>('/magic/system/crudifier/custom-sql', payload);
 }
 
+/*
+ * Generates one sandboxed Hyperlambda endpoint. [policy] is a JSON string carrying
+ * the timeout, root-override flag and the per-role access rules; the backend returns
+ * the generated Hyperlambda so the caller can preview what was written.
+ */
+export function generateSandboxEndpoint(payload: {
+  moduleName: string;
+  endpointName: string;
+  verb: string;
+  inputMode: string;
+  authorization: string;
+  policy: string;
+  overwrite: boolean;
+}) {
+  return http.post<{ result: string; file: string; hyperlambda: string }>(
+    '/magic/system/crudifier/sandbox-api', payload);
+}
+
 export function exportDdl(
   databaseType: string, connectionString: string, databaseName: string,
   tables: string[], full: boolean) {

@@ -1,0 +1,255 @@
+
+/*
+ * Generates a single sandboxed Hyperlambda HTTP endpoint according to the given
+ * [.arguments]. The generated endpoint accepts Hyperlambda and/or natural language,
+ * resolves it to code, and executes it inside a role based whitelist with a per role
+ * rate limit and an execution timeout - see the sandbox.template.hl file it is built
+ * from for the full runtime behaviour.
+ *
+ * [policy] is a JSON string carrying everything that varies between generated
+ * endpoints:
+ *
+ *   {
+ *     "timeout": 20000,
+ *     "overrideRoot": true,
+ *     "generatorUrl": "https://ainiro.io/magic/modules/hyperlambda-generator/chat",
+ *     "rules": [
+ *       { "role": "*", "limit": 10, "window": 60, "slots": ["data.read", "data.connect:chinook"] }
+ *     ]
+ *   }
+ *
+ * Each slot is a single Hyperlambda line, so a pinned argument is written as
+ * "slot:value" (e.g. "data.connect:chinook").
+ */
+.arguments
+   moduleName:string
+   endpointName:string
+   verb:string
+   inputMode:string
+   authorization:string
+   policy:string
+   overwrite:bool
+.description:Creates a sandboxed Hyperlambda HTTP endpoint executing caller supplied code inside a role based whitelist
+.type:internal
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/moduleName
+validators.mandatory:x:@.arguments/*/endpointName
+validators.mandatory:x:@.arguments/*/verb
+validators.mandatory:x:@.arguments/*/inputMode
+validators.mandatory:x:@.arguments/*/policy
+validators.enum:x:@.arguments/*/verb
+   .:post
+   .:get
+   .:put
+   .:delete
+   .:patch
+validators.enum:x:@.arguments/*/inputMode
+   .:hl
+   .:nl
+   .:both
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Logging roughly what we are about to do.
+log.info:Generating sandboxed Hyperlambda endpoint
+   module:x:@.arguments/*/moduleName
+   endpoint:x:@.arguments/*/endpointName
+   verb:x:@.arguments/*/verb
+   inputMode:x:@.arguments/*/inputMode
+
+// Parsing the policy JSON supplied by the caller.
+json2lambda:x:@.arguments/*/policy
+
+// Loading the endpoint template into [.endpoint] so we can inject the policy into it.
+io.file.load:/system/crudifier/templates/sandbox.template.hl
+.endpoint
+add:x:@.endpoint
+   hyper2lambda:x:@io.file.load
+      comments:bool:true
+
+// Injecting the scalar policy values, keeping the template defaults when omitted.
+if
+   not-null:x:@json2lambda/*/overrideRoot
+   .lambda
+
+      // [json2lambda] already types this as a boolean, so no [convert] is needed.
+      set-value:x:@.endpoint/*/.policy/*/override-root
+         get-value:x:@json2lambda/*/overrideRoot
+if
+   not-null:x:@json2lambda/*/returnCode
+   .lambda
+      set-value:x:@.endpoint/*/.policy/*/return-code
+         get-value:x:@json2lambda/*/returnCode
+if
+   and
+      not-null:x:@json2lambda/*/generatorUrl
+      neq:x:@json2lambda/*/generatorUrl
+         .:
+   .lambda
+      set-value:x:@.endpoint/*/.policy/*/generator-url
+         get-value:x:@json2lambda/*/generatorUrl
+
+// A throttle prefix unique to this endpoint, so its rate limiter is not shared.
+set-value:x:@.endpoint/*/.policy/*/throttle-prefix
+   strings.concat
+      .:sandbox-
+      get-value:x:@.arguments/*/moduleName
+      .:-
+      get-value:x:@.arguments/*/endpointName
+      .:-
+      get-value:x:@.arguments/*/verb
+
+// Building one policy rule per rule in the supplied JSON.
+for-each:x:@json2lambda/*/rules/*
+
+   // Joining this rule's slots, one per line, then parsing them into nodes.
+   strings.join:x:@.dp/#/*/slots/*
+      .:"\r\n"
+   hyper2lambda:x:@strings.join
+
+   /*
+    * Building the rule as a single wrapper node under [.rule], then appending that
+    * one node to the policy - [add] copies the grandchildren of its source, so the
+    * wrapper is what ends up as one [rules] child rather than its fields flattened.
+    * [limit]/[window] and [timeout] are added only when the rule declares them, so a
+    * rule can override the rate limit, the timeout, both, or neither.
+    */
+   .rule
+      .
+         role
+         slots
+   set-value:x:@.rule/0/*/role
+      get-value:x:@.dp/#/*/role
+   add:x:@.rule/0/*/slots
+      get-nodes:x:@hyper2lambda/*
+   if
+      not-null:x:@.dp/#/*/limit
+      .lambda
+         add:x:@.rule/0
+            .
+               limit:int:0
+               window:int:0
+         set-value:x:@.rule/0/*/limit
+            convert:x:@.dp/#/*/limit
+               type:int
+         set-value:x:@.rule/0/*/window
+            convert:x:@.dp/#/*/window
+               type:int
+   if
+      not-null:x:@.dp/#/*/timeout
+      .lambda
+         add:x:@.rule/0
+            .
+               timeout:int:0
+         set-value:x:@.rule/0/*/timeout
+            convert:x:@.dp/#/*/timeout
+               type:int
+   add:x:@.endpoint/*/.policy/*/rules
+      get-nodes:x:@.rule/*
+
+/*
+ * Trimming the input argument the endpoint does not accept, together with the comment
+ * documenting it - the comment is the argument's immediately preceding sibling, so it
+ * is removed first while the argument still anchors it.
+ */
+if
+   eq:x:@.arguments/*/inputMode
+      .:hl
+   .lambda
+      remove-nodes:x:@.endpoint/*/.arguments/*/instruction/-
+      remove-nodes:x:@.endpoint/*/.arguments/*/instruction
+if
+   eq:x:@.arguments/*/inputMode
+      .:nl
+   .lambda
+      remove-nodes:x:@.endpoint/*/.arguments/*/hyperlambda/-
+      remove-nodes:x:@.endpoint/*/.arguments/*/hyperlambda
+
+/*
+ * Describing the endpoint according to the input it accepts, by replacing the {input}
+ * placeholder in the file level comment (the first node). That comment is the whole
+ * description of the endpoint - and, because generated endpoints surface as MCP tools,
+ * the tool description the calling model reads - so it must match the arguments the
+ * endpoint actually declares.
+ */
+if
+   eq:x:@.arguments/*/inputMode
+      .:hl
+   .lambda
+      set-value:x:@.endpoint/0
+         strings.replace:x:@.endpoint/0
+            .:"{input}"
+            .:Executes caller-supplied Hyperlambda passed in [hyperlambda].
+else-if
+   eq:x:@.arguments/*/inputMode
+      .:nl
+   .lambda
+      set-value:x:@.endpoint/0
+         strings.replace:x:@.endpoint/0
+            .:"{input}"
+            .:Turns a natural-language [instruction] into Hyperlambda with the Hyperlambda Generator, then executes it.
+else
+   set-value:x:@.endpoint/0
+      strings.replace:x:@.endpoint/0
+         .:"{input}"
+         .:Accepts caller-supplied Hyperlambda in [hyperlambda], or a natural-language [instruction] the Hyperlambda Generator turns into code.
+
+/*
+ * If the caller restricted who may invoke the endpoint, inserting the authorization
+ * check right after the arguments, so it runs before any policy logic.
+ */
+if
+   and
+      not-null:x:@.arguments/*/authorization
+      neq:x:@.arguments/*/authorization
+         .:
+   .lambda
+      unwrap:x:+/*/*
+      insert-after:x:@.endpoint/*/.arguments
+         .
+            auth.ticket.verify:x:@.arguments/*/authorization
+
+// Creating the module folder if necessary.
+.folder:/modules/
+set-value:x:@.folder
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.arguments/*/moduleName
+      .:/
+io.folder.create:x:@.folder
+
+// Figuring out the endpoint's filename.
+.filename
+set-value:x:@.filename
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.arguments/*/endpointName
+      .:.
+      get-value:x:@.arguments/*/verb
+      .:.hl
+
+// Refusing to clobber an existing endpoint unless the caller asked to overwrite it.
+if
+   and
+      not
+         get-value:x:@.arguments/*/overwrite
+      io.file.exists:x:@.filename
+   .lambda
+      throw:Endpoint already exists, choose a new name or enable overwrite
+         status:400
+         public:true
+
+// Serialising and saving the generated endpoint.
+lambda2hyper:x:@.endpoint/*
+   comments:bool:true
+io.file.save:x:@.filename
+   get-value:x:@lambda2hyper
+
+// Returning the generated endpoint to the caller, for preview.
+unwrap:x:+/*
+return
+   result:success
+   file:x:@.filename
+   hyperlambda:x:@lambda2hyper
