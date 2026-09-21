@@ -75,7 +75,7 @@ In our measurements Hyperlambda is roughly **20× faster than FastAPI or Flask**
 
 ![The Magic dashboard, showing the Chatbot Wizard and the cloudlet's MCP URL](images/dashboard.png)
 
-The sidebar is the whole platform: **Hyper IDE** for editing, running and *replaying* any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing databases, **Endpoint Generator** for turning tables into secured CRUD endpoints and importing third-party APIs from their OpenAPI specifications, plus users and roles, scheduled tasks, machine learning, and the plugin store.
+The sidebar is the whole platform: **Hyper IDE** for editing, running and *replaying* any file on the server, **Playground** for executing Hyperlambda without saving it first, **SQL Studio** for querying and designing databases, **Endpoint Generator** for turning tables into secured CRUD endpoints, wrapping caller-supplied code in a role-scoped sandbox, and importing third-party APIs from their OpenAPI specifications, plus users and roles, scheduled tasks, machine learning, and the plugin store.
 
 Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at the top hands any MCP-capable agent your endpoints as tools. The **Chatbot Wizard** goes the other way: give it a website, and it crawls the site, turns what it finds into training data, and hands you an embeddable chatbot grounded in your own content.
 
@@ -108,6 +108,14 @@ Point the **Import API** tab at any OpenAPI or Swagger URL — OpenAPI 3.x or Sw
 Because Magic publishes an endpoint's file comment as its MCP tool description and each argument's comment as that argument's description, an imported API arrives at your agent as a set of self-describing tools. Slack's `chat.postMessage` becomes fifteen individually typed, individually described arguments — not one of them written by hand.
 
 The upstream credential is never written into the generated files. It is read from your configuration at the moment the endpoint is invoked, so the files stay safe to commit, and you declare which of *your* roles are allowed to invoke the wrapper.
+
+## Sandbox API — run caller-supplied code, safely
+
+The **Sandbox API** tab of the Endpoint Generator turns the security model above into a feature you ship. It generates a single HTTP endpoint that executes code *its own callers* send it — Hyperlambda, or plain English turned into Hyperlambda by the generator — inside a whitelist you define per role.
+
+You build a policy from an *everybody* base vocabulary plus per-role rules that add functions on top. A caller runs with the **union** of what their roles grant, so one role can reach a database another role cannot, and a function you did not grant **does not exist** as far as their code is concerned. A referenced function that doesn't exist is refused before anything runs, and an argument you pin — `data.connect:northwind` — restricts access to exactly that resource. Rate limit and execution timeout are set per role too. **Capability wizards** write the function lines for you — Database, HTTP, Files, Email, Logging and more — and the generated endpoint is a self-describing MCP tool like every other.
+
+There's a live one you can attack: a `guest`-only endpoint that grants nothing but read access to the Chinook sample database. Try to make it write — [walkthrough and token here](https://hyperlambda.dev/blog/let-strangers-run-code-on-your-server-on-purpose).
 
 ## Rewind — step through an execution after it ran
 
