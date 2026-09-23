@@ -499,15 +499,22 @@ export function GitBranchIcon() {
 }
 
 /*
- * A brush over a frame — designing what is inside a page rather than editing
- * the file that describes it.
+ * A page with its regions laid out — a header band and a column beside the
+ * content.
+ *
+ * A paintbrush was the obvious choice and it was drawn five ways, but a brush
+ * is a thin diagonal object and every version of it dissolved into a squiggle
+ * at the 17px these are actually seen at. The icons that hold up in this set
+ * are bold closed shapes, so this is one: it reads instantly, and it sits well
+ * against the code document of Hyper IDE directly below it — the visual tool
+ * and the textual one.
  */
-export function DesignIcon() {
+export function LayoutIcon() {
   return (
     <svg {...base}>
       <rect x="3" y="3" width="18" height="18" rx="2" />
-      <path d="M8 16c0-1.5.8-2.3 2-2.3s2 .8 2 2c0 1.4-1.2 2.3-2.8 2.3" />
-      <line x1="11.5" y1="13.2" x2="17" y2="7.5" />
+      <path d="M3 8.5h18" />
+      <path d="M9.5 8.5V21" />
     </svg>
   );
 }

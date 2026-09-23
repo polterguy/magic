@@ -9,10 +9,10 @@ import {
   ClockIcon,
   CodeFileIcon,
   DatabaseIcon,
-  DesignIcon,
   ExchangeIcon,
   GearIcon,
   HomeIcon,
+  LayoutIcon,
   ListIcon,
   PlayIcon,
   ProfileIcon,
@@ -79,7 +79,7 @@ export const SECTIONS: Section[] = [
   {
     to: '/web-designer',
     label: 'Web Designer',
-    Icon: DesignIcon,
+    Icon: LayoutIcon,
     description: 'Design the pages your cloudlet serves — pick an element, drag ' +
       'blocks into place, and edit what it says and how it looks.',
   },

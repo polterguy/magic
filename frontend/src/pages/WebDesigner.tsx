@@ -627,9 +627,16 @@ export default function WebDesigner() {
   // around it — which is what anyone picking a colour with a sentence
   // selected actually means.
   const styleTarget = elementOf(selected);
+  /*
+   * On [version] as well as the element and the stylesheet, because which
+   * selectors match is decided by element.matches() — live DOM state that a
+   * memo cannot see. Adding a class changes neither the element's identity nor
+   * the stylesheet text, so without this the list stays as it was and the
+   * class you just added is missing from it.
+   */
   const selectors = useMemo(
     () => (styleTarget && cssHead ? matchingSelectors(cssHead, styleTarget) : []),
-    [styleTarget, cssHead]);
+    [styleTarget, cssHead, version]);
 
   // A selector that styled the last element rarely styles the next one.
   useEffect(() => {
@@ -638,6 +645,31 @@ export default function WebDesigner() {
 
   /* -- Saving ------------------------------------------------------------- */
 
+  /*
+   * Bumps the cache-busting "v" on the link to the stylesheet being written.
+   *
+   * Without this a style edit reaches nobody. The cloudlet serves CSS with a
+   * one-year cache, so any browser that has already loaded the page keeps the
+   * copy it has — which is exactly why an edit shows in the canvas, where the
+   * designer injects it live, and not in Live, not in a new tab, and not for a
+   * visitor. The page asks for a different URL, so the browser has to fetch it.
+   */
+  function bumpStylesheet(current: Document, sheet: string) {
+    const link = Array.from(current.querySelectorAll('link[rel~="stylesheet"][href]'))
+      .find(candidate => {
+        const href = candidate.getAttribute('href') ?? '';
+        return '/etc/www' + new URL(href, current.baseURI).pathname === sheet;
+      });
+    if (!link) {
+      return;
+    }
+    const url = new URL(link.getAttribute('href')!, current.baseURI);
+    const version = Number(url.searchParams.get('v'));
+    url.searchParams.set('v', String(Number.isFinite(version) && version > 0 ? version + 1 : 1));
+    link.setAttribute('href', url.pathname + url.search);
+  }
+
+
   async function save() {
     const current = docRef.current;
     if (!current || !path) {
@@ -645,15 +677,24 @@ export default function WebDesigner() {
     }
     setSaving(true);
     try {
+      const css = joinCss(cssHead, overrides, cssTail);
+      const cssChanged = !!cssPath && css !== cssOriginal;
+      /*
+       * Done before the page is serialised, so the bumped link goes out in the
+       * same save. In the code view the text on screen is the file and the
+       * user owns it, so nothing is rewritten underneath them there.
+       */
+      if (cssChanged && view !== 'code') {
+        bumpStylesheet(current, cssPath!);
+      }
       /*
        * In the code view what is on screen IS the file, so it is written
        * through as typed rather than re-formatted from the document — nobody
        * wants their own hand formatting rearranged the moment they save it.
        */
       await saveFile(path, view === 'code' ? code : serializeDocument(current));
-      const css = joinCss(cssHead, overrides, cssTail);
-      if (cssPath && css !== cssOriginal) {
-        await saveFile(cssPath, css);
+      if (cssChanged) {
+        await saveFile(cssPath!, css);
         setCssOriginal(css);
       }
       setDirty(false);
