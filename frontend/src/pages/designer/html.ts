@@ -1,0 +1,295 @@
+/*
+ * Turning a file on disk into a design surface, and back again.
+ *
+ * The canvas is an iframe with "sandbox=allow-same-origin" and no
+ * "allow-scripts". That one attribute is what makes the whole designer
+ * possible: the page's own JavaScript never runs, so the DOM inside the frame
+ * is exactly what the file says and nothing more — no list rendered from an
+ * API call, no node that exists only at runtime. Every element you can click
+ * has a home in the source. Meanwhile "allow-same-origin" keeps the frame on
+ * the dashboard's own origin, so this code reaches straight into
+ * contentDocument instead of shouting at an injected agent over postMessage.
+ *
+ * The consequence to keep in mind: the live document IS the editing model.
+ * Edits mutate it directly, and saving serializes it back.
+ */
+
+// Elements that cannot have children, so they never get a closing tag.
+const VOID = new Set([
+  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+  'link', 'meta', 'param', 'source', 'track', 'wbr',
+]);
+
+/*
+ * Elements whose text content is significant to the byte. Reindenting inside
+ * them would change what the page does or shows, so their content is copied
+ * through untouched.
+ */
+const RAW = new Set(['script', 'style', 'pre', 'textarea']);
+
+/*
+ * Elements that flow inside a line of text. Whitespace between them is
+ * rendered, which is why they are never broken apart onto separate lines the
+ * way block elements are — doing so would insert or remove real spaces.
+ */
+const INLINE = new Set([
+  'a', 'abbr', 'b', 'bdi', 'bdo', 'br', 'button', 'cite', 'code', 'data',
+  'datalist', 'dfn', 'em', 'i', 'img', 'input', 'kbd', 'label', 'map', 'mark',
+  'meter', 'noscript', 'object', 'output', 'picture', 'progress', 'q', 'rp',
+  'rt', 'ruby', 's', 'samp', 'select', 'slot', 'small', 'span', 'strong',
+  'sub', 'sup', 'svg', 'template', 'textarea', 'time', 'u', 'var', 'wbr',
+]);
+
+const INDENT = '  ';
+
+/*
+ * Anything the designer adds to the document to do its job carries this
+ * attribute, and everything carrying it is dropped on the way back out to
+ * disk. The user's file never learns that a design tool touched it.
+ */
+export const TOOL_ATTRIBUTE = 'data-magic-tool';
+
+/*
+ * Stylesheet the canvas gets on top of the page's own.
+ *
+ * It is deliberately tiny. Selection outlines and drop indicators are drawn by
+ * the parent document on top of the frame, not injected here, so that nothing
+ * the designer draws can ever end up in the saved file or disturb the layout
+ * being designed.
+ */
+const CANVAS_CSS = `
+/*
+ * Reveals an element the page hides. The designer sets the attribute when you
+ * ask to see hidden elements; "revert" hands display back to the browser
+ * default, and !important is what beats the page's own display:none.
+ */
+[data-magic-force] { display: revert !important; }
+
+/*
+ * Dragging an element should move it, not select the text inside it. Text
+ * becomes selectable again only in the element being edited in place.
+ */
+body { -webkit-user-select: none; user-select: none; }
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  outline: none;
+  cursor: text;
+}
+
+/*
+ * The run currently being typed into. Marked so it reads as a mode you are in
+ * rather than as a span that appeared in your markup — it is scaffolding, it
+ * lasts exactly as long as the edit, and it never reaches the file.
+ *
+ * The tint carries the marking on pages too light or too dark for an outline
+ * alone, and the colour is fixed rather than themed because it has to stand
+ * out against the page being designed, not against the dashboard.
+ */
+[data-magic-editing] {
+  outline: 2px solid #35d07f;
+  outline-offset: 2px;
+  border-radius: 2px;
+  background: rgba(53, 208, 127, 0.16);
+}
+`;
+
+/*
+ * Builds the document the canvas frame renders.
+ *
+ * [base] is what makes a page written for the cloudlet work inside a frame
+ * belonging to the dashboard. Pages here reference their assets with
+ * root-absolute paths — "/taskflow/app.css" — which would otherwise resolve
+ * against the dashboard's own origin and 404. It goes first in the head so the
+ * stylesheet links after it are resolved against the cloudlet.
+ */
+export function prepareDocument(source: string, baseHref: string): string {
+  const doc = new DOMParser().parseFromString(source, 'text/html');
+
+  const base = doc.createElement('base');
+  base.setAttribute('href', baseHref);
+  base.setAttribute(TOOL_ATTRIBUTE, '');
+  doc.head.prepend(base);
+
+  const canvas = doc.createElement('style');
+  canvas.setAttribute(TOOL_ATTRIBUTE, '');
+  canvas.textContent = CANVAS_CSS;
+  doc.head.append(canvas);
+
+  /*
+   * Style edits aimed at a CSS rule rather than at one element land here so
+   * they show up immediately, while the real text is written to the
+   * stylesheet file. Last in the head, so it outranks the page's own sheet at
+   * equal specificity.
+   */
+  const overrides = doc.createElement('style');
+  overrides.setAttribute(TOOL_ATTRIBUTE, '');
+  overrides.setAttribute('data-magic-overrides', '');
+  doc.head.append(overrides);
+
+  return '<!doctype html>\n' + doc.documentElement.outerHTML;
+}
+
+/*
+ * The document as it should look on disk: the designer's own additions
+ * removed, and the markup formatted.
+ *
+ * Formatting is unconditional. The pages this tool is pointed at arrive
+ * minified onto lines thousands of characters long, where a diff says only
+ * that "line 9 changed" and neither a human nor the Chat Ops agent can see
+ * what actually moved. Reformatting once costs a single large diff and makes
+ * every diff after it readable.
+ */
+export function serializeDocument(doc: Document): string {
+  const copy = doc.cloneNode(true) as Document;
+  /*
+   * The span the canvas wraps a run of text in while it is being typed into
+   * is UNWRAPPED rather than removed — it is scaffolding around the user's
+   * words, not an addition of ours, and deleting it would take the words with
+   * it. Committing an edit already takes it out; this is what guarantees it
+   * can never reach the file even if one were somehow left behind.
+   */
+  copy.querySelectorAll('[data-magic-editing]')
+    .forEach(node => node.replaceWith(...Array.from(node.childNodes)));
+  copy.querySelectorAll('[' + TOOL_ATTRIBUTE + ']').forEach(node => node.remove());
+  const out: string[] = [];
+  if (copy.doctype) {
+    out.push('<!doctype ' + copy.doctype.name + '>');
+  }
+  writeElement(copy.documentElement, 0, out);
+  return out.join('\n') + '\n';
+}
+
+/*
+ * True when the element's children force it open across several lines. One
+ * block-level child is enough: block elements already sit on their own lines
+ * when rendered, so putting them on their own lines in the file changes
+ * nothing about the page.
+ */
+function isBlockContext(element: Element) {
+  return Array.from(element.children)
+    .some(child => !INLINE.has(child.tagName.toLowerCase()));
+}
+
+function escapeText(text: string) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/*
+ * Attributes, minus the ones the designer put there. Values are always
+ * quoted, including empty ones — `hidden=""` means the same thing as a bare
+ * `hidden` and needs no list of which attributes are allowed to stand alone.
+ */
+function writeAttributes(element: Element) {
+  return Array.from(element.attributes)
+    .filter(attribute => !attribute.name.startsWith('data-magic-'))
+    .map(attribute => ' ' + attribute.name + '="' +
+      attribute.value.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '"')
+    .join('');
+}
+
+function openTag(element: Element) {
+  return '<' + element.tagName.toLowerCase() + writeAttributes(element) + '>';
+}
+
+function closeTag(element: Element) {
+  return '</' + element.tagName.toLowerCase() + '>';
+}
+
+/*
+ * An element and everything in it on a single line, for content that sits
+ * inside a line of text.
+ */
+function oneLine(node: Node): string {
+  if (node.nodeType === Node.TEXT_NODE) {
+    return escapeText((node as Text).data).replace(/\s+/g, ' ');
+  }
+  if (node.nodeType === Node.COMMENT_NODE) {
+    return '<!--' + (node as Comment).data + '-->';
+  }
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return '';
+  }
+  const element = node as Element;
+  const tag = element.tagName.toLowerCase();
+  if (VOID.has(tag)) {
+    return openTag(element);
+  }
+  if (RAW.has(tag)) {
+    return openTag(element) + (element.textContent ?? '') + closeTag(element);
+  }
+  return openTag(element) + inlineContent(element) + closeTag(element);
+}
+
+function inlineContent(element: Element) {
+  return Array.from(element.childNodes).map(oneLine).join('');
+}
+
+function writeElement(element: Element, depth: number, out: string[]) {
+  const pad = INDENT.repeat(depth);
+  const tag = element.tagName.toLowerCase();
+
+  if (VOID.has(tag)) {
+    out.push(pad + openTag(element));
+    return;
+  }
+
+  /*
+   * A newline after <pre> is swallowed by the parser but a newline before
+   * </pre> is not, so these are written on one line however long they get.
+   * Script and style have no such rule and keep the author's own indentation.
+   */
+  if (tag === 'pre' || tag === 'textarea') {
+    out.push(pad + openTag(element) + (element.textContent ?? '') + closeTag(element));
+    return;
+  }
+  if (RAW.has(tag)) {
+    const text = (element.textContent ?? '').replace(/^\n/, '').replace(/\s+$/, '');
+    if (text === '') {
+      out.push(pad + openTag(element) + closeTag(element));
+      return;
+    }
+    out.push(pad + openTag(element));
+    text.split('\n').forEach(line => out.push(line));
+    out.push(pad + closeTag(element));
+    return;
+  }
+
+  if (isBlockContext(element)) {
+    out.push(pad + openTag(element));
+    for (const child of Array.from(element.childNodes)) {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        writeElement(child as Element, depth + 1, out);
+      } else if (child.nodeType === Node.TEXT_NODE) {
+        // Whitespace between block elements is only indentation, and is remade
+        // by this very function — but real text among them has to survive.
+        const text = (child as Text).data.trim();
+        if (text !== '') {
+          out.push(INDENT.repeat(depth + 1) + escapeText(text).replace(/\s+/g, ' '));
+        }
+      } else if (child.nodeType === Node.COMMENT_NODE) {
+        out.push(INDENT.repeat(depth + 1) + '<!--' + (child as Comment).data + '-->');
+      }
+    }
+    out.push(pad + closeTag(element));
+    return;
+  }
+
+  /*
+   * A run of inline content goes out on one line however long it gets, and is
+   * never wrapped. There is no safe place to put a newline here: a break
+   * between two inline elements adds a space the reader can see, and a break
+   * inside an attribute changes its value. Block nesting is what makes the
+   * file readable, and it has already done its work by the time we get here.
+   */
+  out.push(pad + openTag(element) + inlineContent(element) + closeTag(element));
+}
+
+/*
+ * Whether an element is allowed to hold children at all. Dropping something
+ * into an <img> or into the middle of a <script> is never what was meant.
+ */
+export function canContainChildren(element: Element) {
+  const tag = element.tagName.toLowerCase();
+  return !VOID.has(tag) && !RAW.has(tag);
+}

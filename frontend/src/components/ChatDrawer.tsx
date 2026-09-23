@@ -19,6 +19,7 @@ import {
   ChatChunk, MAX_CHAT_FILES, chatDownloadUrl, chatPrompt, gibberish, killExecution,
 } from '../lib/api';
 import { copyToClipboard, showToast } from '../lib/toast';
+import { notifyChatOpsDone } from '../lib/chatOps';
 import { CopyIcon, DownloadIcon, FilePlusIcon, PaperclipIcon } from './Icons';
 import WidgetDialog from './WidgetDialog';
 
@@ -172,6 +173,8 @@ export default function ChatDrawer(props: {
   // Whether the transcript is following the newest content — see onListScroll.
   const pinned = useRef(true);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  // Whether this turn ran any AI function, and so may have changed files.
+  const wroteRef = useRef(false);
 
   // Escape closes — plain listener, so open dialogs above still get it first.
   useEffect(() => {
@@ -249,10 +252,23 @@ export default function ChatDrawer(props: {
     if (chunk.floating_message) {
       showToast(chunk.floating_message, chunk.floating_state === 'error');
     }
+    /*
+     * A turn that invoked an AI function may have written files — the agent's
+     * tools create and patch them. Pages watching the file system, App
+     * Designer above all, are told once the turn is over rather than per
+     * call, so they reload a settled server instead of a half-finished one.
+     */
+    if (chunk.function_result || chunk.function_error) {
+      wroteRef.current = true;
+    }
     const done = !!chunk.finished || !!chunk.error;
     if (done) {
       setStreaming(false);
       setExecutionId(null);
+      if (wroteRef.current) {
+        wroteRef.current = false;
+        notifyChatOpsDone();
+      }
     }
     setMessages(current => {
       const next = [...current];

@@ -9,8 +9,9 @@ import { SHORTCUTS, shortcutDisplay } from '../lib/shortcuts';
 
 const GROUPS: { id: string; title: string; note?: string }[] = [
   { id: 'Global', title: 'Everywhere' },
-  { id: 'Editor', title: 'Code editors', note: 'With the editor focused — Hyper IDE, Playground, SQL Studio.' },
+  { id: 'Editor', title: 'Code editors', note: 'With the editor focused — Hyper IDE, Playground, SQL Studio, Web Designer\u2019s code view.' },
   { id: 'Hyper IDE', title: 'Hyper IDE file actions', note: 'With the editor focused.' },
+  { id: 'Web Designer', title: 'Web Designer', note: 'On the canvas, or with an element selected.' },
 ];
 
 export default function ShortcutsDialog(props: { onClose: () => void }) {

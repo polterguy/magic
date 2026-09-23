@@ -497,3 +497,17 @@ export function GitBranchIcon() {
     </svg>
   );
 }
+
+/*
+ * A brush over a frame — designing what is inside a page rather than editing
+ * the file that describes it.
+ */
+export function DesignIcon() {
+  return (
+    <svg {...base}>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M8 16c0-1.5.8-2.3 2-2.3s2 .8 2 2c0 1.4-1.2 2.3-2.8 2.3" />
+      <line x1="11.5" y1="13.2" x2="17" y2="7.5" />
+    </svg>
+  );
+}

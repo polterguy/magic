@@ -17,6 +17,7 @@ const Layout = lazy(() => import('./components/Layout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Playground = lazy(() => import('./pages/Playground'));
 const Files = lazy(() => import('./pages/Files'));
+const WebDesigner = lazy(() => import('./pages/WebDesigner'));
 const Sql = lazy(() => import('./pages/Sql'));
 const Databases = lazy(() => import('./pages/Databases'));
 const Configuration = lazy(() => import('./pages/Configuration'));
@@ -86,6 +87,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/hyperlambda-playground" element={<Playground />} />
           <Route path="/hyper-ide" element={<Files />} />
+          <Route path="/web-designer" element={<WebDesigner />} />
           <Route path="/sql-studio" element={<Sql />} />
           <Route path="/databases" element={<Databases />} />
           <Route path="/generator" element={<Generator />} />

@@ -3677,3 +3677,552 @@ tr.vss-irrelevant td {
   background: color-mix(in srgb, var(--danger) 22%, transparent);
   box-shadow: inset 3px 0 0 var(--danger);
 }
+
+/* ---------------------------------------------------------------------------
+ * Web Designer
+ *
+ * Three columns: blocks and the element tree on the left, the canvas in the
+ * middle, the element's own properties on the right. The canvas is the only
+ * part that grows.
+ * ------------------------------------------------------------------------- */
+
+.designer-layout {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.designer-rail {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.designer-rail.right {
+  width: 320px;
+}
+
+/*
+ * Sections keep their own height rather than being compressed to fit. Left to
+ * shrink, the block list would be squeezed until the tree below it had no
+ * height at all — and because the tree absorbed the overflow, the rail never
+ * scrolled either, so the tree was simply gone with no way to reach it.
+ */
+.designer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  flex-shrink: 0;
+}
+
+/*
+ * The tree takes whatever room is left over, but never less than this — and
+ * when there is not enough for both, the rail scrolls instead of one of them
+ * disappearing.
+ */
+/*
+ * Nothing special any more: like every other section it keeps its own height
+ * and lets the rail do the scrolling.
+ */
+.designer-section.grow {
+  flex-shrink: 0;
+}
+
+.designer-section h3 {
+  margin: 0;
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.designer-note {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.designer-note code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.designer-empty {
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  padding: 12px 4px;
+  line-height: 1.5;
+}
+
+.designer-muted {
+  color: var(--text-soft);
+  font-size: var(--text-xs);
+}
+
+.designer-page-select {
+  max-width: 260px;
+}
+
+.designer-viewports {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* -- Blocks ---------------------------------------------------------------- */
+
+.designer-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.designer-block {
+  font: inherit;
+  font-size: var(--text-xs);
+  padding: 5px 10px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  cursor: grab;
+}
+
+.designer-block:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.designer-block:active:not(:disabled) {
+  cursor: grabbing;
+}
+
+.designer-block:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* -- Tree ------------------------------------------------------------------ */
+
+/*
+ * No scroll of its own. The rail scrolls, and a second scroller nested inside
+ * it means reaching the bottom of the tree only to discover there is more rail
+ * underneath — two wheels for one column.
+ */
+.designer-layers {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.designer-layer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.designer-layer:hover {
+  background: var(--accent-soft);
+}
+
+.designer-layer.selected {
+  background: var(--selection-bg);
+  color: var(--selection-text);
+}
+
+/* Greyed rather than hidden — an element the page does not render is still
+ * part of the design, and the tree is the only way to reach it. */
+.designer-layer.invisible .designer-layer-name {
+  opacity: 0.45;
+  font-style: italic;
+}
+
+.designer-layer-chevron {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.designer-layer-chevron svg {
+  width: 12px;
+  height: 12px;
+}
+
+.designer-layer-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* -- Canvas ---------------------------------------------------------------- */
+
+.designer-canvas {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.designer-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  /* White, not the dashboard's surface — a page is designed against what a
+   * visitor will see behind it, not against the tool's own theme. */
+  background: #fff;
+}
+
+/* Outlines are drawn out here, over the frame, so nothing the designer draws
+ * can ever end up inside the document that gets saved. */
+.designer-outline {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.designer-outline.hover {
+  outline: 1px dashed var(--accent);
+  outline-offset: -1px;
+  opacity: 0.7;
+}
+
+.designer-outline.selected {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  box-shadow: 0 0 0 1px var(--scrim);
+}
+
+.designer-drop {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  background: var(--ok);
+  border-radius: 2px;
+}
+
+/* Dropping into an empty container marks the whole container instead of an
+ * edge between two children it does not have. */
+.designer-drop.area {
+  background: transparent;
+  outline: 2px dashed var(--ok);
+  outline-offset: -2px;
+}
+
+/* -- Element and style panels ---------------------------------------------- */
+
+.designer-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* Same rule as the tree — the rail scrolls, this does not. */
+  flex-shrink: 0;
+}
+
+.designer-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.designer-field > span {
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+.designer-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.designer-crumb {
+  font: inherit;
+  padding: 1px 4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-soft);
+  cursor: pointer;
+}
+
+.designer-crumb:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.designer-crumb::after {
+  content: '/';
+  margin-left: 4px;
+  opacity: 0.4;
+}
+
+.designer-crumb.current {
+  color: var(--accent);
+  cursor: default;
+}
+
+.designer-crumb.current::after {
+  content: '';
+}
+
+.designer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.designer-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.designer-chip {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  color: var(--text);
+  background: var(--tint-neutral-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.designer-chip:hover {
+  border-color: var(--danger);
+}
+
+.designer-chip em {
+  font-style: normal;
+  color: var(--text-soft);
+}
+
+.designer-attribute,
+.designer-style {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.designer-attribute label,
+.designer-style label {
+  width: 90px;
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.designer-attribute input,
+.designer-style input,
+.designer-style select {
+  flex: 1;
+  min-width: 0;
+}
+
+.designer-colour {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+}
+
+.designer-colour input[type="color"] {
+  width: 30px;
+  flex-shrink: 0;
+  padding: 2px;
+}
+
+/*
+ * Fixed width so the rows stay in one column whether or not the clear button
+ * is there — the empty slot is a span of exactly the button's size.
+ */
+.designer-clear {
+  flex-shrink: 0;
+  width: 22px;
+  font-size: var(--text-md);
+  line-height: 1;
+  justify-content: center;
+}
+
+.designer-group {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.designer-group summary {
+  cursor: pointer;
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  list-style: none;
+}
+
+.designer-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.designer-group summary::before {
+  content: '▾ ';
+  opacity: 0.6;
+}
+
+.designer-group:not([open]) summary::before {
+  content: '▸ ';
+}
+
+@media (max-width: 1100px) {
+  /* Web Designer — the rails stack under the canvas rather than squeezing it. */
+  .designer-layout {
+    flex-direction: column;
+  }
+
+  .designer-rail,
+  .designer-rail.right {
+    width: auto;
+    max-height: 280px;
+  }
+
+  .designer-canvas {
+    min-height: 420px;
+  }
+}
+
+/* Why the canvas is empty, said where the emptiness is. */
+.designer-canvas-note {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 44ch;
+  margin: 0;
+  padding: 20px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  text-align: center;
+  box-shadow: var(--shadow-hard);
+}
+
+/*
+ * A style value CSS will not accept. Marked on blur and left in the field —
+ * the value is never applied and never rewritten, so what is on screen is
+ * always what was actually typed.
+ */
+.designer-style input.invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger);
+}
+
+/* The code view fills the same space the canvas does. */
+.designer-code {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.designer-code .cm-editor {
+  flex: 1;
+  min-height: 0;
+}
+
+/* A run of text in the tree — quoted and lighter, so it reads as content
+ * rather than as another tag. */
+.designer-layer.text .designer-layer-name {
+  color: var(--tint-green-text);
+  font-style: italic;
+}
+
+.designer-layer.text.selected .designer-layer-name {
+  color: var(--selection-text);
+}
+
+/*
+ * Marks where a text selection stops describing itself and starts describing
+ * the element around it — the fields below act on that element, the buttons
+ * above still act on the run.
+ */
+.designer-owner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+.designer-owner .designer-crumb {
+  font-family: var(--font-mono);
+  color: var(--accent);
+}
+
+.designer-owner .designer-crumb::after {
+  content: '';
+}
+
+/* Toolbar overflow menu — the dashboard's dropdown chrome, with headings. */
+.designer-menu {
+  min-width: 230px;
+}
+
+.designer-menu-heading {
+  padding: 8px 12px 4px;
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  pointer-events: none;
+}
+
+.designer-menu-heading:not(:first-child) {
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}

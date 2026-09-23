@@ -8,7 +8,7 @@
  */
 
 export interface Shortcut {
-  group: 'Global' | 'Editor' | 'Hyper IDE';
+  group: 'Global' | 'Editor' | 'Hyper IDE' | 'Web Designer';
   // Human-readable combo, rendered as key chips split on " + ".
   display: string;
   // The macOS combo when it differs — Cmd for Ctrl, Opt for Alt, and the
@@ -191,6 +191,38 @@ export const SHORTCUTS: Shortcut[] = [
     description: 'Switch to the previous open file',
     keys: ['Alt-p'],
     action: 'previousTab',
+  },
+  /*
+   * Web Designer binds these on the page itself rather than through a
+   * CodeMirror keymap, and they fire inside the canvas frame too — the frame
+   * is same-origin, so its key events are handled by the very same listener.
+   */
+  {
+    group: 'Web Designer',
+    display: 'Delete',
+    description: 'Remove the selected element',
+  },
+  {
+    group: 'Web Designer',
+    display: 'Esc',
+    description: 'Deselect',
+  },
+  {
+    group: 'Web Designer',
+    display: 'Ctrl + Z',
+    mac: 'Cmd + Z',
+    description: 'Undo the last design change',
+  },
+  {
+    group: 'Web Designer',
+    display: 'Ctrl + S',
+    mac: 'Cmd + S',
+    description: 'Save the page, and its stylesheet when it changed',
+  },
+  {
+    group: 'Web Designer',
+    display: 'Double click',
+    description: 'Edit the text of an element that holds nothing but text',
   },
 ];
 

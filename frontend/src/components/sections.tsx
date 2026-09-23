@@ -9,6 +9,7 @@ import {
   ClockIcon,
   CodeFileIcon,
   DatabaseIcon,
+  DesignIcon,
   ExchangeIcon,
   GearIcon,
   HomeIcon,
@@ -74,6 +75,13 @@ export const SECTIONS: Section[] = [
     Icon: NeuralIcon,
     description: 'Train AI models on your own content by crawling a site or ' +
       'uploading files, then embed them as chatbots.',
+  },
+  {
+    to: '/web-designer',
+    label: 'Web Designer',
+    Icon: DesignIcon,
+    description: 'Design the pages your cloudlet serves — pick an element, drag ' +
+      'blocks into place, and edit what it says and how it looks.',
   },
   {
     to: '/hyper-ide',
