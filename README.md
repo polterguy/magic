@@ -85,6 +85,18 @@ Your cloudlet is also an **AI agent**. With the MCP plugin installed, the URL at
 
 Notice the prompt bar below the editor, where *"the Machine Creates the Code"*. Describe what you want in plain English and the built-in generator writes it straight into the file you're editing. The same bar follows you into the Playground and SQL Studio, generating Hyperlambda, SQL, HTML, or whatever fits the file you have open.
 
+## Web Designer
+
+![Web Designer editing a page — the block palette and DOM tree on the left, the live page in the middle, and the selected element's attributes on the right](images/web-designer.webp)
+
+**Design your frontend in the browser, on the real file.** Web Designer opens any HTML page your cloudlet serves and lets you edit it the way you would edit a document — click an element to select it, double-click a run of text to rewrite it, drag a block in from the palette, drag it somewhere else to move it.
+
+There is no project format and no build step. The page in the middle **is** the file on disk: scripts are disabled inside the canvas, so what the browser has parsed is exactly what will be saved back. That is also why selection can reach a bare `#text` node — every run of text is its own thing in the tree, not a property of the tag around it.
+
+The palette carries 60+ blocks, and each one **arrives wearing the classes that page already puts on that kind of element** — drop a button into the navbar and it lands looking like the other nav items. Style changes go into the page's own stylesheet, inside a fenced block, so your hand-written CSS above and below it is returned to disk untouched.
+
+**Code view** puts the same file in an editor — HTML, or any stylesheet the page links, picked from a dropdown — with the *"the Machine Creates the Code"* prompt bar underneath. **Live view** runs the page for real, scripts and all.
+
 ## Chat Ops
 
 ![Chat Ops — asking the cloudlet what it can do, and watching it run an AI function to answer](images/chat-ops.png)
