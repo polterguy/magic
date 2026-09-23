@@ -36,6 +36,8 @@ export default function Layers(props: {
   hidden: Set<Element>;
   onSelect: (node: Node) => void;
   onHover: (node: Node | null) => void;
+  // Double click — take me to it on the canvas.
+  onReveal: (node: Node) => void;
 }) {
 
   // Nodes whose open state the user has flipped away from the default.
@@ -76,7 +78,8 @@ export default function Layers(props: {
           style={{ paddingLeft: 6 + depth * 12 }}
           onMouseEnter={() => props.onHover(node)}
           onMouseLeave={() => props.onHover(null)}
-          onClick={() => props.onSelect(node)}>
+          onClick={() => props.onSelect(node)}
+          onDoubleClick={() => props.onReveal(node)}>
           {children.length > 0 ? (
             <button
               className="designer-layer-chevron"

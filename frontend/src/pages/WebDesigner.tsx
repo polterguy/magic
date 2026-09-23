@@ -18,15 +18,17 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Tabs from '../components/Tabs';
 import SearchInput from '../components/SearchInput';
 import CodeEditor, { modeForFile } from '../components/CodeEditor';
+import AiPrompt from '../components/AiPrompt';
 import { useDialog } from '../components/Dialogs';
 import { useAuth } from '../lib/AuthContext';
 import { useUnsavedGuard } from '../lib/navGuard';
 import { onChatOpsDone } from '../lib/chatOps';
 import { showToast } from '../lib/toast';
-import { listFilesRecursively, loadFile, saveFile } from '../lib/api';
+import { aiContextForFile, createFolder, listFilesRecursively, loadFile, saveFile } from '../lib/api';
 import { SaveIcon, UndoIcon } from '../components/Icons';
 import Canvas from './designer/Canvas';
 import Menu from './designer/Menu';
+import NewPage, { blankPage, fileForUrl } from './designer/NewPage';
 import Inspector from './designer/Inspector';
 import Layers from './designer/Layers';
 import Styles, { INLINE } from './designer/Styles';
@@ -108,6 +110,14 @@ export default function WebDesigner() {
    */
   const [selected, setSelected] = useState<Node | null>(null);
   const [hovered, setHovered] = useState<Node | null>(null);
+  /*
+   * Bumped only when the hover came from the tree, which is what tells the
+   * canvas to bring that node on screen. A hover from the canvas itself must
+   * not scroll anything — the pointer is already on the thing.
+   */
+  const [revealHovered, setRevealHovered] = useState(0);
+  // Bumped by a double click in the tree — take me to the selection.
+  const [revealSelected, setRevealSelected] = useState(0);
   const [reveal, setReveal] = useState(false);
   /*
    * What the middle pane is showing. Design edits the file through the
@@ -118,6 +128,10 @@ export default function WebDesigner() {
   // the difference between them is whether the code view changed anything.
   const [code, setCode] = useState('');
   const [codeOriginal, setCodeOriginal] = useState('');
+  // Which file the code view holds. The page itself unless a stylesheet was picked.
+  const [codeTarget, setCodeTarget] = useState('');
+  // Every local stylesheet this page links that is actually on disk.
+  const [sheets, setSheets] = useState<string[]>([]);
   const [viewport, setViewport] = useState('desktop');
   // The palette block being dragged in. Its markup is not built until it
   // lands, because what it should look like depends on where it lands.
@@ -126,6 +140,7 @@ export default function WebDesigner() {
   // Narrows the block list, and the custom tag typed beside it.
   const [blockFilter, setBlockFilter] = useState('');
   const [customTag, setCustomTag] = useState('');
+  const [creating, setCreating] = useState(false);
   const [history, setHistory] = useState<Snapshot[]>([]);
 
   // The stylesheet the open page is styled by, as it was read and as it stands.
@@ -214,6 +229,8 @@ export default function WebDesigner() {
       setStale(false);
       setTarget(INLINE);
       setShell(false);
+      setCodeTarget('');
+      setSheets([]);
       setCssPath(null);
       setCssOriginal('');
       setCssHead('');
@@ -293,43 +310,78 @@ export default function WebDesigner() {
       loaded.body.querySelectorAll('img, svg, video, canvas, input, textarea, iframe').length === 0);
     // Resolved against the document's own base, so this cannot disagree with
     // how the browser just resolved the very same hrefs.
-    const sheets = stylesheetPaths(loaded, loaded.baseURI);
+    const linked = stylesheetPaths(loaded, loaded.baseURI);
+    const readable: string[] = [];
     const absent: string[] = [];
-    for (const sheet of sheets) {
+    for (const sheet of linked) {
       try {
         const text = await loadFile(sheet);
-        const split = splitCss(text);
-        setCssPath(sheet);
-        setCssOriginal(text);
-        setCssHead(split.head);
-        setCssTail(split.tail);
-        setOverrides(split.overrides);
-        setCssMissing([]);
-        return;
+        readable.push(sheet);
+        // The first one that is really there is the one rule edits go into.
+        if (readable.length === 1) {
+          const split = splitCss(text);
+          setCssPath(sheet);
+          setCssOriginal(text);
+          setCssHead(split.head);
+          setCssTail(split.tail);
+          setOverrides(split.overrides);
+        }
       } catch {
         absent.push(sheet);
       }
     }
-    setCssMissing(absent);
+    setSheets(readable);
+    setCssMissing(readable.length === 0 ? absent : []);
+  }
+
+  /*
+   * Puts a different file in the code view.
+   *
+   * Refused while anything is unsaved, and deliberately so. The editor holds
+   * one file's text at a time, and a stylesheet read off disk does not contain
+   * the style panel's pending edits — so switching with either outstanding
+   * would mean silently choosing which version of the truth to keep. Saving
+   * first makes the two agree, and then there is nothing to choose.
+   */
+  async function switchCodeTarget(file: string) {
+    if (file === codeTarget) {
+      return;
+    }
+    if (code !== codeOriginal) {
+      showToast('Save your changes before switching file', true);
+      return;
+    }
+    if (file !== path && file === cssPath && joinCss(cssHead, overrides, cssTail) !== cssOriginal) {
+      showToast('Save first — the Style panel has changes that are not in ' + file + ' yet', true);
+      return;
+    }
+    const current = docRef.current;
+    if (!current) {
+      return;
+    }
+    setBusy(true);
+    try {
+      const text = file === path ? serializeDocument(current) : await loadFile(file);
+      setCodeTarget(file);
+      setCode(text);
+      setCodeOriginal(text);
+    } catch (err: any) {
+      showToast(err.message, true);
+    } finally {
+      setBusy(false);
+    }
   }
 
   /*
    * Moves the file between the two ways of editing it.
    *
-   * Leaving the code view is what applies what was typed there: the text is
-   * parsed and becomes the document the canvas edits. Nothing is applied per
-   * keystroke, because half-written markup parses into something arbitrary and
-   * the canvas would thrash through it.
+   * Leaving the code view is what applies what was typed there — but only when
+   * the editor was holding the PAGE. A stylesheet's text is not markup, and
+   * feeding it to the parser would produce a document made of nothing.
    */
   function switchView(next: string) {
     const current = docRef.current;
-    /*
-     * Leaving the code view having changed the text reloads the canvas from
-     * it. Compared against the text handed over, not against the document —
-     * the document is untouched while the code view is up, so re-serialising
-     * it would answer a different question.
-     */
-    if (view === 'code' && code !== codeOriginal) {
+    if (view === 'code' && codeTarget === path && code !== codeOriginal) {
       if (current) {
         setHistory(stack => [
           ...stack.slice(-(HISTORY - 1)),
@@ -341,12 +393,51 @@ export default function WebDesigner() {
       setHovered(null);
       setDirty(true);
     }
-    if (next === 'code' && current) {
+    /*
+     * Entering the code view loads the page — unless a stylesheet was already
+     * open, in which case that draft is left exactly where it was rather than
+     * being thrown away by a trip to the canvas and back.
+     */
+    if (next === 'code' && current && (codeTarget === '' || codeTarget === path)) {
       const text = serializeDocument(current);
+      setCodeTarget(path);
       setCode(text);
       setCodeOriginal(text);
     }
     setView(next);
+  }
+
+  /*
+   * Writes a new page and opens it.
+   *
+   * Folders are never invented for you — "/pricing" is pricing.html and
+   * nothing else — but a URL with steps in it still needs those steps to
+   * exist, and a file write into a folder that is not there fails with an
+   * error that says nothing useful. So each step is created first, in order.
+   */
+  async function createPage(file: string, copyFrom: string | null) {
+    setCreating(false);
+    setBusy(true);
+    try {
+      const folders = file.substring(WEB_ROOT.length + 1).split('/').slice(0, -1);
+      let sofar = WEB_ROOT;
+      for (const folder of folders) {
+        sofar += '/' + folder;
+        // Already there is the normal case and not a problem.
+        await createFolder(sofar + '/').catch(() => undefined);
+      }
+      const source = copyFrom
+        ? await loadFile(copyFrom)
+        : blankPage(file.substring(WEB_ROOT.length).replace(/\.html$/, ''));
+      await saveFile(file, source);
+      await loadPages();
+      await openPage(file, true);
+      showToast('Created ' + file);
+    } catch (err: any) {
+      showToast(err.message, true);
+    } finally {
+      setBusy(false);
+    }
   }
 
   /* -- Mutation ----------------------------------------------------------- */
@@ -547,6 +638,42 @@ export default function WebDesigner() {
     });
   }
 
+  /*
+   * Puts what the Machine returned in place of the selected element.
+   *
+   * Everything it returns is used, not just the first node: asked to turn one
+   * paragraph into three, it answers with three, and taking only the first
+   * would silently drop two of them.
+   *
+   * <body> and <html> are refused. Replacing either with whatever comes back
+   * would leave a document that is no longer a document, and "redesign the
+   * whole page" is a job for Chat Ops, which can see the file and the
+   * stylesheet together.
+   */
+  function rewriteSelected(html: string) {
+    const element = styleTarget;
+    const current = docRef.current;
+    if (!element || !current) {
+      return;
+    }
+    const tag = element.tagName.toLowerCase();
+    if (tag === 'body' || tag === 'html') {
+      showToast('Select something inside the page — the page itself is Chat Ops\u2019 job', true);
+      return;
+    }
+    const holder = current.createElement('template');
+    holder.innerHTML = html;
+    const nodes = Array.from(holder.content.childNodes);
+    if (nodes.length === 0) {
+      showToast('The Machine returned nothing to put there', true);
+      return;
+    }
+    mutate(() => {
+      element.replaceWith(...nodes);
+      setSelected(nodes[0]);
+    });
+  }
+
   function setStyle(property: string, value: string) {
     const element = styleTarget;
     if (!element) {
@@ -677,6 +804,29 @@ export default function WebDesigner() {
     }
     setSaving(true);
     try {
+      /*
+       * A stylesheet open in the code view IS that file, whole — not the
+       * designer's block within it. It is written as typed, the page is
+       * written too because its link had to be bumped for anyone to see the
+       * change, and the style panel re-reads the result so the two agree
+       * again straight away.
+       */
+      if (view === 'code' && codeTarget !== '' && codeTarget !== path) {
+        bumpStylesheet(current, codeTarget);
+        await saveFile(path, serializeDocument(current));
+        await saveFile(codeTarget, code);
+        setCodeOriginal(code);
+        if (codeTarget === cssPath) {
+          const split = splitCss(code);
+          setCssOriginal(code);
+          setCssHead(split.head);
+          setCssTail(split.tail);
+          setOverrides(split.overrides);
+        }
+        setDirty(false);
+        showToast('Saved ' + codeTarget);
+        return;
+      }
       const css = joinCss(cssHead, overrides, cssTail);
       const cssChanged = !!cssPath && css !== cssOriginal;
       /*
@@ -696,6 +846,12 @@ export default function WebDesigner() {
       if (cssChanged) {
         await saveFile(cssPath!, css);
         setCssOriginal(css);
+        // The code view may be holding this same file — move its draft onto
+        // what was just written, or it would offer to save the old text back.
+        if (codeTarget === cssPath) {
+          setCode(css);
+          setCodeOriginal(css);
+        }
       }
       setDirty(false);
       showToast('Saved ' + path);
@@ -790,6 +946,11 @@ export default function WebDesigner() {
             })),
             { heading: 'Page' },
             {
+              label: 'New page…',
+              hint: 'Create another page under /etc/www/ and open it',
+              onClick: () => setCreating(true),
+            },
+            {
               label: 'Open in a new tab',
               hint: 'The page as a visitor gets it, served from ' + origin,
               disabled: !path,
@@ -820,8 +981,30 @@ export default function WebDesigner() {
         </button>
       </div>
 
+      {creating && (
+        <NewPage
+          taken={pages.map(canonicalUrl)}
+          pages={pages.map(file => ({ file, url: canonicalUrl(file) }))}
+          onCancel={() => setCreating(false)}
+          onCreate={createPage} />
+      )}
+
       <div className="designer-layout">
-        <div className="designer-rail">
+        {/*
+          * Inert unless the canvas is the thing being edited. In the code view
+          * the FILE is what you are changing, and a property edited over here
+          * would be written into the document and then thrown away the moment
+          * the code text was applied on the way out. In the live view nothing
+          * here corresponds to what is on screen at all.
+          *
+          * Set through a ref because React 18 has no typing for [inert], which
+          * is the one attribute that makes a subtree neither clickable nor
+          * focusable — a pointer-events rule alone would still let the keyboard
+          * tab straight into it.
+          */}
+        <div
+          className="designer-rail"
+          ref={node => node?.toggleAttribute('inert', view !== 'design')}>
           <div className="designer-section">
             <h3>Blocks</h3>
             <p className="designer-note">
@@ -914,20 +1097,45 @@ export default function WebDesigner() {
               selected={selected}
               hidden={hidden}
               onSelect={setSelected}
-              onHover={setHovered} />
+              onHover={node => {
+                setHovered(node);
+                if (node) {
+                  setRevealHovered(count => count + 1);
+                }
+              }}
+              onReveal={node => {
+                setSelected(node);
+                setRevealSelected(count => count + 1);
+              }} />
           </div>
         </div>
 
+        <div className="designer-middle">
         {view === 'code' && (
           <div className="designer-code">
+            <div className="designer-code-bar">
+              <span>Editing</span>
+              <select
+                value={codeTarget || path}
+                title="The file in the editor"
+                onChange={event => switchCodeTarget(event.target.value)}>
+                <option value={path}>{path.substring(WEB_ROOT.length)}</option>
+                {sheets.map(sheet => (
+                  <option key={sheet} value={sheet}>{sheet.substring(WEB_ROOT.length)}</option>
+                ))}
+              </select>
+              {codeTarget !== '' && codeTarget !== path && (
+                <span className="designer-muted">the whole file, not just the designer's block</span>
+              )}
+            </div>
             <CodeEditor
-              key={path}
+              key={codeTarget || path}
               value={code}
               onChange={value => {
                 setCode(value);
                 setDirty(true);
               }}
-              mode={modeForFile(path)}
+              mode={modeForFile(codeTarget || path)}
               onSave={save} />
           </div>
         )}
@@ -947,6 +1155,8 @@ export default function WebDesigner() {
             hovered={hovered}
             version={version}
             inserting={pending !== null}
+            revealHovered={revealHovered}
+            revealSelected={revealSelected}
             note={shell
               ? 'This page draws nothing by itself — its interface is built by ' +
                 'JavaScript, which the canvas does not run. That is what makes ' +
@@ -968,7 +1178,46 @@ export default function WebDesigner() {
             onKey={onKey}
             hidden={view !== 'design'} />
 
-        <div className="designer-rail right">
+        {/*
+          * One prompt bar for the middle column, pointed at whatever is being
+          * edited: the file in the code view, the selected element in the
+          * design view. Not shown over Live, which is a real page on another
+          * origin and not ours to rewrite.
+          */}
+        {view === 'code' && (
+          <AiPrompt
+            key={'code:' + (codeTarget || path)}
+            fileType={(codeTarget || path).endsWith('.css') ? 'css' : 'html'}
+            getContext={() => aiContextForFile(codeTarget || path, code)}
+            getOldCode={() => code}
+            session={codeTarget || path}
+            onResult={value => {
+              setCode(value);
+              setDirty(true);
+            }}
+            onError={message => showToast(message, true)}
+            style={{ flexShrink: 0 }} />
+        )}
+        {view === 'design' && (styleTarget ? (
+          <AiPrompt
+            key="design"
+            fileType="html"
+            getContext={() => aiContextForFile(path, styleTarget.outerHTML)}
+            getOldCode={() => styleTarget.outerHTML}
+            session={path + ' element'}
+            onResult={rewriteSelected}
+            onError={message => showToast(message, true)}
+            style={{ flexShrink: 0 }} />
+        ) : (
+          <p className="designer-note" style={{ flexShrink: 0, padding: '0 2px' }}>
+            Select something on the canvas, and the Machine will change that.
+          </p>
+        ))}
+        </div>
+
+        <div
+          className="designer-rail right"
+          ref={node => node?.toggleAttribute('inert', view !== 'design')}>
           <Tabs
             tabs={[{ id: 'element', label: 'Element' }, { id: 'style', label: 'Style' }]}
             active={tab}

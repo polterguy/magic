@@ -3822,6 +3822,10 @@ tr.vss-irrelevant td {
 .designer-layers {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
+  /* Double clicking a row means "show me that"; it must not also start
+   * selecting the row's text the way a double click otherwise would. */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .designer-layer {
@@ -3905,16 +3909,61 @@ tr.vss-irrelevant td {
   z-index: 2;
 }
 
+/*
+ * What is under the pointer, or under the row being hovered in the tree.
+ *
+ * A fill as well as a border, because a hairline around a large region is easy
+ * to miss entirely — the point is to be able to find the thing. The colour is
+ * fixed rather than themed: it has to stand out against the page being
+ * designed, which may be any colour at all, not against the dashboard.
+ */
 .designer-outline.hover {
-  outline: 1px dashed var(--accent);
+  outline: 2px solid #588cff;
   outline-offset: -1px;
-  opacity: 0.7;
+  background: rgba(88, 140, 255, 0.22);
 }
 
+/* The name and size of what is outlined, like a browser inspector's badge. */
+.designer-tag {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background: #588cff;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.designer-tag em {
+  font-style: normal;
+  opacity: 0.75;
+}
+
+/*
+ * What the panels are acting on.
+ *
+ * Fixed colour with a light and a dark hairline either side of it, so the line
+ * is visible whatever the page behind it happens to be. This used to be drawn
+ * in the dashboard's --accent, which is near-black on the light theme — and
+ * therefore invisible against a dark page, which is most pages. An overlay
+ * sits on the user's page and must be legible against THAT, never against the
+ * dashboard around it.
+ */
 .designer-outline.selected {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #588cff;
   outline-offset: -1px;
-  box-shadow: 0 0 0 1px var(--scrim);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 0 2px rgba(0, 0, 0, 0.35);
 }
 
 .designer-drop {
@@ -4168,9 +4217,35 @@ tr.vss-irrelevant td {
   border-radius: var(--radius);
 }
 
+/*
+ * The file picker above the editor. It keeps its height whatever the editor
+ * does, and the note beside it only appears for a stylesheet.
+ */
+.designer-code-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.designer-code-bar select {
+  max-width: 320px;
+}
+
 .designer-code .cm-editor {
   flex: 1;
   min-height: 0;
+}
+
+/*
+ * The editor takes the room; the prompt bar under it keeps its own height.
+ * The waiter is full-screen and positioned, so it is not in this flow at all.
+ */
+.designer-code > form {
+  flex-shrink: 0;
 }
 
 /* A run of text in the tree — quoted and lighter, so it reads as content
@@ -4225,4 +4300,18 @@ tr.vss-irrelevant td {
 .designer-menu-heading:not(:first-child) {
   border-top: 1px solid var(--border);
   margin-top: 4px;
+}
+
+/* The middle column: whichever view is showing, with the prompt bar under it. */
+.designer-middle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* A rail that is not the thing being edited reads as switched off. */
+.designer-rail[inert] {
+  opacity: 0.45;
 }

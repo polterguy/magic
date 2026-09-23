@@ -1249,7 +1249,8 @@ export async function aiQuery(
     if (!response.ok) {
       await throwApiError(response);
     }
-    return await response.json();
+    const generated = await response.json();
+    return { ...generated, result: unfence(generated.result ?? '', fileType) };
   }
   /*
    * Only the OpenAI proxy takes a system message — it has no instruction of its
@@ -1265,7 +1266,8 @@ export async function aiQuery(
   if (session) {
     payload.append('session', session);
   }
-  return http.post<{ result: string }>('/magic/system/openai/chat', payload);
+  const answer = await http.post<{ result: string }>('/magic/system/openai/chat', payload);
+  return { ...answer, result: unfence(answer.result ?? '', fileType) };
 }
 
 /*
@@ -1281,18 +1283,58 @@ export async function aiQuery(
  * instruction of its own and no channel for existing code, so there the system
  * message stays the only place to put either.
  */
+/*
+ * The rule that has to be in EVERY system message for a code answer.
+ *
+ * Nothing else states it. The backend proxy supplies no system message of its
+ * own — whatever is sent here IS the whole instruction — and left to itself a
+ * model formats a code answer the way it formats a code answer: wrapped in a
+ * ```html fence with a sentence of explanation around it. That is then written
+ * into the file verbatim.
+ */
+const CODE_ONLY =
+  'You are a software developer AI assistant and you will return ONLY CODE! No ``` ' +
+  'characters, no markdown code fences, no explanations and no commentary before or ' +
+  'after — ONLY the raw code.';
+
+/*
+ * The system message for generating or changing a file.
+ *
+ * The rule above used to be attached only when the file was EMPTY, so every
+ * edit of existing code — which is almost every edit — went out with nothing
+ * but "change this", and came back fenced and explained. Both branches carry
+ * it now.
+ */
 export function aiContextForFile(path: string, content: string): string | undefined {
   if (path.endsWith('.hl')) {
     return undefined;
   }
   if (content.length > 0) {
-    return '\n\nChange or modify this code according to instructions in the next message:\n\n' +
+    return CODE_ONLY +
+      '\n\nChange or modify this code according to instructions in the next message:\n\n' +
       content;
   }
-  return 'You are a software developer AI assistant and you will return ONLY CODE! No ``` ' +
-    'characters, or explanations, ONLY the code! In the next message you will be given a ' +
-    'natural language query being a request from the user. Return only the RAW code that ' +
-    "solves the user' problem";
+  return CODE_ONLY + ' In the next message you will be given a natural language query ' +
+    'being a request from the user. Return only the RAW code that solves the user\u2019s problem.';
+}
+
+/*
+ * The code out of an answer that arrived wrapped in markdown anyway.
+ *
+ * A belt to the instruction's braces: the instruction is what should keep
+ * fences out, and this is what stops one reaching a file when it does not.
+ * Prose on either side of the fence goes with it, since a model that explains
+ * itself puts the explanation outside the block.
+ *
+ * Markdown is exempt, for the obvious reason that a fence in a markdown file
+ * is content rather than packaging.
+ */
+export function unfence(answer: string, fileType: string): string {
+  if (fileType === 'md' || fileType === 'markdown') {
+    return answer;
+  }
+  const fenced = /```[a-zA-Z0-9+#.-]*[ \t]*\r?\n?([\s\S]*?)```/.exec(answer);
+  return fenced ? fenced[1].replace(/\s+$/, '') : answer;
 }
 
 export interface OpenAiModel {

@@ -14,7 +14,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { DropSpot, findDropSpot } from './dropTarget';
-import { isText, nodeAtPoint, rectOf } from './nodes';
+import { elementOf, isText, labelOf, nodeAtPoint, rectOf } from './nodes';
 
 export interface CanvasProps {
   srcDoc: string;
@@ -27,6 +27,19 @@ export interface CanvasProps {
   version: number;
   // Whether a palette block is being dragged in from outside the frame.
   inserting: boolean;
+  /*
+   * Bumped when the hover came from the tree rather than the canvas, to bring
+   * the node on screen. Only from the tree: scrolling the page under a pointer
+   * that is already on the thing it is pointing at would be the tool moving
+   * the target away from you.
+   */
+  revealHovered: number;
+  /*
+   * Bumped when the tree is double-clicked. Unlike the hover reveal this is a
+   * deliberate "take me there", so it is smooth and centres the node rather
+   * than nudging it just inside the edge.
+   */
+  revealSelected: number;
   // Shown over the frame when there is a reason it looks empty.
   note: string | null;
   /*
@@ -330,6 +343,28 @@ export default function Canvas(props: CanvasProps) {
   }, [props.hidden]);
 
   /*
+   * Hovering a row in the tree brings that node into view, the way the
+   * elements panel of a browser's inspector does. Nearest rather than centre,
+   * so a node already on screen does not make the page jump.
+   */
+  useEffect(() => {
+    const node = propsRef.current.hovered;
+    if (!props.revealHovered || !node || !node.isConnected) {
+      return;
+    }
+    elementOf(node)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    remeasure();
+  }, [props.revealHovered]);
+
+  useEffect(() => {
+    const node = propsRef.current.selected;
+    if (!props.revealSelected || !node || !node.isConnected) {
+      return;
+    }
+    elementOf(node)?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+  }, [props.revealSelected]);
+
+  /*
    * A drag that leaves the frame still has to end, and a palette block is
    * dragged from outside the frame to begin with, so the pointer is followed
    * at the window level too.
@@ -418,7 +453,12 @@ export default function Canvas(props: CanvasProps) {
    */
   useLayoutEffect(() => {
     const next = {
-      hover: props.hovered && props.hovered !== props.selected ? outline(props.hovered) : null,
+      /*
+       * Drawn even when the thing under the pointer is the thing already
+       * selected. Suppressing it there meant that pointing at your own
+       * selection gave no feedback at all, and no badge to identify it by.
+       */
+      hover: outline(props.hovered),
       selected: outline(props.selected),
       spot: project(spotRef.current?.line ?? null),
     };
@@ -449,6 +489,23 @@ export default function Canvas(props: CanvasProps) {
         style={props.width ? { width: props.width } : undefined} />
       {props.note && <p className="designer-canvas-note">{props.note}</p>}
       {boxes.hover && <div className="designer-outline hover" style={boxes.hover} />}
+      {/*
+        * The badge naming what is outlined, and how big it is — the one part
+        * of a browser inspector that turns an outline into an identification.
+        * It sits above the element, or inside the top when there is no room
+        * above, so it is never cut off at the top of the canvas.
+        */}
+      {boxes.hover && props.hovered && (
+        <span
+          className="designer-tag"
+          style={{
+            left: boxes.hover.left,
+            top: boxes.hover.top >= 22 ? boxes.hover.top - 22 : boxes.hover.top + 2,
+          }}>
+          {labelOf(props.hovered)}
+          <em>{Math.round(boxes.hover.width)} × {Math.round(boxes.hover.height)}</em>
+        </span>
+      )}
       {boxes.selected && <div className="designer-outline selected" style={boxes.selected} />}
       {boxes.spot && (
         <div

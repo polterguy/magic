@@ -8,7 +8,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { tokenExpiration, tokenExpired, tokenRoles, tokenUsername, isRootToken } from './backend';
-import { moduleNameFromZip, modelPriceLabel } from './api';
+import { moduleNameFromZip, modelPriceLabel, unfence, aiContextForFile } from './api';
 
 /*
  * Builds an unsigned JWT-shaped token. These helpers only decode the payload,
@@ -105,5 +105,73 @@ describe('modelPriceLabel', () => {
   it('formats known prices per million tokens', () => {
     expect(modelPriceLabel({ input_price: 2.5, output_price: 15 }))
       .toBe('  ·  $2.50 in / $15.00 out per 1M');
+  });
+});
+
+/*
+ * The model is told not to fence its answers, and mostly does not. This is
+ * what keeps a stray ```html out of somebody's page when it does.
+ */
+describe('unfence', () => {
+  it('takes the code out of a fenced answer', () => {
+    expect(unfence('```html\n<h1>Hi</h1>\n```', 'html')).toBe('<h1>Hi</h1>');
+  });
+
+  it('handles a fence with no language tag', () => {
+    expect(unfence('```\n<h1>Hi</h1>\n```', 'html')).toBe('<h1>Hi</h1>');
+  });
+
+  it('drops explanation before and after the fence', () => {
+    const answer = 'Sure! Here is the updated markup:\n\n```html\n<h1>Hi</h1>\n```\n\n' +
+      'Let me know if you would like anything else.';
+    expect(unfence(answer, 'html')).toBe('<h1>Hi</h1>');
+  });
+
+  it('handles a fence with the code on the same line', () => {
+    expect(unfence('```<h1>Hi</h1>```', 'html')).toBe('<h1>Hi</h1>');
+  });
+
+  it('keeps indentation inside the block', () => {
+    expect(unfence('```html\n<div>\n  <p>Hi</p>\n</div>\n```', 'html'))
+      .toBe('<div>\n  <p>Hi</p>\n</div>');
+  });
+
+  it('leaves an unfenced answer exactly as it came', () => {
+    const raw = '<h1>Hi</h1>\n<p>There</p>\n';
+    expect(unfence(raw, 'html')).toBe(raw);
+  });
+
+  it('leaves markdown alone, where a fence is content and not packaging', () => {
+    const doc = '# Title\n\n```js\nconst x = 1;\n```\n';
+    expect(unfence(doc, 'md')).toBe(doc);
+  });
+
+  it('works for the other languages the editor generates', () => {
+    expect(unfence('```sql\nselect 1\n```', 'sql')).toBe('select 1');
+    expect(unfence('```css\n.a { color: red }\n```', 'css')).toBe('.a { color: red }');
+  });
+});
+
+/*
+ * The instruction that stops the fences arriving in the first place. It used
+ * to be attached only to an EMPTY file, so every edit of existing code went
+ * out without it.
+ */
+describe('aiContextForFile', () => {
+  it('forbids fences when changing existing code', () => {
+    const context = aiContextForFile('/etc/www/x.html', '<h1>Hi</h1>')!;
+    expect(context).toContain('ONLY CODE');
+    expect(context).toContain('no markdown code fences');
+    expect(context).toContain('<h1>Hi</h1>');
+  });
+
+  it('forbids them for an empty file too', () => {
+    const context = aiContextForFile('/etc/www/x.html', '')!;
+    expect(context).toContain('ONLY CODE');
+    expect(context).toContain('no markdown code fences');
+  });
+
+  it('sends no system message for Hyperlambda, which has its own', () => {
+    expect(aiContextForFile('/modules/x.hl', 'foo')).toBeUndefined();
   });
 });
