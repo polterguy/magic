@@ -38,9 +38,9 @@ import Styles, { INLINE } from './designer/Styles';
 import { Block, GROUPS, customBlock } from './designer/palette';
 import { DropSpot } from './designer/dropTarget';
 import { liveSandbox, prepareDocument, serializeDocument } from './designer/html';
-import { designableChildren, elementOf, isText, nodeAt, pathTo, writeText } from './designer/nodes';
+import { designableChildren, elementOf, isText, labelOf, nodeAt, pathTo, writeText } from './designer/nodes';
 import { canContainChildren } from './designer/html';
-import { Overrides, joinCss, overrideCss, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
+import { Overrides, joinCss, overrideCss, ownStylesheet, scriptPaths, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
 
 const WEB_ROOT = '/etc/www';
 
@@ -59,10 +59,20 @@ const VIEWPORTS: { id: string; label: string; width: number | null }[] = [
   { id: 'phone', label: 'Phone', width: 390 },
 ];
 
-// One snapshot of everything an undo has to put back.
+/*
+ * One snapshot of everything an undo has to put back, and which revision of
+ * the page it is.
+ *
+ * The revision is what makes the Save button honest. Every change mints a new
+ * one and saving remembers it, so stepping back to the revision that was last
+ * written means there is nothing to write — the file on disk already says
+ * this. Comparing the document to the file instead would mean serialising it
+ * on every keystroke to answer a question a counter answers exactly.
+ */
 interface Snapshot {
   html: string;
   overrides: Overrides;
+  revision: number;
 }
 
 /*
@@ -133,6 +143,17 @@ export default function WebDesigner() {
   const [codeOriginal, setCodeOriginal] = useState('');
   // Which file the code view holds. The page itself unless a stylesheet was picked.
   const [codeTarget, setCodeTarget] = useState('');
+  /*
+   * The last text the app itself put in the editor. Anything else means the
+   * user has typed since, which is the difference between "this can be
+   * refreshed" and "these are two versions that have to be reconciled".
+   */
+  const codeSetRef = useRef('');
+
+  function applyCode(value: string) {
+    codeSetRef.current = value;
+    setCode(value);
+  }
   // Which picker is open, if any — images, video or audio.
   /*
    * The open picker, and what it is picking for. Without a [home] it is the
@@ -144,6 +165,8 @@ export default function WebDesigner() {
     useState<{ kind: MediaKind; home?: Home } | null>(null);
   // Every local stylesheet this page links that is actually on disk.
   const [sheets, setSheets] = useState<string[]>([]);
+  // Every local script this page runs, readable in the code view beside it.
+  const [scripts, setScripts] = useState<string[]>([]);
   const [viewport, setViewport] = useState('desktop');
   // The palette block being dragged in. Its markup is not built until it
   // lands, because what it should look like depends on where it lands.
@@ -160,6 +183,10 @@ export default function WebDesigner() {
    * the branch you stepped out of stops being reachable.
    */
   const [future, setFuture] = useState<Snapshot[]>([]);
+  // Which revision the document holds, and which one reached the disk.
+  const revisionRef = useRef(0);
+  const savedRevisionRef = useRef(0);
+  const revisionsRef = useRef(0);
 
   // The stylesheet the open page is styled by, as it was read and as it stands.
   const [cssPath, setCssPath] = useState<string | null>(null);
@@ -255,12 +282,17 @@ export default function WebDesigner() {
       setHovered(null);
       setHistory([]);
       setFuture([]);
+      revisionRef.current = 0;
+      savedRevisionRef.current = 0;
+      revisionsRef.current = 0;
+      savedRevisionRef.current = revisionRef.current;
       setDirty(false);
       setStale(false);
       setTarget(INLINE);
       setShell(false);
       setCodeTarget('');
       setSheets([]);
+      setScripts([]);
       setCssPath(null);
       setCssOriginal('');
       setCssHead('');
@@ -329,7 +361,7 @@ export default function WebDesigner() {
     setVersion(current => current + 1);
     // Reloading the page underneath the code view has to refresh its text too.
     if (viewRef.current === 'code') {
-      setCode(serializeDocument(loaded));
+      applyCode(serializeDocument(loaded));
     }
     /*
      * Whether anything at all renders without scripts. Asked of the document
@@ -351,7 +383,19 @@ export default function WebDesigner() {
         if (readable.length === 1) {
           const split = splitCss(text);
           setCssPath(sheet);
-          setCssOriginal(text);
+          /*
+           * The baseline is what this file would be written as, NOT the text
+           * it was read as. The block is parsed by the browser's own CSS
+           * engine, which normalises what it reads — a colour written
+           * #57c77e comes back as rgb(87, 199, 126) — so comparing a
+           * re-emitted block against the original text reports a change on
+           * every page that has one, before anybody has touched anything.
+           *
+           * Comparing like with like makes "has this changed" mean what it
+           * says. The cost is that the first real save also normalises the
+           * block, which is a region that announces it gets rewritten.
+           */
+          setCssOriginal(joinCss(split.head, split.overrides, split.tail));
           setCssHead(split.head);
           setCssTail(split.tail);
           setOverrides(split.overrides);
@@ -362,6 +406,22 @@ export default function WebDesigner() {
     }
     setSheets(readable);
     setCssMissing(readable.length === 0 ? absent : []);
+
+    /*
+     * Scripts are listed to be read as much as edited, so only the ones
+     * actually on this cloudlet are offered — the rest cannot be fetched
+     * through the file API whatever their tag says.
+     */
+    const running: string[] = [];
+    for (const script of scriptPaths(loaded, loaded.baseURI)) {
+      try {
+        await loadFile(script);
+        running.push(script);
+      } catch {
+        // Linked but not here. A visitor gets nothing from it either.
+      }
+    }
+    setScripts(running);
   }
 
   /*
@@ -381,19 +441,28 @@ export default function WebDesigner() {
       showToast('Save your changes before switching file', true);
       return;
     }
-    if (file !== path && file === cssPath && joinCss(cssHead, overrides, cssTail) !== cssOriginal) {
-      showToast('Save first — the Style panel has changes that are not in ' + file + ' yet', true);
-      return;
-    }
     const current = docRef.current;
     if (!current) {
       return;
     }
     setBusy(true);
     try {
-      const text = file === path ? serializeDocument(current) : await loadFile(file);
+      /*
+       * Two of these files are not read from disk, because disk is not where
+       * they currently live. The page is the document in the canvas, and the
+       * stylesheet the Style panel writes into is whatever that panel has
+       * made of it — opening either from disk would show an older version and
+       * then save it back over the newer one.
+       *
+       * Any other stylesheet, and every script, is exactly its file.
+       */
+      const text = file === path
+        ? serializeDocument(current)
+        : file === cssPath
+          ? joinCss(cssHead, overrides, cssTail)
+          : await loadFile(file);
       setCodeTarget(file);
-      setCode(text);
+      applyCode(text);
       setCodeOriginal(text);
     } catch (err: any) {
       showToast(err.message, true);
@@ -440,13 +509,42 @@ export default function WebDesigner() {
       }
     }
     const current = docRef.current;
+    /*
+     * Leaving the code view with hand-edited CSS feeds it back the other way,
+     * so the Style panel is looking at the same stylesheet you were just
+     * typing into rather than at what was on disk when the page opened.
+     *
+     * The text is then replaced by what the split produces, because the two
+     * have to agree: the browser's CSS engine normalises the block on the way
+     * in, and leaving the editor holding the un-normalised version would make
+     * the next trip back look like a conflict when nothing has conflicted.
+     * Only the fenced block changes shape — everything above and below it is
+     * carried as raw text and comes back exactly as typed.
+     *
+     * Not recorded in the undo history, and deliberately so: head and tail
+     * are not part of a snapshot, so a half-undo would leave the block and
+     * the author's CSS describing different moments. Saving behaves the same
+     * way for the same reason.
+     */
+    if (view === 'code' && next !== 'code' && cssPath &&
+        codeTarget === cssPath && code !== codeOriginal) {
+      const split = splitCss(code);
+      setCssHead(split.head);
+      setCssTail(split.tail);
+      setOverrides(split.overrides);
+      applyCode(joinCss(split.head, split.overrides, split.tail));
+    }
     if (view === 'code' && codeTarget === path && code !== codeOriginal) {
       if (current) {
-        setHistory(stack => [
-          ...stack.slice(-(HISTORY - 1)),
-          { html: current.documentElement.innerHTML, overrides },
-        ]);
+        const before: Snapshot = {
+          html: current.documentElement.innerHTML,
+          overrides,
+          revision: revisionRef.current,
+        };
+        setHistory(stack => [...stack.slice(-(HISTORY - 1)), before]);
       }
+      // Typing in the code view changed the file, so this is a new revision.
+      revisionRef.current = ++revisionsRef.current;
       setSrcDoc(prepareDocument(code, origin + canonicalUrl(path)));
       setSelected(null);
       setHovered(null);
@@ -460,8 +558,37 @@ export default function WebDesigner() {
     if (next === 'code' && current && (codeTarget === '' || codeTarget === path)) {
       const text = serializeDocument(current);
       setCodeTarget(path);
-      setCode(text);
+      applyCode(text);
       setCodeOriginal(text);
+    } else if (next === 'code' && cssPath && codeTarget === cssPath) {
+      /*
+       * The stylesheet is already open, and the Style panel may have written
+       * rules since it was loaded. What the editor holds would then be the
+       * file WITHOUT them — and saving from here writes what the editor
+       * holds, so those rules would disappear without anybody being told.
+       *
+       * So the text is brought up to date: the code view shows the file as it
+       * would be written, which is what it claims to show everywhere else.
+       * Only when the editor also has hand edits is there a real conflict,
+       * and that is the one case worth interrupting for, because saving then
+       * genuinely has to choose between two versions.
+       */
+      const joined = joinCss(cssHead, overrides, cssTail);
+      if (code === codeSetRef.current) {
+        /*
+         * Nothing has been typed since the app last filled the editor, so
+         * whatever differs is the Style panel's doing and the text can simply
+         * catch up. Only text the user wrote themselves is worth protecting.
+         */
+        applyCode(joined);
+        if (code === codeOriginal) {
+          setCodeOriginal(joined);
+        }
+      } else if (joined !== code) {
+        showToast(
+          'The Style panel has changes this editor does not. Saving here writes what ' +
+          'you see and drops them — save from the design view first to keep both.', true);
+      }
     }
     setView(next);
   }
@@ -513,9 +640,14 @@ export default function WebDesigner() {
        * document holds the very state this snapshot exists to undo. Capturing
        * the string here pins it to the moment before anything moved.
        */
-      const before: Snapshot = { html: current.documentElement.innerHTML, overrides };
+      const before: Snapshot = {
+        html: current.documentElement.innerHTML,
+        overrides,
+        revision: revisionRef.current,
+      };
       setHistory(stack => [...stack.slice(-(HISTORY - 1)), before]);
     }
+    revisionRef.current = ++revisionsRef.current;
     coalesceRef.current = coalesce ?? null;
     setFuture([]);
     change();
@@ -535,7 +667,11 @@ export default function WebDesigner() {
      * longer in the document.
      */
     // Captured before restore() replaces it, for the reason given in mutate().
-    const undone: Snapshot = { html: current.documentElement.innerHTML, overrides };
+    const undone: Snapshot = {
+      html: current.documentElement.innerHTML,
+      overrides,
+      revision: revisionRef.current,
+    };
     setFuture(stack => [...stack, undone]);
     restore(snapshot);
     setHistory(stack => stack.slice(0, -1));
@@ -552,7 +688,11 @@ export default function WebDesigner() {
     if (!current || !snapshot) {
       return;
     }
-    const redone: Snapshot = { html: current.documentElement.innerHTML, overrides };
+    const redone: Snapshot = {
+      html: current.documentElement.innerHTML,
+      overrides,
+      revision: revisionRef.current,
+    };
     setHistory(stack => [...stack.slice(-(HISTORY - 1)), redone]);
     restore(snapshot);
     setFuture(stack => stack.slice(0, -1));
@@ -577,7 +717,12 @@ export default function WebDesigner() {
     setSelected(where ? nodeAt(current.documentElement, where) : null);
     setHovered(null);
     coalesceRef.current = null;
-    setDirty(true);
+    revisionRef.current = snapshot.revision;
+    /*
+     * Stepping back to what was last saved leaves nothing to save. Undoing
+     * past that point, or forward again, makes it dirty once more.
+     */
+    setDirty(snapshot.revision !== savedRevisionRef.current);
     setVersion(value => value + 1);
   }
 
@@ -795,6 +940,92 @@ export default function WebDesigner() {
     });
   }
 
+  /*
+   * Copy, cut and paste, through localStorage rather than the system
+   * clipboard.
+   *
+   * What is copied is markup, and markup is what the tool already speaks —
+   * no sanitising, no permission prompt, no guessing what a word processor
+   * meant by its inline styles. localStorage rather than a variable because
+   * the case that matters is copying from one page and pasting into another,
+   * which survives the reload in between and works across dashboard tabs.
+   */
+  const clipKey = 'magic2.designer.clipboard.' + (backend?.url ?? '');
+
+  function copy() {
+    const node = selected;
+    if (!node) {
+      return;
+    }
+    const html = isText(node) ? (node.textContent ?? '') : (node as Element).outerHTML;
+    localStorage.setItem(clipKey, JSON.stringify({ html, isText: isText(node) }));
+    showToast('Copied ' + labelOf(node));
+  }
+
+  function cut() {
+    if (selected) {
+      copy();
+      remove();
+    }
+  }
+
+  /*
+   * Where a paste lands: inside the selection when it is an empty container,
+   * after it otherwise. The same rule the panel uses to decide whether words
+   * can go back into an element, so the two behave alike.
+   *
+   * An id that the destination already carries is dropped, because two
+   * elements answering to one name break the page's own CSS. An id that is
+   * free here is kept — pasting into a different page should not cost you
+   * the anchor you were linking to.
+   */
+  function paste() {
+    const current = docRef.current;
+    if (!current) {
+      return;
+    }
+    const stored = localStorage.getItem(clipKey);
+    if (!stored) {
+      showToast('Nothing has been copied yet', true);
+      return;
+    }
+    const { html, isText: wasText } = JSON.parse(stored) as { html: string; isText: boolean };
+    const holder = current.createElement('template');
+    if (wasText) {
+      holder.content.appendChild(current.createTextNode(html));
+    } else {
+      holder.innerHTML = html;
+    }
+    const nodes = Array.from(holder.content.childNodes);
+    if (nodes.length === 0) {
+      return;
+    }
+    nodes.forEach(node => {
+      if (isText(node)) {
+        return;
+      }
+      const element = node as Element;
+      [element, ...Array.from(element.querySelectorAll('[id]'))].forEach(one => {
+        const id = one.getAttribute('id');
+        if (id && current.getElementById(id)) {
+          one.removeAttribute('id');
+        }
+      });
+    });
+    const into = elementOf(selected);
+    mutate(() => {
+      if (!selected || !into) {
+        current.body.append(...nodes);
+      } else if (into === selected && canContainChildren(into) &&
+                 designableChildren(into).length === 0) {
+        into.append(...nodes);
+      } else {
+        (selected as ChildNode).after(...nodes);
+      }
+      setSelected(nodes[0]);
+    });
+  }
+
   function remove() {
     const node = selected;
     if (!node || node === doc?.body) {
@@ -906,6 +1137,53 @@ export default function WebDesigner() {
     });
   }
 
+  /*
+   * Drops a rule from the block entirely.
+   *
+   * Clearing its properties one at a time leaves the selector behind holding
+   * nothing, which then has to be written out and read back as an empty rule
+   * forever. This takes the whole entry away.
+   */
+  function removeRule(selector: string) {
+    mutate(() => setOverrides(current => {
+      const next = { ...current };
+      delete next[selector];
+      return next;
+    }));
+    if (target === selector) {
+      setTarget(INLINE);
+    }
+  }
+
+  /*
+   * Opening a rule from the list.
+   *
+   * Setting the target alone is not enough: the panel keeps the target only
+   * while the selection actually matches it, since every value it shows is
+   * read off the selected element. So this moves the selection to something
+   * the rule applies to first, and the rule then opens with real values in
+   * it. A rule matching nothing left on the page can still be deleted — it
+   * just cannot be edited, because there is nothing to show it against.
+   */
+  function editRule(selector: string) {
+    const current = docRef.current;
+    if (!current) {
+      return;
+    }
+    let element: Element | null = null;
+    try {
+      element = current.body.querySelector(selector);
+    } catch {
+      element = null;
+    }
+    if (!element) {
+      showToast('Nothing on this page matches ' + selector + ' any more', true);
+      return;
+    }
+    setSelected(element);
+    setTarget(selector);
+  }
+
   function setStyle(property: string, value: string) {
     const element = styleTarget;
     if (!element) {
@@ -941,6 +1219,18 @@ export default function WebDesigner() {
       ?.querySelector('style[data-magic-overrides]')
       ?.replaceChildren(overrideCss(overrides));
   }, [overrides, version]);
+
+  /*
+   * And the sheet the designer owns is the only place the block lives, so that
+   * taking a rule out of it takes it off the page. Re-run whenever the
+   * author's half changes too, because editing the file as text is a way of
+   * changing both halves at once.
+   */
+  useEffect(() => {
+    if (docRef.current && cssPath) {
+      ownStylesheet(docRef.current, cssPath, cssHead, cssTail);
+    }
+  }, [cssPath, cssHead, cssTail, version]);
 
   /*
    * Forces every element the page hides to render, so it can be designed.
@@ -1018,19 +1308,23 @@ export default function WebDesigner() {
    * designer injects it live, and not in Live, not in a new tab, and not for a
    * visitor. The page asks for a different URL, so the browser has to fetch it.
    */
-  function bumpStylesheet(current: Document, sheet: string) {
-    const link = Array.from(current.querySelectorAll('link[rel~="stylesheet"][href]'))
-      .find(candidate => {
-        const href = candidate.getAttribute('href') ?? '';
-        return '/etc/www' + new URL(href, current.baseURI).pathname === sheet;
-      });
-    if (!link) {
+  function bumpAsset(current: Document, file: string) {
+    const candidates: [Element, string][] = [
+      ...Array.from(current.querySelectorAll('link[rel~="stylesheet"][href]'))
+        .map(element => [element, 'href'] as [Element, string]),
+      ...Array.from(current.querySelectorAll('script[src]'))
+        .map(element => [element, 'src'] as [Element, string]),
+    ];
+    const found = candidates.find(([element, attribute]) =>
+      WEB_ROOT + new URL(element.getAttribute(attribute) ?? '', current.baseURI).pathname === file);
+    if (!found) {
       return;
     }
-    const url = new URL(link.getAttribute('href')!, current.baseURI);
+    const [element, attribute] = found;
+    const url = new URL(element.getAttribute(attribute)!, current.baseURI);
     const version = Number(url.searchParams.get('v'));
     url.searchParams.set('v', String(Number.isFinite(version) && version > 0 ? version + 1 : 1));
-    link.setAttribute('href', url.pathname + url.search);
+    element.setAttribute(attribute, url.pathname + url.search);
   }
 
 
@@ -1043,14 +1337,15 @@ export default function WebDesigner() {
     setSaving(true);
     try {
       /*
-       * A stylesheet open in the code view IS that file, whole — not the
-       * designer's block within it. It is written as typed, the page is
-       * written too because its link had to be bumped for anyone to see the
-       * change, and the style panel re-reads the result so the two agree
-       * again straight away.
+       * A linked file open in the code view — a stylesheet or a script — IS
+       * that file, whole. It is written as typed, and the page is written
+       * with it because the tag pointing at it had its version bumped, which
+       * is the only reason anyone's browser will fetch the new copy. When the
+       * file happens to be the one the Style panel writes into, the panel
+       * re-reads the result so the two agree again straight away.
        */
       if (view === 'code' && codeTarget !== '' && codeTarget !== path) {
-        bumpStylesheet(current, codeTarget);
+        bumpAsset(current, codeTarget);
         await saveFile(path, serializeDocument(current));
         await saveFile(codeTarget, code);
         setCodeOriginal(code);
@@ -1061,7 +1356,8 @@ export default function WebDesigner() {
           setCssTail(split.tail);
           setOverrides(split.overrides);
         }
-        setDirty(false);
+        savedRevisionRef.current = revisionRef.current;
+      setDirty(false);
         showToast('Saved ' + codeTarget);
         return true;
       }
@@ -1073,7 +1369,7 @@ export default function WebDesigner() {
        * user owns it, so nothing is rewritten underneath them there.
        */
       if (cssChanged && view !== 'code') {
-        bumpStylesheet(current, cssPath!);
+        bumpAsset(current, cssPath!);
       }
       /*
        * In the code view what is on screen IS the file, so it is written
@@ -1087,10 +1383,11 @@ export default function WebDesigner() {
         // The code view may be holding this same file — move its draft onto
         // what was just written, or it would offer to save the old text back.
         if (codeTarget === cssPath) {
-          setCode(css);
+          applyCode(css);
           setCodeOriginal(css);
         }
       }
+      savedRevisionRef.current = revisionRef.current;
       setDirty(false);
       showToast('Saved ' + path);
       return true;
@@ -1116,6 +1413,15 @@ export default function WebDesigner() {
       remove();
     } else if (event.key === 'Escape') {
       setSelected(null);
+    } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'c') {
+      event.preventDefault();
+      copy();
+    } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'x') {
+      event.preventDefault();
+      cut();
+    } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'v') {
+      event.preventDefault();
+      paste();
     } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
       event.preventDefault();
       // Shift is redo, as it is in every editor.
@@ -1382,12 +1688,15 @@ export default function WebDesigner() {
                 title="The file in the editor"
                 onChange={event => switchCodeTarget(event.target.value)}>
                 <option value={path}>{path.substring(WEB_ROOT.length)}</option>
-                {sheets.map(sheet => (
-                  <option key={sheet} value={sheet}>{sheet.substring(WEB_ROOT.length)}</option>
+                {[...sheets, ...scripts].map(file => (
+                  <option key={file} value={file}>{file.substring(WEB_ROOT.length)}</option>
                 ))}
               </select>
-              {codeTarget !== '' && codeTarget !== path && (
+              {codeTarget !== '' && codeTarget === cssPath && (
                 <span className="designer-muted">the whole file, not just the designer's block</span>
+              )}
+              {codeTarget !== '' && scripts.includes(codeTarget) && (
+                <span className="designer-muted">runs in Live view, never on the design canvas</span>
               )}
             </div>
             <CodeEditor
@@ -1450,6 +1759,12 @@ export default function WebDesigner() {
                 'yours to edit in Hyper IDE.'
               : null}
             onReady={onReady}
+            /*
+             * Only while the Style tab is showing a stylesheet selector.
+             * Outlining matches when nobody is choosing one would be noise
+             * over the page rather than an answer to a question.
+             */
+            highlight={tab === 'style' && target !== INLINE ? target : ''}
             onHover={setHovered}
             onSelect={setSelected}
             onMove={move}
@@ -1546,7 +1861,18 @@ export default function WebDesigner() {
               doc={doc}
               urls={pages.map(canonicalUrl)}
               version={version}
-              onSelect={setSelected} />
+              /*
+               * Selecting is not enough when the finding is four screens
+               * down: the canvas is brought to it as well, the same way a
+               * double click in the tree does. Only while the design view is
+               * showing, since there is nothing to scroll otherwise.
+               */
+              onSelect={node => {
+                setSelected(node);
+                if (view === 'design') {
+                  setRevealSelected(value => value + 1);
+                }
+              }} />
           ) : (
             <Styles
               element={styleTarget}
@@ -1558,7 +1884,9 @@ export default function WebDesigner() {
               stylesheet={cssPath}
               missing={cssMissing}
               onTarget={setTarget}
-              onSet={setStyle} />
+              onSet={setStyle}
+              onEditRule={editRule}
+              onRemoveRule={removeRule} />
           )}
         </div>
       </div>

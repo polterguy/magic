@@ -14,6 +14,8 @@
  * block wins, with no !important anywhere.
  */
 
+import { TOOL_ATTRIBUTE } from './html';
+
 /*
  * The block is fenced at BOTH ends. Only what lies between the markers belongs
  * to the designer; everything above the opening one and below the closing one
@@ -70,9 +72,28 @@ export type Overrides = Record<string, Record<string, string>>;
  * this cloudlet. The caller reads down the list until one is actually there.
  */
 export function stylesheetPaths(doc: Document, origin: string): string[] {
+  return linkedPaths(doc, origin, 'link[rel~="stylesheet"][href]', 'href');
+}
+
+/*
+ * The same question asked of scripts.
+ *
+ * Worth being able to read, and not only to edit: the design canvas never
+ * runs a page's JavaScript, but the Live view does, and what runs there is
+ * exactly these files. Having them in the same dropdown as the markup means
+ * you can read what is about to execute before you execute it — which is only
+ * a complete answer for scripts that live here. One loaded from somebody
+ * else's server is not in this list, because it is not ours to read.
+ */
+export function scriptPaths(doc: Document, origin: string): string[] {
+  return linkedPaths(doc, origin, 'script[src]', 'src');
+}
+
+// Files a page links that live on this cloudlet, as paths under the web root.
+function linkedPaths(doc: Document, origin: string, selector: string, attribute: string) {
   const here = new URL(origin).origin;
-  return Array.from(doc.querySelectorAll('link[rel~="stylesheet"][href]'))
-    .map(link => new URL(link.getAttribute('href') ?? '', origin))
+  return Array.from(doc.querySelectorAll(selector))
+    .map(element => new URL(element.getAttribute(attribute) ?? '', origin))
     .filter(url => url.origin === here)
     .map(url => '/etc/www' + url.pathname);
 }
@@ -114,6 +135,83 @@ export function matchingSelectors(css: string, element: Element): string[] {
     }
   }
   return found;
+}
+
+/*
+ * Addresses inside a stylesheet, made absolute against the file it was read
+ * from.
+ *
+ * The author's CSS is about to be moved out of its own file and into the
+ * document, and a relative address means different things in the two places:
+ * in the file it is relative to the stylesheet, in the document it is relative
+ * to the page. Same text, different image. Anything already carrying a scheme,
+ * rooted at the site, or pointing at a fragment already means one thing in
+ * both places and is left alone.
+ */
+const ABSOLUTE = /^(?:[a-z][a-z0-9+.-]*:|[/#])/i;
+
+function resolve(address: string, href: string) {
+  return ABSOLUTE.test(address) ? address : new URL(address, href).href;
+}
+
+export function absoluteUrls(css: string, href: string): string {
+  return css
+    .replace(/\burl\(\s*(['"]?)([^'")]+)\1\s*\)/gi,
+      (whole, quote, address) => ABSOLUTE.test(address)
+        ? whole
+        : 'url(' + quote + resolve(address, href) + quote + ')')
+    .replace(/@import\s+(['"])([^'"]+)\1/gi,
+      (whole, quote, address) => ABSOLUTE.test(address)
+        ? whole
+        : '@import ' + quote + resolve(address, href) + quote);
+}
+
+/*
+ * Hands the stylesheet the designer edits over to the designer, so that what
+ * the panel holds is the whole truth about it.
+ *
+ * While a page is being edited the block exists twice: once in the file the
+ * canvas linked, as it was last saved, and once in the style element the
+ * designer injects from what the panel currently holds. Adding and changing
+ * rules works anyway, because the injected copy comes later and wins. Removing
+ * one does not — the saved copy is still there, still applying, and the change
+ * reads as having been ignored.
+ *
+ * Deleting the saved copy out of the live sheet would be the small fix, and it
+ * is not available: the dashboard is usually served from somewhere other than
+ * the cloudlet, which makes the sheet cross-origin and its rules unreadable.
+ * So the link is switched off instead and the author's own CSS — everything
+ * above and below the fence — is put back into the document in its place, at
+ * the link's position so that every other stylesheet still cascades against it
+ * in the same order. The injected block is then the only copy of the block
+ * there is.
+ *
+ * The link is left in the document rather than removed, disabled and marked,
+ * because it belongs to the file: serializing puts it back exactly as the
+ * author wrote it.
+ */
+export function ownStylesheet(doc: Document, file: string, head: string, tail: string) {
+  const link = Array.from(doc.querySelectorAll('link[rel~="stylesheet"][href]'))
+    .find(candidate => {
+      try {
+        return '/etc/www' + new URL((candidate as HTMLLinkElement).href).pathname === file;
+      } catch {
+        return false;
+      }
+    }) as HTMLLinkElement | undefined;
+  if (!link) {
+    return;
+  }
+  link.setAttribute('data-magic-disabled', '');
+  link.disabled = true;
+
+  const next = link.nextElementSibling;
+  const author = next?.hasAttribute('data-magic-author')
+    ? next
+    : link.insertAdjacentElement('afterend', doc.createElement('style'))!;
+  author.setAttribute(TOOL_ATTRIBUTE, '');
+  author.setAttribute('data-magic-author', '');
+  author.textContent = absoluteUrls(head + '\n' + tail, link.href);
 }
 
 /*

@@ -17,6 +17,7 @@
  */
 
 import { useState } from 'react';
+import { TrashIcon } from '../../components/Icons';
 import { Overrides } from './css';
 import { STYLE_GROUPS, toHexColor } from './properties';
 
@@ -59,6 +60,10 @@ export default function Styles(props: {
   missing: string[];
   onTarget: (target: string) => void;
   onSet: (property: string, value: string) => void;
+  // Opens a rule, moving the selection to something it applies to.
+  onEditRule: (selector: string) => void;
+  // Drops a whole rule from the block, not one property at a time.
+  onRemoveRule: (selector: string) => void;
 }) {
 
   /*
@@ -95,24 +100,35 @@ export default function Styles(props: {
    * Leaving the field is what commits it. An invalid value stays in the field,
    * marked, and is not applied — the page is never changed to something other
    * than what was asked for.
+   *
+   * A value that lands leaves the draft. The draft is only ever text that has
+   * not reached the rule yet, and keeping a committed value in it would make
+   * this field the one place still describing it: delete the rule by hand in
+   * the code view, come back, and the field would go on showing what you
+   * typed an hour ago against a rule that no longer exists.
    */
   function commit(property: string) {
     if (!(property in typed)) {
       return;
     }
     const value = typed[property];
-    if (isValid(property, value)) {
-      update(typed, invalid.filter(name => name !== property));
-      props.onSet(property, value.trim());
-    } else if (!invalid.includes(property)) {
-      update(typed, [...invalid, property]);
+    if (!isValid(property, value)) {
+      if (!invalid.includes(property)) {
+        update(typed, [...invalid, property]);
+      }
+      return;
     }
+    const rest = { ...typed };
+    delete rest[property];
+    update(rest, invalid.filter(name => name !== property));
+    props.onSet(property, value.trim());
   }
 
   // A menu or a colour picker cannot produce an invalid value, so it applies
-  // as soon as it changes — there is nothing to wait for.
+  // as soon as it changes — there is nothing to wait for, and so nothing to
+  // hold in the draft either.
   function pick(property: string, value: string) {
-    update({ ...typed, [property]: value }, invalid.filter(name => name !== property));
+    update(typed, invalid.filter(name => name !== property));
     props.onSet(property, value);
   }
 
@@ -140,6 +156,10 @@ export default function Styles(props: {
   function resolved(property: string) {
     return computed?.getPropertyValue(property) ?? '';
   }
+
+  // Rules with something in them. An emptied one is not worth listing.
+  const rules = Object.entries(props.overrides)
+    .filter(([, values]) => Object.keys(values).length > 0);
 
   return (
     <div className="designer-fields">
@@ -260,6 +280,36 @@ export default function Styles(props: {
           })}
         </details>
       ))}
+
+      {/*
+        * Everything this page has been given a rule for, which is otherwise
+        * invisible: the panel shows one selector at a time, so a rule written
+        * ten minutes ago cannot be found again unless you happen to select
+        * something it matches. Clearing properties one by one also leaves an
+        * empty rule behind, and this is the only way to take one away whole.
+        */}
+      {rules.length > 0 && (
+        <div className="designer-field">
+          <span>Rules on this page</span>
+          {rules.map(([selector, values]) => (
+            <div className="designer-rule" key={selector}>
+              <button
+                className={'designer-rule-name' + (selector === props.target ? ' current' : '')}
+                title="Edit this rule"
+                onClick={() => props.onEditRule(selector)}>
+                <code>{selector}</code>
+                <em>{Object.keys(values).length}</em>
+              </button>
+              <button
+                className="icon-btn"
+                title={'Remove the whole ' + selector + ' rule'}
+                onClick={() => props.onRemoveRule(selector)}>
+                <TrashIcon />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

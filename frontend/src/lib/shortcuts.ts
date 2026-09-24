@@ -209,6 +209,24 @@ export const SHORTCUTS: Shortcut[] = [
   },
   {
     group: 'Web Designer',
+    display: 'Ctrl + C',
+    mac: 'Cmd + C',
+    description: 'Copy the selected element or run of text',
+  },
+  {
+    group: 'Web Designer',
+    display: 'Ctrl + X',
+    mac: 'Cmd + X',
+    description: 'Cut the selection',
+  },
+  {
+    group: 'Web Designer',
+    display: 'Ctrl + V',
+    mac: 'Cmd + V',
+    description: 'Paste after the selection, or inside it when it is empty',
+  },
+  {
+    group: 'Web Designer',
     display: 'Ctrl + Z',
     mac: 'Cmd + Z',
     description: 'Undo the last design change',

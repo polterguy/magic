@@ -151,6 +151,14 @@ export function serializeDocument(doc: Document): string {
    */
   copy.querySelectorAll('[data-magic-editing]')
     .forEach(node => node.replaceWith(...Array.from(node.childNodes)));
+  /*
+   * A stylesheet the designer took over is switched back on. While editing,
+   * its link is disabled and its text lives in an injected style element
+   * instead, so that the panel is the only thing describing the designer's
+   * block — but the link is the author's, and the file gets it back working.
+   */
+  copy.querySelectorAll('[data-magic-disabled]')
+    .forEach(node => node.removeAttribute('disabled'));
   copy.querySelectorAll('[' + TOOL_ATTRIBUTE + ']').forEach(node => node.remove());
   const out: string[] = [];
   if (copy.doctype) {

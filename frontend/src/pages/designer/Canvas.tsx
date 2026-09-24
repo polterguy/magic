@@ -50,6 +50,8 @@ export interface CanvasProps {
    */
   hidden: boolean;
   onReady: (doc: Document) => void;
+  // A selector whose matches are outlined, showing what a style change reaches.
+  highlight: string;
   onHover: (node: Node | null) => void;
   onSelect: (node: Node) => void;
   onMove: (node: Node, spot: DropSpot) => void;
@@ -437,8 +439,32 @@ export default function Canvas(props: CanvasProps) {
     return project({ left: box.left, top: box.top, width: box.width, height: box.height });
   }
 
-  const [boxes, setBoxes] = useState<{ hover: Box | null; selected: Box | null; spot: Box | null }>(
-    { hover: null, selected: null, spot: null });
+  /*
+   * Every element a selector reaches, so choosing what to restyle shows what
+   * that means before anything changes. A selector out of a stylesheet can be
+   * anything, including something this browser will not parse, so asking is
+   * how we find out.
+   */
+  function matches(): Box[] {
+    const doc = docRef.current;
+    if (!doc || !props.highlight) {
+      return [];
+    }
+    try {
+      return Array.from(doc.querySelectorAll(props.highlight))
+        .map(element => outline(element))
+        .filter((box): box is Box => box !== null);
+    } catch {
+      return [];
+    }
+  }
+
+  const [boxes, setBoxes] = useState<{
+    hover: Box | null;
+    selected: Box | null;
+    spot: Box | null;
+    matching: Box[];
+  }>({ hover: null, selected: null, spot: null, matching: [] });
   const boxesRef = useRef('');
 
   /*
@@ -462,6 +488,7 @@ export default function Canvas(props: CanvasProps) {
       hover: outline(props.hovered),
       selected: outline(props.selected),
       spot: project(spotRef.current?.line ?? null),
+      matching: matches(),
     };
     const signature = JSON.stringify(next);
     if (signature !== boxesRef.current) {
@@ -485,6 +512,9 @@ export default function Canvas(props: CanvasProps) {
         onLoad={onLoad}
         style={props.width ? { width: props.width } : undefined} />
       {props.note && <p className="designer-canvas-note">{props.note}</p>}
+      {boxes.matching.map((box, index) => (
+        <div key={index} className="designer-outline matching" style={box} />
+      ))}
       {boxes.hover && <div className="designer-outline hover" style={boxes.hover} />}
       {/*
         * The badge naming what is outlined, and how big it is — the one part

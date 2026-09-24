@@ -4349,6 +4349,56 @@ tr.vss-irrelevant td {
   box-shadow: 0 0 0 1px var(--danger);
 }
 
+/* One rule in the list of what this page has been given. */
+.designer-rule {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.designer-rule-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  cursor: pointer;
+  text-align: left;
+}
+
+.designer-rule-name.current {
+  border-color: var(--accent);
+}
+
+.designer-rule-name code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* How many properties the rule carries. */
+.designer-rule-name em {
+  flex-shrink: 0;
+  font-style: normal;
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+/*
+ * Every element the chosen selector reaches. Dashed and quiet, so it reads as
+ * scope rather than as a selection — there may be twenty of them.
+ */
+.designer-outline.matching {
+  border: 1px dashed rgba(88, 140, 255, 0.85);
+  background: rgba(88, 140, 255, 0.07);
+  border-radius: 2px;
+}
+
 /* One row of the quality panel: where it is, then what is wrong. */
 .designer-finding {
   display: block;
