@@ -486,6 +486,16 @@ export function UndoIcon() {
   );
 }
 
+// The undo arrow, mirrored.
+export function RedoIcon() {
+  return (
+    <svg {...base}>
+      <polyline points="21 7 21 13 15 13" />
+      <path d="M20.5 13A9 9 0 1 0 18 18.5" />
+    </svg>
+  );
+}
+
 export function GitBranchIcon() {
   return (
     <svg {...base}>

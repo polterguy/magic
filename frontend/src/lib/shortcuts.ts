@@ -215,6 +215,12 @@ export const SHORTCUTS: Shortcut[] = [
   },
   {
     group: 'Web Designer',
+    display: 'Ctrl + Shift + Z',
+    mac: 'Cmd + Shift + Z',
+    description: 'Redo the change that was undone',
+  },
+  {
+    group: 'Web Designer',
     display: 'Ctrl + S',
     mac: 'Cmd + S',
     description: 'Save the page, and its stylesheet when it changed',

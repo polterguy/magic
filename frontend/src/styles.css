@@ -4343,9 +4343,63 @@ tr.vss-irrelevant td {
  * the value is never applied and never rewritten, so what is on screen is
  * always what was actually typed.
  */
+.designer-field input.invalid,
 .designer-style input.invalid {
   border-color: var(--danger);
   box-shadow: 0 0 0 1px var(--danger);
+}
+
+/* One row of the quality panel: where it is, then what is wrong. */
+.designer-finding {
+  display: block;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  text-align: left;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  cursor: pointer;
+}
+
+.designer-finding:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.designer-finding:disabled {
+  cursor: default;
+}
+
+.designer-finding-where {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+/* The tree's own filter, above it and outside its scrolling. */
+.designer-tree-search {
+  width: 100%;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+/* The heading above each group of page fields. */
+.designer-meta-group {
+  margin: 4px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+}
+
+.designer-fields > div + div .designer-meta-group {
+  margin-top: 18px;
 }
 
 /*

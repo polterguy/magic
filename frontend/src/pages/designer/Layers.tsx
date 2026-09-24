@@ -29,6 +29,38 @@ function ancestors(node: Node | null, root: Node) {
   return chain;
 }
 
+/*
+ * The nodes a search should show: the ones that match, and every ancestor
+ * between them and the root — because a match nobody can see the path to is
+ * not findable, it is merely present.
+ *
+ * Matching is against the same label the row displays, plus the words a run
+ * of text holds, so searching for what you can read on the page finds it.
+ */
+function matching(root: Element, query: string) {
+  const needle = query.trim().toLowerCase();
+  const keep = new Set<Node>();
+  if (needle === '') {
+    return keep;
+  }
+  const visit = (node: Node) => {
+    const children = designableChildren(node);
+    let found = labelOf(node).toLowerCase().includes(needle) ||
+      (isText(node) && (node.textContent ?? '').toLowerCase().includes(needle));
+    children.forEach(child => {
+      if (visit(child)) {
+        found = true;
+      }
+    });
+    if (found) {
+      keep.add(node);
+    }
+    return found;
+  };
+  visit(root);
+  return keep;
+}
+
 export default function Layers(props: {
   root: Element | null;
   selected: Node | null;
@@ -42,6 +74,7 @@ export default function Layers(props: {
 
   // Nodes whose open state the user has flipped away from the default.
   const [flipped, setFlipped] = useState<Set<Node>>(new Set());
+  const [query, setQuery] = useState('');
 
   if (!props.root) {
     return <p className="designer-empty">Nothing loaded yet.</p>;
@@ -51,6 +84,13 @@ export default function Layers(props: {
   // The path down to the selection always stands open, so selecting in the
   // canvas shows you where the node lives instead of leaving the tree behind.
   const path = ancestors(props.selected, root);
+  /*
+   * While searching, the tree is only the matches and their ancestors, and it
+   * stands open all the way down — collapsing part of a search result would
+   * hide the thing being searched for.
+   */
+  const found = matching(root, query);
+  const searching = query.trim() !== '';
 
   function flip(node: Node) {
     setFlipped(current => {
@@ -65,8 +105,11 @@ export default function Layers(props: {
   }
 
   function row(node: Node, depth: number) {
-    const children = designableChildren(node);
-    const open = path.has(node) || ((depth < OPEN_TO) !== flipped.has(node));
+    const children = searching
+      ? designableChildren(node).filter(child => found.has(child))
+      : designableChildren(node);
+    const open = searching || path.has(node) ||
+      ((depth < OPEN_TO) !== flipped.has(node));
     const text = isText(node);
     return (
       <div key={depth + ':' + labelOf(node)}>
@@ -102,5 +145,19 @@ export default function Layers(props: {
     );
   }
 
-  return <div className="designer-layers">{row(root, 0)}</div>;
+  return (
+    <>
+      <input
+        type="search"
+        className="designer-tree-search"
+        placeholder="Search the tree…"
+        value={query}
+        onChange={event => setQuery(event.target.value)} />
+      <div className="designer-layers">
+        {searching && found.size === 0
+          ? <p className="designer-muted">Nothing matches “{query.trim()}”.</p>
+          : row(root, 0)}
+      </div>
+    </>
+  );
 }

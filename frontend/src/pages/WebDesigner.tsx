@@ -25,13 +25,15 @@ import { useUnsavedGuard } from '../lib/navGuard';
 import { onChatOpsDone } from '../lib/chatOps';
 import { showToast } from '../lib/toast';
 import { aiContextForFile, createFolder, listFilesRecursively, loadFile, saveFile } from '../lib/api';
-import { SaveIcon, UndoIcon } from '../components/Icons';
+import { RedoIcon, SaveIcon, UndoIcon } from '../components/Icons';
 import Canvas from './designer/Canvas';
 import Menu from './designer/Menu';
 import NewPage, { blankPage, fileForUrl } from './designer/NewPage';
 import Inspector from './designer/Inspector';
 import Layers from './designer/Layers';
 import Media, { KIND_FOR_TAG, MediaKind, Picked } from './designer/Media';
+import Meta, { Home, writeMeta } from './designer/Meta';
+import Quality from './designer/Quality';
 import Styles, { INLINE } from './designer/Styles';
 import { Block, GROUPS, customBlock } from './designer/palette';
 import { DropSpot } from './designer/dropTarget';
@@ -132,7 +134,14 @@ export default function WebDesigner() {
   // Which file the code view holds. The page itself unless a stylesheet was picked.
   const [codeTarget, setCodeTarget] = useState('');
   // Which picker is open, if any — images, video or audio.
-  const [choosingMedia, setChoosingMedia] = useState<MediaKind | null>(null);
+  /*
+   * The open picker, and what it is picking for. Without a [home] it is the
+   * selected element; with one it is a field in the head, which takes an
+   * absolute address rather than a path because somebody else's server
+   * fetches it.
+   */
+  const [choosingMedia, setChoosingMedia] =
+    useState<{ kind: MediaKind; home?: Home } | null>(null);
   // Every local stylesheet this page links that is actually on disk.
   const [sheets, setSheets] = useState<string[]>([]);
   const [viewport, setViewport] = useState('desktop');
@@ -145,6 +154,12 @@ export default function WebDesigner() {
   const [customTag, setCustomTag] = useState('');
   const [creating, setCreating] = useState(false);
   const [history, setHistory] = useState<Snapshot[]>([]);
+  /*
+   * What undo took away. Editing again abandons it, which is the ordinary
+   * rule everywhere: the moment you change something after stepping back,
+   * the branch you stepped out of stops being reachable.
+   */
+  const [future, setFuture] = useState<Snapshot[]>([]);
 
   // The stylesheet the open page is styled by, as it was read and as it stands.
   const [cssPath, setCssPath] = useState<string | null>(null);
@@ -239,6 +254,7 @@ export default function WebDesigner() {
       setSelected(null);
       setHovered(null);
       setHistory([]);
+      setFuture([]);
       setDirty(false);
       setStale(false);
       setTarget(INLINE);
@@ -497,6 +513,7 @@ export default function WebDesigner() {
       ]);
     }
     coalesceRef.current = coalesce ?? null;
+    setFuture([]);
     change();
     setDirty(true);
     setVersion(value => value + 1);
@@ -513,9 +530,38 @@ export default function WebDesigner() {
      * out here — the selection, the hover — now points at a node that is no
      * longer in the document.
      */
+    setFuture(stack => [
+      ...stack,
+      { html: current.documentElement.innerHTML, overrides },
+    ]);
+    restore(snapshot);
+    setHistory(stack => stack.slice(0, -1));
+  }
+
+  /*
+   * The mirror of undo. What is about to be put back goes onto the history
+   * stack on the way past, so the two stay each other's opposite however many
+   * times you step in either direction.
+   */
+  function redo() {
+    const current = docRef.current;
+    const snapshot = future[future.length - 1];
+    if (!current || !snapshot) {
+      return;
+    }
+    setHistory(stack => [
+      ...stack.slice(-(HISTORY - 1)),
+      { html: current.documentElement.innerHTML, overrides },
+    ]);
+    restore(snapshot);
+    setFuture(stack => stack.slice(0, -1));
+  }
+
+  // Putting a snapshot back into the canvas, shared by both directions.
+  function restore(snapshot: Snapshot) {
+    const current = docRef.current!;
     current.documentElement.innerHTML = snapshot.html;
     setOverrides(snapshot.overrides);
-    setHistory(stack => stack.slice(0, -1));
     setSelected(null);
     setHovered(null);
     coalesceRef.current = null;
@@ -556,7 +602,12 @@ export default function WebDesigner() {
    * One mutation, so one undo step puts back the image that was there before.
    */
   function pickMedia(picked: Picked) {
+    const home = choosingMedia?.home;
     setChoosingMedia(null);
+    if (home) {
+      mutate(() => writeMeta(docRef.current!, home, origin + picked.src));
+      return;
+    }
     const element = elementOf(selected);
     if (!element) {
       return;
@@ -576,6 +627,88 @@ export default function WebDesigner() {
         element.setAttribute('alt', '');
       }
     });
+  }
+
+  /*
+   * Puts a new element around the selection.
+   *
+   * A div around a block and a span around anything inline, because those are
+   * the two that can hold what they are wrapping without changing how it
+   * lays out. Whatever it should really be is one Change tag away, and that
+   * pairing is deliberate: two plain operations instead of one with a
+   * vocabulary attached to it.
+   *
+   * Works on a run of text too — wrap it, then change the wrapper to strong,
+   * and a word is bold without going near the code view.
+   */
+  function wrap() {
+    const node = selected;
+    const current = docRef.current;
+    if (!node || !current || node === current.body || node === current.documentElement) {
+      return;
+    }
+    const element = elementOf(node);
+    const inline = isText(node) ||
+      (element === node && getComputedStyle(element as Element).display.startsWith('inline'));
+    mutate(() => {
+      const wrapper = current.createElement(inline ? 'span' : 'div');
+      (node as ChildNode).before(wrapper);
+      wrapper.appendChild(node);
+      setSelected(wrapper);
+    });
+  }
+
+  /*
+   * Takes an element away and leaves what was inside it exactly where it was.
+   * The counterpart to the div that turned out to be one div too many.
+   */
+  function unwrap() {
+    const element = elementOf(selected);
+    const current = docRef.current;
+    if (!element || !current || element === current.body ||
+        element === current.documentElement || !element.parentNode) {
+      return;
+    }
+    mutate(() => {
+      const children = Array.from(element.childNodes);
+      element.replaceWith(...children);
+      setSelected(children[0] ?? null);
+    });
+  }
+
+  /*
+   * The same element, under a different tag.
+   *
+   * Attributes and children come across untouched, so a heading demoted from
+   * h2 to h3 keeps its classes, its id and its words — the point is that only
+   * the tag changes, which is the one thing a text editor makes you retype
+   * twice and get wrong once.
+   */
+  function changeTag(tag: string) {
+    const element = elementOf(selected);
+    const current = docRef.current;
+    if (!element || !current || element.tagName.toLowerCase() === tag ||
+        element === current.body || element === current.documentElement) {
+      return;
+    }
+    mutate(() => {
+      const replacement = current.createElement(tag);
+      Array.from(element.attributes).forEach(
+        attribute => replacement.setAttribute(attribute.name, attribute.value));
+      replacement.append(...Array.from(element.childNodes));
+      element.replaceWith(replacement);
+      setSelected(replacement);
+    });
+  }
+
+  /*
+   * A field in the head. Coalesced per field, so typing a description is one
+   * undo step rather than one per character — the same rule the attribute
+   * fields already follow.
+   */
+  function setMeta(home: Home, value: string) {
+    mutate(() => writeMeta(docRef.current!, home, value),
+      'meta:' + home.at + ('key' in home ? home.key : ''));
   }
 
   function removeAttribute(name: string) {
@@ -721,7 +854,7 @@ export default function WebDesigner() {
     // The palette keys these blocks by their tag, so this is the same lookup.
     const kind = KIND_FOR_TAG[block.key];
     if (kind) {
-      setChoosingMedia(kind);
+      setChoosingMedia({ kind });
     }
   }
 
@@ -971,9 +1104,14 @@ export default function WebDesigner() {
       remove();
     } else if (event.key === 'Escape') {
       setSelected(null);
-    } else if ((event.metaKey || event.ctrlKey) && event.key === 'z') {
+    } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
       event.preventDefault();
-      undo();
+      // Shift is redo, as it is in every editor.
+      if (event.shiftKey) {
+        redo();
+      } else {
+        undo();
+      }
     } else if ((event.metaKey || event.ctrlKey) && event.key === 's') {
       event.preventDefault();
       save();
@@ -1030,6 +1168,14 @@ export default function WebDesigner() {
           <UndoIcon />
           Undo
         </button>
+        <button
+          className="btn btn-secondary btn-small"
+          title="Redo the change that was undone"
+          onClick={redo}
+          disabled={future.length === 0}>
+          <RedoIcon />
+          Redo
+        </button>
         <Menu
           title="Viewport, preview and the rest"
           items={[
@@ -1078,7 +1224,7 @@ export default function WebDesigner() {
 
       {choosingMedia && (
         <Media
-          kind={choosingMedia}
+          kind={choosingMedia.kind}
           origin={origin}
           current={elementOf(selected)?.getAttribute('src') ?? ''}
           onPick={pickMedia}
@@ -1346,7 +1492,12 @@ export default function WebDesigner() {
           className="designer-rail right"
           ref={node => node?.toggleAttribute('inert', view !== 'design')}>
           <Tabs
-            tabs={[{ id: 'element', label: 'Element' }, { id: 'style', label: 'Style' }]}
+            tabs={[
+              { id: 'element', label: 'Element' },
+              { id: 'style', label: 'Style' },
+              { id: 'meta', label: 'Page' },
+              { id: 'quality', label: 'Quality' },
+            ]}
             active={tab}
             onChange={setTab} />
           {tab === 'element' ? (
@@ -1366,7 +1517,24 @@ export default function WebDesigner() {
                 canContainChildren(elementOf(selected)!) &&
                 designableChildren(elementOf(selected)!).length === 0}
               origin={origin}
-              onChooseMedia={setChoosingMedia} />
+              onChooseMedia={kind => setChoosingMedia({ kind })}
+              onWrap={wrap}
+              onUnwrap={unwrap}
+              onChangeTag={changeTag}
+              urls={pages.map(canonicalUrl)} />
+          ) : tab === 'meta' ? (
+            <Meta
+              doc={doc}
+              origin={origin}
+              urls={pages.map(canonicalUrl)}
+              onSet={setMeta}
+              onChooseImage={home => setChoosingMedia({ kind: 'image', home })} />
+          ) : tab === 'quality' ? (
+            <Quality
+              doc={doc}
+              urls={pages.map(canonicalUrl)}
+              version={version}
+              onSelect={setSelected} />
           ) : (
             <Styles
               element={styleTarget}

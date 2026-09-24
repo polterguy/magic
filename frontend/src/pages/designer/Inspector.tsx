@@ -20,19 +20,106 @@ import { KIND_FOR_TAG } from './Media';
 // Attributes with a control of their own, or that belong to the designer.
 const OWN = ['class', 'id', 'style', 'contenteditable'];
 
+/*
+ * What an element can become. Deliberately not every tag there is — these are
+ * the ones people actually swap between, and a list you can read beats a list
+ * that is complete.
+ */
+const TAGS = [
+  'div', 'section', 'article', 'header', 'footer', 'nav', 'aside', 'main', 'figure',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre',
+  'a', 'span', 'strong', 'em', 'code', 'small', 'label', 'button',
+  'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'table', 'tr', 'td', 'th',
+];
+
+/*
+ * Whether a browser will read this as a tag rather than as text. Letters to
+ * begin with, then letters, digits or hyphens — which is also what lets a
+ * custom element like my-widget through, since the page may well contain one.
+ */
+function isTagName(tag: string) {
+  return /^[a-z][a-z0-9-]*$/.test(tag);
+}
+
+// Tags that hold the document together. Turning something into one of these
+// produces markup the parser will rearrange, so they are not offered.
+const STRUCTURAL = ['html', 'head', 'body'];
+
+/*
+ * Attribute names worth suggesting, by the tag they belong to, with the ones
+ * that apply anywhere after them. Typing is still allowed — this is a list of
+ * suggestions, not a list of permissions, because the whole point of the field
+ * is that the designer does not decide what your markup may contain.
+ */
+const ANY_TAG = ['title', 'hidden', 'lang', 'dir', 'tabindex', 'role', 'aria-label'];
+
+const PER_TAG: Record<string, string[]> = {
+  a: ['href', 'target', 'rel', 'download', 'hreflang'],
+  img: ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'srcset', 'sizes'],
+  video: ['src', 'poster', 'controls', 'autoplay', 'loop', 'muted', 'preload', 'playsinline', 'width', 'height'],
+  audio: ['src', 'controls', 'autoplay', 'loop', 'muted', 'preload'],
+  source: ['src', 'type', 'srcset', 'media'],
+  input: ['type', 'name', 'value', 'placeholder', 'required', 'disabled', 'readonly', 'checked', 'min', 'max', 'step', 'pattern', 'autocomplete'],
+  textarea: ['name', 'rows', 'cols', 'placeholder', 'required', 'disabled', 'maxlength'],
+  select: ['name', 'required', 'disabled', 'multiple', 'size'],
+  option: ['value', 'selected', 'disabled'],
+  button: ['type', 'name', 'value', 'disabled', 'form'],
+  form: ['action', 'method', 'enctype', 'target', 'novalidate'],
+  label: ['for'],
+  td: ['colspan', 'rowspan', 'headers'],
+  th: ['colspan', 'rowspan', 'scope', 'abbr'],
+  ol: ['start', 'reversed', 'type'],
+  iframe: ['src', 'title', 'width', 'height', 'loading', 'allow', 'sandbox'],
+  details: ['open'],
+  time: ['datetime'],
+  meta: ['name', 'content', 'property', 'charset'],
+  link: ['rel', 'href', 'type', 'media'],
+  script: ['src', 'type', 'defer', 'async'],
+};
+
+// Attributes an element could still be given, in the order worth offering them.
+function suggestedAttributes(element: Element) {
+  const tag = element.tagName.toLowerCase();
+  const already = Array.from(element.attributes).map(attribute => attribute.name);
+  return [...(PER_TAG[tag] ?? []), ...ANY_TAG]
+    .filter(name => !already.includes(name) && !OWN.includes(name));
+}
+
+// Attributes that hold a URL into this same site, so the pages can be offered.
+const LINKS = ['href', 'action', 'formaction'];
+
 const mediaLabel = { image: 'Image', video: 'Video', audio: 'Audio' } as const;
 const mediaArticle = { image: 'an image', video: 'a video', audio: 'an audio file' } as const;
 
-function allClasses(doc: Document) {
-  const found = new Set<string>();
-  doc.body.querySelectorAll('[class]').forEach(element => {
-    element.getAttribute('class')?.trim().split(/\s+/).forEach(name => {
+/*
+ * The classes to offer, with the ones that belong here first.
+ *
+ * Which classes suit which elements is not in the stylesheet — a rule is
+ * written `.btn`, not `a.btn`, so the CSS cannot say what a class is for. The
+ * document can: whatever tags already wear a class is a plain statement of
+ * what it is used on, and on a real page that is close to unambiguous.
+ *
+ * Ordered, never filtered. A class this tag has not worn yet is still a class
+ * you might reasonably want — .btn belongs on a <button> even on a page whose
+ * buttons all happen to be anchors — so the relevant ones come first and the
+ * rest come after, rather than disappearing.
+ */
+function classSuggestions(doc: Document, element: Element) {
+  const worn = new Map<string, Set<string>>();
+  doc.body.querySelectorAll('[class]').forEach(other => {
+    const tag = other.tagName.toLowerCase();
+    other.getAttribute('class')?.trim().split(/\s+/).forEach(name => {
       if (name) {
-        found.add(name);
+        worn.set(name, (worn.get(name) ?? new Set()).add(tag));
       }
     });
   });
-  return Array.from(found).sort();
+  const here = element.tagName.toLowerCase();
+  const names = Array.from(worn.keys()).sort();
+  return [
+    ...names.filter(name => worn.get(name)!.has(here)),
+    ...names.filter(name => !worn.get(name)!.has(here)),
+  ];
 }
 
 /*
@@ -69,6 +156,11 @@ export default function Inspector(props: {
   // Absolute origin of the cloudlet, so a preview loads from where the page will.
   origin: string;
   onChooseMedia: (kind: 'image' | 'video' | 'audio') => void;
+  onWrap: () => void;
+  onUnwrap: () => void;
+  onChangeTag: (tag: string) => void;
+  // Every page this site serves, for the attributes that link to one.
+  urls: string[];
 }) {
 
   const [newClass, setNewClass] = useState('');
@@ -84,6 +176,14 @@ export default function Inspector(props: {
    * anywhere else still shows up here.
    */
   const [typing, setTyping] = useState<{ owner: Node; value: string } | null>(null);
+  /*
+   * The tag being typed, and whether the last attempt to leave the field was
+   * refused. Committing on every keystroke would rebuild the element once per
+   * character — "section" would pass through "s", "se", "sec" — so the change
+   * waits for Enter or for the field to lose focus.
+   */
+  const [tagDraft, setTagDraft] = useState<{ owner: Element; value: string } | null>(null);
+  const [badTag, setBadTag] = useState(false);
 
   const node = props.node;
   if (!node || !props.doc) {
@@ -129,6 +229,20 @@ export default function Inspector(props: {
         <CopyIcon />
         Duplicate
       </button>
+      <button
+        className="btn btn-secondary btn-small"
+        title="Put a new element around this one"
+        onClick={props.onWrap}>
+        Wrap
+      </button>
+      {!isText(node) && (
+        <button
+          className="btn btn-secondary btn-small"
+          title="Remove this element and keep what is inside it"
+          onClick={props.onUnwrap}>
+          Unwrap
+        </button>
+      )}
       <button
         className="btn btn-danger btn-small"
         title="Remove this and everything in it"
@@ -183,6 +297,31 @@ export default function Inspector(props: {
       .filter(attribute => !OWN.includes(attribute.name) &&
         !attribute.name.startsWith('data-magic-'));
 
+    /*
+     * Applied when the field is left, not while it is being typed into. A
+     * name the parser would not accept keeps what was typed and marks the
+     * field, because silently putting the old tag back is how you lose a
+     * typo you were halfway through fixing.
+     */
+    function commitTag(target: Element) {
+      if (!tagDraft || tagDraft.owner !== target) {
+        return;
+      }
+      const tag = tagDraft.value.trim().toLowerCase();
+      if (tag === target.tagName.toLowerCase()) {
+        setTagDraft(null);
+        setBadTag(false);
+        return;
+      }
+      if (!isTagName(tag) || STRUCTURAL.includes(tag)) {
+        setBadTag(true);
+        return;
+      }
+      setTagDraft(null);
+      setBadTag(false);
+      props.onChangeTag(tag);
+    }
+
     function addClass(name: string) {
       const trimmed = name.trim().replace(/^\./, '');
       if (trimmed === '' || classes.includes(trimmed)) {
@@ -194,6 +333,37 @@ export default function Inspector(props: {
 
     return (
       <>
+        <label className="designer-field">
+          <span>Tag</span>
+          {/*
+            * Changing this keeps the attributes and the children — only the
+            * tag is different afterwards. The list is a set of suggestions
+            * rather than the permitted set: anything the parser will accept
+            * can be typed, custom elements included.
+            */}
+          <input
+            type="text"
+            list="designer-tags"
+            className={badTag ? 'invalid' : undefined}
+            value={tagDraft?.owner === element
+              ? tagDraft.value
+              : element.tagName.toLowerCase()}
+            onChange={event => {
+              setTagDraft({ owner: element, value: event.target.value });
+              setBadTag(false);
+            }}
+            onKeyDown={event => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                commitTag(element);
+              }
+            }}
+            onBlur={() => commitTag(element)} />
+          <datalist id="designer-tags">
+            {TAGS.map(tag => <option key={tag} value={tag} />)}
+          </datalist>
+        </label>
+
         <label className="designer-field">
           <span>Id</span>
           <input
@@ -232,7 +402,9 @@ export default function Inspector(props: {
             }}
             onBlur={() => addClass(newClass)} />
           <datalist id="designer-classes">
-            {allClasses(props.doc!).map(name => <option key={name} value={name} />)}
+            {classSuggestions(props.doc!, element).map(name => (
+              <option key={name} value={name} />
+            ))}
           </datalist>
         </div>
 
@@ -269,6 +441,7 @@ export default function Inspector(props: {
               <label title={attribute.name}>{attribute.name}</label>
               <input
                 type="text"
+                list={LINKS.includes(attribute.name) ? 'designer-urls' : undefined}
                 value={attribute.value}
                 onChange={event => props.onSetAttribute(attribute.name, event.target.value)} />
               <button
@@ -282,6 +455,7 @@ export default function Inspector(props: {
           {attributes.length === 0 && <span className="designer-muted">No attributes</span>}
           <input
             type="text"
+            list="designer-attributes"
             placeholder="Add an attribute…"
             value={newAttribute}
             onChange={event => setNewAttribute(event.target.value)}
@@ -292,6 +466,12 @@ export default function Inspector(props: {
                 setNewAttribute('');
               }
             }} />
+          <datalist id="designer-attributes">
+            {suggestedAttributes(element).map(name => <option key={name} value={name} />)}
+          </datalist>
+          <datalist id="designer-urls">
+            {props.urls.map(url => <option key={url} value={url} />)}
+          </datalist>
         </div>
       </>
     );
