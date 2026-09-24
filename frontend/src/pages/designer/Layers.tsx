@@ -9,7 +9,7 @@
  * you edit its words.
  */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronIcon } from '../../components/Icons';
 import { designableChildren, isText, labelOf } from './nodes';
 
@@ -76,6 +76,25 @@ export default function Layers(props: {
   const [flipped, setFlipped] = useState<Set<Node>>(new Set());
   const [query, setQuery] = useState('');
 
+  /*
+   * Selecting on the canvas brings the row into view here, so that the tree
+   * goes on answering "where is this" instead of having to be hunted through
+   * every time something deep in the page is clicked.
+   *
+   * Nothing is expanded on the way: the path down to the selection already
+   * stands open, because a collapsed branch cannot hide the selected row —
+   * see the open test below, where being on that path outranks the user's own
+   * collapsing.
+   *
+   * "nearest" is what makes this safe to run on every selection. A row that
+   * is already on screen is left exactly where it is, so selecting in the
+   * tree itself never makes the rail jump under the pointer.
+   */
+  const selectedRow = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    selectedRow.current?.scrollIntoView({ block: 'nearest' });
+  }, [props.selected]);
+
   if (!props.root) {
     return <p className="designer-empty">Nothing loaded yet.</p>;
   }
@@ -114,6 +133,7 @@ export default function Layers(props: {
     return (
       <div key={depth + ':' + labelOf(node)}>
         <div
+          ref={node === props.selected ? selectedRow : undefined}
           className={'designer-layer' +
             (node === props.selected ? ' selected' : '') +
             (text ? ' text' : '') +
