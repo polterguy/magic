@@ -4078,6 +4078,149 @@ tr.vss-irrelevant td {
   color: var(--text-soft);
 }
 
+/*
+ * The image picker.
+ *
+ * The grid is the only thing that scrolls — the filter stays put at the top
+ * and the count stays put at the bottom, so neither moves while you hunt.
+ */
+.designer-image-filter {
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.designer-images {
+  max-height: 52vh;
+  overflow-y: auto;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+
+.designer-images-folder {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px 2px 6px;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+.designer-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+  gap: 10px;
+  padding-bottom: 12px;
+}
+
+.designer-image {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+}
+
+.designer-image:hover {
+  border-color: var(--accent);
+}
+
+/* The one the element already points at, so re-picking is not a guess. */
+.designer-image.current {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+/*
+ * A checkerboard behind the thumbnail, because a transparent PNG on a flat
+ * panel is indistinguishable from one with a white background until it is on
+ * the page and wrong.
+ */
+.designer-image img {
+  width: 100%;
+  height: 84px;
+  object-fit: contain;
+  background-color: #fff;
+  background-image:
+    linear-gradient(45deg, #e9e9e9 25%, transparent 25%, transparent 75%, #e9e9e9 75%),
+    linear-gradient(45deg, #e9e9e9 25%, transparent 25%, transparent 75%, #e9e9e9 75%);
+  background-size: 14px 14px;
+  background-position: 0 0, 7px 7px;
+  border-radius: 4px;
+}
+
+/* Video previews sit in the same box as an image thumbnail. */
+.designer-image video {
+  width: 100%;
+  height: 84px;
+  object-fit: contain;
+  background: #000;
+  border-radius: 4px;
+}
+
+/* Audio has nothing to show, so the tile carries a mark instead. */
+.designer-media-audio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 84px;
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text-soft);
+}
+
+.designer-image-preview video {
+  display: block;
+  width: 100%;
+  height: 96px;
+  object-fit: contain;
+  background: #000;
+}
+
+.designer-image-preview audio {
+  display: block;
+  width: 100%;
+}
+
+.designer-image-name {
+  font-size: var(--text-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.designer-image-size {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-soft);
+  min-height: 12px;
+}
+
+/* The preview in the Element panel is the button that opens the picker. */
+.designer-image-preview {
+  display: block;
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+.designer-image-preview img {
+  display: block;
+  width: 100%;
+  height: 96px;
+  object-fit: contain;
+}
+
 .designer-attribute,
 .designer-style {
   display: flex;
@@ -4203,6 +4346,25 @@ tr.vss-irrelevant td {
 .designer-style input.invalid {
   border-color: var(--danger);
   box-shadow: 0 0 0 1px var(--danger);
+}
+
+/*
+ * The one-time note above the Live frame. Shown only when the dashboard is
+ * served by the cloudlet being edited, where the isolation is weaker.
+ */
+.designer-live-warning {
+  flex-shrink: 0;
+  margin-bottom: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.designer-live-warning p {
+  margin: 0 0 10px;
 }
 
 /* The code view fills the same space the canvas does. */

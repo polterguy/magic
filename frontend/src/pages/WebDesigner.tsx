@@ -31,13 +31,14 @@ import Menu from './designer/Menu';
 import NewPage, { blankPage, fileForUrl } from './designer/NewPage';
 import Inspector from './designer/Inspector';
 import Layers from './designer/Layers';
+import Media, { KIND_FOR_TAG, MediaKind, Picked } from './designer/Media';
 import Styles, { INLINE } from './designer/Styles';
 import { Block, GROUPS, customBlock } from './designer/palette';
 import { DropSpot } from './designer/dropTarget';
-import { prepareDocument, serializeDocument } from './designer/html';
+import { liveSandbox, prepareDocument, serializeDocument } from './designer/html';
 import { designableChildren, elementOf, isText, writeText } from './designer/nodes';
 import { canContainChildren } from './designer/html';
-import { Overrides, joinCss, matchingSelectors, overrideCss, splitCss, stylesheetPaths } from './designer/css';
+import { Overrides, joinCss, overrideCss, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
 
 const WEB_ROOT = '/etc/www';
 
@@ -87,7 +88,7 @@ function isServed(file: string) {
 export default function WebDesigner() {
 
   const { backend } = useAuth();
-  const { confirm } = useDialog();
+  const { choice, confirm } = useDialog();
 
   const [pages, setPages] = useState<string[]>([]);
   const [path, setPath] = useState('');
@@ -130,6 +131,8 @@ export default function WebDesigner() {
   const [codeOriginal, setCodeOriginal] = useState('');
   // Which file the code view holds. The page itself unless a stylesheet was picked.
   const [codeTarget, setCodeTarget] = useState('');
+  // Which picker is open, if any — images, video or audio.
+  const [choosingMedia, setChoosingMedia] = useState<MediaKind | null>(null);
   // Every local stylesheet this page links that is actually on disk.
   const [sheets, setSheets] = useState<string[]>([]);
   const [viewport, setViewport] = useState('desktop');
@@ -180,6 +183,17 @@ export default function WebDesigner() {
   const origin = backend ? new URL(backend.url).origin : '';
   // Per backend — every cloudlet has its own pages.
   const pageKey = 'magic2.designer.page.' + (backend?.url ?? '');
+  /*
+   * True on the all-in-one image, where the dashboard is served from the same
+   * cloudlet whose pages are being edited. Everywhere else the two are on
+   * different origins and the browser keeps them apart for us; here it cannot,
+   * because they ARE the same origin — so Live is sandboxed harder and the
+   * trade-off is said out loud once.
+   */
+  const sameOrigin = origin !== '' && origin === window.location.origin;
+  const warnedKey = 'magic2.designer.live-warning.' + (backend?.url ?? '');
+  const [liveWarned, setLiveWarned] = useState(
+    () => localStorage.getItem(warnedKey) === 'seen');
   const doc = docRef.current;
   const width = VIEWPORTS.find(entry => entry.id === viewport)?.width ?? null;
 
@@ -379,7 +393,36 @@ export default function WebDesigner() {
    * the editor was holding the PAGE. A stylesheet's text is not markup, and
    * feeding it to the parser would produce a document made of nothing.
    */
-  function switchView(next: string) {
+  async function switchView(next: string) {
+    /*
+     * Live is the only view that does not show the document being edited: it
+     * loads the page from its real URL, which is the file as it stands on
+     * disk. Walking into it with unsaved work means looking at an older page
+     * and drawing conclusions from it, so the choice is made here rather than
+     * discovered later.
+     *
+     * Asked before anything else happens, because the answer may be to stay
+     * put, and the transitions below have side effects worth not having.
+     */
+    if (next === 'live' && dirty) {
+      const answer = await choice({
+        title: 'Unsaved changes',
+        message: 'Live loads ' + canonicalUrl(path) + ' from the server, so it shows the ' +
+          'page as it was last saved. The changes you have made here will not be in it.',
+        buttons: [
+          { label: 'Save, then open Live', value: 'save', kind: 'primary' },
+          { label: 'Open Live anyway', value: 'live', kind: 'secondary' },
+          { label: 'Keep editing', value: 'stay', kind: 'secondary' },
+        ],
+      });
+      // Dismissing the dialog is not a decision to go anywhere.
+      if (answer === null || answer === 'stay') {
+        return;
+      }
+      if (answer === 'save' && !await save()) {
+        return;
+      }
+    }
     const current = docRef.current;
     if (view === 'code' && codeTarget === path && code !== codeOriginal) {
       if (current) {
@@ -500,6 +543,39 @@ export default function WebDesigner() {
         element.setAttribute(name, value);
       }
     }, 'attribute:' + name);
+  }
+
+  /*
+   * Points the selected element at a file that is already on the cloudlet.
+   *
+   * Width and height go on with it, from the size the browser measured while
+   * showing the thumbnail. Without them the page reflows when the image
+   * finally arrives, and this is the one moment where both numbers are known
+   * for free.
+   *
+   * One mutation, so one undo step puts back the image that was there before.
+   */
+  function pickMedia(picked: Picked) {
+    setChoosingMedia(null);
+    const element = elementOf(selected);
+    if (!element) {
+      return;
+    }
+    mutate(() => {
+      element.setAttribute('src', picked.src);
+      if (picked.width > 0 && picked.height > 0) {
+        element.setAttribute('width', String(picked.width));
+        element.setAttribute('height', String(picked.height));
+      }
+      /*
+       * Only an image has alternative text. Describing it is the author's
+       * call; the attribute merely has to exist for that choice to be a
+       * choice rather than an omission.
+       */
+      if (element.tagName.toLowerCase() === 'img' && !element.hasAttribute('alt')) {
+        element.setAttribute('alt', '');
+      }
+    });
   }
 
   function removeAttribute(name: string) {
@@ -636,6 +712,17 @@ export default function WebDesigner() {
       spot.parent.insertBefore(node, spot.before);
       setSelected(node);
     });
+    /*
+     * An image dropped onto the page wants a picture, and the grey
+     * placeholder is not one. The picker opens on top of the drop, so
+     * choosing something already on the cloudlet is the path of least
+     * resistance rather than a thing to go and find.
+     */
+    // The palette keys these blocks by their tag, so this is the same lookup.
+    const kind = KIND_FOR_TAG[block.key];
+    if (kind) {
+      setChoosingMedia(kind);
+    }
   }
 
   /*
@@ -762,8 +849,13 @@ export default function WebDesigner() {
    * class you just added is missing from it.
    */
   const selectors = useMemo(
-    () => (styleTarget && cssHead ? matchingSelectors(cssHead, styleTarget) : []),
-    [styleTarget, cssHead, version]);
+    /*
+     * Only when there is a stylesheet to put them in. A rule for a selector
+     * has nowhere to go without one, and save() would drop it silently — so
+     * a page that links no local stylesheet offers this element only.
+     */
+    () => (styleTarget && cssPath ? selectorsFor(styleTarget, cssHead, overrides) : []),
+    [styleTarget, cssPath, cssHead, overrides, version]);
 
   // A selector that styled the last element rarely styles the next one.
   useEffect(() => {
@@ -797,10 +889,11 @@ export default function WebDesigner() {
   }
 
 
-  async function save() {
+  // Returns whether the file reached disk, for callers waiting on it.
+  async function save(): Promise<boolean> {
     const current = docRef.current;
     if (!current || !path) {
-      return;
+      return false;
     }
     setSaving(true);
     try {
@@ -825,7 +918,7 @@ export default function WebDesigner() {
         }
         setDirty(false);
         showToast('Saved ' + codeTarget);
-        return;
+        return true;
       }
       const css = joinCss(cssHead, overrides, cssTail);
       const cssChanged = !!cssPath && css !== cssOriginal;
@@ -855,8 +948,10 @@ export default function WebDesigner() {
       }
       setDirty(false);
       showToast('Saved ' + path);
+      return true;
     } catch (err: any) {
       showToast(err.message, true);
+      return false;
     } finally {
       setSaving(false);
     }
@@ -980,6 +1075,15 @@ export default function WebDesigner() {
           {saving ? 'Saving…' : 'Save'}
         </button>
       </div>
+
+      {choosingMedia && (
+        <Media
+          kind={choosingMedia}
+          origin={origin}
+          current={elementOf(selected)?.getAttribute('src') ?? ''}
+          onPick={pickMedia}
+          onCancel={() => setChoosingMedia(null)} />
+      )}
 
       {creating && (
         <NewPage
@@ -1141,9 +1245,32 @@ export default function WebDesigner() {
         )}
         {view === 'live' && (
           <div className="designer-canvas">
+            {sameOrigin && !liveWarned && (
+              <div className="designer-live-warning">
+                <p>
+                  <strong>This page runs for real here.</strong> Its JavaScript executes, unlike
+                  in Design — so open a page you did not write only if you trust it.
+                </p>
+                <p>
+                  This cloudlet also serves the dashboard, so Live runs the page with no origin
+                  of its own to keep it away from your session. Storage and calls the page makes
+                  to its own API will not behave as they do in production; open it in a new tab
+                  from the menu to see it work properly.
+                </p>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    localStorage.setItem(warnedKey, 'seen');
+                    setLiveWarned(true);
+                  }}>
+                  Got it
+                </button>
+              </div>
+            )}
             <iframe
               className="designer-frame"
               title="Live preview"
+              sandbox={liveSandbox(sameOrigin)}
               src={origin + canonicalUrl(path)}
               style={width ? { width } : undefined} />
           </div>
@@ -1237,7 +1364,9 @@ export default function WebDesigner() {
               onAddText={addText}
               canAddText={!!elementOf(selected) && !isText(selected!) &&
                 canContainChildren(elementOf(selected)!) &&
-                designableChildren(elementOf(selected)!).length === 0} />
+                designableChildren(elementOf(selected)!).length === 0}
+              origin={origin}
+              onChooseMedia={setChoosingMedia} />
           ) : (
             <Styles
               element={styleTarget}

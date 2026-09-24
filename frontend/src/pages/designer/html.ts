@@ -289,6 +289,44 @@ function writeElement(element: Element, depth: number, out: string[]) {
  * Whether an element is allowed to hold children at all. Dropping something
  * into an <img> or into the middle of a <script> is never what was meant.
  */
+/*
+ * The canvas sandbox, as one value so it cannot drift.
+ *
+ * The missing token is the important one. allow-same-origin gives the frame
+ * THIS page's origin, which is what lets the designer read and write the
+ * document at all — so adding allow-scripts beside it would hand every page
+ * being edited, including one somebody else wrote, full run of the dashboard:
+ * its storage, its token, its API calls. The whole design rests on untrusted
+ * markup never executing, and this attribute is the only thing enforcing it.
+ *
+ * There is a test asserting this exact string. If you are here to make some
+ * page "preview properly", the Live view is where a page is allowed to run.
+ */
+export const CANVAS_SANDBOX = 'allow-same-origin';
+
+/*
+ * The Live sandbox, which depends on where the dashboard is served from.
+ *
+ * Live runs the page for real, so it keeps allow-scripts. What it never
+ * keeps is the ability to navigate the top frame: a previewed page that can
+ * retarget the whole tab can put a convincing login screen in front of you,
+ * and no preview needs that.
+ *
+ * [sameOrigin] is the all-in-one case, where the dashboard is served from the
+ * very cloudlet whose pages are being edited. There, allow-same-origin would
+ * hand the frame the dashboard's own origin — token included — so it is
+ * dropped, and the page runs in an opaque origin instead. Its own storage and
+ * same-origin calls stop working, which is a real cost, and the alternative
+ * is letting an edited page read the session that is editing it.
+ */
+export function liveSandbox(sameOrigin: boolean): string {
+  const tokens = ['allow-scripts', 'allow-forms', 'allow-popups'];
+  if (!sameOrigin) {
+    tokens.splice(1, 0, 'allow-same-origin');
+  }
+  return tokens.join(' ');
+}
+
 export function canContainChildren(element: Element) {
   const tag = element.tagName.toLowerCase();
   return !VOID.has(tag) && !RAW.has(tag);

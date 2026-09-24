@@ -117,6 +117,58 @@ export function matchingSelectors(css: string, element: Element): string[] {
 }
 
 /*
+ * Every selector worth offering for the element in hand.
+ *
+ * Asking the stylesheet which of its rules match is not enough, and the gap is
+ * the whole point of the panel: a class you have just invented matches nothing
+ * yet, so it would never be offered, so you could never write the rule that
+ * would make it match. The list therefore starts from the element itself —
+ * its own classes, then its id — and only then adds whatever the stylesheet
+ * already has for it.
+ *
+ * The designer's own block is read too. A rule written here lives below the
+ * fence rather than in the author's text above it, so without this the class
+ * you styled a minute ago would be missing from the list the next time the
+ * page was opened, and its rule would sit there uneditable.
+ */
+export function selectorsFor(
+  element: Element,
+  css: string,
+  overrides: Overrides): string[] {
+
+  const found: string[] = [];
+  const add = (selector: string) => {
+    if (selector && !found.includes(selector)) {
+      found.push(selector);
+    }
+  };
+  (element.getAttribute('class') ?? '').trim().split(/\s+/)
+    .filter(Boolean)
+    .forEach(name => add('.' + name));
+  if (element.id) {
+    add('#' + element.id);
+  }
+  matchingSelectors(css, element).forEach(add);
+  Object.keys(overrides)
+    .filter(selector => matches(element, selector))
+    .forEach(add);
+  return found;
+}
+
+/*
+ * A selector from the block is text that was in a file, so it can be anything
+ * — including something this browser will not parse. Asking is how you find
+ * out, and an unparseable selector is simply not offered.
+ */
+function matches(element: Element, selector: string) {
+  try {
+    return element.matches(selector);
+  } catch {
+    return false;
+  }
+}
+
+/*
  * Splits a stylesheet into the author's text above the block, the declarations
  * inside it, and the author's text below it.
  *

@@ -15,6 +15,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { DropSpot, findDropSpot } from './dropTarget';
 import { elementOf, isText, labelOf, nodeAtPoint, rectOf } from './nodes';
+import { CANVAS_SANDBOX } from './html';
 
 export interface CanvasProps {
   srcDoc: string;
@@ -478,12 +479,8 @@ export default function Canvas(props: CanvasProps) {
         ref={frameRef}
         className="designer-frame"
         title="Web Designer canvas"
-        /*
-         * No allow-scripts: the page's own JavaScript must not run, or the DOM
-         * stops being the file. allow-same-origin keeps the frame reachable
-         * from here, which is the whole mechanism.
-         */
-        sandbox="allow-same-origin"
+        // Read CANVAS_SANDBOX before changing this. It is load bearing.
+        sandbox={CANVAS_SANDBOX}
         srcDoc={props.srcDoc}
         onLoad={onLoad}
         style={props.width ? { width: props.width } : undefined} />

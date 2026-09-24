@@ -15,9 +15,13 @@
 import { useState } from 'react';
 import { CopyIcon, TrashIcon } from '../../components/Icons';
 import { isText, labelOf } from './nodes';
+import { KIND_FOR_TAG } from './Media';
 
 // Attributes with a control of their own, or that belong to the designer.
 const OWN = ['class', 'id', 'style', 'contenteditable'];
+
+const mediaLabel = { image: 'Image', video: 'Video', audio: 'Audio' } as const;
+const mediaArticle = { image: 'an image', video: 'a video', audio: 'an audio file' } as const;
 
 function allClasses(doc: Document) {
   const found = new Set<string>();
@@ -29,6 +33,19 @@ function allClasses(doc: Document) {
     });
   });
   return Array.from(found).sort();
+}
+
+/*
+ * What to show in the preview for a given src.
+ *
+ * A data URI and a remote URL already say where they live. A root-absolute
+ * path is relative to the cloudlet, so it needs the origin in front of it to
+ * load inside the dashboard. Anything else is relative to the page, which the
+ * dashboard cannot resolve on the page's behalf, so it is left alone and
+ * simply fails to load — visibly, which is the honest outcome.
+ */
+function sourceFor(src: string, origin: string) {
+  return src.startsWith('/') ? origin + src : src;
 }
 
 function classesOf(element: Element) {
@@ -49,6 +66,9 @@ export default function Inspector(props: {
   // Offered when an element holds nothing at all, so words can go back in.
   onAddText: () => void;
   canAddText: boolean;
+  // Absolute origin of the cloudlet, so a preview loads from where the page will.
+  origin: string;
+  onChooseMedia: (kind: 'image' | 'video' | 'audio') => void;
 }) {
 
   const [newClass, setNewClass] = useState('');
@@ -156,6 +176,9 @@ export default function Inspector(props: {
    */
   function elementFields(element: Element) {
     const classes = classesOf(element);
+    const mediaKind = KIND_FOR_TAG[element.tagName.toLowerCase()];
+    const src = element.getAttribute('src');
+    const source = src ? sourceFor(src, props.origin) : null;
     const attributes = Array.from(element.attributes)
       .filter(attribute => !OWN.includes(attribute.name) &&
         !attribute.name.startsWith('data-magic-'));
@@ -212,6 +235,32 @@ export default function Inspector(props: {
             {allClasses(props.doc!).map(name => <option key={name} value={name} />)}
           </datalist>
         </div>
+
+        {mediaKind && (
+          <div className="designer-field">
+            <span>{mediaLabel[mediaKind]}</span>
+            {/*
+              * The preview is the element's own source resolved against the
+              * cloudlet, so a path that is wrong here is wrong on the page
+              * too — which is the fastest way to notice it.
+              */}
+            <button
+              className="designer-image-preview"
+              title={'Choose ' + mediaArticle[mediaKind]}
+              onClick={() => props.onChooseMedia(mediaKind)}>
+              {source === null
+                ? <span className="designer-muted">Nothing chosen</span>
+                : mediaKind === 'image'
+                  ? <img src={source} alt="" />
+                  : mediaKind === 'video'
+                    ? <video src={source} preload="metadata" muted playsInline />
+                    : <audio src={source} controls />}
+            </button>
+            <button className="btn btn-secondary" onClick={() => props.onChooseMedia(mediaKind)}>
+              Choose {mediaArticle[mediaKind]}…
+            </button>
+          </div>
+        )}
 
         <div className="designer-field">
           <span>Attributes</span>

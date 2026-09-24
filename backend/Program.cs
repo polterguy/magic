@@ -39,7 +39,16 @@ namespace magic.backend
                             {
                                 options.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(180);
                                 options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(180);
-                                options.Limits.MaxRequestBodySize = 262144000; // 250MB
+                                /*
+                                 * The ceiling on anything uploaded to a cloudlet.
+                                 *
+                                 * Kestrel measures the whole request body, so a file has to fit
+                                 * inside this together with its multipart envelope — the largest
+                                 * file that actually gets through is a little under the number
+                                 * below, not exactly it.
+                                 */
+                                const long MB = 1024 * 1024;
+                                options.Limits.MaxRequestBodySize = 350 * MB;
                             })
                             .UseStartup<Startup>();
                     })
