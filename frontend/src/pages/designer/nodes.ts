@@ -150,3 +150,49 @@ export function writeText(node: Text, text: string) {
   const trail = /\s*$/.exec(node.data)![0];
   node.data = lead + text + trail;
 }
+
+/*
+ * Where a node sits, as the child indices to walk from an ancestor down to it.
+ *
+ * Replacing a document's innerHTML builds every node again, so a reference
+ * held across that swap points at something no longer in the document. A
+ * position survives it: the same walk through the new tree lands on whatever
+ * now occupies that place, which is what "keep my selection" actually means
+ * when the thing selected has been rebuilt.
+ *
+ * childNodes rather than children, because a run of text is selectable here
+ * and skipping text would make every path after one of them wrong.
+ */
+export function pathTo(node: Node, root: Node): number[] | null {
+  const path: number[] = [];
+  let current: Node | null = node;
+  while (current && current !== root) {
+    const parent: Node | null = current.parentNode;
+    if (!parent) {
+      return null;
+    }
+    path.unshift(Array.prototype.indexOf.call(parent.childNodes, current));
+    current = parent;
+  }
+  return current === root ? path : null;
+}
+
+/*
+ * The node at a position, or the deepest one on the way there.
+ *
+ * An undo can take away the very node a path was built for — undoing a wrap
+ * removes the wrapper that was selected. Stopping at the last step that
+ * exists puts the selection on its nearest surviving ancestor instead of
+ * dropping it, which is nearly always the thing you were working on.
+ */
+export function nodeAt(root: Node, path: number[]): Node | null {
+  let current: Node = root;
+  for (const index of path) {
+    const next: Node | undefined = current.childNodes[index];
+    if (!next) {
+      break;
+    }
+    current = next;
+  }
+  return current === root ? null : current;
+}

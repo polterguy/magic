@@ -142,12 +142,22 @@ export function selectorsFor(
       found.push(selector);
     }
   };
-  (element.getAttribute('class') ?? '').trim().split(/\s+/)
-    .filter(Boolean)
-    .forEach(name => add('.' + name));
+  const classes = (element.getAttribute('class') ?? '').trim().split(/\s+/).filter(Boolean);
+  const tag = element.tagName.toLowerCase();
+  /*
+   * Widest intent first, then narrower. A class on its own is what people
+   * reach for; the same class qualified by this tag is how you reach the
+   * buttons that are anchors without touching the ones that are not; the id
+   * is this element and nothing else; and the bare tag is every one of these
+   * on the page, which is both the broadest and the least often wanted, so it
+   * sits below the rest rather than first under the cursor.
+   */
+  classes.forEach(name => add('.' + name));
+  classes.forEach(name => add(tag + '.' + name));
   if (element.id) {
     add('#' + element.id);
   }
+  add(tag);
   matchingSelectors(css, element).forEach(add);
   Object.keys(overrides)
     .filter(selector => matches(element, selector))

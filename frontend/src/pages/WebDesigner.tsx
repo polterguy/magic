@@ -38,7 +38,7 @@ import Styles, { INLINE } from './designer/Styles';
 import { Block, GROUPS, customBlock } from './designer/palette';
 import { DropSpot } from './designer/dropTarget';
 import { liveSandbox, prepareDocument, serializeDocument } from './designer/html';
-import { designableChildren, elementOf, isText, writeText } from './designer/nodes';
+import { designableChildren, elementOf, isText, nodeAt, pathTo, writeText } from './designer/nodes';
 import { canContainChildren } from './designer/html';
 import { Overrides, joinCss, overrideCss, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
 
@@ -507,10 +507,14 @@ export default function WebDesigner() {
       return;
     }
     if (!coalesce || coalesce !== coalesceRef.current) {
-      setHistory(stack => [
-        ...stack.slice(-(HISTORY - 1)),
-        { html: current.documentElement.innerHTML, overrides },
-      ]);
+      /*
+       * Read now, not inside the updater. React may call an updater later,
+       * during the render it schedules — and by then change() has run and the
+       * document holds the very state this snapshot exists to undo. Capturing
+       * the string here pins it to the moment before anything moved.
+       */
+      const before: Snapshot = { html: current.documentElement.innerHTML, overrides };
+      setHistory(stack => [...stack.slice(-(HISTORY - 1)), before]);
     }
     coalesceRef.current = coalesce ?? null;
     setFuture([]);
@@ -530,10 +534,9 @@ export default function WebDesigner() {
      * out here — the selection, the hover — now points at a node that is no
      * longer in the document.
      */
-    setFuture(stack => [
-      ...stack,
-      { html: current.documentElement.innerHTML, overrides },
-    ]);
+    // Captured before restore() replaces it, for the reason given in mutate().
+    const undone: Snapshot = { html: current.documentElement.innerHTML, overrides };
+    setFuture(stack => [...stack, undone]);
     restore(snapshot);
     setHistory(stack => stack.slice(0, -1));
   }
@@ -549,20 +552,29 @@ export default function WebDesigner() {
     if (!current || !snapshot) {
       return;
     }
-    setHistory(stack => [
-      ...stack.slice(-(HISTORY - 1)),
-      { html: current.documentElement.innerHTML, overrides },
-    ]);
+    const redone: Snapshot = { html: current.documentElement.innerHTML, overrides };
+    setHistory(stack => [...stack.slice(-(HISTORY - 1)), redone]);
     restore(snapshot);
     setFuture(stack => stack.slice(0, -1));
   }
 
-  // Putting a snapshot back into the canvas, shared by both directions.
+  /*
+   * Putting a snapshot back into the canvas, shared by both directions.
+   *
+   * The selection is carried across by position rather than by reference,
+   * because every node in the document is about to be rebuilt. Losing it on
+   * each step made stepping back and forth cost a re-selection every time,
+   * which is most of what undo is for.
+   *
+   * The hover is not carried across. It belongs to the pointer, and the
+   * pointer has not moved.
+   */
   function restore(snapshot: Snapshot) {
     const current = docRef.current!;
+    const where = selected ? pathTo(selected, current.documentElement) : null;
     current.documentElement.innerHTML = snapshot.html;
     setOverrides(snapshot.overrides);
-    setSelected(null);
+    setSelected(where ? nodeAt(current.documentElement, where) : null);
     setHovered(null);
     coalesceRef.current = null;
     setDirty(true);
