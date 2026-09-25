@@ -157,9 +157,18 @@ function tokenizeMultiCommentMode(stream: StringStream, state: HyperlambdaState)
   /*
    * No needs to be "fancy" here, simply skip til "end of line", and then
    * parse content, to see if we passed "end of multi line comment" or not.
-   * This is done since a multiline comment in Hyperlambda is NOT, I repeat
-   * *NOT* allowed to have ANY content after it is closed, to avoid creating
-   * the weirdest indentation nightmare you could imagine ...!!
+   *
+   * A comment closes only when the line ENDS with the closing marker, to the
+   * character. The parser is strict about this in both directions: trailing
+   * whitespace after the marker does not close it, and a marker appearing
+   * anywhere earlier in the line does not either. Both are ordinary comment
+   * text.
+   *
+   * That second case is the one worth being careful about, because it is not
+   * a curiosity — a comment ABOUT Hyperlambda quotes expressions and closing
+   * markers as a matter of course, and this file is full of them. Treating
+   * one as the end of a comment used to drop the tokenizer into an error it
+   * never left, painting every remaining line of a perfectly valid file red.
    */
   stream.skipToEnd();
   const cur = stream.current();
@@ -168,16 +177,6 @@ function tokenizeMultiCommentMode(stream: StringStream, state: HyperlambdaState)
     // End of comment, hence name must follow.
     state.indent = state.oldIndent;
     state.mode = 'name';
-  } else if (cur.indexOf('*/') !== -1) {
-
-    /*
-     * Somehow coder managed to stuff something *AFTER* multi line comment, on
-     * same line, which is illegal in Hyperlambda (see over). Returning
-     * "error" which stops tokenizing the rest of the document, leaving
-     * everything from here, until the end of the document in "error state".
-     */
-    state.mode = 'error';
-    return styles.error;
   } // else, comment spans more lines. We still haven't seen the end of it yet.
   return styles.comment;
 }

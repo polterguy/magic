@@ -111,6 +111,26 @@ describe('hyperlambda tokenizer', () => {
     expect(doc[1]).toEqual([{ text: 'two */', style: 'comment' }]);
   });
 
+  /*
+   * A comment about Hyperlambda quotes Hyperlambda, so closing markers turn up
+   * inside comments routinely. One of those used to wedge the tokenizer in an
+   * error state that ran to the end of the file.
+   */
+  it('keeps a closing marker mid line as comment text', () => {
+    const doc = tokenizeDoc('/* one\n * says {{*/.name}} here\n */\nif');
+    expect(doc[1]).toEqual([{ text: ' * says {{*/.name}} here', style: 'comment' }]);
+    expect(doc[2]).toEqual([{ text: ' */', style: 'comment' }]);
+    // And the file carries on normally afterwards, rather than going red.
+    expect(doc[3][0].style).not.toBe('error');
+  });
+
+  it('does not close a comment on a marker followed by whitespace', () => {
+    const doc = tokenizeDoc('/* one\n * not the end */ \n */\nif');
+    expect(doc[1][0].style).toBe('comment');
+    expect(doc[2]).toEqual([{ text: ' */', style: 'comment' }]);
+    expect(doc[3][0].style).not.toBe('error');
+  });
+
   it('tokenizes multi line strings across lines', () => {
     const doc = tokenizeDoc('@"\ncontent\n"');
     expect(doc[0]).toEqual([{ text: '@"', style: 'string' }]);
