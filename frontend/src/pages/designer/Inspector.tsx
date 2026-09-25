@@ -13,6 +13,7 @@
  */
 
 import { useState } from 'react';
+import { SERVER_FILLED, hasSlot } from './html';
 import { CopyIcon, TrashIcon } from '../../components/Icons';
 import { isText, labelOf } from './nodes';
 import { KIND_FOR_TAG } from './Media';
@@ -184,6 +185,12 @@ export default function Inspector(props: {
    */
   const [tagDraft, setTagDraft] = useState<{ owner: Element; value: string } | null>(null);
   const [badTag, setBadTag] = useState(false);
+  /*
+   * The one attribute whose server-filled value has been deliberately
+   * unlocked. One at a time, because unlocking is a decision about the value
+   * in front of you rather than a mode the panel is in.
+   */
+  const [unlocked, setUnlocked] = useState<string | null>(null);
 
   const node = props.node;
   if (!node || !props.doc) {
@@ -437,19 +444,33 @@ export default function Inspector(props: {
         <div className="designer-field">
           <span>Attributes</span>
           {attributes.map(attribute => (
-            <div className="designer-attribute" key={attribute.name}>
+            <div
+              className={'designer-attribute' +
+                (hasSlot(attribute.value) ? ' designer-server-filled' : '')}
+              key={attribute.name}>
               <label title={attribute.name}>{attribute.name}</label>
               <input
                 type="text"
                 list={LINKS.includes(attribute.name) ? 'designer-urls' : undefined}
+                readOnly={hasSlot(attribute.value) && unlocked !== attribute.name}
+                title={hasSlot(attribute.value) ? SERVER_FILLED : undefined}
                 value={attribute.value}
                 onChange={event => props.onSetAttribute(attribute.name, event.target.value)} />
-              <button
-                className="icon-btn"
-                title={'Remove ' + attribute.name}
-                onClick={() => props.onRemoveAttribute(attribute.name)}>
-                <TrashIcon />
-              </button>
+              {hasSlot(attribute.value) && unlocked !== attribute.name ? (
+                <button
+                  className="icon-btn designer-unlock"
+                  title={SERVER_FILLED + ' Click to edit it anyway.'}
+                  onClick={() => setUnlocked(attribute.name)}>
+                  Edit anyway
+                </button>
+              ) : (
+                <button
+                  className="icon-btn"
+                  title={'Remove ' + attribute.name}
+                  onClick={() => props.onRemoveAttribute(attribute.name)}>
+                  <TrashIcon />
+                </button>
+              )}
             </div>
           ))}
           {attributes.length === 0 && <span className="designer-muted">No attributes</span>}

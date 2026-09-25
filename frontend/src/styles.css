@@ -4349,6 +4349,33 @@ tr.vss-irrelevant td {
   box-shadow: 0 0 0 1px var(--danger);
 }
 
+/*
+ * A value the server fills in when the page is served.
+ *
+ * Marked rather than hidden, and read-only rather than disabled: the value is
+ * real, it is worth reading, and replacing it with fixed text is a decision
+ * somebody is allowed to make — just not one they should make by brushing
+ * past it. Amber for the same reason the canvas uses amber on one of these:
+ * this is the one field where doing the ordinary thing is the wrong thing.
+ */
+.designer-server-filled input,
+.designer-server-filled textarea {
+  border-color: #d98324;
+  background: rgba(217, 131, 36, 0.08);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.designer-server-filled .designer-note {
+  color: #d98324;
+}
+
+.designer-unlock {
+  margin-left: 8px;
+  width: auto;
+  white-space: nowrap;
+}
+
 /* One rule in the list of what this page has been given. */
 .designer-rule {
   display: flex;

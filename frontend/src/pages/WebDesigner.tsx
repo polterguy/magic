@@ -32,12 +32,12 @@ import NewPage, { blankPage, fileForUrl } from './designer/NewPage';
 import Inspector from './designer/Inspector';
 import Layers from './designer/Layers';
 import Media, { KIND_FOR_TAG, MediaKind, Picked } from './designer/Media';
-import Meta, { Home, writeMeta } from './designer/Meta';
+import Meta, { Home, readMeta, writeMeta } from './designer/Meta';
 import Quality from './designer/Quality';
 import Styles, { INLINE } from './designer/Styles';
 import { Block, GROUPS, customBlock } from './designer/palette';
 import { DropSpot } from './designer/dropTarget';
-import { liveSandbox, prepareDocument, serializeDocument } from './designer/html';
+import { liveSandbox, prepareDocument, serializeDocument, slotsDropped } from './designer/html';
 import { designableChildren, elementOf, isText, labelOf, nodeAt, pathTo, writeText } from './designer/nodes';
 import { canContainChildren } from './designer/html';
 import { Overrides, joinCss, overrideCss, ownStylesheet, scriptPaths, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
@@ -733,11 +733,31 @@ export default function WebDesigner() {
     }
   }
 
+  /*
+   * Says what an edit just took off the page, when it took a value the server
+   * was going to fill in.
+   *
+   * The warning is on the removal, not on the editing. Typing inside one of
+   * these is a real edit and passes in silence; turning one into fixed text
+   * is the mistake, and it is the kind that shows up weeks later as a page
+   * quietly serving last month's title.
+   */
+  function reportDropped(before: string, after: string) {
+    const gone = slotsDropped(before, after);
+    if (gone.length === 0) {
+      return;
+    }
+    showToast(gone.join(' and ') + (gone.length === 1 ? ' was' : ' were') +
+      ' filled in by the server. Fixed text means the page stops asking — undo ' +
+      'if that was not the idea.', true);
+  }
+
   function setAttribute(name: string, value: string) {
     const element = elementOf(selected);
     if (!element) {
       return;
     }
+    reportDropped(element.getAttribute(name) ?? '', value);
     mutate(() => {
       // An empty id is never meaningful, and writing id="" to the file is noise.
       if (name === 'id' && value === '') {
@@ -864,6 +884,7 @@ export default function WebDesigner() {
    * fields already follow.
    */
   function setMeta(home: Home, value: string) {
+    reportDropped(readMeta(docRef.current!, home), value);
     mutate(() => writeMeta(docRef.current!, home, value),
       'meta:' + home.at + ('key' in home ? home.key : ''));
   }
@@ -1774,7 +1795,10 @@ export default function WebDesigner() {
               }
             }}
             onPendingDone={() => setPending(null)}
-            onEditText={(node, text) => mutate(() => writeText(node, text))}
+            onEditText={(node, text) => {
+              reportDropped(node.data, text);
+              mutate(() => writeText(node, text));
+            }}
             onKey={onKey}
             hidden={view !== 'design'} />
 

@@ -11,6 +11,9 @@
  * other edit here, so the head is covered by the same undo and the same save.
  */
 
+import { useState } from 'react';
+import { SERVER_FILLED, hasSlot } from './html';
+
 // Where a value lives in the head, since they are not all meta tags.
 export type Home =
   | { at: 'title' }
@@ -173,6 +176,15 @@ export default function Meta(props: {
   onChooseImage: (home: Home) => void;
 }) {
 
+  /*
+   * The one field whose server-filled value has been deliberately unlocked.
+   * A page's canonical URL and its og:url are routinely filled in by the
+   * code-behind file, and both of them are shown here as ordinary text boxes
+   * with the value already in them — which is the easiest place in the whole
+   * tool to replace one with a fixed string by accident.
+   */
+  const [unlocked, setUnlocked] = useState<string | null>(null);
+
   const doc = props.doc;
   if (!doc) {
     return <p className="designer-empty">No page open.</p>;
@@ -209,12 +221,16 @@ export default function Meta(props: {
       );
     }
 
+    const filled = hasSlot(value);
+    const locked = filled && unlocked !== id;
+
     return (
-      <label className="designer-field" key={id}>
+      <label className={'designer-field' + (filled ? ' designer-server-filled' : '')} key={id}>
         <span>{field.label}</span>
         {field.control === 'textarea' ? (
           <textarea
             rows={3}
+            readOnly={locked}
             value={value}
             placeholder="None"
             onChange={event => props.onSet(field.home, event.target.value)} />
@@ -222,9 +238,22 @@ export default function Meta(props: {
           <input
             type="text"
             list={field.options ? id + '-options' : field.links ? 'designer-page-urls' : undefined}
+            readOnly={locked}
             value={value}
             placeholder="None"
             onChange={event => props.onSet(field.home, event.target.value)} />
+        )}
+        {filled && (
+          <p className="designer-note">
+            {SERVER_FILLED}
+            {locked && (
+              <button
+                className="btn btn-secondary btn-small designer-unlock"
+                onClick={event => { event.preventDefault(); setUnlocked(id); }}>
+                Edit anyway
+              </button>
+            )}
+          </p>
         )}
         {field.options && (
           <datalist id={id + '-options'}>

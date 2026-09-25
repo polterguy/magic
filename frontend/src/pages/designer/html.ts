@@ -50,6 +50,94 @@ const INDENT = '  ';
 export const TOOL_ATTRIBUTE = 'data-magic-tool';
 
 /*
+ * A value the server fills in, and the page shows a hole for.
+ *
+ * Magic renders a page by evaluating a same-named Hyperlambda file beside it
+ * and substituting every {{expression}} in the markup with what that
+ * expression returns. The canvas loads the file rather than the URL, so these
+ * arrive as literal text — which is exactly how they get typed over and lost,
+ * because nothing about a run of words says the server was going to put
+ * something there.
+ *
+ * One predicate, used by every surface that can show one: the canvas, the
+ * element's attributes, and the page's head. A value that holds one of these
+ * is not yours to replace with a fixed string, and saying so is this
+ * attribute's whole job.
+ */
+const SLOT = /\{\{[^{}]*\}\}/;
+export const SLOT_ATTRIBUTE = 'data-magic-slot';
+// Set for as long as one is being typed into, which is what turns it amber.
+export const SLOT_EDITING = 'data-magic-slot-editing';
+
+export function hasSlot(value: string) {
+  return SLOT.test(value);
+}
+
+// Said the same way wherever one of these turns up, which is three places.
+export const SERVER_FILLED =
+  'The server fills this in when the page is served. Editing it here replaces ' +
+  'it with fixed text.';
+
+/*
+ * What an edit took away, when it replaced a server-filled value with a fixed
+ * one. Empty when it did not.
+ *
+ * Judged on COUNT rather than on identity, so that renaming an expression —
+ * a real edit, and a legitimate one — says nothing, while dropping one of two
+ * still reports the one that went. Comparing identity alone would call every
+ * rename a loss and teach people to ignore the warning.
+ */
+export function slotsDropped(before: string, after: string): string[] {
+  const all = /\{\{[^{}]*\}\}/g;
+  const had: string[] = before.match(all) ?? [];
+  const now: string[] = after.match(all) ?? [];
+  return now.length >= had.length ? [] : had.filter(one => !now.includes(one));
+}
+
+export function isSlot(node: Node): node is Element {
+  return node.nodeType === Node.ELEMENT_NODE &&
+    (node as Element).hasAttribute(SLOT_ATTRIBUTE);
+}
+
+/*
+ * Puts every {{expression}} in the body inside a marked span, so the canvas
+ * has something to draw and something to refuse to swallow.
+ *
+ * Only the body, because the head is not on the canvas and a span in it would
+ * be markup the author never wrote. Never inside script, style, pre or
+ * textarea: their text is significant to the byte, and an element spliced into
+ * the middle of a script is not a highlight, it is a syntax error.
+ */
+function markSlots(doc: Document) {
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+  const runs: Text[] = [];
+  while (walker.nextNode()) {
+    const text = walker.currentNode as Text;
+    if (hasSlot(text.data) && !text.parentElement?.closest(Array.from(RAW).join(','))) {
+      runs.push(text);
+    }
+  }
+  runs.forEach(text => {
+    const pieces = text.data.split(/(\{\{[^{}]*\}\})/);
+    const replacement = doc.createDocumentFragment();
+    pieces.forEach(piece => {
+      if (piece === '') {
+        return;
+      }
+      if (!hasSlot(piece)) {
+        replacement.append(piece);
+        return;
+      }
+      const chip = doc.createElement('span');
+      chip.setAttribute(SLOT_ATTRIBUTE, '');
+      chip.append(piece);
+      replacement.append(chip);
+    });
+    text.replaceWith(replacement);
+  });
+}
+
+/*
  * Stylesheet the canvas gets on top of the page's own.
  *
  * It is deliberately tiny. Selection outlines and drop indicators are drawn by
@@ -92,6 +180,39 @@ body { -webkit-user-select: none; user-select: none; }
   border-radius: 2px;
   background: rgba(53, 208, 127, 0.16);
 }
+
+/*
+ * A hole the server fills. Drawn as a thing rather than as words, because a
+ * thing is not something you type over by accident.
+ *
+ * Colours are fixed rather than themed for the same reason the editing mark
+ * is: this has to stand out against the page being designed, which can be any
+ * colour at all, not against the dashboard.
+ */
+[data-magic-slot] {
+  display: inline-block;
+  padding: 0 6px;
+  border: 1px dashed rgba(120, 130, 150, 0.9);
+  border-radius: 4px;
+  background: rgba(120, 130, 150, 0.14);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: nowrap;
+  cursor: text;
+}
+
+/*
+ * And the same hole while it is being typed into. Amber, because this is the
+ * one edit in the tool where the ordinary outcome of typing — replacing what
+ * is there with what you meant — is the wrong outcome.
+ */
+[data-magic-slot][data-magic-slot-editing] {
+  border: 1px solid #d98324;
+  background: rgba(217, 131, 36, 0.18);
+  outline: 2px solid #d98324;
+  outline-offset: 2px;
+}
 `;
 
 /*
@@ -110,6 +231,8 @@ export function prepareDocument(source: string, baseHref: string): string {
   base.setAttribute('href', baseHref);
   base.setAttribute(TOOL_ATTRIBUTE, '');
   doc.head.prepend(base);
+
+  markSlots(doc);
 
   const canvas = doc.createElement('style');
   canvas.setAttribute(TOOL_ATTRIBUTE, '');
@@ -149,7 +272,16 @@ export function serializeDocument(doc: Document): string {
    * it. Committing an edit already takes it out; this is what guarantees it
    * can never reach the file even if one were somehow left behind.
    */
-  copy.querySelectorAll('[data-magic-editing]')
+  /*
+   * Both of these are UNWRAPPED rather than removed, because each is
+   * scaffolding around the author's own text rather than an addition of ours,
+   * and deleting one would take the text with it. That is also why the span
+   * marking a server-filled value carries no TOOL_ATTRIBUTE: if this unwrap
+   * ever failed to run, the sweep below would delete the element and the
+   * {{expression}} inside it, where leaving it costs a stray span and nothing
+   * more. A visible mess beats a silent loss.
+   */
+  copy.querySelectorAll('[data-magic-editing], [' + SLOT_ATTRIBUTE + ']')
     .forEach(node => node.replaceWith(...Array.from(node.childNodes)));
   /*
    * A stylesheet the designer took over is switched back on. While editing,

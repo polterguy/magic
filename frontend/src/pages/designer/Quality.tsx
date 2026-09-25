@@ -63,6 +63,9 @@ export function audit(doc: Document, urls: string[]): Finding[] {
   if (!doc.querySelector('head meta[name="description"]')) {
     findings.push({ kind: 'Page', detail: 'No description. Search results fall back to whatever text they find.', node: null });
   }
+  if (!doc.querySelector('head meta[name="viewport"]')) {
+    findings.push({ kind: 'Page', detail: 'No viewport. Phones assume a desktop width and shrink the result, which is what turns a page that looks right here into small print on a phone.', node: null });
+  }
 
   // -- Images --------------------------------------------------------------
   body.querySelectorAll('img').forEach(image => {

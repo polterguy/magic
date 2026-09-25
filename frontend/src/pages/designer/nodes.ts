@@ -13,7 +13,7 @@
  * type cover both.
  */
 
-import { TOOL_ATTRIBUTE } from './html';
+import { TOOL_ATTRIBUTE, isSlot } from './html';
 
 export function isText(node: Node): node is Text {
   return node.nodeType === Node.TEXT_NODE;
@@ -46,6 +46,14 @@ export function elementOf(node: Node | null): Element | null {
  * occasion that a space itself needs editing.
  */
 export function designableChildren(node: Node): Node[] {
+  /*
+   * A server-filled value is one thing, not a span with a run of text in it.
+   * Listing its insides would offer the expression as something to edit as
+   * prose, which is the confusion the marking exists to remove.
+   */
+  if (isSlot(node)) {
+    return [];
+  }
   return Array.from(node.childNodes).filter(child => {
     if (isElement(child)) {
       return !child.hasAttribute(TOOL_ATTRIBUTE);
@@ -125,6 +133,10 @@ export function nodeAtPoint(doc: Document, x: number, y: number, element: Elemen
 
 // How a node reads in the tree and the breadcrumb.
 export function labelOf(node: Node): string {
+  // Read as what the server will put there, not as the span holding the hole.
+  if (isSlot(node)) {
+    return node.textContent ?? '{{}}';
+  }
   if (isText(node)) {
     const text = node.data.trim().replace(/\s+/g, ' ');
     return text.length > 26 ? '"' + text.slice(0, 26) + '…"' : '"' + text + '"';

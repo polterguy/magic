@@ -15,7 +15,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { DropSpot, findDropSpot } from './dropTarget';
 import { elementOf, isText, labelOf, nodeAtPoint, rectOf } from './nodes';
-import { CANVAS_SANDBOX } from './html';
+import { CANVAS_SANDBOX, SLOT_EDITING, isSlot } from './html';
 
 export interface CanvasProps {
   srcDoc: string;
@@ -219,6 +219,14 @@ export default function Canvas(props: CanvasProps) {
     element.insertBefore(span, node);
     span.appendChild(node);
     editRef.current = { element, index, html, text: node.data, span };
+    /*
+     * Typing into a server-filled value is allowed — renaming the expression
+     * is a real edit — but it is not the ordinary business of typing, so it
+     * does not look like it while it is happening.
+     */
+    if (isSlot(element)) {
+      element.setAttribute(SLOT_EDITING, '');
+    }
     span.focus();
     const range = doc.createRange();
     range.selectNodeContents(span);
@@ -256,6 +264,7 @@ export default function Canvas(props: CanvasProps) {
     editRef.current = null;
     edit.span.removeEventListener('keydown', editKeys);
     edit.span.removeEventListener('blur', commitEdit);
+    edit.element.removeAttribute(SLOT_EDITING);
     edit.element.innerHTML = edit.html;
   }
 
@@ -267,6 +276,7 @@ export default function Canvas(props: CanvasProps) {
     editRef.current = null;
     edit.span.removeEventListener('keydown', editKeys);
     edit.span.removeEventListener('blur', commitEdit);
+    edit.element.removeAttribute(SLOT_EDITING);
     const typed = (edit.span.textContent ?? '').replace(/\s+/g, ' ').trim();
     /*
      * Typing has already changed the document, but the change has to be made
