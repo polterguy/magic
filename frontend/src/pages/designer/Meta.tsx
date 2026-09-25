@@ -41,6 +41,22 @@ export const GROUPS: { title: string; note?: string; fields: MetaField[] }[] = [
         hint: 'The address this page should be indexed under, when more than one reaches it.' },
       { label: 'Language', home: { at: 'lang' }, control: 'text',
         options: ['en', 'en-GB', 'en-US', 'nb', 'de', 'fr', 'es', 'it', 'nl', 'sv', 'da'] },
+      /*
+       * The suggestions stop short of user-scalable=no and maximum-scale=1,
+       * which are the two every copied snippet carries and the two that take
+       * pinch zoom away from anybody who needs it. They can still be typed —
+       * this is a text field, not a menu — they are just not put in front of
+       * someone who is reaching for the ordinary answer.
+       */
+      { label: 'Viewport', home: { at: 'name', key: 'viewport' }, control: 'text',
+        hint: 'How a phone lays the page out. Without it a phone assumes a desktop ' +
+          'width and shrinks the result, which is what makes an otherwise fine page ' +
+          'arrive as unreadable small print.',
+        options: [
+          'width=device-width, initial-scale=1',
+          'width=device-width, initial-scale=1, viewport-fit=cover',
+          'width=1024',
+        ] },
     ],
   },
   {
