@@ -25,7 +25,7 @@ import { useUnsavedGuard } from '../lib/navGuard';
 import { onChatOpsDone } from '../lib/chatOps';
 import { showToast } from '../lib/toast';
 import { aiContextForFile, createFolder, listFilesRecursively, loadFile, saveFile } from '../lib/api';
-import { RedoIcon, SaveIcon, UndoIcon } from '../components/Icons';
+import { ChevronIcon, RedoIcon, SaveIcon, UndoIcon } from '../components/Icons';
 import Canvas from './designer/Canvas';
 import Menu from './designer/Menu';
 import NewPage, { blankPage, fileForUrl } from './designer/NewPage';
@@ -172,6 +172,24 @@ export default function WebDesigner() {
   // lands, because what it should look like depends on where it lands.
   const [pending, setPending] = useState<Block | null>(null);
   const [tab, setTab] = useState('element');
+  /*
+   * Rails that have been folded away to give the canvas the room.
+   *
+   * Remembered across sessions, the same way the navigation's own collapse is:
+   * somebody who works with the page filling the screen wants it filling the
+   * screen tomorrow too, and re-folding two rails on every visit is the kind
+   * of small tax that makes a preference not worth having.
+   */
+  const [railsShut, setRailsShut] = useState<Record<'left' | 'right', boolean>>(() => ({
+    left: localStorage.getItem('magic2.designer.leftShut') === 'true',
+    right: localStorage.getItem('magic2.designer.rightShut') === 'true',
+  }));
+
+  function toggleRail(side: 'left' | 'right') {
+    const shut = !railsShut[side];
+    localStorage.setItem('magic2.designer.' + side + 'Shut', String(shut));
+    setRailsShut(current => ({ ...current, [side]: shut }));
+  }
   // Narrows the block list, and the custom tag typed beside it.
   const [blockFilter, setBlockFilter] = useState('');
   const [customTag, setCustomTag] = useState('');
@@ -1592,7 +1610,7 @@ export default function WebDesigner() {
           * tab straight into it.
           */}
         <div
-          className="designer-rail"
+          className={'designer-rail' + (railsShut.left ? ' shut' : '')}
           ref={node => node?.toggleAttribute('inert', view !== 'design')}>
           <div className="designer-section">
             <h3>Blocks</h3>
@@ -1698,6 +1716,20 @@ export default function WebDesigner() {
               }} />
           </div>
         </div>
+
+        {/*
+          * The handle sits between the rail and the canvas rather than inside
+          * either, so it is reachable whether the rail is open or folded — a
+          * button living in the thing it hides can only ever hide it.
+          */}
+        <button
+          className="designer-rail-toggle left"
+          title={railsShut.left ? 'Show blocks and tree' : 'Hide blocks and tree'}
+          onClick={() => toggleRail('left')}>
+          <span style={{ display: 'flex', transform: railsShut.left ? undefined : 'rotate(180deg)' }}>
+            <ChevronIcon />
+          </span>
+        </button>
 
         <div className="designer-middle">
         {view === 'code' && (
@@ -1839,8 +1871,17 @@ export default function WebDesigner() {
         ))}
         </div>
 
+        <button
+          className="designer-rail-toggle right"
+          title={railsShut.right ? 'Show properties' : 'Hide properties'}
+          onClick={() => toggleRail('right')}>
+          <span style={{ display: 'flex', transform: railsShut.right ? 'rotate(180deg)' : undefined }}>
+            <ChevronIcon />
+          </span>
+        </button>
+
         <div
-          className="designer-rail right"
+          className={'designer-rail right' + (railsShut.right ? ' shut' : '')}
           ref={node => node?.toggleAttribute('inert', view !== 'design')}>
           <Tabs
             tabs={[

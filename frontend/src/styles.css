@@ -186,17 +186,20 @@ body {
 }
 
 /* Collapses/expands the navigation sidebar. */
-.nav-toggle {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 40;
+/*
+ * The tab that folds a panel out of the way. One look, three of them: the
+ * navigation's own, and one for each of the designer's rails. Shared as one
+ * rule rather than copied, so they cannot drift apart.
+ *
+ * Each is a tab attached to the edge of the thing it folds — open on that
+ * side, rounded on the other — which is what says which panel it belongs to.
+ */
+.nav-toggle,
+.designer-rail-toggle {
   width: 18px;
   height: 52px;
   padding: 0;
   border: 1px solid var(--border);
-  border-left: none;
-  border-radius: 0 var(--radius) var(--radius) 0;
   background: var(--surface);
   color: var(--text-soft);
   cursor: pointer;
@@ -205,14 +208,25 @@ body {
   justify-content: center;
 }
 
-.nav-toggle:hover {
+.nav-toggle:hover,
+.designer-rail-toggle:hover {
   background: var(--accent-soft);
   color: var(--accent-dark);
 }
 
-.nav-toggle svg {
+.nav-toggle svg,
+.designer-rail-toggle svg {
   width: 12px;
   height: 12px;
+}
+
+.nav-toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  border-left: none;
+  border-radius: 0 var(--radius) var(--radius) 0;
 }
 
 .sidebar {
@@ -3712,6 +3726,39 @@ tr.vss-irrelevant td {
 }
 
 /*
+ * A rail folded away to give the canvas the room.
+ *
+ * Taken out of the layout rather than narrowed, because a 0-width flex child
+ * with a border is still a line down the page, and the point of folding it is
+ * that the page being designed gets the space.
+ */
+.designer-rail.shut {
+  display: none;
+}
+
+/*
+ * Centred down the rail it folds, and pulled the width of the layout's gap so
+ * it touches that rail rather than floating in the middle of the gutter. The
+ * chevron points at what the click will do.
+ */
+.designer-rail-toggle {
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.designer-rail-toggle.left {
+  margin-left: -16px;
+  border-left: none;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.designer-rail-toggle.right {
+  margin-right: -16px;
+  border-right: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+/*
  * Sections keep their own height rather than being compressed to fit. Left to
  * shrink, the block list would be squeezed until the tree below it had no
  * height at all — and because the tree absorbed the overflow, the rail never
@@ -4311,6 +4358,19 @@ tr.vss-irrelevant td {
   .designer-rail.right {
     width: auto;
     max-height: 280px;
+  }
+
+  /*
+   * Stacked, there is no width to reclaim, so the handles have nothing to do
+   * and are gone. A rail folded on a wide screen comes back here rather than
+   * staying hidden with no control left to bring it back.
+   */
+  .designer-rail-toggle {
+    display: none;
+  }
+
+  .designer-rail.shut {
+    display: flex;
   }
 
   .designer-canvas {
