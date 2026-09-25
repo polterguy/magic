@@ -2219,6 +2219,26 @@ pre.result-json {
   margin-top: 8px;
 }
 
+/* A yes/no beside a field, rather than above one — the box leads the label. */
+.modal-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  margin-top: 14px;
+  cursor: pointer;
+}
+
+.modal-check input {
+  width: auto;
+  margin: 0;
+}
+
+.modal-check .muted {
+  font-weight: 400;
+}
+
 .modal-actions {
   display: flex;
   align-items: center;

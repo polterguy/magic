@@ -63,6 +63,13 @@ export default function GitPanel(props: {
   const [busy, setBusy] = useState(false);
   // Whether the folder has any contents — git refuses cloning into a non-empty folder.
   const [empty, setEmpty] = useState(false);
+  /*
+   * The publish dialog, open when it holds something. It is its own dialog
+   * rather than a prompt because publishing asks two questions at once, and
+   * the second one — who can see this — is not a detail to be assumed on
+   * somebody's behalf.
+   */
+  const [publishing, setPublishing] = useState<{ name: string; isPrivate: boolean } | null>(null);
 
   const refresh = useCallback(async () => {
     try {
@@ -206,19 +213,11 @@ export default function GitPanel(props: {
     await run(() => gitRemoteAdd(props.path, url), 'Remote added');
   }
 
-  // Creates a private GitHub repository, wires it up as origin, and pushes.
-  async function publish() {
-    const name = await prompt({
-      title: 'Publish to GitHub',
-      message: 'Creates a private GitHub repository and pushes ' + props.path,
-      label: 'Repository name',
-      initial: props.path.split('/').filter(Boolean).pop(),
-    });
-    if (!name) {
-      return;
-    }
+  // Creates a GitHub repository, wires it up as origin, and pushes.
+  async function publish(name: string, isPrivate: boolean) {
+    setPublishing(null);
     await run(async () => {
-      const created = await gitGithubCreate(name);
+      const created = await gitGithubCreate(name, isPrivate);
       await gitRemoteAdd(props.path, created.url);
       await gitPush(props.path, currentBranch || undefined);
     }, 'Published to ' + name + ' on GitHub');
@@ -358,8 +357,11 @@ export default function GitPanel(props: {
               disabled={busy || unborn || hasUpstream}
               title={hasUpstream
                 ? 'Already has a remote'
-                : 'Creates a private GitHub repository and pushes this module to it'}
-              onClick={publish}>
+                : 'Creates a GitHub repository and pushes this folder to it'}
+              onClick={() => setPublishing({
+                name: props.path.split('/').filter(Boolean).pop() ?? '',
+                isPrivate: true,
+              })}>
               Publish to GitHub…
             </button>
             <button
@@ -383,6 +385,57 @@ export default function GitPanel(props: {
             </button>
           </div>
         </>
+      )}
+
+      {publishing && (
+        <Modal
+          width={520}
+          onSubmit={() => publishing.name.trim() !== '' &&
+            publish(publishing.name.trim(), publishing.isPrivate)}
+          onClose={() => setPublishing(null)}>
+          <h2>Publish to GitHub</h2>
+          <p>Creates a GitHub repository and pushes {props.path}</p>
+          <label className="modal-label">
+            Repository name
+            <input
+              autoFocus
+              type="text"
+              value={publishing.name}
+              onChange={event => setPublishing({ ...publishing, name: event.target.value })} />
+          </label>
+          {/*
+            * Private by default. A repository made public cannot be made
+            * unpublished — whatever is in this folder is on the open internet
+            * from the moment it is pushed, and an editor's web root is exactly
+            * the kind of folder that quietly holds a key.
+            */}
+          <label className="modal-check">
+            <input
+              type="checkbox"
+              checked={publishing.isPrivate}
+              onChange={event =>
+                setPublishing({ ...publishing, isPrivate: event.target.checked })} />
+            <span>
+              Private
+              <span className="muted">
+                {publishing.isPrivate
+                  ? ' — only you can see it'
+                  : ' — anyone can see everything in this folder'}
+              </span>
+            </span>
+          </label>
+          <div className="modal-actions">
+            <button className="btn btn-secondary" onClick={() => setPublishing(null)}>
+              Cancel
+            </button>
+            <button
+              className="btn"
+              disabled={publishing.name.trim() === ''}
+              onClick={() => publish(publishing.name.trim(), publishing.isPrivate)}>
+              OK
+            </button>
+          </div>
+        </Modal>
       )}
     </Modal>
   );
