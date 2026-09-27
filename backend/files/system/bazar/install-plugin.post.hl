@@ -23,6 +23,25 @@ validators.default:x:@.arguments
 validators.mandatory:x:@.arguments/*/url
 validators.mandatory:x:@.arguments/*/name
 
+/*
+ * Frontends unzip into /etc/www with overwrite, so installing one where the
+ * dashboard is served from would leave the cloudlet without a dashboard until
+ * its next restart. The deployment that puts the dashboard there marks the
+ * folder, and we refuse rather than overwrite it.
+ *
+ * Checked here rather than inside the fork below, so the caller is told -
+ * anything thrown on that thread only ever reaches the log.
+ */
+if
+   and
+      eq:x:@.arguments/*/type
+         .:frontend
+      io.file.exists:/etc/www/.dashboard
+   .lambda
+      throw:This cloudlet serves its dashboard from /etc/www, so installing a frontend would overwrite it
+         status:int:409
+         public:bool:true
+
 // Running actual installation on a different thread.
 insert-before:x:./*/fork/0
    get-nodes:x:@.arguments

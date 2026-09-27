@@ -23,4 +23,10 @@ set -e
 mkdir -p /magic/files/etc/www
 cp -rf /magic/do-payload/www/. /magic/files/etc/www/
 
+# Declares that www holds the dashboard. Installing a frontend plugin unzips
+# over this folder, so the backend refuses that while the marker is there -
+# deployments serving the dashboard from somewhere else never write it, and
+# frontends install freely.
+touch /magic/files/etc/www/.dashboard
+
 exec dotnet backend.dll

@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { Modal, useDialog } from '../components/Dialogs';
-import { servedByBackend } from '../lib/backend';
 import {
   availablePlugins,
   installModule,
@@ -50,16 +49,6 @@ export default function Plugins() {
   const [details, setDetails] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
   const { confirm } = useDialog();
-
-  /*
-   * Frontends unzip straight into /etc/www. When this cloudlet also serves
-   * the dashboard from there, installing one would land on top of it - so
-   * they are refused here rather than breaking the dashboard the user is
-   * standing in. Nothing is overwritten either way.
-   */
-  const frontendsBlocked = servedByBackend();
-  const blockedReason = 'This cloudlet serves the dashboard from /etc/www, so '
-    + 'installing a frontend would overwrite it';
 
   useEffect(() => {
     availablePlugins()
@@ -212,13 +201,10 @@ export default function Plugins() {
               </button>
               <button
                 className={'btn btn-small' + (installed.has(app.name) ? ' btn-secondary' : '')}
-                disabled={installing === app.name
-                  || (frontendsBlocked && app.type === 'frontend')}
-                title={frontendsBlocked && app.type === 'frontend'
-                  ? blockedReason
-                  : installed.has(app.name)
-                    ? 'Install the plugin repository\'s current version over the one you have'
-                    : undefined}
+                disabled={installing === app.name}
+                title={installed.has(app.name)
+                  ? 'Install the plugin repository\'s current version over the one you have'
+                  : undefined}
                 onClick={() => install(app)}>
                 {installing === app.name
                   ? 'Installing…'
@@ -239,8 +225,6 @@ export default function Plugins() {
             <button className="btn btn-secondary" onClick={() => setDetails(null)}>Close</button>
             <button
               className="btn"
-              disabled={frontendsBlocked && details.type === 'frontend'}
-              title={frontendsBlocked && details.type === 'frontend' ? blockedReason : undefined}
               onClick={() => { const app = details; setDetails(null); install(app); }}>
               {installed.has(details.name) ? 'Reinstall' : 'Install'}
             </button>

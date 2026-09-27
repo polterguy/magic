@@ -16,6 +16,28 @@ auth.ticket.verify:root
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/name
 
+/*
+ * Plugins are either modules or frontends, and the two install into different
+ * places - the plugin repository is what knows which, so we ask it instead of
+ * assuming.
+ */
+http.get:"https://ainiro.io/magic/modules/bazar/bazar-apps"
+   convert:true
+.type
+for-each:x:@http.get/*/content/*
+   if
+      eq:x:@.dp/#/*/name
+         get-value:x:@.arguments/*/name
+      .lambda
+         set-value:x:@.type
+            get-value:x:@.dp/#/*/type
+if
+   null:x:@.type
+   .lambda
+      throw:No such plugin in the plugin repository
+         status:int:404
+         public:bool:true
+
 // Building our URL.
 .url
 set-value:x:@.url
@@ -27,6 +49,7 @@ set-value:x:@.url
 execute-file:/system/bazar/install-plugin.post.hl
    name:x:@.arguments/*/name
    url:x:@.url
+   type:x:@.type
 
 // Signaling frontend
 sockets.signal:x:@.arguments/*/_session
