@@ -59,7 +59,7 @@ namespace magic.lambda.loops
                     throw new HyperlambdaException($"Your [while] loop exceeded the maximum number of iterations, which is {maxIterations}. Refactor your Hyperlambda, or increase your configuration setting.");
 
                 // Executing lambda object associated with [while].
-                signaler.Signal("eval", Common.GetLambda(input));
+                signaler.Signal("eval", Common.GetLambda(input), skipWhitelist: true);
 
                 // Checking if execution for some reasons was terminated.
                 if (terminate != null && (terminate.Value != null || terminate.Children.Any()))

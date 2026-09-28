@@ -31,7 +31,7 @@ namespace magic.lambda.branching
         public void Signal(ISignaler signaler, Node input)
         {
             SanityCheckInvocation(input);
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
         }
 
         #region [ -- Private helper methods -- ]

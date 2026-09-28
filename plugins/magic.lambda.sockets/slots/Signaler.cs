@@ -112,7 +112,7 @@ namespace magic.lambda.sockets.slots
                 Expression.Unwrap(GetDescendants(args), true);
                 var jsonNode = new Node();
                 jsonNode.AddRange(args.Children);
-                signaler.Signal("lambda2json", jsonNode);
+                signaler.Signal("lambda2json", jsonNode, skipWhitelist: true);
                 json = jsonNode.Get<string>();
             }
 

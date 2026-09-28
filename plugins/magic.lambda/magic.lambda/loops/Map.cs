@@ -50,7 +50,7 @@ namespace magic.lambda.loops
                     input.Insert(0, new Node(".dp", idxSource));
 
                     // Evaluating mapper lambda.
-                    signaler.Signal("eval", input);
+                    signaler.Signal("eval", input, skipWhitelist: true);
 
                     // Resetting back to original nodes.
                     input.Clear();

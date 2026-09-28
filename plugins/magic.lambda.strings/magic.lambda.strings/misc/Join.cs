@@ -35,7 +35,7 @@ namespace magic.lambda.strings.misc
         /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
             input.Value = string.Join(
                 input.Children.FirstOrDefault()?.GetEx<string>() ?? "",
                 input.Evaluate().Select(x => x.GetEx<string>()).ToArray());

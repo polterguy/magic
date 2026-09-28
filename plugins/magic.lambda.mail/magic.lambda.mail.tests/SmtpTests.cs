@@ -485,16 +485,5 @@ mail.smtp.send
             });
         }
 
-        [Slot(
-        Name = ".io.folder.root",
-        ReturnsMode = SlotReturnsMode.Value,
-        ReturnsDescription = "Resolves to the absolute dynamic files root folder")]
-        class GetRootFolderSlot : ISlot
-        {
-            public void Signal(ISignaler signaler, Node input)
-            {
-                input.Value = Assembly.GetExecutingAssembly().Location.Replace("\\", "/").Replace("/magic.lambda.mail.tests.dll", "/");
-            }
-        }
     }
 }

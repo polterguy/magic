@@ -30,7 +30,7 @@ namespace magic.lambda.logical
         public void Signal(ISignaler signaler, Node input)
         {
             SanityCheck(input);
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
             input.Value = !input.Children.First().GetEx<bool>();
         }
 

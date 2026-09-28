@@ -119,7 +119,7 @@ namespace magic.lambda.mail
 
             // Cloning node to execute external slot.
             var clone = entityNode.Clone();
-            await signaler.SignalAsync(".mime.create", clone);
+            await signaler.SignalAsync(".mime.create", clone, skipWhitelist: true);
 
             // Extracting result.
             var entity = clone.Value as MimeEntity;

@@ -32,7 +32,7 @@ namespace magic.lambda.math.helpers
         /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
             var step = Utilities.GetStep(input);
             foreach (var idx in input.Evaluate())
             {

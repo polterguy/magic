@@ -19,7 +19,7 @@ namespace magic.lambda.tests
             var input = result.Children.First(x => x.Name == "input");
             var output = result.Children.First(x => x.Name == "output");
 
-            Assert.Equal("dynamic-slot-name", input.Children.First(x => x.Name == "kind").GetEx<string>());
+            Assert.Equal("slot-name", input.Children.First(x => x.Name == "kind").GetEx<string>());
             Assert.Equal("Name of the compiled slot to inspect", input.Children.First(x => x.Name == "description").GetEx<string>());
             Assert.True(input.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Equal(SlotValueMode.ValueOrExpression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());

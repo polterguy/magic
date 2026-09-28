@@ -40,7 +40,6 @@ namespace magic.lambda.eval
 
             // Storing termination node, to check if we should terminate early for some reasons.
             var terminate = signaler.Peek<Node>("slots.result");
-            var whitelist = signaler.Peek<List<Node>>("whitelist");
 
             /*
              * Debug recorder, if any, retrieved once for the entire block instead of once per statement.
@@ -55,19 +54,6 @@ namespace magic.lambda.eval
             // Evaluating "scope".
             foreach (var idx in GetNodes(input))
             {
-                // Verifying caller is allowed to invoke slot.
-                if (whitelist != null && !whitelist.Any(x => 
-                {
-                    if (x.Name == idx.Name)
-                    {
-                        if (x.Value != null && idx.Value != null && x.Get<string>() != idx.GetEx<string>())
-                              return false;
-                        return true;
-                    }
-                    return false;
-                }))
-                    throw new HyperlambdaException($"Slot [{idx.Name}] doesn't exist in currrent scope, or argument `{idx.GetEx<string>()}` not allowed");
-
                 signaler.ThrowIfCancelled();
 
                 // Invoking signal.

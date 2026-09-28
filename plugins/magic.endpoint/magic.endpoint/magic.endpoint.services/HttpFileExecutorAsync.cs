@@ -257,6 +257,13 @@ namespace magic.endpoint.services
                 var execution = _executionRegistry.Create();
                 response.Headers["Content-Type"] = "text/html";
                 response.Headers["X-Execution-Id"] = execution.ExecutionId;
+
+                /*
+                 * Cancelling the execution if the client disconnects before we're done, rather than
+                 * finishing work nobody is waiting for. See the note in HttpApiExecutorAsync for why
+                 * this is a registration we dispose, and not a linked token source.
+                 */
+                var aborted = request.Aborted.Register(() => execution.Cancel());
                 try
                 {
                     await _signaler.ScopeAsync("execution.context", execution, async () =>
@@ -269,7 +276,7 @@ namespace magic.endpoint.services
                                 {
                                     await _signaler.ScopeAsync("slots.result", result, async () =>
                                     {
-                                        await _signaler.SignalAsync("eval", lambda);
+                                        await _signaler.SignalAsync("eval", lambda, skipWhitelist: true);
                                     });
                                 });
                             });
@@ -280,6 +287,7 @@ namespace magic.endpoint.services
                 }
                 finally
                 {
+                    aborted.Dispose();
                     _executionRegistry.Complete(execution.ExecutionId);
                 }
             }

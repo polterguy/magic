@@ -31,18 +31,10 @@ namespace magic.lambda.puppeteer
         SignatureType = typeof(global::magic.lambda.puppeteer.signatures.PuppeteerScreenshotSignature))]
     public class Screenshot : ISlotAsync
     {
-        readonly IRootResolver _rootResolver;
-
-        public Screenshot(IRootResolver rootResolver)
-        {
-            _rootResolver = rootResolver;
-        }
-
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             var page = PuppeteerHelpers.RequirePage(input);
             var filename = PuppeteerHelpers.GetRequiredString(input, "filename");
-            var fullPath = _rootResolver.AbsolutePath(filename);
 
             var options = new ScreenshotOptions
             {
@@ -70,11 +62,19 @@ namespace magic.lambda.puppeteer
             if (quality.HasValue)
                 options.Quality = quality.Value;
 
-            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-            await page.ScreenshotAsync(fullPath, options);
+            /*
+             * Saving through the slot rather than writing the file directly, and deliberately
+             * WITHOUT exempting it from the whitelist, since the path came from the caller.
+             */
+            using (var stream = new MemoryStream(await page.ScreenshotDataAsync(options)))
+            {
+                var save = new Node("", filename);
+                save.Add(new Node("", stream));
+                await signaler.SignalAsync("io.stream.save-file", save);
+            }
 
             input.Clear();
-            input.Value = _rootResolver.RelativePath(fullPath);
+            input.Value = filename;
         }
     }
 }

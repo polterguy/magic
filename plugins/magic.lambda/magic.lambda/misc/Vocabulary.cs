@@ -18,13 +18,13 @@ namespace magic.lambda.misc
     [Slot(
         Name = "vocabulary",
         Description = "Lists available compiled slots",
-        ValueKind = "dynamic-slot-name",
+        ValueKind = "slot-name",
         ValueDescription = "Optional prefix filter for slot names",
         ValueRequired = false,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Lambda,
-        ReturnsKind = "dynamic-slot-name-list,string-list",
-        ReturnsElementKind = "dynamic-slot-name,text",
+        ReturnsKind = "slot-name-list,string-list",
+        ReturnsElementKind = "slot-name,text",
         ReturnsDescription = "Resolves to available slot names as child nodes")]
     public class Vocabulary : ISlot
     {

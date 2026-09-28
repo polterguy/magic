@@ -29,17 +29,6 @@ namespace magic.lambda.image.slots
         SignatureType = typeof(global::magic.lambda.image.signatures.ImageCropSignature))]
     public class ImageCrop : ISlotAsync
     {
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of your type.
-        /// </summary>
-        /// <param name="rootResolver">Needed to resolve absolute paths.</param>
-        public ImageCrop(IRootResolver rootResolver)
-        {
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Slot implementation.
         /// </summary>
@@ -54,7 +43,7 @@ namespace magic.lambda.image.slots
             var bottom = input.Children.FirstOrDefault(n => n.Name == "bottom")?.GetEx<int>() ?? 0;
 
             // Resizing image.
-            await Utilities.TransformImageAsync(input, _rootResolver, (img) => 
+            await Utilities.TransformImageAsync(input, signaler, (img) => 
             {
                 if (left + right >= img.Width)
                     throw new HyperlambdaException("[left] + [right] is larger than image width");

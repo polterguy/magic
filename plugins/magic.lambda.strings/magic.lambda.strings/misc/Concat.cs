@@ -36,7 +36,7 @@ namespace magic.lambda.strings.concat
         {
             if (input.Children.Any())
             {
-                await signaler.SignalAsync("eval", input);
+                await signaler.SignalAsync("eval", input, skipWhitelist: true);
                 input.Value = string.Join("", input.Children.Select(x => x.GetEx<string>()));
             }
             else

@@ -28,17 +28,6 @@ namespace magic.lambda.image.slots
         SignatureType = typeof(global::magic.lambda.image.signatures.ImageResizeSignature))]
     public class ImageResize : ISlotAsync
     {
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of your type.
-        /// </summary>
-        /// <param name="rootResolver">Needed to resolve absolute paths.</param>
-        public ImageResize(IRootResolver rootResolver)
-        {
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Slot implementation.
         /// </summary>
@@ -55,7 +44,7 @@ namespace magic.lambda.image.slots
             var height = heightNode?.GetEx<int>() ?? 0;
 
             // Resizing image.
-            await Utilities.TransformImageAsync(input, _rootResolver, (img) => 
+            await Utilities.TransformImageAsync(input, signaler, (img) => 
             {
                 img.Mutate(x => x.Resize(width, height));
                 return Task.CompletedTask;

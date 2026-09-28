@@ -34,7 +34,7 @@ namespace magic.lambda.mysql
             await signaler.ScopeAsync(
                 "mssql.transaction",
                 new Transaction(signaler, signaler.Peek<SqlConnectionWrapper>("mssql.connect").Connection),
-                async () => await signaler.SignalAsync("eval", input));
+                async () => await signaler.SignalAsync("eval", input, skipWhitelist: true));
         }
     }
 }

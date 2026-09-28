@@ -59,7 +59,7 @@ namespace magic.lambda.io.file
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Making sure we evaluate any children, to make sure any signals wanting to retrieve our source is evaluated.
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Retrieving arguments.
             var rawPath = input.GetEx<string>();

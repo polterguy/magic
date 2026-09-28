@@ -80,7 +80,7 @@ namespace magic.lambda.slots
                     {
                         await signaler.ScopeAsync(".debug.recorder", null, async () =>
                         {
-                            await signaler.SignalAsync("eval", lambda);
+                            await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
                         });
                     });
                 }

@@ -90,27 +90,14 @@ namespace magic.lambda.http.services
         };
 
         readonly HttpClient _client;
-        readonly IFileService _fileService;
-        readonly IRootResolver _rootResolver;
-        readonly IStreamService _streamService;
 
         /// <summary>
         /// Creates an instance of your type.
         /// </summary>
         /// <param name="client">Actual HttpClient implementation</param>
-        /// <param name="fileService">Needed in case caller wants to pass in a file as an HTTP request content object</param>
-        /// <param name="rootResolver">Needed to resolve root path for dynamic files</param>
-        /// <param name="streamService">Needed in case caller wants to pass in a file as an HTTP request content object</param>
-        public MagicHttp(
-            HttpClient client,
-            IFileService fileService,
-            IRootResolver rootResolver,
-            IStreamService streamService)
+        public MagicHttp(HttpClient client)
         {
             _client = client;
-            _fileService = fileService;
-            _rootResolver = rootResolver;
-            _streamService = streamService;
         }
 
         /// <inheritdoc />
@@ -371,7 +358,7 @@ namespace magic.lambda.http.services
             // Prioritising [payload] argument.
             var content = payloadNode != null ?
                 GetRequestContentContent(signaler, input, payloadNode, headers) :
-                await GetRequestFileContentAsync(input);
+                await GetRequestFileContentAsync(signaler, input);
 
             // Making sure we support our 3 primary content types.
             if (content is Stream stream)
@@ -416,19 +403,22 @@ namespace magic.lambda.http.services
         /*
          * Creates an HTTP content object wrapping a file.
          */
-        async Task<object> GetRequestFileContentAsync(Node input)
+        static async Task<object> GetRequestFileContentAsync(ISignaler signaler, Node input)
         {
             // If no [content] was given we check if caller supplied a [filename] argument.
             var filename = input.Children.FirstOrDefault(x => x.Name == "filename")?.GetEx<string>();
             if (filename == null)
                 throw new HyperlambdaException($"Supply either [payload] or [filename] to [{input.Name}]");
 
-            // Caller supplied a [filename] argument, hence using it as a stream content object.
-            if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(filename)))
-                return await _streamService.OpenFileAsync(_rootResolver.AbsolutePath(filename));
-
-            // File doesn't exist.
-            throw new HyperlambdaException($"File supplied as [filename] argument to [{input.Name}] doesn't exist");
+            /*
+             * Caller supplied a [filename] argument, hence using it as a stream content object -
+             * opened through its slot rather than the file service, and deliberately WITHOUT
+             * exempting it from the whitelist, since the path came from the caller. The slot throws
+             * if the file doesn't exist, so no separate existence check is needed.
+             */
+            var file = new Node("", filename);
+            await signaler.SignalAsync("io.stream.open-file", file);
+            return (Stream)file.Value;
         }
 
         /*
@@ -520,7 +510,7 @@ namespace magic.lambda.http.services
                             args.Add(new Node("message", line));
                             exe.Insert(0, args);
                             result.Add(exe);
-                            await signaler.SignalAsync("eval", exe);
+                            await signaler.SignalAsync("eval", exe, skipWhitelist: true);
                             exe.UnTie();
                         }
                     }

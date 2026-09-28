@@ -69,7 +69,7 @@ namespace magic.lambda.scheduler.slots.tasks
             // Retrieving Hyperlambda for task.
             var hlNode = new Node();
             hlNode.AddRange(node.Children.FirstOrDefault(x => x.Name == ".lambda").Clone().Children);
-            signaler.Signal("lambda2hyper", hlNode);
+            signaler.Signal("lambda2hyper", hlNode, skipWhitelist: true);
             var hyperlambda = hlNode.Get<string>();
 
             // Retrieving description for task.

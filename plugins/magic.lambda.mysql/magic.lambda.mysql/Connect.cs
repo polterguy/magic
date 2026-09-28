@@ -57,7 +57,7 @@ namespace magic.lambda.mysql
                 await signaler.ScopeAsync(
                     "mysql.connect",
                     connection,
-                    async () => await signaler.SignalAsync("eval", input));
+                    async () => await signaler.SignalAsync("eval", input, skipWhitelist: true));
                 input.Value = null;
             }
         }

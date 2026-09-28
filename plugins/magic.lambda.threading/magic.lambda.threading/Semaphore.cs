@@ -47,7 +47,7 @@ namespace magic.lambda.threading
             await semaphore.WaitAsync();
             try
             {
-                await signaler.SignalAsync("eval", input);
+                await signaler.SignalAsync("eval", input, skipWhitelist: true);
             }
             finally
             {

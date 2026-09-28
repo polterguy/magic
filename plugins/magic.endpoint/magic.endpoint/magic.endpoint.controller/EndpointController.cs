@@ -138,6 +138,7 @@ namespace magic.endpoint.controller
                 Host = Request.Host.Value,
                 Scheme = Request.Scheme,
                 Ip = Request.HttpContext.Connection.RemoteIpAddress,
+                Aborted = Request.HttpContext.RequestAborted,
             };
 
             // Notice, we only attach payload arguments to PUT, POST and PATCH requests.

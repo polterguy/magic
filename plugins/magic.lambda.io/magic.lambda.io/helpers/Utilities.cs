@@ -28,7 +28,7 @@ namespace magic.lambda.io.helpers
         {
             // Sanity checking arguments and evaluating them.
             SanityCheckArguments(input);
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Retrieving source and destination path.
             var (Source, Destination) = GetCopyMovePaths(input, rootResolver, isFolder);

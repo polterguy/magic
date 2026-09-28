@@ -37,7 +37,7 @@ namespace magic.lambda.strings.misc
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             SanityCheck(input);
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
             input.Value = input.GetEx<string>()?.Contains(input.Children.First().GetEx<string>()) ?? false;
             input.Clear(); // House cleaning.
         }

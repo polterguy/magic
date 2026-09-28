@@ -18,7 +18,7 @@ namespace magic.lambda.misc
     [Slot(
         Name = "slot.signature",
         Description = "Returns the documented input and output contract for a single compiled slot",
-        ValueKind = "dynamic-slot-name",
+        ValueKind = "slot-name",
         ValueDescription = "Name of the compiled slot to inspect",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
@@ -51,7 +51,7 @@ namespace magic.lambda.misc
                 throw new HyperlambdaException("No slot name supplied to [slot.signature]");
 
             var whitelist = signaler.Peek<List<Node>>("whitelist");
-            if (whitelist != null && !whitelist.Any(x => x.Name == name))
+            if (whitelist != null && !whitelist.Any(x => x.Name == name && (x.Value == null || x.Get<string>() == name)))
                 throw new HyperlambdaException($"[{name}] slot does not exist");
 
             var type = _signalProvider.GetSlot(name) ??

@@ -66,7 +66,7 @@ namespace magic.lambda.system
                 {
                     await signaler.ScopeAsync(".debug.recorder", recording, async () =>
                     {
-                        await signaler.SignalAsync("eval", lambda);
+                        await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
                     });
                 });
             }

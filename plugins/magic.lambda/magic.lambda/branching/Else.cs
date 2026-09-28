@@ -39,7 +39,7 @@ namespace magic.lambda.branching
 
             // Results of all previous conditions yielded false, hence evaluating.
             input.Value = true;
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
         }
     }
 }

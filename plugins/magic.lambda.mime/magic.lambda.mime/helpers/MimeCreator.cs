@@ -8,7 +8,6 @@ using System.Linq;
 using MimeKit;
 using MimeKit.IO;
 using magic.node;
-using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
 using System.Threading.Tasks;
@@ -24,16 +23,12 @@ namespace magic.lambda.mime.helpers
         /// Creates a MimeEntity from the specified lambda object and returns the
         /// result as a MimeEntity to caller.
         /// </summary>
-        /// <param name="signaler">Signaler used to construct message.</param>
+        /// <param name="signaler">Signaler used to construct message, and to open files for entities declaring a [filename].</param>
         /// <param name="input">Hierarchical node structure representing the MIME message in lambda format.</param>
-        /// <param name="streamService">Needed in case one of our MIME entities wants to read files from the file service.</param>
-        /// <param name="rootResolver">Needed to determine root folder for files.</param>
         /// <returns>A MIME entity object encapsulating the specified lambda object</returns>
         public static async Task<MimeEntity> CreateAsync(
             ISignaler signaler,
-            Node input,
-            IStreamService streamService,
-            IRootResolver rootResolver)
+            Node input)
         {
             // Finding Content-Type of entity.
             var type = input.GetEx<string>();
@@ -50,10 +45,10 @@ namespace magic.lambda.mime.helpers
             {
                 case "application":
                 case "text":
-                    return await CreateLeafPartAsync(mainType, subType, input, streamService, rootResolver);
+                    return await CreateLeafPartAsync(mainType, subType, input, signaler);
 
                 case "multipart":
-                    return await CreateMultipartAsync(signaler, subType, input, streamService, rootResolver);
+                    return await CreateMultipartAsync(signaler, subType, input);
 
                 default:
                     throw new HyperlambdaException($"I don't know how to handle the '{type}' MIME type.");
@@ -69,8 +64,7 @@ namespace magic.lambda.mime.helpers
             string mainType,
             string subType,
             Node messageNode,
-            IStreamService streamService,
-            IRootResolver rootResolver)
+            ISignaler signaler)
         {
             // Retrieving [content] node.
             var contentNode = messageNode.Children.FirstOrDefault(x => x.Name == "content" || x.Name == "filename") ??
@@ -86,7 +80,7 @@ namespace magic.lambda.mime.helpers
                     break;
 
                 case "filename":
-                    await CreateContentObjectFromFilenameAsync(contentNode, result, streamService, rootResolver);
+                    await CreateContentObjectFromFilenameAsync(contentNode, result, signaler);
                     break;
             }
             return result;
@@ -98,16 +92,14 @@ namespace magic.lambda.mime.helpers
         static async Task<Multipart> CreateMultipartAsync(
             ISignaler signaler,
             string subType,
-            Node messageNode,
-            IStreamService streamService,
-            IRootResolver rootResolver)
+            Node messageNode)
         {
             var result = new Multipart(subType);
             DecorateEntityHeaders(result, messageNode);
 
             foreach (var idxPart in messageNode.Children.Where(x => x.Name == "entity"))
             {
-                result.Add(await CreateAsync(signaler, idxPart, streamService, rootResolver));
+                result.Add(await CreateAsync(signaler, idxPart));
             }
             return result;
         }
@@ -150,8 +142,7 @@ namespace magic.lambda.mime.helpers
         static async Task CreateContentObjectFromFilenameAsync(
             Node contentNode,
             MimePart part,
-            IStreamService streamService,
-            IRootResolver rootResolver)
+            ISignaler signaler)
         {
             var filename = contentNode.GetEx<string>() ?? throw new HyperlambdaException("No [filename] value provided");
 
@@ -164,10 +155,15 @@ namespace magic.lambda.mime.helpers
                     FileName = Path.GetFileName(filename)
                 };
             }
-            part.Content = new MimeContent(
-                await streamService.OpenFileAsync(
-                    rootResolver.AbsolutePath(filename.TrimStart('/'))),
-                    ContentEncoding.Default);
+
+            /*
+             * Opening the file through its slot rather than the file service directly, and
+             * deliberately WITHOUT exempting it from the whitelist - the path came from the caller,
+             * so a whitelist in scope decides whether this caller may attach this particular file.
+             */
+            var file = new Node("", filename);
+            await signaler.SignalAsync("io.stream.open-file", file);
+            part.Content = new MimeContent((Stream)file.Value, ContentEncoding.Default);
         }
 
         /*

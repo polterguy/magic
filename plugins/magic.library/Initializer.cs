@@ -593,7 +593,7 @@ namespace magic.library
             if (await fileService.ExistsAsync(filename))
             {
                 var lambda = HyperlambdaParser.Parse(await fileService.LoadAsync(filename));
-                await signaler.SignalAsync("eval", lambda);
+                await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
             }
         }
 

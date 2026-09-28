@@ -3,6 +3,7 @@
  */
 
 using System.Net;
+using System.Threading;
 using System.Collections.Generic;
 using magic.node;
 
@@ -57,5 +58,11 @@ namespace magic.endpoint.contracts.poco
         /// Originating IP address of request.
         /// </summary>
         public IPAddress Ip { get; set; }
+
+        /// <summary>
+        /// Signaled when the client disconnects before the request has been served, allowing
+        /// the execution to be cancelled instead of finishing work nobody is waiting for.
+        /// </summary>
+        public CancellationToken Aborted { get; set; }
     }
 }

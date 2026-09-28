@@ -45,7 +45,7 @@ namespace magic.lambda.change
         public void Signal(ISignaler signaler, Node input)
         {
             SanityCheck(input);
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
             SetValueToSource(input, input.Evaluate().ToList());
         }
 

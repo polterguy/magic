@@ -68,7 +68,7 @@ namespace magic.lambda.io.stream
             }
 
             // Making sure we evaluate any children, to make sure any signals wanting to retrieve our source is evaluated.
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
 
             // Returning results to caller.
             return (_rootResolver.AbsolutePath(input.GetEx<string>()), input.Children.First().GetEx<Stream>(), overwrite);

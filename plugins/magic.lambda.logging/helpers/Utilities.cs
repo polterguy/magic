@@ -24,7 +24,7 @@ namespace magic.lambda.logging.helpers
             if (node.Value != null)
                 return (node.GetEx<string>(), node.Children.ToDictionary(x => x.Name, x => x.GetEx<string>()));
 
-            signaler.Signal("eval", node);
+            signaler.Signal("eval", node, skipWhitelist: true);
             var builder = new StringBuilder();
             foreach (var idx in node.Children)
             {

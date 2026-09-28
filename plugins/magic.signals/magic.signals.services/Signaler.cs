@@ -42,10 +42,10 @@ namespace magic.signals.services
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Arguments being passed in to slot.</param>
         /// <param name="functor">Optional function that will be executed after slot has been invoked.</param>
-        public void Signal(string name, Node input, Action functor = null)
+        public void Signal(string name, Node input, Action functor = null, bool skipWhitelist = false)
         {
             // Retrieves service for slot.
-            object svc = GetService(name);
+            object svc = GetService(name, input, skipWhitelist);
 
             // Invoking slot while prioritizing synchronized implementation.
             if (svc is ISlot slot)
@@ -69,10 +69,10 @@ namespace magic.signals.services
         /// <param name="input">Arguments being passed in to slot.</param>
         /// <returns>An awaitable task.</returns>
         /// <param name="functor">Optional function that will be executed after slot has been invoked.</param>
-        public async Task SignalAsync(string name, Node input, Action functor = null)
+        public async Task SignalAsync(string name, Node input, Action functor = null, bool skipWhitelist = false)
         {
             // Retrieves service for slot.
-            object svc = GetService(name);
+            object svc = GetService(name, input, skipWhitelist);
 
             // Invoking slot while prioritizing async implementation.
             if (svc is ISlotAsync slotAsync)
@@ -162,8 +162,29 @@ namespace magic.signals.services
         /*
          * Returns service for specified slot.
          */
-        private object GetService(string name)
+        private object GetService(string name, Node input, bool skipWhitelist)
         {
+            /*
+             * A whitelist restricts the vocabulary a user's Hyperlambda may reference, and not how
+             * slots are implemented - hence slots internally signaling other slots as a part of
+             * their own implementation pass skipWhitelist, and are not verified here.
+             */
+            var whitelist = skipWhitelist ? null : Peek<List<Node>>("whitelist");
+
+            // Verifying caller is allowed to invoke slot.
+            if (whitelist != null && !whitelist.Any(x =>
+            {
+                if (x.Name == name)
+                {
+                    if (x.Value != null && x.Get<string>() != input.GetEx<string>())
+                        return false;
+                    return true;
+                }
+                return false;
+            }))
+                throw new HyperlambdaException($"Slot [{name}] doesn't exist in currrent scope, or argument `{input.GetEx<string>()}` not allowed");
+
+
             var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"[{name}] slot does not exist");
             var svc = _provider.GetService(type);
 

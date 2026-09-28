@@ -48,7 +48,7 @@ namespace magic.lambda.config
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Evaluating children as lambda.
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Returning value to caller, making sure we resort to default value if no config value is found.
             input.Value = _configuration[

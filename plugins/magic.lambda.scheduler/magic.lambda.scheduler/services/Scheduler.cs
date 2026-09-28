@@ -426,10 +426,10 @@ namespace magic.lambda.scheduler.services
 
             // Transforming task's Hyperlambda to a lambda object.
             var hlNode = new Node("", task.Hyperlambda);
-            await signaler.SignalAsync("hyper2lambda", hlNode);
+            await signaler.SignalAsync("hyper2lambda", hlNode, skipWhitelist: true);
 
             // Executing task.
-            await signaler.SignalAsync("eval", hlNode);
+            await signaler.SignalAsync("eval", hlNode, skipWhitelist: true);
         }
 
         /*

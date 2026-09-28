@@ -84,11 +84,17 @@ namespace magic.data.common.slots.crud
         /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            var databaseType = 
-                input.Children.FirstOrDefault(x => x.Name == "database-type")?.GetEx<string>() ??
-                _settings.DefaultDatabaseType;
-            input.Children.FirstOrDefault(x => x.Name == "database-type")?.UnTie();
-            await signaler.SignalAsync($"{databaseType}.{GetCrudSlot(input.Name)}", input);
+            var explicitType = input.Children.FirstOrDefault(x => x.Name == "database-type");
+            var databaseType = explicitType?.GetEx<string>() ?? _settings.DefaultDatabaseType;
+            explicitType?.UnTie();
+
+            /*
+             * The composed slot name is only exempted from the whitelist when it was built purely
+             * from configuration. A caller supplied [database-type] is data we do not control, and
+             * would otherwise allow the caller to steer half the name of the slot being signaled -
+             * hence the whitelist still verifies the result whenever the caller picked the database.
+             */
+            await signaler.SignalAsync($"{databaseType}.{GetCrudSlot(input.Name)}", input, skipWhitelist: explicitType == null);
         }
 
         #region [ -- Private helper methods -- ]

@@ -32,7 +32,7 @@ namespace magic.lambda.io.file
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Evaluating all filenames, in case they're slot invocations.
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Notice, this stream is returned to caller, and never disposed - Which is its entire purpose!
             var result = new MemoryStream();
@@ -48,7 +48,7 @@ namespace magic.lambda.io.file
                 foreach (var idx in input.Children)
                 {
                     // Evaluating content node, in case it's a slot invocation.
-                    await signaler.SignalAsync("eval", idx);
+                    await signaler.SignalAsync("eval", idx, skipWhitelist: true);
 
                     // Creating currently iterated ZIP entry and opening stream to write to it.
                     var entry = archive.CreateEntry(idx.GetEx<string>());

@@ -31,7 +31,7 @@ namespace magic.lambda.exceptions
         {
             try
             {
-                signaler.Signal("eval", input);
+                signaler.Signal("eval", input, skipWhitelist: true);
             }
             catch (Exception err)
             {
@@ -71,7 +71,7 @@ namespace magic.lambda.exceptions
             if (input.Next?.Name == ".catch")
             {
                 Node next = InsertException(input, err);
-                signaler.Signal("eval", next);
+                signaler.Signal("eval", next, skipWhitelist: true);
                 return true;
             }
             return false;
@@ -83,9 +83,9 @@ namespace magic.lambda.exceptions
         static void ExecuteFinally(ISignaler signaler, Node input)
         {
             if (input.Next?.Name == ".finally")
-                signaler.Signal("eval", input.Next);
+                signaler.Signal("eval", input.Next, skipWhitelist: true);
             else if (input.Next?.Next?.Name == ".finally")
-                signaler.Signal("eval", input.Next.Next);
+                signaler.Signal("eval", input.Next.Next, skipWhitelist: true);
         }
 
         #endregion

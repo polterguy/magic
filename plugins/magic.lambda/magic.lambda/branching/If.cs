@@ -35,7 +35,7 @@ namespace magic.lambda.branching
             }
 
             // Result of condition yields true. ORDER COUNTS!
-            signaler.Signal("eval", Common.GetLambda(input));
+            signaler.Signal("eval", Common.GetLambda(input), skipWhitelist: true);
             input.Value = true;
         }
     }

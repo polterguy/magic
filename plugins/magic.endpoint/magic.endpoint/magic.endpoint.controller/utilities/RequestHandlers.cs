@@ -28,7 +28,7 @@ namespace magic.endpoint.controller.utilities
             // Reading body as JSON from request as a Stream, with correctly applied encoding.
             var args = new Node("", request.Body);
             args.Add(new Node("encoding", encoding));
-            await signaler.SignalAsync("json2lambda-stream", args);
+            await signaler.SignalAsync("json2lambda-stream", args, skipWhitelist: true);
             return args;
         }
 

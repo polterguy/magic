@@ -91,6 +91,17 @@ namespace magic.endpoint.services
             var response = new MagicResponse();
             var execution = _executionRegistry.Create();
             response.Headers["X-Execution-Id"] = execution.ExecutionId;
+
+            /*
+             * Cancelling the execution if the client disconnects before we're done, rather than
+             * finishing work nobody is waiting for.
+             *
+             * Notice, deliberately a registration we dispose below, and NOT a linked token source.
+             * The context outlives this method whenever a [fork] still holds a reference to it, and
+             * a fire and forget thread must survive its endpoint returning - so the link is severed
+             * the moment we're done here, before we release our own reference.
+             */
+            var aborted = request.Aborted.Register(() => execution.Cancel());
             try
             {
                 await _signaler.ScopeAsync("execution.context", execution, async () =>
@@ -103,7 +114,7 @@ namespace magic.endpoint.services
                             {
                                 await _signaler.ScopeAsync("slots.result", result, async () =>
                                 {
-                                    await _signaler.SignalAsync("eval", lambda);
+                                    await _signaler.SignalAsync("eval", lambda, skipWhitelist: true);
                                 });
                             });
                         });
@@ -122,6 +133,7 @@ namespace magic.endpoint.services
             }
             finally
             {
+                aborted.Dispose();
                 _executionRegistry.Complete(execution.ExecutionId);
             }
         }
@@ -154,7 +166,7 @@ namespace magic.endpoint.services
                 // Defaulting to returning content as JSON by converting from Lambda to JSON.
                 var convert = new Node();
                 convert.AddRange(lambda.Children.ToList());
-                _signaler.Signal(".lambda2json-raw", convert);
+                _signaler.Signal(".lambda2json-raw", convert, skipWhitelist: true);
                 return convert.Value;
             }
             return null; // No content

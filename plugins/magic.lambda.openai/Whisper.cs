@@ -64,7 +64,7 @@ namespace magic.lambda.openai
             input.Clear();
             input.Value = null;
             var tmp = new Node("", transcriptionResult);
-            signaler.Signal("json2lambda", tmp);
+            signaler.Signal("json2lambda", tmp, skipWhitelist: true);
             input.Value = tmp.Children.FirstOrDefault(x => x.Name == "text")?.GetEx<string>();
         }
 

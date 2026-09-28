@@ -34,7 +34,7 @@ namespace magic.lambda.odbc
             await signaler.ScopeAsync(
                 "odbc.transaction",
                 new Help.Transaction(signaler, signaler.Peek<OdbcConnectionWrapper>("odbc.connect").Connection),
-                async () => await signaler.SignalAsync("eval", input));
+                async () => await signaler.SignalAsync("eval", input, skipWhitelist: true));
         }
     }
 }

@@ -31,7 +31,7 @@ namespace magic.endpoint.services.slots.misc
         /// <param name="input">Arguments to your slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
             HttpFileExecutorAsync.AddMimeType(input.GetEx<string>(), input.Children.First().GetEx<string>());
         }
     }

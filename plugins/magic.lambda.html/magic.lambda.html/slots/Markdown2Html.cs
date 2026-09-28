@@ -76,7 +76,7 @@ namespace magic.lambda.html.slots
 
                 // Forwarding to [yaml2lambda] slot.
                 var yamlNode = new Node("", yaml);
-                signaler.Signal("yaml2lambda", yamlNode);
+                signaler.Signal("yaml2lambda", yamlNode, skipWhitelist: true);
 
                 // Adding result of [yaml2lambda] invocation to input node.
                 input.AddRange(yamlNode.Children);

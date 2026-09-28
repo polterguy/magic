@@ -84,6 +84,12 @@ namespace magic.lambda.mail.tests
             if (pop3 != null)
                 services.AddTransient<IPop3Client>((svc) => pop3);
 
+            /*
+             * Attachments are opened through [io.stream.open-file], so the io assembly must be
+             * loaded before the scan below, which only sees assemblies already in the AppDomain.
+             */
+            _ = typeof(magic.lambda.io.stream.OpenFileStream);
+
             var types = new SignalsProvider(InstantiateAllTypes<ISlot, ISlotAsync>(services));
             services.AddTransient<ISignalsProvider>((svc) => types);
             services.AddTransient<IStreamService, StreamService>();

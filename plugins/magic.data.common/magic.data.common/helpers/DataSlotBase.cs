@@ -38,21 +38,17 @@ namespace magic.data.common.helpers
         /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            var databaseType = GetDefaultDatabaseType(_settings, input);
-            await signaler.SignalAsync($"{databaseType}{_slot}", input);
+            var explicitType = input.Children.FirstOrDefault(x => x.Name == "database-type");
+            var databaseType = explicitType?.GetEx<string>() ?? _settings.DefaultDatabaseType;
+            explicitType?.UnTie();
+
+            /*
+             * The composed slot name is only exempted from the whitelist when it was built purely
+             * from configuration. A caller supplied [database-type] is data we do not control, and
+             * would otherwise allow the caller to steer half the name of the slot being signaled -
+             * hence the whitelist still verifies the result whenever the caller picked the database.
+             */
+            await signaler.SignalAsync($"{databaseType}{_slot}", input, skipWhitelist: explicitType == null);
         }
-
-        #region [ -- Private helper methods -- ]
-
-        static string GetDefaultDatabaseType(IDataSettings settings, Node input)
-        {
-            var databaseType = 
-                input.Children.FirstOrDefault(x => x.Name == "database-type")?.GetEx<string>() ??
-                settings.DefaultDatabaseType;
-            input.Children.FirstOrDefault(x => x.Name == "database-type")?.UnTie();
-            return databaseType;
-        }
-
-        #endregion
     }
 }

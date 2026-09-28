@@ -30,17 +30,6 @@ namespace magic.lambda.image.slots
         SignatureType = typeof(global::magic.lambda.image.signatures.ChartSignature))]
     public class Chart : ISlot
     {
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of our type.
-        /// </summary>
-        /// <param name="rootResolver">Instance used to resolve the root folder of your app.</param>
-        public Chart(IRootResolver rootResolver)
-        {
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Slot implementation.
         /// </summary>
@@ -88,7 +77,17 @@ namespace magic.lambda.image.slots
             var filename = input.Children.FirstOrDefault(x => x.Name == "filename")?.GetEx<string>();
             if (filename != null)
             {
-                plot.SavePng(_rootResolver.AbsolutePath(filename), width, height);
+                /*
+                 * Saving through the slot rather than writing the file directly, and deliberately
+                 * WITHOUT exempting it from the whitelist, since the path came from the caller.
+                 */
+                using (var image = plot.GetImage(width, height))
+                using (var stream = new MemoryStream(image.GetImageBytes(ImageFormat.Png, 100)))
+                {
+                    var save = new Node("", filename);
+                    save.Add(new Node("", stream));
+                    signaler.Signal("io.stream.save-file", save);
+                }
             }
             else
             {

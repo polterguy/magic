@@ -52,7 +52,7 @@ namespace magic.lambda.loops
                     input.Insert(0, new Node(".dp", idxSource));
 
                     // Evaluating predicate.
-                    signaler.Signal("eval", input);
+                    signaler.Signal("eval", input, skipWhitelist: true);
 
                     // Determining whether current node should be kept.
                     keep = result.GetEx<bool>();

@@ -175,7 +175,7 @@ namespace magic.lambda.scheduler.utilities
         {
             // Creating our database connection.
             var dbNode = new Node();
-            signaler.Signal($".db-factory.connection.{settings.DefaultDatabaseType}", dbNode);
+            signaler.Signal($".db-factory.connection.{settings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
             var connection = dbNode.Get<DbConnection>();
 
             // Opening up database connection.

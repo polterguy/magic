@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using magic.node;
-using magic.node.contracts;
+using System.IO;
 using magic.node.extensions;
 using magic.signals.contracts;
 
@@ -85,20 +85,6 @@ namespace magic.lambda.crypto.slots.hash
         SignatureType = typeof(global::magic.lambda.crypto.signatures.HashSignature))]
     public class Hash : ISlotAsync
     {
-        readonly IStreamService _streamService;
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of your type.
-        /// </summary>
-        /// <param name="streamService">Needed in case caller wants to create a hash from some sort of file or stream.</param>
-        /// <param name="rootResolver">Needed in resolve the root path for dynamic files.</param>
-        public Hash(IStreamService streamService, IRootResolver rootResolver)
-        {
-            _streamService = streamService;
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Implementation of slot.
         /// </summary>
@@ -154,35 +140,35 @@ namespace magic.lambda.crypto.slots.hash
                 case "md5":
                     using (var algo = MD5.Create())
                     {
-                        input.Value = await GenerateHashAsync(algo, data, format, isFile);
+                        input.Value = await GenerateHashAsync(signaler, algo, data, format, isFile);
                     }
                     break;
 
                 case "sha1":
                     using (var algo = SHA1.Create())
                     {
-                        input.Value = await GenerateHashAsync(algo, data, format, isFile);
+                        input.Value = await GenerateHashAsync(signaler, algo, data, format, isFile);
                     }
                     break;
 
                 case "sha256":
                     using (var algo = SHA256.Create())
                     {
-                        input.Value = await GenerateHashAsync(algo, data, format, isFile);
+                        input.Value = await GenerateHashAsync(signaler, algo, data, format, isFile);
                     }
                     break;
 
                 case "sha384":
                     using (var algo = SHA384.Create())
                     {
-                        input.Value = await GenerateHashAsync(algo, data, format, isFile);
+                        input.Value = await GenerateHashAsync(signaler, algo, data, format, isFile);
                     }
                     break;
 
                 case "sha512":
                     using (var algo = SHA512.Create())
                     {
-                        input.Value = await GenerateHashAsync(algo, data, format, isFile);
+                        input.Value = await GenerateHashAsync(signaler, algo, data, format, isFile);
                     }
                     break;
 
@@ -199,7 +185,8 @@ namespace magic.lambda.crypto.slots.hash
         /*
          * Actual implementation, responsible for creating hash, and returning it to caller.
          */
-        async Task<object> GenerateHashAsync(
+        static async Task<object> GenerateHashAsync(
+            ISignaler signaler,
             HashAlgorithm algo,
             object data,
             string format,
@@ -209,9 +196,14 @@ namespace magic.lambda.crypto.slots.hash
             byte[] bytes = null;
             if (isFile)
             {
-                // Input is a file, hence directly hashing file without loading it into memory.
-                var path = _rootResolver.DynamicFiles + (data as string).TrimStart('/');
-                using (var stream = await _streamService.OpenFileAsync(path))
+                /*
+                 * Input is a file, hence directly hashing file without loading it into memory - and
+                 * opening it through its slot rather than the file service, deliberately WITHOUT
+                 * exempting it from the whitelist, since the path came from the caller.
+                 */
+                var file = new Node("", data as string);
+                await signaler.SignalAsync("io.stream.open-file", file);
+                using (var stream = (Stream)file.Value)
                 {
                     bytes = algo.ComputeHash(stream);
                 }

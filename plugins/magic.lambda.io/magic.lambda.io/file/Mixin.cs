@@ -75,7 +75,7 @@ namespace magic.lambda.io.file
                 {
                     foreach (var idxInit in input.Children.Where(x => x.Name == ".oninit"))
                     {
-                        await signaler.SignalAsync("eval", idxInit);
+                        await signaler.SignalAsync("eval", idxInit, skipWhitelist: true);
                     }
                 });
             }
@@ -188,7 +188,7 @@ namespace magic.lambda.io.file
                 // Executing lambda object, masking any debug recorder the same way [.oninit] does.
                 await signaler.ScopeAsync(".debug.recorder", null, async () =>
                 {
-                    await signaler.SignalAsync("eval", lambda);
+                    await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
                 });
 
                 // Making sure we put lambda object back to its original state after execution.

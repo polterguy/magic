@@ -39,7 +39,7 @@ namespace magic.lambda.strings.misc
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             SanityCheck(input);
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Figuring out which string to split, and upon what to split.
             var split = input.GetEx<string>();

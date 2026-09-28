@@ -38,7 +38,7 @@ namespace magic.lambda.eval
                 var whitelist = GetWhitelist(input);
                 await signaler.ScopeAsync("whitelist", whitelist.Vocabulary, async () =>
                 {
-                    await signaler.SignalAsync("eval", whitelist.Lambda.Clone());
+                    await signaler.SignalAsync("eval", whitelist.Lambda.Clone(), skipWhitelist: true);
                 });
                 input.Clear();
                 input.Value = result.Value;

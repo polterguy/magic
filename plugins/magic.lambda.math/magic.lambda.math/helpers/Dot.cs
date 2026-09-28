@@ -34,7 +34,7 @@ namespace magic.lambda.math
             if (input.Children.Count() != 2)
                 throw new HyperlambdaException("[math.dot] requires exactly two children nodes");
 
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Calculating dot product.
             var lhs = input.Children.First().Children.Select(x => x.GetEx<double>());

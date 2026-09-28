@@ -56,7 +56,7 @@ namespace magic.lambda.caching
                 var result = new Node();
                 await signaler.ScopeAsync("slots.result", result, async () =>
                 {
-                    await signaler.SignalAsync("eval", args.Lambda.Clone());
+                    await signaler.SignalAsync("eval", args.Lambda.Clone(), skipWhitelist: true);
                 });
                 return (result.GetEx<string>(), args.UtcExpires);
             });

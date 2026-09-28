@@ -3,6 +3,7 @@
  */
 
 using SixLabors.ImageSharp;
+using System.IO;
 using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
@@ -26,17 +27,6 @@ namespace magic.lambda.image.slots
         ReturnsDescription = "Returns [width:int] and [height:int] child nodes for the image dimensions")]
     public class ImageSize : ISlot
     {
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of your type.
-        /// </summary>
-        /// <param name="rootResolver">Needed to resolve absolute paths.</param>
-        public ImageSize(IRootResolver rootResolver)
-        {
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Slot implementation.
         /// </summary>
@@ -44,10 +34,18 @@ namespace magic.lambda.image.slots
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            var filename = input.GetEx<string>();
-            var image = Image.Identify(_rootResolver.AbsolutePath(filename));
-            input.Add(new Node("width", image.Width));
-            input.Add(new Node("height", image.Height));
+            /*
+             * Opening the file through its slot rather than the file service, and deliberately
+             * WITHOUT exempting it from the whitelist, since the path came from the caller.
+             */
+            var file = new Node("", input.GetEx<string>());
+            signaler.Signal("io.stream.open-file", file);
+            using (var stream = (Stream)file.Value)
+            {
+                var image = Image.Identify(stream);
+                input.Add(new Node("width", image.Width));
+                input.Add(new Node("height", image.Height));
+            }
             input.Value = null;
         }
     }

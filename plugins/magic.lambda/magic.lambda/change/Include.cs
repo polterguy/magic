@@ -48,7 +48,7 @@ namespace magic.lambda.change
                     input.Insert(0, new Node(".dp", idxDest));
 
                     // Evaluating lambda of slot.
-                    signaler.Signal("eval", input);
+                    signaler.Signal("eval", input, skipWhitelist: true);
 
                     // Resetting back to original nodes.
                     input.Clear();

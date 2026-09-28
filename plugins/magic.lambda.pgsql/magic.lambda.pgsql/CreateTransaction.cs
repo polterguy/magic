@@ -34,7 +34,7 @@ namespace magic.lambda.pgsql
             await signaler.ScopeAsync(
                 "pgsql.transaction",
                 new Help.Transaction(signaler, signaler.Peek<PgSqlConnectionWrapper>("pgsql.connect").Connection),
-                async () => await signaler.SignalAsync("eval", input));
+                async () => await signaler.SignalAsync("eval", input, skipWhitelist: true));
         }
     }
 }

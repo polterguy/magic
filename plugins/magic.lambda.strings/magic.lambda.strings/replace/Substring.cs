@@ -37,7 +37,7 @@ namespace magic.lambda.strings.replace
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             SanityCheck(input);
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
             var start = input.Children.First().GetEx<int>();
             var end = input.Children.Skip(1)?.FirstOrDefault()?.GetEx<int>() ?? -1;
             var source = input.GetEx<string>();

@@ -3,7 +3,6 @@
  */
 
 using System.Linq;
-using System.Collections.Generic;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -22,13 +21,10 @@ namespace magic.lambda.logical
          */
         static internal bool Signal(ISignaler signaler, Node input, bool condition)
         {
-            var whitelist = signaler.Peek<List<Node>>("whitelist");
             foreach (var idx in input.Children)
             {
                 if (idx.Name != string.Empty && idx.Name.FirstOrDefault() != '.')
                 {
-                    if (whitelist != null && !whitelist.Any(x => x.Name == idx.Name))
-                        throw new HyperlambdaException($"Slot [{idx.Name}] doesn't exist in currrent scope");
                     signaler.Signal(idx.Name, idx);
                 }
                 if (idx.GetEx<bool>() == condition)

@@ -86,7 +86,7 @@ namespace magic.lambda.io.file
                  */
                 await signaler.ScopeAsync(".debug.recorder", null, async () =>
                 {
-                    await signaler.SignalAsync("eval", lambda);
+                    await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
                 });
 
                 // Applying result.

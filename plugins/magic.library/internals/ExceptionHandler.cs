@@ -113,7 +113,7 @@ namespace magic.library.internals
             {
                 // Executing file passing in arguments created above.
                 var signaler = app.ApplicationServices.GetService<ISignaler>();
-                await signaler.SignalAsync("io.file.execute", lambda);
+                await signaler.SignalAsync("io.file.execute", lambda, skipWhitelist: true);
 
                 // Rendering custom exception response.
                 await RenderCustomExceptionResponse(context, signaler, lambda);
@@ -160,7 +160,7 @@ namespace magic.library.internals
              * making sure we return default message if no message was returned from
              * Hyperlambda file.
              */
-            signaler.Signal(".lambda2json-raw", nodeResult);
+            signaler.Signal(".lambda2json-raw", nodeResult, skipWhitelist: true);
             var response = nodeResult.Get<JObject>();
             if (response["message"] == null)
                 response["message"] = DEFAULT_ERROR_MESSAGE;

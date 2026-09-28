@@ -28,7 +28,7 @@ namespace magic.lambda.comparison
         /// <returns>An awaitable task.</returns>
         public void Signal(ISignaler signaler, Node input)
         {
-            signaler.Signal("eq", input);
+            signaler.Signal("eq", input, skipWhitelist: true);
             input.Value = !input.Get<bool>();
         }
     }

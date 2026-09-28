@@ -28,7 +28,7 @@ namespace magic.lambda.branching
                 throw new HyperlambdaException($"[{input.Name}] requires exactly two children nodes, a condition node and a [.lambda] node, or an expression and a lambda object");
             
             // Evaluating children nodes of condition node.
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
 
             // Returning result of invocation to caller.
             return input.Children.First(x => x.Name != ".lambda").GetEx<bool>();

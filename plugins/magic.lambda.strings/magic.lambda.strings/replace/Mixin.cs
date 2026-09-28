@@ -143,7 +143,7 @@ namespace magic.lambda.strings.replace
                 var wrapper = new Node();
                 wrapper.Add(lambda);
                 wrapper.Add(exe);
-                await signaler.SignalAsync("eval", wrapper);
+                await signaler.SignalAsync("eval", wrapper, skipWhitelist: true);
                 return exe.Get<string>();
             }
             catch (Exception ex)

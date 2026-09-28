@@ -35,7 +35,7 @@ namespace magic.lambda.http.services.helpers
                     case JsonValueKind.Array:
                     {
                         var tmpNode = new Node("content", json);
-                        signaler.Signal("json2lambda", tmpNode);
+                        signaler.Signal("json2lambda", tmpNode, skipWhitelist: true);
                         return tmpNode;
                     }
 
@@ -62,7 +62,7 @@ namespace magic.lambda.http.services.helpers
             if (string.IsNullOrEmpty(hl))
                 return new Node("content");
             var tmpNode = new Node("content", hl);
-            signaler.Signal("hyper2lambda", tmpNode);
+            signaler.Signal("hyper2lambda", tmpNode, skipWhitelist: true);
             return tmpNode;
         }
 

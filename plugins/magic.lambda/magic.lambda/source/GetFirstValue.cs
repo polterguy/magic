@@ -3,7 +3,6 @@
  */
 
 using System.Linq;
-using System.Collections.Generic;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -37,13 +36,10 @@ namespace magic.lambda.source
             // Checking if above resulted in null at which point we try to evaluate children nodes.
             if (result == null)
             {
-                var whitelist = signaler.Peek<List<Node>>("whitelist");
                 foreach (var idx in input.Children)
                 {
                     if (idx.Name.Length != 0 && idx.Name.FirstOrDefault() != '.')
                     {
-                        if (whitelist != null && !whitelist.Any(x => x.Name == idx.Name))
-                            throw new HyperlambdaException($"Slot [{idx.Name}] doesn't exist in currrent scope");
                         signaler.Signal(idx.Name, idx);
                     }
 

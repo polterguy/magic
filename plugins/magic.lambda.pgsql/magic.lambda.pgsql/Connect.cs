@@ -57,7 +57,7 @@ namespace magic.lambda.pgsql
                 await signaler.ScopeAsync(
                     "pgsql.connect",
                     connection,
-                    async () => await signaler.SignalAsync("eval", input));
+                    async () => await signaler.SignalAsync("eval", input, skipWhitelist: true));
                 input.Value = null;
             }
         }

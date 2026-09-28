@@ -19,7 +19,12 @@ namespace magic.signals.contracts
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Input arguments to slot.</param>
         /// <param name="functor">Function to execute after execution is done.</param>
-        void Signal(string name, Node input, Action functor = null);
+        /// <param name="skipWhitelist">If true the currently scoped whitelist is not consulted for
+        /// this single invocation. Reserved for slots internally signaling other slots as part of
+        /// their own implementation, since a whitelist restricts the vocabulary a user's Hyperlambda
+        /// may reference, and not how slots are implemented. The exemption applies to this one
+        /// invocation only and is never inherited by slots signaled further down.</param>
+        void Signal(string name, Node input, Action functor = null, bool skipWhitelist = false);
 
         /// <summary>
         /// Signals the slot with the name from the input node's Name property async.
@@ -27,8 +32,13 @@ namespace magic.signals.contracts
         /// <param name="name">Name of slot to invoke.</param>
         /// <param name="input">Input arguments to slot.</param>
         /// <param name="functor">Function to execute after execution is done.</param>
+        /// <param name="skipWhitelist">If true the currently scoped whitelist is not consulted for
+        /// this single invocation. Reserved for slots internally signaling other slots as part of
+        /// their own implementation, since a whitelist restricts the vocabulary a user's Hyperlambda
+        /// may reference, and not how slots are implemented. The exemption applies to this one
+        /// invocation only and is never inherited by slots signaled further down.</param>
         /// <returns>Awaitable task.</returns>
-        Task SignalAsync(string name, Node input, Action functor = null);
+        Task SignalAsync(string name, Node input, Action functor = null, bool skipWhitelist = false);
 
         /// <summary>
         /// Adds the given stack value unto the stack with the given name,

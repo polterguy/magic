@@ -45,7 +45,7 @@ namespace magic.lambda.loops
                 input.Insert(0, new Node(".dp", idx));
 
                 // Evaluating "body" lambda of [for-each]
-                signaler.Signal("eval", input);
+                signaler.Signal("eval", input, skipWhitelist: true);
 
                 // Resetting back to original nodes.
                 input.Clear();

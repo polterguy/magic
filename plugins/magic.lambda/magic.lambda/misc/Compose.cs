@@ -28,7 +28,7 @@ namespace magic.lambda.misc
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
             var iterators = input.Children.Select(x => x.GetEx<string>());
             var expression = string.Join("/", iterators.ToArray());
             input.Clear();

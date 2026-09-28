@@ -58,7 +58,7 @@ namespace magic.lambda.eval
                         .Clone());
 
                 // Evaluating lambda of slot.
-                await signaler.SignalAsync("eval", lambda);
+                await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
 
                 // Applying result.
                 ApplyResult(input, result);

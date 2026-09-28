@@ -36,7 +36,7 @@ namespace magic.lambda.sqlite
                 await signaler.ScopeAsync(
                     "sqlite.transaction",
                     new Help.Transaction(signaler, signaler.Peek<SqliteConnectionWrapper>("sqlite.connect").Connection),
-                    async () => await signaler.SignalAsync("eval", input));
+                    async () => await signaler.SignalAsync("eval", input, skipWhitelist: true));
             }
         }
     }

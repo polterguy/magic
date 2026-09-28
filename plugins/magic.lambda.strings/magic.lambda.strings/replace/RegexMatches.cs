@@ -40,7 +40,7 @@ namespace magic.lambda.strings.replace
         {
             // Sanity checking invocation and evaluating children nodes.
             SanityCheck(input);
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Retrieving arguments.
             var source = input.GetEx<string>();

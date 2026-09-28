@@ -48,6 +48,20 @@ namespace magic.lambda.threading
             // All tasks we're waiting for.
             var tasks = new List<(Task, Node)>();
 
+            /*
+             * Each thread gets its own signaler, hence its own stack - so the caller's context
+             * objects must be carried across explicitly. Without the ticket the lambda evaluates as
+             * anonymous, without the execution context it cannot be cancelled or timed out, and
+             * without the whitelist it evaluates with the full vocabulary of the server.
+             *
+             * Notice, no reference counting on the execution context as [fork] does, since we await
+             * every thread below - the caller's own reference outlives all of them.
+             */
+            var auth = new Node();
+            signaler.Signal("auth.ticket.get", auth, skipWhitelist: true);
+            var execution = signaler.GetExecutionContext();
+            var whitelist = signaler.Peek<List<Node>>("whitelist");
+
             // Looping through each child node of input.
             foreach (var idxThread in input.Children)
             {
@@ -57,13 +71,42 @@ namespace magic.lambda.threading
 
                 // Wee need to clone node for thread to avoid race conditions.
                 var clone = idxThread.Clone();
+                var authClone = auth.Value == null ? null : auth.Clone();
                 var curTask = Task.Factory.StartNew(() => 
                 {
                     // Notice, ISignaler is NOT thread safe, since it preserves state on a per thread individual basis.
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var threadSignaler = scope.ServiceProvider.GetService<ISignaler>();
-                        threadSignaler.Signal("eval", clone);
+
+                        /*
+                         * One layer per context object, scoping each only when we actually have it -
+                         * a null must never reach the stack, since a scoped null masks an object of
+                         * the same name further up.
+                         */
+                        void Evaluate()
+                        {
+                            threadSignaler.Signal("eval", clone, skipWhitelist: true);
+                        }
+                        void WithExecution()
+                        {
+                            if (execution == null)
+                                Evaluate();
+                            else
+                                threadSignaler.Scope("execution.context", execution, () =>
+                                    threadSignaler.Scope("dynamic.execution-id", execution.ExecutionId, Evaluate));
+                        }
+                        void WithAuth()
+                        {
+                            if (authClone == null)
+                                WithExecution();
+                            else
+                                threadSignaler.Scope(".auth.ticket.get", authClone, WithExecution);
+                        }
+                        if (whitelist == null)
+                            WithAuth();
+                        else
+                            threadSignaler.Scope("whitelist", whitelist, WithAuth);
                     }
                 });
                 tasks.Add((curTask, clone));

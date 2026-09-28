@@ -38,7 +38,7 @@ namespace magic.lambda.misc
             var arguments = GetArguments(input);
             signaler.Scope(arguments.Name, arguments.Value, () =>
             {
-                signaler.Signal("eval", arguments.Lambda);
+                signaler.Signal("eval", arguments.Lambda, skipWhitelist: true);
             });
         }
 

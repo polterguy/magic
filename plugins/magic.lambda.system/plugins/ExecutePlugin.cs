@@ -52,7 +52,7 @@ namespace magic.lambda.system.plugins
             try
             {
                 // Executing lambda object not with plugin dynamically loaded into AppDomain.
-                signaler.Signal("eval", input);
+                signaler.Signal("eval", input, skipWhitelist: true);
             }
             finally
             {

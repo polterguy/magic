@@ -73,7 +73,7 @@ namespace magic.lambda.mail
                         signaler,
                         lambda,
                         raw);
-                    await signaler.SignalAsync("eval", lambda);
+                    await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
                 }
             }
             finally
@@ -112,7 +112,7 @@ namespace magic.lambda.mail
                     AddRecipient(message.Bcc.Select(x => x as MailboxAddress), messageNode, "bcc");
 
                     var parseNode = new Node("", body);
-                    signaler.Signal(".mime.parse", parseNode);
+                    signaler.Signal(".mime.parse", parseNode, skipWhitelist: true);
                     var entity = new Node("entity", parseNode.Value);
                     entity.AddRange(parseNode.Children);
                     messageNode.Add(entity);

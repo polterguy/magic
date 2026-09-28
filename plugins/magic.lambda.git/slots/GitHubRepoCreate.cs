@@ -55,7 +55,7 @@ namespace magic.lambda.git
             input.Clear();
             input.Value = null;
             var tmp = new Node("", response);
-            signaler.Signal("json2lambda", tmp);
+            signaler.Signal("json2lambda", tmp, skipWhitelist: true);
             foreach (var child in tmp.Children.ToList())
                 input.Add(child);
         }

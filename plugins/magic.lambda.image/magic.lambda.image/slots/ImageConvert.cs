@@ -25,17 +25,6 @@ namespace magic.lambda.image.slots
         SignatureType = typeof(global::magic.lambda.image.signatures.ImageTransformSignature))]
     public class ImageConvert : ISlotAsync
     {
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of your type.
-        /// </summary>
-        /// <param name="rootResolver">Needed to resolve absolute paths.</param>
-        public ImageConvert(IRootResolver rootResolver)
-        {
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Slot implementation.
         /// </summary>
@@ -44,7 +33,7 @@ namespace magic.lambda.image.slots
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Converting image.
-            await Utilities.TransformImageAsync(input, _rootResolver, null);
+            await Utilities.TransformImageAsync(input, signaler, null);
         }
     }
 }

@@ -4,7 +4,6 @@
 
 using System.Threading.Tasks;
 using magic.node;
-using magic.node.contracts;
 using magic.signals.contracts;
 using magic.lambda.mime.helpers;
 
@@ -28,20 +27,6 @@ namespace magic.lambda.mime
         ReturnsDescription = "Resolves to the created MimeKit MIME entity")]
     public class MimeCreatePrivate : ISlotAsync
     {
-        readonly IStreamService _streamService;
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of your type.
-        /// </summary>
-        /// <param name="streamService">Needed in case MIME creator needs to create entities from file service</param>
-        /// <param name="rootResolver">Needed to resolve root folder</param>
-        public MimeCreatePrivate(IStreamService streamService, IRootResolver rootResolver)
-        {
-            _streamService = streamService;
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Implementation of your slot.
         /// </summary>
@@ -50,7 +35,7 @@ namespace magic.lambda.mime
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Creating entity and returning to caller as is.
-            input.Value = await MimeCreator.CreateAsync(signaler, input, _streamService, _rootResolver);
+            input.Value = await MimeCreator.CreateAsync(signaler, input);
             input.Clear();
         }
     }

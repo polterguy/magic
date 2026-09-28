@@ -37,7 +37,7 @@ namespace magic.lambda.strings.builder
                 await signaler.ScopeAsync(
                     ".strings.builder",
                     builder,
-                    async () => await signaler.SignalAsync("eval", input));
+                    async () => await signaler.SignalAsync("eval", input, skipWhitelist: true));
             }
             finally
             {

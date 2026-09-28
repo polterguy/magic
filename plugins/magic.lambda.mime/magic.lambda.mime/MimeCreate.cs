@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using magic.node;
-using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.mime.helpers;
@@ -33,20 +32,6 @@ namespace magic.lambda.mime
         SignatureType = typeof(global::magic.lambda.mime.signatures.MimeCreateSignature))]
     public class MimeCreate : ISlotAsync
     {
-        readonly IStreamService _streamService;
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of your type.
-        /// </summary>
-        /// <param name="streamService">Needed in case MIME creator needs to create entities from file service</param>
-        /// <param name="rootResolver">Needed to resolve root folder</param>
-        public MimeCreate(IStreamService streamService, IRootResolver rootResolver)
-        {
-            _streamService = streamService;
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Implementation of your slot.
         /// </summary>
@@ -60,7 +45,7 @@ namespace magic.lambda.mime
                 .GetEx<bool>() ?? false;
 
             // Creating entity.
-            using (var entity = await MimeCreator.CreateAsync(signaler, input, _streamService, _rootResolver))
+            using (var entity = await MimeCreator.CreateAsync(signaler, input))
             {
                 // House cleaning.
                 input.Value = null;

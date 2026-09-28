@@ -81,7 +81,7 @@ namespace magic.lambda.threading
         static string GetUsername(ISignaler signaler)
         {
             var auth = new Node();
-            signaler.Signal("auth.ticket.get", auth);
+            signaler.Signal("auth.ticket.get", auth, skipWhitelist: true);
             return auth.Value as string;
         }
 
@@ -89,12 +89,12 @@ namespace magic.lambda.threading
         {
             // Preferring CloudFlare's client IP header, since behind CloudFlare [request.ip] resolves to the proxy.
             var header = new Node("", "CF-Connecting-IP");
-            signaler.Signal("request.headers.get", header);
+            signaler.Signal("request.headers.get", header, skipWhitelist: true);
             if (header.Value != null)
                 return header.GetEx<string>();
 
             var ip = new Node();
-            signaler.Signal("request.ip", ip);
+            signaler.Signal("request.ip", ip, skipWhitelist: true);
             return ip.GetEx<string>();
         }
     }

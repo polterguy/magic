@@ -96,6 +96,7 @@ namespace magic.lambda.threading.tests
         {
             var services = new ServiceCollection();
             services.AddTransient<ISignaler, Signaler>();
+            services.AddSingleton<IExecutionRegistry, ExecutionRegistry>();
             var types = new SignalsProvider(InstantiateAllTypes<ISlot, ISlotAsync>(services));
             services.AddTransient<ISignalsProvider>((svc) => types);
             services.AddTransient<ITicketProvider, TicketProvider>((svc) => new TicketProvider(true));

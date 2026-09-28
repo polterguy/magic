@@ -43,7 +43,7 @@ namespace magic.lambda.http.services.helpers
             }
 
             // Using JSON slot to transform nodes to JSON.
-            signaler.Signal("lambda2json", payloadNode);
+            signaler.Signal("lambda2json", payloadNode, skipWhitelist: true);
             return payloadNode.Value;
         }
 
@@ -57,7 +57,7 @@ namespace magic.lambda.http.services.helpers
             string slotName)
         {
             // Using Hyperlambda slot to transform nodes to string.
-            signaler.Signal("lambda2hyper", payloadNode);
+            signaler.Signal("lambda2hyper", payloadNode, skipWhitelist: true);
 
             // Returning Hyperlambda to caller.
             return payloadNode.Value;
@@ -100,7 +100,7 @@ namespace magic.lambda.http.services.helpers
         {
             // Invoking slot responsible for creating our MIME entity.
             payloadNode.Value = headers["Content-Type"];
-            signaler.Signal(".mime.create", payloadNode);
+            signaler.Signal(".mime.create", payloadNode, skipWhitelist: true);
             using (var entity = payloadNode.Get<MimeEntity>())
             {
                 // Attaching MIME envelope headers to HTTP envelope.

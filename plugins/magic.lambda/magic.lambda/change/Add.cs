@@ -31,7 +31,7 @@ namespace magic.lambda.change
         /// <returns>An awaitable task.</returns>
         public void Signal(ISignaler signaler, Node input)
         {
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
             AddResult(input);
             input.Clear();
         }

@@ -90,7 +90,7 @@ namespace magic.lambda.sockets
                 // Transforming from JSON to lambda node structure.
                 var payload = new Node("", json);
                 if (!string.IsNullOrEmpty(json))
-                    _signaler.Signal("json2lambda", payload);
+                    _signaler.Signal("json2lambda", payload, skipWhitelist: true);
 
                 // Loading file, and creating our lambda object and attaching arguments specified as query parameters, and/or payload.
                 var lambda = HyperlambdaParser.Parse(await _fileService.LoadAsync(_rootResolver.AbsolutePath(file)));
@@ -107,7 +107,7 @@ namespace magic.lambda.sockets
                             await _signaler.ScopeAsync("dynamic.sockets.connection", Context.ConnectionId, async () =>
                             {
                                 // Executing file.
-                                await _signaler.SignalAsync("eval", lambda);
+                                await _signaler.SignalAsync("eval", lambda, skipWhitelist: true);
                             });
                         });
                     });
@@ -188,7 +188,7 @@ namespace magic.lambda.sockets
              * belonging to some specific role(s) later.
              */
             var userNode = new Node();
-            await _signaler.SignalAsync("auth.ticket.get", userNode);
+            await _signaler.SignalAsync("auth.ticket.get", userNode, skipWhitelist: true);
             var inRoles = userNode.Children.FirstOrDefault(x => x.Name == "roles");
             if (inRoles != null)
             {

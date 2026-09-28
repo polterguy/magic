@@ -23,7 +23,7 @@ namespace magic.lambda.comparison
         public void Signal(ISignaler signaler, Node input)
         {
             SanityCheck(input);
-            signaler.Signal("eval", input);
+            signaler.Signal("eval", input, skipWhitelist: true);
             input.Value = Compare(input);
         }
 

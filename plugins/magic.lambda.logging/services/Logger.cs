@@ -124,7 +124,7 @@ namespace magic.lambda.logging.services
             var dbNode = new Node();
             using (var shutdownLock = new ShutdownLock())
             {
-                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode);
+                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
                 using (var connection = dbNode.Get<DbConnection>())
                 {
                     connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
@@ -191,7 +191,7 @@ namespace magic.lambda.logging.services
             var dbNode = new Node();
             using (var shutdownLock = new ShutdownLock())
             {
-                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode);
+                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
                 using (var connection = dbNode.Get<DbConnection>())
                 {
                     connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
@@ -221,7 +221,7 @@ namespace magic.lambda.logging.services
             var dbNode = new Node();
             using (var shutdownLock = new ShutdownLock())
             {
-                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode);
+                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
                 using (var connection = dbNode.Get<DbConnection>())
                 {
                     connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
@@ -281,7 +281,7 @@ namespace magic.lambda.logging.services
             var dbNode = new Node();
             using (var shutdownLock = new ShutdownLock())
             {
-                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode);
+                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
                 using (var connection = dbNode.Get<DbConnection>())
                 {
                     connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
@@ -375,7 +375,7 @@ namespace magic.lambda.logging.services
             var dbNode = new Node();
             using (var shutdownLock = new ShutdownLock())
             {
-                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode);
+                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
                 using (var connection = dbNode.Get<DbConnection>())
                 {
                     // Opening database connection.
@@ -463,7 +463,7 @@ namespace magic.lambda.logging.services
             {
                 var node = new Node();
                 node.AddRange(meta.Select(x => new Node(x.Key, x.Value)));
-                signaler.Signal("lambda2json", node);
+                signaler.Signal("lambda2json", node, skipWhitelist: true);
 
                 var metaArg = command.CreateParameter();
                 metaArg.ParameterName = "@meta";

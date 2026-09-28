@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using magic.node;
-using magic.node.contracts;
+using magic.signals.contracts;
 using magic.node.extensions;
 
 namespace magic.lambda.image.slots
@@ -23,16 +23,31 @@ namespace magic.lambda.image.slots
          */
         public static async Task TransformImageAsync(
             Node input,
-            IRootResolver rootResolver,
+            ISignaler signaler,
             Func<Image, Task> functor)
         {
-            // Image is either a filename, an Image or a Stream. Retrieving Image somehow.
+            /*
+             * Image is either a filename, an Image or a Stream. Retrieving Image somehow.
+             *
+             * Notice, a filename is opened through its slot rather than the file service, and
+             * deliberately WITHOUT exempting it from the whitelist, since the path came from the
+             * caller - the same is true for the [dest] we might save to further down.
+             */
             var file = input.GetEx<object>();
             Image result = null;
             if (file is Stream str)
+            {
                 result = await Image.LoadAsync(str);
+            }
             else
-                result = await Image.LoadAsync(rootResolver.AbsolutePath(file as string));
+            {
+                var source = new Node("", file as string);
+                await signaler.SignalAsync("io.stream.open-file", source);
+                using (var sourceStream = (Stream)source.Value)
+                {
+                    result = await Image.LoadAsync(sourceStream);
+                }
+            }
 
             // Making sure we dispose image when we're done with it.
             using (result)
@@ -48,9 +63,13 @@ namespace magic.lambda.image.slots
                 var dest = input.Children.FirstOrDefault(x => x.Name == "dest")?.GetEx<string>();
                 if (dest != null)
                 {
-                    using (var fileStream = File.OpenWrite(rootResolver.AbsolutePath(dest)))
+                    using (var destStream = new MemoryStream())
                     {
-                        await SaveImageAsync(result, fileStream, type);
+                        await SaveImageAsync(result, destStream, type);
+                        destStream.Position = 0;
+                        var save = new Node("", dest);
+                        save.Add(new Node("", destStream));
+                        await signaler.SignalAsync("io.stream.save-file", save);
                         return;
                     }
                 }

@@ -29,7 +29,7 @@ namespace magic.lambda.math.basics
         /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            await signaler.SignalAsync("eval", input);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
             dynamic cur = Utilities.GetBase(input);
             foreach (var idx in Utilities.AllButBase(input))
             {
