@@ -14,6 +14,63 @@ namespace magic.lambda.io.tests
     public class FolderTests
     {
         [Fact]
+        public void CreateFolder_WhitelistWildcard_Succeeds()
+        {
+            var createInvoked = false;
+            var folderService = new FolderService
+            {
+                CreateAction = (path) => createInvoked = true,
+                ExistsAction = (path) => false,
+            };
+
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.folder.create:/etc/*
+   .lambda
+      io.folder.create:/etc/foo/
+", folderService: folderService);
+            Assert.True(createInvoked);
+        }
+
+        [Fact]
+        public void CreateFolder_WhitelistWildcard_Throws()
+        {
+            var folderService = new FolderService
+            {
+                CreateAction = (path) => { },
+                ExistsAction = (path) => false,
+            };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.folder.create:/etc/*
+   .lambda
+      io.folder.create:/other/foo/
+", folderService: folderService));
+        }
+
+        [Fact]
+        public void CreateFolder_WhitelistExtensionPattern_Throws()
+        {
+            var folderService = new FolderService
+            {
+                CreateAction = (path) => { },
+                ExistsAction = (path) => false,
+            };
+
+            // A folder has no extension, hence "/etc/*.md" is illegal for a folder slot.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.folder.create:/etc/*.md
+   .lambda
+      io.folder.create:/etc/foo/
+", folderService: folderService));
+        }
+
+        [Fact]
         public void CreateAndDeleteFolder()
         {
             #region [ -- Setting up mock service(s) -- ]

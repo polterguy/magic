@@ -33,7 +33,7 @@ namespace magic.lambda.io.file
     {
 
         /// <inheritdoc />
-        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
+        public Func<string, string, bool> Comparer => Utilities.MatchesFile;
         readonly IRootResolver _rootResolver;
         readonly IFolderService _folderService;
         readonly IStreamService _streamService;
@@ -151,7 +151,7 @@ namespace magic.lambda.io.file
             var fullFileName = currentFolder + entities.Last();
 
             // Notice, every entry an archive writes is verified, not just the destination folder.
-            Utilities.VerifyPath(signaler, input, destinationFolder + filename);
+            Utilities.VerifyPath(signaler, input, destinationFolder + filename, Utilities.MatchesFile);
 
             // Checking if file exists.
             if (File.Exists(_rootResolver.AbsolutePath(destinationFolder + filename)))

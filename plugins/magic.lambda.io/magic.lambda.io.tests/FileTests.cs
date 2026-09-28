@@ -19,6 +19,62 @@ namespace magic.lambda.io.tests
     public class FileTests
     {
         [Fact]
+        public void SaveFile_WhitelistFolderWildcard_DoesNotCrossFolders()
+        {
+            var fileService = new FileService
+            {
+                SaveAction = (path, content) => { },
+            };
+
+            // "/etc/*" grants the folder itself, not everything beneath it.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*
+   .lambda
+      io.file.save:/etc/sub/foo.txt
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistIllegalPattern_Throws()
+        {
+            var fileService = new FileService
+            {
+                SaveAction = (path, content) => { },
+            };
+
+            // Wildcard spanning folders is not a pattern we implement, hence refused.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*/foo.md
+   .lambda
+      io.file.save:/etc/bar/foo.md
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistDoubleWildcard_Throws()
+        {
+            var fileService = new FileService
+            {
+                SaveAction = (path, content) => { },
+            };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*.*
+   .lambda
+      io.file.save:/etc/foo.md
+         .:foo
+", fileService));
+        }
+
+        [Fact]
         public void SaveFile_WhitelistFolderWildcard_Succeeds()
         {
             var saveInvoked = false;

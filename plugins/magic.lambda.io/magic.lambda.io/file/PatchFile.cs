@@ -32,7 +32,7 @@ namespace magic.lambda.io.file
     {
 
         /// <inheritdoc />
-        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
+        public Func<string, string, bool> Comparer => Utilities.MatchesFile;
         /*
          * How far away from the position declared by a hunk header we are willing to look for the
          * hunk's context. Generous enough to absorb realistic drift between the file the patch was

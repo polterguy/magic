@@ -36,7 +36,7 @@ namespace magic.lambda.io.folder
     {
 
         /// <inheritdoc />
-        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
+        public Func<string, string, bool> Comparer => Utilities.MatchesFolder;
         readonly IRootResolver _rootResolver;
         readonly IIOService _service;
 

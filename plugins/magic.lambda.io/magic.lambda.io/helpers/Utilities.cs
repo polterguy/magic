@@ -23,29 +23,71 @@ namespace magic.lambda.io.helpers
          * destination of a copy, an entry written by an unzip - has to be verified here, using the
          * same comparison the slot publishes through IWhitelistComparer.
          */
-        internal static void VerifyPath(ISignaler signaler, Node input, string path)
+        internal static void VerifyPath(ISignaler signaler, Node input, string path, Func<string, string, bool> comparer)
         {
             var whitelist = signaler.Peek<List<Node>>("whitelist");
             if (whitelist == null)
                 return;
 
-            if (!whitelist.Any(x => x.Name == input.Name && (x.Value == null || MatchesPath(x.Get<string>(), path))))
+            if (!whitelist.Any(x => x.Name == input.Name && (x.Value == null || comparer(x.Get<string>(), path))))
                 throw new HyperlambdaException($"Slot [{input.Name}] is not allowed to access '{path}' in current scope");
         }
 
         /*
-         * Compares a whitelist vocabulary pin to a path, which unlike the default comparison also
-         * accepts a wildcard in the middle, such that "/etc/*" grants everything below a folder
-         * and "/etc/*.md" grants a file extension within it.
+         * Compares a whitelist vocabulary pin to a path.
+         *
+         * Exactly two wildcard patterns are legal - "/etc/*" granting every file directly IN a
+         * folder, and "/etc/*.md" granting an extension within it. Neither reaches into sub folders,
+         * the same way a wildcard does not in a shell. Anything else is refused rather than matched,
+         * since a pattern we don't implement is a pattern whose author believed it meant something
+         * it does not, and silently granting the wrong files is worse than an exception.
          */
-        internal static bool MatchesPath(string pattern, string path)
+        internal static bool MatchesFile(string pattern, string filename)
         {
-            var idx = pattern.IndexOf('*');
-            if (idx == -1 || idx == pattern.Length - 1)
-                return Wildcard.Matches(pattern, path);
+            // No wildcard, hence an exact filename.
+            if (!pattern.Contains('*'))
+                return Wildcard.Matches(pattern, filename);
 
-            return path.StartsWith(pattern.Substring(0, idx), StringComparison.Ordinal) &&
-                path.EndsWith(pattern.Substring(idx + 1), StringComparison.Ordinal);
+            var extension = Path.GetExtension(pattern);
+
+            // In both legal patterns the wildcard is the ENTIRE filename, being "*" or "*.md".
+            if (Path.GetFileName(pattern) != "*" + extension || extension.Contains('*'))
+                throw new HyperlambdaException($"'{pattern}' is not a legal filename in a vocabulary, legal patterns are '/foo/*' and '/foo/*.md'");
+
+            return Folder(filename) == Folder(pattern) &&
+                (extension.Length == 0 || Path.GetExtension(filename) == extension);
+        }
+
+        /*
+         * Compares a whitelist vocabulary pin to a FOLDER, where the only legal pattern is "/etc/*"
+         * granting every folder directly within it - a folder has no extension, so "/etc/*.md" is
+         * refused here even though it is legal for a filename.
+         *
+         * Notice, a trailing slash is trimmed from both sides, since "/etc/foo" and "/etc/foo/" are
+         * the same folder and Hyperlambda is written both ways.
+         */
+        internal static bool MatchesFolder(string pattern, string folder)
+        {
+            pattern = pattern.TrimEnd('/');
+            folder = folder.TrimEnd('/');
+
+            // No wildcard, hence an exact folder.
+            if (!pattern.Contains('*'))
+                return Wildcard.Matches(pattern, folder);
+
+            if (Path.GetFileName(pattern) != "*")
+                throw new HyperlambdaException($"'{pattern}' is not a legal folder in a vocabulary, the only legal pattern is '/foo/*'");
+
+            return Folder(folder) == Folder(pattern);
+        }
+
+        /*
+         * Returns the folder part of the specified path, spelled the same regardless of which
+         * directory separator the platform prefers.
+         */
+        static string Folder(string path)
+        {
+            return Path.GetDirectoryName(path)?.Replace('\\', '/');
         }
 
         /*
@@ -123,7 +165,7 @@ namespace magic.lambda.io.helpers
             }
 
             // Notice, the destination is verified too, since a copy writes to it.
-            VerifyPath(signaler, input, dest);
+            VerifyPath(signaler, input, dest, isFolder ? MatchesFolder : MatchesFile);
 
             // Transforming relative paths to absolute paths.
             var source = rootResolver.AbsolutePath(src);

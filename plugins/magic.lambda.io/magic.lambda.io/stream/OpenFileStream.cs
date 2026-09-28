@@ -31,7 +31,7 @@ namespace magic.lambda.io.stream
     {
 
         /// <inheritdoc />
-        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
+        public Func<string, string, bool> Comparer => Utilities.MatchesFile;
         readonly IRootResolver _rootResolver;
         readonly IStreamService _service;
 
