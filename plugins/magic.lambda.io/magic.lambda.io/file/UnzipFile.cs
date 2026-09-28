@@ -65,6 +65,14 @@ namespace magic.lambda.io.file
             // Retrieving arguments to invocation.
             var args = GetArgs(input);
 
+            /*
+             * The vocabulary decides the destination FOLDER, compared as a folder - the archive
+             * itself is a file, and was already compared as one by the signaler. Every entry is
+             * then confined to that folder further down, rather than compared to the vocabulary,
+             * since an archive legally contains its own sub folders.
+             */
+            Utilities.VerifyPath(signaler, input, args.DestinationFolder, Utilities.MatchesFolder);
+
             // Making sure destination folder exists.
             if (!await _folderService.ExistsAsync(_rootResolver.AbsolutePath(args.DestinationFolder)))
                 throw new HyperlambdaException($"Destination folder '{args.DestinationFolder}' for [io.file.unzip] does not exist.");
@@ -150,8 +158,8 @@ namespace magic.lambda.io.file
             // Figuring out full filename of current entry and saving it.
             var fullFileName = currentFolder + entities.Last();
 
-            // Notice, every entry an archive writes is verified, not just the destination folder.
-            Utilities.VerifyPath(signaler, input, destinationFolder + filename, Utilities.MatchesFile);
+            // Notice, this is what stops an archive escaping its destination with a "../" entry.
+            VerifyWithinDestination(destinationFolder, filename);
 
             // Checking if file exists.
             if (File.Exists(_rootResolver.AbsolutePath(destinationFolder + filename)))
@@ -165,6 +173,30 @@ namespace magic.lambda.io.file
 
             // Saving file.
             await _streamService.SaveFileAsync(contentStream, fullFileName, true);
+        }
+
+        /*
+         * Verifies the specified archive entry ends up INSIDE the destination folder.
+         *
+         * Notice, an entry's name is attacker controlled and may contain "../" segments, hence both
+         * paths are fully resolved before being compared - IRootResolver only guarantees we stay
+         * within the dynamic files folder, which is a far larger place than the destination.
+         */
+        void VerifyWithinDestination(string destinationFolder, string filename)
+        {
+            var folder = FullPath(_rootResolver.AbsolutePath(destinationFolder)).TrimEnd('/') + "/";
+            var entry = FullPath(_rootResolver.AbsolutePath(destinationFolder + filename));
+
+            if (!entry.StartsWith(folder, StringComparison.Ordinal))
+                throw new HyperlambdaException($"Archive entry '{filename}' is not within the destination folder of [io.file.unzip]");
+        }
+
+        /*
+         * Returns the specified path fully resolved, spelled with forward slashes.
+         */
+        static string FullPath(string path)
+        {
+            return Path.GetFullPath(path).Replace('\\', '/');
         }
 
         /*

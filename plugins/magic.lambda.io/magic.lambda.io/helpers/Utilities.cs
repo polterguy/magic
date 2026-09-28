@@ -34,60 +34,68 @@ namespace magic.lambda.io.helpers
         }
 
         /*
-         * Compares a whitelist vocabulary pin to a path.
-         *
-         * Exactly two wildcard patterns are legal - "/etc/*" granting every file directly IN a
-         * folder, and "/etc/*.md" granting an extension within it. Neither reaches into sub folders,
-         * the same way a wildcard does not in a shell. Anything else is refused rather than matched,
-         * since a pattern we don't implement is a pattern whose author believed it meant something
-         * it does not, and silently granting the wrong files is worse than an exception.
+         * Compares a whitelist vocabulary pin to a FILENAME, such as "/etc/*" or "/etc/*.md".
          */
         internal static bool MatchesFile(string pattern, string filename)
         {
-            // No wildcard, hence an exact filename.
-            if (!pattern.Contains('*'))
-                return Wildcard.Matches(pattern, filename);
-
-            var extension = Path.GetExtension(pattern);
-
-            // In both legal patterns the wildcard is the ENTIRE filename, being "*" or "*.md".
-            if (Path.GetFileName(pattern) != "*" + extension || extension.Contains('*'))
-                throw new HyperlambdaException($"'{pattern}' is not a legal filename in a vocabulary, legal patterns are '/foo/*' and '/foo/*.md'");
-
-            return Folder(filename) == Folder(pattern) &&
-                (extension.Length == 0 || Path.GetExtension(filename) == extension);
+            return Matches(pattern, filename, isFolder: false);
         }
 
         /*
-         * Compares a whitelist vocabulary pin to a FOLDER, where the only legal pattern is "/etc/*"
-         * granting every folder directly within it - a folder has no extension, so "/etc/*.md" is
-         * refused here even though it is legal for a filename.
+         * Compares a whitelist vocabulary pin to a FOLDER, being a wildcard segment followed by
+         * the trailing slash every folder carries by convention.
          *
-         * Notice, a trailing slash is trimmed from both sides, since "/etc/foo" and "/etc/foo/" are
-         * the same folder and Hyperlambda is written both ways.
+         * Notice, a folder has no extension, hence an extension wildcard is refused here even
+         * though the same wildcard is legal as a filename.
          */
         internal static bool MatchesFolder(string pattern, string folder)
         {
-            pattern = pattern.TrimEnd('/');
-            folder = folder.TrimEnd('/');
+            return Matches(pattern, folder, isFolder: true);
+        }
 
-            // No wildcard, hence an exact folder.
-            if (!pattern.Contains('*'))
-                return Wildcard.Matches(pattern, folder);
+        #region [ -- Private helper methods -- ]
 
-            if (Path.GetFileName(pattern) != "*")
-                throw new HyperlambdaException($"'{pattern}' is not a legal folder in a vocabulary, the only legal pattern is '/foo/*'");
+        /*
+         * Compares a pin to a path, segment by segment, which confines a wildcard to the segment it
+         * occurs in exactly the way it is confined in a shell.
+         *
+         * Notice, every segment except the filename names a FOLDER, where the only legal wildcard is
+         * "*" matching one level. Only the filename also accepts an extension, since an extension
+         * on a folder segment is not something a folder can mean.
+         */
+        static bool Matches(string pattern, string path, bool isFolder)
+        {
+            var patternSegments = pattern.Split('/');
+            var pathSegments = path.Split('/');
+            if (patternSegments.Length != pathSegments.Length)
+                return false;
 
-            return Folder(folder) == Folder(pattern);
+            // A folder ends with a slash, hence has no filename segment at all.
+            var filename = isFolder ? -1 : patternSegments.Length - 1;
+
+            return patternSegments
+                .Select((x, i) => MatchesSegment(x, pathSegments[i], i == filename))
+                .All(x => x);
         }
 
         /*
-         * Returns the folder part of the specified path, spelled the same regardless of which
-         * directory separator the platform prefers.
+         * Compares one segment to one pattern segment.
          */
-        static string Folder(string path)
+        static bool MatchesSegment(string pattern, string segment, bool isFilename)
         {
-            return Path.GetDirectoryName(path)?.Replace('\\', '/');
+            // A literal segment.
+            if (!pattern.Contains('*'))
+                return pattern == segment;
+
+            // The entire segment, legal for a folder and a filename alike.
+            if (pattern == "*")
+                return true;
+
+            // An extension, legal only as the filename.
+            if (!isFilename || !pattern.StartsWith('*') || pattern.LastIndexOf('*') != 0)
+                throw new HyperlambdaException($"'{pattern}' is not a legal segment in a vocabulary path, a wildcard is either an entire segment such as '*', or a filename extension such as '*.md'");
+
+            return segment.EndsWith(pattern.Substring(1), StringComparison.Ordinal);
         }
 
         /*
@@ -123,8 +131,6 @@ namespace magic.lambda.io.helpers
                     Source,
                     Destination);
         }
-
-        #region [ -- Private helper methods -- ]
 
         /*
          * Sanity checks arguments for copy and move file/folder.

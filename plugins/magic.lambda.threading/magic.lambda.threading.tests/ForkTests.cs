@@ -42,6 +42,40 @@ namespace magic.lambda.threading.tests
         }
 
         [Fact]
+        public void Join_CarriesWhitelistIntoThread()
+        {
+            // [join] evaluates each [fork] body on its OWN signaler, with its own empty stack - so
+            // unless the whitelist is carried across explicitly, the body runs unrestricted.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      join
+      fork
+   .lambda
+      join
+         fork
+            sleep:1
+"));
+        }
+
+        [Fact]
+        public void Join_WhitelistedSlotInThread_Succeeds()
+        {
+            var lambda = Common.Evaluate(@"
+whitelist
+   vocabulary
+      join
+      fork
+      sleep
+   .lambda
+      join
+         fork
+            sleep:1
+");
+            Assert.NotNull(lambda);
+        }
+
+        [Fact]
         public void ForkWithSleep()
         {
             ForkSlot1.SetExecutionCount(0);

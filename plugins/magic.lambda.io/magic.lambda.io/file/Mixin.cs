@@ -65,11 +65,22 @@ namespace magic.lambda.io.file
                 throw new HyperlambdaException("No filename specified for [mixin]");
 
             // Loading Hyperlambda codebehind file and parsing as lambda.
-            var codebehindFilename = _rootResolver.AbsolutePath(staticFilename.Substring(0, staticFilename.LastIndexOf('.')) + ".hl");
+            var codebehindFilename = staticFilename.Substring(0, staticFilename.LastIndexOf('.')) + ".hl";
             var lambda = new Node();
-            if (await _fileService.ExistsAsync(codebehindFilename))
+            if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(codebehindFilename)))
             {
-                lambda = HyperlambdaParser.Parse(await _fileService.LoadAsync(codebehindFilename));
+                /*
+                 * Loading through its slot rather than the file service, and deliberately WITHOUT
+                 * exempting it from the whitelist.
+                 *
+                 * Notice, this path is DERIVED from the caller's filename by swapping its extension,
+                 * hence is not the path the vocabulary granted when it granted [io.file.mixin] - a
+                 * sandbox wanting mixin must grant reading the codebehind too, explicitly.
+                 */
+                var codebehind = new Node("io.file.load", codebehindFilename);
+                await signaler.SignalAsync("io.file.load", codebehind);
+
+                lambda = HyperlambdaParser.Parse(codebehind.Get<string>());
                 input.AddRange(lambda.Children);
 
                 /*

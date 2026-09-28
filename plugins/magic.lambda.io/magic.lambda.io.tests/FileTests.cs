@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using System.Text;
 using System.IO.Compression;
 using System.Threading.Tasks;
@@ -18,6 +19,470 @@ namespace magic.lambda.io.tests
 {
     public class FileTests
     {
+        [Fact]
+        public void Mixin_WhitelistGrantsCodebehind_Succeeds()
+        {
+            var loadInvoked = false;
+            var fileService = new FileService
+            {
+                ExistsAction = (path) => path.EndsWith("/etc/page.hl"),
+                LoadAction = (path) => { loadInvoked = true; return ".oninit"; },
+            };
+            var streamService = new StreamService
+            {
+                OpenFileAction = (path) => new MemoryStream(Encoding.UTF8.GetBytes("<p>howdy</p>")),
+            };
+
+            // Reading the codebehind is granted explicitly, not implied by the mixin pin.
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.mixin:/etc/*.html
+      io.file.load:/etc/*.hl
+   .lambda
+      io.file.mixin:/etc/page.html
+", fileService, streamService: streamService);
+            Assert.True(loadInvoked);
+        }
+
+        [Fact]
+        public void Mixin_WhitelistWithoutCodebehindPin_Throws()
+        {
+            var loadInvoked = false;
+            var fileService = new FileService
+            {
+                ExistsAction = (path) => path.EndsWith("/etc/page.hl"),
+                LoadAction = (path) => { loadInvoked = true; return ".oninit"; },
+            };
+            var streamService = new StreamService
+            {
+                OpenFileAction = (path) => new MemoryStream(Encoding.UTF8.GetBytes("<p>howdy</p>")),
+            };
+
+            // The mixin pin alone no longer implies permission to read the codebehind.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.mixin:/etc/*.html
+   .lambda
+      io.file.mixin:/etc/page.html
+", fileService, streamService: streamService));
+            Assert.False(loadInvoked);
+        }
+
+        [Fact]
+        public void Mixin_WhitelistCodebehindPinnedElsewhere_Throws()
+        {
+            var fileService = new FileService
+            {
+                ExistsAction = (path) => path.EndsWith("/etc/page.hl"),
+                LoadAction = (path) => ".oninit",
+            };
+            var streamService = new StreamService
+            {
+                OpenFileAction = (path) => new MemoryStream(Encoding.UTF8.GetBytes("<p>howdy</p>")),
+            };
+
+            // A codebehind pin for a DIFFERENT folder does not grant this one.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.mixin:/etc/*.html
+      io.file.load:/other/*.hl
+   .lambda
+      io.file.mixin:/etc/page.html
+", fileService, streamService: streamService));
+        }
+
+        static Stream CreateArchive(params string[] entries)
+        {
+            var result = new MemoryStream();
+            using (var archive = new ZipArchive(result, ZipArchiveMode.Create, true))
+            {
+                foreach (var idx in entries)
+                {
+                    using (var writer = new StreamWriter(archive.CreateEntry(idx).Open()))
+                    {
+                        writer.Write("foo");
+                    }
+                }
+            }
+            result.Position = 0;
+            return result;
+        }
+
+        [Fact]
+        public void UnzipFile_WhitelistAllowsDestination_ExtractsNestedEntries()
+        {
+            var saved = new List<string>();
+            var streamService = new StreamService
+            {
+                OpenFileAction = (path) => CreateArchive("root.txt", "sub/nested.txt"),
+                SaveFileAction = (stream, path) => saved.Add(path),
+            };
+            var folderService = new FolderService
+            {
+                ExistsAction = (path) => true,
+                CreateAction = (path) => { },
+            };
+
+            // The vocabulary grants the archive as a file, and the destination as a folder. An
+            // archive's OWN sub folders are then confined to that destination, not re-compared.
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.unzip:/etc/*.zip
+      io.file.unzip:/etc/*/
+   .lambda
+      io.file.unzip:/etc/x.zip
+         folder:/etc/out/
+", streamService: streamService, folderService: folderService);
+
+            Assert.Equal(2, saved.Count);
+            Assert.Contains(saved, x => x.EndsWith("/etc/out/root.txt"));
+            Assert.Contains(saved, x => x.EndsWith("/etc/out/sub/nested.txt"));
+        }
+
+        [Fact]
+        public void UnzipFile_WhitelistRefusesDestination_Throws()
+        {
+            var saveInvoked = false;
+            var streamService = new StreamService
+            {
+                OpenFileAction = (path) => CreateArchive("root.txt"),
+                SaveFileAction = (stream, path) => saveInvoked = true,
+            };
+            var folderService = new FolderService
+            {
+                ExistsAction = (path) => true,
+                CreateAction = (path) => { },
+            };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.unzip:/etc/*.zip
+      io.file.unzip:/etc/*/
+   .lambda
+      io.file.unzip:/etc/x.zip
+         folder:/other/out/
+", streamService: streamService, folderService: folderService));
+            Assert.False(saveInvoked);
+        }
+
+        [Fact]
+        public void UnzipFile_EntryEscapingDestination_Throws()
+        {
+            var saveInvoked = false;
+            var streamService = new StreamService
+            {
+                OpenFileAction = (path) => CreateArchive("../escaped.txt"),
+                SaveFileAction = (stream, path) => saveInvoked = true,
+            };
+            var folderService = new FolderService
+            {
+                ExistsAction = (path) => true,
+                CreateAction = (path) => { },
+            };
+
+            // Classic zip slip - the entry stays inside the dynamic files folder, but leaves the
+            // destination the caller was granted.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.unzip:/etc/*.zip
+      io.file.unzip:/etc/*/
+   .lambda
+      io.file.unzip:/etc/x.zip
+         folder:/etc/out/
+", streamService: streamService, folderService: folderService));
+            Assert.False(saveInvoked);
+        }
+
+        [Fact]
+        public void UnzipFile_EntryEscapingDestination_ThrowsWithoutWhitelist()
+        {
+            var saveInvoked = false;
+            var streamService = new StreamService
+            {
+                OpenFileAction = (path) => CreateArchive("../escaped.txt"),
+                SaveFileAction = (stream, path) => saveInvoked = true,
+            };
+            var folderService = new FolderService
+            {
+                ExistsAction = (path) => true,
+                CreateAction = (path) => { },
+            };
+
+            // Containment is not a whitelist feature - it holds with no sandbox in scope at all.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+io.file.unzip:/etc/x.zip
+   folder:/etc/out/
+", streamService: streamService, folderService: folderService));
+            Assert.False(saveInvoked);
+        }
+
+        [Fact]
+        public void CopyFile_WhitelistAllowsBothPaths_Succeeds()
+        {
+            var copyInvoked = false;
+            var fileService = new FileService
+            {
+                ExistsAction = (path) => false,
+                CopyAction = (src, dest) => copyInvoked = true,
+            };
+
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.copy:/etc/*
+   .lambda
+      io.file.copy:/etc/src.txt
+         .:/etc/dest.txt
+", fileService);
+            Assert.True(copyInvoked);
+        }
+
+        [Fact]
+        public void CopyFile_WhitelistRefusesDestination_Throws()
+        {
+            var copyInvoked = false;
+            var fileService = new FileService
+            {
+                ExistsAction = (path) => false,
+                CopyAction = (src, dest) => copyInvoked = true,
+            };
+
+            // The source is allowed, the DESTINATION is not - and the signaler never sees it.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.copy:/etc/*
+   .lambda
+      io.file.copy:/etc/src.txt
+         .:/other/dest.txt
+", fileService));
+            Assert.False(copyInvoked);
+        }
+
+        [Fact]
+        public void MoveFile_WhitelistRefusesDestination_Throws()
+        {
+            var moveInvoked = false;
+            var fileService = new FileService
+            {
+                ExistsAction = (path) => false,
+                MoveAction = (src, dest) => moveInvoked = true,
+            };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.move:/etc/*
+   .lambda
+      io.file.move:/etc/src.txt
+         .:/other/dest.txt
+", fileService));
+            Assert.False(moveInvoked);
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistWildcardSegment_DoesNotCrossTwoFolders()
+        {
+            var fileService = new FileService { SaveAction = (path, content) => { } };
+
+            // One wildcard segment matches exactly one folder level, never two.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*/foo.md
+   .lambda
+      io.file.save:/etc/bar/baz/foo.md
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistMultipleExtension_WrongExtensionThrows()
+        {
+            var fileService = new FileService { SaveAction = (path, content) => { } };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*.tar.gz
+   .lambda
+      io.file.save:/etc/x.zip
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistExtensionWildcard_SubFolderThrows()
+        {
+            var fileService = new FileService { SaveAction = (path, content) => { } };
+
+            // Right extension, wrong folder level.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*.md
+   .lambda
+      io.file.save:/etc/sub/foo.md
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistExactPath_Succeeds()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/foo.txt
+   .lambda
+      io.file.save:/etc/foo.txt
+         .:foo
+", fileService);
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistExactPath_Throws()
+        {
+            var fileService = new FileService { SaveAction = (path, content) => { } };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/foo.txt
+   .lambda
+      io.file.save:/etc/bar.txt
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistWithoutPin_AllowsAnyPath()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+
+            // An entry with no value permits the slot with any argument, as it always has.
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save
+   .lambda
+      io.file.save:/anywhere/at/all.txt
+         .:foo
+", fileService);
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistExtensionIsCaseSensitive_Throws()
+        {
+            var fileService = new FileService { SaveAction = (path, content) => { } };
+
+            // Ordinal comparison, hence a differing case fails closed.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*.md
+   .lambda
+      io.file.save:/etc/foo.MD
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistPatternWithoutFolder_Throws()
+        {
+            var fileService = new FileService { SaveAction = (path, content) => { } };
+
+            // "*" implies no folder, hence can never match a path, hence is refused.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:*
+   .lambda
+      io.file.save:/etc/foo.txt
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistRootFolder_Succeeds()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/*
+   .lambda
+      io.file.save:/foo.txt
+         .:foo
+", fileService);
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistMultipleExtension_Succeeds()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*.tar.gz
+   .lambda
+      io.file.save:/etc/foo.tar.gz
+         .:foo
+", fileService);
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistExtensionOnFolderSegment_Throws()
+        {
+            var fileService = new FileService { SaveAction = (path, content) => { } };
+
+            // An extension wildcard is only legal as the filename, never as a folder segment.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/foo.*/howdy/*
+   .lambda
+      io.file.save:/etc/foo.bar/howdy/x.txt
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistWildcardSegment_Succeeds()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+
+            // A wildcard segment matches exactly one folder level.
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*/foo.md
+   .lambda
+      io.file.save:/etc/bar/foo.md
+         .:foo
+", fileService);
+            Assert.True(saveInvoked);
+        }
+
         [Fact]
         public void SaveFile_WhitelistFolderWildcard_DoesNotCrossFolders()
         {
@@ -45,13 +510,13 @@ whitelist
                 SaveAction = (path, content) => { },
             };
 
-            // Wildcard spanning folders is not a pattern we implement, hence refused.
+            // A wildcard must be the whole segment or its start, hence "f*o.md" is refused.
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*/foo.md
+      io.file.save:/etc/f*o.md
    .lambda
-      io.file.save:/etc/bar/foo.md
+      io.file.save:/etc/foo.md
          .:foo
 ", fileService));
         }

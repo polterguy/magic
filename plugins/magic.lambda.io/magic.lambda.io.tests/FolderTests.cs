@@ -14,6 +14,85 @@ namespace magic.lambda.io.tests
     public class FolderTests
     {
         [Fact]
+        public void CreateFolder_WhitelistWildcard_DoesNotCrossFolders()
+        {
+            var folderService = new FolderService
+            {
+                CreateAction = (path) => { },
+                ExistsAction = (path) => false,
+            };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.folder.create:/etc/*/
+   .lambda
+      io.folder.create:/etc/sub/deep/
+", folderService: folderService));
+        }
+
+        [Fact]
+        public void CreateFolder_WhitelistWildcardSegment_Succeeds()
+        {
+            var createInvoked = false;
+            var folderService = new FolderService
+            {
+                CreateAction = (path) => createInvoked = true,
+                ExistsAction = (path) => false,
+            };
+
+            // A wildcard folder level in the middle of the pattern.
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.folder.create:/etc/*/deep/
+   .lambda
+      io.folder.create:/etc/sub/deep/
+", folderService: folderService);
+            Assert.True(createInvoked);
+        }
+
+        [Fact]
+        public void CreateFolder_WhitelistExactFolder_Succeeds()
+        {
+            var createInvoked = false;
+            var folderService = new FolderService
+            {
+                CreateAction = (path) => createInvoked = true,
+                ExistsAction = (path) => false,
+            };
+
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.folder.create:/etc/foo/
+   .lambda
+      io.folder.create:/etc/foo/
+", folderService: folderService);
+            Assert.True(createInvoked);
+        }
+
+        [Fact]
+        public void DeleteFolder_WhitelistWildcard_Succeeds()
+        {
+            var deleteInvoked = false;
+            var folderService = new FolderService
+            {
+                DeleteAction = (path) => deleteInvoked = true,
+                ExistsAction = (path) => true,
+            };
+
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.folder.delete:/etc/*/
+   .lambda
+      io.folder.delete:/etc/foo/
+", folderService: folderService);
+            Assert.True(deleteInvoked);
+        }
+
+        [Fact]
         public void CreateFolder_WhitelistWildcard_Succeeds()
         {
             var createInvoked = false;
@@ -26,7 +105,7 @@ namespace magic.lambda.io.tests
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.folder.create:/etc/*
+      io.folder.create:/etc/*/
    .lambda
       io.folder.create:/etc/foo/
 ", folderService: folderService);
@@ -45,7 +124,7 @@ whitelist
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.folder.create:/etc/*
+      io.folder.create:/etc/*/
    .lambda
       io.folder.create:/other/foo/
 ", folderService: folderService));

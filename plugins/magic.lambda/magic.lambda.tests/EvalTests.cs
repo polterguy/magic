@@ -179,6 +179,53 @@ set-value:x:@.result
         }
 
         [Fact]
+        public void EvalWhitelist_MultiplePins_MatchesEither()
+        {
+            var lambda = Common.Evaluate(@"
+.result
+set-value:x:@.result
+   whitelist
+      vocabulary
+         return-value:foo-bar
+         return-value:baz-*
+      .lambda
+         return-value:baz-howdy
+");
+            Assert.Equal("baz-howdy", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void EvalWhitelist_WildcardNotAtEnd_IsLiteral()
+        {
+            // The generic comparer only treats a TRAILING wildcard as a wildcard, hence this
+            // pattern is compared literally and does not match - it does not throw either.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+.result
+set-value:x:@.result
+   whitelist
+      vocabulary
+         return-value:fo*o
+      .lambda
+         return-value:fooo
+"));
+        }
+
+        [Fact]
+        public void EvalWhitelist_WildcardMatchesEmptyRemainder()
+        {
+            var lambda = Common.Evaluate(@"
+.result
+set-value:x:@.result
+   whitelist
+      vocabulary
+         return-value:foo*
+      .lambda
+         return-value:foo
+");
+            Assert.Equal("foo", lambda.Children.First().Value);
+        }
+
+        [Fact]
         public void EvalWhitelist_01_Throws()
         {
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
