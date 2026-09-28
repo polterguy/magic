@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Threading.Tasks;
 using magic.node;
 using magic.node.contracts;
@@ -31,8 +32,11 @@ namespace magic.lambda.io.file
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.lambda.io.signatures.FileCopyMoveSignature))]
-    public class CopyMoveFile : ISlotAsync
+    public class CopyMoveFile : ISlotAsync, IWhitelistComparer
     {
+
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
         readonly IRootResolver _rootResolver;
         readonly IIOService _service;
 

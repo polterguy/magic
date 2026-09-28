@@ -11,6 +11,7 @@ using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
+using magic.lambda.io.helpers;
 
 namespace magic.lambda.io.file
 {
@@ -30,8 +31,11 @@ namespace magic.lambda.io.file
         ReturnsElementKind = "file-search-result,lambda-tree",
         ReturnsDescription = "Returns one child node per matching file, each containing [file] with the relative file path and [lines] with matching line numbers",
         SignatureType = typeof(global::magic.lambda.io.signatures.SearchFileSignature))]
-    public class SearchFile : ISlotAsync
+    public class SearchFile : ISlotAsync, IWhitelistComparer
     {
+
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
         readonly IRootResolver _rootResolver;
         readonly IFileService _service;
 

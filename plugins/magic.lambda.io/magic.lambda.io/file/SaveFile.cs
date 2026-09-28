@@ -2,12 +2,14 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
+using magic.lambda.io.helpers;
 
 namespace magic.lambda.io.file
 {
@@ -44,8 +46,11 @@ namespace magic.lambda.io.file
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.lambda.io.signatures.BinaryFileSaveSignature))]
-    public class SaveFile : ISlotAsync
+    public class SaveFile : ISlotAsync, IWhitelistComparer
     {
+
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
         readonly IRootResolver _rootResolver;
         readonly IFileService _service;
 

@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
+using magic.lambda.io.helpers;
 using magic.node.extensions.hyperlambda;
 
 namespace magic.lambda.io.file
@@ -40,8 +42,11 @@ namespace magic.lambda.io.file
         ReturnsKind = "lambda-result",
         ReturnsDescription = "Resolves to the executed file's value result and any returned child nodes",
         SignatureType = typeof(global::magic.lambda.io.signatures.ExecuteFileUnwrapSignature))]
-    public class ExecuteFile : ISlotAsync
+    public class ExecuteFile : ISlotAsync, IWhitelistComparer
     {
+
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
         readonly IRootResolver _rootResolver;
         readonly IFileService _service;
 

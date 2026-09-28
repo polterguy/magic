@@ -171,20 +171,6 @@ namespace magic.signals.services
              */
             var whitelist = skipWhitelist ? null : Peek<List<Node>>("whitelist");
 
-            // Verifying caller is allowed to invoke slot.
-            if (whitelist != null && !whitelist.Any(x =>
-            {
-                if (x.Name == name)
-                {
-                    if (x.Value != null && x.Get<string>() != input.GetEx<string>())
-                        return false;
-                    return true;
-                }
-                return false;
-            }))
-                throw new HyperlambdaException($"Slot [{name}] doesn't exist in currrent scope, or argument `{input.GetEx<string>()}` not allowed");
-
-
             var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"[{name}] slot does not exist");
             var svc = _provider.GetService(type);
 
@@ -197,6 +183,26 @@ namespace magic.signals.services
                     svc = Activator.CreateInstance(type);
                 else
                     svc = Activator.CreateInstance(type, [_provider]);
+            }
+
+            /*
+             * Verifying caller is allowed to invoke slot, asking the slot itself how a vocabulary
+             * pin should be compared to the argument it was given, and defaulting to a plain
+             * comparison for the slots not caring.
+             */
+            if (whitelist != null)
+            {
+                var comparer = (svc as IWhitelistComparer)?.Comparer ?? Wildcard.Matches;
+
+                if (!whitelist.Any(x =>
+                {
+                    if (x.Name != name)
+                        return false;
+                    if (x.Value == null)
+                        return true;
+                    return comparer(x.Get<string>(), input.GetEx<string>());
+                }))
+                    throw new HyperlambdaException($"Slot [{name}] doesn't exist in currrent scope, or argument `{input.GetEx<string>()}` not allowed");
             }
 
             return svc;

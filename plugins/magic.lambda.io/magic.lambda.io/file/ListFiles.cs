@@ -9,6 +9,7 @@ using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
+using magic.lambda.io.helpers;
 
 namespace magic.lambda.io.file
 {
@@ -41,8 +42,11 @@ namespace magic.lambda.io.file
         ReturnsElementKind = "file-path,text",
         ReturnsDescription = "Returns one unnamed child node per relative file path, recursively",
         SignatureType = typeof(global::magic.lambda.io.signatures.ListDirectorySignature))]
-    public class ListFiles : ISlot
+    public class ListFiles : ISlot, IWhitelistComparer
     {
+
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
         readonly IRootResolver _rootResolver;
         readonly IFileService _service;
 

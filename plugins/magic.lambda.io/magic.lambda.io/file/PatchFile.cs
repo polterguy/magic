@@ -11,6 +11,7 @@ using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
+using magic.lambda.io.helpers;
 
 namespace magic.lambda.io.file
 {
@@ -27,8 +28,11 @@ namespace magic.lambda.io.file
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.lambda.io.signatures.PatchFileSignature))]
-    public class PatchFile : ISlotAsync
+    public class PatchFile : ISlotAsync, IWhitelistComparer
     {
+
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
         /*
          * How far away from the position declared by a hunk header we are willing to look for the
          * hunk's context. Generous enough to absorb realistic drift between the file the patch was

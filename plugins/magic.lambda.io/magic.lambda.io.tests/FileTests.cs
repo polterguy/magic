@@ -19,6 +19,82 @@ namespace magic.lambda.io.tests
     public class FileTests
     {
         [Fact]
+        public void SaveFile_WhitelistFolderWildcard_Succeeds()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService
+            {
+                SaveAction = (path, content) => saveInvoked = true,
+            };
+
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*
+   .lambda
+      io.file.save:/etc/foo.txt
+         .:foo
+", fileService);
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistFolderWildcard_Throws()
+        {
+            var fileService = new FileService
+            {
+                SaveAction = (path, content) => { },
+            };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*
+   .lambda
+      io.file.save:/other/foo.txt
+         .:foo
+", fileService));
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistExtensionWildcard_Succeeds()
+        {
+            var saveInvoked = false;
+            var fileService = new FileService
+            {
+                SaveAction = (path, content) => saveInvoked = true,
+            };
+
+            Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*.md
+   .lambda
+      io.file.save:/etc/foo.md
+         .:foo
+", fileService);
+            Assert.True(saveInvoked);
+        }
+
+        [Fact]
+        public void SaveFile_WhitelistExtensionWildcard_Throws()
+        {
+            var fileService = new FileService
+            {
+                SaveAction = (path, content) => { },
+            };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      io.file.save:/etc/*.md
+   .lambda
+      io.file.save:/etc/foo.txt
+         .:foo
+", fileService));
+        }
+
+        [Fact]
         public void SaveFile()
         {
             #region [ -- Setting up mock service(s) -- ]

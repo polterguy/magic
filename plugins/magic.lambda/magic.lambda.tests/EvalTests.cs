@@ -121,6 +121,64 @@ add:x:-
         }
 
         [Fact]
+        public void EvalWhitelist_WildcardPin_Succeeds()
+        {
+            var lambda = Common.Evaluate(@"
+.result
+set-value:x:@.result
+   whitelist
+      vocabulary
+         return-value:foo-*
+      .lambda
+         return-value:foo-bar
+");
+            Assert.Equal("foo-bar", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void EvalWhitelist_WildcardPin_Throws()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+.result
+set-value:x:@.result
+   whitelist
+      vocabulary
+         return-value:foo-*
+      .lambda
+         return-value:bar-foo
+"));
+        }
+
+        [Fact]
+        public void EvalWhitelist_ExactPin_Succeeds()
+        {
+            var lambda = Common.Evaluate(@"
+.result
+set-value:x:@.result
+   whitelist
+      vocabulary
+         return-value:foo-bar
+      .lambda
+         return-value:foo-bar
+");
+            Assert.Equal("foo-bar", lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void EvalWhitelist_ExactPin_Throws()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+.result
+set-value:x:@.result
+   whitelist
+      vocabulary
+         return-value:foo-bar
+      .lambda
+         return-value:foo-barx
+"));
+        }
+
+        [Fact]
         public void EvalWhitelist_01_Throws()
         {
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"

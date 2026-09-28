@@ -2,12 +2,14 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.IO;
 using System.Linq;
 using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
+using magic.lambda.io.helpers;
 
 namespace magic.lambda.io.folder
 {
@@ -40,8 +42,11 @@ namespace magic.lambda.io.folder
         ReturnsElementKind = "folder-path,text",
         ReturnsDescription = "Returns one unnamed child node per relative folder path, recursively",
         SignatureType = typeof(global::magic.lambda.io.signatures.ListDirectorySignature))]
-    public class ListFolders : ISlot
+    public class ListFolders : ISlot, IWhitelistComparer
     {
+
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
         readonly IRootResolver _rootResolver;
         readonly IFolderService _service;
 

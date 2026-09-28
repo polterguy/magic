@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
+using magic.lambda.io.helpers;
 using magic.node.extensions.hyperlambda;
 
 namespace magic.lambda.io.file
@@ -29,8 +31,11 @@ namespace magic.lambda.io.file
         ReturnsKind = "mixed-file-content,text",
         ReturnsDescription = "Resolves to the mixed file content in value and any codebehind-produced child nodes",
         SignatureType = typeof(global::magic.lambda.io.signatures.FileMixinSignature))]
-    public class Mixin : ISlotAsync
+    public class Mixin : ISlotAsync, IWhitelistComparer
     {
+
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
         readonly IFileService _fileService;
         readonly IStreamService _streamService;
         readonly IRootResolver _rootResolver;

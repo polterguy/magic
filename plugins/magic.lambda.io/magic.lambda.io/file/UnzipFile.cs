@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
+using magic.lambda.io.helpers;
 
 namespace magic.lambda.io.file
 {
@@ -27,8 +29,11 @@ namespace magic.lambda.io.file
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.lambda.io.signatures.UnzipFileSignature))]
-    public class UnzipFile : ISlotAsync
+    public class UnzipFile : ISlotAsync, IWhitelistComparer
     {
+
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => Utilities.MatchesPath;
         readonly IRootResolver _rootResolver;
         readonly IFolderService _folderService;
         readonly IStreamService _streamService;
@@ -65,7 +70,7 @@ namespace magic.lambda.io.file
                 throw new HyperlambdaException($"Destination folder '{args.DestinationFolder}' for [io.file.unzip] does not exist.");
 
             // Invoking implementation method.
-            await UnzipAsync(args.ZipFilePath, args.DestinationFolder, args.ExplicitFolder, args.Overwrite);
+            await UnzipAsync(signaler, input, args.ZipFilePath, args.DestinationFolder, args.ExplicitFolder, args.Overwrite);
         }
 
         #region [ -- Private helper methods -- ]
@@ -74,6 +79,8 @@ namespace magic.lambda.io.file
          * Helper method to unzip file.
          */
         async Task UnzipAsync(
+            ISignaler signaler,
+            Node input,
             string zipFilePath,
             string destinationFolder,
             bool explicitFolder,
@@ -108,7 +115,7 @@ namespace magic.lambda.io.file
                                 var filename = idxEntry.FullName.Substring(toTrim).Replace("\\", "/");
 
                                 // Saving currently iterated file.
-                                await SaveFileAsync(destinationFolder, filename, srcStream, overwrite);
+                                await SaveFileAsync(signaler, input, destinationFolder, filename, srcStream, overwrite);
                             }
                         }
                     }
@@ -120,6 +127,8 @@ namespace magic.lambda.io.file
          * Saves a single file from ZIP file archive.
          */
         async Task SaveFileAsync(
+            ISignaler signaler,
+            Node input,
             string destinationFolder,
             string filename,
             Stream contentStream,
@@ -140,6 +149,9 @@ namespace magic.lambda.io.file
 
             // Figuring out full filename of current entry and saving it.
             var fullFileName = currentFolder + entities.Last();
+
+            // Notice, every entry an archive writes is verified, not just the destination folder.
+            Utilities.VerifyPath(signaler, input, destinationFolder + filename);
 
             // Checking if file exists.
             if (File.Exists(_rootResolver.AbsolutePath(destinationFolder + filename)))
