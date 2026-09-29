@@ -1652,7 +1652,7 @@ const TIER2_WIZARDS: Record<string, WizardSpec> = {
   },
   templating: {
     label: 'Templating', title: 'String templating', defaults: [],
-    note: 'strings.mixin executes every {{ }} snippet in its template as Hyperlambda, bypassing this endpoint\'s own whitelist entirely — grant it only to roles as trusted as root.',
+    note: 'strings.mixin executes every {{ }} snippet in its template as Hyperlambda, using whatever slots this rule already grants — it does not add any new ones. Only feed it template strings the endpoint itself authored, never caller-supplied or stored text, or the caller effectively picks which of those slots run.',
     groups: [
       { key: 'mixin', label: 'Mixin', title: 'Interpolate {{ }} Hyperlambda snippets into a string', slots: ['strings.mixin'] },
     ],
