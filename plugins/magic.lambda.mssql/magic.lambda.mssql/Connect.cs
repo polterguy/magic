@@ -48,6 +48,7 @@ namespace magic.lambda.mssql
         {
             using (var connection = new SqlConnectionWrapper(
                 Executor.GetConnectionString(
+                        signaler,
                     null,
                     input,
                     "mssql",

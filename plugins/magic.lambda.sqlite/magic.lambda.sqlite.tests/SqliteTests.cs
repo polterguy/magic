@@ -4,11 +4,13 @@
 
 using System.Linq;
 using Xunit;
+using magic.node.extensions;
 
 namespace magic.lambda.sqlite.tests
 {
     public class SqliteTests
     {
+
         [Fact]
         public void SelectSQL_01()
         {

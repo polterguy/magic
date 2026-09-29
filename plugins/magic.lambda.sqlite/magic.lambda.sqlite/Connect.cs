@@ -55,6 +55,7 @@ namespace magic.lambda.sqlite
                 using (var connection = new SqliteConnectionWrapper(
                     _resolver,
                     Executor.GetConnectionString(
+                        signaler,
                         _resolver,
                         input,
                         "sqlite",

@@ -48,6 +48,7 @@ namespace magic.lambda.mysql
         {
             using (var connection = new MySqlConnectionWrapper(
                 Executor.GetConnectionString(
+                        signaler,
                     null,
                     input,
                     "mysql",

@@ -48,6 +48,7 @@ namespace magic.lambda.odbc
         {
             using (var connection = new OdbcConnectionWrapper(
                 Executor.GetConnectionString(
+                        signaler,
                     null,
                     input,
                     "odbc",

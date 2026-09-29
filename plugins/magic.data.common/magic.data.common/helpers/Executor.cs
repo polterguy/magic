@@ -4,6 +4,8 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ using magic.node;
 using magic.node.extensions;
 using magic.data.common.contracts;
 using magic.node.contracts;
+using magic.signals.contracts;
 
 namespace magic.data.common.helpers
 {
@@ -21,6 +24,23 @@ namespace magic.data.common.helpers
     /// </summary>
     public static class Executor
     {
+        // A database name is a name, never a path and never a connection string.
+        readonly static Regex _legalDatabaseName = new Regex("^[a-zA-Z0-9_-]+$", RegexOptions.Compiled);
+        /*
+         * Verifies the specified database name is a NAME and not a path or a connection string.
+         *
+         * Notice, the name is substituted into a connection string template such as
+         * "Data Source=files/data/{database}.db", so a name containing a separator would compose a
+         * path of the caller's choosing - which is how a wildcard pin such as "test-*" could
+         * otherwise be walked out of its folder entirely.
+         */
+        static string VerifyDatabaseName(string database)
+        {
+            if (!_legalDatabaseName.IsMatch(database))
+                throw new HyperlambdaException($"'{database}' is not a legal database name, legal characters are a-z, A-Z, 0-9, '-' and '_'");
+            return database;
+        }
+
         /// <summary>
         /// Creates a new SQL command of some type, and parametrizes it with each
         /// child node specified in the invocation node as a key/value DB parameter -
@@ -114,6 +134,7 @@ namespace magic.data.common.helpers
         /// <param name="settings">Configuration object from where to retrieve connection string templates</param>
         /// <returns>Connection string</returns>
         public static string GetConnectionString(
+            ISignaler signaler,
             IRootResolver resolver,
             Node input,
             string databaseType,
@@ -137,18 +158,28 @@ namespace magic.data.common.helpers
                     if (segments.Length != 2)
                         throw new HyperlambdaException($"I don't understand '{connectionString}' as a connection string");
                     var generic = settings.ConnectionString(segments[0], databaseType);
-                    connectionString = generic.Replace("{database}", segments[1]);
+                    connectionString = generic.Replace("{database}", VerifyDatabaseName(segments[1]));
                 }
                 else
                 {
                     var generic = settings.ConnectionString("generic", databaseType);
-                    connectionString = generic.Replace("{database}", connectionString);
+                    connectionString = generic.Replace("{database}", VerifyDatabaseName(connectionString));
                 }
             }
             else if (!connectionString.Contains(';') && !connectionString.Contains(':'))
             {
                 var generic = settings.ConnectionString("generic", databaseType);
-                connectionString = generic.Replace("{database}", connectionString);
+                connectionString = generic.Replace("{database}", VerifyDatabaseName(connectionString));
+            }
+            else if (signaler.Peek<List<Node>>("whitelist") != null)
+            {
+                /*
+                 * A value containing ';' or ':' is a RAW connection string, used verbatim, which
+                 * would let sandboxed code reach any server or any file on disk regardless of how
+                 * its pin was written. Sandboxed code may name a database, never supply a
+                 * connection string.
+                 */
+                throw new HyperlambdaException("A connection string is not a legal database name in current scope");
             }
             if (databaseType == "sqlite")
                 connectionString = connectionString.Replace("files/data/", resolver.DynamicFiles + "data/");

@@ -179,6 +179,35 @@ set-value:x:@.result
         }
 
         [Fact]
+        public void EvalWhitelist_WildcardNotLast_Throws()
+        {
+            // A wildcard anywhere but the end is refused rather than silently matching nothing.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+.result
+set-value:x:@.result
+   whitelist
+      vocabulary
+         return-value:fo*o
+      .lambda
+         return-value:foo
+"));
+        }
+
+        [Fact]
+        public void EvalWhitelist_LeadingWildcard_Throws()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+.result
+set-value:x:@.result
+   whitelist
+      vocabulary
+         return-value:*foo
+      .lambda
+         return-value:barfoo
+"));
+        }
+
+        [Fact]
         public void EvalWhitelist_MultiplePins_MatchesEither()
         {
             var lambda = Common.Evaluate(@"
@@ -195,10 +224,9 @@ set-value:x:@.result
         }
 
         [Fact]
-        public void EvalWhitelist_WildcardNotAtEnd_IsLiteral()
+        public void EvalWhitelist_WildcardNotAtEnd_Refused()
         {
-            // The generic comparer only treats a TRAILING wildcard as a wildcard, hence this
-            // pattern is compared literally and does not match - it does not throw either.
+            // A wildcard is only legal as the last character, hence this pattern is refused.
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 .result
 set-value:x:@.result

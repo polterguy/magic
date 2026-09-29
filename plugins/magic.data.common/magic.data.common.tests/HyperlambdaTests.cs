@@ -11,6 +11,69 @@ namespace magic.data.common.tests
     public class HyperlambdaTests
     {
         [Fact]
+        public void Connect_DatabaseNameWithTraversal_Throws()
+        {
+            // A database name is substituted into a connection string path, hence must be a NAME.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+data.connect:chinook/../chinook
+   data.read
+      table:Artist
+"));
+        }
+
+        [Fact]
+        public void Connect_DatabaseNameWithSeparator_Throws()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+data.connect:some/database
+   data.read
+      table:Artist
+"));
+        }
+
+        [Fact]
+        public void Connect_DatabaseNameWithSpace_Throws()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+data.connect:some database
+   data.read
+      table:Artist
+"));
+        }
+
+        [Fact]
+        public void Connect_RawConnectionString_ThrowsWhenSandboxed()
+        {
+            // Sandboxed code may name a database, never supply a connection string.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      data.connect:*
+      data.read
+   .lambda
+      data.connect:Data Source=/tmp/evil.db;
+         data.read
+            table:Artist
+"));
+        }
+
+        [Fact]
+        public void Connect_WildcardPinCannotEscapeFolder()
+        {
+            // The pin allows the prefix, but the name itself is no longer allowed to be a path.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      data.connect:chin*
+      data.read
+   .lambda
+      data.connect:chinook/../../../etc/passwd
+         data.read
+            table:Artist
+"));
+        }
+
+        [Fact]
         public void CrudCreate_Throws()
         {
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"data.create
