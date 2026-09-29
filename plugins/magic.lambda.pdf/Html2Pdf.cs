@@ -4,7 +4,6 @@
 
 using System.IO;
 using magic.node;
-using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
 using iText.Html2pdf;
@@ -27,17 +26,6 @@ namespace magic.lambda.pdf
         ReturnsDescription = "Resolves to the generated PDF bytes")]
     public class Html2Pdf : ISlot
     {
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of your type
-        /// </summary>
-        /// <param name="rootResolver">Needed to resolve root folder of cloudlet</param>
-        public Html2Pdf(IRootResolver rootResolver)
-        {
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Implementation of your slot.
         /// </summary>
@@ -46,9 +34,18 @@ namespace magic.lambda.pdf
         public void Signal(ISignaler signaler, Node input)
         {
             var html = input.GetEx<string>();
+
+            /*
+             * Routing every resource (image, stylesheet, font) the document references through a
+             * retriever that dispatches to [io.file.load.binary] and [http.get] - rather than letting
+             * iText read files and issue HTTP requests on its own, entirely outside the whitelist.
+             */
+            var properties = new ConverterProperties();
+            properties.SetResourceRetriever(new SignalerResourceRetriever(signaler));
+
             using (var stream = new MemoryStream())
             {
-                HtmlConverter.ConvertToPdf(html, stream);
+                HtmlConverter.ConvertToPdf(html, stream, properties);
                 input.Clear();
                 input.Value = stream.ToArray();
             }
