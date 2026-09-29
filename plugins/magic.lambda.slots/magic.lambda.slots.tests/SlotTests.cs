@@ -13,6 +13,31 @@ namespace magic.lambda.slots.tests
     public class SlotTests
     {
         [Fact]
+        public void DynamicSlotCanDeclareOwnWhitelist()
+        {
+            /*
+             * [signal] masks the whitelist while a dynamic slot's body runs, since the body was
+             * authored outside the sandbox - so the body may declare its own, even though the
+             * caller that signalled it is refused if it tries the same thing. The companion test
+             * for that refusal is EvalWhitelist_Nested_Throws.
+             */
+            var lambda = Common.Evaluate(@"
+slots.create:fxoo-nested
+   whitelist
+      vocabulary
+         return-value
+      .lambda
+         return-value:int:42
+whitelist
+   vocabulary
+      signal:fxoo-nested
+   .lambda
+      signal:fxoo-nested
+");
+            Assert.NotNull(lambda);
+        }
+
+        [Fact]
         public void CreateSlot()
         {
             var lambda = Common.Evaluate(@"

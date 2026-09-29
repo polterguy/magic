@@ -208,6 +208,26 @@ set-value:x:@.result
         }
 
         [Fact]
+        public void EvalWhitelist_Nested_Throws()
+        {
+            // A nested declaration would replace the vocabulary rather than narrow it.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      whitelist
+      vocabulary
+      return-value
+   .lambda
+      whitelist
+         vocabulary
+            return-value
+            io.file.load
+         .lambda
+            return-value:escaped
+"));
+        }
+
+        [Fact]
         public void EvalWhitelist_MultiplePins_MatchesEither()
         {
             var lambda = Common.Evaluate(@"

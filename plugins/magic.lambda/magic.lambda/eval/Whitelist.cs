@@ -32,6 +32,17 @@ namespace magic.lambda.eval
         /// <param name="input">Parameters passed from signaler</param>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
+            /*
+             * A nested declaration would REPLACE the vocabulary in scope rather than narrow it,
+             * since Peek returns the innermost stack object - which would allow sandboxed code to
+             * simply declare itself a wider vocabulary. Hence there can only ever be one.
+             *
+             * Notice, a dynamic slot's body runs with the whitelist masked by [signal], so a slot
+             * authored OUTSIDE the sandbox can still declare its own.
+             */
+            if (signaler.Peek<List<Node>>("whitelist") != null)
+                throw new HyperlambdaException("You cannot declare a [whitelist] inside another [whitelist]");
+
             var result = new Node();
             await signaler.ScopeAsync("slots.result", result, async () =>
             {
