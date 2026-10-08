@@ -17,6 +17,17 @@ export interface Block {
   label: string;
   // [context] is the element the block is being dropped into.
   build: (doc: Document, context: Element) => string;
+  /*
+   * Files this block's markup cannot work without, as root-absolute paths.
+   * Every other block is self-contained HTML that at least renders without
+   * them — a <table> is still a table with no CSS, a <video> still plays
+   * with no script. A widget's custom element is not: undefined, it is not
+   * even the right tag, it is nothing. So dropping one has to make sure its
+   * runtime is actually linked on the page, the same way dropping an image
+   * opens the media picker — a side effect the drop itself is responsible
+   * for, not something the person is expected to remember to wire up by hand.
+   */
+  requires?: { stylesheets?: string[]; scripts?: string[] };
 }
 
 export interface BlockGroup {
@@ -116,6 +127,12 @@ function field(key: string, label: string, type: string, placeholder?: string): 
     ' type="' + type + '"' + (placeholder ? ' placeholder="' + placeholder + '"' : '')));
 }
 
+// Both widgets share one runtime and one default stylesheet.
+const WIDGET_ASSETS = {
+  stylesheets: ['/assets/magic-widgets.css'],
+  scripts: ['/assets/magic-widgets.js'],
+};
+
 export const GROUPS: BlockGroup[] = [
   {
     label: 'Text',
@@ -193,6 +210,73 @@ export const GROUPS: BlockGroup[] = [
       simple('button', 'Button', 'Button'),
       simple('fieldset', 'Fieldset'),
       simple('legend', 'Legend', 'Legend'),
+    ],
+  },
+  {
+    /*
+     * Data-bound widgets wired to a crudify-generated endpoint. Each is a
+     * custom element defined in /assets/magic-widgets.js: it carries its own
+     * Shadow DOM for the real, running page, and the markup dropped here is
+     * its light-DOM fallback — what shows inside this canvas, which never
+     * runs that script, and what a visitor with scripts off would see. The
+     * [part] attributes let the shared /assets/magic-widgets.css style the
+     * fallback the same way the widget's own shadow styles are themed,
+     * through the CSS custom properties the "Data grid" / "Login form"
+     * groups in the Style panel set on the host element.
+     *
+     * The endpoint itself is not picked here — there is no table/column
+     * wizard yet. Point data-read-url (and friends) at a real crudify
+     * endpoint by hand, through the attribute editor, after dropping this.
+     */
+    label: 'App',
+    blocks: [
+      {
+        ...block('magic-data-grid', 'Data grid', (doc, at) => {
+          const headCell = attributes(doc, at, 'th');
+          const cell = attributes(doc, at, 'td');
+          return '<magic-data-grid' + attributes(doc, at, 'table',
+              ' data-read-url="/magic/modules/REPLACE_ME/REPLACE_ME"' +
+              ' data-count-url="/magic/modules/REPLACE_ME/REPLACE_ME-count"' +
+              ' data-columns=\'[{"name":"Column","label":"Column"}]\'' +
+              ' data-page-size="10"') + '>' +
+            '<table part="table"><thead><tr part="head-row">' +
+            '<th part="head-cell"' + headCell + '>Column</th>' +
+            '</tr></thead><tbody>' +
+            '<tr part="row"><td part="cell"' + cell +
+            '>Set data-read-url in the Inspector to a real endpoint</td></tr>' +
+            '</tbody></table>' +
+            '</magic-data-grid>';
+        }),
+        requires: WIDGET_ASSETS,
+      },
+      {
+        ...block('magic-login-form', 'Login form', (doc, at) => {
+          const label = attributes(doc, at, 'label');
+          const input = attributes(doc, at, 'input');
+          const button = attributes(doc, at, 'button');
+          return '<magic-login-form' + attributes(doc, at, 'form',
+              ' data-auth-url="/magic/system/auth/authenticate" data-redirect="/"') + '>' +
+            '<label part="label"' + label + '>Username' +
+            '<input part="input" type="text" name="username"' + input + '></label>' +
+            '<label part="label"' + label + '>Password' +
+            '<input part="input" type="password" name="password"' + input + '></label>' +
+            '<button part="button" type="submit"' + button + '>Log in</button>' +
+            '<p part="error" hidden></p>' +
+            '</magic-login-form>';
+        }),
+        requires: WIDGET_ASSETS,
+      },
+      {
+        ...block('magic-require-login', 'Require login', (doc, at) => {
+          const text = attributes(doc, at, 'p');
+          return '<magic-require-login data-redirect="/login" data-role="">' +
+            '<p part="notice"' + text + '>' +
+            'Requires login — redirects to data-redirect if not signed in, ' +
+            'or signed in without data-role' +
+            '</p></magic-require-login>';
+        }),
+        requires: WIDGET_ASSETS,
+      },
     ],
   },
   {

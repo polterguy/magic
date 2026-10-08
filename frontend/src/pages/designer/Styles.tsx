@@ -19,7 +19,7 @@
 import { useState } from 'react';
 import { TrashIcon } from '../../components/Icons';
 import { Overrides } from './css';
-import { STYLE_GROUPS, toHexColor } from './properties';
+import { STYLE_GROUPS, toHexColor, widgetGroupFor } from './properties';
 
 /*
  * The "just this one" target. A leading colon cannot collide with a real
@@ -161,6 +161,9 @@ export default function Styles(props: {
   const rules = Object.entries(props.overrides)
     .filter(([, values]) => Object.keys(values).length > 0);
 
+  // One of the toolbox's own widgets adds its own group, after the ordinary ones.
+  const groups = [...STYLE_GROUPS, ...widgetGroupFor(element.tagName.toLowerCase())];
+
   return (
     <div className="designer-fields">
       <label className="designer-field">
@@ -206,7 +209,7 @@ export default function Styles(props: {
         </p>
       )}
 
-      {STYLE_GROUPS.map(group => (
+      {groups.map(group => (
         <details key={group.label} className="designer-group" open>
           <summary>{group.label}</summary>
           {group.properties.map(property => {

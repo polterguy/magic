@@ -154,6 +154,53 @@ const CANVAS_CSS = `
 [data-magic-force] { display: revert !important; }
 
 /*
+ * The canvas's own <body> fills the frame even when its content does not. A
+ * short page's body is only as tall as its content by default, and the open
+ * space below the last line then belongs to no element at all — not even
+ * <body> — so there is nothing there for a drop to land on, however the spot
+ * is computed. Design-time only, like every rule in this block: stripped
+ * from the saved file, so a real visitor's body is exactly as tall as its
+ * own content says.
+ *
+ * The browser's own default body margin sits OUTSIDE min-height, not inside
+ * it — a body at exactly 100% height plus 8px of margin on top of that is
+ * taller than the frame it is 100% of, and that excess is what forces a
+ * scrollbar nothing on the page actually asked for. Zeroing it here is the
+ * standard pairing with a full-height body, not a special case for this
+ * tool, and it carries the same disclaimer as the rest of this block: the
+ * saved file is never touched, so a real visitor still gets the browser's
+ * ordinary default margin if the page does not set its own.
+ */
+/*
+ * A child's own top or bottom margin collapses straight through an ordinary
+ * body with nothing to stop it — a heading's default top margin becomes
+ * overflow past <html> rather than space inside <body>, which is the other
+ * source of unwanted scrollbar margin:0 alone did not reach. display:
+ * flow-root is the modern way to block that, but it would also overwrite a
+ * page that deliberately puts display:flex or display:grid on its own
+ * <body> for layout — a far bigger WYSIWYG break than the scrollbar it
+ * fixes. A hairline padding is the old, uglier trick for the same block,
+ * but it only ever touches padding: whatever display the page's own body
+ * already has is left alone, flex or grid included.
+ */
+html { height: 100%; }
+body { min-height: 100%; margin: 0; padding-top: 0.05px; }
+
+/*
+ * A container with nothing in it yet. An empty block with no padding of its
+ * own renders at zero height by default, which is not just invisible but
+ * literally unreachable — there is no pixel for a drop to land on. This gives
+ * it one for exactly as long as it stays empty: the moment a first child
+ * lands inside, the element driving this attribute recomputes and takes it
+ * away, and the page's own sizing takes back over.
+ */
+[data-magic-empty] {
+  min-height: 1.5em;
+  outline: 1px dashed rgba(120, 130, 150, 0.5);
+  outline-offset: -1px;
+}
+
+/*
  * Dragging an element should move it, not select the text inside it. Text
  * becomes selectable again only in the element being edited in place.
  */

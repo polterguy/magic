@@ -41,8 +41,19 @@ import { liveSandbox, prepareDocument, serializeDocument, slotsDropped } from '.
 import { designableChildren, elementOf, isText, labelOf, nodeAt, pathTo, writeText } from './designer/nodes';
 import { canContainChildren } from './designer/html';
 import { Overrides, joinCss, overrideCss, ownStylesheet, scriptPaths, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
+import { CANONICAL_ASSETS } from './designer/widgetRuntime';
 
 const WEB_ROOT = '/etc/www';
+
+/*
+ * The shared widget runtime (magic-widgets.js/.css) is not this page's own
+ * file — every page that drops an App block links it, so editing it from one
+ * page's Code view would mean quietly rewriting what every OTHER page on the
+ * cloudlet runs too. It is excluded wherever [sheets]/[scripts] stand in for
+ * "the file this page owns": the Code view's file switcher, and the Page
+ * menu's "already has one of these" check.
+ */
+const SHARED_ASSET_FILES = new Set(Object.keys(CANONICAL_ASSETS).map(href => WEB_ROOT + href));
 
 // How many steps back the undo history goes.
 const HISTORY = 50;
@@ -87,6 +98,15 @@ function canonicalUrl(file: string) {
     return parent === '' ? '/' : parent;
   }
   return relative.replace(/\.html?$/i, '');
+}
+
+/*
+ * The script/stylesheet a page's OWN file implies, e.g. index.html's is
+ * index.js. Built off the file path, not canonicalUrl() — the home page's
+ * canonical URL is "/", and "/" + ".js" is "/.js", a file with no name.
+ */
+function companionFile(file: string, kind: 'js' | 'css') {
+  return file.replace(/\.html?$/i, '.' + kind);
 }
 
 /*
@@ -389,8 +409,11 @@ export default function WebDesigner() {
     setShell(loaded.body.textContent?.trim() === '' &&
       loaded.body.querySelectorAll('img, svg, video, canvas, input, textarea, iframe').length === 0);
     // Resolved against the document's own base, so this cannot disagree with
-    // how the browser just resolved the very same hrefs.
-    const linked = stylesheetPaths(loaded, loaded.baseURI);
+    // how the browser just resolved the very same hrefs. The shared widget
+    // runtime is excluded here, not just filtered out of the dropdown later —
+    // it must never become [cssPath], the file the Style panel writes into.
+    const linked = stylesheetPaths(loaded, loaded.baseURI)
+      .filter(file => !SHARED_ASSET_FILES.has(file));
     const readable: string[] = [];
     const absent: string[] = [];
     for (const sheet of linked) {
@@ -432,6 +455,9 @@ export default function WebDesigner() {
      */
     const running: string[] = [];
     for (const script of scriptPaths(loaded, loaded.baseURI)) {
+      if (SHARED_ASSET_FILES.has(script)) {
+        continue;
+      }
       try {
         await loadFile(script);
         running.push(script);
@@ -619,7 +645,10 @@ export default function WebDesigner() {
    * exist, and a file write into a folder that is not there fails with an
    * error that says nothing useful. So each step is created first, in order.
    */
-  async function createPage(file: string, copyFrom: string | null) {
+  async function createPage(
+    file: string,
+    copyFrom: string | null,
+    companions: { css: boolean; js: boolean }) {
     setCreating(false);
     setBusy(true);
     try {
@@ -630,12 +659,73 @@ export default function WebDesigner() {
         // Already there is the normal case and not a problem.
         await createFolder(sofar + '/').catch(() => undefined);
       }
-      const source = copyFrom
-        ? await loadFile(copyFrom)
-        : blankPage(file.substring(WEB_ROOT.length).replace(/\.html$/, ''));
+      const url = file.substring(WEB_ROOT.length).replace(/\.html$/, '');
+      const source = copyFrom ? await loadFile(copyFrom) : blankPage(url, companions);
       await saveFile(file, source);
+      /*
+       * Written after the page itself, and not fatal if either fails after
+       * that — the page it was meant to accompany already exists, and a
+       * stylesheet or script missing its file is no worse than one never
+       * asked for, just a broken link worth noticing in the Style panel's
+       * own "could not be read" notice rather than losing the page over it.
+       */
+      if (companions.css) {
+        await saveFile(WEB_ROOT + url + '.css', '').catch(() => undefined);
+      }
+      if (companions.js) {
+        await saveFile(WEB_ROOT + url + '.js', '').catch(() => undefined);
+      }
       await loadPages();
       await openPage(file, true);
+      showToast('Created ' + file);
+    } catch (err: any) {
+      showToast(err.message, true);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /*
+   * The retrofit for a page that did not get a script or stylesheet of its
+   * own when it was created — the only way, otherwise, for one of those
+   * pages to ever reach the App blocks, since the thing that would normally
+   * supply the script is the very drop the missing script is disabling.
+   */
+  async function addCompanionFile(kind: 'js' | 'css') {
+    const current = docRef.current;
+    if (!current || !path) {
+      return;
+    }
+    const file = companionFile(path, kind);
+    const href = file.substring(WEB_ROOT.length);
+    setBusy(true);
+    try {
+      await saveFile(file, '');
+      mutate(() => ensureRequiredAssets(
+        current, kind === 'js' ? { scripts: [href] } : { stylesheets: [href] }));
+      if (kind === 'js') {
+        setScripts(list => [...list, file]);
+      } else {
+        /*
+         * The menu item is enabled whenever this page has no stylesheet of
+         * its OWN by this exact name yet — it may still link something else
+         * entirely (another real sheet, or nothing). Either way the brand
+         * new file becomes the one the Style panel writes into from here on:
+         * without setting these too, the file exists and is linked, but the
+         * panel would keep editing whatever it was pointed at before (or
+         * keep offering only inline editing, if nothing), never the file
+         * this action exists to create.
+         */
+        setSheets(list => [...list, file]);
+        const split = splitCss('');
+        setCssPath(file);
+        setCssOriginal(joinCss(split.head, split.overrides, split.tail));
+        setCssHead(split.head);
+        setCssTail(split.tail);
+        setOverrides(split.overrides);
+        // Stale otherwise if the page's problem was an unreadable link rather than none at all.
+        setCssMissing([]);
+      }
       showToast('Created ' + file);
     } catch (err: any) {
       showToast(err.message, true);
@@ -1106,6 +1196,89 @@ export default function WebDesigner() {
     mutate(() => spot.parent.insertBefore(node, spot.before));
   }
 
+  /*
+   * Makes sure a file a block cannot work without is actually linked on the
+   * page, adding it when it is missing.
+   *
+   * Compared by path rather than by the raw attribute text, the same way
+   * bumpAsset() below does it — a page one folder deep would otherwise see
+   * "/assets/magic-widgets.js" and "../assets/magic-widgets.js" as two
+   * different scripts and link the thing twice.
+   */
+  function ensureRequiredAssets(doc: Document, requires: Block['requires']) {
+    (requires?.stylesheets ?? []).forEach(href => {
+      const linked = Array.from(doc.querySelectorAll('link[rel~="stylesheet"][href]'))
+        .some(link => new URL(link.getAttribute('href') ?? '', doc.baseURI).pathname === href);
+      if (!linked) {
+        const link = doc.createElement('link');
+        link.setAttribute('rel', 'stylesheet');
+        link.setAttribute('href', href);
+        doc.head.appendChild(link);
+      }
+    });
+    (requires?.scripts ?? []).forEach(src => {
+      const linked = Array.from(doc.querySelectorAll('script[src]'))
+        .some(script => new URL(script.getAttribute('src') ?? '', doc.baseURI).pathname === src);
+      if (!linked) {
+        const script = doc.createElement('script');
+        script.setAttribute('src', src);
+        doc.body.appendChild(script);
+      }
+    });
+  }
+
+  /*
+   * Makes sure a shared runtime file a block depends on actually exists on
+   * this cloudlet, writing it from this dashboard's own known-good copy the
+   * first time it is missing — never otherwise. ensureRequiredAssets() only
+   * ever links to these paths; it was written assuming they are already
+   * there, which is true on this checkout only because that copy was put
+   * there by hand. A cloudlet that has never had a widget dropped on it
+   * before has no reason to have them yet.
+   *
+   * Deliberately separate from ensureRequiredAssets() and not awaited by the
+   * drop that triggers it: this talks to the server, and the DOM mutation
+   * that links the tag has to stay synchronous for the undo history to see
+   * it as one step with the drop. The two race harmlessly either way — a
+   * <link>/<script> pointing at a file for the one moment before this
+   * finishes creating it behaves exactly like a slow network request to an
+   * existing file, which every one of these widgets already has to tolerate.
+   */
+  async function ensureAssetFilesExist(requires: Block['requires']) {
+    const hrefs = [...(requires?.stylesheets ?? []), ...(requires?.scripts ?? [])];
+    for (const href of hrefs) {
+      const canonical = CANONICAL_ASSETS[href];
+      if (!canonical) {
+        // Not one of the files this dashboard knows how to recreate.
+        continue;
+      }
+      const file = WEB_ROOT + href;
+      try {
+        await loadFile(file);
+        // Already there — read to confirm existence only, never overwritten.
+        continue;
+      } catch {
+        // Missing, which is the case this function exists for — fall through.
+      }
+      /*
+       * A write into a folder that is not there fails, same as it does for a
+       * new page (see createPage() above) — "assets" is not assumed to exist
+       * just because the file that goes in it does not either, which is
+       * exactly the folder Thomas deleted whole to prove this wrong.
+       */
+      const folders = href.split('/').slice(0, -1);
+      let sofar = WEB_ROOT;
+      for (const folder of folders) {
+        if (folder === '') {
+          continue;
+        }
+        sofar += '/' + folder;
+        await createFolder(sofar + '/').catch(() => undefined);
+      }
+      await saveFile(file, canonical);
+    }
+  }
+
   function insert(block: Block, spot: DropSpot) {
     const current = docRef.current;
     if (!current) {
@@ -1126,7 +1299,9 @@ export default function WebDesigner() {
     mutate(() => {
       spot.parent.insertBefore(node, spot.before);
       setSelected(node);
+      ensureRequiredAssets(current, block.requires);
     });
+    ensureAssetFilesExist(block.requires).catch(err => showToast(err.message, true));
     /*
      * An image dropped onto the page wants a picture, and the grey
      * placeholder is not one. The picker opens on top of the drop, so
@@ -1295,6 +1470,29 @@ export default function WebDesigner() {
     // Not on version: this effect changes the document, and would re-run itself.
   }, [reveal, srcDoc]);
 
+  /*
+   * Gives every empty container a minimum footprint, so it can be dropped
+   * into. A <div> with nothing inside it and no padding of its own renders at
+   * zero height by default — not merely hard to aim at, but genuinely absent
+   * from the page: a point-based hit test has no pixel of it to land on. This
+   * runs on every change, unlike the reveal effect above, and only ever
+   * toggles an attribute CSS already reacts to, so it does not need a version
+   * bump of its own to show up and cannot loop by triggering one.
+   */
+  useEffect(() => {
+    const current = docRef.current;
+    if (!current) {
+      return;
+    }
+    current.querySelectorAll('[data-magic-empty]')
+      .forEach(element => element.removeAttribute('data-magic-empty'));
+    current.body.querySelectorAll('*').forEach(element => {
+      if (canContainChildren(element) && designableChildren(element).length === 0) {
+        element.setAttribute('data-magic-empty', '');
+      }
+    });
+  }, [version, srcDoc]);
+
   const hidden = useMemo(() => {
     const found = new Set<Element>();
     const view = doc?.defaultView;
@@ -1339,31 +1537,43 @@ export default function WebDesigner() {
   /* -- Saving ------------------------------------------------------------- */
 
   /*
-   * Bumps the cache-busting "v" on the link to the stylesheet being written.
+   * Bumps the cache-busting "v" on exactly the one linked file this save
+   * actually rewrote — never on a sibling link this save left untouched.
+   * The cloudlet serves these files with a one-year cache, so without this a
+   * style or script edit would reach nobody: any browser that already loaded
+   * the page keeps the copy it has, which is exactly why an edit shows in
+   * the canvas, where the designer injects it live, and not in Live, not in
+   * a new tab, and not for a visitor. The page asking for a different URL is
+   * what makes the browser fetch it.
    *
-   * Without this a style edit reaches nobody. The cloudlet serves CSS with a
-   * one-year cache, so any browser that has already loaded the page keeps the
-   * copy it has — which is exactly why an edit shows in the canvas, where the
-   * designer injects it live, and not in Live, not in a new tab, and not for a
-   * visitor. The page asks for a different URL, so the browser has to fetch it.
+   * [file] is matched by path, not by the link's raw attribute text, the
+   * same way ensureRequiredAssets() does — a page one folder deep would
+   * otherwise see "/assets/magic-widgets.js" and "../assets/magic-widgets.js"
+   * as two different scripts and bump neither.
+   *
+   * What this does NOT catch: a shared file like /assets/magic-widgets.js
+   * edited from entirely outside the designer — by hand in the repo. Saving
+   * a page that merely links it has no way to know that happened, and so
+   * leaves its version alone; whoever edits that file by hand is the one who
+   * has to carry its own version number forward.
    */
   function bumpAsset(current: Document, file: string) {
-    const candidates: [Element, string][] = [
+    const elements: [Element, string][] = [
       ...Array.from(current.querySelectorAll('link[rel~="stylesheet"][href]'))
         .map(element => [element, 'href'] as [Element, string]),
       ...Array.from(current.querySelectorAll('script[src]'))
         .map(element => [element, 'src'] as [Element, string]),
     ];
-    const found = candidates.find(([element, attribute]) =>
-      WEB_ROOT + new URL(element.getAttribute(attribute) ?? '', current.baseURI).pathname === file);
-    if (!found) {
-      return;
+    const here = new URL(current.baseURI).origin;
+    for (const [element, attribute] of elements) {
+      const url = new URL(element.getAttribute(attribute) ?? '', current.baseURI);
+      if (url.origin !== here || WEB_ROOT + url.pathname !== file) {
+        continue;
+      }
+      const version = Number(url.searchParams.get('v'));
+      url.searchParams.set('v', String(Number.isFinite(version) && version > 0 ? version + 1 : 1));
+      element.setAttribute(attribute, url.pathname + url.search);
     }
-    const [element, attribute] = found;
-    const url = new URL(element.getAttribute(attribute)!, current.baseURI);
-    const version = Number(url.searchParams.get('v'));
-    url.searchParams.set('v', String(Number.isFinite(version) && version > 0 ? version + 1 : 1));
-    element.setAttribute(attribute, url.pathname + url.search);
   }
 
 
@@ -1378,10 +1588,11 @@ export default function WebDesigner() {
       /*
        * A linked file open in the code view — a stylesheet or a script — IS
        * that file, whole. It is written as typed, and the page is written
-       * with it because the tag pointing at it had its version bumped, which
-       * is the only reason anyone's browser will fetch the new copy. When the
-       * file happens to be the one the Style panel writes into, the panel
-       * re-reads the result so the two agree again straight away.
+       * with it because every local link on it just had its version bumped,
+       * which is the only reason anyone's browser will fetch any of the new
+       * copies. When the file happens to be the one the Style panel writes
+       * into, the panel re-reads the result so the two agree again straight
+       * away.
        */
       if (view === 'code' && codeTarget !== '' && codeTarget !== path) {
         bumpAsset(current, codeTarget);
@@ -1403,11 +1614,13 @@ export default function WebDesigner() {
       const css = joinCss(cssHead, overrides, cssTail);
       const cssChanged = !!cssPath && css !== cssOriginal;
       /*
-       * Done before the page is serialised, so the bumped link goes out in the
-       * same save. In the code view the text on screen is the file and the
-       * user owns it, so nothing is rewritten underneath them there.
+       * Done before the page is serialised, so the bumped link goes out in
+       * the same save. In the code view the text on screen is the file and
+       * the user owns it, so nothing is rewritten underneath them there — and
+       * bumping here would be invisible anyway, since that branch below saves
+       * the typed text rather than this document's serialised form.
        */
-      if (cssChanged && view !== 'code') {
+      if (view !== 'code' && cssChanged) {
         bumpAsset(current, cssPath!);
       }
       /*
@@ -1499,6 +1712,7 @@ export default function WebDesigner() {
           className="designer-page-select"
           value={path}
           title="The page being designed"
+          disabled={pages.length === 0}
           onChange={event => openPage(event.target.value)}>
           {pages.length === 0 && <option value="">No pages in /etc/www/</option>}
           {pages.map(file => (
@@ -1512,6 +1726,7 @@ export default function WebDesigner() {
               type="button"
               className={'tab' + (entry.id === view ? ' active' : '')}
               title={entry.hint}
+              disabled={!path}
               onClick={() => switchView(entry.id)}>
               {entry.label}
             </button>
@@ -1564,6 +1779,30 @@ export default function WebDesigner() {
               disabled: !path || busy,
               onClick: () => openPage(path),
             },
+            {
+              label: 'Add a script file',
+              hint: path
+                ? 'Creates ' + companionFile(path, 'js').substring(WEB_ROOT.length) + ' and links it'
+                : 'Creates a script file for this page and links it',
+              /*
+               * Disabled only once THIS page's own same-named script exists —
+               * never because some other script (not least the shared
+               * /assets/magic-widgets.js every App block links) is already
+               * there. [scripts] no longer includes that shared file at all
+               * (see SHARED_ASSET_FILES), so this only ever matches a true
+               * same-filename collision.
+               */
+              disabled: !path || busy || scripts.includes(companionFile(path, 'js')),
+              onClick: () => addCompanionFile('js'),
+            },
+            {
+              label: 'Add a stylesheet',
+              hint: path
+                ? 'Creates ' + companionFile(path, 'css').substring(WEB_ROOT.length) + ' and links it'
+                : 'Creates a stylesheet for this page and links it',
+              disabled: !path || busy || sheets.includes(companionFile(path, 'css')),
+              onClick: () => addCompanionFile('css'),
+            },
             { heading: 'Canvas' },
             {
               label: 'Show hidden elements',
@@ -1573,7 +1812,7 @@ export default function WebDesigner() {
               onClick: () => setReveal(!reveal),
             },
           ]} />
-        <button className="btn btn-small" onClick={save} disabled={!dirty || saving}>
+        <button className="btn btn-small" onClick={save} disabled={!path || !dirty || saving}>
           <SaveIcon />
           {saving ? 'Saving…' : 'Save'}
         </button>
@@ -1624,6 +1863,17 @@ export default function WebDesigner() {
               onChange={setBlockFilter}
               style={{ width: '100%' }} />
             {(() => {
+              /*
+               * A block whose runtime depends on a script used to be withheld
+               * until the page already had one, any one — a stand-in for "has
+               * this page opted into JavaScript at all". That stopped making
+               * sense once ensureAssetFilesExist() could create the specific
+               * file a block actually needs: dropping an App block already
+               * guarantees it ends up with exactly what it requires, so there
+               * was nothing left for the gate to protect against, only a page
+               * that could not use a widget without first being given an
+               * empty, otherwise unused script file just to unlock it.
+               */
               const pill = (block: Block) => (
                 <button
                   key={block.key}
@@ -1732,7 +1982,23 @@ export default function WebDesigner() {
         </button>
 
         <div className="designer-middle">
-        {view === 'code' && (
+        {/*
+          * An empty srcDoc still parses as a tiny, valid, totally blank HTML
+          * document — which is indistinguishable from a real page whose body
+          * is a compiled app's empty mount point, the one case this canvas
+          * already has a message for. Without this, "no page is open" and
+          * "a page is open and it happens to render nothing" looked
+          * identical, and only one of those is actually true here.
+          */}
+        {!path && (
+          <div className="designer-empty" style={{ margin: 'auto', textAlign: 'center' }}>
+            <p>This cloudlet serves no pages yet.</p>
+            <button className="btn" onClick={() => setCreating(true)}>
+              Create the first one…
+            </button>
+          </div>
+        )}
+        {path && view === 'code' && (
           <div className="designer-code">
             <div className="designer-code-bar">
               <span>Editing</span>
@@ -1763,7 +2029,7 @@ export default function WebDesigner() {
               onSave={save} />
           </div>
         )}
-        {view === 'live' && (
+        {path && view === 'live' && (
           <div className="designer-canvas">
             {sameOrigin && !liveWarned && (
               <div className="designer-live-warning">
@@ -1795,6 +2061,7 @@ export default function WebDesigner() {
               style={width ? { width } : undefined} />
           </div>
         )}
+        {path && (
         <Canvas
             srcDoc={srcDoc}
             width={width}
@@ -1833,6 +2100,7 @@ export default function WebDesigner() {
             }}
             onKey={onKey}
             hidden={view !== 'design'} />
+        )}
 
         {/*
           * One prompt bar for the middle column, pointed at whatever is being
@@ -1840,7 +2108,7 @@ export default function WebDesigner() {
           * design view. Not shown over Live, which is a real page on another
           * origin and not ours to rewrite.
           */}
-        {view === 'code' && (
+        {path && view === 'code' && (
           <AiPrompt
             key={'code:' + (codeTarget || path)}
             fileType={(codeTarget || path).endsWith('.css') ? 'css' : 'html'}
@@ -1854,7 +2122,7 @@ export default function WebDesigner() {
             onError={message => showToast(message, true)}
             style={{ flexShrink: 0 }} />
         )}
-        {view === 'design' && (styleTarget ? (
+        {path && view === 'design' && (styleTarget ? (
           <AiPrompt
             key="design"
             fileType="html"

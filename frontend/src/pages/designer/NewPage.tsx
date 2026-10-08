@@ -32,20 +32,36 @@ export function tidyUrl(input: string) {
  * The file a URL becomes. Flat: "/pricing" is "pricing.html", never
  * "pricing/index.html" — both serve the same URL, and the flat form is one
  * file instead of a file and a folder.
+ *
+ * "/" itself is the one exception, because there is no "/.html" to be flat
+ * about — the site's own home page is "index.html" at the web root, which is
+ * the one filename the backend already resolves "/" to on its own (see
+ * GetHtmlFilename in HttpFileExecutorAsync.cs), with no special config
+ * needed.
  */
 export function fileForUrl(url: string) {
-  return WEB_ROOT + tidyUrl(url) + '.html';
+  const tidy = tidyUrl(url);
+  return tidy === '/' ? WEB_ROOT + '/index.html' : WEB_ROOT + tidy + '.html';
 }
 
 /*
  * Why this URL cannot be used, or null when it can. Everything here is a
  * refusal the backend or the file system would make anyway — better said
  * before the file is written than after.
+ *
+ * An empty field and an explicit "/" used to be the same case, both treated
+ * as "nothing typed yet" — which also meant there was no way to actually ASK
+ * for the site's home page, since typing the one character that means it was
+ * indistinguishable from not having typed anything. They are told apart here
+ * by the raw, untidied text: nothing yet is the empty string, "/" is "/".
  */
 export function urlProblem(url: string, taken: string[]): string | null {
+  if (url.trim() === '') {
+    return 'Give the page a name.';
+  }
   const tidy = tidyUrl(url);
   if (tidy === '/') {
-    return 'Give the page a name.';
+    return taken.includes('/') ? 'There is already a page at /.' : null;
   }
   const segments = tidy.slice(1).split('/');
   if (segments.some(segment => segment === '')) {
@@ -65,27 +81,34 @@ export function urlProblem(url: string, taken: string[]): string | null {
 
 // A readable title from the last step of the URL: "/docs/api-keys" → "Api keys".
 function titleFor(url: string) {
-  const last = tidyUrl(url).split('/').filter(Boolean).pop() ?? 'Page';
+  const last = tidyUrl(url).split('/').filter(Boolean).pop() ?? 'Home';
   const words = last.replace(/[-_]+/g, ' ');
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
 /*
- * A page with nothing in it but the things every page needs. No stylesheet —
- * blank means blank — and one heading, so the canvas has something to show
- * rather than the "nothing here to design" notice.
+ * A page with nothing in it but the things every page needs, and the two
+ * optional companion files asked for — no stylesheet and no script unless
+ * asked, blank still means blank by default. The companion files share the
+ * page's own basename ("/pricing" gets "pricing.css"/"pricing.js"), so where
+ * they are is never a separate thing to remember.
  */
-export function blankPage(url: string) {
+export function blankPage(url: string, companions: { css?: boolean; js?: boolean } = {}) {
   const title = titleFor(url);
+  // Same folder as the page itself, not the site root — "/docs/pricing" gets
+  // "/docs/pricing.css", a true sibling, the same way fileForUrl() places it.
+  const base = tidyUrl(url);
   return '<!doctype html>\n' +
     '<html lang="en">\n' +
     '<head>\n' +
     '<meta charset="utf-8">\n' +
     '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
     '<title>' + title + '</title>\n' +
+    (companions.css ? '<link rel="stylesheet" href="' + base + '.css">\n' : '') +
     '</head>\n' +
     '<body>\n' +
     '<h1>' + title + '</h1>\n' +
+    (companions.js ? '<script src="' + base + '.js"></script>\n' : '') +
     '</body>\n' +
     '</html>\n';
 }
@@ -96,17 +119,30 @@ export default function NewPage(props: {
   // Page file → the URL it is served at, for the "copy of" list.
   pages: { file: string; url: string }[];
   onCancel: () => void;
-  onCreate: (file: string, copyFrom: string | null) => void;
+  onCreate: (file: string, copyFrom: string | null, companions: { css: boolean; js: boolean }) => void;
 }) {
 
-  const [url, setUrl] = useState('/');
+  // Empty, not "/" — "/" is now itself a real, meaningful answer (the home
+  // page), so it can no longer also stand for "nothing typed yet".
+  const [url, setUrl] = useState('');
   const [copyFrom, setCopyFrom] = useState('');
+  /*
+   * On by default. A stylesheet is what lets the Style panel write a class
+   * rule at all rather than only ever an inline one, and a script is what
+   * the App blocks in the palette require before they will even come off
+   * the rail — leaving both off is a choice worth making on purpose, not the
+   * quiet default a blank page used to leave you in.
+   */
+  const [addCss, setAddCss] = useState(true);
+  const [addJs, setAddJs] = useState(true);
   const problem = urlProblem(url, props.taken);
-  const touched = tidyUrl(url) !== '/';
+  const touched = url.trim() !== '';
+  // A copy brings its own files, if it has any — these are for a blank page only.
+  const blank = copyFrom === '';
 
   function create() {
     if (!problem) {
-      props.onCreate(fileForUrl(url), copyFrom === '' ? null : copyFrom);
+      props.onCreate(fileForUrl(url), blank ? null : copyFrom, { css: blank && addCss, js: blank && addJs });
     }
   }
 
@@ -120,7 +156,7 @@ export default function NewPage(props: {
             type="text"
             autoFocus
             value={url}
-            placeholder="/pricing"
+            placeholder="/pricing, or / for the home page"
             onChange={event => setUrl(event.target.value)} />
         </label>
 
@@ -134,12 +170,28 @@ export default function NewPage(props: {
           </select>
         </label>
 
+        {blank && (
+          <label className="checkbox-row">
+            <input type="checkbox" checked={addCss} onChange={event => setAddCss(event.target.checked)} />
+            Create a stylesheet for it too
+          </label>
+        )}
+        {blank && (
+          <label className="checkbox-row">
+            <input type="checkbox" checked={addJs} onChange={event => setAddJs(event.target.checked)} />
+            Create a script for it too
+          </label>
+        )}
+
         <p className="designer-note">
           {touched && problem
             ? problem
             : touched
-              ? <>Creates <code>{fileForUrl(url)}</code>, served at <code>{tidyUrl(url)}</code>.</>
-              : 'The address the page will be served at.'}
+              ? <>
+                  Creates <code>{fileForUrl(url)}</code>, served at <code>{tidyUrl(url)}</code>.
+                  {blank && (addCss || addJs) && <> And <code>{tidyUrl(url)}{addCss ? '.css' : ''}{addCss && addJs ? ' / ' : ''}{addJs ? '.js' : ''}</code>, linked from it.</>}
+                </>
+              : 'The address the page will be served at — type / for the site’s own home page.'}
         </p>
       </div>
       <div className="modal-actions">

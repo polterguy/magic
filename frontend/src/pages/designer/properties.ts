@@ -100,6 +100,46 @@ export const STYLE_GROUPS: StyleGroup[] = [
 ];
 
 /*
+ * Style hooks exposed by this toolbox's own data-bound widgets ("App" group
+ * in the palette), offered only when the selected element is one of them.
+ *
+ * Each one is a CSS custom property, not a regular property — the widget's
+ * shadow root reads it with `var(--name, default)`, and so does the plain
+ * light-DOM fallback markup the palette drops in, through the shared
+ * stylesheet at `/assets/magic-widgets.css`. Custom properties inherit from
+ * the host element down into a shadow tree the same way they inherit into
+ * ordinary children, which is what lets one inline style set here look
+ * identical in the canvas (which never runs the widget's script, so it only
+ * ever shows the fallback) and on the real running page (which does).
+ */
+const WIDGET_STYLE_GROUPS: Record<string, StyleGroup> = {
+  'magic-data-grid': {
+    label: 'Data grid',
+    properties: [
+      { name: '--magic-grid-header-bg', label: 'Header background', kind: 'color' },
+      { name: '--magic-grid-header-color', label: 'Header text', kind: 'color' },
+      { name: '--magic-grid-cell-bg', label: 'Cell background', kind: 'color' },
+      { name: '--magic-grid-row-alt-bg', label: 'Alternate row background', kind: 'color' },
+      { name: '--magic-grid-border-color', label: 'Border colour', kind: 'color' },
+    ],
+  },
+  'magic-login-form': {
+    label: 'Login form',
+    properties: [
+      { name: '--magic-login-bg', label: 'Form background', kind: 'color' },
+      { name: '--magic-login-button-bg', label: 'Button background', kind: 'color' },
+      { name: '--magic-login-button-color', label: 'Button text', kind: 'color' },
+    ],
+  },
+};
+
+// The extra group this tag's widget exposes, or none for an ordinary element.
+export function widgetGroupFor(tagName: string): StyleGroup[] {
+  const group = WIDGET_STYLE_GROUPS[tagName];
+  return group ? [group] : [];
+}
+
+/*
  * A colour in the form an <input type="color"> will accept. Computed styles
  * come back as rgb() and the picker only speaks six-digit hex, so anything
  * that is not already hex is converted, and anything that cannot be converted

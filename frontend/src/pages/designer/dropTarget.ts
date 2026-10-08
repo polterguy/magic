@@ -103,12 +103,17 @@ export function findDropSpot(
 
   /*
    * Pointing well inside a container means into it, between the things it
-   * holds. Pointing near one of its edges — or at anything that holds nothing
-   * — means beside it, among its siblings.
+   * holds. Pointing near one of its edges means beside it, among its
+   * siblings instead — but only once it HAS siblings worth being near the
+   * edge of. An empty container has no "between the things it holds" to
+   * measure an edge band against, and no content of its own for the pointer
+   * to be well inside of rather than near the edge of either; the whole box
+   * is the only drop zone it can offer, so it is always that, not "beside
+   * it" forever until something has already landed inside it once.
    */
   let parent: Element | null = target.parentElement;
-  if (designableChildren(target).length > 0 && canContainChildren(target) &&
-      !nearEdge(target, x, y, dragged)) {
+  if (canContainChildren(target) &&
+      (designableChildren(target).length === 0 || !nearEdge(target, x, y, dragged))) {
     parent = target;
   }
   if (!parent) {

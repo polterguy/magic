@@ -12,11 +12,12 @@
  * page already uses are offered as suggestions.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SERVER_FILLED, hasSlot } from './html';
 import { CopyIcon, TrashIcon } from '../../components/Icons';
 import { isText, labelOf } from './nodes';
 import { KIND_FOR_TAG } from './Media';
+import { DataSource, dataGridSources, loadEndpoints } from './dataSources';
 
 // Attributes with a control of their own, or that belong to the designer.
 const OWN = ['class', 'id', 'style', 'contenteditable'];
@@ -140,6 +141,29 @@ function classesOf(element: Element) {
   return (element.getAttribute('class') ?? '').trim().split(/\s+/).filter(Boolean);
 }
 
+interface GridColumn {
+  name: string;
+  label: string;
+  type?: string;
+  // Only ever true while "Allow inline editing" is on for this grid.
+  editable?: boolean;
+}
+
+// The column list a <magic-data-grid> carries in its own data-columns attribute.
+function gridColumns(value: string | null): GridColumn[] {
+  if (!value) {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed)
+      ? parsed.filter((entry): entry is GridColumn => !!entry && typeof entry.name === 'string')
+      : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function Inspector(props: {
   node: Node | null;
   doc: Document | null;
@@ -191,6 +215,30 @@ export default function Inspector(props: {
    * in front of you rather than a mode the panel is in.
    */
   const [unlocked, setUnlocked] = useState<string | null>(null);
+  /*
+   * The tables a Data Grid can bind to, fetched the first time one is
+   * actually selected rather than up front — most selections are never a
+   * data grid, and the full endpoints list is not a small thing to ask the
+   * server for on every click. Declared here, ahead of the early return
+   * below, because a Hook cannot be called from inside a condition.
+   */
+  const [sources, setSources] = useState<DataSource[] | null>(null);
+  const [sourcesLoading, setSourcesLoading] = useState(false);
+  const [sourcesError, setSourcesError] = useState(false);
+
+  useEffect(() => {
+    const element = props.node && !isText(props.node) ? props.node as Element : null;
+    if (!element || element.tagName.toLowerCase() !== 'magic-data-grid' ||
+        sources || sourcesLoading) {
+      return;
+    }
+    setSourcesLoading(true);
+    setSourcesError(false);
+    loadEndpoints()
+      .then(list => setSources(dataGridSources(list)))
+      .catch(() => setSourcesError(true))
+      .finally(() => setSourcesLoading(false));
+  }, [props.node]);
 
   const node = props.node;
   if (!node || !props.doc) {
@@ -440,6 +488,200 @@ export default function Inspector(props: {
             </button>
           </div>
         )}
+
+        {element.tagName.toLowerCase() === 'magic-data-grid' && (() => {
+          const currentColumns = gridColumns(element.getAttribute('data-columns'));
+          const currentSource = sources?.find(
+            source => source.readUrl === element.getAttribute('data-read-url')) ?? null;
+          const deleteOn = !!element.getAttribute('data-delete-url');
+          const editOn = !!element.getAttribute('data-update-url');
+          const filterOn = !!element.getAttribute('data-filterable');
+
+          // Present as soon as either capability needs it, gone once neither does.
+          function syncPrimaryKey(deleteWill: boolean, editWill: boolean) {
+            if ((deleteWill || editWill) && currentSource) {
+              props.onSetAttribute('data-primary-key', JSON.stringify(currentSource.primaryKey));
+            } else {
+              props.onRemoveAttribute('data-primary-key');
+            }
+          }
+
+          function writeColumns(names: string[], editable: boolean) {
+            if (!currentSource) {
+              return;
+            }
+            const ordered = currentSource.columns
+              .filter(column => names.includes(column.name))
+              .map(column => ({
+                name: column.name,
+                label: currentColumns.find(entry => entry.name === column.name)?.label ?? column.name,
+                // The widget needs the Hyperlambda type too, to pick an input
+                // kind for inline editing and to send the right JSON shape —
+                // a number typed into a text box is still a string otherwise.
+                type: column.type,
+                editable: editable && currentSource.editableColumns.includes(column.name),
+              }));
+            props.onSetAttribute('data-columns', JSON.stringify(ordered));
+          }
+
+          function pickSource(source: DataSource | null) {
+            if (!source) {
+              return;
+            }
+            props.onSetAttribute('data-read-url', source.readUrl);
+            if (source.countUrl) {
+              props.onSetAttribute('data-count-url', source.countUrl);
+            } else {
+              props.onRemoveAttribute('data-count-url');
+            }
+            // Delete and inline editing start OFF on a freshly picked table,
+            // even when this one happens to support both — a destructive and
+            // a data-changing capability are each worth turning on on
+            // purpose, not inheriting from whatever the table allows.
+            props.onRemoveAttribute('data-delete-url');
+            props.onRemoveAttribute('data-update-url');
+            props.onRemoveAttribute('data-primary-key');
+            props.onRemoveAttribute('data-filterable');
+            // A freshly picked table starts with every column checked.
+            props.onSetAttribute('data-columns', JSON.stringify(
+              source.columns.map(column => ({ name: column.name, label: column.name, type: column.type }))));
+          }
+
+          function toggleColumn(column: { name: string }, checked: boolean) {
+            if (!currentSource) {
+              return;
+            }
+            const names = checked
+              ? [...currentColumns.map(entry => entry.name), column.name]
+              : currentColumns.map(entry => entry.name).filter(name => name !== column.name);
+            // Written back in the table's own column order, not click order.
+            writeColumns(names, editOn);
+          }
+
+          function toggleDelete(checked: boolean) {
+            if (!currentSource?.deleteUrl) {
+              return;
+            }
+            if (checked) {
+              props.onSetAttribute('data-delete-url', currentSource.deleteUrl);
+            } else {
+              props.onRemoveAttribute('data-delete-url');
+            }
+            syncPrimaryKey(checked, editOn);
+          }
+
+          function toggleEdit(checked: boolean) {
+            if (!currentSource?.updateUrl) {
+              return;
+            }
+            if (checked) {
+              props.onSetAttribute('data-update-url', currentSource.updateUrl);
+            } else {
+              props.onRemoveAttribute('data-update-url');
+            }
+            // Re-stamps every currently checked column's [editable] flag to match.
+            writeColumns(currentColumns.map(entry => entry.name), checked);
+            syncPrimaryKey(deleteOn, checked);
+          }
+
+          /*
+           * Every crud-read endpoint crudify generates accepts a filtering
+           * argument per column — Table.Column.eq for any type, and also
+           * Table.Column.like (a fuzzy, wildcarded match) for a string one —
+           * see Album.get.hl for a real example. This is a fixed, unconditional
+           * part of what crudify writes, not a capability some tables have and
+           * others don't, so unlike delete/edit this is never disabled: a
+           * boolean the widget runtime itself turns into the right query
+           * parameter per column, straight off each column's own [type].
+           */
+          function toggleFilters(checked: boolean) {
+            if (checked) {
+              props.onSetAttribute('data-filterable', 'true');
+            } else {
+              props.onRemoveAttribute('data-filterable');
+            }
+          }
+
+          return (
+            <div className="designer-field">
+              <span>Table</span>
+              {sourcesLoading && <span className="designer-muted">Loading tables…</span>}
+              {sourcesError && (
+                <span className="designer-muted">Could not load the list of tables.</span>
+              )}
+              {sources && (
+                <select
+                  value={currentSource?.readUrl ?? ''}
+                  onChange={event =>
+                    pickSource(sources.find(source => source.readUrl === event.target.value) ?? null)}>
+                  <option value="">
+                    {sources.length === 0 ? 'No crudified table has a read endpoint yet' : 'Choose a table…'}
+                  </option>
+                  {sources.map(source => (
+                    <option key={source.readUrl} value={source.readUrl}>{source.label}</option>
+                  ))}
+                </select>
+              )}
+              {currentSource && (
+                <>
+                  <span>Columns</span>
+                  <div className="designer-chips">
+                    {currentSource.columns.map(column => (
+                      <label
+                        key={column.name}
+                        className="checkbox-row"
+                        title={column.lookup?.length ? 'References ' + column.lookup[0].table : undefined}>
+                        <input
+                          type="checkbox"
+                          checked={currentColumns.some(entry => entry.name === column.name)}
+                          onChange={event => toggleColumn(column, event.target.checked)} />
+                        {column.name}{column.lookup?.length ? ' →' : ''}
+                      </label>
+                    ))}
+                  </div>
+
+                  {/*
+                    * Disabled rather than hidden when the table has no
+                    * crud-delete / crud-update of its own — seeing the option
+                    * exist, and seeing why it cannot be ticked, says more than
+                    * the option just not being there would.
+                    */}
+                  <label
+                    className="checkbox-row"
+                    title={currentSource.deleteUrl
+                      ? undefined
+                      : 'This table has no crud-delete endpoint to delete rows through'}>
+                    <input
+                      type="checkbox"
+                      checked={deleteOn}
+                      disabled={!currentSource.deleteUrl}
+                      onChange={event => toggleDelete(event.target.checked)} />
+                    Allow delete
+                  </label>
+                  <label
+                    className="checkbox-row"
+                    title={currentSource.updateUrl
+                      ? undefined
+                      : 'This table has no crud-update endpoint with editable columns to edit through'}>
+                    <input
+                      type="checkbox"
+                      checked={editOn}
+                      disabled={!currentSource.updateUrl}
+                      onChange={event => toggleEdit(event.target.checked)} />
+                    Allow inline editing
+                  </label>
+                  <label className="checkbox-row">
+                    <input
+                      type="checkbox"
+                      checked={filterOn}
+                      onChange={event => toggleFilters(event.target.checked)} />
+                    Allow filtering
+                  </label>
+                </>
+              )}
+            </div>
+          );
+        })()}
 
         <div className="designer-field">
           <span>Attributes</span>

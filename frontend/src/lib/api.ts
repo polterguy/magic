@@ -287,6 +287,48 @@ export function getOpenApiSpec(filter: string) {
 }
 
 /*
+ * One foreign key an argument or a returned column carries, when the
+ * endpoint's generator recorded one for it.
+ */
+export interface EndpointLookup {
+  table?: string;
+  key?: string;
+  name?: string;
+  long?: boolean;
+}
+
+export interface EndpointField {
+  name: string;
+  type: string;
+  description?: string;
+  lookup?: EndpointLookup[];
+}
+
+/*
+ * One endpoint, as returned by the root-only, rich sibling of
+ * /system/auth/endpoints — that one is public and gives only {path, verb,
+ * auth}; this one adds [type] (crudify's own `.type`, e.g. "crud-read"),
+ * [input]/[output] with names, types and FK lookups, and [array].
+ */
+export interface EndpointMeta {
+  path: string;
+  verb: string;
+  type?: string;
+  auth?: string[];
+  description?: string;
+  input?: EndpointField[];
+  output?: EndpointField[];
+  array?: boolean;
+  produces?: string;
+  consumes?: string;
+}
+
+// Root-only. The Web Designer's own session always is, so this is never gated here.
+export function listEndpointsDetailed() {
+  return http.get<EndpointMeta[]>('/magic/system/endpoints/list');
+}
+
+/*
  * Hyperlambda evaluator.
  */
 
