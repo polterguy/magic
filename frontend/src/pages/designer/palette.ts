@@ -250,6 +250,24 @@ export const GROUPS: BlockGroup[] = [
         requires: WIDGET_ASSETS,
       },
       {
+        ...block('magic-data-create', 'Create row', (doc, at) => {
+          const label = attributes(doc, at, 'label');
+          const input = attributes(doc, at, 'input');
+          const button = attributes(doc, at, 'button');
+          const message = attributes(doc, at, 'p');
+          return '<magic-data-create' + attributes(doc, at, 'form',
+              ' data-create-url="/magic/modules/REPLACE_ME/REPLACE_ME"' +
+              ' data-columns=\'[{"name":"Column","label":"Column"}]\'') + '>' +
+            '<label part="label"' + label + '>Column' +
+            '<input part="input" type="text" name="Column"' + input + '></label>' +
+            '<button part="button" type="submit"' + button + '>Create</button>' +
+            '<p part="message"' + message +
+            '>Set data-create-url (and data-columns) in the Inspector to a real endpoint</p>' +
+            '</magic-data-create>';
+        }),
+        requires: WIDGET_ASSETS,
+      },
+      {
         ...block('magic-login-form', 'Login form', (doc, at) => {
           const label = attributes(doc, at, 'label');
           const input = attributes(doc, at, 'input');

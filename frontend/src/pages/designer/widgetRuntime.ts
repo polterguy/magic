@@ -19,3 +19,23 @@ export const CANONICAL_ASSETS: Record<string, string> = {
   '/assets/magic-widgets.js': magicWidgetsJs,
   '/assets/magic-widgets.css': magicWidgetsCss,
 };
+
+/*
+ * Root-absolute href -> the version this source is currently at.
+ *
+ * These files are edited directly on disk, not through the Designer's own
+ * Code view, so no save anywhere can see that one of them just changed - the
+ * Designer only ever bumps the one file ITS OWN session just wrote (see
+ * bumpAsset() in WebDesigner.tsx). This is the other half of that: WHOEVER
+ * edits one of these files BY HAND bumps its number here, in the same change,
+ * and every page's next save then notices its own link is behind and
+ * corrects just that one link - never a page's other, unrelated files, and
+ * never every page at once.
+ *
+ * Bump only the file you actually touched. Editing the .js and leaving the
+ * .css alone bumps only '/assets/magic-widgets.js'.
+ */
+export const CANONICAL_VERSIONS: Record<string, number> = {
+  '/assets/magic-widgets.js': 2,
+  '/assets/magic-widgets.css': 2,
+};

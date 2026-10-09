@@ -228,7 +228,8 @@ export default function Inspector(props: {
 
   useEffect(() => {
     const element = props.node && !isText(props.node) ? props.node as Element : null;
-    if (!element || element.tagName.toLowerCase() !== 'magic-data-grid' ||
+    const tag = element?.tagName.toLowerCase();
+    if (!element || (tag !== 'magic-data-grid' && tag !== 'magic-data-create') ||
         sources || sourcesLoading) {
       return;
     }
@@ -542,9 +543,16 @@ export default function Inspector(props: {
             props.onRemoveAttribute('data-update-url');
             props.onRemoveAttribute('data-primary-key');
             props.onRemoveAttribute('data-filterable');
-            // A freshly picked table starts with every column checked.
+            /*
+             * A freshly picked table starts with every column checked except
+             * its own primary key — an ID column is rarely what a visitor
+             * wants to see, and it is still right there in the checklist,
+             * one click from being turned back on, same as any other column.
+             */
             props.onSetAttribute('data-columns', JSON.stringify(
-              source.columns.map(column => ({ name: column.name, label: column.name, type: column.type }))));
+              source.columns
+                .filter(column => !source.primaryKey.includes(column.name))
+                .map(column => ({ name: column.name, label: column.name, type: column.type }))));
           }
 
           function toggleColumn(column: { name: string }, checked: boolean) {
@@ -677,6 +685,98 @@ export default function Inspector(props: {
                       onChange={event => toggleFilters(event.target.checked)} />
                     Allow filtering
                   </label>
+                </>
+              )}
+            </div>
+          );
+        })()}
+
+        {element.tagName.toLowerCase() === 'magic-data-create' && (() => {
+          /*
+           * Picks off the same [sources] the Data Grid uses, by [createUrl]
+           * instead of [readUrl] — a table is only offered here when crudify
+           * actually generated a crud-create endpoint for it, the one thing
+           * that makes it "relevant" to this widget.
+           */
+          const creatable = sources?.filter(source => source.createUrl) ?? null;
+          const currentSource = creatable?.find(
+            source => source.createUrl === element.getAttribute('data-create-url')) ?? null;
+          const currentFields = gridColumns(element.getAttribute('data-columns'));
+
+          /*
+           * Every field checked by default — crud-create's own input is
+           * already exactly what a new row needs, nothing more — but
+           * unchecked is still offered, same as a Data Grid column: the
+           * field simply never appears, and the request sends whatever is
+           * still checked. A column a NOT NULL constraint actually requires
+           * will fail server-side if left unchecked; this picker only
+           * decides what shows, same as it already does for the grid.
+           */
+          function pickCreateSource(source: DataSource | null) {
+            if (!source?.createUrl) {
+              return;
+            }
+            props.onSetAttribute('data-create-url', source.createUrl);
+            props.onSetAttribute('data-columns', JSON.stringify(
+              source.createColumns.map(column => (
+                { name: column.name, label: column.name, type: column.type }))));
+          }
+
+          function toggleField(column: { name: string }, checked: boolean) {
+            if (!currentSource) {
+              return;
+            }
+            const names = checked
+              ? [...currentFields.map(entry => entry.name), column.name]
+              : currentFields.map(entry => entry.name).filter(name => name !== column.name);
+            // Written back in crud-create's own field order, not click order.
+            const ordered = currentSource.createColumns
+              .filter(column => names.includes(column.name))
+              .map(column => ({
+                name: column.name,
+                label: currentFields.find(entry => entry.name === column.name)?.label ?? column.name,
+                type: column.type,
+              }));
+            props.onSetAttribute('data-columns', JSON.stringify(ordered));
+          }
+
+          return (
+            <div className="designer-field">
+              <span>Table</span>
+              {sourcesLoading && <span className="designer-muted">Loading tables…</span>}
+              {sourcesError && (
+                <span className="designer-muted">Could not load the list of tables.</span>
+              )}
+              {creatable && (
+                <select
+                  value={currentSource?.createUrl ?? ''}
+                  onChange={event =>
+                    pickCreateSource(creatable.find(source => source.createUrl === event.target.value) ?? null)}>
+                  <option value="">
+                    {creatable.length === 0 ? 'No crudified table has a create endpoint yet' : 'Choose a table…'}
+                  </option>
+                  {creatable.map(source => (
+                    <option key={source.createUrl} value={source.createUrl!}>{source.label}</option>
+                  ))}
+                </select>
+              )}
+              {currentSource && (
+                <>
+                  <span>Fields</span>
+                  <div className="designer-chips">
+                    {currentSource.createColumns.map(column => (
+                      <label
+                        key={column.name}
+                        className="checkbox-row"
+                        title={column.lookup?.length ? 'References ' + column.lookup[0].table : undefined}>
+                        <input
+                          type="checkbox"
+                          checked={currentFields.some(entry => entry.name === column.name)}
+                          onChange={event => toggleField(column, event.target.checked)} />
+                        {column.name}{column.lookup?.length ? ' →' : ''}
+                      </label>
+                    ))}
+                  </div>
                 </>
               )}
             </div>

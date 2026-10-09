@@ -901,6 +901,27 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   gap: 2px;
   border-bottom: 2px solid var(--border);
   margin-bottom: 16px;
+  /*
+   * Scrolls on its own, rather than forcing whatever holds it to overflow,
+   * once there are more tabs than a narrow container has room for (the Web
+   * Designer's right rail is a fixed 320px - five tabs there no longer fit
+   * at that width, and a sixth tab somewhere else should not have to mean
+   * revisiting this rule again).
+   */
+  overflow-x: auto;
+  /*
+   * Setting overflow-x above makes a browser compute overflow-y as auto too
+   * (the two can't disagree), which erases a flex item's automatic min-height
+   * - so inside a flex column like .designer-rail, this strip became the one
+   * child willing to shrink below its own content height. The Page tab has
+   * the tallest content of the five (two full field groups), so switching to
+   * it was the case that actually ran the rail out of room: the layout
+   * squeezed this strip toward zero height instead of just scrolling the
+   * rail, and the tab strip itself appeared to vanish. Same bug class as
+   * .designer-section below, same fix - keep this strip's own height fixed
+   * and let the rail's own scrollbar absorb tall content instead.
+   */
+  flex-shrink: 0;
 }
 
 .tab {
@@ -913,6 +934,8 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   cursor: pointer;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .tab:hover {
@@ -3741,8 +3764,16 @@ tr.vss-irrelevant td {
   padding: 12px;
 }
 
+/*
+ * Wide enough for all five Inspector tabs (Element/Style/Page/Quality/
+ * Website) to show at once without the tab strip needing to scroll - the
+ * five together need ~390px, and this rail's own padding/border eat about
+ * 26px of whatever width it is given. 320px was 96px short of that; this
+ * is 390 + 26 plus a little room rather than the exact minimum, so a label
+ * changing slightly later does not immediately reopen the gap.
+ */
 .designer-rail.right {
-  width: 320px;
+  width: 420px;
 }
 
 /*
@@ -4293,6 +4324,18 @@ tr.vss-irrelevant td {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.designer-redirect-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.designer-redirect-row input {
+  flex: 1;
+  min-width: 0;
 }
 
 .designer-attribute label,

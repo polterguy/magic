@@ -34,6 +34,7 @@ import Layers from './designer/Layers';
 import Media, { KIND_FOR_TAG, MediaKind, Picked } from './designer/Media';
 import Meta, { Home, readMeta, writeMeta } from './designer/Meta';
 import Quality from './designer/Quality';
+import Website from './designer/Website';
 import Styles, { INLINE } from './designer/Styles';
 import { Block, GROUPS, customBlock } from './designer/palette';
 import { DropSpot } from './designer/dropTarget';
@@ -41,7 +42,7 @@ import { liveSandbox, prepareDocument, serializeDocument, slotsDropped } from '.
 import { designableChildren, elementOf, isText, labelOf, nodeAt, pathTo, writeText } from './designer/nodes';
 import { canContainChildren } from './designer/html';
 import { Overrides, joinCss, overrideCss, ownStylesheet, scriptPaths, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
-import { CANONICAL_ASSETS } from './designer/widgetRuntime';
+import { CANONICAL_ASSETS, CANONICAL_VERSIONS } from './designer/widgetRuntime';
 
 const WEB_ROOT = '/etc/www';
 
@@ -1212,7 +1213,10 @@ export default function WebDesigner() {
       if (!linked) {
         const link = doc.createElement('link');
         link.setAttribute('rel', 'stylesheet');
-        link.setAttribute('href', href);
+        // Versioned from the start where there is a known version to start
+        // at, so a brand new link is never a save behind the shared file it
+        // already points at.
+        link.setAttribute('href', href + (CANONICAL_VERSIONS[href] ? '?v=' + CANONICAL_VERSIONS[href] : ''));
         doc.head.appendChild(link);
       }
     });
@@ -1221,7 +1225,7 @@ export default function WebDesigner() {
         .some(script => new URL(script.getAttribute('src') ?? '', doc.baseURI).pathname === src);
       if (!linked) {
         const script = doc.createElement('script');
-        script.setAttribute('src', src);
+        script.setAttribute('src', src + (CANONICAL_VERSIONS[src] ? '?v=' + CANONICAL_VERSIONS[src] : ''));
         doc.body.appendChild(script);
       }
     });
@@ -1553,9 +1557,8 @@ export default function WebDesigner() {
    *
    * What this does NOT catch: a shared file like /assets/magic-widgets.js
    * edited from entirely outside the designer — by hand in the repo. Saving
-   * a page that merely links it has no way to know that happened, and so
-   * leaves its version alone; whoever edits that file by hand is the one who
-   * has to carry its own version number forward.
+   * a page that merely links it has no way to know that happened by itself;
+   * see syncSharedAssetVersions() just below for the other half of that.
    */
   function bumpAsset(current: Document, file: string) {
     const elements: [Element, string][] = [
@@ -1572,6 +1575,37 @@ export default function WebDesigner() {
       }
       const version = Number(url.searchParams.get('v'));
       url.searchParams.set('v', String(Number.isFinite(version) && version > 0 ? version + 1 : 1));
+      element.setAttribute(attribute, url.pathname + url.search);
+    }
+  }
+
+  /*
+   * The other half of cache-busting: a shared file like magic-widgets.js is
+   * never edited through this designer, so no save anywhere can know its
+   * content just changed the way bumpAsset() knows about a file THIS session
+   * just wrote. What it can know is CANONICAL_VERSIONS — bumped by hand, in
+   * the same change, by whoever edits one of these files on disk.
+   *
+   * Every save checks every local link against that table and corrects only
+   * the ones that are behind — never a page's own, unrelated files, and
+   * never a page that already carries the current version, so most saves
+   * touch nothing here at all.
+   */
+  function syncSharedAssetVersions(current: Document) {
+    const elements: [Element, string][] = [
+      ...Array.from(current.querySelectorAll('link[rel~="stylesheet"][href]'))
+        .map(element => [element, 'href'] as [Element, string]),
+      ...Array.from(current.querySelectorAll('script[src]'))
+        .map(element => [element, 'src'] as [Element, string]),
+    ];
+    const here = new URL(current.baseURI).origin;
+    for (const [element, attribute] of elements) {
+      const url = new URL(element.getAttribute(attribute) ?? '', current.baseURI);
+      const version = CANONICAL_VERSIONS[url.pathname];
+      if (url.origin !== here || version === undefined || url.searchParams.get('v') === String(version)) {
+        continue;
+      }
+      url.searchParams.set('v', String(version));
       element.setAttribute(attribute, url.pathname + url.search);
     }
   }
@@ -1595,6 +1629,7 @@ export default function WebDesigner() {
        * away.
        */
       if (view === 'code' && codeTarget !== '' && codeTarget !== path) {
+        syncSharedAssetVersions(current);
         bumpAsset(current, codeTarget);
         await saveFile(path, serializeDocument(current));
         await saveFile(codeTarget, code);
@@ -1620,8 +1655,11 @@ export default function WebDesigner() {
        * bumping here would be invisible anyway, since that branch below saves
        * the typed text rather than this document's serialised form.
        */
-      if (view !== 'code' && cssChanged) {
-        bumpAsset(current, cssPath!);
+      if (view !== 'code') {
+        syncSharedAssetVersions(current);
+        if (cssChanged) {
+          bumpAsset(current, cssPath!);
+        }
       }
       /*
        * In the code view what is on screen IS the file, so it is written
@@ -2157,6 +2195,7 @@ export default function WebDesigner() {
               { id: 'style', label: 'Style' },
               { id: 'meta', label: 'Page' },
               { id: 'quality', label: 'Quality' },
+              { id: 'website', label: 'Website' },
             ]}
             active={tab}
             onChange={setTab} />
@@ -2206,6 +2245,8 @@ export default function WebDesigner() {
                   setRevealSelected(value => value + 1);
                 }
               }} />
+          ) : tab === 'website' ? (
+            <Website urls={pages.map(canonicalUrl)} />
           ) : (
             <Styles
               element={styleTarget}

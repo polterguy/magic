@@ -38,6 +38,14 @@ export interface DataSource {
   // nothing else — not guessed from column names or position.
   primaryKey: string[];
   columns: DataColumn[];
+  // Null unless crudify generated a crud-create endpoint for this table.
+  createUrl: string | null;
+  // crud-create's own input — already exactly the fields a new row needs and
+  // nothing else: no primary key (an auto-increment column is never part of
+  // it), no column that has a database default crudify left out. Carries FK
+  // [lookup] the same way crud-update's input already does, for the same
+  // reason (GetInputArguments attaches it for every post/put endpoint).
+  createColumns: DataColumn[];
 }
 
 let cache: Promise<EndpointMeta[]> | null = null;
@@ -56,9 +64,11 @@ export function loadEndpoints(refresh = false): Promise<EndpointMeta[]> {
 
 /*
  * Every table with a crud-read endpoint of its own — that is the one thing
- * that makes a table "relevant" to a Data Grid. Its crud-count sibling, if
- * crudify was asked to generate one, is matched by the exact convention
- * crudify itself uses: the same path with "-count" appended. A table without
+ * that makes a table "relevant" to a Data Grid, and the Create Row widget
+ * picks its own table off this same list, by [createUrl] rather than
+ * [readUrl]. Its crud-count sibling, if crudify was asked to generate one, is
+ * matched by the exact convention crudify itself uses: the same path with
+ * "-count" appended. A table without
  * one is still offered; the grid already tolerates a missing count URL by
  * just not showing a total.
  */
@@ -80,6 +90,8 @@ export function dataGridSources(endpoints: EndpointMeta[]): DataSource[] {
         endpoint => endpoint.type === 'crud-delete' && endpoint.verb === 'delete' && endpoint.path === read.path);
       const update = endpoints.find(
         endpoint => endpoint.type === 'crud-update' && endpoint.verb === 'put' && endpoint.path === read.path);
+      const create = endpoints.find(
+        endpoint => endpoint.type === 'crud-create' && endpoint.verb === 'post' && endpoint.path === read.path);
       const primaryKey = (del?.input ?? []).map(field => field.name);
       const editableColumns = (update?.input ?? [])
         .map(field => field.name)
@@ -95,6 +107,9 @@ export function dataGridSources(endpoints: EndpointMeta[]): DataSource[] {
         editableColumns,
         primaryKey,
         columns: (read.output ?? []).map(column => (
+          { name: column.name, type: column.type, lookup: column.lookup })),
+        createUrl: create ? '/' + create.path : null,
+        createColumns: (create?.input ?? []).map(column => (
           { name: column.name, type: column.type, lookup: column.lookup })),
       };
     })

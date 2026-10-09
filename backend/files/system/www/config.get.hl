@@ -1,0 +1,110 @@
+
+/*
+ * Returns the site's current website configuration read from the /etc/www/.config Hyperlambda file. Requires the root role.
+ * 
+ * Checks whether /etc/www/.config exists using io.file.exists. If it does not exist, treats the configuration as having no settings at all (an empty lambda object) instead of throwing. If it does exist, loads it with io.file.load and parses the loaded text into a lambda object using hyper2lambda.
+ * 
+ * Reads a top-level spa_enabled boolean node from that lambda object, defaulting to the boolean value false if no such node exists.
+ * 
+ * Reads a top-level not_found string node from that lambda object, defaulting to the empty string if no such node exists - an explicit not_found is a real, present setting, and the empty string is what "nothing configured" looks like, not a guess at where a 404 page might be.
+ * 
+ * Reads a top-level redirect node's children from that lambda object. Each child of the redirect node has a "from" string child and a "to" string child. Builds a list of objects, one per child of the redirect node, each object having a "from" field set to that child's "from" value and a "to" field set to that child's "to" value, preserving the order the children were found in. If there is no top-level redirect node, this list is empty.
+ * 
+ * Returns a response with exactly three fields: "spa_enabled" set to the boolean read above, "not_found" set to the string read above, and "redirects" set to the list built above.
+ */
+auth.ticket.verify:root
+io.file.exists:/etc/www/.config
+
+/*
+ * Declared once, here, as a real sibling of the if/else below - not inside
+ * either branch. A node created inside an if's [.lambda] or an else's own
+ * children is nested one level deeper than its surrounding siblings, so a
+ * later top-level expression like [@.config] could never see it there.
+ */
+.config
+if
+   eq:x:@io.file.exists
+      .:bool:false
+   .lambda
+
+      // No /etc/www/.config file exists yet - .config stays empty.
+else
+   io.file.load:/etc/www/.config
+   hyper2lambda:x:@io.file.load
+   add:x:@.config
+      get-nodes:x:@hyper2lambda/*
+/*
+ * [get-value] has no "default if missing" argument of its own - a value
+ * written directly underneath it, like the two below used to be, is simply
+ * never read by it. Falling back to a default when the node is absent needs
+ * an actual [if]/[else] on [exists], same as the file-existence check above.
+ */
+.spa_enabled
+if
+   exists:x:@.config/*/spa_enabled
+   .lambda
+
+      /*
+       * [get-value] returns whatever .NET type the node's value already is,
+       * never coercing it - an untyped spa_enabled:true in the file parses
+       * as the literal string "true", not a boolean, so without some
+       * conversion the response would carry a quoted "true" instead of a
+       * real JSON boolean.
+       *
+       * [convert]'s own type:bool does NOT handle this correctly: tried
+       * directly against this project's real local .config, converting an
+       * ALREADY-boolean true (written as spa_enabled:bool:true, the form a
+       * save through this same pair of endpoints always produces) came back
+       * false - converting first to a string renders .NET's own "True"
+       * (capital T), which [convert]'s bool parser evidently compares
+       * case-sensitively against "true" and so always fails for a value
+       * that was already proper boolean. Converting to a STRING first and
+       * comparing it case-insensitively sidesteps that bug entirely, and
+       * handles both an untyped "true" string and a proper boolean true the
+       * same way.
+       */
+      convert:x:@.config/*/spa_enabled
+         type:string
+      strings.to-lower:x:@convert
+      eq:x:@strings.to-lower
+         .:true
+      set-value:x:@.spa_enabled
+         get-value:x:@eq
+else
+   set-value:x:@.spa_enabled
+      .:bool:false
+
+/*
+ * Empty, not the convention path /etc/www/.components/404.html, when there
+ * is no explicit not_found - that path is only ever something the SERVER
+ * probes for and silently falls back past if it is not there (confirmed in
+ * Serve404Page, HttpFileExecutorAsync.cs), which is true for every fresh
+ * cloudlet: /etc/www/ starts out completely empty. Returning that path here
+ * as if it were "the current setting" would show a value in the Website
+ * tab's field that looks configured and active when nothing really is -
+ * the field's own placeholder already shows that same path as a hint, so
+ * there is nothing lost by leaving the real value empty until someone
+ * actually sets one.
+ */
+.not_found
+if
+   exists:x:@.config/*/not_found
+   .lambda
+      set-value:x:@.not_found
+         get-value:x:@.config/*/not_found
+else
+   set-value:x:@.not_found
+      .:
+
+.redirects
+for-each:x:@.config/*/redirect/*
+   unwrap:x:+/*/*/*
+   add:x:@.redirects
+      .
+         .
+            from:x:@.dp/#/*/from
+            to:x:@.dp/#/*/to
+yield
+   spa_enabled:x:@.spa_enabled
+   not_found:x:@.not_found
+   redirects:x:@.redirects/*

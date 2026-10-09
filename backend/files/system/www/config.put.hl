@@ -1,0 +1,104 @@
+
+/*
+ * Updates the site's website configuration stored in the /etc/www/.config Hyperlambda file, preserving every other existing setting in that file untouched. Requires the root role.
+ * 
+ * Takes three arguments: spa_enabled of type bool, not_found of type string, and redirects, a list where each item has a "from" string value and a "to" string value.
+ * 
+ * Checks whether /etc/www/.config exists using io.file.exists. If it exists, loads it with io.file.load and parses the loaded text into a lambda object using hyper2lambda with the comments argument set to true, so that any existing comments in the file are kept in the parsed lambda object as part of its nodes. If it does not exist, starts with an empty lambda object instead of throwing.
+ * 
+ * Removes any existing top-level node named spa_enabled from that lambda object, if one exists. Removes any existing top-level node named not_found from that lambda object, if one exists. Removes any existing top-level node named redirect from that lambda object, if one exists. Every other existing top-level node in the lambda object, including comment nodes, is left exactly as found - never removed, never modified.
+ * 
+ * Adds a new top-level node named spa_enabled of type bool to the lambda object, holding the value of the spa_enabled argument.
+ * 
+ * Adds a new top-level node named not_found of type string to the lambda object, holding the value of the not_found argument, but only when that argument is not an empty string - an empty not_found means nothing is configured and no not_found node should be written at all, rather than one holding an empty value.
+ * 
+ * Adds a new top-level node named redirect to the lambda object. This redirect node has one child per item in the redirects argument. Each such child is an anonymous node (name is a single period) having two children of its own: one named "from" holding that item's "from" value, and one named "to" holding that item's "to" value. If the redirects argument is empty, the redirect node has no children.
+ * 
+ * Converts the modified lambda object back into Hyperlambda text using lambda2hyper with the comments argument set to true, so the comments kept earlier are rendered back into the text.
+ * 
+ * Saves that text to /etc/www/.config using io.file.save, overwriting the file's previous content.
+ * 
+ * Returns a response with exactly one field: "saved" set to the boolean value true.
+ */
+.arguments
+   spa_enabled:bool
+   not_found:string
+   redirects:*
+auth.ticket.verify:root
+
+/*
+ * Declared once, here, as a real top-level sibling of the if/else below -
+ * deliberately NOT named ".lambda". [if] and [else] both look for a child
+ * literally named [.lambda] as their own body wrapper (confirmed against
+ * misc/workflows/snippets/if-else.hl), so reusing that name for an ordinary
+ * data node means it never becomes a reachable top-level sibling the way a
+ * node under any other name would - the generator's first attempt at this
+ * file used [.lambda] for exactly that and silently failed to find it again
+ * afterward. Also missing from that attempt: hyper2lambda was never called
+ * on the loaded text at all, so [.existing] stayed a raw string instead of
+ * a parsed lambda object.
+ */
+.existing
+if
+   io.file.exists:/etc/www/.config
+   .lambda
+      io.file.load:/etc/www/.config
+      hyper2lambda:x:@io.file.load
+         comments:true
+      add:x:@.existing
+         get-nodes:x:@hyper2lambda/*
+else
+
+   // No /etc/www/.config file exists yet - .existing stays empty.
+
+remove-nodes:x:@.existing/*/spa_enabled
+remove-nodes:x:@.existing/*/not_found
+remove-nodes:x:@.existing/*/redirect
+
+/*
+ * [add] copies node structures as-is; it does not evaluate an [x:] value
+ * expression written directly on a child the way [yield] does further down.
+ * Without this [unwrap] first, spa_enabled would be added holding the
+ * literal, unresolved expression text rather than the argument's actual
+ * value - the same reason the for-each below unwraps before its own [add].
+ */
+unwrap:x:+/*/*
+add:x:@.existing
+   .
+      spa_enabled:x:@.arguments/*/spa_enabled
+      redirect
+
+/*
+ * not_found is only written when it actually holds something. An empty
+ * value here does not mean "a 404 page at the empty path" - it means
+ * nothing has been configured, which is what the node's ABSENCE already
+ * means to the reader of this file (confirmed in Serve404Page,
+ * HttpFileExecutorAsync.cs: no not_found node falls back to probing the
+ * conventional /etc/www/.components/404.html path and, failing that, a
+ * plain "Not found"). Writing an empty not_found node would instead make
+ * the reader use literally that empty value as the path to check, which is
+ * not the same thing and not what was asked for.
+ */
+if
+   neq:x:@.arguments/*/not_found
+      .:
+   .lambda
+      unwrap:x:+/*/*
+      add:x:@.existing
+         .
+            not_found:x:@.arguments/*/not_found
+
+for-each:x:@.arguments/*/redirects/*
+   unwrap:x:+/*/*/*
+   add:x:@.existing/*/redirect
+      .
+         .
+            from:x:@.dp/#/*/from
+            to:x:@.dp/#/*/to
+
+lambda2hyper:x:@.existing/*
+   comments:true
+io.file.save:/etc/www/.config
+   get-value:x:@lambda2hyper
+return
+   saved:bool:true
