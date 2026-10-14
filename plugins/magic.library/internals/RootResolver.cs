@@ -40,7 +40,18 @@ namespace magic.library.internals
 
         public string AbsolutePath(string path)
         {
-            var absolute = DynamicFiles + path.Replace("\\", "/").TrimStart('/');
+            var relative = path.Replace("\\", "/").TrimStart('/');
+
+            /*
+             * A parent segment is never needed to address a dynamic file, since every path is
+             * relative to the dynamic files folder, and it allows a path to spell one folder while
+             * resolving to another - '/etc/../config/x' is '/config/x' once resolved, which defeats
+             * any caller that checks the folder a path starts with before using it.
+             */
+            if (relative.Split('/').Any(segment => segment == ".."))
+                throw new HyperlambdaException("Path traversal attempt detected");
+
+            var absolute = DynamicFiles + relative;
             var normalized = Path.GetFullPath(absolute);
             if (!normalized.StartsWith(Path.GetFullPath(DynamicFiles)))
                 throw new HyperlambdaException("Path traversal attempt detected");
