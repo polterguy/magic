@@ -927,6 +927,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 .tab {
   background: none;
   border: none;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   padding: 10px 16px;
   font-size: var(--text-base);
   font-weight: 600;
@@ -942,8 +943,13 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   color: var(--text);
 }
 
+/* Same accent-soft fill the rest of the app uses for a selected state
+   (.nav-link.active, .file-tab.active) - the underline alone read too close
+   to a plain hover. */
 .tab.active {
+  background: var(--accent-soft);
   color: var(--accent);
+  font-weight: 700;
   border-bottom-color: var(--accent);
 }
 
