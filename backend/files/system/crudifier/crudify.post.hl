@@ -111,6 +111,23 @@ semaphore:crudifier
             public:true
             status:int:400
 
+   /*
+    * Sanity checking module name and URL, to make sure the generated files cannot be placed
+    * outside of the module's own folder beneath /modules/.
+    */
+   if
+      or
+         strings.contains:x:@.arguments/*/moduleName
+            .:/
+         strings.contains:x:@.arguments/*/moduleName
+            .:..
+         strings.contains:x:@.arguments/*/moduleUrl
+            .:..
+      .lambda
+         throw:"Your module name cannot contain '/' or '..', and your module URL cannot contain '..'"
+            public:true
+            status:int:400
+
    // Creating a log entry explaining roughly what we're about to do.
    log.info:Generating CRUD backend
       module:x:@.arguments/*/moduleName
