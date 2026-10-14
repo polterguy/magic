@@ -849,6 +849,27 @@ semaphore:crudifier
                   status:int:400
 
          /*
+          * A primary key is the [where] criterion of a PUT endpoint and must only be declared in
+          * [primary]. Declaring it in [columns] as well would make the generated [.arguments]
+          * declare the same argument twice, which breaks consumers of the endpoint's signature.
+          */
+         for-each:x:@.arguments/*/args/*/primary/*
+            .pk
+            set-value:x:@.pk
+               get-value:x:@.dp/#/*/name
+            if
+               exists:x:@.arguments/*/args/*/columns/*/*/name/={@.pk}
+               .lambda
+                  strings.concat
+                     .:"Primary key column '"
+                     get-value:x:@.pk
+                     .:"' is declared in both [columns] and [primary] for your PUT endpoint. Declare primary keys in [primary] only."
+                  unwrap:x:+
+                  throw:x:@strings.concat
+                     public:true
+                     status:int:400
+
+         /*
           * Applying PUT arguments.
           * First our primary keys, which ends up becoming a [where] condition,
           * to avoid allowing for updating all records.
