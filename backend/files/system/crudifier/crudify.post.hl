@@ -1786,6 +1786,92 @@ semaphore:crudifier
                   table:x:@.arguments/*/table
                   escaped-table:x:@.escaped-table
 
+               /*
+                * Applying the caller's cross-cutting options to the search endpoint, exactly as they
+                * are applied to the main CRUD template above: [log], [auth] and [captcha]. Without this
+                * the search endpoint is saved without any of them, regardless of what the caller
+                * specified - in particular without any [auth.ticket.verify].
+                */
+               if
+                  and
+                     exists:x:@.arguments/*/log
+                     not
+                        eq
+                           get-value:x:@.arguments/*/log
+                           .:
+                     not
+                        eq
+                           get-value:x:@.arguments/*/log
+                           .
+                  .lambda
+                     unwrap:x:+/*/*/log.info
+                     insert-after:x:@apply/*/.type
+                        .
+                           ..:Logging invocation.
+                           auth.ticket.get
+                           lambda2hyper:x:@.arguments/*
+                           log.info:x:@.arguments/*/log
+                              username:x:@auth.ticket.get
+                              arguments:x:@lambda2hyper
+               if
+                  exists:x:@.arguments/*/auth
+                  .lambda
+                     if
+                        eq
+                           get-value:x:@.arguments/*/auth
+                           .:*
+                        .lambda
+
+                           // No roles specified, but user must be authenticated.
+                           insert-after:x:@apply/*/.type
+                              .
+
+                                 ..:Verifying user is authorized to access endpoint.
+                                 auth.ticket.verify
+                     else
+
+                        // Comma separated list of roles specified.
+                        unwrap:x:+/*/*/auth.ticket.verify
+                        insert-after:x:@apply/*/.type
+                           .
+
+                              ..:Verifying user is authorized to access endpoint.
+                              auth.ticket.verify:x:@.arguments/*/auth
+               if
+                  exists:x:@.arguments/*/captcha
+                  .lambda
+
+                     add:x:@apply/*/.arguments
+                        .
+                           recaptcha:string
+                     unwrap:x:+/**/min
+                     insert-after:x:@apply/*/.type
+                        .
+                           ..:Checking reCAPTCHA value if backend is configured with reCAPTCHA configuration settings.
+                           config.get:"magic:auth:recaptcha:key"
+                           config.get:"magic:auth:recaptcha:secret"
+                           if
+                              and
+                                 neq:x:@config.get
+                                    .
+                                 neq:x:@config.get
+                                    .:
+                                 neq:x:@config.get/@config.get
+                                    .
+                                 neq:x:@config.get/@config.get
+                                    .:
+                              .lambda
+
+                                 ..:reCAPTCHA configuration settings found.
+                                 validators.mandatory:x:@.arguments/*/recaptcha
+                                 validators.recaptcha:x:@.arguments/*/recaptcha/[0,1]
+                                    site-key:x:@config.get/@config.get
+                                    secret:x:@config.get
+                                    min:x:@.arguments/*/captcha
+
+                           ..:To remove reCAPTCHA value preventing it from being used as an argument further down in file.
+                           remove-nodes:x:@.arguments/*/recaptcha/[0,1]
+
                // Creating our file level comment.
                set-value:x:@apply/0
                   strings.replace:x:@apply/0
