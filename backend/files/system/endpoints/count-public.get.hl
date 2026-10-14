@@ -1,0 +1,31 @@
+/*
+ * Returns the number of endpoints in the system that require no
+ * authentication at all - i.e. public endpoints.
+ *
+ * Sibling of "count.get.hl", avoiding the ~100KB full endpoint list for
+ * something that only wants to display how many endpoints are public.
+ */
+.description:Returns the number of endpoints in the system that require no authentication
+.type:internal
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// Contains one empty child per public endpoint found below.
+.result
+
+// Counting endpoints without an [auth] requirement.
+endpoints.list
+for-each:x:@endpoints.list/*
+   if
+      not-exists:x:@.dp/#/*/auth
+      .lambda
+         add:x:@.result
+            .
+               .
+
+// Returning result to caller.
+get-count:x:@.result/*
+unwrap:x:+/*
+return
+   count:x:@get-count

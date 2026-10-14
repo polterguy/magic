@@ -789,6 +789,11 @@ export function countEndpoints() {
   return http.get<{ count: number }>('/magic/system/endpoints/count');
 }
 
+// How many of those endpoints require no authentication at all.
+export function countPublicEndpoints() {
+  return http.get<{ count: number }>('/magic/system/endpoints/count-public');
+}
+
 /*
  * Users and roles.
  */

@@ -19,6 +19,7 @@ import {
   openaiSystemMessages,
   countLog,
   countEndpoints,
+  countPublicEndpoints,
   countTasks,
   countUsers,
   executeTask,
@@ -158,12 +159,14 @@ export default function Dashboard() {
 
   const { backend, version } = useAuth();
   const [endpoints, setEndpoints] = useState<number | null>(null);
+  const [publicEndpoints, setPublicEndpoints] = useState<number | null>(null);
   const [users, setUsers] = useState<number | null>(null);
   const [tasks, setTasks] = useState<number | null>(null);
   const [logItems, setLogItems] = useState<number | null>(null);
   const [missingPlugins, setMissingPlugins] = useState<string[]>([]);
   const [installing, setInstalling] = useState(false);
   const [showEndpointWarning, setShowEndpointWarning] = useState(false);
+  const [showPublicEndpointWarning, setShowPublicEndpointWarning] = useState(false);
   // Null until we know — the prompt stays hidden while the answer is pending.
   const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(null);
   const [configuringOpenai, setConfiguringOpenai] = useState(false);
@@ -239,6 +242,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     countEndpoints().then(r => setEndpoints(r.count)).catch(() => {});
+    countPublicEndpoints().then(r => setPublicEndpoints(r.count)).catch(() => {});
     countUsers('').then(r => setUsers(r.count)).catch(() => {});
     countTasks().then(r => setTasks(r.count)).catch(() => {});
     countLog().then(r => setLogItems(r.count)).catch(() => {});
@@ -349,6 +353,27 @@ export default function Dashboard() {
                 event.preventDefault();
                 event.stopPropagation();
                 setShowEndpointWarning(true);
+              }}>
+              !
+            </button>
+          )}
+        </Link>
+        <Link className="card kpi-link" to="/endpoints?publicOnly=1">
+          <div className={publicEndpoints !== null && publicEndpoints > 0
+            ? 'kpi-value warn'
+            : 'kpi-value'}>
+            {publicEndpoints ?? '…'}
+          </div>
+          <div className="kpi-label">Public endpoints</div>
+          {publicEndpoints !== null && publicEndpoints > 1 && (
+            <button
+              className="kpi-warn-btn"
+              title="Public endpoints require no authentication — click for details"
+              onClick={event => {
+                // The card is a link now — the warning must not navigate.
+                event.preventDefault();
+                event.stopPropagation();
+                setShowPublicEndpointWarning(true);
               }}>
               !
             </button>
@@ -573,6 +598,25 @@ export default function Dashboard() {
           </p>
           <div className="modal-actions">
             <button className="btn" onClick={() => setShowEndpointWarning(false)}>
+              Close
+            </button>
+          </div>
+        </Modal>
+      )}
+      {showPublicEndpointWarning && (
+        <Modal width={560} onClose={() => setShowPublicEndpointWarning(false)}>
+          <h2>This cloudlet has public endpoints</h2>
+          <p className="muted" style={{ marginTop: 0 }}>
+            This cloudlet has {publicEndpoints} endpoints that require no
+            authentication whatsoever — anyone who finds the URL can invoke
+            them, with no login, token, or role check standing in their way.
+            Make sure none of them can read, change, or delete data they
+            shouldn't, run up costs, or otherwise cause damage in the hands
+            of a stranger. If an endpoint doesn't need to be public, add an
+            [auth] requirement to it.
+          </p>
+          <div className="modal-actions">
+            <button className="btn" onClick={() => setShowPublicEndpointWarning(false)}>
               Close
             </button>
           </div>

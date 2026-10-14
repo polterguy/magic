@@ -1978,7 +1978,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
  */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 0;
   margin-bottom: 24px;
   border: 1px solid var(--border);

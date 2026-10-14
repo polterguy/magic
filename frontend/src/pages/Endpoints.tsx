@@ -58,6 +58,7 @@ export default function Endpoints() {
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [filter, setFilter] = useState('');
   const [showSystem, setShowSystem] = useState(false);
+  const [publicOnly, setPublicOnly] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
   const [expanded, setExpanded] = useState<string | null>(null);
   const [result, setResult] = useState<InvokeResult | null>(null);
@@ -84,6 +85,10 @@ export default function Endpoints() {
   const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
     const target = searchParams.get('filter');
+    const wantsPublicOnly = searchParams.get('publicOnly') === '1';
+    if (wantsPublicOnly) {
+      setPublicOnly(true);
+    }
     if (target !== null) {
       setFilter(target);
       // A deep link into a system endpoint must also reveal system endpoints,
@@ -101,6 +106,8 @@ export default function Endpoints() {
         setExpanded(key);
         scrollTarget.current = key;
       }
+    }
+    if (target !== null || wantsPublicOnly) {
       setSearchParams({}, { replace: true });
     }
   }, [searchParams, setSearchParams]);
@@ -112,6 +119,9 @@ export default function Endpoints() {
     for (const endpoint of endpoints) {
       const module = moduleOf(endpoint);
       if (module.system && !showSystem) {
+        continue;
+      }
+      if (publicOnly && (endpoint.auth?.length ?? 0) > 0) {
         continue;
       }
       if (query &&
@@ -140,7 +150,7 @@ export default function Endpoints() {
     // User modules first, system modules last, alphabetical within each.
     return list.sort((left, right) =>
       Number(left.system) - Number(right.system) || left.name.localeCompare(right.name));
-  }, [endpoints, query, showSystem]);
+  }, [endpoints, query, showSystem, publicOnly]);
 
   const shown = groups.reduce((total, group) => total + group.endpoints.length, 0);
   const isOpen = (key: string) => query ? true : expandedModules.has(key);
@@ -201,6 +211,13 @@ export default function Endpoints() {
               checked={showSystem}
               onChange={e => setShowSystem(e.target.checked)} />
             Show system endpoints
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input
+              type="checkbox"
+              checked={publicOnly}
+              onChange={e => setPublicOnly(e.target.checked)} />
+            Public only
           </label>
           <SearchInput
             placeholder="Filter endpoints…"
