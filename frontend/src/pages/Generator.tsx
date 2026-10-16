@@ -10,6 +10,7 @@ import AiPrompt from '../components/AiPrompt';
 import RoleChips from '../components/RoleChips';
 import Tabs from '../components/Tabs';
 import ImportApiTab from '../components/ImportApiTab';
+import SearchInput from '../components/SearchInput';
 import {
   DatabaseSelection,
   buildSqlAiContext,
@@ -21,6 +22,8 @@ import {
   crudify,
   customSqlEndpoint,
   generateSandboxEndpoint,
+  listDynamicSlots,
+  listFilesRecursively,
   listRoles,
   loadFile,
 } from '../lib/api';
@@ -1550,6 +1553,151 @@ function LoggingWizard(props: { onAdd: (lines: string[]) => void; onCancel: () =
 }
 
 /*
+ * Wizard granting dynamic-slot invocation. [execute]/[signal]/[try-signal] do NOT
+ * implement IWhitelistComparer, so pinning them works exactly like any other slot: an
+ * unpinned [execute] would let a caller name ANY dynamic slot as its argument — the fact
+ * that the slot's own internal lookup separately re-checks a [signal:<name>] pin before
+ * actually resolving one is a second, independent gate, not a reason to leave the outer
+ * grant open-ended. So every picked slot gets all three aliases pinned individually —
+ * [execute:<name>], [signal:<name>], [try-signal:<name>] — never a bare alias. Names come
+ * from [slots.vocabulary] (GET /magic/system/evaluator/slots), fetched once per wizard
+ * open so the list always reflects what the server currently has.
+ */
+function DynamicSlotsWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+
+  const [slots, setSlots] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('');
+  const [chosen, setChosen] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    listDynamicSlots()
+      .then(setSlots)
+      .catch(() => showToast('Could not load dynamic slots', true))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const shown = slots.filter(name => !filter || name.toLowerCase().includes(filter.toLowerCase()));
+  const count = Object.values(chosen).filter(Boolean).length;
+
+  function add() {
+    const picked = Object.keys(chosen).filter(name => chosen[name]);
+    if (picked.length === 0) {
+      showToast('Pick at least one dynamic slot', true);
+      return;
+    }
+    const lines = picked.flatMap(name => ['execute:' + name, 'signal:' + name, 'try-signal:' + name]);
+    props.onAdd(lines);
+  }
+
+  return (
+    <div className="card" style={{ padding: 10, marginBottom: 6 }}>
+      <div className="toolbar" style={{ marginBottom: 6 }}>
+        <div style={{ fontWeight: 600, fontSize: 13 }}>Dynamic slots</div>
+        <span className="spacer" />
+        <button className="btn btn-small" onClick={add} disabled={count === 0}>Add</button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+      </div>
+      <div className="toolbar" style={{ marginBottom: 6 }}>
+        <SearchInput placeholder="Filter dynamic slots…" value={filter} onChange={setFilter} />
+        {count > 0 && <span className="muted" style={{ fontSize: 12 }}>{count} selected</span>}
+      </div>
+      <div className="card" style={{ maxHeight: 180, overflow: 'auto', padding: 6 }}>
+        {loading && <span className="muted" style={{ fontSize: 12 }}>loading…</span>}
+        {!loading && shown.length === 0 && (
+          <span className="muted" style={{ fontSize: 12 }}>No dynamic slots found.</span>
+        )}
+        {shown.map(name => (
+          <label key={name} className="checkbox-row" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
+            <input
+              type="checkbox"
+              checked={!!chosen[name]}
+              onChange={e => setChosen({ ...chosen, [name]: e.target.checked })} />
+            <span className="mono">{name}</span>
+          </label>
+        ))}
+      </div>
+      <span className="muted" style={{ fontSize: 12 }}>
+        Each pick pins all three aliases to this exact slot — <span className="mono">execute:&lt;name&gt;</span>,{' '}
+        <span className="mono">signal:&lt;name&gt;</span>, <span className="mono">try-signal:&lt;name&gt;</span> — never a
+        bare alias, so this role can never name a different dynamic slot at either check.
+      </span>
+    </div>
+  );
+}
+
+/*
+ * Wizard granting [execute-file]/[io.file.execute] against specific files under
+ * /modules/ — the only tree admins author business logic in. The chosen file's own
+ * code is NOT re-sandboxed once its path clears the pin (it runs with the whitelist
+ * lifted), so this hands the role everything that file can reach, not just "permission
+ * to call it" — the note below says so. Candidates come from the existing recursive
+ * file listing endpoint, filtered client-side to Hyperlambda files.
+ */
+function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+
+  const [files, setFiles] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('');
+  const [chosen, setChosen] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    listFilesRecursively('/modules/', true)
+      .then(list => setFiles(list.filter(path => path.endsWith('.hl'))))
+      .catch(() => showToast('Could not load module files', true))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const shown = files.filter(path => !filter || path.toLowerCase().includes(filter.toLowerCase()));
+  const count = Object.values(chosen).filter(Boolean).length;
+
+  function add() {
+    const picked = Object.keys(chosen).filter(path => chosen[path]);
+    if (picked.length === 0) {
+      showToast('Pick at least one file', true);
+      return;
+    }
+    const lines = picked.flatMap(path => ['execute-file:' + path, 'io.file.execute:' + path]);
+    props.onAdd(lines);
+  }
+
+  return (
+    <div className="card" style={{ padding: 10, marginBottom: 6 }}>
+      <div className="toolbar" style={{ marginBottom: 6 }}>
+        <div style={{ fontWeight: 600, fontSize: 13 }}>Execute files</div>
+        <span className="spacer" />
+        <button className="btn btn-small" onClick={add} disabled={count === 0}>Add</button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+      </div>
+      <div className="toolbar" style={{ marginBottom: 6 }}>
+        <SearchInput placeholder="Filter files…" value={filter} onChange={setFilter} />
+        {count > 0 && <span className="muted" style={{ fontSize: 12 }}>{count} selected</span>}
+      </div>
+      <div className="card" style={{ maxHeight: 180, overflow: 'auto', padding: 6 }}>
+        {loading && <span className="muted" style={{ fontSize: 12 }}>loading…</span>}
+        {!loading && shown.length === 0 && (
+          <span className="muted" style={{ fontSize: 12 }}>No .hl files found under /modules/.</span>
+        )}
+        {shown.map(path => (
+          <label key={path} className="checkbox-row" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
+            <input
+              type="checkbox"
+              checked={!!chosen[path]}
+              onChange={e => setChosen({ ...chosen, [path]: e.target.checked })} />
+            <span className="mono">{path}</span>
+          </label>
+        ))}
+      </div>
+      <span className="muted" style={{ fontSize: 12 }}>
+        Pins <span className="mono">execute-file</span> and <span className="mono">io.file.execute</span> to
+        each chosen path. Once a path is admitted its own code runs fully trusted, not
+        re-sandboxed — only whitelist files whose logic you have reviewed for this role.
+      </span>
+    </div>
+  );
+}
+
+/*
  * Generic capability wizard: a checkbox per named group of slots. Ticking a group and
  * pressing Add merges that group's slots into the editor. Drives the Tier-2 wizards,
  * which are all "pick which sub-capabilities" with no extra parameters.
@@ -1919,6 +2067,7 @@ function SandboxTab() {
           <div className="toolbar" style={{ marginBottom: 6 }}>
             <span className="muted" style={{ fontSize: 12, marginRight: 4 }}>Add capability:</span>
             {([['db', 'Database'], ['http', 'HTTP'], ['files', 'Files'], ['email', 'Email'], ['images', 'Images'], ['logging', 'Logging'],
+              ['dynslots', 'Dynamic slots'], ['execfiles', 'Execute files'],
               ...Object.entries(TIER2_WIZARDS).map(([kind, spec]) => [kind, spec.label])] as [string, string][]).map(([kind, label]) => (
               <button
                 key={kind}
@@ -1956,6 +2105,16 @@ function SandboxTab() {
           )}
           {wizard?.index === index && wizard.kind === 'logging' && (
             <LoggingWizard
+              onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
+              onCancel={() => setWizard(null)} />
+          )}
+          {wizard?.index === index && wizard.kind === 'dynslots' && (
+            <DynamicSlotsWizard
+              onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
+              onCancel={() => setWizard(null)} />
+          )}
+          {wizard?.index === index && wizard.kind === 'execfiles' && (
+            <ExecuteFilesWizard
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
               onCancel={() => setWizard(null)} />
           )}

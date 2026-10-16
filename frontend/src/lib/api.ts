@@ -378,6 +378,14 @@ export function getHyperlambdaArguments(hyperlambda: string) {
 }
 
 /*
+ * Names of every dynamically created slot ([slots.create]) in the system —
+ * the vocabulary [execute]/[signal] can invoke. Root-only.
+ */
+export function listDynamicSlots() {
+  return http.get<string[]>('/magic/system/evaluator/slots');
+}
+
+/*
  * Issues a request and returns the raw response so callers can dispatch on
  * Content-Type and Content-Disposition (JSON, HTML, files, anything).
  * Throws on non-2xx unless allowErrors is set — invokers want to SHOW
