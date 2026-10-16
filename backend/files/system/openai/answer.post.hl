@@ -55,23 +55,17 @@ data.connect:[generic|magic]
                set-value:x:@.secret
                   config.get:"magic:auth:recaptcha:secret"
 
-               // Making sure reCAPTCHA is configured on the server level.
-               if
-                  and
-                     not-null:x:@.key
-                     neq:x:@.key
-                        .:
-                     not-null:x:@.secret
-                     neq:x:@.secret
-                        .:
-                  .lambda
-
-                     // Verifying reCAPTCHA argument is above threshold, valid, and exists.
-                     validators.mandatory:x:@.arguments/*/recaptcha_response
-                     validators.recaptcha:x:@.arguments/*/recaptcha_response
-                        min:x:@convert
-                        site-key:x:@.key
-                        secret:x:@.secret
+               // Verifying reCAPTCHA argument is above threshold, valid, and exists.
+               //
+               // Validated unconditionally: a type configured to demand reCAPTCHA must fail
+               // CLOSED when the server keys are not configured, not silently accept the
+               // request. This matches magic.ai.endpoint-common.hl, which does not guard the
+               // validation on the server keys being present.
+               validators.mandatory:x:@.arguments/*/recaptcha_response
+               validators.recaptcha:x:@.arguments/*/recaptcha_response
+                  min:x:@convert
+                  site-key:x:@.key
+                  secret:x:@.secret
 
          else
 
