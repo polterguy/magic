@@ -249,9 +249,8 @@ function preview(value: any, max: number) {
  * Resolves the executing node's index path into a line of the rendered
  * Hyperlambda, by walking the indentation one level per index.
  *
- * A value spanning several lines would throw the indentation off, so the line
- * found is only accepted when the name on it is the slot that actually ran -
- * highlighting nothing is fine, highlighting the wrong statement is not.
+ * The line found is only accepted when the name on it is the slot that actually
+ * ran - highlighting nothing is fine, highlighting the wrong statement is not.
  */
 function verifiedLine(lambda: string, path: string, slot: string) {
   const line = lineOfPath(lambda, path);
@@ -293,10 +292,53 @@ function lineOfPath(lambda: string, path: string) {
           break;
         }
       }
+      // A value's own verbatim string may carry literal newlines - jump past its
+      // closing line so those lines are never recounted as siblings of their own.
+      cursor = skipVerbatimString(lines, cursor);
     }
     if (!matched) {
       return -1;
     }
   }
   return found;
+}
+
+/*
+ * Hyperlambda's verbatim string, @"...", may span several real lines, with "" inside
+ * it escaping a literal quote rather than ending the string. Given the line a value
+ * sits on, returns the line its @" literal actually closes on - unchanged when the
+ * line opens no unterminated @" at all - so the caller's line count skips straight
+ * past the lines swallowed by the string instead of mistaking them for siblings.
+ */
+function skipVerbatimString(lines: string[], line: number) {
+  const open = lines[line].indexOf('@"');
+  if (open < 0) {
+    return line;
+  }
+  let index = line;
+  let rest = lines[index].slice(open + 2);
+  while (closingQuote(rest) < 0) {
+    index += 1;
+    if (index >= lines.length) {
+      return lines.length - 1;
+    }
+    rest = lines[index];
+  }
+  return index;
+}
+
+// The index of the first " in text that is not half of a "" escaped literal quote.
+function closingQuote(text: string) {
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === '"') {
+      if (text[i + 1] === '"') {
+        i += 2;
+        continue;
+      }
+      return i;
+    }
+    i += 1;
+  }
+  return -1;
 }
