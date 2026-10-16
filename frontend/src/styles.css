@@ -2314,6 +2314,21 @@ pre.result-json {
 }
 
 /*
+ * Highlights a whole picker row on hover — so a trailing per-row icon (e.g. the
+ * Sandbox generator's file-description button) visually ties back to its row
+ * instead of floating, in both light and dark mode.
+ */
+.wizard-pick-row {
+  padding: 2px 6px;
+  margin: 0 -6px;
+  border-radius: var(--radius-sm);
+}
+
+.wizard-pick-row:hover {
+  background: var(--accent-soft);
+}
+
+/*
  * A checkbox belongs BESIDE its label, but .form-grid stacks every label as a
  * caption above its control — and wins on specificity. So the row direction is
  * restated here, scoped tightly enough to beat it.

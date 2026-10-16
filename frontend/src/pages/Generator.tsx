@@ -19,10 +19,13 @@ import {
   useSqlSnippets,
 } from '../lib/sql';
 import {
+  EndpointMeta,
   crudify,
   customSqlEndpoint,
   generateSandboxEndpoint,
+  getHyperlambdaArguments,
   listDynamicSlots,
+  listEndpointsDetailed,
   listFilesRecursively,
   listRoles,
   loadFile,
@@ -1345,11 +1348,27 @@ function HttpAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: (
  * slots take their path as the slot value, so an optional [path] pins every granted
  * operation to that exact path; blank grants the operation for any path.
  */
+/*
+ * Folder-kind slots take a FOLDER as their argument (Utilities.MatchesFolder) — pinning one
+ * to a folder restricts it to that exact folder, not its subfolders. Every other slot below
+ * takes a FILENAME (Utilities.MatchesFile) instead, so pinning it to the same bare folder
+ * path would be unsatisfiable: no real filename ever equals the empty trailing segment a
+ * folder path leaves, and the pin would silently deny every call rather than fail loudly.
+ * [io.path.get-folder] is left out of FILE_SLOTS entirely — it is a pure string utility with
+ * no filesystem side effect and a third, unrelated matching rule if ever pinned, so it is
+ * granted unconditionally alongside Read instead of forced into either shape.
+ */
+const FOLDER_KIND_SLOTS = new Set([
+  'io.file.list', 'io.file.list-recursively', 'io.file.search',
+  'io.folder.exists', 'io.folder.list', 'io.folder.list-recursively',
+  'io.folder.create', 'io.folder.copy', 'io.folder.move', 'io.folder.delete',
+]);
+
 const FILE_SLOTS: Record<string, string[]> = {
   read: [
     'io.file.load', 'io.file.load.binary', 'io.file.exists', 'io.file.list',
     'io.file.list-recursively', 'io.file.search', 'io.folder.exists', 'io.folder.list',
-    'io.folder.list-recursively', 'io.path.get-folder',
+    'io.folder.list-recursively',
   ],
   write: [
     'io.file.save', 'io.file.save.binary', 'io.file.copy', 'io.file.move', 'io.file.patch',
@@ -1358,9 +1377,27 @@ const FILE_SLOTS: Record<string, string[]> = {
   delete: ['io.file.delete', 'io.folder.delete'],
 };
 
+/*
+ * Builds one slot's vocabulary line for a given folder — folder-kind slots pin the folder
+ * verbatim; file-kind slots append a wildcard filename (optionally narrowed to an extension),
+ * since that is the only way Utilities.Matches ever admits a real file inside a folder.
+ */
+function fileSystemPin(slot: string, folder: string, extension: string): string {
+  if (!folder) {
+    return slot;
+  }
+  const normalized = folder.endsWith('/') ? folder : folder + '/';
+  if (FOLDER_KIND_SLOTS.has(slot)) {
+    return slot + ':' + normalized;
+  }
+  const ext = extension.trim().replace(/^\.+/, '');
+  return slot + ':' + normalized + '*' + (ext ? '.' + ext : '');
+}
+
 function FilesAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
 
   const [path, setPath] = useState('');
+  const [extension, setExtension] = useState('');
   const [read, setRead] = useState(true);
   const [write, setWrite] = useState(false);
   const [remove, setRemove] = useState(false);
@@ -1380,8 +1417,12 @@ function FilesAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: 
       showToast('Tick at least one tier', true);
       return;
     }
-    const pinned = path.trim();
-    props.onAdd(pinned ? slots.map(slot => slot + ':' + pinned) : slots);
+    const folder = path.trim();
+    const lines = slots.map(slot => fileSystemPin(slot, folder, extension));
+    if (read) {
+      lines.push('io.path.get-folder');
+    }
+    props.onAdd(lines);
   }
 
   return (
@@ -1402,8 +1443,8 @@ function FilesAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: 
         <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
       </div>
       <div className="toolbar">
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }} title="Pin every ticked operation to this exact path; blank allows any path">
-          Path
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }} title="Folder operations are pinned to exactly this folder, not its subfolders; file operations are pinned to any file directly inside it">
+          Folder
           <input
             type="text"
             placeholder="/etc/data/  (blank = any path)"
@@ -1411,10 +1452,23 @@ function FilesAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: 
             onChange={e => setPath(e.target.value)}
             style={{ flex: 1 }} />
         </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Narrows file operations to this extension only, e.g. conf for *.conf; blank allows any file in the folder">
+          Extension
+          <input
+            type="text"
+            placeholder="any"
+            value={extension}
+            onChange={e => setExtension(e.target.value)}
+            style={{ width: 70 }} />
+        </label>
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
-        File and folder slots pin their path argument — a path here restricts every ticked
-        operation to that exact path; leave it blank to allow any path.
+        Folder operations (list, exists, create, delete, copy, move on folders) are pinned to
+        exactly this folder — not its subfolders. File operations (load, save, delete, copy,
+        move, exists, patch, unzip) are pinned to any file directly inside it; add an
+        extension above to narrow that further. For a deeper folder, run this wizard again
+        with that folder; for one exact file, edit the list below directly. Leave Folder
+        blank to allow any path.
       </span>
     </div>
   );
@@ -1517,21 +1571,13 @@ function ImagesWizard(props: { onAdd: (lines: string[]) => void; onCancel: () =>
 function LoggingWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
 
   const [write, setWrite] = useState(true);
-  const [read, setRead] = useState(false);
 
   function add() {
-    const lines: string[] = [];
-    if (write) {
-      lines.push('log.info', 'log.debug', 'log.error', 'log.fatal');
-    }
-    if (read) {
-      lines.push('log.get', 'log.query', 'log.count');
-    }
-    if (lines.length === 0) {
-      showToast('Tick Write or Read', true);
+    if (!write) {
+      showToast('Tick Write', true);
       return;
     }
-    props.onAdd(lines);
+    props.onAdd(['log.info', 'log.debug', 'log.error', 'log.fatal']);
   }
 
   return (
@@ -1540,9 +1586,6 @@ function LoggingWizard(props: { onAdd: (lines: string[]) => void; onCancel: () =
         <div style={{ fontWeight: 600, fontSize: 13 }}>Logging</div>
         <label style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="log.info / debug / error / fatal">
           <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} />Write
-        </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="log.get / query / count">
-          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} />Read
         </label>
         <span className="spacer" />
         <button className="btn btn-small" onClick={add}>Add</button>
@@ -1608,7 +1651,7 @@ function DynamicSlotsWizard(props: { onAdd: (lines: string[]) => void; onCancel:
           <span className="muted" style={{ fontSize: 12 }}>No dynamic slots found.</span>
         )}
         {shown.map(name => (
-          <label key={name} className="checkbox-row" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
+          <label key={name} className="checkbox-row wizard-pick-row" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
             <input
               type="checkbox"
               checked={!!chosen[name]}
@@ -1634,18 +1677,117 @@ function DynamicSlotsWizard(props: { onAdd: (lines: string[]) => void; onCancel:
  * to call it" — the note below says so. Candidates come from the existing recursive
  * file listing endpoint, filtered client-side to Hyperlambda files.
  */
+const TOOLTIP_WIDTH = 560;
+
+/*
+ * Matches a candidate file's path (e.g. "/modules/oauth/authorize.get.hl") against the
+ * {path, verb} shape /magic/system/endpoints/list keys its entries by (e.g.
+ * "magic/oauth/authorize" + "get") — null for files with no HTTP-verb suffix, since
+ * those are never HTTP endpoints and so never appear in that list.
+ */
+const VERB_SUFFIX = /^(.*)\.(get|post|put|patch|delete|socket)\.hl$/;
+
+function endpointKey(filePath: string): string | null {
+  const relative = filePath.replace(/^\/(modules|system)\//, '');
+  const match = VERB_SUFFIX.exec(relative);
+  return match ? 'magic/' + match[1] + '|' + match[2] : null;
+}
+
+/*
+ * Pulls the single file-level comment every generated Hyperlambda file carries at its
+ * top — a leading /* *\/ block or a leading run of // lines — stripping the comment
+ * markers so only the prose remains. Returns null when the file has neither. Used only
+ * as a fallback for files endpoints.list never sees (no HTTP-verb suffix, e.g. a startup
+ * script or a plain manifest) — every endpoint file's description comes from the backend
+ * instead (see endpointKey above), which already applies this exact same rule server-side.
+ */
+function extractFileComment(content: string): string | null {
+  const lines = content.split('\n');
+  let i = 0;
+  while (i < lines.length && lines[i].trim() === '') {
+    i++;
+  }
+  if (i >= lines.length) {
+    return null;
+  }
+  if (lines[i].trim().startsWith('/*')) {
+    const body: string[] = [];
+    let line = lines[i].replace(/^\s*\/\*/, '');
+    while (i < lines.length && !line.includes('*/')) {
+      body.push(line.replace(/^\s*\*\s?/, ''));
+      i++;
+      line = lines[i] ?? '';
+    }
+    body.push(line.replace(/\*\/.*$/, '').replace(/^\s*\*\s?/, ''));
+    return body.join('\n').trim() || null;
+  }
+  if (lines[i].trim().startsWith('//')) {
+    const body: string[] = [];
+    while (i < lines.length && lines[i].trim().startsWith('//')) {
+      body.push(lines[i].trim().replace(/^\/\/\s?/, ''));
+      i++;
+    }
+    return body.join('\n').trim() || null;
+  }
+  return null;
+}
+
+function formatEndpointMeta(meta: EndpointMeta): string {
+  const lines = [meta.description ?? 'No description.'];
+  if (meta.input && meta.input.length > 0) {
+    lines.push('', 'Arguments:');
+    for (const field of meta.input) {
+      lines.push('  ' + field.name + ': ' + field.type + (field.description ? ' — ' + field.description : ''));
+    }
+  }
+  return lines.join('\n');
+}
+
+function formatFallbackMeta(
+  description: string,
+  args: Record<string, { type: string; mandatory?: boolean }> | null,
+): string {
+  const lines = [description];
+  const names = args ? Object.keys(args) : [];
+  if (names.length > 0) {
+    lines.push('', 'Arguments:');
+    for (const name of names) {
+      lines.push('  ' + name + ': ' + args![name].type + (args![name].mandatory ? ' (mandatory)' : ''));
+    }
+  }
+  return lines.join('\n');
+}
+
 function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
 
   const [files, setFiles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [chosen, setChosen] = useState<Record<string, boolean>>({});
+  // The description + arguments currently shown as a tooltip, and where to anchor it;
+  // resolved lazily on click and cached per path so re-opening the same file is instant.
+  const [tooltip, setTooltip] = useState<{ path: string; text: string; x: number; y: number } | null>(null);
+  const [descLoading, setDescLoading] = useState<string | null>(null);
+  const descCache = useRef<Record<string, string>>({});
+  // One /magic/system/endpoints/list fetch, keyed by {path, verb} — the same backend-
+  // computed description/argument metadata the Web Designer and OpenAPI spec use, so an
+  // endpoint file's tooltip costs no extra request once this has loaded.
+  const endpointsByKey = useRef<Record<string, EndpointMeta>>({});
 
   useEffect(() => {
     listFilesRecursively('/modules/', true)
       .then(list => setFiles(list.filter(path => path.endsWith('.hl'))))
       .catch(() => showToast('Could not load module files', true))
       .finally(() => setLoading(false));
+    listEndpointsDetailed()
+      .then(list => {
+        const map: Record<string, EndpointMeta> = {};
+        for (const entry of list) {
+          map[entry.path + '|' + entry.verb] = entry;
+        }
+        endpointsByKey.current = map;
+      })
+      .catch(() => {}); // best-effort — the per-file fallback still works without it
   }, []);
 
   const shown = files.filter(path => !filter || path.toLowerCase().includes(filter.toLowerCase()));
@@ -1661,6 +1803,46 @@ function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel:
     props.onAdd(lines);
   }
 
+  async function toggleDescription(path: string, e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (tooltip?.path === path) {
+      setTooltip(null);
+      return;
+    }
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    // Right-aligns the tooltip to the icon, then clamps it to stay inside the viewport —
+    // the icon sits at the far right of its row, so left-aligning it would run off-screen.
+    const x = Math.max(8, Math.min(rect.right - TOOLTIP_WIDTH, window.innerWidth - TOOLTIP_WIDTH - 8));
+    const position = { x, y: rect.bottom + 4 };
+    const cached = descCache.current[path];
+    if (cached !== undefined) {
+      setTooltip({ path, text: cached, ...position });
+      return;
+    }
+    const key = endpointKey(path);
+    const meta = key ? endpointsByKey.current[key] : undefined;
+    if (meta) {
+      const text = formatEndpointMeta(meta);
+      descCache.current[path] = text;
+      setTooltip({ path, text, ...position });
+      return;
+    }
+    setDescLoading(path);
+    try {
+      const content = await loadFile(path);
+      const description = extractFileComment(content) ?? 'No file-level comment.';
+      const args = await getHyperlambdaArguments(content);
+      const text = formatFallbackMeta(description, args);
+      descCache.current[path] = text;
+      setTooltip({ path, text, ...position });
+    } catch {
+      showToast('Could not load ' + path, true);
+    } finally {
+      setDescLoading(null);
+    }
+  }
+
   return (
     <div className="card" style={{ padding: 10, marginBottom: 6 }}>
       <div className="toolbar" style={{ marginBottom: 6 }}>
@@ -1673,18 +1855,26 @@ function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel:
         <SearchInput placeholder="Filter files…" value={filter} onChange={setFilter} />
         {count > 0 && <span className="muted" style={{ fontSize: 12 }}>{count} selected</span>}
       </div>
-      <div className="card" style={{ maxHeight: 180, overflow: 'auto', padding: 6 }}>
+      <div className="card" style={{ maxHeight: 180, overflow: 'auto', padding: '6px 14px 6px 6px' }}>
         {loading && <span className="muted" style={{ fontSize: 12 }}>loading…</span>}
         {!loading && shown.length === 0 && (
           <span className="muted" style={{ fontSize: 12 }}>No .hl files found under /modules/.</span>
         )}
         {shown.map(path => (
-          <label key={path} className="checkbox-row" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
+          <label key={path} className="checkbox-row wizard-pick-row" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
             <input
               type="checkbox"
               checked={!!chosen[path]}
               onChange={e => setChosen({ ...chosen, [path]: e.target.checked })} />
             <span className="mono">{path}</span>
+            <button
+              type="button"
+              className="btn btn-secondary btn-small"
+              title="Show this file's file-level comment"
+              style={{ marginLeft: 'auto', padding: '0 6px', minWidth: 20 }}
+              onClick={e => toggleDescription(path, e)}>
+              {descLoading === path ? '…' : '?'}
+            </button>
           </label>
         ))}
       </div>
@@ -1693,6 +1883,22 @@ function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel:
         each chosen path. Once a path is admitted its own code runs fully trusted, not
         re-sandboxed — only whitelist files whose logic you have reviewed for this role.
       </span>
+      {tooltip && (
+        <div
+          className="card"
+          style={{
+            position: 'fixed', left: tooltip.x, top: tooltip.y, zIndex: 1000,
+            width: TOOLTIP_WIDTH, maxHeight: 280, overflow: 'auto',
+            padding: 8, fontSize: 12, whiteSpace: 'pre-wrap', boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          }}>
+          <div className="toolbar" style={{ marginBottom: 4 }}>
+            <span className="mono" style={{ fontWeight: 600 }}>{tooltip.path}</span>
+            <span className="spacer" />
+            <button className="btn btn-secondary btn-small" onClick={() => setTooltip(null)}>×</button>
+          </div>
+          {tooltip.text}
+        </div>
+      )}
     </div>
   );
 }
