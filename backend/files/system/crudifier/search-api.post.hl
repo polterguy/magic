@@ -45,10 +45,16 @@ validators.enum:x:@.arguments/*/verb
 validators.enum:x:@.arguments/*/result
    .:references
    .:rows
-validators.enum:x:@.arguments/*/retrieval
-   .:bm25
-   .:mixed
-   .:embeddings
+if
+   and
+      not-null:x:@.arguments/*/retrieval
+      neq:x:@.arguments/*/retrieval
+         .:
+   .lambda
+      validators.enum:x:@.arguments/*/retrieval
+         .:bm25
+         .:mixed
+         .:embeddings
 validators.default:x:@.arguments
    limit:int:5
    rateWindow:int:60

@@ -38,10 +38,6 @@
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/type
 validators.mandatory:x:@.arguments/*/query
-validators.enum:x:@.arguments/*/retrieval
-   .:bm25
-   .:mixed
-   .:embeddings
 validators.default:x:@.arguments
    limit:int:5
 
@@ -69,13 +65,35 @@ data.connect:magic
       get-value:x:@data.read/*/*/vector_model
    set-value:x:@.retrieval
       get-first-value
-         get-value:x:@.arguments/*/retrieval
          get-value:x:@data.read/*/*/retrieval
          .:embeddings
    set-value:x:@.threshold
-      get-first-value
+      get-value:x:@data.read/*/*/threshold
+
+/*
+ * The optional overrides. A setting that was left out arrives empty - as an empty text, or as 0
+ * for the threshold, which is not a useful cutoff anyway - and then the type's own applies.
+ */
+if
+   and
+      not-null:x:@.arguments/*/retrieval
+      neq:x:@.arguments/*/retrieval
+         .:
+   .lambda
+      validators.enum:x:@.arguments/*/retrieval
+         .:bm25
+         .:mixed
+         .:embeddings
+      set-value:x:@.retrieval
+         get-value:x:@.arguments/*/retrieval
+if
+   and
+      not-null:x:@.arguments/*/threshold
+      mt:x:@.arguments/*/threshold
+         .:decimal:0
+   .lambda
+      set-value:x:@.threshold
          get-value:x:@.arguments/*/threshold
-         get-value:x:@data.read/*/*/threshold
 set-value:x:@.threshold
    convert:x:@.threshold
       type:double
