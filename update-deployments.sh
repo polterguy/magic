@@ -2,7 +2,7 @@
 set -euo pipefail
 
 NAMESPACE="cloudlets"
-IMAGE="servergardens/magic-backend:v23.5.14"
+IMAGE="servergardens/magic-backend:v24.0.2"
 FSGROUP="999"
 
 # Forwarded-headers hop count: client → Cloudflare → ingress → pod.
@@ -11,10 +11,23 @@ FSGROUP="999"
 FWD_LIMIT="2"
 FWD_ENV="magic__forwarded-headers__forward-limit"
 
+# Cloudlet workloads never call the Kubernetes API, so they get a ServiceAccount with no
+# token mounted at all, rather than the namespace's "default" SA every pod gets otherwise.
+NOAPI_SA="no-api-access"
+
 echo "========================================="
 echo "Safe upgrade of deployments in $NAMESPACE"
 echo "Target image: $IMAGE"
 echo "========================================="
+
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: $NOAPI_SA
+  namespace: $NAMESPACE
+automountServiceAccountToken: false
+EOF
 
 for DEP in $(kubectl get deployments -n "$NAMESPACE" -o jsonpath='{.items[*].metadata.name}')
 do
@@ -61,6 +74,44 @@ spec:
     NEEDS_UPDATE=1
   else
     echo "fsGroup already correct."
+  fi
+
+  # ===============================
+  # 2.3) Check serviceAccountName
+  # ===============================
+  CURSA=$(kubectl get deployment "$DEP" -n "$NAMESPACE" \
+    -o jsonpath='{.spec.template.spec.serviceAccountName}' 2>/dev/null || true)
+
+  if [[ "$CURSA" != "$NOAPI_SA" ]]; then
+    echo "serviceAccountName needs update → $NOAPI_SA"
+    kubectl patch deployment "$DEP" -n "$NAMESPACE" --type=merge -p "
+spec:
+  template:
+    spec:
+      serviceAccountName: $NOAPI_SA
+"
+    NEEDS_UPDATE=1
+  else
+    echo "serviceAccountName already correct."
+  fi
+
+  # ===============================
+  # 2.4) Check automountServiceAccountToken
+  # ===============================
+  CURTOKEN=$(kubectl get deployment "$DEP" -n "$NAMESPACE" \
+    -o jsonpath='{.spec.template.spec.automountServiceAccountToken}' 2>/dev/null || true)
+
+  if [[ "$CURTOKEN" != "false" ]]; then
+    echo "automountServiceAccountToken needs update → false"
+    kubectl patch deployment "$DEP" -n "$NAMESPACE" --type=merge -p "
+spec:
+  template:
+    spec:
+      automountServiceAccountToken: false
+"
+    NEEDS_UPDATE=1
+  else
+    echo "automountServiceAccountToken already correct."
   fi
 
   # ===============================
