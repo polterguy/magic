@@ -1,6 +1,6 @@
 import { showToast } from '../lib/toast';
 import Select from '../components/Select';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import ProgressDialog, { ProgressLine } from '../components/ProgressDialog';
 import AiWaiter from '../components/AiWaiter';
@@ -1917,8 +1917,10 @@ function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel:
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
         Pins <span className="mono">execute-file</span> and <span className="mono">io.file.execute</span> to
-        each chosen path. Once a path is admitted its own code runs fully trusted, not
-        re-sandboxed — only whitelist files whose logic you have reviewed for this role.
+        each chosen path. This is how a role gets complex domain logic without being granted
+        the raw slots that logic uses (data.read and so on): once a path is admitted its own
+        code runs fully trusted, not re-sandboxed — only whitelist files whose logic you have
+        reviewed for this role.
       </span>
       {tooltip && (
         <div
@@ -2088,6 +2090,9 @@ function SandboxTab() {
   const [wizard, setWizard] = useState<{ index: number; kind: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState('');
+  // The endpoint that was just generated, so it can be opened straight from here.
+  const [generated, setGenerated] = useState<{ path: string; file: string; verb: string } | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     listRoles()
@@ -2151,8 +2156,10 @@ function SandboxTab() {
         policy: JSON.stringify(policy),
         overwrite,
       });
+      const path = 'magic/modules/' + moduleName + '/' + endpointName;
       setPreview(response.hyperlambda);
-      showToast('Endpoint magic/' + moduleName + '/' + endpointName + ' created');
+      setGenerated({ path, file: response.file, verb });
+      showToast('Endpoint ' + path + ' created');
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     } finally {
@@ -2414,6 +2421,24 @@ function SandboxTab() {
           <div className="toolbar" style={{ marginTop: 12 }}>
             <div style={{ fontWeight: 600, fontSize: 13 }}>Generated endpoint</div>
             <span className="muted" style={{ fontSize: 12 }}>read-only preview of what was saved</span>
+            <span className="spacer" />
+            {generated && (
+              <>
+                <button
+                  className="btn btn-secondary btn-small"
+                  title="Invoke it, or describe what each role can call"
+                  onClick={() => navigate(
+                    '/endpoints?filter=' + encodeURIComponent(generated.path) +
+                    '&expand=' + encodeURIComponent(generated.verb))}>
+                  Open in Endpoints
+                </button>
+                <button
+                  className="btn btn-secondary btn-small"
+                  onClick={() => navigate('/hyper-ide?open=' + encodeURIComponent(generated.file))}>
+                  Open in Hyper IDE
+                </button>
+              </>
+            )}
           </div>
           <div style={{ height: 320, display: 'flex', flexDirection: 'column' }}>
             <CodeEditor value={preview} mode="hyperlambda" readOnly={true} />

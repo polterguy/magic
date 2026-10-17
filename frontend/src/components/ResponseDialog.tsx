@@ -33,6 +33,11 @@ export default function ResponseDialog(props: {
         <span className="muted" style={{ fontSize: 13, fontWeight: 400 }}>
           {result.elapsed} ms
         </span>
+        {result.runAs && (
+          <span className="badge" title="This call ran as a caller holding only this role">
+            as {result.runAs}
+          </span>
+        )}
       </h2>
       <ResponseHeaders headers={result.headers} />
       {props.httpInvocation && !servedByBackend() && (

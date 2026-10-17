@@ -10,8 +10,9 @@
  * what happened, and a [reason] whenever the runtime refused the code or it failed.
  *
  * To discover the exact capability surface available to you, call with [describe] set
- * to true instead of [hyperlambda]/[instruction] - it returns your visible vocabulary
- * directly, without executing anything or counting against the rate limit.
+ * to true instead of [hyperlambda]/[instruction] - it returns your visible vocabulary,
+ * and the rate limit and timeout that apply to you, without executing anything or
+ * counting against the rate limit.
  *
  * States: described (a [describe] call), executed, rejected (a function or a pinned
  * argument was not allowed), unknown-slot (a referenced function does not exist),
@@ -77,10 +78,61 @@ if
          .:bool:true
 
 /*
- * A caller asking to [describe] the sandbox gets back its own visible vocabulary
- * instead of executing anything. This runs before the rate limit and timeout are
- * resolved, and before [instruction]/[hyperlambda] are required, so discovering what
- * is allowed here never costs the caller's execution budget.
+ * Rate limit and timeout for sandboxed (non-root) callers - root has neither. Both are
+ * resolved independently by walking the rules top down and taking the first matching rule
+ * that declares that dimension, so an earlier rule can override one, both, or neither,
+ * with the '*' base rule as the fallback. Resolved ahead of [describe] so that it can tell
+ * the caller what it is subject to, and applied only once there is code to run.
+ */
+.tname
+.tlimit:int:0
+.twindow:int:0
+.ttimeout
+if
+   not
+      get-value:x:@.is-root
+   .lambda
+
+      // Rate limit - first matching rule that declares a [limit].
+      for-each:x:@.policy/*/rules/*
+         if
+            and
+               null:x:@.tname
+               not-null:x:@.dp/#/*/limit
+               or
+                  eq:x:@.dp/#/*/role
+                     .:*
+                  auth.ticket.in-role:x:@.dp/#/*/role
+            .lambda
+               set-value:x:@.tname
+                  strings.concat
+                     get-value:x:@.policy/*/throttle-prefix
+                     .:-
+                     get-value:x:@.dp/#/*/role
+               set-value:x:@.tlimit
+                  get-value:x:@.dp/#/*/limit
+               set-value:x:@.twindow
+                  get-value:x:@.dp/#/*/window
+
+      // Timeout - first matching rule that declares a [timeout].
+      for-each:x:@.policy/*/rules/*
+         if
+            and
+               null:x:@.ttimeout
+               not-null:x:@.dp/#/*/timeout
+               or
+                  eq:x:@.dp/#/*/role
+                     .:*
+                  auth.ticket.in-role:x:@.dp/#/*/role
+            .lambda
+               set-value:x:@.ttimeout
+                  get-value:x:@.dp/#/*/timeout
+
+/*
+ * A caller asking to [describe] the sandbox gets back its own visible vocabulary, and
+ * the rate limit and timeout it is subject to, instead of executing anything. This runs
+ * before [instruction]/[hyperlambda] are required, and before the rate limit is applied,
+ * so discovering what is allowed here never costs the caller's execution budget.
  *
  * The vocabulary is a list with one object per slot, carrying its [name] and its pinned
  * [value] (null when unpinned). It cannot be a map keyed by slot name, since the same
@@ -138,67 +190,45 @@ if
                get-value:x:@.dp/#
             add:x:@.response/*/vocabulary
                get-nodes:x:@.row/*
-      return-nodes:x:@.response/*
 
-/*
- * Rate limiting and timeout for sandboxed (non-root) callers. Both are resolved
- * independently by walking the rules top down and taking the first matching rule
- * that declares that dimension, so an earlier rule can override one, both, or
- * neither, with the '*' base rule as the fallback. The throttle is keyed by the
- * caller's IP; declaring an unchanged throttle keeps its counters, so the
- * declaration can live in the endpoint itself.
- */
-if
-   not
-      get-value:x:@.is-root
-   .lambda
-
-      // Rate limit - first matching rule that declares a [limit].
-      .tname
-      .tlimit:int:0
-      .twindow:int:0
-      for-each:x:@.policy/*/rules/*
-         if
-            and
-               null:x:@.tname
-               not-null:x:@.dp/#/*/limit
-               or
-                  eq:x:@.dp/#/*/role
-                     .:*
-                  auth.ticket.in-role:x:@.dp/#/*/role
-            .lambda
-               set-value:x:@.tname
-                  strings.concat
-                     get-value:x:@.policy/*/throttle-prefix
-                     .:-
-                     get-value:x:@.dp/#/*/role
-               set-value:x:@.tlimit
-                  get-value:x:@.dp/#/*/limit
-               set-value:x:@.twindow
-                  get-value:x:@.dp/#/*/window
+      /*
+       * What the caller is subject to: invocations per [window] seconds, per IP, and the
+       * timeout in milliseconds. Either is left out when it does not apply, as for root.
+       */
       if
          not-null:x:@.tname
          .lambda
-            execution.throttle.create:x:@.tname
-               limit:x:@.tlimit
-               window:x:@.twindow
-               per:ip
-            execution.throttle:x:@.tname
+            add:x:@.response
+               .
+                  limit
+                  window
+            set-value:x:@.response/*/limit
+               get-value:x:@.tlimit
+            set-value:x:@.response/*/window
+               get-value:x:@.twindow
+      if
+         not-null:x:@.ttimeout
+         .lambda
+            add:x:@.response
+               .
+                  timeout
+            set-value:x:@.response/*/timeout
+               get-value:x:@.ttimeout
+      return-nodes:x:@.response/*
 
-      // Timeout - first matching rule that declares a [timeout].
-      .ttimeout
-      for-each:x:@.policy/*/rules/*
-         if
-            and
-               null:x:@.ttimeout
-               not-null:x:@.dp/#/*/timeout
-               or
-                  eq:x:@.dp/#/*/role
-                     .:*
-                  auth.ticket.in-role:x:@.dp/#/*/role
-            .lambda
-               set-value:x:@.ttimeout
-                  get-value:x:@.dp/#/*/timeout
+/*
+ * Applying the rate limit resolved above to sandboxed (non-root) callers. The throttle
+ * is keyed by the caller's IP; declaring an unchanged throttle keeps its counters, so
+ * the declaration can live in the endpoint itself.
+ */
+if
+   not-null:x:@.tname
+   .lambda
+      execution.throttle.create:x:@.tname
+         limit:x:@.tlimit
+         window:x:@.twindow
+         per:ip
+      execution.throttle:x:@.tname
 
 /*
  * Resolving the code to run. A non-empty [instruction] is natural language and is

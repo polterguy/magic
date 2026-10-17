@@ -16,7 +16,12 @@ import { Endpoint, apiBaseUrl, generateRoleToken, invokeEndpoint, listRoles } fr
 
 export interface InvokeResult extends RawResult {
   elapsed: number;
+  // The role the invocation impersonated, when it did - empty or absent means the caller.
+  runAs?: string;
 }
+
+// Where the "Run as" choice is kept, so it survives switching endpoint within a session.
+const RUN_AS_KEY = 'magic2.invoke.runAs';
 
 /*
  * Builds a sample JSON payload from the endpoint's argument meta, the way
@@ -128,7 +133,12 @@ export default function InvokePanel(props: {
   const [fullDescription, setFullDescription] = useState(false);
   // Every role on the server, and the one the invocation impersonates - empty is yourself.
   const [roles, setRoles] = useState<string[]>([]);
-  const [runAs, setRunAs] = useState('');
+  const [runAs, setRunAsState] = useState(() => sessionStorage.getItem(RUN_AS_KEY) ?? '');
+
+  function setRunAs(role: string) {
+    setRunAsState(role);
+    sessionStorage.setItem(RUN_AS_KEY, role);
+  }
 
   useEffect(() => {
     listRoles()
@@ -288,7 +298,7 @@ export default function InvokePanel(props: {
       const token = runAs ? await generateRoleToken(runAs) : undefined;
       const response = await invokeEndpoint(
         endpoint.verb, url, body, endpoint.consumes ?? 'application/json', token);
-      props.onResult(response);
+      props.onResult({ ...response, runAs });
     } catch (err: any) {
       setInvokeError(err.message);
     } finally {
