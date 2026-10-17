@@ -1,0 +1,115 @@
+
+/*
+ * Creates a new memory - any piece of text worth keeping, such as a reusable Hyperlambda snippet,
+ * a fact, a preference or a decision - which can later be found again with [search-memory], both
+ * by keyword and by meaning. Read the persist-memory guide for how to use memories.
+ *
+ * Memories live in a collection, which is a machine learning type. A collection is created the
+ * first time it is used. It searches by keyword and meaning, and can only be used by root.
+ */
+.arguments
+
+   // Injected by the framework.
+   _session:string
+
+   // Mandatory single line summary of what the memory is about. This is what it is found by, so include the words you would search for.
+   prompt:string
+
+   // Mandatory content of the memory, stored exactly as given. Whitespace is kept, which matters for Hyperlambda.
+   completion:string
+
+   // Optional URL or reference the memory belongs to, such as the endpoint a Hyperlambda snippet was written for. Search can be restricted to it.
+   uri:string
+
+   // Optional short label for the kind of memory, such as hyperlambda or preference.
+   meta:string
+
+   // Optional name of the collection to store the memory in. Lower case letters, numbers, - and _ only. Defaults to the type named default.
+   type:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/prompt
+validators.mandatory:x:@.arguments/*/completion
+validators.default:x:@.arguments
+   type:default
+validators.regex:x:@.arguments/*/type
+   regex:^[a-z0-9_-]+$
+
+// Whether the collection searches by meaning too, which needs a vector for every memory.
+.retrieval:mixed
+.id
+
+// Opening database
+data.connect:magic
+
+   // Checking if the collection exists, and how it searches if it does.
+   data.read
+      table:ml_types
+      columns
+         retrieval
+      where
+         and
+            type.eq:x:@.arguments/*/type
+   if
+      exists:x:@data.read/*
+      .lambda
+         set-value:x:@.retrieval
+            get-value:x:@data.read/*/*/retrieval
+   else
+
+      /*
+       * Creating the collection. It is not for chatting with, so embeddings are off and it
+       * belongs to root, which keeps it out of reach of every public chatbot.
+       */
+      data.create
+         table:ml_types
+         values
+            type:x:@.arguments/*/type
+            model:gpt-5.6-luna
+            max_tokens:int:12000
+            temperature:decimal:0.3
+            vector_model:text-embedding-3-small
+            threshold:decimal:0.3
+            retrieval:mixed
+            use_embeddings:int:0
+            auth:root
+
+   // Parametrizing invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*/type
+      get-nodes:x:@.arguments/*/prompt
+      get-nodes:x:@.arguments/*/completion
+      get-nodes:x:@.arguments/*/uri
+      get-nodes:x:@.arguments/*/meta
+
+   // Inserting our item.
+   data.create
+      table:ml_training_snippets
+      values
+   set-value:x:@.id
+      get-value:x:@data.create
+
+/*
+ * Vectorising the new memory, unless the collection is keyword only. Should this fail, the
+ * memory still exists and can be found by keyword - update it to try vectorising it again.
+ */
+if
+   neq:x:@.retrieval
+      .:bm25
+   .lambda
+      execute-file:/system/openai/vectorise-snippet.post.hl
+         id:x:@.id
+
+// Signaling frontend
+sockets.signal:x:@.arguments/*/_session
+   args
+      type:floating_message
+      floating_message:Memory successfully created
+      floating_state:success
+
+// Returning result to caller.
+yield
+   id:x:@.id

@@ -1,0 +1,113 @@
+
+/*
+ * Updates an existing memory, found by its [id] - which [search-memory] returns. Only the
+ * arguments given are changed. When the prompt or the completion changes, the memory is
+ * vectorised again, so that it is found by its new meaning.
+ */
+.arguments
+
+   // Injected by the framework.
+   _session:string
+
+   // Mandatory ID of the memory to update.
+   id:long
+
+   // Optional new single line summary of what the memory is about, which is what it is found by.
+   prompt:string
+
+   // Optional new content of the memory, stored exactly as given.
+   completion:string
+
+   // Optional new URL or reference the memory belongs to.
+   uri:string
+
+   // Optional new short label for the kind of memory.
+   meta:string
+
+   // Optional name of the collection the memory is in. Defaults to the type named default.
+   type:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/id
+validators.default:x:@.arguments
+   type:default
+if
+   not
+      or
+         exists:x:@.arguments/*/prompt
+         exists:x:@.arguments/*/completion
+         exists:x:@.arguments/*/uri
+         exists:x:@.arguments/*/meta
+   .lambda
+      throw:Provide at least one of prompt, completion, uri and meta to change
+         public:bool:true
+         status:int:400
+
+// Whether the collection searches by meaning too, which needs a vector for every memory.
+.retrieval:mixed
+
+// Opening database
+data.connect:magic
+
+   // Parametrizing invocation.
+   add:x:./*/data.update/*/values
+      get-nodes:x:@.arguments/*/prompt
+      get-nodes:x:@.arguments/*/completion
+      get-nodes:x:@.arguments/*/uri
+      get-nodes:x:@.arguments/*/meta
+
+   // Updating our item, which must be in the collection.
+   data.update
+      table:ml_training_snippets
+      values
+      where
+         and
+            id.eq:x:@.arguments/*/id
+            type.eq:x:@.arguments/*/type
+   if
+      eq:x:@data.update
+         .:int:0
+      .lambda
+         throw:No such memory in that collection
+            public:bool:true
+            status:int:404
+
+   // Finding out how the collection searches.
+   data.read
+      table:ml_types
+      columns
+         retrieval
+      where
+         and
+            type.eq:x:@.arguments/*/type
+   set-value:x:@.retrieval
+      get-value:x:@data.read/*/*/retrieval
+
+/*
+ * Vectorising the memory again when what it is found by has changed, unless the collection is
+ * keyword only. The keyword index follows every change by itself.
+ */
+if
+   and
+      neq:x:@.retrieval
+         .:bm25
+      or
+         exists:x:@.arguments/*/prompt
+         exists:x:@.arguments/*/completion
+   .lambda
+      execute-file:/system/openai/vectorise-snippet.post.hl
+         id:x:@.arguments/*/id
+
+// Signaling frontend
+sockets.signal:x:@.arguments/*/_session
+   args
+      type:floating_message
+      floating_message:Memory successfully updated
+      floating_state:success
+
+// Returning result to caller.
+yield
+   affected_records:x:@data.update

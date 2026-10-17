@@ -1,0 +1,52 @@
+
+/*
+ * Deletes a memory, found by its [id] - which [search-memory] returns. Its keyword index entry
+ * and its vector go with it.
+ */
+.arguments
+
+   // Injected by the framework.
+   _session:string
+
+   // Mandatory ID of the memory to delete.
+   id:long
+
+   // Optional name of the collection the memory is in. Defaults to the type named default.
+   type:string
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/id
+validators.default:x:@.arguments
+   type:default
+
+// Opening database
+data.connect:magic
+
+   // Deleting our item, which must be in the collection.
+   data.delete
+      table:ml_training_snippets
+      where
+         and
+            id.eq:x:@.arguments/*/id
+            type.eq:x:@.arguments/*/type
+   if
+      eq:x:@data.delete
+         .:int:0
+      .lambda
+         throw:No such memory in that collection
+            public:bool:true
+            status:int:404
+
+   // Signaling frontend
+   sockets.signal:x:@.arguments/*/_session
+      args
+         type:floating_message
+         floating_message:Memory successfully deleted
+         floating_state:success
+
+   // Returning result to caller.
+   yield
+      affected_records:x:@data.delete
