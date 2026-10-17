@@ -401,11 +401,12 @@ export function listDynamicSlots() {
  * error responses rather than throw.
  */
 async function requestRaw(
-  method: string, url: string, body?: string | FormData, contentType?: string, allowErrors = false) {
+  method: string, url: string, body?: string | FormData, contentType?: string, allowErrors = false,
+  token?: string) {
 
   const headers: Record<string, string> = {};
-  if (bearerToken) {
-    headers['Authorization'] = 'Bearer ' + bearerToken;
+  if (token ?? bearerToken) {
+    headers['Authorization'] = 'Bearer ' + (token ?? bearerToken);
   }
   // FormData bodies set their own multipart content-type with boundary.
   if (body !== undefined && !(body instanceof FormData)) {
@@ -476,8 +477,21 @@ export function evaluateWithArgs(hyperlambda: string, args: any) {
  * Error responses are returned, not thrown, so the invoker can display them.
  */
 export function invokeEndpoint(
-  verb: string, url: string, payload?: string | FormData, contentType?: string) {
-  return requestRaw(verb.toUpperCase(), '/' + url, payload, contentType, true);
+  verb: string, url: string, payload?: string | FormData, contentType?: string, token?: string) {
+  return requestRaw(verb.toUpperCase(), '/' + url, payload, contentType, true, token);
+}
+
+/*
+ * Mints a short lived JWT for the given role, so root can invoke an endpoint as a caller
+ * holding only that role. Root-only. The username need not exist.
+ */
+export async function generateRoleToken(role: string) {
+  const expires = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+  const response = await http.get<{ ticket: string }>(
+    '/magic/system/auth/generate-token?username=' + encodeURIComponent('impersonated-' + role) +
+    '&role=' + encodeURIComponent(role) +
+    '&expires=' + encodeURIComponent(expires));
+  return response.ticket;
 }
 
 /*

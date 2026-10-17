@@ -10,8 +10,9 @@ import { useEffect, useState } from 'react';
 import CodeEditor from './CodeEditor';
 import { ChevronIcon } from './Icons';
 import { RawResult } from './ResultViewer';
+import Select from './Select';
 import { copyToClipboard } from '../lib/toast';
-import { Endpoint, apiBaseUrl, invokeEndpoint } from '../lib/api';
+import { Endpoint, apiBaseUrl, generateRoleToken, invokeEndpoint, listRoles } from '../lib/api';
 
 export interface InvokeResult extends RawResult {
   elapsed: number;
@@ -125,6 +126,15 @@ export default function InvokePanel(props: {
   const [invokeError, setInvokeError] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [fullDescription, setFullDescription] = useState(false);
+  // Every role on the server, and the one the invocation impersonates - empty is yourself.
+  const [roles, setRoles] = useState<string[]>([]);
+  const [runAs, setRunAs] = useState('');
+
+  useEffect(() => {
+    listRoles()
+      .then(list => setRoles((list ?? []).map(role => role.name)))
+      .catch(() => {});
+  }, []);
 
   /*
    * Wildcard (*) arguments are context-dependent — sub-objects, lists of
@@ -198,14 +208,25 @@ export default function InvokePanel(props: {
   }
 
   /*
-   * The current invocation as a runnable curl command — auth left as $TOKEN
-   * so the command is safe to paste into scripts and share.
+   * The current invocation as a runnable curl command. Auth is left as $TOKEN so the
+   * command is safe to paste into scripts and share - unless a role is being impersonated,
+   * in which case a token minted for that role is embedded, since $TOKEN would otherwise
+   * run the command as you rather than as the role.
    */
-  function copyCurl() {
+  async function copyCurl() {
+    let token = '$TOKEN';
+    if (runAs) {
+      try {
+        token = await generateRoleToken(runAs);
+      } catch (err: any) {
+        setInvokeError(err.message);
+        return;
+      }
+    }
     const lines = [
       'curl -X ' + endpoint.verb.toUpperCase() + ' "' +
         apiBaseUrl() + '/' + (usesQuery ? queryUrl() : endpoint.path) + '"',
-      '-H "Authorization: Bearer $TOKEN"',
+      '-H "Authorization: Bearer ' + token + '"',
     ];
     if (isMultipart) {
       for (const argument of formFields) {
@@ -263,8 +284,10 @@ export default function InvokePanel(props: {
         }
         body = payload;
       }
+      // A fresh short lived token per invocation, so an impersonation never goes stale.
+      const token = runAs ? await generateRoleToken(runAs) : undefined;
       const response = await invokeEndpoint(
-        endpoint.verb, url, body, endpoint.consumes ?? 'application/json');
+        endpoint.verb, url, body, endpoint.consumes ?? 'application/json', token);
       props.onResult(response);
     } catch (err: any) {
       setInvokeError(err.message);
@@ -428,6 +451,19 @@ export default function InvokePanel(props: {
         ) : (
           <span className="muted">This endpoint cannot be invoked from here.</span>
         )}
+        {canInvoke && roles.length > 0 && (
+          <label
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            title="Invoke as a caller holding only this role, using a short lived token minted for it. Debug always runs as you.">
+            Run as
+            <Select value={runAs} onChange={value => setRunAs(value)}>
+              <option value="">me</option>
+              {roles.map(role => (
+                <option key={role} value={role}>{role}</option>
+              ))}
+            </Select>
+          </label>
+        )}
         {props.onDebug && (
           <button
             type="button"
@@ -450,7 +486,7 @@ export default function InvokePanel(props: {
           <button
             type="button"
             className="btn btn-secondary"
-            title="Copy this invocation as a curl command, with $TOKEN standing in for your bearer token"
+            title="Copy this invocation as a curl command, with $TOKEN standing in for your bearer token - or a 5 minute token for the role selected in Run as"
             onClick={copyCurl}>
             Copy as cURL
           </button>
