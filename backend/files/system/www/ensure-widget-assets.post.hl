@@ -1,0 +1,57 @@
+
+/*
+ * Makes sure the Web Designer's shared "App" widget runtime files exist under /etc/www/assets/,
+ * copying each one from its canonical source under /etc/system/web-designer/ when it is not
+ * already there. Requires the root role.
+ *
+ * Creates /etc/www/assets/ first using io.folder.create, if io.folder.exists says it does not
+ * already exist.
+ *
+ * For each of "magic-widgets.js" and "magic-widgets.css", checks whether a file of that name
+ * already exists directly under /etc/www/assets/ using io.file.exists. Only when it does not
+ * exist, copies it there from the matching file under /etc/system/web-designer/ using
+ * io.file.copy - an existing file at the destination is left untouched, never overwritten.
+ *
+ * Returns a response with exactly one field: "ensured" set to the boolean value true.
+ */
+.arguments
+auth.ticket.verify:root
+
+if
+   not
+      io.folder.exists:/etc/www/assets/
+   .lambda
+      io.folder.create:/etc/www/assets/
+
+.files
+   .:magic-widgets.js
+   .:magic-widgets.css
+
+for-each:x:@.files/*
+
+   .name
+   set-value:x:@.name
+      get-value:x:@.dp/#
+
+   .target
+   set-value:x:@.target
+      strings.concat
+         .:/etc/www/assets/
+         get-value:x:@.name
+
+   if
+      not
+         io.file.exists:x:@.target
+      .lambda
+
+         .source
+         set-value:x:@.source
+            strings.concat
+               .:/etc/system/web-designer/
+               get-value:x:@.name
+
+         io.file.copy:x:@.source
+            get-value:x:@.target
+
+return
+   ensured:bool:true

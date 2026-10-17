@@ -24,7 +24,7 @@ import { useAuth } from '../lib/AuthContext';
 import { useUnsavedGuard } from '../lib/navGuard';
 import { onChatOpsDone } from '../lib/chatOps';
 import { showToast } from '../lib/toast';
-import { aiContextForFile, createFolder, listFilesRecursively, loadFile, saveFile } from '../lib/api';
+import { aiContextForFile, createFolder, ensureWidgetAssets, listFilesRecursively, loadFile, saveFile } from '../lib/api';
 import { ChevronIcon, RedoIcon, SaveIcon, UndoIcon } from '../components/Icons';
 import Canvas from './designer/Canvas';
 import Menu from './designer/Menu';
@@ -42,7 +42,7 @@ import { liveSandbox, prepareDocument, serializeDocument, slotsDropped } from '.
 import { designableChildren, elementOf, isText, labelOf, nodeAt, pathTo, writeText } from './designer/nodes';
 import { canContainChildren } from './designer/html';
 import { Overrides, joinCss, overrideCss, ownStylesheet, scriptPaths, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
-import { CANONICAL_ASSETS, CANONICAL_VERSIONS } from './designer/widgetRuntime';
+import { CANONICAL_VERSIONS, WIDGET_ASSET_HREFS } from './designer/widgetRuntime';
 
 const WEB_ROOT = '/etc/www';
 
@@ -54,7 +54,7 @@ const WEB_ROOT = '/etc/www';
  * "the file this page owns": the Code view's file switcher, and the Page
  * menu's "already has one of these" check.
  */
-const SHARED_ASSET_FILES = new Set(Object.keys(CANONICAL_ASSETS).map(href => WEB_ROOT + href));
+const SHARED_ASSET_FILES = new Set(WIDGET_ASSET_HREFS.map(href => WEB_ROOT + href));
 
 // How many steps back the undo history goes.
 const HISTORY = 50;
@@ -1199,7 +1199,11 @@ export default function WebDesigner() {
 
   /*
    * Makes sure a file a block cannot work without is actually linked on the
-   * page, adding it when it is missing.
+   * page, adding it when it is missing. Returns whether anything was
+   * actually added — false means every required href was linked already,
+   * which is what insert() below uses to fire ensureWidgetAssets() only for
+   * the first block on a page that ever needed one of these files, never
+   * for the second one that finds its own link already sitting there.
    *
    * Compared by path rather than by the raw attribute text, the same way
    * bumpAsset() below does it — a page one folder deep would otherwise see
@@ -1207,6 +1211,7 @@ export default function WebDesigner() {
    * different scripts and link the thing twice.
    */
   function ensureRequiredAssets(doc: Document, requires: Block['requires']) {
+    let addedAny = false;
     (requires?.stylesheets ?? []).forEach(href => {
       const linked = Array.from(doc.querySelectorAll('link[rel~="stylesheet"][href]'))
         .some(link => new URL(link.getAttribute('href') ?? '', doc.baseURI).pathname === href);
@@ -1218,6 +1223,7 @@ export default function WebDesigner() {
         // already points at.
         link.setAttribute('href', href + (CANONICAL_VERSIONS[href] ? '?v=' + CANONICAL_VERSIONS[href] : ''));
         doc.head.appendChild(link);
+        addedAny = true;
       }
     });
     (requires?.scripts ?? []).forEach(src => {
@@ -1227,61 +1233,10 @@ export default function WebDesigner() {
         const script = doc.createElement('script');
         script.setAttribute('src', src + (CANONICAL_VERSIONS[src] ? '?v=' + CANONICAL_VERSIONS[src] : ''));
         doc.body.appendChild(script);
+        addedAny = true;
       }
     });
-  }
-
-  /*
-   * Makes sure a shared runtime file a block depends on actually exists on
-   * this cloudlet, writing it from this dashboard's own known-good copy (see
-   * designer/widgetRuntime.ts, bundled into the dashboard itself, so it is
-   * there regardless of what this particular cloudlet has ever deployed) the
-   * first time it is missing — never otherwise. ensureRequiredAssets() only
-   * ever links to these paths; it was written assuming they are already
-   * there on the SERVER, which a cloudlet that has never had a widget
-   * dropped on it before has no reason to be.
-   *
-   * Deliberately separate from ensureRequiredAssets() and not awaited by the
-   * drop that triggers it: this talks to the server, and the DOM mutation
-   * that links the tag has to stay synchronous for the undo history to see
-   * it as one step with the drop. The two race harmlessly either way — a
-   * <link>/<script> pointing at a file for the one moment before this
-   * finishes creating it behaves exactly like a slow network request to an
-   * existing file, which every one of these widgets already has to tolerate.
-   */
-  async function ensureAssetFilesExist(requires: Block['requires']) {
-    const hrefs = [...(requires?.stylesheets ?? []), ...(requires?.scripts ?? [])];
-    for (const href of hrefs) {
-      const canonical = CANONICAL_ASSETS[href];
-      if (!canonical) {
-        // Not one of the files this dashboard knows how to recreate.
-        continue;
-      }
-      const file = WEB_ROOT + href;
-      try {
-        await loadFile(file);
-        // Already there — read to confirm existence only, never overwritten.
-        continue;
-      } catch {
-        // Missing, which is the case this function exists for — fall through.
-      }
-      /*
-       * A write into a folder that is not there fails, same as it does for a
-       * new page (see createPage() above) — "assets" is not assumed to exist
-       * just because the file that goes in it does not either, which is
-       * exactly the folder Thomas deleted whole to prove this wrong.
-       */
-      const folders = href.split('/').slice(0, -1);
-      let sofar = WEB_ROOT;
-      for (const folder of folders) {
-        if (folder === '') {
-          continue;
-        }
-        sofar += '/' + folder;
-        await createFolder(sofar + '/').catch(() => undefined);
-      }
-      await saveFile(file, canonical);
-    }
+    return addedAny;
   }
 
   function insert(block: Block, spot: DropSpot) {
@@ -1301,12 +1256,20 @@ export default function WebDesigner() {
     if (!node) {
       return;
     }
+    /*
+     * Whether this drop just linked a shared widget asset this page did not
+     * already have — the signal for "first block of this kind on this page",
+     * which is the only time ensureWidgetAssets() below needs to run at all.
+     */
+    let linkedNewAsset = false;
     mutate(() => {
       spot.parent.insertBefore(node, spot.before);
       setSelected(node);
-      ensureRequiredAssets(current, block.requires);
+      linkedNewAsset = ensureRequiredAssets(current, block.requires);
     });
-    ensureAssetFilesExist(block.requires).catch(err => showToast(err.message, true));
+    if (linkedNewAsset) {
+      ensureWidgetAssets().catch(err => showToast(err.message, true));
+    }
     /*
      * An image dropped onto the page wants a picture, and the grey
      * placeholder is not one. The picker opens on top of the drop, so
@@ -1906,7 +1869,7 @@ export default function WebDesigner() {
                * A block whose runtime depends on a script used to be withheld
                * until the page already had one, any one — a stand-in for "has
                * this page opted into JavaScript at all". That stopped making
-               * sense once ensureAssetFilesExist() could create the specific
+               * sense once ensureWidgetAssets() could create the specific
                * file a block actually needs: dropping an App block already
                * guarantees it ends up with exactly what it requires, so there
                * was nothing left for the gate to protect against, only a page

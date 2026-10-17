@@ -356,6 +356,15 @@ export function saveWebsiteConfig(config: WebsiteConfig) {
 }
 
 /*
+ * Makes sure the Web Designer's shared widget runtime files (magic-widgets.js/.css)
+ * exist under /etc/www/assets/ on this cloudlet, copying them server-side from
+ * backend/files/etc/system/web-designer/ when missing — see widgetRuntime.ts.
+ */
+export function ensureWidgetAssets() {
+  return http.post<{ ensured: boolean }>('/magic/system/www/ensure-widget-assets', {});
+}
+
+/*
  * Hyperlambda evaluator.
  */
 

@@ -11,8 +11,7 @@
  * that the container runtime can flag the container as unhealthy, and e.g.
  * restart it. Deliberately public, since orchestrators have no JWT ticket.
  */
-.description:Health check for container orchestration - returns 200 when the backend and its database are up, 503 otherwise
-.type:public
+.arguments
 
 /*
  * Verifying the database is reachable. If connecting or reading fails, we
