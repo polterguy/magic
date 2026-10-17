@@ -1829,6 +1829,16 @@ function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel:
 
   const shown = files.filter(path => !filter || path.toLowerCase().includes(filter.toLowerCase()));
   const count = Object.values(chosen).filter(Boolean).length;
+  const allShownChosen = shown.length > 0 && shown.every(path => chosen[path]);
+
+  // Ticks or unticks every file the filter currently shows, leaving other picks untouched.
+  function toggleShown(on: boolean) {
+    const next = { ...chosen };
+    for (const path of shown) {
+      next[path] = on;
+    }
+    setChosen(next);
+  }
 
   function add() {
     const picked = Object.keys(chosen).filter(path => chosen[path]);
@@ -1836,7 +1846,8 @@ function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel:
       showToast('Pick at least one file', true);
       return;
     }
-    const lines = picked.flatMap(path => ['execute-file:' + path, 'io.file.execute:' + path]);
+    const lines = picked.flatMap(path => [
+      'execute-file:' + path, 'io.file.execute:' + path, 'io.file.load:' + path]);
     props.onAdd(lines);
   }
 
@@ -1890,6 +1901,15 @@ function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel:
       </div>
       <div className="toolbar" style={{ marginBottom: 6 }}>
         <SearchInput placeholder="Filter files…" value={filter} onChange={setFilter} />
+        {shown.length > 0 && (
+          <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
+            <input
+              type="checkbox"
+              checked={allShownChosen}
+              onChange={e => toggleShown(e.target.checked)} />
+            {filter ? 'Select all filtered (' + shown.length + ')' : 'Select all (' + shown.length + ')'}
+          </label>
+        )}
         {count > 0 && <span className="muted" style={{ fontSize: 12 }}>{count} selected</span>}
       </div>
       <div className="card" style={{ maxHeight: 180, overflow: 'auto', padding: '6px 14px 6px 6px' }}>
@@ -1916,11 +1936,12 @@ function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel:
         ))}
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
-        Pins <span className="mono">execute-file</span> and <span className="mono">io.file.execute</span> to
-        each chosen path. This is how a role gets complex domain logic without being granted
-        the raw slots that logic uses (data.read and so on): once a path is admitted its own
-        code runs fully trusted, not re-sandboxed — only whitelist files whose logic you have
-        reviewed for this role.
+        Pins <span className="mono">execute-file</span>, <span className="mono">io.file.execute</span> and{' '}
+        <span className="mono">io.file.load</span> to each chosen path, so a caller can read a
+        file's source to learn how to execute it. This is how a role gets complex domain logic
+        without being granted the raw slots that logic uses (data.read and so on): once a path
+        is admitted its own code runs fully trusted, not re-sandboxed — only whitelist files
+        whose logic, and source, you have reviewed for this role.
       </span>
       {tooltip && (
         <div

@@ -237,12 +237,12 @@ else-if
       set-value:x:@.endpoint/0
          strings.replace:x:@.endpoint/0
             .:"{input}"
-            .:"Turns a natural-language [instruction] into Hyperlambda with the Hyperlambda\nGenerator, then executes it."
+            .:"Turns a natural-language [instruction] into Hyperlambda with the Hyperlambda\r\nGenerator, then executes it."
 else
    set-value:x:@.endpoint/0
       strings.replace:x:@.endpoint/0
          .:"{input}"
-         .:"Accepts caller-supplied Hyperlambda in [hyperlambda], or a natural-language\n[instruction] the Hyperlambda Generator turns into code."
+         .:"Accepts caller-supplied Hyperlambda in [hyperlambda], or a natural-language\r\n[instruction] the Hyperlambda Generator turns into code."
 
 // Replacing the "{roles}" placeholder with the sentence built above, or nothing.
 if
@@ -252,9 +252,9 @@ if
          strings.replace:x:@.endpoint/0
             .:"{roles}"
             strings.concat
-               .:"\n\nRoles:\n\n"
+               .:"\r\n\r\nRoles:\r\n\r\n"
                strings.join:x:@.role-descriptions/*
-                  .:"\n"
+                  .:"\r\n"
 else
    set-value:x:@.endpoint/0
       strings.replace:x:@.endpoint/0
