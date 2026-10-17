@@ -25,6 +25,12 @@
  * short, human-written sentence of what that role can do with its slots - every rule
  * that has one is stitched into the generated endpoint's own file level comment,
  * which is also the tool description a calling AI model sees through MCP.
+ *
+ * Every endpoint saved is also listed in /etc/www/.well-known/hyperlambda-agent, a well known
+ * file pair (hyperlambda-agent.html and its code-behind hyperlambda-agent.hl) that lets an agent
+ * discover the sandboxed endpoints on this server without MCP. The folder and the pair are
+ * created from the hyperlambda-agent templates next to sandbox.template.hl when missing, never
+ * overwritten, and the code-behind gets one entry per endpoint - see the template for the format.
  */
 .arguments
    moduleName:string
@@ -305,6 +311,106 @@ lambda2hyper:x:@.endpoint/*
    comments:bool:true
 io.file.save:x:@.filename
    get-value:x:@lambda2hyper
+
+/*
+ * Advertising the endpoint at /.well-known/hyperlambda-agent, so an agent can find it
+ * without MCP. The folder and the file pair are created from their templates when they do
+ * not exist yet, and never overwritten once they do.
+ */
+if
+   not
+      io.folder.exists:/etc/www/.well-known/
+   .lambda
+      io.folder.create:/etc/www/.well-known/
+.pair
+   .:.hl
+   .:.html
+for-each:x:@.pair/*
+   .suffix
+   set-value:x:@.suffix
+      get-value:x:@.dp/#
+   .target
+   set-value:x:@.target
+      strings.concat
+         .:/etc/www/.well-known/hyperlambda-agent
+         get-value:x:@.suffix
+   if
+      not
+         io.file.exists:x:@.target
+      .lambda
+         .source
+         set-value:x:@.source
+            strings.concat
+               .:/system/crudifier/templates/hyperlambda-agent.template
+               get-value:x:@.suffix
+         io.file.copy:x:@.source
+            get-value:x:@.target
+
+/*
+ * This endpoint's entry. [description] is the endpoint's file level comment, which is what
+ * MCP shows as the tool description, and [auth] is only there when callers are restricted.
+ */
+.entry
+   .
+      path
+      verb
+      description
+set-value:x:@.entry/0/*/path
+   strings.concat
+      .:magic/modules/
+      get-value:x:@.arguments/*/moduleName
+      .:/
+      get-value:x:@.arguments/*/endpointName
+set-value:x:@.entry/0/*/verb
+   get-value:x:@.arguments/*/verb
+set-value:x:@.entry/0/*/description
+   get-value:x:@.endpoint/0
+if
+   and
+      not-null:x:@.arguments/*/authorization
+      neq:x:@.arguments/*/authorization
+         .:
+   .lambda
+      add:x:@.entry/0
+         .
+            auth
+      set-value:x:@.entry/0/*/auth
+         get-value:x:@.arguments/*/authorization
+
+/*
+ * Loading the code-behind as a lambda object, and putting its entries back apart from any
+ * earlier one for this very endpoint, so saving it again replaces it, followed by the new
+ * entry. The entries are kept and re-added rather than removed one by one, since a list
+ * cannot be changed while it is being iterated.
+ */
+io.file.load:/etc/www/.well-known/hyperlambda-agent.hl
+.wellknown
+add:x:@.wellknown
+   hyper2lambda:x:@io.file.load
+      comments:bool:true
+.kept
+for-each:x:@.wellknown/*/.metadata/*/.result/*/endpoints/*
+   if
+      not
+         and
+            eq:x:@.dp/#/*/path
+               get-value:x:@.entry/0/*/path
+            eq:x:@.dp/#/*/verb
+               get-value:x:@.entry/0/*/verb
+      .lambda
+         add:x:@.kept
+            get-nodes:x:@.dp/#
+remove-nodes:x:@.wellknown/*/.metadata/*/.result/*/endpoints/*
+add:x:@.wellknown/*/.metadata/*/.result/*/endpoints
+   get-nodes:x:@.kept/*
+add:x:@.wellknown/*/.metadata/*/.result/*/endpoints
+   get-nodes:x:@.entry/*
+.wellknown-hl
+set-value:x:@.wellknown-hl
+   lambda2hyper:x:@.wellknown/*
+      comments:bool:true
+io.file.save:/etc/www/.well-known/hyperlambda-agent.hl
+   get-value:x:@.wellknown-hl
 
 // Returning the generated endpoint to the caller, for preview.
 unwrap:x:+/*

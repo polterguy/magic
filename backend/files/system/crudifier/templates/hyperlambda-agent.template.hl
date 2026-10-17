@@ -1,0 +1,43 @@
+/*
+ * Code-behind serving /.well-known/hyperlambda-agent as JSON - the list of sandboxed
+ * Hyperlambda endpoints on this server, so an agent can find them, and ask each what it may
+ * call, without any prior knowledge of the server and without MCP.
+ *
+ * This is a WELL KNOWN FILE PAIR, both files living in /etc/www/.well-known/:
+ *
+ *   hyperlambda-agent.html   - a single placeholder, which renders the [.metadata] below.
+ *   hyperlambda-agent.hl     - this file, the code-behind, where [.metadata] builds the document.
+ *
+ * Both are created from templates under /system/crudifier/templates/ the first time the Sandbox
+ * API generator saves an endpoint, and never overwritten afterwards. The generator then adds one
+ * entry to [endpoints] below for every endpoint it saves - replacing the entry of an endpoint it
+ * saves again - so this file is a plain, readable list you can also edit or prune by hand.
+ *
+ * The document has a [base] URL (the host of the current request), and for every endpoint a
+ * [path] relative to it, its [verb], its [description], and [auth] when only some roles may call
+ * it. Invoke an endpoint with [describe] set to true to learn the functions its caller may use,
+ * and the rate limit and timeout that apply.
+ */
+.oninit
+
+   // This is a JSON document, not an HTML page.
+   response.headers.set
+      Content-Type:application/json
+
+.metadata
+
+   // The document - [endpoints] gets one entry per sandboxed endpoint.
+   .result
+      about:Sandboxed Hyperlambda endpoints on this server. Invoke any of them with describe set to true to learn which functions you may call, and the rate limit and timeout that apply to you.
+      base
+      endpoints
+
+   // Base URL of this cloudlet, taken from the current request.
+   set-value:x:@.result/*/base
+      strings.concat
+         .:"https://"
+         request.host
+
+   // Returning the document as a JSON string.
+   lambda2json:x:@.result/*
+   return:x:-
