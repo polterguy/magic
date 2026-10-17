@@ -1,0 +1,168 @@
+/*
+ * Default look for the Web Designer's "App" widgets (magic-data-grid,
+ * magic-login-form), plus the light-DOM fallback every instance carries.
+ *
+ * These rules only ever reach the fallback markup, never the widget's own
+ * Shadow DOM - a shadow root is a hard boundary even for an attribute
+ * selector like [part="cell"], so this file and magic-widgets.js each carry
+ * their own copy of the same rules, written in parallel against the same
+ * CSS custom properties. Keep the two in sync by hand when either changes:
+ * this one styles the inert version a script-disabled canvas (or a visitor
+ * with scripts off) actually sees, the one inside the widget's shadow root
+ * styles the live version everyone else gets.
+ */
+
+magic-data-grid {
+  display: block;
+}
+
+magic-data-grid table,
+magic-data-grid [part="table"] {
+  width: 100%;
+  border-collapse: collapse;
+  /*
+   * Fixed, not auto: an auto layout keeps re-measuring every column's width
+   * off its cells' actual content, so the moment a click-to-edit cell swaps
+   * its text for an <input>, the column it is in (and usually its
+   * neighbours) visibly jumps width. Fixed instead sizes every column once,
+   * off the header row, and never again - so a cell starting or ending an
+   * edit cannot move anything.
+   */
+  table-layout: fixed;
+}
+
+magic-data-grid [part="head-row"] {
+  background: var(--magic-grid-header-bg, #1f2430);
+}
+
+magic-data-grid [part="head-cell"] {
+  color: var(--magic-grid-header-color, #ffffff);
+  text-align: left;
+  padding: 0.5em 0.75em;
+}
+
+magic-data-grid [part="row"]:nth-child(even) {
+  background: var(--magic-grid-row-alt-bg, #f6f7f9);
+}
+
+magic-data-grid [part="cell"] {
+  background: var(--magic-grid-cell-bg, transparent);
+  border-bottom: 1px solid var(--magic-grid-border-color, #e2e4e8);
+  padding: 0.5em 0.75em;
+  /* A column's width is now fixed - long text clips with an ellipsis rather
+     than forcing the cell (and so the column) wider than that. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+magic-data-grid [part="pager"] {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
+  margin-top: 0.5em;
+}
+
+magic-data-grid [part="pager-button"] {
+  cursor: pointer;
+}
+
+magic-data-grid [part="empty"],
+magic-data-grid [part="error"] {
+  padding: 0.75em;
+  color: #99412e;
+}
+
+magic-data-grid [part="filter-cell"] {
+  padding: 0.35em 0.75em;
+  background: var(--magic-grid-header-bg, #1f2430);
+}
+
+magic-data-create {
+  display: block;
+  max-width: 420px;
+}
+
+magic-data-create [part="label"] {
+  display: block;
+  margin-bottom: 0.75em;
+  font-size: 0.9em;
+}
+
+magic-data-create [part="input"] {
+  display: block;
+  width: 100%;
+  margin-top: 0.25em;
+  padding: 0.4em 0.5em;
+  box-sizing: border-box;
+}
+
+magic-data-create [part="button"] {
+  background: var(--magic-create-button-bg, #1f2430);
+  color: var(--magic-create-button-color, #ffffff);
+  border: none;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+magic-data-create [part="error"] {
+  color: #b3261e;
+  margin-top: 0.5em;
+}
+
+magic-data-create [part="success"] {
+  color: #2e7d46;
+  margin-top: 0.5em;
+}
+
+magic-login-form {
+  display: block;
+  background: var(--magic-login-bg, transparent);
+  padding: 1em;
+  max-width: 320px;
+}
+
+magic-login-form [part="label"] {
+  display: block;
+  margin-bottom: 0.75em;
+  font-size: 0.9em;
+}
+
+magic-login-form [part="input"] {
+  display: block;
+  width: 100%;
+  margin-top: 0.25em;
+  padding: 0.4em 0.5em;
+  box-sizing: border-box;
+}
+
+magic-login-form [part="button"] {
+  background: var(--magic-login-button-bg, #1f2430);
+  color: var(--magic-login-button-color, #ffffff);
+  border: none;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+magic-login-form [part="error"] {
+  color: #b3261e;
+  margin-top: 0.5em;
+}
+
+/*
+ * magic-require-login never shows this for a real visitor - it clears its
+ * own children the moment it has decided whether to redirect, which never
+ * runs in the canvas (no scripts there), so this is what the canvas and a
+ * scripts-off visitor are the only ones who ever actually see.
+ */
+magic-require-login [part="notice"] {
+  display: block;
+  padding: 0.5em 0.75em;
+  border: 1px dashed #99a;
+  color: #667;
+  font-size: 0.85em;
+}
+
+magic-login-form [part="error"][hidden] {
+  display: none;
+}

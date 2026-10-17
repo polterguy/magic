@@ -1233,12 +1233,13 @@ export default function WebDesigner() {
 
   /*
    * Makes sure a shared runtime file a block depends on actually exists on
-   * this cloudlet, writing it from this dashboard's own known-good copy the
+   * this cloudlet, writing it from this dashboard's own known-good copy (see
+   * designer/widgetRuntime.ts, bundled into the dashboard itself, so it is
+   * there regardless of what this particular cloudlet has ever deployed) the
    * first time it is missing — never otherwise. ensureRequiredAssets() only
    * ever links to these paths; it was written assuming they are already
-   * there, which is true on this checkout only because that copy was put
-   * there by hand. A cloudlet that has never had a widget dropped on it
-   * before has no reason to have them yet.
+   * there on the SERVER, which a cloudlet that has never had a widget
+   * dropped on it before has no reason to be.
    *
    * Deliberately separate from ensureRequiredAssets() and not awaited by the
    * drop that triggers it: this talks to the server, and the DOM mutation
