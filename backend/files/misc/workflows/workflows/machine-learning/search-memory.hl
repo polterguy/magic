@@ -185,7 +185,7 @@ if
    .lambda
       set-value:x:@.uri
          get-value:x:@.arguments/*/uri
-.tail:" and (@uri = '*' or ts.uri = @uri)"
+.tail:" and (@uri = '*' or ts.uri = @uri) and (ts.meta is null or (ts.meta not like 'FUNCTION_INVOCATION ==> %' and ts.meta not like 'WIDGET ==> %'))"
 
 // Searching.
 .found
