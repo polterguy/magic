@@ -85,13 +85,27 @@ namespace magic.lambda.io.file
                 var lambda = GetLambda(input, hyperlambda, filename);
 
                 /*
-                 * Evaluating lambda of slot, masking any debug recorder while doing so - this
-                 * file's statements belong to this file, and a recording of whoever invoked us
-                 * would otherwise step into them.
+                 * Evaluating lambda of slot, temporarily clearing any existing [whitelist]
+                 * declaration and masking any debug recorder while doing so.
+                 *
+                 * The file being executed is pre-authored, trusted content - a role was only
+                 * ever granted permission to invoke it BY ITS EXACT PATH (see IWhitelistComparer
+                 * above), never handed a vocabulary of slots to run with, so its own statements
+                 * must run fully trusted - the same way a dynamic slot's body already does (see
+                 * [signal]/[execute] in magic.lambda.slots/Signal.cs). Without this, a sandboxed
+                 * caller could be granted [execute-file] for one specific file and still have
+                 * every slot THAT FILE calls internally (e.g. [data.connect]) rejected, because
+                 * the ambient whitelist from the caller's own scope would otherwise still apply.
+                 *
+                 * This file's statements also belong to this file, not whoever invoked us, so a
+                 * recording of the caller would otherwise step into them too.
                  */
-                await signaler.ScopeAsync(".debug.recorder", null, async () =>
+                await signaler.ScopeAsync("whitelist", null, async () =>
                 {
-                    await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
+                    await signaler.ScopeAsync(".debug.recorder", null, async () =>
+                    {
+                        await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
+                    });
                 });
 
                 // Applying result.
