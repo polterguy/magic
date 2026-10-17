@@ -23,12 +23,14 @@ import {
   crudify,
   customSqlEndpoint,
   generateSandboxEndpoint,
+  generateSearchEndpoint,
   getHyperlambdaArguments,
   listDynamicSlots,
   listEndpointsDetailed,
   listFilesRecursively,
   listRoles,
   loadFile,
+  mlTypes,
 } from '../lib/api';
 
 /*
@@ -221,8 +223,8 @@ export default function Generator() {
           {guiding
             ? 'Turn a database into secured REST endpoints'
             : 'Generate a CRUD backend from a database, publish your own SQL as an '
-              + 'endpoint, expose a sandboxed Hyperlambda endpoint, or wrap a '
-              + 'third-party API from its OpenAPI specification'}
+              + 'endpoint, expose a sandboxed Hyperlambda endpoint, search a machine '
+              + 'learning type, or wrap a third-party API from its OpenAPI specification'}
         </p>
       </div>
       <Tabs
@@ -230,6 +232,7 @@ export default function Generator() {
           { id: 'crud', label: 'CRUD backend' },
           { id: 'sql', label: 'SQL endpoint' },
           { id: 'sandbox', label: 'Sandbox API' },
+          { id: 'search', label: 'Search endpoint' },
           { id: 'import', label: 'Import API' },
         ]}
         active={tab}
@@ -237,6 +240,7 @@ export default function Generator() {
       {tab === 'crud' && <CrudTab guided={guiding} />}
       {tab === 'sql' && <SqlEndpointTab />}
       {tab === 'sandbox' && <SandboxTab />}
+      {tab === 'search' && <SearchTab />}
       {tab === 'import' && <ImportApiTab />}
     </>
   );
@@ -2448,6 +2452,231 @@ function SandboxTab() {
                 <button
                   className="btn btn-secondary btn-small"
                   title="Invoke it, or describe what each role can call"
+                  onClick={() => navigate(
+                    '/endpoints?filter=' + encodeURIComponent(generated.path) +
+                    '&expand=' + encodeURIComponent(generated.verb))}>
+                  Open in Endpoints
+                </button>
+                <button
+                  className="btn btn-secondary btn-small"
+                  onClick={() => navigate('/hyper-ide?open=' + encodeURIComponent(generated.file))}>
+                  Open in Hyper IDE
+                </button>
+              </>
+            )}
+          </div>
+          <div style={{ height: 320, display: 'flex', flexDirection: 'column' }}>
+            <CodeEditor value={preview} mode="hyperlambda" readOnly={true} />
+          </div>
+        </>
+      )}
+      {busy && <AiWaiter />}
+    </>
+  );
+}
+
+/*
+ * Search endpoint tab - generates an HTTP endpoint that searches the training snippets of one
+ * machine learning type by keyword, by meaning or both. Everything but the query is baked into
+ * the endpoint, so callers cannot choose the type, the search mode or how much comes back.
+ */
+function SearchTab() {
+
+  const [moduleName, setModuleName] = useState('');
+  const [endpointName, setEndpointName] = useState('search');
+  const [verb, setVerb] = useState('get');
+  const [types, setTypes] = useState<any[]>([]);
+  const [type, setType] = useState('');
+  // Empty searches the way the type itself is set to.
+  const [retrieval, setRetrieval] = useState('');
+  const [result, setResult] = useState('references');
+  const [limit, setLimit] = useState('5');
+  const [threshold, setThreshold] = useState('');
+  const [uri, setUri] = useState('');
+  const [meta, setMeta] = useState('');
+  // Who may call the endpoint at all - empty means public.
+  const [roles, setRoles] = useState<string[]>([]);
+  const [auth, setAuth] = useState<string[]>([]);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [rateLimit, setRateLimit] = useState('20');
+  const [rateWindow, setRateWindow] = useState('60');
+  const [cacheSeconds, setCacheSeconds] = useState('0');
+  const [overwrite, setOverwrite] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [preview, setPreview] = useState('');
+  // The endpoint that was just generated, so it can be opened straight from here.
+  const [generated, setGenerated] = useState<{ path: string; file: string; verb: string } | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    mlTypes()
+      .then(list => setTypes(list ?? []))
+      .catch(() => showToast('Could not load machine learning types', true));
+    listRoles()
+      .then(list => setRoles((list ?? []).map(role => role.name)))
+      .catch(() => {});
+  }, []);
+
+  // How the endpoint will really search, which decides whether each call costs an embedding.
+  const effective = retrieval || types.find(t => t.type === type)?.retrieval || 'embeddings';
+
+  async function generate() {
+    if (!moduleName || !endpointName || !type) {
+      showToast('Provide a module name, an endpoint name and a type', true);
+      return;
+    }
+    setBusy(true);
+    try {
+      const response = await generateSearchEndpoint({
+        moduleName,
+        endpointName,
+        verb,
+        type,
+        retrieval,
+        threshold: threshold.trim() ? Number(threshold) : undefined,
+        limit: Number(limit) || 5,
+        uri: uri.trim(),
+        meta: meta.trim(),
+        result,
+        authorization: auth.join(','),
+        rateLimit: Number(rateLimit) || 0,
+        rateWindow: Number(rateWindow) || 60,
+        cacheSeconds: Number(cacheSeconds) || 0,
+        overwrite,
+      });
+      const path = 'magic/modules/' + moduleName + '/' + endpointName;
+      setPreview(response.hyperlambda);
+      setGenerated({ path, file: response.file, verb });
+      showToast('Endpoint ' + path + ' created');
+    } catch (err: any) {
+      showToast(err.message, true, err.logId);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <>
+      <div className="toolbar">
+        <Select value={verb} onChange={value => setVerb(value)}>
+          <option value="get">GET</option>
+          <option value="post">POST</option>
+        </Select>
+        <input
+          type="text"
+          placeholder="Module name…"
+          value={moduleName}
+          onChange={e => setModuleName(e.target.value)}
+          style={{ width: 150 }} />
+        <input
+          type="text"
+          placeholder="Endpoint name…"
+          value={endpointName}
+          onChange={e => setEndpointName(e.target.value)}
+          style={{ width: 150 }} />
+        <span className="spacer" />
+        <button className="btn" onClick={generate} disabled={busy}>
+          {busy ? 'Generating…' : '⚙ Generate endpoint'}
+        </button>
+      </div>
+      <div className="toolbar">
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="The machine learning type whose training snippets are searched">
+          Type
+          <Select value={type} onChange={value => setType(value)}>
+            <option value="">choose type…</option>
+            {types.map(t => <option key={t.type} value={t.type}>{t.type}</option>)}
+          </Select>
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="How the endpoint searches. Keyword search needs no OpenAI key and costs nothing per call">
+          Search by
+          <Select value={retrieval} onChange={value => setRetrieval(value)}>
+            <option value="">the type's own setting</option>
+            <option value="bm25">Keyword</option>
+            <option value="mixed">Keyword and meaning</option>
+            <option value="embeddings">Meaning</option>
+          </Select>
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="What each match gives out">
+          Returns
+          <Select value={result} onChange={value => setResult(value)}>
+            <option value="references">Prompt and URI</option>
+            <option value="rows">Prompt, completion, URI and meta</option>
+          </Select>
+        </label>
+      </div>
+      <div className="toolbar">
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="The most matches returned">
+          Limit
+          <input type="number" value={limit} onChange={e => setLimit(e.target.value)} style={{ width: 70 }} />
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Similarity cutoff between 0 and 1, where lower is stricter. Blank uses the type's own">
+          Threshold
+          <input type="number" step={0.05} placeholder="type's" value={threshold}
+            onChange={e => setThreshold(e.target.value)} style={{ width: 80 }} />
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Only matches belonging to exactly this URL or reference">
+          URI
+          <input type="text" placeholder="any" value={uri} onChange={e => setUri(e.target.value)} style={{ width: 200 }} />
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Only matches whose meta fits this pattern, where % matches any text, such as FACT ==> %">
+          Meta
+          <input type="text" placeholder="any" value={meta} onChange={e => setMeta(e.target.value)} style={{ width: 200 }} />
+        </label>
+      </div>
+      {/* Who may call the endpoint at all - empty leaves it public. */}
+      <div className="toolbar">
+        <div style={{ fontWeight: 600, fontSize: 13 }}>Who may call:</div>
+        <span>
+          {auth.length > 0 ? auth.join(', ') : <em className="muted">public — anyone</em>}
+        </span>
+        <button className="btn btn-secondary btn-small" onClick={() => setAuthOpen(!authOpen)}>
+          {authOpen ? 'Done' : 'Edit'}
+        </button>
+        {authOpen && (
+          <div style={{ flexBasis: '100%' }}>
+            <RoleChips
+              roles={roles}
+              selected={auth}
+              onToggle={(role, selected) => setAuth(selected
+                ? [...auth, role]
+                : auth.filter(candidate => candidate !== role))} />
+          </div>
+        )}
+      </div>
+      <div className="toolbar">
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Calls an IP may make per window - root is exempt. 0 means no limit">
+          Rate limit
+          <input type="number" value={rateLimit} onChange={e => setRateLimit(e.target.value)} style={{ width: 70 }} />
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Window length in seconds">
+          Window&nbsp;s
+          <input type="number" value={rateWindow} onChange={e => setRateWindow(e.target.value)} style={{ width: 70 }} />
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="How long the caller may cache an answer. 0 means not at all">
+          Cache&nbsp;s
+          <input type="number" value={cacheSeconds} onChange={e => setCacheSeconds(e.target.value)} style={{ width: 70 }} />
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
+          Overwrite
+        </label>
+      </div>
+      <span className="muted" style={{ fontSize: 12 }}>
+        The endpoint takes one argument, <span className="mono">query</span>, and everything else is
+        fixed in it. {effective === 'bm25'
+          ? 'Keyword search needs no OpenAI key, and costs nothing per call.'
+          : 'Searching by meaning spends one OpenAI embedding on every call, so keep a rate limit on a public endpoint.'}
+      </span>
+      {preview && (
+        <>
+          <div className="toolbar" style={{ marginTop: 12 }}>
+            <div style={{ fontWeight: 600, fontSize: 13 }}>Generated endpoint</div>
+            <span className="muted" style={{ fontSize: 12 }}>read-only preview of what was saved</span>
+            <span className="spacer" />
+            {generated && (
+              <>
+                <button
+                  className="btn btn-secondary btn-small"
                   onClick={() => navigate(
                     '/endpoints?filter=' + encodeURIComponent(generated.path) +
                     '&expand=' + encodeURIComponent(generated.verb))}>

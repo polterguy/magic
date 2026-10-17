@@ -1,0 +1,322 @@
+
+/*
+ * Searches the training snippets of one machine learning type for the given [query], combining
+ * keyword search (BM25) with search by meaning (vectors), and returns the best matches first,
+ * each with its [id], [prompt], [completion], [uri] and [meta].
+ *
+ * Executed with [execute-file] by search-memory and by endpoints made with the Search endpoint
+ * generator, which is why it checks no authorization of its own - the caller decides who may
+ * search. It is not an endpoint itself.
+ *
+ * Without [retrieval] the type's own setting is used. A keyword only search needs no OpenAI key,
+ * while the other two spend one embedding call per query. A type set to search by meaning alone
+ * is searched with keywords as well, unless the query has no words to match.
+ */
+.arguments
+
+   // Mandatory name of the machine learning type to search.
+   type:string
+
+   // Mandatory text to search for, in natural language or as keywords.
+   query:string
+
+   // Optional search mode, one of bm25, mixed or embeddings. Defaults to the type's own.
+   retrieval:string
+
+   // Optional similarity cutoff between 0 and 1, where a lower value is stricter. Defaults to the type's own.
+   threshold:decimal
+
+   // Optional maximum number of matches to return. Defaults to 5.
+   limit:int
+
+   // Optional URL or reference that a match must belong to.
+   uri:string
+
+   // Optional pattern a match's meta must fit, where % matches any text, such as FACT ==> %.
+   meta:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/query
+validators.enum:x:@.arguments/*/retrieval
+   .:bm25
+   .:mixed
+   .:embeddings
+validators.default:x:@.arguments
+   limit:int:5
+
+// Finding how the type searches.
+.model
+.retrieval
+.threshold
+data.connect:magic
+   data.read
+      table:ml_types
+      columns
+         vector_model
+         retrieval
+         threshold
+      where
+         and
+            type.eq:x:@.arguments/*/type
+   if
+      not-exists:x:@data.read/*
+      .lambda
+         throw:No such machine learning type
+            public:bool:true
+            status:int:404
+   set-value:x:@.model
+      get-value:x:@data.read/*/*/vector_model
+   set-value:x:@.retrieval
+      get-first-value
+         get-value:x:@.arguments/*/retrieval
+         get-value:x:@data.read/*/*/retrieval
+         .:embeddings
+   set-value:x:@.threshold
+      get-first-value
+         get-value:x:@.arguments/*/threshold
+         get-value:x:@data.read/*/*/threshold
+set-value:x:@.threshold
+   convert:x:@.threshold
+      type:double
+
+// Retrieving the embedding of the query, unless the search is by keyword only.
+.embedding
+if
+   neq:x:@.retrieval
+      .:bm25
+   .lambda
+      .token
+      set-value:x:@.token
+         strings.concat
+            .:"Bearer "
+            config.get:"magic:openai:key"
+      http.post:"https://api.openai.com/v1/embeddings"
+         headers
+            Authorization:x:@.token
+            Content-Type:application/json
+         payload
+            input:x:@.arguments/*/query
+            model:x:@.model
+         convert:true
+      if
+         not
+            and
+               mte:x:@http.post
+                  .:int:200
+               lt:x:@http.post
+                  .:int:300
+         .lambda
+            lambda2hyper:x:@http.post
+            log.error:Something went wrong while invoking OpenAI
+               message:x:@http.post/*/content/*/error/*/message
+               error:x:@lambda2hyper
+            throw:x:@http.post/*/content/*/error/*/message
+               public:bool:true
+               status:x:@http.post
+
+      // Converting the embedding to the string format SQLite stores vectors in.
+      set-value:x:@.embedding
+         strings.concat
+            .:[
+            strings.join:x:@http.post/*/content/*/data/0/*/embedding/*
+               .:,
+            .:]
+
+/*
+ * Building the keyword query - every token quoted, joined with OR and punctuation stripped,
+ * since a raw query breaks the syntax of the keyword index.
+ */
+.query
+.tokens
+set-value:x:@.tokens
+   strings.to-lower:x:@.arguments/*/query
+set-value:x:@.tokens
+   strings.replace-not-of:x:@.tokens
+      .:"abcdefghijklmnopqrstuvwxyz0123456789 "
+      .:" "
+strings.split:x:@.tokens
+   .:" "
+for-each:x:@strings.split/*
+   if
+      neq:x:@.dp/#
+         .:
+      .lambda
+         if
+            null:x:@.query
+            .lambda
+               set-value:x:@.query
+                  strings.concat
+                     .:"\""
+                     get-value:x:@.dp/#
+                     .:"\""
+         else
+            set-value:x:@.query
+               strings.concat
+                  get-value:x:@.query
+                  .:" OR \""
+                  get-value:x:@.dp/#
+                  .:"\""
+
+/*
+ * A query without a single word cannot match by keyword, so such a query is answered by
+ * meaning alone when the search can do that, and finds nothing when it cannot. Otherwise a
+ * search by meaning alone is widened with keywords.
+ */
+if
+   and
+      null:x:@.query
+      neq:x:@.retrieval
+         .:bm25
+   .lambda
+      set-value:x:@.retrieval
+         .:embeddings
+else-if
+   eq:x:@.retrieval
+      .:embeddings
+   .lambda
+      set-value:x:@.retrieval
+         .:mixed
+
+/*
+ * The optional filters. Both are always given a non empty value, since a missing one cannot be
+ * compared in SQL, so * and % stand for no restriction at all. Notice, snippets that declare
+ * functions and widgets are never returned, as they are tools and not knowledge.
+ */
+.uri:*
+if
+   and
+      not-null:x:@.arguments/*/uri
+      neq:x:@.arguments/*/uri
+         .:
+   .lambda
+      set-value:x:@.uri
+         get-value:x:@.arguments/*/uri
+.meta:%
+if
+   and
+      not-null:x:@.arguments/*/meta
+      neq:x:@.arguments/*/meta
+         .:
+   .lambda
+      set-value:x:@.meta
+         get-value:x:@.arguments/*/meta
+.tail:" and (@uri = '*' or ts.uri = @uri) and (@meta = '%' or ts.meta like @meta) and (ts.meta is null or (ts.meta not like 'FUNCTION_INVOCATION ==> %' and ts.meta not like 'WIDGET ==> %'))"
+
+// Searching.
+.found
+data.connect:[generic|magic]
+
+   // Initializing vector search, unless the search is by keyword only.
+   if
+      neq:x:@.retrieval
+         .:bm25
+      .lambda
+         sqlite.load-extension
+            file:sqlite-plugins/vector
+            proc:sqlite3_vector_init
+         data.execute:"select vector_init('ml_training_snippets', 'embeddings', 'dimension=1536,type=FLOAT32,distance=cosine')"
+
+   // Converting the distance cutoff, since what is stored is 1 - threshold.
+   math.subtract
+      .:float:1
+      get-value:x:@.threshold
+
+   if
+      eq:x:@.retrieval
+         .:bm25
+      .lambda
+
+         // Keyword only - BM25 rank order.
+         if
+            not-null:x:@.query
+            .lambda
+               strings.concat
+                  .:@"
+select ts.id, ts.prompt, ts.completion, ts.uri, ts.meta
+   from ml_training_snippets_fts(@query) as f
+   inner join ml_training_snippets ts on ts.id = f.rowid
+   where ts.type = @type"
+                  get-value:x:@.tail
+                  .:" order by f.rank limit @max_hits"
+               data.select:x:@strings.concat
+                  query:x:@.query
+                  type:x:@.arguments/*/type
+                  uri:x:@.uri
+                  meta:x:@.meta
+                  max_hits:x:@.arguments/*/limit
+               add:x:@.found
+                  get-nodes:x:@data.select/*
+
+   else-if
+      eq:x:@.retrieval
+         .:mixed
+      .lambda
+
+         /*
+          * Both searches, merged with reciprocal rank fusion. The vector search applies the
+          * threshold as a cosine distance cutoff, and the keyword search applies it as a
+          * relative cutoff - candidates must score at least that fraction of the best keyword
+          * hit, since keyword scores mean nothing in absolute terms.
+          */
+         strings.concat
+            .:@"
+with fts as (
+    select f.rowid as id, f.rank as score, min(f.rank) over () as best,
+           row_number() over (order by f.rank) as r
+      from ml_training_snippets_fts(@query) as f
+      inner join ml_training_snippets ts on ts.id = f.rowid
+     where ts.type = @type"
+            get-value:x:@.tail
+            .:@" limit 25
+), vss as (
+    select vss.rowid as id, row_number() over (order by vss.distance) as r
+      from vector_full_scan_stream('ml_training_snippets', 'embeddings', vector_as_f32(@embedding)) as vss
+      inner join ml_training_snippets ts on ts.id = vss.rowid
+     where ts.type = @type and ts.embeddings is not null and vss.distance < @threshold"
+            get-value:x:@.tail
+            .:@" limit 25
+), rrf as (
+    select id, sum(1.0 / (60 + r)) as score
+      from (select id, r from fts where score / best >= @rthreshold union all select id, r from vss)
+     group by id
+)
+select ts.id, ts.prompt, ts.completion, ts.uri, ts.meta
+  from rrf
+  inner join ml_training_snippets ts on ts.id = rrf.id
+ order by rrf.score desc limit @max_hits"
+         data.select:x:@strings.concat
+            query:x:@.query
+            embedding:x:@.embedding
+            type:x:@.arguments/*/type
+            threshold:x:@math.subtract
+            rthreshold:x:@.threshold
+            uri:x:@.uri
+            meta:x:@.meta
+            max_hits:x:@.arguments/*/limit
+         add:x:@.found
+            get-nodes:x:@data.select/*
+
+   else
+
+      // By meaning only.
+      strings.concat
+         .:@"
+select ts.id, ts.prompt, ts.completion, ts.uri, ts.meta
+   from vector_full_scan_stream('ml_training_snippets', 'embeddings', vector_as_f32(@embedding)) as vss
+   inner join ml_training_snippets ts on ts.id = vss.rowid
+   where ts.type = @type and ts.embeddings is not null and vss.distance < @threshold"
+         get-value:x:@.tail
+         .:" order by vss.distance limit @max_hits"
+      data.select:x:@strings.concat
+         embedding:x:@.embedding
+         type:x:@.arguments/*/type
+         threshold:x:@math.subtract
+         uri:x:@.uri
+         meta:x:@.meta
+         max_hits:x:@.arguments/*/limit
+      add:x:@.found
+         get-nodes:x:@data.select/*
+
+// Returning the best matches first.
+return-nodes:x:@.found/*

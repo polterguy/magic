@@ -679,6 +679,32 @@ export function generateSandboxEndpoint(payload: {
     '/magic/system/crudifier/sandbox-api', payload);
 }
 
+/*
+ * Generates one endpoint searching the training snippets of a single machine learning type by
+ * keyword, by meaning or both. Everything but the query is baked into the endpoint; the backend
+ * returns the generated Hyperlambda so the caller can preview what was written.
+ */
+export function generateSearchEndpoint(payload: {
+  moduleName: string;
+  endpointName: string;
+  verb: string;
+  type: string;
+  retrieval: string;
+  threshold?: number;
+  limit: number;
+  uri: string;
+  meta: string;
+  result: string;
+  authorization: string;
+  rateLimit: number;
+  rateWindow: number;
+  cacheSeconds: number;
+  overwrite: boolean;
+}) {
+  return http.post<{ result: string; file: string; hyperlambda: string }>(
+    '/magic/system/crudifier/search-api', payload);
+}
+
 export function exportDdl(
   databaseType: string, connectionString: string, databaseName: string,
   tables: string[], full: boolean) {

@@ -1,0 +1,273 @@
+
+/*
+ * Generates a single search endpoint, searching the training snippets of one machine learning
+ * type by keyword (BM25), by meaning (vectors) or both, according to the given [.arguments]. The
+ * endpoint takes a [query], and returns the best matches - only their prompt and uri, or their
+ * completion and meta too. Everything else is baked into it, so callers cannot choose the type,
+ * the search mode or how much is returned. See the search.template.hl file it is built from for
+ * the full runtime behaviour.
+ *
+ * [authorization] is a comma separated list of roles allowed to call it, and empty makes it
+ * public. [rateLimit] is the number of calls per [rateWindow] seconds that an IP may make, root
+ * excepted, and 0 or empty means no limit. [cacheSeconds] lets the caller cache an answer for
+ * that long, and is private to the caller when the endpoint is restricted by [authorization].
+ * Leave [retrieval] empty to search the way the type itself is set to. A search by keyword
+ * alone costs nothing per call, while the others spend one OpenAI embedding per call.
+ */
+.arguments
+   moduleName:string
+   endpointName:string
+   verb:string
+   type:string
+   retrieval:string
+   threshold:decimal
+   limit:int
+   uri:string
+   meta:string
+   result:string
+   authorization:string
+   rateLimit:int
+   rateWindow:int
+   cacheSeconds:int
+   overwrite:bool
+.description:Creates an HTTP endpoint searching the training snippets of one machine learning type by keyword, by meaning or both
+.type:internal
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/moduleName
+validators.mandatory:x:@.arguments/*/endpointName
+validators.mandatory:x:@.arguments/*/verb
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/result
+validators.enum:x:@.arguments/*/verb
+   .:get
+   .:post
+validators.enum:x:@.arguments/*/result
+   .:references
+   .:rows
+validators.enum:x:@.arguments/*/retrieval
+   .:bm25
+   .:mixed
+   .:embeddings
+validators.default:x:@.arguments
+   limit:int:5
+   rateWindow:int:60
+
+// Ensures user is authorized to access endpoint.
+auth.ticket.verify:root
+
+// The type must exist, or the endpoint would answer every call with an error.
+data.connect:magic
+   data.read
+      table:ml_types
+      columns
+         type
+      where
+         and
+            type.eq:x:@.arguments/*/type
+   if
+      not-exists:x:@data.read/*
+      .lambda
+         throw:No such machine learning type
+            public:bool:true
+            status:int:400
+
+// Logging roughly what we are about to do.
+log.info:Generating search endpoint
+   module:x:@.arguments/*/moduleName
+   endpoint:x:@.arguments/*/endpointName
+   verb:x:@.arguments/*/verb
+   type:x:@.arguments/*/type
+
+// Loading the endpoint template into [.endpoint] so we can inject the settings into it.
+io.file.load:/system/crudifier/templates/search.template.hl
+.endpoint
+add:x:@.endpoint
+   hyper2lambda:x:@io.file.load
+      comments:bool:true
+
+// Injecting the settings. The optional ones are only set when they were given.
+set-value:x:@.endpoint/*/.policy/*/type
+   get-value:x:@.arguments/*/type
+set-value:x:@.endpoint/*/.policy/*/limit
+   get-value:x:@.arguments/*/limit
+set-value:x:@.endpoint/*/.policy/*/result
+   get-value:x:@.arguments/*/result
+if
+   and
+      not-null:x:@.arguments/*/retrieval
+      neq:x:@.arguments/*/retrieval
+         .:
+   .lambda
+      set-value:x:@.endpoint/*/.policy/*/retrieval
+         get-value:x:@.arguments/*/retrieval
+if
+   not-null:x:@.arguments/*/threshold
+   .lambda
+      set-value:x:@.endpoint/*/.policy/*/threshold
+         get-value:x:@.arguments/*/threshold
+if
+   and
+      not-null:x:@.arguments/*/uri
+      neq:x:@.arguments/*/uri
+         .:
+   .lambda
+      set-value:x:@.endpoint/*/.policy/*/uri
+         get-value:x:@.arguments/*/uri
+if
+   and
+      not-null:x:@.arguments/*/meta
+      neq:x:@.arguments/*/meta
+         .:
+   .lambda
+      set-value:x:@.endpoint/*/.policy/*/meta
+         get-value:x:@.arguments/*/meta
+
+// A throttle prefix unique to this endpoint, so its rate limiter is not shared.
+set-value:x:@.endpoint/*/.policy/*/throttle-prefix
+   strings.concat
+      .:search-
+      get-value:x:@.arguments/*/moduleName
+      .:-
+      get-value:x:@.arguments/*/endpointName
+      .:-
+      get-value:x:@.arguments/*/verb
+if
+   and
+      not-null:x:@.arguments/*/rateLimit
+      mt:x:@.arguments/*/rateLimit
+         .:int:0
+   .lambda
+      set-value:x:@.endpoint/*/.policy/*/throttle-limit
+         get-value:x:@.arguments/*/rateLimit
+      set-value:x:@.endpoint/*/.policy/*/throttle-window
+         get-value:x:@.arguments/*/rateWindow
+
+/*
+ * Caching headers - private to the caller when the endpoint is restricted, since a shared cache
+ * must never hand one caller's answer to another.
+ */
+if
+   and
+      not-null:x:@.arguments/*/cacheSeconds
+      mt:x:@.arguments/*/cacheSeconds
+         .:int:0
+   .lambda
+      .cache
+      set-value:x:@.cache
+         strings.concat
+            .:max-age=
+            get-value:x:@.arguments/*/cacheSeconds
+      if
+         and
+            not-null:x:@.arguments/*/authorization
+            neq:x:@.arguments/*/authorization
+               .:
+         .lambda
+            set-value:x:@.cache
+               strings.concat
+                  .:"private, "
+                  get-value:x:@.cache
+      set-value:x:@.endpoint/*/.policy/*/cache-control
+         get-value:x:@.cache
+
+/*
+ * Describing the endpoint by replacing the {description} placeholder in the file level comment
+ * (the first node). That comment is the whole description of the endpoint - and, because
+ * generated endpoints surface as MCP tools, the tool description the calling model reads.
+ */
+.what:"its prompt and uri"
+if
+   eq:x:@.arguments/*/result
+      .:rows
+   .lambda
+      set-value:x:@.what
+         .:"its prompt, completion, uri and meta"
+.how
+if
+   eq:x:@.arguments/*/retrieval
+      .:bm25
+   .lambda
+      set-value:x:@.how
+         .:" by keyword"
+else-if
+   eq:x:@.arguments/*/retrieval
+      .:embeddings
+   .lambda
+      set-value:x:@.how
+         .:" by meaning"
+else-if
+   eq:x:@.arguments/*/retrieval
+      .:mixed
+   .lambda
+      set-value:x:@.how
+         .:" by keyword and meaning"
+set-value:x:@.endpoint/0
+   strings.replace:x:@.endpoint/0
+      .:"{description}"
+      strings.concat
+         .:"Searches the knowledge in the "
+         get-value:x:@.arguments/*/type
+         .:" type"
+         get-value:x:@.how
+         .:" for [query], and returns the best matches, each with "
+         get-value:x:@.what
+         .:.
+
+/*
+ * If the caller restricted who may invoke the endpoint, inserting the authorization
+ * check right after the arguments, so it runs before anything else.
+ */
+if
+   and
+      not-null:x:@.arguments/*/authorization
+      neq:x:@.arguments/*/authorization
+         .:
+   .lambda
+      unwrap:x:+/*/*
+      insert-after:x:@.endpoint/*/.arguments
+         .
+            auth.ticket.verify:x:@.arguments/*/authorization
+
+// Creating the module folder if necessary.
+.folder:/modules/
+set-value:x:@.folder
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.arguments/*/moduleName
+      .:/
+io.folder.create:x:@.folder
+
+// Figuring out the endpoint's filename.
+.filename
+set-value:x:@.filename
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.arguments/*/endpointName
+      .:.
+      get-value:x:@.arguments/*/verb
+      .:.hl
+
+// Refusing to clobber an existing endpoint unless the caller asked to overwrite it.
+if
+   and
+      not
+         get-value:x:@.arguments/*/overwrite
+      io.file.exists:x:@.filename
+   .lambda
+      throw:Endpoint already exists, choose a new name or enable overwrite
+         status:400
+         public:true
+
+// Serialising and saving the generated endpoint.
+lambda2hyper:x:@.endpoint/*
+   comments:bool:true
+io.file.save:x:@.filename
+   get-value:x:@lambda2hyper
+
+// Returning the generated endpoint to the caller, for preview.
+unwrap:x:+/*
+return
+   result:success
+   file:x:@.filename
+   hyperlambda:x:@lambda2hyper
