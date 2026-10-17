@@ -7,7 +7,9 @@
   <ItemGroup>
     <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="ScottPlot" Version="5.0.47" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="4.1.2" />
+    <!-- Pinned below 4.0 deliberately: 4.x introduced a licensing requirement that
+         breaks an unattended CI/Docker build with no license configured. -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
     <ProjectReference Include="..\..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
     <ProjectReference Include="..\..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
   </ItemGroup>
