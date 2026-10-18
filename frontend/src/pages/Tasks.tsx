@@ -4,7 +4,7 @@ import DateTimePicker from '../components/DateTimePicker';
 import SearchInput from '../components/SearchInput';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import CodeEditor from '../components/CodeEditor';
+import CodeEditor, { useEditToken } from '../components/CodeEditor';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
 import Pagination from '../components/Pagination';
@@ -316,6 +316,7 @@ function TaskDialog(props: {
   const [id, setId] = useState(props.task.id);
   const [description, setDescription] = useState(props.task.description ?? '');
   const [code, setCode] = useState(props.task.hyperlambda ?? '');
+  const [codeEditId, bumpCodeEditId] = useEditToken();
   const [saved, setSaved] = useState({
     description: props.task.description ?? '',
     code: props.task.hyperlambda ?? '',
@@ -386,13 +387,18 @@ function TaskDialog(props: {
           style={{ flex: 1 }} />
       </div>
       <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
-        <CodeEditor value={code} onChange={setCode} mode="hyperlambda" onSave={save} />
+        <CodeEditor
+          value={code}
+          onChange={setCode}
+          mode="hyperlambda"
+          onSave={save}
+          undoableEditId={codeEditId} />
       </div>
       <AiPrompt
         fileType="hl"
         getOldCode={() => code}
         session="task-editor.editor"
-        onResult={setCode}
+        onResult={value => { setCode(value); bumpCodeEditId(); }}
         onError={message => showToast(message, true)}
         style={{ marginTop: 8 }} />
       <div className="modal-actions">

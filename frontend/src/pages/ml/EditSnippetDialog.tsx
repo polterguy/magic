@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import AiPrompt from '../../components/AiPrompt';
-import CodeEditor from '../../components/CodeEditor';
+import CodeEditor, { useEditToken } from '../../components/CodeEditor';
 import { Modal } from '../../components/Dialogs';
 import { mlSnippetCreate, mlSnippetUpdate, vectoriseSnippet } from '../../lib/api';
 import { showToast } from '../../lib/toast';
@@ -19,6 +19,7 @@ export default function EditSnippetDialog(props: {
 
   const [prompt, setPrompt] = useState(props.existing?.prompt ?? '');
   const [completion, setCompletion] = useState(props.existing?.completion ?? '');
+  const [completionEditId, bumpCompletionEditId] = useEditToken();
   const [busy, setBusy] = useState(false);
 
   /*
@@ -57,6 +58,7 @@ export default function EditSnippetDialog(props: {
     } catch {
       setCompletion(result);
     }
+    bumpCompletionEditId();
   }
 
   async function save() {
@@ -124,7 +126,11 @@ export default function EditSnippetDialog(props: {
         <div>
           <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Completion</div>
           <div style={{ height: '38vh', display: 'flex', flexDirection: 'column' }}>
-            <CodeEditor value={completion} onChange={setCompletion} mode="markdown" />
+            <CodeEditor
+              value={completion}
+              onChange={setCompletion}
+              mode="markdown"
+              undoableEditId={completionEditId} />
           </div>
           {/*
             * Ask the Machine to transform the snippet — the typed instruction is

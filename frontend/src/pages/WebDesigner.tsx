@@ -17,7 +17,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Tabs from '../components/Tabs';
 import SearchInput from '../components/SearchInput';
-import CodeEditor, { modeForFile } from '../components/CodeEditor';
+import CodeEditor, { modeForFile, useEditToken } from '../components/CodeEditor';
 import AiPrompt from '../components/AiPrompt';
 import { useDialog } from '../components/Dialogs';
 import { useAuth } from '../lib/AuthContext';
@@ -161,6 +161,12 @@ export default function WebDesigner() {
   // The file as text, while the code view has it, and as it was handed over —
   // the difference between them is whether the code view changed anything.
   const [code, setCode] = useState('');
+  /*
+   * Bumped only when `code` is deliberately replaced by AI generation — never
+   * by applyCode's programmatic reloads below — so the generated replacement
+   * becomes one undo step without making a silent reload undoable.
+   */
+  const [codeEditId, bumpCodeEditId] = useEditToken();
   const [codeOriginal, setCodeOriginal] = useState('');
   // Which file the code view holds. The page itself unless a stylesheet was picked.
   const [codeTarget, setCodeTarget] = useState('');
@@ -2028,7 +2034,8 @@ export default function WebDesigner() {
                 setDirty(true);
               }}
               mode={modeForFile(codeTarget || path)}
-              onSave={save} />
+              onSave={save}
+              undoableEditId={codeEditId} />
           </div>
         )}
         {path && view === 'live' && (
@@ -2119,6 +2126,7 @@ export default function WebDesigner() {
             session={codeTarget || path}
             onResult={value => {
               setCode(value);
+              bumpCodeEditId();
               setDirty(true);
             }}
             onError={message => showToast(message, true)}

@@ -4,7 +4,7 @@ import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
 import { useSessionState } from '../lib/useSessionState';
 import type { EditorView } from '@codemirror/view';
-import CodeEditor, { editorSelection } from '../components/CodeEditor';
+import CodeEditor, { editorSelection, useEditToken } from '../components/CodeEditor';
 import { SparkIcon } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
 import Tabs from '../components/Tabs';
@@ -38,6 +38,10 @@ export default function Sql() {
   // The editor's buffer outlives the page — leaving and coming back restores
   // it, instead of a discard-changes dialog standing in the way.
   const [sql, setSql] = useSessionState('magic2.sql-studio.sql', '');
+  // Bumped alongside setSql whenever the whole buffer is deliberately
+  // replaced (generate, load snippet, load history, import), so that
+  // replacement becomes one undo step instead of bypassing undo entirely.
+  const [sqlEditId, bumpSqlEditId] = useEditToken();
   // What the editor last loaded or saved — differing content means unsaved changes.
   const [savedSql, setSavedSql] = useSessionState('magic2.sql-studio.saved', '');
   const [safeMode, setSafeMode] = useState(true);
@@ -206,6 +210,7 @@ export default function Sql() {
     const entry = history[index];
     if (entry) {
       setSql(entry.sql);
+      bumpSqlEditId();
     }
   }
 
@@ -226,6 +231,7 @@ export default function Sql() {
       const response = await aiQuery(
         selected, 'sql', await createAiContext(), 'sql-studio.editor');
       setSql(response.result);
+      bumpSqlEditId();
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     } finally {
@@ -283,6 +289,7 @@ export default function Sql() {
     try {
       const text = await loadFile(filename);
       setSql(text);
+      bumpSqlEditId();
       setSavedSql(text);
     } catch (err: any) {
       showToast(err.message, true, err.logId);
@@ -325,7 +332,10 @@ export default function Sql() {
 
   function importSqlFile(file: File) {
     const reader = new FileReader();
-    reader.onload = () => setSql(String(reader.result ?? ''));
+    reader.onload = () => {
+      setSql(String(reader.result ?? ''));
+      bumpSqlEditId();
+    };
     reader.readAsText(file);
   }
 
@@ -629,6 +639,7 @@ export default function Sql() {
           mode="text/x-sql"
           onExecute={execute}
           hintTables={hintTables}
+          undoableEditId={sqlEditId}
           onInstance={instance => {
             if (editorRef.current === instance) {
               return;
@@ -641,7 +652,7 @@ export default function Sql() {
         fileType="sql"
         getContext={createAiContext}
         session="sql-studio.editor"
-        onResult={setSql}
+        onResult={value => { setSql(value); bumpSqlEditId(); }}
         onError={message => showToast(message, true)}
         style={{ marginTop: 8 }} />
       </>}

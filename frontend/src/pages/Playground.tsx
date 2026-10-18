@@ -4,7 +4,7 @@ import { explainHyperlambda } from '../lib/support';
 import { useEffect, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
-import CodeEditor from '../components/CodeEditor';
+import CodeEditor, { useEditToken } from '../components/CodeEditor';
 import { useDialog } from '../components/Dialogs';
 import { aiContextForFile, evaluate, listFiles, loadFile, saveFile } from '../lib/api';
 import { useSessionState } from '../lib/useSessionState';
@@ -33,6 +33,7 @@ export default function Playground() {
   // The editor's buffer outlives the page — leaving and coming back restores
   // it, instead of a discard-changes dialog standing in the way.
   const [code, setCode] = useSessionState('magic2.playground.code', DEFAULT_CODE);
+  const [codeEditId, bumpCodeEditId] = useEditToken();
   // What the editor last loaded or saved — differing content means unsaved changes.
   const [savedCode, setSavedCode] = useSessionState('magic2.playground.saved', DEFAULT_CODE);
   const [result, setResult] = useState('');
@@ -102,6 +103,7 @@ export default function Playground() {
     try {
       const text = await loadFile(filename);
       setCode(text);
+      bumpCodeEditId();
       setSavedCode(text);
     } catch (err: any) {
       showToast(err.message, true, err.logId);
@@ -169,7 +171,8 @@ export default function Playground() {
             onChange={setCode}
             mode="hyperlambda"
             onExecute={execute}
-            onHelp={explainHyperlambda} />
+            onHelp={explainHyperlambda}
+            undoableEditId={codeEditId} />
         </div>
         <div>
           <div className="editor-pane-title">Result</div>
@@ -182,7 +185,7 @@ export default function Playground() {
         getContext={() => aiContextForFile('/playground.hl', code)}
         getOldCode={() => code}
         session="hyperlambda-playground.editor"
-        onResult={setCode}
+        onResult={value => { setCode(value); bumpCodeEditId(); }}
         onError={message => showToast(message, true)}
         style={{ marginTop: 8 }} />
       {/* Execution can be slow — cover the screen so the wait reads clearly. */}

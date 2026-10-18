@@ -4,7 +4,7 @@ import { copyToClipboard, showToast } from '../lib/toast';
 import { explainHyperlambda } from '../lib/support';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
-import CodeEditor, { editorSelection, modeForFile } from '../components/CodeEditor';
+import CodeEditor, { editorSelection, modeForFile, useEditToken } from '../components/CodeEditor';
 import type { EditorView } from '@codemirror/view';
 import AiWaiter from '../components/AiWaiter';
 import InvokePanel, { InvokeResult } from '../components/InvokePanel';
@@ -137,6 +137,10 @@ export default function Files() {
    */
   const [openFiles, setOpenFiles] = useState<{ path: string; content: string; saved: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState('');
+  // Bumped whenever updateContent runs, so an AI-generated replacement of the
+  // open file becomes one undo step — harmless on ordinary keystrokes, which
+  // never reach the editor's compare-and-dispatch branch in the first place.
+  const [contentEditId, bumpContentEditId] = useEditToken();
   // Set by clicking a folder; null means "follow whichever file is open".
   const [openFolder, setOpenFolder] = useState<string | null>(null);
   const [executeResult, setExecuteResult] = useState<InvokeResult | null>(null);
@@ -389,6 +393,7 @@ export default function Files() {
   function updateContent(value: string) {
     setOpenFiles(files => files.map(file =>
       file.path === selectedFile ? { ...file, content: value } : file));
+    bumpContentEditId();
   }
 
   // Returns whether the save actually happened, for callers whose next step
@@ -1012,6 +1017,7 @@ export default function Files() {
               mode={modeForFile(selectedFile)}
               onSave={save}
               onExecute={execute}
+              undoableEditId={contentEditId}
               // Only Hyperlambda — the support bot answers about that.
               onHelp={selectedFile.endsWith('.hl') ? explainHyperlambda : undefined}
               onInstance={instance => {

@@ -5,7 +5,7 @@ import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import ProgressDialog, { ProgressLine } from '../components/ProgressDialog';
 import AiWaiter from '../components/AiWaiter';
 import { ChevronIcon } from '../components/Icons';
-import CodeEditor from '../components/CodeEditor';
+import CodeEditor, { useEditToken } from '../components/CodeEditor';
 import AiPrompt from '../components/AiPrompt';
 import RoleChips from '../components/RoleChips';
 import Tabs from '../components/Tabs';
@@ -906,6 +906,7 @@ function SqlEndpointTab() {
   const [endpointName, setEndpointName] = useState('custom-sql');
   const [args, setArgs] = useState<{ name: string; type: string }[]>([]);
   const [sql, setSql] = useState('');
+  const [sqlEditId, bumpSqlEditId] = useEditToken();
   const [overwrite, setOverwrite] = useState(false);
   const [busy, setBusy] = useState(false);
   // The same saved-snippets folder SQL Studio reads and writes.
@@ -923,6 +924,7 @@ function SqlEndpointTab() {
     }
     try {
       setSql(await loadFile(filename));
+      bumpSqlEditId();
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     }
@@ -930,7 +932,10 @@ function SqlEndpointTab() {
 
   function importSqlFile(file: File) {
     const reader = new FileReader();
-    reader.onload = () => setSql(String(reader.result ?? ''));
+    reader.onload = () => {
+      setSql(String(reader.result ?? ''));
+      bumpSqlEditId();
+    };
     reader.readAsText(file);
   }
 
@@ -1106,13 +1111,18 @@ function SqlEndpointTab() {
         </label>
       </div>
       <div style={{ height: 280, display: 'flex', flexDirection: 'column' }}>
-        <CodeEditor value={sql} onChange={setSql} mode="text/x-sql" hintTables={hintTables} />
+        <CodeEditor
+          value={sql}
+          onChange={setSql}
+          mode="text/x-sql"
+          hintTables={hintTables}
+          undoableEditId={sqlEditId} />
       </div>
       <AiPrompt
         fileType="sql"
         getContext={createAiContext}
         session="generator-sql.editor"
-        onResult={setSql}
+        onResult={value => { setSql(value); bumpSqlEditId(); }}
         onError={message => showToast(message, true)}
         style={{ marginTop: 8 }} />
       {busy && <AiWaiter />}

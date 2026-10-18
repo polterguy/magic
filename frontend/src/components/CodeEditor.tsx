@@ -288,6 +288,26 @@ interface CodeEditorProps {
   // Old-dashboard Alt-key actions: newFile, newFolder, renameFile,
   // deleteFile, deleteFolder, close.
   onAction?: (action: string) => void;
+  /*
+   * Change this (to any new value, from useEditToken below) in the same
+   * update that hands `value` a deliberate whole-buffer replacement — AI
+   * generation, loading a saved snippet, opening a dropped/uploaded file —
+   * and that replacement becomes one undo step. Leave it alone for a value
+   * change that must NOT be undoable: switching to a different record,
+   * scrubbing through Rewind's recorded steps, or any other silent resync.
+   * Without it, an external `value` change is applied without entering the
+   * undo history at all, as before.
+   */
+  undoableEditId?: number;
+}
+
+/*
+ * Pairs with `undoableEditId` above. Call bump() in the same handler that
+ * sets the state driving a deliberate `value` replacement.
+ */
+export function useEditToken(): [number, () => void] {
+  const [token, setToken] = useState(0);
+  return [token, () => setToken(current => current + 1)];
 }
 
 export default function CodeEditor(props: CodeEditorProps) {
@@ -307,6 +327,7 @@ export default function CodeEditor(props: CodeEditorProps) {
   const [ready, setReady] = useState(false);
   const callbacks = useRef(props);
   callbacks.current = props;
+  const lastUndoableEditId = useRef(props.undoableEditId);
 
   useEffect(() => {
     let cancelled = false;
@@ -523,9 +544,14 @@ export default function CodeEditor(props: CodeEditorProps) {
     }
     const current = view.state.doc.toString();
     if (props.value !== current) {
+      const undoable = props.undoableEditId !== undefined &&
+        props.undoableEditId !== lastUndoableEditId.current;
+      lastUndoableEditId.current = props.undoableEditId;
       view.dispatch({
         changes: { from: 0, to: current.length, insert: props.value },
-        annotations: [externalChange.of(true), Transaction.addToHistory.of(false)],
+        annotations: undoable
+          ? [externalChange.of(true)]
+          : [externalChange.of(true), Transaction.addToHistory.of(false)],
       });
     }
   }, [props.value]);
