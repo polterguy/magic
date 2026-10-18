@@ -2521,10 +2521,6 @@ function SearchTab() {
   const effective = retrieval || types.find(t => t.type === type)?.retrieval || 'embeddings';
 
   async function generate() {
-    if (!moduleName || !endpointName || !type) {
-      showToast('Provide a module name, an endpoint name and a type', true);
-      return;
-    }
     setBusy(true);
     try {
       const response = await generateSearchEndpoint({
@@ -2575,7 +2571,7 @@ function SearchTab() {
           onChange={e => setEndpointName(e.target.value)}
           style={{ width: 150 }} />
         <span className="spacer" />
-        <button className="btn" onClick={generate} disabled={busy}>
+        <button className="btn" onClick={generate} disabled={busy || !moduleName || !endpointName || !type}>
           {busy ? 'Generating…' : '⚙ Generate endpoint'}
         </button>
       </div>
