@@ -9,6 +9,7 @@ import { SparkIcon } from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
 import Tabs from '../components/Tabs';
 import Select from '../components/Select';
+import { CardGridSkeleton } from '../components/Skeleton';
 import { FIELD_TYPES, PK_TYPES } from '../lib/dbTypes';
 import { exportCsv } from '../lib/download';
 import { buildSqlAiContext, sqlHintTables, useDatabaseSelection, useSqlSnippets } from '../lib/sql';
@@ -399,12 +400,7 @@ export default function Sql() {
           No connection strings are configured for {type}. Add one under Databases → External.
         </div>
       )}
-      {selection.schemaLoading && (
-        <div className="spinner-panel">
-          <div className="spinner" />
-          <span className="muted">Loading databases and schema…</span>
-        </div>
-      )}
+      {selection.schemaLoading && view === 'tables' && <CardGridSkeleton />}
       {view === 'tables' && !selection.schemaLoading && (
         <>
           <div className="toolbar">

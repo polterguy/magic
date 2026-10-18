@@ -7,6 +7,7 @@ import SortHeader, { useSort } from '../components/SortHeader';
 import Pagination from '../components/Pagination';
 import RoleChips from '../components/RoleChips';
 import Tabs from '../components/Tabs';
+import { TableSkeleton } from '../components/Skeleton';
 import { usePagedList } from '../lib/usePagedList';
 import { exportCsv } from '../lib/download';
 import { useAuth } from '../lib/AuthContext';
@@ -191,13 +192,10 @@ function UsersTab(props: { roles: Role[] }) {
         <button className="btn" onClick={() => setCreating(true)}>+ New user</button>
         <Pagination page={list.page} pageCount={list.pageCount} onPage={list.setPage} />
       </div>
-      {list.rows === null ? (
-        <div className="spinner-panel">
-          <div className="spinner" />
-          <span className="muted">Loading users…</span>
-        </div>
-      ) : (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
+        {list.rows === null ? (
+        <TableSkeleton columns={6} />
+        ) : (
         <table>
           <thead>
             <tr>
@@ -263,8 +261,8 @@ function UsersTab(props: { roles: Role[] }) {
             ))}
           </tbody>
         </table>
+        )}
       </div>
-      )}
       {creating && (
         <NewUserDialog
           roles={props.roles}

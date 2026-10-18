@@ -9,6 +9,7 @@ import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
 import Pagination from '../components/Pagination';
 import { Modal, useDialog } from '../components/Dialogs';
+import { TableSkeleton } from '../components/Skeleton';
 import { usePagedList } from '../lib/usePagedList';
 import {
   Task,
@@ -198,13 +199,10 @@ export default function Tasks() {
         <button className="btn" onClick={openNew}>+ New task</button>
         <Pagination page={list.page} pageCount={list.pageCount} onPage={list.setPage} />
       </div>
-      {list.rows === null ? (
-        <div className="spinner-panel">
-          <div className="spinner" />
-          <span className="muted">Loading tasks…</span>
-        </div>
-      ) : (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
+        {list.rows === null ? (
+        <TableSkeleton columns={5} />
+        ) : (
         <table>
           <thead>
             <tr>
@@ -284,8 +282,8 @@ export default function Tasks() {
             ))}
           </tbody>
         </table>
+        )}
       </div>
-      )}
       {editing && (
         <TaskDialog
           task={editing.task}

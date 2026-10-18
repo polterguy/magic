@@ -9,6 +9,7 @@ import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
 import DebugDialog from '../components/DebugDialog';
 import { BracesIcon, ChevronIcon } from '../components/Icons';
+import { ModuleListSkeleton } from '../components/Skeleton';
 import {
   DebugRecording,
   Endpoint,
@@ -226,14 +227,9 @@ export default function Endpoints() {
             style={{ width: 300 }} />
         </div>
       </div>
-      {loading && (
-        <div className="spinner-panel">
-          <div className="spinner" />
-          <span className="muted">Loading endpoints…</span>
-        </div>
-      )}
+      {loading && <ModuleListSkeleton />}
       <div>
-      {groups.map(group => (
+      {!loading && groups.map(group => (
         <div
           className="card"
           key={group.key}

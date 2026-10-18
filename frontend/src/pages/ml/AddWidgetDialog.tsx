@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import Banner from '../../components/Banner';
 import { Modal } from '../../components/Dialogs';
 import SearchInput from '../../components/SearchInput';
+import { ListSkeleton } from '../../components/Skeleton';
 import { availableWidgets, mlSnippetCreate } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 
@@ -71,7 +72,8 @@ export default function AddWidgetDialog(props: {
         onChange={setFilter}
         style={{ width: '100%', marginBottom: 10 }} />
       <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
-        {visible.map(widget => (
+        {loading && <ListSkeleton withAction />}
+        {!loading && visible.map(widget => (
           <div
             key={widget.file}
             style={{
@@ -93,7 +95,6 @@ export default function AddWidgetDialog(props: {
             </button>
           </div>
         ))}
-        {loading && <div className="spinner-panel"><div className="spinner" /></div>}
         {!loading && visible.length === 0 && <div className="muted">No widgets available.</div>}
       </div>
       <div className="modal-actions">

@@ -4,6 +4,7 @@ import Select from '../components/Select';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal, useDialog } from '../components/Dialogs';
+import { TableSkeleton } from '../components/Skeleton';
 import Tabs from '../components/Tabs';
 import {
   addConnectionString,
@@ -171,14 +172,10 @@ function InternalTab() {
             }} />
         </label>
       </div>
-      {loading && (
-        <div className="spinner-panel">
-          <div className="spinner" />
-          <span className="muted">Loading databases…</span>
-        </div>
-      )}
-      {!loading && (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
+        {loading ? (
+        <TableSkeleton columns={3} />
+        ) : (
         <table>
           <thead>
             <tr>
@@ -217,8 +214,8 @@ function InternalTab() {
             ))}
           </tbody>
         </table>
+        )}
       </div>
-      )}
       {busy && <AiWaiter />}
     </>
   );
@@ -451,14 +448,10 @@ function ExternalTab() {
           Connect
         </button>
       </div>
-      {loading && (
-        <div className="spinner-panel">
-          <div className="spinner" />
-          <span className="muted">Loading connections…</span>
-        </div>
-      )}
-      {!loading && (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
+        {loading ? (
+        <TableSkeleton columns={5} />
+        ) : (
         <table>
           <thead>
             <tr>
@@ -522,8 +515,8 @@ function ExternalTab() {
             ))}
           </tbody>
         </table>
+        )}
       </div>
-      )}
       {catalogs && (
         <Modal width={700} onClose={() => setCatalogs(null)}>
           <h2>Catalogs — {catalogs.row.name} ({catalogs.row.type})</h2>

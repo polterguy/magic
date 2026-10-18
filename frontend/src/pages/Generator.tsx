@@ -11,6 +11,7 @@ import RoleChips from '../components/RoleChips';
 import Tabs from '../components/Tabs';
 import ImportApiTab from '../components/ImportApiTab';
 import SearchInput from '../components/SearchInput';
+import { TableSkeleton } from '../components/Skeleton';
 import {
   DatabaseSelection,
   buildSqlAiContext,
@@ -589,9 +590,8 @@ function CrudTab(props: { guided: boolean }) {
         <DatabaseSelectors selection={selection} />
       </div>
       {selection.loading ? (
-        <div className="spinner-panel">
-          <div className="spinner" />
-          <span className="muted">Loading databases…</span>
+        <div className="card gen-table-card" style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}>
+          <TableSkeleton columns={2} />
         </div>
       ) : !selection.database ? (
         <div className="info-box">

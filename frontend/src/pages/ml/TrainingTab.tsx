@@ -10,6 +10,7 @@ import SearchInput from '../../components/SearchInput';
 import Select from '../../components/Select';
 import SocketFeedback from '../../components/SocketFeedback';
 import SortHeader, { useSort } from '../../components/SortHeader';
+import { TableSkeleton } from '../../components/Skeleton';
 import {
   gibberish,
   importPage,
@@ -236,7 +237,7 @@ export default function TrainingTab(props: {
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         {snippets === null ? (
-          <div className="spinner-panel"><div className="spinner" /></div>
+          <TableSkeleton columns={searchingByVector ? 5 : 4} />
         ) : (
           <table>
             <thead>

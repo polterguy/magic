@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react';
 import Pagination from '../../components/Pagination';
 import Select from '../../components/Select';
+import { TableSkeleton } from '../../components/Skeleton';
 import { mlRequests, mlRequestsCount } from '../../lib/api';
 import { usePagedList } from '../../lib/usePagedList';
 
@@ -51,7 +52,7 @@ export default function HistoryTab(props: {
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         {list.rows === null ? (
-          <div className="spinner-panel"><div className="spinner" /></div>
+          <TableSkeleton columns={2} />
         ) : (
           <table>
             <thead>

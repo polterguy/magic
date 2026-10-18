@@ -1744,6 +1744,67 @@ tr.clickable:hover td { background: var(--accent-soft); }
   75% { content: '...'; }
 }
 
+/* ---------- Skeleton ---------- */
+
+.skeleton-bar {
+  display: inline-block;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--accent-soft) 37%, var(--surface-2) 63%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.skeleton-table {
+  width: 100%;
+}
+
+.skeleton-table td {
+  padding: 12px;
+}
+
+.skeleton-row:not(:last-child) td {
+  border-bottom: 1px solid var(--border);
+}
+
+.skeleton-list-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.skeleton-list-row-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-module {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+}
+
 /* ---------- Editors ---------- */
 
 .code-editor {

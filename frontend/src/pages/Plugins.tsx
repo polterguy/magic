@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { Modal, useDialog } from '../components/Dialogs';
+import { CardGridSkeleton } from '../components/Skeleton';
 import {
   availablePlugins,
   installModule,
@@ -173,12 +174,7 @@ export default function Plugins() {
           <span className="muted">{visible.length} shown</span>
         </div>
       </div>
-      {loading && (
-        <div className="spinner-panel">
-          <div className="spinner" />
-          <span className="muted">Loading plugins from the plugin repository…</span>
-        </div>
-      )}
+      {loading && <CardGridSkeleton />}
       <div style={{
         display: loading ? 'none' : 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',

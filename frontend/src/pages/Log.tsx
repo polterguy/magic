@@ -4,6 +4,7 @@ import SearchInput from '../components/SearchInput';
 import { useSearchParams } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LogItem, countLog, listLog } from '../lib/api';
+import { TableSkeleton } from '../components/Skeleton';
 import { useDebounced } from '../lib/usePagedList';
 
 const PAGE_SIZE = 20;
@@ -127,13 +128,10 @@ export default function Log() {
           Older ›
         </button>
       </div>
-      {items === null ? (
-        <div className="spinner-panel">
-          <div className="spinner" />
-          <span className="muted">Loading log…</span>
-        </div>
-      ) : (
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
+        {items === null ? (
+        <TableSkeleton columns={5} />
+        ) : (
         <table>
           <thead>
             <tr>
@@ -162,8 +160,8 @@ export default function Log() {
             ))}
           </tbody>
         </table>
+        )}
       </div>
-      )}
     </>
   );
 }
