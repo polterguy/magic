@@ -105,20 +105,41 @@ namespace magic.node.extensions
             if (node.Value is not Expression ex)
                 return node.Get<T>();
 
-            var value = ex.Evaluate(node);
+            /*
+             * One expression might lead to another expression, etc, so we follow the chain in a loop.
+             * To detect expressions leading back to a node we've already visited, such as "get-value:x:@get-value",
+             * we use Brent's cycle detection, comparing each node to a single "checkpoint" node, which is moved
+             * forward at every power of 2 hops. This costs no allocations, and no additional evaluations.
+             */
+            var checkpoint = node;
+            var hops = 0;
+            var limit = 2;
+            while (true)
+            {
+                var value = ex.Evaluate(node);
 
-            // Sanity checking result.
-            if (value.Count() > 1)
-                throw new HyperlambdaException("Multiple resulting nodes from expression.");
+                // Sanity checking result.
+                if (value.Count() > 1)
+                    throw new HyperlambdaException("Multiple resulting nodes from expression.");
 
-            // Making sure we return default value for T if we have no result.
-            if (!value.Any())
-                return default;
+                // Making sure we return default value for T if we have no result.
+                if (!value.Any())
+                    return default;
 
-            // Returning result of evaluation process.
-            // Notice, this process will recursively evaluate all expressions, 
-            // if one expression leads to another expression, etc.
-            return value.First().GetEx<T>();
+                node = value.First();
+                if (node.Value is not Expression next)
+                    return node.Get<T>();
+
+                if (node == checkpoint)
+                    throw new HyperlambdaException($"Expression '{next}' is recursive, and leads back to a node it has already visited.");
+                if (++hops == limit)
+                {
+                    checkpoint = node;
+                    hops = 0;
+                    limit <<= 1;
+                }
+                ex = next;
+            }
         }
 
         /// <summary>
