@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using Xunit;
 using magic.node.extensions;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.node.tests
 {
@@ -296,6 +297,64 @@ namespace magic.node.tests
             node.Add(new Node("", new Expression(".")));
             var res = node.Children.First().GetEx<int>();
             Assert.Equal(0, res);
+        }
+
+        [Fact]
+        public void GetEx_05_AncestorIteratorSkipsSelf()
+        {
+            // [@] starts at the previous sibling or parent, so this is not recursive, it simply yields nothing.
+            var lambda = HyperlambdaParser.Parse("get-value:x:@get-value");
+            Assert.Null(lambda.Children.First().GetEx<string>());
+        }
+
+        [Fact]
+        public void GetEx_05_ParentAndChildReferencingEachOther_Throws()
+        {
+            var lambda = HyperlambdaParser.Parse("get-value:x:*/foo\r\n   foo:x:@get-value");
+            Assert.Throws<HyperlambdaException>(() => lambda.Children.First().GetEx<string>());
+        }
+
+        [Fact]
+        public void GetEx_06_SiblingsReferencingEachOther_Throws()
+        {
+            var lambda = HyperlambdaParser.Parse("get-value:x:+\r\nget-value:x:-");
+            Assert.Throws<HyperlambdaException>(() => lambda.Children.First().GetEx<string>());
+            Assert.Throws<HyperlambdaException>(() => lambda.Children.Skip(1).First().GetEx<string>());
+        }
+
+        [Fact]
+        public void GetEx_07_CycleNotIncludingStart_Throws()
+        {
+            // First node is not part of the cycle, but leads into one.
+            var lambda = HyperlambdaParser.Parse("start:x:+\r\nfoo:x:+\r\nbar:x:-");
+            Assert.Throws<HyperlambdaException>(() => lambda.Children.First().GetEx<string>());
+        }
+
+        [Fact]
+        public void GetEx_08_SignalWithoutUnwrap_Throws()
+        {
+            // What [signal] sees when invoked with "username:x:@.arguments/*/username" without [unwrap] first.
+            var lambda = HyperlambdaParser.Parse(@"
+.arguments
+   username:x:@.arguments/*/username");
+            var username = lambda.Children.First().Children.First();
+            Assert.Throws<HyperlambdaException>(() => username.GetEx<string>());
+        }
+
+        [Fact]
+        public void GetEx_09_LongChain()
+        {
+            // Each node points to its only child, which used to cost one stack frame per link.
+            var root = new Node("", new Expression("*"));
+            var cur = root;
+            for (var idx = 0; idx < 100000; idx++)
+            {
+                var next = new Node("", new Expression("*"));
+                cur.Add(next);
+                cur = next;
+            }
+            cur.Add(new Node("", "OK"));
+            Assert.Equal("OK", root.GetEx<string>());
         }
 
         [Fact]
