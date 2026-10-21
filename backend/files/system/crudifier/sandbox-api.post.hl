@@ -198,6 +198,24 @@ for-each:x:@json2lambda/*/rules/*
             get-nodes:x:@.entry
 
 /*
+ * Whether any rule grants [execute-file] or [io.file.execute] - unlike most slots, the
+ * invocation syntax for executing a pinned file is not obvious from the slot name alone,
+ * so the generated header explains it explicitly whenever a rule grants either one.
+ */
+.has-execute-help:bool:false
+for-each:x:@json2lambda/*/rules/*
+   for-each:x:@.dp/#/*/slots/*
+      if
+         or
+            strings.starts-with:x:@.dp/#
+               .:execute-file
+            strings.starts-with:x:@.dp/#
+               .:io.file.execute
+         .lambda
+            set-value:x:@.has-execute-help
+               .:bool:true
+
+/*
  * Trimming the input argument the endpoint does not accept, together with the comment
  * documenting it - the comment is the argument's immediately preceding sibling, so it
  * is removed first while the argument still anchors it.
@@ -259,6 +277,24 @@ else
    set-value:x:@.endpoint/0
       strings.replace:x:@.endpoint/0
          .:"{roles}"
+         .:
+
+/*
+ * Replacing the "{execute-help}" placeholder with the [execute-file]/[io.file.execute]
+ * invocation syntax whenever a rule grants either, or with nothing when none does - the
+ * same mechanism as "{roles}" above, keyed off the flag computed while building it.
+ */
+if
+   get-value:x:@.has-execute-help
+   .lambda
+      set-value:x:@.endpoint/0
+         strings.replace:x:@.endpoint/0
+            .:"{execute-help}"
+            .:"\r\n\r\nIf your vocabulary includes [execute-file] or [io.file.execute], pinned to\r\none or more file paths, you can invoke any of those files directly:\r\n\r\n   execute-file:\"/foo/bar.hl\"\r\n      argument1:\"foo\"\r\n      argument2:int:57\r\n   return-nodes:x:-/*\r\n\r\nThe above returns a list of items. If the file returns a single value instead,\r\nuse:\r\n\r\n   execute-file:\"/foo/bar.hl\"\r\n   return-value:x:-\r\n\r\nMost arguments are optional. Call [describe] to see the exact paths pinned to\r\nyour role, and use [io.file.load] against a given path to read its source and\r\nlearn which arguments it accepts."
+else
+   set-value:x:@.endpoint/0
+      strings.replace:x:@.endpoint/0
+         .:"{execute-help}"
          .:
 
 /*
