@@ -1,17 +1,48 @@
 
 /*
- * Sets the active session and returns the history for the currently authenticated user.
+ * Sets the active session and returns its history to the caller.
+ *
+ * The session is scoped to its owner: the caller must either be the
+ * authenticated user who owns it, or supply the anonymous [user_id] the
+ * session was created under. This mirrors history-list.get.hl and stops a
+ * caller from reading another user's transcript by guessing its [session_id].
  */
 .arguments
    session_id:string
+   user_id:string
+
+// Resolving the caller's identity - the authenticated ticket, or the supplied
+// anonymous [user_id] - exactly as history-list.get.hl does.
+.user-id
+set-value:x:@.user-id
+   get-first-value
+      get-value:x:@.arguments/*/user_id
+      auth.ticket.get
+
+// Avoiding "session stealing": an authenticated caller may only pass their own
+// username or an anonymous "u_" id, never another named user's id.
+if
+   and
+      neq:x:@.user-id
+         auth.ticket.get
+      not
+         strings.starts-with:x:@.user-id
+            .:u_
+   .lambda
+      log.error:Injection attack attempted
+      throw:Not allowed
+         status:int:400
+         public:bool:true
 
 // Opening up database connection.
 data.connect:[generic|magic]
 
-   // Retrieving all questions from database.
+   // Retrieving the session - scoped to the caller's own [username] so that a
+   // [session_id] alone cannot return a transcript the caller does not own.
    data.select:@"
-select content from ml_history where session_id = @session_id"
+select content from ml_history where session_id = @session_id and username = @username"
       session_id:x:@.arguments/*/session_id
+      username:x:@.user-id
 
    // Making sure above invocation returned something.
    if

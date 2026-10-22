@@ -1138,7 +1138,8 @@
           "Content-Type": 'application/json'
         },
         body: JSON.stringify({
-          session_id: session
+          session_id: session,
+          user_id: this.userId
         })
         })
         .then(res => {
