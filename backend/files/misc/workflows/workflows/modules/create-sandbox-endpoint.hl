@@ -1,0 +1,47 @@
+
+/*
+ * Executable Hyperlambda file that generates one sandboxed HTTP endpoint, using the same Sandbox API
+ * generator the dashboard is using. The generated endpoint accepts Hyperlambda and/or natural language,
+ * and executes it inside a role based whitelist of functions, with a per role rate limit and an
+ * execution timeout. Create the module with create-module unless it already exists. Call list-slots
+ * to find the function names a rule can whitelist. The generated endpoint is instantly available as
+ * an HTTP endpoint and an MCP tool, and is also listed in /.well-known/hyperlambda-agent.
+ */
+.arguments
+
+   // Mandatory argument being name of module to generate the endpoint inside of.
+   moduleName:string
+
+   // Mandatory argument being name of the generated endpoint, which becomes the filename of it.
+   endpointName:string
+
+   // Mandatory argument being HTTP verb of the endpoint. Can be either 'post', 'get', 'put', 'delete' or 'patch'.
+   verb:string
+
+   // Mandatory argument being what the endpoint accepts. Can be either 'hl' for Hyperlambda, 'nl' for natural language or 'both'.
+   inputMode:string
+
+   // Optional argument being comma separated list of roles allowed to invoke the endpoint. Omitting it creates an endpoint anyone can invoke.
+   authorization:string
+
+   // Mandatory argument being the policy as a JSON string. It has an optional 'timeout' in milliseconds, an optional boolean 'overrideRoot' and an optional boolean 'returnCode', an optional 'generatorUrl' used to turn natural language into code, and a 'rules' list. Each rule is matched top down and has a 'role' being a role name or '*' for everyone, a 'slots' list of whitelisted functions each written as one Hyperlambda line where a pinned argument is 'slot:value' such as 'data.connect:chinook', an optional 'limit' and 'window' being calls allowed per number of seconds, an optional 'timeout' in milliseconds, and an optional 'description' being a short sentence on what that role can do. E.g. {"timeout":20000,"rules":[{"role":"*","limit":10,"window":60,"slots":["data.read","data.connect:chinook"],"description":"Can read from the chinook database"}]}
+   policy:string
+
+   // Optional argument that if true will overwrite a previously generated endpoint file.
+   overwrite:bool
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/moduleName
+validators.mandatory:x:@.arguments/*/endpointName
+validators.mandatory:x:@.arguments/*/verb
+validators.mandatory:x:@.arguments/*/inputMode
+validators.mandatory:x:@.arguments/*/policy
+
+// Passing arguments through to the Sandbox API generator.
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*
+execute-file:/system/crudifier/sandbox-api.post.hl
+return-nodes:x:@execute-file/*

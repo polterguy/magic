@@ -1,0 +1,72 @@
+
+/*
+ * Executable Hyperlambda file that generates one search HTTP endpoint, using the same Search endpoint
+ * generator the dashboard is using. The generated endpoint takes a query and searches the training
+ * snippets of one machine learning type by keyword, by meaning or both, returning the best matches.
+ * Everything else is baked into the endpoint, so its callers cannot choose the type, the search mode
+ * or how much is returned. Call list-types to find the machine learning types, and create the module
+ * with create-module unless it already exists. The generated endpoint is instantly available as an
+ * HTTP endpoint and an MCP tool.
+ */
+.arguments
+
+   // Mandatory argument being name of module to generate the endpoint inside of.
+   moduleName:string
+
+   // Mandatory argument being name of the generated endpoint, which becomes the filename of it.
+   endpointName:string
+
+   // Mandatory argument being HTTP verb of the endpoint. Can be either 'get' or 'post'.
+   verb:string
+
+   // Mandatory argument being name of the machine learning type to search.
+   type:string
+
+   // Optional argument being how to search. Can be either 'bm25' for keywords, 'embeddings' for meaning or 'mixed' for both. Omitting it searches the way the type itself is set to. Keywords alone cost nothing per call, the others spend one OpenAI embedding per call.
+   retrieval:string
+
+   // Optional argument being minimum similarity a match must have to be returned.
+   threshold:decimal
+
+   // Optional argument being how many matches the endpoint returns. Defaults to 5.
+   limit:int
+
+   // Optional argument restricting the search to snippets having this uri.
+   uri:string
+
+   // Optional argument restricting the search to snippets having this meta value.
+   meta:string
+
+   // Mandatory argument being what each match contains. Can be either 'references' for only prompt and uri, or 'rows' for completion and meta too.
+   result:string
+
+   // Optional argument being comma separated list of roles allowed to invoke the endpoint. Omitting it creates an endpoint anyone can invoke.
+   authorization:string
+
+   // Optional argument being number of calls an IP may make per [rateWindow] seconds, root excepted. 0 or omitting it means no limit.
+   rateLimit:int
+
+   // Optional argument being the number of seconds [rateLimit] applies to. Defaults to 60.
+   rateWindow:int
+
+   // Optional argument being number of seconds the caller may cache an answer. Omitting it sends no cache header.
+   cacheSeconds:int
+
+   // Optional argument that if true will overwrite a previously generated endpoint file.
+   overwrite:bool
+
+// Ensuring user is root.
+auth.ticket.verify:root
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/moduleName
+validators.mandatory:x:@.arguments/*/endpointName
+validators.mandatory:x:@.arguments/*/verb
+validators.mandatory:x:@.arguments/*/type
+validators.mandatory:x:@.arguments/*/result
+
+// Passing arguments through to the Search endpoint generator.
+add:x:./*/execute-file
+   get-nodes:x:@.arguments/*
+execute-file:/system/crudifier/search-api.post.hl
+return-nodes:x:@execute-file/*
