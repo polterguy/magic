@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -77,7 +78,7 @@ namespace magic.endpoint.controller.utilities
             return request.ContentType?
                 .Split(';')
                 .Select(x => x.Trim())
-                .FirstOrDefault(x => x.StartsWith("charset"))?
+                .FirstOrDefault(x => x.StartsWith("charset", StringComparison.Ordinal))?
                 .Split('=')
                 .Skip(1)
                 .FirstOrDefault()?

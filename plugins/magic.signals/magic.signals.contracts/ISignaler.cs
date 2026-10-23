@@ -68,6 +68,17 @@ namespace magic.signals.contracts
         Task ScopeAsync(string name, object value, Func<Task> functor);
 
         /// <summary>
+        /// Pushes all the given stack values unto the stack, in order, and invokes functor,
+        /// making sure they are all popped, in reverse order, after the functor has been
+        /// evaluated. Equivalent to nesting one ScopeAsync invocation for each value.
+        /// </summary>
+        /// <param name="scopes">Names and values of the stack objects.</param>
+        /// <param name="functor">Callback evaluated while the objects are on the
+        /// stack.</param>
+        /// <returns>Awaitable task.</returns>
+        Task ScopeAsync((string Name, object Value)[] scopes, Func<Task> functor);
+
+        /// <summary>
         /// Returns the last stack object previously pushed with the specified
         /// name.
         /// </summary>

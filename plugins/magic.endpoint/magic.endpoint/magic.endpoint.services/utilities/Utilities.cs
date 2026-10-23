@@ -64,7 +64,7 @@ namespace magic.endpoint.services.utilities
         internal static bool IsLegalFileRequest(string url)
         {
             // Making sure we don't serve Hyperlambda files.
-            if (url.EndsWith(".hl"))
+            if (url.EndsWith(".hl", StringComparison.Ordinal))
                 return false;
 
             // Splitting up URL in separate entities.
@@ -107,7 +107,7 @@ namespace magic.endpoint.services.utilities
 
             // Finding filename of request.
             var filename = splits.Last();
-            if (filename.EndsWith(".html") || filename.EndsWith(".xml") || filename.EndsWith(".txt") || !filename.Contains('.'))
+            if (filename.EndsWith(".html", StringComparison.Ordinal) || filename.EndsWith(".xml", StringComparison.Ordinal) || filename.EndsWith(".txt", StringComparison.Ordinal) || !filename.Contains('.'))
                 return true; // If filename does not contain "." at all, it's a mixin URL.
 
             return false; // Defaulting to statically served content.

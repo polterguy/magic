@@ -115,7 +115,7 @@ namespace magic.endpoint.services
             }
 
             // Avoiding duplicated content.
-            if (request.URL.EndsWith(".html"))
+            if (request.URL.EndsWith(".html", StringComparison.Ordinal))
             {
                 var response = new MagicResponse { Result = 301 };
                 response.Headers["Location"] = request.Scheme + "://" + request.Host + "/" + request.URL.Substring(0, request.URL.Length - 5);
@@ -123,7 +123,7 @@ namespace magic.endpoint.services
             }
 
             // Avoiding duplicated content.
-            if (request.URL.EndsWith("index"))
+            if (request.URL.EndsWith("index", StringComparison.Ordinal))
             {
                 var response = new MagicResponse { Result = 301 };
                 response.Headers["Location"] = request.Scheme + "://" + request.Host + "/" + request.URL.Substring(0, request.URL.Length - 6);

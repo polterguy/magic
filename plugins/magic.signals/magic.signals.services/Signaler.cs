@@ -143,6 +143,33 @@ namespace magic.signals.services
         }
 
         /// <summary>
+        /// Pushes all the given stack values unto the stack, in order, and invokes
+        /// functor, popping them in reverse order afterwards, disposing those that
+        /// implement IDisposable.
+        /// </summary>
+        /// <param name="scopes">Names and values of the stack objects.</param>
+        /// <param name="functor">Callback evaluated while the objects are on the
+        /// stack.</param>
+        /// <returns>An awaitable task.</returns>
+        public async Task ScopeAsync((string Name, object Value)[] scopes, Func<Task> functor)
+        {
+            foreach (var idx in scopes)
+                Push(idx.Name, idx.Value);
+            try
+            {
+                await functor();
+            }
+            finally
+            {
+                for (var idx = 0; idx < scopes.Length; idx++)
+                {
+                    if (Pop() is IDisposable disp)
+                        disp.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
         /// Retrieves the last stack object pushed unto the stack with the
         /// specified name.
         /// </summary>

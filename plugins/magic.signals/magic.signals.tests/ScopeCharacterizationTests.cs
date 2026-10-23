@@ -39,6 +39,40 @@ namespace magic.signals.tests
         static Signaler Create() => new Signaler(null, null);
 
         [Fact]
+        public async Task ScopeAsync_Batch_PushesAllInside_PopsAllAfterwards_DisposesInReverseOrder()
+        {
+            var signaler = Create();
+            var log = new List<string>();
+            var a = new Disposable("a", log);
+            var b = new Disposable("b", log);
+            string x = null; Disposable ia = null, ib = null;
+            await signaler.ScopeAsync(new (string, object)[] { ("a", a), ("x", "foo"), ("b", b) }, async () =>
+            {
+                await Task.Yield();
+                ia = signaler.Peek<Disposable>("a");
+                x = signaler.Peek<string>("x");
+                ib = signaler.Peek<Disposable>("b");
+            });
+            Assert.Same(a, ia);
+            Assert.Equal("foo", x);
+            Assert.Same(b, ib);
+            Assert.Null(signaler.Peek<string>("x"));
+            Assert.Null(signaler.Peek<Disposable>("a"));
+            Assert.Equal(new[] { "b", "a" }, log);
+        }
+
+        [Fact]
+        public async Task ScopeAsync_Batch_FunctorThrows_StillPopsAndDisposes()
+        {
+            var signaler = Create();
+            var a = new Disposable("a", null);
+            await Assert.ThrowsAsync<InvalidOperationException>(() => signaler.ScopeAsync(new (string, object)[] { ("a", a), ("x", "foo") }, () => throw new InvalidOperationException()));
+            Assert.True(a.Disposed);
+            Assert.Null(signaler.Peek<string>("x"));
+            Assert.Null(signaler.Peek<Disposable>("a"));
+        }
+
+        [Fact]
         public void Peek_NoScope_ReturnsNull()
         {
             Assert.Null(Create().Peek<string>("foo"));

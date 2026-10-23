@@ -66,7 +66,7 @@ namespace magic.endpoint.services
             var url = request.URL.Substring(6);
 
             // Making sure we never resolve to anything outside of "modules/" and "system/" folder.
-            if (!url.StartsWith("modules/") && !url.StartsWith("system/"))
+            if (!url.StartsWith("modules/", StringComparison.Ordinal) && !url.StartsWith("system/", StringComparison.Ordinal))
                 return new MagicResponse { Result = 401 };
 
             // Figuring out file to execute, and doing some basic sanity checking.
@@ -193,22 +193,15 @@ namespace magic.endpoint.services
             var aborted = request.Aborted.Register(() => execution.Cancel());
             try
             {
-                await _signaler.ScopeAsync("execution.context", execution, async () =>
-                {
-                    await _signaler.ScopeAsync("dynamic.execution-id", execution.ExecutionId, async () =>
-                    {
-                        await _signaler.ScopeAsync("http.request", request, async () =>
-                        {
-                            await _signaler.ScopeAsync("http.response", response, async () =>
-                            {
-                                await _signaler.ScopeAsync("slots.result", result, async () =>
-                                {
-                                    await _signaler.SignalAsync("eval", lambda, skipWhitelist: true);
-                                });
-                            });
-                        });
-                    });
-                });
+                await _signaler.ScopeAsync(
+                    [
+                        ("execution.context", execution),
+                        ("dynamic.execution-id", execution.ExecutionId),
+                        ("http.request", request),
+                        ("http.response", response),
+                        ("slots.result", result),
+                    ],
+                    () => _signaler.SignalAsync("eval", lambda, skipWhitelist: true));
                 response.Content = GetReturnValue(response, result);
                 return response;
             }

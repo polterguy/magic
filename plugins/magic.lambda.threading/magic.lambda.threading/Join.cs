@@ -72,7 +72,7 @@ namespace magic.lambda.threading
                 // Wee need to clone node for thread to avoid race conditions.
                 var clone = idxThread.Clone();
                 var authClone = auth.Value == null ? null : auth.Clone();
-                var curTask = Task.Factory.StartNew(() => 
+                var curTask = Task.Run(async () =>
                 {
                     // Notice, ISignaler is NOT thread safe, since it preserves state on a per thread individual basis.
                     using (var scope = _serviceScopeFactory.CreateScope())
@@ -84,29 +84,29 @@ namespace magic.lambda.threading
                          * a null must never reach the stack, since a scoped null masks an object of
                          * the same name further up.
                          */
-                        void Evaluate()
+                        async Task Evaluate()
                         {
-                            threadSignaler.Signal("eval", clone, skipWhitelist: true);
+                            await threadSignaler.SignalAsync("eval", clone, skipWhitelist: true);
                         }
-                        void WithExecution()
+                        async Task WithExecution()
                         {
                             if (execution == null)
-                                Evaluate();
+                                await Evaluate();
                             else
-                                threadSignaler.Scope("execution.context", execution, () =>
-                                    threadSignaler.Scope("dynamic.execution-id", execution.ExecutionId, Evaluate));
+                                await threadSignaler.ScopeAsync("execution.context", execution, async () =>
+                                    await threadSignaler.ScopeAsync("dynamic.execution-id", execution.ExecutionId, Evaluate));
                         }
-                        void WithAuth()
+                        async Task WithAuth()
                         {
                             if (authClone == null)
-                                WithExecution();
+                                await WithExecution();
                             else
-                                threadSignaler.Scope(".auth.ticket.get", authClone, WithExecution);
+                                await threadSignaler.ScopeAsync(".auth.ticket.get", authClone, WithExecution);
                         }
                         if (whitelist == null)
-                            WithAuth();
+                            await WithAuth();
                         else
-                            threadSignaler.Scope("whitelist", whitelist, WithAuth);
+                            await threadSignaler.ScopeAsync("whitelist", whitelist, WithAuth);
                     }
                 });
                 tasks.Add((curTask, clone));

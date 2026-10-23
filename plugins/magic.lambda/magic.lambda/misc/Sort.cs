@@ -48,7 +48,8 @@ namespace magic.lambda.change
                 input.Insert(2, new Node(".rhs", rhs));
 
                 // Evaluating "body" lambda of [for-each]
-                signaler.Signal("eval", input, skipWhitelist: true);
+                // Notice, List.Sort needs a synchronous comparer, so we wait for eval ourselves instead of hopping to another thread.
+                signaler.SignalAsync("eval", input, skipWhitelist: true).GetAwaiter().GetResult();
 
                 // Resetting back to original nodes.
                 input.Clear();
