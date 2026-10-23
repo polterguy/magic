@@ -11,7 +11,7 @@ using magic.node.contracts;
 namespace magic.node.services
 {
     /// <inheritdoc/>
-    public class FileService : IFileService
+    public class FileService : IFileService, IFileStamps
     {
         /// <inheritdoc/>
         public async Task CopyAsync(string source, string destination)
@@ -40,6 +40,14 @@ namespace magic.node.services
         }
 
         /// <inheritdoc/>
+        public FileStamp? GetStamp(string path)
+        {
+            var info = new FileInfo(path);
+            if (!info.Exists)
+                return null;
+            return new FileStamp(info.LastWriteTimeUtc.Ticks, info.Length);
+        }
+
         public Task<bool> ExistsAsync(string path)
         {
             return Task.FromResult(File.Exists(path));

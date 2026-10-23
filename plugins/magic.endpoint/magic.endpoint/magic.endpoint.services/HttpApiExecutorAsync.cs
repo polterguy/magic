@@ -4,6 +4,9 @@
 
 using System;
 using System.Linq;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using magic.node;
 using magic.node.contracts;
@@ -27,6 +30,13 @@ namespace magic.endpoint.services
         readonly IRootResolver _rootResolver;
         readonly IHttpArgumentsHandler _argumentsHandler;
         readonly IExecutionRegistry _executionRegistry;
+
+        /*
+         * Parsed endpoints, with their interceptors applied but without any arguments, by the full path of the file.
+         *
+         * Static since this class is transient, and the cache must outlive every request.
+         */
+        static readonly ConcurrentDictionary<string, CachedEndpoint> _cache = new();
 
         /// <summary>
         /// Creates an instance of your type.
@@ -61,16 +71,16 @@ namespace magic.endpoint.services
 
             // Figuring out file to execute, and doing some basic sanity checking.
             var path = Utilities.GetEndpointFilePath(_rootResolver, url, request.Verb);
-            if (!await _fileService.ExistsAsync(path))
+            /*
+             * Creating our lambda object by loading Hyperlambda file and applying interceptors, unless
+             * none of the files it was created from have changed since the last request, at which point
+             * we simply clone what we created back then.
+             */
+            var lambda = await GetLambdaAsync(url, path);
+            if (lambda == null)
                 return new MagicResponse { Result = 404 };
 
-            // Creating our lambda object by loading Hyperlambda file.
-            var lambda = HyperlambdaParser.Parse(await _fileService.LoadAsync(path));
-
-            // Applying interceptors.
-            lambda = await Utilities.ApplyInterceptors(_rootResolver, _fileService, lambda, url);
-
-            // Attaching arguments.
+            // Attaching arguments, which is the only part that differs between requests to the same endpoint.
             _argumentsHandler.Attach(lambda, request.Query, request.Payload);
 
             // Invoking method responsible for actually executing lambda object.
@@ -78,6 +88,85 @@ namespace magic.endpoint.services
         }
 
         #region [ -- Private helper methods -- ]
+
+        /*
+         * Returns a lambda object for the specified endpoint file, with interceptors applied and without arguments,
+         * or null if the file does not exist. The caller owns the returned lambda, and is free to change it.
+         */
+        async Task<Node> GetLambdaAsync(string url, string path)
+        {
+            // Caching requires a file service that can tell whether a file has changed without reading it.
+            if (_fileService is not IFileStamps stamps)
+                return await CreateLambdaAsync(url, path);
+
+            /*
+             * An entry is only created for a file that exists, since the URL is chosen by the client, and an entry for every
+             * URL anybody ever requested would let anyone grow the cache for as long as they like.
+             *
+             * Notice, GetOrAdd always hands every caller the same instance, so there is only one gate for each endpoint.
+             */
+            if (!_cache.TryGetValue(path, out var entry))
+            {
+                if (!await _fileService.ExistsAsync(path))
+                    return null;
+                entry = _cache.GetOrAdd(path, _ => new CachedEndpoint());
+            }
+
+            // Common case, nothing has changed, and nobody has to wait for anybody.
+            var snapshot = entry.Snapshot;
+            if (snapshot != null && snapshot.IsCurrent(stamps))
+                return snapshot.Template.Clone();
+
+            /*
+             * Only one thread at a time creates the lambda of an endpoint, and any other thread that needs the same
+             * endpoint waits here, and then uses what the first thread created. Different endpoints don't wait for each other.
+             */
+            await entry.Gate.WaitAsync();
+            try
+            {
+                // Somebody else might have created it while we were waiting for our turn.
+                snapshot = entry.Snapshot;
+                if (snapshot != null && snapshot.IsCurrent(stamps))
+                    return snapshot.Template.Clone();
+
+                /*
+                 * Taking the stamps before reading any file. If a file changes after this, the stamp we store is older than the
+                 * file, and the next request simply creates the lambda again, whereas the opposite order could serve stale content.
+                 */
+                var paths = new List<string> { path };
+                paths.AddRange(Utilities.GetInterceptorFilePaths(_rootResolver, url));
+                var observed = paths.Select(x => stamps.GetStamp(x)).ToArray();
+
+                var lambda = await CreateLambdaAsync(url, path);
+                if (lambda == null)
+                {
+                    // The file is gone, so neither the entry nor the lambda it holds is of any use.
+                    entry.Snapshot = null;
+                    _cache.TryRemove(new KeyValuePair<string, CachedEndpoint>(path, entry));
+                    return null;
+                }
+
+                // Storing a copy, since the caller will change the lambda we return.
+                entry.Snapshot = new Snapshot(paths.ToArray(), observed, lambda.Clone());
+                return lambda;
+            }
+            finally
+            {
+                entry.Gate.Release();
+            }
+        }
+
+        /*
+         * Loads the endpoint file, parses it and applies interceptors, or returns null if the file does not exist.
+         */
+        async Task<Node> CreateLambdaAsync(string url, string path)
+        {
+            if (!await _fileService.ExistsAsync(path))
+                return null;
+
+            var lambda = HyperlambdaParser.Parse(await _fileService.LoadAsync(path));
+            return await Utilities.ApplyInterceptors(_rootResolver, _fileService, lambda, url);
+        }
 
         /*
          * Method responsible for actually executing lambda object after file has been loaded,
@@ -170,6 +259,54 @@ namespace magic.endpoint.services
                 return convert.Value;
             }
             return null; // No content
+        }
+
+        /*
+         * Everything we know about one endpoint. Only [Snapshot] is ever replaced, and only by the thread holding [Gate].
+         */
+        sealed class CachedEndpoint
+        {
+            public readonly SemaphoreSlim Gate = new(1, 1);
+
+            volatile Snapshot _snapshot;
+
+            public Snapshot Snapshot
+            {
+                get => _snapshot;
+                set => _snapshot = value;
+            }
+        }
+
+        /*
+         * An immutable copy of a lambda, and the stamps of the files it was created from.
+         */
+        sealed class Snapshot
+        {
+            readonly string[] _paths;
+            readonly FileStamp?[] _stamps;
+
+            public Snapshot(string[] paths, FileStamp?[] stamps, Node template)
+            {
+                _paths = paths;
+                _stamps = stamps;
+                Template = template;
+            }
+
+            public Node Template { get; }
+
+            /*
+             * True if none of the files have changed, been created or been deleted since the lambda was created.
+             * Includes every interceptor file that could apply, whether it existed or not.
+             */
+            public bool IsCurrent(IFileStamps stamps)
+            {
+                for (var idx = 0; idx < _paths.Length; idx++)
+                {
+                    if (stamps.GetStamp(_paths[idx]) != _stamps[idx])
+                        return false;
+                }
+                return true;
+            }
         }
 
         #endregion

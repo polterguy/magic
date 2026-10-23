@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using magic.node;
 using magic.node.contracts;
@@ -121,6 +122,23 @@ namespace magic.endpoint.services.utilities
             Node result,
             string filename)
         {
+            // Applying every interceptor that exists, starting with the one closest to the endpoint.
+            foreach (var idx in GetInterceptorFilePaths(rootResolver, filename))
+            {
+                if (await fileService.ExistsAsync(idx))
+                    result = await ApplyInterceptor(fileService, result, idx);
+            }
+
+            // Returning result to caller.
+            return result;
+        }
+
+        /*
+         * Returns the full paths of every "interceptor.hl" file that could apply to the specified URL, whether it
+         * exists or not, recursively upwards in the folder hierarchy, in the order they are applied.
+         */
+        internal static List<string> GetInterceptorFilePaths(IRootResolver rootResolver, string filename)
+        {
             // Checking to see if interceptors exists recursively upwards in folder hierarchy.
             var splits = filename.Split(new char [] {'/'}, StringSplitOptions.RemoveEmptyEntries);
 
@@ -128,12 +146,11 @@ namespace magic.endpoint.services.utilities
             var folders = splits.Take(splits.Length - 1);
 
             // Iterating as long as we have more entities in list of folders.
+            var result = new List<string>();
             while (true)
             {
-                // Checking if "current-folder/interceptor.hl" file exists.
-                var current = rootResolver.AbsolutePath(string.Join("/", folders) + "/interceptor.hl");
-                if (await fileService.ExistsAsync(current))
-                    result = await ApplyInterceptor(fileService, result, current);
+                // Adding "current-folder/interceptor.hl".
+                result.Add(rootResolver.AbsolutePath(string.Join("/", folders) + "/interceptor.hl"));
 
                 // Checking if we're done, and at root folder, at which point we break while loop.
                 if (!folders.Any())
@@ -142,8 +159,6 @@ namespace magic.endpoint.services.utilities
                 // Traversing upwards in hierarchy to be able to nest interceptors upwards in hierarchy.
                 folders = folders.Take(folders.Count() - 1);
             }
-
-            // Returning result to caller.
             return result;
         }
 
