@@ -120,7 +120,15 @@ namespace magic.node.extensions.hyperlambda.internals
          */
         static string GetEscapeCharacter(StreamReader reader, char endCharacter)
         {
-            var ch = reader.Read();
+            return GetEscapeCharacter(reader.Read(), endCharacter);
+        }
+
+        /*
+         * Returns the character an escape sequence represents, where [ch] is the character following the '\' character,
+         * or -1 if the input ended there.
+         */
+        internal static string GetEscapeCharacter(int ch, char endCharacter)
+        {
             if (ch == endCharacter)
                 return endCharacter.ToString();
 

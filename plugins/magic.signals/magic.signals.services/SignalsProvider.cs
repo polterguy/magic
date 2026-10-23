@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 using magic.signals.contracts;
 
@@ -15,6 +16,7 @@ namespace magic.signals.services
     public class SignalsProvider : ISignalsProvider
     {
         readonly Dictionary<string, Type> _slots = new Dictionary<string, Type>();
+        readonly Dictionary<string, StatelessSlot> _stateless = new Dictionary<string, StatelessSlot>();
 
         /// <summary>
         /// Creates an instance of the signals provider class. Notice, this should normally be associated
@@ -42,6 +44,7 @@ namespace magic.signals.services
                         throw new ArgumentException($"Slot [{idxAtr}] attempted registered by {idxType.FullName} is already registered by {value.FullName}.");
 
                     _slots[idxAtr] = idxType;
+                    RegisterStateless(idxAtr, idxType);
                 }
             }
         }
@@ -64,6 +67,13 @@ namespace magic.signals.services
             return result;
         }
 
+        public object GetStatelessSlot(string name)
+        {
+            if (_stateless.TryGetValue(name, out var slot))
+                return slot.Instance ??= Activator.CreateInstance(slot.Type);
+            return null;
+        }
+
         /// <summary>
         /// Adds the specified type as a slot implementation.
         /// </summary>
@@ -83,6 +93,7 @@ namespace magic.signals.services
                     throw new ArgumentException($"Slot [{idxAtr}] attempted registered by {type.FullName} is already registered by {_slots[idxAtr].FullName}.");
 
                 _slots[idxAtr] = type;
+                RegisterStateless(idxAtr, type);
             }
         }
 
@@ -95,7 +106,51 @@ namespace magic.signals.services
             foreach (var idxAtr in type.GetCustomAttributes(true).OfType<SlotAttribute>().Select(x => x.Name))
             {
                 _slots.Remove(idxAtr);
+                _stateless.Remove(idxAtr);
             }
+        }
+
+        #endregion
+
+        #region [ -- Private helper methods -- ]
+
+        /*
+         * Remembers the slot as one that can be shared, if it provably holds no state, which is decided
+         * here, once, instead of while invoking slots.
+         */
+        void RegisterStateless(string name, Type type)
+        {
+            if (IsStateless(type))
+                _stateless[name] = new StatelessSlot { Type = type };
+        }
+
+        /*
+         * A slot holds no state if it has no instance fields in itself or any of its base types, and one single
+         * public constructor, without arguments, which implies nothing is injected into it either. A slot that
+         * needs disposing is never shared.
+         */
+        static bool IsStateless(Type type)
+        {
+            if (typeof(IDisposable).IsAssignableFrom(type) || typeof(IAsyncDisposable).IsAssignableFrom(type))
+                return false;
+
+            var constructors = type.GetConstructors();
+            if (constructors.Length != 1 || constructors[0].GetParameters().Length != 0)
+                return false;
+
+            for (var idx = type; idx != null && idx != typeof(object); idx = idx.BaseType)
+            {
+                if (idx.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly).Length > 0)
+                    return false;
+            }
+            return true;
+        }
+
+        class StatelessSlot
+        {
+            public Type Type { get; init; }
+
+            public object Instance { get; set; }
         }
 
         #endregion

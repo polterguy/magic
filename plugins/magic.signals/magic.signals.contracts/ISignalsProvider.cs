@@ -21,6 +21,14 @@ namespace magic.signals.contracts
         Type GetSlot(string name);
 
         /// <summary>
+        /// Returns a shared instance of the slot with the specified name, if the slot holds no state, implying it
+        /// has no instance fields and no constructor arguments, and returns null otherwise.
+        /// </summary>
+        /// <param name="name">Slot name for the instance to return.</param>
+        /// <returns>A slot instance that is safe to reuse, or null if a new instance must be created for each invocation.</returns>
+        object GetStatelessSlot(string name) => null;
+
+        /// <summary>
         /// Returns all keys, implying names registered for your signals
         /// implementation.
         /// </summary>

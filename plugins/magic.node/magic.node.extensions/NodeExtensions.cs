@@ -116,17 +116,31 @@ namespace magic.node.extensions
             var limit = 2;
             while (true)
             {
-                var value = ex.Evaluate(node);
+                /*
+                 * Enumerating the lazy result exactly once, since enumerating it again would evaluate the entire
+                 * expression again. The result is drained even when we already know it has multiple nodes, such
+                 * that an exception thrown while evaluating a later node is thrown, as it always was.
+                 */
+                Node first;
+                using (var enumerator = ex.Evaluate(node).GetEnumerator())
+                {
+                    // Making sure we return default value for T if we have no result.
+                    if (!enumerator.MoveNext())
+                        return default;
 
-                // Sanity checking result.
-                if (value.Count() > 1)
-                    throw new HyperlambdaException("Multiple resulting nodes from expression.");
+                    first = enumerator.Current;
 
-                // Making sure we return default value for T if we have no result.
-                if (!value.Any())
-                    return default;
+                    // Sanity checking result.
+                    if (enumerator.MoveNext())
+                    {
+                        while (enumerator.MoveNext())
+                        {
+                        }
+                        throw new HyperlambdaException("Multiple resulting nodes from expression.");
+                    }
+                }
 
-                node = value.First();
+                node = first;
                 if (node.Value is not Expression next)
                     return node.Get<T>();
 

@@ -3,7 +3,6 @@
  */
 
 using System;
-using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
@@ -24,7 +23,7 @@ namespace magic.node.extensions
         /// <param name="expression">String representation of expression to create.</param>
         public Expression(string expression)
         {
-            _iterators = new List<Iterator>(Parse(expression));
+            _iterators = Parse(expression);
         }
 
         /// <summary>
@@ -140,94 +139,137 @@ namespace magic.node.extensions
 
         /*
          * Parses your expression resulting in a chain of iterators.
+         *
+         * Walks the text by index, only allocating a builder for iterators containing a quoted string.
+         * The text of the iterator currently being read is the content of [quoted], if any, followed by
+         * everything from [segment] up to the current position.
          */
-        IEnumerable<Iterator> Parse(string expression)
+        static List<Iterator> Parse(string expression)
         {
-            var builder = new StringBuilder();
-            using (var reader = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(expression))))
+            var result = new List<Iterator>();
+            var length = expression.Length;
+
+            // The expression used to be read through a stream reader, which discards a BOM.
+            var position = length > 0 && expression[0] == '\uFEFF' ? 1 : 0;
+            var segment = position;
+            StringBuilder quoted = null;
+            while (position < length)
             {
-                while (!reader.EndOfStream)
+                var idx = expression[position];
+                var contentLength = (quoted?.Length ?? 0) + (position - segment);
+                if (idx == '/')
                 {
-                    var idx = (char)reader.Peek();
-                    if (idx == '/')
-                    {
-                        yield return new Iterator(builder.ToString());
-                        builder.Clear();
-                        reader.Read(); // Discarding the '/' character at stream's head.
-                    }
-                    else if (idx == '"' && builder.Length == 0)
-                    {
-                        // Single quoted string, allows for having iterators containing "/" in their values.
-                        builder.Append(ParserHelper.ReadQuotedString(reader));
-                    }
-                    else if (idx == '{' && builder.Length == 0)
-                    {
-                        // Extrapolated expression allowing for nesting expressions.
-                        yield return new Iterator(ParseExtrapolatedExpression(reader, expression));
+                    result.Add(new Iterator(Content(expression, segment, position, quoted)));
+                    quoted = null;
+                    segment = ++position; // Discarding the '/' character.
+                }
+                else if (idx == '"' && contentLength == 0)
+                {
+                    // Single quoted string, allows for having iterators containing "/" in their values.
+                    quoted ??= new StringBuilder();
+                    quoted.Append(ReadQuotedString(expression, ref position));
+                    segment = position;
+                }
+                else if (idx == '{' && contentLength == 0)
+                {
+                    // Extrapolated expression allowing for nesting expressions.
+                    result.Add(new Iterator(ReadExtrapolatedExpression(expression, ref position)));
+                    quoted = null;
 
-                        // Making sure we don't return remnants in builder further down
-                        if (reader.EndOfStream)
-                            yield break;
+                    // Making sure we don't return remnants further down.
+                    if (position >= length)
+                        return result;
 
-                        if ('/' == (char)reader.Peek())
-                            reader.Read(); // Discarding end of iterator character to prepare for next iterator's value.
-                    }
-                    else if (idx == '{' && builder.Length == 1 && builder.ToString() == "=")
-                    {
-                        // Extrapolated expression allowing for nesting expressions.
-                        yield return new Iterator("=" + ParseExtrapolatedExpression(reader, expression));
-                        builder.Clear();
+                    if (expression[position] == '/')
+                        position++; // Discarding end of iterator character to prepare for next iterator's value.
+                    segment = position;
+                }
+                else if (idx == '{' && contentLength == 1 && (quoted != null && quoted.Length == 1 ? quoted[0] : expression[segment]) == '=')
+                {
+                    // Extrapolated expression allowing for nesting expressions.
+                    result.Add(new Iterator("=" + ReadExtrapolatedExpression(expression, ref position)));
+                    quoted = null;
 
-                        // Making sure we don't return remnants in builder further down
-                        if (reader.EndOfStream)
-                            yield break;
+                    // Making sure we don't return remnants further down.
+                    if (position >= length)
+                        return result;
 
-                        if ('/' == (char)reader.Peek())
-                            reader.Read(); // Discarding end of iterator character to prepare for next iterator's value.
-                    }
-                    else
-                    {
-                        builder.Append(idx);
-                        reader.Read(); // Discarding whatever we stuffed into our builder just now.
-                    }
+                    if (expression[position] == '/')
+                        position++; // Discarding end of iterator character to prepare for next iterator's value.
+                    segment = position;
+                }
+                else
+                {
+                    position++;
                 }
             }
-
-            yield return new Iterator(builder.ToString());
+            result.Add(new Iterator(Content(expression, segment, position, quoted)));
+            return result;
         }
 
         /*
-         * Parses an extrapolated/nested expression.
+         * Returns the content of the iterator currently being read.
          */
-        string ParseExtrapolatedExpression(StreamReader reader, string expression)
+        static string Content(string expression, int segment, int position, StringBuilder quoted)
         {
-            // Buffer used to hold nested expression.
+            if (quoted == null)
+                return expression.Substring(segment, position - segment);
+            return quoted.Append(expression, segment, position - segment).ToString();
+        }
+
+        /*
+         * Reads a quoted string, starting at the opening '"' character, and leaves position after the closing one.
+         */
+        static string ReadQuotedString(string expression, ref int position)
+        {
+            var start = position + 1;
+            var idx = expression.AsSpan(start).IndexOfAny('"', '\\');
+            if (idx < 0)
+                throw new HyperlambdaException("Syntax error, string literal not closed before end of input");
+            idx += start;
+            if (expression[idx] == '"')
+            {
+                position = idx + 1;
+                return expression.Substring(start, idx - start);
+            }
+
+            // String literal contains escape characters.
             var builder = new StringBuilder();
+            builder.Append(expression, start, idx - start);
+            position = idx;
+            while (position < expression.Length)
+            {
+                var c = expression[position++];
+                if (c == '"')
+                    return builder.ToString();
+                if (c == '\\')
+                    builder.Append(ParserHelper.GetEscapeCharacter(position < expression.Length ? expression[position++] : -1, '"'));
+                else
+                    builder.Append(c);
+            }
+            throw new HyperlambdaException("Syntax error, string literal not closed before end of input");
+        }
 
-            // Needed to count "levels" of nexted expressions, for cases where a nested expression contains another nested expression.
-            var no = 0;
-
-            // Reading until we reach EOF or have fetched entire nested expression.
+        /*
+         * Reads an extrapolated/nested expression, starting at its opening '{' character, and leaves position
+         * after its closing '}' character. Supports multiple levels of extrapolated expressions.
+         */
+        static string ReadExtrapolatedExpression(string expression, ref int position)
+        {
+            var start = position;
+            var level = 0;
             do
             {
-                // Reading next character, sanity checking, and appending to builder.
-                if (reader.EndOfStream)
+                if (position >= expression.Length)
                     throw new HyperlambdaException($"Extrapolated expression was never closed in expression '{expression}'");
 
-                // Reading next character and appending to builder.
-                var idx = (char)reader.Read();
-                builder.Append(idx);
-
-                // Supporting multiple levels of extrapolated expressions.
+                var idx = expression[position++];
                 if (idx == '{')
-                    no += 1;
+                    level += 1;
                 else if (idx == '}')
-                    no -= 1;
-
-            } while (no != 0); // Ensuring we don't quit before we're at "level 0" again ...
-
-            // Done, returning nexted expression.
-            return builder.ToString();
+                    level -= 1;
+            } while (level != 0);
+            return expression.Substring(start, position - start);
         }
 
         #endregion

@@ -19,7 +19,13 @@ namespace magic.signals.services
     {
         readonly IServiceProvider _provider;
         readonly ISignalsProvider _signals;
-        readonly List<Tuple<string, object>> _stack = [];
+        readonly List<(string Name, object Value)> _stack = [];
+
+        /*
+         * The values in [_stack] by name, in the same order, making Peek independent of how deep the stack is.
+         * Always pushed and popped together with [_stack], and never removing a name once seen.
+         */
+        readonly Dictionary<string, Stack<object>> _byName = [];
 
         /// <summary>
         /// Creates a new instance of the default ISignaler service class.
@@ -97,16 +103,14 @@ namespace magic.signals.services
         /// <param name="functor">Callback evaluated while stack object is on the stack.</param>
         public void Scope(string name, object value, Action functor)
         {
-            _stack.Add(new Tuple<string, object>(name, value));
+            Push(name, value);
             try
             {
                 functor();
             }
             finally
             {
-                var obj = _stack.Last();
-                _stack.RemoveAt(_stack.Count - 1);
-                if (obj.Item2 is IDisposable disp)
+                if (Pop() is IDisposable disp)
                     disp.Dispose();
             }
         }
@@ -126,16 +130,14 @@ namespace magic.signals.services
         /// <returns>An awaitable task.</returns>
         public async Task ScopeAsync(string name, object value, Func<Task> functor)
         {
-            _stack.Add(new Tuple<string, object>(name, value));
+            Push(name, value);
             try
             {
                 await functor();
             }
             finally
             {
-                var obj = _stack.Last();
-                _stack.RemoveAt(_stack.Count - 1);
-                if (obj.Item2 is IDisposable disp)
+                if (Pop() is IDisposable disp)
                     disp.Dispose();
             }
         }
@@ -152,12 +154,36 @@ namespace magic.signals.services
         /// none are found.</returns>
         public T Peek<T>(string name) where T : class
         {
-            return _stack.LastOrDefault(x => x.Item1 == name)?.Item2 as T;
+            if (_byName.TryGetValue(name, out var values) && values.Count > 0)
+                return values.Peek() as T;
+            return null;
         }
 
         #endregion
 
         #region [ -- private helper methods -- ]
+
+        /*
+         * Pushes a value unto the stack.
+         */
+        void Push(string name, object value)
+        {
+            _stack.Add((name, value));
+            if (!_byName.TryGetValue(name, out var values))
+                _byName[name] = values = new Stack<object>();
+            values.Push(value);
+        }
+
+        /*
+         * Pops the last value pushed unto the stack, and returns it.
+         */
+        object Pop()
+        {
+            var last = _stack[^1];
+            _stack.RemoveAt(_stack.Count - 1);
+            _byName[last.Name].Pop();
+            return last.Value;
+        }
 
         /*
          * Returns service for specified slot.
@@ -171,18 +197,23 @@ namespace magic.signals.services
              */
             var whitelist = skipWhitelist ? null : Peek<List<Node>>("whitelist");
 
-            var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"[{name}] slot does not exist");
-            var svc = _provider.GetService(type);
-
-            // Basic sanity checking.
+            // Slots holding no state are shared, all others are created for each invocation.
+            var svc = _signals.GetStatelessSlot(name);
             if (svc == null)
             {
-                // Dynamically compiled and loaded assemblies cannot be registered in DI container.
-                var ctor = type.GetConstructor([]);
-                if (ctor != null)
-                    svc = Activator.CreateInstance(type);
-                else
-                    svc = Activator.CreateInstance(type, [_provider]);
+                var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"[{name}] slot does not exist");
+                svc = _provider.GetService(type);
+
+                // Basic sanity checking.
+                if (svc == null)
+                {
+                    // Dynamically compiled and loaded assemblies cannot be registered in DI container.
+                    var ctor = type.GetConstructor([]);
+                    if (ctor != null)
+                        svc = Activator.CreateInstance(type);
+                    else
+                        svc = Activator.CreateInstance(type, [_provider]);
+                }
             }
 
             /*

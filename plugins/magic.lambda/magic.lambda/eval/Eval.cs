@@ -158,16 +158,17 @@ namespace magic.lambda.eval
         static IEnumerable<Node> GetNodes(Node input)
         {
             // Sanity checking invocation. Notice non [eval] keywords might have expressions and children.
+            var hasChildren = input.Children.Any();
             if (input.Value != null &&
-                input.Children.Any() &&
+                hasChildren &&
                 input.Name == "eval")
                 throw new HyperlambdaException("[eval] cannot handle both expression values and children at the same time");
 
             // Children have precedence, in case invocation is from a non [eval] keyword.
-            if (input.Children.Any())
+            if (hasChildren)
                 return input
                     .Children
-                    .Where(x => x.Name != string.Empty && !x.Name.StartsWith("."));
+                    .Where(x => x.Name.Length > 0 && x.Name[0] != '.');
 
             if (input.Value != null && 
                 input.Name == "eval")
@@ -175,7 +176,7 @@ namespace magic.lambda.eval
                     .Evaluate()
                     .SelectMany(x => 
                         x.Children
-                            .Where(x2 => x2.Name != string.Empty && !x2.Name.StartsWith(".")));
+                            .Where(x2 => x2.Name.Length > 0 && x2.Name[0] != '.'));
 
             // Nothing to evaluate here.
             return Array.Empty<Node>();
