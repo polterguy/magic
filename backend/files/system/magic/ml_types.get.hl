@@ -31,6 +31,49 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify
 
+/*
+ * Any authenticated user may list the models available to them, but only root may see, filter on
+ * or sort by the columns holding secrets, since filtering or sorting on a column leaks its content
+ * even when it is not returned.
+ */
+.secrets
+   .:api_key
+   .:twilio_account_id
+   .:twilio_account_sid
+   .:webhook_incoming_url
+   .:webhook_outgoing_url
+   .:lead_email
+auth.ticket.get
+.is-root:bool:false
+if
+   exists:x:@auth.ticket.get/*/roles/*/=root
+   .lambda
+      set-value:x:@.is-root
+         .:bool:true
+if
+   eq:x:@.is-root
+      .:bool:false
+   .lambda
+      for-each:x:@.secrets/*
+         strings.concat
+            .:ml_types.
+            get-value:x:@.dp/#
+         if
+            strings.contains:x:@.arguments/*/order
+               get-value:x:@strings.concat
+            .lambda
+               remove-nodes:x:@.arguments/*/order
+         strings.concat
+            .:ml_types.
+            get-value:x:@.dp/#
+            .:.like
+         remove-nodes:x:@.arguments/*/{@strings.concat}
+         strings.concat
+            .:ml_types.
+            get-value:x:@.dp/#
+            .:.eq
+         remove-nodes:x:@.arguments/*/{@strings.concat}
+
 // Opening up our database connection.
 data.connect:[generic|magic]
 
@@ -160,6 +203,14 @@ data.connect:[generic|magic]
       add:x:@.dp/#
          .
             system_message_token_count:x:@openai.tokenize
+
+   // Stripping secret columns from the rows unless caller is root.
+   if
+      eq:x:@.is-root
+         .:bool:false
+      .lambda
+         for-each:x:@.secrets/*
+            remove-nodes:x:@.models/*/*/{@.dp/#}
 
    // Returning result of above filter invocation to caller.
    return-nodes:x:@.models/*

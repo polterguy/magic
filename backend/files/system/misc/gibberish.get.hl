@@ -3,8 +3,14 @@
 .arguments
    min:long
    max:long
-.description:Returns some Cryptographically Secure randomly generated text to caller according to specified arguments
-.type:public
+
+// Sanity checking invocation
+validators.integer:x:@.arguments/*/min
+   min:1
+   max:500
+validators.integer:x:@.arguments/*/max
+   min:1
+   max:500
 
 // Generating gibberish text.
 add:x:./*/crypto.random
