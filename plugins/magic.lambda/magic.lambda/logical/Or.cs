@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.logical
 {
@@ -20,7 +21,7 @@ namespace magic.lambda.logical
         ReturnsKind = "boolean",
         ReturnsDescription = "Resolves to true if any operand evaluates to true",
         SignatureType = typeof(global::magic.lambda.signatures.MultipleLogicalOperandsSignature))]
-    public class Or : ISlot
+    public class Or : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -28,10 +29,10 @@ namespace magic.lambda.logical
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             SanityCheck(input);
-            input.Value = Common.Signal(signaler, input, true);
+            input.Value = await Common.Signal(signaler, input, true);
         }
 
         #region [ -- Private helper methods -- ]

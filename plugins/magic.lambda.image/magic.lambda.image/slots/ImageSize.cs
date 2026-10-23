@@ -8,6 +8,7 @@ using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.image.slots
 {
@@ -25,21 +26,21 @@ namespace magic.lambda.image.slots
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "image-dimensions,lambda-tree",
         ReturnsDescription = "Returns [width:int] and [height:int] child nodes for the image dimensions")]
-    public class ImageSize : ISlot
+    public class ImageSize : ISlotAsync
     {
         /// <summary>
         /// Slot implementation.
         /// </summary>
         /// <param name="signaler">Signaler that raised the signal.</param>
         /// <param name="input">Arguments to slot.</param>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             /*
              * Opening the file through its slot rather than the file service, and deliberately
              * WITHOUT exempting it from the whitelist, since the path came from the caller.
              */
             var file = new Node("", input.GetEx<string>());
-            signaler.Signal("io.stream.open-file", file);
+            await signaler.SignalAsync("io.stream.open-file", file);
             using (var stream = (Stream)file.Value)
             {
                 var image = Image.Identify(stream);

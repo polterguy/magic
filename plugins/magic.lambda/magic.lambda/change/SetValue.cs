@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.change
 {
@@ -34,7 +35,7 @@ namespace magic.lambda.change
         ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.lambda.signatures.SourceExpressionSignature))]
-    public class SetValue : ISlot
+    public class SetValue : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -42,10 +43,10 @@ namespace magic.lambda.change
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             SanityCheck(input);
-            signaler.Signal("eval", input, skipWhitelist: true);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
             SetValueToSource(input, input.Evaluate().ToList());
         }
 

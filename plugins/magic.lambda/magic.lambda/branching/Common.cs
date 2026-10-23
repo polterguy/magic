@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.branching
 {
@@ -17,7 +18,7 @@ namespace magic.lambda.branching
         /*
          * Returns true if condition is true.
          */
-        public static bool ConditionIsTrue(ISignaler signaler, Node input)
+        public static async Task<bool> ConditionIsTrue(ISignaler signaler, Node input)
         {
             // Checking for value in condition node.
             if (input.Value != null)
@@ -28,7 +29,7 @@ namespace magic.lambda.branching
                 throw new HyperlambdaException($"[{input.Name}] requires exactly two children nodes, a condition node and a [.lambda] node, or an expression and a lambda object");
             
             // Evaluating children nodes of condition node.
-            signaler.Signal("eval", input, skipWhitelist: true);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Returning result of invocation to caller.
             return input.Children.First(x => x.Name != ".lambda").GetEx<bool>();

@@ -10,6 +10,7 @@ using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace magic.lambda.image.slots
 {
@@ -28,14 +29,14 @@ namespace magic.lambda.image.slots
         ReturnsKind = "image,binary-content",
         ReturnsDescription = "Resolves to the generated chart image bytes",
         SignatureType = typeof(global::magic.lambda.image.signatures.ChartSignature))]
-    public class Chart : ISlot
+    public class Chart : ISlotAsync
     {
         /// <summary>
         /// Slot implementation.
         /// </summary>
         /// <param name="signaler">Signaler that raised the signal.</param>
         /// <param name="input">Arguments to slot.</param>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Extracting common arguments.
             var type = input.GetEx<string>() ?? 
@@ -86,7 +87,7 @@ namespace magic.lambda.image.slots
                 {
                     var save = new Node("", filename);
                     save.Add(new Node("", stream));
-                    signaler.Signal("io.stream.save-file", save);
+                    await signaler.SignalAsync("io.stream.save-file", save);
                 }
             }
             else

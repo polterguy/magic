@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.logical
 {
@@ -19,13 +20,13 @@ namespace magic.lambda.logical
          * is somehow returned from invocation. If condition is reached,
          * the method returns true - Otherwise it'll return false.
          */
-        static internal bool Signal(ISignaler signaler, Node input, bool condition)
+        static internal async Task<bool> Signal(ISignaler signaler, Node input, bool condition)
         {
             foreach (var idx in input.Children)
             {
                 if (idx.Name != string.Empty && idx.Name.FirstOrDefault() != '.')
                 {
-                    signaler.Signal(idx.Name, idx);
+                    await signaler.SignalAsync(idx.Name, idx);
                 }
                 if (idx.GetEx<bool>() == condition)
                     return true;

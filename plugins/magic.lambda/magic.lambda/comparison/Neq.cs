@@ -5,6 +5,7 @@
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.comparison
 {
@@ -18,7 +19,7 @@ namespace magic.lambda.comparison
         ReturnsKind = "boolean",
         ReturnsDescription = "Resolves to true if the operands are not equal",
         SignatureType = typeof(global::magic.lambda.signatures.ComparisonSignature))]
-    public class Neq : ISlot
+    public class Neq : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -26,9 +27,9 @@ namespace magic.lambda.comparison
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            signaler.Signal("eq", input, skipWhitelist: true);
+            await signaler.SignalAsync("eq", input, skipWhitelist: true);
             input.Value = !input.Get<bool>();
         }
     }

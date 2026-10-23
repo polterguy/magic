@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.loops
 {
@@ -26,14 +27,14 @@ namespace magic.lambda.loops
         ProvidesIterationPointer = true,
         ScopeRequiresStrictExit = true,
         SignatureType = typeof(global::magic.lambda.signatures.MapSignature))]
-    public class Map : ISlot
+    public class Map : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal.
         /// </summary>
         /// <param name="signaler">Signaler used to signal.</param>
         /// <param name="input">Parameters passed from signaler.</param>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             var mapped = new List<Node>();
 
@@ -45,12 +46,12 @@ namespace magic.lambda.loops
 
                 // Making sure we're able to handle returned values and nodes from slot implementation.
                 var result = new Node();
-                signaler.Scope("slots.result", result, () =>
+                await signaler.ScopeAsync("slots.result", result, async () =>
                 {
                     input.Insert(0, new Node(".dp", idxSource));
 
                     // Evaluating mapper lambda.
-                    signaler.Signal("eval", input, skipWhitelist: true);
+                    await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
                     // Resetting back to original nodes.
                     input.Clear();

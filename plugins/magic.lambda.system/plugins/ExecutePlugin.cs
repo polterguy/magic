@@ -5,6 +5,7 @@
 using magic.node;
 using magic.node.contracts;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.system.plugins
 {
@@ -22,7 +23,7 @@ namespace magic.lambda.system.plugins
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.lambda.system.plugins.signatures.ExecutePluginSignature))]
-    public class ExecutePlugin : ISlot
+    public class ExecutePlugin : ISlotAsync
     {
         readonly IRootResolver _rootResolver;
         readonly ISignalsProvider _provider;
@@ -43,7 +44,7 @@ namespace magic.lambda.system.plugins
         /// </summary>
         /// <param name="signaler">Signaler that raised signal.</param>
         /// <param name="input">Arguments to slot.</param>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Loading plugin.
             var plugin = LoadPlugin.Load(_provider, _rootResolver, input);
@@ -52,7 +53,7 @@ namespace magic.lambda.system.plugins
             try
             {
                 // Executing lambda object not with plugin dynamically loaded into AppDomain.
-                signaler.Signal("eval", input, skipWhitelist: true);
+                await signaler.SignalAsync("eval", input, skipWhitelist: true);
             }
             finally
             {

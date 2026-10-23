@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.loops
 {
@@ -23,7 +24,7 @@ namespace magic.lambda.loops
         ProvidesIterationPointer = true,
         ScopeRequiresStrictExit = true,
         SignatureType = typeof(global::magic.lambda.signatures.IteratorBodySignature))]
-    public class ForEach : ISlot
+    public class ForEach : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -31,7 +32,7 @@ namespace magic.lambda.loops
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Making sure we can reset back to original nodes after every single iteration.
             var old = input.Children.Select(x => x.Clone()).ToList();
@@ -45,7 +46,7 @@ namespace magic.lambda.loops
                 input.Insert(0, new Node(".dp", idx));
 
                 // Evaluating "body" lambda of [for-each]
-                signaler.Signal("eval", input, skipWhitelist: true);
+                await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
                 // Resetting back to original nodes.
                 input.Clear();

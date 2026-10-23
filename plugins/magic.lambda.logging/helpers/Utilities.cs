@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.logging.helpers
 {
@@ -19,12 +20,12 @@ namespace magic.lambda.logging.helpers
         /*
          * Utility method to create new log item from specified node.
          */
-        public static (string Content, Dictionary<string, string> Meta) GetLogContent(Node node, ISignaler signaler)
+        public static async Task<(string Content, Dictionary<string, string> Meta)> GetLogContent(Node node, ISignaler signaler)
         {
             if (node.Value != null)
                 return (node.GetEx<string>(), node.Children.ToDictionary(x => x.Name, x => x.GetEx<string>()));
 
-            signaler.Signal("eval", node, skipWhitelist: true);
+            await signaler.SignalAsync("eval", node, skipWhitelist: true);
             var builder = new StringBuilder();
             foreach (var idx in node.Children)
             {

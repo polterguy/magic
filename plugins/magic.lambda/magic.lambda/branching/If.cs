@@ -4,6 +4,7 @@
 
 using magic.node;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.branching
 {
@@ -16,7 +17,7 @@ namespace magic.lambda.branching
         ReturnsMode = SlotReturnsMode.None,
         ProvidesScope = "if",
         SignatureType = typeof(global::magic.lambda.signatures.ConditionalBlockSignature))]
-    public class If : ISlot
+    public class If : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -24,10 +25,10 @@ namespace magic.lambda.branching
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Checking if we should evaluate lambda object.
-            if (!Common.ConditionIsTrue(signaler, input))
+            if (!await Common.ConditionIsTrue(signaler, input))
             {
                 // Result of condition yields false.
                 input.Value = false;
@@ -35,7 +36,7 @@ namespace magic.lambda.branching
             }
 
             // Result of condition yields true. ORDER COUNTS!
-            signaler.Signal("eval", Common.GetLambda(input), skipWhitelist: true);
+            await signaler.SignalAsync("eval", Common.GetLambda(input), skipWhitelist: true);
             input.Value = true;
         }
     }

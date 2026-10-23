@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.branching
 {
@@ -22,7 +23,7 @@ namespace magic.lambda.branching
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.lambda.signatures.SwitchSignature))]
-    public class Switch : ISlot
+    public class Switch : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -30,11 +31,11 @@ namespace magic.lambda.branching
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             var executionNode = GetExecutionNode(input);
             if (executionNode != null)
-                signaler.Signal(executionNode.Name, executionNode);
+                await signaler.SignalAsync(executionNode.Name, executionNode);
         }
 
         #region [ -- Private helper methods -- ]

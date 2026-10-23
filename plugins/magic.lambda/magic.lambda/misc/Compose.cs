@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.misc
 {
@@ -19,16 +20,16 @@ namespace magic.lambda.misc
         ReturnsKind = "expression",
         ReturnsDescription = "Resolves to the composed expression",
         SignatureType = typeof(global::magic.lambda.signatures.ComposeSignature))]
-    public class Compose : ISlot
+    public class Compose : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
         /// </summary>
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            signaler.Signal("eval", input, skipWhitelist: true);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
             var iterators = input.Children.Select(x => x.GetEx<string>());
             var expression = string.Join("/", iterators.ToArray());
             input.Clear();

@@ -55,13 +55,13 @@ namespace magic.lambda.io.stream
         /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            var args = GetArguments(signaler, input);
+            var args = await GetArguments(signaler, input);
             await _streamService.SaveFileAsync(args.Stream, args.Destination, args.Overwrite);
         }
 
         #region [ -- Private helper methods -- ]
 
-        (string Destination, Stream Stream, bool Overwrite) GetArguments(ISignaler signaler, Node input)
+        async Task<(string Destination, Stream Stream, bool Overwrite)> GetArguments(ISignaler signaler, Node input)
         {
             // Checking if caller wants to overwrite existing file.
             var overwrite = true;
@@ -73,7 +73,7 @@ namespace magic.lambda.io.stream
             }
 
             // Making sure we evaluate any children, to make sure any signals wanting to retrieve our source is evaluated.
-            signaler.Signal("eval", input, skipWhitelist: true);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Returning results to caller.
             return (_rootResolver.AbsolutePath(input.GetEx<string>()), input.Children.First().GetEx<Stream>(), overwrite);

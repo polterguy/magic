@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.source
 {
@@ -20,7 +21,7 @@ namespace magic.lambda.source
         ReturnsKind = "",
         ReturnsDescription = "Resolves to the first non-null value produced by the candidate child nodes",
         SignatureType = typeof(global::magic.lambda.signatures.GetFirstValueSignature))]
-    public class GetFirstValue : ISlot
+    public class GetFirstValue : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -28,7 +29,7 @@ namespace magic.lambda.source
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>Awaitable task</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Prioritising value of node.
             var result = TryValue(input);
@@ -40,7 +41,7 @@ namespace magic.lambda.source
                 {
                     if (idx.Name.Length != 0 && idx.Name.FirstOrDefault() != '.')
                     {
-                        signaler.Signal(idx.Name, idx);
+                        await signaler.SignalAsync(idx.Name, idx);
                     }
 
                     // Short curcuiting if we've got a value.

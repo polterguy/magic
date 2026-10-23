@@ -4,6 +4,7 @@
 
 using magic.node;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.branching
 {
@@ -16,7 +17,7 @@ namespace magic.lambda.branching
         ReturnsMode = SlotReturnsMode.None,
         ProvidesScope = "if",
         SignatureType = typeof(global::magic.lambda.signatures.ElseSignature))]
-    public class Else : ISlot
+    public class Else : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -24,7 +25,7 @@ namespace magic.lambda.branching
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Sanity checking invocation.
             Common.SanityCheckElse(input);
@@ -39,7 +40,7 @@ namespace magic.lambda.branching
 
             // Results of all previous conditions yielded false, hence evaluating.
             input.Value = true;
-            signaler.Signal("eval", input, skipWhitelist: true);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
         }
     }
 }

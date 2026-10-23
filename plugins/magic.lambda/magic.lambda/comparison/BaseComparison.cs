@@ -6,13 +6,14 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.comparison
 {
     /// <summary>
     /// Base class for all comparison operators.
     /// </summary>
-    public abstract class BaseComparison : ISlot
+    public abstract class BaseComparison : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -20,10 +21,10 @@ namespace magic.lambda.comparison
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             SanityCheck(input);
-            signaler.Signal("eval", input, skipWhitelist: true);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
             input.Value = Compare(input);
         }
 

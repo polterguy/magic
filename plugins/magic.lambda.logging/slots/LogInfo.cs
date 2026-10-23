@@ -45,7 +45,7 @@ namespace magic.lambda.logging.slots
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Retrieving log content and logging data.
-            var args = Utilities.GetLogContent(input, signaler);
+            var args = await Utilities.GetLogContent(input, signaler);
             var id = await _logger.InfoAsync(args.Content, args.Meta);
 
             // House cleaning, returning id of created log entry.

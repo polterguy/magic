@@ -8,6 +8,7 @@ using magic.node.extensions;
 using magic.lambda.branching;
 using magic.lambda.contracts;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.loops
 {
@@ -20,7 +21,7 @@ namespace magic.lambda.loops
         ReturnsMode = SlotReturnsMode.None,
         ProvidesScope = "while",
         SignatureType = typeof(global::magic.lambda.signatures.ConditionalBlockSignature))]
-    public class While : ISlot
+    public class While : ISlotAsync
     {
         readonly LambdaSettings _settings;
 
@@ -39,7 +40,7 @@ namespace magic.lambda.loops
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Storing termination node, to check if we should terminate early for some reasons.
             var terminate = signaler.Peek<Node>("slots.result");
@@ -52,14 +53,14 @@ namespace magic.lambda.loops
             var clone = input.Clone();
 
             // Looping while condition is true.
-            while (Common.ConditionIsTrue(signaler, input))
+            while (await Common.ConditionIsTrue(signaler, input))
             {
                 // Making sure we don't exceed maximum number of iterations.
                 if (iterations++ >= maxIterations)
                     throw new HyperlambdaException($"Your [while] loop exceeded the maximum number of iterations, which is {maxIterations}. Refactor your Hyperlambda, or increase your configuration setting.");
 
                 // Executing lambda object associated with [while].
-                signaler.Signal("eval", Common.GetLambda(input), skipWhitelist: true);
+                await signaler.SignalAsync("eval", Common.GetLambda(input), skipWhitelist: true);
 
                 // Checking if execution for some reasons was terminated.
                 if (terminate != null && (terminate.Value != null || terminate.Children.Any()))

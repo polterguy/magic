@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.misc
 {
@@ -25,7 +26,7 @@ namespace magic.lambda.misc
         ProvidesScope = "context",
         ScopeDescription = "Creates a named context scope retrievable by [get-context] using the same input value",
         SignatureType = typeof(global::magic.lambda.signatures.ContextSignature))]
-    public class Context : ISlot
+    public class Context : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -33,12 +34,12 @@ namespace magic.lambda.misc
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaiatble task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             var arguments = GetArguments(input);
-            signaler.Scope(arguments.Name, arguments.Value, () =>
+            await signaler.ScopeAsync(arguments.Name, arguments.Value, async () =>
             {
-                signaler.Signal("eval", arguments.Lambda, skipWhitelist: true);
+                await signaler.SignalAsync("eval", arguments.Lambda, skipWhitelist: true);
             });
         }
 

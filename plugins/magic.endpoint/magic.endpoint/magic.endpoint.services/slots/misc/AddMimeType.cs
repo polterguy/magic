@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.endpoint.services.slots.misc
 {
@@ -22,16 +23,16 @@ namespace magic.endpoint.services.slots.misc
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.endpoint.services.signatures.MimeAddSignature))]
-    public class AddMimeType : ISlot
+    public class AddMimeType : ISlotAsync
     {
         /// <summary>
         /// Implementation of your slot.
         /// </summary>
         /// <param name="signaler">Signaler used to raise signal.</param>
         /// <param name="input">Arguments to your slot.</param>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            signaler.Signal("eval", input, skipWhitelist: true);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
             HttpFileExecutorAsync.AddMimeType(input.GetEx<string>(), input.Children.First().GetEx<string>());
         }
     }

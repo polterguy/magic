@@ -5,6 +5,7 @@
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.branching
 {
@@ -20,7 +21,7 @@ namespace magic.lambda.branching
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.lambda.signatures.CaseSignature))]
-    public class Case : ISlot
+    public class Case : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -28,10 +29,10 @@ namespace magic.lambda.branching
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             SanityCheckInvocation(input);
-            signaler.Signal("eval", input, skipWhitelist: true);
+            await signaler.SignalAsync("eval", input, skipWhitelist: true);
         }
 
         #region [ -- Private helper methods -- ]

@@ -52,7 +52,7 @@ namespace magic.lambda.logging.slots
             errorNode?.UnTie();
 
             // Retrieving log content and logging data.
-            var args = Utilities.GetLogContent(input, signaler);
+            var args = await Utilities.GetLogContent(input, signaler);
             var id = await _logger.ErrorAsync(
                 args.Content,
                 args.Meta,

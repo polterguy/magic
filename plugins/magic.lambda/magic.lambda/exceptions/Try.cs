@@ -6,6 +6,7 @@ using System;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.exceptions
 {
@@ -19,7 +20,7 @@ namespace magic.lambda.exceptions
         ReturnsMode = SlotReturnsMode.None,
         ProvidesScope = "try",
         SignatureType = typeof(global::magic.lambda.signatures.TrySignature))]
-    public class Try : ISlot
+    public class Try : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -27,22 +28,22 @@ namespace magic.lambda.exceptions
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             try
             {
-                signaler.Signal("eval", input, skipWhitelist: true);
+                await signaler.SignalAsync("eval", input, skipWhitelist: true);
             }
             catch (Exception err)
             {
-                var foundCatch = ExecuteCatch(signaler, input, err);
-                ExecuteFinally(signaler, input);
+                var foundCatch = await ExecuteCatch(signaler, input, err);
+                await ExecuteFinally(signaler, input);
                 if (foundCatch)
                     return;
                 else
                     throw;
             }
-            ExecuteFinally(signaler, input);
+            await ExecuteFinally(signaler, input);
         }
 
         #region [ -- Private helper methods -- ]
@@ -66,12 +67,12 @@ namespace magic.lambda.exceptions
         /*
          * Executes [.catch] if existing, and returns true if [.catch] was found
          */
-        bool ExecuteCatch(ISignaler signaler, Node input, Exception err)
+        async Task<bool> ExecuteCatch(ISignaler signaler, Node input, Exception err)
         {
             if (input.Next?.Name == ".catch")
             {
                 Node next = InsertException(input, err);
-                signaler.Signal("eval", next, skipWhitelist: true);
+                await signaler.SignalAsync("eval", next, skipWhitelist: true);
                 return true;
             }
             return false;
@@ -80,12 +81,12 @@ namespace magic.lambda.exceptions
         /*
          * Executes [.finally] if it exists.
          */
-        static void ExecuteFinally(ISignaler signaler, Node input)
+        static async Task ExecuteFinally(ISignaler signaler, Node input)
         {
             if (input.Next?.Name == ".finally")
-                signaler.Signal("eval", input.Next, skipWhitelist: true);
+                await signaler.SignalAsync("eval", input.Next, skipWhitelist: true);
             else if (input.Next?.Next?.Name == ".finally")
-                signaler.Signal("eval", input.Next.Next, skipWhitelist: true);
+                await signaler.SignalAsync("eval", input.Next.Next, skipWhitelist: true);
         }
 
         #endregion

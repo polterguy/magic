@@ -6,6 +6,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Threading.Tasks;
 
 namespace magic.lambda.change
 {
@@ -25,7 +26,7 @@ namespace magic.lambda.change
         ProvidesIterationPointer = true,
         ScopeRequiresStrictExit = true,
         SignatureType = typeof(global::magic.lambda.signatures.IncludeSignature))]
-    public class Include : ISlot
+    public class Include : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -33,7 +34,7 @@ namespace magic.lambda.change
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Iterating through each destination.
             foreach (var idxDest in input.Evaluate().ToList())
@@ -43,12 +44,12 @@ namespace magic.lambda.change
 
                 // Making sure we're able to handle returned values and nodes from slot implementation.
                 var result = new Node();
-                signaler.Scope("slots.result", result, () =>
+                await signaler.ScopeAsync("slots.result", result, async () =>
                 {
                     input.Insert(0, new Node(".dp", idxDest));
 
                     // Evaluating lambda of slot.
-                    signaler.Signal("eval", input, skipWhitelist: true);
+                    await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
                     // Resetting back to original nodes.
                     input.Clear();
