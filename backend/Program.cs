@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using magic.data.common.helpers;
 
 namespace magic.backend
@@ -28,6 +29,7 @@ namespace magic.backend
             }))
             {
                 Host.CreateDefaultBuilder(args)
+                    .ConfigureLogging(logging => logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning))
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
                         webBuilder
