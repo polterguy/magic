@@ -3,7 +3,6 @@
  */
 
 using System.IO;
-using Newtonsoft.Json.Linq;
 using YamlDotNet.Serialization;
 using magic.node;
 using magic.node.extensions;
@@ -51,7 +50,7 @@ namespace magic.lambda.json.slots.yaml
                 string json = serializer.Serialize(yamlObject);
 
                 // Creating lambda object from JSON content.
-                Json2LambdaTransformer.ToNode(input, JContainer.Parse(json) as JContainer);
+                NodeJson.FromJson(input, json);
 
                 // House cleaning.
                 input.Value = null;

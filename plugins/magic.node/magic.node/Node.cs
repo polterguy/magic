@@ -92,6 +92,24 @@ namespace magic.node
         }
 
         /// <summary>
+        /// Number of children of your node, without having to enumerate them.
+        /// </summary>
+        public int ChildCount
+        {
+            get { return _children.Count; }
+        }
+
+        /// <summary>
+        /// Returns the child at the specified index, without having to enumerate the children.
+        /// </summary>
+        /// <param name="index">Zero based index of the child to return.</param>
+        /// <returns>The child at the specified index.</returns>
+        public Node ChildAt(int index)
+        {
+            return _children[index];
+        }
+
+        /// <summary>
         /// Your node's parent node, if any.
         ///
         /// Will be null if the node has no parents and is a root node.

@@ -8,7 +8,7 @@ using System.Text;
 using System.Data.Common;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -167,7 +167,7 @@ namespace magic.lambda.logging.services
                                     dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // SQLite always stores dates as UTC
 
                                 var jString = reader["meta"] as string;
-                                var metaObj = jString == null ? null : JObject.Parse(jString);
+                                var metaObj = jString == null ? null : ParseMeta(jString);
                                 result.Add(new LogItem
                                 {
                                     Id = Convert.ToString(reader["id"]),
@@ -175,7 +175,7 @@ namespace magic.lambda.logging.services
                                     Type = reader["type"] as string,
                                     Content = reader["content"] as string,
                                     Exception = reader["exception"] as string,
-                                    Meta = metaObj?.ToObject<Dictionary<string, string>>(),
+                                    Meta = metaObj,
                                 });
                             }
                             return result;
@@ -306,7 +306,7 @@ namespace magic.lambda.logging.services
                                     dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // SQLite always stores dates as UTC
 
                                 var jString = reader["meta"] as string;
-                                var metaObj = jString == null ? null : JObject.Parse(jString);
+                                var metaObj = jString == null ? null : ParseMeta(jString);
                                 return new LogItem
                                 {
                                     Id = Convert.ToString(reader["id"]),
@@ -314,7 +314,7 @@ namespace magic.lambda.logging.services
                                     Type = reader["type"] as string,
                                     Content = reader["content"] as string,
                                     Exception = reader["exception"] as string,
-                                    Meta = metaObj?.ToObject<Dictionary<string, string>>(),
+                                    Meta = metaObj,
                                 };
                             }
                             throw new HyperlambdaException($"Couldn't find log item with ID '{id}'");
@@ -339,6 +339,32 @@ namespace magic.lambda.logging.services
         #endregion
 
         #region [ -- Private helper methods and properties -- ]
+
+        /*
+         * Parses the JSON object stored as meta information with a log entry into a dictionary of strings.
+         */
+        static Dictionary<string, string> ParseMeta(string json)
+        {
+            using (var document = JsonDocument.Parse(json))
+            {
+                if (document.RootElement.ValueKind != JsonValueKind.Object)
+                    throw new HyperlambdaException("Meta information of log entry is not a JSON object");
+                var result = new Dictionary<string, string>();
+                foreach (var idx in document.RootElement.EnumerateObject())
+                {
+                    result[idx.Name] = idx.Value.ValueKind switch
+                    {
+                        JsonValueKind.String => idx.Value.GetString(),
+                        JsonValueKind.Null => null,
+                        JsonValueKind.True => "True",
+                        JsonValueKind.False => "False",
+                        JsonValueKind.Number => idx.Value.GetRawText(),
+                        _ => throw new HyperlambdaException($"Meta information '{idx.Name}' of log entry is not a simple value"),
+                    };
+                }
+                return result;
+            }
+        }
 
         async Task<object> InsertLogEntryAsync(
             ISignaler signaler,

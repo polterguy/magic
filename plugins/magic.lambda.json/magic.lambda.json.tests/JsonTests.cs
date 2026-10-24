@@ -270,7 +270,7 @@ foo2:bar2
 ");
             signaler.Signal("hyper2lambda", node);
             signaler.Signal(".lambda2json-raw", node);
-            Assert.Equal(@"{""foo1"":null,""foo2"":""bar2""}", node.Get<JContainer>().ToString(Newtonsoft.Json.Formatting.None));
+            Assert.Equal(@"{""foo1"":null,""foo2"":""bar2""}", node.Get<string>());
         }
 
         [Fact]
@@ -296,7 +296,7 @@ foo2:bar2
 ");
             signaler.Signal("hyper2lambda", node);
             signaler.Signal(".lambda2json-raw", node);
-            Assert.Equal(@"[5,7]", node.Get<JContainer>().ToString(Newtonsoft.Json.Formatting.None));
+            Assert.Equal(@"[5,7]", node.Get<string>());
         }
 
         [Fact]
@@ -354,7 +354,7 @@ foo2:bar2
 ");
             signaler.Signal("hyper2lambda", node);
             signaler.Signal(".lambda2json-raw", node);
-            Assert.Equal(@"[5,7]", node.Get<JContainer>().ToString(Newtonsoft.Json.Formatting.None));
+            Assert.Equal(@"[5,7]", node.Get<string>());
         }
 
         [Fact]
@@ -369,7 +369,7 @@ foo2:bar2
 ");
             signaler.Signal("hyper2lambda", node);
             signaler.Signal(".lambda2json-raw", node);
-            Assert.Equal(@"[{""foo1"":""bar1""},{""foo2"":""bar2""}]", node.Get<JContainer>().ToString(Newtonsoft.Json.Formatting.None));
+            Assert.Equal(@"[{""foo1"":""bar1""},{""foo2"":""bar2""}]", node.Get<string>());
         }
 
         [Fact]
@@ -386,7 +386,7 @@ foo2:bar2
 ");
             signaler.Signal("hyper2lambda", node);
             signaler.Signal(".lambda2json-raw", node);
-            Assert.Equal(@"[{""foo1"":{""foo11"":""bar11""}},{""foo2"":{""foo22"":""bar22""}}]", node.Get<JContainer>().ToString(Newtonsoft.Json.Formatting.None));
+            Assert.Equal(@"[{""foo1"":{""foo11"":""bar11""}},{""foo2"":{""foo22"":""bar22""}}]", node.Get<string>());
         }
 
         [Fact]

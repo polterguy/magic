@@ -2,16 +2,14 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.IO;
 using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.json.utilities;
 
 namespace magic.lambda.json.slots.json
 {
@@ -43,13 +41,16 @@ namespace magic.lambda.json.slots.json
             var encoding = GetEncoding(input);
 
             // Loading JSON and transforming to a lambda object.
-            Json2LambdaTransformer.ToNode(
-                input,
-                await JContainer.LoadAsync(
-                    new JsonTextReader(
-                        new StreamReader(input.GetEx<Stream>() ??
-                            throw new HyperlambdaException("No stream object given to [json2lambda-stream]"),
-                            encoding))));
+            using (var buffer = new MemoryStream())
+            {
+                await (input.GetEx<Stream>() ??
+                    throw new HyperlambdaException("No stream object given to [json2lambda-stream]")).CopyToAsync(buffer);
+                var content = new ReadOnlySpan<byte>(buffer.GetBuffer(), 0, (int)buffer.Length);
+                if (encoding.CodePage == 65001)
+                    NodeJson.FromUtf8(input, content, false);
+                else
+                    NodeJson.FromUtf8(input, Encoding.UTF8.GetBytes(encoding.GetString(content)), false);
+            }
 
             // House cleaning.
             input.Value = null;

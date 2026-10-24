@@ -3,7 +3,6 @@
  */
 
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
@@ -55,10 +54,10 @@ namespace magic.lambda.config
              * This little bugger will validate that the JSON is actually valid JSON,
              * which prevents saving of non-valid JSON to configuration file.
              */
-            var jObject = JObject.Parse(json);
+            var reformatted = NodeJson.Reformat(json);
 
             // Saving JSON as text to "appsettings.json" file.
-            await _fileService.SaveAsync(_rootResolver.RootFolder + "files/config/appsettings.json", jObject.ToString());
+            await _fileService.SaveAsync(_rootResolver.RootFolder + "files/config/appsettings.json", reformatted);
         }
     }
 }

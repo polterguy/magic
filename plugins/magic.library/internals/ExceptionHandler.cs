@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
@@ -160,10 +159,8 @@ namespace magic.library.internals
              * making sure we return default message if no message was returned from
              * Hyperlambda file.
              */
-            signaler.Signal(".lambda2json-raw", nodeResult, skipWhitelist: true);
-            var response = nodeResult.Get<JObject>();
-            if (response["message"] == null)
-                response["message"] = DEFAULT_ERROR_MESSAGE;
+            if (!nodeResult.Children.Any(x => x.Name == "message"))
+                nodeResult.Add(new Node("message", DEFAULT_ERROR_MESSAGE));
 
             /*
              * Notice, we have no way to determine the frontend used unless we find an explicit configuration part.
@@ -173,7 +170,7 @@ namespace magic.library.internals
             context.Response.Headers["Access-Control-Allow-Origin"] = "*"; //NOSONAR
 
             // Writing exception to response and returning success.
-            await context.Response.WriteAsync(response.ToString(Newtonsoft.Json.Formatting.Indented));
+            await context.Response.WriteAsync(NodeJson.ToJson(nodeResult, true));
         }
 
         /*
@@ -233,19 +230,20 @@ namespace magic.library.internals
              */
             context.Response.Headers["Access-Control-Allow-Origin"] = "*"; //NOSONAR
 
-            await context.Response.WriteAsync(response.ToString(Newtonsoft.Json.Formatting.Indented));
+            await context.Response.WriteAsync(NodeJson.ToJson(response, true));
         }
 
         /*
          * Helper method to create a JSON result from an exception, and returning
          * the result to the caller.
          */
-        static JObject GetDefaultExceptionResponse(
+        static Node GetDefaultExceptionResponse(
             IExceptionHandlerPathFeature ex,
             HttpContext context,
             string msg)
         {
             // Checking if exception is a HyperlambdaException, which is handled in a custom way.
+            var response = new Node();
             var hypEx = ex.Error as HyperlambdaException;
             if (hypEx != null)
             {
@@ -257,10 +255,7 @@ namespace magic.library.internals
                 if (hypEx.IsPublic)
                 {
                     // Exception details is supposed to be publicly visible.
-                    var response = new JObject
-                    {
-                        ["message"] = msg,
-                    };
+                    response.Add(new Node("message", msg));
 
                     /*
                      * Checking if we've got a field name of some sort, which allows client
@@ -268,26 +263,20 @@ namespace magic.library.internals
                      * creating more detailed feedback to the user.
                      */
                     if (!string.IsNullOrEmpty(hypEx.FieldName))
-                        response["field"] = hypEx.FieldName;
-                    return response;
+                        response.Add(new Node("field", hypEx.FieldName));
                 }
                 else
                 {
                     // Exception details is not supposed to be publicly visible.
-                    return new JObject
-                    {
-                        ["message"] = DEFAULT_ERROR_MESSAGE
-                    };
+                    response.Add(new Node("message", DEFAULT_ERROR_MESSAGE));
                 }
             }
             else
             {
                 // Default exception response, returned if exception is not Hyperlambda exception.
-                return new JObject
-                {
-                    ["message"] = DEFAULT_ERROR_MESSAGE
-                };
+                response.Add(new Node("message", DEFAULT_ERROR_MESSAGE));
             }
+            return response;
         }
 
         #endregion

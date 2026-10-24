@@ -67,8 +67,8 @@ namespace magic.library
             // Adding global configuration to services collection.
             services.AddSingleton(svc => configuration);
 
-            // Making sure we add all controllers in AppDomain and use Newtonsoft JSON as JSON library.
-            services.AddControllers().AddNewtonsoftJson();
+            // Making sure we add all controllers in AppDomain.
+            services.AddControllers();
 
             // Adding memory cache.
             services.AddMemoryCache();

@@ -2,9 +2,6 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
-using System.Dynamic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using YamlDotNet.Serialization;
 using magic.node;
 using magic.node.extensions;
@@ -39,8 +36,7 @@ namespace magic.lambda.json.slots.json
             input.Clear();
 
             // Converting to JSON object.
-            var expConverter = new ExpandoObjectConverter();
-            dynamic deserializedObject = JsonConvert.DeserializeObject<ExpandoObject>(input.GetEx<string>(), expConverter);
+            var deserializedObject = NodeJson.ParseObject(input.GetEx<string>());
 
             // Converting to YAML.
             var serializer = new SerializerBuilder().Build();

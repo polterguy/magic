@@ -2,11 +2,9 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
-using Newtonsoft.Json.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.json.utilities;
 
 namespace magic.lambda.json.slots.json
 {
@@ -34,7 +32,7 @@ namespace magic.lambda.json.slots.json
         public void Signal(ISignaler signaler, Node input)
         {
             input.Clear();
-            Json2LambdaTransformer.ToNode(input, JContainer.Parse(input.GetEx<string>()) as JContainer);
+            NodeJson.FromJson(input, input.GetEx<string>());
             input.Value = null;
         }
     }

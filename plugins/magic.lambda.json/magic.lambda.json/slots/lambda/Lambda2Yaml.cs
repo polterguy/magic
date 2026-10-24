@@ -4,9 +4,9 @@
 
 using System;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 using YamlDotNet.Serialization;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.json.utilities;
 
@@ -35,8 +35,8 @@ namespace magic.lambda.json.slots.lambda
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Getting source nodes and converting to JContainer.
-            var jContainer = Lambda2JsonTransformer.ToJson(Lambda2JsonTransformer.GetSourceNode(input));
+            // Getting source nodes and converting to simple objects that YamlDotNet understands.
+            var simple = NodeJson.ToObject(Lambda2JsonTransformer.GetSourceNode(input));
 
             // House cleaning.
             input.Clear();
@@ -47,25 +47,7 @@ namespace magic.lambda.json.slots.lambda
                 .Build();
 
             // Converting to YAML.
-            input.Value = serializer.Serialize(SimplifyJContainer(jContainer));
+            input.Value = serializer.Serialize(simple);
         }
-
-        #region [ -- Private helper methods -- ]
-
-        /*
-         * Converts the specified JToken to a "simple object" that YamlDotNet can understand.
-         */
-        static object SimplifyJContainer(JToken token)
-        {
-            if (token is JValue jValue)
-                return jValue.Value;
-            if (token is JArray jArray)
-                return jArray.Select(x => SimplifyJContainer(x)).ToList();
-            if (token is JObject)
-                return token.AsEnumerable().Cast<JProperty>().ToDictionary(x => x.Name, x => SimplifyJContainer(x.Value));
-            throw new InvalidOperationException("Unexpected token: " + token);
-        }
-
-        #endregion
     }
 }

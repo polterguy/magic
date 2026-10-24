@@ -3,7 +3,6 @@
  */
 
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using magic.endpoint.contracts.poco;
 
 namespace magic.endpoint.controller.utilities
@@ -15,7 +14,7 @@ namespace magic.endpoint.controller.utilities
     internal static class ResponseHandlers
     {
         /*
-         * Default JSON handler, simply returning a JsonResult to caller.
+         * Default JSON handler, simply returning the JSON as a string to caller.
          */
         internal static IActionResult JsonHandler(MagicResponse response)
         {
@@ -23,8 +22,8 @@ namespace magic.endpoint.controller.utilities
             if (response.Content is string strContent)
                 return new ContentResult { Content = strContent, StatusCode = response.Result };
 
-            // Strongly typed JSON object, hence returning as such.
-            return new JsonResult(response.Content as JToken) { StatusCode = response.Result };
+            // Not JSON we know how to return, which has always been returned as null.
+            return new ContentResult { Content = "null", StatusCode = response.Result };
         }
     }
 }

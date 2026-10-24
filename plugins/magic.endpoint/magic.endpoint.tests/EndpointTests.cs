@@ -37,7 +37,7 @@ namespace magic.endpoint.tests
 
             Assert.Equal(200, result.Result);
             Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
-            var j = result.Content as JObject;
+            var j = JObject.Parse((string)result.Content);
             Assert.NotNull(j);
             Assert.Equal("hello world", j["result"].Value<string>());
         }
@@ -147,7 +147,7 @@ namespace magic.endpoint.tests
                 });
 
             Assert.Equal(200, result.Result);
-            var content = result.Content as JContainer;
+            var content = JToken.Parse((string)result.Content) as JContainer;
             Assert.Equal(2, content.Count);
             Assert.Equal("bar1", content["foo1"].Value<string>());
             Assert.Equal("bar2", content["foo2"].Value<string>());
@@ -172,7 +172,7 @@ namespace magic.endpoint.tests
                 });
 
             Assert.Equal(200, result.Result);
-            var content = result.Content as JContainer;
+            var content = JToken.Parse((string)result.Content) as JContainer;
             Assert.Equal(2, content.Count);
             Assert.Equal("bar1", content["foo1"].Value<string>());
             Assert.Equal("bar2", content["foo2"].Value<string>());
@@ -263,7 +263,7 @@ namespace magic.endpoint.tests
 
             Assert.Equal(200, result.Result);
             Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
-            var j = result.Content as JObject;
+            var j = JObject.Parse((string)result.Content);
             Assert.NotNull(j);
             Assert.Equal("foo", j["input1"].Value<string>());
             Assert.Equal(5, j["input2"].Value<int>());
@@ -290,7 +290,7 @@ namespace magic.endpoint.tests
 
             Assert.Equal(200, result.Result);
             Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
-            var j = result.Content as JObject;
+            var j = JObject.Parse((string)result.Content);
             Assert.NotNull(j);
             Assert.Single(j);
             Assert.Equal("foo", j["input1"].Value<string>());
@@ -337,7 +337,7 @@ namespace magic.endpoint.tests
 
             Assert.Equal(200, result.Result);
             Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
-            var j = result.Content as JObject;
+            var j = JObject.Parse((string)result.Content);
             Assert.NotNull(j);
             Assert.Equal("foo", j["inputXXX"].Value<string>());
         }
@@ -405,7 +405,7 @@ namespace magic.endpoint.tests
 
             Assert.Equal(200, result.Result);
             Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
-            var j = result.Content as JObject;
+            var j = JObject.Parse((string)result.Content);
             Assert.NotNull(j);
             Assert.Equal("hello world", j["result"].Value<string>());
         }
@@ -448,7 +448,7 @@ input5
 
             Assert.Equal(200, result.Result);
             Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
-            var j = result.Content as JObject;
+            var j = JObject.Parse((string)result.Content);
             Assert.NotNull(j);
             Assert.Equal("foo", j["input1"].Value<string>());
             Assert.Equal(5, j["input2"].Value<int>());
@@ -460,7 +460,7 @@ input5
             Assert.Equal("any-object", j["input4"].Value<JArray>()[0]["arr3"].Value<string>());
             Assert.False(j["input4"].Value<JArray>()[1]["arr1"].Value<bool>());
             Assert.Equal(67, j["input4"].Value<JArray>()[1]["arr2"].Value<int>());
-            Assert.True(j["input4"].Value<JArray>()[1]["arr3"].Value<Guid>().ToString() != Guid.Empty.ToString());
+            Assert.True(j["input4"].Value<JArray>()[1]["arr3"].Value<string>() != Guid.Empty.ToString());
             Assert.NotNull(j["input5"].Value<JObject>());
             Assert.Equal("foo", j["input5"].Value<JObject>()["obj1"].Value<string>());
             Assert.True(j["input5"].Value<JObject>()["obj2"].Value<bool>());
@@ -504,7 +504,7 @@ input5
 
             Assert.Equal(200, result.Result);
             Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
-            var j = result.Content as JObject;
+            var j = JObject.Parse((string)result.Content);
             Assert.NotNull(j);
             Assert.Equal("foo", j["input1"].Value<string>());
             Assert.Equal(5, j["input2"].Value<int>());
@@ -516,7 +516,7 @@ input5
             Assert.Equal("any-object", j["input4"].Value<JArray>()[0]["arr3"].Value<string>());
             Assert.False(j["input4"].Value<JArray>()[1]["arr1"].Value<bool>());
             Assert.Equal(67, j["input4"].Value<JArray>()[1]["arr2"].Value<int>());
-            Assert.True(j["input4"].Value<JArray>()[1]["arr3"].Value<Guid>().ToString() != Guid.Empty.ToString());
+            Assert.True(j["input4"].Value<JArray>()[1]["arr3"].Value<string>() != Guid.Empty.ToString());
             Assert.NotNull(j["input5"].Value<JObject>());
             Assert.Equal("foo", j["input5"].Value<JObject>()["obj1"].Value<string>());
             Assert.True(j["input5"].Value<JObject>()["obj2"].Value<bool>());
@@ -547,7 +547,7 @@ input2:int:5");
 
             Assert.Equal(200, result.Result);
             Assert.Empty(result.Headers.Where(x => x.Key != "X-Execution-Id"));
-            var j = result.Content as JObject;
+            var j = JObject.Parse((string)result.Content);
             Assert.NotNull(j);
             Assert.Equal(2, j.Count);
             Assert.Equal("foo", j["input1"].Value<string>());

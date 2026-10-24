@@ -33,8 +33,8 @@ namespace magic.lambda.json.slots.lambda
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Getting source nodes and converting to JContainer.
-            var jContainer = Lambda2JsonTransformer.ToJson(Lambda2JsonTransformer.GetSourceNode(input));
+            // Getting source nodes to convert.
+            var source = Lambda2JsonTransformer.GetSourceNode(input);
 
             // Checking if caller wants to have a formatted result.
             var format = input.Children.FirstOrDefault(x => x.Name == "format")?.GetEx<bool>() ?? false;
@@ -43,7 +43,7 @@ namespace magic.lambda.json.slots.lambda
             input.Clear();
 
             // Converting to JSON string and returning to caller.
-            input.Value = jContainer.ToString(format ? Newtonsoft.Json.Formatting.Indented : Newtonsoft.Json.Formatting.None);
+            input.Value = NodeJson.ToJson(source, format);
         }
     }
 }

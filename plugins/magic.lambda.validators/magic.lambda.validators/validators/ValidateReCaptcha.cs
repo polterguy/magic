@@ -6,7 +6,7 @@ using System.Net;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -69,7 +69,7 @@ namespace magic.lambda.validators.validators
 
             // Parsing result.
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<RecaptchaResponse>(jsonResponse);
+            var result = JsonSerializer.Deserialize<RecaptchaResponse>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             // Sanity checking invocation.
             if (result.Score == null || !result.Success)
