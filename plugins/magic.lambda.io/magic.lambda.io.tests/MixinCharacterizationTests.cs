@@ -39,7 +39,7 @@ namespace magic.lambda.io.tests
                             continue;
                         }
                         var lambdaExpression = ReferenceToEndOfScope(reader);
-                        var exe = new Expression(lambdaExpression).Evaluate(lambda).FirstOrDefault() ??
+                        var exe = Expression.Create(lambdaExpression).Evaluate(lambda).FirstOrDefault() ??
                             throw new HyperlambdaException($"Expression '{lambdaExpression}' referenced in mixin file '{filename}' returned no nodes");
                         builder.Append(exe.GetEx<string>());
                         break;

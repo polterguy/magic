@@ -27,8 +27,8 @@ namespace magic.lambda.xml.tests
 </CATALOG>
 ""
 xml2lambda:x:@.xml");
-            Assert.Equal("Bloodroot", new Expression("**/xml2lambda/*/*/*/COMMON/*/\\#text").Evaluate(result).First().Value);
-            Assert.Equal("qwertyuio", new Expression("**/xml2lambda/*/*/*/COMMON/*/\\@a").Evaluate(result).First().Value);
+            Assert.Equal("Bloodroot", Expression.Create("**/xml2lambda/*/*/*/COMMON/*/\\#text").Evaluate(result).First().Value);
+            Assert.Equal("qwertyuio", Expression.Create("**/xml2lambda/*/*/*/COMMON/*/\\@a").Evaluate(result).First().Value);
         }
 
         [Fact]
@@ -98,7 +98,7 @@ lambda2xml:x:-
 lambda2xml
    foo
       #text:bar");
-            Assert.Equal("<foo>bar</foo>", new Expression("**/lambda2xml").Evaluate(result).First().Value);
+            Assert.Equal("<foo>bar</foo>", Expression.Create("**/lambda2xml").Evaluate(result).First().Value);
         }
     }
 }

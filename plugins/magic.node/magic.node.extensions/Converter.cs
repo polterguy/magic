@@ -61,7 +61,7 @@ namespace magic.node.extensions
             {"x", (value) => {
                 if (value is Expression)
                     return value;
-                return new Expression(value.ToString());
+                return Expression.Create(value.ToString());
             }},
             {"node", (value) => {
                 if (value is Node)

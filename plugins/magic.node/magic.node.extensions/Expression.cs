@@ -5,7 +5,9 @@
 using System;
 using System.Text;
 using System.Linq;
+using System.Threading;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using magic.node.extensions.hyperlambda.internals;
 
 namespace magic.node.extensions
@@ -19,12 +21,110 @@ namespace magic.node.extensions
 
         /// <summary>
         /// Creates a new expression from its string representation.
+        ///
+        /// Notice, internal, since an expression should be created with Create, which shares the expression
+        /// created for a string with whoever asks for the same string next.
         /// </summary>
         /// <param name="expression">String representation of expression to create.</param>
-        public Expression(string expression)
+        internal Expression(string expression)
         {
             _iterators = Parse(expression);
         }
+
+        #region [ -- Sharing expressions created from the same string -- ]
+
+        /*
+         * The expressions created recently, by the string they were created from, in two generations; the current one, and the
+         * one before it. A string found in the old generation is moved to the current one, and when the current one is full it
+         * becomes the old one, and the old one is dropped. The cache never holds more than twice the maximum, whatever the
+         * strings are, and a string used now and then stays in it.
+         */
+        sealed class Generations
+        {
+            public readonly ConcurrentDictionary<string, Expression> Current = new();
+            public readonly ConcurrentDictionary<string, Expression> Previous;
+            public int Count;
+
+            public Generations(ConcurrentDictionary<string, Expression> previous)
+            {
+                Previous = previous;
+            }
+        }
+
+        const int MaxCachedExpressions = 4096;
+        const int MaxCachedLength = 256;
+        static readonly object _rotation = new();
+        static volatile Generations _generations = new(new());
+
+        /// <summary>
+        /// Returns an expression for the specified string, which is the very same instance as the one a previous call
+        /// returned for the same string, if that was not too long ago.
+        ///
+        /// Useful for strings you evaluate over and over, or that show up in many places, since an expression cannot be changed
+        /// once it is created, and sharing it saves both parsing the string again and keeping a copy of the result.
+        /// Notice, a string that is not a valid expression throws every time, and is never remembered.
+        /// </summary>
+        /// <param name="expression">String representation of the expression.</param>
+        /// <returns>An expression equal to the one new Expression(expression) would create.</returns>
+        public static Expression Create(string expression)
+        {
+            if (expression == null || expression.Length > MaxCachedLength)
+                return new Expression(expression);
+
+            var generations = _generations;
+            if (generations.Current.TryGetValue(expression, out var result))
+                return result;
+
+            if (generations.Previous.TryGetValue(expression, out result))
+            {
+                Remember(generations, expression, result);
+                return result;
+            }
+
+            result = new Expression(expression);
+            Remember(generations, expression, result);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a new expression from its string representation, which is never shared with anybody else, and never remembered.
+        ///
+        /// For strings that are not worth remembering, such as the ones built from the data of a request, which anybody
+        /// could fill the cache with. Everything else should be created with Create.
+        /// </summary>
+        /// <param name="expression">String representation of expression to create.</param>
+        /// <returns>A new expression.</returns>
+        public static Expression CreateUncached(string expression)
+        {
+            return new Expression(expression);
+        }
+
+        /*
+         * Forgets every expression created so far. Needed when something that decides what a string means has changed, which
+         * is what registering an iterator does, since an iterator is resolved when it is created.
+         */
+        internal static void ClearCache()
+        {
+            lock (_rotation)
+            {
+                _generations = new(new());
+            }
+        }
+
+        static void Remember(Generations generations, string key, Expression value)
+        {
+            // Notice, always the generations the caller started out with, so something created before a clear can never end up in the new ones.
+            if (generations.Current.TryAdd(key, value) && Interlocked.Increment(ref generations.Count) > MaxCachedExpressions)
+            {
+                lock (_rotation)
+                {
+                    if (ReferenceEquals(_generations, generations))
+                        _generations = new(generations.Current);
+                }
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Returns the string representation of your expression.

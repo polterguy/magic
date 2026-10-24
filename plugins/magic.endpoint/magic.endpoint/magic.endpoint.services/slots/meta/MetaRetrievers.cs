@@ -78,7 +78,7 @@ namespace magic.endpoint.services.slots.meta
             string verb,
             Node arguments)
         {
-            var x = new Expression("**/response.headers.set/*/Content-Type");
+            var x = Expression.Create("**/response.headers.set/*/Content-Type");
             var result = x.Evaluate(lambda);
 
             /*
@@ -110,7 +110,7 @@ namespace magic.endpoint.services.slots.meta
                 yield break;
 
             // Finding [.accept] meta node, if existing.
-            var x = new Expression("*/.accept");
+            var x = Expression.Create("*/.accept");
             var result = x.Evaluate(lambda);
 
             /*

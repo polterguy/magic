@@ -33,7 +33,7 @@ namespace magic.lambda.misc
             var iterators = input.Children.Select(x => x.GetEx<string>());
             var expression = string.Join("/", iterators.ToArray());
             input.Clear();
-            input.Value = new Expression(expression);
+            input.Value = Expression.Create(expression);
         }
     }
 }

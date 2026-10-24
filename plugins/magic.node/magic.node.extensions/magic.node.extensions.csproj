@@ -8,4 +8,8 @@
     <ProjectReference Include="..\magic.node\magic.node.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="magic.node.tests" />
+  </ItemGroup>
+
 </Project>

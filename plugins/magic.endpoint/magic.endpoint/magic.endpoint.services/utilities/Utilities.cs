@@ -204,7 +204,7 @@ namespace magic.endpoint.services.utilities
             }
 
             // Moving endpoint Lambda to position before any [.interceptor] node found in interceptor lambda.
-            foreach (var idxLambda in new Expression("**/.interceptor").Evaluate(interceptNode).ToList())
+            foreach (var idxLambda in Expression.Create("**/.interceptor").Evaluate(interceptNode).ToList())
             {
                 // Iterating through each node in current result and injecting before currently iterated [.lambda] node.
                 foreach (var idx in lambda.Children)

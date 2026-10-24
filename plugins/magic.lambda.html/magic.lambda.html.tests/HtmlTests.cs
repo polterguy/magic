@@ -23,8 +23,8 @@ html2lambda:@""<html>
     <p class=""""howdy"""">
   </body>
 </html>""");
-            Assert.Equal("Foo", new Expression("**/html2lambda/*/*/*/title/*/\\#text").Evaluate(result).First().Value);
-            Assert.Equal("howdy", new Expression("**/html2lambda/*/*/*/p/*/\\@class").Evaluate(result).First().Value);
+            Assert.Equal("Foo", Expression.Create("**/html2lambda/*/*/*/title/*/\\#text").Evaluate(result).First().Value);
+            Assert.Equal("howdy", Expression.Create("**/html2lambda/*/*/*/p/*/\\@class").Evaluate(result).First().Value);
         }
 
         [Fact]
@@ -61,8 +61,8 @@ markdown2html:@""
 howdy
 ""
 html2lambda:x:-");
-            Assert.Equal("Header", new Expression("**/html2lambda/*/h1/*/\\#text").Evaluate(result).First().Value);
-            Assert.Equal("howdy", new Expression("**/html2lambda/*/p/*/\\#text").Evaluate(result).First().Value);
+            Assert.Equal("Header", Expression.Create("**/html2lambda/*/h1/*/\\#text").Evaluate(result).First().Value);
+            Assert.Equal("howdy", Expression.Create("**/html2lambda/*/p/*/\\#text").Evaluate(result).First().Value);
         }
 
         [Fact]
@@ -77,9 +77,9 @@ foo: bar
 howdy
 ""
 html2lambda:x:-");
-            Assert.Equal("Header", new Expression("**/html2lambda/*/h1/*/\\#text").Evaluate(result).First().Value);
-            Assert.Equal("howdy", new Expression("**/html2lambda/*/p/*/\\#text").Evaluate(result).First().Value);
-            Assert.Equal("bar", new Expression("**/markdown2html/*/foo").Evaluate(result).First().Value);
+            Assert.Equal("Header", Expression.Create("**/html2lambda/*/h1/*/\\#text").Evaluate(result).First().Value);
+            Assert.Equal("howdy", Expression.Create("**/html2lambda/*/p/*/\\#text").Evaluate(result).First().Value);
+            Assert.Equal("bar", Expression.Create("**/markdown2html/*/foo").Evaluate(result).First().Value);
         }
 
         [Fact]

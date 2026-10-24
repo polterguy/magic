@@ -66,7 +66,7 @@ namespace magic.node.extensions
             {'=', (value) => {
                 var name = value.Substring(1);
                 if (name.StartsWith("{") && name.EndsWith("}"))
-                    return (identity, input) => ExtrapolatedExpressionIterator(identity, input, value, true);
+                    return Extrapolated(value, true);
                 return (identity, input) => ValueEqualsIterator(
                     input,
                     name);
@@ -101,7 +101,7 @@ namespace magic.node.extensions
              * expression is referencing, assuming there is only one node matching expression.
              */
             {'{', (value) => {
-                return (identity, input) => ExtrapolatedExpressionIterator(identity, input, value);
+                return Extrapolated(value, false);
             }},
 
             /*
@@ -187,6 +187,7 @@ namespace magic.node.extensions
             Func<Node, IEnumerable<Node>, IEnumerable<Node>> functor)
         {
             _nonParametrizedIterators[iteratorValue] = functor;
+            Expression.ClearCache(); // An iterator is resolved when it is created, so expressions created earlier have to go.
         }
 
         /// <summary>
@@ -200,6 +201,7 @@ namespace magic.node.extensions
             Func<string, Func<Node, IEnumerable<Node>, IEnumerable<Node>>> createFunctor)
         {
             _parametrizedIterators[iteratorFirstCharacter] = createFunctor;
+            Expression.ClearCache(); // An iterator is resolved when it is created, so expressions created earlier have to go.
         }
 
         #region [ -- Overrides -- ]
@@ -434,13 +436,28 @@ namespace magic.node.extensions
         /*
          * Extrapolated iterator, returning result of nested expression.
          */
+        static Func<Node, IEnumerable<Node>, IEnumerable<Node>> Extrapolated(string expression, bool value)
+        {
+            /*
+             * The nested expression is created the first time the iterator is evaluated, and not before, such that one that is
+             * not valid throws when it is evaluated, as it always did, and then it is created no more. It is evaluated every
+             * time, since what it yields depends on the nodes it is evaluated from, and not on the expression.
+             */
+            Expression nested = null;
+            return (identity, input) =>
+            {
+                nested ??= Expression.Create(expression.Substring(value ? 2 : 1, expression.Length - (value ? 3 : 2)));
+                return ExtrapolatedExpressionIterator(identity, input, expression, nested, value);
+            };
+        }
+
         static IEnumerable<Node> ExtrapolatedExpressionIterator(
             Node identity,
             IEnumerable<Node> input,
             string expression,
+            Expression x,
             bool value = false)
         {
-            var x = new Expression(expression.Substring(value ? 2 : 1, expression.Length - (value ? 3 : 2)));
             var result = x.Evaluate(identity);
             if (result.Count() > 1)
                throw new HyperlambdaException($"Extrapolated expression '{expression}' yields multiple results");

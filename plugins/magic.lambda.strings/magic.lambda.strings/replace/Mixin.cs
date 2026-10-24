@@ -136,7 +136,7 @@ namespace magic.lambda.strings.replace
 
                 var lambda = HyperlambdaParser.Parse(hl);
                 lambda.Name = ".exe";
-                var exe = new Node("invoke", new Expression("@.exe"));
+                var exe = new Node("invoke", Expression.Create("@.exe"));
                 if (args.Children.Any())
                     exe.AddRange(args.Children.Select(x => x.Clone()));
 
@@ -162,7 +162,7 @@ namespace magic.lambda.strings.replace
                     .Where(x => x.Name != "strip")
                     .Select(x => x.Clone())
                     .ToList());
-            var result = new Expression(expression).Evaluate(arguments).ToList();
+            var result = Expression.Create(expression).Evaluate(arguments).ToList();
             if (result.Count > 1)
                 throw new HyperlambdaException("Multiple resulting nodes from mixin expression.");
             return result.FirstOrDefault()?.GetEx<string>() ?? "";

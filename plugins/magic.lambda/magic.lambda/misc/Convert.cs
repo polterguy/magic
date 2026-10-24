@@ -104,7 +104,7 @@ namespace magic.lambda.misc
                     break;
 
                 case "x":
-                    input.Value = new Expression(value?.ToString() ?? "");
+                    input.Value = Expression.Create(value?.ToString() ?? "");
                     break;
 
                 case "bytes":

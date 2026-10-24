@@ -13,6 +13,7 @@ namespace magic.node.tests
     /*
      * Unit tests for lambda expressions.
      */
+    [Collection("ExpressionCache")]
     public class ExpressionTests
     {
         [Fact]

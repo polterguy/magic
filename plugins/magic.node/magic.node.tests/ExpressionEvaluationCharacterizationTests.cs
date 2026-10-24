@@ -15,6 +15,7 @@ namespace magic.node.tests
      * Pins [Expression.Evaluate] and the [@] and [^] iterators against verbatim copies of the implementations they had
      * before they were optimised, over thousands of random trees and expressions.
      */
+    [Collection("ExpressionCache")]
     public class ExpressionEvaluationCharacterizationTests
     {
         // The original Expression.Evaluate: an emptiness check after every single iterator.

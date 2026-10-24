@@ -40,7 +40,7 @@ namespace magic.endpoint.services
 
         sealed record ConfigSnapshot(string Path, FileStamp Stamp, Node Config);
 
-        static readonly Expression _headersForAllFiles = new("*/static_files/*/headers/*/\\*/*");
+        static readonly Expression _headersForAllFiles = Expression.Create("*/static_files/*/headers/*/\\*/*");
 
         /*
          * Registered Content-Type payload handlers, responsible for handling requests and parametrising invocation
@@ -278,7 +278,7 @@ namespace magic.endpoint.services
                 // Creating our initial lambda object.
                 var lambda = new Node("");
                 lambda.Add(new Node("io.file.mixin", htmlFile));
-                lambda.Add(new Node("return", new Expression("-")));
+                lambda.Add(new Node("return", Expression.Create("-")));
 
                 // Applying interceptors.
                 lambda = await Utilities.ApplyInterceptors(_rootResolver, _fileService, lambda, codebehindFile);
@@ -432,7 +432,7 @@ namespace magic.endpoint.services
                 }
 
                 // Headers that applies only for files with the specified extension (or filename, for extensionless files).
-                foreach (var idx in new Expression($"*/static_files/*/headers/*/{extension}/*").Evaluate(config))
+                foreach (var idx in Expression.CreateUncached($"*/static_files/*/headers/*/{extension}/*").Evaluate(config))
                 {
                     response.Headers[idx.Name] = idx.GetEx<string>();
                 }
