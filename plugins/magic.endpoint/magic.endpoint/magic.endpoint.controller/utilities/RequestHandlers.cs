@@ -3,10 +3,14 @@
  */
 
 using System;
+using System.IO;
+using System.Text;
 using System.Linq;
+using System.Buffers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 
 namespace magic.endpoint.controller.utilities
@@ -24,12 +28,37 @@ namespace magic.endpoint.controller.utilities
         internal static async Task<Node> JsonHandler(ISignaler signaler, HttpRequest request)
         {
             // Figuring out encoding of request.
-            var encoding = GetEncoding(request);
+            var encoding = Encoding.GetEncoding(GetEncoding(request));
 
-            // Reading body as JSON from request as a Stream, with correctly applied encoding.
-            var args = new Node("", request.Body);
-            args.Add(new Node("encoding", encoding));
-            await signaler.SignalAsync("json2lambda-stream", args, skipWhitelist: true);
+            /*
+             * Reading the body, and parsing it directly into a lambda object.
+             *
+             * Notice, when the client has told us how long the body is, and it is not huge, we read it into a buffer of exactly
+             * that size, instead of copying it to a stream that has to grow to fit it.
+             */
+            var args = new Node("");
+            var length = request.ContentLength;
+            if (length.HasValue && length.Value > 0 && length.Value <= MaxBufferedBody)
+            {
+                var buffer = ArrayPool<byte>.Shared.Rent((int)length.Value);
+                try
+                {
+                    await request.Body.ReadExactlyAsync(buffer.AsMemory(0, (int)length.Value));
+                    ParseJson(args, new ReadOnlySpan<byte>(buffer, 0, (int)length.Value), encoding);
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
+            }
+            else
+            {
+                using (var buffer = new MemoryStream())
+                {
+                    await request.Body.CopyToAsync(buffer);
+                    ParseJson(args, new ReadOnlySpan<byte>(buffer.GetBuffer(), 0, (int)buffer.Length), encoding);
+                }
+            }
             return args;
         }
 
@@ -73,6 +102,19 @@ namespace magic.endpoint.controller.utilities
         /*
          * Returns encoding of HTTP request to caller in string format.
          */
+        const int MaxBufferedBody = 1024 * 1024;
+
+        /*
+         * Parses JSON in the specified encoding into the specified node.
+         */
+        static void ParseJson(Node args, ReadOnlySpan<byte> content, Encoding encoding)
+        {
+            if (encoding.CodePage == 65001)
+                NodeJson.FromUtf8(args, content, false);
+            else
+                NodeJson.FromUtf8(args, Encoding.UTF8.GetBytes(encoding.GetString(content)), false);
+        }
+
         static string GetEncoding(HttpRequest request)
         {
             return request.ContentType?

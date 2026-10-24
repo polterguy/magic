@@ -252,10 +252,7 @@ namespace magic.endpoint.services
                     return HyperlambdaGenerator.GetHyperlambda(lambda.Children);
 
                 // Defaulting to returning content as JSON by converting from Lambda to JSON.
-                var convert = new Node();
-                convert.AddRange(lambda.Children.ToList());
-                _signaler.Signal(".lambda2json-raw", convert, skipWhitelist: true);
-                return convert.Value;
+                return new JsonContent(NodeJson.ToUtf8(lambda));
             }
             return null; // No content
         }

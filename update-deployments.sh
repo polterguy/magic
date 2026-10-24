@@ -1,9 +1,40 @@
 #!/bin/bash
 set -euo pipefail
 
-NAMESPACE="cloudlets"
-IMAGE="servergardens/magic-backend:v24.0.12"
+# Both can be overridden from the environment, e.g.  IMAGE=servergardens/magic-backend:v24.2.0 ./update-deployments.sh
+NAMESPACE="${NAMESPACE:-cloudlets}"
+IMAGE="${IMAGE:-servergardens/magic-backend:v24.1.2}"
 FSGROUP="999"
+
+# Set ONLY to the name of one deployment to try the script on just that one, e.g.  ONLY=thomastest-team ./update-deployments.sh
+ONLY="${ONLY:-}"
+
+# How long to wait for one deployment to become ready before giving up on it and moving on to the next one.
+ROLLOUT_TIMEOUT="${ROLLOUT_TIMEOUT:-300s}"
+
+# Resources. CPU limit is written as "1" (not "1000m") because Kubernetes reports it that way,
+# which keeps the idempotence check below from patching on every run.
+MAIN_REQ_CPU="50m"
+MAIN_REQ_MEM="128Mi"
+MAIN_LIM_CPU="1"
+MAIN_LIM_MEM="768Mi"
+
+INIT_REQ_CPU="25m"
+INIT_REQ_MEM="32Mi"
+INIT_LIM_CPU="500m"
+INIT_LIM_MEM="256Mi"
+
+# Probes. Magic listens on 4444.
+#
+#   startup   - gives a booting pod (database migrations, scanning files) up to 60 x 5s = 5 minutes, and
+#               holds off the other two probes until it has succeeded once.
+#   readiness - [healthz] also checks that the database can be reached, so traffic only reaches a pod that is
+#               actually able to serve it, and is taken away while the database is unavailable.
+#   liveness  - [ping] only checks that the HTTP pipeline answers. Deliberately NOT [healthz], since a
+#               database hiccup must never get the pod restarted - restarting would not fix the database.
+PORT="4444"
+PROBE_READY_PATH="/magic/system/healthz"
+PROBE_LIVE_PATH="/magic/system/ping"
 
 # Forwarded-headers hop count: client → Cloudflare → ingress → pod.
 # Makes request.ip/request.scheme resolve the true end user (see
@@ -29,8 +60,27 @@ metadata:
 automountServiceAccountToken: false
 EOF
 
+# Deployments that did not become ready, reported at the end.
+FAILED=""
+
+# The deployment currently paused by this script. If the script dies half way through, for instance on Ctrl+C or a
+# failing kubectl command, it must never leave a deployment paused, since a paused deployment silently ignores
+# every change made to it afterwards.
+PAUSED=""
+resume_paused() {
+  if [[ -n "$PAUSED" ]]; then
+    kubectl rollout resume deployment/"$PAUSED" -n "$NAMESPACE" >/dev/null 2>&1 || true
+    PAUSED=""
+  fi
+}
+trap resume_paused EXIT
+
 for DEP in $(kubectl get deployments -n "$NAMESPACE" -o jsonpath='{.items[*].metadata.name}')
 do
+  if [[ -n "$ONLY" && "$DEP" != "$ONLY" ]]; then
+    continue
+  fi
+
   echo ""
   echo "-----------------------------------------"
   echo "Checking deployment: $DEP"
@@ -41,6 +91,13 @@ do
 
   # Track whether we actually change anything
   NEEDS_UPDATE=0
+
+  # Every change to the pod template of a deployment starts a rollout of its own, and since these deployments
+  # use the Recreate strategy, each one would kill the pod and start a new one - which also runs the init container
+  # again. So we pause the deployment, make all our changes, and resume it, which results in ONE rollout.
+  # (Pausing a deployment that is already paused is reported as an error, which we don't care about.)
+  kubectl rollout pause deployment/"$DEP" -n "$NAMESPACE" >/dev/null 2>&1 || true
+  PAUSED="$DEP"
 
   # ===============================
   # 1) Check image
@@ -129,6 +186,89 @@ spec:
   fi
 
   # ===============================
+  # 2.6) Check CPU/memory requests and limits
+  # ===============================
+  # $1 = containers | initContainers, $2 = request cpu, $3 = request memory, $4 = limit cpu, $5 = limit memory
+  ensure_resources() {
+    local KIND="$1"
+    local RC="$2"
+    local RM="$3"
+    local LC="$4"
+    local LM="$5"
+    local BASE=".spec.template.spec.${KIND}[0].resources"
+
+    local CUR
+    CUR=$(kubectl get deployment "$DEP" -n "$NAMESPACE" \
+      -o jsonpath="{${BASE}.requests.cpu}/{${BASE}.requests.memory}/{${BASE}.limits.cpu}/{${BASE}.limits.memory}" 2>/dev/null || true)
+
+    if [[ "$CUR" != "$RC/$RM/$LC/$LM" ]]; then
+      echo "$KIND resources need update: '${CUR:-<unset>}' → $RC/$RM/$LC/$LM"
+      kubectl patch deployment "$DEP" -n "$NAMESPACE" --type=json -p="[
+        {
+          \"op\": \"add\",
+          \"path\": \"/spec/template/spec/${KIND}/0/resources\",
+          \"value\": {
+            \"requests\": { \"cpu\": \"$RC\", \"memory\": \"$RM\" },
+            \"limits\":   { \"cpu\": \"$LC\", \"memory\": \"$LM\" }
+          }
+        }
+      ]"
+      NEEDS_UPDATE=1
+    else
+      echo "$KIND resources already correct."
+    fi
+  }
+
+  ensure_resources "containers" "$MAIN_REQ_CPU" "$MAIN_REQ_MEM" "$MAIN_LIM_CPU" "$MAIN_LIM_MEM"
+
+  # Only touch the init container if the deployment has one.
+  if [[ -n "$(kubectl get deployment "$DEP" -n "$NAMESPACE" \
+        -o jsonpath='{.spec.template.spec.initContainers[0].name}' 2>/dev/null || true)" ]]; then
+    ensure_resources "initContainers" "$INIT_REQ_CPU" "$INIT_REQ_MEM" "$INIT_LIM_CPU" "$INIT_LIM_MEM"
+  fi
+
+  # ===============================
+  # 2.7) Check probes
+  # ===============================
+  # $1 = readinessProbe | livenessProbe | startupProbe, $2 = HTTP path, $3 = period seconds,
+  # $4 = timeout seconds, $5 = failure threshold
+  ensure_probe() {
+    local FIELD="$1"
+    local PROBE_PATH="$2"
+    local PERIOD="$3"
+    local TIMEOUT="$4"
+    local FAILURES="$5"
+    local BASE=".spec.template.spec.containers[0].${FIELD}"
+
+    local CUR
+    CUR=$(kubectl get deployment "$DEP" -n "$NAMESPACE" \
+      -o jsonpath="{${BASE}.httpGet.path}:{${BASE}.httpGet.port}/{${BASE}.periodSeconds}/{${BASE}.timeoutSeconds}/{${BASE}.failureThreshold}" 2>/dev/null || true)
+
+    if [[ "$CUR" != "$PROBE_PATH:$PORT/$PERIOD/$TIMEOUT/$FAILURES" ]]; then
+      echo "$FIELD needs update: '${CUR:-<unset>}' → $PROBE_PATH:$PORT/$PERIOD/$TIMEOUT/$FAILURES"
+      kubectl patch deployment "$DEP" -n "$NAMESPACE" --type=json -p="[
+        {
+          \"op\": \"add\",
+          \"path\": \"/spec/template/spec/containers/0/${FIELD}\",
+          \"value\": {
+            \"httpGet\": { \"path\": \"$PROBE_PATH\", \"port\": $PORT },
+            \"periodSeconds\": $PERIOD,
+            \"timeoutSeconds\": $TIMEOUT,
+            \"failureThreshold\": $FAILURES
+          }
+        }
+      ]"
+      NEEDS_UPDATE=1
+    else
+      echo "$FIELD already correct."
+    fi
+  }
+
+  ensure_probe "startupProbe"   "$PROBE_READY_PATH" 5  5 60
+  ensure_probe "readinessProbe" "$PROBE_READY_PATH" 10 5 3
+  ensure_probe "livenessProbe"  "$PROBE_LIVE_PATH"  20 5 3
+
+  # ===============================
   # Helper function for mounts
   # ===============================
   ensure_mount() {
@@ -138,8 +278,10 @@ spec:
     local MOUNT="$4"
     local SUB="$5"
 
+    # The mount paths come back as one space separated line, and must match exactly, so that for instance
+    # /magic/files/data is not considered present because /magic/files/database is.
     if kubectl get deployment "$DEP" -n "$NAMESPACE" \
-      -o jsonpath="$PATH_JSON" | grep -q "$MOUNT"; then
+      -o jsonpath="$PATH_JSON" | tr ' ' '\n' | grep -qxF "$MOUNT"; then
       echo "Mount exists: $MOUNT"
     else
       echo "Adding mount: $MOUNT"
@@ -195,6 +337,9 @@ spec:
   # ===============================
   # 5) Restart ONLY if changes happened
   # ===============================
+  # Resuming starts ONE rollout if anything in the pod template changed, and none if nothing did.
+  resume_paused
+
   if [[ "$NEEDS_UPDATE" -eq 0 ]]; then
     echo ""
     echo "✅ Deployment $DEP already fully up to date. Skipping rollout."
@@ -202,16 +347,23 @@ spec:
   fi
 
   echo ""
-  echo "Changes applied → restarting rollout..."
-  kubectl rollout restart deployment "$DEP" -n "$NAMESPACE"
-
-  echo "Waiting for rollout..."
-  kubectl rollout status deployment "$DEP" -n "$NAMESPACE"
+  echo "Changes applied → waiting for rollout..."
+  if ! kubectl rollout status deployment "$DEP" -n "$NAMESPACE" --timeout="$ROLLOUT_TIMEOUT"; then
+    echo "❌ Deployment $DEP did not become ready within $ROLLOUT_TIMEOUT."
+    echo "   Look at it with:  kubectl describe pod -n $NAMESPACE -l app=$DEP"
+    echo "   Roll it back with: kubectl rollout undo deployment/$DEP -n $NAMESPACE"
+    FAILED="$FAILED $DEP"
+  fi
 
 done
 
 echo ""
 echo "========================================="
+if [[ -n "$FAILED" ]]; then
+  echo "Done, but these deployments are NOT ready:$FAILED"
+  echo "========================================="
+  exit 1
+fi
 echo "All deployments processed safely."
 echo "Up-to-date deployments were skipped."
 echo "========================================="

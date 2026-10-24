@@ -2,12 +2,14 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Web;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text.Json;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 
 namespace magic.lambda.http.services.helpers
@@ -22,9 +24,55 @@ namespace magic.lambda.http.services.helpers
          */
         internal static async Task<Node> TransformFromJson(ISignaler signaler, HttpContent content)
         {
-            var json = await content.ReadAsStringAsync();
+            /*
+             * Most JSON is UTF8, and is an object or an array, which we parse directly from the bytes we receive, in
+             * one pass, without ever creating a string out of it.
+             */
+            var charset = content.Headers.ContentType?.CharSet?.Trim('"');
+            if (charset == null || string.Equals(charset, "utf-8", StringComparison.OrdinalIgnoreCase))
+            {
+                var bytes = await content.ReadAsByteArrayAsync();
+                if (bytes.Length == 0)
+                    return new Node("content");
+                var start = FirstSignificant(bytes);
+                if (start < bytes.Length && (bytes[start] == '{' || bytes[start] == '['))
+                {
+                    var result = new Node("content");
+                    try
+                    {
+                        // Strict, since the JSON must be valid JSON for us to accept it as JSON.
+                        NodeJson.FromUtf8(result, bytes, true, true, true);
+                        return result;
+                    }
+                    catch (HyperlambdaException)
+                    {
+                        // Not valid JSON, hence preserving the response body below.
+                    }
+                }
+            }
+            return await TransformFromJsonText(signaler, await content.ReadAsStringAsync());
+        }
+
+        /*
+         * Index of the first byte that is not a byte order mark or white space.
+         */
+        static int FirstSignificant(byte[] bytes)
+        {
+            var idx = bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF ? 3 : 0;
+            while (idx < bytes.Length && (bytes[idx] == ' ' || bytes[idx] == '\t' || bytes[idx] == '\r' || bytes[idx] == '\n'))
+            {
+                idx++;
+            }
+            return idx;
+        }
+
+        /*
+         * Transforms from JSON string to lambda object.
+         */
+        static Task<Node> TransformFromJsonText(ISignaler signaler, string json)
+        {
             if (string.IsNullOrEmpty(json))
-                return new Node("content");
+                return Task.FromResult(new Node("content"));
 
             try
             {
@@ -36,20 +84,20 @@ namespace magic.lambda.http.services.helpers
                     {
                         var tmpNode = new Node("content", json);
                         signaler.Signal("json2lambda", tmpNode, skipWhitelist: true);
-                        return tmpNode;
+                        return Task.FromResult(tmpNode);
                     }
 
                     case JsonValueKind.String:
-                        return new Node("content", document.RootElement.GetString());
+                        return Task.FromResult(new Node("content", document.RootElement.GetString()));
 
                     default:
-                        return new Node("content", document.RootElement.GetRawText());
+                        return Task.FromResult(new Node("content", document.RootElement.GetRawText()));
                 }
             }
             catch (JsonException)
             {
                 // Preserve the response body even if the server mislabeled invalid content as JSON.
-                return new Node("content", json);
+                return Task.FromResult(new Node("content", json));
             }
         }
 

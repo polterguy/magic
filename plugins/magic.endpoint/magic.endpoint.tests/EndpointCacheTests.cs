@@ -313,7 +313,7 @@ namespace magic.endpoint.tests
         {
             var response = await executor.ExecuteAsync(Request(endpoint, query));
             Assert.Equal(200, response.Result);
-            return JObject.Parse(Assert.IsType<string>(response.Content));
+            return JObject.Parse(response.Content.ToString());
         }
 
         async Task<string> FirstNode(IHttpExecutorAsync executor, string endpoint)

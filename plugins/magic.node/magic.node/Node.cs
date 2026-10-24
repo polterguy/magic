@@ -15,7 +15,10 @@ namespace magic.node
     /// </summary>
     public class Node : ICloneable
     {
-        readonly List<Node> _children;
+        /*
+         * Created when it is first needed, since most nodes, the ones holding a value, never have any children.
+         */
+        List<Node> _children;
         string _name;
 
         /// <summary>
@@ -24,7 +27,6 @@ namespace magic.node
         public Node()
         {
             Name = "";
-            _children = new List<Node>();
         }
 
         /// <summary>
@@ -34,7 +36,6 @@ namespace magic.node
         public Node(string name)
         {
             Name = name;
-            _children = new List<Node>();
         }
 
         /// <summary>
@@ -46,7 +47,6 @@ namespace magic.node
         {
             Name = name;
             Value = value;
-            _children = new List<Node>();
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace magic.node
         /// </summary>
         public IEnumerable<Node> Children
         {
-            get { return _children; }
+            get { return _children ??= new List<Node>(); }
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace magic.node
         /// </summary>
         public int ChildCount
         {
-            get { return _children.Count; }
+            get { return _children?.Count ?? 0; }
         }
 
         /// <summary>
@@ -106,6 +106,8 @@ namespace magic.node
         /// <returns>The child at the specified index.</returns>
         public Node ChildAt(int index)
         {
+            if (_children == null)
+                throw new ArgumentOutOfRangeException(nameof(index));
             return _children[index];
         }
 
@@ -191,7 +193,7 @@ namespace magic.node
             value.Parent?.Remove(value);
 
             value.Parent = this;
-            _children.Add(value);
+            (_children ??= new List<Node>()).Add(value);
         }
 
         /// <summary>
@@ -205,7 +207,7 @@ namespace magic.node
             value.Parent?.Remove(value);
 
             value.Parent = this;
-            _children.Insert(index, value);
+            (_children ??= new List<Node>()).Insert(index, value);
         }
 
         /// <summary>
@@ -268,11 +270,13 @@ namespace magic.node
                 return; // Moving every child to the end of its own collection changes nothing.
 
             var moving = source._children;
+            if (moving == null || moving.Count == 0)
+                return;
             foreach (var idx in moving)
             {
                 idx.Parent = this;
             }
-            _children.AddRange(moving);
+            (_children ??= new List<Node>(moving.Count)).AddRange(moving);
             moving.Clear();
         }
 
@@ -282,7 +286,7 @@ namespace magic.node
         /// <param name="value">Removes the specified node from the Children collection of the current node.</param>
         public void Remove(Node value)
         {
-            if (_children.Remove(value))
+            if (_children != null && _children.Remove(value))
                 value.Parent = null;
             else
                 throw new ArgumentException("Node does not belong to current node's children collection.");
@@ -293,6 +297,9 @@ namespace magic.node
         /// </summary>
         public void Clear()
         {
+            if (_children == null)
+                return;
+
             // Making sure we reset nodes' parents properties first.
             foreach (var idx in _children)
             {
@@ -314,9 +321,16 @@ namespace magic.node
                 value = cloner.Clone();
 
             var result = new Node(Name, value);
-            foreach (var idx in Children)
+            var count = ChildCount;
+            if (count > 0)
             {
-                result.Add(idx.Clone());
+                result._children = new List<Node>(count);
+                for (var idx = 0; idx < count; idx++)
+                {
+                    var clone = _children[idx].Clone();
+                    clone.Parent = result;
+                    result._children.Add(clone);
+                }
             }
             return result;
         }
@@ -336,7 +350,7 @@ namespace magic.node
         /// <param name="functor">Comparison functor</param>
         public void Sort(Comparison<Node> functor)
         {
-            _children.Sort(functor);
+            _children?.Sort(functor);
         }
 
         /// <summary>
@@ -345,7 +359,7 @@ namespace magic.node
         /// <param name="max">Maximum number of nodes to keep</param>
         public void Max(int max)
         {
-            if (_children.Count > max)
+            if (_children != null && _children.Count > max)
                 _children.RemoveRange(max, _children.Count - max);
         }
 

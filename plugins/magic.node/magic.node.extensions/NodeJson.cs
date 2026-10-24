@@ -6,6 +6,7 @@ using System;
 using System.Text;
 using System.Numerics;
 using System.Globalization;
+using System.Buffers;
 using System.Text.Json;
 using System.Collections.Generic;
 
@@ -30,6 +31,25 @@ namespace magic.node.extensions
             CommentHandling = JsonCommentHandling.Skip,
         };
 
+        static readonly JsonReaderOptions _strictOptions = new JsonReaderOptions();
+
+        /*
+         * Boxed values shared by everybody, since nodes hold their values as objects, and boxing a value allocates.
+         */
+        static readonly object _true = true;
+        static readonly object _false = false;
+        static readonly object[] _smallIntegers = CreateSmallIntegers();
+
+        static object[] CreateSmallIntegers()
+        {
+            var result = new object[1026];
+            for (var idx = 0; idx < result.Length; idx++)
+            {
+                result[idx] = (long)(idx - 1);
+            }
+            return result;
+        }
+
         #region [ -- Lambda to JSON -- ]
 
         /// <summary>
@@ -48,6 +68,26 @@ namespace magic.node.extensions
             {
                 WriteContainer(emitter, source);
                 return emitter.ToString();
+            }
+            finally
+            {
+                emitter.Return();
+            }
+        }
+
+        /// <summary>
+        /// Converts the children of the specified node to JSON, the way ToJson does, and returns it UTF8 encoded, which is
+        /// how it is sent over the wire, without ever creating the string.
+        /// </summary>
+        /// <param name="source">Node whose children should be converted.</param>
+        /// <returns>The JSON, UTF8 encoded.</returns>
+        public static byte[] ToUtf8(Node source)
+        {
+            var emitter = Emitter.Rent(false);
+            try
+            {
+                WriteContainer(emitter, source);
+                return emitter.ToUtf8();
             }
             finally
             {
@@ -103,8 +143,24 @@ namespace magic.node.extensions
         {
             if (json == null)
                 throw new HyperlambdaException("No JSON given");
-            var bytes = Encoding.UTF8.GetBytes(json);
-            FromUtf8(target, bytes, true, false);
+
+            // Small documents are encoded on the stack, larger ones in a pooled buffer, so no array is allocated for them.
+            var max = Encoding.UTF8.GetMaxByteCount(json.Length);
+            if (max <= 512)
+            {
+                Span<byte> buffer = stackalloc byte[512];
+                FromUtf8(target, buffer.Slice(0, Encoding.UTF8.GetBytes(json, buffer)), true, false);
+                return;
+            }
+            var rented = ArrayPool<byte>.Shared.Rent(max);
+            try
+            {
+                FromUtf8(target, new ReadOnlySpan<byte>(rented, 0, Encoding.UTF8.GetBytes(json, rented)), true, false);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(rented);
+            }
         }
 
         /// <summary>
@@ -114,13 +170,14 @@ namespace magic.node.extensions
         /// <param name="utf8">JSON to parse.</param>
         /// <param name="rejectTrailing">If true, anything after the JSON value is an error.</param>
         /// <param name="skipBom">If true, a UTF8 byte order mark at the start is ignored.</param>
-        public static void FromUtf8(Node target, ReadOnlySpan<byte> utf8, bool rejectTrailing, bool skipBom = true)
+        /// <param name="strict">If true, comments and trailing commas are errors.</param>
+        public static void FromUtf8(Node target, ReadOnlySpan<byte> utf8, bool rejectTrailing, bool skipBom = true, bool strict = false)
         {
             if (skipBom)
                 utf8 = SkipBom(utf8);
             try
             {
-                var reader = new Utf8JsonReader(utf8, _options);
+                var reader = new Utf8JsonReader(utf8, strict ? _strictOptions : _options);
                 if (!reader.Read())
                     throw new HyperlambdaException("Invalid JSON, no content");
                 if (reader.TokenType == JsonTokenType.StartObject || reader.TokenType == JsonTokenType.StartArray)
@@ -429,7 +486,7 @@ namespace magic.node.extensions
                     Dictionary<string, Node> index = null;
                     while (reader.Read() && reader.TokenType == JsonTokenType.PropertyName)
                     {
-                        var name = reader.GetString();
+                        var name = Names.Get(ref reader);
                         reader.Read();
                         var child = FindProperty(node, name, ref index);
                         if (child != null)
@@ -466,11 +523,11 @@ namespace magic.node.extensions
                     break;
 
                 case JsonTokenType.True:
-                    node.Value = true;
+                    node.Value = _true;
                     break;
 
                 case JsonTokenType.False:
-                    node.Value = false;
+                    node.Value = _false;
                     break;
 
                 default:
@@ -512,7 +569,7 @@ namespace magic.node.extensions
                     var dictionary = new Dictionary<string, object>();
                     while (reader.Read() && reader.TokenType == JsonTokenType.PropertyName)
                     {
-                        var name = reader.GetString();
+                        var name = Names.Get(ref reader);
                         reader.Read();
                         dictionary[name] = ReadObject(ref reader);
                     }
@@ -533,10 +590,10 @@ namespace magic.node.extensions
                     return NumberValue(ref reader);
 
                 case JsonTokenType.True:
-                    return true;
+                    return _true;
 
                 case JsonTokenType.False:
-                    return false;
+                    return _false;
 
                 default:
                     return null;
@@ -581,7 +638,7 @@ namespace magic.node.extensions
             if (span.IndexOfAny((byte)'.', (byte)'e', (byte)'E') < 0)
             {
                 if (reader.TryGetInt64(out var integer))
-                    return integer;
+                    return integer >= -1 && integer <= 1024 ? _smallIntegers[integer + 1] : integer;
                 return BigInteger.Parse(Encoding.ASCII.GetString(span), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
             }
             if (reader.TryGetDouble(out var result))
@@ -706,6 +763,49 @@ namespace magic.node.extensions
 
         #endregion
 
+        #region [ -- Property names -- ]
+
+        /*
+         * Remembers the property names it has seen, so a document that repeats its names, such as a list of objects, creates
+         * one string for each name, instead of one string for each time it is used. One per thread, and it forgets
+         * everything when it has seen too many names, since nobody should be able to fill it.
+         */
+        sealed class Names
+        {
+            [ThreadStatic]
+            static Names _shared;
+
+            readonly Dictionary<string, string> _names = new Dictionary<string, string>(StringComparer.Ordinal);
+            readonly Dictionary<string, string>.AlternateLookup<ReadOnlySpan<char>> _lookup;
+
+            Names()
+            {
+                _lookup = _names.GetAlternateLookup<ReadOnlySpan<char>>();
+            }
+
+            public static string Get(ref Utf8JsonReader reader)
+            {
+                if (reader.ValueIsEscaped || reader.ValueSpan.Length > 64)
+                    return reader.GetString();
+                return (_shared ??= new Names()).Intern(reader.ValueSpan);
+            }
+
+            string Intern(ReadOnlySpan<byte> utf8)
+            {
+                Span<char> buffer = stackalloc char[64];
+                var key = buffer.Slice(0, Encoding.UTF8.GetChars(utf8, buffer));
+                if (_lookup.TryGetValue(key, out var found))
+                    return found;
+                if (_names.Count >= 512)
+                    _names.Clear();
+                var result = new string(key);
+                _names[result] = result;
+                return result;
+            }
+        }
+
+        #endregion
+
         #region [ -- The JSON writer -- ]
 
         /*
@@ -741,6 +841,30 @@ namespace magic.node.extensions
             public override string ToString()
             {
                 return _builder.ToString();
+            }
+
+            /*
+             * Returns what has been written UTF8 encoded, without creating a string first.
+             */
+            public byte[] ToUtf8()
+            {
+                var rented = ArrayPool<byte>.Shared.Rent(Encoding.UTF8.GetMaxByteCount(_builder.Length));
+                try
+                {
+                    // An encoder, since a surrogate pair can be split across two chunks.
+                    var encoder = Encoding.UTF8.GetEncoder();
+                    var length = 0;
+                    foreach (var chunk in _builder.GetChunks())
+                    {
+                        length += encoder.GetBytes(chunk.Span, rented.AsSpan(length), false);
+                    }
+                    length += encoder.GetBytes(ReadOnlySpan<char>.Empty, rented.AsSpan(length), true);
+                    return rented.AsSpan(0, length).ToArray();
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(rented);
+                }
             }
 
             public void BeginObject()
