@@ -4,11 +4,13 @@
 
 using System;
 using System.IO;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using magic.node;
 using magic.node.contracts;
+using magic.node.services;
 using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.io.helpers;
@@ -39,6 +41,18 @@ namespace magic.lambda.io.file
         readonly IFileService _fileService;
         readonly IStreamService _streamService;
         readonly IRootResolver _rootResolver;
+
+        static readonly char[] _special = ['\\', '{'];
+
+        /*
+         * The text of the files recently mixed, by their full path, and the stamp of the file it was read from.
+         */
+        static readonly ConcurrentDictionary<string, CachedContent> _content = new();
+
+        sealed record CachedContent(FileStamp Stamp, string Text);
+
+        const int MaxCachedFiles = 256;
+        const long MaxCachedFileLength = 256 * 1024;
         
         /// <summary>
         /// Creates an instance of your type.
@@ -96,16 +110,48 @@ namespace magic.lambda.io.file
                 });
             }
 
-            // Opening static file as a stream, and dynamically substituting content using "mixin logic".
-            using (var reader = new StreamReader(await _streamService.OpenFileAsync(_rootResolver.AbsolutePath(staticFilename))))
-            {
-                // Executing mixin logic.
-                input.Value = await Apply(signaler, reader, input, staticFilename);
-            }
+            // Reading the static file, and dynamically substituting content using "mixin logic".
+            input.Value = await Apply(signaler, await ReadContentAsync(staticFilename), input, staticFilename);
             input.Clear();
         }
 
         #region [ -- Private helper methods -- ]
+
+        /*
+         * Returns the content of the static file, as the text it is mixed with.
+         *
+         * A file is only read again when it has changed since the last time, which a page that is served over and over
+         * would otherwise pay a read, a decode and a pile of buffers for on every request. Only done for files read through
+         * the default services, and only for pages of a size that makes sense to keep in memory.
+         */
+        async Task<string> ReadContentAsync(string staticFilename)
+        {
+            var path = _rootResolver.AbsolutePath(staticFilename);
+            if (_fileService is IFileStamps stamps && _streamService is StreamService)
+            {
+                var stamp = stamps.GetStamp(path);
+                if (stamp != null && stamp.Value.Length <= MaxCachedFileLength)
+                {
+                    if (_content.TryGetValue(path, out var cached) && cached.Stamp == stamp.Value)
+                        return cached.Text;
+
+                    // Notice, the stamp was taken before the file was read, so a file changing meanwhile is read again next time.
+                    var text = await ReadAsync(path);
+                    if (_content.ContainsKey(path) || _content.Count < MaxCachedFiles)
+                        _content[path] = new CachedContent(stamp.Value, text);
+                    return text;
+                }
+            }
+            return await ReadAsync(path);
+        }
+
+        async Task<string> ReadAsync(string path)
+        {
+            using (var reader = new StreamReader(await _streamService.OpenFileAsync(path)))
+            {
+                return reader.ReadToEnd();
+            }
+        }
 
         /*
          * Parses file and combines results from lambda invocations with static content.
@@ -115,37 +161,44 @@ namespace magic.lambda.io.file
          */
         async Task<string> Apply(
             ISignaler signaler,
-            StreamReader reader,
+            string content,
             Node lambda,
             string filename)
         {
-            var builder = new StringBuilder();
-            while (reader.Peek() != -1)
+            var builder = new StringBuilder(content.Length);
+            var position = 0;
+            while (position < content.Length)
             {
-                var cur = (char)reader.Read();
+                // Copying everything up to the next character that means something, in one go.
+                var special = content.IndexOfAny(_special, position);
+                if (special == -1)
+                {
+                    builder.Append(content, position, content.Length - position);
+                    break;
+                }
+                builder.Append(content, position, special - position);
+                position = special;
+
+                var cur = content[position++];
                 switch (cur)
                 {
                     // Escaped character, probably an escaped '{'.
                     case '\\':
-                        builder.Append((char)reader.Read());
+                        builder.Append(Read(content, ref position));
                         break;
 
                     // Probably the beginning of a scope.
                     case '{':
-                        var next = (char)reader.Read();
+                        var next = Read(content, ref position);
                         if (next != '{')
                         {
                             builder.Append(cur).Append(next);
                             continue;
                         }
-                        var lambdaExpression = ReadToEndOfScope(reader);
+                        var lambdaExpression = ReadToEndOfScope(content, ref position);
                         var exe = new Expression(lambdaExpression).Evaluate(lambda).FirstOrDefault() ??
                             throw new HyperlambdaException($"Expression '{lambdaExpression}' referenced in mixin file '{filename}' returned no nodes");
                         builder.Append(await ExecuteLambda(signaler, exe));
-                        break;
-
-                    default:
-                        builder.Append(cur);
                         break;
                 }
             }
@@ -155,22 +208,22 @@ namespace magic.lambda.io.file
         /*
          * Helper method to read to end of lambda reference
          */
-        string ReadToEndOfScope(StreamReader reader)
+        static string ReadToEndOfScope(string content, ref int position)
         {
             var builder = new StringBuilder();
-            while (reader.Peek() != -1)
+            while (position < content.Length)
             {
-                var cur = (char)reader.Read();
+                var cur = content[position++];
                 switch (cur)
                 {
                     // Escaped character, probably an escaped '}'.
                     case '\\':
-                        builder.Append((char)reader.Read());
+                        builder.Append(Read(content, ref position));
                         break;
 
                     // Probably the end of scope.
                     case '}':
-                        var next = (char)reader.Read();
+                        var next = Read(content, ref position);
                         if (next != '}')
                         {
                             builder.Append(cur).Append(next);
@@ -184,6 +237,15 @@ namespace magic.lambda.io.file
                 }
             }
             throw new HyperlambdaException("Server side include was never closed!");
+        }
+
+        /*
+         * Returns the next character, or '\uffff' at the end of the content, which is what casting the -1 a StreamReader
+         * returns there to a char gives, and what this has always done to a file ending in a backslash or a single brace.
+         */
+        static char Read(string content, ref int position)
+        {
+            return position < content.Length ? content[position++] : '\uffff';
         }
 
         /*

@@ -137,6 +137,33 @@ namespace magic.node
         }
 
         /// <summary>
+        /// Returns the nearest node with the specified name, looking at your elder siblings first, nearest first, then your
+        /// parent, then your parent's elder siblings, and so on upwards, or null if there is none.
+        ///
+        /// Notice, a single pass, as opposed to repeatedly using Previous, which has to find its own position
+        /// amongst its siblings every time.
+        /// </summary>
+        /// <param name="name">Name of node to look for.</param>
+        /// <returns>The nearest node with the specified name, or null.</returns>
+        public Node FindElderOrAncestor(string name)
+        {
+            var node = this;
+            while (node.Parent != null)
+            {
+                var siblings = node.Parent._children;
+                for (var idx = siblings.IndexOf(node) - 1; idx >= 0; idx--)
+                {
+                    if (siblings[idx].Name == name)
+                        return siblings[idx];
+                }
+                node = node.Parent;
+                if (node.Name == name)
+                    return node;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Appends a node into the node's children collection.
         /// </summary>
         /// <param name="value">Node to append. Notice, will be untied from any previous parents.</param>

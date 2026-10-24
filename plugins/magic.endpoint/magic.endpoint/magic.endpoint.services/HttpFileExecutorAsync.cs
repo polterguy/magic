@@ -31,6 +31,18 @@ namespace magic.endpoint.services
         readonly IExecutionRegistry _executionRegistry;
 
         /*
+         * The parsed "/etc/www/.config", shared by every request until the file changes, instead of being read and parsed
+         * up to three times for each of them.
+         *
+         * Notice, shared between threads, which is only safe since nothing ever changes it. Whoever uses it must not either.
+         */
+        static volatile ConfigSnapshot _config;
+
+        sealed record ConfigSnapshot(string Path, FileStamp Stamp, Node Config);
+
+        static readonly Expression _headersForAllFiles = new("*/static_files/*/headers/*/\\*/*");
+
+        /*
          * Registered Content-Type payload handlers, responsible for handling requests and parametrising invocation
          * according to Content-Type specified by caller.
          */
@@ -131,10 +143,9 @@ namespace magic.endpoint.services
             }
 
             // Checking if we've got a redirect for URL.
-            var configFilename = _rootResolver.AbsolutePath("/etc/www/.config");
-            if (await _fileService.ExistsAsync(configFilename))
+            var config = await GetConfigAsync();
+            if (config != null)
             {
-                var config = HyperlambdaParser.Parse(await _fileService.LoadAsync(configFilename));
                 var redirectNode = config.Children.FirstOrDefault(x => x.Name == "redirect");
                 if (redirectNode != null)
                 {
@@ -156,43 +167,67 @@ namespace magic.endpoint.services
 
             // Checking if this is a mixin file.
             if (Utilities.IsHtmlFileRequest(request.URL))
-                return await ServeHtmlFileAsync(request); // HTML file, might have Hyperlambda codebehind file.
+                return await ServeHtmlFileAsync(request, config); // HTML file, might have Hyperlambda codebehind file.
 
             // Statically served file.
-            return await ServeStaticFileAsync("/etc/www/" + request.URL);
+            return await ServeStaticFileAsync("/etc/www/" + request.URL, config);
         }
 
         #region [ -- Private helper methods -- ]
 
         /*
+         * Returns the parsed "/etc/www/.config", or null if there is none. Parsed again only when the file has changed, and
+         * only ever handed out for reading.
+         */
+        async Task<Node> GetConfigAsync()
+        {
+            var path = _rootResolver.AbsolutePath("/etc/www/.config");
+
+            // A file service that cannot tell whether a file has changed without reading it gets no caching.
+            if (_fileService is not IFileStamps stamps)
+                return await _fileService.ExistsAsync(path) ? HyperlambdaParser.Parse(await _fileService.LoadAsync(path)) : null;
+
+            var stamp = stamps.GetStamp(path);
+            if (stamp == null)
+                return null;
+
+            var snapshot = _config;
+            if (snapshot != null && snapshot.Path == path && snapshot.Stamp == stamp.Value)
+                return snapshot.Config;
+
+            // Notice, the stamp was taken before the file was read, so a file changing meanwhile is parsed again by the next request.
+            var config = HyperlambdaParser.Parse(await _fileService.LoadAsync(path));
+            _config = new ConfigSnapshot(path, stamp.Value, config);
+            return config;
+        }
+
+        /*
          * Serves an HTML file that might have a Hyperlambda codebehind file associated with it.
          */
-        async Task<MagicResponse> ServeHtmlFileAsync(MagicRequest request)
+        async Task<MagicResponse> ServeHtmlFileAsync(MagicRequest request, Node config)
         {
             // Getting mixin file and sanity checking request.
-            var file = await GetHtmlFilename(request.URL);
+            var file = await GetHtmlFilename(request.URL, config);
             if (file == null)
-                return await Serve404Page(request);
+                return await Serve404Page(request, config);
 
             // Checking if Hyperlambda codebehind file exists.
             var codebehindFile = (file.Contains('.') ? file.Substring(0, file.LastIndexOf('.')) : file) + ".hl";
             if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(codebehindFile)))
-                return await ServeDynamicPage(request, file, codebehindFile); // Codebehind file exists.
+                return await ServeDynamicPage(request, file, codebehindFile, config); // Codebehind file exists.
 
              // No codebehind file, serving file as static content file.
-            return await ServeStaticFileAsync(file);
+            return await ServeStaticFileAsync(file, config);
         }
 
         /*
          * Serves 404 page if existing.
          */
-        async Task<MagicResponse> Serve404Page(MagicRequest request)
+        async Task<MagicResponse> Serve404Page(MagicRequest request, Node config)
         {
             // Checking if we've got a 404 file.
-            var configFilename = _rootResolver.AbsolutePath("/etc/www/.config");
-            if (await _fileService.ExistsAsync(configFilename))
+            if (config != null)
             {
-                var config = HyperlambdaParser.Parse(await _fileService.LoadAsync(configFilename));
                 var not_found = config.Children.FirstOrDefault(x => x.Name == "not_found")?.Get<string>() ?? "/etc/www/.components/404.html";
                 if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(not_found)))
                 {
@@ -200,14 +235,14 @@ namespace magic.endpoint.services
                     var codebehindFile2 = not_found.Substring(0, not_found.Length - 5) + ".hl";
                     if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(codebehindFile2)))
                     {
-                        var tmp = await ServeDynamicPage(request, not_found, codebehindFile2); // Codebehind file exists.
+                        var tmp = await ServeDynamicPage(request, not_found, codebehindFile2, config); // Codebehind file exists.
                         tmp.Headers["Content-Type"] = "text/html";
                         tmp.Result = 404;
                         return tmp;
                     }
 
                     // No codebehind file, serving file as static content file.
-                    var tmp2 = await ServeStaticFileAsync(not_found);
+                    var tmp2 = await ServeStaticFileAsync(not_found, config);
                     tmp2.Headers["Content-Type"] = "text/html";
                     tmp2.Result = 404;
                     return tmp2;
@@ -236,7 +271,7 @@ namespace magic.endpoint.services
         /*
          * Serves an HTML file that has an associated Hyperlambda codebehind file.
          */
-        async Task<MagicResponse> ServeDynamicPage(MagicRequest request, string htmlFile, string codebehindFile)
+        async Task<MagicResponse> ServeDynamicPage(MagicRequest request, string htmlFile, string codebehindFile, Node config)
         {
             try
             {
@@ -266,22 +301,15 @@ namespace magic.endpoint.services
                 var aborted = request.Aborted.Register(() => execution.Cancel());
                 try
                 {
-                    await _signaler.ScopeAsync("execution.context", execution, async () =>
-                    {
-                        await _signaler.ScopeAsync("dynamic.execution-id", execution.ExecutionId, async () =>
-                        {
-                            await _signaler.ScopeAsync("http.request", request, async () =>
-                            {
-                                await _signaler.ScopeAsync("http.response", response, async () =>
-                                {
-                                    await _signaler.ScopeAsync("slots.result", result, async () =>
-                                    {
-                                        await _signaler.SignalAsync("eval", lambda, skipWhitelist: true);
-                                    });
-                                });
-                            });
-                        });
-                    });
+                    await _signaler.ScopeAsync(
+                        [
+                            ("execution.context", execution),
+                            ("dynamic.execution-id", execution.ExecutionId),
+                            ("http.request", request),
+                            ("http.response", response),
+                            ("slots.result", result),
+                        ],
+                        () => _signaler.SignalAsync("eval", lambda, skipWhitelist: true));
                     response.Content = result.Value;
                     return response;
                 }
@@ -294,7 +322,7 @@ namespace magic.endpoint.services
             catch (HyperlambdaException err)
             {
                 if (err.Status == 404)
-                    return await Serve404Page(request);
+                    return await Serve404Page(request, config);
                 throw;
             }
         }
@@ -302,7 +330,7 @@ namespace magic.endpoint.services
         /*
          * Returns the filename for the mixin file matching the specified URL, if any.
          */
-        async Task<string> GetHtmlFilename(string url)
+        async Task<string> GetHtmlFilename(string url, Node config)
         {
             // Checking if this is a request for root folder, at which point we append "index.html" to it.
             if (url == "")
@@ -342,11 +370,8 @@ namespace magic.endpoint.services
             }
 
             // Checking if site has been configured to serve pages as SPA pages (frontend routing type of resolving).
-            var configFilename = _rootResolver.AbsolutePath("/etc/www/.config");
-            if (await _fileService.ExistsAsync(configFilename))
+            if (config != null)
             {
-                var config = HyperlambdaParser.Parse(await _fileService.LoadAsync(configFilename));
-
                 // Checking if [spa-enabled] node exists, and has a value of boolean true.
                 if (config.Children.FirstOrDefault(x => x.Name == "spa_enabled")?.GetEx<bool>() ?? false)
                 {
@@ -362,7 +387,7 @@ namespace magic.endpoint.services
         /*
          * Serves a static file.
          */
-        async Task<MagicResponse> ServeStaticFileAsync(string url)
+        async Task<MagicResponse> ServeStaticFileAsync(string url, Node config)
         {
             // Transforming to absolute path and verifying file exists.
             var absPath = _rootResolver.AbsolutePath(url);
@@ -382,7 +407,7 @@ namespace magic.endpoint.services
                 response.Headers["Content-Type"] = "application/octet-stream"; // Defaulting to binary content
 
             // Adding default headers from .config file.
-            await AddDefaultStaticHttpHeaders(response, ext);
+            AddDefaultStaticHttpHeaders(response, ext, config);
 
             // Checking if Content-Type is application/json, at which point we load the file before returning it.
             if (response.Headers["Content-Type"].Contains("application/json"))
@@ -396,15 +421,12 @@ namespace magic.endpoint.services
         /*
          * Adds default HTTP headers according to config file to response.
          */
-        async Task AddDefaultStaticHttpHeaders(MagicResponse response, string extension)
+        static void AddDefaultStaticHttpHeaders(MagicResponse response, string extension, Node config)
         {
-            var configFilename = _rootResolver.AbsolutePath("/etc/www/.config");
-            if (await _fileService.ExistsAsync(configFilename))
+            if (config != null)
             {
-                var config = HyperlambdaParser.Parse(await _fileService.LoadAsync(configFilename));
-
                 // Headers that applies for all files.
-                foreach (var idx in new Expression("*/static_files/*/headers/*/\\*/*").Evaluate(config))
+                foreach (var idx in _headersForAllFiles.Evaluate(config))
                 {
                     response.Headers[idx.Name] = idx.GetEx<string>();
                 }

@@ -134,13 +134,30 @@ namespace magic.node.extensions
         };
 
         /*
+         * The built-in iterators as they were declared above, such that we can tell them apart from
+         * iterators somebody replaced or added later, which can do anything with their input.
+         */
+        static readonly Dictionary<string, Func<Node, IEnumerable<Node>, IEnumerable<Node>>> _builtInNonParametrizedIterators = new(_nonParametrizedIterators);
+        static readonly Dictionary<char, Func<string, Func<Node, IEnumerable<Node>, IEnumerable<Node>>>> _builtInParametrizedIterators = new(_parametrizedIterators);
+
+        /*
          * Creates an iterator from its given string representation.
          */
         internal Iterator(string value)
         {
             Value = value;
             _evaluate = CreateEvaluator(Value);
+            IsInputPure = CalculateIsInputPure(Value);
         }
+
+        /*
+         * True if the iterator is a pure function of the nodes it is given; it yields nothing when it is given nothing,
+         * and does no work until its result is enumerated. All the built-in iterators are, except the extrapolated ones,
+         * which evaluate a nested expression as soon as they are created.
+         *
+         * Notice, Expression.Evaluate only needs to look for an empty result in front of an iterator that is not.
+         */
+        internal bool IsInputPure { get; }
 
         /// <summary>
         /// Returns the string representation of the iterator.
@@ -270,6 +287,49 @@ namespace magic.node.extensions
              * used if none of the above results in any match.
              */
             return (identity, input) => input.Where(x => x.Name == iteratorValue);
+        }
+
+        /*
+         * Mirrors the way CreateEvaluator resolves an iterator, answering whether it is one of the pure built-in ones.
+         * Notice, when in doubt this returns false, which only costs Expression.Evaluate an extra check.
+         */
+        static bool CalculateIsInputPure(string iteratorValue)
+        {
+            if (iteratorValue.StartsWith('\\'))
+                return true; // Name lookup.
+
+            if (_nonParametrizedIterators.TryGetValue(iteratorValue, out var value))
+                return _builtInNonParametrizedIterators.TryGetValue(iteratorValue, out var original) && ReferenceEquals(value, original);
+
+            if (iteratorValue.Length != 0)
+            {
+                var firstCharacter = iteratorValue[0];
+                if (_parametrizedIterators.TryGetValue(firstCharacter, out var factory))
+                {
+                    if (!_builtInParametrizedIterators.TryGetValue(firstCharacter, out var originalFactory) || !ReferenceEquals(factory, originalFactory))
+                        return false;
+
+                    switch (firstCharacter)
+                    {
+                        case '[':
+                        case '@':
+                        case '^':
+                        case '!':
+                            return true;
+
+                        case '=':
+                            return !iteratorValue.Contains('{'); // Only the extrapolated variant evaluates a nested expression.
+
+                        default:
+                            return false; // '{', the extrapolated expression iterator.
+                    }
+                }
+
+                if (int.TryParse(iteratorValue, out _))
+                    return true; // n'th child iterator.
+            }
+
+            return true; // Name lookup iterator.
         }
 
         /*
@@ -405,16 +465,7 @@ namespace magic.node.extensions
         {
             if (siblings)
             {
-                var cur = input.FirstOrDefault()?.Previous ?? input.FirstOrDefault()?.Parent;
-                while (cur != null && cur.Name != name)
-                {
-                    var previous = cur.Previous;
-                    if (previous == null)
-                        cur = cur.Parent;
-                    else
-                        cur = previous;
-                }
-
+                var cur = input.FirstOrDefault()?.FindElderOrAncestor(name);
                 if (cur == null)
                     return [];
 

@@ -60,11 +60,19 @@ namespace magic.node.extensions
              * starting from the identity node.
              */
             IEnumerable<Node> result = [identity];
-            foreach (var idx in _iterators)
+            var last = _iterators.Count - 1;
+            for (var idx = 0; idx <= last; idx++)
             {
-                result = idx.Evaluate(identity, result);
-                if (!result.Any())
-                    return []; // Short circuiting to slightly optimize invocation.
+                result = _iterators[idx].Evaluate(identity, result);
+
+                /*
+                 * Short circuiting when a step yields nothing. Only needed after the last iterator, and in front of one that is
+                 * not a pure function of its input, since the pure ones yield nothing when given nothing - and since every check
+                 * walks the whole chain of iterators so far, checking after every step makes the cost grow with the square of the
+                 * number of iterators.
+                 */
+                if ((idx == last || !_iterators[idx + 1].IsInputPure) && !result.Any())
+                    return [];
             }
             return result;
         }
