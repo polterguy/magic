@@ -548,7 +548,7 @@ namespace magic.lambda.html.slots.helpers
             StringBuilder builder)
         {
             var srcAtr = htmlNode.GetAttributeValue("src", "");
-            if (!string.IsNullOrEmpty(srcAtr) && !srcAtr.StartsWith("data:"))
+            if (!string.IsNullOrEmpty(srcAtr) && !srcAtr.StartsWith("data:", StringComparison.Ordinal))
             {
                 EnsureSpace(builder);
                 var altAtr = htmlNode.GetAttributeValue("alt", "Image");
@@ -574,7 +574,7 @@ namespace magic.lambda.html.slots.helpers
             StringBuilder builder)
         {
             var hrefAtr = htmlNode.GetAttributeValue("href", "");
-            if (!string.IsNullOrEmpty(hrefAtr) && !hrefAtr.StartsWith("javascript:") && hrefAtr != "#")
+            if (!string.IsNullOrEmpty(hrefAtr) && !hrefAtr.StartsWith("javascript:", StringComparison.Ordinal) && hrefAtr != "#")
             {
                 EnsureSpace(builder);
                 builder.Append('[');
@@ -844,7 +844,7 @@ namespace magic.lambda.html.slots.helpers
                         urlsNode = new Node("urls");
                         _input.Add(urlsNode);
                     }
-                    if (!curUrl.StartsWith("mailto:") && !curUrl.StartsWith("tel:") && !urlsNode.Children.Any(x => x.Get<string>() == curUrl))
+                    if (!curUrl.StartsWith("mailto:", StringComparison.Ordinal) && !curUrl.StartsWith("tel:", StringComparison.Ordinal) && !urlsNode.Children.Any(x => x.Get<string>() == curUrl))
                         urlsNode.Add(new Node(".", curUrl));
                 }
                 if (curUrl == "")
@@ -853,15 +853,15 @@ namespace magic.lambda.html.slots.helpers
             }
 
             // Early return for absolute URLs and special schemes
-            if (url.StartsWith("http://") || url.StartsWith("https://") ||
-                url.StartsWith("mailto:") || url.StartsWith("tel:"))
+            if (url.StartsWith("http://", StringComparison.Ordinal) || url.StartsWith("https://", StringComparison.Ordinal) ||
+                url.StartsWith("mailto:", StringComparison.Ordinal) || url.StartsWith("tel:", StringComparison.Ordinal))
                 return ensureUrl(url.Replace(" ", ""));
 
             // Determine the base URL: Prefer DocBaseUrl, fallback to DocUrl if necessary
             string baseUriString = !string.IsNullOrEmpty(baseUrl.DocBaseUrl) ? baseUrl.DocBaseUrl : baseUrl.DocUrl;
 
             // Handle protocol-relative URLs by prepending the scheme of the base URL
-            if (url.StartsWith("//"))
+            if (url.StartsWith("//", StringComparison.Ordinal))
             {
                 if (string.IsNullOrEmpty(baseUriString))
                 {

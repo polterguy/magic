@@ -43,7 +43,7 @@ namespace magic.lambda.misc
                 Transform(args, destination.Children);
 
                 // Returning transformed template to caller.
-                input.AddRange(destination.Children.ToList());
+                input.MoveChildrenFrom(destination);
             }
             input.Value = null;
         }

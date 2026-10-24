@@ -202,8 +202,9 @@ namespace magic.node.extensions
                         }
                         else
                         {
-                            var res = idx.Evaluate();
-                            if (res.Count() > 1)
+                            // Evaluating once, since the result is lazy, and every Count and FirstOrDefault would walk the expression again.
+                            var res = idx.Evaluate().ToList();
+                            if (res.Count > 1)
                             {
                                 if (applyLists)
                                     idx.AddRange(res.Select(x => x.Clone()));

@@ -32,7 +32,7 @@ namespace magic.data.common.slots.sql
             var result = builder.Build();
             input.Value = result.Value;
             input.Clear();
-            input.AddRange(result.Children.ToList());
+            input.MoveChildrenFrom(result);
         }
     }
 }

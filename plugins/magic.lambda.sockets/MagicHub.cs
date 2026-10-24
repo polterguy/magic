@@ -69,7 +69,7 @@ namespace magic.lambda.sockets
             file += ".socket.hl";
 
             // Making sure we never resolve to anything outside of "/modules/" and "/system" folder.
-            if (!file.StartsWith("modules/") && !file.StartsWith("system/"))
+            if (!file.StartsWith("modules/", StringComparison.Ordinal) && !file.StartsWith("system/", StringComparison.Ordinal))
             {
                 // Caller tried to resolve a file outside of '/system/' and '/modules/' folder. 
                 await _logger.ErrorAsync($"Socket execute method tried to resolve an illegal file '{file}'");
@@ -148,7 +148,7 @@ namespace magic.lambda.sockets
                 // Creating our enumerable and applying filtering accordingly.
                 IEnumerable<string> enumerable = _userConnections.Keys;
                 if (filter != null)
-                    enumerable = enumerable.Where(x => x.StartsWith(filter));
+                    enumerable = enumerable.Where(x => x.StartsWith(filter, StringComparison.Ordinal));
                 if (offset > 0)
                     enumerable = enumerable.Skip(offset);
                 enumerable = enumerable.Take(limit);
@@ -168,7 +168,7 @@ namespace magic.lambda.sockets
                 // Creating our enumerable and applying filtering accordingly.
                 IEnumerable<string> enumerable = _userConnections.Keys;
                 if (filter != null)
-                    enumerable = enumerable.Where(x => x.StartsWith(filter));
+                    enumerable = enumerable.Where(x => x.StartsWith(filter, StringComparison.Ordinal));
 
                 // Returning results to caller.
                 return enumerable.Count();

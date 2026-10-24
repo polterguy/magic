@@ -106,7 +106,7 @@ namespace magic.lambda.io.file
                      */
                     var toTrim = explicitFolder &&
                         (archive.Entries.FirstOrDefault()?.FullName.EndsWith('/') ?? false) &&
-                        archive.Entries.Skip(1).All(x => x.FullName.StartsWith(archive.Entries.First().FullName)) ?
+                        archive.Entries.Skip(1).All(x => x.FullName.StartsWith(archive.Entries.First().FullName, StringComparison.Ordinal)) ?
                             archive.Entries.First().FullName.Length :
                             0;
 

@@ -32,14 +32,42 @@ namespace magic.endpoint.tests
         {
             _folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "modules", _name);
             Directory.CreateDirectory(_folder);
+
+            // These tests edit files and expect the very next request to notice, so nothing is trusted without checking.
+            HttpApiExecutorAsync.RecheckMilliseconds = 0;
         }
 
         public void Dispose()
         {
+            HttpApiExecutorAsync.RecheckMilliseconds = 0;
             Directory.Delete(_folder, true);
         }
 
         #region [ -- Edits, deletions and interceptors -- ]
+
+        [Fact]
+        public async Task EditOfEndpoint_IsOnlyPickedUpAfterTheRecheckTime()
+        {
+            Write("hello.get.hl", "return-nodes\n   result:first\n");
+            var executor = CreateExecutor();
+            try
+            {
+                HttpApiExecutorAsync.RecheckMilliseconds = 600000;
+                Assert.Equal("first", (await Get(executor, "hello"))["result"].Value<string>());
+
+                // The second request is the first to find the files unchanged, which starts the clock.
+                Assert.Equal("first", (await Get(executor, "hello"))["result"].Value<string>());
+                Write("hello.get.hl", "return-nodes\n   result:second\n", 5);
+                Assert.Equal("first", (await Get(executor, "hello"))["result"].Value<string>());
+
+                HttpApiExecutorAsync.RecheckMilliseconds = 0;
+                Assert.Equal("second", (await Get(executor, "hello"))["result"].Value<string>());
+            }
+            finally
+            {
+                HttpApiExecutorAsync.RecheckMilliseconds = 0;
+            }
+        }
 
         [Fact]
         public async Task EditOfEndpoint_IsPickedUp_EvenWhenTheSizeIsTheSame()

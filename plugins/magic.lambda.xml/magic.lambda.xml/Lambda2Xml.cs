@@ -72,7 +72,7 @@ namespace magic.lambda.xml
 
         static void WriteNode(Node node, XmlWriter writer)
         {
-            if (node.Name.StartsWith("@"))
+            if (node.Name.StartsWith("@", StringComparison.Ordinal))
             {
                 writer.WriteAttributeString(node.Name.Substring(1), node.GetEx<string>());
             }

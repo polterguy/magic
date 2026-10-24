@@ -404,7 +404,7 @@ namespace magic.data.common.builders
             else
             {
                 // Checking if column name is escaped.
-                if (column.Name.StartsWith("\\"))
+                if (column.Name.StartsWith("\\", StringComparison.Ordinal))
                     builder.Append(EscapeColumnName(column.Name.Substring(1)));
                 else
                     builder.Append(EscapeTypeName(column.Name));

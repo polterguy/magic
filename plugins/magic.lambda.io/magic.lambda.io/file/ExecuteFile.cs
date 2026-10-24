@@ -177,7 +177,7 @@ namespace magic.lambda.io.file
 
             // Making sure we return both value and any children nodes to caller.
             input.Value = result.Value;
-            input.AddRange(result.Children.ToList());
+            input.MoveChildrenFrom(result);
         }
 
         #endregion

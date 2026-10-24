@@ -87,7 +87,7 @@ namespace magic.lambda.system
             if (result.Value != null || result.Children.Any())
             {
                 var returned = new Node("returned", result.Value);
-                returned.AddRange(result.Children.ToList());
+                returned.MoveChildrenFrom(result);
                 input.Add(returned);
             }
             if (error != null)

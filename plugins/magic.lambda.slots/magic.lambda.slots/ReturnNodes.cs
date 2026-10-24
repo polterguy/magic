@@ -50,10 +50,11 @@ namespace magic.lambda.slots
             if (input.Name == "yield")
                 Expression.Unwrap(GetDescendants(input), true);
 
-            signaler.Peek<Node>("slots.result")
-                .AddRange(input.Value == null ? 
-                    input.Children.ToList() : 
-                    input.Evaluate().Select(x => x.Clone()));
+            var result = signaler.Peek<Node>("slots.result");
+            if (input.Value == null)
+                result.MoveChildrenFrom(input);
+            else
+                result.AddRange(input.Evaluate().Select(x => x.Clone()));
         }
 
         #region [ -- Private helper methods -- ]

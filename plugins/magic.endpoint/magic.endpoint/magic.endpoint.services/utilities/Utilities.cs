@@ -195,7 +195,7 @@ namespace magic.endpoint.services.utilities
                     x.Name == ".description" ||
                     x.Name == ".type" ||
                     x.Name == "auth.ticket.verify" ||
-                    x.Name.StartsWith("validators."));
+                    x.Name.StartsWith("validators.", StringComparison.Ordinal));
 
             // Notice, reversing arguments nodes makes sure we apply arguments in order of appearance.
             foreach (var idx in args.Reverse().ToList())

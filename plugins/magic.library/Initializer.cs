@@ -268,10 +268,11 @@ namespace magic.library
              */
             var loadedPaths = AppDomain.CurrentDomain
                 .GetAssemblies()
-                .Select(x => x.Location);
+                .Select(x => x.Location)
+                .ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
             var assemblyPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
-            foreach (var idx in assemblyPaths.Where(x => !loadedPaths.Contains(x, StringComparer.InvariantCultureIgnoreCase)))
+            foreach (var idx in assemblyPaths.Where(x => !loadedPaths.Contains(x)))
             {
                 AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(idx));
             }
@@ -646,7 +647,7 @@ namespace magic.library
         {
             foreach (Assembly idxAsm in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if (idxAsm.FullName.StartsWith("System."))
+                if (idxAsm.FullName.StartsWith("System.", StringComparison.Ordinal))
                     continue;
 
                 var result = idxAsm.GetType(name);
@@ -664,9 +665,10 @@ namespace magic.library
         internal static IEnumerable<Type> Slots(IServiceCollection services)
         {
             var result = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => !x.IsDynamic && !x.FullName.StartsWith("Microsoft", StringComparison.InvariantCulture))
+                .Where(x => !x.IsDynamic && !x.FullName.StartsWith("Microsoft", StringComparison.Ordinal) && !x.FullName.StartsWith("System", StringComparison.Ordinal))
                 .SelectMany(s => s.GetTypes())
-                .Where(p => (typeof(ISlot).IsAssignableFrom(p) || typeof(ISlotAsync).IsAssignableFrom(p)) && !p.IsInterface && !p.IsAbstract);
+                .Where(p => (typeof(ISlot).IsAssignableFrom(p) || typeof(ISlotAsync).IsAssignableFrom(p)) && !p.IsInterface && !p.IsAbstract)
+                .ToList(); // Notice, materialised, since the caller enumerates the result a second time and GetTypes is expensive.
 
             foreach (var idx in result)
             {

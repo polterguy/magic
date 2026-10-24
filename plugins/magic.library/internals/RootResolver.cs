@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using magic.node.contracts;
@@ -31,7 +32,7 @@ namespace magic.library.internals
         public string RelativePath(string path)
         {
             // Sanity checking invocation.
-            if (!path.StartsWith(DynamicFiles))
+            if (!path.StartsWith(DynamicFiles, StringComparison.Ordinal))
                 throw new HyperlambdaException("Tried to create a relative path out of a path that is not absolute");
 
             // Making sure we remove DynamicFiles, but keeping the initial slash (/).
@@ -53,7 +54,7 @@ namespace magic.library.internals
 
             var absolute = DynamicFiles + relative;
             var normalized = Path.GetFullPath(absolute);
-            if (!normalized.StartsWith(Path.GetFullPath(DynamicFiles)))
+            if (!normalized.StartsWith(Path.GetFullPath(DynamicFiles), StringComparison.Ordinal))
                 throw new HyperlambdaException("Path traversal attempt detected");
             return absolute;
         }

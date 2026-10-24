@@ -75,7 +75,7 @@ namespace magic.data.common.builders
             {
                 builder.Root.Value = sqlNode.Value;
                 builder.Root.Clear();
-                builder.Root.AddRange(sqlNode.Children.ToList());
+                builder.Root.MoveChildrenFrom(sqlNode);
                 return null ;
             }
             return sqlNode;

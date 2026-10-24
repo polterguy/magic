@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Text;
 using System.Collections.Generic;
 
@@ -81,8 +82,8 @@ namespace magic.node.extensions.hyperlambda
                     name = "@\"" + name.Replace("\"", "\"\"") + "\"";
                 else if (name.Contains("\"") ||
                     name.Contains(":") ||
-                    name.StartsWith(" ") ||
-                    name.EndsWith(" "))
+                    name.StartsWith(" ", StringComparison.Ordinal) ||
+                    name.EndsWith(" ", StringComparison.Ordinal))
                     name = "\"" + name.Replace("\"", "\\\"") + "\"";
                 else if (node.Value == null && name == "")
                     name = @"""""";
@@ -198,7 +199,7 @@ namespace magic.node.extensions.hyperlambda
             }
             else
             {
-                var hasControlChar = content.StartsWith(" ") || content.EndsWith(" ");
+                var hasControlChar = content.StartsWith(" ", StringComparison.Ordinal) || content.EndsWith(" ", StringComparison.Ordinal);
                 foreach (var idx in content)
                 {
                     switch (idx)

@@ -520,7 +520,7 @@ namespace magic.lambda.http.services
                     // Checking if caller wants to automatically convert and if we've got response converters registered for Content-Type.
                     if (convert && _responseTransformers.TryGetValue(contentType, out var functor))
                         result.Add(await functor(signaler, content));
-                    else if (contentType.StartsWith("text/"))
+                    else if (contentType.StartsWith("text/", StringComparison.Ordinal))
                         result.Add(new Node("content", await content.ReadAsStringAsync()));
                     else
                         result.Add(new Node("content", await content.ReadAsByteArrayAsync()));

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.Odbc" Version="9.0.0" />
+    <PackageReference Include="System.Data.Odbc" Version="10.0.13" />
     <ProjectReference Include="..\magic.data.common\magic.data.common\magic.data.common.csproj" />
   </ItemGroup>
 

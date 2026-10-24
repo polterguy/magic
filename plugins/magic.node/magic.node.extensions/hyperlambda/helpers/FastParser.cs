@@ -216,14 +216,14 @@ namespace magic.node.extensions.hyperlambda.internals
                 ReadLine(out var start, out var length);
                 var line = _s.Substring(start, length);
                 var trimmed = line.TrimStart(' ').Trim();
-                if (trimmed.StartsWith("* "))
+                if (trimmed.StartsWith("* ", StringComparison.Ordinal))
                     trimmed = trimmed[2..];
                 else if (trimmed.StartsWith('*'))
                     trimmed = trimmed[1..];
-                if (builder.Length == 0 && line.EndsWith("*/") && trimmed == "/")
+                if (builder.Length == 0 && line.EndsWith("*/", StringComparison.Ordinal) && trimmed == "/")
                     return null; // Empty comment
                 builder.Append(trimmed).Append("\r\n");
-                if (line.EndsWith("*/"))
+                if (line.EndsWith("*/", StringComparison.Ordinal))
                     break;
                 if (_p >= _n)
                     return null;

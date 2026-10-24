@@ -159,9 +159,9 @@ namespace magic.lambda.git
         {
             if (string.IsNullOrWhiteSpace(path))
                 throw new HyperlambdaException("Folder path is missing");
-            if (!path.StartsWith("/"))
+            if (!path.StartsWith("/", StringComparison.Ordinal))
                 throw new HyperlambdaException("Folder paths must start with '/'");
-            if (!path.EndsWith("/"))
+            if (!path.EndsWith("/", StringComparison.Ordinal))
                 throw new HyperlambdaException("Folder paths must end with '/'");
         }
     }

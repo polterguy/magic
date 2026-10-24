@@ -237,6 +237,28 @@ namespace magic.node
         }
 
         /// <summary>
+        /// Moves all children of the specified node to the end of this node's children collection, keeping their order,
+        /// leaving the specified node without children.
+        ///
+        /// Equivalent to AddRange(source.Children), except it is linear in the number of children, since AddRange
+        /// untied one child at a time, which shifted the remaining children of the source for each of them.
+        /// </summary>
+        /// <param name="source">Node to move all children from. Must not be this node.</param>
+        public void MoveChildrenFrom(Node source)
+        {
+            if (ReferenceEquals(source, this))
+                return; // Moving every child to the end of its own collection changes nothing.
+
+            var moving = source._children;
+            foreach (var idx in moving)
+            {
+                idx.Parent = this;
+            }
+            _children.AddRange(moving);
+            moving.Clear();
+        }
+
+        /// <summary>
         /// Removes the specified node from the node's children collection.
         /// </summary>
         /// <param name="value">Removes the specified node from the Children collection of the current node.</param>

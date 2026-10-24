@@ -234,7 +234,7 @@ namespace magic.node.extensions
             if (value is DateTime date)
                 return date;
             var str = value as string;
-            if (str.EndsWith("Z"))
+            if (str.EndsWith("Z", StringComparison.Ordinal))
                 return DateTime.Parse(str, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
             if (!str.Contains("+"))
             {

@@ -64,32 +64,30 @@ namespace magic.lambda.slots
             if (input.Name == "execute")
                 Expression.Unwrap(GetDescendants(input), true);
 
+            /*
+             * Retrieving lambda of slot. Notice, this must happen before we push [whitelist] as null below,
+             * since it verifies the dynamic slot against the caller's [whitelist].
+             */
+            var lambda = GetLambda(signaler, input, input.Name != "try-signal");
+
             // Making sure we're able to handle returned values and nodes from slot implementation.
             var result = new Node();
-            await signaler.ScopeAsync("slots.result", result, async () =>
+            if (lambda != null)
             {
                 /*
                  * Evaluating lambda of slot, making sure we temporary clear any existing [whitelist]
                  * declarations, and mask any debug recorder - the slot's lambda was declared
                  * elsewhere, so it is not part of the lambda being recorded.
                  */
-                var lambda = GetLambda(signaler, input, input.Name != "try-signal");
-                if (lambda != null)
-                {
-                    await signaler.ScopeAsync("whitelist", null, async () =>
-                    {
-                        await signaler.ScopeAsync(".debug.recorder", null, async () =>
-                        {
-                            await signaler.SignalAsync("eval", lambda, skipWhitelist: true);
-                        });
-                    });
-                }
+                await signaler.ScopeAsync(
+                    [("slots.result", result), ("whitelist", null), (".debug.recorder", null)],
+                    () => signaler.SignalAsync("eval", lambda, skipWhitelist: true));
+            }
 
-                // Clearing original lambda and adding result of invocation.
-                input.Clear();
-                input.Value = result.Value;
-                input.AddRange(result.Children.ToList());
-            });
+            // Clearing original lambda and adding result of invocation.
+            input.Clear();
+            input.Value = result.Value;
+            input.MoveChildrenFrom(result);
         }
 
         #region [ -- Private helper methods -- ]

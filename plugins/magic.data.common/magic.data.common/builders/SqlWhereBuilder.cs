@@ -96,7 +96,7 @@ namespace magic.data.common.builders
             else
             {
                 // Plain argument, referencing it in SQL, and adding to args collection.
-                var argNo = args.Children.Count(x => x.Name.StartsWith("@") && x.Name.Skip(1).First() != 'v');
+                var argNo = args.Children.Count(x => x.Name.StartsWith("@", StringComparison.Ordinal) && x.Name.Skip(1).First() != 'v');
                 var argName = "@" + argNo;
                 builder.Append(argName);
                 var val = colNode.GetEx<object>();
@@ -226,7 +226,7 @@ namespace magic.data.common.builders
         {
             // Field comparison of some sort.
             var columnName = comparison.Name;
-            if (columnName.StartsWith("\\"))
+            if (columnName.StartsWith("\\", StringComparison.Ordinal))
             {
                 // Allowing for escaped column names, to suppor columns containing "." as a part of their names.
                 columnName = EscapeColumnName(columnName.Substring(1));
@@ -250,7 +250,7 @@ namespace magic.data.common.builders
 
                 // Checking if last entity is escaped.
                 var tmp = new List<string>();
-                if (keyword.StartsWith("\\"))
+                if (keyword.StartsWith("\\", StringComparison.Ordinal))
                 {
                     keyword = keyword.Substring(1);
                     tmp.AddRange(entities.Take(entities.Count() - 1));
@@ -347,7 +347,7 @@ namespace magic.data.common.builders
             // Special case for "in" comparison operator.
             result["in"] = (builder, args, colNode, escapeChar, kind) => {
                 builder.Append(" in (");
-                var argNo = args.Children.Count(x => x.Name.StartsWith("@") && x.Name.Skip(1).First() != 'v');
+                var argNo = args.Children.Count(x => x.Name.StartsWith("@", StringComparison.Ordinal) && x.Name.Skip(1).First() != 'v');
                 builder.Append(string.Join(",", colNode.Children.Select(x =>
                 {
                     args.Add(new Node("@" + argNo, x.GetEx<object>()));

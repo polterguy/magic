@@ -64,7 +64,7 @@ namespace magic.lambda.system.helpers
             });
 
             // Ensuring assembly name ends with ".dll" if caller didn't already ensure it.
-            if (!assemblyName.EndsWith(".dll"))
+            if (!assemblyName.EndsWith(".dll", StringComparison.Ordinal))
                 assemblyName += ".dll";
 
             // Compiling C# and returning result to caller.

@@ -39,7 +39,7 @@ namespace magic.lambda.slots
             if (input.Children.Any())
             {
                 // Simple case
-                result.AddRange(input.Children.ToList());
+                result.MoveChildrenFrom(input);
                 result.Value = input.Value;
             }
             else

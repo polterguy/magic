@@ -101,7 +101,7 @@ namespace magic.lambda.caching.services
             {
                 await locker.LockAsync();
 
-                foreach (var idx in _items.Where(x => x.Key.StartsWith(filter)).ToList())
+                foreach (var idx in _items.Where(x => x.Key.StartsWith(filter, StringComparison.Ordinal)).ToList())
                 {
                     _items.Remove(idx.Key);
                 }
@@ -124,7 +124,7 @@ namespace magic.lambda.caching.services
                 // Purging all expired items.
                 PurgeExpiredItems();
                 return _items
-                    .Where(x => x.Key.StartsWith(filter))
+                    .Where(x => x.Key.StartsWith(filter, StringComparison.Ordinal))
                     .Select(x => 
                         new KeyValuePair<string, string>(
                             x.Key.Substring(_rootResolver.RootFolder.Length + 1),
@@ -213,7 +213,7 @@ namespace magic.lambda.caching.services
             // Sanity checking invocation.
             if (string.IsNullOrEmpty(key))
                 throw new HyperlambdaException("You cannot reference an item in your cache without providing us with a key.");
-            if (key.StartsWith(".") || key.StartsWith("+"))
+            if (key.StartsWith(".", StringComparison.Ordinal) || key.StartsWith("+", StringComparison.Ordinal))
                 throw new HyperlambdaException($"You cannot reference an new item in your cache that starts with a period (.) or a plus (+) - Cache key of item that created conflict was '{key}'");
 
             // Returning unique key to caller.
@@ -226,7 +226,7 @@ namespace magic.lambda.caching.services
         string GetFilter(string filter, bool hidden)
         {
             // Sanity checking invocation.
-            if (!string.IsNullOrEmpty(filter) && (filter.StartsWith(".") || filter.StartsWith("+")))
+            if (!string.IsNullOrEmpty(filter) && (filter.StartsWith(".", StringComparison.Ordinal) || filter.StartsWith("+", StringComparison.Ordinal)))
                 throw new HyperlambdaException($"You cannot reference items from your cache starting with a period (.) or a (+) - Filter that created conflict was '{filter}'");
 
             // Returning filter to caller.

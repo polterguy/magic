@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="magic.endpoint.tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
     <ProjectReference Include="..\..\..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
     <ProjectReference Include="..\magic.endpoint.contracts\magic.endpoint.contracts.csproj" />

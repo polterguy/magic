@@ -38,6 +38,12 @@ namespace magic.endpoint.services
          */
         static readonly ConcurrentDictionary<string, CachedEndpoint> _cache = new();
 
+        /*
+         * How long a cached endpoint is trusted without looking at its files again. Not a constant, since tests that edit an
+         * endpoint and expect the very next request to see the edit set it to 0.
+         */
+        internal static long RecheckMilliseconds = 1000;
+
         /// <summary>
         /// Creates an instance of your type.
         /// </summary>
@@ -285,19 +291,31 @@ namespace magic.endpoint.services
                 Template = template;
             }
 
+            // When the files were last found unchanged, in Environment.TickCount64 milliseconds, or 0 if never.
+            long _verifiedAt;
+
             public Node Template { get; }
 
             /*
              * True if none of the files have changed, been created or been deleted since the lambda was created.
              * Includes every interceptor file that could apply, whether it existed or not.
+             *
+             * Notice, every check is one stat for the endpoint and one for each of its interceptors, so the files are only
+             * checked again once RecheckMilliseconds have passed since they were last found unchanged. An edit is
+             * therefore picked up within that time.
              */
             public bool IsCurrent(IFileStamps stamps)
             {
+                var now = Environment.TickCount64;
+                if (_verifiedAt != 0 && now - Interlocked.Read(ref _verifiedAt) < RecheckMilliseconds)
+                    return true;
+
                 for (var idx = 0; idx < _paths.Length; idx++)
                 {
                     if (stamps.GetStamp(_paths[idx]) != _stamps[idx])
                         return false;
                 }
+                Interlocked.Exchange(ref _verifiedAt, now == 0 ? 1 : now);
                 return true;
             }
         }

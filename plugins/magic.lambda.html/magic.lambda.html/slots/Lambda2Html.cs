@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Linq;
 using HtmlAgilityPack;
 using magic.node;
@@ -55,11 +56,11 @@ namespace magic.lambda.html.slots
         static void CreateElement(Node srcNode, HtmlNode html, HtmlDocument doc)
         {
             var cur = doc.CreateElement(srcNode.Name);
-            foreach (var idx in srcNode.Children.Where(x => x.Name.StartsWith("@")))
+            foreach (var idx in srcNode.Children.Where(x => x.Name.StartsWith("@", StringComparison.Ordinal)))
             {
                 cur.Attributes.Add(idx.Name.Substring(1), idx.GetEx<string>());
             }
-            foreach (var idx in srcNode.Children.Where(x => !x.Name.StartsWith("@")))
+            foreach (var idx in srcNode.Children.Where(x => !x.Name.StartsWith("@", StringComparison.Ordinal)))
             {
                 if (idx.Name == "#text")
                     cur.AppendChild(doc.CreateTextNode(idx.GetEx<string>()));

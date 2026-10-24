@@ -28,7 +28,7 @@ namespace magic.lambda.scheduler.utilities
         public static IRepetitionPattern Create(string pattern)
         {
             // Checking if this is an extension pattern.
-            if (pattern.StartsWith("ext:"))
+            if (pattern.StartsWith("ext:", StringComparison.Ordinal))
             {
                 var tmp = pattern.Split(':');
                 return _createExtensions[tmp[1]](string.Join(":", tmp.Skip(2)));

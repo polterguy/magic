@@ -111,7 +111,7 @@ namespace magic.endpoint.services.slots.misc
             var result = new List<Node>();
 
             // Looping through each file in current folder.
-            foreach (var idxFile in _content.Keys.Where(x => x.StartsWith(folder)))
+            foreach (var idxFile in _content.Keys.Where(x => x.StartsWith(folder, StringComparison.Ordinal)))
             {
                 // Removing the root folder, to return only relativ filename back to caller.
                 var filename = idxFile.Substring(rootFolder.Length);

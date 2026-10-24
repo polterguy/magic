@@ -119,10 +119,10 @@ namespace magic.lambda.io.folder
         {
             // Making sure we don't show hidden operating system files by default.
             var folderInfo = new DirectoryInfo(folderName);
-            if (showHidden || !folderInfo.Name.StartsWith("."))
+            if (showHidden || !folderInfo.Name.StartsWith(".", StringComparison.Ordinal))
             {
                 var relFolder = _rootResolver.RelativePath(folderName);
-                if (showSystem || (!relFolder.StartsWith("/system/") && !relFolder.StartsWith("/misc/") && !relFolder.StartsWith("/data/") && !relFolder.StartsWith("/config/")))
+                if (showSystem || (!relFolder.StartsWith("/system/", StringComparison.Ordinal) && !relFolder.StartsWith("/misc/", StringComparison.Ordinal) && !relFolder.StartsWith("/data/", StringComparison.Ordinal) && !relFolder.StartsWith("/config/", StringComparison.Ordinal)))
                     result.Add(new Node("", relFolder));
             }
         }

@@ -101,7 +101,7 @@ namespace magic.lambda.io.file
                 : extValue.Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => x.Trim())
                     .Where(x => x.Length > 0)
-                    .Select(x => x.StartsWith(".") ? x : "." + x)
+                    .Select(x => x.StartsWith(".", StringComparison.Ordinal) ? x : "." + x)
                     .ToArray();
 
             var folder = input.GetEx<string>();

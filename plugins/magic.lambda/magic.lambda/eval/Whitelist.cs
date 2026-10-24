@@ -53,7 +53,7 @@ namespace magic.lambda.eval
                 });
                 input.Clear();
                 input.Value = result.Value;
-                input.AddRange(result.Children.ToList());
+                input.MoveChildrenFrom(result);
             });
         }
 

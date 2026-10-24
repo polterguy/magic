@@ -35,7 +35,7 @@ namespace magic.lambda.io.misc
         public void Signal(ISignaler signaler, Node input)
         {
             var path = input.GetEx<string>();
-            if (path.EndsWith("/"))
+            if (path.EndsWith("/", StringComparison.Ordinal))
             {
                 input.Value = path;
             }

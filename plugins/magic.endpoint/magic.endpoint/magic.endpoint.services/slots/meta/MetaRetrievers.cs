@@ -166,8 +166,8 @@ namespace magic.endpoint.services.slots.meta
         {
             var resultNode = new Node("output");
             var enumerator = lambda.Children
-                .FirstOrDefault(x => x.Name.EndsWith(".connect"))?.Children
-                .FirstOrDefault(x => x.Name.EndsWith(".read"))?.Children
+                .FirstOrDefault(x => x.Name.EndsWith(".connect", StringComparison.Ordinal))?.Children
+                .FirstOrDefault(x => x.Name.EndsWith(".read", StringComparison.Ordinal))?.Children
                 .FirstOrDefault(x => x.Name == "columns")?.Children ?? new Node[0];
             foreach (var idx in enumerator)
             {

@@ -37,7 +37,7 @@ namespace magic.lambda.hyperlambda
             var comments = input.Children.FirstOrDefault(x => x.Name == "comments")?.GetEx<bool>() ?? false;
             input.Clear();
             var parser = HyperlambdaParser.Parse(input.GetEx<string>(), comments);
-            input.AddRange(parser.Children.ToList());
+            input.MoveChildrenFrom(parser);
             input.Value = null;
         }
     }

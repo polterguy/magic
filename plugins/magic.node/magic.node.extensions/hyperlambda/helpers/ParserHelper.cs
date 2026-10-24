@@ -78,14 +78,14 @@ namespace magic.node.extensions.hyperlambda.internals
             {
                 var line = reader.ReadLine();
                 var trimmed = line.TrimStart(new char[] { ' ' }).Trim();
-                if (trimmed.StartsWith("* "))
+                if (trimmed.StartsWith("* ", StringComparison.Ordinal))
                     trimmed = trimmed[2..];
                 else if (trimmed.StartsWith('*'))
                     trimmed = trimmed[1..];
-                if (builder.Length == 0 && line.EndsWith("*/") && trimmed == "/")
+                if (builder.Length == 0 && line.EndsWith("*/", StringComparison.Ordinal) && trimmed == "/")
                     return null; // Empty comment
                 builder.Append(trimmed).Append("\r\n");
-                if (line.EndsWith("*/"))
+                if (line.EndsWith("*/", StringComparison.Ordinal))
                     break;
                 if (reader.EndOfStream)
                     return null;

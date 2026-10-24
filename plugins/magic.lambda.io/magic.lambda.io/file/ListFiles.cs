@@ -121,7 +121,7 @@ namespace magic.lambda.io.file
             if (showHidden || !Path.GetFileName(filename).StartsWith(".", StringComparison.InvariantCulture))
             {
                 var relFilename = _rootResolver.RelativePath(filename);
-                if (showSystem || (!relFilename.StartsWith("/system/") && !relFilename.StartsWith("/misc/") && !relFilename.StartsWith("/data/") && !relFilename.StartsWith("/config/")))
+                if (showSystem || (!relFilename.StartsWith("/system/", StringComparison.Ordinal) && !relFilename.StartsWith("/misc/", StringComparison.Ordinal) && !relFilename.StartsWith("/data/", StringComparison.Ordinal) && !relFilename.StartsWith("/config/", StringComparison.Ordinal)))
                     result.Add(new Node("", relFilename));
             }
         }

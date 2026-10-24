@@ -16,6 +16,7 @@ import { Modal, useDialog } from '../components/Dialogs';
 import OpenApiDialog from '../components/OpenApiDialog';
 import GitPanel from '../components/GitPanel';
 import { useUnsavedGuard } from '../lib/navGuard';
+import { useDebounced } from '../lib/usePagedList';
 import { useAuth } from '../lib/AuthContext';
 import {
   Endpoint,
@@ -282,7 +283,7 @@ export default function Files() {
    * show when they have a visible descendant, and every visible folder is
    * force-expanded.
    */
-  const query = filter.trim().toLowerCase();
+  const query = useDebounced(filter, 250).trim().toLowerCase();
 
   const visibleFiles = useMemo(() =>
     query ? files.filter(file => file.toLowerCase().includes(query)) : files,
