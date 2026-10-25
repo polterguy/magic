@@ -401,7 +401,8 @@ namespace magic.lambda.http.services
 
         /*
          * Creates the request for the next redirect hop, preserving the method and payload for
-         * 307/308, switching to a plain GET for everything else, and never carrying the bearer
+         * 307/308, forcing a plain GET for 303 (See Other) regardless of method, switching
+         * other methods than GET and DELETE to GET for 301/302, and never carrying the bearer
          * token nor content headers to a hop where they no longer apply.
          */
         static HttpRequestMessage CreateRedirectRequest(
@@ -412,7 +413,9 @@ namespace magic.lambda.http.services
             HttpStatusCode status)
         {
             var preserve = status == HttpStatusCode.TemporaryRedirect || status == HttpStatusCode.PermanentRedirect;
-            var newMethod = preserve || method == HttpMethod.Get || method == HttpMethod.Delete ?
+            var newMethod = preserve ||
+                method == HttpMethod.Get ||
+                (method == HttpMethod.Delete && status != HttpStatusCode.SeeOther) ?
                 method : HttpMethod.Get;
             var bodyless = newMethod == HttpMethod.Get || newMethod == HttpMethod.Delete;
 

@@ -525,5 +525,32 @@ whitelist
             });
             Assert.True(second);
         }
+
+        [Fact]
+        public async Task HttpDelete_Redirect_SeeOther_SwitchesToGet()
+        {
+            // A 303 (See Other) instructs the client to retrieve, not to repeat the side
+            // effect, so even a DELETE must switch to a plain GET on the next hop.
+            var hops = 0;
+            await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.delete:""https://foo.com/*""
+   .lambda
+      http.delete:""https://foo.com/start""
+", async (request, _) =>
+            {
+                hops++;
+                if (hops == 1)
+                {
+                    var response = new HttpResponseMessage(HttpStatusCode.SeeOther);
+                    response.Headers.Location = new Uri("https://foo.com/final");
+                    return response;
+                }
+                Assert.Equal(HttpMethod.Get, request.Method);
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            });
+            Assert.Equal(2, hops);
+        }
     }
 }
