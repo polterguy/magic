@@ -1166,6 +1166,12 @@ function SqlEndpointTab() {
  * from the hash string the caller supplies, so a fabricated hash can burn hours of
  * uncancellable CPU per request. [crypto.password.hash] stays, since its cost is
  * server-chosen.
+ *
+ * [openai.tokenize] is deliberately absent as well: it caches one tokenizer per
+ * caller-supplied model name in a static, never-evicted dictionary, and each entry
+ * holds a full BPE vocabulary - a single request naming hundreds of fake models can
+ * permanently pin hundreds of megabytes, growing until the process runs out of
+ * memory. Grant it per role only where untrusted callers cannot reach it.
  */
 const DEFAULT_BASE_SLOTS = [
   'add', 'and', 'apply', 'case', 'compose', 'convert', 'csv2lambda', 'default',
@@ -1189,7 +1195,6 @@ const DEFAULT_BASE_SLOTS = [
   'math.abs', 'math.add', 'math.ceil', 'math.cos', 'math.decrement', 'math.divide',
   'math.dot', 'math.floor', 'math.increment', 'math.max', 'math.min', 'math.modulo',
   'math.multiply', 'math.random', 'math.round', 'math.sin', 'math.sqrt', 'math.subtract',
-  'openai.tokenize',
   'request.cookies.get', 'request.cookies.list', 'request.headers.get',
   'request.headers.list', 'request.host', 'request.ip', 'request.scheme',
   'request.url', 'request.verb',
