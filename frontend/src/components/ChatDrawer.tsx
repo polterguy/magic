@@ -11,6 +11,7 @@
  */
 
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { HubConnection } from '@microsoft/signalr';
 import { createSocket } from '../lib/socket';
@@ -128,7 +129,9 @@ async function renderMermaidDiagrams(root: HTMLElement, dark: boolean) {
   mermaid.initialize({
     startOnLoad: false,
     theme: dark ? 'dark' : 'default',
-    securityLevel: 'loose',
+    // Strict keeps node labels as text — combined with the DOMPurify pass
+    // below, diagram output cannot smuggle HTML into the page.
+    securityLevel: 'strict',
   });
   for (const container of Array.from(containers)) {
     const code = (container.querySelector('.chat-mermaid-code')?.textContent ?? '').trim();
@@ -136,7 +139,7 @@ async function renderMermaidDiagrams(root: HTMLElement, dark: boolean) {
     try {
       const id = 'chat-mermaid-' + Math.random().toString(36).slice(2, 10);
       const { svg } = await mermaid.render(id, sanitiseMermaid(code));
-      container.innerHTML = svg;
+      container.innerHTML = DOMPurify.sanitize(svg);
     } catch {
       // A diagram that doesn't parse still carries information — show the code.
       container.innerHTML = '<pre class="result-json">' + escapeHtml(code) + '</pre>';
@@ -713,8 +716,12 @@ function ChatSegment({ segment, markdown }: { segment: Segment; markdown: boolea
       import('../lib/chatHighlight').then(module => module.highlightUnder(root));
     }
   }, [showDetail]);
+  // Model output is untrusted — raw HTML must never reach the page, so the
+  // markdown passes through DOMPurify before dangerouslySetInnerHTML.
   const html = useMemo(
-    () => segment.kind === 'text' && markdown ? marked.parse(segment.text) as string : '',
+    () => segment.kind === 'text' && markdown
+      ? DOMPurify.sanitize(marked.parse(segment.text) as string)
+      : '',
     [segment, markdown]);
 
   switch (segment.kind) {
