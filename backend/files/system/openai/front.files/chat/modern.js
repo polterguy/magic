@@ -653,6 +653,7 @@
         if ((this.ainiro_settings.recaptcha === '-1' || typeof mcaptcha !== 'undefined' || typeof grecaptcha !== 'undefined') &&
           typeof marked !== 'undefined' &&
           typeof signalR !== 'undefined' &&
+          typeof extendedTables !== 'undefined' &&
           (this.ainiro_settings.code === false || typeof hljs !== 'undefined')) {
 
           afterMarked();

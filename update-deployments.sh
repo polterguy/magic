@@ -3,14 +3,20 @@ set -euo pipefail
 
 # Both can be overridden from the environment, e.g.  IMAGE=servergardens/magic-backend:v24.2.0 ./update-deployments.sh
 NAMESPACE="${NAMESPACE:-cloudlets}"
-IMAGE="${IMAGE:-servergardens/magic-backend:v24.1.2}"
+IMAGE="${IMAGE:-servergardens/magic-backend:v24.1.3}"
 FSGROUP="999"
 
 # Set ONLY to the name of one deployment to try the script on just that one, e.g.  ONLY=thomastest-team ./update-deployments.sh
 ONLY="${ONLY:-}"
 
-# How long to wait for one deployment to become ready before giving up on it and moving on to the next one.
-ROLLOUT_TIMEOUT="${ROLLOUT_TIMEOUT:-300s}"
+# These deployments use a volume that can only be attached to one node at a time. When the new pod lands on another
+# node than the old one, it fails with a Multi-Attach error until the old attachment is gone. So a deployment that is
+# about to change is scaled to 0 first, and given this many seconds to release its volume before the new pod starts.
+DETACH_WAIT="${DETACH_WAIT:-20}"
+
+# How many seconds to wait for one deployment to become ready. When it does not, the script STOPS, and the deployments
+# after it are not touched.
+ROLLOUT_TIMEOUT="${ROLLOUT_TIMEOUT:-300}"
 
 # Resources. CPU limit is written as "1" (not "1000m") because Kubernetes reports it that way,
 # which keeps the idempotence check below from patching on every run.
@@ -48,8 +54,33 @@ NOAPI_SA="no-api-access"
 
 echo "========================================="
 echo "Safe upgrade of deployments in $NAMESPACE"
+echo "Cluster:      $(kubectl config current-context)"
 echo "Target image: $IMAGE"
+if [[ -n "$ONLY" ]]; then
+  echo "Only:         $ONLY"
+fi
 echo "========================================="
+
+# Make sure the image exists before anything is touched. These deployments use the Recreate strategy, so one whose new
+# image cannot be pulled is DOWN until somebody rolls it back.
+if command -v docker >/dev/null 2>&1; then
+  if ! docker manifest inspect "$IMAGE" >/dev/null 2>&1; then
+    echo "❌ Cannot find $IMAGE in the registry (or you are not logged in to it). Nothing was changed."
+    exit 1
+  fi
+  echo "✅ The image exists in the registry."
+else
+  echo "⚠️  docker is not installed here, so the image could not be checked. Make sure the tag exists before you continue."
+fi
+
+# This is run by hand, so ask first. Set YES=1 to skip the question.
+if [[ "${YES:-}" != "1" ]]; then
+  read -r -p "Continue? [y/N] " ANSWER
+  if [[ "$ANSWER" != "y" && "$ANSWER" != "Y" ]]; then
+    echo "Aborted. Nothing was changed."
+    exit 1
+  fi
+fi
 
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -59,9 +90,6 @@ metadata:
   namespace: $NAMESPACE
 automountServiceAccountToken: false
 EOF
-
-# Deployments that did not become ready, reported at the end.
-FAILED=""
 
 # The deployment currently paused by this script. If the script dies half way through, for instance on Ctrl+C or a
 # failing kubectl command, it must never leave a deployment paused, since a paused deployment silently ignores
@@ -73,7 +101,48 @@ resume_paused() {
     PAUSED=""
   fi
 }
-trap resume_paused EXIT
+
+# The deployment this script has scaled to 0, and how many replicas it had. If the script dies while a deployment is at 0,
+# it is scaled back up, since otherwise that cloudlet stays down.
+SCALED=""
+SCALED_REPLICAS=""
+restore_scale() {
+  if [[ -n "$SCALED" ]]; then
+    echo "Scaling $SCALED back to $SCALED_REPLICAS replica(s)..."
+    kubectl scale deployment/"$SCALED" --replicas="$SCALED_REPLICAS" -n "$NAMESPACE" >/dev/null 2>&1 || true
+    SCALED=""
+  fi
+}
+
+cleanup() {
+  resume_paused
+  restore_scale
+}
+trap cleanup EXIT
+
+# Waits for a rollout to finish, but gives up as soon as a pod reports a problem that waiting will not fix, such as an
+# image that cannot be pulled, instead of waiting for the whole timeout.
+wait_for_rollout() {
+  local DEPLOYMENT="$1"
+  local WAITED=0
+  local REASONS
+
+  while (( WAITED < ROLLOUT_TIMEOUT )); do
+    if kubectl rollout status deployment "$DEPLOYMENT" -n "$NAMESPACE" --timeout=10s >/dev/null 2>&1; then
+      return 0
+    fi
+    WAITED=$((WAITED + 10))
+
+    REASONS=$(kubectl get pods -n "$NAMESPACE" -l "app=$DEPLOYMENT" \
+      -o jsonpath='{range .items[*]}{.status.containerStatuses[*].state.waiting.reason} {.status.initContainerStatuses[*].state.waiting.reason} {end}' 2>/dev/null || true)
+    if [[ "$REASONS" =~ (ErrImagePull|ImagePullBackOff|InvalidImageName|CreateContainerConfigError|CrashLoopBackOff) ]]; then
+      echo "   The pod reports: $REASONS"
+      return 1
+    fi
+    echo "   Still waiting ($WAITED/${ROLLOUT_TIMEOUT}s)..."
+  done
+  return 1
+}
 
 for DEP in $(kubectl get deployments -n "$NAMESPACE" -o jsonpath='{.items[*].metadata.name}')
 do
@@ -337,33 +406,53 @@ spec:
   # ===============================
   # 5) Restart ONLY if changes happened
   # ===============================
-  # Resuming starts ONE rollout if anything in the pod template changed, and none if nothing did.
-  resume_paused
-
   if [[ "$NEEDS_UPDATE" -eq 0 ]]; then
+    resume_paused
     echo ""
     echo "✅ Deployment $DEP already fully up to date. Skipping rollout."
     continue
   fi
 
+  # Releasing the volume first, see DETACH_WAIT. Notice, a paused deployment can still be scaled.
+  REPLICAS=$(kubectl get deployment "$DEP" -n "$NAMESPACE" -o jsonpath='{.spec.replicas}')
+  if [[ "${REPLICAS:-0}" -gt 0 ]]; then
+    SCALED="$DEP"
+    SCALED_REPLICAS="$REPLICAS"
+    echo "Scaling $DEP to 0 so its volume is released before the new pod starts..."
+    kubectl scale deployment/"$DEP" --replicas=0 -n "$NAMESPACE"
+    kubectl wait --for=delete pod -l "app=$DEP" -n "$NAMESPACE" --timeout=120s >/dev/null 2>&1 || true
+    echo "Giving the volume ${DETACH_WAIT}s to detach..."
+    sleep "$DETACH_WAIT"
+  fi
+
+  # Resuming starts ONE rollout of the changed template, and since there are no pods, nothing is started yet.
+  resume_paused
+
+  # Waiting until the deployment has picked up the new template, since scaling up before that could start a pod from
+  # the OLD template, only for it to be replaced a moment later.
+  kubectl rollout status deployment/"$DEP" -n "$NAMESPACE" --timeout=60s >/dev/null 2>&1 || true
+
+  # Starting the new pod.
+  if [[ -n "$SCALED" ]]; then
+    kubectl scale deployment/"$DEP" --replicas="$SCALED_REPLICAS" -n "$NAMESPACE"
+    SCALED=""
+  fi
+
   echo ""
   echo "Changes applied → waiting for rollout..."
-  if ! kubectl rollout status deployment "$DEP" -n "$NAMESPACE" --timeout="$ROLLOUT_TIMEOUT"; then
-    echo "❌ Deployment $DEP did not become ready within $ROLLOUT_TIMEOUT."
-    echo "   Look at it with:  kubectl describe pod -n $NAMESPACE -l app=$DEP"
+  if ! wait_for_rollout "$DEP"; then
+    echo ""
+    echo "❌ Deployment $DEP did not become ready. STOPPING - the remaining deployments were NOT touched."
+    echo "   Look at it with:   kubectl describe pod -n $NAMESPACE -l app=$DEP"
     echo "   Roll it back with: kubectl rollout undo deployment/$DEP -n $NAMESPACE"
-    FAILED="$FAILED $DEP"
+    exit 1
   fi
+  echo "✅ $DEP is ready."
 
 done
 
 echo ""
 echo "========================================="
-if [[ -n "$FAILED" ]]; then
-  echo "Done, but these deployments are NOT ready:$FAILED"
-  echo "========================================="
-  exit 1
-fi
 echo "All deployments processed safely."
 echo "Up-to-date deployments were skipped."
 echo "========================================="
