@@ -2,11 +2,13 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using magic.node;
 using magic.signals.contracts;
 using magic.lambda.http.contracts;
+using magic.lambda.http.services.helpers;
 
 namespace magic.lambda.http
 {
@@ -24,8 +26,11 @@ namespace magic.lambda.http
         ReturnsKind = "http-response",
         ReturnsDescription = "Resolves to the HTTP status code in value and response headers and content as child nodes",
         SignatureType = typeof(global::magic.lambda.http.signatures.HttpPayloadRequestSignature))]
-    public class HttpPatch : ISlotAsync
+    public class HttpPatch : ISlotAsync, IWhitelistComparer
     {
+        /// <inheritdoc />
+        public Func<string, string, bool> Comparer => UrlWhitelistComparer.Matches;
+
         readonly IMagicHttp _service;
 
         /// <summary>

@@ -433,5 +433,19 @@ context:foo
    value:howdy
 "));
         }
+
+        [Fact]
+        public void EvalWhitelist_BareInvocation_Throws()
+        {
+            // Invoking a pinned slot without a value used to crash with a NullReferenceException
+            // from the default wildcard comparison, and must now yield a HyperlambdaException.
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+whitelist
+   vocabulary
+      return-value:foo-*
+   .lambda
+      return-value
+"));
+        }
     }
 }

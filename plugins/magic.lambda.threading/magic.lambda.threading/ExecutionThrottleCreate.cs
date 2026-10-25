@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using System.Threading.RateLimiting;
 using magic.node;
+using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
 
@@ -21,11 +22,12 @@ namespace magic.lambda.threading
     {
         readonly PartitionedRateLimiter<string> _limiter;
 
-        public Throttle(int limit, int window, string per)
+        public Throttle(int limit, int window, string per, bool trustCloudflare)
         {
             Limit = limit;
             Window = window;
             Per = per;
+            TrustCloudflare = trustCloudflare;
             _limiter = PartitionedRateLimiter.Create<string, string>(partition =>
                 RateLimitPartition.GetFixedWindowLimiter(partition, _ => new FixedWindowRateLimiterOptions
                 {
@@ -38,6 +40,7 @@ namespace magic.lambda.threading
         public int Limit { get; }
         public int Window { get; }
         public string Per { get; }
+        public bool TrustCloudflare { get; }
 
         public void Acquire(ISignaler signaler, string name)
         {
@@ -85,13 +88,19 @@ namespace magic.lambda.threading
             return auth.Value as string;
         }
 
-        static string GetIp(ISignaler signaler)
+        string GetIp(ISignaler signaler)
         {
-            // Preferring CloudFlare's client IP header, since behind CloudFlare [request.ip] resolves to the proxy.
-            var header = new Node("", "CF-Connecting-IP");
-            signaler.Signal("request.headers.get", header, skipWhitelist: true);
-            if (header.Value != null)
-                return header.GetEx<string>();
+            // Preferring CloudFlare's client IP header by default, since behind CloudFlare [request.ip]
+            // resolves to the proxy - but the header is forgeable when the app is exposed directly to
+            // the internet, hence "magic:forwarded-headers:trust-cloudflare" turns the preference off,
+            // making the throttle rely on the "bare bones" connection IP only.
+            if (TrustCloudflare)
+            {
+                var header = new Node("", "CF-Connecting-IP");
+                signaler.Signal("request.headers.get", header, skipWhitelist: true);
+                if (header.Value != null)
+                    return header.GetEx<string>();
+            }
 
             var ip = new Node();
             signaler.Signal("request.ip", ip, skipWhitelist: true);
@@ -116,6 +125,17 @@ namespace magic.lambda.threading
     public class ExecutionThrottleCreate : ISlot
     {
         internal static readonly ConcurrentDictionary<string, Throttle> Throttles = new();
+
+        readonly bool _trustCloudflare;
+
+        /// <summary>
+        /// Creates an instance of your type.
+        /// </summary>
+        /// <param name="configuration">Configuration to read [magic:forwarded-headers:trust-cloudflare] from.</param>
+        public ExecutionThrottleCreate(IMagicConfiguration configuration)
+        {
+            _trustCloudflare = !bool.TryParse(configuration["magic:forwarded-headers:trust-cloudflare"], out var trust) || trust;
+        }
 
         /// <summary>
         /// Implementation of signal
@@ -142,12 +162,13 @@ namespace magic.lambda.threading
 
             // An unchanged configuration keeps the existing throttle and its counters, allowing declarations in hot paths such as endpoints.
             if (Throttles.TryGetValue(name, out var current) &&
-                current.Limit == limit && current.Window == window && current.Per == per)
+                current.Limit == limit && current.Window == window && current.Per == per &&
+                current.TrustCloudflare == _trustCloudflare)
                 return;
 
             if (Throttles.TryRemove(name, out var existing))
                 existing.Dispose();
-            Throttles[name] = new Throttle(limit, window, per);
+            Throttles[name] = new Throttle(limit, window, per, _trustCloudflare);
         }
     }
 }

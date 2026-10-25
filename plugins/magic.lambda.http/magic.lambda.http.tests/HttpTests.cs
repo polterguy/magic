@@ -3,6 +3,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Linq;
 using System.Text;
 using System.Net;
@@ -313,6 +314,216 @@ http.delete:""https://jsonplaceholder.typicode.com/posts/1""
 http.delete:""https://jsonplaceholder.typicode.com/posts/1""
 ");
             Assert.Equal(200, lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public async Task HttpGet_WhitelistPin_AllowsPinnedUrl()
+        {
+            var invoked = false;
+            await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/*""
+   .lambda
+      http.get:""https://foo.com/bar/baz""
+", async (request, _) =>
+            {
+                invoked = true;
+                Assert.Equal("https://foo.com/bar/baz", request.RequestUri.ToString());
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            });
+            Assert.True(invoked);
+        }
+
+        [Fact]
+        public async Task HttpGet_WhitelistPin_HostSuffix_Throws()
+        {
+            await Assert.ThrowsAsync<HyperlambdaException>(async () => await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/*""
+   .lambda
+      http.get:""https://foo.com.evil.com/x""
+", (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))));
+        }
+
+        [Fact]
+        public async Task HttpGet_WhitelistPin_UserInfo_Throws()
+        {
+            await Assert.ThrowsAsync<HyperlambdaException>(async () => await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/*""
+   .lambda
+      http.get:""https://foo.com@evil.com/x""
+", (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))));
+        }
+
+        [Fact]
+        public async Task HttpGet_WhitelistPin_SchemeSwitch_Throws()
+        {
+            await Assert.ThrowsAsync<HyperlambdaException>(async () => await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/*""
+   .lambda
+      http.get:""http://foo.com/x""
+", (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))));
+        }
+
+        [Fact]
+        public async Task HttpGet_WhitelistPin_ExactPath_Succeeds()
+        {
+            var invoked = false;
+            await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/api""
+   .lambda
+      http.get:""https://foo.com/api""
+", async (request, _) =>
+            {
+                invoked = true;
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            });
+            Assert.True(invoked);
+        }
+
+        [Fact]
+        public async Task HttpGet_WhitelistPin_ExtraSegment_Throws()
+        {
+            await Assert.ThrowsAsync<HyperlambdaException>(async () => await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/api""
+   .lambda
+      http.get:""https://foo.com/api/users""
+", (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))));
+        }
+
+        [Fact]
+        public async Task HttpGet_BarePin_AllowsAnyUrl()
+        {
+            var invoked = false;
+            await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get
+   .lambda
+      http.get:""https://anything.example.org/whatever""
+", async (request, _) =>
+            {
+                invoked = true;
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            });
+            Assert.True(invoked);
+        }
+
+        [Fact]
+        public async Task HttpGet_WhitelistPin_UrlParams_Succeeds()
+        {
+            await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/users/{id}""
+   .lambda
+      http.get:""https://foo.com/users/{id}""
+         url-params
+            id:123
+", async (request, _) =>
+            {
+                Assert.Equal("https://foo.com/users/123", request.RequestUri.ToString());
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            });
+        }
+
+        [Fact]
+        public async Task HttpGet_WhitelistPin_UrlParamsPathEscape_Throws()
+        {
+            // The pin matches the raw template, but the substituted value escapes the pinned path.
+            await Assert.ThrowsAsync<HyperlambdaException>(async () => await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/api/{id}""
+   .lambda
+      http.get:""https://foo.com/api/{id}""
+         url-params
+            id:""../admin""
+", (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))));
+        }
+
+        [Fact]
+        public async Task HttpGet_Redirect_ToPinnedHost_Succeeds()
+        {
+            var second = false;
+            await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/*""
+      http.get:""https://bar.com/*""
+   .lambda
+      http.get:""https://foo.com/start""
+", async (request, _) =>
+            {
+                if (request.RequestUri.Host == "foo.com")
+                {
+                    var response = new HttpResponseMessage(HttpStatusCode.Redirect);
+                    response.Headers.Location = new Uri("https://bar.com/final");
+                    return response;
+                }
+                second = true;
+                Assert.Equal("https://bar.com/final", request.RequestUri.ToString());
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            });
+            Assert.True(second);
+        }
+
+        [Fact]
+        public async Task HttpGet_Redirect_ToUnpinnedHost_Throws()
+        {
+            var hops = 0;
+            await Assert.ThrowsAsync<HyperlambdaException>(async () => await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/*""
+   .lambda
+      http.get:""https://foo.com/start""
+", async (request, _) =>
+            {
+                hops++;
+                if (hops == 1)
+                {
+                    var response = new HttpResponseMessage(HttpStatusCode.Redirect);
+                    response.Headers.Location = new Uri("https://evil.com/");
+                    return response;
+                }
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            }));
+        }
+
+        [Fact]
+        public async Task HttpGet_Redirect_RelativeLocation_Succeeds()
+        {
+            var second = false;
+            await Common.EvaluateAsync(@"
+whitelist
+   vocabulary
+      http.get:""https://foo.com/*""
+   .lambda
+      http.get:""https://foo.com/start""
+", async (request, _) =>
+            {
+                if (request.RequestUri.AbsolutePath == "/start")
+                {
+                    var response = new HttpResponseMessage(HttpStatusCode.MovedPermanently);
+                    response.Headers.TryAddWithoutValidation("Location", "/final");
+                    return response;
+                }
+                second = true;
+                Assert.Equal("/final", request.RequestUri.AbsolutePath);
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            });
+            Assert.True(second);
         }
     }
 }

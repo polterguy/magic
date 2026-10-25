@@ -197,6 +197,10 @@ namespace magic.library
                     // Enable multiple HTTP2 connections at the same time.
                     EnableMultipleHttp2Connections = true,
 
+                    // Redirects are followed manually by MagicHttp, such that each hop can be
+                    // re-verified against an ambient whitelist before it is issued.
+                    AllowAutoRedirect = false,
+
                     // Connection pool stability
                     ConnectTimeout = TimeSpan.FromSeconds(20),
                     PooledConnectionLifetime = TimeSpan.FromSeconds(45),

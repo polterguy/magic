@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using MimeKit;
@@ -37,6 +38,25 @@ namespace magic.lambda.http.services
                 { "Content-Type", "application/json" },
                 { "Accept", "application/json" },
             };
+
+        // Maximum number of redirect hops followed for one invocation.
+        const int MaxRedirects = 10;
+
+        // HTTP headers decorating the content object rather than the request message.
+        static readonly string[] CONTENT_HEADERS =
+        {
+            "Allow",
+            "Content-Disposition",
+            "Content-Encoding",
+            "Content-Language",
+            "Content-Length",
+            "Content-Location",
+            "Content-MD5",
+            "Content-Range",
+            "Content-Type",
+            "Expires",
+            "Last-Modified",
+        };
 
         // Lambda to request object converters, to semantically transform from a lambda object to an object value of some sort.
         readonly static Dictionary<string, Func<ISignaler, Dictionary<string, string>, Node, string, object>> _requestTransformers =
@@ -121,7 +141,12 @@ namespace magic.lambda.http.services
                 x.Name != "convert"))
                 throw new HyperlambdaException($"Only supply [query], [payload], [filename], [headers], [convert], [timeout], [.sse] and [token] to [{input.Name}]");
 
-            // Checking if caller provided us with a [timeout] argument.
+            /*
+             * [timeout] applies per request and is enforced through cancellation instead of
+             * mutating the shared client's Timeout, which races across concurrent invocations
+             * and leaks into invocations not declaring the argument.
+             */
+            CancellationTokenSource timeoutCts = null;
             var timeoutNode = input.Children.FirstOrDefault(x => x.Name == "timeout");
             if (timeoutNode != null)
             {
@@ -130,54 +155,78 @@ namespace magic.lambda.http.services
                     throw new HyperlambdaException("[timeout] must be between 1 and 600 seconds");
 
                 timeoutNode.UnTie();
-                _client.Timeout = new TimeSpan(0, 0, timeout);
+                timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
+                cancellationToken = CancellationTokenSource.CreateLinkedTokenSource(
+                    cancellationToken, timeoutCts.Token).Token;
             }
 
             // Checking if user wants to use SSE.
             var useSse = input.Children.Any(x => x.Name == ".sse");
 
+            // Bodyless verbs accept neither a payload nor a filename.
+            var bodyless = method.Method.ToLowerInvariant() is "get" or "delete";
+            if (bodyless && input.Children.Any(x => x.Name == "payload" || x.Name == "filename"))
+                throw new HyperlambdaException($"Do not supply a [payload] or [filename] argument to [{input.Name}]");
+
             /*
-             * Strictly speaking it should not be necessary to dispose client,
-             * since it's created using IHttpClientFactory - However, to make sure
-             * we keep with the standard of the language, we do it anyways.
+             * Redirects are followed manually rather than by the handler (see AddMagicHttp), such
+             * that every hop can be re-verified against the whitelist before it is issued -
+             * otherwise a pinned host could redirect the caller to a host the pin never granted.
              */
-            using (var request = CreateRequestMessage(method, input, out var headers))
+            var request = CreateRequestMessage(method, input, out var headers);
+            try
             {
-                switch (method.Method.ToLowerInvariant())
+                /*
+                 * The first URL is re-verified too, since its [url-params] placeholders are
+                 * substituted by CreateRequestMessage above, AFTER the signaler verified the pin
+                 * against the raw template - and a placeholder value can add path segments of its
+                 * own.
+                 */
+                VerifyUrl(signaler, input.Name, request.RequestUri);
+
+                var hops = 0;
+                while (true)
                 {
-                    case "get":
-                    case "delete":
+                    // Payload type of request, implying 'PUT', 'POST' or 'PATCH'.
+                    if (request.Method != HttpMethod.Get && request.Method != HttpMethod.Delete)
+                    {
+                        var content = await GetRequestContentAsync(signaler, input, headers);
+                        AddContentHeaders(content, headers);
+                        request.Content = content;
+                    }
 
-                        // Empty request, sanity checking invocation, making sure no [payload] was provided.
-                        if (input.Children.Any(x => x.Name == "payload" || x.Name == "filename"))
-                            throw new HyperlambdaException($"Do not supply a [payload] or [filename] argument to [{input.Name}]");
-
-                        using (var response = await _client.SendAsync(
-                            request,
-                            useSse ? HttpCompletionOption.ResponseHeadersRead : HttpCompletionOption.ResponseContentRead,
-                            cancellationToken))
+                    using (var response = await _client.SendAsync(
+                        request,
+                        useSse ? HttpCompletionOption.ResponseHeadersRead : HttpCompletionOption.ResponseContentRead,
+                        cancellationToken))
+                    {
+                        // Following redirects manually, re-verifying each hop against the whitelist.
+                        if (IsRedirect(response.StatusCode))
                         {
-                            await GetResponse(signaler, response, input);
-                        }
-                        break;
-
-                    default:
-
-                        // Payload type of request, implying 'PUT', 'POST' or 'PATCH'.
-                        using (var content = await GetRequestContentAsync(signaler, input, headers))
-                        {
-                            AddContentHeaders(content, headers);
-                            request.Content = content;
-                            using (var response = await _client.SendAsync(
-                                request,
-                                useSse ? HttpCompletionOption.ResponseHeadersRead : HttpCompletionOption.ResponseContentRead,
-                                cancellationToken))
+                            var location = response.Headers.Location ?? GetRawLocation(response);
+                            if (location != null)
                             {
-                                await GetResponse(signaler, response, input);
+                                if (hops++ >= MaxRedirects)
+                                    throw new HyperlambdaException($"More than {MaxRedirects} redirects while invoking [{input.Name}]");
+
+                                var previous = request.RequestUri;
+                                request.Dispose();
+                                var target = new Uri(previous, location);
+                                VerifyUrl(signaler, input.Name, target);
+                                request = CreateRedirectRequest(method, previous, headers, target, response.StatusCode);
+                                continue;
                             }
                         }
-                        break;
+
+                        await GetResponse(signaler, response, input);
+                        return;
+                    }
                 }
+            }
+            finally
+            {
+                timeoutCts?.Dispose();
+                request.Dispose();
             }
         }
 
@@ -315,33 +364,94 @@ namespace magic.lambda.http.services
         {
             foreach (var idx in headers.Keys)
             {
-                switch (idx)
+                if (CONTENT_HEADERS.Contains(idx))
                 {
-                    case "Allow":
-                    case "Content-Disposition":
-                    case "Content-Encoding":
-                    case "Content-Language":
-                    case "Content-Length":
-                    case "Content-Location":
-                    case "Content-MD5":
-                    case "Content-Range":
-                    case "Content-Type":
-                    case "Expires":
-                    case "Last-Modified":
-
-                        // These HTTP headers we simply ignore, since they're added to the content object later.
-                        // However, if such headers are added to GET or DELETE invocation, it's considered a bug.
-                        if (method.Method.ToLowerInvariant() == "get" || method.Method.ToLowerInvariant() == "delete")
-                            throw new HyperlambdaException($"You cannot decorate an HTTP GET or DELETE request with content type of headers");
-                        break;
-
-                    default:
-
-                        // These are the only HTTP headers we're interested in adding to the request message itself.
-                        result.Headers.Add(idx, headers[idx]);
-                        break;
+                    // These HTTP headers we simply ignore, since they're added to the content object later.
+                    // However, if such headers are added to GET or DELETE invocation, it's considered a bug.
+                    if (method.Method.ToLowerInvariant() == "get" || method.Method.ToLowerInvariant() == "delete")
+                        throw new HyperlambdaException($"You cannot decorate an HTTP GET or DELETE request with content type of headers");
+                }
+                else
+                {
+                    // These are the only HTTP headers we're interested in adding to the request message itself.
+                    result.Headers.Add(idx, headers[idx]);
                 }
             }
+        }
+
+        /*
+         * Returns true if the response asks the caller to redirect to another URL.
+         */
+        static bool IsRedirect(HttpStatusCode status) =>
+            status == HttpStatusCode.MovedPermanently ||
+            status == HttpStatusCode.Redirect ||
+            status == HttpStatusCode.SeeOther ||
+            status == HttpStatusCode.TemporaryRedirect ||
+            status == HttpStatusCode.PermanentRedirect;
+
+        /*
+         * Returns the raw Location header value when the typed property refuses to parse it,
+         * which happens for some relative locations real servers emit.
+         */
+        static Uri GetRawLocation(HttpResponseMessage response) =>
+            response.Headers.TryGetValues("Location", out var raw) &&
+            raw.Any() &&
+            Uri.TryCreate(raw.First(), UriKind.RelativeOrAbsolute, out var result) ?
+                result : null;
+
+        /*
+         * Creates the request for the next redirect hop, preserving the method and payload for
+         * 307/308, switching to a plain GET for everything else, and never carrying the bearer
+         * token nor content headers to a hop where they no longer apply.
+         */
+        static HttpRequestMessage CreateRedirectRequest(
+            HttpMethod method,
+            Uri previous,
+            Dictionary<string, string> headers,
+            Uri target,
+            HttpStatusCode status)
+        {
+            var preserve = status == HttpStatusCode.TemporaryRedirect || status == HttpStatusCode.PermanentRedirect;
+            var newMethod = preserve || method == HttpMethod.Get || method == HttpMethod.Delete ?
+                method : HttpMethod.Get;
+            var bodyless = newMethod == HttpMethod.Get || newMethod == HttpMethod.Delete;
+
+            // Stripping headers that cannot decorate the next hop.
+            var filtered = new Dictionary<string, string>();
+            foreach (var idx in headers)
+            {
+                // The platform does not carry the bearer token to a different host, and neither do we.
+                if (idx.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase) &&
+                    !target.GetLeftPart(UriPartial.Authority).Equals(previous.GetLeftPart(UriPartial.Authority), StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                // Content headers cannot decorate a request without a body.
+                if (bodyless && CONTENT_HEADERS.Contains(idx.Key))
+                    continue;
+
+                filtered[idx.Key] = idx.Value;
+            }
+
+            var request = new HttpRequestMessage(newMethod, target);
+            AddRequestHeaders(filtered, newMethod, request);
+            return request;
+        }
+
+        /*
+         * Verifies an URL against the whitelist in scope, re-checking the pin the same way the
+         * signaler did, so both the substituted first URL and every redirect hop stays inside the
+         * vocabulary granted to the caller.
+         */
+        static void VerifyUrl(ISignaler signaler, string slot, Uri url)
+        {
+            var whitelist = signaler.Peek<List<Node>>("whitelist");
+            if (whitelist == null)
+                return;
+
+            if (!whitelist.Any(x =>
+                x.Name == slot &&
+                (x.Value == null || UrlWhitelistComparer.Matches(x.Get<string>(), url.ToString()))))
+                throw new HyperlambdaException($"Slot [{slot}] is not allowed to access '{url}' in current scope");
         }
 
         /*

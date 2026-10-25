@@ -144,32 +144,14 @@ try
             yield
             auth.ticket.get
             auth.ticket.in-role
-            auth.ticket.verify
-            auth.token.verify
-            crypto.aes.decrypt
-            crypto.aes.encrypt
-            crypto.decrypt
-            crypto.encrypt
-            crypto.fingerprint
-            crypto.get-key
             crypto.hash
             crypto.hash.md5
             crypto.hash.sha1
             crypto.hash.sha256
             crypto.hash.sha384
             crypto.hash.sha512
-            crypto.password.hash
-            crypto.password.verify
             crypto.random
             crypto.random.int
-            crypto.rsa.create-key
-            crypto.rsa.decrypt
-            crypto.rsa.encrypt
-            crypto.rsa.sign
-            crypto.rsa.verify
-            crypto.seed
-            crypto.sign
-            crypto.verify
             date.format
             date.from-unix
             date.max
@@ -177,7 +159,6 @@ try
             date.now
             date.unix
             guid.new
-            http.delete
             http.get
             math.abs
             math.add
@@ -198,7 +179,6 @@ try
             math.subtract
             mime.create
             mime.parse
-            openai.tokenize
             request.cookies.get
             request.cookies.list
             request.headers.get

@@ -21,6 +21,10 @@ namespace magic.node.extensions
         /// <returns>True if the candidate matches the pattern.</returns>
         public static bool Matches(string pattern, string candidate)
         {
+            // A slot invoked without a value produces a null candidate, which simply doesn't match.
+            if (candidate == null)
+                return false;
+
             /*
              * A wildcard is only legal as the LAST character. Anything else is refused rather than
              * compared literally, since a pattern we don't implement would otherwise silently match
