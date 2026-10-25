@@ -67,9 +67,9 @@ Install the `mcp` plugin, point Claude Code, Cowork, or OpenAI's Codex at your c
 
 ## Performance
 
-On a Chinook read endpoint (10 rows per request, pooled SQLite connections, 128 concurrent connections, measured with [wrk](https://github.com/wg/wrk)), Hyperlambda served **64,664 requests per second**, **3.7× the throughput of FastAPI with 4 workers** (17,686) and **14× that of FastAPI with 1 worker** (4,564). The 99th percentile latency was **5.6 ms**, against 77.4 ms and 83.9 ms for FastAPI. Hyperlambda used about 9 cores and FastAPI with 4 workers about 4.6, so this is a measurement of throughput on one machine, not of efficiency per core. The full harness is in [`bench/hl-vs-python`](bench/hl-vs-python).
+On a Chinook read endpoint (10 rows per request, pooled SQLite connections, 128 concurrent connections, measured with [wrk](https://github.com/wg/wrk)), Hyperlambda served **64,664 requests per second**, **3.7× the throughput of FastAPI with 4 workers** (17,686) and **14× that of FastAPI with 1 worker** (4,564). The 99th percentile latency was **5.6 ms**, against 77.4 ms and 83.9 ms for FastAPI. Hyperlambda used about 9 cores and FastAPI with 4 workers about 4.6, so this is a measurement of throughput on one machine, not of efficiency per core.
 
-![Chinook Artist read: Hyperlambda versus FastAPI](bench/hl-vs-python/results-hl-vs-fastapi-128.png)
+![Chinook Artist read: Hyperlambda versus FastAPI](images/hyperlambda-vs-fastapi.png)
 
 Our earlier measurements put Hyperlambda around **50× faster than LangChain**, and **100–1,000× faster than** graphical workflow tools such as n8n, Zapier and Make, because it runs a real compiled runtime instead of interpreting logic out of JSON, XML or YAML. Hyperlambda solutions are broadly on par with C# and Entity Framework on both performance and scalability.
 
