@@ -57,7 +57,7 @@ Combined with the ability to restrict the vocabulary, this lets you ship AI agen
 
 Hyperlambda runs sandboxed, with no file system access outside its sandbox, and can **whitelist individual functions** through its RBAC system — so your server can accept code as input and execute it safely without knowing where it came from. Restricting invocations at the *execution* level makes Hyperlambda, as far as we know, the only language that currently does this.
 
-> I'm so confident in the codebase quality, I'll give you **$100** if you can find a severe security-related bug in its backend code — and another **$100** if you can exploit the [natural language API](https://ainiro.io/natural-language-api), which has accepted arbitrary public input for 3 months with nobody succeeding.
+> I'm so confident in the codebase quality, I'll give you **$100** if you can find a severe security-related bug in its backend code — and another **$100** if you can exploit the [natural language API](https://hyperlambda.dev/natural-language-api), which has accepted arbitrary public input for 3 months with nobody succeeding.
 
 ## MCP support — and an 80% token saving
 
@@ -67,9 +67,11 @@ Install the `mcp` plugin, point Claude Code, Cowork, or OpenAI's Codex at your c
 
 ## Performance
 
-In our measurements Hyperlambda is roughly **20× faster than FastAPI or Flask**, around **50× faster than LangChain**, and **100–1,000× faster than** graphical workflow tools such as n8n, Zapier and Make — because it runs a real compiled runtime instead of interpreting logic out of JSON, XML or YAML. Hyperlambda solutions are broadly on par with C# and Entity Framework on both performance and scalability.
+On a Chinook read endpoint (10 rows per request, pooled SQLite connections, 128 concurrent connections, measured with [wrk](https://github.com/wg/wrk)), Hyperlambda served **64,664 requests per second**, **3.7× the throughput of FastAPI with 4 workers** (17,686) and **14× that of FastAPI with 1 worker** (4,564). The 99th percentile latency was **5.6 ms**, against 77.4 ms and 83.9 ms for FastAPI. Hyperlambda used about 9 cores and FastAPI with 4 workers about 4.6, so this is a measurement of throughput on one machine, not of efficiency per core. The full harness is in [`bench/hl-vs-python`](bench/hl-vs-python).
 
-![Python versus Hyperlambda](https://raw.githubusercontent.com/polterguy/polterguy.github.io/master/images/hyperlambda-performance.png)
+![Chinook Artist read: Hyperlambda versus FastAPI](bench/hl-vs-python/results-hl-vs-fastapi-128.png)
+
+Our earlier measurements put Hyperlambda around **50× faster than LangChain**, and **100–1,000× faster than** graphical workflow tools such as n8n, Zapier and Make, because it runs a real compiled runtime instead of interpreting logic out of JSON, XML or YAML. Hyperlambda solutions are broadly on par with C# and Entity Framework on both performance and scalability.
 
 ## The dashboard
 
