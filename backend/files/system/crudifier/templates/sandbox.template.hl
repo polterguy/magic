@@ -24,7 +24,7 @@
    // A plain-language description of what you want done, turned into Hyperlambda for you.
    instruction:string
 
-   // Hyperlambda to execute as-is inside the sandbox.
+   // Hyperlambda to execute as-is inside the sandbox, at most [max-hyperlambda] characters.
    hyperlambda:string
 
    // When true, returns your visible vocabulary instead of executing [instruction]/[hyperlambda].
@@ -43,6 +43,7 @@
    return-code:bool:false
    generator-url:"https://ainiro.io/magic/modules/hyperlambda-generator/chat"
    throttle-prefix:sandbox
+   max-hyperlambda:int:4000
    rules
 
 // Result fields.
@@ -270,6 +271,10 @@ else-if
       neq:x:@.arguments/*/hyperlambda
          .:
    .lambda
+
+      // Rejecting oversized code up front, before anything is parsed or executed.
+      validators.string:x:@.arguments/*/hyperlambda
+         max:x:@.policy/*/max-hyperlambda
       set-value:x:@.code
          get-value:x:@.arguments/*/hyperlambda
 else

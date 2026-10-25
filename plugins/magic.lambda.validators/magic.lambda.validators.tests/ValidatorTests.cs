@@ -4,9 +4,12 @@
 
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 using magic.node;
 using magic.node.extensions;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.lambda.validators.tests
 {
@@ -374,5 +377,60 @@ validators.default:x:@.arguments
             Assert.Equal("foo1", result.Children.First().Children.First().Name);
             Assert.Equal("foo2", result.Children.First().Children.Skip(1).First().Name);
         }
+
+        [Fact]
+        public async Task VerifyRegex_Timeout_01()
+        {
+            var exception = await Assert.ThrowsAsync<HyperlambdaException>(async () =>
+                await EvaluateWithDeadline(@"
+.pat:(a+)+$
+.foo:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaab
+validators.regex:x:@.foo
+   regex:x:@.pat
+", TimeSpan.FromMilliseconds(50)));
+
+            Assert.Contains("timed out", exception.Message);
+        }
+
+        [Fact]
+        public async Task VerifyRegex_WithinDeadline_01()
+        {
+            await EvaluateWithDeadline(@"
+.pat:han[0-9]*sen
+.foo:thomas han0123sen
+validators.regex:x:@.foo
+   regex:x:@.pat
+", TimeSpan.FromSeconds(5));
+        }
+
+        [Fact]
+        public void VerifyRegex_Error_Truncated()
+        {
+            var signaler = Common.Initialize();
+            var args = new Node("", new string('a', 5000), new Node[] { new Node("regex", "nomatch") });
+
+            var ex = Assert.Throws<HyperlambdaException>(() => signaler.Signal("validators.regex", args));
+
+            Assert.Contains("\u2026", ex.Message);
+            Assert.True(ex.Message.Length < 200);
+        }
+
+        #region [ -- Private helper methods -- ]
+
+        static async Task<Node> EvaluateWithDeadline(string hl, TimeSpan deadline)
+        {
+            var signaler = Common.Initialize();
+            var lambda = HyperlambdaParser.Parse(hl);
+            var context = new magic.signals.contracts.ExecutionContext("regex-timeout-test", new CancellationTokenSource());
+            context.TrySetTimeout(deadline);
+
+            await signaler.ScopeAsync("execution.context", context, async () =>
+            {
+                await signaler.SignalAsync("eval", lambda);
+            });
+            return lambda;
+        }
+
+        #endregion
     }
 }

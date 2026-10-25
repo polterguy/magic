@@ -18,7 +18,7 @@ namespace magic.lambda.strings.replace
     /// </summary>
     [Slot(
         Name = "strings.regex-replace",
-        Description = "Replaces text using a regular expression",
+        Description = "Replaces text using a regular expression, bounded by the execution deadline when set",
         ValueKind = "text",
         ValueDescription = "Text to transform",
         ValueRequired = true,
@@ -45,8 +45,15 @@ namespace magic.lambda.strings.replace
             var what = input.Children.First().GetEx<string>();
             var with = input.Children.Skip(1).First().GetEx<string>();
 
-            // Substituting.
-            input.Value = Regex.Replace(original, what, with, RegexOptions.Multiline);
+            // Substituting, bounded by the execution deadline when one is configured.
+            try
+            {
+                input.Value = Regex.Replace(original, what, with, RegexOptions.Multiline, RegexHelpers.MatchTimeout(signaler));
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                throw RegexHelpers.OnTimeout();
+            }
 
             // House cleaning.
             input.Clear();

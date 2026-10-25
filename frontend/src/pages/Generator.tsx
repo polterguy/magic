@@ -1147,24 +1147,43 @@ function SqlEndpointTab() {
  * The base vocabulary mirrors the public Natural Language API's whitelist, minus the
  * database and HTTP slots — those are handed out per role instead. It is only a
  * starting point; the creator edits it freely.
+ *
+ * [while] is deliberately absent: loops multiply whatever is inside them, and with
+ * the 15000-iteration cap a nested loop can allocate gigabytes before the sandbox
+ * timeout stops it. Give loops out per role only where they are actually needed.
+ *
+ * [sleep] is deliberately absent too: each invocation holds its request thread, so
+ * an attacker who can spoof rate-limit keys can park unbounded threads at the cost
+ * of one cheap request each. Grant it per role only where it is actually needed.
+ *
+ * The YAML slots ([yaml2lambda], [yaml2json], [json2yaml] and [lambda2yaml]) are
+ * deliberately absent: YAML anchors and aliases let a few dozen characters expand
+ * exponentially while parsing, and YamlDotNet applies no cap - a 4 KB payload can
+ * materialize gigabytes and kill the process. JSON parsing is immune; grant YAML per
+ * role only where untrusted callers cannot reach it.
+ *
+ * [crypto.password.verify] is deliberately absent too: the bcrypt cost factor comes
+ * from the hash string the caller supplies, so a fabricated hash can burn hours of
+ * uncancellable CPU per request. [crypto.password.hash] stays, since its cost is
+ * server-chosen.
  */
 const DEFAULT_BASE_SLOTS = [
   'add', 'and', 'apply', 'case', 'compose', 'convert', 'csv2lambda', 'default',
   'else', 'else-if', 'eq', 'exists', 'floatArray2bytes', 'for-each', 'format',
   'get-count', 'get-first-value', 'get-name', 'get-nodes', 'get-value', 'html-decode',
   'html2lambda', 'html2markdown', 'hyper2lambda', 'if', 'include',
-  'insert-after', 'insert-before', 'int2words', 'json2lambda', 'json2yaml',
+  'insert-after', 'insert-before', 'int2words', 'json2lambda',
   'lambda2csv', 'lambda2html', 'lambda2hyper', 'lambda2json', 'lambda2xml',
-  'lambda2yaml', 'lt', 'lte', 'markdown2html', 'mt', 'mte', 'neq', 'not',
+  'lt', 'lte', 'markdown2html', 'mt', 'mte', 'neq', 'not',
   'not-exists', 'not-null', 'null', 'or', 'reference', 'remove-nodes',
   'return', 'return-nodes', 'return-value', 'set-name', 'set-value',
-  'set-x', 'sleep', 'sort', 'switch', 'throw', 'time', 'try', 'type', 'types',
-  'unwrap', 'vocabulary', 'while', 'xml2lambda', 'yaml2json',
-  'yaml2lambda', 'yield',
+  'set-x', 'sort', 'switch', 'throw', 'time', 'try', 'type', 'types',
+  'unwrap', 'vocabulary', 'xml2lambda',
+  'yield',
   'auth.ticket.get', 'auth.ticket.in-role',
   'crypto.hash', 'crypto.hash.md5',
   'crypto.hash.sha1', 'crypto.hash.sha256', 'crypto.hash.sha384', 'crypto.hash.sha512',
-  'crypto.password.hash', 'crypto.password.verify', 'crypto.random', 'crypto.random.int',
+  'crypto.password.hash', 'crypto.random', 'crypto.random.int',
   'date.format', 'date.from-unix', 'date.max', 'date.min', 'date.now', 'date.unix',
   'guid.new',
   'math.abs', 'math.add', 'math.ceil', 'math.cos', 'math.decrement', 'math.divide',
@@ -2109,6 +2128,8 @@ function SandboxTab() {
   const [inputMode, setInputMode] = useState('both');
   const [overrideRoot, setOverrideRoot] = useState(true);
   const [returnCode, setReturnCode] = useState(false);
+  // Maximum characters accepted in [hyperlambda]; blank or non-numeric keeps the backend default.
+  const [maxHyperlambda, setMaxHyperlambda] = useState('4000');
   const [overwrite, setOverwrite] = useState(false);
   // Who may call the endpoint at all — empty means public.
   const [roles, setRoles] = useState<string[]>([]);
@@ -2179,7 +2200,12 @@ function SandboxTab() {
         slots: linesToSlots(baseSlots),
       },
     ];
-    const policy = { overrideRoot, returnCode, rules };
+    const policy: any = { overrideRoot, returnCode, rules };
+    // The hyperlambda length cap only applies when the endpoint accepts it; blank keeps the template default.
+    const maxHl = Number(maxHyperlambda);
+    if (inputMode !== 'nl' && Number.isFinite(maxHl) && maxHl > 0) {
+      policy.maxHyperlambda = maxHl;
+    }
     setBusy(true);
     try {
       const response = await generateSandboxEndpoint({
@@ -2241,25 +2267,35 @@ function SandboxTab() {
       </div>
       <div className="toolbar">
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="When on, a root caller runs with the server's full vocabulary and no sandbox">
+          Root bypasses the sandbox
           <input
             type="checkbox"
             checked={overrideRoot}
             onChange={e => setOverrideRoot(e.target.checked)} />
-          Root bypasses the sandbox
         </label>
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="When on, the response includes the executed code; otherwise it returns only state and result">
+          Return code
           <input
             type="checkbox"
             checked={returnCode}
             onChange={e => setReturnCode(e.target.checked)} />
-          Return code
         </label>
+        {inputMode !== 'nl' && (
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Maximum characters accepted in [hyperlambda] — longer code is rejected with a 400 before anything is parsed or executed">
+            Max Hyperlambda length
+            <input
+              type="number"
+              value={maxHyperlambda}
+              onChange={e => setMaxHyperlambda(e.target.value)}
+              style={{ width: 90 }} />
+          </label>
+        )}
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          Overwrite
           <input
             type="checkbox"
             checked={overwrite}
             onChange={e => setOverwrite(e.target.checked)} />
-          Overwrite
         </label>
       </div>
       {/* Who may call the endpoint at all — empty leaves it public. */}

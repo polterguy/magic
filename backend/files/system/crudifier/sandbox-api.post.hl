@@ -12,6 +12,7 @@
  *   {
  *     "timeout": 20000,
  *     "overrideRoot": true,
+ *     "maxHyperlambda": 4000,
  *     "generatorUrl": "https://ainiro.io/magic/modules/hyperlambda-generator/chat",
  *     "rules": [
  *       { "role": "*", "limit": 10, "window": 60,
@@ -101,6 +102,14 @@ if
    .lambda
       set-value:x:@.endpoint/*/.policy/*/generator-url
          get-value:x:@json2lambda/*/generatorUrl
+if
+   and
+      not-null:x:@json2lambda/*/maxHyperlambda
+      neq:x:@json2lambda/*/maxHyperlambda
+         .:
+   .lambda
+      set-value:x:@.endpoint/*/.policy/*/max-hyperlambda
+         get-value:x:@json2lambda/*/maxHyperlambda
 
 // A throttle prefix unique to this endpoint, so its rate limiter is not shared.
 set-value:x:@.endpoint/*/.policy/*/throttle-prefix

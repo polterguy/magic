@@ -36,11 +36,18 @@ namespace magic.lambda.validators.validators
             Enumerator.Enumerate<string>(input, (value, name) =>
             {
                 if (value.Length < min || value.Length > max)
+                {
+                    /*
+                     * Never echoing the whole value - a caller can legally send megabytes, and the
+                     * message is returned to the caller, logged, and captured by exception handlers.
+                     */
+                    var shown = value.Length > 50 ? value[..50] + "\u2026" : value;
                     throw new HyperlambdaException(
-                        $"'{value}' is not a valid string between {min} and {max} in length for [{name}]",
+                        $"'{shown}' is not a valid string between {min} and {max} in length for [{name}]",
                         true,
                         400,
                         name);
+                }
             });
         }
     }

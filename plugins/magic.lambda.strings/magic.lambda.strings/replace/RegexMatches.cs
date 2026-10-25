@@ -17,7 +17,7 @@ namespace magic.lambda.strings.replace
     /// </summary>
     [Slot(
         Name = "strings.matches",
-        Description = "Returns regular expression matches",
+        Description = "Returns regular expression matches, bounded by the execution deadline when set",
         ValueKind = "text",
         ValueDescription = "Text to match against the regular expression",
         ValueRequired = true,
@@ -50,11 +50,18 @@ namespace magic.lambda.strings.replace
             input.Clear();
             input.Value = null;
 
-            // Retrieving matches.
-            var ex = new Regex(regex);
-            foreach (Match idx in ex.Matches(source))
+            // Retrieving matches, bounded by the execution deadline when one is configured.
+            var ex = new Regex(regex, RegexOptions.None, RegexHelpers.MatchTimeout(signaler));
+            try
             {
-                input.Add(new Node(".", idx.Value));
+                foreach (Match idx in ex.Matches(source))
+                {
+                    input.Add(new Node(".", idx.Value));
+                }
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                throw RegexHelpers.OnTimeout();
             }
         }
 

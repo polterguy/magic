@@ -53,7 +53,7 @@ namespace magic.lambda.strings.tests
 
         #region [ -- Private helper methods -- ]
 
-        static IServiceProvider Initialize()
+        static internal IServiceProvider Initialize()
         {
             var services = new ServiceCollection();
             services.AddTransient<ISignaler, Signaler>();
