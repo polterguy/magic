@@ -155,11 +155,19 @@ cache.try-get:x:@strings.concat
 
          .catch
 
-            // Skipping database we cannot enumerate, logging why.
+            /*
+             * Skipping database we cannot enumerate, logging why. Only marking it here,
+             * since [for-each] enumerates [.result] lazily, and removing the current node
+             * mid-iteration throws "Collection was modified" and fails the whole endpoint.
+             */
             log.info:Could not enumerate database
                database:x:@.dp/#/*/name
                error:x:@.arguments/*/message
-            remove-nodes:x:@.dp/#
+            set-name:x:@.dp/#
+               .:failed
+
+      // Removing databases we could not enumerate, now that we are done iterating.
+      remove-nodes:x:@.result/*/failed
 
       // Returning database to caller.
       lambda2hyper:x:@.result/*

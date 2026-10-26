@@ -40,6 +40,9 @@ for-each:x:@.words/*
 // Specify which columns to search against.
 .columns
 
+// Row level security, set by the generator when columns are locked, e.g. ' where "user" = @lk0'.
+.where:" "
+
 // Database type this endpoint was generated for, deciding how the non-portable parts are spelled.
 .database-type:{database-type}
 
@@ -241,6 +244,7 @@ data.connect:{database}
          get-value:x:@.matches
          .:") as keyword_count from "
          .:{escaped-table}
+         get-value:x:@.where
          .:") magic_search where keyword_count > 0 order by keyword_count desc, keyword_density desc"
          get-value:x:@.paging
 

@@ -332,10 +332,9 @@ semaphore:crudifier
                strings.concat
                   .:@
                   get-value:x:@.dp/#/*/locked
-            convert:x:@.x
-               type:x
             set-x:x:+/+/*/1
-               get-value:x:@convert
+               convert:x:@.x
+                  type:x
             set-name:x:+/*/1
                strings.concat
                   get-value:x:@.dp/#/*/name
@@ -738,10 +737,9 @@ semaphore:crudifier
                strings.concat
                   .:@
                   get-value:x:@.dp/#/*/locked
-            convert:x:@.x
-               type:x
             set-x:x:+/+/*/1
-               get-value:x:@convert
+               convert:x:@.x
+                  type:x
             set-name:x:+/*/1
                strings.concat
                   get-value:x:@.dp/#/*/name
@@ -815,10 +813,9 @@ semaphore:crudifier
                strings.concat
                   .:@
                   get-value:x:@.dp/#/*/locked
-            convert:x:@.x
-               type:x
             set-x:x:+/+/*/1
-               get-value:x:@convert
+               convert:x:@.x
+                  type:x
             set-name:x:+/*/1
                get-value:x:@.dp/#/*/name
             add:x:@apply/*/data.connect/*/data.create/*/values
@@ -989,10 +986,9 @@ semaphore:crudifier
                strings.concat
                   .:@
                   get-value:x:@.dp/#/*/locked
-            convert:x:@.x
-               type:x
             set-x:x:+/+/*/1
-               get-value:x:@convert
+               convert:x:@.x
+                  type:x
             set-name:x:+/*/1
                strings.concat
                   get-value:x:@.dp/#/*/name
@@ -1923,6 +1919,55 @@ semaphore:crudifier
                         add:x:@apply/*/.columns
                            .
                               .:x:@strings.concat
+
+               /*
+                * Row level security. Every locked column narrows the rows the search can see,
+                * as it does in the other endpoints. The caller's lock value is passed as an SQL
+                * parameter, and the WHERE referencing it is written into the template's [.where].
+                */
+               .lock-no:int:0
+               .lock-where
+               for-each:x:@.arguments/*/args/*/columns/*/*/locked/.
+                  set-name:x:+/*/1
+                     get-value:x:@.dp/#/*/locked
+                  insert-before:x:@apply/*/data.connect/-
+                     .
+                        ..:Making sure we retrieve lock value for column.
+                        .
+                  .x
+                  set-value:x:@.x
+                     strings.concat
+                        .:@
+                        get-value:x:@.dp/#/*/locked
+                  set-x:x:+/+/*/0
+                     convert:x:@.x
+                        type:x
+                  set-name:x:+/*/0
+                     strings.concat
+                        .:@lk
+                        get-value:x:@.lock-no
+                  add:x:@apply/*/data.connect/*/data.select
+                     .
+                        .
+                  strings.concat
+                     get-value:x:@.escape
+                     strings.replace:x:@.dp/#/*/name
+                        get-value:x:@.escape
+                        get-value:x:@.escape-doubled
+                     get-value:x:@.escape
+                     .:" = @lk"
+                     get-value:x:@.lock-no
+                  unwrap:x:+/*/*
+                  add:x:@.lock-where
+                     .
+                        .:x:@strings.concat
+                  math.increment:x:@.lock-no
+               if:x:@.lock-where/*
+                  set-value:x:@apply/*/.where
+                     strings.concat
+                        .:" where "
+                        strings.join:x:@.lock-where/*
+                           .:" and "
 
                // Verifying we've actually got columns.
                if:x:@.has-columns

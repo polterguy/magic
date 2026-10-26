@@ -35,6 +35,39 @@ import {
 } from '../lib/api';
 
 /*
+ * A locked column holds its row's owner: crudify removes it from the endpoint's
+ * arguments and output, fills it in on create, and adds it to the WHERE of
+ * every read, update and delete. 'username' locks to the caller's username,
+ * 'custom' to whatever the named slot returns (a tenant id, for instance).
+ */
+interface ColumnLock {
+  mode: 'none' | 'username' | 'custom';
+  slot: string;
+}
+
+// What a string column named user or username gets unless the author says otherwise.
+function defaultLock(column: any): ColumnLock {
+  return (column.name === 'user' || column.name === 'username') && column.hl === 'string'
+    ? { mode: 'username', slot: '' }
+    : { mode: 'none', slot: '' };
+}
+
+/*
+ * Primary keys are never lockable: they are what identifies the row in PUT and
+ * DELETE, so locking one would silently drop the lock from both.
+ */
+function resolveLocks(chosen: Record<string, ColumnLock> | undefined, table: any) {
+  const locks: Record<string, string> = {};
+  for (const column of table.columns ?? []) {
+    const lock = chosen?.[column.name] ?? defaultLock(column);
+    locks[column.name] = column.primary ? ''
+      : lock.mode === 'username' ? 'auth.ticket.get'
+        : lock.mode === 'custom' ? lock.slot.trim() : '';
+  }
+  return locks;
+}
+
+/*
  * Builds the per-verb crudify payload the way the old dashboard's
  * transform-model service does.
  */
@@ -67,6 +100,8 @@ function buildCrudifyPayload(
     live?: boolean;
     liveAudience?: string;
     liveValues?: string;
+    // Column name -> slot its value is locked to ('' = not locked), see resolveLocks().
+    locks: Record<string, string>;
   }) {
 
   // Old dashboard's per-column verb defaults.
@@ -80,8 +115,8 @@ function buildCrudifyPayload(
     decorated.get = true;
     decorated.put = !column.automatic || column.primary;
     decorated.delete = column.primary;
-    if ((column.name === 'user' || column.name === 'username') && column.hl === 'string') {
-      decorated.locked = 'auth.ticket.get';
+    if (options.locks[column.name]) {
+      decorated.locked = options.locks[column.name];
     }
     if (name === 'picture' || name === 'image' || name === 'photo') {
       decorated.handling = 'image';
@@ -344,6 +379,8 @@ function CrudTab(props: { guided: boolean }) {
   const [cache, setCache] = useState('0');
   const [publicCache, setPublicCache] = useState(false);
   const [overwrite, setOverwrite] = useState(false);
+  // Table -> column -> the lock the author chose, only where it differs from defaultLock().
+  const [locks, setLocks] = useState<Record<string, Record<string, ColumnLock>>>({});
   const [live, setLive] = useState(false);
   const [liveAudience, setLiveAudience] = useState('inherited');
   const [liveValues, setLiveValues] = useState('');
@@ -380,6 +417,7 @@ function CrudTab(props: { guided: boolean }) {
       ? new Set<string>((selection.selectedMeta?.tables ?? []).map((table: any) => table.name))
       : new Set<string>());
     setExpandedTables(new Set());
+    setLocks({});
     setModuleName(selection.database);
   }, [selection.database, selection.selectedMeta, props.guided]);
 
@@ -415,7 +453,8 @@ function CrudTab(props: { guided: boolean }) {
         const payload = buildCrudifyPayload(
           selection.type, selection.connectionString, selection.database, table, verb,
           { ...options, auth, logging, cache: Number(cache), publicCache, overwrite,
-            paging, sorting, verbose, moduleName, moduleUrl: null });
+            paging, sorting, verbose, moduleName, moduleUrl: null,
+            locks: resolveLocks(locks[table.name], table) });
         if (canGenerate(payload, verb)) {
           total += endpointsForVerb(verb, options);
         }
@@ -424,7 +463,7 @@ function CrudTab(props: { guided: boolean }) {
     return total;
   }, [tables, selectedTables, verbs, aggregate, distinct, search, selection.type,
       selection.connectionString, selection.database, auth, logging, cache, publicCache,
-      overwrite, paging, sorting, verbose, moduleName]);
+      overwrite, paging, sorting, verbose, moduleName, locks]);
 
   function toggleExpanded(name: string) {
     const next = new Set(expandedTables);
@@ -434,6 +473,10 @@ function CrudTab(props: { guided: boolean }) {
       next.add(name);
     }
     setExpandedTables(next);
+  }
+
+  function setColumnLock(table: string, column: string, lock: ColumnLock) {
+    setLocks({ ...locks, [table]: { ...locks[table], [column]: lock } });
   }
 
   function toggleVerb(verb: string) {
@@ -465,6 +508,15 @@ function CrudTab(props: { guided: boolean }) {
     if (targets.length === 0 || active.length === 0) {
       showToast('Select at least one table and one verb', true);
       return;
+    }
+    for (const table of targets) {
+      const blank = (table.columns ?? []).find((column: any) =>
+        !column.primary && locks[table.name]?.[column.name]?.mode === 'custom'
+          && !locks[table.name][column.name].slot.trim());
+      if (blank) {
+        showToast('Enter the slot ' + table.name + '.' + blank.name + ' is locked to', true);
+        return;
+      }
     }
     if (live && liveAudience !== 'inherited' && !liveValues.trim()) {
       showToast('Enter who should be notified, or choose the endpoint\'s own roles', true);
@@ -518,7 +570,8 @@ function CrudTab(props: { guided: boolean }) {
         step++;
         setProgressText(step + ' of ' + total);
         const payload = buildCrudifyPayload(
-          selection.type, selection.connectionString, selection.database, table, verb, options);
+          selection.type, selection.connectionString, selection.database, table, verb,
+          { ...options, locks: resolveLocks(locks[table.name], table) });
         if (!canGenerate(payload, verb)) {
           // Surfacing what used to be silently skipped — the answer to "why
           // did I get fewer endpoints than tables × verbs?".
@@ -676,7 +729,9 @@ function CrudTab(props: { guided: boolean }) {
                         * cell padding + the expand chevron and its gap.
                         */}
                       <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
-                        {(table.columns ?? []).map((column: any) => (
+                        {(table.columns ?? []).map((column: any) => {
+                          const lock = locks[table.name]?.[column.name] ?? defaultLock(column);
+                          return (
                           <div
                             key={column.name}
                             style={{
@@ -685,6 +740,8 @@ function CrudTab(props: { guided: boolean }) {
                               gap: 8,
                               padding: '3px 0',
                               fontSize: 13,
+                              // The lock controls drop to their own line when the row is too narrow for them.
+                              flexWrap: 'wrap',
                             }}>
                             <span className="mono">{column.name}</span>
                             <span className="muted">{column.db}</span>
@@ -697,8 +754,39 @@ function CrudTab(props: { guided: boolean }) {
                               </span>
                             )}
                             {column.nullable && <span className="muted">nullable</span>}
+                            {/*
+                              * Primary keys identify the row in PUT and DELETE, so they cannot
+                              * be locked. Every other column can hold its row's owner.
+                              */}
+                            {!column.primary && (
+                              <span style={{
+                                marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8,
+                              }}>
+                                <span className="muted" style={{ whiteSpace: 'nowrap' }}>Lock to</span>
+                                <Select
+                                  value={lock.mode}
+                                  onChange={value => setColumnLock(table.name, column.name, {
+                                    mode: value as ColumnLock['mode'], slot: lock.slot,
+                                  })}>
+                                  <option value="none">Not locked</option>
+                                  <option value="username">Current username</option>
+                                  <option value="custom">Custom slot…</option>
+                                </Select>
+                                {lock.mode === 'custom' && (
+                                  <input
+                                    type="text"
+                                    placeholder="slot name"
+                                    style={{ minWidth: 160 }}
+                                    value={lock.slot}
+                                    onChange={e => setColumnLock(table.name, column.name, {
+                                      mode: 'custom', slot: e.target.value,
+                                    })} />
+                                )}
+                              </span>
+                            )}
                           </div>
-                        ))}
+                          );
+                        })}
                       </td>
                     </tr>
                   )}
