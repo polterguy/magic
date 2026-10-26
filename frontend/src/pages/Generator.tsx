@@ -868,14 +868,12 @@ function CrudTab(props: { guided: boolean }) {
                 <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
                     <span>Notify</span>
-                    <select
-                      value={liveAudience}
-                      onChange={e => setLiveAudience(e.target.value)}>
+                    <Select value={liveAudience} onChange={value => setLiveAudience(value)}>
                       <option value="inherited">The endpoint's own roles</option>
                       <option value="roles">Roles</option>
                       <option value="groups">Groups</option>
                       <option value="users">Users</option>
-                    </select>
+                    </Select>
                     {liveAudience !== 'inherited' && (
                       <input
                         type="text"
