@@ -9,7 +9,6 @@ using System.Linq;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using magic.node;
-using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
 
@@ -32,17 +31,6 @@ namespace magic.lambda.pdf
         SignatureType = typeof(global::magic.lambda.pdf.signatures.Pdf2TextSignature))]
     public class Pdf2Text : ISlot
     {
-        readonly IRootResolver _rootResolver;
-
-        /// <summary>
-        /// Creates an instance of your type
-        /// </summary>
-        /// <param name="rootResolver">Needed to resolve root folder of cloudlet</param>
-        public Pdf2Text(IRootResolver rootResolver)
-        {
-            _rootResolver = rootResolver;
-        }
-
         /// <summary>
         /// Implementation of your slot.
         /// </summary>
@@ -54,7 +42,7 @@ namespace magic.lambda.pdf
             var preservePages = input.Children.FirstOrDefault(x => x.Name == "preserve-pages")?.GetEx<bool>() ?? false;
             input.Clear();
             if (value is string filename)
-                input.Value = ExtractFromFile(_rootResolver.AbsolutePath(filename), input, preservePages);
+                input.Value = ExtractFromFile(signaler, filename, input, preservePages);
             else if (value is Stream stream)
                 input.Value = ExtractFromStream(stream, input, preservePages);
             else if (value is byte[] bytes)
@@ -64,14 +52,15 @@ namespace magic.lambda.pdf
         #region [ -- Private helper methods -- ]
 
         /*
-         * Reads PDF file from the specified (absolute) filename.
+         * Loads the PDF through [io.file.load.binary] rather than opening it directly, so the
+         * read is subject to whatever [whitelist] is in scope - the same convention [http.post]
+         * uses for its [filename] argument. The slot throws if the file does not exist.
          */
-        static string ExtractFromFile(string filename, Node input, bool preservePages)
+        static string ExtractFromFile(ISignaler signaler, string filename, Node input, bool preservePages)
         {
-            using (var reader = new PdfReader(filename))
-            {
-                return Extract(reader, input, preservePages);
-            }
+            var file = new Node("io.file.load.binary", filename);
+            signaler.Signal("io.file.load.binary", file);
+            return ExtractFromBytes(file.Get<byte[]>(), input, preservePages);
         }
 
         /*
