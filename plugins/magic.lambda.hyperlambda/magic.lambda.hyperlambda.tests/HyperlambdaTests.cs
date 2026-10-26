@@ -541,6 +541,108 @@ try
             Assert.Empty(result.Children);
         }
 
+        [Fact]
+        public void VerifySlots_UndeclaredArgument()
+        {
+            var result = VerifySlots(@"hyper2lambda:return
+   maximum:bool:true");
+            AssertInvalidInvocation(result, "hyper2lambda", "maximum");
+        }
+
+        [Fact]
+        public void VerifySlots_DeclaredArgument()
+        {
+            var result = VerifySlots(@"hyper2lambda:return
+   comments:bool:true");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_RequiredPrimaryValue()
+        {
+            var result = VerifySlots(@"hyper2lambda
+   comments:bool:true");
+            AssertInvalidInvocation(result, "hyper2lambda", "primary (RHS) value");
+        }
+
+        [Fact]
+        public void VerifySlots_RequiredPrimaryValueExpression()
+        {
+            var result = VerifySlots(@"hyper2lambda:x:@.arguments/*/code
+   comments:bool:true");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_RequiredValueOrChildren()
+        {
+            var result = VerifySlots(@"test.value-or-children");
+            AssertInvalidInvocation(result, "test.value-or-children", "primary (RHS) value or child nodes");
+        }
+
+        [Fact]
+        public void VerifySlots_ValueOrChildrenExpression()
+        {
+            var result = VerifySlots(@"test.value-or-children:x:@.arguments/*/result");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_ValueOrChildrenLiteralChildren()
+        {
+            var result = VerifySlots(@"test.value-or-children
+   result:foo");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_DynamicArguments()
+        {
+            var result = VerifySlots(@"invoke:x:@.arguments/*/lambda
+   maximum:bool:true");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_NestedInvocationError()
+        {
+            var result = VerifySlots(@"eval
+   hyper2lambda:return
+      maximum:bool:true");
+            AssertInvalidInvocation(result, "hyper2lambda", "maximum");
+        }
+
+        [Fact]
+        public void VerifySlots_InvocationErrorAndMissingSlot()
+        {
+            var result = VerifySlots(@"hyper2lambda:return
+   maximum:bool:true
+missing.slot");
+            Assert.False(result.Get<bool>());
+            Assert.Equal(2, result.Children.Count());
+            Assert.Contains(result.Children, x => x.Name == "" && x.Get<string>() == "missing.slot");
+            AssertInvalidInvocation(result, "hyper2lambda", "maximum", 2);
+        }
+
+        static void AssertInvalidInvocation(
+            Node result,
+            string slot,
+            string detail,
+            int expectedChildren = 1)
+        {
+            Assert.False(result.Get<bool>());
+            Assert.Equal(expectedChildren, result.Children.Count());
+            Assert.Contains(result.Children, x =>
+                x.Name == "invalid-invocation" &&
+                x.Get<string>().Contains(slot, StringComparison.Ordinal) &&
+                x.Get<string>().Contains(detail, StringComparison.Ordinal));
+        }
+
         static Node VerifySlots(string hyperlambda)
         {
             var node = new Node("", hyperlambda);
@@ -589,6 +691,17 @@ foo:date:'2019-07-10T08:12:39'").Children.ToList();
             Assert.Equal(
                 DateTime.Parse("2019-07-10T08:12:39", CultureInfo.InvariantCulture).ToUniversalTime(),
                 result.First().Get<DateTime>().ToUniversalTime());
+        }
+    }
+
+    [Slot(
+        Name = "test.value-or-children",
+        ValueOrChildrenRequired = true,
+        ValueMode = SlotValueMode.ValueOrExpression)]
+    public class ValueOrChildrenTestSlot : ISlot
+    {
+        public void Signal(ISignaler signaler, Node input)
+        {
         }
     }
 }

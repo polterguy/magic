@@ -13,12 +13,13 @@ using magic.node.extensions.hyperlambda;
 namespace magic.lambda.hyperlambda
 {
     /// <summary>
-    /// [hyperlambda.verify-slots] slot, verifying that every slot referenced in EXECUTABLE
-    /// STATEMENT position of a piece of Hyperlambda actually exists as a registered slot.
+    /// [hyperlambda.verify-slots] slot, verifying slot invocations in EXECUTABLE STATEMENT
+    /// position of a piece of Hyperlambda against their registered slot metadata.
     ///
     /// Intended as a cheap static sanity check on generated Hyperlambda: a hallucinated
     /// slot (e.g. a made up "strings.reverse") is silently treated as an inert data node
     /// by the evaluator, so this slot surfaces such names before the code is executed.
+    /// It also rejects undeclared child argument names and missing mandatory primary values.
     ///
     /// SCOPE - the executable statements that are checked are the ROOT level of the supplied
     /// Hyperlambda plus the body of every body-bearing slot it encounters, resolved from slot
@@ -56,7 +57,7 @@ namespace magic.lambda.hyperlambda
         ReturnsMode = SlotReturnsMode.Both,
         ReturnsKind = "boolean",
         ReturnsElementKind = "text",
-        ReturnsDescription = "Resolves to true when every referenced slot exists, and lists the names of any non-existing slots as child nodes")]
+        ReturnsDescription = "Resolves to true when every invocation is statically valid; otherwise lists missing slot names and invalid-invocation diagnostics as child nodes")]
     public class VerifySlots : ISlot
     {
         readonly ISignalsProvider _signalProvider;
@@ -90,18 +91,20 @@ namespace magic.lambda.hyperlambda
                 : HyperlambdaParser.Parse(hyperlambda).Children.ToList();
 
             /*
-             * Walking every executable statement, collecting non-existing slot names. The
-             * cache memoizes each slot's body layout so signatures are reflected over once each.
+             * Walking every executable statement, collecting missing slots and invalid invocations.
+             * The cache memoizes each slot's metadata so signatures are reflected over once each.
              */
             var missing = new List<string>();
+            var invalid = new List<string>();
             var seen = new HashSet<string>(StringComparer.Ordinal);
             var cache = new Dictionary<string, BodyInfo>(StringComparer.Ordinal);
-            VerifyScope(lambda, slots, cache, missing, seen);
+            VerifyScope(lambda, slots, cache, missing, seen, invalid);
 
-            // Returning true when every referenced slot exists, plus the missing names as child nodes.
+            // Returning true when every invocation is valid, plus diagnostics as child nodes.
             input.Clear();
-            input.Value = missing.Count == 0;
+            input.Value = missing.Count == 0 && invalid.Count == 0;
             input.AddRange(missing.Select(x => new Node("", x)));
+            input.AddRange(invalid.Select(x => new Node("invalid-invocation", x)));
         }
 
         #region [ -- Private helper methods -- ]
@@ -115,7 +118,8 @@ namespace magic.lambda.hyperlambda
             HashSet<string> slots,
             Dictionary<string, BodyInfo> cache,
             List<string> missing,
-            HashSet<string> seen)
+            HashSet<string> seen,
+            List<string> invalid)
         {
             foreach (var node in statements)
             {
@@ -129,7 +133,7 @@ namespace magic.lambda.hyperlambda
                 if (name.Length == 0 || name[0] == '.')
                 {
                     if (name == ".lambda")
-                        VerifyScope(node.Children, slots, cache, missing, seen);
+                        VerifyScope(node.Children, slots, cache, missing, seen, invalid);
                     continue;
                 }
 
@@ -145,12 +149,13 @@ namespace magic.lambda.hyperlambda
                  * arguments are skipped.
                  */
                 var info = BodyInfoFor(name, cache);
+                VerifyInvocation(node, info, invalid);
                 foreach (var child in node.Children)
                 {
                     if (info.WrapperNames.Contains(child.Name) || info.NestedBodyNames.Contains(child.Name))
-                        VerifyScope(child.Children, slots, cache, missing, seen);
+                        VerifyScope(child.Children, slots, cache, missing, seen, invalid);
                     else if (info.HasStarBody && !info.ArgumentNames.Contains(child.Name))
-                        VerifyScope(new[] { child }, slots, cache, missing, seen);
+                        VerifyScope(new[] { child }, slots, cache, missing, seen, invalid);
                 }
 
                 /*
@@ -160,14 +165,39 @@ namespace magic.lambda.hyperlambda
                 var continuation = node.Next;
                 while (continuation != null && info.ContinuationBodyNames.Contains(continuation.Name))
                 {
-                    VerifyScope(continuation.Children, slots, cache, missing, seen);
+                    VerifyScope(continuation.Children, slots, cache, missing, seen, invalid);
                     continuation = continuation.Next;
                 }
             }
         }
 
         /*
-         * Body layout of a slot, derived from its signature:
+         * Verifies the parts of an invocation that are knowable without evaluating it.
+         * Expressions count as supplied primary values, but are deliberately not evaluated.
+         */
+        void VerifyInvocation(Node node, BodyInfo info, List<string> invalid)
+        {
+            if (info.Attribute?.ValueRequired == true && node.Value == null)
+                invalid.Add($"Slot [{node.Name}] requires a primary (RHS) value");
+            if (info.Attribute?.ValueOrChildrenRequired == true &&
+                node.Value == null &&
+                !node.Children.Any())
+            {
+                invalid.Add($"Slot [{node.Name}] requires either a primary (RHS) value or child nodes");
+            }
+
+            // Without an attached signature, the accepted child argument names are unknown.
+            if (!info.HasSignature || info.AcceptsAnyChild)
+                return;
+            foreach (var child in node.Children)
+            {
+                if (!info.ChildNames.Contains(child.Name))
+                    invalid.Add($"Slot [{node.Name}] does not accept a child argument named [{child.Name}]");
+            }
+        }
+
+        /*
+         * Body and invocation layout of a slot, derived from its metadata:
          *   - HasStarBody   : the slot declares a "*" ExecutableLambda child, so its own direct
          *                     children are executable statements.
          *   - WrapperNames         : names of NAMED ExecutableLambda children whose OWN children
@@ -180,6 +210,10 @@ namespace magic.lambda.hyperlambda
          */
         sealed class BodyInfo
         {
+            public SlotAttribute Attribute;
+            public bool HasSignature;
+            public bool AcceptsAnyChild;
+            public HashSet<string> ChildNames = new HashSet<string>(StringComparer.Ordinal);
             public bool HasStarBody;
             public HashSet<string> WrapperNames = new HashSet<string>(StringComparer.Ordinal) { ".lambda" };
             public HashSet<string> NestedBodyNames = new HashSet<string>(StringComparer.Ordinal);
@@ -209,6 +243,7 @@ namespace magic.lambda.hyperlambda
                 .GetCustomAttributes(typeof(SlotAttribute), false)
                 .Cast<SlotAttribute>()
                 .FirstOrDefault(x => x.Name == name);
+            result.Attribute = attribute;
             if (attribute?.SignatureType == null)
                 return result;
             try
@@ -220,6 +255,10 @@ namespace magic.lambda.hyperlambda
                 {
                     if (string.IsNullOrEmpty(child.Name))
                         continue;
+                    if (child.Name == "*")
+                        result.AcceptsAnyChild = true;
+                    else
+                        result.ChildNames.Add(child.Name == "." ? "" : child.Name);
 
                     /*
                      * Note that SourceContainer bodies ([add]/[insert-before]/[insert-after]/
@@ -251,6 +290,7 @@ namespace magic.lambda.hyperlambda
                     if (constraint.Kind == SlotConstraintKind.NextSiblingMustBeOneOf)
                         result.ContinuationBodyNames.UnionWith(constraint.Values);
                 }
+                result.HasSignature = true;
             }
             catch
             {

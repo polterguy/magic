@@ -16,6 +16,7 @@
  *
  * States: described (a [describe] call), executed, rejected (a function or a pinned
  * argument was not allowed), unknown-slot (a referenced function does not exist),
+ * invalid-invocation (a declared argument is misspelled or a mandatory value is absent),
  * error (the code threw), timeout (execution exceeded the configured limit),
  * generator-failed (no code came back from the Hyperlambda Generator).
  */
@@ -291,13 +292,22 @@ if
    not
       get-value:x:@hyperlambda.verify-slots
    .lambda
-      set-value:x:@.state
-         .:unknown-slot
-      set-value:x:@.reason
-         strings.concat
-            .:"The code references functions that do not exist on this server: "
-            strings.join:x:@hyperlambda.verify-slots/*
-               .:", "
+      if
+         exists:x:@hyperlambda.verify-slots/invalid-invocation
+         .lambda
+            set-value:x:@.state
+               .:invalid-invocation
+            set-value:x:@.reason
+               strings.join:x:@hyperlambda.verify-slots/invalid-invocation
+                  .:"; "
+      else
+         set-value:x:@.state
+            .:unknown-slot
+         set-value:x:@.reason
+            strings.concat
+               .:"The code references functions that do not exist on this server: "
+               strings.join:x:@hyperlambda.verify-slots/*
+                  .:", "
 else
    set-value:x:@.execute
       .:bool:true

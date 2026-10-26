@@ -4,7 +4,7 @@
  *
  * Supply the code directly as [hyperlambda], or point at an existing file with [filename]. The
  * verdict is machine checked - the code is parsed, and every slot referenced in executable position
- * is checked to actually exist on this instance.
+ * is checked against its registered existence, primary-value, and child-argument metadata.
  *
  * This is the only admissible way to conclude that Hyperlambda is broken. Hyperlambda resembles no
  * other programming language, and reading it is not sufficient grounds for reporting a defect. If
@@ -96,13 +96,22 @@ if
             set-value:x:@.result/*/valid
                .:bool:false
             for-each:x:@hyperlambda.verify-slots/*
-               strings.concat
-                  .:"Slot does not exist on this instance: "
-                  get-value:x:@.dp/#
-               unwrap:x:+/*/*
-               add:x:@.result/*/errors
-                  .
-                     .:x:@strings.concat
+               if
+                  eq
+                     get-name:x:@.dp/#
+                     .:invalid-invocation
+                  .lambda
+                     add:x:@.result/*/errors
+                        .
+                           .:x:@.dp/#
+               else
+                  strings.concat
+                     .:"Slot does not exist on this instance: "
+                     get-value:x:@.dp/#
+                  unwrap:x:+/*/*
+                  add:x:@.result/*/errors
+                     .
+                        .:x:@strings.concat
 
 // Returning verdict to caller.
 return-nodes:x:@.result/*
