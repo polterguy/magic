@@ -23,6 +23,7 @@ namespace magic.lambda.crypto.slots.misc
         SignatureType = typeof(global::magic.lambda.crypto.signatures.CryptoRandomSignature))]
     public class Random : ISlot
     {
+        const int _maxLength = 4096;
         const string _alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         /// <summary>
@@ -37,6 +38,10 @@ namespace magic.lambda.crypto.slots.misc
             var max = input.Children.FirstOrDefault(x => x.Name == "max")?.GetEx<int>() ?? (min == 10 ? 20 : min);
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
+
+            // Bounding output size before allocating, since these arguments may originate from sandboxed callers.
+            if (min < 0 || max < min || max > _maxLength)
+                throw new HyperlambdaException($"[min] and [max] must be between 0 and {_maxLength}, and [max] cannot be less than [min]");
 
             // Creating a new CSRNG, seeding it if caller provided a [seed].
             var rnd = new SecureRandom();

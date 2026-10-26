@@ -126,6 +126,48 @@ crypto.random
         }
 
         [Fact]
+        public void RandomCharacters_MaximumLength()
+        {
+            var lambda = Common.Evaluate(@"
+crypto.random
+   min:4096
+   max:4096");
+            Assert.Equal(4096, lambda.Children.First().Get<string>().Length);
+        }
+
+        [Fact]
+        public void RandomCharacters_OverMaximumLength_Throws()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+crypto.random
+   min:4097
+   max:4097"));
+        }
+
+        [Fact]
+        public void RandomBytes_OverMaximumLength_Throws()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+crypto.random
+   raw:true
+   min:4097
+   max:4097"));
+        }
+
+        [Fact]
+        public void RandomInvalidRange_Throws()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+crypto.random
+   min:-1
+   max:1"));
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+crypto.random
+   min:10
+   max:9"));
+        }
+
+        [Fact]
         public void Seed()
         {
             var lambda = Common.Evaluate(@"crypto.seed:qwertyuiop");
