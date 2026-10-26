@@ -235,6 +235,54 @@ namespace magic.lambda.scheduler.tests
             Assert.True((next - DateTime.UtcNow).TotalDays / 30 >= 4 && (next - DateTime.UtcNow).TotalDays / 30 < 6);
         }
 
+        [Fact]
+        public void ImpossibleMonthPattern_01()
+        {
+            Assert.Throws<HyperlambdaException>(() => PatternFactory.Create("02.30.12.00.00").Next());
+        }
+
+        [Fact]
+        public void ImpossibleMonthPattern_02()
+        {
+            Assert.Throws<HyperlambdaException>(() => PatternFactory.Create("02.31.12.00.00").Next());
+        }
+
+        [Fact]
+        public void OutOfRangeMonth_01()
+        {
+            Assert.Throws<HyperlambdaException>(() => PatternFactory.Create("13.01.00.00.00"));
+        }
+
+        [Fact]
+        public void OutOfRangeDay_01()
+        {
+            Assert.Throws<HyperlambdaException>(() => PatternFactory.Create("**.32.00.00.00"));
+        }
+
+        [Fact]
+        public void OutOfRangeHour_01()
+        {
+            Assert.Throws<HyperlambdaException>(() => PatternFactory.Create("**.01.24.00.00"));
+        }
+
+        [Fact]
+        public void OutOfRangeMinute_01()
+        {
+            Assert.Throws<HyperlambdaException>(() => PatternFactory.Create("**.01.23.60.00"));
+        }
+
+        [Fact]
+        public void ZeroInterval_01()
+        {
+            Assert.Throws<HyperlambdaException>(() => PatternFactory.Create("0.seconds"));
+        }
+
+        [Fact]
+        public void NegativeInterval_01()
+        {
+            Assert.Throws<HyperlambdaException>(() => PatternFactory.Create("-5.minutes"));
+        }
+
         private class ExtPattern : IRepetitionPattern
         {
             readonly string _args;

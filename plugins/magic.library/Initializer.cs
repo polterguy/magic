@@ -5,7 +5,6 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -38,6 +37,7 @@ using magic.lambda.auth.services;
 using magic.lambda.mail.services;
 using magic.lambda.http.contracts;
 using magic.lambda.auth.contracts;
+using magic.lambda.auth.helpers;
 using magic.lambda.mail.contracts;
 using magic.data.common.contracts;
 using magic.lambda.config.services;
@@ -352,14 +352,6 @@ namespace magic.library
             services.AddHttpContextAccessor();
 
             /*
-             * Retrieving secret from configuration file, and wiring up
-             * authentication to use JWT Bearer tokens.
-             */
-            var secret = configuration["magic:auth:secret"] ?? "";
-            if (secret.Length < 50)
-                secret += "abcdefghijklmnopqrstuvwxyz1234567890";
-
-            /*
              * Wiring up .Net Core to use JWT Bearer tokens for auth.
              */
             services.AddAuthentication(x =>
@@ -412,10 +404,7 @@ namespace magic.library
                      */
                     IssuerSigningKeyResolver = (token, secToken, kid, valParams) =>
                     {
-                        var secret = configuration["magic:auth:secret"] ?? "";
-                        if (secret.Length < 50)
-                            secret += "abcdefghijklmnopqrstuvwxyz1234567890";
-                        var key = Encoding.ASCII.GetBytes(secret);
+                        var key = AuthKeyDerivation.GetKeyBytes(configuration["magic:auth:secret"]);
                         return [new SymmetricSecurityKey(key)];
                     }
                 };

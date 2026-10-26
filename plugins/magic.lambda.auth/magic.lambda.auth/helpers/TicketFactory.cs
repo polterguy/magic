@@ -4,7 +4,6 @@
 
 using System;
 using System.Linq;
-using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
@@ -31,10 +30,7 @@ namespace magic.lambda.auth.helpers
             Ticket ticket)
         {
             // Getting data to put into token.
-            var secret = settings.Secret ?? "";
-            if (secret.Length < 50)
-                secret += "abcdefghijklmnopqrstuvwxyz1234567890";
-            var key = Encoding.UTF8.GetBytes(secret);
+            var key = AuthKeyDerivation.GetKeyBytes(settings.Secret);
 
             // Creating our token descriptor.
             var tokenHandler = new JwtSecurityTokenHandler();

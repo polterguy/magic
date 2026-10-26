@@ -48,23 +48,36 @@ namespace magic.lambda.scheduler.utilities
                             .Select(x => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), x, true));
                     return new WeekdayPattern(
                         weekdays,
-                        int.Parse(entities[1]),
-                        int.Parse(entities[2]),
-                        int.Parse(entities[3]));
+                        Parse(entities[1], 0, 23),
+                        Parse(entities[2], 0, 59),
+                        Parse(entities[3], 0, 59));
 
                 case 5:
-                    var months = entities[0] == "**" ? null : entities[0].Split('|').Select(x => int.Parse(x));
-                    var days = entities[1] == "**" ? null : entities[1].Split('|').Select(x => int.Parse(x));
+                    var months = entities[0] == "**" ? null : entities[0].Split('|').Select(x => Parse(x, 1, 12));
+                    var days = entities[1] == "**" ? null : entities[1].Split('|').Select(x => Parse(x, 1, 31));
                     return new MonthPattern(
                         months,
                         days,
-                        int.Parse(entities[2]),
-                        int.Parse(entities[3]),
-                        int.Parse(entities[4]));
+                        Parse(entities[2], 0, 23),
+                        Parse(entities[3], 0, 59),
+                        Parse(entities[4], 0, 59));
 
                 default:
                     throw new HyperlambdaException($"'{pattern}' is not a recognized repetition pattern.");
             }
+        }
+
+        /*
+         * Parses a numeric pattern part, making sure the result is within the
+         * given range, to avoid impossible dates and endless loops when the
+         * pattern is used to find the next execution date.
+         */
+        static int Parse(string value, int min, int max)
+        {
+            var result = int.Parse(value);
+            if (result < min || result > max)
+                throw new HyperlambdaException($"'{value}' is not a valid repetition pattern part, expected a value between {min} and {max}");
+            return result;
         }
 
         /// <summary>

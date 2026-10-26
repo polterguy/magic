@@ -24,6 +24,8 @@ namespace magic.lambda.scheduler.utilities.patterns
         public IntervalPattern(int interval, string entity)
         {
             // Sanity checking invocation.
+            if (interval < 1)
+                throw new HyperlambdaException($"You cannot use an interval of '{interval}', expected a value of 1 or higher");
             switch(entity)
             {
                 case "seconds":

@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using magic.node.extensions;
 using magic.lambda.scheduler.contracts;
 
 namespace magic.lambda.scheduler.utilities.patterns
@@ -67,12 +68,22 @@ namespace magic.lambda.scheduler.utilities.patterns
                 _hour,
                 _minute,
                 _second);
+
+            /*
+             * Giving up after 4 years, which covers every possible combination of
+             * month and day including leap years - At that point the pattern can
+             * never be satisfied, such as e.g. February 30th, and rather than
+             * looping forever we throw an exception.
+             */
+            var max = result.AddYears(4);
             while (true)
             {
                 if (result > utcNow &&
                     (_months == null || _months.Any(x => result.Month == x)) &&
                     (_days == null || _days.Any(x => result.Day == x)))
                     return result;
+                if (result > max)
+                    throw new HyperlambdaException($"No future date satisfies the repetition pattern '{Value}'");
                 result = result.AddDays(1);
             }
         }

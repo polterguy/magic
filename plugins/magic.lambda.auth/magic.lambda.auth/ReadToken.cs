@@ -3,13 +3,13 @@
  */
 
 using System;
-using System.Text;
 using System.Linq;
 using System.Security.Claims;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using magic.lambda.auth.helpers;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -53,7 +53,7 @@ namespace magic.backend.slots
                 ValidateIssuerSigningKey = true,
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["magic:auth:secret"])),
+                IssuerSigningKey = new SymmetricSecurityKey(AuthKeyDerivation.GetKeyBytes(_configuration["magic:auth:secret"])),
                 ValidateLifetime = true,
             };
 
