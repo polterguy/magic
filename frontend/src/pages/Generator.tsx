@@ -2080,9 +2080,9 @@ const TIER2_WIZARDS: Record<string, WizardSpec> = {
   },
   identity: {
     label: 'Identity', title: 'Identity (read only)', defaults: ['read'],
-    note: 'Reads the caller identity and verifies tokens. Minting or refreshing a ticket is never offered — that is the escalation the sandbox exists to prevent.',
+    note: 'Reads the caller identity only. Minting or refreshing a ticket is never offered — that is the escalation the sandbox exists to prevent. [auth.token.verify] is deliberately excluded: it trusts caller-supplied issuers and would turn the endpoint into an SSRF oracle.',
     groups: [
-      { key: 'read', label: 'Read identity', slots: ['auth.ticket.get', 'auth.ticket.in-role', 'auth.ticket.verify', 'auth.token.read', 'auth.token.verify'] },
+      { key: 'read', label: 'Read identity', slots: ['auth.ticket.get', 'auth.ticket.in-role', 'auth.ticket.verify', 'auth.token.read'] },
     ],
   },
   crypto: {

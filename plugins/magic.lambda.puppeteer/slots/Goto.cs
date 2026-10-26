@@ -33,6 +33,16 @@ namespace magic.lambda.puppeteer
             var page = PuppeteerHelpers.RequirePage(input);
             var url = PuppeteerHelpers.GetRequiredString(input, "url");
 
+            /*
+             * Only http:// and https:// navigation is permitted. Any other scheme
+             * (file:// in particular) would let the caller read local files through
+             * the server's browser and exfiltrate them via [puppeteer.content] - the
+             * sandbox never needs to navigate anywhere but the web.
+             */
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+                (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+                throw new HyperlambdaException("Only http:// and https:// URLs are allowed in [puppeteer.goto]");
+
             var timeout = PuppeteerHelpers.GetOptionalInt(input, "timeout");
             var waitUntilValue = PuppeteerHelpers.GetOptionalString(input, "wait-until");
             var waitUntil = PuppeteerHelpers.ParseWaitUntil(waitUntilValue);

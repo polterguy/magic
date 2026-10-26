@@ -67,7 +67,7 @@ namespace magic.lambda.io.file
                 if (!MatchesExtensions(filename, args.Extensions))
                     continue;
 
-                var matches = FindMatches(filename, args.Pattern, args.IsRegex, args.CaseSensitive);
+                var matches = FindMatches(signaler, filename, args.Pattern, args.IsRegex, args.CaseSensitive);
                 if (matches.Count == 0)
                     continue;
 
@@ -124,14 +124,31 @@ namespace magic.lambda.io.file
             return false;
         }
 
-        System.Collections.Generic.List<int> FindMatches(string filename, string pattern, bool isRegex, bool caseSensitive)
+        /*
+         * The .NET Regex engine provides no cancellation surface, so the remaining
+         * execution deadline is handed to the engine as its match timeout - the same
+         * pattern as the regex slots in magic.lambda.strings, letting [execution.timeout]
+         * bound search work the same way it bounds any other statement. Without an
+         * execution deadline the historical unbounded behaviour is preserved.
+         */
+        static TimeSpan MatchTimeout(ISignaler signaler)
+        {
+            var context = signaler.Peek<ExecutionContext>("execution.context");
+            if (context?.DeadlineUtc == null)
+                return Regex.InfiniteMatchTimeout;
+
+            var remaining = context.DeadlineUtc.Value - DateTime.UtcNow;
+            return remaining <= TimeSpan.Zero ? TimeSpan.FromMilliseconds(1) : remaining;
+        }
+
+        System.Collections.Generic.List<int> FindMatches(ISignaler signaler, string filename, string pattern, bool isRegex, bool caseSensitive)
         {
             var result = new System.Collections.Generic.List<int>();
             Regex regex = null;
             if (isRegex)
             {
                 var options = caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
-                regex = new Regex(pattern, options);
+                regex = new Regex(pattern, options, MatchTimeout(signaler));
             }
 
             var comparison = caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
@@ -141,8 +158,20 @@ namespace magic.lambda.io.file
                 lineNumber++;
                 if (isRegex)
                 {
-                    if (regex.IsMatch(line))
-                        result.Add(lineNumber);
+                    try
+                    {
+                        if (regex.IsMatch(line))
+                            result.Add(lineNumber);
+                    }
+                    catch (RegexMatchTimeoutException)
+                    {
+                        /*
+                         * Never echoing the pattern or the offending line - the message
+                         * is returned to the caller, logged, and captured by exception
+                         * handlers, and any of them can be huge.
+                         */
+                        throw new HyperlambdaException("Regular expression timed out and was aborted");
+                    }
                 }
                 else
                 {

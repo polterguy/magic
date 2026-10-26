@@ -32,6 +32,17 @@ namespace magic.lambda.puppeteer
     {
         readonly IRootResolver _rootResolver;
 
+        /*
+         * Caller-supplied browser flags that would defeat the file isolation the
+         * browser sessions rely on, silently dropped from [args].
+         */
+        static readonly HashSet<string> DeniedBrowserArgs = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "--allow-file-access",
+            "--allow-file-access-from-files",
+            "--disable-web-security",
+        };
+
         public Connect(IRootResolver rootResolver)
         {
             _rootResolver = rootResolver;
@@ -49,6 +60,19 @@ namespace magic.lambda.puppeteer
             {
                 browser = await Puppeteer.LaunchAsync(launchOptions);
                 page = (await browser.PagesAsync()).FirstOrDefault(x => !x.IsClosed) ?? await browser.NewPageAsync();
+
+                /*
+                 * JavaScript in the page can also steer navigation ([puppeteer.evaluate]
+                 * assigning window.location), which bypasses the scheme check in
+                 * [puppeteer.goto] - so any navigation landing on file:// is bounced
+                 * straight back to a blank page before its content becomes readable.
+                 */
+                page.FrameNavigated += (sender, e) =>
+                {
+                    if (e.Frame == page.MainFrame &&
+                        e.Frame.Url.StartsWith("file://", StringComparison.OrdinalIgnoreCase))
+                        _ = page.GoToAsync("about:blank");
+                };
 
                 var session = PuppeteerSessions.Create(browser, page, timeoutMinutes, maxLifetimeMinutes);
 
@@ -89,7 +113,9 @@ namespace magic.lambda.puppeteer
             if (!string.IsNullOrWhiteSpace(userDataDir))
                 options.UserDataDir = userDataDir;
 
-            var args = PuppeteerHelpers.GetArgs(argsNode).ToArray();
+            var args = PuppeteerHelpers.GetArgs(argsNode)
+                .Where(x => !DeniedBrowserArgs.Contains(x))
+                .ToArray();
             if (args.Length > 0)
                 options.Args = args;
 
