@@ -54,6 +54,10 @@ FWD_ENV="magic__forwarded-headers__forward-limit"
 GC_LIMIT="0x20000000"
 GC_ENV="DOTNET_GCHeapHardLimit"
 
+# Make the GC release freed memory sooner on idle tenants (0-9, higher = smaller footprint, a bit more CPU).
+GCM_LIMIT="5"
+GCM_ENV="DOTNET_GCConserveMemory"
+
 # Cloudlet workloads never call the Kubernetes API, so they get a ServiceAccount with no
 # token mounted at all, rather than the namespace's "default" SA every pod gets otherwise.
 NOAPI_SA="no-api-access"
@@ -272,6 +276,20 @@ spec:
     NEEDS_UPDATE=1
   else
     echo "GC heap hard limit already correct."
+  fi
+
+  # ===============================
+  # 2.56) Check GC conserve-memory level
+  # ===============================
+  CURGCM=$(kubectl get deployment "$DEP" -n "$NAMESPACE" \
+    -o jsonpath="{.spec.template.spec.containers[0].env[?(@.name=='$GCM_ENV')].value}" 2>/dev/null || true)
+
+  if [[ "$CURGCM" != "$GCM_LIMIT" ]]; then
+    echo "GC conserve-memory needs update: '${CURGCM:-<unset>}' → $GCM_LIMIT"
+    kubectl set env deployment/"$DEP" -c "$DEP" -n "$NAMESPACE" "$GCM_ENV=$GCM_LIMIT"
+    NEEDS_UPDATE=1
+  else
+    echo "GC conserve-memory already correct."
   fi
 
   # ===============================
