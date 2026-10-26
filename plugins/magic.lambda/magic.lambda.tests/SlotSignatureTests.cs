@@ -61,15 +61,28 @@ namespace magic.lambda.tests
         [Fact]
         public void OmitsOutputWhenSlotDoesNotDocumentOutput()
         {
-            var lambda = Common.Evaluate(@"slot.signature:eval");
+            var lambda = Common.Evaluate(@"slot.signature:remove-nodes");
             var result = lambda.Children.First();
             var input = result.Children.First(x => x.Name == "input");
 
-            Assert.Equal("lambda-object,lambda-tree", input.Children.First(x => x.Name == "kind").GetEx<string>());
-            Assert.Equal("Expression selecting the Hyperlambda nodes to evaluate", input.Children.First(x => x.Name == "description").GetEx<string>());
+            Assert.Equal("node-list,single-object", input.Children.First(x => x.Name == "kind").GetEx<string>());
+            Assert.Equal("Expression selecting the node or nodes to remove", input.Children.First(x => x.Name == "description").GetEx<string>());
             Assert.True(input.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Equal(SlotValueMode.Expression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.DoesNotContain(result.Children, x => x.Name == "children");
+            Assert.DoesNotContain(result.Children, x => x.Name == "output");
+        }
+
+        [Fact]
+        public void ReturnsEvalExecutableBody()
+        {
+            var lambda = Common.Evaluate(@"slot.signature:eval");
+            var result = lambda.Children.First();
+            var body = result.Children.First(x => x.Name == "children").Children.Single();
+
+            Assert.Equal("*", body.Name);
+            Assert.Equal(SlotChildMode.ExecutableLambda.ToString(), body.Children.First(x => x.Name == "mode").GetEx<string>());
+            Assert.Equal(SlotChildRole.ExecutableBody.ToString(), body.Children.First(x => x.Name == "role").GetEx<string>());
             Assert.DoesNotContain(result.Children, x => x.Name == "output");
         }
 

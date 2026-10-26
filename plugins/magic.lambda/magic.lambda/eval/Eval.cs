@@ -25,7 +25,8 @@ namespace magic.lambda.eval
         ValueDescription = "Expression selecting the Hyperlambda nodes to evaluate",
         ValueRequired = true,
         ValueMode = SlotValueMode.Expression,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.lambda.signatures.EvalSignature))]
     public class Eval : ISlotAsync
     {
         /// <summary>

@@ -494,6 +494,43 @@ try
         }
 
         [Fact]
+        public void VerifySlots_EvalBody()
+        {
+            AssertMissingSlots(@"eval
+   missing.eval", "missing.eval");
+        }
+
+        [Fact]
+        public void VerifySlots_NestedEvalBody()
+        {
+            AssertMissingSlots(@"switch:foo
+   case:foo
+      eval
+         missing.nested.eval", "missing.nested.eval");
+        }
+
+        [Fact]
+        public void VerifySlots_EvalDataChildrenAreIgnored()
+        {
+            var result = VerifySlots(@"eval
+   .arguments
+      missing.not.executable
+   .data
+      missing.also.not.executable");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_ValidEvalBody()
+        {
+            var result = VerifySlots(@"eval
+   eval");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
         public void VerifySlots_UnattachedContinuationDataIsIgnored()
         {
             var result = VerifySlots(@".catch
