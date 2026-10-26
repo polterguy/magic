@@ -48,6 +48,12 @@ PROBE_LIVE_PATH="/magic/system/ping"
 FWD_LIMIT="2"
 FWD_ENV="magic__forwarded-headers__forward-limit"
 
+# Hard cap on the .NET GC heap (hex bytes, 0x20000000 = 512Mi) inside the 768Mi
+# container limit, leaving ~256Mi for native memory (SQLite, Python, stacks, JIT).
+# The GC collects harder near the cap instead of the pod being OOMKilled.
+GC_LIMIT="0x20000000"
+GC_ENV="DOTNET_GCHeapHardLimit"
+
 # Cloudlet workloads never call the Kubernetes API, so they get a ServiceAccount with no
 # token mounted at all, rather than the namespace's "default" SA every pod gets otherwise.
 NOAPI_SA="no-api-access"
@@ -252,6 +258,20 @@ spec:
     NEEDS_UPDATE=1
   else
     echo "Forwarded-headers limit already correct."
+  fi
+
+  # ===============================
+  # 2.55) Check GC heap hard limit
+  # ===============================
+  CURGC=$(kubectl get deployment "$DEP" -n "$NAMESPACE" \
+    -o jsonpath="{.spec.template.spec.containers[0].env[?(@.name=='$GC_ENV')].value}" 2>/dev/null || true)
+
+  if [[ "$CURGC" != "$GC_LIMIT" ]]; then
+    echo "GC heap hard limit needs update: '${CURGC:-<unset>}' → $GC_LIMIT"
+    kubectl set env deployment/"$DEP" -c "$DEP" -n "$NAMESPACE" "$GC_ENV=$GC_LIMIT"
+    NEEDS_UPDATE=1
+  else
+    echo "GC heap hard limit already correct."
   fi
 
   # ===============================
