@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Both can be overridden from the environment, e.g.  IMAGE=servergardens/magic-backend:v24.2.0 ./update-deployments.sh
 NAMESPACE="${NAMESPACE:-cloudlets}"
-IMAGE="${IMAGE:-servergardens/magic-backend:v24.1.3}"
+IMAGE="${IMAGE:-servergardens/magic-backend:v24.1.4}"
 FSGROUP="999"
 
 # Set ONLY to the name of one deployment to try the script on just that one, e.g.  ONLY=thomastest-team ./update-deployments.sh
