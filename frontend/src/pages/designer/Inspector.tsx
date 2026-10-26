@@ -497,6 +497,7 @@ export default function Inspector(props: {
           const deleteOn = !!element.getAttribute('data-delete-url');
           const editOn = !!element.getAttribute('data-update-url');
           const filterOn = !!element.getAttribute('data-filterable');
+          const liveOn = !!element.getAttribute('data-live');
 
           // Present as soon as either capability needs it, gone once neither does.
           function syncPrimaryKey(deleteWill: boolean, editWill: boolean) {
@@ -610,6 +611,14 @@ export default function Inspector(props: {
             }
           }
 
+          function toggleLive(checked: boolean) {
+            if (checked) {
+              props.onSetAttribute('data-live', 'true');
+            } else {
+              props.onRemoveAttribute('data-live');
+            }
+          }
+
           return (
             <div className="designer-field">
               <span>Table</span>
@@ -684,6 +693,18 @@ export default function Inspector(props: {
                       checked={filterOn}
                       onChange={event => toggleFilters(event.target.checked)} />
                     Allow filtering
+                  </label>
+                  {/*
+                    * The grid refetches when a row changes, but only if the table's
+                    * endpoints were generated with "Publish live updates" - the
+                    * widget cannot tell, so this is the author's to switch on.
+                    */}
+                  <label className="checkbox-row" title="Needs endpoints generated with Publish live updates">
+                    <input
+                      type="checkbox"
+                      checked={liveOn}
+                      onChange={event => toggleLive(event.target.checked)} />
+                    Update live
                   </label>
                 </>
               )}

@@ -48,6 +48,104 @@
     return fetch(url, init);
   }
 
+  /*
+   * A minimal SignalR client over a plain WebSocket - only the JSON protocol's
+   * handshake, invocations and pings - so the widgets stay dependency free.
+   * One connection is shared by the whole page. liveSubscribe() listens for
+   * the messages crudify publishes after a create, update or delete (the
+   * Generator's "Publish live updates" option), and calls back again after a
+   * reconnect, since SignalR does not replay what was missed while offline.
+   */
+  var RS = String.fromCharCode(30);
+  var live = { socket: null, listeners: {}, retry: 0, ping: null, timer: null, lost: false };
+
+  function liveNames() {
+    return Object.keys(live.listeners);
+  }
+
+  function liveConnect() {
+    if (live.socket || liveNames().length === 0) {
+      return;
+    }
+    var ticket = getTicket();
+    var socket = new WebSocket(
+      (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/sockets' +
+      (ticket ? '?access_token=' + encodeURIComponent(ticket) : ''));
+    live.socket = socket;
+    var handshaken = false;
+    socket.onopen = function () {
+      socket.send(JSON.stringify({ protocol: 'json', version: 1 }) + RS);
+    };
+    socket.onmessage = function (event) {
+      String(event.data).split(RS).forEach(function (frame) {
+        if (!frame) {
+          return;
+        }
+        var message = JSON.parse(frame);
+        if (!handshaken) {
+          // The server's first frame answers the handshake - {} when it succeeded.
+          handshaken = true;
+          if (message.error) {
+            console.error('Live updates: ' + message.error);
+            return;
+          }
+          live.retry = 0;
+          live.ping = setInterval(function () {
+            socket.send(JSON.stringify({ type: 6 }) + RS);
+          }, 15000);
+          if (live.lost) {
+            live.lost = false;
+            var seen = [];
+            liveNames().forEach(function (name) {
+              live.listeners[name].forEach(function (fn) {
+                if (seen.indexOf(fn) === -1) {
+                  seen.push(fn);
+                  fn();
+                }
+              });
+            });
+          }
+        } else if (message.type === 1) {
+          (live.listeners[message.target] || []).slice().forEach(function (fn) {
+            fn();
+          });
+        } else if (message.type === 7) {
+          socket.close();
+        }
+      });
+    };
+    socket.onclose = function () {
+      clearInterval(live.ping);
+      live.socket = null;
+      live.lost = true;
+      live.timer = setTimeout(liveConnect, Math.min(30000, 1000 * Math.pow(2, live.retry++)));
+    };
+  }
+
+  // Calls fn whenever one of the named messages arrives. Returns the unsubscribe function.
+  function liveSubscribe(names, fn) {
+    names.forEach(function (name) {
+      (live.listeners[name] = live.listeners[name] || []).push(fn);
+    });
+    liveConnect();
+    return function () {
+      names.forEach(function (name) {
+        live.listeners[name] = live.listeners[name].filter(function (candidate) {
+          return candidate !== fn;
+        });
+        if (live.listeners[name].length === 0) {
+          delete live.listeners[name];
+        }
+      });
+      if (liveNames().length === 0) {
+        clearTimeout(live.timer);
+        if (live.socket) {
+          live.socket.close();
+        }
+      }
+    };
+  }
+
   var GRID_STYLE =
     ':host { display: block; }' +
     /*
@@ -116,6 +214,7 @@
     connectedCallback() {
       // A reconnect (e.g. the element being moved) must not rebuild and refetch.
       if (this._built) {
+        this._subscribeLive();
         return;
       }
       this._built = true;
@@ -144,6 +243,66 @@
 
       this._renderHead();
       this._load();
+      this._subscribeLive();
+    }
+
+    disconnectedCallback() {
+      this._unsubscribeLive();
+    }
+
+    /*
+     * With data-live the grid refetches its current page whenever a row in its
+     * table is created, updated or deleted - by anyone, through any endpoint
+     * generated with "Publish live updates". The messages are named
+     * <module>.<url>.<verb>, which data-read-url already spells out.
+     */
+    _liveNames() {
+      var path = (this.getAttribute('data-read-url') || '').split('?')[0];
+      var marker = '/magic/modules/';
+      var at = path.indexOf(marker);
+      if (at === -1) {
+        return [];
+      }
+      var rest = path.substring(at + marker.length).split('/');
+      var base = rest.shift() + '.' + rest.join('/');
+      return ['post', 'put', 'delete'].map(function (verb) {
+        return base + '.' + verb;
+      });
+    }
+
+    _subscribeLive() {
+      if (this.getAttribute('data-live') === null || this._unlive) {
+        return;
+      }
+      var self = this;
+      this._unlive = liveSubscribe(this._liveNames(), function () {
+        self._refreshLive();
+      });
+    }
+
+    _unsubscribeLive() {
+      clearTimeout(this._liveTimer);
+      if (this._unlive) {
+        this._unlive();
+        this._unlive = null;
+      }
+    }
+
+    /*
+     * Debounced, since a bulk import publishes one message per row and should
+     * cost one refetch. Held back while a cell is being edited, because a
+     * reload would throw away what is being typed.
+     */
+    _refreshLive() {
+      var self = this;
+      clearTimeout(this._liveTimer);
+      this._liveTimer = setTimeout(function () {
+        if (self._tbody.querySelector('input')) {
+          self._refreshLive();
+          return;
+        }
+        self._load();
+      }, 300);
     }
 
     _columns() {

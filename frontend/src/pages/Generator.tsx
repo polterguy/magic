@@ -61,6 +61,12 @@ function buildCrudifyPayload(
     // like the old dashboard).
     moduleName: string;
     moduleUrl: string | null;
+    // Publishes a web socket message after every POST/PUT/DELETE, so open
+    // clients can refresh. Audience is inherited (the endpoint's own roles),
+    // or an explicit comma separated list of roles, groups or users.
+    live?: boolean;
+    liveAudience?: string;
+    liveValues?: string;
   }) {
 
   // Old dashboard's per-column verb defaults.
@@ -99,9 +105,20 @@ function buildCrudifyPayload(
     overwrite: options.overwrite,
     verbose: options.verbose,
     join: true,
-    cqrs: false,
+    cqrs: !!options.live && verb !== 'get',
     args: { columns: [], primary: [] },
   };
+
+  /*
+   * crudify publishes to every connected client when cqrs is on but no
+   * authorisation is given, so an audience is always sent along with it.
+   */
+  if (payload.cqrs) {
+    payload.cqrsAuthorisation = options.liveAudience || 'inherited';
+    if (payload.cqrsAuthorisation !== 'inherited') {
+      payload.cqrsAuthorisationValues = options.liveValues;
+    }
+  }
 
   if (options.auth.length > 0) {
     payload.auth = options.auth.join(',');
@@ -327,6 +344,9 @@ function CrudTab(props: { guided: boolean }) {
   const [cache, setCache] = useState('0');
   const [publicCache, setPublicCache] = useState(false);
   const [overwrite, setOverwrite] = useState(false);
+  const [live, setLive] = useState(false);
+  const [liveAudience, setLiveAudience] = useState('inherited');
+  const [liveValues, setLiveValues] = useState('');
   const [paging, setPaging] = useState(true);
   const [sorting, setSorting] = useState(true);
   const [aggregate, setAggregate] = useState(false);
@@ -446,6 +466,10 @@ function CrudTab(props: { guided: boolean }) {
       showToast('Select at least one table and one verb', true);
       return;
     }
+    if (live && liveAudience !== 'inherited' && !liveValues.trim()) {
+      showToast('Enter who should be notified, or choose the endpoint\'s own roles', true);
+      return;
+    }
     setBusy(true);
     cancelRequested.current = false;
     pendingDone.current = null;
@@ -463,6 +487,9 @@ function CrudTab(props: { guided: boolean }) {
       verbose,
       moduleName,
       moduleUrl: singleTable ? componentUrl : null,
+      live,
+      liveAudience,
+      liveValues,
     };
     /*
      * Every unit of progress is a resolved promise in this very loop, so the
@@ -827,7 +854,47 @@ function CrudTab(props: { guided: boolean }) {
                     onChange={e => setOverwrite(e.target.checked)} />
                   Overwrite existing files
                 </label>
+                <label
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                  title="Publish a web socket message after every create, update and delete">
+                  <input
+                    type="checkbox"
+                    checked={live}
+                    onChange={e => setLive(e.target.checked)} />
+                  Publish live updates
+                </label>
               </div>
+              {live && (
+                <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <span>Notify</span>
+                    <select
+                      value={liveAudience}
+                      onChange={e => setLiveAudience(e.target.value)}>
+                      <option value="inherited">The endpoint's own roles</option>
+                      <option value="roles">Roles</option>
+                      <option value="groups">Groups</option>
+                      <option value="users">Users</option>
+                    </select>
+                    {liveAudience !== 'inherited' && (
+                      <input
+                        type="text"
+                        placeholder="comma separated"
+                        value={liveValues}
+                        onChange={e => setLiveValues(e.target.value)} />
+                    )}
+                  </div>
+                  {liveAudience === 'inherited' && auth.length === 0 && (
+                    <em className="muted">
+                      The endpoints are public, so every connected client receives these messages.
+                    </em>
+                  )}
+                  <span className="muted">
+                    Messages are named {'<module>.<table>.<post|put|delete>'}, carrying the
+                    request's arguments as JSON.
+                  </span>
+                </div>
+              )}
             </div>
             <div>
               <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>

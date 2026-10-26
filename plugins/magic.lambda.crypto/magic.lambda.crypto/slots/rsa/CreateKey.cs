@@ -59,6 +59,14 @@ namespace magic.lambda.crypto.slots.rsa
         {
             var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
 
+            /*
+             * RSA key generation cost grows super-linearly with modulus size, and the work
+             * is synchronous and uncancellable - an unbounded [strength] is therefore a
+             * CPU-exhaustion DoS vector, so the caller is confined to a sane range.
+             */
+            if (strength < 1024 || strength > 4096)
+                throw new HyperlambdaException("RSA [strength] must be between 1024 and 4096");
+
             var rawSeed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<object>();
             var seed = rawSeed is string strSeed ?
                 Encoding.UTF8.GetBytes(strSeed) :

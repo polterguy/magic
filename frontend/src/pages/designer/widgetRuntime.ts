@@ -33,6 +33,6 @@ export const WIDGET_ASSET_HREFS = ['/assets/magic-widgets.js', '/assets/magic-wi
  * .css alone bumps only '/assets/magic-widgets.js'.
  */
 export const CANONICAL_VERSIONS: Record<string, number> = {
-  '/assets/magic-widgets.js': 2,
+  '/assets/magic-widgets.js': 3,
   '/assets/magic-widgets.css': 2,
 };

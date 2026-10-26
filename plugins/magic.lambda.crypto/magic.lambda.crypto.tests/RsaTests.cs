@@ -12,6 +12,22 @@ namespace magic.lambda.crypto.tests
     public class RsaTests
     {
         [Fact]
+        public void CreateKey_RejectsStrengthBelowCap()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+crypto.rsa.create-key
+   strength:512"));
+        }
+
+        [Fact]
+        public void CreateKey_RejectsStrengthAboveCap()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+crypto.rsa.create-key
+   strength:8192"));
+        }
+
+        [Fact]
         public void GenerateKey1024()
         {
             var lambda = Common.Evaluate(@"
