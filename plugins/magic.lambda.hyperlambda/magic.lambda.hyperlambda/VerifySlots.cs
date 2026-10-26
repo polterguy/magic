@@ -33,15 +33,18 @@ namespace magic.lambda.hyperlambda
     ///                       ([default] for [switch]), a fork ([fork] for [join]), or a callback
     ///                       ([.sse] for streaming [http.*]). "[.lambda]" is always treated as a
     ///                       wrapper, so slots without signature metadata still work by convention.
+    /// A named non-executable child can also carry a NESTED "*" body, as [case] does under
+    /// [switch]; its children are executable statements even though its own value is an argument.
     /// Named non-executable arguments the signature also declares (e.g. [data.connect]'s
-    /// [database-type]) are excluded from a "*" body. Both body kinds are traversed to any depth.
+    /// [database-type]) are excluded from a "*" body. Executable continuation siblings declared
+    /// through NextSiblingMustBeOneOf ([.catch]/[.finally] after [try]) are traversed as bodies,
+    /// not checked as slots themselves. All body kinds are traversed to any depth.
     ///
-    /// STILL IGNORED (for now): non-executable arguments (e.g. [table]/[where] under
-    /// [data.read]), [switch]'s [case] branches (a value child carrying a NESTED body, not an
-    /// ExecutableLambda child), and every node whose name starts with a "." that is not a
-    /// declared body (variables, comments, [.arguments]). Note that [add]/[insert-*] source
-    /// bodies ARE checked - those slots [eval] their children, so a named child is a slot
-    /// invocation at runtime while "." children are static data.
+    /// STILL IGNORED: non-executable arguments (e.g. [table]/[where] under [data.read]), and
+    /// every node whose name starts with a "." that is not a declared body (variables, comments,
+    /// [.arguments]). Note that [add]/[insert-*] source bodies ARE checked - those slots [eval]
+    /// their children, so a named child is a slot invocation at runtime while "." children are
+    /// static data.
     /// </summary>
     [Slot(
         Name = "hyperlambda.verify-slots",
@@ -136,7 +139,7 @@ namespace magic.lambda.hyperlambda
 
                 /*
                  * Descending into the slot's executable body/bodies. Every direct child is
-                 * routed by the slot's signature: a named wrapper ([.lambda], [default],
+                 * routed by the slot's signature: a named wrapper ([.lambda], [case], [default],
                  * [fork], [.sse]) is descended into (its children are the statements), while a
                  * "*" body means the child itself is a statement. Named non-executable
                  * arguments are skipped.
@@ -144,10 +147,21 @@ namespace magic.lambda.hyperlambda
                 var info = BodyInfoFor(name, cache);
                 foreach (var child in node.Children)
                 {
-                    if (info.WrapperNames.Contains(child.Name))
+                    if (info.WrapperNames.Contains(child.Name) || info.NestedBodyNames.Contains(child.Name))
                         VerifyScope(child.Children, slots, cache, missing, seen);
                     else if (info.HasStarBody && !info.ArgumentNames.Contains(child.Name))
                         VerifyScope(new[] { child }, slots, cache, missing, seen);
+                }
+
+                /*
+                 * Continuation blocks are siblings, not slots. Only their children are checked,
+                 * and only when the preceding slot's signature declares them as continuations.
+                 */
+                var continuation = node.Next;
+                while (continuation != null && info.ContinuationBodyNames.Contains(continuation.Name))
+                {
+                    VerifyScope(continuation.Children, slots, cache, missing, seen);
+                    continuation = continuation.Next;
                 }
             }
         }
@@ -156,15 +170,20 @@ namespace magic.lambda.hyperlambda
          * Body layout of a slot, derived from its signature:
          *   - HasStarBody   : the slot declares a "*" ExecutableLambda child, so its own direct
          *                     children are executable statements.
-         *   - WrapperNames  : names of NAMED ExecutableLambda children whose OWN children are the
-         *                     body ([.lambda], [default], [fork], [.sse]); "[.lambda]" is always
-         *                     present so signature-less slots work by convention.
-         *   - ArgumentNames : named non-executable children to exclude from a "*" body.
+         *   - WrapperNames         : names of NAMED ExecutableLambda children whose OWN children
+         *                            are the body ([.lambda], [default], [fork], [.sse]).
+         *   - NestedBodyNames      : value-bearing children carrying a nested "*" body ([case]).
+         *   - ContinuationBodyNames: executable sibling blocks following the slot ([.catch],
+         *                            [.finally]); these siblings are not slot invocations.
+         *   - ArgumentNames        : named non-executable children to exclude from a "*" body.
+         * "[.lambda]" is always a wrapper so signature-less slots work by convention.
          */
         sealed class BodyInfo
         {
             public bool HasStarBody;
             public HashSet<string> WrapperNames = new HashSet<string>(StringComparer.Ordinal) { ".lambda" };
+            public HashSet<string> NestedBodyNames = new HashSet<string>(StringComparer.Ordinal);
+            public HashSet<string> ContinuationBodyNames = new HashSet<string>(StringComparer.Ordinal);
             public HashSet<string> ArgumentNames = new HashSet<string>(StringComparer.Ordinal);
         }
 
@@ -194,10 +213,10 @@ namespace magic.lambda.hyperlambda
                 return result;
             try
             {
-                var children = (Activator.CreateInstance(attribute.SignatureType) as ISlotSignature)?.Children;
-                if (children == null)
+                var signature = Activator.CreateInstance(attribute.SignatureType) as ISlotSignature;
+                if (signature == null)
                     return result;
-                foreach (var child in children)
+                foreach (var child in signature.Children ?? Enumerable.Empty<SlotChild>())
                 {
                     if (string.IsNullOrEmpty(child.Name))
                         continue;
@@ -219,7 +238,18 @@ namespace magic.lambda.hyperlambda
                     else if (child.Name != "*")
                     {
                         result.ArgumentNames.Add(child.Name);
+                        if (child.Children.Any(x =>
+                            x.Name == "*" &&
+                            x.Mode == SlotChildMode.ExecutableLambda))
+                        {
+                            result.NestedBodyNames.Add(child.Name);
+                        }
                     }
+                }
+                foreach (var constraint in signature.Constraints ?? Enumerable.Empty<SlotConstraint>())
+                {
+                    if (constraint.Kind == SlotConstraintKind.NextSiblingMustBeOneOf)
+                        result.ContinuationBodyNames.UnionWith(constraint.Values);
                 }
             }
             catch

@@ -399,6 +399,128 @@ jo:dude
         }
 
         [Fact]
+        public void VerifySlots_MatchingCaseBody()
+        {
+            AssertMissingSlots(@"switch:foo
+   case:foo
+      missing.case.match", "missing.case.match");
+        }
+
+        [Fact]
+        public void VerifySlots_NonMatchingCaseBody()
+        {
+            AssertMissingSlots(@"switch:foo
+   case:bar
+      missing.case.other", "missing.case.other");
+        }
+
+        [Fact]
+        public void VerifySlots_DefaultBody()
+        {
+            AssertMissingSlots(@"switch:foo
+   case:bar
+      eval
+   default
+      missing.default", "missing.default");
+        }
+
+        [Fact]
+        public void VerifySlots_TryBody()
+        {
+            AssertMissingSlots(@"try
+   missing.try
+.catch
+   eval", "missing.try");
+        }
+
+        [Fact]
+        public void VerifySlots_CatchBody()
+        {
+            AssertMissingSlots(@"try
+   eval
+.catch
+   missing.catch", "missing.catch");
+        }
+
+        [Fact]
+        public void VerifySlots_FinallyBodies()
+        {
+            AssertMissingSlots(@"try
+   eval
+.finally
+   missing.finally
+try
+   eval
+.catch
+   eval
+.finally
+   missing.finally.after.catch",
+                "missing.finally",
+                "missing.finally.after.catch");
+        }
+
+        [Fact]
+        public void VerifySlots_NestedBranchAndContinuationBodies()
+        {
+            AssertMissingSlots(@"switch:foo
+   case:foo
+      try
+         eval
+      .catch
+         missing.nested.catch
+      .finally
+         switch:bar
+            case:bar
+               missing.nested.case",
+                "missing.nested.catch",
+                "missing.nested.case");
+        }
+
+        [Fact]
+        public void VerifySlots_ValidBranchAndContinuationBodies()
+        {
+            var result = VerifySlots(@"switch:foo
+   case:foo
+      try
+         eval
+      .catch
+         eval
+      .finally
+         eval
+   default
+      eval");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_UnattachedContinuationDataIsIgnored()
+        {
+            var result = VerifySlots(@".catch
+   missing.not.executable
+.finally
+   missing.also.not.executable");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        static Node VerifySlots(string hyperlambda)
+        {
+            var node = new Node("", hyperlambda);
+            Common.GetSignaler().Signal("hyperlambda.verify-slots", node);
+            return node;
+        }
+
+        static void AssertMissingSlots(string hyperlambda, params string[] expected)
+        {
+            var result = VerifySlots(hyperlambda);
+            Assert.False(result.Get<bool>());
+            Assert.Equal(expected.Length, result.Children.Count());
+            foreach (var name in expected)
+                Assert.Contains(result.Children, x => x.Get<string>() == name);
+        }
+
+        [Fact]
         public void TypeConversion()
         {
             var hl = @"
