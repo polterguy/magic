@@ -24,8 +24,12 @@ namespace magic.lambda.scheduler.services
     /// <inheritdoc />
     public sealed class Scheduler : ITaskScheduler, ITaskStorage
     {
-        readonly ISignaler _signaler;
         readonly IDataSettings _settings;
+        /*
+         * Used to create a new ISignaler instance for every method invocation, since the Signaler
+         * class is not thread safe, and this class is registered as a singleton, implying we cannot
+         * reuse the same instance across multiple concurrent invocations.
+         */
         readonly IServiceCreator<ISignaler> _signalCreator;
         readonly IServiceCreator<ILogger> _loggerCreator;
         readonly IServiceCreator<IDataSettings> _settingsFactory;
@@ -37,20 +41,17 @@ namespace magic.lambda.scheduler.services
         /// Creates a new instance of the task scheduler, allowing you to create, edit, delete, and
         /// update tasks in your system - In addition to letting you schedule tasks.
         /// </summary>
-        /// <param name="signaler">Needed to signal slots.</param>
         /// <param name="configuration">Needed to verify scheduling is turned on.</param>
         /// <param name="settings">Configuration object.</param>
-        /// <param name="signalCreator">Needed to be able to create an ISignaler instance during execution of scheduled tasks.</param>
+        /// <param name="signalCreator">Needed to be able to create an ISignaler instance during execution of scheduled tasks, and for every method invocation in this class.</param>
         /// <param name="loggerCreator">Needed to be able to log errors occurring as tasks are executed.</param>
         /// <param name="settingsCreator">Needed to be able to create an IDataSettings instance during execution of scheduled tasks.</param>
         public Scheduler(
-            ISignaler signaler,
             IDataSettings settings,
             IServiceCreator<ISignaler> signalCreator,
             IServiceCreator<ILogger> loggerCreator,
             IServiceCreator<IDataSettings> settingsCreator)
         {
-            _signaler = signaler;
             _settings = settings;
             _signalCreator = signalCreator;
             _settingsFactory = settingsCreator;
@@ -62,7 +63,8 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public async Task CreateTaskAsync(MagicTask task)
         {
-            await DatabaseHelper.ConnectAsync(_signaler, _settings, async (connection) =>
+            var signaler = _signalCreator.Create();
+            await DatabaseHelper.ConnectAsync(signaler, _settings, async (connection) =>
             {
                 var sqlBuilder = new StringBuilder();
                 sqlBuilder
@@ -106,8 +108,9 @@ namespace magic.lambda.scheduler.services
             long offset,
             long limit)
         {
+            var signaler = _signalCreator.Create();
             return await DatabaseHelper.ConnectAsync(
-                _signaler,
+                signaler,
                 _settings,
                 async (connection) =>
             {
@@ -151,8 +154,9 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public Task<MagicTask> GetTaskAsync(string id, bool schedules = false)
         {
+            var signaler = _signalCreator.Create();
             return GetTaskAsync(
-                _signaler,
+                signaler,
                 _settings,
                 id,
                 schedules,
@@ -162,8 +166,9 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public async Task<int> CountTasksAsync(string filter)
         {
+            var signaler = _signalCreator.Create();
             return await DatabaseHelper.ConnectAsync(
-                _signaler,
+                signaler,
                 _settings,
                 async (connection) =>
             {
@@ -188,12 +193,14 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public async Task UpdateTaskAsync(MagicTask task)
         {
+            var signaler = _signalCreator.Create();
+
             // Sanity checking invocation.
             if (task.Schedules.Any())
                 throw new HyperlambdaException("You cannot update schedules for tasks when updating your task");
 
             await DatabaseHelper.ConnectAsync(
-                _signaler,
+                signaler,
                 _settings,
                 async (connection) =>
             {
@@ -217,8 +224,9 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public async Task DeleteTaskAsync(string id)
         {
+            var signaler = _signalCreator.Create();
             await DatabaseHelper.ConnectAsync(
-                _signaler,
+                signaler,
                 _settings,
                 async (connection) =>
             {
@@ -254,8 +262,9 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public Task ExecuteTaskAsync(string id)
         {
+            var signaler = _signalCreator.Create();
             return ExecuteTaskAsync(
-                _signaler,
+                signaler,
                 _settings,
                 id);
         }
@@ -267,8 +276,9 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public async Task<int> ScheduleTaskAsync(string taskId, IRepetitionPattern repetition)
         {
+            var signaler = _signalCreator.Create();
             return await DatabaseHelper.ConnectAsync(
-                _signaler,
+                signaler,
                 _settings,
                 async (connection) =>
             {
@@ -282,8 +292,9 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public async Task<int> ScheduleTaskAsync(string taskId, DateTime due)
         {
+            var signaler = _signalCreator.Create();
             return await DatabaseHelper.ConnectAsync(
-                _signaler,
+                signaler,
                 _settings,
                 async (connection) =>
             {
@@ -297,8 +308,9 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public Task DeleteScheduleAsync(int id)
         {
+            var signaler = _signalCreator.Create();
             return DeleteScheduleAsync(
-                _signaler,
+                signaler,
                 _settings,
                 id);
         }
@@ -306,9 +318,11 @@ namespace magic.lambda.scheduler.services
         /// <inheritdoc />
         public async Task StartAsync()
         {
+            var signaler = _signalCreator.Create();
+
             // Retrieving all schedules.
             var schedules = await DatabaseHelper.ConnectAsync(
-                _signaler,
+                signaler,
                 _settings,
                 async (connection) =>
             {
