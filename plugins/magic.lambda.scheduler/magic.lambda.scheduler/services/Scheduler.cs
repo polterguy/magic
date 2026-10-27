@@ -601,52 +601,24 @@ namespace magic.lambda.scheduler.services
             lock (_dictionarySemaphore)
             {
                 // Creating our Timer instance.
-                var timer = new Timer(async (state) =>
+                /*
+                 * Notice, the callback is deliberately NOT an async lambda, since the TimerCallback
+                 * delegate returns void, at which point an async lambda would become an "async void"
+                 * method, implying any exception thrown during its execution would end up as an
+                 * unhandled exception on the thread pool, crashing our process. Instead we route the
+                 * asynchronous work through our helper method below, catching all exceptions there.
+                 */
+                var timer = new Timer((_) =>
                 {
-                    /*
-                     * Making sure we dispose existing timer.
-                     *
-                     * Notice, this little trickery of awaiting our semaphore from inside another
-                     * wait on the same semaphore ensures that our timer always exists in our
-                     * dictionary as we try to dispose it on the timer's thread. And yes, it looks weird,
-                     * but remember that the timer's callback is executed on a different thread, so
-                     * there are no deadlocks here, even though it technically might look like a deadlock.
-                     */
-                    lock (_dictionarySemaphore)
-                    {
-                        // Removing and disposing timer.
-                        if (_schedules.ContainsKey(scheduleId))
-                        {
-                            var schedule = _schedules[scheduleId];
-                            _schedules.Remove(scheduleId);
-                            schedule.Dispose();
-                        }
-                    }
-
-                    // Checking if we have to postpone execution of task further into the future.
-                    if (postpone)
-                    {
-                        // More than 45 days until schedule is due, hence just re-creating our timer.
-                        CreateTimer(
-                            signalFactory,
-                            settingsFactory,
-                            logFactory,
-                            scheduleId,
-                            taskId,
-                            due,
-                            repetition);
-                    }
-                    else
-                    {
-                        // Executing task.
-                        await ExecuteScheduleAsync(
-                            signalFactory,
-                            logFactory,
-                            settingsFactory,
-                            scheduleId,
-                            taskId,
-                            repetition);
-                    }
+                    _ = ExecuteTimerCallbackAsync(
+                        signalFactory,
+                        settingsFactory,
+                        logFactory,
+                        scheduleId,
+                        taskId,
+                        due,
+                        repetition,
+                        postpone);
                 }, null, nextDue, Timeout.Infinite);
 
                 // Stuffing wrapper into dictionary.
@@ -655,6 +627,102 @@ namespace magic.lambda.scheduler.services
                     taskId,
                     scheduleId,
                     repetition);
+            }
+        }
+
+        /*
+         * Executes the timer's callback, for then to either postpone the schedule further into
+         * the future, or execute its task.
+         *
+         * Notice, this method makes sure no exception is ever allowed to propagate out of it,
+         * since the timer's callback is a void method, implying an escaping exception would
+         * become an unhandled exception on the thread pool, crashing our process.
+         */
+        static async Task ExecuteTimerCallbackAsync(
+            IServiceCreator<ISignaler> signalFactory,
+            IServiceCreator<IDataSettings> settingsFactory,
+            IServiceCreator<ILogger> logFactory,
+            int scheduleId,
+            string taskId,
+            DateTime due,
+            IRepetitionPattern repetition,
+            bool postpone)
+        {
+            try
+            {
+                /*
+                 * Making sure we dispose existing timer.
+                 *
+                 * Notice, this little trickery of awaiting our semaphore from inside another
+                 * wait on the same semaphore ensures that our timer always exists in our
+                 * dictionary as we try to dispose it on the timer's thread. And yes, it looks weird,
+                 * but remember that the timer's callback is executed on a different thread, so
+                 * there are no deadlocks here, even though it technically might look like a deadlock.
+                 *
+                 * Notice also, if the schedule no longer exists in our dictionary, it was deleted
+                 * before the timer got a chance of firing, at which point we do not execute the task.
+                 */
+                bool stillExists;
+                lock (_dictionarySemaphore)
+                {
+                    // Removing and disposing timer.
+                    stillExists = _schedules.ContainsKey(scheduleId);
+                    if (stillExists)
+                    {
+                        var schedule = _schedules[scheduleId];
+                        _schedules.Remove(scheduleId);
+                        schedule.Dispose();
+                    }
+                }
+                if (!stillExists)
+                    return; // Schedule was deleted before timer fired, hence ignoring its execution.
+
+                // Checking if we have to postpone execution of task further into the future.
+                if (postpone)
+                {
+                    // More than 45 days until schedule is due, hence just re-creating our timer.
+                    CreateTimer(
+                        signalFactory,
+                        settingsFactory,
+                        logFactory,
+                        scheduleId,
+                        taskId,
+                        due,
+                        repetition);
+                }
+                else
+                {
+                    // Executing task.
+                    await ExecuteScheduleAsync(
+                        signalFactory,
+                        logFactory,
+                        settingsFactory,
+                        scheduleId,
+                        taskId,
+                        repetition);
+                }
+            }
+            catch (Exception error)
+            {
+                /*
+                 * Making sure we log the exception, before it is swallowed, since this method
+                 * is the last line of defence between our process and an unhandled exception
+                 * on the thread pool, potentially crashing our process.
+                 */
+                try
+                {
+                    var logger = logFactory.Create();
+                    var dictionary = new Dictionary<string, string>();
+                    dictionary["inner_exception"] = error.Message;
+                    await logger.ErrorAsync(
+                        $"Unhandled exception while processing timer for scheduled task with id of '{taskId}'",
+                        dictionary,
+                        error.StackTrace);
+                }
+                catch
+                {
+                    // Ignoring intentionally, since logging might itself throw exceptions, at which point we'd otherwise end up with an unhandled exception anyways.
+                }
             }
         }
 
