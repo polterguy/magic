@@ -306,13 +306,18 @@ button.ainiro.ainiro_hide {
   margin-bottom: 5px;
   font-size: 16px;
   line-height: 24px;
-  text-align: justify;
   position: relative;
   padding: 15px;
   padding-left: 50px;
   color: var(--ainiro-color);
   border: solid 1px rgb(100,100,255);
   border-radius: 10px;
+}
+/* Justify paragraphs only, so tables, lists, etc. keep natural alignment. */
+@media (min-width: 769px) {
+  div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p {
+    text-align: justify;
+  }
 }
 
 .ainiro_human {

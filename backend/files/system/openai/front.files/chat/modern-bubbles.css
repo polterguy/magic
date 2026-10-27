@@ -290,12 +290,17 @@ button.ainiro.ainiro_hide {
   margin-bottom: 55px;
   font-size: 18px;
   line-height: 26px;
-  text-align: justify;
   position: relative;
   border-radius: 10px;
   padding: 35px;
   background: linear-gradient(var(--ainiro-bg-start), var(--ainiro-bg-end));
   color: var(--ainiro-color);
+}
+/* Justify paragraphs only, so tables, lists, etc. keep natural alignment. */
+@media (min-width: 769px) {
+  div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p {
+    text-align: justify;
+  }
 }
 .ainiro_machine:after,
 .ainiro_human:after {

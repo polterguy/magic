@@ -284,13 +284,18 @@ div.ainiro>.ainiro_chat_surface>.ainiro_starters>.ainiro_starter {
   margin-block: 40px;
   font-size: 16px;
   line-height: 24px;
-  text-align: justify;
   position: relative;
   padding: 15px;
   color: var(--ainiro-color);
   background-color: rgba(0, 0, 0, 0.1);
   border: solid 1px rgb(0, 0, 0);
   border-radius: 10px;
+}
+/* Justify paragraphs only, so tables, lists, etc. keep natural alignment. */
+@media (min-width: 769px) {
+  div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p {
+    text-align: justify;
+  }
 }
 
 .ainiro_machine:after,

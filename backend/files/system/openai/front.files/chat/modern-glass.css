@@ -321,7 +321,6 @@ button.ainiro_starter::before {
   margin-bottom: 55px;
   font-size: 18px;
   line-height: 26px;
-  text-align: justify;
   position: relative;
   border-radius: 5px;
   padding: 35px;
@@ -332,6 +331,12 @@ button.ainiro_starter::before {
   -webkit-backdrop-filter: blur(20px) saturate(140%);
   overflow: hidden;
   color: var(--ainiro-color);
+}
+/* Justify paragraphs only, so tables, lists, etc. keep natural alignment. */
+@media (min-width: 769px) {
+  div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p {
+    text-align: justify;
+  }
 }
 .ainiro_machine::before,
 .ainiro_human::before {
