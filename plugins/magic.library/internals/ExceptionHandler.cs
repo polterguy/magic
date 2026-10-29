@@ -170,7 +170,7 @@ namespace magic.library.internals
             context.Response.Headers["Access-Control-Allow-Origin"] = "*"; //NOSONAR
 
             // Writing exception to response and returning success.
-            await context.Response.WriteAsync(NodeJson.ToJson(nodeResult, true));
+            await context.Response.WriteAsync(NodeJson.ToJson(nodeResult, true), context.RequestAborted);
         }
 
         /*
@@ -230,7 +230,7 @@ namespace magic.library.internals
              */
             context.Response.Headers["Access-Control-Allow-Origin"] = "*"; //NOSONAR
 
-            await context.Response.WriteAsync(NodeJson.ToJson(response, true));
+            await context.Response.WriteAsync(NodeJson.ToJson(response, true), context.RequestAborted);
         }
 
         /*

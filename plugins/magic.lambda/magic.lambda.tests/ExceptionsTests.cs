@@ -22,7 +22,7 @@ try
    set-value:x:@.throws
       .:bool:true
 ");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ try
    set-value:x:@.field
       get-value:x:@.arguments/*/field
 ");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
             Assert.Equal("foo", lambda.Children.Skip(1).First().Value);
         }
 
@@ -64,7 +64,7 @@ try
    set-value:x:@.throws
       .:bool:true
 ");
-            Assert.Equal(false, lambda.Children.First().Value);
+            Assert.False((bool)lambda.Children.First().Value);
         }
 
 
@@ -88,7 +88,7 @@ try
    set-value:x:@.throws
       .:bool:true
 ");
-            Assert.Equal(false, lambda.Children.First().Value);
+            Assert.False((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -103,7 +103,7 @@ try
    set-value:x:@.throws
       .:bool:true
 ");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -119,7 +119,7 @@ try
          .:bool:true
 .catch
 ");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -135,7 +135,7 @@ try
          .:bool:true
 .catch
 ");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -152,7 +152,7 @@ try
          .:bool:true
 .catch
 ");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -179,7 +179,7 @@ try
       get-value:x:@.arguments/*/type
 ");
             Assert.Equal(500, lambda.Children.Skip(1).First().Value);
-            Assert.Equal(false, lambda.Children.Skip(2).First().Value);
+            Assert.False((bool)lambda.Children.Skip(2).First().Value);
             Assert.Equal("foo", lambda.Children.Skip(3).First().Value);
             Assert.Equal("magic.node.extensions.HyperlambdaException", lambda.Children.Skip(4).First().Value);
         }
@@ -208,7 +208,7 @@ try
       get-value:x:@.arguments/*/type
 ");
             Assert.Equal(500, lambda.Children.Skip(1).First().Value);
-            Assert.Equal(false, lambda.Children.Skip(2).First().Value);
+            Assert.False((bool)lambda.Children.Skip(2).First().Value);
             Assert.Equal("foo", lambda.Children.Skip(3).First().Value);
             Assert.Equal("magic.node.extensions.HyperlambdaException", lambda.Children.Skip(4).First().Value);
         }
@@ -224,7 +224,7 @@ try
    set-value:x:@.throws
       .:bool:true
 ");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -253,7 +253,7 @@ try
       get-value:x:@.arguments/*/type
 ");
             Assert.Equal(123, lambda.Children.Skip(1).First().Value);
-            Assert.Equal(true, lambda.Children.Skip(2).First().Value);
+            Assert.True((bool)lambda.Children.Skip(2).First().Value);
             Assert.Equal("[no-message]", lambda.Children.Skip(3).First().Value);
             Assert.Equal("magic.node.extensions.HyperlambdaException", lambda.Children.Skip(4).First().Value);
         }

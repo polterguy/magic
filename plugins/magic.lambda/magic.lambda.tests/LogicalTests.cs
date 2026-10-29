@@ -19,7 +19,7 @@ namespace magic.lambda.tests
 and
    get-value:x:../*/.foo1
    .:bool:true");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -31,7 +31,7 @@ and
    get-value:x:../*/.foo1
    .:bool:true
    .:bool:false");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -136,7 +136,7 @@ whitelist
 or
    get-value:x:../*/.foo1
    .:bool:false");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -148,7 +148,7 @@ or
    get-value:x:../*/.foo1
    .:bool:true
    .:bool:false");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -160,7 +160,7 @@ or
    get-value:x:../*/.foo1
    .:bool:false
    .:bool:false");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
     }
 }

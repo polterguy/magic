@@ -18,7 +18,7 @@ namespace magic.lambda.strings.tests
 .foo1:howdy world
 strings.contains:x:-
    .:world");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -29,7 +29,7 @@ strings.contains:x:-
 .foo2:x:-
 strings.contains:x:-
    .:world");
-            Assert.Equal(true, lambda.Children.Skip(2).First().Value);
+            Assert.True((bool)lambda.Children.Skip(2).First().Value);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ strings.contains:x:-
 .foo1:howdy tjobing
 strings.contains:x:-
    .:world");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ strings.contains:x:-
 .foo1
 strings.contains:x:-
    .:world");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ strings.contains:x:-
 .foo2:x:-
 strings.contains:x:-
    .:world");
-            Assert.Equal(false, lambda.Children.Skip(2).First().Value);
+            Assert.False((bool)lambda.Children.Skip(2).First().Value);
         }
 
         [Fact]
@@ -70,7 +70,7 @@ strings.contains:x:-
 .foo1:howdy world
 strings.contains:x:-
    .:world");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]

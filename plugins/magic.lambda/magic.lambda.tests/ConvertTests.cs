@@ -130,7 +130,7 @@ convert:x:-
 convert:x:-
    type:bool");
             Assert.Equal(typeof(bool), lambda.Children.Skip(1).First().Value.GetType());
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -425,7 +425,7 @@ convert:x:-
 convert:x:-
    type:bool");
             Assert.Equal(typeof(bool), lambda.Children.Skip(1).First().Value.GetType());
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]

@@ -289,7 +289,7 @@ namespace magic.endpoint.services
                 // Creating our result wrapper, wrapping whatever the endpoint wants to return to the client.
                 var response = new MagicResponse();
                 var result = new Node();
-                var execution = _executionRegistry.Create();
+                var execution = _executionRegistry.Create(request.Aborted);
                 response.Headers["Content-Type"] = "text/html";
                 response.Headers["X-Execution-Id"] = execution.ExecutionId;
 

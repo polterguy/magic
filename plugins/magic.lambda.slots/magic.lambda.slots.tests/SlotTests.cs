@@ -74,7 +74,7 @@ signal:foo"));
 slots.create:foo
    return-value:int:57
 slots.exists:foo");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]

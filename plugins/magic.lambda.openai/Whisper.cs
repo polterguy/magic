@@ -101,7 +101,7 @@ namespace magic.lambda.openai
                             request.Headers.Add("Authorization", "Bearer " + apiKey);
                             using (var response = await _httpClient.SendAsync(request, cancellationToken))
                             {
-                                var responseBody = await response.Content.ReadAsStringAsync();
+                                var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
 
                                 if (!response.IsSuccessStatusCode)
                                     throw new HyperlambdaException($"Failed to transcribe audio. Status: {response.StatusCode}, Body: {responseBody}");

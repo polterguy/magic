@@ -676,7 +676,7 @@ missing.slot");
             Assert.Equal(5, node.Children.First().Value);
             Assert.Equal(5M, node.Children.Skip(1).First().Value);
             Assert.Equal(5D, node.Children.Skip(2).First().Value);
-            Assert.Equal(true, node.Children.Skip(3).First().Value);
+            Assert.True((bool)node.Children.Skip(3).First().Value);
             Assert.Equal("foo", node.Children.Skip(4).First().Value);
             Assert.True(node.Children.Skip(5).First().Value is Expression);
         }

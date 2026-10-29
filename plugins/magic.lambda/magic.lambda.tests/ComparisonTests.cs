@@ -156,7 +156,7 @@ neq:x:../*/.foo1
 eq
    get-value:x:../*/.foo1
    .:OK");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -167,7 +167,7 @@ eq
 eq
    get-value:x:../*/.foo1
    .:OK");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -178,7 +178,7 @@ eq
 eq
    get-value:x:../*/.foo1
    .");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -189,7 +189,7 @@ eq
 eq
    get-value:x:../*/.foo1
    .:OK");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -199,7 +199,7 @@ eq
 eq
    .
    .");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -209,7 +209,7 @@ eq
 eq
    .:int:5
    .:uint:5");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -229,7 +229,7 @@ eq
 eq
    .:int:5
    .:long:5");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -239,7 +239,7 @@ eq
 eq
    .:float:5
    .:double:5");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -249,7 +249,7 @@ eq
 eq
    .:double:5
    .:int:5");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -259,7 +259,7 @@ eq
 eq
    .:float:5
    .:decimal:5");
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
         }
 
         [Fact]
@@ -271,7 +271,7 @@ not
    eq
       get-value:x:../*/.foo1
       .:OK");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -295,7 +295,7 @@ not
    eq
       get-value:x:../*/.foo1
       .:OK");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -306,7 +306,7 @@ not
 mt
    get-value:x:../*/.foo1
    .:B");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -317,7 +317,7 @@ mt
 mt
    get-value:x:../*/.foo1
    .:B");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -328,7 +328,7 @@ mt
 mt
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -339,7 +339,7 @@ mt
 mt
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -350,7 +350,7 @@ mt
 mt
    get-value:x:../*/.foo1
    .");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -361,7 +361,7 @@ mt
 mt
    get-value:x:../*/.foo1
    .");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -372,7 +372,7 @@ mt
 mt
    get-value:x:../*/.foo1
    .:string:5");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -383,7 +383,7 @@ mt
 lt
    get-value:x:../*/.foo1
    .:B");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -394,7 +394,7 @@ lt
 lt
    get-value:x:../*/.foo1
    .:B");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -405,7 +405,7 @@ lt
 lt
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -416,7 +416,7 @@ lt
 lt
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -427,7 +427,7 @@ lt
 lt
    get-value:x:../*/.foo1
    .");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -438,7 +438,7 @@ lt
 lt
    get-value:x:../*/.foo1
    .");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -449,7 +449,7 @@ lt
 lt
    get-value:x:../*/.foo1
    .:int:5");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -460,7 +460,7 @@ lt
 lte
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -471,7 +471,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -482,7 +482,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .:B");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -493,7 +493,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -504,7 +504,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -515,7 +515,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -526,7 +526,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -537,7 +537,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .:uint:5");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -548,7 +548,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .:uint:5");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -559,7 +559,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .:long:5");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -570,7 +570,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .:double:5.1");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -581,7 +581,7 @@ lte
 lte
    get-value:x:../*/.foo1
    .:long:5");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -592,7 +592,7 @@ lte
 mte
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -603,7 +603,7 @@ mte
 mte
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -614,7 +614,7 @@ mte
 mte
    get-value:x:../*/.foo1
    .:B");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -625,7 +625,7 @@ mte
 mte
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -636,7 +636,7 @@ mte
 mte
    get-value:x:../*/.foo1
    .:A");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -647,7 +647,7 @@ mte
 mte
    get-value:x:../*/.foo1
    .");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -658,7 +658,7 @@ mte
 mte
    get-value:x:../*/.foo1
    .");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -669,7 +669,7 @@ mte
 mte
    get-value:x:../*/.foo1
    .:int:5");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
     }
 }

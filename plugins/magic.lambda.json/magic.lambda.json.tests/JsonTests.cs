@@ -82,9 +82,9 @@ namespace magic.lambda.json.tests
             var node = new Node("", @"{""foo1"":true,""foo2"":false}");
             signaler.Signal("json2lambda", node);
             Assert.Equal("foo1", node.Children.First().Name);
-            Assert.Equal(true, node.Children.First().Value);
+            Assert.True((bool)node.Children.First().Value);
             Assert.Equal("foo2", node.Children.Skip(1).First().Name);
-            Assert.Equal(false, node.Children.Skip(1).First().Value);
+            Assert.False((bool)node.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -94,9 +94,9 @@ namespace magic.lambda.json.tests
             var node = new Node("", @"{""foo1"":true,""foo2"":false}");
             signaler.Signal("json2lambda", node);
             Assert.Equal("foo1", node.Children.First().Name);
-            Assert.Equal(true, node.Children.First().Value);
+            Assert.True((bool)node.Children.First().Value);
             Assert.Equal("foo2", node.Children.Skip(1).First().Name);
-            Assert.Equal(false, node.Children.Skip(1).First().Value);
+            Assert.False((bool)node.Children.Skip(1).First().Value);
         }
 
         [Fact]

@@ -18,25 +18,25 @@ namespace magic.node.tests
         [Fact]
         public void ConvertBoolTrue()
         {
-            Assert.Equal(true, Converter.ToObject(true, "bool"));
+            Assert.True((bool)Converter.ToObject(true, "bool"));
         }
 
         [Fact]
         public void ConvertBoolFalse()
         {
-            Assert.Equal(false, Converter.ToObject(false, "bool"));
+            Assert.False((bool)Converter.ToObject(false, "bool"));
         }
 
         [Fact]
         public void ConvertBoolTrue_String()
         {
-            Assert.Equal(true, Converter.ToObject("true", "bool"));
+            Assert.True((bool)Converter.ToObject("true", "bool"));
         }
 
         [Fact]
         public void ConvertBoolFalse_String()
         {
-            Assert.Equal(false, Converter.ToObject("false", "bool"));
+            Assert.False((bool)Converter.ToObject("false", "bool"));
         }
 
         [Fact]

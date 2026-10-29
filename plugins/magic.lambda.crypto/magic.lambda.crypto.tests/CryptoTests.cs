@@ -17,7 +17,7 @@ namespace magic.lambda.crypto.tests
             var lambda = Common.Evaluate(@"crypto.password.hash:foo
 crypto.password.verify:foo
    hash:x:@crypto.password.hash");
-            Assert.Equal(true, lambda.Children.Skip(1).First().Value);
+            Assert.True((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
@@ -26,7 +26,7 @@ crypto.password.verify:foo
             var lambda = Common.Evaluate(@"crypto.password.hash:foo
 crypto.password.verify:WRONG
    hash:x:@crypto.password.hash");
-            Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+            Assert.False((bool)lambda.Children.Skip(1).First().Value);
         }
 
         [Fact]
