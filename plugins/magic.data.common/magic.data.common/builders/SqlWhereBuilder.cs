@@ -78,7 +78,7 @@ namespace magic.data.common.builders
                      * SQL injection attacks through explicitly added arguments referenced
                      * from for instance join [on] conditions.
                      */
-                    if (!Regex.IsMatch(rhsValue, @"^@[A-Za-z0-9_.]+$"))
+                    if (!Regex.IsMatch(rhsValue, @"^@[A-Za-z0-9_.]+$", RegexOptions.None, TimeSpan.FromSeconds(1)))
                         throw new HyperlambdaException($"'{rhsValue}' is not a valid argument reference");
                     builder.Append(rhsValue);
                 }

@@ -28,7 +28,8 @@ namespace magic.data.common.builders
             @"(?<fun>count|sum|avg|min|max|group_concat|string_agg)\s*\(\s*(?<distinct>distinct\s+)?(?<args>\*|[A-Za-z0-9_.]+(\s*[-+*/]\s*[A-Za-z0-9_.]+)*)\s*\)";
         readonly static Regex _aggregateFunction = new Regex(
             $"^{_aggregateCall}$",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            RegexOptions.IgnoreCase | RegexOptions.Compiled,
+            TimeSpan.FromSeconds(1));
 
         /*
          * The 'cast(fun(col) as type)' variant, matched separately from the plain call such that the
@@ -36,7 +37,8 @@ namespace magic.data.common.builders
          */
         readonly static Regex _castedAggregate = new Regex(
             $@"^cast\s*\(\s*{_aggregateCall}\s+as\s+(?<type>[A-Za-z0-9_]+)\s*\)$",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            RegexOptions.IgnoreCase | RegexOptions.Compiled,
+            TimeSpan.FromSeconds(1));
 
         /*
          * Splits an aggregate's argument list on its arithmetic operators, keeping the operators
@@ -45,7 +47,8 @@ namespace magic.data.common.builders
          */
         readonly static Regex _arithmeticOperator = new Regex(
             @"(\s*[-+*/]\s*)",
-            RegexOptions.Compiled);
+            RegexOptions.Compiled,
+            TimeSpan.FromSeconds(1));
 
         /*
          * White list of allowed table and join alias names, constraining aliases to plain
@@ -53,7 +56,8 @@ namespace magic.data.common.builders
          */
         readonly static Regex _aliasName = new Regex(
             @"^[A-Za-z0-9_]+$",
-            RegexOptions.Compiled);
+            RegexOptions.Compiled,
+            TimeSpan.FromSeconds(1));
 
         /// <summary>
         /// Creates a select SQL statement

@@ -19,10 +19,10 @@ namespace magic.lambda.http.services.helpers
          * Matches the {placeholder} segments of an url template, substituted for a benign segment
          * keeping the URL parseable and its structure intact.
          */
-        static readonly Regex _templateSegment = new Regex("\\{[^}]+\\}", RegexOptions.Compiled);
+        static readonly Regex _templateSegment = new Regex("\\{[^}]+\\}", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
         // Identifies a whole path segment that is a {placeholder}.
-        static readonly Regex _segmentPlaceholder = new Regex("^\\{[^}]+\\}$", RegexOptions.Compiled);
+        static readonly Regex _segmentPlaceholder = new Regex("^\\{[^}]+\\}$", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
         /// <summary>
         /// Returns true if the specified URL matches the specified pin.

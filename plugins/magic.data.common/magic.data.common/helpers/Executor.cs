@@ -25,7 +25,7 @@ namespace magic.data.common.helpers
     public static class Executor
     {
         // A database name is a name, never a path and never a connection string.
-        readonly static Regex _legalDatabaseName = new Regex("^[a-zA-Z0-9_-]+$", RegexOptions.Compiled);
+        readonly static Regex _legalDatabaseName = new Regex("^[a-zA-Z0-9_-]+$", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
         /*
          * Verifies the specified database name is a NAME and not a path or a connection string.
          *
