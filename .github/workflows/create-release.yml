@@ -52,7 +52,10 @@ jobs:
       # Login to DockerHub
       # ==========================
       - name: Login to DockerHub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
       # ==========================
       # Build & Push Backend (multi-arch)
@@ -124,19 +127,21 @@ jobs:
       # Upload release zips (Cloudflare-safe)
       # ==========================
       - name: Upload release zip files
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
 
           curl -X PUT \
             -H "Content-Type: multipart/form-data" \
-            -H "Authorization: Bearer ${{ secrets.API_TOKEN }}" \
+            -H "Authorization: Bearer $API_TOKEN" \
             -F "folder=/etc/releases/" \
             -F "file=@magic-$VERSION.zip" \
             "https://ainiro.io/magic/system/file-system/file"
 
           curl -X PUT \
             -H "Content-Type: multipart/form-data" \
-            -H "Authorization: Bearer ${{ secrets.API_TOKEN }}" \
+            -H "Authorization: Bearer $API_TOKEN" \
             -F "folder=/etc/releases/" \
             -F "file=@magic.zip" \
             "https://ainiro.io/magic/system/file-system/file"
@@ -159,7 +164,7 @@ jobs:
 
       - name: Install mcp-publisher
         run: |
-          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+          curl -L --proto '=https' --tlsv1.2 "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
 
       # server.json in git is a template; stamp the released version and
       # the matching Docker Hub image tag into it before publishing.

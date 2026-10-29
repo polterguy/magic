@@ -84,7 +84,7 @@ namespace magic.endpoint.controller
         [HttpPatch]
         [HttpDelete]
         [Route("{*url}")]
-        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
+        [RequestFormLimits(ValueLengthLimit = 350 * 1024 * 1024, MultipartBodyLengthLimit = 350 * 1024 * 1024)]
         public async Task<IActionResult> Execute(string url)
         {
             return await HandleRequest(Request.Method?.ToLowerInvariant(), url);
