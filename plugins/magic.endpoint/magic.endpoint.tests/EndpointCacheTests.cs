@@ -17,6 +17,9 @@ using magic.endpoint.contracts;
 using magic.endpoint.contracts.poco;
 using magic.node.extensions.hyperlambda;
 
+// The endpoint cache and its recheck time are static, so test classes running in parallel would change each other's counts.
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
+
 namespace magic.endpoint.tests
 {
     /*
