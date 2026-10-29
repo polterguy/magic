@@ -1862,7 +1862,7 @@ io.file.load:/existing.txt
             var lambda = Common.Evaluate(@"
 io.file.list:/
 ", fileService);
-            Assert.True(lambda.Children.First().Children.Count() == 2);
+            Assert.Equal(2, lambda.Children.First().Children.Count());
 
             // Notice, files are SORTED!
             Assert.Equal("/bar.txt", lambda.Children.First().Children.First().Get<string>());

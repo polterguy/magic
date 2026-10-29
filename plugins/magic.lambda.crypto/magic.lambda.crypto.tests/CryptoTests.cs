@@ -189,7 +189,7 @@ crypto.random
    min:32
    max:32");
             Assert.NotNull(lambda.Children.First().Value);
-            Assert.True(lambda.Children.First().Get<byte[]>().Length == 32);
+            Assert.Equal(32, lambda.Children.First().Get<byte[]>().Length);
         }
 
         [Fact]

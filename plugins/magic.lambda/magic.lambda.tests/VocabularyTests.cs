@@ -27,7 +27,7 @@ namespace magic.lambda.tests
         {
             var lambda = Common.Evaluate(@"vocabulary");
             Assert.True(lambda.Children.First().Children.Count() > 20);
-            Assert.Empty(lambda.Children.First().Children.Where(x => x.Name == ".not-visible"));
+            Assert.DoesNotContain(lambda.Children.First().Children, x => x.Name == ".not-visible");
         }
 
         [Fact]

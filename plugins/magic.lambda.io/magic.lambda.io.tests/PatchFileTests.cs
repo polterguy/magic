@@ -18,7 +18,7 @@ namespace magic.lambda.io.tests
             var fileService = new FileService
             {
                 LoadAction = path => "foo",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid patches.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for invalid patches.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
@@ -34,7 +34,7 @@ io.file.patch:/existing.txt
             var fileService = new FileService
             {
                 LoadAction = path => "foo",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid patches.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for invalid patches.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
@@ -114,7 +114,7 @@ io.file.patch:/existing.txt
             var fileService = new FileService
             {
                 LoadAction = path => "line0\nline1\nline2\nline3\nline4\nline5\nline6\nline7",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid patches.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for invalid patches.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
@@ -145,7 +145,7 @@ io.file.patch:/existing.txt
             var fileService = new FileService
             {
                 LoadAction = path => "line1\nline2",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid patches.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for invalid patches.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
@@ -165,7 +165,7 @@ io.file.patch:/existing.txt
             var fileService = new FileService
             {
                 LoadAction = path => "line1\nline2",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid patches.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for invalid patches.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
@@ -182,7 +182,7 @@ io.file.patch:/existing.txt
             var fileService = new FileService
             {
                 LoadAction = path => "line1\n",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid patches.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for invalid patches.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
@@ -441,7 +441,7 @@ io.file.patch:/existing.txt
             var fileService = new FileService
             {
                 LoadAction = path => "foo",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid invocations.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for invalid invocations.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
@@ -515,7 +515,7 @@ io.file.patch:/existing.txt
             var fileService = new FileService
             {
                 LoadAction = path => "line1\nline2\nline3\n",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for multi file patches.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for multi file patches.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
@@ -548,7 +548,7 @@ diff --git a/other.txt b/other.txt
             var fileService = new FileService
             {
                 LoadAction = path => "line1\nline2\nline3\n",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for multi file patches.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for multi file patches.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""
@@ -605,7 +605,7 @@ io.file.patch:/my file.txt
             var fileService = new FileService
             {
                 LoadAction = path => "line1\n",
-                SaveAction = (path, content) => Assert.True(false, "Save should not be called for invalid patches.")
+                SaveAction = (path, content) => Assert.Fail("Save should not be called for invalid patches.")
             };
 
             var exception = Assert.Throws<HyperlambdaException>(() => Common.Evaluate("""

@@ -885,9 +885,9 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(3, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
         }
 
         [Fact]
@@ -897,10 +897,10 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(4, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
         }
 
         [Fact]
@@ -910,10 +910,10 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(4, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
         }
 
         [Fact]
@@ -923,10 +923,10 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(4, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
         }
 
         [Fact]
@@ -936,13 +936,13 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(7, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
-            Assert.True(tokens.Skip(4).First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(5).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(6).First().Type == TokenType.Value);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
+            Assert.Equal(TokenType.Name, tokens.Skip(4).First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(5).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(6).First().Type);
         }
 
         [Fact]
@@ -952,15 +952,15 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(8, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
-            Assert.True(tokens.Skip(4).First().Type == TokenType.Space);
-            Assert.True(tokens.Skip(4).First().Value.Length == 3);
-            Assert.True(tokens.Skip(5).First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(6).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(7).First().Type == TokenType.Value);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
+            Assert.Equal(TokenType.Space, tokens.Skip(4).First().Type);
+            Assert.Equal(3, tokens.Skip(4).First().Value.Length);
+            Assert.Equal(TokenType.Name, tokens.Skip(5).First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(6).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(7).First().Type);
         }
 
         [Fact]
@@ -970,19 +970,19 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(11, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
-            Assert.True(tokens.Skip(4).First().Type == TokenType.Space);
-            Assert.True(tokens.Skip(4).First().Value.Length == 3);
-            Assert.True(tokens.Skip(5).First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(6).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(7).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(8).First().Type == TokenType.CRLF);
-            Assert.True(tokens.Skip(9).First().Type == TokenType.SingleLineComment);
-            Assert.True(tokens.Skip(9).First().Value == "Howdy world ...");
-            Assert.True(tokens.Skip(10).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
+            Assert.Equal(TokenType.Space, tokens.Skip(4).First().Type);
+            Assert.Equal(3, tokens.Skip(4).First().Value.Length);
+            Assert.Equal(TokenType.Name, tokens.Skip(5).First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(6).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(7).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(8).First().Type);
+            Assert.Equal(TokenType.SingleLineComment, tokens.Skip(9).First().Type);
+            Assert.Equal("Howdy world ...", tokens.Skip(9).First().Value);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(10).First().Type);
         }
 
         [Fact]
@@ -992,18 +992,18 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(9, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
             Assert.Equal("foo", tokens.First().Value);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
             Assert.Equal("bar", tokens.Skip(2).First().Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
-            Assert.True(tokens.Skip(4).First().Type == TokenType.Space);
-            Assert.True(tokens.Skip(4).First().Value.Length == 3);
-            Assert.True(tokens.Skip(5).First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(6).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(7).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(8).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
+            Assert.Equal(TokenType.Space, tokens.Skip(4).First().Type);
+            Assert.Equal(3, tokens.Skip(4).First().Value.Length);
+            Assert.Equal(TokenType.Name, tokens.Skip(5).First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(6).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(7).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(8).First().Type);
         }
 
         [Fact]
@@ -1013,22 +1013,22 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(13, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
             Assert.Equal("foo", tokens.First().Value);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
             Assert.Equal("bar", tokens.Skip(2).First().Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
-            Assert.True(tokens.Skip(4).First().Type == TokenType.Space);
-            Assert.True(tokens.Skip(4).First().Value.Length == 3);
-            Assert.True(tokens.Skip(5).First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(6).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(7).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(8).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
+            Assert.Equal(TokenType.Space, tokens.Skip(4).First().Type);
+            Assert.Equal(3, tokens.Skip(4).First().Value.Length);
+            Assert.Equal(TokenType.Name, tokens.Skip(5).First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(6).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(7).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(8).First().Type);
             Assert.Equal("Howdy world ...", tokens.Skip(9).First().Value);
-            Assert.True(tokens.Skip(10).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(10).First().Type);
             Assert.Equal("Thomas Hansen", tokens.Skip(11).First().Value);
-            Assert.True(tokens.Skip(12).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(12).First().Type);
         }
 
         [Fact]
@@ -1038,22 +1038,22 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(13, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
             Assert.Equal("foo", tokens.First().Value);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
             Assert.Equal("bar", tokens.Skip(2).First().Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
-            Assert.True(tokens.Skip(4).First().Type == TokenType.Space);
-            Assert.True(tokens.Skip(4).First().Value.Length == 3);
-            Assert.True(tokens.Skip(5).First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(6).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(7).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(8).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
+            Assert.Equal(TokenType.Space, tokens.Skip(4).First().Type);
+            Assert.Equal(3, tokens.Skip(4).First().Value.Length);
+            Assert.Equal(TokenType.Name, tokens.Skip(5).First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(6).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(7).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(8).First().Type);
             Assert.Equal("Howdy world ...\r\n  thomas\r\nhansen", tokens.Skip(9).First().Value);
-            Assert.True(tokens.Skip(10).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(10).First().Type);
             Assert.Equal("Thomas Hansen", tokens.Skip(11).First().Value);
-            Assert.True(tokens.Skip(12).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(12).First().Type);
         }
 
         [Fact]
@@ -1063,22 +1063,22 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(13, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
             Assert.Equal("foo", tokens.First().Value);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
             Assert.Equal("bar", tokens.Skip(2).First().Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
-            Assert.True(tokens.Skip(4).First().Type == TokenType.Space);
-            Assert.True(tokens.Skip(4).First().Value.Length == 3);
-            Assert.True(tokens.Skip(5).First().Type == TokenType.Name);
-            Assert.True(tokens.Skip(6).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(7).First().Type == TokenType.Value);
-            Assert.True(tokens.Skip(8).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
+            Assert.Equal(TokenType.Space, tokens.Skip(4).First().Type);
+            Assert.Equal(3, tokens.Skip(4).First().Value.Length);
+            Assert.Equal(TokenType.Name, tokens.Skip(5).First().Type);
+            Assert.Equal(TokenType.Separator, tokens.Skip(6).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(7).First().Type);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(8).First().Type);
             Assert.Equal("Howdy world ...\r\n  thomas\r\nhansen", tokens.Skip(9).First().Value);
-            Assert.True(tokens.Skip(10).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(10).First().Type);
             Assert.Equal("Thomas Hansen", tokens.Skip(11).First().Value);
-            Assert.True(tokens.Skip(12).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(12).First().Type);
         }
 
         [Fact]
@@ -1179,11 +1179,11 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(2, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.SingleLineComment);
+            Assert.Equal(TokenType.SingleLineComment, tokens.First().Type);
             Assert.Equal("Thomas Hansen", tokens.First().Value);
 
             // Notice, comments have CR/LF automatically appended to the list of tokens afterwards.
-            Assert.True(tokens.Skip(1).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(1).First().Type);
             Assert.Equal("\r\n", tokens.Skip(1).First().Value);
         }
 
@@ -1194,7 +1194,7 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Single(tokens);
-            Assert.True(tokens.First().Type == TokenType.Name);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
             Assert.Equal("foo", tokens.First().Value);
         }
 
@@ -1205,7 +1205,7 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Single(tokens);
-            Assert.True(tokens.First().Type == TokenType.Name);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
             Assert.Equal("foo\rf\ng", tokens.First().Value);
         }
 
@@ -1216,12 +1216,12 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(4, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.Name);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
             Assert.Equal("foo", tokens.First().Value);
-            Assert.True(tokens.Skip(1).First().Type == TokenType.Separator);
-            Assert.True(tokens.Skip(2).First().Type == TokenType.Value);
+            Assert.Equal(TokenType.Separator, tokens.Skip(1).First().Type);
+            Assert.Equal(TokenType.Value, tokens.Skip(2).First().Type);
             Assert.Equal("", tokens.Skip(2).First().Value);
-            Assert.True(tokens.Skip(3).First().Type == TokenType.CRLF);
+            Assert.Equal(TokenType.CRLF, tokens.Skip(3).First().Type);
         }
 
         [Fact]
@@ -1259,7 +1259,7 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Single(tokens);
-            Assert.True(tokens.First().Type == TokenType.Name);
+            Assert.Equal(TokenType.Name, tokens.First().Type);
             Assert.Equal("\"", tokens.First().Value);
         }
 
@@ -1270,7 +1270,7 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(2, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.MultiLineComment);
+            Assert.Equal(TokenType.MultiLineComment, tokens.First().Type);
             Assert.Equal("thomas\r\n\r\nhansen", tokens.First().Value);
             Assert.Equal(TokenType.CRLF, tokens.Skip(1).First().Type);
         }
@@ -1282,7 +1282,7 @@ world:""foobar \t howdy""");
             var tokenizer = new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl)));
             var tokens = tokenizer.Tokens();
             Assert.Equal(2, tokens.Count);
-            Assert.True(tokens.First().Type == TokenType.MultiLineComment);
+            Assert.Equal(TokenType.MultiLineComment, tokens.First().Type);
             Assert.Equal("thomas\r\n\r\nhansen", tokens.First().Value);
             Assert.Equal(TokenType.CRLF, tokens.Skip(1).First().Type);
         }

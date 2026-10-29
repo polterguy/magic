@@ -395,12 +395,14 @@ validators.regex:x:@.foo
         [Fact]
         public async Task VerifyRegex_WithinDeadline_01()
         {
-            await EvaluateWithDeadline(@"
+            var exception = await Record.ExceptionAsync(async () => await EvaluateWithDeadline(@"
 .pat:han[0-9]*sen
 .foo:thomas han0123sen
 validators.regex:x:@.foo
    regex:x:@.pat
-", TimeSpan.FromSeconds(5));
+", TimeSpan.FromSeconds(5)));
+
+            Assert.Null(exception);
         }
 
         [Fact]

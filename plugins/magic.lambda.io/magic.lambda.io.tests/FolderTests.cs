@@ -316,7 +316,7 @@ io.folder.list:/
 ", null, folderService);
             Assert.True(listInvoked);
             Assert.True(createInvoked);
-            Assert.True(lambda.Children.Skip(1).First().Children.Count() == 2);
+            Assert.Equal(2, lambda.Children.Skip(1).First().Children.Count());
 
             // Notice, files are SORTED!
             Assert.Equal("/bar/", lambda.Children.Skip(1).First().Children.First().Get<string>());

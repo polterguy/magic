@@ -85,7 +85,7 @@ slots.create:foo
    return-value:int:57
 slots.vocabulary");
             Assert.NotEmpty(lambda.Children.Skip(1).First().Children);
-            Assert.NotEmpty(lambda.Children.Skip(1).First().Children.Where(x => x.GetEx<string>() == "foo"));
+            Assert.Contains(lambda.Children.Skip(1).First().Children, x => x.GetEx<string>() == "foo");
         }
 
         [Fact]
@@ -98,10 +98,10 @@ slots.create:fooAA
    return-value:int:57
 slots.vocabulary");
             Assert.NotEmpty(lambda.Children.Skip(1).First().Children);
-            Assert.NotEmpty(lambda.Children.Skip(2).First().Children.Where(x => x.GetEx<string>() == "fooAA"));
-            Assert.NotEmpty(lambda.Children.Skip(2).First().Children.Where(x => x.GetEx<string>() == "fooBB"));
-            Assert.Single(lambda.Children.Skip(2).First().Children.Where(x => x.Get<string>() == "fooAA"));
-            Assert.Single(lambda.Children.Skip(2).First().Children.Where(x => x.Get<string>() == "fooBB"));
+            Assert.Contains(lambda.Children.Skip(2).First().Children, x => x.GetEx<string>() == "fooAA");
+            Assert.Contains(lambda.Children.Skip(2).First().Children, x => x.GetEx<string>() == "fooBB");
+            Assert.Single(lambda.Children.Skip(2).First().Children, x => x.Get<string>() == "fooAA");
+            Assert.Single(lambda.Children.Skip(2).First().Children, x => x.Get<string>() == "fooBB");
         }
 
         [Fact]
@@ -114,10 +114,10 @@ slots.create:fooAA
    return-value:int:57
 slots.vocabulary:foo");
             Assert.NotEmpty(lambda.Children.Skip(1).First().Children);
-            Assert.NotEmpty(lambda.Children.Skip(2).First().Children.Where(x => x.GetEx<string>() == "fooAA"));
-            Assert.NotEmpty(lambda.Children.Skip(2).First().Children.Where(x => x.GetEx<string>() == "fooBB"));
-            Assert.Single(lambda.Children.Skip(2).First().Children.Where(x => x.Get<string>() == "fooAA"));
-            Assert.Single(lambda.Children.Skip(2).First().Children.Where(x => x.Get<string>() == "fooBB"));
+            Assert.Contains(lambda.Children.Skip(2).First().Children, x => x.GetEx<string>() == "fooAA");
+            Assert.Contains(lambda.Children.Skip(2).First().Children, x => x.GetEx<string>() == "fooBB");
+            Assert.Single(lambda.Children.Skip(2).First().Children, x => x.Get<string>() == "fooAA");
+            Assert.Single(lambda.Children.Skip(2).First().Children, x => x.Get<string>() == "fooBB");
         }
 
         [Fact]

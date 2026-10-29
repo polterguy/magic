@@ -38,7 +38,7 @@ namespace magic.lambda.tests
                 "node"};
             foreach (var idxType in types)
             {
-                Assert.Single(lambda.Children.First().Children.Where(x => x.Get<string>() == idxType));
+                Assert.Single(lambda.Children.First().Children, x => x.Get<string>() == idxType);
             }
         }
     }
