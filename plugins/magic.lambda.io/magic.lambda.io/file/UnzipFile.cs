@@ -142,6 +142,9 @@ namespace magic.lambda.io.file
             Stream contentStream,
             bool overwrite)
         {
+            // Notice, this is what stops an archive escaping its destination with a "../" entry, and it must run before any folder is created.
+            VerifyWithinDestination(destinationFolder, filename);
+
             // Making sure we create currently iterated destination folder unless it already exists.
             var entities = filename.Split('/');
             var currentFolder = new StringBuilder(_rootResolver.AbsolutePath(destinationFolder));
@@ -157,9 +160,6 @@ namespace magic.lambda.io.file
 
             // Figuring out full filename of current entry and saving it.
             var fullFileName = currentFolder + entities.Last();
-
-            // Notice, this is what stops an archive escaping its destination with a "../" entry.
-            VerifyWithinDestination(destinationFolder, filename);
 
             // Checking if file exists.
             if (File.Exists(_rootResolver.AbsolutePath(destinationFolder + filename)))

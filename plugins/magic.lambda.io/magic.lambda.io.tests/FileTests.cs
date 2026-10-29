@@ -200,6 +200,28 @@ whitelist
         }
 
         [Fact]
+        public void UnzipFile_EntryEscapingDestination_CreatesNoFolders()
+        {
+            var created = new List<string>();
+            var streamService = new StreamService
+            {
+                OpenFileAction = (path) => CreateArchive("../elsewhere/escaped.txt"),
+                SaveFileAction = (stream, path) => { },
+            };
+            var folderService = new FolderService
+            {
+                ExistsAction = (path) => false,
+                CreateAction = (path) => created.Add(path),
+            };
+
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+io.file.unzip:/etc/x.zip
+   folder:/etc/out/
+", streamService: streamService, folderService: folderService));
+            Assert.Empty(created);
+        }
+
+        [Fact]
         public void UnzipFile_EntryEscapingDestination_ThrowsWithoutWhitelist()
         {
             var saveInvoked = false;

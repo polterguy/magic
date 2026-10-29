@@ -138,14 +138,14 @@ namespace magic.lambda.crypto.slots.hash
                  * such as existing passwords in existing legacy databases
                  */
                 case "md5":
-                    using (var algo = MD5.Create())
+                    using (var algo = MD5.Create()) //NOSONAR - Legacy data requires it.
                     {
                         input.Value = await GenerateHashAsync(signaler, algo, data, format, isFile);
                     }
                     break;
 
                 case "sha1":
-                    using (var algo = SHA1.Create())
+                    using (var algo = SHA1.Create()) //NOSONAR - Legacy data requires it.
                     {
                         input.Value = await GenerateHashAsync(signaler, algo, data, format, isFile);
                     }
