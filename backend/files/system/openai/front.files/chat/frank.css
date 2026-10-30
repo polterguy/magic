@@ -101,7 +101,10 @@ button.aista-chat-btn:focus {
 .aista-chat-header {
   font-size: 12px !important;
   margin: 18px 60px 15px 12px !important;
-  color:linear-gradient(#5de0e6, #004aad) !important;
+  background: linear-gradient(#5de0e6, #004aad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
 }
 .aista-chat-close-btn {
   border-radius: 4px !important;

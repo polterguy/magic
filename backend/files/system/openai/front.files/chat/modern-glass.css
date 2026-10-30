@@ -382,7 +382,7 @@ button.ainiro_starter::before {
   100% {
     opacity: 1;
     margin-right: 0;
-    margin-left: 50;
+    margin-left: 50px;
   }
 }
 .ainiro_human.ainiro_just_added {

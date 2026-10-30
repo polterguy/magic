@@ -1755,10 +1755,6 @@ export function openaiThemes() {
   return http.get<string[]>('/magic/system/openai/themes');
 }
 
-export function openaiThemesSearch() {
-  return http.get<string[]>('/magic/system/openai/themes-search');
-}
-
 /*
  * Crawls a website and builds a chatbot from it — the "chatbot wizard" as one
  * call. Long running: progress is published on [channel] over the socket, and

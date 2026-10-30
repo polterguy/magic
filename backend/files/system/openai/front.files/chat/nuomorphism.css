@@ -110,7 +110,7 @@ button.aista-chat-btn:focus i.icofont-chat {
   color: rgb(128,128,128) !important;
   animation-name: aista-fade-in;
   animation-duration: .75s;
-  animation-direction: forwards;
+  animation-fill-mode: forwards;
   animation-timing-function: ease-in-out;
 }
 .aista-chat-close-btn {
