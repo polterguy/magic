@@ -113,6 +113,7 @@ export default function Configuration() {
             {toolsOpen && (
               <>
                 <div
+                  role="presentation"
                   style={{ position: 'fixed', inset: 0, zIndex: 2000001 }}
                   onClick={() => setToolsOpen(false)} />
                 <ul

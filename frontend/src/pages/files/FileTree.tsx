@@ -216,7 +216,7 @@ function FolderActions(props: {
   onDelete?: () => void;
 }) {
   return (
-    <span className="row-actions" onClick={e => e.stopPropagation()}>
+    <span className="row-actions" role="presentation" onClick={e => e.stopPropagation()}>
       <button className="icon-btn" title="New file" onClick={props.onNewFile}><FilePlusIcon /></button>
       <button className="icon-btn" title="New folder" onClick={props.onNewFolder}><FolderPlusIcon /></button>
       {props.onGit &&

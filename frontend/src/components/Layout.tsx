@@ -197,7 +197,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <span className="brand-magic">magic</span>
       </div>
       {/* Dims the page behind the open drawer; tapping it closes the drawer. */}
-      <div className="nav-backdrop" onClick={() => setMobileNav(false)} />
+      <div className="nav-backdrop" role="presentation" onClick={() => setMobileNav(false)} />
       <aside className={'sidebar' + (collapsed ? ' collapsed' : '') + (mobileNav ? ' open' : '')}>
         <div className="brand">
           <span className="brand-magic">magic</span>

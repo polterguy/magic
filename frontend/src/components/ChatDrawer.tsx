@@ -496,7 +496,7 @@ export default function ChatDrawer(props: {
           ×
         </button>
       </div>
-      <div className="chat-messages" ref={listRef} onClick={onListClick} onScroll={onListScroll}>
+      <div className="chat-messages" role="presentation" ref={listRef} onClick={onListClick} onScroll={onListScroll}>
         {messages.length === 0 && (
           <p className="muted" style={{ textAlign: 'center', marginTop: 48 }}>
             Talk to your cloudlet — generate endpoints, query your databases,
