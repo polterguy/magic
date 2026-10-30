@@ -57,65 +57,19 @@ namespace magic.lambda.strings.replace
             // Parsing string.
             using (var reader = new StringReader(input.GetEx<string>()))
             {
-                while (true)
+                int val;
+                while ((val = reader.Read()) != -1)
                 {
-                    // Checking for EOF.
-                    var val = reader.Read();
-                    if (val == -1)
-                        break;
-
-                    // Checking what character we're looking at.
                     var ch = (char)val;
-                    switch (ch)
+                    if (ch == '{' && (char)reader.Peek() == '{')
                     {
-                        case '{':
-                            if ((char)reader.Peek() == '{')
-                            {
-                                // Hyperlambda snippet, discarding second '{' character.
-                                reader.Read();
-                                var snippet = new StringBuilder();
-                                var cont = true;
-                                while (cont)
-                                {
-                                    val = reader.Read();
-                                    if (val == -1)
-                                    {
-                                        builder.Append("{{");
-                                        builder.Append(snippet);
-                                        cont = false;
-                                    }
-                                    else
-                                    {
-                                        ch = (char)val;
-                                        switch (ch)
-                                        {
-                                            case '}':
-                                                if ((char)reader.Peek() == '}')
-                                                {
-                                                    // Done finding mixin expression or Hyperlambda.
-                                                    reader.Read();
-                                                    if (!strip)
-                                                        builder.Append(await ResolveMixin(signaler, input, snippet.ToString()));
-                                                    cont = false;
-                                                }
-                                                else
-                                                    snippet.Append(ch);
-                                                break;
-
-                                            default:
-                                                snippet.Append(ch);
-                                                break;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                                builder.Append(ch); // Just a single '{' character.
-                            break;
-
-                        default:
-                            builder.Append(ch);
-                            break;
+                        // Hyperlambda snippet, discarding second '{' character.
+                        reader.Read();
+                        builder.Append(await ReadSnippet(reader, signaler, input, strip));
+                    }
+                    else
+                    {
+                        builder.Append(ch);
                     }
                 }
             }
@@ -126,6 +80,30 @@ namespace magic.lambda.strings.replace
         }
 
         #region [ -- Private helper methods -- ]
+
+        /*
+         * Reads a mixin expression or Hyperlambda snippet, up until its closing "}}", and returns its result,
+         * or an empty string when stripping. A snippet never closed is returned as the text it was.
+         */
+        private async Task<string> ReadSnippet(StringReader reader, ISignaler signaler, Node input, bool strip)
+        {
+            var snippet = new StringBuilder();
+            while (true)
+            {
+                var val = reader.Read();
+                if (val == -1)
+                    return "{{" + snippet;
+
+                var ch = (char)val;
+                if (ch == '}' && (char)reader.Peek() == '}')
+                {
+                    // Done finding mixin expression or Hyperlambda.
+                    reader.Read();
+                    return strip ? "" : await ResolveMixin(signaler, input, snippet.ToString());
+                }
+                snippet.Append(ch);
+            }
+        }
 
         private async Task<string> ResolveMixin(ISignaler signaler, Node args, string hl)
         {

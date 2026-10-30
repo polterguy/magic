@@ -187,35 +187,7 @@ namespace magic.node.extensions
             foreach (var idx in nodes)
             {
                 if (idx.Value is Expression ex)
-                {
-                    if (applyLists && idx.Name == "node_reference")
-                    {
-                        idx.Value = idx.Evaluate()?.SingleOrDefault();
-                    }
-                    else
-                    {
-                        if (applyLists && ex._iterators[^1].Value == "*")
-                        {
-                            var res = idx.Evaluate();
-                            idx.AddRange(res.Select(x => x.Clone()));
-                            idx.Value = null;
-                        }
-                        else
-                        {
-                            // Evaluating once, since the result is lazy, and every Count and FirstOrDefault would walk the expression again.
-                            var res = idx.Evaluate().ToList();
-                            if (res.Count > 1)
-                            {
-                                if (applyLists)
-                                    idx.AddRange(res.Select(x => x.Clone()));
-                                else
-                                    throw new HyperlambdaException("Multiple sources found for unwrap invocation");
-                            }
-
-                            idx.Value = res.FirstOrDefault()?.Value;
-                        }
-                    }
-                }
+                    UnwrapNode(idx, ex, applyLists);
             }
         }
 
@@ -245,6 +217,38 @@ namespace magic.node.extensions
         #endregion
 
         #region [ -- Private helper methods -- ]
+
+        /*
+         * Forward evaluates the expression in the specified node.
+         */
+        static void UnwrapNode(Node idx, Expression ex, bool applyLists)
+        {
+            if (applyLists && idx.Name == "node_reference")
+            {
+                idx.Value = idx.Evaluate()?.SingleOrDefault();
+                return;
+            }
+
+            if (applyLists && ex._iterators[^1].Value == "*")
+            {
+                var all = idx.Evaluate();
+                idx.AddRange(all.Select(x => x.Clone()));
+                idx.Value = null;
+                return;
+            }
+
+            // Evaluating once, since the result is lazy, and every Count and FirstOrDefault would walk the expression again.
+            var res = idx.Evaluate().ToList();
+            if (res.Count > 1)
+            {
+                if (applyLists)
+                    idx.AddRange(res.Select(x => x.Clone()));
+                else
+                    throw new HyperlambdaException("Multiple sources found for unwrap invocation");
+            }
+
+            idx.Value = res.FirstOrDefault()?.Value;
+        }
 
         /*
          * Parses your expression resulting in a chain of iterators.
@@ -279,24 +283,10 @@ namespace magic.node.extensions
                     quoted.Append(ReadQuotedString(expression, ref position));
                     segment = position;
                 }
-                else if (idx == '{' && contentLength == 0)
+                else if (idx == '{' && ExtrapolationPrefix(expression, segment, quoted, contentLength) is { } prefix)
                 {
                     // Extrapolated expression allowing for nesting expressions.
-                    result.Add(new Iterator(ReadExtrapolatedExpression(expression, ref position)));
-                    quoted = null;
-
-                    // Making sure we don't return remnants further down.
-                    if (position >= length)
-                        return result;
-
-                    if (expression[position] == '/')
-                        position++; // Discarding end of iterator character to prepare for next iterator's value.
-                    segment = position;
-                }
-                else if (idx == '{' && contentLength == 1 && (quoted != null && quoted.Length == 1 ? quoted[0] : expression[segment]) == '=')
-                {
-                    // Extrapolated expression allowing for nesting expressions.
-                    result.Add(new Iterator("=" + ReadExtrapolatedExpression(expression, ref position)));
+                    result.Add(new Iterator(prefix + ReadExtrapolatedExpression(expression, ref position)));
                     quoted = null;
 
                     // Making sure we don't return remnants further down.
@@ -314,6 +304,19 @@ namespace magic.node.extensions
             }
             result.Add(new Iterator(Content(expression, segment, position, quoted)));
             return result;
+        }
+
+        /*
+         * Returns the prefix of an iterator starting an extrapolated expression at the current position, which
+         * is empty for "{...}" and "=" for "={...}", or null if the iterator already has other content.
+         */
+        static string ExtrapolationPrefix(string expression, int segment, StringBuilder quoted, int contentLength)
+        {
+            if (contentLength == 0)
+                return "";
+            if (contentLength == 1 && (quoted != null && quoted.Length == 1 ? quoted[0] : expression[segment]) == '=')
+                return "=";
+            return null;
         }
 
         /*

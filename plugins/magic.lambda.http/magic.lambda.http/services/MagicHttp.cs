@@ -132,36 +132,14 @@ namespace magic.lambda.http.services
             var cancellationToken = signaler.GetCancellationToken();
 
             // Sanitcy checking invocation.
-            if (input.Children.Any(x =>
-                x.Name != "payload" &&
-                x.Name != "query" &&
-                x.Name != "url-params" &&
-                x.Name != "filename" &&
-                x.Name != "headers" &&
-                x.Name != "token" &&
-                x.Name != "timeout" &&
-                x.Name != ".sse" &&
-                x.Name != "convert"))
-                throw new HyperlambdaException($"Only supply [query], [payload], [filename], [headers], [convert], [timeout], [.sse] and [token] to [{input.Name}]");
+            VerifyArguments(input);
 
             /*
              * [timeout] applies per request and is enforced through cancellation instead of
              * mutating the shared client's Timeout, which races across concurrent invocations
              * and leaks into invocations not declaring the argument.
              */
-            CancellationTokenSource timeoutCts = null;
-            var timeoutNode = input.Children.FirstOrDefault(x => x.Name == "timeout");
-            if (timeoutNode != null)
-            {
-                var timeout = timeoutNode.GetEx<int>();
-                if (timeout < 1 || timeout > 600)
-                    throw new HyperlambdaException("[timeout] must be between 1 and 600 seconds");
-
-                timeoutNode.UnTie();
-                timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
-                cancellationToken = CancellationTokenSource.CreateLinkedTokenSource(
-                    cancellationToken, timeoutCts.Token).Token;
-            }
+            var timeoutCts = ApplyTimeout(input, ref cancellationToken);
 
             // Checking if user wants to use SSE.
             var useSse = input.Children.Any(x => x.Name == ".sse");
@@ -204,21 +182,11 @@ namespace magic.lambda.http.services
                         cancellationToken))
                     {
                         // Following redirects manually, re-verifying each hop against the whitelist.
-                        if (IsRedirect(response.StatusCode))
+                        var next = FollowRedirect(signaler, input, method, request, headers, response, ref hops);
+                        if (next != null)
                         {
-                            var location = response.Headers.Location ?? GetRawLocation(response);
-                            if (location != null)
-                            {
-                                if (hops++ >= MaxRedirects)
-                                    throw new HyperlambdaException($"More than {MaxRedirects} redirects while invoking [{input.Name}]");
-
-                                var previous = request.RequestUri;
-                                request.Dispose();
-                                var target = new Uri(previous, location);
-                                VerifyUrl(signaler, input.Name, target);
-                                request = CreateRedirectRequest(method, previous, headers, target, response.StatusCode);
-                                continue;
-                            }
+                            request = next;
+                            continue;
                         }
 
                         await GetResponse(signaler, response, input);
@@ -231,6 +199,74 @@ namespace magic.lambda.http.services
                 timeoutCts?.Dispose();
                 request.Dispose();
             }
+        }
+
+        /*
+         * Sanity checks the arguments supplied to the invocation.
+         */
+        static void VerifyArguments(Node input)
+        {
+            if (input.Children.Any(x =>
+                x.Name != "payload" &&
+                x.Name != "query" &&
+                x.Name != "url-params" &&
+                x.Name != "filename" &&
+                x.Name != "headers" &&
+                x.Name != "token" &&
+                x.Name != "timeout" &&
+                x.Name != ".sse" &&
+                x.Name != "convert"))
+                throw new HyperlambdaException($"Only supply [query], [payload], [filename], [headers], [convert], [timeout], [.sse] and [token] to [{input.Name}]");
+        }
+
+        /*
+         * Links the token to the [timeout] argument, if given, and returns the source enforcing it, or null.
+         */
+        static CancellationTokenSource ApplyTimeout(Node input, ref CancellationToken cancellationToken)
+        {
+            var timeoutNode = input.Children.FirstOrDefault(x => x.Name == "timeout");
+            if (timeoutNode == null)
+                return null;
+
+            var timeout = timeoutNode.GetEx<int>();
+            if (timeout < 1 || timeout > 600)
+                throw new HyperlambdaException("[timeout] must be between 1 and 600 seconds");
+
+            timeoutNode.UnTie();
+            var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
+            cancellationToken = CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken, timeoutCts.Token).Token;
+            return timeoutCts;
+        }
+
+        /*
+         * Returns the request following the specified redirect response, after verifying its
+         * target against the whitelist, or null if the response is not a redirect to follow.
+         */
+        HttpRequestMessage FollowRedirect(
+            ISignaler signaler,
+            Node input,
+            HttpMethod method,
+            HttpRequestMessage request,
+            Dictionary<string, string> headers,
+            HttpResponseMessage response,
+            ref int hops)
+        {
+            if (!IsRedirect(response.StatusCode))
+                return null;
+
+            var location = response.Headers.Location ?? GetRawLocation(response);
+            if (location == null)
+                return null;
+
+            if (hops++ >= MaxRedirects)
+                throw new HyperlambdaException($"More than {MaxRedirects} redirects while invoking [{input.Name}]");
+
+            var previous = request.RequestUri;
+            request.Dispose();
+            var target = new Uri(previous, location);
+            VerifyUrl(signaler, input.Name, target);
+            return CreateRedirectRequest(method, previous, headers, target, response.StatusCode);
         }
 
         /// <summary>

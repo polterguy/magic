@@ -103,40 +103,71 @@ namespace magic.lambda.io.file
                 patchLines.RemoveAt(0);
             while (patchLines.Count > 0 && patchLines[patchLines.Count - 1].Length == 0)
                 patchLines.RemoveAt(patchLines.Count - 1);
-            var output = new List<string>();
-            var outputHasTrailingNewline = originalHasTrailingNewline;
-            var hasHunks = false;
-            var seenHeader = false;
-            var originalIndex = 0;
-            var patchIndex = 0;
+            return new Patcher(originalLines, originalHasTrailingNewline, patchLines, targetPath).Apply(newline);
+        }
 
-            while (patchIndex < patchLines.Count)
+        /*
+         * Walks a patch, applying each of its hunks to the original lines, while keeping track of
+         * where we are in both of them.
+         */
+        sealed class Patcher(
+            List<string> originalLines,
+            bool originalHasTrailingNewline,
+            List<string> patchLines,
+            string targetPath)
+        {
+            readonly List<string> _output = [];
+            bool _outputHasTrailingNewline = originalHasTrailingNewline;
+            bool _hasHunks;
+            bool _seenHeader;
+            int _originalIndex;
+            int _patchIndex;
+
+            public string Apply(string newline)
             {
-                var line = patchLines[patchIndex];
+                while (_patchIndex < patchLines.Count)
+                {
+                    ReadNext();
+                }
 
-                if (line.StartsWith("diff --git", StringComparison.InvariantCulture) ||
-                    line.StartsWith("index ", StringComparison.InvariantCulture))
+                if (!_hasHunks)
+                    throw new HyperlambdaException("Patch does not contain any hunks.");
+
+                // Append remaining original lines.
+                while (_originalIndex < originalLines.Count)
+                {
+                    _output.Add(originalLines[_originalIndex]);
+                    _outputHasTrailingNewline = OriginalLineHasTrailingNewline(_originalIndex, originalLines.Count, originalHasTrailingNewline);
+                    _originalIndex++;
+                }
+
+                if (_output.Count == 0)
+                    return string.Empty;
+
+                return string.Join(newline, _output) + (_outputHasTrailingNewline ? newline : string.Empty);
+            }
+
+            /*
+             * Consumes the next preamble, header or hunk of the patch.
+             */
+            void ReadNext()
+            {
+                var line = patchLines[_patchIndex];
+
+                if (IsGitPreamble(line))
                 {
                     // A git preamble after hunks have started implies a second file.
-                    if (hasHunks)
+                    if (_hasHunks)
                         throw new HyperlambdaException("Patch can only modify a single file.");
 
-                    patchIndex++;
-                    continue;
+                    _patchIndex++;
+                    return;
                 }
 
                 if (line.StartsWith("--- ", StringComparison.InvariantCulture))
                 {
-                    if (seenHeader)
-                        throw new HyperlambdaException("Patch can only modify a single file.");
-
-                    if (patchIndex + 1 >= patchLines.Count || !patchLines[patchIndex + 1].StartsWith("+++ ", StringComparison.InvariantCulture))
-                        throw new HyperlambdaException("Invalid patch header.");
-
-                    ValidatePatchHeaders(line, patchLines[patchIndex + 1], targetPath);
-                    seenHeader = true;
-                    patchIndex += 2;
-                    continue;
+                    ReadHeader(line);
+                    return;
                 }
 
                 if (line.StartsWith("+++ ", StringComparison.InvariantCulture))
@@ -145,25 +176,34 @@ namespace magic.lambda.io.file
                 if (!line.StartsWith("@@", StringComparison.InvariantCulture))
                     throw new HyperlambdaException("Invalid patch.");
 
-                var header = ParseHunkHeader(line);
-                hasHunks = true;
+                ApplyHunk(line);
+            }
 
-                patchIndex++;
-                var hunkLines = new List<string>();
-                while (patchIndex < patchLines.Count)
-                {
-                    // Notice, "--- " does NOT terminate a hunk, since it is also a legal deletion of
-                    // a line starting with "-- " (an SQL comment for instance). Headers are only legal
-                    // before the first hunk, making everything up to the next hunk or git preamble content.
-                    line = patchLines[patchIndex];
-                    if (line.StartsWith("@@", StringComparison.InvariantCulture) ||
-                        line.StartsWith("diff --git", StringComparison.InvariantCulture) ||
-                        line.StartsWith("index ", StringComparison.InvariantCulture))
-                        break;
+            static bool IsGitPreamble(string line)
+            {
+                return line.StartsWith("diff --git", StringComparison.InvariantCulture) ||
+                    line.StartsWith("index ", StringComparison.InvariantCulture);
+            }
 
-                    hunkLines.Add(line);
-                    patchIndex++;
-                }
+            void ReadHeader(string line)
+            {
+                if (_seenHeader)
+                    throw new HyperlambdaException("Patch can only modify a single file.");
+
+                if (_patchIndex + 1 >= patchLines.Count || !patchLines[_patchIndex + 1].StartsWith("+++ ", StringComparison.InvariantCulture))
+                    throw new HyperlambdaException("Invalid patch header.");
+
+                ValidatePatchHeaders(line, patchLines[_patchIndex + 1], targetPath);
+                _seenHeader = true;
+                _patchIndex += 2;
+            }
+
+            void ApplyHunk(string headerLine)
+            {
+                var header = ParseHunkHeader(headerLine);
+                _hasHunks = true;
+                _patchIndex++;
+                var hunkLines = ReadHunkLines();
 
                 /*
                  * The hunk header declares where the hunk belongs in the original file, and we use it
@@ -171,13 +211,13 @@ namespace magic.lambda.io.file
                  * since the patch was created, so the resolver is allowed to search outwards from it.
                  */
                 var expectedIndex = header.OldStart > 0 ? header.OldStart - 1 : 0;
-                var (targetIndex, whitespaceFuzz) = ResolveHunkTargetIndex(originalLines, originalIndex, hunkLines, expectedIndex);
+                var (targetIndex, whitespaceFuzz) = ResolveHunkTargetIndex(originalLines, _originalIndex, hunkLines, expectedIndex);
 
                 // Copy unchanged lines before hunk.
-                while (originalIndex < targetIndex && originalIndex < originalLines.Count)
+                while (_originalIndex < targetIndex && _originalIndex < originalLines.Count)
                 {
-                    output.Add(originalLines[originalIndex]);
-                    originalIndex++;
+                    _output.Add(originalLines[_originalIndex]);
+                    _originalIndex++;
                 }
 
                 var previousOperation = '\0';
@@ -186,69 +226,80 @@ namespace magic.lambda.io.file
                     // An entirely empty line is an empty context line whose leading space was
                     // stripped somewhere in transport.
                     var tag = hunkLine.Length == 0 ? ' ' : hunkLine[0];
-                    var text = hunkLine.Length > 1 ? hunkLine.Substring(1) : string.Empty;
-                    switch (tag)
-                    {
-                        case ' ':
-                            EnsureLineMatch(originalLines, originalIndex, text, whitespaceFuzz);
-
-                            // Notice, we deliberately keep the ORIGINAL line rather than the patch's
-                            // version of it, so that a whitespace tolerant match cannot silently
-                            // rewrite trailing whitespace the file's author put there on purpose.
-                            output.Add(originalLines[originalIndex]);
-                            outputHasTrailingNewline = true;
-                            originalIndex++;
-                            break;
-
-                        case '-':
-                            EnsureLineMatch(originalLines, originalIndex, text, whitespaceFuzz);
-                            originalIndex++;
-                            break;
-
-                        case '+':
-                            output.Add(text);
-                            outputHasTrailingNewline = true;
-                            break;
-
-                        case '\\':
-                            if (!string.Equals(hunkLine, "\\ No newline at end of file", StringComparison.InvariantCulture))
-                                throw new HyperlambdaException(InvalidPatchLine);
-                            if (previousOperation == '\0')
-                                throw new HyperlambdaException(InvalidPatchLine);
-
-                            if (previousOperation == ' ' || previousOperation == '+')
-                            {
-                                outputHasTrailingNewline = false;
-                            }
-                            else if (previousOperation != '-')
-                            {
-                                throw new HyperlambdaException(InvalidPatchLine);
-                            }
-                            break;
-
-                        default:
-                            throw new HyperlambdaException(InvalidPatchLine);
-                    }
-
+                    ApplyHunkLine(hunkLine, tag, previousOperation, whitespaceFuzz);
                     previousOperation = tag;
                 }
             }
 
-            if (!hasHunks)
-                throw new HyperlambdaException("Patch does not contain any hunks.");
-
-            // Append remaining original lines.
-            while (originalIndex < originalLines.Count)
+            /*
+             * Returns the lines of the hunk starting at the current position.
+             *
+             * Notice, "--- " does NOT terminate a hunk, since it is also a legal deletion of
+             * a line starting with "-- " (an SQL comment for instance). Headers are only legal
+             * before the first hunk, making everything up to the next hunk or git preamble content.
+             */
+            List<string> ReadHunkLines()
             {
-                output.Add(originalLines[originalIndex]);
-                outputHasTrailingNewline = OriginalLineHasTrailingNewline(originalIndex, originalLines.Count, originalHasTrailingNewline);
-                originalIndex++;
+                var hunkLines = new List<string>();
+                while (_patchIndex < patchLines.Count)
+                {
+                    var line = patchLines[_patchIndex];
+                    if (line.StartsWith("@@", StringComparison.InvariantCulture) || IsGitPreamble(line))
+                        break;
+
+                    hunkLines.Add(line);
+                    _patchIndex++;
+                }
+                return hunkLines;
             }
 
-            if (output.Count == 0)
-                return string.Empty;
+            void ApplyHunkLine(string hunkLine, char tag, char previousOperation, bool whitespaceFuzz)
+            {
+                var text = hunkLine.Length > 1 ? hunkLine.Substring(1) : string.Empty;
+                switch (tag)
+                {
+                    case ' ':
+                        EnsureLineMatch(originalLines, _originalIndex, text, whitespaceFuzz);
 
-            return string.Join(newline, output) + (outputHasTrailingNewline ? newline : string.Empty);
+                        // Notice, we deliberately keep the ORIGINAL line rather than the patch's
+                        // version of it, so that a whitespace tolerant match cannot silently
+                        // rewrite trailing whitespace the file's author put there on purpose.
+                        _output.Add(originalLines[_originalIndex]);
+                        _outputHasTrailingNewline = true;
+                        _originalIndex++;
+                        break;
+
+                    case '-':
+                        EnsureLineMatch(originalLines, _originalIndex, text, whitespaceFuzz);
+                        _originalIndex++;
+                        break;
+
+                    case '+':
+                        _output.Add(text);
+                        _outputHasTrailingNewline = true;
+                        break;
+
+                    case '\\':
+                        ApplyNoNewlineMarker(hunkLine, previousOperation);
+                        break;
+
+                    default:
+                        throw new HyperlambdaException(InvalidPatchLine);
+                }
+            }
+
+            void ApplyNoNewlineMarker(string hunkLine, char previousOperation)
+            {
+                if (!string.Equals(hunkLine, "\\ No newline at end of file", StringComparison.InvariantCulture))
+                    throw new HyperlambdaException(InvalidPatchLine);
+                if (previousOperation == '\0')
+                    throw new HyperlambdaException(InvalidPatchLine);
+
+                if (previousOperation == ' ' || previousOperation == '+')
+                    _outputHasTrailingNewline = false;
+                else if (previousOperation != '-')
+                    throw new HyperlambdaException(InvalidPatchLine);
+            }
         }
 
         /*

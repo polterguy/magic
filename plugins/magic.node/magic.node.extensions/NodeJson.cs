@@ -694,45 +694,8 @@ namespace magic.node.extensions
         static bool TryParseDate(string s, out DateTime result)
         {
             result = default;
-            if (!Digits(s, 0, 4, out var year) || s[4] != '-' ||
-                !Digits(s, 5, 2, out var month) || s[7] != '-' ||
-                !Digits(s, 8, 2, out var day) || s[10] != 'T' ||
-                !Digits(s, 11, 2, out var hour) || s[13] != ':' ||
-                !Digits(s, 14, 2, out var minute) || s[16] != ':' ||
-                !Digits(s, 17, 2, out var second))
+            if (!TryParseDateAndTime(s, out var date, out var pos))
                 return false;
-            if (year < 1 || month < 1 || month > 12 || day < 1 || day > DateTime.DaysInMonth(year, month) || hour > 24 || minute > 59 || second > 59)
-                return false;
-
-            var pos = 19;
-            long fraction = 0;
-            if (pos < s.Length && s[pos] == '.')
-            {
-                pos++;
-                var start = pos;
-                var digits = 0;
-                while (pos < s.Length && s[pos] >= '0' && s[pos] <= '9')
-                {
-                    if (digits == 7)
-                        return false;
-                    fraction = fraction * 10 + (s[pos] - '0');
-                    digits++;
-                    pos++;
-                }
-                if (pos == start)
-                    return false;
-                while (digits++ < 7)
-                {
-                    fraction *= 10;
-                }
-            }
-
-            // Hour 24 is only legal as midnight at the end of the day.
-            if (hour == 24 && (minute != 0 || second != 0 || fraction != 0))
-                return false;
-            var date = new DateTime(year, month, day, hour == 24 ? 0 : hour, minute, second, DateTimeKind.Unspecified).AddTicks(fraction);
-            if (hour == 24)
-                date = date.AddDays(1);
             if (pos == s.Length)
             {
                 result = date;
@@ -743,6 +706,73 @@ namespace magic.node.extensions
                 result = new DateTime(date.Ticks, DateTimeKind.Utc);
                 return true;
             }
+            return TryApplyOffset(s, pos, date, out result);
+        }
+
+        /*
+         * Parses yyyy-MM-ddTHH:mm:ss and an optional fraction, and returns the position following them.
+         */
+        static bool TryParseDateAndTime(string s, out DateTime date, out int pos)
+        {
+            date = default;
+            pos = 19;
+            if (!Digits(s, 0, 4, out var year) || s[4] != '-' ||
+                !Digits(s, 5, 2, out var month) || s[7] != '-' ||
+                !Digits(s, 8, 2, out var day) || s[10] != 'T' ||
+                !Digits(s, 11, 2, out var hour) || s[13] != ':' ||
+                !Digits(s, 14, 2, out var minute) || s[16] != ':' ||
+                !Digits(s, 17, 2, out var second))
+                return false;
+            if (year < 1 || month < 1 || month > 12 || day < 1 || day > DateTime.DaysInMonth(year, month) || hour > 24 || minute > 59 || second > 59)
+                return false;
+            if (!TryParseFraction(s, ref pos, out var fraction))
+                return false;
+
+            // Hour 24 is only legal as midnight at the end of the day.
+            if (hour == 24 && (minute != 0 || second != 0 || fraction != 0))
+                return false;
+            date = new DateTime(year, month, day, hour == 24 ? 0 : hour, minute, second, DateTimeKind.Unspecified).AddTicks(fraction);
+            if (hour == 24)
+                date = date.AddDays(1);
+            return true;
+        }
+
+        /*
+         * Parses an optional fraction of a second, returned as ticks, and moves the position past it.
+         */
+        static bool TryParseFraction(string s, ref int pos, out long fraction)
+        {
+            fraction = 0;
+            if (pos >= s.Length || s[pos] != '.')
+                return true;
+
+            pos++;
+            var start = pos;
+            var digits = 0;
+            while (pos < s.Length && s[pos] >= '0' && s[pos] <= '9')
+            {
+                if (digits == 7)
+                    return false;
+                fraction = fraction * 10 + (s[pos] - '0');
+                digits++;
+                pos++;
+            }
+            if (pos == start)
+                return false;
+            while (digits++ < 7)
+            {
+                fraction *= 10;
+            }
+            return true;
+        }
+
+        /*
+         * Parses an offset such as +02:00, +0200 or +02 at the specified position, which must end the string, and
+         * converts the date to local time.
+         */
+        static bool TryApplyOffset(string s, int pos, DateTime date, out DateTime result)
+        {
+            result = default;
             if (s[pos] != '+' && s[pos] != '-')
                 return false;
             var west = s[pos] == '-';
