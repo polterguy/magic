@@ -177,6 +177,11 @@ function MediaPreview(props: Readonly<{ kind: string; source: string | null }>) 
   return <audio src={props.source} controls><track kind="captions" /></audio>;
 }
 
+// The label chosen for a column, which is its name until one was given.
+function columnLabel(entries: { name: string; label: string }[], name: string) {
+  return entries.find(entry => entry.name === name)?.label ?? name;
+}
+
 export default function Inspector(props: Readonly<{
   node: Node | null;
   doc: Document | null;
@@ -524,7 +529,7 @@ export default function Inspector(props: Readonly<{
               .filter(column => names.includes(column.name))
               .map(column => ({
                 name: column.name,
-                label: currentColumns.find(entry => entry.name === column.name)?.label ?? column.name,
+                label: columnLabel(currentColumns, column.name),
                 // The widget needs the Hyperlambda type too, to pick an input
                 // kind for inline editing and to send the right JSON shape —
                 // a number typed into a text box is still a string otherwise.
@@ -758,7 +763,7 @@ export default function Inspector(props: Readonly<{
               .filter(column => names.includes(column.name))
               .map(column => ({
                 name: column.name,
-                label: currentFields.find(entry => entry.name === column.name)?.label ?? column.name,
+                label: columnLabel(currentFields, column.name),
                 type: column.type,
               }));
             props.onSetAttribute('data-columns', JSON.stringify(ordered));

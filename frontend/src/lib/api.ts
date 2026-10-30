@@ -773,27 +773,63 @@ export async function dropTable(
   return result;
 }
 
-export async function addColumn(
-  databaseType: string, connectionString: string, databaseName: string, tableName: string,
-  columnName: string, columnType: string, defaultValue: string | null,
-  nullable: boolean, columnLength: number | null) {
-  const result = await http.post<any>('/magic/system/sql/ddl/column', {
-    databaseType, connectionString, databaseName, tableName,
-    columnName, columnType, defaultValue, nullable, indexed: false, columnLength,
-  });
-  await bustSchemaCache(databaseType, connectionString);
-  return result;
+// The table a column is added to, and the database it is in.
+export interface ColumnTarget {
+  databaseType: string;
+  connectionString: string;
+  databaseName: string;
+  tableName: string;
 }
 
-export async function addForeignKey(
-  databaseType: string, connectionString: string, databaseName: string, tableName: string,
-  columnName: string, columnType: string, foreignTable: string, foreignField: string,
-  nullable: boolean, columnLength: number | null, cascading: boolean) {
+export interface NewColumn {
+  columnName: string;
+  columnType: string;
+  defaultValue: string | null;
+  nullable: boolean;
+  columnLength: number | null;
+}
+
+export interface NewForeignKey {
+  columnName: string;
+  columnType: string;
+  foreignTable: string;
+  foreignField: string;
+  nullable: boolean;
+  columnLength: number | null;
+  cascading: boolean;
+}
+
+export async function addColumn(target: ColumnTarget, column: NewColumn) {
   const result = await http.post<any>('/magic/system/sql/ddl/column', {
-    databaseType, connectionString, databaseName, tableName,
-    columnName, columnType, foreignTable, foreignField, nullable, columnLength, cascading,
+    databaseType: target.databaseType,
+    connectionString: target.connectionString,
+    databaseName: target.databaseName,
+    tableName: target.tableName,
+    columnName: column.columnName,
+    columnType: column.columnType,
+    defaultValue: column.defaultValue,
+    nullable: column.nullable,
+    indexed: false,
+    columnLength: column.columnLength,
   });
-  await bustSchemaCache(databaseType, connectionString);
+  await bustSchemaCache(target.databaseType, target.connectionString);
+  return result;
+}
+export async function addForeignKey(target: ColumnTarget, column: NewForeignKey) {
+  const result = await http.post<any>('/magic/system/sql/ddl/column', {
+    databaseType: target.databaseType,
+    connectionString: target.connectionString,
+    databaseName: target.databaseName,
+    tableName: target.tableName,
+    columnName: column.columnName,
+    columnType: column.columnType,
+    foreignTable: column.foreignTable,
+    foreignField: column.foreignField,
+    nullable: column.nullable,
+    columnLength: column.columnLength,
+    cascading: column.cascading,
+  });
+  await bustSchemaCache(target.databaseType, target.connectionString);
   return result;
 }
 

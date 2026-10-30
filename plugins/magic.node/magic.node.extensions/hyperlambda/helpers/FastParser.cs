@@ -234,35 +234,41 @@ namespace magic.node.extensions.hyperlambda.internals
 
         void ReadSpaceToken()
         {
-            // Only creating space tokens for SP characters followed by something besides CR/LF, or EOF.
-            while (true)
+            bool again;
+            do
             {
-                if (_p >= _n)
-                    return;
+                again = ReadSpaces();
+            } while (again);
+        }
 
-                var start = _p;
-                while (_p < _n && _s[_p] == ' ')
-                    _p++;
-                var count = _p - start;
-                if (count == 0)
-                    return;
-                if (_p >= _n)
-                    return; // Trailing SP characters at EOF.
+        // Reads one run of SP characters, and returns true if there might be more of them to read.
+        bool ReadSpaces()
+        {
+            // Only creating space tokens for SP characters followed by something besides CR/LF, or EOF.
+            if (_p >= _n)
+                return false;
 
-                var next = _s[_p];
-                if (next == '\n' || next == '\r')
-                {
-                    // Line with only spaces, discarding it and everything up to the next non CR/LF character.
-                    _p++;
-                    SkipCRLF();
-                }
-                else
-                {
-                    if (count % 3 != 0)
-                        throw Error("Not correct number of spaces");
-                    OnSpace(count);
-                }
+            var start = _p;
+            while (_p < _n && _s[_p] == ' ')
+                _p++;
+            var count = _p - start;
+            if (count == 0)
+                return false;
+            if (_p >= _n)
+                return false; // Trailing SP characters at EOF.
+
+            var next = _s[_p];
+            if (next == '\n' || next == '\r')
+            {
+                // Line with only spaces, discarding it and everything up to the next non CR/LF character.
+                _p++;
+                SkipCRLF();
+                return true;
             }
+            if (count % 3 != 0)
+                throw Error("Not correct number of spaces");
+            OnSpace(count);
+            return true;
         }
 
         void EatSeparator()

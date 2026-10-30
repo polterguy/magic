@@ -554,16 +554,13 @@ export default function Sql() {
               onSubmit={async payload => {
                 setWaiting(true);
                 try {
+                  const target = {
+                    databaseType: type, connectionString, databaseName: database, tableName: addingColumn,
+                  };
                   if (payload.foreignTable) {
-                    await addForeignKey(
-                      type, connectionString, database, addingColumn,
-                      payload.columnName, payload.columnType, payload.foreignTable,
-                      payload.foreignField, payload.nullable, payload.columnLength, payload.cascading);
+                    await addForeignKey(target, { ...payload, foreignTable: payload.foreignTable });
                   } else {
-                    await addColumn(
-                      type, connectionString, database, addingColumn,
-                      payload.columnName, payload.columnType, payload.defaultValue,
-                      payload.nullable, payload.columnLength);
+                    await addColumn(target, payload);
                   }
                   setAddingColumn(null);
                   showToast('Column ' + payload.columnName + ' added');

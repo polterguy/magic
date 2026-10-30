@@ -629,11 +629,7 @@ namespace magic.lambda.scheduler.services
                         signalFactory,
                         settingsFactory,
                         logFactory,
-                        scheduleId,
-                        taskId,
-                        due,
-                        repetition,
-                        postpone);
+                        new TimerSchedule(scheduleId, taskId, due, repetition, postpone));
                 }, null, nextDue, Timeout.Infinite);
 
                 // Stuffing wrapper into dictionary.
@@ -644,6 +640,17 @@ namespace magic.lambda.scheduler.services
                     repetition);
             }
         }
+
+        /*
+         * What a timer needs to know about its schedule when it fires, and whether the schedule is
+         * due too far into the future for the timer to wait for it in one go.
+         */
+        sealed record TimerSchedule(
+            int ScheduleId,
+            string TaskId,
+            DateTime Due,
+            IRepetitionPattern Repetition,
+            bool Postpone);
 
         /*
          * Executes the timer's callback, for then to either postpone the schedule further into
@@ -657,12 +664,9 @@ namespace magic.lambda.scheduler.services
             IServiceCreator<ISignaler> signalFactory,
             IServiceCreator<IDataSettings> settingsFactory,
             IServiceCreator<ILogger> logFactory,
-            int scheduleId,
-            string taskId,
-            DateTime due,
-            IRepetitionPattern repetition,
-            bool postpone)
+            TimerSchedule timerSchedule)
         {
+            var (scheduleId, taskId, due, repetition, postpone) = timerSchedule;
             try
             {
                 /*

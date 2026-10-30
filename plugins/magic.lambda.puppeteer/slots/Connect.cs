@@ -61,18 +61,7 @@ namespace magic.lambda.puppeteer
                 browser = await Puppeteer.LaunchAsync(launchOptions);
                 page = (await browser.PagesAsync()).FirstOrDefault(x => !x.IsClosed) ?? await browser.NewPageAsync();
 
-                /*
-                 * JavaScript in the page can also steer navigation ([puppeteer.evaluate]
-                 * assigning window.location), which bypasses the scheme check in
-                 * [puppeteer.goto] - so any navigation landing on file:// is bounced
-                 * straight back to a blank page before its content becomes readable.
-                 */
-                page.FrameNavigated += (sender, e) =>
-                {
-                    if (e.Frame == page.MainFrame &&
-                        e.Frame.Url.StartsWith("file://", StringComparison.OrdinalIgnoreCase))
-                        _ = page.GoToAsync("about:blank");
-                };
+                BlockFileNavigation(page);
 
                 var session = PuppeteerSessions.Create(browser, page, timeoutMinutes, maxLifetimeMinutes);
 
@@ -81,15 +70,40 @@ namespace magic.lambda.puppeteer
             }
             catch
             {
-                if (page != null && !page.IsClosed)
-                {
-                    try { await page.CloseAsync(); } catch { /* Best effort, the original exception is rethrown below. */ }
-                }
-                if (browser != null && !browser.IsClosed)
-                {
-                    try { await browser.CloseAsync(); } catch { /* Best effort, the original exception is rethrown below. */ }
-                }
+                await CloseQuietlyAsync(page, browser);
                 throw;
+            }
+        }
+
+        /*
+         * JavaScript in the page can also steer navigation ([puppeteer.evaluate]
+         * assigning window.location), which bypasses the scheme check in
+         * [puppeteer.goto] - so any navigation landing on file:// is bounced
+         * straight back to a blank page before its content becomes readable.
+         */
+        static void BlockFileNavigation(IPage page)
+        {
+            page.FrameNavigated += (sender, e) =>
+            {
+                if (e.Frame == page.MainFrame &&
+                    e.Frame.Url.StartsWith("file://", StringComparison.OrdinalIgnoreCase))
+                    _ = page.GoToAsync("about:blank");
+            };
+        }
+
+        /*
+         * Closes what was opened, without letting a failure to do so hide the exception we are
+         * already handling.
+         */
+        static async Task CloseQuietlyAsync(IPage page, IBrowser browser)
+        {
+            if (page != null && !page.IsClosed)
+            {
+                try { await page.CloseAsync(); } catch { /* Best effort, the original exception is rethrown by the caller. */ }
+            }
+            if (browser != null && !browser.IsClosed)
+            {
+                try { await browser.CloseAsync(); } catch { /* Best effort, the original exception is rethrown by the caller. */ }
             }
         }
 

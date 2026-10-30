@@ -211,7 +211,7 @@ namespace magic.lambda.puppeteer
                     {
                         inQuotes = false;
                     }
-                    else if (c == '\\' && i + 1 < input.Length && input[i + 1] == quoteChar)
+                    else if (IsEscapedQuote(input, i, quoteChar))
                     {
                         current.Append(quoteChar);
                         i++;
@@ -225,11 +225,7 @@ namespace magic.lambda.puppeteer
 
                 if (char.IsWhiteSpace(c))
                 {
-                    if (current.Length > 0)
-                    {
-                        args.Add(current.ToString());
-                        current.Clear();
-                    }
+                    AddArg(args, current);
                     continue;
                 }
 
@@ -243,10 +239,23 @@ namespace magic.lambda.puppeteer
                 current.Append(c);
             }
 
-            if (current.Length > 0)
-                args.Add(current.ToString());
-
+            AddArg(args, current);
             return args;
+        }
+
+        // Whether the character is a backslash escaping the quote character that follows it.
+        static bool IsEscapedQuote(string input, int index, char quoteChar)
+        {
+            return input[index] == '\\' && index + 1 < input.Length && input[index + 1] == quoteChar;
+        }
+
+        // Adds what has been read so far as an argument, unless there is nothing.
+        static void AddArg(List<string> args, StringBuilder current)
+        {
+            if (current.Length == 0)
+                return;
+            args.Add(current.ToString());
+            current.Clear();
         }
     }
 }
