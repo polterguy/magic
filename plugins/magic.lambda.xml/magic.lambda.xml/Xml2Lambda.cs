@@ -42,9 +42,24 @@ namespace magic.lambda.xml
             input.Value = null;
             input.Clear();
 
-            // Creating XML document by loading string content.
+            /*
+             * Creating XML document by loading string content.
+             *
+             * DTD processing is prohibited and the resolver is nulled, so a malicious
+             * document cannot exhaust memory through internal entity expansion
+             * ("billion laughs") or reach external resources (XXE). The slot only ever
+             * needs to transform a plain XML tree into lambda, never a DTD.
+             */
             var doc = new XmlDocument();
-            doc.LoadXml(xml);
+            var settings = new XmlReaderSettings
+            {
+                DtdProcessing = DtdProcessing.Prohibit,
+                XmlResolver = null,
+            };
+            using (var reader = XmlReader.Create(new System.IO.StringReader(xml), settings))
+            {
+                doc.Load(reader);
+            }
 
             // Creating result node and adding as child to input node.
             var result = new Node();
@@ -54,8 +69,14 @@ namespace magic.lambda.xml
 
         #region [ -- Private helper methods -- ]
 
-        static void ParseXmlNode(Node resultNode, XmlNode xmlNode)
+        // Upper bound on element nesting, guarding against a stack overflow from a maliciously deep document.
+        const int MaxDepth = 256;
+
+        static void ParseXmlNode(Node resultNode, XmlNode xmlNode, int depth = 0)
         {
+            if (depth > MaxDepth)
+                throw new HyperlambdaException("XML document is nested too deeply");
+
             // Making sure we apply name of node.
             resultNode.Name = xmlNode.Name;
 
@@ -80,7 +101,7 @@ namespace magic.lambda.xml
                 if (IsIgnored(idxChild))
                     continue;
                 resultNode.Add(new Node());
-                ParseXmlNode(resultNode.Children.Last(), idxChild);
+                ParseXmlNode(resultNode.Children.Last(), idxChild, depth + 1);
             }
         }
 
