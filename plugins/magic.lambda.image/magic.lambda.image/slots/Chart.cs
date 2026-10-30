@@ -220,11 +220,11 @@ namespace magic.lambda.image.slots
             // Iterating through each bar.
             var idxNoBar = 1;
             var groupCount = 0;
-            foreach (var idxBar in input.Children.First(x => x.Name == "bars").Children)
+            foreach (var cells in input.Children.First(x => x.Name == "bars").Children.Select(x => x.Children))
             {
-                groupCount = idxBar.Children.Count();
+                groupCount = cells.Count();
                 var idxNoY = 0;
-                foreach (var idxCell in idxBar.Children)
+                foreach (var idxCell in cells)
                 {
                     var value = idxCell.GetEx<double>();
                     var bar = new Bar

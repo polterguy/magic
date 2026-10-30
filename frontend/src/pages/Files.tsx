@@ -92,6 +92,25 @@ function endpointOf(path: string): { path: string; verb: string } | null {
   return { path: 'magic/' + parts[0], verb: parts[1] };
 }
 
+interface OpenTab {
+  path: string;
+  content: string;
+  saved: string;
+}
+
+// The open files with the restored ones in front, except those that are already open.
+function withRestored(current: OpenTab[], restored: OpenTab[]) {
+  return [
+    ...restored.filter(tab => !current.some(file => file.path === tab.path)),
+    ...current,
+  ];
+}
+
+// The file that was selected, if it was restored, and otherwise the last one that was.
+function restoredSelection(restored: OpenTab[], selected: string | undefined) {
+  return restored.some(tab => tab.path === selected) ? selected! : restored[restored.length - 1].path;
+}
+
 export default function Files() {
 
   const { backend } = useAuth();
@@ -206,22 +225,12 @@ export default function Files() {
         .then(text => ({ path, content: text, saved: text }))
         .catch(() => null)))
       .then(loaded => {
-        const tabs = loaded.filter(Boolean) as { path: string; content: string; saved: string }[];
+        const tabs = loaded.filter(Boolean) as OpenTab[];
         if (tabs.length === 0) {
           return;
         }
-        setOpenFiles(current => [
-          ...tabs.filter(tab => !current.some(file => file.path === tab.path)),
-          ...current,
-        ]);
-        setSelectedFile(current => {
-          if (current !== '') {
-            return current;
-          }
-          return tabs.some(tab => tab.path === workspace.selected)
-            ? workspace.selected!
-            : tabs[tabs.length - 1].path;
-        });
+        setOpenFiles(current => withRestored(current, tabs));
+        setSelectedFile(current => current !== '' ? current : restoredSelection(tabs, workspace.selected));
       })
       .catch(error => showToast('Could not restore open files: ' + error.message, true));
   }, []);

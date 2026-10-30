@@ -426,11 +426,7 @@ namespace magic.node.extensions
             IEnumerable<Node> input,
             string[] names)
         {
-            foreach (var idx in input)
-            {
-                if (names.Contains(idx.Name))
-                    yield return idx;
-            }
+            return input.Where(idx => names.Contains(idx.Name));
         }
 
         /*

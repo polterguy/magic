@@ -138,6 +138,7 @@ namespace magic.node.extensions
                     {
                         while (enumerator.MoveNext())
                         {
+                            // Draining the result, such that an exception thrown while evaluating a later node is thrown.
                         }
                         throw new HyperlambdaException("Multiple resulting nodes from expression.");
                     }

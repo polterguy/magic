@@ -3581,9 +3581,11 @@ tr.vss-irrelevant td {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
 
   /* Dashboard — the agent banners stack instead of squeezing the heading. */
+  /* Keep the MCP hero's button centered on phones — the desktop bottom-right
+     alignment is deliberately not applied here. */
   .agent-prompt {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     gap: 14px;
   }
   .agent-prompt .btn-large {
@@ -3613,10 +3615,6 @@ tr.vss-irrelevant td {
    */
   .page-header h1,
   .page-header p { display: none; }
-  /* Keep the MCP hero's button centered on phones — the desktop bottom-right
-     alignment is deliberately not applied here. */
-  .agent-prompt { align-items: center; }
-
   /* Hyper IDE header on a phone: drop the path entirely. The toolbar is already
      icon-only from 1200px down — see that breakpoint. */
   .ide-path { display: none; }
@@ -3671,6 +3669,8 @@ tr.vss-irrelevant td {
     /* Long unbroken values (connection strings, tokens) wrap instead of overflowing. */
     overflow-wrap: anywhere;
     min-width: 0;
+    /* Cells that cap their width on desktop expand fully in a card. */
+    max-width: none !important;
   }
   .content td::before {
     content: attr(data-label);
@@ -3712,8 +3712,7 @@ tr.vss-irrelevant td {
     gap: 8px;
   }
   .content table.sql-result td::before { color: var(--accent-dark); }
-  /* Cells that truncate or cap their width on desktop expand fully in a card. */
-  .content td { max-width: none !important; }
+  /* Cells that truncate on desktop expand fully in a card. */
   .content td.truncate {
     white-space: normal;
     overflow: visible;

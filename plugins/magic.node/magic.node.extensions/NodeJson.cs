@@ -87,7 +87,7 @@ namespace magic.node.extensions
             try
             {
                 WriteContainer(emitter, source);
-                return emitter.ToUtf8();
+                return emitter.ToBytes();
             }
             finally
             {
@@ -883,7 +883,7 @@ namespace magic.node.extensions
             /*
              * Returns what has been written UTF8 encoded, without creating a string first.
              */
-            public byte[] ToUtf8()
+            public byte[] ToBytes()
             {
                 var rented = ArrayPool<byte>.Shared.Rent(Encoding.UTF8.GetMaxByteCount(_builder.Length));
                 try

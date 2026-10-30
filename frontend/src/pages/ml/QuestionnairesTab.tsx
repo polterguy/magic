@@ -207,13 +207,15 @@ export default function QuestionnairesTab() {
                   + Add question
                 </button>
               </div>
-              {questions === null ? (
+              {questions === null && (
                 <span className="muted">Loading questions…</span>
-              ) : questions.length === 0 ? (
+              )}
+              {questions?.length === 0 && (
                 <span className="muted">
                   No questions yet — add the first one your chatbot should ask.
                 </span>
-              ) : (
+              )}
+              {questions !== null && questions.length > 0 && (
                 <table>
                   <thead>
                     <tr>

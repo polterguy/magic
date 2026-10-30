@@ -51,6 +51,23 @@ function statusClass(change: { untracked?: boolean; code: string }) {
   return change.code.includes('D') ? 'del' : '';
 }
 
+// The diff of a file, or what stands in for it while it is not there yet or has no changes.
+function DiffLines(props: Readonly<{ diff: string | undefined }>) {
+  if (props.diff === undefined) {
+    return <span className="meta">Loading…</span>;
+  }
+  if (props.diff === '') {
+    return <span className="meta">No changes</span>;
+  }
+  return (
+    <>
+      {props.diff.split('\n').map((line, index) => (
+        <span key={index} className={diffLineClass(line)}>{line}{'\n'}</span>
+      ))}
+    </>
+  );
+}
+
 export default function GitPanel(props: Readonly<{
   path: string;
   onClose: () => void;
@@ -329,13 +346,7 @@ export default function GitPanel(props: Readonly<{
                     </div>
                     {open[change.path] && (
                       <pre className="git-diff">
-                        {!(change.path in diffs)
-                          ? <span className="meta">Loading…</span>
-                          : diffs[change.path] === ''
-                            ? <span className="meta">No changes</span>
-                            : diffs[change.path].split('\n').map((line, index) => (
-                              <span key={index} className={diffLineClass(line)}>{line}{'\n'}</span>
-                            ))}
+                        <DiffLines diff={change.path in diffs ? diffs[change.path] : undefined} />
                       </pre>
                     )}
                   </div>

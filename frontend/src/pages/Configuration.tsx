@@ -502,6 +502,17 @@ const OIDC_FIELDS: Record<string, OidcField[]> = {
   ],
 };
 
+// What a stored setting is shown as in a text field: nothing for none, JSON for a structure.
+function fieldText(value: unknown): string {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  if (typeof value === 'object') {
+    return JSON.stringify(value);
+  }
+  return String(value);
+}
+
 function OpenIdDialog(props: Readonly<{
   config: string;
   onClose: () => void;
@@ -526,7 +537,7 @@ function OpenIdDialog(props: Readonly<{
   const [values, setValues] = useState<Record<string, Record<string, string>>>(() =>
     Object.fromEntries(Object.keys(existing).map(name =>
       [name, Object.fromEntries(Object.entries(existing[name] ?? {})
-        .map(([key, value]) => [key, typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value ?? '')]))])));
+        .map(([key, value]) => [key, fieldText(value)]))])));
 
   // The selected provider's fields — client ID first, then whatever else it needs.
   const fields: OidcField[] = [
@@ -609,11 +620,12 @@ function OpenIdDialog(props: Readonly<{
           Copy
         </button>
       </div>
-      {providers === null ? (
+      {providers === null && (
         <div className="spinner-panel">
           <div className="spinner" />
         </div>
-      ) : providers.length === 0 ? (
+      )}
+      {providers !== null && providers.length === 0 && (
         <div className="info-box">
           No OpenID providers are registered. The backend supports any
           provider for which a slot named{' '}
@@ -622,7 +634,8 @@ function OpenIdDialog(props: Readonly<{
           <span className="mono">/system/auth/magic.startup/</span> for the
           pattern.
         </div>
-      ) : (
+      )}
+      {providers !== null && providers.length > 0 && (
         <>
           <label className="modal-label">Provider
             <Select value={provider} onChange={setProvider}>

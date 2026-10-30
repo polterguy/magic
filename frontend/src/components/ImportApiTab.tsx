@@ -38,6 +38,11 @@ const SCHEMES = [
   { id: 'basic', label: 'Basic (pre-encoded)' },
 ];
 
+// What the import button says when it is ready, with the number of operations about to be imported.
+function importLabel(count: number) {
+  return count ? 'Import ' + count : 'Import';
+}
+
 export default function ImportApiTab() {
 
   const [url, setUrl] = useState('');
@@ -470,7 +475,7 @@ export default function ImportApiTab() {
 
       <div className="form-row" style={{ marginTop: 16 }}>
         <button className="btn" onClick={run} disabled={busy || !spec || count === 0}>
-          {busy && running ? 'Importing…' : 'Import' + (count ? ' ' + count : '')}
+          {busy && running ? 'Importing…' : importLabel(count)}
         </button>
       </div>
       {busy && !running && <AiWaiter />}

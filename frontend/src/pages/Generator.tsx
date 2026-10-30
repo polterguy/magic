@@ -870,15 +870,17 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
       <div className="toolbar">
         <DatabaseSelectors selection={selection} />
       </div>
-      {selection.loading ? (
+      {selection.loading && (
         <div className="card gen-table-card" style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}>
           <TableSkeleton columns={2} />
         </div>
-      ) : !selection.database ? (
+      )}
+      {!selection.loading && !selection.database && (
         <div className="info-box">
           Select a database with tables to generate a CRUD backend.
         </div>
-      ) : (
+      )}
+      {!selection.loading && !!selection.database && (
       <div className="editor-split" style={{ flex: 'unset', alignItems: 'flex-start' }}>
         <div className="card gen-table-card" style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}>
           <table className="compact-table">
