@@ -32,7 +32,10 @@ export function elementOf(node: Node | null): Element | null {
   if (!node) {
     return null;
   }
-  return isText(node) ? node.parentElement : (isElement(node) ? node : null);
+  if (isText(node)) {
+    return node.parentElement;
+  }
+  return isElement(node) ? node : null;
 }
 
 /*

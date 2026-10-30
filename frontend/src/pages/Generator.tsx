@@ -56,13 +56,18 @@ function defaultLock(column: any): ColumnLock {
  * Primary keys are never lockable: they are what identifies the row in PUT and
  * DELETE, so locking one would silently drop the lock from both.
  */
+function lockSlot(lock: ColumnLock) {
+  if (lock.mode === 'username') {
+    return 'auth.ticket.get';
+  }
+  return lock.mode === 'custom' ? lock.slot.trim() : '';
+}
+
 function resolveLocks(chosen: Record<string, ColumnLock> | undefined, table: any) {
   const locks: Record<string, string> = {};
   for (const column of table.columns ?? []) {
     const lock = chosen?.[column.name] ?? defaultLock(column);
-    locks[column.name] = column.primary ? ''
-      : lock.mode === 'username' ? 'auth.ticket.get'
-        : lock.mode === 'custom' ? lock.slot.trim() : '';
+    locks[column.name] = column.primary ? '' : lockSlot(lock);
   }
   return locks;
 }
@@ -355,12 +360,25 @@ function WizardSteps({ step }: Readonly<{ step: number }>) {
 function endpointsForVerb(
   verb: string,
   options: { aggregate: boolean; distinct: boolean; search: boolean }) {
-  return verb !== 'get'
-    ? 1
-    : 2 +
-      (options.aggregate ? 2 : 0) +
-      (options.distinct ? 2 : 0) +
-      (options.search ? 1 : 0);
+  if (verb !== 'get') {
+    return 1;
+  }
+  return 2 +
+    (options.aggregate ? 2 : 0) +
+    (options.distinct ? 2 : 0) +
+    (options.search ? 1 : 0);
+}
+
+function crudSummary(tables: number, verbs: number, endpoints: number, module: string) {
+  if (tables === 0) {
+    return 'Select at least one table.';
+  }
+  if (verbs === 0) {
+    return 'Select at least one HTTP verb.';
+  }
+  return `${endpoints} endpoint${endpoints === 1 ? '' : 's'} across ` +
+    `${tables} table${tables > 1 ? 's' : ''} ` +
+    `→ /magic/${module}/`;
 }
 
 function CrudTab(props: Readonly<{ guided: boolean }>) {
@@ -1008,13 +1026,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
               paddingTop: 14,
             }}>
               <span className="muted">
-                {selectedTables.size === 0
-                  ? 'Select at least one table.'
-                  : verbs.size === 0
-                    ? 'Select at least one HTTP verb.'
-                    : `${plannedEndpoints} endpoint${plannedEndpoints === 1 ? '' : 's'} across ` +
-                      `${selectedTables.size} table${selectedTables.size > 1 ? 's' : ''} ` +
-                      `→ /magic/${moduleName || selection.database}/`}
+                {crudSummary(selectedTables.size, verbs.size, plannedEndpoints, moduleName || selection.database)}
               </span>
               <span style={{ flex: 1 }} />
               <button

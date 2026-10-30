@@ -88,6 +88,10 @@ export interface Picked {
   height: number;
 }
 
+function countLabel(shown: number, total: number) {
+  return shown === total ? total + ' files' : shown + ' of ' + total;
+}
+
 export default function Media(props: Readonly<{
   kind: MediaKind;
   // Absolute origin of the cloudlet, so previews load from where the page will.
@@ -284,7 +288,7 @@ export default function Media(props: Readonly<{
 
       <div className="modal-actions">
         <span className="designer-muted" style={{ marginRight: 'auto' }}>
-          {files === null ? '' : shown === total ? total + ' files' : shown + ' of ' + total}
+          {files === null ? '' : countLabel(shown, total)}
         </span>
         <input
           ref={fileRef}

@@ -214,11 +214,14 @@ export default function Files() {
           ...tabs.filter(tab => !current.some(file => file.path === tab.path)),
           ...current,
         ]);
-        setSelectedFile(current => current !== ''
-          ? current
-          : tabs.some(tab => tab.path === workspace.selected)
+        setSelectedFile(current => {
+          if (current !== '') {
+            return current;
+          }
+          return tabs.some(tab => tab.path === workspace.selected)
             ? workspace.selected!
-            : tabs[tabs.length - 1].path);
+            : tabs[tabs.length - 1].path;
+        });
       })
       .catch(error => showToast('Could not restore open files: ' + error.message, true));
   }, []);
@@ -727,9 +730,12 @@ export default function Files() {
       await renamePath(path, isFolder ? newPath : name);
       // Remap open files affected by the rename — the file itself, or
       // everything inside a renamed folder.
-      const remap = (candidate: string) => isFolder
-        ? (candidate.startsWith(path) ? newPath + candidate.substring(path.length) : candidate)
-        : (candidate === path ? newPath : candidate);
+      const remap = (candidate: string) => {
+        if (!isFolder) {
+          return candidate === path ? newPath : candidate;
+        }
+        return candidate.startsWith(path) ? newPath + candidate.substring(path.length) : candidate;
+      };
       setOpenFiles(files => files.map(file => ({ ...file, path: remap(file.path) })));
       setSelectedFile(remap(selectedFile));
       await loadTree(systemFiles);

@@ -470,7 +470,7 @@ export default function ImportApiTab() {
 
       <div className="form-row" style={{ marginTop: 16 }}>
         <button className="btn" onClick={run} disabled={busy || !spec || count === 0}>
-          {busy && running ? 'Importing…' : count ? 'Import ' + count : 'Import'}
+          {busy && running ? 'Importing…' : 'Import' + (count ? ' ' + count : '')}
         </button>
       </div>
       {busy && !running && <AiWaiter />}

@@ -44,6 +44,13 @@ function diffLineClass(line: string) {
   }
 }
 
+function statusClass(change: { untracked?: boolean; code: string }) {
+  if (change.untracked || change.code.includes('A')) {
+    return 'add';
+  }
+  return change.code.includes('D') ? 'del' : '';
+}
+
 export default function GitPanel(props: Readonly<{
   path: string;
   onClose: () => void;
@@ -304,9 +311,7 @@ export default function GitPanel(props: Readonly<{
                       <button className="git-change-row" onClick={() => toggle(change)}>
                         <ChevronIcon open={open[change.path]} />
                         <span
-                          className={'git-status ' +
-                            (change.untracked || change.code.includes('A') ? 'add'
-                              : change.code.includes('D') ? 'del' : '')}>
+                          className={'git-status ' + statusClass(change)}>
                           {change.code}
                         </span>
                         <span>{change.path}</span>

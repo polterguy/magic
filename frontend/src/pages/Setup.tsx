@@ -14,6 +14,19 @@ import { EyeIcon, EyeOffIcon } from '../components/Icons';
 import { useAuth } from '../lib/AuthContext';
 import { ApiError, MIN_PASSWORD, saveUserExtra, setupSystem } from '../lib/api';
 
+function firstProblem(name: string, email: string, password: string, repeat: string, showPassword: boolean) {
+  if (name.trim() === '') {
+    return 'Your name is required';
+  }
+  if (!/^[^@\s]+@[^@\s.]+(?:\.[^@\s.]+)+$/.test(email)) {
+    return 'That does not look like an email address';
+  }
+  if (password.length < MIN_PASSWORD) {
+    return 'The password must be at least ' + MIN_PASSWORD + ' characters';
+  }
+  return !showPassword && password !== repeat ? 'The two passwords do not match' : '';
+}
+
 export default function Setup() {
 
   const { backend, loginWithTicket, setupCompleted } = useAuth();
@@ -26,12 +39,7 @@ export default function Setup() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const problem =
-    name.trim() === '' ? 'Your name is required'
-      : !/^[^@\s]+@[^@\s.]+(?:\.[^@\s.]+)+$/.test(email) ? 'That does not look like an email address'
-        : password.length < MIN_PASSWORD ? 'The password must be at least ' + MIN_PASSWORD + ' characters'
-          : !showPassword && password !== repeat ? 'The two passwords do not match'
-            : '';
+  const problem = firstProblem(name, email, password, repeat, showPassword);
 
   async function submit(event: FormEvent) {
     event.preventDefault();

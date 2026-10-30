@@ -28,6 +28,24 @@ import AddWidgetDialog from './AddWidgetDialog';
 import EditSnippetDialog from './EditSnippetDialog';
 import SpiceDialog from './SpiceDialog';
 
+function deleteTitle(searchingByVector: boolean, filter: string, type: string) {
+  if (searchingByVector) {
+    return 'Vector search ranks snippets rather than filtering them, so there is no filter to delete by';
+  }
+  return filter ? 'Delete every snippet matching the filter' : 'Delete every snippet in ' + type;
+}
+
+function vssClass(relevant: boolean) {
+  return relevant ? 'vss-relevant' : 'vss-irrelevant';
+}
+
+function vssTitle(relevant: boolean, threshold: unknown) {
+  return relevant
+    ? 'Close enough to be included in the model\'s context'
+    : 'Too distant for the model\'s ' + threshold + ' threshold — ' +
+      'this would not be included in the context';
+}
+
 export default function TrainingTab(props: Readonly<{
   types: any[];
   // A model the command palette asked to filter by, resolved by the page above.
@@ -198,11 +216,7 @@ export default function TrainingTab(props: Readonly<{
         <button
           className="btn btn-danger btn-small"
           disabled={count === 0 || searchingByVector}
-          title={searchingByVector
-            ? 'Vector search ranks snippets rather than filtering them, so there is no filter to delete by'
-            : filter
-              ? 'Delete every snippet matching the filter'
-              : 'Delete every snippet in ' + type}
+          title={deleteTitle(searchingByVector, filter, type)}
           onClick={removeFiltered}>
           {filter ? 'Delete filtered' : 'Delete all'}
         </button>
@@ -254,15 +268,8 @@ export default function TrainingTab(props: Readonly<{
               {snippets.map(snippet => (
                 <tr
                   key={snippet.id}
-                  className={searchingByVector
-                    ? (inContext(snippet) ? 'vss-relevant' : 'vss-irrelevant')
-                    : undefined}
-                  title={searchingByVector
-                    ? (inContext(snippet)
-                      ? 'Close enough to be included in the model\'s context'
-                      : 'Too distant for the model\'s ' + threshold + ' threshold — ' +
-                        'this would not be included in the context')
-                    : undefined}>
+                  className={searchingByVector ? vssClass(inContext(snippet)) : undefined}
+                  title={searchingByVector ? vssTitle(inContext(snippet), threshold) : undefined}>
                   <td style={{
                     maxWidth: 520,
                     overflow: 'hidden',

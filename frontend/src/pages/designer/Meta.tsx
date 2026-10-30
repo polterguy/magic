@@ -167,6 +167,13 @@ export function writeMeta(doc: Document, home: Home, value: string) {
   head.appendChild(meta);
 }
 
+function listFor(field: { options?: unknown; links?: unknown }, id: string) {
+  if (field.options) {
+    return id + '-options';
+  }
+  return field.links ? 'designer-page-urls' : undefined;
+}
+
 export default function Meta(props: Readonly<{
   doc: Document | null;
   // Absolute origin of the cloudlet, so a preview loads from where the page will.
@@ -237,7 +244,7 @@ export default function Meta(props: Readonly<{
         ) : (
           <input
             type="text"
-            list={field.options ? id + '-options' : field.links ? 'designer-page-urls' : undefined}
+            list={listFor(field, id)}
             readOnly={locked}
             value={value}
             placeholder="None"

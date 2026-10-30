@@ -162,10 +162,15 @@ export default function DateTimePicker(props: Readonly<{
   }
 
   const today = new Date();
-  const label = selected
-    ? `${pad(selected.getDate())}/${pad(selected.getMonth() + 1)}/${selected.getFullYear()}` +
-      (dateOnly ? '' : `, ${pad(selected.getHours())}:${pad(selected.getMinutes())}`)
-    : (props.placeholder ?? (dateOnly ? 'Pick a date' : 'Pick a date and time'));
+  let label: string;
+  if (selected) {
+    label = `${pad(selected.getDate())}/${pad(selected.getMonth() + 1)}/${selected.getFullYear()}`;
+    if (!dateOnly) {
+      label += `, ${pad(selected.getHours())}:${pad(selected.getMinutes())}`;
+    }
+  } else {
+    label = props.placeholder ?? (dateOnly ? 'Pick a date' : 'Pick a date and time');
+  }
 
   return (
     <div className={'dtp' + (props.disabled ? ' disabled' : '')}>

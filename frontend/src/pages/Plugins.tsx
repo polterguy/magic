@@ -39,6 +39,13 @@ function intro(description: string) {
   return sentence.length > 150 ? sentence.substring(0, 150) + '…' : sentence;
 }
 
+function installLabel(installing: boolean, installed: boolean) {
+  if (installing) {
+    return 'Installing…';
+  }
+  return installed ? 'Reinstall' : 'Install';
+}
+
 export default function Plugins() {
 
   const [available, setAvailable] = useState<any[]>([]);
@@ -202,9 +209,7 @@ export default function Plugins() {
                   ? 'Install the plugin repository\'s current version over the one you have'
                   : undefined}
                 onClick={() => install(app)}>
-                {installing === app.name
-                  ? 'Installing…'
-                  : installed.has(app.name) ? 'Reinstall' : 'Install'}
+                {installLabel(installing === app.name, installed.has(app.name))}
               </button>
             </div>
           </div>

@@ -164,6 +164,19 @@ function gridColumns(value: string | null): GridColumn[] {
   }
 }
 
+function MediaPreview(props: Readonly<{ kind: string; source: string | null }>) {
+  if (props.source === null) {
+    return <span className="designer-muted">Nothing chosen</span>;
+  }
+  if (props.kind === 'image') {
+    return <img src={props.source} alt="" />;
+  }
+  if (props.kind === 'video') {
+    return <video src={props.source} preload="metadata" muted playsInline><track kind="captions" /></video>;
+  }
+  return <audio src={props.source} controls><track kind="captions" /></audio>;
+}
+
 export default function Inspector(props: Readonly<{
   node: Node | null;
   doc: Document | null;
@@ -476,13 +489,7 @@ export default function Inspector(props: Readonly<{
               className="designer-image-preview"
               title={'Choose ' + mediaArticle[mediaKind]}
               onClick={() => props.onChooseMedia(mediaKind)}>
-              {source === null
-                ? <span className="designer-muted">Nothing chosen</span>
-                : mediaKind === 'image'
-                  ? <img src={source} alt="" />
-                  : mediaKind === 'video'
-                    ? <video src={source} preload="metadata" muted playsInline><track kind="captions" /></video>
-                    : <audio src={source} controls><track kind="captions" /></audio>}
+              <MediaPreview kind={mediaKind} source={source} />
             </button>
             <button className="btn btn-secondary" onClick={() => props.onChooseMedia(mediaKind)}>
               Choose {mediaArticle[mediaKind]}…

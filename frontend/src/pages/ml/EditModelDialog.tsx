@@ -24,6 +24,13 @@ import {
 import { showToast } from '../../lib/toast';
 import AddFunctionDialog from './AddFunctionDialog';
 
+function thresholdHint(useEmbeddings: boolean, retrieval: string) {
+  if (!useEmbeddings) {
+    return 'Only used when "Use embeddings" is on';
+  }
+  return retrieval === 'bm25' ? 'Keyword retrieval has no threshold — BM25 rank order decides' : undefined;
+}
+
 export default function EditModelDialog(props: Readonly<{
   existing: any;
   onClose: () => void;
@@ -259,11 +266,7 @@ export default function EditModelDialog(props: Readonly<{
                 step="0.1"
                 value={threshold}
                 disabled={!useEmbeddings || retrieval === 'bm25'}
-                title={!useEmbeddings
-                  ? 'Only used when "Use embeddings" is on'
-                  : retrieval === 'bm25'
-                    ? 'Keyword retrieval has no threshold — BM25 rank order decides'
-                    : undefined}
+                title={thresholdHint(useEmbeddings, retrieval)}
                 onChange={e => setThreshold(e.target.value)} />
             </label>
             <label>Max tokens

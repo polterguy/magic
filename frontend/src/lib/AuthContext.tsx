@@ -8,6 +8,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   ReactNode,
@@ -318,22 +319,29 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
     }
   }, [backend, applyBackend]);
 
+  const setupCompleted = useCallback(() => setSetupNeeded(false), []);
+
+  const value = useMemo(() => ({
+    backend,
+    authenticated: !!backend?.token,
+    isRoot,
+    setupNeeded,
+    setupCompleted,
+    version,
+    login,
+    loginWithTicket,
+    logout,
+    backends,
+    switchBackend,
+    removeBackend,
+    addBackend,
+  }), [
+    backend, isRoot, setupNeeded, setupCompleted, version, login, loginWithTicket, logout,
+    backends, switchBackend, removeBackend, addBackend,
+  ]);
+
   return (
-    <AuthContext.Provider value={{
-      backend,
-      authenticated: !!backend?.token,
-      isRoot,
-      setupNeeded,
-      setupCompleted: () => setSetupNeeded(false),
-      version,
-      login,
-      loginWithTicket,
-      logout,
-      backends,
-      switchBackend,
-      removeBackend,
-      addBackend,
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

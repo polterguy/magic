@@ -9,6 +9,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   FormEvent,
@@ -231,6 +232,8 @@ export function useDialog() {
   return useContext(DialogContext);
 }
 
+const BUTTON_CLASSES: Record<string, string> = { primary: 'btn', danger: 'btn btn-danger' };
+
 export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) {
 
   const [active, setActive] = useState<ActiveDialog | null>(null);
@@ -306,8 +309,12 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
     setActive(null);
   }
 
+  const dialogs = useMemo(
+    () => ({ confirm, confirmTyped, prompt, form, choice }),
+    [confirm, confirmTyped, prompt, form, choice]);
+
   return (
-    <DialogContext.Provider value={{ confirm, confirmTyped, prompt, form, choice }}>
+    <DialogContext.Provider value={dialogs}>
       {children}
       {active && (
         <Modal onClose={dismiss}>
@@ -358,10 +365,7 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
                   <button
                     key={button.value}
                     type="button"
-                    className={
-                      button.kind === 'primary' ? 'btn' :
-                      button.kind === 'danger' ? 'btn btn-danger' :
-                      'btn btn-secondary'}
+                    className={BUTTON_CLASSES[button.kind as string] ?? 'btn btn-secondary'}
                     onClick={() => { active.resolve(button.value); setActive(null); }}>
                     {button.label}
                   </button>

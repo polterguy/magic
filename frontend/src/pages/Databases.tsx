@@ -19,6 +19,8 @@ import {
 } from '../lib/api';
 
 const DB_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
+const STATUS_BADGES: Record<string, string> = { live: 'badge-get', down: 'badge-error' };
+
 const CSTRING_NAME_PATTERN = /^\w+$/;
 
 const EXTERNAL_TYPES = [
@@ -476,9 +478,7 @@ function ExternalTab() {
                 <td data-label="Name"><strong>{row.name}</strong></td>
                 <td className="mono" data-label="Connection">{row.connectionString}</td>
                 <td data-label="Status">
-                  <span className={'badge ' +
-                    (row.status === 'live' ? 'badge-get'
-                      : row.status === 'down' ? 'badge-error' : 'badge-debug')}>
+                  <span className={'badge ' + (STATUS_BADGES[row.status] ?? 'badge-debug')}>
                     {row.status}
                   </span>
                 </td>

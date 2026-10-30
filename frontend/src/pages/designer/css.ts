@@ -159,7 +159,12 @@ export function absoluteUrls(css: string, href: string): string {
     .replace(/\burl\(\s*(?:"([^"]*)"|'([^']*)'|([^'")\s]+))\s*\)/gi,
       (whole, doubleQuoted, singleQuoted, bare) => {
         const address = doubleQuoted ?? singleQuoted ?? bare;
-        const quote = doubleQuoted !== undefined ? '"' : singleQuoted !== undefined ? "'" : '';
+        let quote = '';
+        if (doubleQuoted !== undefined) {
+          quote = '"';
+        } else if (singleQuoted !== undefined) {
+          quote = "'";
+        }
         return ABSOLUTE.test(address)
           ? whole
           : 'url(' + quote + resolve(address, href) + quote + ')';

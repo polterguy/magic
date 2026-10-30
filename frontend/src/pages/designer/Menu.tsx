@@ -140,10 +140,10 @@ export default function Menu(props: Readonly<{ items: MenuItem[]; title: string;
       role="menu"
       style={{ position: 'fixed', top: rect.bottom + 4, right: window.innerWidth - rect.right }}>
       {props.items.map((item, index) => item.heading !== undefined ? (
-        <li key={index} className="designer-menu-heading">{item.heading}</li>
+        <li key={item.heading} className="designer-menu-heading">{item.heading}</li>
       ) : (
         <li
-          key={index}
+          key={item.label}
           id={menuId + '-' + index}
           role="menuitem"
           title={item.hint}

@@ -285,6 +285,13 @@ export default function QuestionnairesTab() {
   );
 }
 
+function saveLabel(busy: boolean, existing: boolean) {
+  if (busy) {
+    return 'Saving…';
+  }
+  return existing ? 'Save' : 'Create';
+}
+
 function QuestionnaireDialog(props: Readonly<{
   existing: Questionnaire | null;
   onClose: () => void;
@@ -364,7 +371,7 @@ function QuestionnaireDialog(props: Readonly<{
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
         <button className="btn" onClick={save} disabled={busy || !valid}>
-          {busy ? 'Saving…' : existing ? 'Save' : 'Create'}
+          {saveLabel(busy, !!existing)}
         </button>
       </div>
     </Modal>

@@ -506,11 +506,14 @@ export default function WebDesigner() {
        *
        * Any other stylesheet, and every script, is exactly its file.
        */
-      const text = file === path
-        ? serializeDocument(current)
-        : file === cssPath
-          ? joinCss(cssHead, overrides, cssTail)
-          : await loadFile(file);
+      let text: string;
+      if (file === path) {
+        text = serializeDocument(current);
+      } else if (file === cssPath) {
+        text = joinCss(cssHead, overrides, cssTail);
+      } else {
+        text = await loadFile(file);
+      }
       setCodeTarget(file);
       applyCode(text);
       setCodeOriginal(text);

@@ -256,11 +256,13 @@ export default function Sql() {
         type, '[' + connectionString + '|' + database + ']', toExecute, safeMode, batch);
       setResult(response ?? []);
       const count = (response ?? []).reduce((total, set) => total + (set?.length ?? 0), 0);
-      showToast(response === null
-        ? 'SQL executed successfully, no result'
-        : count === 200 && safeMode
-          ? 'First 200 records returned. Turn off safe mode to return all records.'
-          : count + ' records returned');
+      let message = count + ' records returned';
+      if (response === null) {
+        message = 'SQL executed successfully, no result';
+      } else if (count === 200 && safeMode) {
+        message = 'First 200 records returned. Turn off safe mode to return all records.';
+      }
+      showToast(message);
     } catch (err: any) {
       showToast(err.message, true, err.logId);
       setResult(null);
