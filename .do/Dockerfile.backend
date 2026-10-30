@@ -10,7 +10,7 @@ COPY frontend/ ./
 
 # The dashboard has no compiled-in backend URL - it asks at sign in and keeps
 # the answer in localStorage - so there is nothing to rewrite here.
-RUN npm ci && npm run build
+RUN npm ci --ignore-scripts && npm run build
 
 # =========================
 # Backend build stage
@@ -24,7 +24,7 @@ COPY plugins/ /plugins/
 RUN dotnet restore /backend/backend.csproj
 RUN dotnet publish /backend/backend.csproj -c Release -o /magic
 
-ADD backend/sqlite-plugins/ /magic/sqlite-plugins/
+COPY backend/sqlite-plugins/ /magic/sqlite-plugins/
 
 
 # =========================
