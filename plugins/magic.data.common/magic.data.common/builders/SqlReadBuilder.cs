@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using magic.node;
 using magic.node.extensions;
@@ -152,50 +153,7 @@ namespace magic.data.common.builders
         protected virtual void AppendOrderBy(StringBuilder builder)
         {
             var orderNodes = Root.Children.Where(x => x.Name == "order");
-            if (orderNodes.Any())
-            {
-                // Retrieving default direction.
-                var defaultDirection = GetDefaultDirection();
-
-                // Appending order by clause.
-                builder.Append(" order by ");
-
-                var first = true;
-                foreach (var idx in orderNodes)
-                {
-                    var colName = idx.GetEx<string>();
-                    if (colName.Contains('('))
-                    {
-                        /*
-                         * Aggregate expression, only allowing explicitly white listed
-                         * aggregate functions, to avoid SQL injection attacks.
-                         */
-                        if (first)
-                            first = false;
-                        else
-                            builder.Append(',');
-                        builder
-                            .Append(EscapeAggregateName(colName))
-                            .Append(' ')
-                            .Append(GetDirection(idx, defaultDirection));
-                    }
-                    else
-                    {
-                        foreach (var idxCol in colName.Split(','))
-                        {
-                            if (first)
-                                first = false;
-                            else
-                                builder.Append(',');
-                            builder
-                                .Append(EscapeTypeName(idxCol.Trim()))
-                                .Append(' ')
-                                .Append(GetDirection(idx, defaultDirection));
-                        }
-                    }
-                }
-            }
-            else
+            if (!orderNodes.Any())
             {
                 /*
                  * Some databases requires "default order by" statement, such as
@@ -203,6 +161,38 @@ namespace magic.data.common.builders
                  * "limit" and "offset".
                  */
                 AppendDefaultOrderBy(builder);
+                return;
+            }
+
+            // Appending order by clause, retrieving default direction first.
+            var defaultDirection = GetDefaultDirection();
+            builder.Append(" order by ");
+            builder.AppendJoin(',', GetOrderExpressions(orderNodes, defaultDirection));
+        }
+
+        /*
+         * Returns one "column direction" expression for each column to order by.
+         */
+        IEnumerable<string> GetOrderExpressions(IEnumerable<Node> orderNodes, string defaultDirection)
+        {
+            foreach (var idx in orderNodes)
+            {
+                var colName = idx.GetEx<string>();
+                if (colName.Contains('('))
+                {
+                    /*
+                     * Aggregate expression, only allowing explicitly white listed
+                     * aggregate functions, to avoid SQL injection attacks.
+                     */
+                    yield return EscapeAggregateName(colName) + ' ' + GetDirection(idx, defaultDirection);
+                }
+                else
+                {
+                    foreach (var idxCol in colName.Split(','))
+                    {
+                        yield return EscapeTypeName(idxCol.Trim()) + ' ' + GetDirection(idx, defaultDirection);
+                    }
+                }
             }
         }
 

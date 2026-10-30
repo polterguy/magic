@@ -141,33 +141,56 @@ namespace magic.lambda.hyperlambda
                 if (!slots.Contains(name) && seen.Add(name))
                     missing.Add(name);
 
-                /*
-                 * Descending into the slot's executable body/bodies. Every direct child is
-                 * routed by the slot's signature: a named wrapper ([.lambda], [case], [default],
-                 * [fork], [.sse]) is descended into (its children are the statements), while a
-                 * "*" body means the child itself is a statement. Named non-executable
-                 * arguments are skipped.
-                 */
                 var info = BodyInfoFor(name, cache);
                 VerifyInvocation(node, info, invalid);
-                foreach (var child in node.Children)
-                {
-                    if (info.WrapperNames.Contains(child.Name) || info.NestedBodyNames.Contains(child.Name))
-                        VerifyScope(child.Children, slots, cache, missing, seen, invalid);
-                    else if (info.HasStarBody && !info.ArgumentNames.Contains(child.Name))
-                        VerifyScope(new[] { child }, slots, cache, missing, seen, invalid);
-                }
+                VerifyBodies(node, info, slots, cache, missing, seen, invalid);
+                VerifyContinuations(node, info, slots, cache, missing, seen, invalid);
+            }
+        }
 
-                /*
-                 * Continuation blocks are siblings, not slots. Only their children are checked,
-                 * and only when the preceding slot's signature declares them as continuations.
-                 */
-                var continuation = node.Next;
-                while (continuation != null && info.ContinuationBodyNames.Contains(continuation.Name))
-                {
-                    VerifyScope(continuation.Children, slots, cache, missing, seen, invalid);
-                    continuation = continuation.Next;
-                }
+        /*
+         * Descending into the slot's executable body/bodies. Every direct child is
+         * routed by the slot's signature: a named wrapper ([.lambda], [case], [default],
+         * [fork], [.sse]) is descended into (its children are the statements), while a
+         * "*" body means the child itself is a statement. Named non-executable
+         * arguments are skipped.
+         */
+        void VerifyBodies(
+            Node node,
+            BodyInfo info,
+            HashSet<string> slots,
+            Dictionary<string, BodyInfo> cache,
+            List<string> missing,
+            HashSet<string> seen,
+            List<string> invalid)
+        {
+            foreach (var child in node.Children)
+            {
+                if (info.WrapperNames.Contains(child.Name) || info.NestedBodyNames.Contains(child.Name))
+                    VerifyScope(child.Children, slots, cache, missing, seen, invalid);
+                else if (info.HasStarBody && !info.ArgumentNames.Contains(child.Name))
+                    VerifyScope(new[] { child }, slots, cache, missing, seen, invalid);
+            }
+        }
+
+        /*
+         * Continuation blocks are siblings, not slots. Only their children are checked,
+         * and only when the preceding slot's signature declares them as continuations.
+         */
+        void VerifyContinuations(
+            Node node,
+            BodyInfo info,
+            HashSet<string> slots,
+            Dictionary<string, BodyInfo> cache,
+            List<string> missing,
+            HashSet<string> seen,
+            List<string> invalid)
+        {
+            var continuation = node.Next;
+            while (continuation != null && info.ContinuationBodyNames.Contains(continuation.Name))
+            {
+                VerifyScope(continuation.Children, slots, cache, missing, seen, invalid);
+                continuation = continuation.Next;
             }
         }
 
@@ -247,55 +270,63 @@ namespace magic.lambda.hyperlambda
                 return result;
             try
             {
-                var signature = Activator.CreateInstance(attribute.SignatureType) as ISlotSignature;
-                if (signature == null)
-                    return result;
-                foreach (var child in signature.Children ?? Enumerable.Empty<SlotChild>())
-                {
-                    if (string.IsNullOrEmpty(child.Name))
-                        continue;
-                    if (child.Name == "*")
-                        result.AcceptsAnyChild = true;
-                    else
-                        result.ChildNames.Add(child.Name == "." ? "" : child.Name);
-
-                    /*
-                     * Note that SourceContainer bodies ([add]/[insert-before]/[insert-after]/
-                     * [include]) are deliberately included here: their implementations raise
-                     * [eval] on their children, so a NAMED child is dispatched as a slot at
-                     * runtime (and throws if it does not exist), while "."-prefixed children
-                     * are static data - exactly the dispatch rule this walker applies.
-                     */
-                    if (child.Mode == SlotChildMode.ExecutableLambda)
-                    {
-                        if (child.Name == "*")
-                            result.HasStarBody = true;
-                        else
-                            result.WrapperNames.Add(child.Name);
-                    }
-                    else if (child.Name != "*")
-                    {
-                        result.ArgumentNames.Add(child.Name);
-                        if (child.Children.Any(x =>
-                            x.Name == "*" &&
-                            x.Mode == SlotChildMode.ExecutableLambda))
-                        {
-                            result.NestedBodyNames.Add(child.Name);
-                        }
-                    }
-                }
-                foreach (var constraint in signature.Constraints ?? Enumerable.Empty<SlotConstraint>())
-                {
-                    if (constraint.Kind == SlotConstraintKind.NextSiblingMustBeOneOf)
-                        result.ContinuationBodyNames.UnionWith(constraint.Values);
-                }
-                result.HasSignature = true;
+                ApplySignature(result, attribute.SignatureType);
             }
             catch
             {
                 // A signature that cannot be instantiated tells us nothing - leaving the defaults.
             }
             return result;
+        }
+
+        /*
+         * Adds what the specified signature declares to the body layout.
+         */
+        static void ApplySignature(BodyInfo result, Type signatureType)
+        {
+            if (Activator.CreateInstance(signatureType) is not ISlotSignature signature)
+                return;
+            foreach (var child in signature.Children ?? Enumerable.Empty<SlotChild>())
+            {
+                AddChild(result, child);
+            }
+            foreach (var constraint in signature.Constraints ?? Enumerable.Empty<SlotConstraint>())
+            {
+                if (constraint.Kind == SlotConstraintKind.NextSiblingMustBeOneOf)
+                    result.ContinuationBodyNames.UnionWith(constraint.Values);
+            }
+            result.HasSignature = true;
+        }
+
+        static void AddChild(BodyInfo result, SlotChild child)
+        {
+            if (string.IsNullOrEmpty(child.Name))
+                return;
+            if (child.Name == "*")
+                result.AcceptsAnyChild = true;
+            else
+                result.ChildNames.Add(child.Name == "." ? "" : child.Name);
+
+            /*
+             * Note that SourceContainer bodies ([add]/[insert-before]/[insert-after]/
+             * [include]) are deliberately included here: their implementations raise
+             * [eval] on their children, so a NAMED child is dispatched as a slot at
+             * runtime (and throws if it does not exist), while "."-prefixed children
+             * are static data - exactly the dispatch rule this walker applies.
+             */
+            if (child.Mode == SlotChildMode.ExecutableLambda)
+            {
+                if (child.Name == "*")
+                    result.HasStarBody = true;
+                else
+                    result.WrapperNames.Add(child.Name);
+            }
+            else if (child.Name != "*")
+            {
+                result.ArgumentNames.Add(child.Name);
+                if (child.Children.Any(x => x.Name == "*" && x.Mode == SlotChildMode.ExecutableLambda))
+                    result.NestedBodyNames.Add(child.Name);
+            }
         }
 
         #endregion
