@@ -110,7 +110,7 @@ namespace magic.lambda.http.services.helpers
             if (string.IsNullOrEmpty(hl))
                 return new Node("content");
             var tmpNode = new Node("content", hl);
-            signaler.Signal("hyper2lambda", tmpNode, skipWhitelist: true);
+            await signaler.SignalAsync("hyper2lambda", tmpNode, skipWhitelist: true);
             return tmpNode;
         }
 

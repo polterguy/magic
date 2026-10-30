@@ -64,7 +64,7 @@ namespace magic.lambda.mime
                         if (structured)
                         {
                             input.AddRange(entity.Headers.Select(x => new Node(x.Field, x.Value)));
-                            input.Add(new Node("content", reader.ReadToEnd()));
+                            input.Add(new Node("content", await reader.ReadToEndAsync()));
                         }
                         else
                         {

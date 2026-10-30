@@ -221,7 +221,7 @@ namespace magic.endpoint.services
             }
             finally
             {
-                aborted.Dispose();
+                await aborted.DisposeAsync();
                 _executionRegistry.Complete(execution.ExecutionId);
             }
         }

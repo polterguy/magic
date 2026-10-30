@@ -90,7 +90,7 @@ namespace magic.lambda.sockets
                 // Transforming from JSON to lambda node structure.
                 var payload = new Node("", json);
                 if (!string.IsNullOrEmpty(json))
-                    _signaler.Signal("json2lambda", payload, skipWhitelist: true);
+                    await _signaler.SignalAsync("json2lambda", payload, skipWhitelist: true);
 
                 // Loading file, and creating our lambda object and attaching arguments specified as query parameters, and/or payload.
                 var lambda = HyperlambdaParser.Parse(await _fileService.LoadAsync(_rootResolver.AbsolutePath(file)));

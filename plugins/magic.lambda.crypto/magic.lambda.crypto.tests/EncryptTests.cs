@@ -40,6 +40,22 @@ crypto.encrypt:This is some super secret!
       }
 
       [Fact]
+      public void SignAndEncryptFingerprintNotStringOrBytes_Throws()
+      {
+         var ex = Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.create-key
+   strength:1024
+crypto.encrypt:This is some super secret!
+   encryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
+   signing-key:x:@crypto.rsa.create-key/*/private
+   signing-key-fingerprint:int:5
+"));
+         Assert.Contains("signing-key-fingerprint", ex.Message);
+      }
+
+      [Fact]
       public void SignAndEncryptNoFingerprint_Throws()
       {
          Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"

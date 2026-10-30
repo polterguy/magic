@@ -149,7 +149,7 @@ namespace magic.lambda.io.file
         {
             using (var reader = new StreamReader(await _streamService.OpenFileAsync(path)))
             {
-                return reader.ReadToEnd();
+                return await reader.ReadToEndAsync();
             }
         }
 

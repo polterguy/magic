@@ -205,7 +205,7 @@ namespace magic.lambda.crypto.slots.hash
                 await signaler.SignalAsync("io.stream.open-file", file);
                 using (var stream = (Stream)file.Value)
                 {
-                    bytes = algo.ComputeHash(stream);
+                    bytes = await algo.ComputeHashAsync(stream);
                 }
             }
             else

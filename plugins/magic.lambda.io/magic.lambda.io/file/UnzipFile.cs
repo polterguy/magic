@@ -117,7 +117,7 @@ namespace magic.lambda.io.file
                         if (idxEntry.FullName.Split('/').Last().Contains('.', System.StringComparison.CurrentCulture))
                         {
                             // This is a file, opening it up and saving it.
-                            using (var srcStream = idxEntry.Open())
+                            await using (var srcStream = await idxEntry.OpenAsync())
                             {
                                 // Getting filename.
                                 var filename = idxEntry.FullName.Substring(toTrim).Replace("\\", "/");

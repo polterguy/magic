@@ -49,7 +49,7 @@ namespace magic.lambda.threading
         {
             // Retrieving username, roles, and claims, if these exists.
             var auth = new Node();
-            signaler.Signal("auth.ticket.get", auth, skipWhitelist: true);
+            await signaler.SignalAsync("auth.ticket.get", auth, skipWhitelist: true);
             var execution = signaler.GetExecutionContext();
             if (execution != null && !execution.AddReference())
                 execution = null;

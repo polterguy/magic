@@ -58,7 +58,7 @@ namespace magic.lambda.threading
              * every thread below - the caller's own reference outlives all of them.
              */
             var auth = new Node();
-            signaler.Signal("auth.ticket.get", auth, skipWhitelist: true);
+            await signaler.SignalAsync("auth.ticket.get", auth, skipWhitelist: true);
             var execution = signaler.GetExecutionContext();
             var whitelist = signaler.Peek<List<Node>>("whitelist");
 

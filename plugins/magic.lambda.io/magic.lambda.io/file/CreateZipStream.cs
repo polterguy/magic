@@ -52,7 +52,7 @@ namespace magic.lambda.io.file
 
                     // Creating currently iterated ZIP entry and opening stream to write to it.
                     var entry = archive.CreateEntry(idx.GetEx<string>());
-                    using (var entryStream = entry.Open())
+                    await using (var entryStream = await entry.OpenAsync())
                     {
                         // Figuring out content type of current entry (byte[] or string), and sanity checking invocation.
                         var content = (idx.Children.FirstOrDefault()?.GetEx<object>()) ??

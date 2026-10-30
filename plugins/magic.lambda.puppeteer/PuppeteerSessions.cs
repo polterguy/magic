@@ -116,7 +116,8 @@ namespace magic.lambda.puppeteer
 
             try
             {
-                session.Timer?.Dispose();
+                if (session.Timer != null)
+                    await session.Timer.DisposeAsync();
             }
             catch
             {

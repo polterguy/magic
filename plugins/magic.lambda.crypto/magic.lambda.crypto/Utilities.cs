@@ -99,7 +99,9 @@ namespace magic.lambda.crypto
             }
             else
             {
-                var resultFingerprint = (result as string).Replace("-", "");
+                if (result is not string resultString)
+                    throw new HyperlambdaException("[signing-key-fingerprint] must be a base64 encoded string or byte[]");
+                var resultFingerprint = resultString.Replace("-", "");
                 int noChars = resultFingerprint.Length;
                 byte[] bytes = new byte[noChars / 2];
                 for (int i = 0; i < noChars; i += 2)

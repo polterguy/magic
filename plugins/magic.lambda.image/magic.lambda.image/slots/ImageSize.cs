@@ -43,7 +43,7 @@ namespace magic.lambda.image.slots
             await signaler.SignalAsync("io.stream.open-file", file);
             using (var stream = (Stream)file.Value)
             {
-                var image = Image.Identify(stream);
+                var image = await Image.IdentifyAsync(stream);
                 input.Add(new Node("width", image.Width));
                 input.Add(new Node("height", image.Height));
             }

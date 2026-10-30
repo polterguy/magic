@@ -49,6 +49,28 @@ namespace magic.lambda.auth.tests
         }
 
         [Fact]
+        public void VerifyTicket_ContextTicketWithoutRoles_Denies()
+        {
+            var signaler = Common.Initialize();
+            var ticket = new Node(".auth.ticket.get");
+            ticket.Add(new Node("username", "foo"));
+            var ex = Assert.Throws<HyperlambdaException>(() =>
+                signaler.Scope(".auth.ticket.get", ticket, () => signaler.Signal("auth.ticket.verify", new Node("", "admin"))));
+            Assert.Equal("Access denied", ex.Message);
+        }
+
+        [Fact]
+        public void InRole_ContextTicketWithoutRoles_ReturnsFalse()
+        {
+            var signaler = Common.Initialize();
+            var ticket = new Node(".auth.ticket.get");
+            ticket.Add(new Node("username", "foo"));
+            var node = new Node("", "admin");
+            signaler.Scope(".auth.ticket.get", ticket, () => signaler.Signal("auth.ticket.in-role", node));
+            Assert.False(node.Get<bool>());
+        }
+
+        [Fact]
         public void VerifyRole_Throws()
         {
             var signaler = Common.Initialize();

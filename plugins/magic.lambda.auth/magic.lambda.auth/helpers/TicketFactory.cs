@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
@@ -70,6 +71,14 @@ namespace magic.lambda.auth.helpers
             return tokenHandler.WriteToken(token);
         }
 
+        /*
+         * Roles of a context stored ticket, which has none when the ticket has no [roles] node.
+         */
+        static IEnumerable<Node> ContextRoles(Node signalerAuth)
+        {
+            return signalerAuth.Children.FirstOrDefault(x => x.Name == "roles")?.Children ?? Enumerable.Empty<Node>();
+        }
+
         /// <summary>
         /// Verifies that the current user belongs to the specified role.
         /// </summary>
@@ -85,7 +94,7 @@ namespace magic.lambda.auth.helpers
             if (signalerAuth != null)
             {
                 // Retrieving roles from scoped context.
-                var userRoles = signalerAuth.Children.FirstOrDefault(x2 => x2.Name == "roles").Children;
+                var userRoles = ContextRoles(signalerAuth);
 
                 // Checking if user is root, at which point user ALWAYS has access, regardless of the role declaration of the lambda object.
                 if (userRoles.Any(x => x.Get<string>() == "root"))
@@ -127,7 +136,7 @@ namespace magic.lambda.auth.helpers
             var signalerAuth = signaler.Peek<Node>(".auth.ticket.get");
             if (signalerAuth != null)
             {
-                if (!string.IsNullOrEmpty(roles) && !roles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Any(x => signalerAuth.Children.FirstOrDefault(x2 => x2.Name == "roles").Children.Any(x3 => x3.Get<string>() == x)))
+                if (!string.IsNullOrEmpty(roles) && !roles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Any(x => ContextRoles(signalerAuth).Any(x3 => x3.Get<string>() == x)))
                     return false;
                 return true; // Success, found at least one roles in context.
             }
