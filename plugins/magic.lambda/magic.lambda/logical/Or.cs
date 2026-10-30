@@ -37,9 +37,9 @@ namespace magic.lambda.logical
 
         #region [ -- Private helper methods -- ]
 
-        void SanityCheck(Node input)
+        static void SanityCheck(Node input)
         {
-            if (input.Children.Count() < 1)
+            if (!input.Children.Any())
                 throw new HyperlambdaException("[or] must have at least 2 argument nodes");
         }
 

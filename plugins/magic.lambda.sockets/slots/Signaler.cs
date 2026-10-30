@@ -99,7 +99,7 @@ namespace magic.lambda.sockets.slots
         /*
          * Helper method to retrieve arguments to invocation.
          */
-        (string Method, string? Json, string[]? Roles, string[]? Users, string[]? Clients, string[]? Groups) GetArguments(ISignaler signaler, Node input)
+        static (string Method, string? Json, string[]? Roles, string[]? Users, string[]? Clients, string[]? Groups) GetArguments(ISignaler signaler, Node input)
         {
             // Retrieving method name.
             var method = input.GetEx<string>();

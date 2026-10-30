@@ -368,7 +368,7 @@ namespace magic.lambda.http.services
                 {
                     // These HTTP headers we simply ignore, since they're added to the content object later.
                     // However, if such headers are added to GET or DELETE invocation, it's considered a bug.
-                    if (method.Method.ToLowerInvariant() == "get" || method.Method.ToLowerInvariant() == "delete")
+                    if (string.Equals(method.Method, "get", StringComparison.OrdinalIgnoreCase) || string.Equals(method.Method, "delete", StringComparison.OrdinalIgnoreCase))
                         throw new HyperlambdaException($"You cannot decorate an HTTP GET or DELETE request with content type of headers");
                 }
                 else
@@ -460,7 +460,7 @@ namespace magic.lambda.http.services
         /*
          * Creates an HTTP content object for HTTP invocations requiring such things (POST, PUT and PATCH).
          */
-        async Task<HttpContent> GetRequestContentAsync(
+        static async Task<HttpContent> GetRequestContentAsync(
             ISignaler signaler,
             Node input,
             Dictionary<string, string> headers)
@@ -496,8 +496,8 @@ namespace magic.lambda.http.services
             if (payloadNode.Value == null)
             {
                 // Figuring out Content-Type of request payload to make sure we correctly transform into the specified value.
-                var contentType = headers.ContainsKey("Content-Type") ?
-                    ContentType.Parse(headers["Content-Type"]) :
+                var contentType = headers.TryGetValue("Content-Type", out var requestContentType) ?
+                    ContentType.Parse(requestContentType) :
                     ContentType.Parse("application/json");
 
                 if (_requestTransformers.TryGetValue(contentType.MimeType, out var functor))
@@ -602,7 +602,7 @@ namespace magic.lambda.http.services
                     }
                     foreach (var idx in content.Headers)
                     {
-                        if (idx.Key.ToLowerInvariant() == "content-type")
+                        if (string.Equals(idx.Key, "content-type", StringComparison.OrdinalIgnoreCase))
                             contentType = ContentType.Parse(idx.Value.First()).MimeType;
                         headers.Add(new Node(idx.Key, string.Join(", ", idx.Value)));
                     }

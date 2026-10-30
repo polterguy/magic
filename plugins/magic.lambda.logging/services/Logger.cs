@@ -443,7 +443,7 @@ namespace magic.lambda.logging.services
                 builder.Append(", @exception");
             if (meta != null && meta.Count > 0)
                 builder.Append(", @meta");
-            builder.Append(")");
+            builder.Append(')');
 
             // Returning the id of the inserted entry, allowing callers to reference it.
             switch (dbType)

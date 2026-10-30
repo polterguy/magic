@@ -116,7 +116,7 @@ namespace magic.data.common.builders
                     builder.Append(", ");
                 builder.Append(EscapeColumnName(idx.Name));
             }
-            builder.Append(")");
+            builder.Append(')');
         }
 
         /*
@@ -148,7 +148,7 @@ namespace magic.data.common.builders
                 args.Add(new Node("@" + idxNo, val));
                 ++idxNo;
             }
-            builder.Append(")");
+            builder.Append(')');
         }
 
         #endregion

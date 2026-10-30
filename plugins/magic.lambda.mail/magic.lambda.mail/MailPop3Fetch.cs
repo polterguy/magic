@@ -124,7 +124,7 @@ namespace magic.lambda.mail
          * Helper method to handle a specific type of recipient, and creating a lambda list of nodes,
          * wrapping recipient's email address.
          */
-        void AddRecipient(IEnumerable<MailboxAddress> items, Node node, string nodeName)
+        static void AddRecipient(IEnumerable<MailboxAddress> items, Node node, string nodeName)
         {
             if (items == null || !items.Any())
                 return;

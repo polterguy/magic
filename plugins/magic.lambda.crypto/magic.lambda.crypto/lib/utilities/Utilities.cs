@@ -24,11 +24,7 @@ namespace magic.lambda.crypto.lib.utilities
         /// <returns>Fingerprint representation of hash generated from content</returns>
         public static string CreateSha256Fingerprint(byte[] content)
         {
-            using (var hash = SHA256.Create())
-            {
-                var hashed = hash.ComputeHash(content);
-                return CreateFingerprint(hashed);
-            }
+            return CreateFingerprint(SHA256.HashData(content));
         }
 
         /// <summary>
@@ -49,7 +45,7 @@ namespace magic.lambda.crypto.lib.utilities
             {
                 result.Append(BitConverter.ToString(new byte[] { idx }));
                 if (++idxNo % 2 == 0)
-                    result.Append("-");
+                    result.Append('-');
             }
             return result.ToString().TrimEnd('-').ToLowerInvariant();
         }
@@ -82,10 +78,7 @@ namespace magic.lambda.crypto.lib.utilities
         /// <returns>32 bytes long byte array found by hashing passphrase argument</returns>
         public static byte[] Generate256BitKey(string passphrase)
         {
-            using (var hash = SHA256.Create())
-            {
-                return hash.ComputeHash(Encoding.UTF8.GetBytes(passphrase));
-            }
+            return SHA256.HashData(Encoding.UTF8.GetBytes(passphrase));
         }
 
         /// <summary>
@@ -95,10 +88,7 @@ namespace magic.lambda.crypto.lib.utilities
         /// <returns></returns>
         public static byte[] CreateSha256(byte[] content)
         {
-            using (var algo = SHA256.Create())
-            {
-                return algo.ComputeHash(content);
-            }
+            return SHA256.HashData(content);
         }
 
         /// <summary>

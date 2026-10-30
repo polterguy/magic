@@ -31,6 +31,8 @@ namespace magic.backend.slots
         SignatureType = typeof(global::magic.lambda.auth.signatures.ReadTokenSignature))]
     public class ReadToken : ISlot
     {
+        static readonly char[] _roleSeparators = [',', ' '];
+
         readonly private IConfiguration _configuration;
 
         /// <summary>
@@ -72,7 +74,7 @@ namespace magic.backend.slots
             var userRoles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             static IEnumerable<string> SplitRoles(string raw) =>
                 raw?.Trim().Trim('[', ']', '"')
-                    .Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Split(_roleSeparators, StringSplitOptions.RemoveEmptyEntries)
                     .Select(s => s.Trim().Trim('"')) ?? Enumerable.Empty<string>();
 
             foreach (var c in principal.Claims.Where(c => c.Type == ClaimTypes.Role))
@@ -82,7 +84,7 @@ namespace magic.backend.slots
             }
 
             var requiredRoles = rolesCsv
-                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(r => r.Trim())
                 .Where(r => r.Length > 0)
                 .ToArray();
@@ -90,7 +92,7 @@ namespace magic.backend.slots
             var authorized = requiredRoles.Any(r => userRoles.Contains(r));
             if (!authorized)
             {
-                var found = userRoles.Any()
+                var found = userRoles.Count > 0
                     ? $"found roles: {string.Join(", ", userRoles)}"
                     : "no roles found in token";
                 throw new HyperlambdaException($"Access denied by [auth.token.verify]. Required one of: {string.Join(", ", requiredRoles)}; {found}.");

@@ -62,7 +62,7 @@ namespace magic.lambda.logging.slots
                 input.Add(new Node("exception", item.Exception));
 
             // Retrieving meta.
-            if (item.Meta != null && item.Meta.Any())
+            if (item.Meta != null && item.Meta.Count > 0)
             {
                 var metaNode = new Node("meta");
                 metaNode.AddRange(item.Meta.Select(x => new Node(x.Key, x.Value)));

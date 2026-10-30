@@ -229,7 +229,7 @@ namespace magic.endpoint.services
         /*
          * Creates a returned payload of some sort and returning to caller.
          */
-        object GetReturnValue(MagicResponse httpResponse, Node lambda)
+        static object GetReturnValue(MagicResponse httpResponse, Node lambda)
         {
             /*
              * An endpoint can return either a Node/Lambda hierarchy or a simple value.

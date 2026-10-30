@@ -18,7 +18,7 @@ namespace magic.lambda.threading
      * [execution.throttle]. Owns its entire enforcement strategy, such that the
      * enforcing slot is a simple lookup and acquire.
      */
-    internal sealed class Throttle
+    internal sealed class Throttle : IDisposable
     {
         readonly PartitionedRateLimiter<string> _limiter;
 

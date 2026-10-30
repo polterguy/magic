@@ -235,7 +235,7 @@ namespace magic.endpoint.controller
 #if DEBUG
             // Making it easier to debug locally by simply "turning off" all CORS safe guards in DEBUG builds.
             if (!Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
-                Response.Headers["Access-Control-Allow-Origin"] = "*";
+                Response.Headers.AccessControlAllowOrigin = "*";
 #endif
 
             // Making sure we attach all cookies.
@@ -250,7 +250,7 @@ namespace magic.endpoint.controller
                     Path = idx.Path,
                 };
                 if (!string.IsNullOrEmpty(idx.SameSite))
-                    options.SameSite = (SameSiteMode)Enum.Parse(typeof(SameSiteMode), idx.SameSite, true);
+                    options.SameSite = Enum.Parse<SameSiteMode>(idx.SameSite, true);
                 else
                     options.SameSite = SameSiteMode.Lax; // Defaulting to Lax to avoid cookies being attached cross-site
                 Response.Cookies.Append(idx.Name, idx.Value, options);

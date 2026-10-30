@@ -32,7 +32,7 @@ namespace magic.lambda.auth.signatures
                     Kind = SlotConstraintKind.AtMostOneOf,
                     Description = "Use either absolute [expires] or relative [duration]",
                 };
-                result.Values.AddRange(new[] { "expires", "duration" });
+                result.Values.AddRange(["expires", "duration"]);
                 return new[] { result };
             }
         }
@@ -115,7 +115,7 @@ namespace magic.lambda.auth.signatures
                     Kind = SlotConstraintKind.AtMostOneOf,
                     Description = "Use either absolute [expires] or relative [duration]",
                 };
-                result.Values.AddRange(new[] { "expires", "duration" });
+                result.Values.AddRange(["expires", "duration"]);
                 return new[] { result };
             }
         }

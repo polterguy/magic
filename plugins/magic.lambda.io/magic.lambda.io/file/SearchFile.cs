@@ -86,7 +86,7 @@ namespace magic.lambda.io.file
 
         #region [ -- Private helper methods -- ]
 
-        (string Folder, string Pattern, bool IsRegex, bool CaseSensitive, string[] Extensions) GetArgs(Node input)
+        static (string Folder, string Pattern, bool IsRegex, bool CaseSensitive, string[] Extensions) GetArgs(Node input)
         {
             var pattern = input.Children.FirstOrDefault(x => x.Name == "pattern")?.GetEx<string>();
             if (string.IsNullOrWhiteSpace(pattern))
@@ -101,7 +101,7 @@ namespace magic.lambda.io.file
                 : extValue.Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => x.Trim())
                     .Where(x => x.Length > 0)
-                    .Select(x => x.StartsWith(".", StringComparison.Ordinal) ? x : "." + x)
+                    .Select(x => x.StartsWith('.') ? x : "." + x)
                     .ToArray();
 
             var folder = input.GetEx<string>();
@@ -112,7 +112,7 @@ namespace magic.lambda.io.file
             return (folder, pattern, isRegex, caseSensitive, extensions);
         }
 
-        bool MatchesExtensions(string filename, string[] extensions)
+        static bool MatchesExtensions(string filename, string[] extensions)
         {
             if (extensions.Length == 0)
                 return true;
@@ -141,7 +141,7 @@ namespace magic.lambda.io.file
             return remaining <= TimeSpan.Zero ? TimeSpan.FromMilliseconds(1) : remaining;
         }
 
-        System.Collections.Generic.List<int> FindMatches(ISignaler signaler, string filename, string pattern, bool isRegex, bool caseSensitive)
+        static System.Collections.Generic.List<int> FindMatches(ISignaler signaler, string filename, string pattern, bool isRegex, bool caseSensitive)
         {
             var result = new System.Collections.Generic.List<int>();
             Regex regex = null;
@@ -175,7 +175,7 @@ namespace magic.lambda.io.file
                 }
                 else
                 {
-                    if (line.IndexOf(pattern, comparison) >= 0)
+                    if (line.Contains(pattern, comparison))
                         result.Add(lineNumber);
                 }
             }

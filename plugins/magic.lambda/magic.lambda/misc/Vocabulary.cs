@@ -54,7 +54,7 @@ namespace magic.lambda.misc
             {
                 var keys = _signalProvider.Keys
                     .Where(x => 
-                        !x.StartsWith(".", StringComparison.InvariantCulture) &&
+                        !x.StartsWith('.') &&
                         (whitelist == null || whitelist.Any(x2 => x2.Name == x)))
                     .ToList();
                 SortKeys(keys);
@@ -64,7 +64,7 @@ namespace magic.lambda.misc
             {
                 var keys = _signalProvider.Keys
                     .Where(x => 
-                        !x.StartsWith(".", StringComparison.InvariantCulture) &&
+                        !x.StartsWith('.') &&
                         x.StartsWith(filter, StringComparison.InvariantCulture) &&
                         (whitelist == null || whitelist.Any(x2 => x2.Name == x)))
                     .ToList();

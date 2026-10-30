@@ -158,9 +158,9 @@ namespace magic.lambda.io.helpers
             if (isFolder)
             {
                 // Folders.
-                if (!src.EndsWith("/", StringComparison.Ordinal))
+                if (!src.EndsWith('/'))
                     src += "/";
-                if (!dest.EndsWith("/", StringComparison.Ordinal))
+                if (!dest.EndsWith('/'))
                     dest += "/";
             }
             else

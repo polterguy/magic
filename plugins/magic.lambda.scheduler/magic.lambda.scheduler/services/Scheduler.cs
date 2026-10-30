@@ -500,9 +500,8 @@ namespace magic.lambda.scheduler.services
 
                     lock (_dictionarySemaphore)
                     {
-                        if (_schedules.ContainsKey(id))
+                        if (_schedules.TryGetValue(id, out var schedule))
                         {
-                            var schedule = _schedules[id];
                             _schedules.Remove(id);
                             schedule.Dispose();
                         }

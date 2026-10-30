@@ -39,7 +39,7 @@ namespace magic.lambda.logical
 
         static void SanityCheck(Node input)
         {
-            if (input.Children.Count() < 1)
+            if (!input.Children.Any())
                 throw new HyperlambdaException("[and] must have at least two children nodes");
         }
 

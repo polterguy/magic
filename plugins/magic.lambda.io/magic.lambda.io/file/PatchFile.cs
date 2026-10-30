@@ -266,8 +266,8 @@ namespace magic.lambda.io.file
             var oldPart = parts[1];
             var newPart = parts[2];
 
-            if (!oldPart.StartsWith("-", StringComparison.InvariantCulture) ||
-                !newPart.StartsWith("+", StringComparison.InvariantCulture))
+            if (!oldPart.StartsWith('-') ||
+                !newPart.StartsWith('+'))
                 throw new HyperlambdaException("Invalid hunk header.");
 
             var (oldStart, oldCount) = ParseRange(oldPart.Substring(1));
@@ -310,7 +310,7 @@ namespace magic.lambda.io.file
          * not match - and it stays strict even when the hunk was LOCATED with a tolerant comparison.
          */
         static void EnsureLineMatch(
-            IReadOnlyList<string> originalLines,
+            List<string> originalLines,
             int index,
             string expected,
             bool ignoreTrailingWhitespace)
@@ -354,7 +354,7 @@ namespace magic.lambda.io.file
          * spaces denote a hard line break and are routinely lost when a patch is written by hand.
          */
         static (int Index, bool WhitespaceFuzz) ResolveHunkTargetIndex(
-            IReadOnlyList<string> originalLines,
+            List<string> originalLines,
             int originalIndex,
             IReadOnlyList<string> hunkLines,
             int expectedIndex)
@@ -454,7 +454,7 @@ namespace magic.lambda.io.file
             if (value == null)
                 return string.Empty;
 
-            return value.Length <= 120 ? value : value.Substring(0, 120) + "...";
+            return value.Length <= 120 ? value : string.Concat(value.AsSpan(0, 120), "...");
         }
 
         static void ValidatePatchHeaders(string oldHeader, string newHeader, string targetPath)
@@ -485,7 +485,7 @@ namespace magic.lambda.io.file
             if (string.Equals(headerPath, normalizedTarget, StringComparison.InvariantCulture))
                 return true;
 
-            if (!headerPath.StartsWith("/", StringComparison.InvariantCulture))
+            if (!headerPath.StartsWith('/'))
                 headerPath = "/" + headerPath;
 
             return normalizedTarget.EndsWith(headerPath, StringComparison.InvariantCulture);
@@ -503,7 +503,7 @@ namespace magic.lambda.io.file
         {
             return text
                 .Replace("\r\n", "\n")
-                .Split(new[] { '\n' }, StringSplitOptions.None)
+                .Split('\n', StringSplitOptions.None)
                 .ToList();
         }
 

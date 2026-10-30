@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Linq;
 using magic.node;
 using magic.node.extensions;
@@ -35,8 +36,7 @@ namespace magic.lambda.strings.replace
             var str = input.GetEx<string>();
             if (str.Length > 0)
                 input.Value = 
-                    char.ToUpperInvariant(str.First()).ToString() +
-                    str.Substring(1);
+                    string.Concat(char.ToUpperInvariant(str[0]).ToString(), str.AsSpan(1));
         }
     }
 }

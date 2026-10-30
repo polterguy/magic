@@ -57,7 +57,7 @@ namespace magic.signals.tests
         {
             public void Signal(ISignaler signaler, Node input) { }
 
-            public void Dispose() { }
+            public void Dispose() { GC.SuppressFinalize(this); }
         }
 
         public class BaseWithField

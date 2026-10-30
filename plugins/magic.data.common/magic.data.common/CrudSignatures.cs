@@ -903,7 +903,7 @@ namespace magic.data.common.signatures
         // Declared virtual so [data.select] / dialect select slots can override
         // with the row-list shape without falling into DIM-shadow (the class
         // member would otherwise be hidden from `ISlotSignature` dispatch).
-        public virtual IEnumerable<SlotChild> OutputChildren => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> OutputChildren => Array.Empty<SlotChild>();
 
         internal static SlotChild SqlParameter()
         {

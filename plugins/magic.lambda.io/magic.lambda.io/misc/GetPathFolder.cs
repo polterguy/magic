@@ -35,13 +35,13 @@ namespace magic.lambda.io.misc
         public void Signal(ISignaler signaler, Node input)
         {
             var path = input.GetEx<string>();
-            if (path.EndsWith("/", StringComparison.Ordinal))
+            if (path.EndsWith('/'))
             {
                 input.Value = path;
             }
             else
             {
-                var entities = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                var entities = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
                 input.Value =
                     "/" +
                     string.Join(

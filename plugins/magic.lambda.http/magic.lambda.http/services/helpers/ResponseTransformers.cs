@@ -124,8 +124,8 @@ namespace magic.lambda.http.services.helpers
             foreach (var idxArg in args)
             {
                 var cur = idxArg.Split('=');
-                var curNode = new Node(cur.First());
-                if (cur.Count() > 1)
+                var curNode = new Node(cur[0]);
+                if (cur.Length > 1)
                     curNode.Value = HttpUtility.UrlDecode(cur.Skip(1).First());
                 result.Add(curNode);
             }

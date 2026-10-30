@@ -71,7 +71,7 @@ namespace magic.data.common.builders
             {
                 // Checking if this is an explicit argument, added by caller explicitly.
                 var rhsValue = colNode.GetEx<string>();
-                if (rhsValue.StartsWith("@", StringComparison.InvariantCulture))
+                if (rhsValue.StartsWith('@'))
                 {
                     /*
                      * Sanity checking that value is a plain argument reference, to avoid
@@ -96,7 +96,7 @@ namespace magic.data.common.builders
             else
             {
                 // Plain argument, referencing it in SQL, and adding to args collection.
-                var argNo = args.Children.Count(x => x.Name.StartsWith("@", StringComparison.Ordinal) && x.Name.Skip(1).First() != 'v');
+                var argNo = args.Children.Count(x => x.Name.StartsWith('@') && x.Name.Skip(1).First() != 'v');
                 var argName = "@" + argNo;
                 builder.Append(argName);
                 var val = colNode.GetEx<object>();
@@ -182,7 +182,7 @@ namespace magic.data.common.builders
             bool paranthesis = true)
         {
             if (paranthesis && booleanNode.Children.Any())
-                builder.Append("(");
+                builder.Append('(');
 
             var no = 0;
             foreach (var idx in booleanNode.Children)
@@ -213,7 +213,7 @@ namespace magic.data.common.builders
             }
 
             if (paranthesis && booleanNode.Children.Any())
-                builder.Append(")");
+                builder.Append(')');
         }
 
         /*
@@ -226,34 +226,34 @@ namespace magic.data.common.builders
         {
             // Field comparison of some sort.
             var columnName = comparison.Name;
-            if (columnName.StartsWith("\\", StringComparison.Ordinal))
+            if (columnName.StartsWith('\\'))
             {
                 // Allowing for escaped column names, to suppor columns containing "." as a part of their names.
                 columnName = EscapeColumnName(columnName.Substring(1));
             }
-            else if (columnName.Contains("."))
+            else if (columnName.Contains('.'))
             {
                 // Possibly an operator, hence checking operator dictionary for a match.
                 var entities = columnName.Split('.');
-                var keyword = entities.Last();
-                if (_comparisonOperators.ContainsKey(keyword))
+                var keyword = entities[^1];
+                if (_comparisonOperators.TryGetValue(keyword, out var comparisonOperator))
                 {
                     columnName = string.Join(
                         ".",
                         entities
-                            .Take(entities.Count() - 1)
+                            .Take(entities.Length - 1)
                             .Select(x => EscapeColumnName(x)));
                     builder.Append(columnName);
-                    _comparisonOperators[keyword](builder, args, comparison, EscapeChar, Kind);
+                    comparisonOperator(builder, args, comparison, EscapeChar, Kind);
                     return;
                 }
 
                 // Checking if last entity is escaped.
                 var tmp = new List<string>();
-                if (keyword.StartsWith("\\", StringComparison.Ordinal))
+                if (keyword.StartsWith('\\'))
                 {
                     keyword = keyword.Substring(1);
-                    tmp.AddRange(entities.Take(entities.Count() - 1));
+                    tmp.AddRange(entities.Take(entities.Length - 1));
                     tmp.Add(keyword);
                     entities = tmp.ToArray();
                 }
@@ -347,12 +347,12 @@ namespace magic.data.common.builders
             // Special case for "in" comparison operator.
             result["in"] = (builder, args, colNode, escapeChar, kind) => {
                 builder.Append(" in (");
-                var argNo = args.Children.Count(x => x.Name.StartsWith("@", StringComparison.Ordinal) && x.Name.Skip(1).First() != 'v');
+                var argNo = args.Children.Count(x => x.Name.StartsWith('@') && x.Name.Skip(1).First() != 'v');
                 builder.Append(string.Join(",", colNode.Children.Select(x =>
                 {
                     args.Add(new Node("@" + argNo, x.GetEx<object>()));
                     return "@" + argNo++;
-                }))).Append(")");
+                }))).Append(')');
             };
             return result;
         }

@@ -13,10 +13,10 @@ namespace magic.lambda.strings.signatures
     public abstract class StringSignature : ISlotSignature
     {
         /// <inheritdoc />
-        public virtual IEnumerable<SlotChild> Children => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
         /// <inheritdoc />
-        public virtual IEnumerable<SlotConstraint> Constraints => new SlotConstraint[0];
+        public virtual IEnumerable<SlotConstraint> Constraints => System.Array.Empty<SlotConstraint>();
 
         protected static SlotChild Arg(
             string name,

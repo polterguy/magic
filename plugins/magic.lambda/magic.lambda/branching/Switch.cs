@@ -75,7 +75,7 @@ namespace magic.lambda.branching
         /*
          * Sanity checks invocation.
          */
-        void SanityCheckInvocation(Node input)
+        static void SanityCheckInvocation(Node input)
         {
             if (!input.Children.Any(x => x.Name == "case"))
                 throw new HyperlambdaException("[switch] must have one at least one [case] child");

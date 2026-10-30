@@ -111,7 +111,7 @@ namespace magic.lambda.scheduler.slots.tasks
                 throw new HyperlambdaException($"No [id] or value provided to [{node.Name}]");
 
             // Sanity checking ID.
-            if (id.Any(x => "abcdefghijklmnopqrstuvwxyz0123456789.-_".IndexOf(x) == -1))
+            if (id.Any(x => !"abcdefghijklmnopqrstuvwxyz0123456789.-_".Contains(x)))
                 throw new HyperlambdaException("ID of task can only contain [a-z], [0-9] and '.', '-' or '_' characters");
 
             // Returning ID to caller.

@@ -41,17 +41,19 @@ namespace magic.lambda.http.tests
 
         private class RootResolver : IRootResolver
         {
+            static readonly char[] _separators = ['/', '\\'];
+
             public string DynamicFiles => AppDomain.CurrentDomain.BaseDirectory;
             public string RootFolder => AppDomain.CurrentDomain.BaseDirectory;
 
             public string AbsolutePath(string path)
             {
-                return DynamicFiles + path.TrimStart(new char[] { '/', '\\' });
+                return DynamicFiles + path.TrimStart(_separators);
             }
 
             public string RuntimePath(string path)
             {
-                return RootFolder + path.TrimStart(new char[] { '/', '\\' });
+                return RootFolder + path.TrimStart(_separators);
             }
 
             public string RelativePath(string path)
@@ -91,7 +93,7 @@ namespace magic.lambda.http.tests
 
         #region [ -- Private helper methods -- ]
 
-        static IServiceProvider Initialize(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler = null)
+        static ServiceProvider Initialize(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler = null)
         {
             var services = new ServiceCollection();
             services.AddTransient<ISignaler, Signaler>();

@@ -74,7 +74,7 @@ namespace magic.lambda.crypto.slots.combinations
         /*
          * Retrieves arguments for invocation.
          */
-        (byte[] Content, byte[] DecryptionKey, byte[] VerifyKey, bool Raw) GetArguments(Node input)
+        static (byte[] Content, byte[] DecryptionKey, byte[] VerifyKey, bool Raw) GetArguments(Node input)
         {
             var content = Utilities.GetContent(input, true);
             var decryptionKey = Utilities.GetKeyFromArguments(input, "decryption-key");

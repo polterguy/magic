@@ -233,7 +233,7 @@ namespace magic.lambda.crypto.slots.hash
                     {
                         result.Append(BitConverter.ToString(new byte[] { idx }));
                         if (++idxNo % 2 == 0)
-                            result.Append("-");
+                            result.Append('-');
                     }
                     return result.ToString().TrimEnd('-').ToLowerInvariant();
 

@@ -41,7 +41,7 @@ namespace magic.endpoint.services.utilities
                             if (idxNo > 0)
                             {
                                 // We need to check if this is a file extension, at which point we allow it.
-                                if (!idxEntity.Equals(entities.Last()))
+                                if (!idxEntity.Equals(entities[^1]))
                                     return false; // File or folder is not served
                             }
                             break;
@@ -106,7 +106,7 @@ namespace magic.endpoint.services.utilities
                 return true; // Request for root index.html document
 
             // Finding filename of request.
-            var filename = splits.Last();
+            var filename = splits[^1];
             if (filename.EndsWith(".html", StringComparison.Ordinal) || filename.EndsWith(".xml", StringComparison.Ordinal) || filename.EndsWith(".txt", StringComparison.Ordinal) || !filename.Contains('.'))
                 return true; // If filename does not contain "." at all, it's a mixin URL.
 
@@ -140,7 +140,7 @@ namespace magic.endpoint.services.utilities
         internal static List<string> GetInterceptorFilePaths(IRootResolver rootResolver, string filename)
         {
             // Checking to see if interceptors exists recursively upwards in folder hierarchy.
-            var splits = filename.Split(new char [] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            var splits = filename.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
             // Stripping away last entity (filename) of invocation.
             var folders = splits.Take(splits.Length - 1);

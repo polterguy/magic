@@ -70,7 +70,7 @@ namespace magic.lambda.csv
         /*
          * Appends one single record into specified StringBuilder.
          */
-        void CreateRecord(
+        static void CreateRecord(
             Node current,
             StringBuilder builder,
             string nullValue,
@@ -84,7 +84,7 @@ namespace magic.lambda.csv
                 if (firstValue)
                     firstValue = false;
                 else
-                    builder.Append(",");
+                    builder.Append(',');
                 var value = idxValue.Value;
 
                 // Making sure we escape string values correctly.
@@ -109,7 +109,7 @@ namespace magic.lambda.csv
         /*
          * Appends headers into specified string builder.
          */
-        void CreateHeaders(
+        static void CreateHeaders(
             Node current,
             StringBuilder builder,
             List<Tuple<string, string>> types)
@@ -120,7 +120,7 @@ namespace magic.lambda.csv
                 if (firstHeader)
                     firstHeader = false;
                 else
-                    builder.Append(",");
+                    builder.Append(',');
                 builder.Append(idxHeader);
                 types.Add(new Tuple<string, string>(idxHeader, null));
             }
@@ -130,7 +130,7 @@ namespace magic.lambda.csv
         /*
          * Helper method to retrieve null string value if existing.
          */
-        string GetNullableValue(Node input)
+        static string GetNullableValue(Node input)
         {
             string nullValue = "[NULL]";
             var nullArgument = input.Children.FirstOrDefault(x => x.Name == "null-value");

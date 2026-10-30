@@ -34,7 +34,7 @@ namespace magic.lambda.hyperlambda.tests
 
         #region [ -- Private helper methods -- ]
 
-        static IServiceProvider Initialize()
+        static ServiceProvider Initialize()
         {
             var services = new ServiceCollection();
             services.AddTransient<ISignaler, Signaler>();

@@ -47,7 +47,7 @@ namespace magic.data.common.tests
             protected override DbConnection DbConnection { get; set; }
             protected override DbParameterCollection DbParameterCollection => _parameters;
             protected override DbTransaction DbTransaction { get; set; }
-            public IEnumerable<(string Name, object Value)> Parameters =>
+            public IEnumerable<(string Name, object Value)> ParameterValues =>
                 _parameters.Items.Select(x => (x.ParameterName, x.Value));
             public override void Cancel() { Cancelled = true; }
             public override int ExecuteNonQuery() => 0;
@@ -221,7 +221,7 @@ namespace magic.data.common.tests
             Assert.Equal("select * from foo where a = @a", command.CommandText);
             Assert.Equal(300, command.CommandTimeout);
             Assert.Equal(10L, seenMax);
-            var parameters = command.Parameters.ToList();
+            var parameters = command.ParameterValues.ToList();
             Assert.Equal(3, parameters.Count);
             Assert.Equal(("@a", (object)5L), parameters[0]);
             Assert.Equal(DBNull.Value, parameters[1].Value);
@@ -252,7 +252,7 @@ namespace magic.data.common.tests
                 return Task.CompletedTask;
             });
             Assert.Equal(3L, seenMax);
-            var parameters = connection.Command.Parameters.ToList();
+            var parameters = connection.Command.ParameterValues.ToList();
             Assert.Single(parameters);
             Assert.Equal("@a", parameters[0].Name);
         }

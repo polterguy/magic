@@ -13,10 +13,10 @@ namespace magic.lambda.signatures
     public abstract class LambdaSignature : ISlotSignature
     {
         /// <inheritdoc />
-        public virtual IEnumerable<SlotChild> Children => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
         /// <inheritdoc />
-        public virtual IEnumerable<SlotConstraint> Constraints => new SlotConstraint[0];
+        public virtual IEnumerable<SlotConstraint> Constraints => System.Array.Empty<SlotConstraint>();
 
         // Generic action body: pure imperative sequence with no return-value
         // contract. The body can contain any slot whose side effects are

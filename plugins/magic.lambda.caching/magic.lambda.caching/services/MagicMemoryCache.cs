@@ -213,7 +213,7 @@ namespace magic.lambda.caching.services
             // Sanity checking invocation.
             if (string.IsNullOrEmpty(key))
                 throw new HyperlambdaException("You cannot reference an item in your cache without providing us with a key.");
-            if (key.StartsWith(".", StringComparison.Ordinal) || key.StartsWith("+", StringComparison.Ordinal))
+            if (key.StartsWith('.') || key.StartsWith('+'))
                 throw new HyperlambdaException($"You cannot reference an new item in your cache that starts with a period (.) or a plus (+) - Cache key of item that created conflict was '{key}'");
 
             // Returning unique key to caller.
@@ -226,7 +226,7 @@ namespace magic.lambda.caching.services
         string GetFilter(string filter, bool hidden)
         {
             // Sanity checking invocation.
-            if (!string.IsNullOrEmpty(filter) && (filter.StartsWith(".", StringComparison.Ordinal) || filter.StartsWith("+", StringComparison.Ordinal)))
+            if (!string.IsNullOrEmpty(filter) && (filter.StartsWith('.') || filter.StartsWith('+')))
                 throw new HyperlambdaException($"You cannot reference items from your cache starting with a period (.) or a (+) - Filter that created conflict was '{filter}'");
 
             // Returning filter to caller.

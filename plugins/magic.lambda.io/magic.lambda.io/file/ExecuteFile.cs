@@ -135,7 +135,7 @@ namespace magic.lambda.io.file
         /*
          * Helper method containing commonalities to retrieve and parametrise lambda object.
          */
-        Node GetLambda(Node input, string hyperlambda, string filename)
+        static Node GetLambda(Node input, string hyperlambda, string filename)
         {
             // Parsing specified Hyperlambda, creating our lambda object.
             var lambda = HyperlambdaParser.Parse(hyperlambda);
@@ -170,7 +170,7 @@ namespace magic.lambda.io.file
         /*
          * Commonalities to apply result after invocation of [eval].
          */
-        void ApplyResult(Node input, Node result)
+        static void ApplyResult(Node input, Node result)
         {
             // Clearing Children collection, since it might contain input parameters.
             input.Clear();

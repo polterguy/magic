@@ -123,7 +123,7 @@ namespace magic.lambda.system.terminal
             if (argsNode == null)
                 yield break;
 
-            if (argsNode.Children.Count() > 0)
+            if (argsNode.Children.Any())
             {
                 foreach (var child in argsNode.Children)
                 {
@@ -142,7 +142,7 @@ namespace magic.lambda.system.terminal
                 yield return arg;
         }
 
-        static IEnumerable<string> SplitArgs(string input)
+        static List<string> SplitArgs(string input)
         {
             var args = new List<string>();
             var current = new StringBuilder();

@@ -56,11 +56,11 @@ namespace magic.lambda.html.slots
         static void CreateElement(Node srcNode, HtmlNode html, HtmlDocument doc)
         {
             var cur = doc.CreateElement(srcNode.Name);
-            foreach (var idx in srcNode.Children.Where(x => x.Name.StartsWith("@", StringComparison.Ordinal)))
+            foreach (var idx in srcNode.Children.Where(x => x.Name.StartsWith('@')))
             {
                 cur.Attributes.Add(idx.Name.Substring(1), idx.GetEx<string>());
             }
-            foreach (var idx in srcNode.Children.Where(x => !x.Name.StartsWith("@", StringComparison.Ordinal)))
+            foreach (var idx in srcNode.Children.Where(x => !x.Name.StartsWith('@')))
             {
                 if (idx.Name == "#text")
                     cur.AppendChild(doc.CreateTextNode(idx.GetEx<string>()));

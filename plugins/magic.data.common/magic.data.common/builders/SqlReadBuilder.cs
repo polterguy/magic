@@ -79,7 +79,7 @@ namespace magic.data.common.builders
              * Retrieving all explicitly added arguments.
              */
             var explicitArgs = Root.Children
-                .Where(x => x.Name.StartsWith("@", StringComparison.InvariantCulture)).ToList();
+                .Where(x => x.Name.StartsWith('@')).ToList();
 
             // Return value.
             var result = new Node("sql");
@@ -122,7 +122,7 @@ namespace magic.data.common.builders
                 // Checking if we have an alias for table.
                 var alias = idx.Children.FirstOrDefault(x => x.Name == "as");
                 if (alias != null)
-                    builder.Append(" ").Append(EscapeAliasName(alias.GetEx<string>()));
+                    builder.Append(' ').Append(EscapeAliasName(alias.GetEx<string>()));
 
                 // Then making sure we apply [join] tables, if there are any.
                 foreach (var idxJoin in idx.Children.Where(x => x.Name == "join"))
@@ -164,7 +164,7 @@ namespace magic.data.common.builders
                 foreach (var idx in orderNodes)
                 {
                     var colName = idx.GetEx<string>();
-                    if (colName.Contains("("))
+                    if (colName.Contains('('))
                     {
                         /*
                          * Aggregate expression, only allowing explicitly white listed
@@ -173,10 +173,10 @@ namespace magic.data.common.builders
                         if (first)
                             first = false;
                         else
-                            builder.Append(",");
+                            builder.Append(',');
                         builder
                             .Append(EscapeAggregateName(colName))
-                            .Append(" ")
+                            .Append(' ')
                             .Append(GetDirection(idx, defaultDirection));
                     }
                     else
@@ -186,10 +186,10 @@ namespace magic.data.common.builders
                             if (first)
                                 first = false;
                             else
-                                builder.Append(",");
+                                builder.Append(',');
                             builder
                                 .Append(EscapeTypeName(idxCol.Trim()))
-                                .Append(" ")
+                                .Append(' ')
                                 .Append(GetDirection(idx, defaultDirection));
                         }
                     }
@@ -380,7 +380,7 @@ namespace magic.data.common.builders
             if (!columnsNodes.Any() || (!columnsNodes.FirstOrDefault()?.Children.Any() ?? true))
             {
                 // Caller did not explicitly declare columns, hence defaulting to all.
-                builder.Append("*");
+                builder.Append('*');
                 return;
             }
 
@@ -401,14 +401,14 @@ namespace magic.data.common.builders
         string GetSingleColumn(Node column)
         {
             var builder = new StringBuilder();
-            if (column.Name.Contains("(") && column.Name.Contains(")"))
+            if (column.Name.Contains('(') && column.Name.Contains(')'))
             {
                 builder.Append(EscapeAggregateName(column.Name)); // Aggregate column, white listed shape.
             }
             else
             {
                 // Checking if column name is escaped.
-                if (column.Name.StartsWith("\\", StringComparison.Ordinal))
+                if (column.Name.StartsWith('\\'))
                     builder.Append(EscapeColumnName(column.Name.Substring(1)));
                 else
                     builder.Append(EscapeTypeName(column.Name));
@@ -440,7 +440,7 @@ namespace magic.data.common.builders
                 case "right":
                 case "inner":
                 case "full":
-                    builder.Append(" ")
+                    builder.Append(' ')
                         .Append(joinType)
                         .Append(" join ");
                     break;
@@ -454,7 +454,7 @@ namespace magic.data.common.builders
             // Checking if we have an alias for table.
             var alias = joinNode.Children.FirstOrDefault(x => x.Name == "as");
             if (alias != null)
-                builder.Append(" ").Append(EscapeAliasName(alias.GetEx<string>()));
+                builder.Append(' ').Append(EscapeAliasName(alias.GetEx<string>()));
 
             // Appending on condition.
             builder.Append(" on ");

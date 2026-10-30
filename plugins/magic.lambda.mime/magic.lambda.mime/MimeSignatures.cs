@@ -160,7 +160,7 @@ namespace magic.lambda.mime.signatures
                 Description = "Leaf MIME parts require either [content] or [filename]",
                 ValuePattern = @"^(?!multipart/).+/.+$",
             };
-            leaf.Values.AddRange(new[] { "content", "filename" });
+            leaf.Values.AddRange(["content", "filename"]);
 
             var leafExcludesEntity = new SlotConstraint
             {
@@ -212,7 +212,7 @@ namespace magic.lambda.mime.signatures
                 Description = "Multipart MIME parts must not contain [content] or [filename]",
                 ValuePattern = @"^multipart/.+$",
             };
-            multipartExcludesLeaf.Values.AddRange(new[] { "content", "filename" });
+            multipartExcludesLeaf.Values.AddRange(["content", "filename"]);
 
             // Order matters: Excludes constraints must run BEFORE the
             // ExactlyOneOf(leaf) so the latter sees `content` already in
@@ -229,7 +229,7 @@ namespace magic.lambda.mime.signatures
     public class MimeParseSignature : ISlotSignature
     {
         /// <inheritdoc />
-        public IEnumerable<SlotChild> Children => new SlotChild[0];
+        public IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
         /// <inheritdoc />
         public IEnumerable<SlotChild> OutputChildren => ParsedEntityChildren(2);

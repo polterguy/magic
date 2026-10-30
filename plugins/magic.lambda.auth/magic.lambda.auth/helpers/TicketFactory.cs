@@ -106,7 +106,7 @@ namespace magic.lambda.auth.helpers
                  * means "no valid session" to API clients, which would log a perfectly
                  * valid session out because it asked for something it can't do.
                  */
-                if (!string.IsNullOrEmpty(roles) && !roles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Any(x => userRoles.Any(x3 => x3.Get<string>() == x)))
+                if (!string.IsNullOrEmpty(roles) && !roles.Split(',', StringSplitOptions.RemoveEmptyEntries).Any(x => userRoles.Any(x3 => x3.Get<string>() == x)))
                     throw new HyperlambdaException("Access denied", true, 403);
 
                 return; // Success, found at least one roles in context.
@@ -117,7 +117,7 @@ namespace magic.lambda.auth.helpers
 
             // Notice, lack of authentication is 401, while an authenticated user lacking
             // the required roles is 403, such that clients can keep their session alive.
-            if (!string.IsNullOrEmpty(roles) && !ticketProvider.InRole("root") && !roles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Any(x => ticketProvider.InRole(x)))
+            if (!string.IsNullOrEmpty(roles) && !ticketProvider.InRole("root") && !roles.Split(',', StringSplitOptions.RemoveEmptyEntries).Any(x => ticketProvider.InRole(x)))
                 throw new HyperlambdaException("Access denied", true, 403);
         }
 
@@ -136,7 +136,7 @@ namespace magic.lambda.auth.helpers
             var signalerAuth = signaler.Peek<Node>(".auth.ticket.get");
             if (signalerAuth != null)
             {
-                if (!string.IsNullOrEmpty(roles) && !roles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Any(x => ContextRoles(signalerAuth).Any(x3 => x3.Get<string>() == x)))
+                if (!string.IsNullOrEmpty(roles) && !roles.Split(',', StringSplitOptions.RemoveEmptyEntries).Any(x => ContextRoles(signalerAuth).Any(x3 => x3.Get<string>() == x)))
                     return false;
                 return true; // Success, found at least one roles in context.
             }
@@ -146,7 +146,7 @@ namespace magic.lambda.auth.helpers
 
             if (string.IsNullOrEmpty(roles))
                 return false;
-            return roles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Any(x => ticketProvider.InRole(x));
+            return roles.Split(',', StringSplitOptions.RemoveEmptyEntries).Any(x => ticketProvider.InRole(x));
         }
 
         /// <summary>

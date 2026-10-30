@@ -62,7 +62,7 @@ namespace magic.lambda.eval
         /*
          * Helper method to retrieve [whitelist] arguments.
          */
-        (List<Node> Vocabulary, Node Lambda) GetWhitelist(Node input)
+        static (List<Node> Vocabulary, Node Lambda) GetWhitelist(Node input)
         {
             var vocabulary = input
                 .Children

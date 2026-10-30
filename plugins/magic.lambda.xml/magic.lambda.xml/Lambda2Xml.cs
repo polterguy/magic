@@ -72,7 +72,7 @@ namespace magic.lambda.xml
 
         static void WriteNode(Node node, XmlWriter writer)
         {
-            if (node.Name.StartsWith("@", StringComparison.Ordinal))
+            if (node.Name.StartsWith('@'))
             {
                 writer.WriteAttributeString(node.Name.Substring(1), node.GetEx<string>());
             }
@@ -94,7 +94,7 @@ namespace magic.lambda.xml
         /*
          * Helper to retrieve execution nodes for slot.
          */
-        IEnumerable<Node> GetNodes(Node input)
+        static IEnumerable<Node> GetNodes(Node input)
         {
             // Sanity checking invocation. Notice non [eval] keywords might have expressions and children.
             if (input.Value != null && input.Children.Any())

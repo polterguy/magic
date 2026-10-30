@@ -89,7 +89,7 @@ namespace magic.lambda.io.file
         /*
          * Returns arguments to slot invocation.
          */
-        (string Folder, bool ShowHidden, bool ShowSystem) GetArgs(Node input)
+        static (string Folder, bool ShowHidden, bool ShowSystem) GetArgs(Node input)
         {
             // Checking if we should display hidden files (files starting with ".").
             var displayHiddenFiles = input.Children
@@ -118,7 +118,7 @@ namespace magic.lambda.io.file
         void AddFile(Node result, string filename, bool showHidden, bool showSystem)
         {
             // Making sure we don't show hidden operating system files by default.
-            if (showHidden || !Path.GetFileName(filename).StartsWith(".", StringComparison.InvariantCulture))
+            if (showHidden || !Path.GetFileName(filename).StartsWith('.'))
             {
                 var relFilename = _rootResolver.RelativePath(filename);
                 if (showSystem || (!relFilename.StartsWith("/system/", StringComparison.Ordinal) && !relFilename.StartsWith("/misc/", StringComparison.Ordinal) && !relFilename.StartsWith("/data/", StringComparison.Ordinal) && !relFilename.StartsWith("/config/", StringComparison.Ordinal)))

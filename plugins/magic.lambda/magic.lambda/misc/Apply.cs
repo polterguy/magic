@@ -53,13 +53,13 @@ namespace magic.lambda.misc
         /*
          * Actual implementation that applies lambda object to destination.
          */
-        void Transform(IEnumerable<Node> args, IEnumerable<Node> templateNodes)
+        static void Transform(IEnumerable<Node> args, IEnumerable<Node> templateNodes)
         {
             foreach (var idx in templateNodes)
             {
                 if (idx.Value is string strValue &&
-                    strValue.StartsWith("{", StringComparison.InvariantCulture) &&
-                    strValue.EndsWith("}", StringComparison.InvariantCulture))
+                    strValue.StartsWith('{') &&
+                    strValue.EndsWith('}'))
                 {
                     // Template variable, finding relevant node from args and applying
                     var templateName = strValue.Substring(1, strValue.Length - 2);
@@ -70,8 +70,8 @@ namespace magic.lambda.misc
                     idx.Value = argNode.Value;
                     idx.AddRange(argNode.Children.Select(x => x.Clone()));
                 }
-                if (idx.Name.StartsWith("{", StringComparison.InvariantCulture) &&
-                    idx.Name.EndsWith("}", StringComparison.InvariantCulture))
+                if (idx.Name.StartsWith('{') &&
+                    idx.Name.EndsWith('}'))
                 {
                     var templateName = idx.Name.Substring(1, idx.Name.Length - 2);
                     var argNode = args.FirstOrDefault(x => x.Name == templateName);

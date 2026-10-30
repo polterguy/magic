@@ -33,7 +33,7 @@ namespace magic.lambda.branching
 
         #region [ -- Private helper methods -- ]
 
-        void SanityCheckInvocation(Node input)
+        static void SanityCheckInvocation(Node input)
         {
             if (input.Parent?.Name != "switch")
                 throw new HyperlambdaException("[default] must be a child of [switch]");

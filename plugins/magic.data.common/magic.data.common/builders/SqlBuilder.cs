@@ -64,7 +64,7 @@ namespace magic.data.common.builders
             var explicitArgs = builder
                 .Root
                 .Children
-                .Where(x => x.Name.StartsWith("@", StringComparison.InvariantCulture)).ToList();
+                .Where(x => x.Name.StartsWith('@')).ToList();
             var sqlNode = builder.Build();
 
             // Adding all explicitly added arguments.

@@ -48,7 +48,7 @@ namespace magic.backend.slots
                 .SelectMany(x => GetIssuers(x))
                 .Where(x => !string.IsNullOrEmpty(x))
                 .ToList();
-            if (!trustedIssuers.Any())
+            if (trustedIssuers.Count == 0)
                 throw new HyperlambdaException("[auth.token.verify] must be given one or more trusted [issuer] or [issuers] to verify the token against", true, 500);
 
             // Reading issuer from token, without trusting it.

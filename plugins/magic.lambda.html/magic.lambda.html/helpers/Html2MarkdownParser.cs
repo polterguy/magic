@@ -593,7 +593,7 @@ namespace magic.lambda.html.slots.helpers
                                 {
                                     if (hasRenderedTxt)
                                         builder
-                                            .Append(" ")
+                                            .Append(' ')
                                             .Append(txt);
                                     else
                                         builder.Append(txt);

@@ -64,7 +64,7 @@ namespace magic.lambda.scheduler.signatures
                 Kind = SlotConstraintKind.AtLeastOneOf,
                 Description = "At least one schedule source must be supplied",
             };
-            result.Values.AddRange(new[] { "due", "repeats" });
+            result.Values.AddRange(["due", "repeats"]);
             return result;
         }
     }

@@ -9,9 +9,9 @@ namespace magic.lambda.puppeteer.signatures
 {
     public abstract class PuppeteerSignature : ISlotSignature
     {
-        public virtual IEnumerable<SlotChild> Children => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
-        public virtual IEnumerable<SlotConstraint> Constraints => new SlotConstraint[0];
+        public virtual IEnumerable<SlotConstraint> Constraints => System.Array.Empty<SlotConstraint>();
 
         protected static SlotChild Option(string name, string type, string description, bool required = false, string defaultValue = null, string kind = null)
         {

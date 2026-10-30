@@ -9,7 +9,7 @@ namespace magic.lambda.dates.signatures
 {
     public abstract class DateSignature : ISlotSignature
     {
-        public virtual IEnumerable<SlotChild> Children => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
         protected static SlotChild Option(string name, string type, string description, bool required = false, string defaultValue = null, string kind = null)
         {
@@ -57,7 +57,7 @@ namespace magic.lambda.dates.signatures
                     Kind = SlotConstraintKind.AtLeastOneOf,
                     Description = "[time] requires at least one component (days/hours/minutes/seconds/milliseconds)",
                 };
-                c.Values.AddRange(new[] { "days", "hours", "minutes", "seconds", "milliseconds" });
+                c.Values.AddRange(["days", "hours", "minutes", "seconds", "milliseconds"]);
                 return new[] { c };
             }
         }

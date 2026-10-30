@@ -79,7 +79,7 @@ namespace magic.lambda.io.file
                 throw new HyperlambdaException("No filename specified for [mixin]");
 
             // Loading Hyperlambda codebehind file and parsing as lambda.
-            var codebehindFilename = staticFilename.Substring(0, staticFilename.LastIndexOf('.')) + ".hl";
+            var codebehindFilename = string.Concat(staticFilename.AsSpan(0, staticFilename.LastIndexOf('.')), ".hl");
             var lambda = new Node();
             if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(codebehindFilename)))
             {
@@ -251,7 +251,7 @@ namespace magic.lambda.io.file
         /*
          * Helper method to execute lambda object and return result of invocation to caller.
          */
-        async Task<string> ExecuteLambda(ISignaler signaler, Node lambda)
+        static async Task<string> ExecuteLambda(ISignaler signaler, Node lambda)
         {
             if (lambda.Value != null)
                 return lambda.GetEx<string>(); // Simple "variable reference".

@@ -85,6 +85,7 @@ namespace magic.endpoint.tests
         public void Dispose()
         {
             Directory.Delete(_dir, true);
+            GC.SuppressFinalize(this);
         }
 
         HttpFileExecutorAsync Create(IFileService files) => new HttpFileExecutorAsync(

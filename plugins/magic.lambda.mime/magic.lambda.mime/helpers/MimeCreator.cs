@@ -32,7 +32,7 @@ namespace magic.lambda.mime.helpers
         {
             // Finding Content-Type of entity.
             var type = input.GetEx<string>();
-            if (!type.Contains("/"))
+            if (!type.Contains('/'))
                 throw new HyperlambdaException($"'{type}' is an unknown MIME Content-Type. Please provide a valid MIME type as the value of your node.");
 
             var tokens = type.Split('/');

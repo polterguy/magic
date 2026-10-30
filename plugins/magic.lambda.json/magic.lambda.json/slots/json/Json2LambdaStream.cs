@@ -58,7 +58,7 @@ namespace magic.lambda.json.slots.json
 
         #region [ -- Private helper methods -- ]
 
-        Encoding GetEncoding(Node input)
+        static Encoding GetEncoding(Node input)
         {
             var encoding = Encoding.GetEncoding(
                 input.Children

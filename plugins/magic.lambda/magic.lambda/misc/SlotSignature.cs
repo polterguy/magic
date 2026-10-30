@@ -224,9 +224,9 @@ namespace magic.lambda.misc
                 result.Add(new Node("evaluation", child.Evaluation.ToString()));
             if (child.Projection != SlotChildProjection.None)
                 result.Add(new Node("projection", child.Projection.ToString()));
-            if (child.Constraints.Any())
+            if (child.Constraints.Count > 0)
                 result.Add(CreateConstraintsNode(child.Constraints));
-            if (child.Children.Any())
+            if (child.Children.Count > 0)
             {
                 var children = new Node("children");
                 children.AddRange(child.Children.Select(CreateChildNode));
@@ -257,7 +257,7 @@ namespace magic.lambda.misc
                 result.Add(new Node("description", constraint.Description));
             if (!string.IsNullOrEmpty(constraint.ValuePattern))
                 result.Add(new Node("value-pattern", constraint.ValuePattern));
-            if (constraint.Values.Any())
+            if (constraint.Values.Count > 0)
             {
                 var values = new Node("values");
                 values.AddRange(constraint.Values.Select(x => new Node(".", x)));

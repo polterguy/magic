@@ -16,7 +16,7 @@ namespace magic.lambda.http.signatures
         public abstract IEnumerable<SlotChild> Children { get; }
 
         /// <inheritdoc />
-        public virtual IEnumerable<SlotConstraint> Constraints => new SlotConstraint[0];
+        public virtual IEnumerable<SlotConstraint> Constraints => System.Array.Empty<SlotConstraint>();
 
         /// <inheritdoc />
         public virtual IEnumerable<SlotChild> OutputChildren => new[]

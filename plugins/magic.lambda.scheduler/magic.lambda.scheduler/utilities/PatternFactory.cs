@@ -45,7 +45,7 @@ namespace magic.lambda.scheduler.utilities
                     var weekdays = entities[0] == "**" ?
                         null :
                         entities[0].Split('|')
-                            .Select(x => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), x, true));
+                            .Select(x => Enum.Parse<DayOfWeek>(x, true));
                     return new WeekdayPattern(
                         weekdays,
                         Parse(entities[1], 0, 23),

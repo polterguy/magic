@@ -58,7 +58,7 @@ namespace magic.lambda.tests
 
         #region [ -- Private helper methods -- ]
 
-        static IServiceProvider Initialize(bool maxIterations = true)
+        static ServiceProvider Initialize(bool maxIterations = true)
         {
             var services = new ServiceCollection();
             services.AddTransient<ISignaler, Signaler>();

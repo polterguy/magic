@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -68,7 +69,7 @@ namespace magic.lambda.mssql
             var builder = new StringBuilder();
             foreach (var idxLine in lines)
             {
-                if (idxLine.ToUpperInvariant() == "GO")
+                if (string.Equals(idxLine, "GO", StringComparison.OrdinalIgnoreCase))
                 {
                     yield return builder.ToString();
                     builder.Clear();

@@ -9,11 +9,11 @@ namespace magic.lambda.csv.signatures
 {
     public abstract class CsvSignature : ISlotSignature
     {
-        public virtual IEnumerable<SlotChild> Children => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
         // Virtual so [csv2lambda] can declare its row-list output without being
         // shadowed by ISlotSignature's default-interface-member.
-        public virtual IEnumerable<SlotChild> OutputChildren => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> OutputChildren => System.Array.Empty<SlotChild>();
 
         protected static SlotChild NullValue()
         {

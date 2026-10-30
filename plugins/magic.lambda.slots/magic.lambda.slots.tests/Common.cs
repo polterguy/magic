@@ -23,17 +23,19 @@ namespace magic.lambda.slots.tests
     {
         private class RootResolver : IRootResolver
         {
+            static readonly char[] _separators = ['/', '\\'];
+
             public string DynamicFiles => AppDomain.CurrentDomain.BaseDirectory;
             public string RootFolder => AppDomain.CurrentDomain.BaseDirectory;
 
             public string AbsolutePath(string path)
             {
-                return DynamicFiles + path.TrimStart(new char[] { '/', '\\' });
+                return DynamicFiles + path.TrimStart(_separators);
             }
 
             public string RuntimePath(string path)
             {
-                return RootFolder + path.TrimStart(new char[] { '/', '\\' });
+                return RootFolder + path.TrimStart(_separators);
             }
 
             public string RelativePath(string path)
@@ -62,7 +64,7 @@ namespace magic.lambda.slots.tests
 
         #region [ -- Private helper methods -- ]
 
-        static IServiceProvider Initialize()
+        static ServiceProvider Initialize()
         {
             var services = new ServiceCollection();
             services.AddTransient<ISignaler, Signaler>();

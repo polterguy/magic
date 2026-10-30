@@ -15,6 +15,10 @@ namespace magic.lambda.http.services.helpers
     /// </summary>
     public static class UrlWhitelistComparer
     {
+        static readonly char[] _authorityTerminators = ['/', '?', '#'];
+        static readonly char[] _pathTerminators = ['?', '#'];
+
+
         /*
          * Matches the {placeholder} segments of an url template, substituted for a benign segment
          * keeping the URL parseable and its structure intact.
@@ -103,10 +107,10 @@ namespace magic.lambda.http.services.helpers
         {
             var scheme = url.IndexOf("://", StringComparison.Ordinal);
             var start = scheme == -1 ? 0 : scheme + 3;
-            var authorityEnd = url.IndexOfAny(new[] { '/', '?', '#' }, start);
+            var authorityEnd = url.IndexOfAny(_authorityTerminators, start);
             if (authorityEnd == -1 || url[authorityEnd] != '/')
                 return "/";
-            var end = url.IndexOfAny(new[] { '?', '#' }, authorityEnd);
+            var end = url.IndexOfAny(_pathTerminators, authorityEnd);
             return end == -1 ?
                 url.Substring(authorityEnd) :
                 url.Substring(authorityEnd, end - authorityEnd);

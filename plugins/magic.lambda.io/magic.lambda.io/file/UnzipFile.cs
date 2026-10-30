@@ -106,15 +106,15 @@ namespace magic.lambda.io.file
                      */
                     var toTrim = explicitFolder &&
                         (archive.Entries.FirstOrDefault()?.FullName.EndsWith('/') ?? false) &&
-                        archive.Entries.Skip(1).All(x => x.FullName.StartsWith(archive.Entries.First().FullName, StringComparison.Ordinal)) ?
-                            archive.Entries.First().FullName.Length :
+                        archive.Entries.Skip(1).All(x => x.FullName.StartsWith(archive.Entries[0].FullName, StringComparison.Ordinal)) ?
+                            archive.Entries[0].FullName.Length :
                             0;
 
                     // Looping through each entry in archive, ignoring garbage OS X "special files".
                     foreach (var idxEntry in archive.Entries)
                     {
                         // Verifying this is a file.
-                        if (idxEntry.FullName.Split('/').Last().Contains('.', System.StringComparison.CurrentCulture))
+                        if (idxEntry.FullName.Split('/')[^1].Contains('.', System.StringComparison.CurrentCulture))
                         {
                             // This is a file, opening it up and saving it.
                             await using (var srcStream = await idxEntry.OpenAsync())
@@ -159,7 +159,7 @@ namespace magic.lambda.io.file
             }
 
             // Figuring out full filename of current entry and saving it.
-            var fullFileName = currentFolder + entities.Last();
+            var fullFileName = currentFolder + entities[^1];
 
             // Checking if file exists.
             if (File.Exists(_rootResolver.AbsolutePath(destinationFolder + filename)))
@@ -202,7 +202,7 @@ namespace magic.lambda.io.file
         /*
          * Helper method to retrieve arguments.
          */
-        (string ZipFilePath, string DestinationFolder, bool ExplicitFolder, bool Overwrite) GetArgs(Node input)
+        static (string ZipFilePath, string DestinationFolder, bool ExplicitFolder, bool Overwrite) GetArgs(Node input)
         {
             // Figuring out zip file's full path.
             var zipFilePath = input.GetEx<string>();

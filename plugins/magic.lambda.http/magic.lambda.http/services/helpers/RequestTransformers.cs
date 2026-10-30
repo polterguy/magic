@@ -80,9 +80,9 @@ namespace magic.lambda.http.services.helpers
                     throw new HyperlambdaException($"'application/x-www-form-urlencoded' requests can only handle one level of arguments, and node '{idx.Name}' had children");
 
                 if (builder.Length > 0)
-                    builder.Append("&");
+                    builder.Append('&');
 
-                builder.Append(idx.Name).Append("=").Append(HttpUtility.UrlEncode(idx.GetEx<string>()));
+                builder.Append(idx.Name).Append('=').Append(HttpUtility.UrlEncode(idx.GetEx<string>()));
             }
 
             // Returning URL encoded key/value pairs to caller.

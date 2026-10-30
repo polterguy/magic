@@ -68,7 +68,7 @@ namespace magic.lambda.caching
         /*
          * Returns arguments specified to invocation.
          */
-        (string Key, Node Lambda, DateTime UtcExpires) GetArgs(Node input)
+        static (string Key, Node Lambda, DateTime UtcExpires) GetArgs(Node input)
         {
             var key = input.GetEx<string>() ?? throw new HyperlambdaException("[cache.try-get] must be given a key");
 

@@ -9,6 +9,6 @@ namespace magic.lambda.xml.signatures
 {
     public class Lambda2XmlSignature : ISlotSignature
     {
-        public IEnumerable<SlotChild> Children => new SlotChild[0];
+        public IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
     }
 }

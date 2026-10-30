@@ -49,7 +49,7 @@ namespace magic.lambda.slots
                 {
                     var expResult = exp.Evaluate(input).ToList();
                     if (expResult.Count == 1)
-                        result.Value = expResult.First().Value;
+                        result.Value = expResult[0].Value;
                     else if (expResult.Count > 1)
                         result.AddRange(expResult.Select(x => x.Clone()));
                 }

@@ -13,13 +13,13 @@ namespace magic.lambda.slots.signatures
     public abstract class SlotSignature : ISlotSignature
     {
         /// <inheritdoc />
-        public virtual IEnumerable<SlotChild> Children => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
         /// <inheritdoc />
-        public virtual IEnumerable<SlotConstraint> Constraints => new SlotConstraint[0];
+        public virtual IEnumerable<SlotConstraint> Constraints => System.Array.Empty<SlotConstraint>();
 
         /// <inheritdoc />
-        public virtual IEnumerable<SlotChild> OutputChildren => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> OutputChildren => System.Array.Empty<SlotChild>();
 
         internal static SlotChild ArgumentBag(string description, SlotChildPreprocess preprocess = SlotChildPreprocess.None)
         {

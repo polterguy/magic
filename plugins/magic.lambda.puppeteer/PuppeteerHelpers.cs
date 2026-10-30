@@ -194,7 +194,7 @@ namespace magic.lambda.puppeteer
             }
         }
 
-        static IEnumerable<string> SplitArgs(string input)
+        static List<string> SplitArgs(string input)
         {
             var args = new List<string>();
             var current = new StringBuilder();

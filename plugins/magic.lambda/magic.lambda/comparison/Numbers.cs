@@ -17,7 +17,7 @@ namespace magic.lambda.comparison
 
         internal static bool IsFloat(object o) => o is double || o is float;
 
-        internal static object UnwrapEnum(object o) => o is Enum ? Convert.ChangeType(o, Enum.GetUnderlyingType(o.GetType()))! : o;
+        internal static object UnwrapEnum(object o) => o is Enum ? Convert.ChangeType(o, Enum.GetUnderlyingType(o.GetType())) : o;
 
         internal static bool IsNumeric(object o)
         {

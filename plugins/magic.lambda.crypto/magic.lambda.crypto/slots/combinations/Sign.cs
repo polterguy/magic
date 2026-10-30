@@ -50,7 +50,7 @@ namespace magic.lambda.crypto.slots.combinations
         /*
          * Retrieves arguments for invocation.
          */
-        (byte[] Content, byte[] SigningKey, byte[] SigningKeyFingerprint, bool Raw) GetArguments(Node input)
+        static (byte[] Content, byte[] SigningKey, byte[] SigningKeyFingerprint, bool Raw) GetArguments(Node input)
         {
             var content = Utilities.GetContent(input);
             var signingKey = Utilities.GetKeyFromArguments(input, "signing-key");

@@ -175,7 +175,7 @@ namespace magic.lambda.hyperlambda
          * Verifies the parts of an invocation that are knowable without evaluating it.
          * Expressions count as supplied primary values, but are deliberately not evaluated.
          */
-        void VerifyInvocation(Node node, BodyInfo info, List<string> invalid)
+        static void VerifyInvocation(Node node, BodyInfo info, List<string> invalid)
         {
             if (info.Attribute?.ValueRequired == true && node.Value == null)
                 invalid.Add($"Slot [{node.Name}] requires a primary (RHS) value");

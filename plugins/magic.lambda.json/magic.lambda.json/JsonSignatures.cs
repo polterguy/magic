@@ -68,7 +68,7 @@ namespace magic.lambda.json.signatures
 
     public class Lambda2YamlSignature : ISlotSignature
     {
-        public IEnumerable<SlotChild> Children => new SlotChild[0];
+        public IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
     }
 
     public class Lambda2JsonRawSignature : ISlotSignature

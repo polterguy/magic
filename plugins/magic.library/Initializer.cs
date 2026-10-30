@@ -389,7 +389,7 @@ namespace magic.library
                     },
                 };
                 var httpsOnly = configuration["magic:auth:https-only"] ?? "false";
-                x.RequireHttpsMetadata = httpsOnly.ToLowerInvariant() == "true";
+                x.RequireHttpsMetadata = string.Equals(httpsOnly, "true", StringComparison.OrdinalIgnoreCase);
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {

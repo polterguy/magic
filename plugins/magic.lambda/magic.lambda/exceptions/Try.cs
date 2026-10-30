@@ -67,7 +67,7 @@ namespace magic.lambda.exceptions
         /*
          * Executes [.catch] if existing, and returns true if [.catch] was found
          */
-        async Task<bool> ExecuteCatch(ISignaler signaler, Node input, Exception err)
+        static async Task<bool> ExecuteCatch(ISignaler signaler, Node input, Exception err)
         {
             if (input.Next?.Name == ".catch")
             {

@@ -40,6 +40,7 @@ namespace magic.lambda.io.tests
         public void Dispose()
         {
             Directory.Delete(_dir, true);
+            GC.SuppressFinalize(this);
         }
 
         async Task<string> Mix(string filename)

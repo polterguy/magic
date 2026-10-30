@@ -60,7 +60,7 @@ namespace magic.lambda.strings.replace
             var result = new StringBuilder();
             foreach (var idx in original)
             {
-                if (what.IndexOf(idx) != -1)
+                if (what.Contains(idx))
                     result.Append(idx);
                 else
                     result.Append(with);

@@ -85,6 +85,7 @@ namespace magic.signals.tests
             public void Dispose()
             {
                 Disposed += 1;
+                GC.SuppressFinalize(this);
             }
         }
 

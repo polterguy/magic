@@ -44,6 +44,7 @@ namespace magic.endpoint.tests
         {
             HttpApiExecutorAsync.RecheckMilliseconds = 0;
             Directory.Delete(_folder, true);
+            GC.SuppressFinalize(this);
         }
 
         #region [ -- Edits, deletions and interceptors -- ]

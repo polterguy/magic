@@ -55,7 +55,7 @@ namespace magic.lambda.crypto.slots.rsa
 
         #region [ -- Private helper methods -- ]
 
-        (int Strength, byte[] Seed, bool Raw) GetArguments(Node input)
+        static (int Strength, byte[] Seed, bool Raw) GetArguments(Node input)
         {
             var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
 

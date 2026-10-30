@@ -9,7 +9,7 @@ namespace magic.lambda.sockets.signatures
 {
     public abstract class SocketSignature : ISlotSignature
     {
-        public virtual IEnumerable<SlotChild> Children => new SlotChild[0];
+        public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
         protected static SlotChild Option(string name, string type, string description, bool required = false, string defaultValue = null, string kind = null)
         {

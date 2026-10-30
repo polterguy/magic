@@ -94,7 +94,7 @@ whitelist
 ", fileService, streamService: streamService));
         }
 
-        static Stream CreateArchive(params string[] entries)
+        static MemoryStream CreateArchive(params string[] entries)
         {
             var result = new MemoryStream();
             using (var archive = new ZipArchive(result, ZipArchiveMode.Create, true))

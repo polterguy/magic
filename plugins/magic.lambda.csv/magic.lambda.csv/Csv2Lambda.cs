@@ -51,7 +51,7 @@ namespace magic.lambda.csv
                     var columns = GetHeaders(parser);
 
                     // If above returns null, CSV file is empty.
-                    if (!columns.Any())
+                    if (columns.Count == 0)
                         return; // Nothing to see here ...
 
                     // Reading through each record in CSV file.
@@ -83,7 +83,7 @@ namespace magic.lambda.csv
         /*
          * Returns headers from CSV file.
          */
-        List<string> GetHeaders(CsvParser parser)
+        static List<string> GetHeaders(CsvParser parser)
         {
             if (parser.Read())
                 return parser.Record.ToList();
@@ -114,7 +114,7 @@ namespace magic.lambda.csv
         /*
          * Helper method to retrieve type information from arguments.
          */
-        Dictionary<string, string> GetTypes(Node input)
+        static Dictionary<string, string> GetTypes(Node input)
         {
             var types = new Dictionary<string, string>();
             var typesNode = input.Children.FirstOrDefault(x => x.Name == "types");
@@ -131,7 +131,7 @@ namespace magic.lambda.csv
         /*
          * Helper method to retrieve null string value if existing.
          */
-        string GetNullableValue(Node input)
+        static string GetNullableValue(Node input)
         {
             string nullValue = "[NULL]";
             var nullArgument = input.Children.FirstOrDefault(x => x.Name == "null-value");

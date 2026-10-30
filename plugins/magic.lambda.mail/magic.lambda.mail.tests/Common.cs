@@ -23,17 +23,19 @@ namespace magic.lambda.mail.tests
     {
         private class RootResolver : IRootResolver
         {
+            static readonly char[] _separators = ['/', '\\'];
+
             public string DynamicFiles => AppDomain.CurrentDomain.BaseDirectory;
             public string RootFolder => AppDomain.CurrentDomain.BaseDirectory;
 
             public string AbsolutePath(string path)
             {
-                return DynamicFiles + path.TrimStart(new char[] { '/', '\\' });
+                return DynamicFiles + path.TrimStart(_separators);
             }
 
             public string RuntimePath(string path)
             {
-                return RootFolder + path.TrimStart(new char[] { '/', '\\' });
+                return RootFolder + path.TrimStart(_separators);
             }
 
             public string RelativePath(string path)
@@ -74,7 +76,7 @@ namespace magic.lambda.mail.tests
 
         #region [ -- Private helper methods -- ]
 
-        static IServiceProvider Initialize(MockSmtpClient smtp, MockPop3Client pop3)
+        static ServiceProvider Initialize(MockSmtpClient smtp, MockPop3Client pop3)
         {
             var services = new ServiceCollection();
             services.AddTransient<ISignaler, Signaler>();

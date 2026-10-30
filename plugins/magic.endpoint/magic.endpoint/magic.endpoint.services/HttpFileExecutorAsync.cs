@@ -232,7 +232,7 @@ namespace magic.endpoint.services
                 if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(not_found)))
                 {
                     // Checking if Hyperlambda codebehind file exists.
-                    var codebehindFile2 = not_found.Substring(0, not_found.Length - 5) + ".hl";
+                    var codebehindFile2 = string.Concat(not_found.AsSpan(0, not_found.Length - 5), ".hl");
                     if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(codebehindFile2)))
                     {
                         var tmp = await ServeDynamicPage(request, not_found, codebehindFile2, config); // Codebehind file exists.
