@@ -218,10 +218,7 @@ namespace magic.lambda.crypto.slots.hash
             switch (format)
             {
                 case "text":
-                    return BitConverter
-                        .ToString(bytes)
-                        .Replace("-", "")
-                        .ToLowerInvariant();
+                    return Convert.ToHexStringLower(bytes);
 
                 case "raw":
                     return bytes;

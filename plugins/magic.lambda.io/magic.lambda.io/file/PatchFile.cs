@@ -216,11 +216,7 @@ namespace magic.lambda.io.file
                             if (previousOperation == '\0')
                                 throw new HyperlambdaException(InvalidPatchLine);
 
-                            if (previousOperation == ' ')
-                            {
-                                outputHasTrailingNewline = false;
-                            }
-                            else if (previousOperation == '+')
+                            if (previousOperation == ' ' || previousOperation == '+')
                             {
                                 outputHasTrailingNewline = false;
                             }

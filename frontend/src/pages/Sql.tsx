@@ -331,12 +331,10 @@ export default function Sql() {
   }
 
   function importSqlFile(file: File) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setSql(String(reader.result ?? ''));
+    void file.text().then(text => {
+      setSql(text);
       bumpSqlEditId();
-    };
-    reader.readAsText(file);
+    });
   }
 
   return (

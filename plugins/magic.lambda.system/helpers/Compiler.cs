@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
@@ -16,7 +17,7 @@ namespace magic.lambda.system.helpers
     /*
      * Helper class to compile C# code creating a byte array being the assembly
      */
-    internal class Compiler
+    internal static class Compiler
     {
         public static byte[] Compile(string sourceCode, string assemblyName, IEnumerable<string> references)
         {
@@ -26,14 +27,14 @@ namespace magic.lambda.system.helpers
                 var compilationResult = result.Emit(stream);
                 if (!compilationResult.Success)
                 {
-                    var errors = "\r\n\r\n";
+                    var errors = new StringBuilder("\r\n\r\n");
                     var failures = compilationResult.Diagnostics
                         .Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
                     foreach (var idx in failures)
                     {
-                        errors += string.Format("{0}: {1} \r\n\r\n", idx.Id, idx.GetMessage());
+                        errors.AppendFormat("{0}: {1} \r\n\r\n", idx.Id, idx.GetMessage());
                     }
-                    throw new HyperlambdaException("Compilation did not succeed, errors were; " + errors.Trim());
+                    throw new HyperlambdaException("Compilation did not succeed, errors were; " + errors.ToString().Trim());
                 }
                 stream.Position = 0;
                 return stream.ToArray();

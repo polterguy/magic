@@ -249,8 +249,9 @@ export default function InvokePanel(props: Readonly<{
         lines.push('-F "' + argument.name + '=@/path/to/file"');
       }
     } else if (!usesQuery) {
-      lines.push('-H "Content-Type: ' + (endpoint.consumes ?? 'application/json') + '"');
-      lines.push("-d '" + payload.replace(/'/g, String.raw`'\''`) + "'");
+      lines.push(
+        '-H "Content-Type: ' + (endpoint.consumes ?? 'application/json') + '"',
+        "-d '" + payload.replace(/'/g, String.raw`'\''`) + "'");
     }
     void copyToClipboard(lines.join(' \\\n  '), 'The cURL command');
   }

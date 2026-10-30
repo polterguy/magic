@@ -58,6 +58,23 @@ function previewUrl(path: string): string | null {
 }
 
 /*
+ * Enter and Space activate a row the way a click does. Key events from the
+ * row's action buttons bubble up here too, so only keys pressed on the row
+ * itself count — and Space's default is cancelled so the page doesn't
+ * scroll.
+ */
+function keyActivate(action: () => void) {
+  return (event: React.KeyboardEvent) => {
+    if (event.target !== event.currentTarget ||
+        (event.key !== 'Enter' && event.key !== ' ')) {
+      return;
+    }
+    event.preventDefault();
+    action();
+  };
+}
+
+/*
  * The recursive folder/file tree of the Hyper IDE. All state lives in the
  * page — the tree only renders it and reports clicks back through callbacks.
  */
@@ -112,24 +129,7 @@ export default function FileTree(props: Readonly<{
     return map;
   }, [folders, visibleFiles, visibleFolders]);
 
-  /*
-   * Enter and Space activate a row the way a click does. Key events from the
-   * row's action buttons bubble up here too, so only keys pressed on the row
-   * itself count — and Space's default is cancelled so the page doesn't
-   * scroll.
-   */
-  function keyActivate(action: () => void) {
-    return (event: React.KeyboardEvent) => {
-      if (event.target !== event.currentTarget ||
-          (event.key !== 'Enter' && event.key !== ' ')) {
-        return;
-      }
-      event.preventDefault();
-      action();
-    };
-  }
-
-  function renderChildren(path: string): JSX.Element {
+    function renderChildren(path: string): JSX.Element {
     const { folders: childFolders, files: childFiles } =
       childrenOf.get(path) ?? { folders: [], files: [] };
     const isOpen = (folder: string) => query ? true : expanded.has(folder);

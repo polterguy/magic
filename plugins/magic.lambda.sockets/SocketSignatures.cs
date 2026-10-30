@@ -11,7 +11,7 @@ namespace magic.lambda.sockets.signatures
     {
         public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
-        protected static SlotChild Option(string name, string type, string description, bool required = false, string defaultValue = null, string kind = null)
+        protected static SlotChild Option(string name, string type, string description, bool required = false, string? defaultValue = null, string? kind = null)
         {
             return new SlotChild
             {

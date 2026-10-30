@@ -81,7 +81,7 @@ namespace magic.lambda.strings.replace
                                     if (val == -1)
                                     {
                                         builder.Append("{{");
-                                        builder.Append(snippet.ToString());
+                                        builder.Append(snippet);
                                         cont = false;
                                     }
                                     else

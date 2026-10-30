@@ -679,7 +679,7 @@ function functionName(file?: string): string | undefined {
   if (!file) {
     return undefined;
   }
-  const path = file.match(/\[([^[\]]+)\]/)?.[1] ?? file;
+  const path = /\[([^[\]]+)\]/.exec(file)?.[1] ?? file;
   return path.trim().replace(/\.hl$/i, '').split('/').pop() || undefined;
 }
 

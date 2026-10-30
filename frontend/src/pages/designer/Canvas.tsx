@@ -216,7 +216,7 @@ export default function Canvas(props: Readonly<CanvasProps>) {
     const span = doc.createElement('span');
     span.setAttribute('contenteditable', 'true');
     span.dataset.magicEditing = '';
-    element.insertBefore(span, node);
+    node.before(span);
     span.appendChild(node);
     editRef.current = { element, index, html, text: node.data, span };
     /*

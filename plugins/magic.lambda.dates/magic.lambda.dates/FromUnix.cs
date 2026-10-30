@@ -32,7 +32,7 @@ namespace magic.lambda.dates
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var dt = DateTime.UnixEpoch;
             input.Value = dt.AddSeconds(input.GetEx<long>());
         }
     }

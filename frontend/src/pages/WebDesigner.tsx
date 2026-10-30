@@ -1431,7 +1431,7 @@ export default function WebDesigner() {
       return;
     }
     current.querySelectorAll('[data-magic-force]')
-      .forEach(element => element.removeAttribute('data-magic-force'));
+      .forEach(element => delete (element as HTMLElement).dataset.magicForce);
     if (reveal) {
       current.body.querySelectorAll('*').forEach(element => {
         if (view.getComputedStyle(element).display === 'none') {
@@ -1458,7 +1458,7 @@ export default function WebDesigner() {
       return;
     }
     current.querySelectorAll('[data-magic-empty]')
-      .forEach(element => element.removeAttribute('data-magic-empty'));
+      .forEach(element => delete (element as HTMLElement).dataset.magicEmpty);
     current.body.querySelectorAll('*').forEach(element => {
       if (canContainChildren(element) && designableChildren(element).length === 0) {
         (element as HTMLElement).dataset.magicEmpty = '';

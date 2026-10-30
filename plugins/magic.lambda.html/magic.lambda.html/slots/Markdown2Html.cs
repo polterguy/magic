@@ -69,7 +69,6 @@ namespace magic.lambda.html.slots
                     .Lines
                     .OrderByDescending(x => x.Line)
                     .Select(x => $"{x}\n")
-                    .ToList()
                     .Select(x => x.Replace("---", string.Empty))
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Aggregate((s, agg) => agg + s);

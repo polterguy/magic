@@ -19,7 +19,7 @@ import {
 } from '../lib/api';
 
 const DB_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
-const CSTRING_NAME_PATTERN = /^[a-zA-Z0-9_]+$/;
+const CSTRING_NAME_PATTERN = /^\w+$/;
 
 const EXTERNAL_TYPES = [
   { name: 'MySQL', type: 'mysql' },

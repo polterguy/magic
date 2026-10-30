@@ -222,7 +222,8 @@ export default function ImportApiTab() {
   const groups: Record<string, OpenApiOperation[]> = {};
   shown.forEach(op => {
     const tag = heading(op);
-    (groups[tag] = groups[tag] ?? []).push(op);
+    groups[tag] ??= [];
+    groups[tag].push(op);
   });
 
   const count = Object.values(chosen).filter(Boolean).length;

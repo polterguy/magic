@@ -35,6 +35,8 @@ namespace magic.lambda.mssql
         ScopeDescription = "Requires an open SQL Server connection created by [mssql.connect]")]
     public class ExecuteBatch : ISlotAsync
     {
+        static readonly char[] _lineBreaks = ['\r', '\n'];
+
         /// <summary>
         /// Implementation of your slot.
         /// </summary>
@@ -65,7 +67,7 @@ namespace magic.lambda.mssql
             if (string.IsNullOrEmpty(sql))
                 yield break; // Nothing to do here ...
 
-            var lines = sql.Split('\r', '\n');
+            var lines = sql.Split(_lineBreaks);
             var builder = new StringBuilder();
             foreach (var idxLine in lines)
             {

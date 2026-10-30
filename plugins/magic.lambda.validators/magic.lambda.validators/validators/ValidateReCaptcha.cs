@@ -29,6 +29,8 @@ namespace magic.lambda.validators.validators
         SignatureType = typeof(global::magic.lambda.validators.signatures.RecaptchaValidatorSignature))]
     public class ValidateReCaptcha : ISlotAsync
     {
+        static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
         readonly HttpClient _httpClient;
 
         /// <summary>
@@ -49,7 +51,7 @@ namespace magic.lambda.validators.validators
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Retrieving arguments and sanity checking invocation.
-            var site_key = input.Children.FirstOrDefault(x => x.Name == "site-key").GetEx<string>() ??
+            _ = input.Children.FirstOrDefault(x => x.Name == "site-key").GetEx<string>() ??
                 throw new HyperlambdaException("No [site-key] supplied to [validators.recaptcha]");
             var secret = input.Children.FirstOrDefault(x => x.Name == "secret").GetEx<string>() ??
                 throw new HyperlambdaException("No [secret] supplied to [validators.recaptcha]");
@@ -69,7 +71,7 @@ namespace magic.lambda.validators.validators
 
             // Parsing result.
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<RecaptchaResponse>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var result = JsonSerializer.Deserialize<RecaptchaResponse>(jsonResponse, _jsonOptions);
 
             // Sanity checking invocation.
             if (result.Score == null || !result.Success)

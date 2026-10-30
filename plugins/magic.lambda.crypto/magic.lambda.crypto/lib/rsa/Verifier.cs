@@ -8,9 +8,6 @@ using Org.BouncyCastle.Security;
 
 namespace magic.lambda.crypto.lib.rsa
 {
-    /*
-     * 
-     */
     /// <summary>
     /// Helper class to verify a message cryptographically signed with some RSA key.
     /// </summary>

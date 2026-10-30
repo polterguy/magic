@@ -1083,12 +1083,10 @@ function SqlEndpointTab() {
   }
 
   function importSqlFile(file: File) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setSql(String(reader.result ?? ''));
+    void file.text().then(text => {
+      setSql(text);
       bumpSqlEditId();
-    };
-    reader.readAsText(file);
+    });
   }
 
   useEffect(() => {
@@ -1440,8 +1438,7 @@ function DbAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCa
       lines.push('data.delete');
     }
     if (rawSql) {
-      lines.push('data.select');
-      lines.push('data.scalar');
+      lines.push('data.select', 'data.scalar');
     }
     props.onAdd(lines);
   }
