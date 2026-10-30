@@ -53,6 +53,50 @@ interface ModuleGroup {
   endpoints: Endpoint[];
 }
 
+// Whether an endpoint passes the filters the page has been given.
+function isVisible(endpoint: Endpoint, module: { name: string; system: boolean }, query: string, showSystem: boolean, publicOnly: boolean) {
+  if (module.system && !showSystem) {
+    return false;
+  }
+  if (publicOnly && (endpoint.auth?.length ?? 0) > 0) {
+    return false;
+  }
+  return !query ||
+    endpoint.path.toLowerCase().includes(query) ||
+    endpoint.verb.toLowerCase().includes(query) ||
+    module.name.toLowerCase().includes(query);
+}
+
+// The visible endpoints, grouped by module, user modules first and system modules last.
+function groupEndpoints(endpoints: Endpoint[], query: string, showSystem: boolean, publicOnly: boolean) {
+  const map = new Map<string, ModuleGroup>();
+  for (const endpoint of endpoints) {
+    const module = moduleOf(endpoint);
+    if (!isVisible(endpoint, module, query, showSystem, publicOnly)) {
+      continue;
+    }
+    const key = (module.system ? 'system:' : 'user:') + module.name;
+    if (!map.has(key)) {
+      map.set(key, {
+        key,
+        name: module.name,
+        system: module.system,
+        folder: (module.system ? '/system/' : '/modules/') + module.name + '/',
+        endpoints: [],
+      });
+    }
+    map.get(key)!.endpoints.push(endpoint);
+  }
+  const list = [...map.values()];
+  for (const group of list) {
+    group.endpoints.sort((left, right) =>
+      left.path.localeCompare(right.path) || left.verb.localeCompare(right.verb));
+  }
+  // Alphabetical within each.
+  return list.sort((left, right) =>
+    Number(left.system) - Number(right.system) || left.name.localeCompare(right.name));
+}
+
 export default function Endpoints() {
 
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
@@ -114,43 +158,9 @@ export default function Endpoints() {
 
   const query = filter.trim().toLowerCase();
 
-  const groups = useMemo(() => {
-    const map = new Map<string, ModuleGroup>();
-    for (const endpoint of endpoints) {
-      const module = moduleOf(endpoint);
-      if (module.system && !showSystem) {
-        continue;
-      }
-      if (publicOnly && (endpoint.auth?.length ?? 0) > 0) {
-        continue;
-      }
-      if (query &&
-          !endpoint.path.toLowerCase().includes(query) &&
-          !endpoint.verb.toLowerCase().includes(query) &&
-          !module.name.toLowerCase().includes(query)) {
-        continue;
-      }
-      const key = (module.system ? 'system:' : 'user:') + module.name;
-      if (!map.has(key)) {
-        map.set(key, {
-          key,
-          name: module.name,
-          system: module.system,
-          folder: (module.system ? '/system/' : '/modules/') + module.name + '/',
-          endpoints: [],
-        });
-      }
-      map.get(key)!.endpoints.push(endpoint);
-    }
-    const list = [...map.values()];
-    for (const group of list) {
-      group.endpoints.sort((left, right) =>
-        left.path.localeCompare(right.path) || left.verb.localeCompare(right.verb));
-    }
-    // User modules first, system modules last, alphabetical within each.
-    return list.sort((left, right) =>
-      Number(left.system) - Number(right.system) || left.name.localeCompare(right.name));
-  }, [endpoints, query, showSystem, publicOnly]);
+  const groups = useMemo(
+    () => groupEndpoints(endpoints, query, showSystem, publicOnly),
+    [endpoints, query, showSystem, publicOnly]);
 
   const shown = groups.reduce((total, group) => total + group.endpoints.length, 0);
   const isOpen = (key: string) => query ? true : expandedModules.has(key);

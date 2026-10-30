@@ -363,65 +363,16 @@ namespace magic.lambda.html.slots.helpers
             if (htmlNode.Descendants().Any(x => x.Name == "table"))
                 return true;
 
-            // Collecting this table's rows, whether sectioned or not.
-            var trNodes = new List<HtmlNode>();
-            foreach (var child in htmlNode.ChildNodes)
-            {
-                if (child.Name == "tr")
-                    trNodes.Add(child);
-                else if (child.Name == "thead" || child.Name == "tbody" || child.Name == "tfoot")
-                    trNodes.AddRange(child.ChildNodes.Where(x => x.Name == "tr"));
-            }
+            var trNodes = CollectTableRows(htmlNode);
             if (trNodes.Count < 2)
                 return true;
 
             // Rendering every cell, deciding as we go whether this is data at all.
-            var rows = new List<List<(string Text, bool Header)>>();
-            var maxCols = 0;
-            foreach (var tr in trNodes)
-            {
-                var row = new List<(string Text, bool Header)>();
-                foreach (var cell in tr.ChildNodes.Where(x => x.Name == "td" || x.Name == "th"))
-                {
-                    var tmpBuilder = new StringBuilder();
-                    self.RenderChildren(cell, tmpBuilder, baseUrl);
-                    var text = TrimText(tmpBuilder.ToString()).Replace("|", "\\|");
-
-                    // Cells of essay length mean layout, not data.
-                    if (text.Length > 150)
-                        return true;
-                    row.Add((text, cell.Name == "th"));
-
-                    // Approximating colspan by padding, since Markdown cannot merge cells.
-                    if (int.TryParse(cell.GetAttributeValue("colspan", "1"), out var span))
-                    {
-                        for (var idx = 1; idx < span; idx++)
-                            row.Add((string.Empty, cell.Name == "th"));
-                    }
-                }
-                rows.Add(row);
-                maxCols = Math.Max(maxCols, row.Count);
-            }
-            if (maxCols < 2)
+            if (!TryRenderCells(self, trNodes, baseUrl, out var rows, out var maxCols) || maxCols < 2)
                 return true;
 
             EnsureDoubleNewLine(builder);
-
-            // Caption becomes an emphasized line above the table.
-            var caption = htmlNode.ChildNodes.FirstOrDefault(x => x.Name == "caption");
-            if (caption != null)
-            {
-                var tmpBuilder = new StringBuilder();
-                self.RenderChildren(caption, tmpBuilder, baseUrl);
-                var captionText = TrimText(tmpBuilder.ToString());
-                if (!string.IsNullOrEmpty(captionText))
-                {
-                    builder
-                        .Append("**")
-                        .Append(captionText)
-                        .Append("**\r\n\r\n");
-                }
-            }
+            AppendCaption(self, htmlNode, baseUrl, builder);
 
             /*
              * Markdown requires a header row - the first row counts as one when
@@ -437,6 +388,86 @@ namespace magic.lambda.html.slots.helpers
                 RenderTableRow(builder, row, maxCols);
             builder.Append("\r\n");
             return false;
+        }
+
+        /*
+         * Collecting a table's rows, whether sectioned or not.
+         */
+        static List<HtmlNode> CollectTableRows(HtmlNode table)
+        {
+            var trNodes = new List<HtmlNode>();
+            foreach (var child in table.ChildNodes)
+            {
+                if (child.Name == "tr")
+                    trNodes.Add(child);
+                else if (child.Name == "thead" || child.Name == "tbody" || child.Name == "tfoot")
+                    trNodes.AddRange(child.ChildNodes.Where(x => x.Name == "tr"));
+            }
+            return trNodes;
+        }
+
+        /*
+         * Renders the cells of every row, returning false if they are not data, as in layout.
+         */
+        static bool TryRenderCells(
+            Html2MarkdownParser self,
+            List<HtmlNode> trNodes,
+            (string DocBaseUrl, string DocUrl) baseUrl,
+            out List<List<(string Text, bool Header)>> rows,
+            out int maxCols)
+        {
+            rows = [];
+            maxCols = 0;
+            foreach (var tr in trNodes)
+            {
+                var row = new List<(string Text, bool Header)>();
+                foreach (var cell in tr.ChildNodes.Where(x => x.Name == "td" || x.Name == "th"))
+                {
+                    var tmpBuilder = new StringBuilder();
+                    self.RenderChildren(cell, tmpBuilder, baseUrl);
+                    var text = TrimText(tmpBuilder.ToString()).Replace("|", "\\|");
+
+                    // Cells of essay length mean layout, not data.
+                    if (text.Length > 150)
+                        return false;
+                    row.Add((text, cell.Name == "th"));
+
+                    // Approximating colspan by padding, since Markdown cannot merge cells.
+                    if (int.TryParse(cell.GetAttributeValue("colspan", "1"), out var span))
+                    {
+                        for (var idx = 1; idx < span; idx++)
+                            row.Add((string.Empty, cell.Name == "th"));
+                    }
+                }
+                rows.Add(row);
+                maxCols = Math.Max(maxCols, row.Count);
+            }
+            return true;
+        }
+
+        /*
+         * Caption becomes an emphasized line above the table.
+         */
+        static void AppendCaption(
+            Html2MarkdownParser self,
+            HtmlNode table,
+            (string DocBaseUrl, string DocUrl) baseUrl,
+            StringBuilder builder)
+        {
+            var caption = table.ChildNodes.FirstOrDefault(x => x.Name == "caption");
+            if (caption == null)
+                return;
+
+            var tmpBuilder = new StringBuilder();
+            self.RenderChildren(caption, tmpBuilder, baseUrl);
+            var captionText = TrimText(tmpBuilder.ToString());
+            if (string.IsNullOrEmpty(captionText))
+                return;
+
+            builder
+                .Append("**")
+                .Append(captionText)
+                .Append("**\r\n\r\n");
         }
 
         /*
@@ -575,51 +606,51 @@ namespace magic.lambda.html.slots.helpers
             StringBuilder builder)
         {
             var hrefAtr = htmlNode.GetAttributeValue("href", "");
-            if (!string.IsNullOrEmpty(hrefAtr) && !hrefAtr.StartsWith("javascript:", StringComparison.Ordinal) && hrefAtr != "#")
-            {
-                EnsureSpace(builder);
-                builder.Append('[');
-                var hasRenderedTxt = false;
-                var hasRenderedImage = false;
-                var oldLength = builder.Length;
-                foreach (var idx in htmlNode.Descendants())
-                {
-                    switch (idx.Name)
-                    {
-                        case TextNode:
-                            if (!hasRenderedImage)
-                            {
-                                var txt = HttpUtility.HtmlDecode(TrimText(idx.InnerText));
-                                if (!string.IsNullOrEmpty(txt))
-                                {
-                                    if (hasRenderedTxt)
-                                        builder
-                                            .Append(' ')
-                                            .Append(txt);
-                                    else
-                                        builder.Append(txt);
-                                    hasRenderedTxt = true;
-                                }
-                            }
-                            break;
+            if (string.IsNullOrEmpty(hrefAtr) || hrefAtr.StartsWith("javascript:", StringComparison.Ordinal) || hrefAtr == "#")
+                return false;
 
-                        case "img":
-                            if (self._images && !hasRenderedTxt && !hasRenderedImage)
-                            {
-                                hasRenderedImage = true;
-                                ImgElementHandler(self, idx, baseUrl, builder);
-                            }
-                            break;
-                    }
-                }
-                if (oldLength == builder.Length)
-                    builder.Append("link");
-                builder
-                    .Append("](")
-                    .Append(self.NormalizeUrl(hrefAtr, true, baseUrl))
-                    .Append(')');
-            }
+            EnsureSpace(builder);
+            builder.Append('[');
+            var oldLength = builder.Length;
+            RenderAnchorLabel(self, htmlNode, baseUrl, builder);
+            if (oldLength == builder.Length)
+                builder.Append("link");
+            builder
+                .Append("](")
+                .Append(self.NormalizeUrl(hrefAtr, true, baseUrl))
+                .Append(')');
             return false;
+        }
+
+        /*
+         * Renders the label of a link, which is its text, or its image if it has no text.
+         */
+        static void RenderAnchorLabel(
+            Html2MarkdownParser self,
+            HtmlNode anchor,
+            (string DocBaseUrl, string DocUrl) baseUrl,
+            StringBuilder builder)
+        {
+            var hasRenderedTxt = false;
+            var hasRenderedImage = false;
+            foreach (var idx in anchor.Descendants())
+            {
+                if (idx.Name == TextNode && !hasRenderedImage)
+                {
+                    var txt = HttpUtility.HtmlDecode(TrimText(idx.InnerText));
+                    if (string.IsNullOrEmpty(txt))
+                        continue;
+                    if (hasRenderedTxt)
+                        builder.Append(' ');
+                    builder.Append(txt);
+                    hasRenderedTxt = true;
+                }
+                else if (idx.Name == "img" && self._images && !hasRenderedTxt && !hasRenderedImage)
+                {
+                    hasRenderedImage = true;
+                    ImgElementHandler(self, idx, baseUrl, builder);
+                }
+            }
         }
 
         #endregion
@@ -835,6 +866,30 @@ namespace magic.lambda.html.slots.helpers
         }
 
         /*
+         * Adds the URL to the [urls] result if we're supposed to, and returns it, as "/" if it is empty.
+         */
+        string EnsureUrl(bool addUrl, string curUrl)
+        {
+            if (addUrl)
+            {
+                var idxOfHash = curUrl.IndexOf('#');
+                if (idxOfHash != -1)
+                    curUrl = curUrl.Substring(0, idxOfHash);
+                var urlsNode = _input.Children.FirstOrDefault(x => x.Name == "urls");
+                if (urlsNode == null)
+                {
+                    urlsNode = new Node("urls");
+                    _input.Add(urlsNode);
+                }
+                if (!curUrl.StartsWith("mailto:", StringComparison.Ordinal) && !curUrl.StartsWith("tel:", StringComparison.Ordinal) && !urlsNode.Children.Any(x => x.Get<string>() == curUrl))
+                    urlsNode.Add(new Node(".", curUrl));
+            }
+            if (curUrl == "")
+                curUrl = "/";
+            return curUrl;
+        }
+
+        /*
          * Normalizes a URL that's supposed to be added to the Markdown document.
          *
          * Notice, we might not have a document URL here, if caller transforms just some random Markdown,
@@ -849,32 +904,10 @@ namespace magic.lambda.html.slots.helpers
             url = url.Replace("&amp;", "&").Trim();
             url = url.Replace(" ", "%20");
 
-            // Local helper method to ensure we add URL if we're supposed to.
-            string ensureUrl(string curUrl)
-            {
-                if (addUrl)
-                {
-                    var idxOfHash = curUrl.IndexOf('#');
-                    if (idxOfHash != -1)
-                        curUrl = curUrl.Substring(0, idxOfHash);
-                    var urlsNode = _input.Children.FirstOrDefault(x => x.Name == "urls");
-                    if (urlsNode == null)
-                    {
-                        urlsNode = new Node("urls");
-                        _input.Add(urlsNode);
-                    }
-                    if (!curUrl.StartsWith("mailto:", StringComparison.Ordinal) && !curUrl.StartsWith("tel:", StringComparison.Ordinal) && !urlsNode.Children.Any(x => x.Get<string>() == curUrl))
-                        urlsNode.Add(new Node(".", curUrl));
-                }
-                if (curUrl == "")
-                    curUrl = "/";
-                return curUrl;
-            }
-
             // Early return for absolute URLs and special schemes
             if (url.StartsWith("http://", StringComparison.Ordinal) || url.StartsWith("https://", StringComparison.Ordinal) ||
                 url.StartsWith("mailto:", StringComparison.Ordinal) || url.StartsWith("tel:", StringComparison.Ordinal))
-                return ensureUrl(url.Replace(" ", ""));
+                return EnsureUrl(addUrl, url.Replace(" ", ""));
 
             // Determine the base URL: Prefer DocBaseUrl, fallback to DocUrl if necessary
             string baseUriString = !string.IsNullOrEmpty(baseUrl.DocBaseUrl) ? baseUrl.DocBaseUrl : baseUrl.DocUrl;
@@ -885,30 +918,30 @@ namespace magic.lambda.html.slots.helpers
                 if (string.IsNullOrEmpty(baseUriString))
                 {
                     var tmp = "https:" + url;
-                    return ensureUrl(tmp);
+                    return EnsureUrl(addUrl, tmp);
                 }
 
                 // Extract the scheme from baseUriString
                 var baseUri = new Uri(baseUriString);
                 var res = $"{baseUri.Scheme}:{url}";
-                return ensureUrl(res);
+                return EnsureUrl(addUrl, res);
             }
 
             // If baseUriString is not set, there's not much we can do to resolve a relative URL
             if (string.IsNullOrEmpty(baseUriString))
-                return ensureUrl(url);
+                return EnsureUrl(addUrl, url);
 
             // Use Uri class to resolve relative URLs against the base URL
             try
             {
                 var baseUri = new Uri(baseUriString);
                 var resolvedUri = new Uri(baseUri, url).ToString();
-                return ensureUrl(resolvedUri);
+                return EnsureUrl(addUrl, resolvedUri);
             }
             catch (UriFormatException)
             {
                 // In case of a UriFormatException, return the original URL.
-                return ensureUrl(url);
+                return EnsureUrl(addUrl, url);
             }
         }
 

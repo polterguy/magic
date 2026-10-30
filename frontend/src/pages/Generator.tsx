@@ -72,6 +72,33 @@ function resolveLocks(chosen: Record<string, ColumnLock> | undefined, table: any
   return locks;
 }
 
+interface CrudifyOptions {
+  auth: string[];
+  logging: boolean;
+  cache: number;
+  publicCache: boolean;
+  overwrite: boolean;
+  paging: boolean;
+  sorting: boolean;
+  aggregate: boolean;
+  distinct: boolean;
+  search: boolean;
+  verbose: boolean;
+  // URL overrides — module defaults to the database name, component to the
+  // table name (and is only overridable when one single table is selected,
+  // like the old dashboard).
+  moduleName: string;
+  moduleUrl: string | null;
+  // Publishes a web socket message after every POST/PUT/DELETE, so open
+  // clients can refresh. Audience is inherited (the endpoint's own roles),
+  // or an explicit comma separated list of roles, groups or users.
+  live?: boolean;
+  liveAudience?: string;
+  liveValues?: string;
+  // Column name -> slot its value is locked to ('' = not locked), see resolveLocks().
+  locks: Record<string, string>;
+}
+
 /*
  * Builds the per-verb crudify payload the way the old dashboard's
  * transform-model service does.
@@ -82,56 +109,9 @@ function buildCrudifyPayload(
   database: string,
   table: any,
   verb: string,
-  options: {
-    auth: string[];
-    logging: boolean;
-    cache: number;
-    publicCache: boolean;
-    overwrite: boolean;
-    paging: boolean;
-    sorting: boolean;
-    aggregate: boolean;
-    distinct: boolean;
-    search: boolean;
-    verbose: boolean;
-    // URL overrides — module defaults to the database name, component to the
-    // table name (and is only overridable when one single table is selected,
-    // like the old dashboard).
-    moduleName: string;
-    moduleUrl: string | null;
-    // Publishes a web socket message after every POST/PUT/DELETE, so open
-    // clients can refresh. Audience is inherited (the endpoint's own roles),
-    // or an explicit comma separated list of roles, groups or users.
-    live?: boolean;
-    liveAudience?: string;
-    liveValues?: string;
-    // Column name -> slot its value is locked to ('' = not locked), see resolveLocks().
-    locks: Record<string, string>;
-  }) {
+  options: CrudifyOptions) {
 
-  // Old dashboard's per-column verb defaults.
-  const columns = (table.columns ?? []).map((column: any) => {
-    const name = (column.name ?? '').toLowerCase();
-    const decorated: any = { ...column };
-    decorated.post = !(column.automatic && column.primary);
-    if (column.automatic && (name === 'created' || name === 'last_update')) {
-      decorated.post = false;
-    }
-    decorated.get = true;
-    decorated.put = !column.automatic || column.primary;
-    decorated.delete = column.primary;
-    if (options.locks[column.name]) {
-      decorated.locked = options.locks[column.name];
-    }
-    if (name === 'picture' || name === 'image' || name === 'photo') {
-      decorated.handling = 'image';
-    } else if (name === 'file') {
-      decorated.handling = 'file';
-    } else if (name === 'youtube' || name === 'video') {
-      decorated.handling = 'youtube';
-    }
-    return decorated;
-  });
+  const columns = (table.columns ?? []).map((column: any) => withVerbDefaults(column, options.locks));
 
   const payload: any = {
     databaseType,
@@ -163,75 +143,106 @@ function buildCrudifyPayload(
   if (options.auth.length > 0) {
     payload.auth = options.auth.join(',');
   }
-  if (verb === 'get') {
-    payload.paging = options.paging;
-    payload.sorting = options.sorting;
-    payload.aggregate = options.aggregate;
-    payload.distinct = options.distinct;
-    payload.search = options.search;
-    if (options.cache > 0) {
-      payload.cache = options.cache;
-      payload.publicCache = options.publicCache;
-    }
-    payload.template = '/system/crudifier/templates/crud.template-no-operator.get.hl';
-  } else {
-    payload.template = '/system/crudifier/templates/crud.template.' + verb + '.hl';
-  }
+  addVerbOptions(payload, verb, options);
   if (options.logging && verb !== 'get') {
     const past: any = { post: 'created', put: 'updated', delete: 'deleted' };
     payload.log = database + '.' + table.name + ' entry ' + past[verb];
   }
 
-  const decorate = (column: any) => {
-    const entry: any = { name: column.name, type: column.hl };
-    if (column.locked) {
-      entry.locked = column.locked;
-    }
-    if (column.handling) {
-      entry.handling = column.handling;
-    }
-    if (column.foreign_key?.foreign_name != null) {
-      entry.foreign_key = {
-        table: column.foreign_key.foreign_table,
-        column: column.foreign_key.foreign_column,
-        name: column.foreign_key.foreign_name,
-        long: column.foreign_key.long_data,
-      };
-    }
-    return entry;
-  };
-
   for (const column of columns) {
-    switch (verb) {
-      case 'post':
-        if (column.post) {
-          payload.args.columns.push(decorate(column));
-        }
-        break;
-      case 'get':
-        if (column.get) {
-          payload.args.columns.push(decorate(column));
-        }
-        break;
-      case 'put':
-        if (column.put) {
-          if (column.primary) {
-            payload.args.primary.push(decorate(column));
-          } else {
-            payload.args.columns.push(decorate(column));
-          }
-        }
-        break;
-      case 'delete':
-        if (column.delete && column.primary) {
-          payload.args.primary.push({ [column.name]: column.hl });
-        } else if (!column.delete && column.locked) {
-          payload.args.columns.push({ name: column.name, locked: column.locked });
-        }
-        break;
-    }
+    addArgumentColumn(payload, verb, column);
   }
   return payload;
+}
+
+// Old dashboard's per-column verb defaults.
+function withVerbDefaults(column: any, locks: Record<string, string>) {
+  const name = (column.name ?? '').toLowerCase();
+  const decorated: any = { ...column };
+  decorated.post = !(column.automatic && column.primary);
+  if (column.automatic && (name === 'created' || name === 'last_update')) {
+    decorated.post = false;
+  }
+  decorated.get = true;
+  decorated.put = !column.automatic || column.primary;
+  decorated.delete = column.primary;
+  if (locks[column.name]) {
+    decorated.locked = locks[column.name];
+  }
+  if (name === 'picture' || name === 'image' || name === 'photo') {
+    decorated.handling = 'image';
+  } else if (name === 'file') {
+    decorated.handling = 'file';
+  } else if (name === 'youtube' || name === 'video') {
+    decorated.handling = 'youtube';
+  }
+  return decorated;
+}
+
+// What only a GET takes, and the template each verb is generated from.
+function addVerbOptions(payload: any, verb: string, options: CrudifyOptions) {
+  if (verb !== 'get') {
+    payload.template = '/system/crudifier/templates/crud.template.' + verb + '.hl';
+    return;
+  }
+  payload.paging = options.paging;
+  payload.sorting = options.sorting;
+  payload.aggregate = options.aggregate;
+  payload.distinct = options.distinct;
+  payload.search = options.search;
+  if (options.cache > 0) {
+    payload.cache = options.cache;
+    payload.publicCache = options.publicCache;
+  }
+  payload.template = '/system/crudifier/templates/crud.template-no-operator.get.hl';
+}
+
+// How a column appears in the arguments of the endpoint being generated.
+function crudifyColumnEntry(column: any) {
+  const entry: any = { name: column.name, type: column.hl };
+  if (column.locked) {
+    entry.locked = column.locked;
+  }
+  if (column.handling) {
+    entry.handling = column.handling;
+  }
+  if (column.foreign_key?.foreign_name != null) {
+    entry.foreign_key = {
+      table: column.foreign_key.foreign_table,
+      column: column.foreign_key.foreign_column,
+      name: column.foreign_key.foreign_name,
+      long: column.foreign_key.long_data,
+    };
+  }
+  return entry;
+}
+
+// Puts the column among the arguments of the verb, if the verb takes it.
+function addArgumentColumn(payload: any, verb: string, column: any) {
+  switch (verb) {
+    case 'post':
+      if (column.post) {
+        payload.args.columns.push(crudifyColumnEntry(column));
+      }
+      break;
+    case 'get':
+      if (column.get) {
+        payload.args.columns.push(crudifyColumnEntry(column));
+      }
+      break;
+    case 'put':
+      if (column.put) {
+        payload.args[column.primary ? 'primary' : 'columns'].push(crudifyColumnEntry(column));
+      }
+      break;
+    case 'delete':
+      if (column.delete && column.primary) {
+        payload.args.primary.push({ [column.name]: column.hl });
+      } else if (!column.delete && column.locked) {
+        payload.args.columns.push({ name: column.name, locked: column.locked });
+      }
+      break;
+  }
 }
 
 /*
@@ -519,24 +530,63 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
     }
   }
 
-  async function generate() {
-    const targets = tables.filter((table: any) => selectedTables.has(table.name));
-    const active = ALL_VERBS.filter(candidate => verbs.has(candidate));
+  // What is wrong with what is about to be generated, if anything.
+  function generationProblem(targets: any[], active: string[]) {
     if (targets.length === 0 || active.length === 0) {
-      showToast('Select at least one table and one verb', true);
-      return;
+      return 'Select at least one table and one verb';
     }
     for (const table of targets) {
       const blank = (table.columns ?? []).find((column: any) =>
         !column.primary && locks[table.name]?.[column.name]?.mode === 'custom'
           && !locks[table.name][column.name].slot.trim());
       if (blank) {
-        showToast('Enter the slot ' + table.name + '.' + blank.name + ' is locked to', true);
-        return;
+        return 'Enter the slot ' + table.name + '.' + blank.name + ' is locked to';
       }
     }
     if (live && liveAudience !== 'inherited' && !liveValues.trim()) {
-      showToast('Enter who should be notified, or choose the endpoint\'s own roles', true);
+      return 'Enter who should be notified, or choose the endpoint\'s own roles';
+    }
+    return null;
+  }
+
+  // Generates one verb for one table, reporting on it, and what came of it.
+  async function generateVerb(
+    table: any,
+    verb: string,
+    options: Omit<CrudifyOptions, 'locks'>,
+    push: (type: string, message: string) => void,
+  ): Promise<{ count: number; loc: number } | 'skipped' | 'failed'> {
+    const payload = buildCrudifyPayload(
+      selection.type, selection.connectionString, selection.database, table, verb,
+      { ...options, locks: resolveLocks(locks[table.name], table) });
+    if (!canGenerate(payload, verb)) {
+      // Surfacing what used to be silently skipped — the answer to "why
+      // did I get fewer endpoints than tables × verbs?".
+      push('warning', verb.toUpperCase() + ' ' + table.name + ' — skipped, ' +
+        (payload.args.primary.length === 0 && (verb === 'put' || verb === 'delete')
+          ? 'no primary key'
+          : 'no columns for this verb'));
+      return 'skipped';
+    }
+    try {
+      const response = await crudify(payload);
+      const count = endpointsForVerb(verb, options);
+      push('information', verb.toUpperCase() + ' ' + table.name + ' — ' +
+        count + (count === 1 ? ' endpoint, ' : ' endpoints, ') +
+        (response.loc ?? 0) + ' lines');
+      return { count, loc: response.loc ?? 0 };
+    } catch (err: any) {
+      push('error', verb.toUpperCase() + ' ' + table.name + ' — ' + err.message);
+      return 'failed';
+    }
+  }
+
+  async function generate() {
+    const targets = tables.filter((table: any) => selectedTables.has(table.name));
+    const active = ALL_VERBS.filter(candidate => verbs.has(candidate));
+    const problem = generationProblem(targets, active);
+    if (problem) {
+      showToast(problem, true);
       return;
     }
     setBusy(true);
@@ -586,36 +636,20 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
         }
         step++;
         setProgressText(step + ' of ' + total);
-        const payload = buildCrudifyPayload(
-          selection.type, selection.connectionString, selection.database, table, verb,
-          { ...options, locks: resolveLocks(locks[table.name], table) });
-        if (!canGenerate(payload, verb)) {
-          // Surfacing what used to be silently skipped — the answer to "why
-          // did I get fewer endpoints than tables × verbs?".
-          push('warning', verb.toUpperCase() + ' ' + table.name + ' — skipped, ' +
-            (payload.args.primary.length === 0 && (verb === 'put' || verb === 'delete')
-              ? 'no primary key'
-              : 'no columns for this verb'));
-          continue;
-        }
-        try {
-          const response = await crudify(payload);
-          const count = endpointsForVerb(verb, options);
-          loc += response.loc ?? 0;
-          generated += count;
-          push('information', verb.toUpperCase() + ' ' + table.name + ' — ' +
-            count + (count === 1 ? ' endpoint, ' : ' endpoints, ') +
-            (response.loc ?? 0) + ' lines');
-        } catch (err: any) {
+        const outcome = await generateVerb(table, verb, options, push);
+        if (outcome === 'failed') {
           /*
            * One crudify call per verb per table — a failure mid-loop must
            * say WHERE it stopped, and how much had already been generated,
            * or there's no telling which endpoints exist.
            */
           failed = true;
-          push('error', verb.toUpperCase() + ' ' + table.name + ' — ' + err.message);
           push('warning', generated + ' endpoints were generated before the failure.');
           break outer;
+        }
+        if (outcome !== 'skipped') {
+          loc += outcome.loc;
+          generated += outcome.count;
         }
       }
     }

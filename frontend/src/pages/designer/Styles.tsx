@@ -19,7 +19,7 @@
 import { useState } from 'react';
 import { TrashIcon } from '../../components/Icons';
 import { Overrides } from './css';
-import { STYLE_GROUPS, toHexColor, widgetGroupFor } from './properties';
+import { STYLE_GROUPS, StyleProperty, toHexColor, widgetGroupFor } from './properties';
 
 /*
  * The "just this one" target. A leading colon cannot collide with a real
@@ -42,6 +42,58 @@ function isValid(property: string, value: string) {
   probe.style.removeProperty(property);
   probe.style.setProperty(property, value);
   return probe.style.getPropertyValue(property) !== '';
+}
+
+/*
+ * The control for one property: a menu, a colour picker next to a text field, or just a text field.
+ */
+function StyleControl(props: Readonly<{
+  property: StyleProperty;
+  value: string;
+  invalid: boolean;
+  resolved: string;
+  onPick: (value: string) => void;
+  onType: (value: string) => void;
+  onCommit: () => void;
+}>) {
+  const { property, value, invalid, resolved } = props;
+  if (property.kind === 'select') {
+    return (
+      <select value={value} onChange={event => props.onPick(event.target.value)}>
+        <option value="">{resolved || 'inherit'}</option>
+        {property.options?.map(option => (
+          <option key={option} value={option}>{option}</option>
+        ))}
+      </select>
+    );
+  }
+  const text = (
+    <input
+      type="text"
+      className={invalid ? 'invalid' : undefined}
+      title={invalid ? 'Not a value CSS accepts for ' + property.name : undefined}
+      value={value}
+      placeholder={resolved}
+      onChange={event => props.onType(event.target.value)}
+      onBlur={props.onCommit}
+      onKeyDown={event => {
+        if (event.key === 'Enter') {
+          props.onCommit();
+        }
+      }} />
+  );
+  if (property.kind === 'color') {
+    return (
+      <span className="designer-colour">
+        <input
+          type="color"
+          value={toHexColor(value, toHexColor(resolved))}
+          onChange={event => props.onPick(event.target.value)} />
+        {text}
+      </span>
+    );
+  }
+  return text;
 }
 
 export default function Styles(props: Readonly<{
@@ -218,50 +270,14 @@ export default function Styles(props: Readonly<{
             return (
               <div className="designer-style" key={property.name}>
                 <label title={property.name}>{property.label}</label>
-                {property.kind === 'select' ? (
-                  <select
-                    value={value}
-                    onChange={event => pick(property.name, event.target.value)}>
-                    <option value="">{resolved(property.name) || 'inherit'}</option>
-                    {property.options?.map(option => (
-                      <option key={option} value={option}>{option}</option>
-                    ))}
-                  </select>
-                ) : property.kind === 'color' ? (
-                  <span className="designer-colour">
-                    <input
-                      type="color"
-                      value={toHexColor(value, toHexColor(resolved(property.name)))}
-                      onChange={event => pick(property.name, event.target.value)} />
-                    <input
-                      type="text"
-                      className={bad ? 'invalid' : undefined}
-                      title={bad ? 'Not a value CSS accepts for ' + property.name : undefined}
-                      value={value}
-                      placeholder={resolved(property.name)}
-                      onChange={event => type(property.name, event.target.value)}
-                      onBlur={() => commit(property.name)}
-                      onKeyDown={event => {
-                        if (event.key === 'Enter') {
-                          commit(property.name);
-                        }
-                      }} />
-                  </span>
-                ) : (
-                  <input
-                    type="text"
-                    className={bad ? 'invalid' : undefined}
-                    title={bad ? 'Not a value CSS accepts for ' + property.name : undefined}
-                    value={value}
-                    placeholder={resolved(property.name)}
-                    onChange={event => type(property.name, event.target.value)}
-                    onBlur={() => commit(property.name)}
-                    onKeyDown={event => {
-                      if (event.key === 'Enter') {
-                        commit(property.name);
-                      }
-                    }} />
-                )}
+                <StyleControl
+                  property={property}
+                  value={value}
+                  invalid={bad}
+                  resolved={resolved(property.name)}
+                  onPick={next => pick(property.name, next)}
+                  onType={next => type(property.name, next)}
+                  onCommit={() => commit(property.name)} />
                 {/*
                   * Shown only once the property carries a value. A disabled
                   * control on every row made a live panel look switched off,

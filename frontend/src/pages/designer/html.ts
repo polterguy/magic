@@ -412,6 +412,41 @@ function inlineContent(element: Element) {
   return Array.from(element.childNodes).map(oneLine).join('');
 }
 
+// Script and style, which keep the author's own indentation.
+function writeRawText(element: Element, pad: string, out: string[]) {
+  const text = (element.textContent ?? '').replace(/^\n/, '').trimEnd();
+  if (text === '') {
+    out.push(pad + openTag(element) + closeTag(element));
+    return;
+  }
+  out.push(pad + openTag(element));
+  text.split('\n').forEach(line => out.push(line));
+  out.push(pad + closeTag(element));
+}
+
+function writeBlock(element: Element, depth: number, pad: string, out: string[]) {
+  out.push(pad + openTag(element));
+  for (const child of Array.from(element.childNodes)) {
+    writeBlockChild(child, depth + 1, out);
+  }
+  out.push(pad + closeTag(element));
+}
+
+function writeBlockChild(child: Node, depth: number, out: string[]) {
+  if (child.nodeType === Node.ELEMENT_NODE) {
+    writeElement(child as Element, depth, out);
+  } else if (child.nodeType === Node.TEXT_NODE) {
+    // Whitespace between block elements is only indentation, and is remade
+    // by writeElement — but real text among them has to survive.
+    const text = (child as Text).data.trim();
+    if (text !== '') {
+      out.push(INDENT.repeat(depth) + escapeText(text).replace(/\s+/g, ' '));
+    }
+  } else if (child.nodeType === Node.COMMENT_NODE) {
+    out.push(INDENT.repeat(depth) + '<!--' + (child as Comment).data + '-->');
+  }
+}
+
 function writeElement(element: Element, depth: number, out: string[]) {
   const pad = INDENT.repeat(depth);
   const tag = element.tagName.toLowerCase();
@@ -431,34 +466,12 @@ function writeElement(element: Element, depth: number, out: string[]) {
     return;
   }
   if (RAW.has(tag)) {
-    const text = (element.textContent ?? '').replace(/^\n/, '').trimEnd();
-    if (text === '') {
-      out.push(pad + openTag(element) + closeTag(element));
-      return;
-    }
-    out.push(pad + openTag(element));
-    text.split('\n').forEach(line => out.push(line));
-    out.push(pad + closeTag(element));
+    writeRawText(element, pad, out);
     return;
   }
 
   if (isBlockContext(element)) {
-    out.push(pad + openTag(element));
-    for (const child of Array.from(element.childNodes)) {
-      if (child.nodeType === Node.ELEMENT_NODE) {
-        writeElement(child as Element, depth + 1, out);
-      } else if (child.nodeType === Node.TEXT_NODE) {
-        // Whitespace between block elements is only indentation, and is remade
-        // by this very function — but real text among them has to survive.
-        const text = (child as Text).data.trim();
-        if (text !== '') {
-          out.push(INDENT.repeat(depth + 1) + escapeText(text).replace(/\s+/g, ' '));
-        }
-      } else if (child.nodeType === Node.COMMENT_NODE) {
-        out.push(INDENT.repeat(depth + 1) + '<!--' + (child as Comment).data + '-->');
-      }
-    }
-    out.push(pad + closeTag(element));
+    writeBlock(element, depth, pad, out);
     return;
   }
 

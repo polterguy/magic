@@ -31,6 +31,37 @@ function thresholdHint(useEmbeddings: boolean, retrieval: string) {
   return retrieval === 'bm25' ? 'Keyword retrieval has no threshold — BM25 rank order decides' : undefined;
 }
 
+// The settings without a field of their own above, from the model being edited, or the defaults for a new one.
+function initialExtra(existing: any) {
+  return {
+    base_url: existing?.base_url ?? '',
+    conversation_starters: existing?.conversation_starters ?? '',
+    api_key: existing?.api_key ?? '',
+    no_requests: existing?.no_requests ?? 0,
+    max_requests: existing?.max_requests ?? -1,
+    max_function_invocations: existing?.max_function_invocations ?? 5,
+    max_session_items: existing?.max_session_items ?? 15,
+    completion_slot: existing?.completion_slot ?? 'magic.ai.chat',
+    session_timeout: existing?.session_timeout ?? 1200,
+    /*
+     * Empty string is this field's "no questionnaire", mapped back to null on
+     * save — the column is a nullable foreign key into questionnaires.
+     */
+    initial_questionnaire: existing?.initial_questionnaire ?? '',
+    /*
+     * Matches the backend's own default in ml_types.post.hl, and what the
+     * chatbot wizard writes in create-bot.post.hl — a new model created here
+     * must not end up on a different embedding model than one created anywhere
+     * else, since embeddings from two models are not comparable.
+     */
+    vector_model: existing?.vector_model ?? 'text-embedding-3-small',
+    // A null captcha value ("no captcha") is shown as -1, the sentinel the field
+    // maps back to null on save — so the three modes round-trip.
+    // Magic's own captcha is the default for new models — 0 in this field.
+    recaptcha: existing?.recaptcha ?? 0,
+  };
+}
+
 export default function EditModelDialog(props: Readonly<{
   existing: any;
   onClose: () => void;
@@ -84,33 +115,7 @@ export default function EditModelDialog(props: Readonly<{
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   // Twilio, webhooks, lead-gen, prefix and search-postfix are legacy —
   // dropped from the UI and no longer sent.
-  const [extra, setExtra] = useState<any>({
-    base_url: existing?.base_url ?? '',
-    conversation_starters: existing?.conversation_starters ?? '',
-    api_key: existing?.api_key ?? '',
-    no_requests: existing?.no_requests ?? 0,
-    max_requests: existing?.max_requests ?? -1,
-    max_function_invocations: existing?.max_function_invocations ?? 5,
-    max_session_items: existing?.max_session_items ?? 15,
-    completion_slot: existing?.completion_slot ?? 'magic.ai.chat',
-    session_timeout: existing?.session_timeout ?? 1200,
-    /*
-     * Empty string is this field's "no questionnaire", mapped back to null on
-     * save — the column is a nullable foreign key into questionnaires.
-     */
-    initial_questionnaire: existing?.initial_questionnaire ?? '',
-    /*
-     * Matches the backend's own default in ml_types.post.hl, and what the
-     * chatbot wizard writes in create-bot.post.hl — a new model created here
-     * must not end up on a different embedding model than one created anywhere
-     * else, since embeddings from two models are not comparable.
-     */
-    vector_model: existing?.vector_model ?? 'text-embedding-3-small',
-    // A null captcha value ("no captcha") is shown as -1, the sentinel the field
-    // maps back to null on save — so the three modes round-trip.
-    // Magic's own captcha is the default for new models — 0 in this field.
-    recaptcha: existing?.recaptcha ?? 0,
-  });
+  const [extra, setExtra] = useState<any>(() => initialExtra(existing));
 
   function setField(key: string, value: any) {
     setExtra((current: any) => ({ ...current, [key]: value }));

@@ -9,10 +9,10 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module">
+    <script>
       if ('serviceWorker' in navigator) {
-        const regs = await navigator.serviceWorker.getRegistrations();
-        regs.forEach(reg => reg.unregister());
+        navigator.serviceWorker.getRegistrations()
+          .then(regs => regs.forEach(reg => reg.unregister()));
       }
     </script>
     <script type="module" src="/src/main.tsx"></script>

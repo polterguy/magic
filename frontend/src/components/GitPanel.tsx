@@ -364,7 +364,7 @@ export default function GitPanel(props: Readonly<{
                 ? 'Already has a remote'
                 : 'Creates a GitHub repository and pushes this folder to it'}
               onClick={() => setPublishing({
-                name: props.path.split('/').findLast(Boolean) ?? '',
+                name: props.path.split('/').filter(Boolean).pop() ?? '',
                 isPrivate: true,
               })}>
               Publish to GitHub…

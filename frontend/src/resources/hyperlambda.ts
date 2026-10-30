@@ -186,29 +186,56 @@ function tokenizeMultiCommentMode(stream: StringStream, state: HyperlambdaState)
  */
 function tokenizeMultilineStringMode(stream: StringStream, state: HyperlambdaState, more: boolean): StyleName {
 
-  /*
-   * The "hard" way of parsing a multi line string, since it might be followed
-   * by a "value" entity, on the same line as where it ends.
-   */
+  // Not at the end of the multi line string literal yet, so it carries on over the next line.
+  if (!readToEndOfMultilineString(stream)) {
+    return styles.string;
+  }
+
+  // Resetting indent again.
+  state.indent = state.oldIndent;
+
+  // Checking if there's a value or a type declaration behind multi line string name.
+  const cr = stream.peek();
+  if (!more && cr != null) {
+
+    // "Garbage data" found after closing of multi line string literal as value.
+    state.mode = 'error';
+    return styles.error;
+  }
+  if (cr == null) {
+
+    // No value for this guy!
+    state.mode = 'name';
+  } else if (cr === ':') {
+
+    // Value follows.
+    state.mode = 'value';
+  } else {
+
+    // "Garbage data" found after closing of multi line string literal.
+    state.mode = 'error';
+    return styles.error;
+  }
+  return styles.string;
+}
+
+/*
+ * The "hard" way of parsing a multi line string, since it might be followed
+ * by a "value" entity, on the same line as where it ends. Returns true if it
+ * saw the end of the string literal.
+ *
+ * Looping until we see only ONE '"'. This is because two '"' after each
+ * other ('""' that is), means the '"' is escaped, and the string literal is
+ * still open.
+ */
+function readToEndOfMultilineString(stream: StringStream): boolean {
   let cr = stream.next();
-
-  // Whether or not we've seen the end of multi line string literal.
-  let seenTheEnd = false;
-
-  /*
-   * Looping until we see only ONE '"'. This is because two '"' after each
-   * other ('""' that is), means the '"' is escaped, and the string literal is
-   * still open.
-   */
   while (cr != null) {
 
     // Checking for easy "end of multi line string" condition, meaning one
     // '"' character, WITHOUT another '"' following it.
     if (cr === '"' && stream.peek() !== '"') {
-
-      // End of multi line string literal, breaking while.
-      seenTheEnd = true;
-      break;
+      return true;
     } else if (cr === '"' /* Implicitly another '"' is following here in stream */) {
 
       /*
@@ -226,44 +253,13 @@ function tokenizeMultilineStringMode(stream: StringStream, state: HyperlambdaSta
 
       // If our number of '"' are odd, we are at end of multi line string literal.
       if (val.length % 2 === 1) {
-        seenTheEnd = true;
-        break;
+        return true;
       }
     } else {
       cr = stream.next();
     }
   }
-
-  // Checking if we've seen the end of multi line string literal.
-  if (seenTheEnd) {
-
-    // Resetting indent again.
-    state.indent = state.oldIndent;
-
-    // Checking if there's a value or a type declaration behind multi line string name.
-    cr = stream.peek();
-    if (!more && cr != null) {
-
-      // "Garbage data" found after closing of multi line string literal as value.
-      state.mode = 'error';
-      return styles.error;
-    }
-    if (cr == null) {
-
-      // No value for this guy!
-      state.mode = 'name';
-    } else if (cr === ':') {
-
-      // Value follows.
-      state.mode = 'value';
-    } else {
-
-      // "Garbage data" found after closing of multi line string literal.
-      state.mode = 'error';
-      return styles.error;
-    }
-  }
-  return styles.string;
+  return false;
 }
 
 /*
@@ -334,100 +330,11 @@ function tokenizeNameMode(stream: StringStream, state: HyperlambdaState): StyleN
    * Figuring out which type of token this is, by checking first character,
    * without removing it from stream.
    */
-  let retVal: StyleName | null = null;
-  let cr = stream.peek();
-  switch (cr) {
-
-    case '"':
-
-      /*
-       * This is a single line string literal (hopefully, unless there's a bug
-       * in it), checking for indentation bugs first.
-       */
-      state.noContent = false;
-      stream.next();
-      if (checkIndentation(state, pos) === true) {
-        return styles.error;
-      }
-
-      // Then parsing string literal.
-      return parseSingleLineStringLiteral(stream, state);
-
-    case '@':
-
-      /*
-       * This is (possibly) a multi line string literal (hopefully, unless
-       * there's a bug in it). First checking for indentation bugs.
-       */
-      if (checkIndentation(state, pos) === true) {
-        return styles.error;
-      }
-
-      /*
-       * Then fetching next character, to check for sure, whether or not this
-       * is a multi line string literal.
-       */
-      state.noContent = false;
-      stream.next();
-      cr = (cr ?? '') + (stream.next() ?? '');
-      if (cr === '@"') {
-        state.mode = 'mstring-name';
-        state.oldIndent = state.indent;
-        state.indent = 0;
-        return tokenizeMultilineStringMode(stream, state, true);
-      }
-
-      /*
-       * NOT a multi line string literal, just happens to be a name starting
-       * with "@", "fallthrough" to logic after switch.
-       */
-      break;
-
-    case ':':
-
-      /*
-       * This is a node with an "empty" name, first checking indentation for
-       * bugs, WITHOUT removing ":" from stream.
-       */
-      if (checkIndentation(state, pos) === true) {
-        return styles.error;
-      }
-
-      // Switching to "value" mode, and returning "type".
-      state.noContent = false;
-      state.mode = 'value';
-
-      // Returning "type", since next in stream is ":".
-      return styles.type;
-
-    case '/':
-
-      /*
-       * Possibly a comment, either multi line comment, or single line
-       * comment, but first checking next character before we determine if it
-       * is a comment or not.
-       */
-      stream.next();
-      if (stream.peek() === '/') {
-
-        // Single line comment.
-        state.indent = pos;
-        return parseSingleLineComment(stream);
-      } else if (stream.peek() === '*') {
-
-        // Multi line comment.
-        state.oldIndent = pos;
-        state.indent = pos + 1;
-        state.mode = 'mcomment';
-        return tokenizeMultiCommentMode(stream, state);
-      }
-
-      /*
-       * NOT any type of comment, just happens to be a name starting with "/",
-       * "fallthrough" to logic after switch.
-       */
-      break;
+  const special = tokenizeSpecialName(stream, state, pos, stream.peek());
+  if (special.done) {
+    return special.style;
   }
+  let cr = special.cr;
 
   /*
    * Not a string literal, neither multi line, nor single line. Neither is it
@@ -464,6 +371,7 @@ function tokenizeNameMode(stream: StringStream, state: HyperlambdaState): StyleN
    * Word is now the name of our node, checking how our while loop ended,
    * which can be either "end of line", or "switch to value mode".
    */
+  let retVal: StyleName | null = null;
   if (cr === ':') {
 
     /*
@@ -488,6 +396,113 @@ function tokenizeNameMode(stream: StringStream, state: HyperlambdaState): StyleN
 }
 
 /*
+ * Handles a name starting with a string literal, a multi line string literal,
+ * ":" or a comment. If it is none of those, it is an ordinary name, and what
+ * we have read of it so far is returned, to be continued by the caller.
+ */
+function tokenizeSpecialName(
+  stream: StringStream,
+  state: HyperlambdaState,
+  pos: number,
+  first: string | null | undefined,
+): { done: true; style: StyleName | null } | { done: false; cr: string | null | undefined } {
+  switch (first) {
+
+    case '"':
+
+      /*
+       * This is a single line string literal (hopefully, unless there's a bug
+       * in it), checking for indentation bugs first.
+       */
+      state.noContent = false;
+      stream.next();
+      if (checkIndentation(state, pos) === true) {
+        return { done: true, style: styles.error };
+      }
+
+      // Then parsing string literal.
+      return { done: true, style: parseSingleLineStringLiteral(stream, state) };
+
+    case '@': {
+
+      /*
+       * This is (possibly) a multi line string literal (hopefully, unless
+       * there's a bug in it). First checking for indentation bugs.
+       */
+      if (checkIndentation(state, pos) === true) {
+        return { done: true, style: styles.error };
+      }
+
+      /*
+       * Then fetching next character, to check for sure, whether or not this
+       * is a multi line string literal.
+       */
+      state.noContent = false;
+      stream.next();
+      const cr = (first ?? '') + (stream.next() ?? '');
+      if (cr === '@"') {
+        state.mode = 'mstring-name';
+        state.oldIndent = state.indent;
+        state.indent = 0;
+        return { done: true, style: tokenizeMultilineStringMode(stream, state, true) };
+      }
+
+      /*
+       * NOT a multi line string literal, just happens to be a name starting
+       * with "@", "fallthrough" to logic after switch.
+       */
+      return { done: false, cr };
+    }
+
+    case ':':
+
+      /*
+       * This is a node with an "empty" name, first checking indentation for
+       * bugs, WITHOUT removing ":" from stream.
+       */
+      if (checkIndentation(state, pos) === true) {
+        return { done: true, style: styles.error };
+      }
+
+      // Switching to "value" mode, and returning "type".
+      state.noContent = false;
+      state.mode = 'value';
+
+      // Returning "type", since next in stream is ":".
+      return { done: true, style: styles.type };
+
+    case '/':
+
+      /*
+       * Possibly a comment, either multi line comment, or single line
+       * comment, but first checking next character before we determine if it
+       * is a comment or not.
+       */
+      stream.next();
+      if (stream.peek() === '/') {
+
+        // Single line comment.
+        state.indent = pos;
+        return { done: true, style: parseSingleLineComment(stream) };
+      } else if (stream.peek() === '*') {
+
+        // Multi line comment.
+        state.oldIndent = pos;
+        state.indent = pos + 1;
+        state.mode = 'mcomment';
+        return { done: true, style: tokenizeMultiCommentMode(stream, state) };
+      }
+
+      /*
+       * NOT any type of comment, just happens to be a name starting with "/",
+       * "fallthrough" to logic after switch.
+       */
+      return { done: false, cr: first };
+  }
+  return { done: false, cr: first };
+}
+
+/*
  * Invoked when parser is parsing a "value" entity.
  */
 function tokenizeValueMode(stream: StringStream, state: HyperlambdaState): StyleName | null {
@@ -504,14 +519,8 @@ function tokenizeValueMode(stream: StringStream, state: HyperlambdaState): Style
     return parseLambdaExpression(stream);
   }
 
-  // Getting next token out of stream.
-  let cr = stream.next();
-
-  // Defaulting state to "value".
-  let retVal: StyleName | null = styles.value;
-
-  // Figuring out what type of value token this is.
-  switch (cr) {
+  // Getting next token out of stream, and figuring out what type of value token this is.
+  switch (stream.next()) {
 
     case '"':
 
@@ -522,27 +531,7 @@ function tokenizeValueMode(stream: StringStream, state: HyperlambdaState): Style
     case '@':
 
       // Possibly a multi line string literal, but we don't quite know yet!
-      cr = stream.peek();
-      if (cr === '"') {
-
-        // Multi line string literal.
-        stream.next();
-        state.mode = 'mstring-value';
-        state.oldIndent = state.indent;
-        state.indent = 0;
-        retVal = tokenizeMultilineStringMode(stream, state, false);
-      } else {
-
-        /*
-         * Just so happens to be a node who's value starts with "@", looping
-         * until "end of line", and returning value (default).
-         */
-        state.mode = 'name';
-        while (stream.next() != null) {
-          // do nothing
-        }
-      }
-      break;
+      return tokenizeValueStartingWithAt(stream, state);
 
     case ':':
 
@@ -550,61 +539,87 @@ function tokenizeValueMode(stream: StringStream, state: HyperlambdaState): Style
        * Possible "type carry over" from value tokenizer logic, we don't know
        * quite yet.
        */
-      retVal = styles.type;
       if (stream.peek() == null) {
         state.mode = 'name';
       }
-      break;
+      return styles.type;
 
     default:
-
-      /*
-       * Not any type of string literal, possibly either a type declaration,
-       * or a value. Need further examining before we know for sure. Looping
-       * until we see either a ":" or "end of line".
-       */
-      while (true) {
-
-        // Fetching next character out of stream.
-        cr = stream.next();
-        if (cr == null) {
-
-          // We're at "end of line", hence next mode is "name".
-          state.mode = 'name';
-          break;
-
-        } else if (cr === ':') {
-
-          /*
-           * Checking for type declaration, without value, which might occur
-           * in e.g. expressions.
-           */
-          if (stream.peek() == null) {
-            state.mode = 'name';
-            break;
-          }
-
-          /*
-           * End of "type declaration" for value of node, now checking if this
-           * particular type is a lambda expression or not. Expressions have
-           * special treatment.
-           */
-          if (stream.string.substring(stream.start, stream.pos - 1) === 'x') {
-            state.is_ex = true;
-          } // else, some arbitrary type, such as "bool", "int", etc ...
-
-          /*
-           * Return value for style of currently tokenized content is anyways
-           * a "type" declaration, regardless of whether or not it was an
-           * expression ...
-           */
-          retVal = styles.type;
-          break;
-        }
-      }
-      break;
+      return tokenizeTypeOrValue(stream, state);
   }
-  return retVal;
+}
+
+/*
+ * A value starting with "@", which is either a multi line string literal, or a
+ * value that just happens to start with "@".
+ */
+function tokenizeValueStartingWithAt(stream: StringStream, state: HyperlambdaState): StyleName | null {
+  if (stream.peek() === '"') {
+
+    // Multi line string literal.
+    stream.next();
+    state.mode = 'mstring-value';
+    state.oldIndent = state.indent;
+    state.indent = 0;
+    return tokenizeMultilineStringMode(stream, state, false);
+  }
+
+  /*
+   * Just so happens to be a node who's value starts with "@", looping
+   * until "end of line", and returning value (default).
+   */
+  state.mode = 'name';
+  while (stream.next() != null) {
+    // do nothing
+  }
+  return styles.value;
+}
+
+/*
+ * Not any type of string literal, possibly either a type declaration,
+ * or a value. Need further examining before we know for sure. Looping
+ * until we see either a ":" or "end of line".
+ */
+function tokenizeTypeOrValue(stream: StringStream, state: HyperlambdaState): StyleName | null {
+  while (true) {
+
+    // Fetching next character out of stream.
+    const cr = stream.next();
+    if (cr == null) {
+
+      // We're at "end of line", hence next mode is "name".
+      state.mode = 'name';
+      return styles.value;
+    }
+    if (cr !== ':') {
+      continue;
+    }
+
+    /*
+     * Checking for type declaration, without value, which might occur
+     * in e.g. expressions.
+     */
+    if (stream.peek() == null) {
+      state.mode = 'name';
+      return styles.value;
+    }
+
+    /*
+     * End of "type declaration" for value of node, now checking if this
+     * particular type is a lambda expression or not. Expressions have
+     * special treatment.
+     */
+    if (stream.string.substring(stream.start, stream.pos - 1) === 'x') {
+      state.is_ex = true;
+    } // else, some arbitrary type, such as "bool", "int", etc ...
+
+    /*
+     * Return value for style of currently tokenized content is anyways
+     * a "type" declaration, regardless of whether or not it was an
+     * expression ...
+     */
+    return styles.type;
+  }
 }
 
 /*

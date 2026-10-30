@@ -101,32 +101,37 @@ export default function Select(props: Readonly<{
     setActive(i);
   }
 
+  // Enter and Space either pick the highlighted option, or open the menu.
+  function activate() {
+    if (open && active >= 0) choose(options[active].value);
+    else openMenu();
+  }
+
+  // Type-ahead — jump to the next option whose label starts with the typed run.
+  function typeAhead(key: string) {
+    const now = Date.now();
+    typed.current.str = now - typed.current.at < 800 ? typed.current.str + key : key;
+    typed.current.at = now;
+    const q = typed.current.str.toLowerCase();
+    const hit = options.findIndex(o => !o.disabled && o.text.toLowerCase().startsWith(q));
+    if (hit < 0) return;
+    if (open) setActive(hit);
+    else choose(options[hit].value);
+  }
+
   function onKeyDown(e: React.KeyboardEvent) {
     if (props.disabled) return;
-    if (e.key === 'Escape') { setOpen(false); return; }
-    if (e.key === 'Enter' || (e.key === ' ' && !open)) {
+    if (e.key === 'Escape') {
+      setOpen(false);
+    } else if (e.key === 'Enter' || (e.key === ' ' && !open)) {
       e.preventDefault();
-      if (open && active >= 0) choose(options[active].value);
+      activate();
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (open) move(e.key === 'ArrowDown' ? 1 : -1);
       else openMenu();
-      return;
-    }
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (!open) { openMenu(); return; }
-      move(e.key === 'ArrowDown' ? 1 : -1);
-      return;
-    }
-    // Type-ahead — jump to the next option whose label starts with the typed run.
-    if (e.key.length === 1 && !e.metaKey && !e.ctrlKey) {
-      const now = Date.now();
-      typed.current.str = now - typed.current.at < 800 ? typed.current.str + e.key : e.key;
-      typed.current.at = now;
-      const q = typed.current.str.toLowerCase();
-      const hit = options.findIndex(o => !o.disabled && o.text.toLowerCase().startsWith(q));
-      if (hit >= 0) {
-        if (open) setActive(hit);
-        else choose(options[hit].value);
-      }
+    } else if (e.key.length === 1 && !e.metaKey && !e.ctrlKey) {
+      typeAhead(e.key);
     }
   }
 

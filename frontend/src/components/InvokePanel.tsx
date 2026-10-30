@@ -62,6 +62,15 @@ function samplePayload(endpoint: Endpoint) {
   return JSON.stringify(payload, null, 2).replace(/"__wildcard__"/g, '*');
 }
 
+function isValidJson(text: string) {
+  try {
+    JSON.parse(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function ArgumentField(props: Readonly<{
   argument: { name: string; type?: string };
   value: string;
@@ -256,6 +265,25 @@ export default function InvokePanel(props: Readonly<{
     void copyToClipboard(lines.join(' \\\n  '), 'The cURL command');
   }
 
+  // The arguments as a multipart form, with the files under their own part names.
+  function multipartForm() {
+    const form = new FormData();
+    for (const argument of formFields) {
+      const value = args[argument.name];
+      if (value !== undefined && value !== '') {
+        form.append(argument.name, value);
+      }
+    }
+    for (const argument of fileArgs) {
+      // Several files under the same part name — Magic's convention for
+      // endpoints accepting multiple files through one [file] argument.
+      for (const file of files[argument.name] ?? []) {
+        form.append(argument.name, file, file.name);
+      }
+    }
+    return form;
+  }
+
   async function invoke() {
     setBusy(true);
     setInvokeError('');
@@ -265,33 +293,15 @@ export default function InvokePanel(props: Readonly<{
       if (usesQuery) {
         url = queryUrl();
       } else if (isMultipart) {
-        const form = new FormData();
-        for (const argument of formFields) {
-          const value = args[argument.name];
-          if (value !== undefined && value !== '') {
-            form.append(argument.name, value);
-          }
-        }
-        for (const argument of fileArgs) {
-          // Several files under the same part name — Magic's convention for
-          // endpoints accepting multiple files through one [file] argument.
-          for (const file of files[argument.name] ?? []) {
-            form.append(argument.name, file, file.name);
-          }
-        }
-        body = form;
+        body = multipartForm();
       } else {
         // Wildcard (*) placeholders make the sample payload deliberately
         // invalid — catch it here and push the burden back to the user.
-        if (consumesJson) {
-          try {
-            JSON.parse(payload);
-          } catch {
-            setInvokeError(
-              'The payload is not valid JSON — replace the * wildcard arguments ' +
-              'with real values (objects, lists or scalars), or remove them.');
-            return;
-          }
+        if (consumesJson && !isValidJson(payload)) {
+          setInvokeError(
+            'The payload is not valid JSON — replace the * wildcard arguments ' +
+            'with real values (objects, lists or scalars), or remove them.');
+          return;
         }
         body = payload;
       }

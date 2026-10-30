@@ -551,6 +551,19 @@ export default function WebDesigner() {
    * feeding it to the parser would produce a document made of nothing.
    */
   async function switchView(next: string) {
+    // Asked before anything else happens, because the answer may be to stay
+    // put, and the transitions below have side effects worth not having.
+    if (!await confirmLeavingForLive(next)) {
+      return;
+    }
+    const current = docRef.current;
+    applyCodeEdits(current, next);
+    enterCodeView(current, next);
+    setView(next);
+  }
+
+  // Whether to go on, which is only in question when walking into Live with unsaved work.
+  async function confirmLeavingForLive(next: string): Promise<boolean> {
     /*
      * Live is the only view that does not show the document being edited: it
      * loads the page from its real URL, which is the file as it stands on
@@ -574,13 +587,17 @@ export default function WebDesigner() {
       });
       // Dismissing the dialog is not a decision to go anywhere.
       if (answer === null || answer === 'stay') {
-        return;
+        return false;
       }
       if (answer === 'save' && !await save()) {
-        return;
+        return false;
       }
     }
-    const current = docRef.current;
+    return true;
+  }
+
+  // Leaving the code view applies what was typed there, to the stylesheet or to the page.
+  function applyCodeEdits(current: Document | null | undefined, next: string) {
     /*
      * Leaving the code view with hand-edited CSS feeds it back the other way,
      * so the Style panel is looking at the same stylesheet you were just
@@ -622,6 +639,10 @@ export default function WebDesigner() {
       setHovered(null);
       setDirty(true);
     }
+  }
+
+  // Entering the code view loads what it is going to edit.
+  function enterCodeView(current: Document | null | undefined, next: string) {
     /*
      * Entering the code view loads the page — unless a stylesheet was already
      * open, in which case that draft is left exactly where it was rather than
@@ -662,7 +683,6 @@ export default function WebDesigner() {
           'you see and drops them — save from the design view first to keep both.', true);
       }
     }
-    setView(next);
   }
 
   /*
@@ -1675,26 +1695,42 @@ export default function WebDesigner() {
       remove();
     } else if (event.key === 'Escape') {
       setSelected(null);
-    } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'c') {
-      event.preventDefault();
-      copy();
-    } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'x') {
-      event.preventDefault();
-      cut();
-    } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'v') {
-      event.preventDefault();
-      paste();
-    } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
-      event.preventDefault();
-      // Shift is redo, as it is in every editor.
-      if (event.shiftKey) {
-        redo();
-      } else {
-        undo();
-      }
-    } else if ((event.metaKey || event.ctrlKey) && event.key === 's') {
-      event.preventDefault();
-      void save();
+    } else if (event.metaKey || event.ctrlKey) {
+      onShortcut(event);
+    }
+  }
+
+  // Copy, cut, paste, undo, redo and save.
+  function onShortcut(event: KeyboardEvent) {
+    switch (event.key.toLowerCase()) {
+      case 'c':
+        event.preventDefault();
+        copy();
+        break;
+      case 'x':
+        event.preventDefault();
+        cut();
+        break;
+      case 'v':
+        event.preventDefault();
+        paste();
+        break;
+      case 'z':
+        event.preventDefault();
+        // Shift is redo, as it is in every editor.
+        if (event.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+        break;
+      case 's':
+        // Notice, only the lower case key saves.
+        if (event.key === 's') {
+          event.preventDefault();
+          void save();
+        }
+        break;
     }
   }
 

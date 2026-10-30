@@ -283,79 +283,7 @@ export default function ChatDrawer(props: Readonly<{
         notifyChatOpsDone();
       }
     }
-    setMessages(current => {
-      const next = [...current];
-      let last = next[next.length - 1];
-      if (last?.role !== 'assistant') {
-        // Nothing to attach status-only chunks to — don't invent a bubble.
-        if (!chunk.message && !chunk.html && !(chunk.ticket && chunk.filename) &&
-            !chunk.function_waiting && !chunk.function_result && !chunk.function_error) {
-          return current;
-        }
-        last = { role: 'assistant', segments: [] };
-        next.push(last);
-      } else {
-        last = { ...last, segments: [...last.segments] };
-        next[next.length - 1] = last;
-      }
-      const segments = last.segments;
-
-      // Every field a chunk carries is processed — never one at the expense of another.
-      if (chunk.message) {
-        const tail = segments[segments.length - 1];
-        if (tail?.kind === 'text') {
-          segments[segments.length - 1] = { kind: 'text', text: tail.text + chunk.message };
-        } else {
-          segments.push({ kind: 'text', text: chunk.message });
-        }
-      }
-      if (chunk.function_waiting) {
-        segments.push({ kind: 'function', state: 'waiting' });
-      }
-      if (chunk.function_result || chunk.function_error) {
-        const state = chunk.function_error ? 'error' : 'success';
-        // Trimmed — the server's payloads arrive with leading whitespace.
-        const detail = [prettyJson(chunk.invocation), chunk.function_error]
-          .map(part => part?.trim())
-          .filter(Boolean).join('\n\n');
-        const waiting = segments.findIndex(
-          segment => segment.kind === 'function' && segment.state === 'waiting');
-        const resolved: Segment = {
-          kind: 'function',
-          state,
-          file: chunk.file?.trim(),
-          detail: detail || undefined,
-        };
-        if (waiting === -1) {
-          segments.push(resolved);
-        } else {
-          segments[waiting] = resolved;
-        }
-      }
-      if (chunk.ticket && chunk.filename) {
-        segments.push({
-          kind: 'download',
-          url: chatDownloadUrl(chunk.ticket, chunk.filename),
-          filename: chunk.filename,
-        });
-      }
-      if (chunk.html) {
-        segments.push({ kind: 'html', html: chunk.html });
-      }
-      if (done) {
-        // A spinner must not outlive the conversation — resolve dangling pills.
-        segments.forEach((segment, index) => {
-          if (segment.kind === 'function' && segment.state === 'waiting') {
-            // The name never arrived, so the pill keeps its generic wording.
-            segments[index] = {
-              kind: 'function',
-              state: chunk.error ? 'error' : 'success',
-            };
-          }
-        });
-      }
-      return next;
-    });
+    setMessages(current => applyChunk(current, chunk, done));
   }
 
   // Chunk handler behind a ref, so the socket subscription never goes stale.
@@ -650,6 +578,97 @@ function FileTile(props: Readonly<{ name: string; size: number; url?: string; on
       <span className="chat-tile-size">{formatSize(props.size)}</span>
     </div>
   );
+}
+
+// Whether a chunk carries anything to put in a bubble, as opposed to only status.
+function hasContent(chunk: ChatChunk) {
+  return !!chunk.message || !!chunk.html || !!(chunk.ticket && chunk.filename) ||
+    !!chunk.function_waiting || !!chunk.function_result || !!chunk.function_error;
+}
+
+// Adds to the text the assistant is already writing, or starts a new run of text.
+function appendText(segments: Segment[], message: string) {
+  const tail = segments[segments.length - 1];
+  if (tail?.kind === 'text') {
+    segments[segments.length - 1] = { kind: 'text', text: tail.text + message };
+  } else {
+    segments.push({ kind: 'text', text: message });
+  }
+}
+
+// Turns the pill of the function that was waiting into its outcome, or adds the outcome as a new pill.
+function resolveFunction(segments: Segment[], chunk: ChatChunk) {
+  const state = chunk.function_error ? 'error' : 'success';
+  // Trimmed — the server's payloads arrive with leading whitespace.
+  const detail = [prettyJson(chunk.invocation), chunk.function_error]
+    .map(part => part?.trim())
+    .filter(Boolean).join('\n\n');
+  const waiting = segments.findIndex(
+    segment => segment.kind === 'function' && segment.state === 'waiting');
+  const resolved: Segment = {
+    kind: 'function',
+    state,
+    file: chunk.file?.trim(),
+    detail: detail || undefined,
+  };
+  if (waiting === -1) {
+    segments.push(resolved);
+  } else {
+    segments[waiting] = resolved;
+  }
+}
+
+// A spinner must not outlive the conversation — resolves dangling pills.
+function settleWaiting(segments: Segment[], failed: boolean) {
+  segments.forEach((segment, index) => {
+    if (segment.kind === 'function' && segment.state === 'waiting') {
+      // The name never arrived, so the pill keeps its generic wording.
+      segments[index] = { kind: 'function', state: failed ? 'error' : 'success' };
+    }
+  });
+}
+
+// The messages once the chunk has been processed.
+function applyChunk(current: ChatMessage[], chunk: ChatChunk, done: boolean): ChatMessage[] {
+  const next = [...current];
+  let last = next[next.length - 1];
+  if (last?.role !== 'assistant') {
+    // Nothing to attach status-only chunks to — don't invent a bubble.
+    if (!hasContent(chunk)) {
+      return current;
+    }
+    last = { role: 'assistant', segments: [] };
+    next.push(last);
+  } else {
+    last = { ...last, segments: [...last.segments] };
+    next[next.length - 1] = last;
+  }
+  const segments = last.segments;
+
+  // Every field a chunk carries is processed — never one at the expense of another.
+  if (chunk.message) {
+    appendText(segments, chunk.message);
+  }
+  if (chunk.function_waiting) {
+    segments.push({ kind: 'function', state: 'waiting' });
+  }
+  if (chunk.function_result || chunk.function_error) {
+    resolveFunction(segments, chunk);
+  }
+  if (chunk.ticket && chunk.filename) {
+    segments.push({
+      kind: 'download',
+      url: chatDownloadUrl(chunk.ticket, chunk.filename),
+      filename: chunk.filename,
+    });
+  }
+  if (chunk.html) {
+    segments.push({ kind: 'html', html: chunk.html });
+  }
+  if (done) {
+    settleWaiting(segments, !!chunk.error);
+  }
+  return next;
 }
 
 /*

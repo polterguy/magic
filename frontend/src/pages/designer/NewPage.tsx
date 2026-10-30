@@ -82,7 +82,7 @@ export function urlProblem(url: string, taken: string[]): string | null {
 
 // A readable title from the last step of the URL: "/docs/api-keys" → "Api keys".
 function titleFor(url: string) {
-  const last = tidyUrl(url).split('/').findLast(Boolean) ?? 'Home';
+  const last = tidyUrl(url).split('/').filter(Boolean).pop() ?? 'Home';
   const words = last.replace(/[-_]+/g, ' ');
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
@@ -114,6 +114,29 @@ export function blankPage(url: string, companions: { css?: boolean; js?: boolean
     '</html>\n';
 }
 
+// What will happen on Create, or what is wrong with the address typed.
+function NewPageNote(props: Readonly<{
+  url: string;
+  problem: ReturnType<typeof urlProblem>;
+  blank: boolean;
+  addCss: boolean;
+  addJs: boolean;
+}>) {
+  const { url, problem, blank, addCss, addJs } = props;
+  if (url.trim() === '') {
+    return <p className="designer-note">The address the page will be served at — type / for the site’s own home page.</p>;
+  }
+  if (problem) {
+    return <p className="designer-note">{problem}</p>;
+  }
+  return (
+    <p className="designer-note">
+      Creates <code>{fileForUrl(url)}</code>, served at <code>{tidyUrl(url)}</code>.
+      {blank && (addCss || addJs) && <> And <code>{tidyUrl(url)}{addCss ? '.css' : ''}{addCss && addJs ? ' / ' : ''}{addJs ? '.js' : ''}</code>, linked from it.</>}
+    </p>
+  );
+}
+
 export default function NewPage(props: Readonly<{
   // Canonical URLs already in use, so a collision is refused before writing.
   taken: string[];
@@ -137,7 +160,6 @@ export default function NewPage(props: Readonly<{
   const [addCss, setAddCss] = useState(true);
   const [addJs, setAddJs] = useState(true);
   const problem = urlProblem(url, props.taken);
-  const touched = url.trim() !== '';
   // A copy brings its own files, if it has any — these are for a blank page only.
   const blank = copyFrom === '';
 
@@ -184,16 +206,7 @@ export default function NewPage(props: Readonly<{
           </label>
         )}
 
-        <p className="designer-note">
-          {touched && problem
-            ? problem
-            : touched
-              ? <>
-                  Creates <code>{fileForUrl(url)}</code>, served at <code>{tidyUrl(url)}</code>.
-                  {blank && (addCss || addJs) && <> And <code>{tidyUrl(url)}{addCss ? '.css' : ''}{addCss && addJs ? ' / ' : ''}{addJs ? '.js' : ''}</code>, linked from it.</>}
-                </>
-              : 'The address the page will be served at — type / for the site’s own home page.'}
-        </p>
+        <NewPageNote url={url} problem={problem} blank={blank} addCss={addCss} addJs={addJs} />
       </div>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onCancel}>Cancel</button>

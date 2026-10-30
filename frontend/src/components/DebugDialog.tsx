@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState } from 'react';
 import CodeEditor from './CodeEditor';
 import { Modal } from './Dialogs';
-import type { DebugRecording } from '../lib/api';
+import type { DebugRecording, DebugStep } from '../lib/api';
 
 /*
  * Height of both panes. One constant rather than two numbers, since the step
@@ -154,46 +154,15 @@ export default function DebugDialog(props: Readonly<{
             */}
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
 
-            {/* The steps themselves, newest work at the bottom, as they ran. */}
-            <div
-              className="card"
-              style={{ padding: 0, overflow: 'auto', height: PANE_HEIGHT, flex: '0 0 300px' }}>
-              <table className="compact-table debug-steps">
-                <thead>
-                  <tr>
-                    <th style={{ width: 42 }}>#</th>
-                    <th>Slot</th>
-                    <th style={{ width: 60 }}>ms</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {steps.map((step, idx) => (
-                    <tr
-                      key={idx}
-                      ref={idx === index ? currentRow : undefined}
-                      className={'clickable'
-                        + (idx === index ? ' current' : '')
-                        + (idx === errorIndex ? ' failed' : '')}
-                      onClick={() => setIndex(idx)}>
-                      <td className="mono muted">{idx + 1}</td>
-                      <td className="mono">{step.slot}</td>
-                      <td className="mono muted">{step.elapsed}</td>
-                    </tr>
-                  ))}
-                  {/* The outcome, sitting where the execution actually ended. */}
-                  {hasReturn && (
-                    <tr
-                      ref={onReturn ? currentRow : undefined}
-                      className={'clickable returned' + (onReturn ? ' current' : '')}
-                      onClick={() => setIndex(returnIndex)}>
-                      <td className="mono muted">↩</td>
-                      <td className="mono">returned</td>
-                      <td />
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <StepTable
+              steps={steps}
+              index={index}
+              errorIndex={errorIndex}
+              hasReturn={hasReturn}
+              onReturn={onReturn}
+              returnIndex={returnIndex}
+              currentRow={currentRow}
+              onSelect={setIndex} />
 
             {/*
               * The whole lambda, as it looked after the selected step ran. No
@@ -202,23 +171,11 @@ export default function DebugDialog(props: Readonly<{
               * same fact only cost the editor the height to say it.
               */}
             <div style={{ flex: '1 1 auto', minWidth: 0 }}>
-              <CodeEditor
-                /*
-                 * The same pane in both modes rather than a second component -
-                 * one keystroke separates the final lambda from the value it
-                 * produced, and comparing them is the point.
-                 */
-                value={onReturn
-                  ? JSON.stringify(returned, null, 2)
-                  : (current.lambda ?? '')}
-                mode={onReturn ? 'application/json' : 'hyperlambda'}
-                readOnly
-                lineNumbers={false}
-                highlightLine={onReturn
-                  ? -1
-                  : verifiedLine(current.lambda ?? '', current.path, current.slot)}
-                highlightClass={index === errorIndex ? 'cm-error-step' : 'cm-current-step'}
-                height={PANE_HEIGHT + 'px'} />
+              <LambdaPane
+                onReturn={onReturn}
+                returned={returned}
+                current={current}
+                failed={index === errorIndex} />
             </div>
           </div>
         </>
@@ -227,6 +184,94 @@ export default function DebugDialog(props: Readonly<{
         <button className="btn" onClick={props.onClose}>Close</button>
       </div>
     </Modal>
+  );
+}
+
+// The steps themselves, newest work at the bottom, as they ran.
+function StepTable(props: Readonly<{
+  steps: DebugRecording['steps'];
+  index: number;
+  errorIndex: number;
+  hasReturn: boolean;
+  onReturn: boolean;
+  returnIndex: number;
+  currentRow: React.RefObject<HTMLTableRowElement>;
+  onSelect: (index: number) => void;
+}>) {
+  const { steps, index, errorIndex, onReturn, returnIndex, currentRow } = props;
+  return (
+    <div
+      className="card"
+      style={{ padding: 0, overflow: 'auto', height: PANE_HEIGHT, flex: '0 0 300px' }}>
+      <table className="compact-table debug-steps">
+        <thead>
+          <tr>
+            <th style={{ width: 42 }}>#</th>
+            <th>Slot</th>
+            <th style={{ width: 60 }}>ms</th>
+          </tr>
+        </thead>
+        <tbody>
+          {(steps ?? []).map((step, idx) => (
+            <tr
+              key={idx}
+              ref={idx === index ? currentRow : undefined}
+              className={'clickable'
+                + (idx === index ? ' current' : '')
+                + (idx === errorIndex ? ' failed' : '')}
+              onClick={() => props.onSelect(idx)}>
+              <td className="mono muted">{idx + 1}</td>
+              <td className="mono">{step.slot}</td>
+              <td className="mono muted">{step.elapsed}</td>
+            </tr>
+          ))}
+          {/* The outcome, sitting where the execution actually ended. */}
+          {props.hasReturn && (
+            <tr
+              ref={onReturn ? currentRow : undefined}
+              className={'clickable returned' + (onReturn ? ' current' : '')}
+              onClick={() => props.onSelect(returnIndex)}>
+              <td className="mono muted">↩</td>
+              <td className="mono">returned</td>
+              <td />
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/*
+ * The whole lambda, as it looked after the selected step ran. No
+ * caption above it — the step list already says which step is
+ * selected, and the heading counts it, so a third statement of the
+ * same fact only cost the editor the height to say it.
+ *
+ * The same pane in both modes rather than a second component -
+ * one keystroke separates the final lambda from the value it
+ * produced, and comparing them is the point.
+ */
+function LambdaPane(props: Readonly<{
+  onReturn: boolean;
+  returned: any;
+  current: DebugStep;
+  failed: boolean;
+}>) {
+  const { onReturn, returned, current } = props;
+  return (
+    <CodeEditor
+      value={onReturn
+        ? JSON.stringify(returned, null, 2)
+        : (current.lambda ?? '')}
+      mode={onReturn ? 'application/json' : 'hyperlambda'}
+      readOnly
+      lineNumbers={false}
+      highlightLine={onReturn
+        ? -1
+        : verifiedLine(current.lambda ?? '', current.path, current.slot)}
+      highlightClass={props.failed ? 'cm-error-step' : 'cm-current-step'}
+      height={PANE_HEIGHT + 'px'} />
   );
 }
 
@@ -268,39 +313,40 @@ function lineOfPath(lambda: string, path: string) {
   const lines = lambda.split('\n');
   const targets = path.split('.').map(Number);
   let cursor = 0;
-  let depth = 0;
   let found = -1;
-  for (const target of targets) {
-    let seen = -1;
-    let matched = false;
-    for (; cursor < lines.length; cursor++) {
-      const raw = lines[cursor];
-      if (raw.trim() === '') {
-        continue;
-      }
-      const indent = (raw.length - raw.replace(/^ +/, '').length) / 3;
-      if (indent < depth) {
-        break;
-      }
-      if (indent === depth) {
-        seen += 1;
-        if (seen === target) {
-          found = cursor;
-          cursor += 1;
-          depth += 1;
-          matched = true;
-          break;
-        }
-      }
-      // A value's own verbatim string may carry literal newlines - jump past its
-      // closing line so those lines are never recounted as siblings of their own.
-      cursor = skipVerbatimString(lines, cursor);
-    }
-    if (!matched) {
+  for (let depth = 0; depth < targets.length; depth++) {
+    found = findSibling(lines, cursor, depth, targets[depth]);
+    if (found < 0) {
       return -1;
     }
+    cursor = found + 1;
   }
   return found;
+}
+
+// The line of the target'th node at the given depth, from the cursor onwards, or -1.
+function findSibling(lines: string[], from: number, depth: number, target: number) {
+  let seen = -1;
+  for (let cursor = from; cursor < lines.length; cursor++) {
+    const raw = lines[cursor];
+    if (raw.trim() === '') {
+      continue;
+    }
+    const indent = (raw.length - raw.replace(/^ +/, '').length) / 3;
+    if (indent < depth) {
+      break;
+    }
+    if (indent === depth) {
+      seen += 1;
+      if (seen === target) {
+        return cursor;
+      }
+    }
+    // A value's own verbatim string may carry literal newlines - jump past its
+    // closing line so those lines are never recounted as siblings of their own.
+    cursor = skipVerbatimString(lines, cursor);
+  }
+  return -1;
 }
 
 /*
