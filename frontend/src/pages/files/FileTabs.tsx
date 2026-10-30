@@ -12,12 +12,22 @@ export default function FileTabs(props: {
   onClose: (path: string) => void;
 }) {
   return (
-    <div className="file-tabs">
+    <div className="file-tabs" role="tablist">
       {props.openFiles.map(file => (
         <div
           key={file.path}
           className={'file-tab' + (file.path === props.selectedFile ? ' active' : '')}
           title={file.path}
+          role="tab"
+          aria-selected={file.path === props.selectedFile}
+          tabIndex={0}
+          onKeyDown={event => {
+            // Not when the key was meant for the close button inside the tab.
+            if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
+              event.preventDefault();
+              props.onSelect(file.path);
+            }
+          }}
           onClick={() => props.onSelect(file.path)}>
           <span className="file-tab-name">
             {nameOf(file.path)}

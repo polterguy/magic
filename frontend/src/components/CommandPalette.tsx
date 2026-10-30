@@ -297,6 +297,10 @@ export default function CommandPalette(props: {
           <span className="palette-prompt" aria-hidden="true">&gt;</span>
           <input
             ref={inputRef}
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="palette-list"
+            aria-activedescendant={matches.length > 0 ? 'palette-option-' + selected : undefined}
             autoFocus
             type="text"
             placeholder="Jump to a page, file, endpoint, task or model…"
@@ -304,7 +308,7 @@ export default function CommandPalette(props: {
             onChange={event => { setQuery(event.target.value); setSelected(0); }}
             onKeyDown={onKeyDown} />
         </div>
-        <div className="palette-list" ref={listRef}>
+        <div className="palette-list" id="palette-list" role="listbox" ref={listRef}>
           {matches.length === 0 && (
             <div className="palette-empty">Nothing matches</div>
           )}
@@ -312,9 +316,12 @@ export default function CommandPalette(props: {
             const header = command.group !== previousGroup ? command.group : null;
             previousGroup = command.group;
             return (
-              <div key={command.group + command.label + index}>
+              <div key={command.group + command.label + index} role="presentation">
                 {header && <div className="palette-group">{header}</div>}
                 <div
+                  id={'palette-option-' + index}
+                  role="option"
+                  aria-selected={index === selected}
                   className={'palette-row' + (index === selected ? ' selected' : '')}
                   onMouseMove={() => setSelected(index)}
                   onClick={() => run(command)}>

@@ -990,6 +990,20 @@ export default function Files() {
         </div>
         <div
           className="splitter"
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize the file tree"
+          aria-valuemin={220}
+          aria-valuemax={640}
+          aria-valuenow={treeWidth}
+          tabIndex={0}
+          onKeyDown={event => {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+              event.preventDefault();
+              const step = event.key === 'ArrowRight' ? 16 : -16;
+              setTreeWidth(width => Math.max(220, Math.min(640, width + step)));
+            }
+          }}
           onMouseDown={event => {
             event.preventDefault();
             const startX = event.clientX;
