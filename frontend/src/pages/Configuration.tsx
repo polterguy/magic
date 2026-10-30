@@ -4,7 +4,7 @@ import CodeEditor from '../components/CodeEditor';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import Select from '../components/Select';
 import { Modal } from '../components/Dialogs';
-import { MenuIcon } from '../components/Icons';
+import Menu from './designer/Menu';
 import { downloadBlob } from '../components/ResultViewer';
 import { downloadFileRaw, http, loadConfig, saveConfig, uploadFile } from '../lib/api';
 
@@ -21,7 +21,6 @@ export default function Configuration() {
   const [recaptchaOpen, setRecaptchaOpen] = useState(false);
   const [gitOpen, setGitOpen] = useState(false);
   const [openidOpen, setOpenidOpen] = useState(false);
-  const [toolsOpen, setToolsOpen] = useState(false);
   const uploadInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -101,46 +100,18 @@ export default function Configuration() {
             * The individual settings dialogs and backup actions live in one
             * hamburger menu — six buttons crowded the header.
             */}
-          <div style={{ position: 'relative' }}>
-            <button
-              className="btn btn-secondary"
-              aria-haspopup="menu"
-              aria-expanded={toolsOpen}
-              title="Settings dialogs and backup"
-              onClick={() => setToolsOpen(!toolsOpen)}>
-              <MenuIcon />
-            </button>
-            {toolsOpen && (
-              <>
-                <div
-                  role="presentation"
-                  style={{ position: 'fixed', inset: 0, zIndex: 2000001 }}
-                  onClick={() => setToolsOpen(false)} />
-                <ul
-                  className="select-menu"
-                  role="menu"
-                  style={{ position: 'absolute', right: 0, top: '100%', marginTop: 4, minWidth: 220 }}>
-                  {[
-                    { label: 'SMTP', act: () => setSmtpOpen(true) },
-                    { label: 'OpenAI', act: () => setOpenaiOpen(true) },
-                    { label: 'reCAPTCHA', act: () => setRecaptchaOpen(true) },
-                    { label: 'OpenID', act: () => setOpenidOpen(true) },
-                    { label: 'Git', act: () => setGitOpen(true) },
-                    { label: 'Download backup', act: downloadBackup },
-                    { label: 'Upload backup', act: () => uploadInput.current?.click() },
-                  ].map(item => (
-                    <li
-                      key={item.label}
-                      className="select-option"
-                      role="menuitem"
-                      onClick={() => { setToolsOpen(false); item.act(); }}>
-                      {item.label}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
+          <Menu
+            title="Settings dialogs and backup"
+            className="btn btn-secondary"
+            items={[
+              { label: 'SMTP', onClick: () => setSmtpOpen(true) },
+              { label: 'OpenAI', onClick: () => setOpenaiOpen(true) },
+              { label: 'reCAPTCHA', onClick: () => setRecaptchaOpen(true) },
+              { label: 'OpenID', onClick: () => setOpenidOpen(true) },
+              { label: 'Git', onClick: () => setGitOpen(true) },
+              { label: 'Download backup', onClick: downloadBackup },
+              { label: 'Upload backup', onClick: () => uploadInput.current?.click() },
+            ]} />
           <input
             ref={uploadInput}
             type="file"
