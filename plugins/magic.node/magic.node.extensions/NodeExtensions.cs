@@ -56,7 +56,7 @@ namespace magic.node.extensions
             {
                 if (node.Value != null)
                 {
-                    if (node.Value.GetType() == typeof(string) && ((string)node.Value) == "false")
+                    if (node.Value is string text && text == "false")
                         return (T)(object)false;
                     if (IsNumber(node.Value) && Convert.ToDouble(node.Value) == 0D)
                         return (T)(object)false;

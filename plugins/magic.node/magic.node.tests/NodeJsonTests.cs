@@ -120,26 +120,28 @@ namespace magic.node.tests
             Assert.Equal("{\"v\":" + expected + "}", NodeJson.ToJson(node));
         }
 
-        public static IEnumerable<object[]> Values()
+        public static TheoryData<object, string> Values()
         {
-            yield return new object[] { (int)5, "5" };
-            yield return new object[] { (short)-5, "-5" };
-            yield return new object[] { (sbyte)-1, "-1" };
-            yield return new object[] { (byte)200, "200" };
-            yield return new object[] { (ushort)65535, "65535" };
-            yield return new object[] { (uint)4000000000, "4000000000" };
-            yield return new object[] { ulong.MaxValue, "18446744073709551615" };
-            yield return new object[] { BigInteger.Pow(10, 30), "1000000000000000000000000000000" };
-            yield return new object[] { 1.5f, "1.5" };
-            yield return new object[] { 2.25m, "2.25" };
-            yield return new object[] { Colour.Green, "2" };
-            yield return new object[] { false, "false" };
-            yield return new object[] { DBNull.Value, "null" };
-            yield return new object[] { new byte[] { 1, 2, 3 }, "\"AQID\"" };
-            yield return new object[] { Guid.Parse("11111111-2222-3333-4444-555555555555"), "\"11111111-2222-3333-4444-555555555555\"" };
-            yield return new object[] { new Uri("https://ainiro.io/x"), "\"https://ainiro.io/x\"" };
-            yield return new object[] { new TimeSpan(1, 2, 3), "\"01:02:03\"" };
-            yield return new object[] { "quote \" and \\ and \n", "\"quote \\\" and \\\\ and \\n\"" };
+            var data = new TheoryData<object, string>();
+            data.Add((int)5, "5");
+            data.Add((short)-5, "-5");
+            data.Add((sbyte)-1, "-1");
+            data.Add((byte)200, "200");
+            data.Add((ushort)65535, "65535");
+            data.Add((uint)4000000000, "4000000000");
+            data.Add(ulong.MaxValue, "18446744073709551615");
+            data.Add(BigInteger.Pow(10, 30), "1000000000000000000000000000000");
+            data.Add(1.5f, "1.5");
+            data.Add(2.25m, "2.25");
+            data.Add(Colour.Green, "2");
+            data.Add(false, "false");
+            data.Add(DBNull.Value, "null");
+            data.Add(new byte[] { 1, 2, 3 }, "\"AQID\"");
+            data.Add(Guid.Parse("11111111-2222-3333-4444-555555555555"), "\"11111111-2222-3333-4444-555555555555\"");
+            data.Add(new Uri("https://ainiro.io/x"), "\"https://ainiro.io/x\"");
+            data.Add(new TimeSpan(1, 2, 3), "\"01:02:03\"");
+            data.Add("quote \" and \\ and \n", "\"quote \\\" and \\\\ and \\n\"");
+            return data;
         }
 
         [Fact]
@@ -211,12 +213,12 @@ namespace magic.node.tests
         public void ObjectBecomesNamedChildren()
         {
             var node = Parse("{\"a\":1,\"b\":\"x\",\"c\":{\"d\":true},\"e\":[null,2]}");
-            Assert.Equal(new[] { "a", "b", "c", "e" }, node.Children.Select(x => x.Name).ToArray());
+            Assert.Equal<string>(["a", "b", "c", "e"], node.Children.Select(x => x.Name).ToArray());
             Assert.Equal(1L, node.Children.First().Value);
             Assert.Equal("x", node.Children.Skip(1).First().Value);
-            Assert.Equal(true, node.Children.Skip(2).First().Children.First().Value);
+            Assert.True((bool)node.Children.Skip(2).First().Children.First().Value);
             var array = node.Children.Last();
-            Assert.Equal(new[] { ".", "." }, array.Children.Select(x => x.Name).ToArray());
+            Assert.Equal<string>([".", "."], array.Children.Select(x => x.Name).ToArray());
             Assert.Null(array.Children.First().Value);
             Assert.Equal(2L, array.Children.Last().Value);
         }
@@ -346,7 +348,7 @@ namespace magic.node.tests
             var obj = NodeJson.ParseObject("{\"a\":1,\"b\":[1,{\"c\":\"x\"}],\"d\":{\"e\":null},\"f\":1.5,\"g\":false}");
             Assert.Equal(1L, obj["a"]);
             Assert.Equal(1.5, obj["f"]);
-            Assert.Equal(false, obj["g"]);
+            Assert.False((bool)obj["g"]);
             Assert.Null(((Dictionary<string, object>)obj["d"])["e"]);
             var list = (List<object>)obj["b"];
             Assert.Equal("x", ((Dictionary<string, object>)list[1])["c"]);
@@ -375,9 +377,9 @@ namespace magic.node.tests
             var json = NodeJson.Reformat("{\"a\":[1,2],\"b\":{\"c\":\"x\"},\"d\":null,\"e\":true,\"f\":1.5}");
             Assert.Contains("\n", json);
             Assert.Contains("  \"a\": [", json);
-            Assert.Equal(
-                NodeJson.ParseObject(json).Keys.ToArray(),
-                new[] { "a", "b", "d", "e", "f" });
+            Assert.Equal<string>(
+                ["a", "b", "d", "e", "f"],
+                NodeJson.ParseObject(json).Keys.ToArray());
         }
 
         [Fact]

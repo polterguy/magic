@@ -50,7 +50,7 @@ foo:1
 
             target.MoveChildrenFrom(source);
 
-            Assert.Equal(new[] { "a", "1", "2", "3" }, target.Children.Select(x => x.Name).ToArray());
+            Assert.Equal<string>(["a", "1", "2", "3"], target.Children.Select(x => x.Name).ToArray());
         }
 
         [Fact]
@@ -105,7 +105,7 @@ foo:1
 
             node.MoveChildrenFrom(node);
 
-            Assert.Equal(new[] { "1", "2" }, node.Children.Select(x => x.Name).ToArray());
+            Assert.Equal<string>(["1", "2"], node.Children.Select(x => x.Name).ToArray());
         }
 
         [Fact]
@@ -119,8 +119,8 @@ foo:1
             target.Add(new Node("2"));
             source.Add(new Node("3"));
 
-            Assert.Equal(new[] { "1", "2" }, target.Children.Select(x => x.Name).ToArray());
-            Assert.Equal(new[] { "3" }, source.Children.Select(x => x.Name).ToArray());
+            Assert.Equal<string>(["1", "2"], target.Children.Select(x => x.Name).ToArray());
+            Assert.Equal<string>(["3"], source.Children.Select(x => x.Name).ToArray());
         }
 
         [Fact]

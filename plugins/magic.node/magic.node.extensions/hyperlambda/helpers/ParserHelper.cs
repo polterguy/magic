@@ -77,7 +77,7 @@ namespace magic.node.extensions.hyperlambda.internals
             while (true)
             {
                 var line = reader.ReadLine();
-                var trimmed = line.TrimStart(new char[] { ' ' }).Trim();
+                var trimmed = line.TrimStart(' ').Trim();
                 if (trimmed.StartsWith("* ", StringComparison.Ordinal))
                     trimmed = trimmed[2..];
                 else if (trimmed.StartsWith('*'))

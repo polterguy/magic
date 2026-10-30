@@ -59,10 +59,10 @@ namespace magic.lambda.io.tests
         {
             var result = Search("   pattern:world");
             Assert.Null(result.Value);
-            Assert.Equal(new[] { "a.txt", "b.hl", "c.txt" }, Files(result));
-            Assert.Equal(new[] { 1 }, Lines(result, "a.txt"));
-            Assert.Equal(new[] { 1, 2 }, Lines(result, "b.hl"));
-            Assert.Equal(new[] { 2 }, Lines(result, "c.txt"));
+            Assert.Equal<string>(["a.txt", "b.hl", "c.txt"], Files(result));
+            Assert.Equal<int>([1], Lines(result, "a.txt"));
+            Assert.Equal<int>([1, 2], Lines(result, "b.hl"));
+            Assert.Equal<int>([2], Lines(result, "c.txt"));
         }
 
         [Fact]
@@ -77,31 +77,31 @@ namespace magic.lambda.io.tests
         public void CaseSensitiveSearch()
         {
             var result = Search("   pattern:WORLD\n   case-sensitive:true");
-            Assert.Equal(new[] { "b.hl" }, Files(result));
-            Assert.Equal(new[] { 2 }, Lines(result, "b.hl"));
+            Assert.Equal<string>(["b.hl"], Files(result));
+            Assert.Equal<int>([2], Lines(result, "b.hl"));
         }
 
         [Fact]
         public void RegularExpressionSearch()
         {
             var result = Search("   pattern:^h.llo\n   regex:true");
-            Assert.Equal(new[] { "a.txt" }, Files(result));
-            Assert.Equal(new[] { 1, 3 }, Lines(result, "a.txt"));
+            Assert.Equal<string>(["a.txt"], Files(result));
+            Assert.Equal<int>([1, 3], Lines(result, "a.txt"));
         }
 
         [Fact]
         public void CaseSensitiveRegularExpressionSearch()
         {
             var result = Search("   pattern:^h.llo\n   regex:true\n   case-sensitive:true");
-            Assert.Equal(new[] { 3 }, Lines(result, "a.txt"));
+            Assert.Equal<int>([3], Lines(result, "a.txt"));
         }
 
         [Fact]
         public void ExtensionsAreOptionalWithOrWithoutDot()
         {
-            Assert.Equal(new[] { "b.hl" }, Files(Search("   pattern:world\n   extensions:hl")));
-            Assert.Equal(new[] { "a.txt", "c.txt" }, Files(Search("   pattern:world\n   extensions:\".txt\"")));
-            Assert.Equal(new[] { "a.txt", "b.hl", "c.txt" }, Files(Search("   pattern:world\n   extensions:\"hl, .TXT\"")));
+            Assert.Equal<string>(["b.hl"], Files(Search("   pattern:world\n   extensions:hl")));
+            Assert.Equal<string>(["a.txt", "c.txt"], Files(Search("   pattern:world\n   extensions:\".txt\"")));
+            Assert.Equal<string>(["a.txt", "b.hl", "c.txt"], Files(Search("   pattern:world\n   extensions:\"hl, .TXT\"")));
         }
 
         [Fact]

@@ -266,7 +266,7 @@ namespace magic.node.extensions
             return false;
         }
 
-        static Exception DuplicateName(string name)
+        static ArgumentException DuplicateName(string name)
         {
             return new ArgumentException($"Can not add property {name} to JSON object. Property with the same name already exists.");
         }
@@ -946,7 +946,7 @@ namespace magic.node.extensions
                     return;
                 }
                 _builder.Append(text);
-                if (text.IndexOf('.') == -1 && text.IndexOf('E') == -1 && text.IndexOf('e') == -1)
+                if (!text.Contains('.') && !text.Contains('E') && !text.Contains('e'))
                     _builder.Append(".0");
             }
 
@@ -960,7 +960,7 @@ namespace magic.node.extensions
                     return;
                 }
                 _builder.Append(text);
-                if (text.IndexOf('.') == -1 && text.IndexOf('E') == -1 && text.IndexOf('e') == -1)
+                if (!text.Contains('.') && !text.Contains('E') && !text.Contains('e'))
                     _builder.Append(".0");
             }
 
@@ -969,7 +969,7 @@ namespace magic.node.extensions
                 BeforeValue();
                 var text = value.ToString(null, CultureInfo.InvariantCulture);
                 _builder.Append(text);
-                if (text.IndexOf('.') == -1)
+                if (!text.Contains('.'))
                     _builder.Append(".0");
             }
 

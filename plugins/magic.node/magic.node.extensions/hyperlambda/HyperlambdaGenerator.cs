@@ -13,6 +13,8 @@ namespace magic.node.extensions.hyperlambda
     /// </summary>
     public static class HyperlambdaGenerator
     {
+        static readonly string[] _lineSeparators = ["\r\n", "\n", "\r"];
+
         /// <summary>
         /// Returns Hyperlambda for the specified collection of nodes.
         /// </summary>
@@ -78,12 +80,12 @@ namespace magic.node.extensions.hyperlambda
                 PrependSpacing(builder, level);
 
                 // Checking if we need to escape the name, or wrap it in double quotes, etc.
-                if (name.Contains("\n"))
+                if (name.Contains('\n'))
                     name = "@\"" + name.Replace("\"", "\"\"") + "\"";
-                else if (name.Contains("\"") ||
-                    name.Contains(":") ||
-                    name.StartsWith(" ", StringComparison.Ordinal) ||
-                    name.EndsWith(" ", StringComparison.Ordinal))
+                else if (name.Contains('"') ||
+                    name.Contains(':') ||
+                    name.StartsWith(' ') ||
+                    name.EndsWith(' '))
                     name = "\"" + name.Replace("\"", "\\\"") + "\"";
                 else if (node.Value == null && name == "")
                     name = @"""""";
@@ -108,7 +110,7 @@ namespace magic.node.extensions.hyperlambda
             var value = node.Get<string>();
 
             // Checking comment type.
-            var splits = value.Split(new string[] { "\r\n", "\n", "\r" }, System.StringSplitOptions.None);
+            var splits = value.Split(_lineSeparators, System.StringSplitOptions.None);
             if (splits.Length == 1)
             {
                 // Single line comment.
@@ -159,13 +161,13 @@ namespace magic.node.extensions.hyperlambda
             {
                 // Converting type to string.
                 var value = Converter.ToString(node.Value);
-                builder.Append(":");
+                builder.Append(':');
 
                 // Checking if we need to provide an explicit type declaration.
                 if (!string.IsNullOrEmpty(value.Item1) && value.Item1 != "string")
                     builder
                         .Append(value.Item1)
-                        .Append(":"); // Persisting type declaration into StringBuilder
+                        .Append(':'); // Persisting type declaration into StringBuilder
                 if (value.Item1 == "node" && value.Item2 == "")
                     builder.Append(@"""""");
                 else
@@ -195,11 +197,11 @@ namespace magic.node.extensions.hyperlambda
                             break;
                     }
                 }
-                builder.Append("\"");
+                builder.Append('"');
             }
             else
             {
-                var hasControlChar = content.StartsWith(" ", StringComparison.Ordinal) || content.EndsWith(" ", StringComparison.Ordinal);
+                var hasControlChar = content.StartsWith(' ') || content.EndsWith(' ');
                 foreach (var idx in content)
                 {
                     switch (idx)
@@ -226,7 +228,7 @@ namespace magic.node.extensions.hyperlambda
 
                         case ':':
                             hasControlChar = true;
-                            builder.Append(":");
+                            builder.Append(':');
                             break;
 
                         case '"':
@@ -236,7 +238,7 @@ namespace magic.node.extensions.hyperlambda
 
                         case '\'':
                             hasControlChar = true;
-                            builder.Append("'");
+                            builder.Append('\'');
                             break;
 
                         default:
@@ -247,7 +249,7 @@ namespace magic.node.extensions.hyperlambda
                 if (hasControlChar)
                 {
                     builder.Insert(0, "\"");
-                    builder.Append("\"");
+                    builder.Append('"');
                 }
             }
             return builder.ToString();

@@ -136,7 +136,7 @@ namespace magic.node.extensions
                 return string.Join("/", _iterators.Select(x =>
                 {
                     // Checking if we need to quote iterator.
-                    if (x.Value.Contains("/"))
+                    if (x.Value.Contains('/'))
                         return "\"" + x.Value + "\"";
                     return x.Value;
                 }));
@@ -194,7 +194,7 @@ namespace magic.node.extensions
                     }
                     else
                     {
-                        if (applyLists && ex._iterators.Last().Value == "*")
+                        if (applyLists && ex._iterators[^1].Value == "*")
                         {
                             var res = idx.Evaluate();
                             idx.AddRange(res.Select(x => x.Clone()));

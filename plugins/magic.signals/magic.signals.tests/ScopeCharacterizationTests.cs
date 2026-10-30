@@ -58,7 +58,7 @@ namespace magic.signals.tests
             Assert.Same(b, ib);
             Assert.Null(signaler.Peek<string>("x"));
             Assert.Null(signaler.Peek<Disposable>("a"));
-            Assert.Equal(new[] { "b", "a" }, log);
+            Assert.Equal<string>(["b", "a"], log);
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace magic.signals.tests
                 signaler.Scope("n", "inner", () => seen.Add(signaler.Peek<string>("n")));
                 seen.Add(signaler.Peek<string>("n"));
             });
-            Assert.Equal(new[] { "outer", "inner", "outer" }, seen);
+            Assert.Equal<string>(["outer", "inner", "outer"], seen);
             Assert.Null(signaler.Peek<string>("n"));
         }
 
@@ -151,7 +151,7 @@ namespace magic.signals.tests
             var log = new List<string>();
             signaler.Scope("a", new Disposable("outer", log), () =>
                 signaler.Scope("b", new Disposable("inner", log), () => { }));
-            Assert.Equal(new[] { "inner", "outer" }, log);
+            Assert.Equal<string>(["inner", "outer"], log);
         }
 
         [Fact]
@@ -162,7 +162,7 @@ namespace magic.signals.tests
             Assert.Throws<InvalidOperationException>(() =>
                 signaler.Scope("a", new Disposable("outer", log), () =>
                     signaler.Scope("b", new Disposable("inner", log), () => throw new InvalidOperationException())));
-            Assert.Equal(new[] { "inner", "outer" }, log);
+            Assert.Equal<string>(["inner", "outer"], log);
             Assert.Null(signaler.Peek<Disposable>("a"));
             Assert.Null(signaler.Peek<Disposable>("b"));
         }
@@ -201,7 +201,7 @@ namespace magic.signals.tests
                 });
                 seen.Add(signaler.Peek<string>("n"));
             });
-            Assert.Equal(new[] { "outer", "inner", "outer" }, seen);
+            Assert.Equal<string>(["outer", "inner", "outer"], seen);
             Assert.Null(signaler.Peek<string>("n"));
         }
 

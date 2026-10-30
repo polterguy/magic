@@ -114,7 +114,7 @@ namespace magic.signals.tests
                 signaler.Signal("test.instance.counter", node);
                 return (int)node.Value;
             });
-            Assert.Equal(new[] { 1, 1, 1 }, results);
+            Assert.Equal<int>([1, 1, 1], results);
         }
 
         [Fact]

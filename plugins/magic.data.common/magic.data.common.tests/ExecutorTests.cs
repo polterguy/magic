@@ -329,7 +329,7 @@ namespace magic.data.common.tests
             }
             Assert.Equal(3, rows);
             Assert.Equal(3, parent.Children.Count());
-            Assert.Equal(new[] { "id", "name" }, parent.Children.First().Children.Select(x => x.Name).ToArray());
+            Assert.Equal<string>(["id", "name"], parent.Children.First().Children.Select(x => x.Name).ToArray());
             Assert.Equal("one", parent.Children.First().Children.Last().Value);
             Assert.Null(parent.Children.Skip(1).First().Children.Last().Value);
         }

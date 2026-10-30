@@ -89,8 +89,8 @@ namespace magic.signals.services
                 if (!typeof(ISlotAsync).IsAssignableFrom(type) && !typeof(ISlot).IsAssignableFrom(type))
                     throw new ArgumentException($"{type.FullName} is marked as a slot, but does not implement neither {nameof(ISlotAsync)} nor {nameof(ISlot)}");
 
-                if (_slots.ContainsKey(idxAtr))
-                    throw new ArgumentException($"Slot [{idxAtr}] attempted registered by {type.FullName} is already registered by {_slots[idxAtr].FullName}.");
+                if (_slots.TryGetValue(idxAtr, out var existing))
+                    throw new ArgumentException($"Slot [{idxAtr}] attempted registered by {type.FullName} is already registered by {existing.FullName}.");
 
                 _slots[idxAtr] = type;
                 RegisterStateless(idxAtr, type);

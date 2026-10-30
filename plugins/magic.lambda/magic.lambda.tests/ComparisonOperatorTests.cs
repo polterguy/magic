@@ -50,12 +50,14 @@ namespace magic.lambda.tests
             ("string:a", "string:b", -1),
         ];
 
-        public static IEnumerable<object[]> Numeric()
+        public static TheoryData<string, string, int> Numeric()
         {
+            var data = new TheoryData<string, string, int>();
             foreach (var pair in _pairs)
             {
-                yield return [pair.Lhs, pair.Rhs, pair.Order];
+                data.Add(pair.Lhs, pair.Rhs, pair.Order);
             }
+            return data;
         }
 
         [Theory]

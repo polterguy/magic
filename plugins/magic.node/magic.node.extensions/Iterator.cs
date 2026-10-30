@@ -65,7 +65,7 @@ namespace magic.node.extensions
              */
             {'=', (value) => {
                 var name = value.Substring(1);
-                if (name.StartsWith("{", StringComparison.Ordinal) && name.EndsWith("}", StringComparison.Ordinal))
+                if (name.StartsWith('{') && name.EndsWith('}'))
                     return Extrapolated(value, true);
                 return (identity, input) => ValueEqualsIterator(
                     input,

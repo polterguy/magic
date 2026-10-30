@@ -185,9 +185,9 @@ namespace magic.node.extensions
         /// <returns>Converted object.</returns>
         public static object ToObject(object value, string type)
         {
-            if (!_toObjectFunctors.ContainsKey(type))
+            if (!_toObjectFunctors.TryGetValue(type, out var functor))
                 throw new HyperlambdaException($"Unknown type declaration '{type}'");
-            return _toObjectFunctors[type](value);
+            return functor(value);
         }
 
         /// <summary>
@@ -201,9 +201,9 @@ namespace magic.node.extensions
             if (value == null)
                 return (null, null);
             var typeName = value.GetType().FullName;
-            if (!_toStringFunctors.ContainsKey(typeName))
+            if (!_toStringFunctors.TryGetValue(typeName, out var functor))
                 return ("[" + typeName + "]", value.ToString());
-            return _toStringFunctors[typeName](value);
+            return functor(value);
         }
 
         /// <summary>
@@ -234,9 +234,9 @@ namespace magic.node.extensions
             if (value is DateTime date)
                 return date;
             var str = value as string;
-            if (str.EndsWith("Z", StringComparison.Ordinal))
+            if (str.EndsWith('Z'))
                 return DateTime.Parse(str, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-            if (!str.Contains("+"))
+            if (!str.Contains('+'))
             {
                 if (DefaultTimeZone == "utc")
                     return DateTime.Parse(str, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
