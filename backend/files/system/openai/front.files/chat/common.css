@@ -17,11 +17,10 @@
 :host .ainiro-icofont::after,
 :host [class^="ainiro-icofont-"]::after,
 :host [class*=" ainiro-icofont-"]::after {
-  font-family: 'AiniroIcoFont' !important;
+  font-family: 'AiniroIcoFont', sans-serif !important;
   font-style: normal !important;
   font-weight: 400 !important;
   line-height: 1;
-  speak: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -389,7 +388,7 @@ button.ainiro.ainiro_blink::after {
   position: absolute;
   top: 5px;
   right: 8px;
-  font-family: AiniroIcoFont !important;
+  font-family: AiniroIcoFont, sans-serif !important;
   font-style: normal;
   font-weight: 400;
   font-variant: normal;

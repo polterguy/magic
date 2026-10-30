@@ -26,7 +26,7 @@
  */
 button.ainiro,
 .ainiro *:not(.hljs_ignore):not(.hljs_ignore *) {
-  font-family: Montserrat;
+  font-family: Montserrat, sans-serif;
 }
 div.ainiro * {
   font-family: inherit;

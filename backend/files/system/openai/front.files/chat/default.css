@@ -46,7 +46,7 @@ button.aista-chat-btn {
   cursor: pointer !important;
   box-shadow: 3px 3px 5px rgba(0,0,0,.5) !important;
   border: solid 1px #0080eb !important;
-  font-family: Helvetica !important;
+  font-family: Helvetica, Arial, sans-serif !important;
   font-weight: normal !important;
   text-align: center !important;
   text-decoration: none !important;

@@ -87,7 +87,7 @@ button.aista-chat-btn:focus i.icofont-chat {
   animation-duration: .5s;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  font-family: Roboto !important;
+  font-family: Roboto, sans-serif !important;
   position: fixed !important;
   z-index: 100001 !important;
   bottom: 10px !important;
