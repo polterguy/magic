@@ -193,6 +193,7 @@ export function Modal(props: {
   return (
     <div
       className="overlay"
+      role="presentation"
       style={{ zIndex }}
       onMouseDown={event => {
         if (event.target === event.currentTarget) {

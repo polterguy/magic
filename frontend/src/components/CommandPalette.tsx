@@ -287,7 +287,7 @@ export default function CommandPalette(props: {
   let previousGroup = '';
 
   return (
-    <div className="palette-backdrop" onMouseDown={props.onClose}>
+    <div className="palette-backdrop" role="presentation" onMouseDown={props.onClose}>
       <div
         className="palette"
         role="dialog"

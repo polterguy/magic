@@ -481,7 +481,7 @@ export default function Inspector(props: {
                 : mediaKind === 'image'
                   ? <img src={source} alt="" />
                   : mediaKind === 'video'
-                    ? <video src={source} preload="metadata" muted playsInline />
+                    ? <video src={source} preload="metadata" muted playsInline><track kind="captions" /></video>
                     : <audio src={source} controls />}
             </button>
             <button className="btn btn-secondary" onClick={() => props.onChooseMedia(mediaKind)}>

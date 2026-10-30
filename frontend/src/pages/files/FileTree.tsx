@@ -144,6 +144,7 @@ export default function FileTree(props: {
               title={folder}
               tabIndex={0}
               role="treeitem"
+              aria-selected={folder === props.activeFolder}
               onClick={() => props.onToggleFolder(folder)}
               onKeyDown={keyActivate(() => props.onToggleFolder(folder))}>
               <span className="tree-chevron">
@@ -178,6 +179,7 @@ export default function FileTree(props: {
             title={file}
             tabIndex={0}
             role="treeitem"
+            aria-selected={file === props.selectedFile}
             onClick={() => props.onOpenFile(file)}
             onKeyDown={keyActivate(() => props.onOpenFile(file))}>
             <span className="tree-chevron" />

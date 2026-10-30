@@ -332,7 +332,7 @@ function InviteUserDialog(props: {
       // learns it, and changes it after following the link.
       const random = new Uint8Array(24);
       crypto.getRandomValues(random);
-      const password = btoa(String.fromCharCode(...random));
+      const password = btoa(String.fromCodePoint(...random));
       await createUser(email, password);
       await addUserExtra(email, 'email', email);
       if (name) {

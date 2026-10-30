@@ -11,7 +11,9 @@ export interface SortState {
   direction: 'asc' | 'desc';
 }
 
-export function useSort(initial: SortState = { column: null, direction: 'asc' }) {
+const UNSORTED: SortState = { column: null, direction: 'asc' };
+
+export function useSort(initial: SortState = UNSORTED) {
   return useState<SortState>(initial);
 }
 
@@ -47,7 +49,7 @@ export default function SortHeader(props: {
     <th
       style={{ cursor: 'pointer', userSelect: 'none', ...props.style }}
       tabIndex={0}
-      role="button"
+      role="columnheader"
       aria-sort={!active ? undefined
         : props.sort.direction === 'asc' ? 'ascending' : 'descending'}
       onClick={advance}
