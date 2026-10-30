@@ -262,8 +262,7 @@ namespace magic.node.extensions
             var result = new List<Iterator>();
             var length = expression.Length;
 
-            // The expression used to be read through a stream reader, which discards a BOM.
-            var position = length > 0 && expression[0] == '\uFEFF' ? 1 : 0;
+            var position = StartOf(expression);
             var segment = position;
             StringBuilder quoted = null;
             while (position < length)
@@ -293,8 +292,8 @@ namespace magic.node.extensions
                     if (position >= length)
                         return result;
 
-                    if (expression[position] == '/')
-                        position++; // Discarding end of iterator character to prepare for next iterator's value.
+                    // Discarding end of iterator character to prepare for next iterator's value.
+                    position = SkipSeparator(expression, position);
                     segment = position;
                 }
                 else
@@ -304,6 +303,18 @@ namespace magic.node.extensions
             }
             result.Add(new Iterator(Content(expression, segment, position, quoted)));
             return result;
+        }
+
+        // The expression used to be read through a stream reader, which discards a BOM.
+        static int StartOf(string expression)
+        {
+            return expression.Length > 0 && expression[0] == '\uFEFF' ? 1 : 0;
+        }
+
+        // Moves past the "/" ending an iterator, if that is what the position is at.
+        static int SkipSeparator(string expression, int position)
+        {
+            return expression[position] == '/' ? position + 1 : position;
         }
 
         /*

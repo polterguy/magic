@@ -694,7 +694,7 @@ export default function Inspector(props: Readonly<{
                       type="checkbox"
                       checked={filterOn}
                       onChange={flagHandler('data-filterable')} />
-                    Allow filtering
+                    <span>Allow filtering</span>
                   </label>
                   {/*
                     * The grid refetches when a row changes, but only if the table's
@@ -706,7 +706,7 @@ export default function Inspector(props: Readonly<{
                       type="checkbox"
                       checked={liveOn}
                       onChange={flagHandler('data-live')} />
-                    Update live
+                    <span>Update live</span>
                   </label>
                 </>
               )}

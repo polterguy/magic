@@ -231,35 +231,28 @@ function tokenizeMultilineStringMode(stream: StringStream, state: HyperlambdaSta
 function readToEndOfMultilineString(stream: StringStream): boolean {
   let cr = stream.next();
   while (cr != null) {
-
-    // Checking for easy "end of multi line string" condition, meaning one
-    // '"' character, WITHOUT another '"' following it.
-    if (cr === '"' && stream.peek() !== '"') {
-      return true;
-    } else if (cr === '"' /* Implicitly another '"' is following here in stream */) {
-
-      /*
-       * "Hard case", needs to loop until we do not see another '"', and then
-       * count the number of '"' we saw afterwards.
-       */
-      let val = cr;
-      while (cr === '"') {
-        cr = stream.peek();
-        if (cr === '"') {
-          val += cr;
-          stream.next(); // Avoids removing character out of stream, unless it's another '"'
-        }
-      }
-
-      // If our number of '"' are odd, we are at end of multi line string literal.
-      if (val.length % 2 === 1) {
-        return true;
-      }
-    } else {
+    if (cr !== '"') {
       cr = stream.next();
+      continue;
     }
+
+    // A run of '"': an odd number of them ends the literal, an even number is escaped quotes.
+    if (quoteRunLength(stream) % 2 === 1) {
+      return true;
+    }
+    cr = stream.next();
   }
   return false;
+}
+
+// The number of '"' in a row, counting the one just read.
+function quoteRunLength(stream: StringStream): number {
+  let length = 1;
+  while (stream.peek() === '"') {
+    stream.next();
+    length++;
+  }
+  return length;
 }
 
 /*
