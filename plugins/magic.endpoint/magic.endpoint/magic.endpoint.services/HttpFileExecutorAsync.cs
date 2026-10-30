@@ -154,8 +154,9 @@ namespace magic.endpoint.services
                 var redirectNode = config.Children.FirstOrDefault(x => x.Name == "redirect");
                 if (redirectNode != null)
                 {
-                    foreach (var idxRedirect in redirectNode.Children.Where(
-                        n => n.Children.Any(x => x.Name == "from" && x.Get<string>() == request.URL)))
+                    var idxRedirect = redirectNode.Children.FirstOrDefault(
+                        n => n.Children.Any(x => x.Name == "from" && x.Get<string>() == request.URL));
+                    if (idxRedirect != null)
                     {
                         // Redirecting.
                         var response = new MagicResponse
