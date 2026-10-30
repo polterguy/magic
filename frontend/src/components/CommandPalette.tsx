@@ -322,8 +322,15 @@ export default function CommandPalette(props: {
                   id={'palette-option-' + index}
                   role="option"
                   aria-selected={index === selected}
+                  tabIndex={-1}
                   className={'palette-row' + (index === selected ? ' selected' : '')}
                   onMouseMove={() => setSelected(index)}
+                  onKeyDown={event => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      run(command);
+                    }
+                  }}
                   onClick={() => run(command)}>
                   {command.verb && (
                     <span className={'badge badge-' + command.verb.toLowerCase()}>
