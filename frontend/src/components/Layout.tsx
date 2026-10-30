@@ -55,7 +55,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         setNavGuard(null);
         navigate(to);
       }
-    });
+    }).catch(error => console.error('Navigation guard failed:', error));
   }, [navigate]);
 
   function onNavClick(event: React.MouseEvent, to: string) {
@@ -255,7 +255,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <button
               className="btn btn-ghost btn-small"
               title="Ask Frank about Hyperlambda and Magic"
-              onClick={() => { openSupport(); setMobileNav(false); }}>
+              onClick={() => { void openSupport(); setMobileNav(false); }}>
               <HelpIcon />
             </button>
             <button

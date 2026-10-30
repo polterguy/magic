@@ -164,7 +164,7 @@ export default function ImportDialog(props: {
 
   return (
     <>
-      <Modal width={620} onClose={props.onClose} onSubmit={() => { if (url) crawl(); }}>
+      <Modal width={620} onClose={props.onClose} onSubmit={() => { if (url) void crawl(); }}>
         <h2>Import into {props.type}</h2>
         <Tabs
           tabs={[
@@ -340,7 +340,7 @@ export default function ImportDialog(props: {
                   const files = Array.from(e.target.files ?? []);
                   e.target.value = '';
                   if (files.length > 0) {
-                    upload(files);
+                    void upload(files);
                   }
                 }} />
             </label>

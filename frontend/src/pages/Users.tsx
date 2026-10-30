@@ -354,7 +354,7 @@ function InviteUserDialog(props: {
     <Modal
       width={520}
       onClose={props.onClose}
-      onSubmit={() => { if (!busy && email) invite(); }}>
+      onSubmit={() => { if (!busy && email) void invite(); }}>
       <h2>Invite user</h2>
       <p className="muted" style={{ marginTop: 0 }}>
         Creates the account and emails a sign-in link. The link works once and
@@ -439,7 +439,7 @@ function NewUserDialog(props: {
     <Modal
       width={520}
       onClose={props.onClose}
-      onSubmit={() => { if (!busy && username && password) save(); }}>
+      onSubmit={() => { if (!busy && username && password) void save(); }}>
       <h2>New user</h2>
       <div className="form-grid">
         <label>Username
@@ -574,7 +574,7 @@ function EditUserDialog(props: {
   }
 
   return (
-    <Modal width={620} onClose={props.onClose} onSubmit={() => { if (!busy) save(); }}>
+    <Modal width={620} onClose={props.onClose} onSubmit={() => { if (!busy) void save(); }}>
       <h2>Edit {props.user.username}</h2>
       <div className="form-grid">
         <div>
@@ -660,7 +660,7 @@ function ChangePasswordDialog(props: {
     <Modal
       width={480}
       onClose={props.onClose}
-      onSubmit={() => { if (!busy && password) save(); }}>
+      onSubmit={() => { if (!busy && password) void save(); }}>
       <h2>Change password for {props.user.username}</h2>
       <label className="modal-label">
         New password (min {MIN_PASSWORD} characters)
@@ -820,7 +820,7 @@ function RoleDialog(props: {
   }
 
   return (
-    <Modal width={520} onClose={props.onClose} onSubmit={() => { if (!busy && name) save(); }}>
+    <Modal width={520} onClose={props.onClose} onSubmit={() => { if (!busy && name) void save(); }}>
       <h2>{isEdit ? 'Edit role ' + props.role!.name : 'New role'}</h2>
       <div className="form-grid">
         <label>Name

@@ -120,7 +120,7 @@ export default function Media(props: {
   }
 
   useEffect(() => {
-    reload();
+    void reload();
     // The folder the element's current file sits in is the likeliest home for
     // its replacement, so uploads default there rather than to the web root.
     const at = props.current.lastIndexOf('/');
@@ -294,7 +294,7 @@ export default function Media(props: {
           hidden
           onChange={event => {
             if (event.target.files && event.target.files.length > 0) {
-              upload(event.target.files);
+              void upload(event.target.files);
             }
             // So the same file can be chosen twice in a row.
             event.target.value = '';

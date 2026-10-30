@@ -105,7 +105,7 @@ export default function OpenAiKeyDialog(props: {
           placeholder="sk-…"
           value={key}
           onChange={e => setKey(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') save(); }} />
+          onKeyDown={e => { if (e.key === 'Enter') void save(); }} />
       </label>
       <label className="modal-label">
         Model

@@ -183,7 +183,7 @@ export default function QuestionnairesTab() {
                         className="btn btn-danger btn-small"
                         onClick={event => {
                           event.stopPropagation();
-                          removeQuestionnaire(item.name);
+                          void removeQuestionnaire(item.name);
                         }}>
                         Delete
                       </button>
@@ -322,7 +322,7 @@ function QuestionnaireDialog(props: {
     <Modal
       width={460}
       onClose={props.onClose}
-      onSubmit={() => { if (!busy && valid) save(); }}>
+      onSubmit={() => { if (!busy && valid) void save(); }}>
       <h2>{existing ? 'Edit ' + existing.name : 'New questionnaire'}</h2>
       <div className="form-grid">
         <label>Name
@@ -418,7 +418,7 @@ function QuestionDialog(props: {
     <Modal
       width={520}
       onClose={props.onClose}
-      onSubmit={() => { if (!busy && question) save(); }}>
+      onSubmit={() => { if (!busy && question) void save(); }}>
       <h2>{existing ? 'Edit question' : 'Add question'}</h2>
       <div className="form-grid">
         <label>Question

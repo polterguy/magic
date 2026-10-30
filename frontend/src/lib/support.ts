@@ -120,5 +120,5 @@ export function explainHyperlambda(code: string) {
   if (code.trim() === '') {
     return;
   }
-  askSupport('Explain this code \n```hyperlambda\n' + code + '\n```');
+  void askSupport('Explain this code \n```hyperlambda\n' + code + '\n```');
 }

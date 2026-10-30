@@ -431,7 +431,7 @@ export default function Sql() {
                 style={{ display: 'none' }}
                 onChange={e => {
                   if (e.target.files?.[0]) {
-                    importCsv(e.target.files[0]);
+                    void importCsv(e.target.files[0]);
                     e.target.value = '';
                   }
                 }} />

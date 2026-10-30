@@ -162,7 +162,7 @@ export default function Plugins() {
                 // Cleared so picking the same archive twice fires again.
                 e.target.value = '';
                 if (file) {
-                  installFromFile(file);
+                  void installFromFile(file);
                 }
               }} />
           </label>
@@ -221,7 +221,7 @@ export default function Plugins() {
             <button className="btn btn-secondary" onClick={() => setDetails(null)}>Close</button>
             <button
               className="btn"
-              onClick={() => { const app = details; setDetails(null); install(app); }}>
+              onClick={() => { const app = details; setDetails(null); void install(app); }}>
               {installed.has(details.name) ? 'Reinstall' : 'Install'}
             </button>
           </div>

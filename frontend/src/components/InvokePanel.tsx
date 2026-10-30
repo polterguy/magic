@@ -252,7 +252,7 @@ export default function InvokePanel(props: {
       lines.push('-H "Content-Type: ' + (endpoint.consumes ?? 'application/json') + '"');
       lines.push("-d '" + payload.replace(/'/g, "'\\''") + "'");
     }
-    copyToClipboard(lines.join(' \\\n  '), 'The cURL command');
+    void copyToClipboard(lines.join(' \\\n  '), 'The cURL command');
   }
 
   async function invoke() {
@@ -320,7 +320,7 @@ export default function InvokePanel(props: {
      * newlines, so multi-line payloads are unaffected.
      */
     <form
-      onSubmit={e => { e.preventDefault(); if (canInvoke && !busy) { invoke(); } }}>
+      onSubmit={e => { e.preventDefault(); if (canInvoke && !busy) { void invoke(); } }}>
       {description && (
         <p style={{ marginTop: 0 }}>
           {fullDescription ? description : shortDescription}

@@ -339,7 +339,8 @@ export default function CodeEditor(props: CodeEditorProps) {
         }
         createEditor(host.current);
         setReady(true);
-      });
+      })
+      .catch(error => console.error('Could not start the code editor:', error));
 
     /*
      * The keymap is built from the shared shortcut registry, so every

@@ -238,8 +238,10 @@ export default function ChatDrawer(props: {
       return;
     }
     const root = listRef.current;
-    renderMermaidDiagrams(root, getTheme() === 'dark');
-    import('../lib/chatHighlight').then(module => module.highlightUnder(root));
+    void renderMermaidDiagrams(root, getTheme() === 'dark');
+    import('../lib/chatHighlight')
+      .then(module => module.highlightUnder(root))
+      .catch(error => console.error('Could not highlight code:', error));
   }, [messages, streaming]);
 
   useEffect(() => {
@@ -468,7 +470,7 @@ export default function ChatDrawer(props: {
   function onListClick(event: React.MouseEvent) {
     const button = (event.target as HTMLElement).closest('.chat-copy-btn');
     if (button) {
-      copyToClipboard(decodeURIComponent(button.getAttribute('data-code') ?? ''), 'Code');
+      void copyToClipboard(decodeURIComponent(button.getAttribute('data-code') ?? ''), 'Code');
     }
   }
 
@@ -592,7 +594,7 @@ export default function ChatDrawer(props: {
           onKeyDown={event => {
             if (event.key === 'Enter' && !event.shiftKey) {
               event.preventDefault();
-              send();
+              void send();
             }
           }} />
         {streaming ? (
@@ -713,7 +715,9 @@ function ChatSegment({ segment, markdown }: { segment: Segment; markdown: boolea
   useEffect(() => {
     const root = detailRef.current;
     if (showDetail && root) {
-      import('../lib/chatHighlight').then(module => module.highlightUnder(root));
+      import('../lib/chatHighlight')
+      .then(module => module.highlightUnder(root))
+      .catch(error => console.error('Could not highlight code:', error));
     }
   }, [showDetail]);
   // Model output is untrusted — raw HTML must never reach the page, so the

@@ -364,7 +364,7 @@ export default function WebDesigner() {
          * design on it.
          */
         const remembered = localStorage.getItem(pageKey);
-        openPage(remembered && html.includes(remembered) ? remembered : html[0], true);
+        void openPage(remembered && html.includes(remembered) ? remembered : html[0], true);
       })
       .catch((err: any) => showToast(err.message, true));
     // Mount only — the page list is refreshed by hand and after a Chat Ops turn.
@@ -383,7 +383,7 @@ export default function WebDesigner() {
       return;
     }
     if (pathRef.current) {
-      openPage(pathRef.current, true);
+      void openPage(pathRef.current, true);
     }
     loadPages().catch(() => {});
   }), []);
@@ -1692,7 +1692,7 @@ export default function WebDesigner() {
       }
     } else if ((event.metaKey || event.ctrlKey) && event.key === 's') {
       event.preventDefault();
-      save();
+      void save();
     }
   }
 

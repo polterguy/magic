@@ -167,7 +167,7 @@ export default function EmbedDialog(props: { type: string; onClose: () => void }
       <div className="modal-actions">
         <button
           className="btn btn-secondary"
-          onClick={() => { copyToClipboard(script, 'The embed script'); setCopied(true); }}>
+          onClick={() => { void copyToClipboard(script, 'The embed script'); setCopied(true); }}>
           {copied ? 'Copied!' : 'Copy embed code'}
         </button>
         <button className="btn" onClick={props.onClose}>Close</button>

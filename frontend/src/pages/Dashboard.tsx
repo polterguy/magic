@@ -701,7 +701,7 @@ function SetPasswordDialog(props: { onClose: () => void }) {
     <Modal
       width={460}
       onClose={props.onClose}
-      onSubmit={() => { if (!busy && password) save(); }}>
+      onSubmit={() => { if (!busy && password) void save(); }}>
       <h2>Set your password</h2>
       <p className="muted" style={{ marginTop: 0 }}>
         You signed in through an emailed link, which only works once. Set a

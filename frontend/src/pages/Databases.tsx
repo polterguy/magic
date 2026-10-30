@@ -146,7 +146,7 @@ function InternalTab() {
             keeps the input and button as direct flex children of the toolbar. */}
         <form
           style={{ display: 'contents' }}
-          onSubmit={e => { e.preventDefault(); if (!busy && name) create(); }}>
+          onSubmit={e => { e.preventDefault(); if (!busy && name) void create(); }}>
           <input
             type="text"
             placeholder="New database name…"
@@ -166,7 +166,7 @@ function InternalTab() {
             style={{ display: 'none' }}
             onChange={e => {
               if (e.target.files?.[0]) {
-                upload(e.target.files[0]);
+                void upload(e.target.files[0]);
                 e.target.value = '';
               }
             }} />
@@ -499,7 +499,7 @@ function ExternalTab() {
                     <button
                       className="btn btn-secondary btn-small"
                       onClick={() => {
-                        copyToClipboard(row.connectionString, 'The connection string');
+                        void copyToClipboard(row.connectionString, 'The connection string');
                         show('Connection string copied');
                       }}>
                       Copy

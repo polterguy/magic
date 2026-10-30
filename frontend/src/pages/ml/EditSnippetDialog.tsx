@@ -118,7 +118,7 @@ export default function EditSnippetDialog(props: {
   }
 
   return (
-    <Modal width={820} onClose={props.onClose} onSubmit={() => { if (prompt) save(); }}>
+    <Modal width={820} onClose={props.onClose} onSubmit={() => { if (prompt) void save(); }}>
       <h2>{props.existing ? 'Edit snippet' : 'New snippet'}</h2>
       <div className="form-grid">
         <label>Prompt

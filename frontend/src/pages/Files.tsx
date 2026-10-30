@@ -219,7 +219,8 @@ export default function Files() {
           : tabs.some(tab => tab.path === workspace.selected)
             ? workspace.selected!
             : tabs[tabs.length - 1].path);
-      });
+      })
+      .catch(error => showToast('Could not restore open files: ' + error.message, true));
   }, []);
 
   // Remembers the workspace shape — file contents deliberately excluded.
@@ -251,7 +252,7 @@ export default function Files() {
       ancestors.push(ancestor);
     }
     setExpanded(current => new Set([...current, ...ancestors]));
-    openFile(target);
+    void openFile(target);
     setSearchParams({}, { replace: true });
   }, [searchParams, setSearchParams]);
 
@@ -803,7 +804,7 @@ export default function Files() {
               className="btn btn-secondary btn-small"
               title="Copy path"
               onClick={() => {
-                copyToClipboard(selectedFile, 'The path');
+                void copyToClipboard(selectedFile, 'The path');
               }}>
               <CopyIcon />
               Copy path
@@ -977,7 +978,7 @@ export default function Files() {
             selectedFile={selectedFile}
             backendUrl={backend!.url}
             onToggleFolder={folder => { toggle(folder); setOpenFolder(folder); }}
-            onOpenFile={file => { setOpenFolder(null); openFile(file); }}
+            onOpenFile={file => { setOpenFolder(null); void openFile(file); }}
             onNewFile={newFile}
             onNewFolder={newFolder}
             onGit={setGitTarget}
@@ -1037,12 +1038,12 @@ export default function Files() {
               onSelectionChange={setHasSelection}
               onAction={action => {
                 switch (action) {
-                  case 'newFile': newFile(activeFolder); break;
-                  case 'newFolder': newFolder(activeFolder); break;
-                  case 'renameFile': rename(selectedFile, false); break;
-                  case 'deleteFile': removeFile(selectedFile); break;
-                  case 'deleteFolder': removeFolder(activeFolder); break;
-                  case 'close': closeFile(selectedFile); break;
+                  case 'newFile': void newFile(activeFolder); break;
+                  case 'newFolder': void newFolder(activeFolder); break;
+                  case 'renameFile': void rename(selectedFile, false); break;
+                  case 'deleteFile': void removeFile(selectedFile); break;
+                  case 'deleteFolder': void removeFolder(activeFolder); break;
+                  case 'close': void closeFile(selectedFile); break;
                   case 'nextTab': switchTab(1); break;
                   case 'previousTab': switchTab(-1); break;
                 }

@@ -185,7 +185,7 @@ function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
     <Modal
       width={560}
       onClose={onClose}
-      onSubmit={() => { if (username && selectedRoles.length > 0) generate(); }}>
+      onSubmit={() => { if (username && selectedRoles.length > 0) void generate(); }}>
       <h2>Generate token</h2>
       {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
       <div className="form-grid">

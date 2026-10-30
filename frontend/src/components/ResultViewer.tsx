@@ -83,6 +83,10 @@ export default function ResultViewer(
         }
       }
       setText(value === '' ? 'OK — no result' : value);
+    }).catch(error => {
+      if (!cancelled) {
+        setText('Could not read the result: ' + error.message);
+      }
     });
     return () => { cancelled = true; };
   }, [result, textual, contentType]);

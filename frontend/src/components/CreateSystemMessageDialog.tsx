@@ -114,7 +114,7 @@ export default function CreateSystemMessageDialog(props: {
               value={url}
               autoFocus
               onChange={e => setUrl(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') generate(); }} />
+              onKeyDown={e => { if (e.key === 'Enter') void generate(); }} />
           </label>
           <div className="modal-actions">
             <button className="btn btn-secondary" onClick={close}>Cancel</button>

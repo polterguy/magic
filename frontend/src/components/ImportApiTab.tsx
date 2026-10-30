@@ -259,7 +259,7 @@ export default function ImportApiTab() {
               placeholder="https://api.example.com/openapi.json"
               value={url}
               onChange={e => setUrl(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); read(); } }} />
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void read(); } }} />
             <button className="btn" onClick={read} disabled={busy}>
               {busy && !running ? 'Reading…' : 'Read'}
             </button>

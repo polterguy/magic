@@ -85,7 +85,7 @@ export default function Tasks() {
       return;
     }
     deepLinked.current = true;
-    openEdit(id);
+    void openEdit(id);
     params.delete('edit');
     setParams(params, { replace: true });
   }, [params, setParams]);
@@ -365,7 +365,7 @@ function TaskDialog(props: {
     <Modal
       width={1100}
       onClose={close}
-      onSubmit={() => { if (!busy && (!props.isNew || id)) save(); }}>
+      onSubmit={() => { if (!busy && (!props.isNew || id)) void save(); }}>
       <h2>{props.isNew ? 'New task' : 'Edit ' + props.task.id}</h2>
       <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
         <input

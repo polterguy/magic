@@ -194,7 +194,7 @@ export default function CommandPalette(props: {
       if (!cancelled) {
         setDynamic(commands);
       }
-    });
+    }).catch(error => console.error('Could not load commands:', error));
     return () => { cancelled = true; };
   }, []);
 

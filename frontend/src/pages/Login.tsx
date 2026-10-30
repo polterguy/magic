@@ -163,7 +163,9 @@ export default function Login() {
   // Only offer a link the backend can actually send.
   useEffect(() => {
     let cancelled = false;
-    canResetPassword(probeUrl).then(value => { if (!cancelled) { setCanReset(value); } });
+    canResetPassword(probeUrl)
+      .then(value => { if (!cancelled) { setCanReset(value); } })
+      .catch(error => console.error('Could not check password reset:', error));
     return () => { cancelled = true; };
   }, [probeUrl]);
 

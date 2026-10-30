@@ -30,14 +30,14 @@ export default function OpenApiDialog(props: {
           className="btn btn-secondary"
           title="Copies a URL always returning the current spec — note it requires authentication"
           onClick={() => {
-            copyToClipboard(specUrl, 'The spec URL');
+            void copyToClipboard(specUrl, 'The spec URL');
           }}>
           Copy spec URL
         </button>
         <button
           className="btn btn-secondary"
           onClick={() => {
-            copyToClipboard(props.json, 'The specification');
+            void copyToClipboard(props.json, 'The specification');
           }}>
           Copy JSON
         </button>

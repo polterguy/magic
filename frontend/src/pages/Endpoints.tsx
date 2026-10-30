@@ -259,7 +259,7 @@ export default function Endpoints() {
             <button
               className="icon-btn"
               title={'OpenAPI specification for ' + group.folder}
-              onClick={e => { e.stopPropagation(); showOpenApi(group.folder); }}>
+              onClick={e => { e.stopPropagation(); void showOpenApi(group.folder); }}>
               <BracesIcon />
             </button>
           </div>

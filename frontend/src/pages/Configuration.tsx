@@ -150,7 +150,7 @@ export default function Configuration() {
               // Cleared so picking the same file twice fires onChange again.
               e.target.value = '';
               if (file) {
-                uploadBackup(file);
+                void uploadBackup(file);
               }
             }} />
           <button className="btn" onClick={() => save()} disabled={busy || !config}>
@@ -169,25 +169,25 @@ export default function Configuration() {
         <SmtpDialog
           config={config}
           onClose={() => setSmtpOpen(false)}
-          onSave={next => { setSmtpOpen(false); save(next); }} />
+          onSave={next => { setSmtpOpen(false); void save(next); }} />
       )}
       {recaptchaOpen && (
         <RecaptchaDialog
           config={config}
           onClose={() => setRecaptchaOpen(false)}
-          onSave={next => { setRecaptchaOpen(false); save(next); }} />
+          onSave={next => { setRecaptchaOpen(false); void save(next); }} />
       )}
       {gitOpen && (
         <GitDialog
           config={config}
           onClose={() => setGitOpen(false)}
-          onSave={next => { setGitOpen(false); save(next); }} />
+          onSave={next => { setGitOpen(false); void save(next); }} />
       )}
       {openidOpen && (
         <OpenIdDialog
           config={config}
           onClose={() => setOpenidOpen(false)}
-          onSave={next => { setOpenidOpen(false); save(next); }} />
+          onSave={next => { setOpenidOpen(false); void save(next); }} />
       )}
       {/*
         * Unlike the others this writes its own key through the OpenAI
