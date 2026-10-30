@@ -95,7 +95,7 @@ namespace magic.endpoint.services.slots.misc
         /// and its arguments. The latter will be found from your file's [.arguments] node.
         /// </summary>
         /// <param name="functor">Function responsible for returning additional meta data for endpoint.</param>
-        public void AddMetaDataResolver(Func<Node, string, Node, IEnumerable<Node>> functor)
+        public static void AddMetaDataResolver(Func<Node, string, Node, IEnumerable<Node>> functor)
         {
             _endpointMetaRetrievers.Add(functor);
         }
