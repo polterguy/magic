@@ -153,7 +153,7 @@ button.ainiro.ainiro_hide {
  * Toolbar.
  */
 .ainiro>.ainiro_toolbar {
-  display: flex !important;
+  display: flex;
   flex-direction: row;
   padding: 10px 15px;
   margin-top: 15px;
@@ -454,7 +454,7 @@ button.ainiro.ainiro_hide {
 }
 .ainiro_references>li {
   list-style-type:decimal;
-  color: #999 !important;
+  color: #999;
   animation-name: ainiro_fade_in_left_full_width;
   animation-duration: .4s;
   animation-iteration-count: 1;
@@ -562,7 +562,7 @@ button.ainiro.ainiro_hide {
   padding: 8px 15px;
   outline: none;
   font-size: 20px;
-  color: #555 !important;
+  color: #555;
   background-color: #fefefe;
   box-sizing: border-box;
   border: none;
@@ -570,7 +570,7 @@ button.ainiro.ainiro_hide {
   border-radius: 10px 0 0 10px;
 }
 .ainiro_form>.ainiro_query::placeholder {
-  color: rgb(180,180,180) !important;
+  color: rgb(180,180,180);
 }
 .ainiro_form>.ainiro_send,
 .ainiro_form>.ainiro_attachments {
@@ -588,7 +588,7 @@ button.ainiro.ainiro_hide {
 }
 .ainiro_form>.ainiro_send:disabled,
 .ainiro_form>.ainiro_attachments:disabled {
-  cursor: not-allowed !important;
+  cursor: not-allowed;
 }
 .ainiro_form>.ainiro_send i,
 .ainiro_form>.ainiro_attachments i {
@@ -607,7 +607,7 @@ button.ainiro.ainiro_hide {
 .ainiro_form>.ainiro_attachments:disabled i {
   opacity: 0.1;
   transition: color .4s ease-in-out, opacity .4s ease-in-out;
-  cursor: not-allowed !important;
+  cursor: not-allowed;
 }
 
 /*
@@ -679,14 +679,14 @@ button.ainiro.ainiro_hide {
  * Copy response button.
  */
 .ainiro_copy_response {
-  position:absolute !important;
-  bottom: 10px !important;
-  right: 10px !important;
-  background-color: transparent !important;
-  border: none !important;
-  cursor: pointer !important;
-  opacity: .5 !important;
-  transition: opacity .1s ease-in-out !important;
+  position:absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: .5;
+  transition: opacity .1s ease-in-out;
 }
 .ainiro_copy_response:hover,
 .ainiro_copy_response:active,
@@ -695,7 +695,7 @@ button.ainiro.ainiro_hide {
   transition: opacity .1s ease-in-out !important;
 }
 .ainiro_copy_response i {
-  font-size: 20px !important;
+  font-size: 20px;
   color: var(--ainiro-color);
 }
 

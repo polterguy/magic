@@ -388,7 +388,7 @@ button.ainiro.ainiro_blink::after {
   position: absolute;
   top: 5px;
   right: 8px;
-  font-family: AiniroIcoFont, sans-serif !important;
+  font-family: AiniroIcoFont, sans-serif;
   font-style: normal;
   font-weight: 400;
   font-variant: normal;
@@ -419,8 +419,8 @@ button.ainiro.ainiro_blink::after {
   bottom: 8px;
   right: 8px;
   color:rgb(0,0,0);
-  opacity: .5 !important;
-  transition: opacity .1s ease-in-out !important;
+  opacity: .5;
+  transition: opacity .1s ease-in-out;
 }
 .ainiro_machine pre.hljs button.copy_code_button:hover,
 .ainiro_machine pre.hljs button.copy_code_button:active,
@@ -596,7 +596,7 @@ div.ainiro_filename {
 .ainiro div.hljs_ignore {
   margin-top: 25px;
   margin-bottom: 25px;
-  display: flex !important;
+  display: flex;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
