@@ -57,7 +57,7 @@ namespace magic.lambda.git
 
         #region [ -- Private helper methods -- ]
 
-        (string Name, string Owner) GetArgs(Node input)
+        static (string Name, string Owner) GetArgs(Node input)
         {
             var name = input.GetEx<string>();
             if (string.IsNullOrWhiteSpace(name))

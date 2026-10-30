@@ -6,7 +6,6 @@
 /*   strings, amber numbers, gold slots) but carry ZERO violet.  */
 /*   All colours live in the --cm-* variables below, so the      */
 /*   light theme flips them without touching the rules.          */
-/*                                                               */
 /*   CodeMirror 6: the token rules still target the cm-* class   */
 /*   names the CM5 theme used, because the editor's              */
 /*   HighlightStyle maps CM6's highlight tags onto exactly       */

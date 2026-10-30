@@ -43,7 +43,7 @@ namespace magic.lambda.git
 
         #region [ -- Private helper methods -- ]
 
-        string GetArgs(Node input)
+        static string GetArgs(Node input)
         {
             var path = GitSlotHelpers.GetRequiredPrimaryValue(input);
 

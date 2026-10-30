@@ -65,7 +65,7 @@ namespace magic.lambda.git
             return (owner, visibility, type, perPage, page);
         }
 
-        int? GetOptionalInt(Node input, string name)
+        static int? GetOptionalInt(Node input, string name)
         {
             var node = input.Children.FirstOrDefault(x => x.Name == name);
             if (node == null || node.Value == null)
@@ -80,7 +80,7 @@ namespace magic.lambda.git
             throw new HyperlambdaException($"Invalid integer value for [{name}]");
         }
 
-        string BuildEndpoint((string Owner, string Visibility, string Type, int? PerPage, int? Page) args)
+        static string BuildEndpoint((string Owner, string Visibility, string Type, int? PerPage, int? Page) args)
         {
             var query = new List<string>();
             if (!string.IsNullOrWhiteSpace(args.Visibility))
@@ -119,13 +119,13 @@ namespace magic.lambda.git
             }
         }
 
-        void AddString(Node parent, string name, JsonElement element)
+        static void AddString(Node parent, string name, JsonElement element)
         {
             if (element.TryGetProperty(name, out var value) && value.ValueKind != JsonValueKind.Null)
                 parent.Add(new Node(name, value.GetString()));
         }
 
-        void AddBool(Node parent, string name, JsonElement element)
+        static void AddBool(Node parent, string name, JsonElement element)
         {
             if (element.TryGetProperty(name, out var value) &&
                 (value.ValueKind == JsonValueKind.True || value.ValueKind == JsonValueKind.False))

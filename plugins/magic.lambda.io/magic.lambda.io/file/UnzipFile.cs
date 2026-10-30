@@ -78,7 +78,7 @@ namespace magic.lambda.io.file
                 throw new HyperlambdaException($"Destination folder '{args.DestinationFolder}' for [io.file.unzip] does not exist.");
 
             // Invoking implementation method.
-            await UnzipAsync(signaler, input, args.ZipFilePath, args.DestinationFolder, args.ExplicitFolder, args.Overwrite);
+            await UnzipAsync(args.ZipFilePath, args.DestinationFolder, args.ExplicitFolder, args.Overwrite);
         }
 
         #region [ -- Private helper methods -- ]
@@ -87,8 +87,6 @@ namespace magic.lambda.io.file
          * Helper method to unzip file.
          */
         async Task UnzipAsync(
-            ISignaler signaler,
-            Node input,
             string zipFilePath,
             string destinationFolder,
             bool explicitFolder,

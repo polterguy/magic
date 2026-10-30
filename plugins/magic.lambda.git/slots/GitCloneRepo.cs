@@ -65,7 +65,7 @@ namespace magic.lambda.git
 
         #region [ -- Private helper methods -- ]
 
-        (string Url, string Destination, string Branch, string Depth) GetArgs(Node input)
+        static (string Url, string Destination, string Branch, string Depth) GetArgs(Node input)
         {
             var url = GitSlotHelpers.GetRequiredPrimaryValue(input);
             var destination = GitSlotHelpers.GetOptionalChild(input, "path");

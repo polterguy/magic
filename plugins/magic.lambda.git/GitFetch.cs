@@ -56,7 +56,7 @@ namespace magic.lambda.git
 
         #region [ -- Private helper methods -- ]
 
-        (string Path, string Remote, string Refspec) GetArgs(Node input)
+        static (string Path, string Remote, string Refspec) GetArgs(Node input)
         {
             var path = GitSlotHelpers.GetRequiredPrimaryValue(input);
             var remote = input.Children.FirstOrDefault(x => x.Name == "remote")?.GetEx<string>() ?? "origin";

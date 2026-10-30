@@ -71,7 +71,7 @@ namespace magic.lambda.git
 
         #region [ -- Private helper methods -- ]
 
-        (string Path, bool Porcelain, bool Branch, bool Structured) GetArgs(Node input)
+        static (string Path, bool Porcelain, bool Branch, bool Structured) GetArgs(Node input)
         {
             var path = GitSlotHelpers.GetRequiredPrimaryValue(input);
             var porcelain = input.Children.FirstOrDefault(x => x.Name == "porcelain")?.GetEx<bool>() ?? false;

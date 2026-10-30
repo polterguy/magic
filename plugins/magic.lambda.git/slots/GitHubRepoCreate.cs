@@ -62,7 +62,7 @@ namespace magic.lambda.git
 
         #region [ -- Private helper methods -- ]
 
-        (string Name, string Owner, bool Private, string Description, string Homepage, bool AutoInit, string DefaultBranch, string Gitignore, string License) GetArgs(Node input)
+        static (string Name, string Owner, bool Private, string Description, string Homepage, bool AutoInit, string DefaultBranch, string Gitignore, string License) GetArgs(Node input)
         {
             var name = input.GetEx<string>();
             if (string.IsNullOrWhiteSpace(name))
@@ -83,7 +83,7 @@ namespace magic.lambda.git
             return (name, owner, isPrivate, description, homepage, autoInit, defaultBranch, gitignore, license);
         }
 
-        Dictionary<string, object> BuildPayload(
+        static Dictionary<string, object> BuildPayload(
             (string Name, string Owner, bool Private, string Description, string Homepage, bool AutoInit, string DefaultBranch, string Gitignore, string License) args)
         {
             var payload = new Dictionary<string, object>

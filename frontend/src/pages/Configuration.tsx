@@ -526,7 +526,7 @@ function OpenIdDialog(props: Readonly<{
   const [values, setValues] = useState<Record<string, Record<string, string>>>(() =>
     Object.fromEntries(Object.keys(existing).map(name =>
       [name, Object.fromEntries(Object.entries(existing[name] ?? {})
-        .map(([key, value]) => [key, String(value ?? '')]))])));
+        .map(([key, value]) => [key, typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value ?? '')]))])));
 
   // The selected provider's fields — client ID first, then whatever else it needs.
   const fields: OidcField[] = [
