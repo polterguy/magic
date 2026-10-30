@@ -22,7 +22,6 @@ namespace magic.lambda.html.slots.helpers
         const string TextNode = "#text";
 
         readonly HtmlDocument _doc;
-        readonly string _url;
         readonly Node _input;
         readonly (string DocBaseUrl, string DocUrl) _baseUrl;
         readonly bool _images;
@@ -139,15 +138,15 @@ namespace magic.lambda.html.slots.helpers
             bool code,
             bool lists)
         {
-            _doc = doc ?? throw new NullReferenceException(nameof(doc));
-            _url = url ?? "";
+            _doc = doc ?? throw new ArgumentNullException(nameof(doc));
+            var nonNullUrl = url ?? "";
             _input = input;
             _baseUrl = GetDocUrls(_doc, url);
             _images = images;
             _code = code;
             _lists = lists;
-            if (!string.IsNullOrEmpty(_url))
-                _input.Add(new Node("url", _url));
+            if (!string.IsNullOrEmpty(nonNullUrl))
+                _input.Add(new Node("url", nonNullUrl));
         }
 
 
@@ -810,7 +809,7 @@ namespace magic.lambda.html.slots.helpers
             url = url ?? "";
 
             // Removing # parts.
-            if (url.IndexOf('#') != -1)
+            if (url.Contains('#'))
                 url = url.Substring(0, url.IndexOf('#'));
 
             // Returning result to caller.

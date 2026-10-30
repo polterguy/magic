@@ -24,9 +24,7 @@ const MONTHS = [
 const pad = (n: number) => String(n).padStart(2, '0');
 const ymd = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
-function toValue(d: Date, dateOnly: boolean) {
-  return dateOnly ? ymd(d) : `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+const ymdhm = (d: Date) => `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 
 // Parses "YYYY-MM-DD" with an optional "Thh:mm" as local time; null if unparseable.
 function parseValue(v: string): Date | null {
@@ -142,7 +140,8 @@ export default function DateTimePicker(props: Readonly<{
   }, [view]);
 
   function emit(day: Date, t: { h: number; min: number }) {
-    props.onChange(toValue(new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.h, t.min), dateOnly));
+    const picked = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.h, t.min);
+    props.onChange(dateOnly ? ymd(picked) : ymdhm(picked));
   }
 
   const disabledDay = (d: Date) => minTime !== null && startOfDay(d) < minTime;

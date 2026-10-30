@@ -350,6 +350,24 @@ namespace magic.node.extensions
         }
 
         /*
+         * Helper method to return all descendants recursively for the '!' iterator.
+         */
+        static IEnumerable<Node> AllDescendants(IEnumerable<Node> input, string exceptName)
+        {
+            foreach (var idx in input)
+            {
+                if (idx.Name != exceptName)
+                {
+                    yield return idx;
+                    foreach (var idxInner in AllDescendants(idx.Children, exceptName))
+                    {
+                        yield return idxInner;
+                    }
+                }
+            }
+        }
+
+        /*
          * Helper method to return all ancestors recursively for the '--' iterator.
          */
         static IEnumerable<Node> AllAncestors(IEnumerable<Node> input)
@@ -367,24 +385,6 @@ namespace magic.node.extensions
                     cur = cur.Parent;
                     if (cur != null)
                         yield return cur;
-                }
-            }
-        }
-
-        /*
-         * Helper method to return all descendants recursively for the '!' iterator.
-         */
-        static IEnumerable<Node> AllDescendants(IEnumerable<Node> input, string exceptName)
-        {
-            foreach (var idx in input)
-            {
-                if (idx.Name != exceptName)
-                {
-                    yield return idx;
-                    foreach (var idxInner in AllDescendants(idx.Children, exceptName))
-                    {
-                        yield return idxInner;
-                    }
                 }
             }
         }

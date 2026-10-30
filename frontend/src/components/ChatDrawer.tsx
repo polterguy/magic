@@ -147,6 +147,14 @@ async function renderMermaidDiagrams(root: HTMLElement, dark: boolean) {
   }
 }
 
+// Copy buttons inside marked-rendered HTML, wired through delegation.
+function onListClick(event: React.MouseEvent) {
+  const button = (event.target as HTMLElement).closest('.chat-copy-btn');
+  if (button) {
+    void copyToClipboard(decodeURIComponent((button as HTMLElement).dataset.code ?? ''), 'Code');
+  }
+}
+
 export default function ChatDrawer(props: Readonly<{
   open: boolean;
   userId: string;
@@ -464,14 +472,6 @@ export default function ChatDrawer(props: Readonly<{
     objectUrls.current.forEach(URL.revokeObjectURL);
     objectUrls.current = [];
     inputRef.current?.focus();
-  }
-
-  // Copy buttons inside marked-rendered HTML, wired through delegation.
-  function onListClick(event: React.MouseEvent) {
-    const button = (event.target as HTMLElement).closest('.chat-copy-btn');
-    if (button) {
-      void copyToClipboard(decodeURIComponent((button as HTMLElement).dataset.code ?? ''), 'Code');
-    }
   }
 
   return (

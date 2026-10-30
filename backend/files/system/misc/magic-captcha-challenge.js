@@ -102,11 +102,9 @@ mcaptcha.token = async function(callback, workload = 3) {
         // Incrementing the seed value and trying again.
         seed += 1;
       }
-    }).catch(err => {
-      err.json().then(err => {
-        console.log(err);
-        alert('Could not get Magic CAPTCHA challenge, contact sys admin');
-      });
+    }).catch(async err => {
+      console.log(await err.json());
+      alert('Could not get Magic CAPTCHA challenge, contact sys admin');
     });
 }
 })();

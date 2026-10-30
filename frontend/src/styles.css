@@ -361,6 +361,7 @@ h1 {
 
 .page-header {
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 /* Terminal prompt in front of every page title: reads as "~/ dashboard". */
@@ -376,17 +377,13 @@ h1 {
 }
 
 /*
- * Any page header that puts controls beside its title is a flex row, and by
+ * Any page header that puts controls beside its title is a flex row (and wraps), and by
  * default the title is the item that gives way: it gets squeezed under its
  * natural width, wraps onto two or three lines, and grows the header — moving
  * everything below it. Whenever the controls change width (a toolbar appearing,
  * a select populating, "Run" becoming "Running…") that turns into a visible
  * jump. So the title keeps its width and the controls take the pressure.
  */
-.page-header {
-  flex-wrap: wrap;
-}
-
 .page-header .page-title {
   flex: 0 0 auto;
   white-space: nowrap;
@@ -1144,10 +1141,6 @@ tr.clickable:hover td { background: var(--accent-soft); }
   pointer-events: none;
 }
 
-.tour-card {
-  pointer-events: auto;
-}
-
 .tour-scrim {
   position: absolute;
   inset: 0;
@@ -1180,6 +1173,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .tour-card {
+  pointer-events: auto;
   position: absolute;
   width: 380px;
   max-width: calc(100vw - 32px);
@@ -1294,7 +1288,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 
 .chat-text {
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
   line-height: 1.6;
 }
 
@@ -1412,7 +1406,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
   padding: 12px 14px;
   overflow-x: auto;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
   font-size: var(--text-sm);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color: var(--cm-text, var(--text));
@@ -1563,7 +1557,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
   line-height: 1.55;
   color: var(--muted);
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .chat-download {
@@ -2170,7 +2164,7 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .log-meta-value {
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .mono {
@@ -3472,7 +3466,7 @@ tr.vss-irrelevant td {
   font-size: var(--text-xs);
   line-height: 1.55;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .terminal-line.error { color: #ff8a8a; }
@@ -4812,4 +4806,21 @@ tr.vss-irrelevant td {
 /* A rail that is not the thing being edited reads as switched off. */
 .designer-rail[inert] {
   opacity: 0.45;
+}
+
+/*
+ * Reduced motion: whoever asks their system for less motion gets none of the
+ * transitions and animations above.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  a.kpi-link,
+  .guide-card {
+    transition: none;
+  }
+
+  .toast,
+  .ai-waiter-dots span {
+    animation: none;
+  }
 }

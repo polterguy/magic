@@ -82,7 +82,7 @@ export function urlProblem(url: string, taken: string[]): string | null {
 
 // A readable title from the last step of the URL: "/docs/api-keys" → "Api keys".
 function titleFor(url: string) {
-  const last = tidyUrl(url).split('/').filter(Boolean).pop() ?? 'Home';
+  const last = tidyUrl(url).split('/').findLast(Boolean) ?? 'Home';
   const words = last.replace(/[-_]+/g, ' ');
   return words.charAt(0).toUpperCase() + words.slice(1);
 }

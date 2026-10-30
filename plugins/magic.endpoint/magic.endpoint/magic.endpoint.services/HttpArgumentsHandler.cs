@@ -99,7 +99,7 @@ namespace magic.endpoint.services
          * payload to args node, sanity checking that the
          * parameter is allowed in the process.
          */
-        static IEnumerable<Node> GetPayloadParameters(Node declaration, Node payload)
+        static List<Node> GetPayloadParameters(Node declaration, Node payload)
         {
             /*
              * Checking if file contains a declaration at all.

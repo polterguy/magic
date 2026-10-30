@@ -315,15 +315,6 @@ export default function Files() {
     return set;
   }, [folders, visibleFiles, query]);
 
-  /*
-   * Toasts rather than an inline banner: a banner is part of the layout, so
-   * showing one pushed the editor down and made it jump under the cursor.
-   * Toasts float over the page and leave the editor where it is.
-   */
-  function show(text: string, isError = false) {
-    showToast(text, isError);
-  }
-
   function toggle(path: string) {
     const next = new Set(expanded);
     if (next.has(path)) {
@@ -361,7 +352,7 @@ export default function Files() {
         : [...current, { path, content: text, saved: text }]);
       setSelectedFile(path);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -413,10 +404,10 @@ export default function Files() {
       await saveFile(file.path, file.content);
       setOpenFiles(files => files.map(candidate =>
         candidate.path === file.path ? { ...candidate, saved: file.content } : candidate));
-      show('Saved ' + file.path);
+      showToast('Saved ' + file.path);
       return true;
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
       return false;
     } finally {
       setSaving(false);
@@ -450,7 +441,7 @@ export default function Files() {
         try {
           await saveFile(path, file.content);
         } catch (err: any) {
-          show(err.message, true);
+          showToast(err.message, true);
           return;
         } finally {
           setWaiting(false);
@@ -516,7 +507,7 @@ export default function Files() {
       setWaiting(true);
       setExecuteResult(await evaluateWithArgs(code, args));
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -531,7 +522,7 @@ export default function Files() {
     try {
       setRecording(await debugHyperlambda(code ?? content, args));
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -553,7 +544,7 @@ export default function Files() {
       const response = await aiQuery(selection, 'hl');
       updateContent(response.result);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setGenerating(false);
     }
@@ -590,13 +581,13 @@ export default function Files() {
         candidate.path === endpoint.path &&
         candidate.verb.toLowerCase() === endpoint.verb);
       if (!meta) {
-        show('The server does not list ' + endpoint.verb.toUpperCase() + ' ' +
+        showToast('The server does not list ' + endpoint.verb.toUpperCase() + ' ' +
           endpoint.path + ' as an endpoint', true);
         return;
       }
       setInvokeTarget(meta);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -614,7 +605,7 @@ export default function Files() {
       await loadTree(systemFiles);
       await openFile(path);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -630,7 +621,7 @@ export default function Files() {
       await createFolder(folder + name + '/');
       await loadTree(systemFiles);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -655,7 +646,7 @@ export default function Files() {
       }
       await loadTree(systemFiles);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -663,7 +654,7 @@ export default function Files() {
 
   async function removeFolder(path: string) {
     if (PROTECTED_FOLDERS.has(path)) {
-      show('You cannot delete the ' + path + ' folder', true);
+      showToast('You cannot delete the ' + path + ' folder', true);
       return;
     }
     /*
@@ -697,7 +688,7 @@ export default function Files() {
       }
       await loadTree(systemFiles);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -705,7 +696,7 @@ export default function Files() {
 
   async function rename(path: string, isFolder: boolean) {
     if (isFolder && PROTECTED_FOLDERS.has(path)) {
-      show('You cannot rename the ' + path + ' folder', true);
+      showToast('You cannot rename the ' + path + ' folder', true);
       return;
     }
     const oldName = nameOf(path);
@@ -740,7 +731,7 @@ export default function Files() {
       setSelectedFile(remap(selectedFile));
       await loadTree(systemFiles);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -767,9 +758,9 @@ export default function Files() {
           meta: 'FUNCTION_INVOCATION ==> ' + file,
         });
       }
-      show(targets.length + ' AI function(s) declared on ' + type);
+      showToast(targets.length + ' AI function(s) declared on ' + type);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -782,7 +773,7 @@ export default function Files() {
       const spec = await getOpenApiSpec(target);
       setOpenApiSpec({ json: JSON.stringify(spec, null, 2), target });
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setWaiting(false);
     }
@@ -826,7 +817,7 @@ export default function Files() {
                     raw.blob,
                     dispositionFilename(raw.disposition) ?? nameOf(selectedFile));
                 } catch (err: any) {
-                  show(err.message, true);
+                  showToast(err.message, true);
                 } finally {
                   setWaiting(false);
                 }
@@ -909,10 +900,10 @@ export default function Files() {
                     for (const file of files) {
                       await uploadFile(activeFolder, file);
                     }
-                    show('Uploaded ' + files.length + ' file(s) to ' + activeFolder);
+                    showToast('Uploaded ' + files.length + ' file(s) to ' + activeFolder);
                     await loadTree(systemFiles);
                   } catch (err: any) {
-                    show(err.message, true);
+                    showToast(err.message, true);
                   } finally {
                     setWaiting(false);
                   }
@@ -936,7 +927,7 @@ export default function Files() {
                    */
                   const moduleName = moduleNameFromZip(file);
                   if (!moduleName) {
-                    show(
+                    showToast(
                       file.name + ' cannot be a module name — it must be ' +
                       '<name>.zip, using only lowercase letters, digits, ' +
                       'hyphens or underscores, and no further dots',
@@ -946,10 +937,10 @@ export default function Files() {
                   setWaiting(true);
                   try {
                     await installModule(file);
-                    show('Module ' + moduleName + ' installed');
+                    showToast('Module ' + moduleName + ' installed');
                     await loadTree(systemFiles);
                   } catch (err: any) {
-                    show(err.message, true);
+                    showToast(err.message, true);
                   } finally {
                     setWaiting(false);
                   }
@@ -966,7 +957,7 @@ export default function Files() {
                     raw.blob,
                     dispositionFilename(raw.disposition) ?? 'folder.zip');
                 } catch (err: any) {
-                  show(err.message, true);
+                  showToast(err.message, true);
                 } finally {
                   setWaiting(false);
                 }
@@ -1080,7 +1071,7 @@ export default function Files() {
               getOldCode={() => content}
               session={selectedFile}
               onResult={updateContent}
-              onError={message => show(message, true)}
+              onError={message => showToast(message, true)}
               style={{ marginTop: 8 }} />
           )}
         </div>

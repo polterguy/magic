@@ -77,23 +77,19 @@ function InternalTab() {
     refresh();
   }, [refresh]);
 
-  function show(text: string, isError = false) {
-    showToast(text, isError);
-  }
-
   async function create() {
     if (!DB_NAME_PATTERN.test(name)) {
-      show('Database names accept alphanumeric characters, - and _', true);
+      showToast('Database names accept alphanumeric characters, - and _', true);
       return;
     }
     setBusy(true);
     try {
       await createDatabase('sqlite', 'generic', name);
-      show('Database ' + name + ' created');
+      showToast('Database ' + name + ' created');
       setName('');
       await refresh();
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -108,17 +104,17 @@ function InternalTab() {
     });
     if (typed !== database) {
       if (typed !== null) {
-        show('Name did not match — nothing deleted', true);
+        showToast('Name did not match — nothing deleted', true);
       }
       return;
     }
     setBusy(true);
     try {
       await dropDatabase('sqlite', 'generic', database);
-      show('Database ' + database + ' deleted');
+      showToast('Database ' + database + ' deleted');
       await refresh();
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -126,16 +122,16 @@ function InternalTab() {
 
   async function upload(file: File) {
     if (!file.name.endsWith('.db')) {
-      show('Backups must be .db files', true);
+      showToast('Backups must be .db files', true);
       return;
     }
     setBusy(true);
     try {
       await uploadDatabaseBackup(file);
-      show('Backup ' + file.name + ' uploaded');
+      showToast('Backup ' + file.name + ' uploaded');
       await refresh();
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -285,36 +281,32 @@ function ExternalTab() {
     refresh();
   }, [refresh]);
 
-  function show(text: string, isError = false) {
-    showToast(text, isError);
-  }
-
   async function testOrConnect(connectAfter: boolean) {
     if (!name || !connectionString) {
-      show('Give the connection a name and a connection string', true);
+      showToast('Give the connection a name and a connection string', true);
       return;
     }
     if (!connectionString.includes('{database}')) {
-      show('The connection string must contain the {database} placeholder', true);
+      showToast('The connection string must contain the {database} placeholder', true);
       return;
     }
     if (!CSTRING_NAME_PATTERN.test(name)) {
-      show('Connection names accept alphanumeric characters and _', true);
+      showToast('Connection names accept alphanumeric characters and _', true);
       return;
     }
     if (rows.some(row => row.type === type && row.name === name)) {
-      show('That name is already in use for ' + type, true);
+      showToast('That name is already in use for ' + type, true);
       return;
     }
     setBusy(true);
     try {
       const test = await testConnectionString(type, connectionString);
       if (test.result !== 'success') {
-        show(test.message ?? 'Could not connect', true);
+        showToast(test.message ?? 'Could not connect', true);
         return;
       }
       if (!connectAfter) {
-        show('Connection succeeded');
+        showToast('Connection succeeded');
         return;
       }
       let useAsDefault = false;
@@ -326,12 +318,12 @@ function ExternalTab() {
         });
       }
       await addConnectionString(type, name, connectionString, useAsDefault);
-      show('Connected — ' + name + ' added');
+      showToast('Connected — ' + name + ' added');
       setName('');
       setConnectionString('');
       await refresh();
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -346,17 +338,17 @@ function ExternalTab() {
     });
     if (typed !== row.name) {
       if (typed !== null) {
-        show('Name did not match — nothing deleted', true);
+        showToast('Name did not match — nothing deleted', true);
       }
       return;
     }
     setBusy(true);
     try {
       await deleteConnectionString(row.type, row.name);
-      show('Connection ' + row.name + ' deleted');
+      showToast('Connection ' + row.name + ' deleted');
       await refresh();
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -373,15 +365,15 @@ function ExternalTab() {
       return;
     }
     if (!CSTRING_NAME_PATTERN.test(catalogName)) {
-      show('Catalog names accept alphanumeric characters and _', true);
+      showToast('Catalog names accept alphanumeric characters and _', true);
       return;
     }
     setBusy(true);
     try {
       await createDatabase(row.type, row.name, catalogName);
-      show('Catalog ' + catalogName + ' created');
+      showToast('Catalog ' + catalogName + ' created');
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -393,7 +385,7 @@ function ExternalTab() {
       const response = await listDatabases(row.type, row.name);
       setCatalogs({ row, list: response.databases ?? [] });
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setManaging(null);
     }
@@ -408,7 +400,7 @@ function ExternalTab() {
     });
     if (typed !== catalog) {
       if (typed !== null) {
-        show('Name did not match — nothing deleted', true);
+        showToast('Name did not match — nothing deleted', true);
       }
       return;
     }
@@ -417,7 +409,7 @@ function ExternalTab() {
       await dropDatabase(row.type, row.name, catalog);
       await manageCatalogs(row);
     } catch (err: any) {
-      show(err.message, true);
+      showToast(err.message, true);
     } finally {
       setBusy(false);
     }
@@ -500,7 +492,7 @@ function ExternalTab() {
                       className="btn btn-secondary btn-small"
                       onClick={() => {
                         void copyToClipboard(row.connectionString, 'The connection string');
-                        show('Connection string copied');
+                        showToast('Connection string copied');
                       }}>
                       Copy
                     </button>

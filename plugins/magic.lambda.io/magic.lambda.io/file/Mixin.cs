@@ -80,7 +80,6 @@ namespace magic.lambda.io.file
 
             // Loading Hyperlambda codebehind file and parsing as lambda.
             var codebehindFilename = string.Concat(staticFilename.AsSpan(0, staticFilename.LastIndexOf('.')), ".hl");
-            var lambda = new Node();
             if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(codebehindFilename)))
             {
                 /*
@@ -94,7 +93,7 @@ namespace magic.lambda.io.file
                 var codebehind = new Node("io.file.load", codebehindFilename);
                 await signaler.SignalAsync("io.file.load", codebehind);
 
-                lambda = HyperlambdaParser.Parse(codebehind.Get<string>());
+                var lambda = HyperlambdaParser.Parse(codebehind.Get<string>());
                 input.AddRange(lambda.Children);
 
                 /*

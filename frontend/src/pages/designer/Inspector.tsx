@@ -507,15 +507,6 @@ export default function Inspector(props: Readonly<{
           const filterOn = !!data.filterable;
           const liveOn = !!data.live;
 
-          // Present as soon as either capability needs it, gone once neither does.
-          function syncPrimaryKey(deleteWill: boolean, editWill: boolean) {
-            if ((deleteWill || editWill) && currentSource) {
-              props.onSetAttribute('data-primary-key', JSON.stringify(currentSource.primaryKey));
-            } else {
-              props.onRemoveAttribute('data-primary-key');
-            }
-          }
-
           function writeColumns(names: string[], editable: boolean) {
             if (!currentSource) {
               return;
@@ -584,7 +575,12 @@ export default function Inspector(props: Readonly<{
             } else {
               props.onRemoveAttribute('data-delete-url');
             }
-            syncPrimaryKey(checked, editOn);
+            // Present as soon as either capability needs it, gone once neither does.
+            if (checked || editOn) {
+              props.onSetAttribute('data-primary-key', JSON.stringify(currentSource.primaryKey));
+            } else {
+              props.onRemoveAttribute('data-primary-key');
+            }
           }
 
           function toggleEdit(checked: boolean) {
@@ -598,7 +594,12 @@ export default function Inspector(props: Readonly<{
             }
             // Re-stamps every currently checked column's [editable] flag to match.
             writeColumns(currentColumns.map(entry => entry.name), checked);
-            syncPrimaryKey(deleteOn, checked);
+            // Present as soon as either capability needs it, gone once neither does.
+            if (deleteOn || checked) {
+              props.onSetAttribute('data-primary-key', JSON.stringify(currentSource.primaryKey));
+            } else {
+              props.onRemoveAttribute('data-primary-key');
+            }
           }
 
           /*
@@ -611,22 +612,6 @@ export default function Inspector(props: Readonly<{
            * boolean the widget runtime itself turns into the right query
            * parameter per column, straight off each column's own [type].
            */
-          function toggleFilters(checked: boolean) {
-            if (checked) {
-              props.onSetAttribute('data-filterable', 'true');
-            } else {
-              props.onRemoveAttribute('data-filterable');
-            }
-          }
-
-          function toggleLive(checked: boolean) {
-            if (checked) {
-              props.onSetAttribute('data-live', 'true');
-            } else {
-              props.onRemoveAttribute('data-live');
-            }
-          }
-
           return (
             <div className="designer-field">
               <span>Table</span>
@@ -699,7 +684,9 @@ export default function Inspector(props: Readonly<{
                     <input
                       type="checkbox"
                       checked={filterOn}
-                      onChange={event => toggleFilters(event.target.checked)} />
+                      onChange={event => event.target.checked
+                        ? props.onSetAttribute('data-filterable', 'true')
+                        : props.onRemoveAttribute('data-filterable')} />
                     Allow filtering
                   </label>
                   {/*
@@ -711,7 +698,9 @@ export default function Inspector(props: Readonly<{
                     <input
                       type="checkbox"
                       checked={liveOn}
-                      onChange={event => toggleLive(event.target.checked)} />
+                      onChange={event => event.target.checked
+                        ? props.onSetAttribute('data-live', 'true')
+                        : props.onRemoveAttribute('data-live')} />
                     Update live
                   </label>
                 </>

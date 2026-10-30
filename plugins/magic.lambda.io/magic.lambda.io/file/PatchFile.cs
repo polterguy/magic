@@ -396,7 +396,7 @@ namespace magic.lambda.io.file
         }
 
         static bool HunkMatchesAt(
-            IReadOnlyList<string> originalLines,
+            List<string> originalLines,
             int candidate,
             IReadOnlyList<string> hunkLines,
             bool ignoreTrailingWhitespace)
