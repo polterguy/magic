@@ -18,10 +18,13 @@ namespace magic.lambda.pdf
     /// letting iText read files and issue HTTP requests on its own. This subjects such resources to
     /// whatever [whitelist] is in scope, exactly like any other slot invocation.
     /// </summary>
-    // itext.pdfhtml 6.3.1's ConverterProperties.SetResourceRetriever still only accepts this
-    // namespace's IResourceRetriever, even though iText.IO.Resolver.Resource.IResourceRetriever
-    // has superseded it - hence implementing the obsolete one is deliberate, not an oversight.
+    // itext.pdfhtml 6.3.4 (the latest release) has a ConverterProperties.SetResourceRetriever that still
+    // only accepts this namespace's IResourceRetriever, even though iText.IO.Resolver.Resource.IResourceRetriever
+    // has superseded it - hence implementing the obsolete one is deliberate, not an oversight, and the
+    // warning is silenced for this one declaration. Switch to the new interface once SetResourceRetriever takes it.
+#pragma warning disable CS0618
     public class SignalerResourceRetriever : IResourceRetriever
+#pragma warning restore CS0618
     {
         readonly ISignaler _signaler;
 

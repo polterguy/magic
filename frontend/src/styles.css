@@ -4091,9 +4091,9 @@ tr.vss-irrelevant td {
  * designed, which may be any colour at all, not against the dashboard.
  */
 .designer-outline.hover {
-  outline: 2px solid #588cff;
+  outline: 2px solid #3068e6;
   outline-offset: -1px;
-  background: rgba(88, 140, 255, 0.22);
+  background: rgba(48, 104, 230, 0.22);
 }
 
 /* The name and size of what is outlined, like a browser inspector's badge. */
@@ -4107,7 +4107,7 @@ tr.vss-irrelevant td {
   max-width: 100%;
   padding: 2px 7px;
   border-radius: var(--radius-sm);
-  background: #588cff;
+  background: #3068e6;
   color: #fff;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -4134,7 +4134,7 @@ tr.vss-irrelevant td {
  * dashboard around it.
  */
 .designer-outline.selected {
-  outline: 2px solid #588cff;
+  outline: 2px solid #3068e6;
   outline-offset: -1px;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 0 2px rgba(0, 0, 0, 0.35);
 }
@@ -4619,8 +4619,8 @@ tr.vss-irrelevant td {
  * scope rather than as a selection — there may be twenty of them.
  */
 .designer-outline.matching {
-  border: 1px dashed rgba(88, 140, 255, 0.85);
-  background: rgba(88, 140, 255, 0.07);
+  border: 1px dashed rgba(48, 104, 230, 0.85);
+  background: rgba(48, 104, 230, 0.07);
   border-radius: 2px;
 }
 
