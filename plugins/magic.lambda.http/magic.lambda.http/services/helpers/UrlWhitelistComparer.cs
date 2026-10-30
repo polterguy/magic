@@ -31,8 +31,8 @@ namespace magic.lambda.http.services.helpers
         /// <summary>
         /// Returns true if the specified URL matches the specified pin.
         /// </summary>
-        /// <param name="pattern">Pin to match, an absolute URL whose host labels and path
-        /// segments may contain wildcards.</param>
+        /// <param name="pattern">Pin to match, an absolute URL whose path segments may contain
+        /// wildcards.</param>
         /// <param name="url">URL to verify, possibly an url template still carrying its
         /// {placeholder} segments.</param>
         /// <returns>True if the URL matches the pin.</returns>
@@ -47,7 +47,15 @@ namespace magic.lambda.http.services.helpers
                 return false;
 
             /*
-             * The pin must be an absolute URL itself, wildcards are only legal in host and path.
+             * Hosts are matched exactly, since a host wildcard trusts every subdomain, including any
+             * that gets taken over. System.Uri refuses '*' in a host anyway, so this gives the
+             * author a clear reason rather than "not an absolute URL".
+             */
+            if (AuthorityOf(pattern).Contains('*'))
+                throw new HyperlambdaException($"'{pattern}' is not a legal pin in a vocabulary, host wildcards are not supported, list each host instead");
+
+            /*
+             * The pin must be an absolute URL itself, wildcards are only legal in the path.
              * A pin carrying {placeholders} in its path is parsed with those placeholders
              * substituted, since the strict parser may refuse the braces.
              */
@@ -79,10 +87,10 @@ namespace magic.lambda.http.services.helpers
             if (candidate.UserInfo != string.Empty)
                 return false;
 
-            // Scheme, host and port must be exact, the only wildcard in a host is one whole label.
+            // Scheme, host and port must be exact.
             if (!pin.Scheme.Equals(candidate.Scheme, StringComparison.OrdinalIgnoreCase))
                 return false;
-            if (!MatchesHost(pattern, pin.Host, candidate.Host))
+            if (!pin.Host.Equals(candidate.Host, StringComparison.OrdinalIgnoreCase))
                 return false;
             if (pin.Port != candidate.Port)
                 return false;
@@ -124,24 +132,14 @@ namespace magic.lambda.http.services.helpers
             path.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
         /*
-         * Compares a host pattern to a host, label by label, where '*' matches one whole label.
+         * Extracts the authority (host, port and any user info) of an URL from its raw string form.
          */
-        static bool MatchesHost(string pattern, string pinHost, string host)
+        static string AuthorityOf(string url)
         {
-            var patternLabels = pinHost.Split('.');
-            var hostLabels = host.Split('.');
-            if (patternLabels.Length != hostLabels.Length)
-                return false;
-            for (var idx = 0; idx < patternLabels.Length; idx++)
-            {
-                if (patternLabels[idx] == "*")
-                    continue;
-                if (patternLabels[idx].Contains('*'))
-                    throw new HyperlambdaException($"'{pattern}' is not a legal pin in a vocabulary, a host wildcard must be an entire label such as '*.example.com'");
-                if (!patternLabels[idx].Equals(hostLabels[idx], StringComparison.OrdinalIgnoreCase))
-                    return false;
-            }
-            return true;
+            var scheme = url.IndexOf("://", StringComparison.Ordinal);
+            var start = scheme == -1 ? 0 : scheme + 3;
+            var end = url.IndexOfAny(_authorityTerminators, start);
+            return end == -1 ? url.Substring(start) : url.Substring(start, end - start);
         }
 
         /*

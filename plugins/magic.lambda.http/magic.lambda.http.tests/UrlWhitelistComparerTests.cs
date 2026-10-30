@@ -81,30 +81,21 @@ namespace magic.lambda.http.tests
             Assert.Contains("user info", ex.Message);
         }
 
-        /*
-         * The two tests below describe what the comparer says it does, and are skipped because it does not do it:
-         * System.Uri refuses '*' in a host, so a pin such as 'https://*.example.com/a' is rejected as "not an absolute
-         * URL" before the label-by-label host comparison, which handles '*', is ever reached. Only {placeholders}
-         * are substituted before parsing. Remove the skip when the pin's host wildcards are made to work.
-         */
-        const string HostWildcardSkip = "Uri.TryCreate rejects '*' in a host, so a host wildcard pin is rejected before it is compared";
-
-        [Theory(Skip = HostWildcardSkip)]
-        [InlineData("https://*.example.com/a", "https://api.example.com/a", true)]
-        [InlineData("https://*.example.com/a", "https://example.com/a", false)]
-        [InlineData("https://*.example.com/a", "https://a.b.example.com/a", false)]
-        [InlineData("https://api.*.com/a", "https://api.example.com/a", true)]
-        [InlineData("https://api.*.com/a", "https://web.example.com/a", false)]
-        public void HostWildcardIsOneWholeLabel(string pin, string url, bool expected)
+        [Theory]
+        [InlineData("https://*.example.com/a")]
+        [InlineData("https://api.*.com/a")]
+        [InlineData("https://ex*.example.com/a")]
+        [InlineData("https://*.example.com:8443/a")]
+        public void HostWildcardsAreRejected(string pin)
         {
-            Assert.Equal(expected, UrlWhitelistComparer.Matches(pin, url));
+            var ex = Assert.Throws<HyperlambdaException>(() => UrlWhitelistComparer.Matches(pin, "https://api.example.com/a"));
+            Assert.Contains("host wildcards are not supported", ex.Message);
         }
 
-        [Fact(Skip = HostWildcardSkip)]
-        public void HostWildcardMustBeAWholeLabel()
+        [Fact]
+        public void WildcardInThePathOfAPinStillWorks()
         {
-            var ex = Assert.Throws<HyperlambdaException>(() => UrlWhitelistComparer.Matches("https://ex*.example.com/a", "https://exa.example.com/a"));
-            Assert.Contains("entire label", ex.Message);
+            Assert.True(UrlWhitelistComparer.Matches("https://example.com/*", "https://example.com/a/b"));
         }
 
         [Fact]
