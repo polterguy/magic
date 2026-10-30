@@ -87,7 +87,6 @@ button.aista-chat-btn:focus i.icofont-chat {
   animation-duration: .5s;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  font-family: Roboto, sans-serif !important;
   position: fixed !important;
   z-index: 100001 !important;
   bottom: 10px !important;
@@ -107,8 +106,6 @@ button.aista-chat-btn:focus i.icofont-chat {
   color: rgb(128,128,128) !important;
 }
 .aista-chat-close-btn {
-  border-radius: 8px !important;
-  border: none !important;
   padding: 5px 9px !important;
   font-size: 12px !important;
   color: #a0a0a0 !important;
@@ -209,7 +206,6 @@ button.aista-chat-btn:focus i.icofont-chat {
   animation-iteration-count: infinite;
   animation-direction: alternate;
   font-size: 14px !important;
-  margin-bottom: 10px !important;
   border-radius: 25px 25px 0 25px;
   background-color: rgb(230, 231, 238) !important;
   padding: 15px !important;
@@ -221,7 +217,6 @@ button.aista-chat-btn:focus i.icofont-chat {
 .aista-chat-question {
   border-radius: 25px 25px 0 25px;
   background-color: rgb(230, 231, 238) !important;
-  border: .0625rem solid #d1d9e6 !important;
   padding: 15px !important;
   margin-left: 60px !important;
   margin-bottom: 25px !important;
@@ -240,7 +235,6 @@ button.aista-chat-btn:focus i.icofont-chat {
   background-color: rgb(230, 231, 238) !important;
   border: .0625rem solid #d1d9e6 !important;
   box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff !important;
-  color: #555 !important;
   padding: 15px !important;
   margin-right: 60px !important;
   margin-bottom: 25px !important;

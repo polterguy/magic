@@ -37,7 +37,6 @@ button.aista-chat-btn {
   bottom: 10px !important;
   right: 10px !important;
   border-radius: 23px !important;
-  border: none !important;
   padding: 15px 35px !important;
   font-size: 14px !important;
   z-index: 100000 !important;
@@ -212,7 +211,6 @@ button.aista-chat-btn:focus i.icofont-chat {
   animation-iteration-count: infinite;
   animation-direction: alternate;
   font-size: 14px !important;
-  margin-bottom: 10px !important;
   margin-left: 60px !important;
   border-radius: 10px 10px 0 10px;
   margin-bottom: 25px !important;

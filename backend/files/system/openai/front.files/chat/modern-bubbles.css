@@ -223,7 +223,6 @@ button.ainiro.ainiro_hide {
   animation-duration: .4s;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  color: inherit;
   transition: color .1s ease-in-out;
   text-align: left;
   border-radius: 10px;
@@ -449,7 +448,6 @@ button.ainiro.ainiro_hide {
 }
 .ainiro_references {
   display: block;
-  padding-left: 0;
   margin-top: 25px;
   padding-left: 30px;
 }

@@ -207,7 +207,6 @@ div.ainiro>.ainiro_chat_surface>.ainiro_starters>.ainiro_starter {
   animation-duration: 0.4s;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  color: inherit;
   transition: color 0.1s ease-in-out;
   text-align: left;
   color: var(--ainiro-color);
@@ -470,7 +469,6 @@ div.ainiro>.ainiro_chat_surface>.ainiro_starters>.ainiro_starter {
 
 .ainiro_references {
   display: block;
-  padding-left: 0;
   margin-top: 25px;
   padding-left: 30px;
 }

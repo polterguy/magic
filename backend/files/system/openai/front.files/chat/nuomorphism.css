@@ -84,7 +84,6 @@ button.aista-chat-btn:focus i.icofont-chat {
   animation-duration: .5s;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  background-color: rgb(230, 231, 238) !important;
   position: fixed;
   z-index: 100001 !important;
   bottom: 10px;
@@ -114,8 +113,6 @@ button.aista-chat-btn:focus i.icofont-chat {
   animation-timing-function: ease-in-out;
 }
 .aista-chat-close-btn {
-  border-radius: 8px !important;
-  border: none !important;
   padding: 5px 9px !important;
   font-size: 12px !important;
   position: absolute;

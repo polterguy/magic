@@ -209,7 +209,6 @@ button.aista-chat-btn:focus {
   animation-iteration-count: infinite;
   animation-direction: alternate;
   font-size: 14px !important;
-  margin-bottom: 10px !important;
   margin-left: 60px !important;
   border-radius: 10px 10px 0 10px;
   margin-bottom: 25px !important;

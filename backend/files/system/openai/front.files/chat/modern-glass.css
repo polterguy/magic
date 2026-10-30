@@ -235,7 +235,6 @@ button.ainiro.ainiro_hide {
   animation-duration: .4s;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  color: inherit;
   transition: color .1s ease-in-out;
   text-align: left;
   border-radius: 5px;

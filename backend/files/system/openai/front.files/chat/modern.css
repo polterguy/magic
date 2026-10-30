@@ -194,7 +194,6 @@ div.ainiro>div.ainiro_chat_surface>div.ainiro_starters>button.ainiro_starter {
   animation-duration: .4s;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
-  color: inherit;
   transition: color .1s ease-in-out;
   text-align: left;
   color: var(--ainiro-color);
@@ -421,7 +420,6 @@ div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>p>span.ainiro-dot.ainiro-d
 }
 div.ainiro>div.ainiro_chat_surface>div.ainiro_machine>ul.ainiro_references {
   display: block;
-  padding-left: 0;
   margin-top: 25px;
   padding-left: 30px;
 }

@@ -44,7 +44,6 @@ button.aista-chat-btn {
   color: #fcfeff !important;
   cursor: pointer !important;
   font-weight: bold !important;
-  border: solid 1px #2b1700;
   text-align: center !important;
   text-decoration: none !important;
   font-family: Arial, Helvetica, sans-serif !important;
@@ -212,7 +211,6 @@ button.aista-chat-btn:focus i.icofont-chat {
   animation-iteration-count: infinite;
   animation-direction: alternate;
   font-size: 14px !important;
-  margin-bottom: 10px !important;
   margin-left: 60px !important;
   border-radius: 10px 10px 0 10px;
   margin-bottom: 25px !important;
