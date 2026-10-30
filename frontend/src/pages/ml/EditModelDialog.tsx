@@ -31,6 +31,21 @@ function thresholdHint(useEmbeddings: boolean, retrieval: string) {
   return retrieval === 'bm25' ? 'Keyword retrieval has no threshold — BM25 rank order decides' : undefined;
 }
 
+// The roles the model being edited is restricted to.
+function rolesOf(existing: any): string[] {
+  return existing?.auth ? existing.auth.split(',') : [];
+}
+
+// A 0 or 1 setting of the model being edited, which is on for a new one.
+function flagOf(existing: any, name: string) {
+  return existing ? existing[name] === 1 : true;
+}
+
+// Fades a field that does nothing under the current settings.
+const FADED = { opacity: 0.45 };
+
+const EMBEDDINGS_HINT = 'Only used when "Use embeddings" is on';
+
 // The settings without a field of their own above, from the model being edited, or the defaults for a new one.
 function initialExtra(existing: any) {
   return {
@@ -84,11 +99,11 @@ export default function EditModelDialog(props: Readonly<{
     useState(String(existing?.max_context_tokens ?? 2000));
   const [maxRequestTokens, setMaxRequestTokens] =
     useState(String(existing?.max_request_tokens ?? 1000));
-  const [auth, setAuth] = useState<string[]>(existing?.auth ? existing.auth.split(',') : []);
+  const [auth, setAuth] = useState<string[]>(() => rolesOf(existing));
   const [authOpen, setAuthOpen] = useState(false);
-  const [supervised, setSupervised] = useState(existing ? existing.supervised === 1 : true);
+  const [supervised, setSupervised] = useState(() => flagOf(existing, 'supervised'));
   const [useEmbeddings, setUseEmbeddings] =
-    useState(existing ? existing.use_embeddings === 1 : true);
+    useState(() => flagOf(existing, 'use_embeddings'));
   /*
    * How get-context finds snippets: semantic (cosine over embeddings),
    * keyword (BM25 over an FTS index, needing no OpenAI key), or both merged
@@ -201,6 +216,12 @@ export default function EditModelDialog(props: Readonly<{
     }
   }
 
+  // What depends on embeddings being used, and on the retrieval not being keyword based.
+  const fadedUnlessEmbeddings = useEmbeddings ? undefined : FADED;
+  const fadedUnlessVectors = useEmbeddings && retrieval !== 'bm25' ? undefined : FADED;
+  const embeddingsHint = useEmbeddings ? undefined : EMBEDDINGS_HINT;
+  const tabStyle = (tab: string) => ({ display: dialogTab === tab ? 'flex' : 'none' });
+
   return (
     <Modal width={640} onClose={props.onClose} onSubmit={save}>
       <h2>{existing ? 'Edit ' + existing.type : 'New model'}</h2>
@@ -213,7 +234,7 @@ export default function EditModelDialog(props: Readonly<{
         active={dialogTab}
         onChange={setDialogTab} />
       <div style={{ maxHeight: '55vh', overflow: 'auto', paddingRight: 6 }}>
-        <div className="form-grid" style={{ display: dialogTab === 'general' ? 'flex' : 'none' }}>
+        <div className="form-grid" style={tabStyle('general')}>
           {!existing && (
             <label>Type name
               <input type="text" value={type} onChange={e => setType(e.target.value)} />
@@ -265,7 +286,7 @@ export default function EditModelDialog(props: Readonly<{
             {/* Threshold is dead weight when embeddings are off — and for pure
                 keyword retrieval, which takes BM25 rank order as it comes. In
                 mixed mode it doubles as the keyword leg's relative cutoff. */}
-            <label style={useEmbeddings && retrieval !== 'bm25' ? undefined : { opacity: 0.45 }}>Threshold
+            <label style={fadedUnlessVectors}>Threshold
               <input
                 type="number"
                 step="0.1"
@@ -282,12 +303,12 @@ export default function EditModelDialog(props: Readonly<{
             </label>
             {/* Context tokens bound how much retrieved (embedded) material is
                 injected, so it too is irrelevant without embeddings. */}
-            <label style={useEmbeddings ? undefined : { opacity: 0.45 }}>Max context tokens
+            <label style={fadedUnlessEmbeddings}>Max context tokens
               <input
                 type="number"
                 value={maxContextTokens}
                 disabled={!useEmbeddings}
-                title={useEmbeddings ? undefined : 'Only used when "Use embeddings" is on'}
+                title={embeddingsHint}
                 onChange={e => setMaxContextTokens(e.target.value)} />
             </label>
             <label>Max request tokens
@@ -347,7 +368,7 @@ export default function EditModelDialog(props: Readonly<{
             </label>
           </div>
         </div>
-        <div className="form-grid" style={{ display: dialogTab === 'behaviour' ? 'flex' : 'none' }}>
+        <div className="form-grid" style={tabStyle('behaviour')}>
           <label>Conversation starters (markdown list)
             <textarea
               rows={4}
@@ -415,7 +436,7 @@ export default function EditModelDialog(props: Readonly<{
             </label>
           </div>
         </div>
-        <div className="form-grid" style={{ display: dialogTab === 'integrations' ? 'flex' : 'none' }}>
+        <div className="form-grid" style={tabStyle('integrations')}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {/* base_url is the site the daily "ainiro-crawl-machine-learning-models"
                 task re-crawls to keep the model's training data fresh — not an
@@ -458,11 +479,11 @@ export default function EditModelDialog(props: Readonly<{
                 OpenAI key at all; Hybrid merges both with rank fusion. "Use
                 embeddings" is the master switch for retrieval as such, so
                 without it there is nothing here to choose between. */}
-            <label style={useEmbeddings ? undefined : { opacity: 0.45 }}>Retrieval
+            <label style={fadedUnlessEmbeddings}>Retrieval
               <Select
                 value={retrieval}
                 disabled={!useEmbeddings}
-                title={useEmbeddings ? undefined : 'Only used when "Use embeddings" is on'}
+                title={embeddingsHint}
                 onChange={value => setRetrieval(value)}>
                 <option value="embeddings">Semantic (embeddings)</option>
                 <option value="bm25">Keyword (BM25)</option>
@@ -471,7 +492,7 @@ export default function EditModelDialog(props: Readonly<{
             </label>
             {/* Only relevant when embeddings are involved — it's the model
                 used to vectorise the training snippets. */}
-            <label style={useEmbeddings && retrieval !== 'bm25' ? undefined : { opacity: 0.45 }}>Vector model
+            <label style={fadedUnlessVectors}>Vector model
               <Select
                 value={extra.vector_model}
                 disabled={!useEmbeddings || retrieval === 'bm25'}
