@@ -192,47 +192,58 @@ namespace magic.endpoint.services.slots.misc
             {
                 foreach (var idx in args.Children.Where(x => x.Name != ".."))
                 {
-                    var node = new Node(".");
-                    node.Add(new Node("name", idx.Name));
-                    node.Add(new Node("type", idx.Value));
-                    if (idx.Previous != null && idx.Previous.Name == "..")
-                        node.Add(new Node("description", idx.Previous.Value));
-                    if (verb == "post" || verb == "put")
-                    {
-                        // Attaching foreign key information if possible.
-                        var fkNodes = lambda
-                            .Children
-                            .FirstOrDefault(x => x.Name == ".foreign-keys")?
-                            .Children
-                            .Where(x => x.Name != "..")
-                            .Where(x => x.Children.Any(x2 => x2.Name == "column" && x2.GetEx<string>() == idx.Name)) ?? Array.Empty<Node>();
-                        foreach (var idxFk in fkNodes.Select(x => x.Children))
-                        {
-                            var fkNode = new Node("lookup");
-                            fkNode.Add(new Node("table", idxFk.FirstOrDefault(x => x.Name == "table")?.GetEx<string>()));
-                            fkNode.Add(new Node("key", idxFk.FirstOrDefault(x => x.Name == "foreign_column")?.GetEx<string>()));
-                            fkNode.Add(new Node("name", idxFk.FirstOrDefault(x => x.Name == "foreign_name")?.GetEx<string>()));
-                            fkNode.Add(new Node("long", idxFk.FirstOrDefault(x => x.Name == "long")?.GetEx<bool>()));
-                            node.Add(fkNode);
-                        }
-                    }
-                    result.Add(node);
-
-                    // Checking for handling.
-                    var handling = lambda
-                        .Children
-                        .FirstOrDefault(x => x.Name == ".handling")?
-                        .Children
-                        .Where(x => x.Name == idx.Name) ?? Array.Empty<Node>();
-
-                    foreach (var idxHa in handling)
-                    {
-                        var haNode = new Node("handling", idxHa.Value);
-                        node.Add(haNode);
-                    }
+                    result.Add(CreateArgumentNode(lambda, verb, idx));
                 }
             }
             return result.Children.Any() ? result : null;
+        }
+
+        /*
+         * Creates the node describing a single argument.
+         */
+        static Node CreateArgumentNode(Node lambda, string verb, Node argument)
+        {
+            var node = new Node(".");
+            node.Add(new Node("name", argument.Name));
+            node.Add(new Node("type", argument.Value));
+            if (argument.Previous != null && argument.Previous.Name == "..")
+                node.Add(new Node("description", argument.Previous.Value));
+            if (verb == "post" || verb == "put")
+                AddLookups(lambda, argument, node);
+
+            // Checking for handling.
+            var handling = lambda
+                .Children
+                .FirstOrDefault(x => x.Name == ".handling")?
+                .Children
+                .Where(x => x.Name == argument.Name) ?? Array.Empty<Node>();
+            foreach (var idxHa in handling)
+            {
+                node.Add(new Node("handling", idxHa.Value));
+            }
+            return node;
+        }
+
+        /*
+         * Attaches foreign key information if possible.
+         */
+        static void AddLookups(Node lambda, Node argument, Node node)
+        {
+            var fkNodes = lambda
+                .Children
+                .FirstOrDefault(x => x.Name == ".foreign-keys")?
+                .Children
+                .Where(x => x.Name != "..")
+                .Where(x => x.Children.Any(x2 => x2.Name == "column" && x2.GetEx<string>() == argument.Name)) ?? Array.Empty<Node>();
+            foreach (var idxFk in fkNodes.Select(x => x.Children))
+            {
+                var fkNode = new Node("lookup");
+                fkNode.Add(new Node("table", idxFk.FirstOrDefault(x => x.Name == "table")?.GetEx<string>()));
+                fkNode.Add(new Node("key", idxFk.FirstOrDefault(x => x.Name == "foreign_column")?.GetEx<string>()));
+                fkNode.Add(new Node("name", idxFk.FirstOrDefault(x => x.Name == "foreign_name")?.GetEx<string>()));
+                fkNode.Add(new Node("long", idxFk.FirstOrDefault(x => x.Name == "long")?.GetEx<bool>()));
+                node.Add(fkNode);
+            }
         }
 
         /*

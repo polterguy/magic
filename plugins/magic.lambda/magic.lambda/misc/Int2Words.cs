@@ -64,6 +64,16 @@ namespace magic.lambda.misc
             "ninety"
         ];
 
+        // Magnitudes handled recursively, largest first.
+        static readonly (long Size, string Name)[] _scales =
+        [
+            (1000000000000L, "trillion"),
+            (1000000000L, "billion"),
+            (1000000L, "million"),
+            (1000L, "thousand"),
+            (100L, "hundred"),
+        ];
+
         /// <summary>
         /// Implementation of signal
         /// </summary>
@@ -87,54 +97,32 @@ namespace magic.lambda.misc
                 return "minus " + ConvertIntegerToWords(Math.Abs(number));
             var words = "";
 
-            if ((number / 1000000000000L) > 0L)
+            foreach (var (size, name) in _scales)
             {
-                words += ConvertIntegerToWords(number / 1000000000000L) + " trillion ";
-                number %= 1000000000000L;
-            }
-
-            if ((number / 1000000000L) > 0L)
-            {
-                words += ConvertIntegerToWords(number / 1000000000L) + " billion ";
-                number %= 1000000000L;
-            }
-
-            if ((number / 1000000L) > 0L)
-            {
-                words += ConvertIntegerToWords(number / 1000000L) + " million ";
-                number %= 1000000L;
-            }
-
-            if ((number / 1000L) > 0L)
-            {
-                words += ConvertIntegerToWords(number / 1000L) + " thousand ";
-                number %= 1000L;
-            }
-
-            if ((number / 100L) > 0L)
-            {
-                words += ConvertIntegerToWords(number / 100L) + " hundred ";
-                number %= 100L;
+                if ((number / size) > 0L)
+                {
+                    words += ConvertIntegerToWords(number / size) + " " + name + " ";
+                    number %= size;
+                }
             }
 
             if (number > 0L)
-            {
-                if (words != "")
-                    words += "and ";
-
-                if (number < 20L)
-                {
-                    words += _unitsMap[number];
-                }
-                else
-                {
-                    words += _tensMap[number / 10L];
-                    if ((number % 10L) > 0L)
-                        words += "-" + _unitsMap[number % 10L];
-                }
-            }
+                words += (words == "" ? "" : "and ") + ConvertBelowHundred(number);
 
             return words.Trim();
+        }
+
+        /*
+         * Converts a number between 1 and 99 to its word representation.
+         */
+        static string ConvertBelowHundred(long number)
+        {
+            if (number < 20L)
+                return _unitsMap[number];
+            var words = _tensMap[number / 10L];
+            if ((number % 10L) > 0L)
+                words += "-" + _unitsMap[number % 10L];
+            return words;
         }
 
         #endregion

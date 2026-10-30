@@ -592,56 +592,75 @@ namespace magic.lambda.http.services
             // Ensuring we clean up after ourselves.
             using (var content = response.Content)
             {
-                // HTTP content, defaulting Content-Type to 'application/json' unless explicitly overridden by endpoint.
-                var contentType = ApplicationJson;
-
-                // HTTP headers.
-                if (response.Headers.Any() || content.Headers.Any())
-                {
-                    var headers = new Node("headers");
-                    foreach (var idx in response.Headers)
-                    {
-                        headers.Add(new Node(idx.Key, string.Join(", ", idx.Value)));
-                    }
-                    foreach (var idx in content.Headers)
-                    {
-                        if (string.Equals(idx.Key, "content-type", StringComparison.OrdinalIgnoreCase))
-                            contentType = ContentType.Parse(idx.Value.First()).MimeType;
-                        headers.Add(new Node(idx.Key, string.Join(", ", idx.Value)));
-                    }
-                    result.Add(headers);
-                }
+                // HTTP headers, also figuring out the content type, defaulting to 'application/json' unless explicitly overridden by endpoint.
+                var contentType = AddHeaders(response, content, result);
 
                 // Checking if we're using SSE.
                 if (sse != null)
-                {
-                    using (var reader = new StreamReader(await content.ReadAsStreamAsync()))
-                    {
-                        string line;
-                        while ((line = await reader.ReadLineAsync().WaitAsync(signaler.GetCancellationToken())) is not null)
-                        {
-                            signaler.ThrowIfCancelled();
-                            var exe = sse.Clone();
-                            var args = new Node(".arguments");
-                            args.Add(new Node("message", line));
-                            exe.Insert(0, args);
-                            result.Add(exe);
-                            await signaler.SignalAsync("eval", exe, skipWhitelist: true);
-                            exe.UnTie();
-                        }
-                    }
-                }
+                    await AddSseEvents(signaler, content, sse, result);
                 else
+                    await AddContent(signaler, content, result, convert, contentType);
+            }
+        }
+
+        /*
+         * Adds the response's headers to the result, and returns the content type of the response.
+         */
+        static string AddHeaders(HttpResponseMessage response, HttpContent content, Node result)
+        {
+            var contentType = ApplicationJson;
+            if (!response.Headers.Any() && !content.Headers.Any())
+                return contentType;
+
+            var headers = new Node("headers");
+            foreach (var idx in response.Headers)
+            {
+                headers.Add(new Node(idx.Key, string.Join(", ", idx.Value)));
+            }
+            foreach (var idx in content.Headers)
+            {
+                if (string.Equals(idx.Key, "content-type", StringComparison.OrdinalIgnoreCase))
+                    contentType = ContentType.Parse(idx.Value.First()).MimeType;
+                headers.Add(new Node(idx.Key, string.Join(", ", idx.Value)));
+            }
+            result.Add(headers);
+            return contentType;
+        }
+
+        /*
+         * Evaluates the specified SSE lambda once for every line streamed from the response.
+         */
+        static async Task AddSseEvents(ISignaler signaler, HttpContent content, Node sse, Node result)
+        {
+            using (var reader = new StreamReader(await content.ReadAsStreamAsync()))
+            {
+                string line;
+                while ((line = await reader.ReadLineAsync().WaitAsync(signaler.GetCancellationToken())) is not null)
                 {
-                    // Checking if caller wants to automatically convert and if we've got response converters registered for Content-Type.
-                    if (convert && _responseTransformers.TryGetValue(contentType, out var functor))
-                        result.Add(await functor(signaler, content));
-                    else if (contentType.StartsWith("text/", StringComparison.Ordinal))
-                        result.Add(new Node("content", await content.ReadAsStringAsync()));
-                    else
-                        result.Add(new Node("content", await content.ReadAsByteArrayAsync()));
+                    signaler.ThrowIfCancelled();
+                    var exe = sse.Clone();
+                    var args = new Node(".arguments");
+                    args.Add(new Node("message", line));
+                    exe.Insert(0, args);
+                    result.Add(exe);
+                    await signaler.SignalAsync("eval", exe, skipWhitelist: true);
+                    exe.UnTie();
                 }
             }
+        }
+
+        /*
+         * Adds the response's content to the result, converting it if the caller asked for it and we know how to.
+         */
+        static async Task AddContent(ISignaler signaler, HttpContent content, Node result, bool convert, string contentType)
+        {
+            // Checking if caller wants to automatically convert and if we've got response converters registered for Content-Type.
+            if (convert && _responseTransformers.TryGetValue(contentType, out var functor))
+                result.Add(await functor(signaler, content));
+            else if (contentType.StartsWith("text/", StringComparison.Ordinal))
+                result.Add(new Node("content", await content.ReadAsStringAsync()));
+            else
+                result.Add(new Node("content", await content.ReadAsByteArrayAsync()));
         }
 
         #endregion

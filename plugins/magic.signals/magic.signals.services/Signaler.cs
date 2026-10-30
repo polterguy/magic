@@ -224,24 +224,7 @@ namespace magic.signals.services
              */
             var whitelist = skipWhitelist ? null : Peek<List<Node>>("whitelist");
 
-            // Slots holding no state are shared, all others are created for each invocation.
-            var svc = _signals.GetStatelessSlot(name);
-            if (svc == null)
-            {
-                var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"[{name}] slot does not exist");
-                svc = _provider.GetService(type);
-
-                // Basic sanity checking.
-                if (svc == null)
-                {
-                    // Dynamically compiled and loaded assemblies cannot be registered in DI container.
-                    var ctor = type.GetConstructor([]);
-                    if (ctor != null)
-                        svc = Activator.CreateInstance(type);
-                    else
-                        svc = Activator.CreateInstance(type, [_provider]);
-                }
-            }
+            var svc = CreateService(name);
 
             /*
              * Verifying caller is allowed to invoke slot, asking the slot itself how a vocabulary
@@ -249,21 +232,46 @@ namespace magic.signals.services
              * comparison for the slots not caring.
              */
             if (whitelist != null)
-            {
-                var comparer = (svc as IWhitelistComparer)?.Comparer ?? Wildcard.Matches;
-
-                if (!whitelist.Any(x =>
-                {
-                    if (x.Name != name)
-                        return false;
-                    if (x.Value == null)
-                        return true;
-                    return comparer(x.Get<string>(), input.GetEx<string>());
-                }))
-                    throw new HyperlambdaException($"Slot [{name}] doesn't exist in currrent scope, or argument `{input.GetEx<string>()}` not allowed");
-            }
+                VerifyWhitelisted(whitelist, svc, name, input);
 
             return svc;
+        }
+
+        /*
+         * Returns the shared instance of a stateless slot, or creates a new instance of any other slot.
+         */
+        private object CreateService(string name)
+        {
+            // Slots holding no state are shared, all others are created for each invocation.
+            var svc = _signals.GetStatelessSlot(name);
+            if (svc != null)
+                return svc;
+
+            var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"[{name}] slot does not exist");
+            svc = _provider.GetService(type);
+            if (svc != null)
+                return svc;
+
+            // Dynamically compiled and loaded assemblies cannot be registered in DI container.
+            var ctor = type.GetConstructor([]);
+            if (ctor != null)
+                return Activator.CreateInstance(type);
+            return Activator.CreateInstance(type, [_provider]);
+        }
+
+        private static void VerifyWhitelisted(List<Node> whitelist, object svc, string name, Node input)
+        {
+            var comparer = (svc as IWhitelistComparer)?.Comparer ?? Wildcard.Matches;
+
+            if (!whitelist.Any(x =>
+            {
+                if (x.Name != name)
+                    return false;
+                if (x.Value == null)
+                    return true;
+                return comparer(x.Get<string>(), input.GetEx<string>());
+            }))
+                throw new HyperlambdaException($"Slot [{name}] doesn't exist in currrent scope, or argument `{input.GetEx<string>()}` not allowed");
         }
 
         #endregion

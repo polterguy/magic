@@ -307,25 +307,32 @@ namespace magic.node.extensions
             if (count < 2)
                 return;
             if (count <= 16)
+                CheckNoDuplicatesByComparing(node, count);
+            else
+                CheckNoDuplicatesByHashing(node, count);
+        }
+
+        // Cheaper than allocating a hash set for the typical, small, object.
+        static void CheckNoDuplicatesByComparing(Node node, int count)
+        {
+            for (var idx = 1; idx < count; idx++)
             {
-                for (var idx = 1; idx < count; idx++)
+                var name = node.ChildAt(idx).Name;
+                for (var idxPrev = 0; idxPrev < idx; idxPrev++)
                 {
-                    var name = node.ChildAt(idx).Name;
-                    for (var idxPrev = 0; idxPrev < idx; idxPrev++)
-                    {
-                        if (string.Equals(node.ChildAt(idxPrev).Name, name, StringComparison.Ordinal))
-                            throw DuplicateName(name);
-                    }
+                    if (string.Equals(node.ChildAt(idxPrev).Name, name, StringComparison.Ordinal))
+                        throw DuplicateName(name);
                 }
             }
-            else
+        }
+
+        static void CheckNoDuplicatesByHashing(Node node, int count)
+        {
+            var seen = new HashSet<string>(count, StringComparer.Ordinal);
+            for (var idx = 0; idx < count; idx++)
             {
-                var seen = new HashSet<string>(count, StringComparer.Ordinal);
-                for (var idx = 0; idx < count; idx++)
-                {
-                    if (!seen.Add(node.ChildAt(idx).Name))
-                        throw DuplicateName(node.ChildAt(idx).Name);
-                }
+                if (!seen.Add(node.ChildAt(idx).Name))
+                    throw DuplicateName(node.ChildAt(idx).Name);
             }
         }
 

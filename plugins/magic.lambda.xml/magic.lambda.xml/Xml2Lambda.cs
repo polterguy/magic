@@ -59,42 +59,46 @@ namespace magic.lambda.xml
             // Making sure we apply name of node.
             resultNode.Name = xmlNode.Name;
 
-            // Checking if this is a simple "text node".
+            // Checking if this is a simple "text node", with no children, only HTML content.
             if (xmlNode.Name == "#text")
             {
-                // This is a "simple node", with no children, only HTML content
                 resultNode.Value = HttpUtility.HtmlDecode(xmlNode.InnerText);
+                return;
             }
-            else
+
+            AddAttributes(resultNode, xmlNode);
+
+            if (xmlNode.Name == "#cdata-section")
             {
-                // Adding all attributes.
-                if (xmlNode.Attributes != null)
-                {
-                    foreach (XmlAttribute idx in xmlNode.Attributes)
-                    {
-                        resultNode.Add(new Node("@" + idx.Name, HttpUtility.HtmlDecode(idx.Value)));
-                    }
-                }
-
-                if (xmlNode.Name == "#cdata-section")
-                {
-                    resultNode.Value = ((XmlCDataSection)xmlNode).Data;
-                    return;
-                }
-
-                // Then looping through each child HTML element
-                foreach (XmlNode idxChild in xmlNode.ChildNodes)
-                {
-                    // We don't add comments or empty elements
-                    if (idxChild.Name != "#comment")
-                    {
-                        if (idxChild.Name == "#text" && string.IsNullOrEmpty(idxChild.InnerText.Trim()))
-                            continue;
-                        resultNode.Add(new Node());
-                        ParseXmlNode(resultNode.Children.Last(), idxChild);
-                    }
-                }
+                resultNode.Value = ((XmlCDataSection)xmlNode).Data;
+                return;
             }
+
+            // Then looping through each child HTML element
+            foreach (XmlNode idxChild in xmlNode.ChildNodes)
+            {
+                if (IsIgnored(idxChild))
+                    continue;
+                resultNode.Add(new Node());
+                ParseXmlNode(resultNode.Children.Last(), idxChild);
+            }
+        }
+
+        static void AddAttributes(Node resultNode, XmlNode xmlNode)
+        {
+            if (xmlNode.Attributes == null)
+                return;
+            foreach (XmlAttribute idx in xmlNode.Attributes)
+            {
+                resultNode.Add(new Node("@" + idx.Name, HttpUtility.HtmlDecode(idx.Value)));
+            }
+        }
+
+        // We don't add comments or empty elements.
+        static bool IsIgnored(XmlNode xmlNode)
+        {
+            return xmlNode.Name == "#comment" ||
+                (xmlNode.Name == "#text" && string.IsNullOrEmpty(xmlNode.InnerText.Trim()));
         }
 
         #endregion

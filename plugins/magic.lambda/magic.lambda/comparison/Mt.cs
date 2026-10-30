@@ -26,59 +26,60 @@ namespace magic.lambda.comparison
         /// <inheritdoc />
         protected override bool Compare(object lhs, object rhs)
         {
-            if (lhs == null && rhs == null)
+            // Anything but null is more than null, and null is more than nothing.
+            if (lhs == null)
                 return false;
-            else if (lhs != null && rhs == null)
+            if (rhs == null)
                 return true;
-            else if (lhs == null)
-                return false;
 
             // Unwrap enums to their underlying numeric type
             lhs = UnwrapEnum(lhs);
             rhs = UnwrapEnum(rhs);
 
-            // If both are numeric, allow cross-type comparison similar to [eq]/[lt]/[lte]
+            // If both are numeric, allow cross-type comparison similar to [eq]
             if (IsNumeric(lhs) && IsNumeric(rhs))
-            {
-                // 1) If any side is decimal, prefer decimal comparison (exact for base-10)
-                if (IsDecimal(lhs) || IsDecimal(rhs))
-                {
-                    if (TryToDecimal(lhs, out var dl) && TryToDecimal(rhs, out var dr))
-                        return dl > dr;
-
-                    // Fallback to tolerant double comparison
-                    var l = ToDouble(lhs);
-                    var r = ToDouble(rhs);
-
-                    if (double.IsNaN(l) || double.IsNaN(r)) return false;
-                    if (double.IsInfinity(l) || double.IsInfinity(r))
-                        return l > r;
-
-                    return l > r && !DoubleAlmostEqual(l, r);
-                }
-
-                // 2) If any side is floating (double/float), compare in double space with epsilon
-                if (IsFloat(lhs) || IsFloat(rhs))
-                {
-                    double l = ToDouble(lhs);
-                    double r = ToDouble(rhs);
-
-                    if (double.IsNaN(l) || double.IsNaN(r)) return false;
-                    if (double.IsInfinity(l) || double.IsInfinity(r))
-                        return l > r;
-
-                    return l > r && !DoubleAlmostEqual(l, r);
-                }
-
-                // 3) Otherwise both are integral: compare via BigInteger to avoid overflow
-                return ToBigInteger(lhs) > ToBigInteger(rhs);
-            }
+                return NumericMoreThan(lhs, rhs);
 
             // Non-numeric: only compare if same type, otherwise preserve original behavior
-            else if (lhs.GetType() != rhs.GetType())
+            if (lhs.GetType() != rhs.GetType())
                 return false;
 
             return ((IComparable)lhs).CompareTo(rhs) == 1;
+        }
+
+        #endregion
+
+        #region [ -- Private helper methods -- ]
+
+        static bool NumericMoreThan(object lhs, object rhs)
+        {
+            // 1) If any side is decimal, prefer decimal comparison (exact for base-10)
+            if (IsDecimal(lhs) || IsDecimal(rhs))
+            {
+                if (TryToDecimal(lhs, out var dl) && TryToDecimal(rhs, out var dr))
+                    return dl > dr;
+
+                // Fallback to tolerant double comparison
+                return DoubleMoreThan(ToDouble(lhs), ToDouble(rhs));
+            }
+
+            // 2) If any side is floating (double/float), compare in double space with epsilon
+            if (IsFloat(lhs) || IsFloat(rhs))
+                return DoubleMoreThan(ToDouble(lhs), ToDouble(rhs));
+
+            // 3) Otherwise both are integral: compare via BigInteger to avoid overflow
+            return ToBigInteger(lhs) > ToBigInteger(rhs);
+        }
+
+        static bool DoubleMoreThan(double l, double r)
+        {
+            // NaN handling: comparisons with NaN are false
+            if (double.IsNaN(l) || double.IsNaN(r))
+                return false;
+            if (double.IsInfinity(l) || double.IsInfinity(r))
+                return l > r;
+
+            return l > r && !DoubleAlmostEqual(l, r);
         }
 
         #endregion

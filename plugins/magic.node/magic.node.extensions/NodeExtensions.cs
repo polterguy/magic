@@ -53,19 +53,22 @@ namespace magic.node.extensions
             if (typeof(T) == typeof(string) && node.Value is Guid guidValue)
                 return (T)(object)guidValue.ToString();
             if (typeof(T) == typeof(bool) && node.Value?.GetType() != typeof(bool))
-            {
-                if (node.Value != null)
-                {
-                    if (node.Value is string text && text == "false")
-                        return (T)(object)false;
-                    if (IsNumber(node.Value) && Convert.ToDouble(node.Value) == 0D)
-                        return (T)(object)false;
-                }
-                return (T)(object)(node.Value != null);
-            }
+                return (T)(object)IsTruthy(node.Value);
 
             // Converting, the simple version.
             return (T)Convert.ChangeType(node.Value, typeof(T), CultureInfo.InvariantCulture);
+        }
+
+        /*
+         * Returns false for null, the string "false" and numeric zero, and true for everything else.
+         */
+        static bool IsTruthy(object value)
+        {
+            if (value == null)
+                return false;
+            if (value is string text && text == "false")
+                return false;
+            return !(IsNumber(value) && Convert.ToDouble(value) == 0D);
         }
 
         /*

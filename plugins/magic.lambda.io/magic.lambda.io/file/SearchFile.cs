@@ -139,43 +139,47 @@ namespace magic.lambda.io.file
         static System.Collections.Generic.List<int> FindMatches(ISignaler signaler, string filename, string pattern, bool isRegex, bool caseSensitive)
         {
             var result = new System.Collections.Generic.List<int>();
-            Regex regex = null;
-            if (isRegex)
-            {
-                var options = caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
-                regex = new Regex(pattern, options, MatchTimeout(signaler));
-            }
+            var isMatch = isRegex ?
+                RegexMatcher(signaler, pattern, caseSensitive) :
+                TextMatcher(pattern, caseSensitive);
 
-            var comparison = caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
             var lineNumber = 0;
             foreach (var line in File.ReadLines(filename))
             {
                 lineNumber++;
-                if (isRegex)
-                {
-                    try
-                    {
-                        if (regex.IsMatch(line))
-                            result.Add(lineNumber);
-                    }
-                    catch (RegexMatchTimeoutException)
-                    {
-                        /*
-                         * Never echoing the pattern or the offending line - the message
-                         * is returned to the caller, logged, and captured by exception
-                         * handlers, and any of them can be huge.
-                         */
-                        throw new HyperlambdaException("Regular expression timed out and was aborted");
-                    }
-                }
-                else
-                {
-                    if (line.Contains(pattern, comparison))
-                        result.Add(lineNumber);
-                }
+                if (isMatch(line))
+                    result.Add(lineNumber);
             }
 
             return result;
+        }
+
+        static Func<string, bool> RegexMatcher(ISignaler signaler, string pattern, bool caseSensitive)
+        {
+            var options = caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+            var regex = new Regex(pattern, options, MatchTimeout(signaler));
+            return line =>
+            {
+                try
+                {
+                    return regex.IsMatch(line);
+                }
+                catch (RegexMatchTimeoutException)
+                {
+                    /*
+                     * Never echoing the pattern or the offending line - the message
+                     * is returned to the caller, logged, and captured by exception
+                     * handlers, and any of them can be huge.
+                     */
+                    throw new HyperlambdaException("Regular expression timed out and was aborted");
+                }
+            };
+        }
+
+        static Func<string, bool> TextMatcher(string pattern, bool caseSensitive)
+        {
+            var comparison = caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
+            return line => line.Contains(pattern, comparison);
         }
 
         #endregion

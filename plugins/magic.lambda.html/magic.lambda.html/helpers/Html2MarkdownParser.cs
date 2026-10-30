@@ -691,71 +691,89 @@ namespace magic.lambda.html.slots.helpers
         {
             foreach (var idxChild in htmlNode.ChildNodes)
             {
-                switch (idxChild.Name)
-                {
-                    case TextNode:
-                        var txt = HttpUtility.HtmlDecode(idxChild.InnerText.Trim());
-                        if (!string.IsNullOrEmpty(txt))
-                        {
-                            if (builder.Length > 0)
-                                builder.Append(' ');
-                            builder.Append(TrimText(txt));
-                        }
-                        break;
-
-                    case "b":
-                    case "strong":
-                        RenderElement(idxChild, builder, "**");
-                        break;
-
-                    case "i":
-                    case "em":
-                        RenderElement(idxChild, builder, "*");
-                        break;
-
-                    case "section":
-                    case "nav":
-                    case "span":
-                    case "p":
-                    case "div":
-                        RenderElement(idxChild, builder);
-                        break;
-
-                    case "img":
-                        if (_images)
-                            ImgElementHandler(this, idxChild, baseUrl, builder);
-                        break;
-
-                    case "a":
-                        AnchorElementHandler(this, idxChild, baseUrl, builder);
-                        break;
-
-                    case "code":
-                        RenderElement(idxChild, builder, _code ? "`" : null);
-                        break;
-
-                    // Same suppression as the handlers dictionary - not prose.
-                    case "script":
-                    case "style":
-                    case "noscript":
-                    case "template":
-                    case "svg":
-                    case "select":
-                    case "option":
-                    case "button":
-                    case "textarea":
-                        break;
-
-                    default:
-
-                        /*
-                         * Unknown element inside a block - its formatting is unknown,
-                         * but its text is kept, since text is never dropped.
-                         */
-                        RenderElement(idxChild, builder);
-                        break;
-                }
+                RenderChild(idxChild, builder, baseUrl);
             }
+        }
+
+        /*
+         * Renders a single child element, according to its name.
+         */
+        void RenderChild(
+            HtmlNode child,
+            StringBuilder builder,
+            (string DocBaseUrl, string DocUrl) baseUrl)
+        {
+            switch (child.Name)
+            {
+                case TextNode:
+                    AppendText(child, builder);
+                    break;
+
+                case "b":
+                case "strong":
+                    RenderElement(child, builder, "**");
+                    break;
+
+                case "i":
+                case "em":
+                    RenderElement(child, builder, "*");
+                    break;
+
+                case "section":
+                case "nav":
+                case "span":
+                case "p":
+                case "div":
+                    RenderElement(child, builder);
+                    break;
+
+                case "img":
+                    if (_images)
+                        ImgElementHandler(this, child, baseUrl, builder);
+                    break;
+
+                case "a":
+                    AnchorElementHandler(this, child, baseUrl, builder);
+                    break;
+
+                case "code":
+                    RenderElement(child, builder, _code ? "`" : null);
+                    break;
+
+                // Same suppression as the handlers dictionary - not prose.
+                case "script":
+                case "style":
+                case "noscript":
+                case "template":
+                case "svg":
+                case "select":
+                case "option":
+                case "button":
+                case "textarea":
+                    break;
+
+                default:
+
+                    /*
+                     * Unknown element inside a block - its formatting is unknown,
+                     * but its text is kept, since text is never dropped.
+                     */
+                    RenderElement(child, builder);
+                    break;
+            }
+        }
+
+        /*
+         * Appends the text of the specified text node, if it has any.
+         */
+        static void AppendText(HtmlNode textNode, StringBuilder builder)
+        {
+            var txt = HttpUtility.HtmlDecode(textNode.InnerText.Trim());
+            if (string.IsNullOrEmpty(txt))
+                return;
+            if (builder.Length > 0)
+                builder.Append(' ');
+            builder.Append(TrimText(txt));
         }
 
         /*

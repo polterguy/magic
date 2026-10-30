@@ -26,11 +26,10 @@ namespace magic.lambda.comparison
         /// <inheritdoc />
         protected override bool Compare(object lhs, object rhs)
         {
-            if (lhs == null && rhs == null)
+            // Null is less than anything but null, and nothing is less than null.
+            if (rhs == null)
                 return false;
-            else if (lhs != null && rhs == null)
-                return false;
-            else if (lhs == null)
+            if (lhs == null)
                 return true;
 
             // Unwrap enums to their underlying numeric type
@@ -39,45 +38,10 @@ namespace magic.lambda.comparison
 
             // If both are numeric, allow cross-type comparison similar to [eq]
             if (IsNumeric(lhs) && IsNumeric(rhs))
-            {
-                // 1) If any side is decimal, prefer decimal comparison (exact for base-10)
-                if (IsDecimal(lhs) || IsDecimal(rhs))
-                {
-                    if (TryToDecimal(lhs, out var dl) && TryToDecimal(rhs, out var dr))
-                        return dl < dr;
-
-                    // Fallback to tolerant double comparison
-                    var l = ToDouble(lhs);
-                    var r = ToDouble(rhs);
-
-                    // NaN handling: comparisons with NaN are false
-                    if (double.IsNaN(l) || double.IsNaN(r)) return false;
-                    if (double.IsInfinity(l) || double.IsInfinity(r))
-                        return l < r;
-
-                    // Consider epsilon: only "less than" if strictly less and not effectively equal
-                    return l < r && !DoubleAlmostEqual(l, r);
-                }
-
-                // 2) If any side is floating (double/float), compare in double space with epsilon
-                if (IsFloat(lhs) || IsFloat(rhs))
-                {
-                    double l = ToDouble(lhs);
-                    double r = ToDouble(rhs);
-
-                    if (double.IsNaN(l) || double.IsNaN(r)) return false;
-                    if (double.IsInfinity(l) || double.IsInfinity(r))
-                        return l < r;
-
-                    return l < r && !DoubleAlmostEqual(l, r);
-                }
-
-                // 3) Otherwise both are integral: compare via BigInteger to avoid overflow
-                return ToBigInteger(lhs) < ToBigInteger(rhs);
-            }
+                return NumericLessThan(lhs, rhs);
 
             // Non-numeric: only compare if same type, otherwise preserve original behavior
-            else if (lhs.GetType() != rhs.GetType())
+            if (lhs.GetType() != rhs.GetType())
                 return false;
 
             return ((IComparable)lhs).CompareTo(rhs) == -1;
@@ -86,6 +50,38 @@ namespace magic.lambda.comparison
         #endregion
 
         #region [ -- Private helper methods -- ]
+
+        static bool NumericLessThan(object lhs, object rhs)
+        {
+            // 1) If any side is decimal, prefer decimal comparison (exact for base-10)
+            if (IsDecimal(lhs) || IsDecimal(rhs))
+            {
+                if (TryToDecimal(lhs, out var dl) && TryToDecimal(rhs, out var dr))
+                    return dl < dr;
+
+                // Fallback to tolerant double comparison
+                return DoubleLessThan(ToDouble(lhs), ToDouble(rhs));
+            }
+
+            // 2) If any side is floating (double/float), compare in double space with epsilon
+            if (IsFloat(lhs) || IsFloat(rhs))
+                return DoubleLessThan(ToDouble(lhs), ToDouble(rhs));
+
+            // 3) Otherwise both are integral: compare via BigInteger to avoid overflow
+            return ToBigInteger(lhs) < ToBigInteger(rhs);
+        }
+
+        static bool DoubleLessThan(double l, double r)
+        {
+            // NaN handling: comparisons with NaN are false
+            if (double.IsNaN(l) || double.IsNaN(r))
+                return false;
+            if (double.IsInfinity(l) || double.IsInfinity(r))
+                return l < r;
+
+            // Consider epsilon: only "less than" if strictly less and not effectively equal
+            return l < r && !DoubleAlmostEqual(l, r);
+        }
 
         static bool DoubleAlmostEqual(double a, double b, double relEps = 1e-12, double absEps = 1e-12)
         {

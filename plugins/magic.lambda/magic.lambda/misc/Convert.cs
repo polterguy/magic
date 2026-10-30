@@ -44,123 +44,100 @@ namespace magic.lambda.misc
                 .GetEx<string>() ??
                 throw new HyperlambdaException("No [type] declaration found in invocation to [convert]");
             input.Clear(); // House cleaning.
+            input.Value = ConvertValue(type, value);
+        }
+
+        #region [ -- Private helper methods -- ]
+
+        /*
+         * Notice, every case returns its own boxed value, to avoid the compiler unifying
+         * the numeric types into one common type, which would silently widen the result.
+         */
+        static object ConvertValue(string type, object value)
+        {
             switch (type)
             {
                 case "int":
-                    input.Value = Sys.Convert.ToInt32(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToInt32(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "uint":
-                    input.Value = Sys.Convert.ToUInt32(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToUInt32(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "short":
-                    input.Value = Sys.Convert.ToInt16(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToInt16(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "ushort":
-                    input.Value = Sys.Convert.ToUInt16(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToUInt16(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "long":
-                    input.Value = Sys.Convert.ToInt64(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToInt64(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "ulong":
-                    input.Value = Sys.Convert.ToUInt64(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToUInt64(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "decimal":
-                    input.Value = Sys.Convert.ToDecimal(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToDecimal(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "double":
-                    input.Value = Sys.Convert.ToDouble(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToDouble(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "single":
                 case "float":
-                    input.Value = Sys.Convert.ToSingle(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToSingle(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "bool":
-                    input.Value = value?.Equals("true") ?? false;
-                    break;
+                    return value?.Equals("true") ?? false;
 
                 case "date":
-                    input.Value = Converter.ToObject(value.ToString(), "date");
-                    break;
+                    return Converter.ToObject(value.ToString(), "date");
 
                 case "guid":
-                    input.Value = new Guid(value?.ToString() ?? Guid.Empty.ToString());
-                    break;
+                    return new Guid(value?.ToString() ?? Guid.Empty.ToString());
 
                 case "char":
-                    input.Value = Sys.Convert.ToChar(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToChar(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "byte":
-                    input.Value = Sys.Convert.ToByte(value ?? 0, CultureInfo.InvariantCulture);
-                    break;
+                    return Sys.Convert.ToByte(value ?? 0, CultureInfo.InvariantCulture);
 
                 case "x":
-                    input.Value = Expression.Create(value?.ToString() ?? "");
-                    break;
+                    return Expression.Create(value?.ToString() ?? "");
 
                 case "bytes":
-                    if (value is string strBytes)
-                        input.Value = Encoding.UTF8.GetBytes(strBytes);
-                    else
-                        input.Value = null;
-                    break;
+                    return value is string strBytes ? Encoding.UTF8.GetBytes(strBytes) : null;
 
                 case "string":
-                    if (value is byte[] bytes)
-                        input.Value = Encoding.UTF8.GetString(bytes);
-                    else
-                        input.Value = value?.ToString() ?? "";
-                    break;
+                    return value is byte[] bytes ? Encoding.UTF8.GetString(bytes) : value?.ToString() ?? "";
 
                 case "base64":
-                    if (value is byte[] bytes2)
-                        input.Value = Sys.Convert.ToBase64String(bytes2);
-                    else if (value is string str)
-                        input.Value = Sys.Convert.ToBase64String(Encoding.UTF8.GetBytes(str));
-                    else
-                        throw new HyperlambdaException($"I don't know how to base64 encode {value}");
-                    break;
+                    return ToBase64(value);
 
                 case "base64-url":
-                    if (value is byte[] bytes3)
-                        input.Value = Sys.Convert
-                            .ToBase64String(bytes3)
-                            .TrimEnd('=')
-                            .Replace('+', '-')
-                            .Replace('/', '_');
-                    else if (value is string str)
-                        input.Value = Sys.Convert
-                            .ToBase64String(Encoding.UTF8.GetBytes(str))
-                            .TrimEnd('=')
-                            .Replace('+', '-')
-                            .Replace('/', '_');
-                    else
-                        throw new HyperlambdaException($"I don't know how to base64 encode {value}");
-                    break;
+                    return ToBase64(value).TrimEnd('=').Replace('+', '-').Replace('/', '_');
 
                 case "from-base64":
-                    if (value is string strValue)
-                        input.Value = Sys.Convert.FromBase64String(strValue);
-                    else
+                    return value is string strValue ?
+                        Sys.Convert.FromBase64String(strValue) :
                         throw new HyperlambdaException($"I don't know how to base64 decode {value}");
-                    break;
 
                 case "node":
-                    input.Value = HyperlambdaParser.Parse(value?.ToString() ?? "");
-                    break;
+                    return HyperlambdaParser.Parse(value?.ToString() ?? "");
 
                 default:
                     throw new HyperlambdaException($"Unknown type '{type}' when invoking [convert]");
             }
         }
+
+        static string ToBase64(object value)
+        {
+            return value switch
+            {
+                byte[] bytes => Sys.Convert.ToBase64String(bytes),
+                string str => Sys.Convert.ToBase64String(Encoding.UTF8.GetBytes(str)),
+                _ => throw new HyperlambdaException($"I don't know how to base64 encode {value}"),
+            };
+        }
+
+        #endregion
     }
 }

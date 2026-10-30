@@ -365,26 +365,9 @@ namespace magic.lambda.io.file
 
             foreach (var ignoreTrailingWhitespace in new[] { false, true })
             {
-                if (HunkMatchesAt(originalLines, expectedIndex, hunkLines, ignoreTrailingWhitespace))
-                    return (expectedIndex, ignoreTrailingWhitespace);
-
-                for (var radius = 1; radius <= MaxFuzzRadius; radius++)
-                {
-                    var after = expectedIndex + radius;
-                    var before = expectedIndex - radius;
-                    var afterLegal = after <= originalLines.Count;
-                    var beforeLegal = before >= originalIndex;
-
-                    // Nothing left to search in either direction.
-                    if (!afterLegal && !beforeLegal)
-                        break;
-
-                    if (afterLegal && HunkMatchesAt(originalLines, after, hunkLines, ignoreTrailingWhitespace))
-                        return (after, ignoreTrailingWhitespace);
-
-                    if (beforeLegal && HunkMatchesAt(originalLines, before, hunkLines, ignoreTrailingWhitespace))
-                        return (before, ignoreTrailingWhitespace);
-                }
+                var found = FindNearestMatch(originalLines, originalIndex, hunkLines, expectedIndex, ignoreTrailingWhitespace);
+                if (found != null)
+                    return (found.Value, ignoreTrailingWhitespace);
             }
 
             throw new HyperlambdaException(
@@ -393,6 +376,40 @@ namespace magic.lambda.io.file
                 " lines of line " +
                 (expectedIndex + 1).ToString(CultureInfo.InvariantCulture) +
                 ".");
+        }
+
+        /*
+         * Returns the position nearest to the expected one where the hunk matches, or null if there is none.
+         */
+        static int? FindNearestMatch(
+            List<string> originalLines,
+            int originalIndex,
+            IReadOnlyList<string> hunkLines,
+            int expectedIndex,
+            bool ignoreTrailingWhitespace)
+        {
+            if (HunkMatchesAt(originalLines, expectedIndex, hunkLines, ignoreTrailingWhitespace))
+                return expectedIndex;
+
+            for (var radius = 1; radius <= MaxFuzzRadius; radius++)
+            {
+                var after = expectedIndex + radius;
+                var before = expectedIndex - radius;
+                var afterLegal = after <= originalLines.Count;
+                var beforeLegal = before >= originalIndex;
+
+                // Nothing left to search in either direction.
+                if (!afterLegal && !beforeLegal)
+                    break;
+
+                if (afterLegal && HunkMatchesAt(originalLines, after, hunkLines, ignoreTrailingWhitespace))
+                    return after;
+
+                if (beforeLegal && HunkMatchesAt(originalLines, before, hunkLines, ignoreTrailingWhitespace))
+                    return before;
+            }
+
+            return null;
         }
 
         static bool HunkMatchesAt(
