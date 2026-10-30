@@ -23,9 +23,9 @@ jobs:
             /k:"polterguy_magic" /o:"polterguy" \
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
+            /d:sonar.coverage.exclusions="frontend/**"
           dotnet build magic.sln
           dotnet test magic.sln --no-build --collect:"XPlat Code Coverage" \
-          /d:sonar.coverage.exclusions="frontend/** \
             -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
