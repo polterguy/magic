@@ -322,6 +322,33 @@ function BlockPalette(props: Readonly<{
   );
 }
 
+// The handle on the edge of a rail, which folds and unfolds it.
+function RailToggle(props: Readonly<{
+  side: 'left' | 'right';
+  shut: boolean;
+  showTitle: string;
+  hideTitle: string;
+  onToggle: () => void;
+}>) {
+  // The chevron points away from the rail when it is open on the left, and when it is folded on the right.
+  const rotated = props.side === 'left' ? !props.shut : props.shut;
+  return (
+    <button
+      className={'designer-rail-toggle ' + props.side}
+      title={props.shut ? props.showTitle : props.hideTitle}
+      onClick={props.onToggle}>
+      <span style={{ display: 'flex', transform: rotated ? 'rotate(180deg)' : undefined }}>
+        <ChevronIcon />
+      </span>
+    </button>
+  );
+}
+
+// The class names of a rail, which are the side it is on, and whether it is folded.
+function railClass(side: 'left' | 'right', railsShut: Record<'left' | 'right', boolean>) {
+  return 'designer-rail' + (side === 'right' ? ' right' : '') + (railsShut[side] ? ' shut' : '');
+}
+
 export default function WebDesigner() {
 
   const { backend } = useAuth();
@@ -1930,6 +1957,83 @@ export default function WebDesigner() {
     openPage, addCompanionFile, reveal, setReveal, view,
   });
 
+  // What the right rail shows, according to its selected tab.
+  function rightPanel() {
+    switch (tab) {
+      case 'element':
+        return (
+          <Inspector
+            node={selected}
+            doc={doc}
+            onSetText={setText}
+            onSetAttribute={setAttribute}
+            onRemoveAttribute={removeAttribute}
+            onSetClasses={setClasses}
+            onSelect={setSelected}
+            onDuplicate={duplicate}
+            onDelete={remove}
+            onMove={nudge}
+            onAddText={addText}
+            canAddText={!!elementOf(selected) && !isText(selected!) &&
+              canContainChildren(elementOf(selected)!) &&
+              designableChildren(elementOf(selected)!).length === 0}
+            origin={origin}
+            onChooseMedia={kind => setChoosingMedia({ kind })}
+            onWrap={wrap}
+            onUnwrap={unwrap}
+            onChangeTag={changeTag}
+            urls={pages.map(canonicalUrl)} />
+        );
+      case 'meta':
+        return (
+          <Meta
+            doc={doc}
+            origin={origin}
+            urls={pages.map(canonicalUrl)}
+            onSet={setMeta}
+            onChooseImage={home => setChoosingMedia({ kind: 'image', home })} />
+        );
+      case 'quality':
+        return (
+          <Quality
+            doc={doc}
+            urls={pages.map(canonicalUrl)}
+            /*
+             * Selecting is not enough when the finding is four screens
+             * down: the canvas is brought to it as well, the same way a
+             * double click in the tree does. Only while the design view is
+             * showing, since there is nothing to scroll otherwise.
+             */
+            onSelect={node => {
+              setSelected(node);
+              if (view === 'design') {
+                setRevealSelected(value => value + 1);
+              }
+            }} />
+        );
+      case 'website':
+        return (
+          <Website urls={pages.map(canonicalUrl)} />
+        );
+      default:
+        return (
+          <Styles
+            element={styleTarget}
+            onText={!!selected && isText(selected)}
+            frameWindow={doc?.defaultView ?? null}
+            selectors={selectors}
+            target={target}
+            overrides={overrides}
+            stylesheet={cssPath}
+            missing={cssMissing}
+            onTarget={setTarget}
+            onSet={setStyle}
+            onEditRule={editRule}
+            onRemoveRule={removeRule} />
+        );
+    }
+  }
+
   /* -- Rendering ---------------------------------------------------------- */
 
   return (
@@ -2023,7 +2127,7 @@ export default function WebDesigner() {
           * tab straight into it.
           */}
         <div
-          className={'designer-rail' + (railsShut.left ? ' shut' : '')}
+          className={railClass('left', railsShut)}
           ref={node => node?.toggleAttribute('inert', view !== 'design')}>
           <div className="designer-section">
             <h3>Blocks</h3>
@@ -2064,14 +2168,12 @@ export default function WebDesigner() {
           * either, so it is reachable whether the rail is open or folded — a
           * button living in the thing it hides can only ever hide it.
           */}
-        <button
-          className="designer-rail-toggle left"
-          title={railsShut.left ? 'Show blocks and tree' : 'Hide blocks and tree'}
-          onClick={() => toggleRail('left')}>
-          <span style={{ display: 'flex', transform: railsShut.left ? undefined : 'rotate(180deg)' }}>
-            <ChevronIcon />
-          </span>
-        </button>
+        <RailToggle
+          side="left"
+          shut={railsShut.left}
+          showTitle="Show blocks and tree"
+          hideTitle="Hide blocks and tree"
+          onToggle={() => toggleRail('left')} />
 
         <div className="designer-middle">
         {/*
@@ -2233,17 +2335,15 @@ export default function WebDesigner() {
         ))}
         </div>
 
-        <button
-          className="designer-rail-toggle right"
-          title={railsShut.right ? 'Show properties' : 'Hide properties'}
-          onClick={() => toggleRail('right')}>
-          <span style={{ display: 'flex', transform: railsShut.right ? 'rotate(180deg)' : undefined }}>
-            <ChevronIcon />
-          </span>
-        </button>
+        <RailToggle
+          side="right"
+          shut={railsShut.right}
+          showTitle="Show properties"
+          hideTitle="Hide properties"
+          onToggle={() => toggleRail('right')} />
 
         <div
-          className={'designer-rail right' + (railsShut.right ? ' shut' : '')}
+          className={railClass('right', railsShut)}
           ref={node => node?.toggleAttribute('inert', view !== 'design')}>
           <Tabs
             tabs={[
@@ -2255,68 +2355,7 @@ export default function WebDesigner() {
             ]}
             active={tab}
             onChange={setTab} />
-          {tab === 'element' ? (
-            <Inspector
-              node={selected}
-              doc={doc}
-              onSetText={setText}
-              onSetAttribute={setAttribute}
-              onRemoveAttribute={removeAttribute}
-              onSetClasses={setClasses}
-              onSelect={setSelected}
-              onDuplicate={duplicate}
-              onDelete={remove}
-              onMove={nudge}
-              onAddText={addText}
-              canAddText={!!elementOf(selected) && !isText(selected!) &&
-                canContainChildren(elementOf(selected)!) &&
-                designableChildren(elementOf(selected)!).length === 0}
-              origin={origin}
-              onChooseMedia={kind => setChoosingMedia({ kind })}
-              onWrap={wrap}
-              onUnwrap={unwrap}
-              onChangeTag={changeTag}
-              urls={pages.map(canonicalUrl)} />
-          ) : tab === 'meta' ? (
-            <Meta
-              doc={doc}
-              origin={origin}
-              urls={pages.map(canonicalUrl)}
-              onSet={setMeta}
-              onChooseImage={home => setChoosingMedia({ kind: 'image', home })} />
-          ) : tab === 'quality' ? (
-            <Quality
-              doc={doc}
-              urls={pages.map(canonicalUrl)}
-              /*
-               * Selecting is not enough when the finding is four screens
-               * down: the canvas is brought to it as well, the same way a
-               * double click in the tree does. Only while the design view is
-               * showing, since there is nothing to scroll otherwise.
-               */
-              onSelect={node => {
-                setSelected(node);
-                if (view === 'design') {
-                  setRevealSelected(value => value + 1);
-                }
-              }} />
-          ) : tab === 'website' ? (
-            <Website urls={pages.map(canonicalUrl)} />
-          ) : (
-            <Styles
-              element={styleTarget}
-              onText={!!selected && isText(selected)}
-              frameWindow={doc?.defaultView ?? null}
-              selectors={selectors}
-              target={target}
-              overrides={overrides}
-              stylesheet={cssPath}
-              missing={cssMissing}
-              onTarget={setTarget}
-              onSet={setStyle}
-              onEditRule={editRule}
-              onRemoveRule={removeRule} />
-          )}
+          {rightPanel()}
         </div>
       </div>
     </>
