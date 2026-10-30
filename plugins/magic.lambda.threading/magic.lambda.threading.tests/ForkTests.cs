@@ -3,6 +3,7 @@
  */
 
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using magic.node;
@@ -22,6 +23,8 @@ namespace magic.lambda.threading.tests
 
             public static void SetExecutionCount(int value) { ExecutionCount = value; }
 
+            public static void IncrementExecutionCount() { Interlocked.Increment(ref ExecutionCount); }
+
             public static int GetExecutionCount() => ExecutionCount;
 
             public void Signal(ISignaler signaler, Node input)
@@ -37,7 +40,7 @@ namespace magic.lambda.threading.tests
         {
             public void Signal(ISignaler signaler, Node input)
             {
-                ForkSlot1.SetExecutionCount(ForkSlot1.GetExecutionCount() + 1);
+                ForkSlot1.IncrementExecutionCount();
             }
         }
 
