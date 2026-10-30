@@ -131,7 +131,7 @@ export default function Playground() {
       setSavedCode(code);
       setSelectedSnippet(filename);
       if (!snippets.includes(filename)) {
-        setSnippets([...snippets, filename].sort());
+        setSnippets([...snippets, filename].sort((a, b) => a.localeCompare(b)));
       }
       showToast('Saved ' + filename, false);
     } catch (err: any) {

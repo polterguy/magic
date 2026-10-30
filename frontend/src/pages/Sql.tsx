@@ -251,7 +251,7 @@ export default function Sql() {
     try {
       // Batch mode only when a line actually IS a GO statement — merely
       // containing the letters "go" (category, algorithm…) doesn't count.
-      const batch = type === 'mssql' && /^\s*go\s*;?\s*$/im.test(toExecute);
+      const batch = type === 'mssql' && /^[ \t]*go(?:[ \t]*;)?[ \t]*$/im.test(toExecute);
       const response = await executeSql(
         type, '[' + connectionString + '|' + database + ']', toExecute, safeMode, batch);
       setResult(response ?? []);
@@ -321,7 +321,7 @@ export default function Sql() {
       setSelectedSnippet(filename);
       showToast('Saved ' + filename);
       if (!snippets.includes(filename)) {
-        setSnippets([...snippets, filename].sort());
+        setSnippets([...snippets, filename].sort((a, b) => a.localeCompare(b)));
       }
     } catch (err: any) {
       showToast(err.message, true, err.logId);

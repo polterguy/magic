@@ -71,7 +71,7 @@ function ResponseHeaders({ headers }: { headers?: Record<string, string> }) {
 
   const [open, setOpen] = useState(false);
 
-  const names = Object.keys(headers ?? {}).sort();
+  const names = Object.keys(headers ?? {}).sort((a, b) => a.localeCompare(b));
   if (names.length === 0) {
     return null;
   }

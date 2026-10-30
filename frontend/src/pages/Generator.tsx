@@ -1403,7 +1403,7 @@ function mergeSlots(existing: string, additions: string[]) {
   if (fresh.length === 0) {
     return existing;
   }
-  const trimmed = existing.replace(/\s+$/, '');
+  const trimmed = existing.trimEnd();
   return (trimmed ? trimmed + '\n' : '') + fresh.join('\n') + '\n';
 }
 

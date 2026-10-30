@@ -575,7 +575,7 @@ function OpenIdDialog(props: {
         const found = (slots ?? [])
           .filter(name => name.startsWith(OIDC_SLOT_PREFIX))
           .map(name => name.substring(OIDC_SLOT_PREFIX.length))
-          .sort();
+          .sort((a, b) => a.localeCompare(b));
         setProviders(found);
         setProvider(found[0] ?? '');
       })

@@ -117,7 +117,7 @@ function classSuggestions(doc: Document, element: Element) {
     });
   });
   const here = element.tagName.toLowerCase();
-  const names = Array.from(worn.keys()).sort();
+  const names = Array.from(worn.keys()).sort((a, b) => a.localeCompare(b));
   return [
     ...names.filter(name => worn.get(name)!.has(here)),
     ...names.filter(name => !worn.get(name)!.has(here)),

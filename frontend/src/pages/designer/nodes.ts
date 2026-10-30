@@ -159,7 +159,7 @@ export function labelOf(node: Node): string {
  */
 export function writeText(node: Text, text: string) {
   const lead = /^\s*/.exec(node.data)![0];
-  const trail = /\s*$/.exec(node.data)![0];
+  const trail = node.data.slice(node.data.trimEnd().length);
   node.data = lead + text + trail;
 }
 

@@ -156,10 +156,14 @@ function resolve(address: string, href: string) {
 
 export function absoluteUrls(css: string, href: string): string {
   return css
-    .replace(/\burl\(\s*(['"]?)([^'")]+)\1\s*\)/gi,
-      (whole, quote, address) => ABSOLUTE.test(address)
-        ? whole
-        : 'url(' + quote + resolve(address, href) + quote + ')')
+    .replace(/\burl\(\s*(?:"([^"]*)"|'([^']*)'|([^'")\s]+))\s*\)/gi,
+      (whole, doubleQuoted, singleQuoted, bare) => {
+        const address = doubleQuoted ?? singleQuoted ?? bare;
+        const quote = doubleQuoted !== undefined ? '"' : singleQuoted !== undefined ? "'" : '';
+        return ABSOLUTE.test(address)
+          ? whole
+          : 'url(' + quote + resolve(address, href) + quote + ')';
+      })
     .replace(/@import\s+(['"])([^'"]+)\1/gi,
       (whole, quote, address) => ABSOLUTE.test(address)
         ? whole
@@ -333,8 +337,8 @@ export function overrideCss(overrides: Overrides): string {
 // The full stylesheet to write back to disk.
 export function joinCss(head: string, overrides: Overrides, tail = ''): string {
   const block = overrideCss(overrides);
-  const author = head.replace(/\s+$/, '');
-  const rest = tail.replace(/^\s+/, '').replace(/\s+$/, '');
+  const author = head.trimEnd();
+  const rest = tail.trim();
 
   /*
    * No overrides means no block, and therefore no markers — an empty fence in

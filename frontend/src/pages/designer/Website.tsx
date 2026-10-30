@@ -97,7 +97,7 @@ export default function Website(props: {
           setHtmlFiles(files
             .filter(file => /\.html?$/i.test(file) && !file.includes('/.well-known/'))
             .map(stripHtmlExt)
-            .sort());
+            .sort((a, b) => a.localeCompare(b)));
         }
       })
       .catch(() => { /* Autocomplete is a convenience - the field still works typed by hand. */ });

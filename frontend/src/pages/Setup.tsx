@@ -28,7 +28,7 @@ export default function Setup() {
 
   const problem =
     name.trim() === '' ? 'Your name is required'
-      : !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) ? 'That does not look like an email address'
+      : !/^[^@\s]+@[^@\s.]+(?:\.[^@\s.]+)+$/.test(email) ? 'That does not look like an email address'
         : password.length < MIN_PASSWORD ? 'The password must be at least ' + MIN_PASSWORD + ' characters'
           : !showPassword && password !== repeat ? 'The two passwords do not match'
             : '';

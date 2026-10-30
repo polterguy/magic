@@ -72,7 +72,7 @@ function importFromPreviousDashboard(): StoredBackend[] {
   const list: StoredBackend[] = previous
     .filter(candidate => typeof candidate?.url === 'string' && candidate.url !== '')
     .map(candidate => ({
-      url: candidate.url.replace(/\/+$/, ''),
+      url: withoutTrailingSlashes(candidate.url),
       username: typeof candidate.username === 'string' ? candidate.username : '',
       token: typeof candidate.token === 'string' ? candidate.token : null,
     }));
@@ -84,6 +84,18 @@ function importFromPreviousDashboard(): StoredBackend[] {
   const active = list.find(candidate => !!candidate.token) ?? list[0];
   localStorage.setItem(ACTIVE_KEY, active.url);
   return list;
+}
+
+/*
+ * Strips trailing slashes. A loop rather than a /\/+$/ regex, which backtracks
+ * quadratically on a long run of slashes that doesn't end the string.
+ */
+export function withoutTrailingSlashes(value: string) {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === '/') {
+    end--;
+  }
+  return value.slice(0, end);
 }
 
 function persist(list: StoredBackend[]) {
@@ -153,7 +165,7 @@ export function backendFromUrl(): StoredBackend | null {
   if (!target || !URL.canParse(target) || !/^https?:$/.test(new URL(target).protocol)) {
     return null;
   }
-  const url = target.replace(/\/+$/, '');
+  const url = withoutTrailingSlashes(target);
   const stored = activateBackend(url);
   if (stored) {
     return stored;

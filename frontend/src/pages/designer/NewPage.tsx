@@ -9,6 +9,7 @@
 
 import { useState } from 'react';
 import { Modal } from '../../components/Dialogs';
+import { withoutTrailingSlashes } from '../../lib/backend';
 
 export const WEB_ROOT = '/etc/www';
 
@@ -25,7 +26,7 @@ export const WEB_ROOT = '/etc/www';
 export function tidyUrl(input: string) {
   const trimmed = input.trim();
   const withSlash = trimmed.startsWith('/') ? trimmed : '/' + trimmed;
-  return withSlash.length > 1 ? withSlash.replace(/\/+$/, '') : withSlash;
+  return withSlash.length > 1 ? withoutTrailingSlashes(withSlash) : withSlash;
 }
 
 /*

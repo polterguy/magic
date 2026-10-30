@@ -27,6 +27,7 @@ import {
   saveConfig,
 } from '../lib/api';
 import { showToast } from '../lib/toast';
+import { withoutTrailingSlashes } from '../lib/backend';
 
 // Schemes we can generate. OAuth2 needs a token exchange, which this does not do.
 const SCHEMES = [
@@ -86,7 +87,7 @@ export default function ImportApiTab() {
       const absolute = declared.startsWith('http')
         ? declared
         : new URL(declared || '/', url.trim()).href;
-      setBaseUrl(absolute.replace(/\/+$/, ''));
+      setBaseUrl(withoutTrailingSlashes(absolute));
 
       const guess = (result.title ?? 'imported-api')
         .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -375,7 +376,7 @@ export default function ImportApiTab() {
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(groups).sort().map(tag => {
+                {Object.keys(groups).sort((a, b) => a.localeCompare(b)).map(tag => {
                   const ops = groups[tag];
                   const allInGroup = ops.every(op => chosen[op.id]);
                   return (

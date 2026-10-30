@@ -106,7 +106,7 @@ marked.setOptions({ renderer, breaks: true, gfm: true });
  * do, so `A[my (label)]` becomes `A["my (label)"]` before rendering.
  */
 function sanitiseMermaid(code: string): string {
-  return code.replace(/(\w+)\[([^\]]+)\]/g, (_match: string, id: string, label: string) => {
+  return code.replace(/(?<!\w)(\w+)\[([^[\]]+)\]/g, (_match: string, id: string, label: string) => {
     const clean = label.replace(/(?:^["'])|(?:["']$)/g, '');
     if (/[()/"'[\]]/.test(clean)) {
       return id + '["' + clean.replace(/"/g, '\\"') + '"]';
@@ -677,7 +677,7 @@ function functionName(file?: string): string | undefined {
   if (!file) {
     return undefined;
   }
-  const path = file.match(/\[([^\]]+)\]/)?.[1] ?? file;
+  const path = file.match(/\[([^[\]]+)\]/)?.[1] ?? file;
   return path.trim().replace(/\.hl$/i, '').split('/').pop() || undefined;
 }
 

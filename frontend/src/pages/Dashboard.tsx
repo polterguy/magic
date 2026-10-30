@@ -31,6 +31,7 @@ import {
 } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
 import { openSupport } from '../lib/support';
+import { withoutTrailingSlashes } from '../lib/backend';
 import { RobotIcon, SearchIcon } from '../components/Icons';
 import { openChatOps, openPalette, setDashboardTourRunner } from '../lib/shellActions';
 import Tour from '../components/Tour';
@@ -878,7 +879,7 @@ function CreateChatbot(props: { onTour: () => void }) {
             if (!model) {
               return null;
             }
-            const href = backendInfo().url.replace(/\/+$/, '') + '/' + model;
+            const href = withoutTrailingSlashes(backendInfo().url) + '/' + model;
             /*
              * Seeing the result comes before tuning it, so opening the chatbot
              * leads. Editing is offered next to it because everything the

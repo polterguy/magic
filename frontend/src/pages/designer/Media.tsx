@@ -173,7 +173,7 @@ export default function Media(props: {
   const folders = useMemo(() => {
     const all = new Set<string>(['']);
     (files ?? []).forEach(file => all.add(webPath(file.substring(0, file.lastIndexOf('/')))));
-    return Array.from(all).sort();
+    return Array.from(all).sort((a, b) => a.localeCompare(b));
   }, [files]);
 
   const total = files?.length ?? 0;

@@ -26,6 +26,7 @@ import {
   tokenUsername,
   tokenExpiration,
   tokenExpired,
+  withoutTrailingSlashes,
 } from './backend';
 import {
   authenticate,
@@ -300,13 +301,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [backend, applyBackend]);
 
   const login = useCallback(async (url: string, username: string, password: string) => {
-    url = url.replace(/\/+$/, '');
+    url = withoutTrailingSlashes(url);
     const response = await authenticate(url, username, password);
     applyBackend({ url, username, token: response.ticket });
   }, [applyBackend]);
 
   const loginWithTicket = useCallback((url: string, ticket: string) => {
-    url = url.replace(/\/+$/, '');
+    url = withoutTrailingSlashes(url);
     // Whoever the ticket belongs to — the caller has no better source.
     applyBackend({ url, username: tokenUsername(ticket), token: ticket });
   }, [applyBackend]);

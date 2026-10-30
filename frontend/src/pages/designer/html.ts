@@ -431,7 +431,7 @@ function writeElement(element: Element, depth: number, out: string[]) {
     return;
   }
   if (RAW.has(tag)) {
-    const text = (element.textContent ?? '').replace(/^\n/, '').replace(/\s+$/, '');
+    const text = (element.textContent ?? '').replace(/^\n/, '').trimEnd();
     if (text === '') {
       out.push(pad + openTag(element) + closeTag(element));
       return;

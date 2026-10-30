@@ -47,9 +47,10 @@ export default function EditSnippetDialog(props: {
    * the completion so nothing the model produced is lost.
    */
   function applyTransform(result: string) {
-    const match = result.match(/\{[\s\S]*\}/);
+    const start = result.indexOf('{');
+    const end = result.lastIndexOf('}');
     try {
-      const parsed = JSON.parse(match ? match[0] : result);
+      const parsed = JSON.parse(start >= 0 && end > start ? result.slice(start, end + 1) : result);
       if (typeof parsed.prompt === 'string') setPrompt(parsed.prompt);
       if (typeof parsed.completion === 'string') setCompletion(parsed.completion);
       if (typeof parsed.prompt !== 'string' && typeof parsed.completion !== 'string') {

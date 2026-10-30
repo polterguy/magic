@@ -4,7 +4,7 @@
  * Angular service layer.
  */
 
-import { loadBackend } from './backend';
+import { loadBackend, withoutTrailingSlashes } from './backend';
 
 let baseUrl = '';
 let bearerToken: string | null = null;
@@ -1252,7 +1252,7 @@ export interface OidcProvider {
 export async function canResetPassword(backendUrl: string) {
   try {
     const response = await fetch(
-      backendUrl.replace(/\/+$/, '') + '/magic/system/auth/can-reset-password');
+      withoutTrailingSlashes(backendUrl) + '/magic/system/auth/can-reset-password');
     if (!response.ok) {
       return false;
     }
@@ -1268,7 +1268,7 @@ export async function canResetPassword(backendUrl: string) {
  */
 export async function sendResetPasswordLink(backendUrl: string, user: string) {
   const response = await fetch(
-    backendUrl.replace(/\/+$/, '') + '/magic/system/auth/send-reset-password-link',
+    withoutTrailingSlashes(backendUrl) + '/magic/system/auth/send-reset-password-link',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1292,7 +1292,7 @@ export async function verifyTicket() {
 
 export async function openidProviders(backendUrl: string) {
   const response = await fetch(
-    backendUrl.replace(/\/+$/, '') +
+    withoutTrailingSlashes(backendUrl) +
     '/magic/system/auth/openid-providers?createNonce=true');
   if (!response.ok) {
     return [];
@@ -1304,7 +1304,7 @@ export async function openidProviders(backendUrl: string) {
 // Exchanges a provider's id_token for a Magic JWT.
 export async function openidLogin(backendUrl: string, token: string) {
   const response = await fetch(
-    backendUrl.replace(/\/+$/, '') +
+    withoutTrailingSlashes(backendUrl) +
     '/magic/system/auth/openid-login?token=' + encodeURIComponent(token));
   if (!response.ok) {
     await throwApiError(response);
@@ -1320,7 +1320,7 @@ export async function openidLogin(backendUrl: string, token: string) {
 export async function openidExchange(
   backendUrl: string, code: string, state: string, redirectUri: string) {
   const response = await fetch(
-    backendUrl.replace(/\/+$/, '') + '/magic/system/auth/openid-exchange',
+    withoutTrailingSlashes(backendUrl) + '/magic/system/auth/openid-exchange',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1464,8 +1464,14 @@ export function unfence(answer: string, fileType: string): string {
   if (fileType === 'md' || fileType === 'markdown') {
     return answer;
   }
-  const fenced = /```[a-zA-Z0-9+#.-]*[ \t]*\r?\n?([\s\S]*?)```/.exec(answer);
-  return fenced ? fenced[1].replace(/\s+$/, '') : answer;
+  const open = answer.indexOf('```');
+  const close = open < 0 ? -1 : answer.indexOf('```', open + 3);
+  if (close < 0) {
+    return answer;
+  }
+  // Past the fence comes an optional language tag, spaces and one line break.
+  const body = answer.slice(open + 3, close).replace(/^[a-zA-Z0-9+#.-]*[ \t]*\r?\n?/, '');
+  return body.trimEnd();
 }
 
 export interface OpenAiModel {
