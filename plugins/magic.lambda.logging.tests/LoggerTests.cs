@@ -39,6 +39,9 @@ namespace magic.lambda.logging.tests
      */
     public sealed class LoggerTests : IDisposable
     {
+        static readonly string[] FirstPage = ["entry 5", "entry 4"];
+        static readonly string[] SecondPage = ["entry 3", "entry 2"];
+
         readonly string _folder = Path.Combine(Path.GetTempPath(), "magic-logging-tests-" + Guid.NewGuid().ToString("N"));
         readonly string _connectionString;
         readonly LogSettings _settings = new LogSettings { Level = "debug" };
@@ -163,10 +166,10 @@ namespace magic.lambda.logging.tests
                 await _logger.InfoAsync("entry " + idx);
             }
             var firstPage = (await _logger.QueryAsync(2, null)).ToList();
-            Assert.Equal(new[] { "entry 5", "entry 4" }, firstPage.Select(x => x.Content).ToArray());
+            Assert.Equal(FirstPage, firstPage.Select(x => x.Content).ToArray());
 
             var secondPage = (await _logger.QueryAsync(2, firstPage.Last().Id)).ToList();
-            Assert.Equal(new[] { "entry 3", "entry 2" }, secondPage.Select(x => x.Content).ToArray());
+            Assert.Equal(SecondPage, secondPage.Select(x => x.Content).ToArray());
         }
 
         [Fact]
@@ -347,8 +350,8 @@ namespace magic.lambda.logging.tests
         public async Task CapabilitiesSlot()
         {
             var node = (await EvaluateAsync("log.capabilities")).Children.First();
-            Assert.Equal(true, node.Children.First(x => x.Name == "can-filter").Value);
-            Assert.Equal(true, node.Children.First(x => x.Name == "can-timeshift").Value);
+            Assert.True((bool)node.Children.First(x => x.Name == "can-filter").Value);
+            Assert.True((bool)node.Children.First(x => x.Name == "can-timeshift").Value);
         }
 
         #endregion

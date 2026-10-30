@@ -21,6 +21,8 @@ namespace magic.endpoint.tests
      */
     public sealed class EndpointListingTests : IDisposable
     {
+        static readonly string[] Roles = ["root", "admin"];
+
         readonly string _name = "listing-" + Guid.NewGuid().ToString("N");
         readonly string _folder;
 
@@ -42,7 +44,7 @@ namespace magic.endpoint.tests
             File.WriteAllText(Path.Combine(_folder, filename), hl);
         }
 
-        async Task<Node> ListAsync()
+        static async Task<Node> ListAsync()
         {
             var services = Common.Initialize();
             var signaler = services.GetService<ISignaler>();
@@ -71,7 +73,7 @@ response.headers.set
 return:foo");
             var endpoint = await EndpointAsync("plain", "get");
             Assert.Equal("Returns a greeting", Child(endpoint, "description").Value);
-            Assert.Equal(new[] { "root", "admin" }, Child(endpoint, "auth").Children.Select(x => x.Value).ToArray());
+            Assert.Equal(Roles, Child(endpoint, "auth").Children.Select(x => x.Value).ToArray());
             Assert.Equal("custom", Child(endpoint, "type").Value);
             Assert.Equal("text/plain", Child(endpoint, "produces").Value);
             Assert.Null(Child(endpoint, "consumes"));       // GET endpoints have no payload.
@@ -156,7 +158,7 @@ return:foo");
             Assert.Equal("Artist", Child(lookup, "table").Value);
             Assert.Equal("ArtistId", Child(lookup, "key").Value);
             Assert.Equal("Name", Child(lookup, "name").Value);
-            Assert.Equal(true, Child(lookup, "long").Value);
+            Assert.True((bool)Child(lookup, "long").Value);
         }
 
         [Fact]
@@ -169,7 +171,7 @@ return:foo");
             var output = Child(endpoint, "output").Children.Single();
             Assert.Equal("count", Child(output, "name").Value);
             Assert.Equal("long", Child(output, "type").Value);
-            Assert.Equal(false, Child(endpoint, "array").Value);
+            Assert.False((bool)Child(endpoint, "array").Value);
         }
 
         [Fact]
@@ -191,7 +193,7 @@ data.connect:db
 return:foo");
             var endpoint = await EndpointAsync("read", "get");
             Assert.Equal("crud-read", Child(endpoint, "type").Value);
-            Assert.Equal(true, Child(endpoint, "array").Value);
+            Assert.True((bool)Child(endpoint, "array").Value);
             var columns = Child(endpoint, "output").Children.ToList();
             Assert.Equal(3, columns.Count);
             Assert.Equal("Title", Child(columns[0], "name").Value);

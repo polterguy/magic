@@ -321,6 +321,7 @@ create table task_due (
 
             await _scheduler.StartAsync();
             await WaitForAsync(() => TestMark.Marks.Contains(mark));
+            Assert.Contains(mark, TestMark.Marks);
         }
 
         [Fact]
@@ -334,6 +335,9 @@ create table task_due (
             await _scheduler.StartAsync();
             await WaitForAsync(() => TestMark.Marks.Contains(mark));
             await WaitForAsync(() => SchedulesOf("t1") == 1);
+
+            // A repeating schedule is kept, as opposed to a single shot one, which is deleted once it has run.
+            Assert.Equal(1, SchedulesOf("t1"));
         }
 
         [Fact]
@@ -344,6 +348,8 @@ create table task_due (
 
             await WaitForAsync(() => _logger.Invocations.Count > 0);
             await WaitForAsync(() => SchedulesOf("t1") == 0);
+            Assert.NotEmpty(_logger.Invocations);
+            Assert.Equal(0, SchedulesOf("t1"));
         }
 
         #endregion

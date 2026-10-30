@@ -71,7 +71,7 @@ namespace magic.library.tests
             return new ConfigurationBuilder().AddInMemoryCollection(values).Build();
         }
 
-        ServiceProvider Build(IConfiguration configuration, Action<IServiceCollection> before = null)
+        static ServiceProvider Build(IConfiguration configuration, Action<IServiceCollection> before = null)
         {
             var services = new ServiceCollection();
             services.AddLogging();
@@ -213,7 +213,7 @@ namespace magic.library.tests
             return context;
         }
 
-        static IApplicationBuilder Pipeline(IServiceProvider provider) => new ApplicationBuilder(provider);
+        static ApplicationBuilder Pipeline(IServiceProvider provider) => new ApplicationBuilder(provider);
 
         [Fact]
         public async Task ForwardedHeadersAreUsedByDefault()
@@ -378,7 +378,9 @@ namespace magic.library.tests
         public async Task MissingStartupFileIsFine()
         {
             using var provider = Build(Configuration());
-            await Pipeline(provider).UseMagicStartupFiles();
+            var error = await Record.ExceptionAsync(() => Pipeline(provider).UseMagicStartupFiles());
+            Assert.Null(error);
+            Assert.False(File.Exists(_folder + "/ran.txt"));
         }
 
         [Theory]

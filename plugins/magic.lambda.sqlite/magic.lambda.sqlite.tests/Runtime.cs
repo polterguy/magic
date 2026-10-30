@@ -35,7 +35,7 @@ namespace magic.lambda.sqlite.tests
         /// <summary>
         /// Name of the database the tests connect to, as [generic|name].
         /// </summary>
-        public string Database => "[generic|testdb]";
+        public const string Database = "[generic|testdb]";
 
         public async Task<Node> EvaluateAsync(string hl)
         {
@@ -92,7 +92,7 @@ namespace magic.lambda.sqlite.tests
 
         #region [ -- Private helper methods -- ]
 
-        static IEnumerable<Type> InstantiateAllTypes(ServiceCollection services)
+        static List<Type> InstantiateAllTypes(ServiceCollection services)
         {
             var type1 = typeof(ISlot);
             var type2 = typeof(ISlotAsync);

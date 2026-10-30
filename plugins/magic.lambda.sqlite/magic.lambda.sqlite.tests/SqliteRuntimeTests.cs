@@ -18,7 +18,11 @@ namespace magic.lambda.sqlite.tests
     {
         readonly Runtime _runtime = new Runtime();
 
-        public void Dispose() => _runtime.Dispose();
+        public void Dispose()
+        {
+            _runtime.Dispose();
+            GC.SuppressFinalize(this);
+        }
 
         const string Create = @"
    sqlite.execute:create table people (id integer primary key autoincrement, name text not null, age integer)";
