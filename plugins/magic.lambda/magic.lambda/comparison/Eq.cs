@@ -69,7 +69,7 @@ namespace magic.lambda.comparison
 
             // +∞==+∞, -∞==-∞
             if (double.IsInfinity(dl) || double.IsInfinity(dr))
-                return dl.Equals(dr);
+                return double.IsInfinity(dl) && double.IsInfinity(dr) && Math.Sign(dl) == Math.Sign(dr);
 
             return DoubleAlmostEqual(dl, dr);
         }

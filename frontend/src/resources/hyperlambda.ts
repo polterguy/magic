@@ -405,7 +405,7 @@ function tokenizeSpecialName(
   state: HyperlambdaState,
   pos: number,
   first: string | null | undefined,
-): { done: true; style: StyleName | null } | { done: false; cr: string | null | undefined } {
+): SpecialName {
   switch (first) {
 
     case '"':
@@ -423,36 +423,8 @@ function tokenizeSpecialName(
       // Then parsing string literal.
       return { done: true, style: parseSingleLineStringLiteral(stream, state) };
 
-    case '@': {
-
-      /*
-       * This is (possibly) a multi line string literal (hopefully, unless
-       * there's a bug in it). First checking for indentation bugs.
-       */
-      if (checkIndentation(state, pos) === true) {
-        return { done: true, style: styles.error };
-      }
-
-      /*
-       * Then fetching next character, to check for sure, whether or not this
-       * is a multi line string literal.
-       */
-      state.noContent = false;
-      stream.next();
-      const cr = (first ?? '') + (stream.next() ?? '');
-      if (cr === '@"') {
-        state.mode = 'mstring-name';
-        state.oldIndent = state.indent;
-        state.indent = 0;
-        return { done: true, style: tokenizeMultilineStringMode(stream, state, true) };
-      }
-
-      /*
-       * NOT a multi line string literal, just happens to be a name starting
-       * with "@", "fallthrough" to logic after switch.
-       */
-      return { done: false, cr };
-    }
+    case '@':
+      return tokenizeAtName(stream, state, pos, first);
 
     case ':':
 
@@ -472,33 +444,82 @@ function tokenizeSpecialName(
       return { done: true, style: styles.type };
 
     case '/':
-
-      /*
-       * Possibly a comment, either multi line comment, or single line
-       * comment, but first checking next character before we determine if it
-       * is a comment or not.
-       */
-      stream.next();
-      if (stream.peek() === '/') {
-
-        // Single line comment.
-        state.indent = pos;
-        return { done: true, style: parseSingleLineComment(stream) };
-      } else if (stream.peek() === '*') {
-
-        // Multi line comment.
-        state.oldIndent = pos;
-        state.indent = pos + 1;
-        state.mode = 'mcomment';
-        return { done: true, style: tokenizeMultiCommentMode(stream, state) };
-      }
-
-      /*
-       * NOT any type of comment, just happens to be a name starting with "/",
-       * "fallthrough" to logic after switch.
-       */
-      return { done: false, cr: first };
+      return tokenizeSlashName(stream, state, pos, first);
   }
+  return { done: false, cr: first };
+}
+
+type SpecialName = { done: true; style: StyleName | null } | { done: false; cr: string | null | undefined };
+
+// A name starting with "@", which is a multi line string literal, or just a name starting with "@".
+function tokenizeAtName(
+  stream: StringStream,
+  state: HyperlambdaState,
+  pos: number,
+  first: string | null | undefined,
+): SpecialName {
+
+  /*
+   * This is (possibly) a multi line string literal (hopefully, unless
+   * there's a bug in it). First checking for indentation bugs.
+   */
+  if (checkIndentation(state, pos) === true) {
+    return { done: true, style: styles.error };
+  }
+
+  /*
+   * Then fetching next character, to check for sure, whether or not this
+   * is a multi line string literal.
+   */
+  state.noContent = false;
+  stream.next();
+  const cr = (first ?? '') + (stream.next() ?? '');
+  if (cr === '@"') {
+    state.mode = 'mstring-name';
+    state.oldIndent = state.indent;
+    state.indent = 0;
+    return { done: true, style: tokenizeMultilineStringMode(stream, state, true) };
+  }
+
+  /*
+   * NOT a multi line string literal, just happens to be a name starting
+   * with "@", "fallthrough" to logic after switch.
+   */
+  return { done: false, cr };
+}
+
+// A name starting with "/", which is a comment, or just a name starting with "/".
+function tokenizeSlashName(
+  stream: StringStream,
+  state: HyperlambdaState,
+  pos: number,
+  first: string | null | undefined,
+): SpecialName {
+
+  /*
+   * Possibly a comment, either multi line comment, or single line
+   * comment, but first checking next character before we determine if it
+   * is a comment or not.
+   */
+  stream.next();
+  if (stream.peek() === '/') {
+
+    // Single line comment.
+    state.indent = pos;
+    return { done: true, style: parseSingleLineComment(stream) };
+  } else if (stream.peek() === '*') {
+
+    // Multi line comment.
+    state.oldIndent = pos;
+    state.indent = pos + 1;
+    state.mode = 'mcomment';
+    return { done: true, style: tokenizeMultiCommentMode(stream, state) };
+  }
+
+  /*
+   * NOT any type of comment, just happens to be a name starting with "/",
+   * "fallthrough" to logic after switch.
+   */
   return { done: false, cr: first };
 }
 

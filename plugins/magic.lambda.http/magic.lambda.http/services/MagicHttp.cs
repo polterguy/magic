@@ -243,7 +243,7 @@ namespace magic.lambda.http.services
          * Returns the request following the specified redirect response, after verifying its
          * target against the whitelist, or null if the response is not a redirect to follow.
          */
-        HttpRequestMessage FollowRedirect(
+        static HttpRequestMessage FollowRedirect(
             ISignaler signaler,
             Node input,
             HttpMethod method,

@@ -110,22 +110,36 @@ namespace magic.lambda.io.file
          * Walks a patch, applying each of its hunks to the original lines, while keeping track of
          * where we are in both of them.
          */
-        sealed class Patcher(
-            List<string> originalLines,
-            bool originalHasTrailingNewline,
-            List<string> patchLines,
-            string targetPath)
+        sealed class Patcher
         {
             readonly List<string> _output = [];
-            bool _outputHasTrailingNewline = originalHasTrailingNewline;
+            bool _outputHasTrailingNewline;
             bool _hasHunks;
             bool _seenHeader;
             int _originalIndex;
             int _patchIndex;
 
+            readonly List<string> _originalLines;
+            readonly bool _originalHasTrailingNewline;
+            readonly List<string> _patchLines;
+            readonly string _targetPath;
+
+            public Patcher(
+                List<string> originalLines,
+                bool originalHasTrailingNewline,
+                List<string> patchLines,
+                string targetPath)
+            {
+                _originalLines = originalLines;
+                _originalHasTrailingNewline = originalHasTrailingNewline;
+                _patchLines = patchLines;
+                _targetPath = targetPath;
+                _outputHasTrailingNewline = originalHasTrailingNewline;
+            }
+
             public string Apply(string newline)
             {
-                while (_patchIndex < patchLines.Count)
+                while (_patchIndex < _patchLines.Count)
                 {
                     ReadNext();
                 }
@@ -134,10 +148,10 @@ namespace magic.lambda.io.file
                     throw new HyperlambdaException("Patch does not contain any hunks.");
 
                 // Append remaining original lines.
-                while (_originalIndex < originalLines.Count)
+                while (_originalIndex < _originalLines.Count)
                 {
-                    _output.Add(originalLines[_originalIndex]);
-                    _outputHasTrailingNewline = OriginalLineHasTrailingNewline(_originalIndex, originalLines.Count, originalHasTrailingNewline);
+                    _output.Add(_originalLines[_originalIndex]);
+                    _outputHasTrailingNewline = OriginalLineHasTrailingNewline(_originalIndex, _originalLines.Count, _originalHasTrailingNewline);
                     _originalIndex++;
                 }
 
@@ -152,7 +166,7 @@ namespace magic.lambda.io.file
              */
             void ReadNext()
             {
-                var line = patchLines[_patchIndex];
+                var line = _patchLines[_patchIndex];
 
                 if (IsGitPreamble(line))
                 {
@@ -190,10 +204,10 @@ namespace magic.lambda.io.file
                 if (_seenHeader)
                     throw new HyperlambdaException("Patch can only modify a single file.");
 
-                if (_patchIndex + 1 >= patchLines.Count || !patchLines[_patchIndex + 1].StartsWith("+++ ", StringComparison.InvariantCulture))
+                if (_patchIndex + 1 >= _patchLines.Count || !_patchLines[_patchIndex + 1].StartsWith("+++ ", StringComparison.InvariantCulture))
                     throw new HyperlambdaException("Invalid patch header.");
 
-                ValidatePatchHeaders(line, patchLines[_patchIndex + 1], targetPath);
+                ValidatePatchHeaders(line, _patchLines[_patchIndex + 1], _targetPath);
                 _seenHeader = true;
                 _patchIndex += 2;
             }
@@ -211,12 +225,12 @@ namespace magic.lambda.io.file
                  * since the patch was created, so the resolver is allowed to search outwards from it.
                  */
                 var expectedIndex = header.OldStart > 0 ? header.OldStart - 1 : 0;
-                var (targetIndex, whitespaceFuzz) = ResolveHunkTargetIndex(originalLines, _originalIndex, hunkLines, expectedIndex);
+                var (targetIndex, whitespaceFuzz) = ResolveHunkTargetIndex(_originalLines, _originalIndex, hunkLines, expectedIndex);
 
                 // Copy unchanged lines before hunk.
-                while (_originalIndex < targetIndex && _originalIndex < originalLines.Count)
+                while (_originalIndex < targetIndex && _originalIndex < _originalLines.Count)
                 {
-                    _output.Add(originalLines[_originalIndex]);
+                    _output.Add(_originalLines[_originalIndex]);
                     _originalIndex++;
                 }
 
@@ -241,9 +255,9 @@ namespace magic.lambda.io.file
             List<string> ReadHunkLines()
             {
                 var hunkLines = new List<string>();
-                while (_patchIndex < patchLines.Count)
+                while (_patchIndex < _patchLines.Count)
                 {
-                    var line = patchLines[_patchIndex];
+                    var line = _patchLines[_patchIndex];
                     if (line.StartsWith("@@", StringComparison.InvariantCulture) || IsGitPreamble(line))
                         break;
 
@@ -259,18 +273,18 @@ namespace magic.lambda.io.file
                 switch (tag)
                 {
                     case ' ':
-                        EnsureLineMatch(originalLines, _originalIndex, text, whitespaceFuzz);
+                        EnsureLineMatch(_originalLines, _originalIndex, text, whitespaceFuzz);
 
                         // Notice, we deliberately keep the ORIGINAL line rather than the patch's
                         // version of it, so that a whitespace tolerant match cannot silently
                         // rewrite trailing whitespace the file's author put there on purpose.
-                        _output.Add(originalLines[_originalIndex]);
+                        _output.Add(_originalLines[_originalIndex]);
                         _outputHasTrailingNewline = true;
                         _originalIndex++;
                         break;
 
                     case '-':
-                        EnsureLineMatch(originalLines, _originalIndex, text, whitespaceFuzz);
+                        EnsureLineMatch(_originalLines, _originalIndex, text, whitespaceFuzz);
                         _originalIndex++;
                         break;
 
@@ -300,266 +314,266 @@ namespace magic.lambda.io.file
                 else if (previousOperation != '-')
                     throw new HyperlambdaException(InvalidPatchLine);
             }
-        }
 
-        /*
-         * Parses a unified diff hunk header.
-         */
-        static (int OldStart, int OldCount, int NewStart, int NewCount) ParseHunkHeader(string header)
-        {
-            // Format: @@ -l,s +l,s @@
-            var parts = header.Split(' ');
-            if (parts.Length < 3)
-                throw new HyperlambdaException("Invalid hunk header.");
-
-            var oldPart = parts[1];
-            var newPart = parts[2];
-
-            if (!oldPart.StartsWith('-') ||
-                !newPart.StartsWith('+'))
-                throw new HyperlambdaException("Invalid hunk header.");
-
-            var (oldStart, oldCount) = ParseRange(oldPart.Substring(1));
-            var (newStart, newCount) = ParseRange(newPart.Substring(1));
-            return (oldStart, oldCount, newStart, newCount);
-        }
-
-        /*
-         * Parses a line range from a hunk header.
-         */
-        static (int Start, int Count) ParseRange(string range)
-        {
-            var parts = range.Split(',');
-            if (parts.Length == 1)
+            /*
+             * Parses a unified diff hunk header.
+             */
+            static (int OldStart, int OldCount, int NewStart, int NewCount) ParseHunkHeader(string header)
             {
-                var start = ParseInt(parts[0]);
-                return (start, start == 0 ? 0 : 1);
+                // Format: @@ -l,s +l,s @@
+                var parts = header.Split(' ');
+                if (parts.Length < 3)
+                    throw new HyperlambdaException("Invalid hunk header.");
+
+                var oldPart = parts[1];
+                var newPart = parts[2];
+
+                if (!oldPart.StartsWith('-') ||
+                    !newPart.StartsWith('+'))
+                    throw new HyperlambdaException("Invalid hunk header.");
+
+                var (oldStart, oldCount) = ParseRange(oldPart.Substring(1));
+                var (newStart, newCount) = ParseRange(newPart.Substring(1));
+                return (oldStart, oldCount, newStart, newCount);
             }
 
-            return (ParseInt(parts[0]), ParseInt(parts[1]));
-        }
-
-        /*
-         * Parses an integer invariantly.
-         */
-        static int ParseInt(string value)
-        {
-            if (!int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
-                throw new HyperlambdaException("Invalid hunk header.");
-            return result;
-        }
-
-        /*
-         * Ensures the current original line matches the expected line.
-         */
-        /*
-         * Verifies that the original line we are about to consume is the line the hunk expects.
-         *
-         * This is the check that keeps patching safe - a hunk is never applied onto content it does
-         * not match - and it stays strict even when the hunk was LOCATED with a tolerant comparison.
-         */
-        static void EnsureLineMatch(
-            List<string> originalLines,
-            int index,
-            string expected,
-            bool ignoreTrailingWhitespace)
-        {
-            if (index >= originalLines.Count)
-                throw new HyperlambdaException(
-                    "Patch could not be applied. The hunk expected '" +
-                    Ellipsis(expected) +
-                    "' at line " +
-                    (index + 1).ToString(CultureInfo.InvariantCulture) +
-                    ", but the file has only " +
-                    originalLines.Count.ToString(CultureInfo.InvariantCulture) +
-                    " lines.");
-
-            if (!LinesMatch(originalLines[index], expected, ignoreTrailingWhitespace))
-                throw new HyperlambdaException(
-                    "Patch could not be applied. Line " +
-                    (index + 1).ToString(CultureInfo.InvariantCulture) +
-                    " is '" +
-                    Ellipsis(originalLines[index]) +
-                    "' but the hunk expected '" +
-                    Ellipsis(expected) +
-                    "'.");
-        }
-
-        /*
-         * Resolves the position in the original file where a hunk should be applied.
-         *
-         * The hunk header tells us where the hunk belonged in the file the patch was created
-         * against, so we start there and widen outwards, taking the NEAREST position whose content
-         * matches. Requiring the context to instead be unique across the whole file - which is what
-         * this method used to do - rejects most real patches, since repeated lines such as a closing
-         * brace, a blank line or a bare 'return' are entirely normal.
-         *
-         * Locating a hunk is therefore fuzzy, while applying one stays strict: EnsureLineMatch still
-         * verifies every context and removed line at the position we settle on.
-         *
-         * The search is run twice, first comparing lines exactly, and only if that finds nothing,
-         * comparing them ignoring trailing whitespace. The second pass exists for formats where
-         * trailing whitespace is meaningful but invisible, most notably Markdown, where two trailing
-         * spaces denote a hard line break and are routinely lost when a patch is written by hand.
-         */
-        static (int Index, bool WhitespaceFuzz) ResolveHunkTargetIndex(
-            List<string> originalLines,
-            int originalIndex,
-            IReadOnlyList<string> hunkLines,
-            int expectedIndex)
-        {
-            // Hunks are applied in order, so we can never move backwards past what we already consumed.
-            if (expectedIndex < originalIndex)
-                expectedIndex = originalIndex;
-            if (expectedIndex > originalLines.Count)
-                expectedIndex = originalLines.Count;
-
-            foreach (var ignoreTrailingWhitespace in new[] { false, true })
+            /*
+             * Parses a line range from a hunk header.
+             */
+            static (int Start, int Count) ParseRange(string range)
             {
-                var found = FindNearestMatch(originalLines, originalIndex, hunkLines, expectedIndex, ignoreTrailingWhitespace);
-                if (found != null)
-                    return (found.Value, ignoreTrailingWhitespace);
-            }
-
-            throw new HyperlambdaException(
-                "Hunk could not be applied. No position matching its context was found within " +
-                MaxFuzzRadius.ToString(CultureInfo.InvariantCulture) +
-                " lines of line " +
-                (expectedIndex + 1).ToString(CultureInfo.InvariantCulture) +
-                ".");
-        }
-
-        /*
-         * Returns the position nearest to the expected one where the hunk matches, or null if there is none.
-         */
-        static int? FindNearestMatch(
-            List<string> originalLines,
-            int originalIndex,
-            IReadOnlyList<string> hunkLines,
-            int expectedIndex,
-            bool ignoreTrailingWhitespace)
-        {
-            if (HunkMatchesAt(originalLines, expectedIndex, hunkLines, ignoreTrailingWhitespace))
-                return expectedIndex;
-
-            for (var radius = 1; radius <= MaxFuzzRadius; radius++)
-            {
-                var after = expectedIndex + radius;
-                var before = expectedIndex - radius;
-                var afterLegal = after <= originalLines.Count;
-                var beforeLegal = before >= originalIndex;
-
-                // Nothing left to search in either direction.
-                if (!afterLegal && !beforeLegal)
-                    break;
-
-                if (afterLegal && HunkMatchesAt(originalLines, after, hunkLines, ignoreTrailingWhitespace))
-                    return after;
-
-                if (beforeLegal && HunkMatchesAt(originalLines, before, hunkLines, ignoreTrailingWhitespace))
-                    return before;
-            }
-
-            return null;
-        }
-
-        static bool HunkMatchesAt(
-            List<string> originalLines,
-            int candidate,
-            IReadOnlyList<string> hunkLines,
-            bool ignoreTrailingWhitespace)
-        {
-            var index = candidate;
-            foreach (var hunkLine in hunkLines)
-            {
-                // An entirely empty line is an empty context line whose leading space was
-                // stripped somewhere in transport.
-                var tag = hunkLine.Length == 0 ? ' ' : hunkLine[0];
-                switch (tag)
+                var parts = range.Split(',');
+                if (parts.Length == 1)
                 {
-                    case ' ':
-                    case '-':
-                        if (index >= originalLines.Count)
-                            return false;
-                        var expected = hunkLine.Length > 1 ? hunkLine.Substring(1) : string.Empty;
-                        if (!LinesMatch(originalLines[index], expected, ignoreTrailingWhitespace))
-                            return false;
-                        index++;
-                        break;
-                    case '+':
-                    case '\\':
-                        break;
-                    default:
-                        return false;
+                    var start = ParseInt(parts[0]);
+                    return (start, start == 0 ? 0 : 1);
                 }
+
+                return (ParseInt(parts[0]), ParseInt(parts[1]));
             }
 
-            return true;
-        }
+            /*
+             * Parses an integer invariantly.
+             */
+            static int ParseInt(string value)
+            {
+                if (!int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+                    throw new HyperlambdaException("Invalid hunk header.");
+                return result;
+            }
 
-        /*
-         * Compares one original line against the line a hunk expects.
-         */
-        static bool LinesMatch(string actual, string expected, bool ignoreTrailingWhitespace)
-        {
-            if (string.Equals(actual, expected, StringComparison.InvariantCulture))
+            /*
+             * Ensures the current original line matches the expected line.
+             */
+            /*
+             * Verifies that the original line we are about to consume is the line the hunk expects.
+             *
+             * This is the check that keeps patching safe - a hunk is never applied onto content it does
+             * not match - and it stays strict even when the hunk was LOCATED with a tolerant comparison.
+             */
+            static void EnsureLineMatch(
+                List<string> originalLines,
+                int index,
+                string expected,
+                bool ignoreTrailingWhitespace)
+            {
+                if (index >= originalLines.Count)
+                    throw new HyperlambdaException(
+                        "Patch could not be applied. The hunk expected '" +
+                        Ellipsis(expected) +
+                        "' at line " +
+                        (index + 1).ToString(CultureInfo.InvariantCulture) +
+                        ", but the file has only " +
+                        originalLines.Count.ToString(CultureInfo.InvariantCulture) +
+                        " lines.");
+
+                if (!LinesMatch(originalLines[index], expected, ignoreTrailingWhitespace))
+                    throw new HyperlambdaException(
+                        "Patch could not be applied. Line " +
+                        (index + 1).ToString(CultureInfo.InvariantCulture) +
+                        " is '" +
+                        Ellipsis(originalLines[index]) +
+                        "' but the hunk expected '" +
+                        Ellipsis(expected) +
+                        "'.");
+            }
+
+            /*
+             * Resolves the position in the original file where a hunk should be applied.
+             *
+             * The hunk header tells us where the hunk belonged in the file the patch was created
+             * against, so we start there and widen outwards, taking the NEAREST position whose content
+             * matches. Requiring the context to instead be unique across the whole file - which is what
+             * this method used to do - rejects most real patches, since repeated lines such as a closing
+             * brace, a blank line or a bare 'return' are entirely normal.
+             *
+             * Locating a hunk is therefore fuzzy, while applying one stays strict: EnsureLineMatch still
+             * verifies every context and removed line at the position we settle on.
+             *
+             * The search is run twice, first comparing lines exactly, and only if that finds nothing,
+             * comparing them ignoring trailing whitespace. The second pass exists for formats where
+             * trailing whitespace is meaningful but invisible, most notably Markdown, where two trailing
+             * spaces denote a hard line break and are routinely lost when a patch is written by hand.
+             */
+            static (int Index, bool WhitespaceFuzz) ResolveHunkTargetIndex(
+                List<string> originalLines,
+                int originalIndex,
+                IReadOnlyList<string> hunkLines,
+                int expectedIndex)
+            {
+                // Hunks are applied in order, so we can never move backwards past what we already consumed.
+                if (expectedIndex < originalIndex)
+                    expectedIndex = originalIndex;
+                if (expectedIndex > originalLines.Count)
+                    expectedIndex = originalLines.Count;
+
+                foreach (var ignoreTrailingWhitespace in new[] { false, true })
+                {
+                    var found = FindNearestMatch(originalLines, originalIndex, hunkLines, expectedIndex, ignoreTrailingWhitespace);
+                    if (found != null)
+                        return (found.Value, ignoreTrailingWhitespace);
+                }
+
+                throw new HyperlambdaException(
+                    "Hunk could not be applied. No position matching its context was found within " +
+                    MaxFuzzRadius.ToString(CultureInfo.InvariantCulture) +
+                    " lines of line " +
+                    (expectedIndex + 1).ToString(CultureInfo.InvariantCulture) +
+                    ".");
+            }
+
+            /*
+             * Returns the position nearest to the expected one where the hunk matches, or null if there is none.
+             */
+            static int? FindNearestMatch(
+                List<string> originalLines,
+                int originalIndex,
+                IReadOnlyList<string> hunkLines,
+                int expectedIndex,
+                bool ignoreTrailingWhitespace)
+            {
+                if (HunkMatchesAt(originalLines, expectedIndex, hunkLines, ignoreTrailingWhitespace))
+                    return expectedIndex;
+
+                for (var radius = 1; radius <= MaxFuzzRadius; radius++)
+                {
+                    var after = expectedIndex + radius;
+                    var before = expectedIndex - radius;
+                    var afterLegal = after <= originalLines.Count;
+                    var beforeLegal = before >= originalIndex;
+
+                    // Nothing left to search in either direction.
+                    if (!afterLegal && !beforeLegal)
+                        break;
+
+                    if (afterLegal && HunkMatchesAt(originalLines, after, hunkLines, ignoreTrailingWhitespace))
+                        return after;
+
+                    if (beforeLegal && HunkMatchesAt(originalLines, before, hunkLines, ignoreTrailingWhitespace))
+                        return before;
+                }
+
+                return null;
+            }
+
+            static bool HunkMatchesAt(
+                List<string> originalLines,
+                int candidate,
+                IReadOnlyList<string> hunkLines,
+                bool ignoreTrailingWhitespace)
+            {
+                var index = candidate;
+                foreach (var hunkLine in hunkLines)
+                {
+                    // An entirely empty line is an empty context line whose leading space was
+                    // stripped somewhere in transport.
+                    var tag = hunkLine.Length == 0 ? ' ' : hunkLine[0];
+                    switch (tag)
+                    {
+                        case ' ':
+                        case '-':
+                            if (index >= originalLines.Count)
+                                return false;
+                            var expected = hunkLine.Length > 1 ? hunkLine.Substring(1) : string.Empty;
+                            if (!LinesMatch(originalLines[index], expected, ignoreTrailingWhitespace))
+                                return false;
+                            index++;
+                            break;
+                        case '+':
+                        case '\\':
+                            break;
+                        default:
+                            return false;
+                    }
+                }
+
                 return true;
+            }
 
-            if (!ignoreTrailingWhitespace)
-                return false;
+            /*
+             * Compares one original line against the line a hunk expects.
+             */
+            static bool LinesMatch(string actual, string expected, bool ignoreTrailingWhitespace)
+            {
+                if (string.Equals(actual, expected, StringComparison.InvariantCulture))
+                    return true;
 
-            return string.Equals(actual.TrimEnd(), expected.TrimEnd(), StringComparison.InvariantCulture);
-        }
+                if (!ignoreTrailingWhitespace)
+                    return false;
 
-        /*
-         * Keeps a single line short enough to be readable inside an exception message, since a
-         * minified or generated file can legally hold its entire content on one line.
-         */
-        static string Ellipsis(string value)
-        {
-            if (value == null)
-                return string.Empty;
+                return string.Equals(actual.TrimEnd(), expected.TrimEnd(), StringComparison.InvariantCulture);
+            }
 
-            return value.Length <= 120 ? value : string.Concat(value.AsSpan(0, 120), "...");
-        }
+            /*
+             * Keeps a single line short enough to be readable inside an exception message, since a
+             * minified or generated file can legally hold its entire content on one line.
+             */
+            static string Ellipsis(string value)
+            {
+                if (value == null)
+                    return string.Empty;
 
-        static void ValidatePatchHeaders(string oldHeader, string newHeader, string targetPath)
-        {
-            var oldPath = NormalizeHeaderPath(oldHeader.Substring(4));
-            var newPath = NormalizeHeaderPath(newHeader.Substring(4));
+                return value.Length <= 120 ? value : string.Concat(value.AsSpan(0, 120), "...");
+            }
 
-            if (!IsHeaderPathMatch(oldPath, targetPath) && !IsHeaderPathMatch(newPath, targetPath))
-                throw new HyperlambdaException("Patch targets a different file.");
-        }
+            static void ValidatePatchHeaders(string oldHeader, string newHeader, string targetPath)
+            {
+                var oldPath = NormalizeHeaderPath(oldHeader.Substring(4));
+                var newPath = NormalizeHeaderPath(newHeader.Substring(4));
 
-        static string NormalizeHeaderPath(string value)
-        {
-            // Only a TAB separates the path from a timestamp, filenames can legally contain spaces.
-            var path = value.Trim();
-            var whitespaceIndex = path.IndexOf('\t');
-            if (whitespaceIndex >= 0)
-                path = path.Substring(0, whitespaceIndex);
-            if (path.StartsWith("a/", StringComparison.InvariantCulture) ||
-                path.StartsWith("b/", StringComparison.InvariantCulture))
-                path = path.Substring(2);
-            return path.Replace("\\", "/");
-        }
+                if (!IsHeaderPathMatch(oldPath, targetPath) && !IsHeaderPathMatch(newPath, targetPath))
+                    throw new HyperlambdaException("Patch targets a different file.");
+            }
 
-        static bool IsHeaderPathMatch(string headerPath, string targetPath)
-        {
-            var normalizedTarget = targetPath.Replace("\\", "/");
-            if (string.Equals(headerPath, normalizedTarget, StringComparison.InvariantCulture))
-                return true;
+            static string NormalizeHeaderPath(string value)
+            {
+                // Only a TAB separates the path from a timestamp, filenames can legally contain spaces.
+                var path = value.Trim();
+                var whitespaceIndex = path.IndexOf('\t');
+                if (whitespaceIndex >= 0)
+                    path = path.Substring(0, whitespaceIndex);
+                if (path.StartsWith("a/", StringComparison.InvariantCulture) ||
+                    path.StartsWith("b/", StringComparison.InvariantCulture))
+                    path = path.Substring(2);
+                return path.Replace("\\", "/");
+            }
 
-            if (!headerPath.StartsWith('/'))
-                headerPath = "/" + headerPath;
+            static bool IsHeaderPathMatch(string headerPath, string targetPath)
+            {
+                var normalizedTarget = targetPath.Replace("\\", "/");
+                if (string.Equals(headerPath, normalizedTarget, StringComparison.InvariantCulture))
+                    return true;
 
-            return normalizedTarget.EndsWith(headerPath, StringComparison.InvariantCulture);
-        }
+                if (!headerPath.StartsWith('/'))
+                    headerPath = "/" + headerPath;
 
-        static bool OriginalLineHasTrailingNewline(int index, int count, bool contentHasTrailingNewline)
-        {
-            return index < count - 1 || contentHasTrailingNewline;
+                return normalizedTarget.EndsWith(headerPath, StringComparison.InvariantCulture);
+            }
+
+            static bool OriginalLineHasTrailingNewline(int index, int count, bool contentHasTrailingNewline)
+            {
+                return index < count - 1 || contentHasTrailingNewline;
+            }
         }
 
         /*

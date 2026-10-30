@@ -507,6 +507,15 @@ export default function Inspector(props: Readonly<{
           const filterOn = !!data.filterable;
           const liveOn = !!data.live;
 
+          // A checkbox that sets the attribute to "true" when checked, and removes it when not.
+          const flagHandler = (attribute: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+            if (event.target.checked) {
+              props.onSetAttribute(attribute, 'true');
+            } else {
+              props.onRemoveAttribute(attribute);
+            }
+          };
+
           function writeColumns(names: string[], editable: boolean) {
             if (!currentSource) {
               return;
@@ -684,9 +693,7 @@ export default function Inspector(props: Readonly<{
                     <input
                       type="checkbox"
                       checked={filterOn}
-                      onChange={event => event.target.checked
-                        ? props.onSetAttribute('data-filterable', 'true')
-                        : props.onRemoveAttribute('data-filterable')} />
+                      onChange={flagHandler('data-filterable')} />
                     Allow filtering
                   </label>
                   {/*
@@ -698,9 +705,7 @@ export default function Inspector(props: Readonly<{
                     <input
                       type="checkbox"
                       checked={liveOn}
-                      onChange={event => event.target.checked
-                        ? props.onSetAttribute('data-live', 'true')
-                        : props.onRemoveAttribute('data-live')} />
+                      onChange={flagHandler('data-live')} />
                     Update live
                   </label>
                 </>
