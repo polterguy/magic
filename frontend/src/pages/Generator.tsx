@@ -486,6 +486,80 @@ function DonePanel(props: Readonly<{
   );
 }
 
+// The module and component segments of the URL the endpoints are generated under.
+function UrlFields(props: Readonly<{
+  database: string;
+  moduleName: string;
+  onModuleName: (name: string) => void;
+  singleTable: string | null;
+  componentUrl: string;
+  onComponentUrl: (url: string) => void;
+}>) {
+  return (
+    <div>
+      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>URL</div>
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+        <input
+          type="text"
+          placeholder="Module…"
+          title="Module segment of the URL — defaults to the database name"
+          value={props.moduleName}
+          onChange={e => props.onModuleName(e.target.value)}
+          style={{ width: 160 }} />
+        <span className="muted">/</span>
+        <input
+          type="text"
+          placeholder="table name"
+          title={props.singleTable
+            ? 'Component segment of the URL — defaults to the table name'
+            : 'Editable when exactly one table is selected — otherwise each table uses its own name'}
+          value={props.singleTable ? props.componentUrl : ''}
+          disabled={!props.singleTable}
+          onChange={e => props.onComponentUrl(e.target.value)}
+          style={{ width: 160 }} />
+        <span className="muted mono" style={{ fontSize: 12 }}>
+          → /magic/{props.moduleName || props.database}/
+          {props.singleTable ? (props.componentUrl || props.singleTable) : '<table>'}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// The roles the generated endpoints are restricted to, which can be edited in place.
+function AuthorisationField(props: Readonly<{
+  roles: string[];
+  auth: string[];
+  onAuth: (auth: string[]) => void;
+}>) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Authorisation</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <span>
+          {props.auth.length > 0 ? props.auth.join(', ') : <em className="muted">public — no roles</em>}
+        </span>
+        <button
+          className="btn btn-secondary btn-small"
+          onClick={() => setOpen(!open)}>
+          {open ? 'Done' : 'Edit'}
+        </button>
+      </div>
+      {open && (
+        <div style={{ marginTop: 8 }}>
+          <RoleChips
+            roles={props.roles}
+            selected={props.auth}
+            onToggle={(role, selected) => props.onAuth(selected
+              ? [...props.auth, role]
+              : props.auth.filter(candidate => candidate !== role))} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CrudTab(props: Readonly<{ guided: boolean }>) {
 
   const selection = useDatabaseSelection();
@@ -494,7 +568,6 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
   const [verbs, setVerbs] = useState<Set<string>>(new Set(ALL_VERBS));
   const [roles, setRoles] = useState<string[]>([]);
   const [auth, setAuth] = useState<string[]>(['root', 'admin']);
-  const [authOpen, setAuthOpen] = useState(false);
   const [moduleName, setModuleName] = useState('');
   const [componentUrl, setComponentUrl] = useState('');
   const [logging, setLogging] = useState(true);
@@ -643,6 +716,45 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
     return null;
   }
 
+  // Generates every verb of every table, stopping at a failure or when cancelled, and says how far it got.
+  async function generateAll(
+    targets: any[],
+    active: string[],
+    options: Omit<CrudifyOptions, 'locks'>,
+    push: (type: string, message: string) => void,
+  ) {
+    const total = targets.length * active.length;
+    let step = 0;
+    let loc = 0;
+    let generated = 0;
+    for (const table of targets) {
+      for (const verb of active) {
+        if (cancelRequested.current) {
+          push('warning',
+            'Cancelled — the ' + generated + ' endpoints generated so far are kept.');
+          return { generated, loc, failed: false };
+        }
+        step++;
+        setProgressText(step + ' of ' + total);
+        const outcome = await generateVerb(table, verb, options, push);
+        if (outcome === 'failed') {
+          /*
+           * One crudify call per verb per table — a failure mid-loop must
+           * say WHERE it stopped, and how much had already been generated,
+           * or there's no telling which endpoints exist.
+           */
+          push('warning', generated + ' endpoints were generated before the failure.');
+          return { generated, loc, failed: true };
+        }
+        if (outcome !== 'skipped') {
+          loc += outcome.loc;
+          generated += outcome.count;
+        }
+      }
+    }
+    return { generated, loc, failed: false };
+  }
+
   // Generates one verb for one table, reporting on it, and what came of it.
   async function generateVerb(
     table: any,
@@ -714,39 +826,8 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
       setFeed([...lines]);
     };
     setFeed([]);
-    const total = targets.length * active.length;
     const started = Date.now();
-    let step = 0;
-    let loc = 0;
-    let generated = 0;
-    let failed = false;
-    outer:
-    for (const table of targets) {
-      for (const verb of active) {
-        if (cancelRequested.current) {
-          push('warning',
-            'Cancelled — the ' + generated + ' endpoints generated so far are kept.');
-          break outer;
-        }
-        step++;
-        setProgressText(step + ' of ' + total);
-        const outcome = await generateVerb(table, verb, options, push);
-        if (outcome === 'failed') {
-          /*
-           * One crudify call per verb per table — a failure mid-loop must
-           * say WHERE it stopped, and how much had already been generated,
-           * or there's no telling which endpoints exist.
-           */
-          failed = true;
-          push('warning', generated + ' endpoints were generated before the failure.');
-          break outer;
-        }
-        if (outcome !== 'skipped') {
-          loc += outcome.loc;
-          generated += outcome.count;
-        }
-      }
-    }
+    const { generated, loc, failed } = await generateAll(targets, active, options, push);
     if (!failed && !cancelRequested.current) {
       const elapsed = ((Date.now() - started) / 1000).toFixed(1);
       push('success', 'Done — ' + generated + ' endpoints, ' + loc +
@@ -866,33 +947,13 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
         </div>
         <div className="card">
           <div className="form-grid" style={{ gap: 18 }}>
-            <div>
-              <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>URL</div>
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                <input
-                  type="text"
-                  placeholder="Module…"
-                  title="Module segment of the URL — defaults to the database name"
-                  value={moduleName}
-                  onChange={e => setModuleName(e.target.value)}
-                  style={{ width: 160 }} />
-                <span className="muted">/</span>
-                <input
-                  type="text"
-                  placeholder="table name"
-                  title={singleTable
-                    ? 'Component segment of the URL — defaults to the table name'
-                    : 'Editable when exactly one table is selected — otherwise each table uses its own name'}
-                  value={singleTable ? componentUrl : ''}
-                  disabled={!singleTable}
-                  onChange={e => setComponentUrl(e.target.value)}
-                  style={{ width: 160 }} />
-                <span className="muted mono" style={{ fontSize: 12 }}>
-                  → /magic/{moduleName || selection.database}/
-                  {singleTable ? (componentUrl || singleTable) : '<table>'}
-                </span>
-              </div>
-            </div>
+            <UrlFields
+              database={selection.database}
+              moduleName={moduleName}
+              onModuleName={setModuleName}
+              singleTable={singleTable}
+              componentUrl={componentUrl}
+              onComponentUrl={setComponentUrl} />
             <div>
               <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>HTTP verbs</div>
               <div style={{ display: 'flex', gap: 14 }}>
@@ -909,29 +970,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
                 ))}
               </div>
             </div>
-            <div>
-              <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Authorisation</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <span>
-                  {auth.length > 0 ? auth.join(', ') : <em className="muted">public — no roles</em>}
-                </span>
-                <button
-                  className="btn btn-secondary btn-small"
-                  onClick={() => setAuthOpen(!authOpen)}>
-                  {authOpen ? 'Done' : 'Edit'}
-                </button>
-              </div>
-              {authOpen && (
-                <div style={{ marginTop: 8 }}>
-                  <RoleChips
-                    roles={roles}
-                    selected={auth}
-                    onToggle={(role, selected) => setAuth(selected
-                      ? [...auth, role]
-                      : auth.filter(candidate => candidate !== role))} />
-                </div>
-              )}
-            </div>
+            <AuthorisationField roles={roles} auth={auth} onAuth={setAuth} />
             <div>
               <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
                 Endpoints (GET)
