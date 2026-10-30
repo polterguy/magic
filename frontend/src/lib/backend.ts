@@ -146,7 +146,11 @@ export function activateBackend(url: string): StoredBackend | null {
  */
 export function backendFromUrl(): StoredBackend | null {
   const target = new URLSearchParams(window.location.search).get('backend');
-  if (!target) {
+  /*
+   * The link is untrusted input, so anything that isn't an http(s) URL is
+   * ignored rather than stored, keeping javascript: and data: URLs out.
+   */
+  if (!target || !URL.canParse(target) || !/^https?:$/.test(new URL(target).protocol)) {
     return null;
   }
   const url = target.replace(/\/+$/, '');
