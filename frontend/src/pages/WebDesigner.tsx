@@ -27,7 +27,7 @@ import { showToast } from '../lib/toast';
 import { aiContextForFile, createFolder, ensureWidgetAssets, listFilesRecursively, loadFile, saveFile } from '../lib/api';
 import { ChevronIcon, RedoIcon, SaveIcon, UndoIcon } from '../components/Icons';
 import Canvas from './designer/Canvas';
-import Menu from './designer/Menu';
+import Menu, { MenuItem } from './designer/Menu';
 import NewPage, { blankPage } from './designer/NewPage';
 import Inspector from './designer/Inspector';
 import Layers from './designer/Layers';
@@ -134,6 +134,192 @@ function reportDropped(before: string, after: string) {
   showToast(gone.join(' and ') + (gone.length === 1 ? ' was' : ' were') +
     ' filled in by the server. Fixed text means the page stops asking — undo ' +
     'if that was not the idea.', true);
+}
+
+// The items of the menu holding the viewport, the page and the canvas.
+function designerMenuItems(o: {
+  viewport: string;
+  setViewport: (id: string) => void;
+  setCreating: (creating: boolean) => void;
+  origin: string;
+  path: string;
+  busy: boolean;
+  scripts: string[];
+  sheets: string[];
+  openPage: (file: string) => void;
+  addCompanionFile: (kind: 'js' | 'css') => void;
+  reveal: boolean;
+  setReveal: (reveal: boolean) => void;
+  view: string;
+}): MenuItem[] {
+  const { viewport, setViewport, setCreating, origin, path, busy, scripts, sheets,
+    openPage, addCompanionFile, reveal, setReveal, view } = o;
+  return [
+    { heading: 'Width' },
+    ...VIEWPORTS.map(entry => ({
+      label: entry.label + (entry.width ? '  ' + entry.width + 'px' : ''),
+      checked: entry.id === viewport,
+      onClick: () => setViewport(entry.id),
+    })),
+    { heading: 'Page' },
+    {
+      label: 'New page…',
+      hint: 'Create another page under /etc/www/ and open it',
+      onClick: () => setCreating(true),
+    },
+    {
+      label: 'Open in a new tab',
+      hint: 'The page as a visitor gets it, served from ' + origin,
+      disabled: !path,
+      /*
+       * The saved page, not the canvas — it is a real request to the
+       * cloudlet, so unsaved work is not in it.
+       */
+      onClick: () => window.open(origin + canonicalUrl(path), '_blank', 'noopener'),
+    },
+    {
+      label: 'Reload from the server',
+      hint: 'Throw away what is here and read the file again',
+      disabled: !path || busy,
+      onClick: () => openPage(path),
+    },
+    {
+      label: 'Add a script file',
+      hint: path
+        ? 'Creates ' + companionFile(path, 'js').substring(WEB_ROOT.length) + ' and links it'
+        : 'Creates a script file for this page and links it',
+      /*
+       * Disabled only once THIS page's own same-named script exists —
+       * never because some other script (not least the shared
+       * /assets/magic-widgets.js every App block links) is already
+       * there. [scripts] no longer includes that shared file at all
+       * (see SHARED_ASSET_FILES), so this only ever matches a true
+       * same-filename collision.
+       */
+      disabled: !path || busy || scripts.includes(companionFile(path, 'js')),
+      onClick: () => addCompanionFile('js'),
+    },
+    {
+      label: 'Add a stylesheet',
+      hint: path
+        ? 'Creates ' + companionFile(path, 'css').substring(WEB_ROOT.length) + ' and links it'
+        : 'Creates a stylesheet for this page and links it',
+      disabled: !path || busy || sheets.includes(companionFile(path, 'css')),
+      onClick: () => addCompanionFile('css'),
+    },
+    { heading: 'Canvas' },
+    {
+      label: 'Show hidden elements',
+      hint: 'Force everything the page hides to render, so it can be designed',
+      checked: reveal,
+      disabled: view !== 'design',
+      onClick: () => setReveal(!reveal),
+    },
+  ];
+}
+
+// The blocks that can be dragged onto the page, filtered or by drawer, and any other tag.
+function BlockPalette(props: Readonly<{
+  filter: string;
+  onFilter: (filter: string) => void;
+  customTag: string;
+  onCustomTag: (tag: string) => void;
+  disabled: boolean;
+  onPending: (block: Block) => void;
+}>) {
+  return (
+    <>
+      <SearchInput
+        placeholder="Filter blocks…"
+        value={props.filter}
+        onChange={props.onFilter}
+        style={{ width: '100%' }} />
+      {(() => {
+        /*
+         * A block whose runtime depends on a script used to be withheld
+         * until the page already had one, any one — a stand-in for "has
+         * this page opted into JavaScript at all". That stopped making
+         * sense once ensureWidgetAssets() could create the specific
+         * file a block actually needs: dropping an App block already
+         * guarantees it ends up with exactly what it requires, so there
+         * was nothing left for the gate to protect against, only a page
+         * that could not use a widget without first being given an
+         * empty, otherwise unused script file just to unlock it.
+         */
+        const pill = (block: Block) => (
+          <button
+            key={block.key}
+            className="designer-block"
+            disabled={props.disabled}
+            title={'Drag a ' + block.label.toLowerCase() + ' onto the page'}
+            onMouseDown={event => {
+              event.preventDefault();
+              props.onPending(block);
+            }}>
+            {block.label}
+          </button>
+        );
+        const needle = props.filter.trim().toLowerCase();
+        /*
+         * Filtering flattens the groups. Once you are searching, which
+         * drawer a tag lives in is exactly what you did not want to
+         * think about.
+         */
+        if (needle !== '') {
+          const hits = GROUPS.flatMap(group => group.blocks)
+            .filter(block => block.label.toLowerCase().includes(needle) ||
+              block.key.includes(needle));
+          return (
+            <div className="designer-palette">
+              {hits.map(pill)}
+              {hits.length === 0 && (
+                <span className="designer-muted">
+                  Nothing by that name — try the custom tag below.
+                </span>
+              )}
+            </div>
+          );
+        }
+        /*
+         * Closed to start with. Seven open drawers push the tree off the
+         * bottom of the rail, and the tree is looked at constantly while
+         * the blocks are reached for occasionally — so the filter above
+         * is the fast path, and opening a drawer is one click.
+         */
+        return GROUPS.map(group => (
+          <details key={group.label} className="designer-group">
+            <summary>{group.label}</summary>
+            <div className="designer-palette">{group.blocks.map(pill)}</div>
+          </details>
+        ));
+      })()}
+      <div className="designer-field">
+        <span>Any other tag</span>
+        <input
+          type="text"
+          placeholder="figcaption, my-widget…"
+          value={props.customTag}
+          onChange={event => props.onCustomTag(event.target.value)} />
+        {customBlock(props.customTag) && (
+          <div className="designer-palette">
+            {[customBlock(props.customTag)!].map(block => (
+              <button
+                key={block.key}
+                className="designer-block"
+                disabled={props.disabled}
+                title={'Drag a ' + block.label + ' onto the page'}
+                onMouseDown={event => {
+                  event.preventDefault();
+                  props.onPending(block);
+                }}>
+                {block.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
+  );
 }
 
 export default function WebDesigner() {
@@ -1739,6 +1925,11 @@ export default function WebDesigner() {
     return () => window.removeEventListener('keydown', onKey);
   });
 
+  const menuItems = designerMenuItems({
+    viewport, setViewport, setCreating, origin, path, busy, scripts, sheets,
+    openPage, addCompanionFile, reveal, setReveal, view,
+  });
+
   /* -- Rendering ---------------------------------------------------------- */
 
   return (
@@ -1794,70 +1985,7 @@ export default function WebDesigner() {
           <RedoIcon />
           Redo
         </button>
-        <Menu
-          title="Viewport, preview and the rest"
-          items={[
-            { heading: 'Width' },
-            ...VIEWPORTS.map(entry => ({
-              label: entry.label + (entry.width ? '  ' + entry.width + 'px' : ''),
-              checked: entry.id === viewport,
-              onClick: () => setViewport(entry.id),
-            })),
-            { heading: 'Page' },
-            {
-              label: 'New page…',
-              hint: 'Create another page under /etc/www/ and open it',
-              onClick: () => setCreating(true),
-            },
-            {
-              label: 'Open in a new tab',
-              hint: 'The page as a visitor gets it, served from ' + origin,
-              disabled: !path,
-              /*
-               * The saved page, not the canvas — it is a real request to the
-               * cloudlet, so unsaved work is not in it.
-               */
-              onClick: () => window.open(origin + canonicalUrl(path), '_blank', 'noopener'),
-            },
-            {
-              label: 'Reload from the server',
-              hint: 'Throw away what is here and read the file again',
-              disabled: !path || busy,
-              onClick: () => openPage(path),
-            },
-            {
-              label: 'Add a script file',
-              hint: path
-                ? 'Creates ' + companionFile(path, 'js').substring(WEB_ROOT.length) + ' and links it'
-                : 'Creates a script file for this page and links it',
-              /*
-               * Disabled only once THIS page's own same-named script exists —
-               * never because some other script (not least the shared
-               * /assets/magic-widgets.js every App block links) is already
-               * there. [scripts] no longer includes that shared file at all
-               * (see SHARED_ASSET_FILES), so this only ever matches a true
-               * same-filename collision.
-               */
-              disabled: !path || busy || scripts.includes(companionFile(path, 'js')),
-              onClick: () => addCompanionFile('js'),
-            },
-            {
-              label: 'Add a stylesheet',
-              hint: path
-                ? 'Creates ' + companionFile(path, 'css').substring(WEB_ROOT.length) + ' and links it'
-                : 'Creates a stylesheet for this page and links it',
-              disabled: !path || busy || sheets.includes(companionFile(path, 'css')),
-              onClick: () => addCompanionFile('css'),
-            },
-            { heading: 'Canvas' },
-            {
-              label: 'Show hidden elements',
-              hint: 'Force everything the page hides to render, so it can be designed',
-              checked: reveal,
-              disabled: view !== 'design',
-              onClick: () => setReveal(!reveal),
-            },
-          ]} />
+        <Menu title="Viewport, preview and the rest" items={menuItems} />
         <button className="btn btn-small" onClick={save} disabled={!path || !dirty || saving}>
           <SaveIcon />
           {saving ? 'Saving…' : 'Save'}
@@ -1903,95 +2031,13 @@ export default function WebDesigner() {
               Drag onto the page. Each one arrives wearing the classes this page
               already puts on that kind of element.
             </p>
-            <SearchInput
-              placeholder="Filter blocks…"
-              value={blockFilter}
-              onChange={setBlockFilter}
-              style={{ width: '100%' }} />
-            {(() => {
-              /*
-               * A block whose runtime depends on a script used to be withheld
-               * until the page already had one, any one — a stand-in for "has
-               * this page opted into JavaScript at all". That stopped making
-               * sense once ensureWidgetAssets() could create the specific
-               * file a block actually needs: dropping an App block already
-               * guarantees it ends up with exactly what it requires, so there
-               * was nothing left for the gate to protect against, only a page
-               * that could not use a widget without first being given an
-               * empty, otherwise unused script file just to unlock it.
-               */
-              const pill = (block: Block) => (
-                <button
-                  key={block.key}
-                  className="designer-block"
-                  disabled={view !== 'design' || !doc}
-                  title={'Drag a ' + block.label.toLowerCase() + ' onto the page'}
-                  onMouseDown={event => {
-                    event.preventDefault();
-                    setPending(block);
-                  }}>
-                  {block.label}
-                </button>
-              );
-              const needle = blockFilter.trim().toLowerCase();
-              /*
-               * Filtering flattens the groups. Once you are searching, which
-               * drawer a tag lives in is exactly what you did not want to
-               * think about.
-               */
-              if (needle !== '') {
-                const hits = GROUPS.flatMap(group => group.blocks)
-                  .filter(block => block.label.toLowerCase().includes(needle) ||
-                    block.key.includes(needle));
-                return (
-                  <div className="designer-palette">
-                    {hits.map(pill)}
-                    {hits.length === 0 && (
-                      <span className="designer-muted">
-                        Nothing by that name — try the custom tag below.
-                      </span>
-                    )}
-                  </div>
-                );
-              }
-              /*
-               * Closed to start with. Seven open drawers push the tree off the
-               * bottom of the rail, and the tree is looked at constantly while
-               * the blocks are reached for occasionally — so the filter above
-               * is the fast path, and opening a drawer is one click.
-               */
-              return GROUPS.map(group => (
-                <details key={group.label} className="designer-group">
-                  <summary>{group.label}</summary>
-                  <div className="designer-palette">{group.blocks.map(pill)}</div>
-                </details>
-              ));
-            })()}
-            <div className="designer-field">
-              <span>Any other tag</span>
-              <input
-                type="text"
-                placeholder="figcaption, my-widget…"
-                value={customTag}
-                onChange={event => setCustomTag(event.target.value)} />
-              {customBlock(customTag) && (
-                <div className="designer-palette">
-                  {[customBlock(customTag)!].map(block => (
-                    <button
-                      key={block.key}
-                      className="designer-block"
-                      disabled={view !== 'design' || !doc}
-                      title={'Drag a ' + block.label + ' onto the page'}
-                      onMouseDown={event => {
-                        event.preventDefault();
-                        setPending(block);
-                      }}>
-                      {block.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <BlockPalette
+              filter={blockFilter}
+              onFilter={setBlockFilter}
+              customTag={customTag}
+              onCustomTag={setCustomTag}
+              disabled={view !== 'design' || !doc}
+              onPending={setPending} />
           </div>
           <div className="designer-section grow">
             <h3>Tree</h3>

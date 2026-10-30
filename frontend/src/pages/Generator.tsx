@@ -392,6 +392,100 @@ function crudSummary(tables: number, verbs: number, endpoints: number, module: s
     `→ /magic/${module}/`;
 }
 
+// One column of an expanded table: what it is, and, unless it is a primary key, what it is locked to.
+function ColumnRow(props: Readonly<{
+  column: any;
+  lock: ColumnLock;
+  onLock: (lock: ColumnLock) => void;
+}>) {
+  const { column, lock } = props;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '3px 0',
+        fontSize: 13,
+        // The lock controls drop to their own line when the row is too narrow for them.
+        flexWrap: 'wrap',
+      }}>
+      <span className="mono">{column.name}</span>
+      <span className="muted">{column.db}</span>
+      {column.primary && <span className="badge badge-get">PK</span>}
+      {column.automatic && <span className="badge badge-debug">auto</span>}
+      {column.foreign_key && (
+        <span className="badge badge-info">
+          FK → {column.foreign_key.foreign_table}.
+          {column.foreign_key.foreign_column}
+        </span>
+      )}
+      {column.nullable && <span className="muted">nullable</span>}
+      {/*
+        * Primary keys identify the row in PUT and DELETE, so they cannot
+        * be locked. Every other column can hold its row's owner.
+        */}
+      {!column.primary && (
+        <span style={{
+          marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8,
+        }}>
+          <span className="muted" style={{ whiteSpace: 'nowrap' }}>Lock to</span>
+          <Select
+            value={lock.mode}
+            onChange={value => props.onLock({ mode: value as ColumnLock['mode'], slot: lock.slot })}>
+            <option value="none">Not locked</option>
+            <option value="username">Current username</option>
+            <option value="custom">Custom slot…</option>
+          </Select>
+          {lock.mode === 'custom' && (
+            <input
+              type="text"
+              placeholder="slot name"
+              style={{ minWidth: 160 }}
+              value={lock.slot}
+              onChange={e => props.onLock({ mode: 'custom', slot: e.target.value })} />
+          )}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// The guided flow's final step, saying what was generated and where it lives.
+function DonePanel(props: Readonly<{
+  done: { generated: number; loc: number; module: string };
+  auth: string[];
+  onMore: () => void;
+}>) {
+  const { done, auth } = props;
+  return (
+    <>
+      <WizardSteps step={3} />
+      <div className="card" style={{ maxWidth: 640 }}>
+        <h2 style={{ marginTop: 0 }}>Your API is live</h2>
+        <p className="muted" style={{ marginTop: 0 }}>
+          {done.generated} endpoints ({done.loc} lines of Hyperlambda) were
+          generated under <span className="mono">/magic/{done.module}/</span>,
+          secured for {auth.length > 0
+            ? <strong>{auth.join(', ')}</strong>
+            : <em>everyone — no roles required</em>}.
+        </p>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <Link className="btn" to={'/endpoints?filter=' + encodeURIComponent(done.module)}>
+            Try your endpoints
+          </Link>
+          <Link className="btn btn-secondary" to="/user-roles-management">
+            Manage users and roles
+          </Link>
+          <button className="btn btn-secondary" onClick={props.onMore}>
+            Generate more
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function CrudTab(props: Readonly<{ guided: boolean }>) {
 
   const selection = useDatabaseSelection();
@@ -667,32 +761,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
 
   // Done panel showing after generation — the guided flow's final step.
   if (props.guided && done) {
-    return (
-      <>
-        <WizardSteps step={3} />
-        <div className="card" style={{ maxWidth: 640 }}>
-          <h2 style={{ marginTop: 0 }}>Your API is live</h2>
-          <p className="muted" style={{ marginTop: 0 }}>
-            {done.generated} endpoints ({done.loc} lines of Hyperlambda) were
-            generated under <span className="mono">/magic/{done.module}/</span>,
-            secured for {auth.length > 0
-              ? <strong>{auth.join(', ')}</strong>
-              : <em>everyone — no roles required</em>}.
-          </p>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <Link className="btn" to={'/endpoints?filter=' + encodeURIComponent(done.module)}>
-              Try your endpoints
-            </Link>
-            <Link className="btn btn-secondary" to="/user-roles-management">
-              Manage users and roles
-            </Link>
-            <button className="btn btn-secondary" onClick={() => setDone(null)}>
-              Generate more
-            </button>
-          </div>
-        </div>
-      </>
-    );
+    return <DonePanel done={done} auth={auth} onMore={() => setDone(null)} />;
   }
 
   return (
@@ -780,64 +849,13 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
                         * cell padding + the expand chevron and its gap.
                         */}
                       <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
-                        {(table.columns ?? []).map((column: any) => {
-                          const lock = locks[table.name]?.[column.name] ?? defaultLock(column);
-                          return (
-                          <div
+                        {(table.columns ?? []).map((column: any) => (
+                          <ColumnRow
                             key={column.name}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 8,
-                              padding: '3px 0',
-                              fontSize: 13,
-                              // The lock controls drop to their own line when the row is too narrow for them.
-                              flexWrap: 'wrap',
-                            }}>
-                            <span className="mono">{column.name}</span>
-                            <span className="muted">{column.db}</span>
-                            {column.primary && <span className="badge badge-get">PK</span>}
-                            {column.automatic && <span className="badge badge-debug">auto</span>}
-                            {column.foreign_key && (
-                              <span className="badge badge-info">
-                                FK → {column.foreign_key.foreign_table}.
-                                {column.foreign_key.foreign_column}
-                              </span>
-                            )}
-                            {column.nullable && <span className="muted">nullable</span>}
-                            {/*
-                              * Primary keys identify the row in PUT and DELETE, so they cannot
-                              * be locked. Every other column can hold its row's owner.
-                              */}
-                            {!column.primary && (
-                              <span style={{
-                                marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8,
-                              }}>
-                                <span className="muted" style={{ whiteSpace: 'nowrap' }}>Lock to</span>
-                                <Select
-                                  value={lock.mode}
-                                  onChange={value => setColumnLock(table.name, column.name, {
-                                    mode: value as ColumnLock['mode'], slot: lock.slot,
-                                  })}>
-                                  <option value="none">Not locked</option>
-                                  <option value="username">Current username</option>
-                                  <option value="custom">Custom slot…</option>
-                                </Select>
-                                {lock.mode === 'custom' && (
-                                  <input
-                                    type="text"
-                                    placeholder="slot name"
-                                    style={{ minWidth: 160 }}
-                                    value={lock.slot}
-                                    onChange={e => setColumnLock(table.name, column.name, {
-                                      mode: 'custom', slot: e.target.value,
-                                    })} />
-                                )}
-                              </span>
-                            )}
-                          </div>
-                          );
-                        })}
+                            column={column}
+                            lock={locks[table.name]?.[column.name] ?? defaultLock(column)}
+                            onLock={next => setColumnLock(table.name, column.name, next)} />
+                        ))}
                       </td>
                     </tr>
                   )}
