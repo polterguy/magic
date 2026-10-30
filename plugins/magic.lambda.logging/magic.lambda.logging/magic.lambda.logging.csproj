@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="..\..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
+    <ProjectReference Include="..\..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\..\magic.data.common\magic.data.common\magic.data.common.csproj" />
+  </ItemGroup>
+
+</Project>

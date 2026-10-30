@@ -2,7 +2,7 @@
 
 Magic's backend resolves the original client IP and public scheme with ASP.NET
 Core's forwarded-headers middleware (`UseMagicForwardedHeaders` in
-`plugins/magic.library/Initializer.cs`). It is **enabled by default with zero
+`plugins/magic.library/magic.library/Initializer.cs`). It is **enabled by default with zero
 configuration** and consumes `X-Forwarded-For` and `X-Forwarded-Proto`, making
 `request.ip` and `request.scheme` (and everything reading them) reflect the
 original client instead of the last proxy.

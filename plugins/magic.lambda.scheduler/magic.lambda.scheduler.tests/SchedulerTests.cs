@@ -64,6 +64,7 @@ namespace magic.lambda.scheduler.tests
      * database of its own that starts counting IDs at 1 - so these tests all live in the same class, which xUnit
      * runs one at a time, and every test deletes the tasks it creates, since that disposes their timers.
      */
+    [Collection("scheduler")]
     public sealed class SchedulerTests : IDisposable
     {
         readonly string _folder = Path.Combine(Path.GetTempPath(), "magic-scheduler-tests-" + Guid.NewGuid().ToString("N"));

@@ -105,9 +105,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.json", "plugin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.logging", "magic.lambda.logging", "{03B4454C-9FAE-410E-B4DB-C1FB556AC6E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.logging", "plugins\magic.lambda.logging\magic.lambda.logging.csproj", "{4FA1A101-4DE5-4410-877F-9FFDA3B2228C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.logging", "plugins\magic.lambda.logging\magic.lambda.logging\magic.lambda.logging.csproj", "{4FA1A101-4DE5-4410-877F-9FFDA3B2228C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.logging.tests", "plugins\magic.lambda.logging.tests\magic.lambda.logging.tests.csproj", "{E84661A6-945E-4672-A5AA-689E72335BCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.logging.tests", "plugins\magic.lambda.logging\magic.lambda.logging.tests\magic.lambda.logging.tests.csproj", "{E84661A6-945E-4672-A5AA-689E72335BCF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.mail", "magic.lambda.mail", "{FAAD0BDD-6D52-4D9F-9E8A-03BEABBF3CAA}"
 EndProject
@@ -215,9 +215,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda", "plugins\mag
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.library", "magic.library", "{411F8E30-60DA-4A87-AE2E-26C33347811E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.library", "plugins\magic.library\magic.library.csproj", "{5477BE88-7DB8-4DE7-A9FA-9DB426F085C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.library", "plugins\magic.library\magic.library\magic.library.csproj", "{5477BE88-7DB8-4DE7-A9FA-9DB426F085C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.library.tests", "plugins\magic.library.tests\magic.library.tests.csproj", "{FAB6BB37-1ED0-4543-B047-B5291823F111}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.library.tests", "plugins\magic.library\magic.library.tests\magic.library.tests.csproj", "{FAB6BB37-1ED0-4543-B047-B5291823F111}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.node", "magic.node", "{1B569159-F169-45FF-85BB-C61CF43EDD1A}"
 EndProject
