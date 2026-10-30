@@ -504,13 +504,16 @@ const OIDC_FIELDS: Record<string, OidcField[]> = {
 
 // What a stored setting is shown as in a text field: nothing for none, JSON for a structure.
 function fieldText(value: unknown): string {
-  if (value === null || value === undefined) {
-    return '';
+  if (typeof value === 'string') {
+    return value;
   }
-  if (typeof value === 'object') {
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+    return String(value);
+  }
+  if (value !== null && typeof value === 'object') {
     return JSON.stringify(value);
   }
-  return String(value);
+  return '';
 }
 
 function OpenIdDialog(props: Readonly<{

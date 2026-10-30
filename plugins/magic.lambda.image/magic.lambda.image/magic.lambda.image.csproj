@@ -7,9 +7,10 @@
   <ItemGroup>
     <PackageReference Include="QRCoder" Version="1.8.1" />
     <PackageReference Include="ScottPlot" Version="5.1.59" />
-    <!-- Pinned below 4.0 deliberately: 4.x introduced a licensing requirement that
-         breaks an unattended CI/Docker build with no license configured. -->
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.2.0" />
+    <!-- Pinned to 3.1.12 deliberately, the last release before Six Labors' license enforcement: 3.2.0 and
+         4.x require a commercial license key, which breaks an unattended CI/Docker build with none configured.
+         Do not upgrade. See the advisories suppressed in Directory.Build.props. -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
     <ProjectReference Include="..\..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
     <ProjectReference Include="..\..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
   </ItemGroup>
