@@ -88,7 +88,7 @@ namespace magic.lambda.mail
          * Helper method to handle one single message, by parsing it (unless raw is true), and invoking [.lambda]
          * callback to notify client of message retrieved.
          */
-        void HandleMessage(
+        static void HandleMessage(
             MimeMessage message,
             ISignaler signaler,
             Node lambda,

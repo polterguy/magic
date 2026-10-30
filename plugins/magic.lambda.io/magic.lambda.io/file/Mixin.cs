@@ -159,7 +159,7 @@ namespace magic.lambda.io.file
          * Notice {{.foo}} in the content file will invoke the [.foo] lambda object supplied,
          * and replace the reference in your content file with the return value from [.foo].
          */
-        async Task<string> Apply(
+        static async Task<string> Apply(
             ISignaler signaler,
             string content,
             Node lambda,

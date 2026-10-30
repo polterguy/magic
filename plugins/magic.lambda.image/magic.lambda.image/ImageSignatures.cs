@@ -56,10 +56,10 @@ namespace magic.lambda.image.signatures
         {
             Type(),
             Dest(),
-            Option("left", "int", "Pixels to crop from the left edge", defaultValue: "0", kind: "image-crop-pixels"),
-            Option("top", "int", "Pixels to crop from the top edge", defaultValue: "0", kind: "image-crop-pixels"),
-            Option("right", "int", "Pixels to crop from the right edge", defaultValue: "0", kind: "image-crop-pixels"),
-            Option("bottom", "int", "Pixels to crop from the bottom edge", defaultValue: "0", kind: "image-crop-pixels"),
+            Option("left", "int", "Pixels to crop from the left edge", defaultValue: "0", kind: ImageSignaturesLiterals.ImageCropPixels),
+            Option("top", "int", "Pixels to crop from the top edge", defaultValue: "0", kind: ImageSignaturesLiterals.ImageCropPixels),
+            Option("right", "int", "Pixels to crop from the right edge", defaultValue: "0", kind: ImageSignaturesLiterals.ImageCropPixels),
+            Option("bottom", "int", "Pixels to crop from the bottom edge", defaultValue: "0", kind: ImageSignaturesLiterals.ImageCropPixels),
         };
     }
 
@@ -139,5 +139,10 @@ namespace magic.lambda.image.signatures
                 },
             },
         };
+    }
+
+    static class ImageSignaturesLiterals
+    {
+        public const string ImageCropPixels = "image-crop-pixels";
     }
 }

@@ -81,7 +81,7 @@ namespace magic.endpoint.services
                 // Verifying caller wants to perform type checking.
                 if (typeCheck)
                 {
-                    var declarationType = declaration?
+                    var declarationType = declaration
                         .Children
                         .FirstOrDefault(x => x.Name == idxArg.Key)?
                         .Get<string>() ??

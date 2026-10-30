@@ -26,17 +26,20 @@ namespace magic.lambda.http.services
     /// </summary>
     public class MagicHttp : IMagicHttp
     {
+        const string ContentTypeHeader = "Content-Type";
+        const string ApplicationJson = "application/json";
+
         // Default HTTP headers for an empty HTTP request.
         static readonly Dictionary<string, string> DEFAULT_HEADERS_EMPTY_REQUEST =
             new Dictionary<string, string> {
-                { "Accept", "application/json" },
+                { "Accept", ApplicationJson },
             };
 
         // Default HTTP headers for an HTTP request with a payload.
         static readonly Dictionary<string, string> DEFAULT_HEADERS_REQUEST =
             new Dictionary<string, string> {
-                { "Content-Type", "application/json" },
-                { "Accept", "application/json" },
+                { ContentTypeHeader, ApplicationJson },
+                { "Accept", ApplicationJson },
             };
 
         // Maximum number of redirect hops followed for one invocation.
@@ -53,7 +56,7 @@ namespace magic.lambda.http.services
             "Content-Location",
             "Content-MD5",
             "Content-Range",
-            "Content-Type",
+            ContentTypeHeader,
             "Expires",
             "Last-Modified",
         };
@@ -63,7 +66,7 @@ namespace magic.lambda.http.services
             new Dictionary<string, Func<ISignaler, Dictionary<string, string>, Node, string, object>>
             {
                 {
-                    "application/json", RequestTransformers.TransformToJson
+                    ApplicationJson, RequestTransformers.TransformToJson
                 },
                 {
                     "application/x-json", RequestTransformers.TransformToJson
@@ -90,7 +93,7 @@ namespace magic.lambda.http.services
             new Dictionary<string, Func<ISignaler, HttpContent, Task<Node>>>
         {
             {
-                "application/json", ResponseTransformers.TransformFromJson
+                ApplicationJson, ResponseTransformers.TransformFromJson
             },
             {
                 "application/x-json", ResponseTransformers.TransformFromJson
@@ -496,9 +499,9 @@ namespace magic.lambda.http.services
             if (payloadNode.Value == null)
             {
                 // Figuring out Content-Type of request payload to make sure we correctly transform into the specified value.
-                var contentType = headers.TryGetValue("Content-Type", out var requestContentType) ?
+                var contentType = headers.TryGetValue(ContentTypeHeader, out var requestContentType) ?
                     ContentType.Parse(requestContentType) :
-                    ContentType.Parse("application/json");
+                    ContentType.Parse(ApplicationJson);
 
                 if (_requestTransformers.TryGetValue(contentType.MimeType, out var functor))
                     return functor(signaler, headers, payloadNode, input.Name);
@@ -509,7 +512,7 @@ namespace magic.lambda.http.services
             else
             {
                 // [payload] contains a value object of some sort.
-                return payloadNode?.GetEx<object>();
+                return payloadNode.GetEx<object>();
             }
         }
 
@@ -552,7 +555,7 @@ namespace magic.lambda.http.services
                     case "Content-Location":
                     case "Content-MD5":
                     case "Content-Range":
-                    case "Content-Type":
+                    case ContentTypeHeader:
                     case "Expires":
                     case "Last-Modified":
 
@@ -590,7 +593,7 @@ namespace magic.lambda.http.services
             using (var content = response.Content)
             {
                 // HTTP content, defaulting Content-Type to 'application/json' unless explicitly overridden by endpoint.
-                var contentType = "application/json";
+                var contentType = ApplicationJson;
 
                 // HTTP headers.
                 if (response.Headers.Any() || content.Headers.Any())

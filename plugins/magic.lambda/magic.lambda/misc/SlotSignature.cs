@@ -28,6 +28,8 @@ namespace magic.lambda.misc
         ReturnsDescription = "Resolves to input and output contract metadata for the requested slot")]
     public class SlotSignature : ISlot
     {
+        const string DescriptionName = "description";
+
         readonly ISignalsProvider _signalProvider;
 
         /// <summary>
@@ -134,7 +136,7 @@ namespace magic.lambda.misc
             var result = new Node("input");
             if (!string.IsNullOrEmpty(signature.ValueKind))
                 result.Add(new Node("kind", signature.ValueKind));
-            result.Add(new Node("description", signature.ValueDescription));
+            result.Add(new Node(DescriptionName, signature.ValueDescription));
             result.Add(new Node("required", signature.ValueRequired));
             result.Add(new Node("mode", signature.ValueMode.ToString()));
             return result;
@@ -151,7 +153,7 @@ namespace magic.lambda.misc
                 result.Add(new Node("kind", signature.ReturnsKind));
             if (!string.IsNullOrEmpty(signature.ReturnsElementKind))
                 result.Add(new Node("element-kind", signature.ReturnsElementKind));
-            result.Add(new Node("description", signature.ReturnsDescription));
+            result.Add(new Node(DescriptionName, signature.ReturnsDescription));
             if (provider?.OutputChildren?.Any() ?? false)
             {
                 var children = new Node("children");
@@ -172,7 +174,7 @@ namespace magic.lambda.misc
             if (!string.IsNullOrEmpty(signature.RequiresScope))
                 result.Add(new Node("requires", signature.RequiresScope));
             if (!string.IsNullOrEmpty(signature.ScopeDescription))
-                result.Add(new Node("description", signature.ScopeDescription));
+                result.Add(new Node(DescriptionName, signature.ScopeDescription));
             return result;
         }
 
@@ -208,7 +210,7 @@ namespace magic.lambda.misc
                 result.Add(new Node("element-type", child.ElementType));
             if (!string.IsNullOrEmpty(child.ElementKind))
                 result.Add(new Node("element-kind", child.ElementKind));
-            result.Add(new Node("description", child.Description));
+            result.Add(new Node(DescriptionName, child.Description));
             result.Add(new Node("required", child.Required));
             result.Add(new Node("mode", child.Mode.ToString()));
             result.Add(new Node("cardinality", child.Cardinality.ToString()));
@@ -254,7 +256,7 @@ namespace magic.lambda.misc
             if (!string.IsNullOrEmpty(constraint.Target))
                 result.Add(new Node("target", constraint.Target));
             if (!string.IsNullOrEmpty(constraint.Description))
-                result.Add(new Node("description", constraint.Description));
+                result.Add(new Node(DescriptionName, constraint.Description));
             if (!string.IsNullOrEmpty(constraint.ValuePattern))
                 result.Add(new Node("value-pattern", constraint.ValuePattern));
             if (constraint.Values.Count > 0)

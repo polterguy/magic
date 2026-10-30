@@ -33,7 +33,7 @@ namespace magic.lambda.sockets.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("group", "string", "Socket group name", true, kind: "socket-group"),
+            Option("group", SocketSignaturesLiterals.TypeString, "Socket group name", true, kind: "socket-group"),
         };
     }
 
@@ -41,7 +41,7 @@ namespace magic.lambda.sockets.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("filter", "string", "Username filter", kind: "username"),
+            Option("filter", SocketSignaturesLiterals.TypeString, "Username filter", kind: "username"),
             Option("offset", "int", "Number of matching users to skip", defaultValue: "0"),
             Option("limit", "int", "Maximum number of users to return", defaultValue: "10"),
         };
@@ -51,7 +51,7 @@ namespace magic.lambda.sockets.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("filter", "string", "Username filter", kind: "username"),
+            Option("filter", SocketSignaturesLiterals.TypeString, "Username filter", kind: "username"),
         };
     }
 
@@ -84,10 +84,15 @@ namespace magic.lambda.sockets.signatures
                 Evaluation = SlotChildEvaluation.UnwrapDescendants,
                 Projection = SlotChildProjection.StructuredTree,
             },
-            Option("roles", "string", "Comma-separated roles receiving the message", kind: "role"),
-            Option("users", "string", "Comma-separated users receiving the message", kind: "username"),
-            Option("groups", "string", "Comma-separated groups receiving the message", kind: "socket-group"),
-            Option("clients", "string", "Comma-separated connection IDs receiving the message", kind: "socket-connection-id"),
+            Option("roles", SocketSignaturesLiterals.TypeString, "Comma-separated roles receiving the message", kind: "role"),
+            Option("users", SocketSignaturesLiterals.TypeString, "Comma-separated users receiving the message", kind: "username"),
+            Option("groups", SocketSignaturesLiterals.TypeString, "Comma-separated groups receiving the message", kind: "socket-group"),
+            Option("clients", SocketSignaturesLiterals.TypeString, "Comma-separated connection IDs receiving the message", kind: "socket-connection-id"),
         };
+    }
+
+    static class SocketSignaturesLiterals
+    {
+        public const string TypeString = "string";
     }
 }

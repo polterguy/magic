@@ -30,6 +30,8 @@ namespace magic.lambda.io.file
         SignatureType = typeof(global::magic.lambda.io.signatures.PatchFileSignature))]
     public class PatchFile : ISlotAsync, IWhitelistComparer
     {
+        const string InvalidPatchLine = "Invalid patch line.";
+
 
         /// <inheritdoc />
         public Func<string, string, bool> Comparer => Utilities.MatchesFile;
@@ -210,9 +212,9 @@ namespace magic.lambda.io.file
 
                         case '\\':
                             if (!string.Equals(hunkLine, "\\ No newline at end of file", StringComparison.InvariantCulture))
-                                throw new HyperlambdaException("Invalid patch line.");
+                                throw new HyperlambdaException(InvalidPatchLine);
                             if (previousOperation == '\0')
-                                throw new HyperlambdaException("Invalid patch line.");
+                                throw new HyperlambdaException(InvalidPatchLine);
 
                             if (previousOperation == ' ')
                             {
@@ -224,12 +226,12 @@ namespace magic.lambda.io.file
                             }
                             else if (previousOperation != '-')
                             {
-                                throw new HyperlambdaException("Invalid patch line.");
+                                throw new HyperlambdaException(InvalidPatchLine);
                             }
                             break;
 
                         default:
-                            throw new HyperlambdaException("Invalid patch line.");
+                            throw new HyperlambdaException(InvalidPatchLine);
                     }
 
                     previousOperation = tag;

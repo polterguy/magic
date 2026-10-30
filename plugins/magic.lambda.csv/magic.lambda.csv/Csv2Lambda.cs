@@ -93,7 +93,7 @@ namespace magic.lambda.csv
         /*
          * Helper method to retrieve arguments to invocation.
          */
-        (string CSV, Dictionary<string, string> Types, string NullableValue) GetArgs(Node input)
+        static (string CSV, Dictionary<string, string> Types, string NullableValue) GetArgs(Node input)
         {
             // Getting raw CSV text, and making sure we remove any expressions or value in identity node.
             var csv = input.GetEx<string>().TrimStart('\uFEFF');

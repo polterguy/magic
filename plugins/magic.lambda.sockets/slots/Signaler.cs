@@ -125,28 +125,28 @@ namespace magic.lambda.sockets.slots
                 .FirstOrDefault(x => x.Name == "roles")?
                 .GetEx<string>()?
                 .Split(',')
-                .Select(x => x.Trim())?
+                .Select(x => x.Trim())
                 .ToArray();
             var users = input
                 .Children
                 .FirstOrDefault(x => x.Name == "users")?
                 .GetEx<string>()?
                 .Split(',')
-                .Select(x => x.Trim())?
+                .Select(x => x.Trim())
                 .ToArray();
             var clients = input
                 .Children
                 .FirstOrDefault(x => x.Name == "clients")?
                 .GetEx<string>()?
                 .Split(',')
-                .Select(x => x.Trim())?
+                .Select(x => x.Trim())
                 .ToArray();
             var groups = input
                 .Children
                 .FirstOrDefault(x => x.Name == "groups")?
                 .GetEx<string>()?
                 .Split(',')
-                .Select(x => x.Trim())?
+                .Select(x => x.Trim())
                 .ToArray();
 
             // Sanity checking invocation, ensuring only ONE filtering argument is specified.

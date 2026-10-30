@@ -38,12 +38,9 @@ namespace magic.endpoint.services.utilities
                     switch (idxChar)
                     {
                         case '.':
-                            if (idxNo > 0)
-                            {
-                                // We need to check if this is a file extension, at which point we allow it.
-                                if (!idxEntity.Equals(entities[^1]))
-                                    return false; // File or folder is not served
-                            }
+                            // We need to check if this is a file extension, at which point we allow it.
+                            if (idxNo > 0 && !idxEntity.Equals(entities[^1]))
+                                return false; // File or folder is not served
                             break;
                         default:
                             if (!IsLegal(idxChar))
@@ -69,13 +66,9 @@ namespace magic.endpoint.services.utilities
 
             // Splitting up URL in separate entities.
             var splits = url.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var idx in splits)
-            {
-                // ".well-known" is a public IETF-standard URI prefix (RFC 8615), so it is served despite its leading dot.
-                if (idx.StartsWith('.') && idx != ".well-known")
-                    return false; // Hidden file or folder.
-            }
-            return true; // OK URL!
+            // ".well-known" is a public IETF-standard URI prefix (RFC 8615), so it is served despite its leading dot.
+            // Any other segment with a leading dot is a hidden file or folder, which is never served.
+            return !splits.Any(idx => idx.StartsWith('.') && idx != ".well-known"); // OK URL if none were found!
         }
 
         /*

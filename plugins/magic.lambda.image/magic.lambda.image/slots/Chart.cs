@@ -31,6 +31,8 @@ namespace magic.lambda.image.slots
         SignatureType = typeof(global::magic.lambda.image.signatures.ChartSignature))]
     public class Chart : ISlotAsync
     {
+        const string LegendName = "legend";
+
         /// <summary>
         /// Slot implementation.
         /// </summary>
@@ -108,7 +110,7 @@ namespace magic.lambda.image.slots
         private static void CreateBars(Node input, Plot plot)
         {
             // Extracting optional ctor args.
-            var bars = input.Children.FirstOrDefault(x => x.Name == "bars")?.Children.Select(x => x.GetEx<double>())?.ToArray() ??
+            var bars = input.Children.FirstOrDefault(x => x.Name == "bars")?.Children.Select(x => x.GetEx<double>()).ToArray() ??
                 throw new HyperlambdaException("No [bars] provided to [image.chart]");
 
             // Creating our instance.
@@ -134,7 +136,7 @@ namespace magic.lambda.image.slots
             // Extracting optional ctor args.
             if (!input.Children.Any(x => x.Name == "bars"))
                 throw new HyperlambdaException("No [bars] provided to [image.chart]");
-            if (!input.Children.Any(x => x.Name == "legend"))
+            if (!input.Children.Any(x => x.Name == LegendName))
                 throw new HyperlambdaException("No [legend] provided to [image.chart]");
 
             // Creating a default color palette.
@@ -178,7 +180,7 @@ namespace magic.lambda.image.slots
 
             // Creating our legend.
             var idxNo = 0;
-            foreach(var idxLegend in input.Children.First(x => x.Name == "legend").Children)
+            foreach(var idxLegend in input.Children.First(x => x.Name == LegendName).Children)
             {
                 var idx = new LegendItem
                 {
@@ -206,7 +208,7 @@ namespace magic.lambda.image.slots
             // Extracting optional ctor args.
             if (!input.Children.Any(x => x.Name == "bars"))
                 throw new HyperlambdaException("No [bars] provided to [image.chart]");
-            if (!input.Children.Any(x => x.Name == "legend"))
+            if (!input.Children.Any(x => x.Name == LegendName))
                 throw new HyperlambdaException("No [legend] provided to [image.chart]");
 
             // Creating a default color palette.
@@ -241,7 +243,7 @@ namespace magic.lambda.image.slots
             plot.Legend.IsVisible = true;
             plot.Legend.Alignment = Alignment.UpperLeft;
             var idxNo = 0;
-            foreach(var idxLegend in input.Children.First(x => x.Name == "legend").Children)
+            foreach(var idxLegend in input.Children.First(x => x.Name == LegendName).Children)
             {
                 var idx = new LegendItem
                 {

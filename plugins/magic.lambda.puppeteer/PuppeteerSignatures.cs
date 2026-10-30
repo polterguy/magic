@@ -79,8 +79,8 @@ namespace magic.lambda.puppeteer.signatures
             Option("timeout", "int", "Browser launch timeout in milliseconds"),
             Args("args", "Browser launch arguments", childKind: "browser-arg"),
             Option("user-data-dir", "string", "Browser user data directory", kind: "folder-path"),
-            Option("executable", "string", "Browser executable path", kind: "executable-path"),
-            Option("executable-path", "string", "Browser executable path", kind: "executable-path"),
+            Option("executable", "string", "Browser executable path", kind: PuppeteerSignaturesLiterals.ExecutablePath),
+            Option(PuppeteerSignaturesLiterals.ExecutablePath, "string", "Browser executable path", kind: PuppeteerSignaturesLiterals.ExecutablePath),
         };
 
         public override IEnumerable<SlotConstraint> Constraints
@@ -93,7 +93,7 @@ namespace magic.lambda.puppeteer.signatures
                     Description = "[executable] and [executable-path] are aliases; supply at most one",
                 };
                 result.Values.Add("executable");
-                result.Values.Add("executable-path");
+                result.Values.Add(PuppeteerSignaturesLiterals.ExecutablePath);
                 return new[] { result };
             }
         }
@@ -207,5 +207,10 @@ namespace magic.lambda.puppeteer.signatures
             Option("key", "string", "Key to press", kind: "keyboard-key"),
             Option("delay", "int", "Delay in milliseconds between key down and up"),
         };
+    }
+
+    static class PuppeteerSignaturesLiterals
+    {
+        public const string ExecutablePath = "executable-path";
     }
 }

@@ -25,6 +25,8 @@ namespace magic.lambda.branching
         SignatureType = typeof(global::magic.lambda.signatures.SwitchSignature))]
     public class Switch : ISlotAsync
     {
+        const string DefaultName = "default";
+
         /// <summary>
         /// Implementation of signal
         /// </summary>
@@ -43,7 +45,7 @@ namespace magic.lambda.branching
         /*
          * Returns the node to execute, if any.
          */
-        Node GetExecutionNode(Node input)
+        static Node GetExecutionNode(Node input)
         {
             // Sanity checking invocation.
             SanityCheckInvocation(input);
@@ -54,13 +56,13 @@ namespace magic.lambda.branching
             // Finding our execution node, defaulting to [default] if none of our [case] nodes are matching the above value.
             var executionNode = 
                 input.Children.FirstOrDefault(x => x.Name == "case" && x.GetEx<object>().Equals(result)) ??
-                input.Children.FirstOrDefault(x => x.Name == "default");
+                input.Children.FirstOrDefault(x => x.Name == DefaultName);
 
             if (executionNode != null)
             {
                 while (executionNode != null &&
                     !executionNode.Children.Any() &&
-                    executionNode.Name != "default")
+                    executionNode.Name != DefaultName)
                 {
                     executionNode = executionNode.Next;
                 }
@@ -82,13 +84,13 @@ namespace magic.lambda.branching
 
             if (input.Children.Any(x => 
                 x.Name != "case" &&
-                x.Name != "default"))
+                x.Name != DefaultName))
                 throw new HyperlambdaException("[switch] can only handle [case] and [default] children");
 
             if (input.Children.Any(x => x.Name == "case" && x.Value == null))
                 throw new HyperlambdaException("[case] with null value found");
 
-            if (input.Children.Any(x => x.Name == "default" && x.Value != null))
+            if (input.Children.Any(x => x.Name == DefaultName && x.Value != null))
                 throw new HyperlambdaException("[default] with non-null value found");
         }
 

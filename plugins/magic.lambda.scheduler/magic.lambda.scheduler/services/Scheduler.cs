@@ -24,6 +24,8 @@ namespace magic.lambda.scheduler.services
     /// <inheritdoc />
     public sealed class Scheduler : ITaskScheduler, ITaskStorage
     {
+        const string MySql = "mysql";
+
         readonly IDataSettings _settings;
         /*
          * Used to create a new ISignaler instance for every method invocation, since the Signaler
@@ -134,7 +136,7 @@ namespace magic.lambda.scheduler.services
                     return await DatabaseHelper.IterateAsync(cmd, (reader) =>
                     {
                         var dt = reader.GetDateTime(3);
-                        if (_settings.DefaultDatabaseType == "mysql")
+                        if (_settings.DefaultDatabaseType == MySql)
                             dt = DateTime.SpecifyKind(dt, DateTimeKind.Local); // MySQL always returns items in local server time.
                         else if (_settings.DefaultDatabaseType == "sqlite")
                             dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // SQLite always stores date objects as UTC
@@ -338,7 +340,7 @@ namespace magic.lambda.scheduler.services
                         (reader) =>
                     {
                         var dt = reader.GetDateTime(2);
-                        if (_settings.DefaultDatabaseType == "mysql")
+                        if (_settings.DefaultDatabaseType == MySql)
                             dt = dt.ToUniversalTime(); // MySQL always returns items in local server time.
 
                         return (
@@ -399,7 +401,7 @@ namespace magic.lambda.scheduler.services
                     var result = (await DatabaseHelper.IterateAsync(cmd, (reader) =>
                     {
                         var dt = reader.GetDateTime(3);
-                        if (dbType == "mysql")
+                        if (dbType == MySql)
                             dt = DateTime.SpecifyKind(dt, DateTimeKind.Local); // MySQL always returns items in local server time.
                         else if (dbType == "sqlite")
                             dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // MySQL always returns items in local server time.
@@ -463,7 +465,7 @@ namespace magic.lambda.scheduler.services
                 return await DatabaseHelper.IterateAsync(cmd, (reader) =>
                 {
                     var dt = reader.GetDateTime(1);
-                    if (dbType == "mysql")
+                    if (dbType == MySql)
                         dt = DateTime.SpecifyKind(dt, DateTimeKind.Local); // MySQL always returns items in local server time.
                     else if (dbType == "sqlite")
                         dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // SQLite always stores dates as UTC.

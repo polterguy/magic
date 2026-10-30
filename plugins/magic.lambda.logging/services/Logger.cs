@@ -21,6 +21,17 @@ namespace magic.lambda.logging.services
     /// <inheritdoc/>
     public class Logger : ILogger, ILogQuery
     {
+        const string ContentParameter = "@content";
+        const string DebugLevel = "debug";
+        const string ErrorLevel = "error";
+        const string FatalLevel = "fatal";
+        const string GenericConnection = "generic";
+        const string MagicDatabase = "magic";
+        const string MsSql = "mssql";
+        const string MySql = "mysql";
+        const string Sqlite = "sqlite";
+        const string DatabasePlaceholder = "{database}";
+
         readonly ISignaler _signaler;
         readonly LogSettings _setting;
         readonly IDataSettings _dataSettings;
@@ -45,13 +56,13 @@ namespace magic.lambda.logging.services
         /// <inheritdoc/>
         public Task<object> DebugAsync(string content)
         {
-            return InsertLogEntryAsync(_signaler, "debug", content, null, null);
+            return InsertLogEntryAsync(_signaler, DebugLevel, content, null, null);
         }
 
         /// <inheritdoc/>
         public Task<object> DebugAsync(string content, Dictionary<string, string> meta)
         {
-            return InsertLogEntryAsync(_signaler, "debug", content, meta, null);
+            return InsertLogEntryAsync(_signaler, DebugLevel, content, meta, null);
         }
 
         /// <inheritdoc/>
@@ -69,49 +80,49 @@ namespace magic.lambda.logging.services
         /// <inheritdoc/>
         public Task<object> ErrorAsync(string content)
         {
-            return InsertLogEntryAsync(_signaler, "error", content, null, null);
+            return InsertLogEntryAsync(_signaler, ErrorLevel, content, null, null);
         }
 
         /// <inheritdoc/>
         public Task<object> ErrorAsync(string content, Dictionary<string, string> meta)
         {
-            return InsertLogEntryAsync(_signaler, "error", content, meta, null);
+            return InsertLogEntryAsync(_signaler, ErrorLevel, content, meta, null);
         }
 
         /// <inheritdoc/>
         public Task<object> ErrorAsync(string content, string stackTrace)
         {
-            return InsertLogEntryAsync(_signaler, "error", content, null, stackTrace);
+            return InsertLogEntryAsync(_signaler, ErrorLevel, content, null, stackTrace);
         }
 
         /// <inheritdoc/>
         public Task<object> ErrorAsync(string content, Dictionary<string, string> meta, string stackTrace)
         {
-            return InsertLogEntryAsync(_signaler, "error", content, meta, stackTrace);
+            return InsertLogEntryAsync(_signaler, ErrorLevel, content, meta, stackTrace);
         }
 
         /// <inheritdoc/>
         public Task<object> FatalAsync(string content)
         {
-            return InsertLogEntryAsync(_signaler, "fatal", content, null, null);
+            return InsertLogEntryAsync(_signaler, FatalLevel, content, null, null);
         }
 
         /// <inheritdoc/>
         public Task<object> FatalAsync(string content, Dictionary<string, string> meta)
         {
-            return InsertLogEntryAsync(_signaler, "fatal", content, meta, null);
+            return InsertLogEntryAsync(_signaler, FatalLevel, content, meta, null);
         }
 
         /// <inheritdoc/>
         public Task<object> FatalAsync(string content, string stackTrace)
         {
-            return InsertLogEntryAsync(_signaler, "fatal", content, null, stackTrace);
+            return InsertLogEntryAsync(_signaler, FatalLevel, content, null, stackTrace);
         }
 
         /// <inheritdoc/>
         public Task<object> FatalAsync(string content, Dictionary<string, string> meta, string stackTrace)
         {
-            return InsertLogEntryAsync(_signaler, "fatal", content, meta, stackTrace);
+            return InsertLogEntryAsync(_signaler, FatalLevel, content, meta, stackTrace);
         }
 
         #endregion
@@ -127,12 +138,12 @@ namespace magic.lambda.logging.services
                 await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
                 using (var connection = dbNode.Get<DbConnection>())
                 {
-                    connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
+                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
                     await connection.OpenAsync();
                     using (var command = connection.CreateCommand())
                     {
                         var builder = new StringBuilder();
-                        var mid = _dataSettings.DefaultDatabaseType == "mssql" ? $" top {max}" : "";
+                        var mid = _dataSettings.DefaultDatabaseType == MsSql ? $" top {max}" : "";
                         builder.Append($"select{mid} id, created, type, content, exception, meta from log_entries");
                         if (fromId != null)
                         {
@@ -147,12 +158,12 @@ namespace magic.lambda.logging.services
                                 builder.Append(" and ");
                             builder.Append("content like @content");
                             var contentArg = command.CreateParameter();
-                            contentArg.ParameterName = "@content";
+                            contentArg.ParameterName = ContentParameter;
                             contentArg.Value = content;
                             command.Parameters.Add(contentArg);
                         }
                         builder.Append(" order by id desc");
-                        if (_dataSettings.DefaultDatabaseType != "mssql")
+                        if (_dataSettings.DefaultDatabaseType != MsSql)
                             builder.Append($" limit {max}");
                         command.CommandText = builder.ToString();
                         using (var reader = await command.ExecuteReaderAsync())
@@ -161,9 +172,9 @@ namespace magic.lambda.logging.services
                             while (await reader.ReadAsync())
                             {
                                 var dt = reader.GetDateTime(1);
-                                if (_dataSettings.DefaultDatabaseType == "mysql")
+                                if (_dataSettings.DefaultDatabaseType == MySql)
                                     dt = dt.ToUniversalTime(); // MySQL always returns items in local server time.
-                                else if (_dataSettings.DefaultDatabaseType == "sqlite")
+                                else if (_dataSettings.DefaultDatabaseType == Sqlite)
                                     dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // SQLite always stores dates as UTC
 
                                 var jString = reader["meta"] as string;
@@ -194,7 +205,7 @@ namespace magic.lambda.logging.services
                 await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
                 using (var connection = dbNode.Get<DbConnection>())
                 {
-                    connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
+                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
                     await connection.OpenAsync();
                     using (var command = connection.CreateCommand())
                     {
@@ -204,7 +215,7 @@ namespace magic.lambda.logging.services
                         {
                             builder.Append(" where content like @content");
                             var contentArg = command.CreateParameter();
-                            contentArg.ParameterName = "@content";
+                            contentArg.ParameterName = ContentParameter;
                             contentArg.Value = content;
                             command.Parameters.Add(contentArg);
                         }
@@ -224,7 +235,7 @@ namespace magic.lambda.logging.services
                 await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
                 using (var connection = dbNode.Get<DbConnection>())
                 {
-                    connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
+                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
                     await connection.OpenAsync();
                     using (var command = connection.CreateCommand())
                     {
@@ -232,12 +243,12 @@ namespace magic.lambda.logging.services
                         var tail = "";
                         switch (_dataSettings.DefaultDatabaseType)
                         {
-                            case "mysql":
+                            case MySql:
                                 date = "date_format(created, '%Y-%m-%d')";
                                 tail = " limit 14";
                                 break;
 
-                            case "mssql":
+                            case MsSql:
                                 date = "convert(char(10), created, 126)";
                                 tail = " offset 0 rows fetch first 14 rows only";
                                 break;
@@ -247,17 +258,17 @@ namespace magic.lambda.logging.services
                                 tail = " limit 14";
                                 break;
 
-                            case "sqlite":
+                            case Sqlite:
                                 date = "date(created)";
                                 tail = " limit 14";
                                 break;
                         }
                         var contentArg = command.CreateParameter();
-                        contentArg.ParameterName = "@content";
+                        contentArg.ParameterName = ContentParameter;
                         contentArg.Value = content;
                         command.Parameters.Add(contentArg);
                         command.CommandText = $"select {date} as date, count(*) as count from log_entries where " + 
-                            (_dataSettings.DefaultDatabaseType == "mssql" ? "convert(nvarchar(max), content)" : "content") +
+                            (_dataSettings.DefaultDatabaseType == MsSql ? "convert(nvarchar(max), content)" : "content") +
                             $" = @content group by {date} order by {date} desc{tail}";
                         using (var reader = await command.ExecuteReaderAsync())
                         {
@@ -284,7 +295,7 @@ namespace magic.lambda.logging.services
                 await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
                 using (var connection = dbNode.Get<DbConnection>())
                 {
-                    connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
+                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
                     await connection.OpenAsync();
                     using (var command = connection.CreateCommand())
                     {
@@ -300,9 +311,9 @@ namespace magic.lambda.logging.services
                             if (await reader.ReadAsync())
                             {
                                 var dt = reader.GetDateTime(1);
-                                if (_dataSettings.DefaultDatabaseType == "mysql")
+                                if (_dataSettings.DefaultDatabaseType == MySql)
                                     dt = dt.ToUniversalTime(); // MySQL always returns items in local server time.
-                                else if (_dataSettings.DefaultDatabaseType == "sqlite")
+                                else if (_dataSettings.DefaultDatabaseType == Sqlite)
                                     dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // SQLite always stores dates as UTC
 
                                 var jString = reader["meta"] as string;
@@ -377,20 +388,20 @@ namespace magic.lambda.logging.services
             var shouldLog = false;
             switch (type)
             {
-                case "debug":
-                    shouldLog = _setting.Level == "debug";
+                case DebugLevel:
+                    shouldLog = _setting.Level == DebugLevel;
                     break;
 
                 case "info":
-                    shouldLog = _setting.Level == "info" || _setting.Level == "debug";
+                    shouldLog = _setting.Level == "info" || _setting.Level == DebugLevel;
                     break;
 
-                case "error":
-                    shouldLog = _setting.Level == "error" || _setting.Level == "info" || _setting.Level == "debug";
+                case ErrorLevel:
+                    shouldLog = _setting.Level == ErrorLevel || _setting.Level == "info" || _setting.Level == DebugLevel;
                     break;
 
-                case "fatal":
-                    shouldLog = _setting.Level == "fatal" || _setting.Level == "error" || _setting.Level == "info" || _setting.Level == "debug";
+                case FatalLevel:
+                    shouldLog = _setting.Level == FatalLevel || _setting.Level == ErrorLevel || _setting.Level == "info" || _setting.Level == DebugLevel;
                     break;
             }
 
@@ -405,7 +416,7 @@ namespace magic.lambda.logging.services
                 using (var connection = dbNode.Get<DbConnection>())
                 {
                     // Opening database connection.
-                    connection.ConnectionString = _dataSettings.ConnectionString("generic").Replace("{database}", "magic");
+                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
                     await connection.OpenAsync();
 
                     // Creating our insert commend.
@@ -448,11 +459,11 @@ namespace magic.lambda.logging.services
             // Returning the id of the inserted entry, allowing callers to reference it.
             switch (dbType)
             {
-                case "mysql":
+                case MySql:
                     builder.Append("; select last_insert_id()");
                     break;
 
-                case "mssql":
+                case MsSql:
                     builder.Append("; select scope_identity()");
                     break;
 
@@ -460,7 +471,7 @@ namespace magic.lambda.logging.services
                     builder.Append(" returning id");
                     break;
 
-                case "sqlite":
+                case Sqlite:
                     builder.Append("; select last_insert_rowid()");
                     break;
             }
@@ -473,7 +484,7 @@ namespace magic.lambda.logging.services
             command.Parameters.Add(typeArg);
 
             var contentArg = command.CreateParameter();
-            contentArg.ParameterName = "@content";
+            contentArg.ParameterName = ContentParameter;
             contentArg.Value = content;
             command.Parameters.Add(contentArg);
 

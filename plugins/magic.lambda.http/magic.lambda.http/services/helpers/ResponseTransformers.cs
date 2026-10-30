@@ -19,6 +19,8 @@ namespace magic.lambda.http.services.helpers
      */
     internal static class ResponseTransformers
     {
+        const string ContentName = "content";
+
         /*
          * Transforms from JSON string to lambda object.
          */
@@ -33,11 +35,11 @@ namespace magic.lambda.http.services.helpers
             {
                 var bytes = await content.ReadAsByteArrayAsync();
                 if (bytes.Length == 0)
-                    return new Node("content");
+                    return new Node(ContentName);
                 var start = FirstSignificant(bytes);
                 if (start < bytes.Length && (bytes[start] == '{' || bytes[start] == '['))
                 {
-                    var result = new Node("content");
+                    var result = new Node(ContentName);
                     try
                     {
                         // Strict, since the JSON must be valid JSON for us to accept it as JSON.
@@ -72,7 +74,7 @@ namespace magic.lambda.http.services.helpers
         static Task<Node> TransformFromJsonText(ISignaler signaler, string json)
         {
             if (string.IsNullOrEmpty(json))
-                return Task.FromResult(new Node("content"));
+                return Task.FromResult(new Node(ContentName));
 
             try
             {
@@ -82,22 +84,22 @@ namespace magic.lambda.http.services.helpers
                     case JsonValueKind.Object:
                     case JsonValueKind.Array:
                     {
-                        var tmpNode = new Node("content", json);
+                        var tmpNode = new Node(ContentName, json);
                         signaler.Signal("json2lambda", tmpNode, skipWhitelist: true);
                         return Task.FromResult(tmpNode);
                     }
 
                     case JsonValueKind.String:
-                        return Task.FromResult(new Node("content", document.RootElement.GetString()));
+                        return Task.FromResult(new Node(ContentName, document.RootElement.GetString()));
 
                     default:
-                        return Task.FromResult(new Node("content", document.RootElement.GetRawText()));
+                        return Task.FromResult(new Node(ContentName, document.RootElement.GetRawText()));
                 }
             }
             catch (JsonException)
             {
                 // Preserve the response body even if the server mislabeled invalid content as JSON.
-                return Task.FromResult(new Node("content", json));
+                return Task.FromResult(new Node(ContentName, json));
             }
         }
 
@@ -108,8 +110,8 @@ namespace magic.lambda.http.services.helpers
         {
             var hl = await content.ReadAsStringAsync();
             if (string.IsNullOrEmpty(hl))
-                return new Node("content");
-            var tmpNode = new Node("content", hl);
+                return new Node(ContentName);
+            var tmpNode = new Node(ContentName, hl);
             await signaler.SignalAsync("hyper2lambda", tmpNode, skipWhitelist: true);
             return tmpNode;
         }
@@ -120,7 +122,7 @@ namespace magic.lambda.http.services.helpers
         internal static async Task<Node> TransformFromUrlEncoded(ISignaler signaler, HttpContent content)
         {
             var args = (await content.ReadAsStringAsync()).Split('&');
-            var result = new Node("content");
+            var result = new Node(ContentName);
             foreach (var idxArg in args)
             {
                 var cur = idxArg.Split('=');

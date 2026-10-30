@@ -35,7 +35,7 @@ namespace magic.endpoint.services.signatures
             new SlotChild
             {
                 Name = "*",
-                Type = "string",
+                Type = EndpointSignaturesLiterals.TypeString,
                 Kind = "http-response-header-value",
                 Description = "Response header name and value",
                 Required = true,
@@ -56,13 +56,13 @@ namespace magic.endpoint.services.signatures
         public override IEnumerable<SlotChild> Children => new[]
         {
             // 'text' added: a cookie [value] is arbitrary text content (session ids, user tokens, serialized state, free-form strings) — any `text` producer should be wirable. `cookie-value` stays first for catalog selection.
-            Option("value", "string", "Cookie value", true, "cookie-value,text"),
+            Option("value", EndpointSignaturesLiterals.TypeString, "Cookie value", true, "cookie-value,text"),
             Option("expires", "DateTime", "Cookie expiration"),
             Option("http-only", "bool", "Whether the cookie is HTTP-only"),
             Option("secure", "bool", "Whether the cookie is secure"),
-            Option("domain", "string", "Cookie domain", kind: "cookie-domain"),
-            Option("path", "string", "Cookie path", kind: "cookie-path"),
-            Option("same-site", "string", "Cookie SameSite mode: Strict, Lax, None, or Unspecified", kind: "cookie-same-site"),
+            Option("domain", EndpointSignaturesLiterals.TypeString, "Cookie domain", kind: "cookie-domain"),
+            Option("path", EndpointSignaturesLiterals.TypeString, "Cookie path", kind: "cookie-path"),
+            Option("same-site", EndpointSignaturesLiterals.TypeString, "Cookie SameSite mode: Strict, Lax, None, or Unspecified", kind: "cookie-same-site"),
         };
     }
 
@@ -73,7 +73,7 @@ namespace magic.endpoint.services.signatures
             new SlotChild
             {
                 Name = ".",
-                Type = "string",
+                Type = EndpointSignaturesLiterals.TypeString,
                 Kind = "mime-type",
                 Description = "MIME type value for the extension/key",
                 Required = true,
@@ -90,7 +90,12 @@ namespace magic.endpoint.services.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("version", "string", "IP version to return, either ipv4 or ipv6", kind: "ip-version"),
+            Option("version", EndpointSignaturesLiterals.TypeString, "IP version to return, either ipv4 or ipv6", kind: "ip-version"),
         };
+    }
+
+    static class EndpointSignaturesLiterals
+    {
+        public const string TypeString = "string";
     }
 }

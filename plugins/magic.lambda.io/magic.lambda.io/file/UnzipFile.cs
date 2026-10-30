@@ -111,20 +111,17 @@ namespace magic.lambda.io.file
                             0;
 
                     // Looping through each entry in archive, ignoring garbage OS X "special files".
-                    foreach (var idxEntry in archive.Entries)
+                    // Notice, only entries that are files are saved, which is verified by checking for a "." in the last segment.
+                    foreach (var idxEntry in archive.Entries.Where(x => x.FullName.Split('/')[^1].Contains('.', System.StringComparison.CurrentCulture)))
                     {
-                        // Verifying this is a file.
-                        if (idxEntry.FullName.Split('/')[^1].Contains('.', System.StringComparison.CurrentCulture))
+                        // This is a file, opening it up and saving it.
+                        await using (var srcStream = await idxEntry.OpenAsync())
                         {
-                            // This is a file, opening it up and saving it.
-                            await using (var srcStream = await idxEntry.OpenAsync())
-                            {
-                                // Getting filename.
-                                var filename = idxEntry.FullName.Substring(toTrim).Replace("\\", "/");
+                            // Getting filename.
+                            var filename = idxEntry.FullName.Substring(toTrim).Replace("\\", "/");
 
-                                // Saving currently iterated file.
-                                await SaveFileAsync(signaler, input, destinationFolder, filename, srcStream, overwrite);
-                            }
+                            // Saving currently iterated file.
+                            await SaveFileAsync(destinationFolder, filename, srcStream, overwrite);
                         }
                     }
                 }
@@ -135,8 +132,6 @@ namespace magic.lambda.io.file
          * Saves a single file from ZIP file archive.
          */
         async Task SaveFileAsync(
-            ISignaler signaler,
-            Node input,
             string destinationFolder,
             string filename,
             Stream contentStream,

@@ -39,7 +39,7 @@ namespace magic.lambda.strings.replace
             SanityCheck(input);
             await signaler.SignalAsync("eval", input, skipWhitelist: true);
             var start = input.Children.First().GetEx<int>();
-            var end = input.Children.Skip(1)?.FirstOrDefault()?.GetEx<int>() ?? -1;
+            var end = input.Children.Skip(1).FirstOrDefault()?.GetEx<int>() ?? -1;
             var source = input.GetEx<string>();
             if (end == -1)
                 input.Value = source.Substring(start);

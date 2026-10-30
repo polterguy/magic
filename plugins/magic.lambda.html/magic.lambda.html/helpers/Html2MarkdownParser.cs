@@ -19,6 +19,8 @@ namespace magic.lambda.html.slots.helpers
     /// </summary>
     public class Html2MarkdownParser
     {
+        const string TextNode = "#text";
+
         readonly HtmlDocument _doc;
         readonly string _url;
         readonly Node _input;
@@ -172,7 +174,7 @@ namespace magic.lambda.html.slots.helpers
              * elements whose text is not prose (script, style, form machinery) are
              * explicitly suppressed in the handlers dictionary instead.
              */
-            if (htmlNode.Name == "#text")
+            if (htmlNode.Name == TextNode)
             {
                 var txt = HttpUtility.HtmlDecode(TrimText(htmlNode.InnerText));
                 if (!string.IsNullOrEmpty(txt))
@@ -278,7 +280,7 @@ namespace magic.lambda.html.slots.helpers
             {
                 switch (idxChild.Name)
                 {
-                    case "#text":
+                    case TextNode:
                         var txt = HttpUtility.HtmlDecode(TrimText(idxChild.InnerText));
                         if (!string.IsNullOrEmpty(txt))
                         {
@@ -324,16 +326,16 @@ namespace magic.lambda.html.slots.helpers
             EnsureDoubleNewLine(builder);
             builder.Append("```\r\n");
             var first = true;
-            foreach(var idxChild in htmlNode.Descendants().Where(x => x.Name == "#text"))
+            foreach (var text in htmlNode.Descendants().Where(x => x.Name == TextNode).Select(x => x.InnerText))
             {
                 if (first)
                 {
-                    builder.Append(HttpUtility.HtmlDecode(TrimText(idxChild.InnerText.TrimStart(), false)));
+                    builder.Append(HttpUtility.HtmlDecode(TrimText(text.TrimStart(), false)));
                     first = false;
                 }
                 else
                 {
-                    builder.Append(HttpUtility.HtmlDecode(TrimText(idxChild.InnerText, false)));
+                    builder.Append(HttpUtility.HtmlDecode(TrimText(text, false)));
                 }
             }
             EnsureSingleNewLine(builder);
@@ -524,7 +526,7 @@ namespace magic.lambda.html.slots.helpers
             string prefix)
         {
             // Rendering children.
-            var txt = string.Join(" ", htmlNode.Descendants().Where(x => x.Name == "#text").Select(x => HttpUtility.HtmlDecode(TrimText(x.InnerText))));
+            var txt = string.Join(" ", htmlNode.Descendants().Where(x => x.Name == TextNode).Select(x => HttpUtility.HtmlDecode(TrimText(x.InnerText))));
 
             // Making sure something was rendered.
             var content = TrimText(txt);
@@ -585,7 +587,7 @@ namespace magic.lambda.html.slots.helpers
                 {
                     switch (idx.Name)
                     {
-                        case "#text":
+                        case TextNode:
                             if (!hasRenderedImage)
                             {
                                 var txt = HttpUtility.HtmlDecode(TrimText(idx.InnerText));
@@ -692,7 +694,7 @@ namespace magic.lambda.html.slots.helpers
             {
                 switch (idxChild.Name)
                 {
-                    case "#text":
+                    case TextNode:
                         var txt = HttpUtility.HtmlDecode(idxChild.InnerText.Trim());
                         if (!string.IsNullOrEmpty(txt))
                         {
@@ -808,7 +810,7 @@ namespace magic.lambda.html.slots.helpers
             url = url ?? "";
 
             // Removing # parts.
-            if (url?.IndexOf('#') != -1)
+            if (url.IndexOf('#') != -1)
                 url = url.Substring(0, url.IndexOf('#'));
 
             // Returning result to caller.

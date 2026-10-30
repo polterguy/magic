@@ -83,11 +83,11 @@ namespace magic.lambda.puppeteer
             {
                 if (page != null && !page.IsClosed)
                 {
-                    try { await page.CloseAsync(); } catch { }
+                    try { await page.CloseAsync(); } catch { /* Best effort, the original exception is rethrown below. */ }
                 }
                 if (browser != null && !browser.IsClosed)
                 {
-                    try { await browser.CloseAsync(); } catch { }
+                    try { await browser.CloseAsync(); } catch { /* Best effort, the original exception is rethrown below. */ }
                 }
                 throw;
             }
@@ -139,11 +139,9 @@ namespace magic.lambda.puppeteer
             if (IsUsableExecutable(envPath))
                 return envPath;
 
-            foreach (var candidate in GetDefaultCandidates())
-            {
-                if (IsUsableExecutable(candidate))
-                    return candidate;
-            }
+            var found = GetDefaultCandidates().FirstOrDefault(IsUsableExecutable);
+            if (found != null)
+                return found;
 
             throw new HyperlambdaException(
                 "Could not find a Chromium/Chrome executable. " +

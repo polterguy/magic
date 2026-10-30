@@ -110,7 +110,7 @@ namespace magic.lambda.crypto.slots.hash
             // Figuring out hashing algorithm to use, defaulting to SHA256.
             var algorithm = input.Name
                 .Split('.')
-                .Skip(2)?
+                .Skip(2)
                 .FirstOrDefault();
 
             // Checking if algorithm was not part of slot invocation name.

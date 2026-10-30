@@ -189,10 +189,9 @@ namespace magic.lambda.hyperlambda
             // Without an attached signature, the accepted child argument names are unknown.
             if (!info.HasSignature || info.AcceptsAnyChild)
                 return;
-            foreach (var child in node.Children)
+            foreach (var child in node.Children.Where(x => !info.ChildNames.Contains(x.Name)))
             {
-                if (!info.ChildNames.Contains(child.Name))
-                    invalid.Add($"Slot [{node.Name}] does not accept a child argument named [{child.Name}]");
+                invalid.Add($"Slot [{node.Name}] does not accept a child argument named [{child.Name}]");
             }
         }
 

@@ -37,19 +37,19 @@ namespace magic.lambda.auth.services
         /// <inheritdoc/>
         public IEnumerable<string> Roles => (_contextAccessor?.HttpContext?.User?.Identity as ClaimsIdentity)
             ?.Claims
-            ?.Where(c => c.Type == ClaimTypes.Role)
-            ?.Select(x => x.Value) ?? Array.Empty<string>();
+            .Where(c => c.Type == ClaimTypes.Role)
+            .Select(x => x.Value) ?? Array.Empty<string>();
 
         /// <inheritdoc/>
         public IEnumerable<(string Name, string Value)> Claims => (_contextAccessor?.HttpContext?.User?.Identity as ClaimsIdentity)
             ?.Claims
-            ?.Where(c =>
+            .Where(c =>
                 c.Type != ClaimTypes.Role &&
                 c.Type != "nbf" &&
                 c.Type != "exp" &&
                 c.Type != "iat" &&
                 c.Type != ClaimTypes.Name)
-            ?.Select(x => (x.Type, x.Value)) ?? Array.Empty<(string Name, string Value)>();
+            .Select(x => (x.Type, x.Value)) ?? Array.Empty<(string Name, string Value)>();
 
         /// <inheritdoc/>
         public bool InRole(string role)

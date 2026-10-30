@@ -63,7 +63,7 @@ namespace magic.lambda.mime.signatures
                     new SlotChild
                     {
                         Name = "*",
-                        Type = "string",
+                        Type = MimeSignaturesLiterals.TypeString,
                         Kind = "mime-header-value",
                         Description = "Header name and value",
                         Required = false,
@@ -83,7 +83,7 @@ namespace magic.lambda.mime.signatures
         public static SlotChild Content()
         {
             // 'text' added: an inline MIME [content] body genuinely accepts arbitrary text (mail body, JSON serialized payload, log entry, etc.), so any `text` producer can wire here. Parent-value → catalog dispatch (e.g. application/json → json catalog) lives in rules.yaml under `dispatch-rules:` (target-kind: mime-content). No schema-side declaration needed.
-            return Option("content", "string", "Inline MIME part content", kind: "mime-content,mime-entity-source,text");
+            return Option(MimeSignaturesLiterals.ContentName, MimeSignaturesLiterals.TypeString, "Inline MIME part content", kind: "mime-content,mime-entity-source,text");
         }
 
         public static SlotChild Filename()
@@ -91,7 +91,7 @@ namespace magic.lambda.mime.signatures
             // Parent-value → typed file-path catalog dispatch (image/* →
             // image-file, application/pdf → pdf-file, etc.) lives in
             // rules.yaml under `dispatch-rules:` (target-kind: file-path).
-            return Option("filename", "string", "File path to use as MIME part content", kind: "file-path,mime-entity-source,mime-entity-filename-source");
+            return Option("filename", MimeSignaturesLiterals.TypeString, "File path to use as MIME part content", kind: "file-path,mime-entity-source,mime-entity-filename-source");
         }
 
         public static SlotChild Entity()
@@ -117,7 +117,7 @@ namespace magic.lambda.mime.signatures
             var result = new SlotChild
             {
                 Name = "entity",
-                Type = "string",
+                Type = MimeSignaturesLiterals.TypeString,
                 // At depth 0, force leaf MIME types only — there's no nested
                 // [entity] child available, so a multipart value would be a
                 // schema/constraint contradiction.
@@ -160,7 +160,7 @@ namespace magic.lambda.mime.signatures
                 Description = "Leaf MIME parts require either [content] or [filename]",
                 ValuePattern = @"^(?!multipart/).+/.+$",
             };
-            leaf.Values.AddRange(["content", "filename"]);
+            leaf.Values.AddRange([MimeSignaturesLiterals.ContentName, "filename"]);
 
             var leafExcludesEntity = new SlotConstraint
             {
@@ -175,7 +175,7 @@ namespace magic.lambda.mime.signatures
             // "The weekly sales report..."` is nonsense). Force these onto
             // [filename] only. Combined with the ExactlyOneOf above, the
             // synth's constraint filter applies Excludes first (forbidding
-            // `content`), then ExactlyOneOf("content","filename") collapses
+            // `content`), then ExactlyOneOf(MimeSignaturesLiterals.ContentName,"filename") collapses
             // to the only remaining choice — `filename`. Same trick the
             // multipartExcludesLeaf constraint uses below.
             //
@@ -189,7 +189,7 @@ namespace magic.lambda.mime.signatures
                 Description = "Binary MIME parts cannot carry inline [content] — reference the bytes via [filename]",
                 ValuePattern = @"^(image/|video/|audio/|application/(octet-stream|pdf|zip|gzip|x-tar|x-bzip2|x-7z-compressed|vnd\.ms-excel|vnd\.openxmlformats-officedocument))",
             };
-            binaryExcludesInlineContent.Values.Add("content");
+            binaryExcludesInlineContent.Values.Add(MimeSignaturesLiterals.ContentName);
 
             // AtLeastOneOf says "[entity] must be present at all"; the actual
             // minimum of 2 is encoded on the [entity] SlotChild itself
@@ -212,7 +212,7 @@ namespace magic.lambda.mime.signatures
                 Description = "Multipart MIME parts must not contain [content] or [filename]",
                 ValuePattern = @"^multipart/.+$",
             };
-            multipartExcludesLeaf.Values.AddRange(["content", "filename"]);
+            multipartExcludesLeaf.Values.AddRange([MimeSignaturesLiterals.ContentName, "filename"]);
 
             // Order matters: Excludes constraints must run BEFORE the
             // ExactlyOneOf(leaf) so the latter sees `content` already in
@@ -264,7 +264,7 @@ namespace magic.lambda.mime.signatures
                     new SlotChild
                     {
                         Name = "*",
-                        Type = "string",
+                        Type = MimeSignaturesLiterals.TypeString,
                         Kind = "mime-header-value",
                         Description = "Parsed MIME header value; child name is the header name",
                         Required = false,
@@ -281,7 +281,7 @@ namespace magic.lambda.mime.signatures
         {
             return new SlotChild
             {
-                Name = "content",
+                Name = MimeSignaturesLiterals.ContentName,
                 Type = "string|byte[]",
                 Kind = "mime-content,binary-content",
                 Description = "Decoded MIME part content; text parts return string content and binary parts return byte[] content",
@@ -298,7 +298,7 @@ namespace magic.lambda.mime.signatures
             var result = new SlotChild
             {
                 Name = "entity",
-                Type = "string",
+                Type = MimeSignaturesLiterals.TypeString,
                 Kind = "content-type",
                 Description = "Nested parsed MIME entity; node value is the nested entity content type, and children carry headers, content, and any deeper entities",
                 Required = false,
@@ -310,5 +310,11 @@ namespace magic.lambda.mime.signatures
             result.Children.AddRange(ParsedEntityChildren(depth));
             return result;
         }
+    }
+
+    static class MimeSignaturesLiterals
+    {
+        public const string ContentName = "content";
+        public const string TypeString = "string";
     }
 }

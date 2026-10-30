@@ -42,7 +42,7 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("password", "string|byte[]", "Password or raw AES key", true, kind: "password,aes-key"),
+            Option("password", CryptoSignaturesLiterals.TypeStringOrBytes, "Password or raw AES key", true, kind: "password,aes-key"),
             Raw(),
         };
     }
@@ -51,7 +51,7 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("public-key", "string|byte[]", "Public key for the RSA operation", true, kind: "rsa-public-key"),
+            Option("public-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Public key for the RSA operation", true, kind: "rsa-public-key"),
             Raw(),
         };
     }
@@ -60,7 +60,7 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("private-key", "string|byte[]", "Private key for the RSA operation", true, kind: "rsa-private-key"),
+            Option("private-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Private key for the RSA operation", true, kind: "rsa-private-key"),
             Raw(),
         };
     }
@@ -70,7 +70,7 @@ namespace magic.lambda.crypto.signatures
         public override IEnumerable<SlotChild> Children => new[]
         {
             Option("strength", "int", "RSA key strength in bits", defaultValue: "2048", kind: "rsa-key-strength"),
-            Option("seed", "string|byte[]", "Optional deterministic seed", kind: "crypto-seed"),
+            Option("seed", CryptoSignaturesLiterals.TypeStringOrBytes, "Optional deterministic seed", kind: "crypto-seed"),
             Raw(),
         };
     }
@@ -79,8 +79,8 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("signature", "string|byte[]", "RSA signature to verify", true, kind: "rsa-signature"),
-            Option("public-key", "string|byte[]", "Public key used to verify the signature", true, kind: "rsa-public-key"),
+            Option("signature", CryptoSignaturesLiterals.TypeStringOrBytes, "RSA signature to verify", true, kind: "rsa-signature"),
+            Option("public-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Public key used to verify the signature", true, kind: "rsa-public-key"),
             Raw(),
         };
     }
@@ -155,8 +155,8 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("signing-key", "string|byte[]", "Private signing key", true, kind: "crypto-private-key"),
-            Option("signing-key-fingerprint", "string|byte[]", "Fingerprint for the signing key", true, kind: "crypto-key-fingerprint"),
+            Option("signing-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Private signing key", true, kind: "crypto-private-key"),
+            Option("signing-key-fingerprint", CryptoSignaturesLiterals.TypeStringOrBytes, "Fingerprint for the signing key", true, kind: "crypto-key-fingerprint"),
             Raw(),
         };
     }
@@ -165,11 +165,11 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("signing-key", "string|byte[]", "Private signing key", true, kind: "crypto-private-key"),
-            Option("encryption-key", "string|byte[]", "Public encryption key", true, kind: "crypto-public-key"),
-            Option("signing-key-fingerprint", "string|byte[]", "Fingerprint for the signing key", true, kind: "crypto-key-fingerprint"),
+            Option("signing-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Private signing key", true, kind: "crypto-private-key"),
+            Option("encryption-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Public encryption key", true, kind: "crypto-public-key"),
+            Option("signing-key-fingerprint", CryptoSignaturesLiterals.TypeStringOrBytes, "Fingerprint for the signing key", true, kind: "crypto-key-fingerprint"),
             Raw(),
-            Option("seed", "string|byte[]", "Optional encryption seed", kind: "crypto-seed"),
+            Option("seed", CryptoSignaturesLiterals.TypeStringOrBytes, "Optional encryption seed", kind: "crypto-seed"),
         };
     }
 
@@ -177,7 +177,7 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("verification-key", "string|byte[]", "Public key used to verify the signature", true, kind: "crypto-public-key"),
+            Option("verification-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Public key used to verify the signature", true, kind: "crypto-public-key"),
             Raw(),
         };
     }
@@ -186,9 +186,14 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("decryption-key", "string|byte[]", "Private decryption key", true, kind: "crypto-private-key"),
-            Option("verification-key", "string|byte[]", "Public key used to verify the signature", true, kind: "crypto-public-key"),
+            Option("decryption-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Private decryption key", true, kind: "crypto-private-key"),
+            Option("verification-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Public key used to verify the signature", true, kind: "crypto-public-key"),
             Raw(),
         };
+    }
+
+    static class CryptoSignaturesLiterals
+    {
+        public const string TypeStringOrBytes = "string|byte[]";
     }
 }

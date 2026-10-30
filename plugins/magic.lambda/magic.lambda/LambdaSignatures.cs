@@ -30,7 +30,7 @@ namespace magic.lambda.signatures
             return new SlotChild
             {
                 Name = "*",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Description = description,
                 Required = cardinality == SlotChildCardinality.ExactlyOne || cardinality == SlotChildCardinality.OneOrMore,
                 Mode = SlotChildMode.ExecutableLambda,
@@ -57,7 +57,7 @@ namespace magic.lambda.signatures
             return new SlotChild
             {
                 Name = "*",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Kind = kind,
                 Description = description,
                 Required = cardinality == SlotChildCardinality.ExactlyOne
@@ -79,7 +79,7 @@ namespace magic.lambda.signatures
             return new SlotChild
             {
                 Name = ".lambda",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Description = description,
                 Required = required,
                 Mode = SlotChildMode.ExecutableLambda,
@@ -95,7 +95,7 @@ namespace magic.lambda.signatures
             return new SlotChild
             {
                 Name = "*",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Kind = "boolean",
                 Description = "Condition node evaluated for truthiness",
                 Required = true,
@@ -239,7 +239,7 @@ namespace magic.lambda.signatures
             new SlotChild
             {
                 Name = "default",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Description = "Fallback branch when no case matches",
                 Required = false,
                 Mode = SlotChildMode.ExecutableLambda,
@@ -367,7 +367,7 @@ namespace magic.lambda.signatures
             new SlotChild
             {
                 Name = "vocabulary",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Description = "Allowed slot names for the restricted evaluation scope",
                 Required = true,
                 Mode = SlotChildMode.Value,
@@ -509,7 +509,7 @@ namespace magic.lambda.signatures
             new SlotChild
             {
                 Name = "*",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Description = "Candidate value source evaluated until the first non-null value is produced",
                 Required = true,
                 Mode = SlotChildMode.ExecutableLambda,
@@ -532,7 +532,7 @@ namespace magic.lambda.signatures
             new SlotChild
             {
                 Name = "*",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 // Body's picked slot's children-of-children become the
                 // source data spliced into the target. The runtime takes
                 // those grandchildren AS IS — they MUST be a list of nodes
@@ -634,7 +634,7 @@ namespace magic.lambda.signatures
             new SlotChild
             {
                 Name = "*",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Description = "Mapper body evaluated once per selected node; each returned value becomes a [.] node and returned child nodes are added to the mapped result",
                 Required = true,
                 Mode = SlotChildMode.ExecutableLambda,
@@ -657,7 +657,7 @@ namespace magic.lambda.signatures
             new SlotChild
             {
                 Name = "*",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Kind = "boolean",
                 Description = "Predicate body evaluated once per selected node; the selected node is kept when the body returns true",
                 Required = true,
@@ -685,7 +685,7 @@ namespace magic.lambda.signatures
             new SlotChild
             {
                 Name = "*",
-                Type = "lambda",
+                Type = LambdaSignaturesLiterals.TypeLambda,
                 Description = "Executable body evaluated once per selected node; all returned child nodes are included into that selected node",
                 Required = true,
                 Mode = SlotChildMode.ExecutableLambda,
@@ -785,5 +785,10 @@ namespace magic.lambda.signatures
         {
             ThrowSignature.Option("apply-lists", "bool", "Whether list results should be applied while unwrapping", "false"),
         };
+    }
+
+    static class LambdaSignaturesLiterals
+    {
+        public const string TypeLambda = "lambda";
     }
 }

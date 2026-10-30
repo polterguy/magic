@@ -24,6 +24,8 @@ namespace magic.data.common.helpers
     /// </summary>
     public static class Executor
     {
+        const string DatabasePlaceholder = "{database}";
+
         // A database name is a name, never a path and never a connection string.
         readonly static Regex _legalDatabaseName = new Regex("^[a-zA-Z0-9_-]+$", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
         /*
@@ -147,7 +149,7 @@ namespace magic.data.common.helpers
             if (string.IsNullOrEmpty(connectionString))
             {
                 var generic = settings.ConnectionString("generic", databaseType);
-                connectionString = generic.Replace("{database}", defaultCatalogue);
+                connectionString = generic.Replace(DatabasePlaceholder, defaultCatalogue);
             }
             else if (connectionString.StartsWith('[') && connectionString.EndsWith(']'))
             {
@@ -158,18 +160,18 @@ namespace magic.data.common.helpers
                     if (segments.Length != 2)
                         throw new HyperlambdaException($"I don't understand '{connectionString}' as a connection string");
                     var generic = settings.ConnectionString(segments[0], databaseType);
-                    connectionString = generic.Replace("{database}", VerifyDatabaseName(segments[1]));
+                    connectionString = generic.Replace(DatabasePlaceholder, VerifyDatabaseName(segments[1]));
                 }
                 else
                 {
                     var generic = settings.ConnectionString("generic", databaseType);
-                    connectionString = generic.Replace("{database}", VerifyDatabaseName(connectionString));
+                    connectionString = generic.Replace(DatabasePlaceholder, VerifyDatabaseName(connectionString));
                 }
             }
             else if (!connectionString.Contains(';') && !connectionString.Contains(':'))
             {
                 var generic = settings.ConnectionString("generic", databaseType);
-                connectionString = generic.Replace("{database}", VerifyDatabaseName(connectionString));
+                connectionString = generic.Replace(DatabasePlaceholder, VerifyDatabaseName(connectionString));
             }
             else if (signaler.Peek<List<Node>>("whitelist") != null)
             {

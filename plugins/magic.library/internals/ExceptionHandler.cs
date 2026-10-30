@@ -22,6 +22,8 @@ namespace magic.library.internals
      */
     internal sealed class ExceptionHandler : IExceptionHandler
     {
+        const string MessageName = "message";
+
         const string DEFAULT_ERROR_MESSAGE = "Guru meditation, come back when Universe is in order!";
 
         /*
@@ -115,7 +117,7 @@ namespace magic.library.internals
                 await signaler.SignalAsync("io.file.execute", lambda, skipWhitelist: true);
 
                 // Rendering custom exception response.
-                await RenderCustomExceptionResponse(context, signaler, lambda);
+                await RenderCustomExceptionResponse(context, lambda);
 
                 // Returning true to inform caller we have handled the exception.
                 return true;
@@ -146,7 +148,6 @@ namespace magic.library.internals
          */
         static async Task RenderCustomExceptionResponse(
             HttpContext context,
-            ISignaler signaler,
             Node nodeResult)
         {
             // Decorating status code for HTTP response and removing [status] from payload response.
@@ -159,8 +160,8 @@ namespace magic.library.internals
              * making sure we return default message if no message was returned from
              * Hyperlambda file.
              */
-            if (!nodeResult.Children.Any(x => x.Name == "message"))
-                nodeResult.Add(new Node("message", DEFAULT_ERROR_MESSAGE));
+            if (!nodeResult.Children.Any(x => x.Name == MessageName))
+                nodeResult.Add(new Node(MessageName, DEFAULT_ERROR_MESSAGE));
 
             /*
              * Notice, we have no way to determine the frontend used unless we find an explicit configuration part.
@@ -180,7 +181,7 @@ namespace magic.library.internals
         {
             // Creating arguments to exception handler file.
             var args = new Node("", exceptionHandlerFile);
-            args.Add(new Node("message", ex.Error.Message));
+            args.Add(new Node(MessageName, ex.Error.Message));
             args.Add(new Node("path", ex.Path));
             args.Add(new Node("stack", ex.Error.StackTrace));
             args.Add(new Node("source", ex.Error.Source));
@@ -255,7 +256,7 @@ namespace magic.library.internals
                 if (hypEx.IsPublic)
                 {
                     // Exception details is supposed to be publicly visible.
-                    response.Add(new Node("message", msg));
+                    response.Add(new Node(MessageName, msg));
 
                     /*
                      * Checking if we've got a field name of some sort, which allows client
@@ -268,13 +269,13 @@ namespace magic.library.internals
                 else
                 {
                     // Exception details is not supposed to be publicly visible.
-                    response.Add(new Node("message", DEFAULT_ERROR_MESSAGE));
+                    response.Add(new Node(MessageName, DEFAULT_ERROR_MESSAGE));
                 }
             }
             else
             {
                 // Default exception response, returned if exception is not Hyperlambda exception.
-                response.Add(new Node("message", DEFAULT_ERROR_MESSAGE));
+                response.Add(new Node(MessageName, DEFAULT_ERROR_MESSAGE));
             }
             return response;
         }

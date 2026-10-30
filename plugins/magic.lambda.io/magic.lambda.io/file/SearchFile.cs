@@ -116,12 +116,7 @@ namespace magic.lambda.io.file
         {
             if (extensions.Length == 0)
                 return true;
-            foreach (var ext in extensions)
-            {
-                if (filename.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase))
-                    return true;
-            }
-            return false;
+            return extensions.Any(ext => filename.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase));
         }
 
         /*

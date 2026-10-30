@@ -25,7 +25,7 @@ namespace magic.data.common.signatures
             var result = new SlotChild
             {
                 Name = "table",
-                Type = "string",
+                Type = CrudSignaturesLiterals.TypeString,
                 Kind = "table-name",
                 Description = "Table name to use in the SQL statement",
                 Required = true,
@@ -37,7 +37,7 @@ namespace magic.data.common.signatures
                 result.Children.Add(new SlotChild
                 {
                     Name = "as",
-                    Type = "string",
+                    Type = CrudSignaturesLiterals.TypeString,
                     Kind = "table-alias",
                     Description = "Optional table alias",
                     Required = false,
@@ -54,7 +54,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "values",
-                Type = "lambda",
+                Type = CrudSignaturesLiterals.TypeLambda,
                 Description = "Column values to insert or update",
                 Required = true,
                 Mode = SlotChildMode.DynamicNamedValues,
@@ -64,7 +64,7 @@ namespace magic.data.common.signatures
                     new SlotChild
                     {
                         Name = "*",
-                        Type = "object",
+                        Type = CrudSignaturesLiterals.TypeObject,
                         Kind = "sql-column-value,text,number,boolean,date,guid,content,value",
                         Description = "Column name and value",
                         Required = true,
@@ -113,7 +113,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "where",
-                Type = "lambda",
+                Type = CrudSignaturesLiterals.TypeLambda,
                 Kind = "sql-predicate-root",
                 Description = required
                     ? "Required boolean predicate tree — destructive SQL must constrain affected rows"
@@ -154,7 +154,7 @@ namespace magic.data.common.signatures
             var result = new SlotChild
             {
                 Name = name,
-                Type = "lambda",
+                Type = CrudSignaturesLiterals.TypeLambda,
                 Kind = "sql-predicate-group",
                 Description = $"Boolean {name.ToUpperInvariant()} group",
                 Required = false,
@@ -192,7 +192,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "*",
-                Type = "object",
+                Type = CrudSignaturesLiterals.TypeObject,
                 Kind = "sql-column-condition,text,number,boolean,date,guid,content,value",
                 Description = "Column condition; suffix the name with .eq, .neq, .gt, .gte, .lt, .lte, .like, .ilike, or .in to select an operator",
                 Required = true,
@@ -223,7 +223,7 @@ namespace magic.data.common.signatures
                         // an IN list element. Hard-coding `.` is right here
                         // — list items in this shape have no semantic name.
                         Name = ".",
-                        Type = "object",
+                        Type = CrudSignaturesLiterals.TypeObject,
                         Kind = "text,number,boolean,date,guid,content,value",
                         Description = "Value item used by operators such as .in",
                         Required = false,
@@ -305,7 +305,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "*",
-                Type = "object",
+                Type = CrudSignaturesLiterals.TypeObject,
                 Kind = "sql-column-condition,sql-qualified-column,text,number,boolean,date,guid,content,value",
                 Description = "Join predicate: LHS is a column-with-operator suffix, RHS is the joined-side column reference (leaf-only — value-list children are a WHERE-clause feature, not meaningful in JOIN ON)",
                 Required = true,
@@ -369,7 +369,7 @@ namespace magic.data.common.signatures
             var result = new SlotChild
             {
                 Name = "join",
-                Type = "string",
+                Type = CrudSignaturesLiterals.TypeString,
                 Kind = "table-name",
                 Description = "Joined table name",
                 Required = false,
@@ -380,7 +380,7 @@ namespace magic.data.common.signatures
                     new SlotChild
                     {
                         Name = "type",
-                        Type = "string",
+                        Type = CrudSignaturesLiterals.TypeString,
                         Kind = "join-type",
                         Description = "Join type: inner, left, right, or full",
                         Required = false,
@@ -391,7 +391,7 @@ namespace magic.data.common.signatures
                     new SlotChild
                     {
                         Name = "as",
-                        Type = "string",
+                        Type = CrudSignaturesLiterals.TypeString,
                         Kind = "table-alias",
                         Description = "Optional joined table alias",
                         Required = false,
@@ -401,7 +401,7 @@ namespace magic.data.common.signatures
                     new SlotChild
                     {
                         Name = "on",
-                        Type = "lambda",
+                        Type = CrudSignaturesLiterals.TypeLambda,
                         Kind = "sql-predicate-root",
                         Description = "Join predicate tree comparing columns (AND-only at the schema level; the SQL builder still accepts hand-written [or] for legacy code)",
                         Required = true,
@@ -461,7 +461,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = ".",
-                Type = "lambda",
+                Type = CrudSignaturesLiterals.TypeLambda,
                 Kind = "row",
                 Description = "One row returned by the read; child nodes carry the selected column values, with each child's name being the column name or alias from the SELECT statement",
                 Required = false,
@@ -474,7 +474,7 @@ namespace magic.data.common.signatures
                     new SlotChild
                     {
                         Name = "*",
-                        Type = "string",
+                        Type = CrudSignaturesLiterals.TypeString,
                         Kind = "column-value",
                         Description = "Column value; child name is the column name (or alias) declared in the read",
                         Required = false,
@@ -506,7 +506,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "columns",
-                Type = "lambda",
+                Type = CrudSignaturesLiterals.TypeLambda,
                 Description = "Columns or aggregate expressions to select; omitted or empty means all columns",
                 Required = false,
                 Mode = SlotChildMode.DynamicNamedValues,
@@ -516,7 +516,7 @@ namespace magic.data.common.signatures
                     new SlotChild
                     {
                         Name = "*",
-                        Type = "string",
+                        Type = CrudSignaturesLiterals.TypeString,
                         Kind = "column-name,aggregate-expression",
                         Description = "Column name or aggregate expression; optional [as] child declares an alias",
                         Required = false,
@@ -531,7 +531,7 @@ namespace magic.data.common.signatures
                             new SlotChild
                             {
                                 Name = "as",
-                                Type = "string",
+                                Type = CrudSignaturesLiterals.TypeString,
                                 Kind = "column-alias",
                                 Description = "Column alias",
                                 Required = false,
@@ -549,7 +549,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "group",
-                Type = "lambda",
+                Type = CrudSignaturesLiterals.TypeLambda,
                 Description = "Columns or aggregate expressions to group by",
                 Required = false,
                 Mode = SlotChildMode.DynamicNamedValues,
@@ -559,7 +559,7 @@ namespace magic.data.common.signatures
                     new SlotChild
                     {
                         Name = "*",
-                        Type = "string",
+                        Type = CrudSignaturesLiterals.TypeString,
                         Kind = "column-name,aggregate-expression",
                         Description = "Column name or aggregate expression",
                         Required = false,
@@ -575,7 +575,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "order",
-                Type = "string",
+                Type = CrudSignaturesLiterals.TypeString,
                 Kind = "column-name,aggregate-expression",
                 Description = "Column, comma-separated columns, or aggregate expression to order by",
                 Required = false,
@@ -593,7 +593,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "direction",
-                Type = "string",
+                Type = CrudSignaturesLiterals.TypeString,
                 Kind = "sort-direction",
                 Description = description,
                 Required = false,
@@ -778,7 +778,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "database-type",
-                Type = "string",
+                Type = CrudSignaturesLiterals.TypeString,
                 Kind = "database-type",
                 Description = "Database adapter to use instead of the configured default",
                 Required = false,
@@ -910,7 +910,7 @@ namespace magic.data.common.signatures
             return new SlotChild
             {
                 Name = "*",
-                Type = "object",
+                Type = CrudSignaturesLiterals.TypeObject,
                 Kind = "sql-parameter-value,text,number,boolean,date,guid,content,value",
                 Description = "SQL parameter value; child name is used as the parameter name referenced by the SQL statement",
                 Required = false,
@@ -996,5 +996,12 @@ namespace magic.data.common.signatures
             MultipleResultSets(),
             SqlParameter(),
         };
+    }
+
+    static class CrudSignaturesLiterals
+    {
+        public const string TypeLambda = "lambda";
+        public const string TypeObject = "object";
+        public const string TypeString = "string";
     }
 }

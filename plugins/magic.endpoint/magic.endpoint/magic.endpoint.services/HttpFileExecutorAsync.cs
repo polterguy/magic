@@ -23,6 +23,11 @@ namespace magic.endpoint.services
     /// </summary>
     public class HttpFileExecutorAsync : IHttpExecutorAsync
     {
+        const string WwwFolder = "/etc/www/";
+        const string ContentTypeHeader = "Content-Type";
+        const string LocationHeader = "Location";
+        const string TextHtml = "text/html";
+
         readonly ISignaler _signaler;
         readonly IFileService _fileService;
         readonly IStreamService _streamService;
@@ -59,7 +64,7 @@ namespace magic.endpoint.services
             { "gif", "image/gif" },
             { "svg", "image/svg+xml" },
             { "md", "text/markdown" },
-            { "html", "text/html" },
+            { "html", TextHtml },
         };
 
         /*
@@ -122,7 +127,7 @@ namespace magic.endpoint.services
             if (request.URL.EndsWith('/'))
             {
                 var response = new MagicResponse { Result = 301 };
-                response.Headers["Location"] = request.Scheme + "://" + request.Host + "/" + request.URL.TrimEnd('/');
+                response.Headers[LocationHeader] = request.Scheme + "://" + request.Host + "/" + request.URL.TrimEnd('/');
                 return response;
             }
 
@@ -130,7 +135,7 @@ namespace magic.endpoint.services
             if (request.URL.EndsWith(".html", StringComparison.Ordinal))
             {
                 var response = new MagicResponse { Result = 301 };
-                response.Headers["Location"] = request.Scheme + "://" + request.Host + "/" + request.URL.Substring(0, request.URL.Length - 5);
+                response.Headers[LocationHeader] = request.Scheme + "://" + request.Host + "/" + request.URL.Substring(0, request.URL.Length - 5);
                 return response;
             }
 
@@ -138,7 +143,7 @@ namespace magic.endpoint.services
             if (request.URL.EndsWith("index", StringComparison.Ordinal))
             {
                 var response = new MagicResponse { Result = 301 };
-                response.Headers["Location"] = request.Scheme + "://" + request.Host + "/" + request.URL.Substring(0, request.URL.Length - 6);
+                response.Headers[LocationHeader] = request.Scheme + "://" + request.Host + "/" + request.URL.Substring(0, request.URL.Length - 6);
                 return response;
             }
 
@@ -149,18 +154,16 @@ namespace magic.endpoint.services
                 var redirectNode = config.Children.FirstOrDefault(x => x.Name == "redirect");
                 if (redirectNode != null)
                 {
-                    foreach (var idxRedirect in redirectNode.Children)
+                    foreach (var idxRedirect in redirectNode.Children.Where(
+                        n => n.Children.Any(x => x.Name == "from" && x.Get<string>() == request.URL)))
                     {
-                        if (idxRedirect.Children.Any(x => x.Name == "from" && x.Get<string>() == request.URL))
+                        // Redirecting.
+                        var response = new MagicResponse
                         {
-                            // Redirecting.
-                            var response = new MagicResponse
-                            {
-                                Result = 301
-                            };
-                            response.Headers["Location"] = idxRedirect.Children.FirstOrDefault(x => x.Name == "to").Get<string>();
-                            return response;
-                        }
+                            Result = 301
+                        };
+                        response.Headers[LocationHeader] = idxRedirect.Children.FirstOrDefault(x => x.Name == "to").Get<string>();
+                        return response;
                     }
                 }
             }
@@ -170,7 +173,7 @@ namespace magic.endpoint.services
                 return await ServeHtmlFileAsync(request, config); // HTML file, might have Hyperlambda codebehind file.
 
             // Statically served file.
-            return await ServeStaticFileAsync("/etc/www/" + request.URL, config);
+            return await ServeStaticFileAsync(WwwFolder + request.URL, config);
         }
 
         #region [ -- Private helper methods -- ]
@@ -236,14 +239,14 @@ namespace magic.endpoint.services
                     if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(codebehindFile2)))
                     {
                         var tmp = await ServeDynamicPage(request, not_found, codebehindFile2, config); // Codebehind file exists.
-                        tmp.Headers["Content-Type"] = "text/html";
+                        tmp.Headers[ContentTypeHeader] = TextHtml;
                         tmp.Result = 404;
                         return tmp;
                     }
 
                     // No codebehind file, serving file as static content file.
                     var tmp2 = await ServeStaticFileAsync(not_found, config);
-                    tmp2.Headers["Content-Type"] = "text/html";
+                    tmp2.Headers[ContentTypeHeader] = TextHtml;
                     tmp2.Result = 404;
                     return tmp2;
                 }
@@ -253,7 +256,7 @@ namespace magic.endpoint.services
                     Result = 404,
                     Headers = new Dictionary<string, string>
                     {
-                        { "Content-Type", "text/html" }
+                        { ContentTypeHeader, TextHtml }
                     }
                 };
             }
@@ -263,7 +266,7 @@ namespace magic.endpoint.services
                 Result = 404,
                 Headers = new Dictionary<string, string>
                 {
-                    { "Content-Type", "text/html" }
+                    { ContentTypeHeader, TextHtml }
                 }
             };
         }
@@ -290,7 +293,7 @@ namespace magic.endpoint.services
                 var response = new MagicResponse();
                 var result = new Node();
                 var execution = _executionRegistry.Create(request.Aborted);
-                response.Headers["Content-Type"] = "text/html";
+                response.Headers[ContentTypeHeader] = TextHtml;
                 response.Headers["X-Execution-Id"] = execution.ExecutionId;
 
                 /*
@@ -339,16 +342,16 @@ namespace magic.endpoint.services
                 url = url.Substring(1);
 
             // Trying to resolve URL as a direct filename request.
-            if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath("/etc/www/" + url)))
-                return "/etc/www/" + url;
+            if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(WwwFolder + url)))
+                return WwwFolder + url;
 
             // Trying to resolve URL as a direct filename request with HTML extension.
-            if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath("/etc/www/" + url + ".html")))
-                return "/etc/www/" + url + ".html";
+            if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(WwwFolder + url + ".html")))
+                return WwwFolder + url + ".html";
 
             // File didn't exists, checking if /FOLDER/INDEX.HTML exists.
-            if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath("/etc/www/" + url + "/index.html")))
-                return "/etc/www/" + url + "/index.html";
+            if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(WwwFolder + url + "/index.html")))
+                return WwwFolder + url + "/index.html";
 
             /*
              * Traversing upwards in folder hierarchy and returning the
@@ -362,23 +365,19 @@ namespace magic.endpoint.services
             while (true)
             {
                 var cur = string.Join("/", splits) + "/" + "default.html";
-                if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath("/etc/www/" + cur)))
-                    return "/etc/www/" + cur;
+                if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath(WwwFolder + cur)))
+                    return WwwFolder + cur;
                 if (splits.Length == 0)
                     break;
                 splits = splits.Take(splits.Length - 1).ToArray();
             }
 
-            // Checking if site has been configured to serve pages as SPA pages (frontend routing type of resolving).
-            if (config != null)
-            {
-                // Checking if [spa-enabled] node exists, and has a value of boolean true.
-                if (config.Children.FirstOrDefault(x => x.Name == "spa_enabled")?.GetEx<bool>() ?? false)
-                {
-                    if (await _fileService.ExistsAsync(_rootResolver.AbsolutePath("/etc/www/index.html")))
-                        return "/etc/www/index.html";
-                }
-            }
+            // Checking if site has been configured to serve pages as SPA pages (frontend routing type of resolving),
+            // which it has if the [spa_enabled] node exists and has a value of boolean true.
+            if (config != null &&
+                (config.Children.FirstOrDefault(x => x.Name == "spa_enabled")?.GetEx<bool>() ?? false) &&
+                await _fileService.ExistsAsync(_rootResolver.AbsolutePath("/etc/www/index.html")))
+                return "/etc/www/index.html";
 
             // Nothing found that can resolve specified URL.
             return null;
@@ -402,15 +401,15 @@ namespace magic.endpoint.services
             var fileName = url.Substring(url.LastIndexOf('/') + 1);
             var ext = fileName.Contains('.') ? fileName.Substring(fileName.LastIndexOf('.') + 1) : fileName;
             if (_mimeTypes.TryGetValue(ext, out string value))
-                response.Headers["Content-Type"] = value;
+                response.Headers[ContentTypeHeader] = value;
             else
-                response.Headers["Content-Type"] = "application/octet-stream"; // Defaulting to binary content
+                response.Headers[ContentTypeHeader] = "application/octet-stream"; // Defaulting to binary content
 
             // Adding default headers from .config file.
             AddDefaultStaticHttpHeaders(response, ext, config);
 
             // Checking if Content-Type is application/json, at which point we load the file before returning it.
-            if (response.Headers["Content-Type"].Contains("application/json"))
+            if (response.Headers[ContentTypeHeader].Contains("application/json"))
                 response.Content = await _fileService.LoadAsync(_rootResolver.AbsolutePath(url));
             else
                 response.Content = await _streamService.OpenFileAsync(_rootResolver.AbsolutePath(url));

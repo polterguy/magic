@@ -33,6 +33,8 @@ namespace magic.endpoint.controller
     /// </summary>
     public class EndpointController : ControllerBase
     {
+        const string ApplicationJson = "application/json";
+
         // Signal implementation needed to invoke slots.
         readonly ISignaler _signaler;
 
@@ -45,7 +47,7 @@ namespace magic.endpoint.controller
          */
         static readonly Dictionary<string, Func<ISignaler, HttpRequest, Task<Node>>> _payloadHandlers = new()
         {
-            { "application/json", RequestHandlers.JsonHandler },
+            { ApplicationJson, RequestHandlers.JsonHandler },
             { "application/x-json", RequestHandlers.JsonHandler },
             { "application/x-www-form-urlencoded", RequestHandlers.UrlEncodedHandler },
             { "application/www-form-urlencoded", RequestHandlers.UrlEncodedHandler },
@@ -59,7 +61,7 @@ namespace magic.endpoint.controller
         readonly static Dictionary<string, Func<MagicResponse, IActionResult>> _responseHandlers = new()
         {
             {
-                "application/json", ResponseHandlers.JsonHandler
+                ApplicationJson, ResponseHandlers.JsonHandler
             }
         };
 
@@ -173,7 +175,7 @@ namespace magic.endpoint.controller
                 .Select(x => x.Trim())
                 .FirstOrDefault()?
                 .ToLowerInvariant() ??
-                "application/json";
+                ApplicationJson;
 
             /*
              * Figuring out how to read request, which depends upon its Content-Type, and
@@ -260,7 +262,7 @@ namespace magic.endpoint.controller
             if (!response.Headers.TryGetValue("Content-Type", out string value) || string.IsNullOrEmpty(value))
             {
                 Response.ContentType = "application/json; charset=utf-8";
-                return "application/json";
+                return ApplicationJson;
             }
             else
             {

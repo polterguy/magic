@@ -37,7 +37,7 @@ namespace magic.lambda.http.signatures
             },
             new SlotChild
             {
-                Name = "headers",
+                Name = HttpSignaturesLiterals.HeadersName,
                 Type = "lambda",
                 Kind = "http-header-list",
                 Description = "HTTP response headers returned by the server",
@@ -51,7 +51,7 @@ namespace magic.lambda.http.signatures
                     new SlotChild
                     {
                         Name = "*",
-                        Type = "string",
+                        Type = HttpSignaturesLiterals.TypeString,
                         Kind = "http-header-value",
                         Description = "HTTP response header value; child name is the header name",
                         Required = false,
@@ -85,23 +85,23 @@ namespace magic.lambda.http.signatures
         {
             var childDescription = name switch
             {
-                "query" => "Query parameter value",
-                "url-params" => "URL placeholder replacement value",
-                "headers" => "HTTP header value",
+                HttpSignaturesLiterals.QueryName => "Query parameter value",
+                HttpSignaturesLiterals.UrlParams => "URL placeholder replacement value",
+                HttpSignaturesLiterals.HeadersName => "HTTP header value",
                 _ => "Named value",
             };
             var childKind = name switch
             {
-                "query" => "query-parameter-value",
-                "url-params" => "url-parameter-value",
-                "headers" => "http-header-value",
+                HttpSignaturesLiterals.QueryName => "query-parameter-value",
+                HttpSignaturesLiterals.UrlParams => "url-parameter-value",
+                HttpSignaturesLiterals.HeadersName => "http-header-value",
                 _ => null,
             };
             var kind = name switch
             {
-                "query" => "query-parameter-list",
-                "url-params" => "url-parameter-list",
-                "headers" => "http-header-list",
+                HttpSignaturesLiterals.QueryName => "query-parameter-list",
+                HttpSignaturesLiterals.UrlParams => "url-parameter-list",
+                HttpSignaturesLiterals.HeadersName => "http-header-list",
                 _ => null,
             };
             return new SlotChild
@@ -120,13 +120,13 @@ namespace magic.lambda.http.signatures
                 // url-template Input value. Mark the link so tooling derives
                 // child names from the parsed URL rather than picking from a
                 // generic catalog.
-                LinkedToValueKind = name == "url-params" ? "url-template" : null,
+                LinkedToValueKind = name == HttpSignaturesLiterals.UrlParams ? "url-template" : null,
                 Children =
                 {
                     new SlotChild
                     {
                         Name = "*",
-                        Type = "string",
+                        Type = HttpSignaturesLiterals.TypeString,
                         Kind = childKind,
                         Description = childDescription,
                         Required = false,
@@ -174,7 +174,7 @@ namespace magic.lambda.http.signatures
             result.Arguments.Add(new SlotChild
             {
                 Name = "message",
-                Type = "string",
+                Type = HttpSignaturesLiterals.TypeString,
                 Kind = "sse-message,text-line,text",
                 Description = "One server-sent event line as delivered by the HTTP stream reader",
                 Mode = SlotChildMode.Value,
@@ -189,10 +189,10 @@ namespace magic.lambda.http.signatures
         {
             return new[]
             {
-                DynamicMap("query", "Query string parameters"),
-                DynamicMap("url-params", "Named replacements for {placeholders} in the URL"),
-                DynamicMap("headers", "HTTP request headers"),
-                Option("token", "string", "Bearer token to add as Authorization header", kind: "bearer-token"),
+                DynamicMap(HttpSignaturesLiterals.QueryName, "Query string parameters"),
+                DynamicMap(HttpSignaturesLiterals.UrlParams, "Named replacements for {placeholders} in the URL"),
+                DynamicMap(HttpSignaturesLiterals.HeadersName, "HTTP request headers"),
+                Option("token", HttpSignaturesLiterals.TypeString, "Bearer token to add as Authorization header", kind: "bearer-token"),
                 Option("timeout", "int", "Request timeout in seconds", kind: "timeout-seconds"),
                 Option("convert", "bool", "Whether to convert known response content types to lambda", "false", "boolean"),
                 Sse(),
@@ -235,7 +235,7 @@ namespace magic.lambda.http.signatures
                         Evaluation = SlotChildEvaluation.UnwrapDescendants,
                         Projection = SlotChildProjection.StructuredTree,
                     },
-                    Option("filename", "string", "File path to stream as the request payload", kind: "file-path"),
+                    Option("filename", HttpSignaturesLiterals.TypeString, "File path to stream as the request payload", kind: "file-path"),
                 };
                 return result;
             }
@@ -256,5 +256,13 @@ namespace magic.lambda.http.signatures
                 return new[] { result };
             }
         }
+    }
+
+    static class HttpSignaturesLiterals
+    {
+        public const string HeadersName = "headers";
+        public const string QueryName = "query";
+        public const string TypeString = "string";
+        public const string UrlParams = "url-params";
     }
 }
