@@ -24,7 +24,7 @@ jobs:
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
-            /d:sonar.coverage.exclusions="frontend/**"
+            /d:sonar.coverage.exclusions="frontend/**,backend/**,**/magic.lambda.puppeteer/**"
           dotnet build magic.sln
           dotnet test magic.sln --no-build --collect:"XPlat Code Coverage" \
             -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
