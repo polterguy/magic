@@ -155,13 +155,11 @@ export function audit(doc: Document, urls: string[]): Finding[] {
   return findings;
 }
 
-export default function Quality(props: {
+export default function Quality(props: Readonly<{
   doc: Document | null;
   urls: string[];
-  // Bumped on every edit, so the list is re-read rather than remembered.
-  version: number;
   onSelect: (node: Node) => void;
-}) {
+}>) {
 
   if (!props.doc) {
     return <p className="designer-empty">No page open.</p>;

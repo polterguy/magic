@@ -50,7 +50,7 @@ let dynamicCache: { from: string; commands: DynamicCommand[] } | null = null;
 let lastQuery = '';
 
 async function loadDynamic(): Promise<DynamicCommand[]> {
-  if (dynamicCache && dynamicCache.from === apiBaseUrl()) {
+  if (dynamicCache?.from === apiBaseUrl()) {
     return dynamicCache.commands;
   }
   const [endpoints, moduleFiles, wwwFiles, tasks, models] = await Promise.all([
@@ -165,13 +165,13 @@ function highlight(text: string, query: string) {
     positions.has(at) ? <b key={at}>{char}</b> : char);
 }
 
-export default function CommandPalette(props: {
+export default function CommandPalette(props: Readonly<{
   // Guard-aware navigation supplied by Layout.
   go: (to: string) => void;
   // Extra commands only the layout can perform — theme, cloudlet, Frank.
   actions: { label: string; action: () => void }[];
   onClose: () => void;
-}) {
+}>) {
 
   const [query, setQuery] = useState(lastQuery);
   const [selected, setSelected] = useState(0);

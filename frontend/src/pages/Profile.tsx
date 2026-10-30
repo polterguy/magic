@@ -142,7 +142,7 @@ export default function Profile() {
   );
 }
 
-function GenerateTokenDialog({ onClose }: { onClose: () => void }) {
+function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
 
   const [username, setUsername] = useState('service');
   const [roles, setRoles] = useState<string[]>([]);

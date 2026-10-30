@@ -121,7 +121,7 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
       } else if (preferMagic) {
         setDatabase(names.includes('magic') ? 'magic' : names[0] ?? '');
       } else {
-        setDatabase(names.filter((name: string) => name !== 'magic')[0] ?? names[0] ?? '');
+        setDatabase(names.find((name: string) => name !== 'magic') ?? names[0] ?? '');
       }
     }).catch(() => {
       if (current !== schemaSeq.current) {

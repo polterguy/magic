@@ -30,10 +30,10 @@ const MODELS: { name: string; input_price: number; output_price: number }[] = [
  */
 const DEFAULT_MODEL = 'gpt-5.6-terra';
 
-export default function OpenAiKeyDialog(props: {
+export default function OpenAiKeyDialog(props: Readonly<{
   onClose: () => void;
   onSaved: () => void;
-}) {
+}>) {
 
   const [key, setKey] = useState('');
   const [busy, setBusy] = useState(false);

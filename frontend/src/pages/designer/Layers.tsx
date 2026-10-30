@@ -61,7 +61,7 @@ function matching(root: Element, query: string) {
   return keep;
 }
 
-export default function Layers(props: {
+export default function Layers(props: Readonly<{
   root: Element | null;
   selected: Node | null;
   // Elements the page renders as display:none, shown greyed.
@@ -70,7 +70,7 @@ export default function Layers(props: {
   onHover: (node: Node | null) => void;
   // Double click — take me to it on the canvas.
   onReveal: (node: Node) => void;
-}) {
+}>) {
 
   // Nodes whose open state the user has flipped away from the default.
   const [flipped, setFlipped] = useState<Set<Node>>(new Set());

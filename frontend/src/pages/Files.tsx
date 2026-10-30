@@ -49,7 +49,7 @@ import FileTree from './files/FileTree';
 import SelectModelDialog from './files/SelectModelDialog';
 import { nameOf, parentOf } from './files/paths';
 
-const PROTECTED_FOLDERS = ['/', '/system/', '/misc/', '/data/', '/config/', '/etc/', '/modules/'];
+const PROTECTED_FOLDERS = new Set(['/', '/system/', '/misc/', '/data/', '/config/', '/etc/', '/modules/']);
 
 /*
  * Converts a form value to the argument type the Hyperlambda expects.
@@ -78,7 +78,7 @@ function convertArgument(value: string, type: string) {
  *
  * Its route is the path with ".<verb>.hl" stripped, under "magic/".
  */
-const ENDPOINT_VERBS = ['get', 'post', 'put', 'patch', 'delete'];
+const ENDPOINT_VERBS = new Set(['get', 'post', 'put', 'patch', 'delete']);
 
 function endpointOf(path: string): { path: string; verb: string } | null {
   const relative = path.replace(/^\/+/, '');
@@ -86,7 +86,7 @@ function endpointOf(path: string): { path: string; verb: string } | null {
     return null;
   }
   const parts = relative.split('.');
-  if (parts.length !== 3 || parts[2] !== 'hl' || !ENDPOINT_VERBS.includes(parts[1])) {
+  if (parts.length !== 3 || parts[2] !== 'hl' || !ENDPOINT_VERBS.has(parts[1])) {
     return null;
   }
   return { path: 'magic/' + parts[0], verb: parts[1] };
@@ -659,7 +659,7 @@ export default function Files() {
   }
 
   async function removeFolder(path: string) {
-    if (PROTECTED_FOLDERS.includes(path)) {
+    if (PROTECTED_FOLDERS.has(path)) {
       show('You cannot delete the ' + path + ' folder', true);
       return;
     }
@@ -701,7 +701,7 @@ export default function Files() {
   }
 
   async function rename(path: string, isFolder: boolean) {
-    if (isFolder && PROTECTED_FOLDERS.includes(path)) {
+    if (isFolder && PROTECTED_FOLDERS.has(path)) {
       show('You cannot rename the ' + path + ' folder', true);
       return;
     }
@@ -1089,8 +1089,7 @@ export default function Files() {
         <OpenApiDialog
           json={openApiSpec.json}
           target={openApiSpec.target}
-          onClose={() => setOpenApiSpec(null)}
-          onNotify={show} />
+          onClose={() => setOpenApiSpec(null)} />
       )}
       {gitTarget !== null && (
         <GitPanel

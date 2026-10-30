@@ -5,12 +5,12 @@
 
 import { CSSProperties } from 'react';
 
-export default function SearchInput(props: {
+export default function SearchInput(props: Readonly<{
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   style?: CSSProperties;
-}) {
+}>) {
   return (
     <span className="search-input" style={props.style}>
       <input

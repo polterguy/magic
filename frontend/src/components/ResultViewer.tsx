@@ -50,7 +50,7 @@ function isText(contentType: string) {
 
 export default function ResultViewer(
   { result, height = '55vh', onText }:
-  { result: RawResult; height?: string; onText?: (text: string | null) => void }) {
+  Readonly<{ result: RawResult; height?: string; onText?: (text: string | null) => void }>) {
 
   const [text, setText] = useState<string | null>(null);
   const [preview, setPreview] = useState(false);

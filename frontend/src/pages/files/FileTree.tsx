@@ -61,7 +61,7 @@ function previewUrl(path: string): string | null {
  * The recursive folder/file tree of the Hyper IDE. All state lives in the
  * page — the tree only renders it and reports clicks back through callbacks.
  */
-export default function FileTree(props: {
+export default function FileTree(props: Readonly<{
   folders: string[];
   visibleFiles: string[];
   // Null when no filter is active — every folder shows.
@@ -82,7 +82,7 @@ export default function FileTree(props: {
   onRename: (path: string, isFolder: boolean) => void;
   onDeleteFolder: (folder: string) => void;
   onDeleteFile: (file: string) => void;
-}) {
+}>) {
 
   const { folders, visibleFiles, visibleFolders, query, expanded } = props;
 
@@ -206,7 +206,7 @@ export default function FileTree(props: {
   return renderChildren('/');
 }
 
-function FolderActions(props: {
+function FolderActions(props: Readonly<{
   onNewFile: () => void;
   onNewFolder: () => void;
   onGit?: () => void;
@@ -214,7 +214,7 @@ function FolderActions(props: {
   onAiFunctions?: () => void;
   onRename?: () => void;
   onDelete?: () => void;
-}) {
+}>) {
   return (
     <span className="row-actions" role="presentation" onClick={e => e.stopPropagation()}>
       <button className="icon-btn" title="New file" onClick={props.onNewFile}><FilePlusIcon /></button>
@@ -239,12 +239,12 @@ function FolderActions(props: {
   );
 }
 
-function FileActions(props: {
+function FileActions(props: Readonly<{
   onPreview?: (e: React.MouseEvent) => void;
   onAiFunction?: (e: React.MouseEvent) => void;
   onRename: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
-}) {
+}>) {
   return (
     <span className="row-actions">
       {props.onPreview && (

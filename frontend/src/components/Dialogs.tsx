@@ -103,7 +103,7 @@ let modalSeq = 0;
  * Shared modal shell — every dialog in the app renders through this, so
  * Escape and backdrop-click always close.
  */
-export function Modal(props: {
+export function Modal(props: Readonly<{
   onClose: () => void;
   // When set, Enter pressed inside a plain <input> confirms the dialog — the
   // carriage-return behaviour every text field is expected to have. Textareas,
@@ -112,7 +112,7 @@ export function Modal(props: {
   onSubmit?: () => void;
   width?: number;
   children: ReactNode;
-}) {
+}>) {
 
   const idRef = useRef(Symbol('modal'));
   const [zIndex] = useState(() => OVERLAY_BASE_Z + ++modalSeq);
@@ -231,7 +231,7 @@ export function useDialog() {
   return useContext(DialogContext);
 }
 
-export function DialogProvider({ children }: { children: ReactNode }) {
+export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) {
 
   const [active, setActive] = useState<ActiveDialog | null>(null);
   const [draft, setDraft] = useState('');

@@ -206,7 +206,7 @@ export function ownStylesheet(doc: Document, file: string, head: string, tail: s
   if (!link) {
     return;
   }
-  link.setAttribute('data-magic-disabled', '');
+  link.dataset.magicDisabled = '';
   link.disabled = true;
 
   const next = link.nextElementSibling;
@@ -214,7 +214,7 @@ export function ownStylesheet(doc: Document, file: string, head: string, tail: s
     ? next
     : link.insertAdjacentElement('afterend', doc.createElement('style'))!;
   author.setAttribute(TOOL_ATTRIBUTE, '');
-  author.setAttribute('data-magic-author', '');
+  (author as HTMLElement).dataset.magicAuthor = '';
   author.textContent = absoluteUrls(head + '\n' + tail, link.href);
 }
 

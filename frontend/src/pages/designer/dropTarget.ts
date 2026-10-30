@@ -9,7 +9,7 @@
  */
 
 import { canContainChildren } from './html';
-import { designableChildren, isElement, rectOf } from './nodes';
+import { designableChildren, rectOf } from './nodes';
 
 export interface DropSpot {
   // Where the node will be inserted.
@@ -92,11 +92,10 @@ export function findDropSpot(
    * dragged and everything inside it skipped — it is about to be somewhere
    * else, and it must not be able to swallow itself.
    */
-  const under = (doc.elementsFromPoint(x, y) as Element[]).filter(element =>
+  const target = (doc.elementsFromPoint(x, y) as Element[]).find(element =>
     element.tagName !== 'HTML' &&
-    !element.hasAttribute('data-magic-tool') &&
+    (element as HTMLElement).dataset.magicTool === undefined &&
     (!dragged || (element !== dragged && !dragged.contains(element))));
-  const target = under[0];
   if (!target) {
     return null;
   }

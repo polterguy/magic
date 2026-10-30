@@ -5,12 +5,12 @@ import { nameOf } from './paths';
  * they were opened, with a dirty marker while content differs from what was
  * last saved.
  */
-export default function FileTabs(props: {
+export default function FileTabs(props: Readonly<{
   openFiles: { path: string; content: string; saved: string }[];
   selectedFile: string;
   onSelect: (path: string) => void;
   onClose: (path: string) => void;
-}) {
+}>) {
   return (
     <div className="file-tabs" role="tablist">
       {props.openFiles.map(file => (

@@ -83,7 +83,7 @@ function widgetDocument(html: string, id: string) {
 </html>`;
 }
 
-export default function WidgetDialog(props: { html: string; onClose: () => void }) {
+export default function WidgetDialog(props: Readonly<{ html: string; onClose: () => void }>) {
 
   // Stable per dialog, so a height message can be matched to this widget.
   const [id] = useState(() => 'w' + Math.random().toString(36).slice(2));

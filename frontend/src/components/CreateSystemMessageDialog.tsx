@@ -11,12 +11,12 @@ import { createSocket } from '../lib/socket';
 import { Modal, useDialog } from './Dialogs';
 import { createSystemMessage, gibberish } from '../lib/api';
 
-export default function CreateSystemMessageDialog(props: {
+export default function CreateSystemMessageDialog(props: Readonly<{
   instruction: string;
   template: string;
   onGenerated: (message: string) => void;
   onClose: () => void;
-}) {
+}>) {
 
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);

@@ -167,14 +167,14 @@ export function writeMeta(doc: Document, home: Home, value: string) {
   head.appendChild(meta);
 }
 
-export default function Meta(props: {
+export default function Meta(props: Readonly<{
   doc: Document | null;
   // Absolute origin of the cloudlet, so a preview loads from where the page will.
   origin: string;
   urls: string[];
   onSet: (home: Home, value: string) => void;
   onChooseImage: (home: Home) => void;
-}) {
+}>) {
 
   /*
    * The one field whose server-filled value has been deliberately unlocked.

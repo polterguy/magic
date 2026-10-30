@@ -285,11 +285,11 @@ export default function QuestionnairesTab() {
   );
 }
 
-function QuestionnaireDialog(props: {
+function QuestionnaireDialog(props: Readonly<{
   existing: Questionnaire | null;
   onClose: () => void;
   onSaved: (name: string) => void;
-}) {
+}>) {
 
   const { existing } = props;
   const [name, setName] = useState(existing?.name ?? '');
@@ -371,12 +371,12 @@ function QuestionnaireDialog(props: {
   );
 }
 
-function QuestionDialog(props: {
+function QuestionDialog(props: Readonly<{
   questionnaire: string;
   existing: Question | null;
   onClose: () => void;
   onSaved: () => void;
-}) {
+}>) {
 
   const { existing } = props;
   const [question, setQuestion] = useState(existing?.question ?? '');

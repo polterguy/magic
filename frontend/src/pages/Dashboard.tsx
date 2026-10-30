@@ -77,10 +77,10 @@ async function rootIsServed() {
  */
 const TASK_PAGE_SIZE = 6;
 
-function TaskSection(props: {
+function TaskSection(props: Readonly<{
   // Total task count, so paging knows where the list ends.
   count: number | null;
-}) {
+}>) {
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [page, setPage] = useState(0);
@@ -675,7 +675,7 @@ const DEFAULT_BOT_MODEL = 'gpt-5.6-luna';
  * an emailed one-shot link, so they have no password they know. Dismissable —
  * the next emailed link works just as well.
  */
-function SetPasswordDialog(props: { onClose: () => void }) {
+function SetPasswordDialog(props: Readonly<{ onClose: () => void }>) {
 
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -730,7 +730,7 @@ function SetPasswordDialog(props: { onClose: () => void }) {
   );
 }
 
-function CreateChatbot(props: { onTour: () => void }) {
+function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
 
   const [url, setUrl] = useState('');
   const [model, setModel] = useState(DEFAULT_BOT_MODEL);

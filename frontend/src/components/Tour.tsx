@@ -40,10 +40,10 @@ function visibleTarget(step: TourStep): HTMLElement | null {
  * step, or an explicit Skip. Escaping out, or a tour with nothing to point at,
  * does not count, so the caller can offer it again.
  */
-export default function Tour(props: {
+export default function Tour(props: Readonly<{
   steps: TourStep[];
   onClose: (completed: boolean) => void;
-}) {
+}>) {
 
   /*
    * Resolved once on open. Re-resolving per render would reshuffle the tour

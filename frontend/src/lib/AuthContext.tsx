@@ -81,7 +81,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
 
   const [backend, setBackend] = useState<StoredBackend | null>(() => {
     /*

@@ -9,9 +9,9 @@ import { TableSkeleton } from '../../components/Skeleton';
 import { mlRequests, mlRequestsCount } from '../../lib/api';
 import { usePagedList } from '../../lib/usePagedList';
 
-export default function HistoryTab(props: {
+export default function HistoryTab(props: Readonly<{
   types: any[];
-}) {
+}>) {
 
   const PAGE_SIZE = 15;
   const [type, setType] = useState('');
@@ -89,7 +89,7 @@ export default function HistoryTab(props: {
  * screen as visible characters and never as live HTML. Never render any of
  * these values through dangerouslySetInnerHTML.
  */
-function RequestRow(props: { request: any; expanded: boolean; onToggle: () => void }) {
+function RequestRow(props: Readonly<{ request: any; expanded: boolean; onToggle: () => void }>) {
   return (
     <>
       <tr

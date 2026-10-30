@@ -13,7 +13,7 @@ import { ListSkeleton } from '../../components/Skeleton';
 import { availableWorkflows, mlSnippetCreate } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 
-export default function AddFunctionDialog(props: {
+export default function AddFunctionDialog(props: Readonly<{
   type: string;
   onClose: () => void;
   onInstalled: () => void;
@@ -22,7 +22,7 @@ export default function AddFunctionDialog(props: {
    * training snippet — how a function gets added to a system instruction.
    */
   onDeclaration?: (file: string) => void;
-}) {
+}>) {
 
   const [workflows, setWorkflows] = useState<any[]>([]);
   const [filter, setFilter] = useState('');

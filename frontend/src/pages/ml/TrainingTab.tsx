@@ -28,11 +28,11 @@ import AddWidgetDialog from './AddWidgetDialog';
 import EditSnippetDialog from './EditSnippetDialog';
 import SpiceDialog from './SpiceDialog';
 
-export default function TrainingTab(props: {
+export default function TrainingTab(props: Readonly<{
   types: any[];
   // A model the command palette asked to filter by, resolved by the page above.
   initialType?: string | null;
-}) {
+}>) {
 
   const PAGE_SIZE = 12;
   const [type, setType] = useState(props.initialType ?? '');
@@ -44,7 +44,7 @@ export default function TrainingTab(props: {
     }
   }, [props.initialType]);
   const [filter, setFilter] = useState('');
-  const [editing, setEditing] = useState<any | null | 'new'>(null);
+  const [editing, setEditing] = useState<any>(null);
   const [pickingFunction, setPickingFunction] = useState(false);
   const [pickingWidget, setPickingWidget] = useState(false);
   const [spicing, setSpicing] = useState(false);

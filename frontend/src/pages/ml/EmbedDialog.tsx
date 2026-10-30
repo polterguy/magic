@@ -13,7 +13,7 @@ function boolParam(name: string, value: boolean) {
   return name + '=' + (value ? 'true' : 'false');
 }
 
-export default function EmbedDialog(props: { type: string; onClose: () => void }) {
+export default function EmbedDialog(props: Readonly<{ type: string; onClose: () => void }>) {
 
   const backend = backendInfo();
   const [modernThemes, setModernThemes] = useState<string[]>([]);

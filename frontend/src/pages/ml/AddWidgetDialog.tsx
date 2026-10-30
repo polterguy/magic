@@ -13,11 +13,11 @@ import { ListSkeleton } from '../../components/Skeleton';
 import { availableWidgets, mlSnippetCreate } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 
-export default function AddWidgetDialog(props: {
+export default function AddWidgetDialog(props: Readonly<{
   type: string;
   onClose: () => void;
   onAdded: () => void;
-}) {
+}>) {
 
   const [widgets, setWidgets] = useState<any[]>([]);
   const [filter, setFilter] = useState('');

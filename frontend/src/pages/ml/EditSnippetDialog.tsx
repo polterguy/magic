@@ -10,12 +10,12 @@ import { Modal } from '../../components/Dialogs';
 import { mlSnippetCreate, mlSnippetUpdate, vectoriseSnippet } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 
-export default function EditSnippetDialog(props: {
+export default function EditSnippetDialog(props: Readonly<{
   type: string;
-  existing: any | null;
+  existing: any;
   onClose: () => void;
   onSaved: () => void;
-}) {
+}>) {
 
   const [prompt, setPrompt] = useState(props.existing?.prompt ?? '');
   const [completion, setCompletion] = useState(props.existing?.completion ?? '');

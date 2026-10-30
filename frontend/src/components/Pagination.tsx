@@ -3,11 +3,11 @@
  * shows. Renders nothing when everything fits on one page.
  */
 
-export default function Pagination(props: {
+export default function Pagination(props: Readonly<{
   page: number;
   pageCount: number;
   onPage: (page: number) => void;
-}) {
+}>) {
 
   if (props.pageCount <= 1) {
     return null;

@@ -44,12 +44,12 @@ function diffLineClass(line: string) {
   }
 }
 
-export default function GitPanel(props: {
+export default function GitPanel(props: Readonly<{
   path: string;
   onClose: () => void;
   // Invoked after operations that can change files on disk, so the owner can reload its file tree.
   onChanged: () => void;
-}) {
+}>) {
 
   const { prompt, confirm } = useDialog();
   const [mode, setMode] = useState<'loading' | 'repo' | 'norepo'>('loading');

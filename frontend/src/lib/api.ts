@@ -1493,7 +1493,7 @@ export function openaiModels() {
  * option — empty when the backend doesn't publish a price for that model.
  */
 export function modelPriceLabel(model?: { input_price?: number; output_price?: number }): string {
-  if (!model || model.input_price == null || model.output_price == null) {
+  if (model?.input_price == null || model.output_price == null) {
     return '';
   }
   const usd = (n: number) => '$' + Number(n).toFixed(2);

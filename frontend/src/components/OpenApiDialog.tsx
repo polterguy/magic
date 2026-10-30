@@ -9,12 +9,11 @@ import CodeEditor from './CodeEditor';
 import { Modal } from './Dialogs';
 import { backendInfo } from '../lib/api';
 
-export default function OpenApiDialog(props: {
+export default function OpenApiDialog(props: Readonly<{
   json: string;
   target: string;
   onClose: () => void;
-  onNotify?: (text: string) => void;
-}) {
+}>) {
 
   const specUrl = backendInfo().url +
     '/magic/system/endpoints/openapi?system=true&filter=' + encodeURIComponent(props.target);

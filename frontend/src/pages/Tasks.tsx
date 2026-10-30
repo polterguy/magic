@@ -306,12 +306,12 @@ export default function Tasks() {
   );
 }
 
-function TaskDialog(props: {
+function TaskDialog(props: Readonly<{
   task: Task;
   isNew: boolean;
   onClose: () => void;
   onSaved: (id: string, wasNew: boolean) => void;
-}) {
+}>) {
 
   const [id, setId] = useState(props.task.id);
   const [description, setDescription] = useState(props.task.description ?? '');
@@ -418,11 +418,11 @@ const REPEAT_PERIODS = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'months'
  * The old dashboard's 3-mode schedule dialog: fixed date, simple repetition,
  * or a custom repetition pattern.
  */
-function ScheduleDialog(props: {
+function ScheduleDialog(props: Readonly<{
   taskId: string;
   onClose: () => void;
   onSave: (due: string | undefined, repeats: string | undefined) => void;
-}) {
+}>) {
 
   const [mode, setMode] = useState<'fixed' | 'repeat' | 'custom'>('repeat');
   const [due, setDue] = useState('');

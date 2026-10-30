@@ -40,14 +40,14 @@ function stripOwnPageExt(value: string) {
   return /^https?:\/\//i.test(value) ? value : stripHtmlExt(value);
 }
 
-export default function Website(props: {
+export default function Website(props: Readonly<{
   // Every page this site serves, already the designer's usual canonical
   // form ("/pricing", not "/etc/www/pricing.html") - the same list Meta and
   // Quality already get. Hidden folders, .well-known included, are already
   // excluded from this by the same rule that keeps them out of the page
   // picker everywhere else.
   urls: string[];
-}) {
+}>) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);

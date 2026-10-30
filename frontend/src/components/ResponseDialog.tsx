@@ -11,12 +11,12 @@ import { InvokeResult } from './InvokePanel';
 import { servedByBackend } from '../lib/backend';
 import { copyToClipboard } from '../lib/toast';
 
-export default function ResponseDialog(props: {
+export default function ResponseDialog(props: Readonly<{
   result: InvokeResult;
   onClose: () => void;
   // Only a real HTTP invocation has headers worth qualifying.
   httpInvocation?: boolean;
-}) {
+}>) {
 
   const { result, onClose } = props;
   // The displayed body, when textual — null for images/binaries, which have
@@ -67,7 +67,7 @@ export default function ResponseDialog(props: {
  * default, since the body is what's usually wanted — but CORS, caching and
  * content-type problems are only diagnosable from here.
  */
-function ResponseHeaders({ headers }: { headers?: Record<string, string> }) {
+function ResponseHeaders({ headers }: Readonly<{ headers?: Record<string, string> }>) {
 
   const [open, setOpen] = useState(false);
 

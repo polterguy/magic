@@ -7,7 +7,7 @@
  * content shape to preview.
  */
 
-export function SkeletonBar(props: { width?: string | number; height?: number }) {
+export function SkeletonBar(props: Readonly<{ width?: string | number; height?: number }>) {
   return (
     <span
       className="skeleton-bar"
@@ -18,7 +18,7 @@ export function SkeletonBar(props: { width?: string | number; height?: number })
 // Fills a `<table><tbody>` with placeholder rows matching the real column
 // count. Drop it inside the same `.card`/`<table>` wrapper the real table
 // uses, in place of the table's own `<tbody>`.
-export function TableSkeleton(props: { columns: number; rows?: number }) {
+export function TableSkeleton(props: Readonly<{ columns: number; rows?: number }>) {
   const rowCount = props.rows ?? 6;
   return (
     <table className="skeleton-table">
@@ -39,7 +39,7 @@ export function TableSkeleton(props: { columns: number; rows?: number }) {
 
 // A stack of label/sublabel rows, each optionally followed by a button-shaped
 // placeholder — the shape of a filterable pick-list (AI functions, widgets).
-export function ListSkeleton(props: { rows?: number; withAction?: boolean }) {
+export function ListSkeleton(props: Readonly<{ rows?: number; withAction?: boolean }>) {
   const rowCount = props.rows ?? 5;
   return (
     <>
@@ -57,7 +57,7 @@ export function ListSkeleton(props: { rows?: number; withAction?: boolean }) {
 }
 
 // A grid of card-shaped placeholders — the Bazar plugin grid's shape.
-export function CardGridSkeleton(props: { cards?: number }) {
+export function CardGridSkeleton(props: Readonly<{ cards?: number }>) {
   const cardCount = props.cards ?? 6;
   return (
     <div className="skeleton-card-grid">
@@ -74,7 +74,7 @@ export function CardGridSkeleton(props: { cards?: number }) {
 }
 
 // A stack of module-header-shaped bars — the Endpoints module-list shape.
-export function ModuleListSkeleton(props: { modules?: number }) {
+export function ModuleListSkeleton(props: Readonly<{ modules?: number }>) {
   const moduleCount = props.modules ?? 5;
   return (
     <>

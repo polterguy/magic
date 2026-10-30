@@ -14,7 +14,7 @@ export interface ProgressLine {
   message: string;
 }
 
-export default function ProgressDialog(props: {
+export default function ProgressDialog(props: Readonly<{
   title: string;
   // Label in the terminal's title bar — a channel name, a module path.
   label: string;
@@ -28,7 +28,7 @@ export default function ProgressDialog(props: {
   onDismissError?: () => void;
   waitingText?: string;
   onClose: () => void;
-}) {
+}>) {
 
   const listRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

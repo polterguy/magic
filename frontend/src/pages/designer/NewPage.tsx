@@ -65,7 +65,7 @@ export function urlProblem(url: string, taken: string[]): string | null {
     return taken.includes('/') ? 'There is already a page at /.' : null;
   }
   const segments = tidy.slice(1).split('/');
-  if (segments.some(segment => segment === '')) {
+  if (segments.includes('')) {
     return 'That has an empty step in it — check the slashes.';
   }
   if (segments.some(segment => segment.startsWith('.'))) {
@@ -114,14 +114,14 @@ export function blankPage(url: string, companions: { css?: boolean; js?: boolean
     '</html>\n';
 }
 
-export default function NewPage(props: {
+export default function NewPage(props: Readonly<{
   // Canonical URLs already in use, so a collision is refused before writing.
   taken: string[];
   // Page file → the URL it is served at, for the "copy of" list.
   pages: { file: string; url: string }[];
   onCancel: () => void;
   onCreate: (file: string, copyFrom: string | null, companions: { css: boolean; js: boolean }) => void;
-}) {
+}>) {
 
   // Empty, not "/" — "/" is now itself a real, meaningful answer (the home
   // page), so it can no longer also stand for "nothing typed yet".

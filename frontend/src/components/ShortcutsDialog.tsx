@@ -14,7 +14,7 @@ const GROUPS: { id: string; title: string; note?: string }[] = [
   { id: 'Web Designer', title: 'Web Designer', note: 'On the canvas, or with an element selected.' },
 ];
 
-export default function ShortcutsDialog(props: { onClose: () => void }) {
+export default function ShortcutsDialog(props: Readonly<{ onClose: () => void }>) {
   return (
     <Modal width={1040} onClose={props.onClose}>
       <h2 style={{ marginTop: 0 }}>Keyboard shortcuts</h2>

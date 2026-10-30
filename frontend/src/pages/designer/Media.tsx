@@ -88,7 +88,7 @@ export interface Picked {
   height: number;
 }
 
-export default function Media(props: {
+export default function Media(props: Readonly<{
   kind: MediaKind;
   // Absolute origin of the cloudlet, so previews load from where the page will.
   origin: string;
@@ -96,7 +96,7 @@ export default function Media(props: {
   current: string;
   onPick: (picked: Picked) => void;
   onCancel: () => void;
-}) {
+}>) {
 
   const kind = KINDS[props.kind];
   const [files, setFiles] = useState<string[] | null>(null);

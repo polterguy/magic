@@ -294,7 +294,7 @@ export function prepareDocument(source: string, baseHref: string): string {
    */
   const overrides = doc.createElement('style');
   overrides.setAttribute(TOOL_ATTRIBUTE, '');
-  overrides.setAttribute('data-magic-overrides', '');
+  overrides.dataset.magicOverrides = '';
   doc.head.append(overrides);
 
   return '<!doctype html>\n' + doc.documentElement.outerHTML;

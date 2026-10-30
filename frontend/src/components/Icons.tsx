@@ -12,7 +12,7 @@ const base = {
   strokeLinejoin: 'round' as const,
 };
 
-export function ChevronIcon({ open }: { open?: boolean }) {
+export function ChevronIcon({ open }: Readonly<{ open?: boolean }>) {
   return (
     <svg {...base} style={{
       transform: open ? 'rotate(90deg)' : undefined,

@@ -6,11 +6,11 @@
 import { useState } from 'react';
 import { Modal } from '../../components/Dialogs';
 
-export default function SpiceDialog(props: {
+export default function SpiceDialog(props: Readonly<{
   type: string;
   onClose: () => void;
   onScrape: (options: { url: string; images: boolean }) => void;
-}) {
+}>) {
 
   const [url, setUrl] = useState('');
   const [images, setImages] = useState(true);

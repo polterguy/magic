@@ -26,7 +26,7 @@ export interface MenuItem {
   onClick?: () => void;
 }
 
-export default function Menu(props: { items: MenuItem[]; title: string; className?: string }) {
+export default function Menu(props: Readonly<{ items: MenuItem[]; title: string; className?: string }>) {
 
   const [open, setOpen] = useState(false);
   // The item the keyboard is on, or -1 for none.

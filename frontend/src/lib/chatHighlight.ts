@@ -118,7 +118,7 @@ hljs.registerLanguage('hyperlambda', () => ({
   contains: [
     // Comments only exist in statement position, never inside values.
     { className: 'comment', begin: /(?<=^|\n)[ \t]*\/\//, end: /$/ },
-    hljs.COMMENT('/\\*', '\\*/'),
+    hljs.COMMENT(String.raw`/\*`, String.raw`\*/`),
 
     // Expressions - everything after :x: to end of line.
     { className: 'meta', begin: /:x:/, end: /$/ },

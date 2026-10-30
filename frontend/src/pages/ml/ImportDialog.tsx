@@ -58,10 +58,10 @@ const UPLOAD_CATEGORIES = {
   },
 };
 
-export default function ImportDialog(props: {
+export default function ImportDialog(props: Readonly<{
   type: string;
   onClose: () => void;
-}) {
+}>) {
 
   const [tab, setTab] = useState('crawl');
   // Crawl-tab options, defaulted the way the old dashboard defaults them.

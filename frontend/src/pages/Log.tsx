@@ -190,13 +190,13 @@ function isoDate(created: string): string {
   return new Date(created).toISOString().replace(/\.\d{3}Z$/, 'Z');
 }
 
-function LogRow(props: {
+function LogRow(props: Readonly<{
   item: LogItem;
   // The entry a deep link pointed at, marked so the visitor can spot it.
   highlighted: boolean;
   expanded: boolean;
   onToggle: () => void;
-}) {
+}>) {
 
   const { item } = props;
   const meta = Object.entries(item.meta ?? {});

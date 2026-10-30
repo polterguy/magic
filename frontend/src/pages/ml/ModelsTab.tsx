@@ -20,14 +20,14 @@ import EditModelDialog from './EditModelDialog';
 import EmbedDialog from './EmbedDialog';
 import ImportDialog from './ImportDialog';
 
-export default function ModelsTab(props: {
+export default function ModelsTab(props: Readonly<{
   types: any[];
   onChanged: () => void;
   // A model the command palette asked to open, resolved by the page above.
   editOnOpen?: string | null;
-}) {
+}>) {
 
-  const [editing, setEditing] = useState<any | null | 'new'>(null);
+  const [editing, setEditing] = useState<any>(null);
 
   /*
    * The types are loaded by the page above, so this waits for them to arrive

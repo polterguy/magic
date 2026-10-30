@@ -21,7 +21,7 @@ const TOOLTIPS: Record<string, string> = {
   md: 'Ask the Machine to create Markdown for you',
 };
 
-export default function AiPrompt(props: {
+export default function AiPrompt(props: Readonly<{
   fileType: string;
   // System message for the generation — schema, framing, etc. May be async
   // (SQL Studio exports the schema DDL on demand).
@@ -37,7 +37,7 @@ export default function AiPrompt(props: {
   onResult: (snippet: string) => void;
   onError: (message: string) => void;
   style?: CSSProperties;
-}) {
+}>) {
 
   const [configured, setConfigured] = useState(false);
   const [prompt, setPrompt] = useState('');

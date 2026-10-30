@@ -22,7 +22,7 @@ function connected(token: string | null) {
   return !!token && !tokenExpired(token);
 }
 
-export default function BackendsDialog({ onClose }: { onClose: () => void }) {
+export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => void }>) {
 
   const { backend, backends, switchBackend, removeBackend, addBackend } = useAuth();
   const { confirm } = useDialog();

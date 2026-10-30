@@ -5,12 +5,12 @@
 
 import { CSSProperties, ReactNode } from 'react';
 
-export default function Banner(props: {
+export default function Banner(props: Readonly<{
   isError?: boolean;
   onClose: () => void;
   style?: CSSProperties;
   children: ReactNode;
-}) {
+}>) {
   return (
     <div
       className={((props.isError ?? true) ? 'error-box' : 'success-box') + ' closable'}

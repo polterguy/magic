@@ -64,7 +64,7 @@ export interface CanvasProps {
 // How far the pointer travels before a press becomes a drag.
 const THRESHOLD = 4;
 
-export default function Canvas(props: CanvasProps) {
+export default function Canvas(props: Readonly<CanvasProps>) {
 
   const frameRef = useRef<HTMLIFrameElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -215,7 +215,7 @@ export default function Canvas(props: CanvasProps) {
     const html = element.innerHTML;
     const span = doc.createElement('span');
     span.setAttribute('contenteditable', 'true');
-    span.setAttribute('data-magic-editing', '');
+    span.dataset.magicEditing = '';
     element.insertBefore(span, node);
     span.appendChild(node);
     editRef.current = { element, index, html, text: node.data, span };
@@ -362,7 +362,7 @@ export default function Canvas(props: CanvasProps) {
    */
   useEffect(() => {
     const node = propsRef.current.hovered;
-    if (!props.revealHovered || !node || !node.isConnected) {
+    if (!props.revealHovered || !node?.isConnected) {
       return;
     }
     elementOf(node)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -371,7 +371,7 @@ export default function Canvas(props: CanvasProps) {
 
   useEffect(() => {
     const node = propsRef.current.selected;
-    if (!props.revealSelected || !node || !node.isConnected) {
+    if (!props.revealSelected || !node?.isConnected) {
       return;
     }
     elementOf(node)?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
@@ -439,7 +439,7 @@ export default function Canvas(props: CanvasProps) {
   }
 
   function outline(node: Node | null) {
-    if (!node || !node.isConnected) {
+    if (!node?.isConnected) {
       return null;
     }
     const box = rectOf(node);
@@ -546,7 +546,7 @@ export default function Canvas(props: CanvasProps) {
       {boxes.selected && <div className="designer-outline selected" style={boxes.selected} />}
       {boxes.spot && (
         <div
-          className={'designer-drop' + (spot && spot.before === null && boxes.spot.height > 8
+          className={'designer-drop' + (spot?.before === null && boxes.spot.height > 8
             ? ' area' : '')}
           style={boxes.spot} />
       )}

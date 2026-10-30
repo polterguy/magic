@@ -185,8 +185,7 @@ function buildCrudifyPayload(
     if (column.handling) {
       entry.handling = column.handling;
     }
-    if (column.foreign_key && column.foreign_key.foreign_name !== null &&
-        column.foreign_key.foreign_name !== undefined) {
+    if (column.foreign_key?.foreign_name != null) {
       entry.foreign_key = {
         table: column.foreign_key.foreign_table,
         column: column.foreign_key.foreign_column,
@@ -299,7 +298,7 @@ export default function Generator() {
   );
 }
 
-function DatabaseSelectors({ selection }: { selection: DatabaseSelection }) {
+function DatabaseSelectors({ selection }: Readonly<{ selection: DatabaseSelection }>) {
   return (
     <>
       <Select value={selection.type} onChange={value => selection.setType(value)}>
@@ -332,7 +331,7 @@ function DatabaseSelectors({ selection }: { selection: DatabaseSelection }) {
 const ALL_VERBS = ['post', 'get', 'put', 'delete'];
 
 // The guided flow's progress header: choose data, generate, done.
-function WizardSteps({ step }: { step: number }) {
+function WizardSteps({ step }: Readonly<{ step: number }>) {
   return (
     <div className="wizard-steps">
       {['Choose data', 'Generate', 'Done'].map((label, index) => (
@@ -364,7 +363,7 @@ function endpointsForVerb(
       (options.search ? 1 : 0);
 }
 
-function CrudTab(props: { guided: boolean }) {
+function CrudTab(props: Readonly<{ guided: boolean }>) {
 
   const selection = useDatabaseSelection();
   const [selectedTables, setSelectedTables] = useState<Set<string>>(new Set());
@@ -1413,7 +1412,7 @@ function mergeSlots(existing: string, additions: string[]) {
  * per ticked operation. Raw SQL adds [data.select]/[data.scalar]. Reuses the shared
  * database-selection hook so the dropdowns match the rest of the Generator.
  */
-function DbAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+function DbAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
 
   const selection = useDatabaseSelection();
   const [read, setRead] = useState(true);
@@ -1499,7 +1498,7 @@ function DbAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: () 
  * Wizard granting outbound HTTP. Verb-level only - the whitelist cannot pin a URL, so a
  * granted verb reaches any address; the note says so.
  */
-function HttpAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+function HttpAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
 
   const [verbs, setVerbs] = useState<Record<string, boolean>>({ get: true, post: false, put: false, patch: false, delete: false });
 
@@ -1622,7 +1621,7 @@ function lintSlotLines(lines: string): string[] {
   return warnings;
 }
 
-function FilesAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+function FilesAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
 
   const [path, setPath] = useState('');
   const [extension, setExtension] = useState('');
@@ -1706,7 +1705,7 @@ function FilesAccessWizard(props: { onAdd: (lines: string[]) => void; onCancel: 
  * Wizard granting email. Send pairs [mail.smtp.send] with [mime.create] to compose the
  * message; Receive pairs [mail.pop3.fetch] with [mime.parse] to read one.
  */
-function EmailWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+function EmailWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
 
   const [send, setSend] = useState(true);
   const [receive, setReceive] = useState(false);
@@ -1759,7 +1758,7 @@ const IMAGE_OPS: { key: string; label: string }[] = [
   { key: 'generate-qr', label: 'QR code' },
 ];
 
-function ImagesWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+function ImagesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
 
   const [ops, setOps] = useState<Record<string, boolean>>({
     resize: true, crop: true, convert: true, size: true, chart: false, 'generate-qr': false,
@@ -1796,7 +1795,7 @@ function ImagesWizard(props: { onAdd: (lines: string[]) => void; onCancel: () =>
 /*
  * Wizard granting logging. Write covers the four severities; Read covers querying the log.
  */
-function LoggingWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+function LoggingWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
 
   const [write, setWrite] = useState(true);
 
@@ -1834,7 +1833,7 @@ function LoggingWizard(props: { onAdd: (lines: string[]) => void; onCancel: () =
  * from [slots.vocabulary] (GET /magic/system/evaluator/slots), fetched once per wizard
  * open so the list always reflects what the server currently has.
  */
-function DynamicSlotsWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+function DynamicSlotsWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
 
   const [slots, setSlots] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1986,7 +1985,7 @@ function formatFallbackMeta(
   return lines.join('\n');
 }
 
-function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel: () => void }) {
+function ExecuteFilesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
 
   const [files, setFiles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -2162,7 +2161,7 @@ function ExecuteFilesWizard(props: { onAdd: (lines: string[]) => void; onCancel:
 interface SlotGroup { key: string; label: string; title?: string; slots: string[]; }
 interface WizardSpec { label: string; title: string; note?: string; defaults: string[]; groups: SlotGroup[]; }
 
-function GroupWizard(props: { spec: WizardSpec; onAdd: (lines: string[]) => void; onCancel: () => void }) {
+function GroupWizard(props: Readonly<{ spec: WizardSpec; onAdd: (lines: string[]) => void; onCancel: () => void }>) {
 
   const [on, setOn] = useState<Record<string, boolean>>(
     Object.fromEntries(props.spec.groups.map(g => [g.key, props.spec.defaults.includes(g.key)])));

@@ -172,7 +172,7 @@ function tokenizeMultiCommentMode(stream: StringStream, state: HyperlambdaState)
    */
   stream.skipToEnd();
   const cur = stream.current();
-  if (cur.indexOf('*/', cur.length - 2) !== -1) {
+  if (cur.includes('*/', cur.length - 2)) {
 
     // End of comment, hence name must follow.
     state.indent = state.oldIndent;
@@ -290,19 +290,19 @@ function getNodeNameType(word: string | null): StyleName | null {
    * Default handling, simply checks if current name is either a "variable"
    * (starts with "_") or an Active Event invocation (contains ".").
    */
-  if (win._vocabulary.indexOf(word) !== -1) {
+  if (win._vocabulary.includes(word)) {
 
     /*
      * The name was found in our Active Events JSON declaration, and is either
      * a "keyword" or an Active Event. Which type it is, depends upon if it
      * contains a "." or not.
      */
-    if (word!.indexOf('.') === -1) {
+    if (!word!.includes('.')) {
       return styles.keyword;
     } else {
       return styles.activeevent;
     }
-  } else if (word && word[0] === '.') {
+  } else if (word?.[0] === '.') {
 
     /*
      * The name of the node starts with a period ".", and hence is a lambda
@@ -661,11 +661,11 @@ export function hyperlambdaCompletions(context: CompletionContext): CompletionRe
   }
   const from = line.from + (line.text.length - line.text.trimStart().length);
   const options: Completion[] = vocabulary
-    .filter(word => word.indexOf(curWord) !== -1)
+    .filter(word => word.includes(curWord))
     .map(word => ({ label: word, type: 'keyword' }));
   const slots = ((window as any)._slots as string[] | undefined) ?? [];
   for (const slot of slots) {
-    if (slot.indexOf(curWord) !== -1) {
+    if (slot.includes(curWord)) {
       options.push({ label: 'execute:' + slot, type: 'function' });
     }
   }

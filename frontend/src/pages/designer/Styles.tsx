@@ -44,7 +44,7 @@ function isValid(property: string, value: string) {
   return probe.style.getPropertyValue(property) !== '';
 }
 
-export default function Styles(props: {
+export default function Styles(props: Readonly<{
   element: Element | null;
   // The canvas frame's window, for asking what the browser resolved a
   // property to — which needs the frame's own layout, not the dashboard's.
@@ -64,7 +64,7 @@ export default function Styles(props: {
   onEditRule: (selector: string) => void;
   // Drops a whole rule from the block, not one property at a time.
   onRemoveRule: (selector: string) => void;
-}) {
+}>) {
 
   /*
    * What has been typed but not yet committed, and what it was typed against.

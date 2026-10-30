@@ -8,11 +8,11 @@ import { mlTypes } from '../../lib/api';
  * Lets the user pick which AI model a generated function should be added to,
  * the way the old dashboard's select-model dialog does.
  */
-export default function SelectModelDialog(props: {
+export default function SelectModelDialog(props: Readonly<{
   target: string;
   onClose: () => void;
   onSelected: (type: string) => void;
-}) {
+}>) {
 
   const [types, setTypes] = useState<any[]>([]);
   const [type, setType] = useState('');

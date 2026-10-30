@@ -37,7 +37,7 @@ function collectOptions(children: ReactNode): Opt[] {
   return out;
 }
 
-export default function Select(props: {
+export default function Select(props: Readonly<{
   value: string;
   onChange: (value: string) => void;
   children: ReactNode;
@@ -46,7 +46,7 @@ export default function Select(props: {
   className?: string;
   style?: React.CSSProperties;
   placeholder?: string;
-}) {
+}>) {
 
   const options = useMemo(() => collectOptions(props.children), [props.children]);
   const [open, setOpen] = useState(false);

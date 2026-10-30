@@ -530,7 +530,6 @@ export default function Sql() {
           </div>
           {newTable && (
             <NewTableDialog
-              databaseType={type}
               onClose={() => setNewTable(false)}
               onCreate={async (tableName, pkName, pkType, pkLength) => {
                 setWaiting(true);
@@ -685,7 +684,7 @@ export default function Sql() {
  */
 const MAX_RENDERED_ROWS = 1000;
 
-function ResultTable({ rows }: { rows: any[] }) {
+function ResultTable({ rows }: Readonly<{ rows: any[] }>) {
   if (rows.length === 0) {
     return <div className="muted" style={{ padding: 16 }}>Empty result set</div>;
   }
@@ -731,11 +730,10 @@ function formatCell(value: any) {
  * Create-table dialog — a primary key column, auto-increment or varchar,
  * matching the old designer.
  */
-function NewTableDialog(props: {
-  databaseType: string;
+function NewTableDialog(props: Readonly<{
   onClose: () => void;
   onCreate: (tableName: string, pkName: string, pkType: string, pkLength: number) => void;
-}) {
+}>) {
 
   const [tableName, setTableName] = useState('');
   const [pkName, setPkName] = useState('');
@@ -795,7 +793,7 @@ function NewTableDialog(props: {
  * Add-column dialog — a plain field, or a foreign key referencing another
  * table (Field vs Foreign key tab).
  */
-function AddColumnDialog(props: {
+function AddColumnDialog(props: Readonly<{
   databaseType: string;
   tableName: string;
   tables: any[];
@@ -810,7 +808,7 @@ function AddColumnDialog(props: {
     foreignField: string;
     cascading: boolean;
   }) => void;
-}) {
+}>) {
 
   const fieldTypes = FIELD_TYPES[props.databaseType] ?? FIELD_TYPES.sqlite;
   const [mode, setMode] = useState('field');

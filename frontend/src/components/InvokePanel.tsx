@@ -62,12 +62,12 @@ function samplePayload(endpoint: Endpoint) {
   return JSON.stringify(payload, null, 2).replace(/"__wildcard__"/g, '*');
 }
 
-function ArgumentField(props: {
+function ArgumentField(props: Readonly<{
   argument: { name: string; type?: string };
   value: string;
   onChange: (value: string) => void;
   autoFocus?: boolean;
-}) {
+}>) {
   return (
     <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, fontWeight: 600 }}>
       <span>
@@ -83,7 +83,7 @@ function ArgumentField(props: {
   );
 }
 
-export default function InvokePanel(props: {
+export default function InvokePanel(props: Readonly<{
   endpoint: Endpoint;
   onResult: (result: InvokeResult) => void;
   onOpenApi: () => void;
@@ -100,7 +100,7 @@ export default function InvokePanel(props: {
    * exists only where it leads somewhere new.
    */
   onEdit?: () => void;
-}) {
+}>) {
 
   const { endpoint } = props;
   const verb = endpoint.verb.toLowerCase();
@@ -250,7 +250,7 @@ export default function InvokePanel(props: {
       }
     } else if (!usesQuery) {
       lines.push('-H "Content-Type: ' + (endpoint.consumes ?? 'application/json') + '"');
-      lines.push("-d '" + payload.replace(/'/g, "'\\''") + "'");
+      lines.push("-d '" + payload.replace(/'/g, String.raw`'\''`) + "'");
     }
     void copyToClipboard(lines.join(' \\\n  '), 'The cURL command');
   }
@@ -521,7 +521,7 @@ export default function InvokePanel(props: {
  * One picked file. Images get a thumbnail rendered straight onto the form,
  * so what's about to be uploaded is visible without opening anything.
  */
-function FileChip({ file, onRemove }: { file: File; onRemove: () => void }) {
+function FileChip({ file, onRemove }: Readonly<{ file: File; onRemove: () => void }>) {
 
   const [thumbnail, setThumbnail] = useState<string | null>(null);
 

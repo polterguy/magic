@@ -18,11 +18,11 @@ import type { DebugRecording } from '../lib/api';
  */
 const PANE_HEIGHT = 460;
 
-export default function DebugDialog(props: {
+export default function DebugDialog(props: Readonly<{
   filename: string;
   recording: DebugRecording;
   onClose: () => void;
-}) {
+}>) {
 
   const steps = props.recording.steps ?? [];
   const error = props.recording.error;

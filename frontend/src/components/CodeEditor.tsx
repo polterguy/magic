@@ -310,7 +310,7 @@ export function useEditToken(): [number, () => void] {
   return [token, () => setToken(current => current + 1)];
 }
 
-export default function CodeEditor(props: CodeEditorProps) {
+export default function CodeEditor(props: Readonly<CodeEditorProps>) {
 
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<EditorView | null>(null);

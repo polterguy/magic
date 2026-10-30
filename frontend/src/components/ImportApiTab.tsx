@@ -217,8 +217,7 @@ export default function ImportApiTab() {
     if (op.tag) {
       return op.tag;
     }
-    const segments = op.path.split('/').filter(Boolean).filter(s => !/^v\d+$/i.test(s));
-    return segments[0] ?? 'Other';
+    return op.path.split('/').filter(Boolean).find(s => !/^v\d+$/i.test(s)) ?? 'Other';
   }
   const groups: Record<string, OpenApiOperation[]> = {};
   shown.forEach(op => {

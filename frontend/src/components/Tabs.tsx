@@ -8,11 +8,11 @@ export interface TabDefinition {
   label: string;
 }
 
-export default function Tabs(props: {
+export default function Tabs(props: Readonly<{
   tabs: TabDefinition[];
   active: string;
   onChange: (id: string) => void;
-}) {
+}>) {
   return (
     <div className="tabs">
       {props.tabs.map(tab => (

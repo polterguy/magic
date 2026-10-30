@@ -24,11 +24,11 @@ import {
 import { showToast } from '../../lib/toast';
 import AddFunctionDialog from './AddFunctionDialog';
 
-export default function EditModelDialog(props: {
-  existing: any | null;
+export default function EditModelDialog(props: Readonly<{
+  existing: any;
   onClose: () => void;
   onSaved: () => void;
-}) {
+}>) {
 
   const existing = props.existing;
   const [models, setModels] = useState<{ id: string }[]>([]);

@@ -109,7 +109,7 @@ function sanitiseMermaid(code: string): string {
   return code.replace(/(?<!\w)(\w+)\[([^[\]]+)\]/g, (_match: string, id: string, label: string) => {
     const clean = label.replace(/(?:^["'])|(?:["']$)/g, '');
     if (/[()/"'[\]]/.test(clean)) {
-      return id + '["' + clean.replace(/"/g, '\\"') + '"]';
+      return id + '["' + clean.replace(/"/g, String.raw`\"`) + '"]';
     }
     return id + '[' + clean + ']';
   });
@@ -147,11 +147,11 @@ async function renderMermaidDiagrams(root: HTMLElement, dark: boolean) {
   }
 }
 
-export default function ChatDrawer(props: {
+export default function ChatDrawer(props: Readonly<{
   open: boolean;
   userId: string;
   onClose: () => void;
-}) {
+}>) {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -278,7 +278,7 @@ export default function ChatDrawer(props: {
     setMessages(current => {
       const next = [...current];
       let last = next[next.length - 1];
-      if (!last || last.role !== 'assistant') {
+      if (last?.role !== 'assistant') {
         // Nothing to attach status-only chunks to — don't invent a bubble.
         if (!chunk.message && !chunk.html && !(chunk.ticket && chunk.filename) &&
             !chunk.function_waiting && !chunk.function_result && !chunk.function_error) {
@@ -470,7 +470,7 @@ export default function ChatDrawer(props: {
   function onListClick(event: React.MouseEvent) {
     const button = (event.target as HTMLElement).closest('.chat-copy-btn');
     if (button) {
-      void copyToClipboard(decodeURIComponent(button.getAttribute('data-code') ?? ''), 'Code');
+      void copyToClipboard(decodeURIComponent((button as HTMLElement).dataset.code ?? ''), 'Code');
     }
   }
 
@@ -625,7 +625,7 @@ function formatSize(bytes: number): string {
  * One attached file — a thumbnail for images, the extension otherwise.
  * Removable while pending, read-only once the message has been sent.
  */
-function FileTile(props: { name: string; size: number; url?: string; onRemove?: () => void }) {
+function FileTile(props: Readonly<{ name: string; size: number; url?: string; onRemove?: () => void }>) {
 
   const extension = props.name.includes('.')
     ? props.name.split('.').pop()!.toUpperCase().slice(0, 4)
@@ -688,7 +688,7 @@ function functionName(file?: string): string | undefined {
  * itself — it stays mounted here so closing the dialog and opening it again
  * gives you the same widget rather than losing it.
  */
-function WidgetButton({ html }: { html: string }) {
+function WidgetButton({ html }: Readonly<{ html: string }>) {
 
   const [open, setOpen] = useState(false);
   return (
@@ -701,7 +701,7 @@ function WidgetButton({ html }: { html: string }) {
   );
 }
 
-function ChatSegment({ segment, markdown }: { segment: Segment; markdown: boolean }) {
+function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdown: boolean }>) {
 
   // Collapsed by default — the pill is the summary, the payload one click away.
   const [showDetail, setShowDetail] = useState(false);

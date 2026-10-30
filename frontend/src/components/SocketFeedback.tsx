@@ -14,7 +14,7 @@ interface FeedbackMessage {
   message: string;
 }
 
-export default function SocketFeedback(props: {
+export default function SocketFeedback(props: Readonly<{
   title: string;
   channel: string;
   // Invoked once the socket listens — the caller starts the backend job here.
@@ -36,7 +36,7 @@ export default function SocketFeedback(props: {
     // What the job is working through, singular — "snippet", "endpoint".
     noun: string;
   };
-}) {
+}>) {
 
   const [messages, setMessages] = useState<FeedbackMessage[]>([]);
   const [error, setError] = useState('');

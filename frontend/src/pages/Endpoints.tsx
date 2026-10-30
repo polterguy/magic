@@ -2,7 +2,6 @@ import { showToast } from '../lib/toast';
 import SearchInput from '../components/SearchInput';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Modal } from '../components/Dialogs';
 import AiWaiter from '../components/AiWaiter';
 import OpenApiDialog from '../components/OpenApiDialog';
 import InvokePanel, { InvokeResult } from '../components/InvokePanel';

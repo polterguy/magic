@@ -41,7 +41,7 @@ const sameDay = (a: Date, b: Date) =>
 // Midnight of the given day, for day-granularity comparisons (e.g. the min bound).
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 
-export default function DateTimePicker(props: {
+export default function DateTimePicker(props: Readonly<{
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -50,7 +50,7 @@ export default function DateTimePicker(props: {
   dateOnly?: boolean;
   // Earliest selectable day, "YYYY-MM-DD"; earlier days are disabled.
   min?: string;
-}) {
+}>) {
 
   const dateOnly = !!props.dateOnly;
   const selected = useMemo(() => parseValue(props.value), [props.value]);

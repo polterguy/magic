@@ -2,12 +2,11 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { createSocket } from '../lib/socket';
 import { useAuth } from '../lib/AuthContext';
-import { getVersion, openaiIsConfigured } from '../lib/api';
+import { openaiIsConfigured } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
 import { canRunDashboardTour, runDashboardTour, setShellActions } from '../lib/shellActions';
-import { DatabaseIcon, HelpIcon, KeyboardIcon, LogoutIcon, MoonIcon, RobotIcon, SearchIcon, SunIcon } from './Icons';
-import { ChevronIcon } from './Icons';
+import { ChevronIcon, DatabaseIcon, HelpIcon, KeyboardIcon, LogoutIcon, MoonIcon, RobotIcon, SearchIcon, SunIcon } from './Icons';
 import { applyTheme, getTheme } from '../lib/theme';
 import BackendsDialog from './BackendsDialog';
 import ChatDrawer from './ChatDrawer';
@@ -16,7 +15,7 @@ import ShortcutsDialog from './ShortcutsDialog';
 import { openSupport } from '../lib/support';
 import { SECTIONS } from './sections';
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
 
   const { backend, logout, backends, version } = useAuth();
   const [switching, setSwitching] = useState(false);

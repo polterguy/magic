@@ -28,7 +28,7 @@ import { aiContextForFile, createFolder, ensureWidgetAssets, listFilesRecursivel
 import { ChevronIcon, RedoIcon, SaveIcon, UndoIcon } from '../components/Icons';
 import Canvas from './designer/Canvas';
 import Menu from './designer/Menu';
-import NewPage, { blankPage, fileForUrl } from './designer/NewPage';
+import NewPage, { blankPage } from './designer/NewPage';
 import Inspector from './designer/Inspector';
 import Layers from './designer/Layers';
 import Media, { KIND_FOR_TAG, MediaKind, Picked } from './designer/Media';
@@ -38,9 +38,8 @@ import Website from './designer/Website';
 import Styles, { INLINE } from './designer/Styles';
 import { Block, GROUPS, customBlock } from './designer/palette';
 import { DropSpot } from './designer/dropTarget';
-import { liveSandbox, prepareDocument, serializeDocument, slotsDropped } from './designer/html';
+import { canContainChildren, liveSandbox, prepareDocument, serializeDocument, slotsDropped } from './designer/html';
 import { designableChildren, elementOf, isText, labelOf, nodeAt, pathTo, writeText } from './designer/nodes';
-import { canContainChildren } from './designer/html';
 import { Overrides, joinCss, overrideCss, ownStylesheet, scriptPaths, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
 import { CANONICAL_VERSIONS, WIDGET_ASSET_HREFS } from './designer/widgetRuntime';
 
@@ -1389,7 +1388,7 @@ export default function WebDesigner() {
       return;
     }
     mutate(() => setOverrides(current => {
-      const declarations = { ...(current[target] ?? {}) };
+      const declarations = { ...current[target] };
       if (value === '') {
         delete declarations[property];
       } else {
@@ -1436,7 +1435,7 @@ export default function WebDesigner() {
     if (reveal) {
       current.body.querySelectorAll('*').forEach(element => {
         if (view.getComputedStyle(element).display === 'none') {
-          element.setAttribute('data-magic-force', '');
+          (element as HTMLElement).dataset.magicForce = '';
         }
       });
     }
@@ -1462,7 +1461,7 @@ export default function WebDesigner() {
       .forEach(element => element.removeAttribute('data-magic-empty'));
     current.body.querySelectorAll('*').forEach(element => {
       if (canContainChildren(element) && designableChildren(element).length === 0) {
-        element.setAttribute('data-magic-empty', '');
+        (element as HTMLElement).dataset.magicEmpty = '';
       }
     });
   }, [version, srcDoc]);
@@ -1474,7 +1473,7 @@ export default function WebDesigner() {
       return found;
     }
     doc.body.querySelectorAll('*').forEach(element => {
-      if (element.hasAttribute('data-magic-force') ||
+      if ((element as HTMLElement).dataset.magicForce !== undefined ||
           view.getComputedStyle(element).display === 'none') {
         found.add(element);
       }
@@ -2204,7 +2203,6 @@ export default function WebDesigner() {
             <Quality
               doc={doc}
               urls={pages.map(canonicalUrl)}
-              version={version}
               /*
                * Selecting is not enough when the finding is four screens
                * down: the canvas is brought to it as well, the same way a

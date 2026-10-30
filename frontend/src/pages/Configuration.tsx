@@ -182,11 +182,11 @@ export default function Configuration() {
 /*
  * Patches magic.smtp in the configuration, like the old SMTP dialog.
  */
-function SmtpDialog(props: {
+function SmtpDialog(props: Readonly<{
   config: string;
   onClose: () => void;
   onSave: (config: string) => void;
-}) {
+}>) {
 
   const existing = (() => {
     try {
@@ -270,11 +270,11 @@ function SmtpDialog(props: {
  * Patches magic.git.github in the configuration — the credentials Hyper IDE's
  * Git support authenticates with towards GitHub.
  */
-function GitDialog(props: {
+function GitDialog(props: Readonly<{
   config: string;
   onClose: () => void;
   onSave: (config: string) => void;
-}) {
+}>) {
 
   const existing = (() => {
     try {
@@ -358,11 +358,11 @@ function GitDialog(props: {
  * Patches magic.auth.recaptcha in the configuration, like the old reCAPTCHA
  * dialog. reCAPTCHA is optional — clearing both fields turns it off.
  */
-function RecaptchaDialog(props: {
+function RecaptchaDialog(props: Readonly<{
   config: string;
   onClose: () => void;
   onSave: (config: string) => void;
-}) {
+}>) {
 
   const existing = (() => {
     try {
@@ -502,11 +502,11 @@ const OIDC_FIELDS: Record<string, OidcField[]> = {
   ],
 };
 
-function OpenIdDialog(props: {
+function OpenIdDialog(props: Readonly<{
   config: string;
   onClose: () => void;
   onSave: (config: string) => void;
-}) {
+}>) {
 
   const existing: Record<string, any> = (() => {
     try {
@@ -537,7 +537,7 @@ function OpenIdDialog(props: {
   function setValue(key: string, value: string) {
     setValues({
       ...values,
-      [provider]: { ...(values[provider] ?? {}), [key]: value },
+      [provider]: { ...values[provider], [key]: value },
     });
   }
 
@@ -567,9 +567,9 @@ function OpenIdDialog(props: {
       return;
     }
     parsed.magic = parsed.magic ?? {};
-    const oidc = { ...(parsed.magic.oidc ?? {}) };
+    const oidc = { ...parsed.magic.oidc };
     for (const [name, settings] of Object.entries(values)) {
-      const entry = { ...(oidc[name] ?? {}) };
+      const entry = { ...oidc[name] };
       for (const [key, value] of Object.entries(settings)) {
         if (value.trim()) {
           entry[key] = value.trim();

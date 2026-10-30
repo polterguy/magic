@@ -38,8 +38,8 @@ import {
 const PAGE_SIZE = 15;
 
 // Accounts and roles the backend depends on, and which therefore can't be deleted.
-const PROTECTED_ROLES = ['root'];
-const PROTECTED_USERS = ['root'];
+const PROTECTED_ROLES = new Set(['root']);
+const PROTECTED_USERS = new Set(['root']);
 
 export default function Users() {
 
@@ -78,7 +78,7 @@ export default function Users() {
   );
 }
 
-function UsersTab(props: { roles: Role[] }) {
+function UsersTab(props: Readonly<{ roles: Role[] }>) {
 
   const [filter, setFilter] = useState('');
   const [sort, setSort] = useSort();
@@ -249,8 +249,8 @@ function UsersTab(props: { roles: Role[] }) {
                   {' '}
                   <button
                     className="btn btn-danger btn-small"
-                    disabled={PROTECTED_USERS.includes(user.username)}
-                    title={PROTECTED_USERS.includes(user.username)
+                    disabled={PROTECTED_USERS.has(user.username)}
+                    title={PROTECTED_USERS.has(user.username)
                       ? 'The ' + user.username + ' user cannot be deleted'
                       : 'Delete user'}
                     onClick={() => removeUser(user.username)}>
@@ -313,11 +313,11 @@ function UsersTab(props: { roles: Role[] }) {
  * nobody knows, and mails a magic sign-in link — they pick their own
  * password once they arrive. The email doubles as the username.
  */
-function InviteUserDialog(props: {
+function InviteUserDialog(props: Readonly<{
   roles: Role[];
   onClose: () => void;
   onInvited: (email: string) => void;
-}) {
+}>) {
 
   const { backend } = useAuth();
   const [email, setEmail] = useState('');
@@ -396,11 +396,11 @@ function InviteUserDialog(props: {
   );
 }
 
-function NewUserDialog(props: {
+function NewUserDialog(props: Readonly<{
   roles: Role[];
   onClose: () => void;
   onCreated: (username: string) => void;
-}) {
+}>) {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -486,12 +486,12 @@ function NewUserDialog(props: {
   );
 }
 
-function EditUserDialog(props: {
+function EditUserDialog(props: Readonly<{
   user: User;
   roles: Role[];
   onClose: () => void;
   onSaved: () => void;
-}) {
+}>) {
 
   const [memberRoles, setMemberRoles] = useState<string[]>(props.user.roles ?? []);
   const [fields, setFields] = useState<UserExtra[]>(props.user.extra ?? []);
@@ -631,11 +631,11 @@ function EditUserDialog(props: {
   );
 }
 
-function ChangePasswordDialog(props: {
+function ChangePasswordDialog(props: Readonly<{
   user: User;
   onClose: () => void;
   onSaved: () => void;
-}) {
+}>) {
 
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -684,7 +684,7 @@ function ChangePasswordDialog(props: {
   );
 }
 
-function RolesTab(props: { roles: Role[]; onChanged: () => void }) {
+function RolesTab(props: Readonly<{ roles: Role[]; onChanged: () => void }>) {
 
   const [filter, setFilter] = useState('');
   const [editing, setEditing] = useState<Role | null>(null);
@@ -763,8 +763,8 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void }) {
                   {' '}
                   <button
                     className="btn btn-danger btn-small"
-                    disabled={PROTECTED_ROLES.includes(role.name)}
-                    title={PROTECTED_ROLES.includes(role.name)
+                    disabled={PROTECTED_ROLES.has(role.name)}
+                    title={PROTECTED_ROLES.has(role.name)
                       ? 'The ' + role.name + ' role cannot be deleted'
                       : 'Delete role'}
                     onClick={() => removeRole(role)}>
@@ -792,11 +792,11 @@ function RolesTab(props: { roles: Role[]; onChanged: () => void }) {
   );
 }
 
-function RoleDialog(props: {
+function RoleDialog(props: Readonly<{
   role: Role | null;
   onClose: () => void;
   onSaved: (name: string) => void;
-}) {
+}>) {
 
   const [name, setName] = useState(props.role?.name ?? '');
   const [description, setDescription] = useState(props.role?.description ?? '');

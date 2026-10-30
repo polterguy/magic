@@ -30,13 +30,13 @@ export function nextSort(current: SortState, column: string): SortState {
   return { column: null, direction: 'asc' };
 }
 
-export default function SortHeader(props: {
+export default function SortHeader(props: Readonly<{
   column: string;
   label: string;
   sort: SortState;
   onSort: (sort: SortState) => void;
   style?: React.CSSProperties;
-}) {
+}>) {
 
   const active = props.sort.column === props.column;
   const arrow = !active ? '' : props.sort.direction === 'asc' ? ' ↑' : ' ↓';

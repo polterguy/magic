@@ -20,7 +20,7 @@ import { KIND_FOR_TAG } from './Media';
 import { DataSource, dataGridSources, loadEndpoints } from './dataSources';
 
 // Attributes with a control of their own, or that belong to the designer.
-const OWN = ['class', 'id', 'style', 'contenteditable'];
+const OWN = new Set(['class', 'id', 'style', 'contenteditable']);
 
 /*
  * What an element can become. Deliberately not every tag there is — these are
@@ -45,7 +45,7 @@ function isTagName(tag: string) {
 
 // Tags that hold the document together. Turning something into one of these
 // produces markup the parser will rearrange, so they are not offered.
-const STRUCTURAL = ['html', 'head', 'body'];
+const STRUCTURAL = new Set(['html', 'head', 'body']);
 
 /*
  * Attribute names worth suggesting, by the tag they belong to, with the ones
@@ -82,13 +82,13 @@ const PER_TAG: Record<string, string[]> = {
 // Attributes an element could still be given, in the order worth offering them.
 function suggestedAttributes(element: Element) {
   const tag = element.tagName.toLowerCase();
-  const already = Array.from(element.attributes).map(attribute => attribute.name);
+  const already = new Set(Array.from(element.attributes).map(attribute => attribute.name));
   return [...(PER_TAG[tag] ?? []), ...ANY_TAG]
-    .filter(name => !already.includes(name) && !OWN.includes(name));
+    .filter(name => !already.has(name) && !OWN.has(name));
 }
 
 // Attributes that hold a URL into this same site, so the pages can be offered.
-const LINKS = ['href', 'action', 'formaction'];
+const LINKS = new Set(['href', 'action', 'formaction']);
 
 const mediaLabel = { image: 'Image', video: 'Video', audio: 'Audio' } as const;
 const mediaArticle = { image: 'an image', video: 'a video', audio: 'an audio file' } as const;
@@ -164,7 +164,7 @@ function gridColumns(value: string | null): GridColumn[] {
   }
 }
 
-export default function Inspector(props: {
+export default function Inspector(props: Readonly<{
   node: Node | null;
   doc: Document | null;
   onSetText: (text: string) => void;
@@ -186,7 +186,7 @@ export default function Inspector(props: {
   onChangeTag: (tag: string) => void;
   // Every page this site serves, for the attributes that link to one.
   urls: string[];
-}) {
+}>) {
 
   const [newClass, setNewClass] = useState('');
   const [newAttribute, setNewAttribute] = useState('');
@@ -350,7 +350,7 @@ export default function Inspector(props: {
     const src = element.getAttribute('src');
     const source = src ? sourceFor(src, props.origin) : null;
     const attributes = Array.from(element.attributes)
-      .filter(attribute => !OWN.includes(attribute.name) &&
+      .filter(attribute => !OWN.has(attribute.name) &&
         !attribute.name.startsWith('data-magic-'));
 
     /*
@@ -360,7 +360,7 @@ export default function Inspector(props: {
      * typo you were halfway through fixing.
      */
     function commitTag(target: Element) {
-      if (!tagDraft || tagDraft.owner !== target) {
+      if (tagDraft?.owner !== target) {
         return;
       }
       const tag = tagDraft.value.trim().toLowerCase();
@@ -369,7 +369,7 @@ export default function Inspector(props: {
         setBadTag(false);
         return;
       }
-      if (!isTagName(tag) || STRUCTURAL.includes(tag)) {
+      if (!isTagName(tag) || STRUCTURAL.has(tag)) {
         setBadTag(true);
         return;
       }
@@ -491,13 +491,14 @@ export default function Inspector(props: {
         )}
 
         {element.tagName.toLowerCase() === 'magic-data-grid' && (() => {
-          const currentColumns = gridColumns(element.getAttribute('data-columns'));
+          const data = (element as HTMLElement).dataset;
+          const currentColumns = gridColumns(data.columns ?? null);
           const currentSource = sources?.find(
-            source => source.readUrl === element.getAttribute('data-read-url')) ?? null;
-          const deleteOn = !!element.getAttribute('data-delete-url');
-          const editOn = !!element.getAttribute('data-update-url');
-          const filterOn = !!element.getAttribute('data-filterable');
-          const liveOn = !!element.getAttribute('data-live');
+            source => source.readUrl === data.readUrl) ?? null;
+          const deleteOn = !!data.deleteUrl;
+          const editOn = !!data.updateUrl;
+          const filterOn = !!data.filterable;
+          const liveOn = !!data.live;
 
           // Present as soon as either capability needs it, gone once neither does.
           function syncPrimaryKey(deleteWill: boolean, editWill: boolean) {
@@ -720,9 +721,10 @@ export default function Inspector(props: {
            * that makes it "relevant" to this widget.
            */
           const creatable = sources?.filter(source => source.createUrl) ?? null;
+          const data = (element as HTMLElement).dataset;
           const currentSource = creatable?.find(
-            source => source.createUrl === element.getAttribute('data-create-url')) ?? null;
-          const currentFields = gridColumns(element.getAttribute('data-columns'));
+            source => source.createUrl === data.createUrl) ?? null;
+          const currentFields = gridColumns(data.columns ?? null);
 
           /*
            * Every field checked by default — crud-create's own input is
@@ -814,7 +816,7 @@ export default function Inspector(props: {
               <label title={attribute.name}>{attribute.name}</label>
               <input
                 type="text"
-                list={LINKS.includes(attribute.name) ? 'designer-urls' : undefined}
+                list={LINKS.has(attribute.name) ? 'designer-urls' : undefined}
                 readOnly={hasSlot(attribute.value) && unlocked !== attribute.name}
                 title={hasSlot(attribute.value) ? SERVER_FILLED : undefined}
                 value={attribute.value}
