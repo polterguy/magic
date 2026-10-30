@@ -62,10 +62,14 @@ namespace magic.lambda.auth
                     expires = DateTime.UtcNow.AddMinutes(duration.Value);
             }
 
+            // Notice, if caller supplies a private key we sign with RS256, otherwise with HS256 using the auth secret.
+            var privateKey = AuthSigningKeys.GetKeyArgument(input, "private-key");
+
             input.Clear();
             input.Value = TicketFactory.CreateTicket(
                 _settings,
-                new Ticket(username, roles, claims, expires));
+                new Ticket(username, roles, claims, expires),
+                privateKey);
         }
     }
 }

@@ -20,6 +20,7 @@ namespace magic.lambda.auth.signatures
             Map("claims", "string", "Claims to put in the ticket"),
             Option("expires", "DateTime", "Absolute UTC expiration time"),
             Option("duration", "long", "Relative expiration duration in minutes"),
+            Option("private-key", "string", "RSA private key as PEM, or DER as base64 or byte[], signing the ticket with RS256 instead of HS256 using the auth secret", false, "rsa-private-key"),
         };
 
         /// <inheritdoc />
@@ -129,6 +130,29 @@ namespace magic.lambda.auth.signatures
         public IEnumerable<SlotChild> Children => new[]
         {
             CreateTicketSignature.Option("roles", "string", "Comma-separated roles required by the token", true, "role"),
+            CreateTicketSignature.Option("public-key", "string", "RSA public key as PEM, or DER as base64 or byte[], accepting only RS256 tokens signed by its private half instead of HS256 tokens signed with the auth secret", false, "rsa-public-key"),
+        };
+    }
+
+    /// <summary>
+    /// Signature for [auth.jwks].
+    /// </summary>
+    public class JwksSignature : ISlotSignature
+    {
+        public IEnumerable<SlotChild> Children => new[]
+        {
+            new SlotChild
+            {
+                Name = "public-key",
+                Type = "string",
+                Kind = "rsa-public-key",
+                Description = "RSA public key as PEM, or DER as base64 or byte[], to include in the key set, repeat for multiple keys",
+                Required = true,
+                Mode = SlotChildMode.ValueOrExpression,
+                Cardinality = SlotChildCardinality.OneOrMore,
+                Role = SlotChildRole.Option,
+                Projection = SlotChildProjection.Value,
+            },
         };
     }
 
