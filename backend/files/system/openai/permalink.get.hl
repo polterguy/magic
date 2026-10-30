@@ -9,6 +9,24 @@ auth.ticket.verify
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/session
 
+// Verifying the session belongs to the authenticated caller before reading it, so that
+// a [session] alone cannot expose another user's transcript. Mirrors the ownership
+// scoping in active-session.post.hl.
+.username
+set-value:x:@.username
+   auth.ticket.get
+data.connect:[generic|magic]
+   data.select:@"
+select id from ml_history where session_id = @session_id and username = @username limit 1"
+      session_id:x:@.arguments/*/session
+      username:x:@.username
+   if
+      not-exists:x:@data.select/*
+      .lambda
+         throw:Could not find session
+            public:bool:true
+            status:int:404
+
 // Retrieving session items.
 cache.get:x:@.arguments/*/session
 
