@@ -36,6 +36,8 @@ namespace magic.lambda.http.tests
 
     public class HttpBehaviourTests
     {
+        static readonly string[] SseExpected = { "one", "two", "three" };
+
         static HttpResponseMessage Ok(string body = "") => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(body) };
 
         #region [ -- Timeout -- ]
@@ -86,7 +88,7 @@ namespace magic.lambda.http.tests
                 (_, _) => Task.FromResult(Ok("one\ntwo\nthree\n")));
             Assert.Equal(200, lambda.Children.First().Value);
             Assert.Equal(
-                new[] { "one", "two", "three" },
+                SseExpected,
                 TestSseMark.Messages.Where(x => x.Marker == marker).Select(x => x.Message).ToArray());
         }
 
@@ -102,12 +104,12 @@ namespace magic.lambda.http.tests
             var seen = new List<(HttpMethod, string, string, string, string)>();
             await Common.EvaluateAsync(
                 "http." + verb + ":\"https://example.com/start\"\n   token:secret\n   payload\n      a:int:1",
-                async (request, _) =>
+                async (request, ct) =>
                 {
                     seen.Add((
                         request.Method,
                         request.RequestUri.ToString(),
-                        request.Content == null ? null : await request.Content.ReadAsStringAsync(),
+                        request.Content == null ? null : await request.Content.ReadAsStringAsync(ct),
                         request.Headers.Authorization?.ToString(),
                         request.Content?.Headers.ContentType?.MediaType));
                     if (seen.Count == 1)
@@ -198,9 +200,9 @@ namespace magic.lambda.http.tests
             string body = null;
             await Common.EvaluateAsync(
                 "http.post:\"https://example.com/x\"\n   headers\n      Content-Type:application/x-custom-request\n   payload\n      a:1\n      b:2",
-                async (request, _) =>
+                async (request, ct) =>
                 {
-                    body = await request.Content.ReadAsStringAsync();
+                    body = await request.Content.ReadAsStringAsync(ct);
                     return Ok();
                 });
             Assert.Equal("custom:a=1,b=2", body);

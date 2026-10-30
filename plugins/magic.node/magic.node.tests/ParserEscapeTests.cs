@@ -133,7 +133,7 @@ namespace magic.node.tests
             var lambda = HyperlambdaParser.Parse("foo:int:42\n:bar\nbaz:bool:true\nqux:date:\"2020-01-02T03:04:05\"");
             Assert.Equal(42, lambda.Children.First().Value);
             Assert.Equal("", lambda.Children.Skip(1).First().Name);
-            Assert.Equal(true, lambda.Children.Skip(2).First().Value);
+            Assert.True((bool)lambda.Children.Skip(2).First().Value);
             Assert.IsType<System.DateTime>(lambda.Children.Skip(3).First().Value);
         }
     }

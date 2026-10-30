@@ -277,7 +277,7 @@ namespace magic.library.tests
 
         #region [ -- Exceptions -- ]
 
-        static IApplicationBuilder ThrowingPipeline(IServiceProvider provider, Exception error)
+        static ApplicationBuilder ThrowingPipeline(IServiceProvider provider, Exception error)
         {
             var app = Pipeline(provider);
             app.UseMagicExceptions();

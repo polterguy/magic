@@ -11,6 +11,10 @@ namespace magic.lambda.html.tests
 {
     public class Html2MarkdownTests
     {
+        static readonly string[] TwoUrls = { "https://example.com/docs/intro", "https://example.com/guide/next" };
+        static readonly string[] OneUrl = { "https://example.com" };
+        static readonly string[] PageUrl = { "https://example.com/page" };
+
         static Node Convert(string html, string args = "")
         {
             var hl = "html2markdown:@\"" + html.Replace("\"", "\"\"") + "\"" + (args == "" ? "" : "\n" + args);
@@ -38,7 +42,7 @@ namespace magic.lambda.html.tests
             var markdown = node.GetEx<string>();
             Assert.Contains("[Intro](https://example.com/docs/intro)", markdown);
             Assert.Contains("[Next](https://example.com/guide/next)", markdown);
-            Assert.Equal(new[] { "https://example.com/docs/intro", "https://example.com/guide/next" }, Urls(node));
+            Assert.Equal(TwoUrls, Urls(node));
         }
 
         [Fact]
@@ -66,7 +70,7 @@ namespace magic.lambda.html.tests
         public void MailAndPhoneLinksAreNotCollectedAsUrls()
         {
             var node = Convert("<a href=\"mailto:a@b.c\">Mail</a><a href=\"tel:+4512345678\">Call</a><a href=\"https://example.com\">Web</a>");
-            Assert.Equal(new[] { "https://example.com" }, Urls(node));
+            Assert.Equal(OneUrl, Urls(node));
             Assert.Contains("[Mail](mailto:a@b.c)", node.GetEx<string>());
         }
 
@@ -74,7 +78,7 @@ namespace magic.lambda.html.tests
         public void FragmentsAreRemovedFromCollectedUrls()
         {
             var node = Convert("<a href=\"https://example.com/page#section\">Page</a>");
-            Assert.Equal(new[] { "https://example.com/page" }, Urls(node));
+            Assert.Equal(PageUrl, Urls(node));
         }
 
         [Fact]

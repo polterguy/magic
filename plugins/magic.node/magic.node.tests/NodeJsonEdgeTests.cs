@@ -19,6 +19,8 @@ namespace magic.node.tests
     [Collection(nameof(ConversionTests))]
     public class NodeJsonEdgeTests
     {
+        static readonly string[] AB = { "a", "b" };
+
         static Node Parse(string json)
         {
             var node = new Node();
@@ -248,7 +250,7 @@ namespace magic.node.tests
         public void LastValueOfADuplicateNameWinsAndKeepsTheFirstPosition()
         {
             var node = Parse("{\"a\":1,\"b\":2,\"a\":3}");
-            Assert.Equal(new[] { "a", "b" }, node.Children.Select(x => x.Name).ToArray());
+            Assert.Equal(AB, node.Children.Select(x => x.Name).ToArray());
             Assert.Equal(3L, node.Children.First().Value);
         }
 
@@ -286,8 +288,8 @@ namespace magic.node.tests
             Assert.Equal(3, list.Children.Count());
             Assert.Equal(2, list.Children.Skip(1).First().Children.Count());
             Assert.Null(list.Children.Last().Children.First().Value);
-            Assert.Equal(true, node.Children.First(x => x.Name == "flag").Value);
-            Assert.Equal(false, node.Children.First(x => x.Name == "off").Value);
+            Assert.True((bool)node.Children.First(x => x.Name == "flag").Value);
+            Assert.False((bool)node.Children.First(x => x.Name == "off").Value);
         }
 
         [Fact]

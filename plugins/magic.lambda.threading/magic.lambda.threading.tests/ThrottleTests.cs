@@ -73,6 +73,7 @@ execution.throttle.create:t-within
 execution.throttle:t-within
 execution.throttle:t-within
 execution.throttle:t-within");
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate("execution.throttle:t-within"));
         }
 
         [Fact]
@@ -173,6 +174,8 @@ execution.throttle.create:t-change
    per:global
 execution.throttle:t-change
 execution.throttle:t-change");
+            Common.Evaluate("execution.throttle:t-change\nexecution.throttle:t-change\nexecution.throttle:t-change");
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate("execution.throttle:t-change"));
         }
 
         [Fact]
@@ -192,6 +195,7 @@ execution.throttle:t-delete"));
         {
             Reset();
             Common.Evaluate(@"execution.throttle.create:t-never-declared");
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"execution.throttle:t-never-declared"));
         }
 
         [Fact]

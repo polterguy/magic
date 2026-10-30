@@ -3,6 +3,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,6 +34,14 @@ namespace magic.lambda.crypto.tests
         static readonly string SHA256 = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
         static readonly string SHA384 = "cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8b605a43ff5bed8086072ba1e7cc2358baeca134c825a7";
         static readonly string SHA512 = "ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f";
+        static readonly Dictionary<string, string> Expected = new()
+        {
+            ["MD5"] = MD5,
+            ["SHA1"] = SHA1,
+            ["SHA256"] = SHA256,
+            ["SHA384"] = SHA384,
+            ["SHA512"] = SHA512,
+        };
         static readonly string SHA1_FINGERPRINT = "a999-3e36-4706-816a-ba3e-2571-7850-c26c-9cd0-d89d";
 
         [Theory]
@@ -44,7 +53,7 @@ namespace magic.lambda.crypto.tests
         public void EachAlgorithmHasItsOwnSlot(string slot, string expected)
         {
             var lambda = Common.Evaluate(slot + ":abc");
-            Assert.Equal(typeof(HashTests).GetField(expected, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null), lambda.Children.First().Value);
+            Assert.Equal(Expected[expected], lambda.Children.First().Value);
         }
 
         [Theory]
@@ -55,9 +64,9 @@ namespace magic.lambda.crypto.tests
         public void AlgorithmCanBeAnArgument(string algorithm, string expected)
         {
             var lambda = Common.Evaluate("crypto.hash:abc\n   algorithm:" + algorithm);
-            Assert.Equal(typeof(HashTests).GetField(expected, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null), lambda.Children.First().Value);
+            Assert.Equal(Expected[expected], lambda.Children.First().Value);
             lambda = Common.Evaluate("crypto.hash:abc\n   algo:" + algorithm);
-            Assert.Equal(typeof(HashTests).GetField(expected, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null), lambda.Children.First().Value);
+            Assert.Equal(Expected[expected], lambda.Children.First().Value);
         }
 
         [Fact]

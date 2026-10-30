@@ -43,9 +43,9 @@ http.get:""https://example.com/endpoint""
                 "http." + verb + ":\"https://example.com/endpoint\"\n" +
                 (contentType == null ? "" : "   headers\n      Content-Type:" + contentType + "\n") +
                 payloadHl,
-                async (request, _) =>
+                async (request, ct) =>
                 {
-                    body = request.Content == null ? null : await request.Content.ReadAsStringAsync();
+                    body = request.Content == null ? null : await request.Content.ReadAsStringAsync(ct);
                     type = request.Content?.Headers.ContentType?.MediaType;
                     return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") };
                 });
@@ -177,9 +177,9 @@ http.get:""https://example.com/endpoint""
         {
             var lambda = "   payload\n      name:x:@.name\n";
             string body = null;
-            await Common.EvaluateAsync(".name:Ada\nhttp.post:\"https://example.com/endpoint\"\n" + lambda, async (request, _) =>
+            await Common.EvaluateAsync(".name:Ada\nhttp.post:\"https://example.com/endpoint\"\n" + lambda, async (request, ct) =>
             {
-                body = await request.Content.ReadAsStringAsync();
+                body = await request.Content.ReadAsStringAsync(ct);
                 return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") };
             });
             Assert.Equal("{\"name\":\"Ada\"}", body);
