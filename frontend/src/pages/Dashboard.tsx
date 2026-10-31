@@ -657,6 +657,9 @@ export default function Dashboard() {
  * the backend can look up each one's token limit.
  */
 const BOT_MODELS = [
+  'gpt-6-luna',
+  'gpt-6.1-terra',
+  'gpt-6.1-sol',
   'gpt-5.6-luna',
   'gpt-5.6-terra',
   'gpt-5.6-sol',
@@ -668,7 +671,7 @@ const BOT_MODELS = [
 ];
 
 // The balanced, cost-sensible default, matching the "default" model type.
-const DEFAULT_BOT_MODEL = 'gpt-5.6-luna';
+const DEFAULT_BOT_MODEL = 'gpt-6-luna';
 
 /*
  * Opens by itself after a magic-link sign-in: the user just arrived through

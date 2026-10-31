@@ -18,9 +18,9 @@ import { mlTypeUpdate, mlTypes, modelPriceLabel, openaiGetKey, openaiSetKey } fr
  * source of truth everywhere a key already exists — update both together.
  */
 const MODELS: { name: string; input_price: number; output_price: number }[] = [
-  { name: 'gpt-5.6-luna', input_price: 0.2, output_price: 1.2 },
-  { name: 'gpt-5.6-terra', input_price: 2, output_price: 12 },
-  { name: 'gpt-5.6-sol', input_price: 5, output_price: 30 },
+  { name: 'gpt-6-luna', input_price: 0.1, output_price: 0.5 },
+  { name: 'gpt-6.1-terra', input_price: 1, output_price: 5 },
+  { name: 'gpt-6.1-sol', input_price: 2, output_price: 10 },
 ];
 
 /*
@@ -28,7 +28,7 @@ const MODELS: { name: string; input_price: number; output_price: number }[] = [
  * balanced default for the developer tooling behind Chat Ops, where a fumbled
  * answer costs more than the tokens saved by dropping to Luna.
  */
-const DEFAULT_MODEL = 'gpt-5.6-terra';
+const DEFAULT_MODEL = 'gpt-6.1-terra';
 
 export default function OpenAiKeyDialog(props: Readonly<{
   onClose: () => void;

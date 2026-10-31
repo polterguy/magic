@@ -6,7 +6,7 @@
  * list below mirrors the one in magic.ai.endpoint-common.hl. A type still referencing anything
  * else fails on its first prompt, and removing models from the code cannot repair types that
  * already exist, since those live in the database - hence this runs at startup and repoints
- * them at gpt-5.6-luna.
+ * them at gpt-6-luna.
  */
 try
 
@@ -14,7 +14,7 @@ try
    data.connect:[generic|magic]
 
       // Repointing every type whose model is not supported.
-      data.execute:"update ml_types set model = 'gpt-5.6-luna' where model not in ('gpt-5.2', 'gpt-5.2-pro', 'gpt-5.3-codex', 'gpt-5.4', 'gpt-5.4-pro', 'gpt-5.4-mini', 'gpt-5.4-nano', 'gpt-5.5', 'gpt-5.5-pro', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna')"
+      data.execute:"update ml_types set model = 'gpt-6-luna' where model not in ('gpt-5.2', 'gpt-5.2-pro', 'gpt-5.3-codex', 'gpt-5.4', 'gpt-5.4-pro', 'gpt-5.4-mini', 'gpt-5.4-nano', 'gpt-5.5', 'gpt-5.5-pro', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna', 'gpt-6-astra', 'gpt-6-sol', 'gpt-6.1-sol', 'gpt-6.1-terra', 'gpt-6-luna')"
 
       /*
        * Only logging when something was actually changed - a silent rewrite of somebody's
@@ -26,7 +26,7 @@ try
          .lambda
             log.info:Migrated machine learning types off models the chat slot no longer supports
                count:x:@data.execute
-               to:gpt-5.6-luna
+               to:gpt-6-luna
 
 .catch
 
