@@ -12,15 +12,17 @@ namespace magic.lambda.auth.signatures
     /// </summary>
     public class CreateTicketSignature : ISlotSignature
     {
+        const string Text = "string";
+
         /// <inheritdoc />
         public IEnumerable<SlotChild> Children => new[]
         {
-            Option("username", "string", "Username to put in the ticket", true, "username"),
-            List("roles", "string", "Roles to put in the ticket"),
-            Map("claims", "string", "Claims to put in the ticket"),
+            Option("username", Text, "Username to put in the ticket", true, "username"),
+            List("roles", Text, "Roles to put in the ticket"),
+            Map("claims", Text, "Claims to put in the ticket"),
             Option("expires", "DateTime", "Absolute UTC expiration time"),
             Option("duration", "long", "Relative expiration duration in minutes"),
-            Option("private-key", "string", "RSA private key as PEM, or DER as base64 or byte[], signing the ticket with RS256 instead of HS256 using the auth secret", false, "rsa-private-key"),
+            Option("private-key", Text, "RSA private key as PEM, or DER as base64 or byte[], signing the ticket with RS256 instead of HS256 using the auth secret", false, "rsa-private-key"),
         };
 
         /// <inheritdoc />

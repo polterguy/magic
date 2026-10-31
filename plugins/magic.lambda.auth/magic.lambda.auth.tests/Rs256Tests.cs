@@ -59,7 +59,7 @@ namespace magic.lambda.auth.tests
         [Fact]
         public void ReadToken_NoPublicKey_AcceptsHs256AsBefore()
         {
-            Read(CreateToken(null), null);
+            Assert.Null(Record.Exception(() => Read(CreateToken(null), null)));
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace magic.lambda.auth.tests
         [Fact]
         public void ReadToken_PublicKey_AcceptsRs256()
         {
-            Read(CreateToken(_privateKey), _publicKey);
+            Assert.Null(Record.Exception(() => Read(CreateToken(_privateKey), _publicKey)));
         }
 
         [Fact]
