@@ -8,6 +8,12 @@ Turn plain English into a working full-stack app — database, secure API, busin
 [![Dashboard](https://img.shields.io/badge/dashboard-React%20%2B%20Vite-61DAFB.svg)](frontend/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/servergardens/magic-backend.svg)](https://hub.docker.com/r/servergardens/magic-backend)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=polterguy_magic)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=coverage)](https://sonarcloud.io/summary/new_code?id=polterguy_magic)
+[![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=polterguy_magic)
+[![Reliability](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=polterguy_magic)
+[![Security](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=polterguy_magic)
+[![Duplication](https://sonarcloud.io/api/project_badges/measure?project=polterguy_magic&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=polterguy_magic)
 ![polterguy/magic MCP server](https://glama.ai/mcp/servers/polterguy/magic/badges/score.svg)
 
 ## Run it in 60 seconds
