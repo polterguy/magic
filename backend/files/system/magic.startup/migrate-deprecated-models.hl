@@ -2,19 +2,39 @@
 /*
  * Migrates machine learning types off models the chat slot no longer supports.
  *
- * Only gpt-5.2 and newer are supported, spoken to over the Responses API with reasoning - the
- * list below mirrors the one in magic.ai.endpoint-common.hl. A type still referencing anything
- * else fails on its first prompt, and removing models from the code cannot repair types that
- * already exist, since those live in the database - hence this runs at startup and repoints
- * them at gpt-6-luna.
+ * Supported models are the entries with [chat] in /system/openai/model-catalogue.hl, spoken to
+ * over the Responses API with reasoning. A type still referencing anything else fails on its
+ * first prompt, and removing models from the catalogue cannot repair types that already exist,
+ * since those live in the database - hence this runs at startup and repoints them at gpt-6-luna.
  */
 try
+
+   // Listing the supported models as a quoted SQL list, always ending in an empty string.
+   io.file.load:/system/openai/model-catalogue.hl
+   hyper2lambda:x:@io.file.load
+   .models:""
+   for-each:x:@hyper2lambda/*
+      if
+         exists:x:@.dp/#/*/chat
+         .lambda
+            set-value:x:@.models
+               strings.concat
+                  get-value:x:@.models
+                  .:"'"
+                  get-value:x:@.dp/#/*/id
+                  .:"', "
+   .sql
+   set-value:x:@.sql
+      strings.concat
+         .:"update ml_types set model = 'gpt-6-luna' where model not in ("
+         get-value:x:@.models
+         .:"'')"
 
    // Connecting to Magic database.
    data.connect:[generic|magic]
 
       // Repointing every type whose model is not supported.
-      data.execute:"update ml_types set model = 'gpt-6-luna' where model not in ('gpt-5.2', 'gpt-5.2-pro', 'gpt-5.3-codex', 'gpt-5.4', 'gpt-5.4-pro', 'gpt-5.4-mini', 'gpt-5.4-nano', 'gpt-5.5', 'gpt-5.5-pro', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna', 'gpt-6-astra', 'gpt-6-sol', 'gpt-6.1-sol', 'gpt-6.1-terra', 'gpt-6-luna')"
+      data.execute:x:@.sql
 
       /*
        * Only logging when something was actually changed - a silent rewrite of somebody's

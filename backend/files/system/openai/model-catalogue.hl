@@ -1,0 +1,121 @@
+
+/*
+ * The one list of OpenAI models Magic supports, newest first. Everything that needs to know
+ * which models exist, their context window or what they cost reads this file - models.get.hl
+ * serves it to the frontend, magic.ai.endpoint-common.hl takes its context window from it and
+ * migrate-deprecated-models.hl treats every entry with [chat] as supported.
+ *
+ * Only models spoken to over the Responses API with reasoning are listed, which is gpt-5.2 and
+ * up. [tokens] is the context window, and [input_price] and [output_price] are USD per
+ * 1,000,000 tokens at the standard tier for requests up to 272K input tokens. Only 1536
+ * dimension embedding models are listed since the vector index is fixed at that size, and
+ * text-embedding-3-large is 3072.
+ */
+.
+   id:gpt-6-astra
+   tokens:int:1050000
+   chat:bool:true
+   input_price:decimal:10
+   output_price:decimal:50
+.
+   id:gpt-6.1-sol
+   tokens:int:1050000
+   chat:bool:true
+   input_price:decimal:2
+   output_price:decimal:10
+.
+   id:gpt-6.1-terra
+   tokens:int:1050000
+   chat:bool:true
+   input_price:decimal:1
+   output_price:decimal:5
+.
+   id:gpt-6-sol
+   tokens:int:1050000
+   chat:bool:true
+   input_price:decimal:2
+   output_price:decimal:10
+.
+   id:gpt-6-luna
+   tokens:int:1050000
+   chat:bool:true
+   input_price:decimal:0.1
+   output_price:decimal:0.5
+.
+   id:gpt-5.6-sol
+   tokens:int:1050000
+   chat:bool:true
+   input_price:decimal:4
+   output_price:decimal:20
+.
+   id:gpt-5.6-terra
+   tokens:int:1050000
+   chat:bool:true
+   input_price:decimal:2
+   output_price:decimal:12
+.
+   id:gpt-5.6-luna
+   tokens:int:1050000
+   chat:bool:true
+   input_price:decimal:0.2
+   output_price:decimal:1.2
+.
+   id:gpt-5.5-pro
+   tokens:int:1000000
+   chat:bool:true
+   input_price:decimal:30
+   output_price:decimal:180
+.
+   id:gpt-5.5
+   tokens:int:1000000
+   chat:bool:true
+   input_price:decimal:5
+   output_price:decimal:30
+.
+   id:gpt-5.4-pro
+   tokens:int:1000000
+   chat:bool:true
+   input_price:decimal:30
+   output_price:decimal:180
+.
+   id:gpt-5.4
+   tokens:int:1000000
+   chat:bool:true
+   input_price:decimal:2.5
+   output_price:decimal:15
+.
+   id:gpt-5.4-mini
+   tokens:int:400000
+   chat:bool:true
+   input_price:decimal:0.75
+   output_price:decimal:4.5
+.
+   id:gpt-5.4-nano
+   tokens:int:400000
+   chat:bool:true
+   input_price:decimal:0.2
+   output_price:decimal:1.25
+.
+   id:gpt-5.3-codex
+   tokens:int:400000
+   chat:bool:true
+   input_price:decimal:1.75
+   output_price:decimal:14
+.
+   id:gpt-5.2-pro
+   tokens:int:400000
+   chat:bool:true
+   input_price:decimal:21
+   output_price:decimal:168
+.
+   id:gpt-5.2
+   tokens:int:400000
+   chat:bool:true
+   input_price:decimal:1.75
+   output_price:decimal:14
+.
+   id:text-embedding-3-small
+   vector:bool:true
+.
+   id:text-embedding-ada-002
+   vector:bool:true

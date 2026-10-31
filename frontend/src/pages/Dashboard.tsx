@@ -650,26 +650,6 @@ export default function Dashboard() {
  * the crawl carries on regardless.
  */
 
-/*
- * The chat models worth choosing from, newest first. The models endpoint
- * returns everything OpenAI has - embeddings, codex, fine tunes - which is
- * noise here, and these are spelled exactly as models.get.hl knows them, so
- * the backend can look up each one's token limit.
- */
-const BOT_MODELS = [
-  'gpt-6-luna',
-  'gpt-6.1-terra',
-  'gpt-6.1-sol',
-  'gpt-5.6-luna',
-  'gpt-5.6-terra',
-  'gpt-5.6-sol',
-  'gpt-5.5-pro',
-  'gpt-5.5',
-  'gpt-5.4-mini',
-  'gpt-5.4',
-  'gpt-5.4-pro',
-];
-
 // The balanced, cost-sensible default, matching the "default" model type.
 const DEFAULT_BOT_MODEL = 'gpt-6-luna';
 
@@ -737,8 +717,8 @@ function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
 
   const [url, setUrl] = useState('');
   const [model, setModel] = useState(DEFAULT_BOT_MODEL);
-  // Model id → its pricing, so the dropdown can show cost next to each option.
-  const [prices, setPrices] = useState<Record<string, OpenAiModel>>({});
+  // The chat models the backend's catalogue lists, newest first, with their pricing.
+  const [models, setModels] = useState<OpenAiModel[]>([]);
   const [flavors, setFlavors] = useState<any[]>([]);
   const [flavor, setFlavor] = useState('');
   const [max, setMax] = useState('25');
@@ -746,12 +726,19 @@ function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
   const [crawl, setCrawl] = useState<{ channel: string } | null>(null);
 
   /*
-   * The personas and the model prices only matter to somebody actually
-   * filling this in, so they're fetched on the first touch of the form
+   * The models come from a static catalogue, so they load with the form since
+   * the dropdown has nothing to show without them. The personas only matter to
+   * somebody actually filling this in, so they're fetched on the first touch of the form
    * rather than on every dashboard visit. Focus reaches here from any
    * field, including the dropdowns, so whichever one is used first pays
    * for it - and only once.
    */
+  useEffect(() => {
+    openaiModels()
+      .then(list => setModels((list ?? []).filter(candidate => candidate.chat)))
+      .catch(() => {});
+  }, []);
+
   const loaded = useRef(false);
   function loadOptions() {
     if (loaded.current) {
@@ -763,9 +750,6 @@ function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
         setFlavors(list ?? []);
         setFlavor((list ?? [])[0]?.name ?? '');
       })
-      .catch(() => {});
-    openaiModels()
-      .then(list => setPrices(Object.fromEntries((list ?? []).map(m => [m.id, m]))))
       .catch(() => {});
   }
 
@@ -804,8 +788,8 @@ function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
         </label>
         <label data-tour="chatbot-model">OpenAI model
           <Select value={model} onChange={value => setModel(value)}>
-            {BOT_MODELS.map(option => (
-              <option key={option} value={option}>{option}{modelPriceLabel(prices[option])}</option>
+            {models.map(candidate => (
+              <option key={candidate.id} value={candidate.id}>{candidate.id}{modelPriceLabel(candidate)}</option>
             ))}
           </Select>
         </label>

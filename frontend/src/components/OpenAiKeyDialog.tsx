@@ -9,19 +9,8 @@ import Banner from './Banner';
 import Select from './Select';
 import { useEffect, useState } from 'react';
 import { Modal } from './Dialogs';
-import { mlTypeUpdate, mlTypes, modelPriceLabel, openaiGetKey, openaiSetKey } from '../lib/api';
-
-/*
- * Hardcoded rather than fetched — listing models needs a key, and this is the
- * dialog where the key gets supplied in the first place. Prices are USD per
- * million tokens and mirror /system/openai/models.get.hl, which stays the
- * source of truth everywhere a key already exists — update both together.
- */
-const MODELS: { name: string; input_price: number; output_price: number }[] = [
-  { name: 'gpt-6-luna', input_price: 0.1, output_price: 0.5 },
-  { name: 'gpt-6.1-terra', input_price: 1, output_price: 5 },
-  { name: 'gpt-6.1-sol', input_price: 2, output_price: 10 },
-];
+import { mlTypeUpdate, mlTypes, modelPriceLabel, openaiGetKey, openaiModels, openaiSetKey } from '../lib/api';
+import type { OpenAiModel } from '../lib/api';
 
 /*
  * Preselected until we know what the cloudlet already runs — Terra is the
@@ -39,6 +28,8 @@ export default function OpenAiKeyDialog(props: Readonly<{
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [model, setModel] = useState(DEFAULT_MODEL);
+  // The chat models the backend's catalogue lists, which needs no key to be served.
+  const [models, setModels] = useState<OpenAiModel[]>([]);
   // What "default" runs today, so an unchanged dropdown writes nothing.
   const [savedModel, setSavedModel] = useState('');
 
@@ -47,6 +38,9 @@ export default function OpenAiKeyDialog(props: Readonly<{
    * change an existing key shows what's there instead of an empty field.
    */
   useEffect(() => {
+    openaiModels()
+      .then(list => setModels((list ?? []).filter(candidate => candidate.chat)))
+      .catch(() => {});
     openaiGetKey()
       .then(response => setKey(response.result ?? ''))
       .catch(() => {});
@@ -110,9 +104,9 @@ export default function OpenAiKeyDialog(props: Readonly<{
       <label className="modal-label">
         Model
         <Select value={model} onChange={value => setModel(value)}>
-          {MODELS.map(candidate => (
-            <option key={candidate.name} value={candidate.name}>
-              {candidate.name}{modelPriceLabel(candidate)}
+          {models.map(candidate => (
+            <option key={candidate.id} value={candidate.id}>
+              {candidate.id}{modelPriceLabel(candidate)}
             </option>
           ))}
         </Select>

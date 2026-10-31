@@ -235,71 +235,23 @@ slots.create:magic.ai.endpoint-common
          type:int
 
    /*
-    * Making sure we set max size of model.
-    *
-    * Only models spoken to over the Responses API with reasoning are supported,
-    * which is gpt-5.2 and up - anything older is rejected here.
+    * Making sure we set max size of model, from the model catalogue. Only models spoken to
+    * over the Responses API with reasoning are listed there, so anything not found, and
+    * anything without a context window, is rejected here.
     */
-   switch:x:@.model/*/model
-
-      case:gpt-5.2
-         add:x:@.model
-            .
-               model_size:int:400000
-
-      case:gpt-5.2-pro
-         add:x:@.model
-            .
-               model_size:int:400000
-
-      case:gpt-5.3-codex
-         add:x:@.model
-            .
-               model_size:int:400000
-
-      case:gpt-5.4
-         add:x:@.model
-            .
-               model_size:int:1000000
-
-      case:gpt-5.4-pro
-         add:x:@.model
-            .
-               model_size:int:1000000
-
-      case:gpt-5.4-mini
-         add:x:@.model
-            .
-               model_size:int:400000
-
-      case:gpt-5.4-nano
-         add:x:@.model
-            .
-               model_size:int:400000
-
-      case:gpt-5.5
-         add:x:@.model
-            .
-               model_size:int:1000000
-
-      case:gpt-5.5-pro
-         add:x:@.model
-            .
-               model_size:int:1000000
-
-      case:gpt-5.6-sol
-      case:gpt-5.6-terra
-      case:gpt-5.6-luna
-      case:gpt-6-astra
-      case:gpt-6-sol
-      case:gpt-6.1-sol
-      case:gpt-6.1-terra
-      case:gpt-6-luna
-         add:x:@.model
-            .
-               model_size:int:1050000
-
-      default
+   io.file.load:/system/openai/model-catalogue.hl
+   hyper2lambda:x:@io.file.load
+   for-each:x:@hyper2lambda/*
+      if
+         eq:x:@.dp/#/*/id
+            get-value:x:@.model/*/model
+         .lambda
+            add:x:@.model
+               get-nodes:x:@.dp/#/*/tokens
+   if
+      not
+         exists:x:@.model/*/tokens
+      .lambda
 
          throw:Configuration for OpenAI model not found
             status:int:400
@@ -314,7 +266,7 @@ slots.create:magic.ai.endpoint-common
 
          // Defaulting both to half of what the model has left once [max_tokens] is reserved for the answer.
          math.divide
-            math.subtract:x:@.model/*/model_size
+            math.subtract:x:@.model/*/tokens
                get-value:x:@.model/*/max_tokens
             .:int:2
          set-value:x:@.model/*/max_context_tokens
