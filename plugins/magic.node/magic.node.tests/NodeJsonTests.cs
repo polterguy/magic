@@ -112,7 +112,7 @@ namespace magic.node.tests
         }
 
         [Theory]
-        [MemberData(nameof(Values))]
+        [MemberData(nameof(Values), DisableDiscoveryEnumeration = true)]
         public void EveryValueTypeIsWritten(object value, string expected)
         {
             var node = new Node();

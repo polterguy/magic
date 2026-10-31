@@ -142,10 +142,10 @@ export default function InvokePanel(props: Readonly<{
   const [fullDescription, setFullDescription] = useState(false);
   // Every role on the server, and the one the invocation impersonates - empty is yourself.
   const [roles, setRoles] = useState<string[]>([]);
-  const [runAs, setRunAsState] = useState(() => sessionStorage.getItem(RUN_AS_KEY) ?? '');
+  const [runAs, setRunAs] = useState(() => sessionStorage.getItem(RUN_AS_KEY) ?? '');
 
-  function setRunAs(role: string) {
-    setRunAsState(role);
+  function changeRunAs(role: string) {
+    setRunAs(role);
     sessionStorage.setItem(RUN_AS_KEY, role);
   }
 
@@ -477,7 +477,7 @@ export default function InvokePanel(props: Readonly<{
             style={{ display: 'flex', alignItems: 'center', gap: 6 }}
             title="Invoke as a caller holding only this role, using a short lived token minted for it. Debug always runs as you.">
             Run as
-            <Select value={runAs} onChange={value => setRunAs(value)}>
+            <Select value={runAs} onChange={value => changeRunAs(value)}>
               <option value="">me</option>
               {roles.map(role => (
                 <option key={role} value={role}>{role}</option>

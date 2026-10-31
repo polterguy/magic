@@ -94,7 +94,7 @@ namespace magic.node.tests
         [Fact]
         public void ConvertToDateTimeFromStringLocal()
         {
-            var result = Converter.ToObject("2020-12-23T23:59:00.001+" + TimeZoneInfo.Local.BaseUtcOffset.ToString().Substring(0,5), "date");
+            var result = Converter.ToObject(string.Concat("2020-12-23T23:59:00.001+", TimeZoneInfo.Local.BaseUtcOffset.ToString().AsSpan(0, 5)), "date");
             Assert.Equal(typeof(DateTime), result.GetType());
             var date = (DateTime)result;
             Assert.Equal(DateTimeKind.Local, date.Kind);

@@ -12,7 +12,7 @@
  * being edited, so nothing it draws can end up in the saved file.
  */
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react';
 import { DropSpot, findDropSpot } from './dropTarget';
 import { elementOf, isText, labelOf, nodeAtPoint, rectOf } from './nodes';
 import { CANVAS_SANDBOX, SLOT_EDITING, isSlot } from './html';
@@ -79,8 +79,7 @@ export default function Canvas(props: Readonly<CanvasProps>) {
   propsRef.current = props;
 
   // Re-measure trigger: outlines come from live layout, which scrolling moves.
-  const [, setTick] = useState(0);
-  const remeasure = () => setTick(tick => tick + 1);
+  const [, remeasure] = useReducer((tick: number) => tick + 1, 0);
 
   const [spot, setSpot] = useState<DropSpot | null>(null);
   const spotRef = useRef<DropSpot | null>(null);
