@@ -108,6 +108,15 @@ This slot takes a time span as its value, such as one returned from **[time]**, 
 of milliseconds the time span represents. Its value is mandatory, and it can be given either as a constant
 or as an expression.
 
+This slot returns the total number of milliseconds in a time span. Below is an example, returning the number of milliseconds in a minute.
+
+```
+time
+   minutes:1
+time.total-milliseconds:x:-
+```
+
+
 ## How to use [time.format]
 
 This slot formats a time span as a string, using the same format patterns as `TimeSpan.ToString` in C#,
@@ -117,3 +126,13 @@ and is invoked with the time span as its value. It requires the following argume
 
 The time span is typically a value returned from **[time]**, and the result of the slot is the formatted
 string.
+
+This slot formats a time span as text, with the **[format]** argument. Below is an example, formatting 2 hours and 30 minutes.
+
+```
+time
+   hours:2
+   minutes:30
+time.format:x:-
+   format:c
+```

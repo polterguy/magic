@@ -54,3 +54,27 @@ Since the above _"non-existing-key"_ doesn't exist in your configuration file, t
 return the value _"foo"_ being the result of the invocation to the **[get-value]** slot. This allows you
 to create default values your code resorts to if the specified configuration setting doesn't exist.
 
+## How to use [config.load]
+
+This slot returns the raw content of your _"appsettings.json"_ file as the value of its node. Below is an example.
+
+```
+config.load
+```
+
+## How to use [config.save]
+
+This slot saves the JSON you give it as your _"appsettings.json"_ file. The JSON replaces the file entirely, which is why you typically load it with **[config.load]** first, change it, and save the result. Below is an example, saving what was just loaded.
+
+```
+config.load
+config.save:x:@config.load
+```
+
+## How to use [config.section]
+
+This slot reads one section of your _"appsettings.json"_ file, and returns its keys and nested values as child nodes. Below is an example.
+
+```
+config.section:magic
+```

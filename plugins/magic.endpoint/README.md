@@ -496,7 +496,127 @@ This slot lists all MIME type mappings registered in the current installation, i
 It returns one child node for each mapping, where the name of the child node is the file extension and its value is the MIME type.
 It takes no arguments.
 
+This slot lists the MIME types Magic knows about, as a mapping from file extension to MIME type. Below is an example.
+
+```
+mime.list
+```
+
+
 ### How to use [request.verb]
 
 This slot returns the HTTP verb (e.g. _"get"_ or _"post"_) of the current incoming request as the value of the slot's node.
 It takes no arguments, and is only meaningful when invoked from within an HTTP request, such as inside of a Hyperlambda endpoint.
+
+This slot returns the HTTP verb of the current request, such as _"get"_ or _"post"_. Below is an example, to use inside of an endpoint.
+
+```
+request.verb
+```
+
+
+## How to use [endpoints.list]
+
+This slot lists the dynamic Hyperlambda endpoints on your server, with their meta data, such as their path, verb and authorisation requirements. Below is an example.
+
+```
+endpoints.list
+```
+
+## How to use [request.cookies.get]
+
+This slot returns the value of a cookie sent with the current request. Below is an example, to use inside of an endpoint.
+
+```
+request.cookies.get:my-cookie
+```
+
+## How to use [request.cookies.list]
+
+This slot lists all cookies sent with the current request, with each cookie as a child node. Below is an example, to use inside of an endpoint.
+
+```
+request.cookies.list
+```
+
+## How to use [request.headers.get]
+
+This slot returns the value of an HTTP header of the current request. Below is an example, to use inside of an endpoint.
+
+```
+request.headers.get:User-Agent
+```
+
+## How to use [request.headers.list]
+
+This slot lists all HTTP headers of the current request, with each header as a child node. Below is an example, to use inside of an endpoint.
+
+```
+request.headers.list
+```
+
+## How to use [request.host]
+
+This slot returns the host name of the current request, including the port if it is not the default. Below is an example, to use inside of an endpoint.
+
+```
+request.host
+```
+
+## How to use [request.ip]
+
+This slot returns the IP address of the client making the current request. You can ask for an IPv4 or IPv6 address with the **[version]** argument. Below is an example, to use inside of an endpoint.
+
+```
+request.ip
+
+request.ip
+   version:ipv6
+```
+
+## How to use [request.scheme]
+
+This slot returns the scheme of the current request, being _"http"_ or _"https"_. Below is an example, to use inside of an endpoint.
+
+```
+request.scheme
+```
+
+## How to use [request.url]
+
+This slot returns the URL path of the current request as its value, and each query string parameter as a child node. Below is an example, to use inside of an endpoint.
+
+```
+request.url
+```
+
+## How to use [response.cookies.set]
+
+This slot sets a cookie on the response. The cookie value is mandatory, and you can also set **[expires]**, **[http-only]**, **[secure]**, **[domain]**, **[path]** and **[same-site]**. Below is an example, to use inside of an endpoint.
+
+```
+response.cookies.set:my-cookie
+   value:some value
+   http-only:true
+   secure:true
+   same-site:Strict
+```
+
+## How to use [response.status.set]
+
+This slot sets the HTTP status code returned to the caller, such as 201 for created or 404 for not found. Below is an example, to use inside of an endpoint.
+
+```
+response.status.set:201
+```
+
+## How to use [server.ip]
+
+This slot returns the local IP address of your server, IPv4 unless you set **[version]** to _"ipv6"_, which is useful for logging or building absolute URLs. Below is an example.
+
+```
+server.ip
+
+server.ip
+   version:ipv6
+```

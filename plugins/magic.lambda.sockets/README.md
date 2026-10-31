@@ -194,3 +194,19 @@ sockets.connection.leave-group:x:@get-context
    group:foo-bar-group
 ```
 
+## How to use [sockets.users]
+
+This slot lists the users currently connected through web sockets. Each user becomes a child node holding the username and its connections. You can narrow the result with **[filter]**, **[offset]** and **[limit]**. Below is an example.
+
+```
+sockets.users
+   limit:10
+```
+
+## How to use [sockets.users.count]
+
+This slot counts the users currently connected through web sockets, and can be narrowed with **[filter]**. Below is an example.
+
+```
+sockets.users.count
+```

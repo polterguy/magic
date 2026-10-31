@@ -266,17 +266,41 @@ math.cos:x:@.arguments/*/number
 This slot rounds its input down to the nearest whole number. The slot takes a numeric value, which can be a
 constant or an expression, and replaces its value with the rounded result.
 
+Below is an example, rounding 2.6 down to 2.
+
+```
+.number:double:2.6
+math.floor:x:@.number
+```
+
+
 
 ## How to use [math.ceil]
 
 This slot rounds its input up to the nearest whole number. The slot takes a numeric value, which can be a
 constant or an expression, and replaces its value with the rounded result.
 
+Below is an example, rounding 2.6 up to 3.
+
+```
+.number:double:2.6
+math.ceil:x:@.number
+```
+
+
 
 ## How to use [math.round]
 
 This slot rounds its input to the nearest whole number, using .NET's `Math.Round`, which rounds halfway values to the nearest even number. The slot takes a numeric value, which can be a
 constant or an expression, and replaces its value with the rounded result.
+
+Below is an example, rounding 2.6 to 3.
+
+```
+.number:double:2.6
+math.round:x:@.number
+```
+
 
 
 ## How to use [math.random]
@@ -288,3 +312,16 @@ This slot returns a random number. Its behavior depends on how many child nodes 
 * Two children - Returns a random integer between the first child's value, inclusive, and the second child's value, exclusive. The children are documented as **[min]** and **[max]**, but the slot uses the first and second child regardless of their names.
 
 Child values are converted to `int`.
+
+Below are the three ways to invoke the slot. The first returns a random number between 0 and 1, the second a random integer between 0 and 10, and the third a random integer between 5 and 10.
+
+```
+math.random
+
+math.random
+   max:10
+
+math.random
+   min:5
+   max:10
+```

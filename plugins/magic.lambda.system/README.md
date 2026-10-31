@@ -348,3 +348,28 @@ Some things to be aware of.
 * Slots executed on another thread through **[fork]** are not recorded, since a fork creates its own signaler. **[join]** is recorded, but its children are not.
 * Recording is turned on for the lambda passed into this slot only, and adds nothing to the execution speed of the language elsewhere.
 * The recording contains a copy of the entire lambda object for every single step, so debugging a lambda that loops thousands of times produces a very large result. Recording therefore stops after 10,000 steps, and the recording's last step becomes a **[truncated]** node declaring this, rather than the recording silently ending.
+
+## How to use [console.log]
+
+This slot writes a message to the console of the server, which is useful while developing. Below is an example.
+
+```
+console.log:Hello from Hyperlambda
+```
+
+## How to use [version]
+
+This slot returns the version of your Magic Cloud as the value of its node. Below is an example.
+
+```
+version
+console.log:x:@version
+```
+
+## How to use [timezone.init]
+
+This slot reads the _"magic:culture:defaultTimeZone"_ setting from your _"appsettings.json"_ file, and makes it the default time zone used when dates are converted. It takes no arguments, and Magic invokes it during startup, but you can also invoke it yourself after changing the setting.
+
+```
+timezone.init
+```

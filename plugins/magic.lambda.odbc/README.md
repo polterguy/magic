@@ -30,3 +30,80 @@ the _"backend.csproj"_ file yourself, using for instance the DotNet CLI. The rea
 exists literally hundreds of different databases out there having specific ODBC data adapter drivers, and
 installing all of these would be impossible for us to do.
 
+## How to use [odbc.connect]
+
+This slot opens a connection to a ODBC database, and evaluates its lambda object with that connection open. It works like **[data.connect]**, except it always uses ODBC. You can pass in only the name of the database, which is substituted for the `{database}` part of the generic connection string in your _"appsettings.json"_ file, or a complete connection string. Below is an example.
+
+```
+odbc.connect:sakila
+   odbc.select:select first_name, last_name from actor limit 5
+```
+
+## How to use [odbc.select]
+
+This slot executes any SQL you give it against the open connection, and returns every record as a lambda object. It works like **[data.select]**, except it always uses ODBC. Below is an example.
+
+```
+odbc.connect:sakila
+   odbc.select:select first_name, last_name from actor limit 2
+
+// The result of the above looks like the following.
+odbc.connect
+   odbc.select
+      ""
+         first_name:PENELOPE
+         last_name:GUINESS
+      ""
+         first_name:NICK
+         last_name:WAHLBERG
+```
+
+## How to use [odbc.scalar]
+
+This slot executes SQL returning a single value, such as an aggregate, and sets the value of its own node to the result. It works like **[data.scalar]**, except it always uses ODBC. Below is an example, counting the records of a table.
+
+```
+odbc.connect:sakila
+   odbc.scalar:select count(*) from actor
+```
+
+## How to use [odbc.execute]
+
+This slot executes SQL you do not expect any result from, such as updates and deletes. It works like **[data.execute]**, except it always uses ODBC. Below is an example.
+
+```
+odbc.connect:sakila
+   odbc.execute:update actor set last_name = 'Smith' where actor_id = 1
+```
+
+## How to use [odbc.transaction.create]
+
+This slot creates a database transaction, and evaluates its lambda object inside of it. It works like **[data.transaction.create]**. Unless the transaction is explicitly committed before it leaves scope, it is rolled back, which is what happens below.
+
+```
+odbc.connect:sakila
+   odbc.transaction.create
+      odbc.execute:update actor set last_name = 'Smith' where actor_id = 1
+```
+
+## How to use [odbc.transaction.commit]
+
+This slot commits the open transaction. It works like **[data.transaction.commit]**. Without it a transaction is rolled back when it leaves scope. Below is an example.
+
+```
+odbc.connect:sakila
+   odbc.transaction.create
+      odbc.execute:update actor set last_name = 'Smith' where actor_id = 1
+      odbc.transaction.commit
+```
+
+## How to use [odbc.transaction.rollback]
+
+This slot explicitly rolls back the open transaction, discarding everything done since it was created. It works like **[data.transaction.rollback]**. Below is an example.
+
+```
+odbc.connect:sakila
+   odbc.transaction.create
+      odbc.execute:update actor set last_name = 'Smith' where actor_id = 1
+      odbc.transaction.rollback
+```

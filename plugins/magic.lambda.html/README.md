@@ -173,3 +173,9 @@ the _"magic.lambda.json"_ project.
 This slot HTML decodes its value, equivalent of `HttpUtility.HtmlDecode` in C#, turning entities such as
 `&amp;` and `&lt;` back into the characters they represent. The value is mandatory, and can be given as a
 constant or as an expression pointing to a single node. The slot returns the decoded string as its value.
+
+This slot decodes HTML encoded text, turning for instance `&lt;` back into `<`. Below is an example.
+
+```
+html-decode:"&lt;b&gt;Hello &amp; welcome&lt;/b&gt;"
+```

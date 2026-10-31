@@ -237,3 +237,47 @@ found below.
 slots.vocabulary
 ```
 
+## How to use [function]
+
+This slot is an alias for **[slots.create]**, and creates a dynamic slot you can invoke with **[signal]**. Below is an example.
+
+```
+function:foo
+   return:int:57
+
+signal:foo
+```
+
+## How to use [return]
+
+This slot returns a value, or its child nodes, to the nearest caller, such as a dynamic slot being invoked with **[signal]**. It combines **[return-value]** and **[return-nodes]**, so you can give it a value, or children, as the two examples below show.
+
+```
+function:foo
+   return:This is the returned value
+
+signal:foo
+
+function:bar
+   return
+      integer-value:int:57
+      string-value:Foo bar
+
+signal:bar
+```
+
+## How to use [yield]
+
+This slot returns its child nodes to the caller, after unwrapping any expressions they contain. It is typically used inside **[map]**, where it returns what each iteration produces. Below is an example, incrementing every number.
+
+```
+.src
+   .:int:1
+   .:int:2
+   .:int:3
+map:x:@.src/*
+   math.increment:x:@.dp/#
+   unwrap:x:+/*
+   yield
+      .:x:@math.increment
+```

@@ -94,6 +94,13 @@ path relative to the root folder of your backend, and accepts the following opti
 * **[display-hidden]** - Boolean, defaults to false, which hides folders starting with a `.`
 * **[display-system]** - Boolean, defaults to true, and if false hides folders inside of _"/system/"_, _"/misc/"_, _"/data/"_ and _"/config/"_
 
+This slot lists every folder below a folder, at any depth, as child nodes holding the path of each folder. Hidden folders and system folders are left out unless you set **[display-hidden]** or **[display-system]**. Below is an example.
+
+```
+io.folder.list-recursively:/misc/
+```
+
+
 ### How to use [io.folder.move]
 
 Moves the specified source folder to its specified destination folder.
@@ -138,6 +145,13 @@ has the following two children.
 * **[content]** - Content of the file as a string, decoded as UTF-8
 
 As with **[io.file.load]**, you should not use this slot on binary files.
+
+This slot loads every file in a folder and its subfolders, and returns one child node per file, holding its path and content. Below is an example.
+
+```
+io.file.load-recursively:/misc/snippets/
+```
+
 
 ### How to use [io.file.save]
 
@@ -335,6 +349,13 @@ file's path relative to the root folder of your backend, and accepts the followi
 
 * **[display-hidden]** - Boolean, defaults to false, which hides files starting with a `.`
 * **[display-system]** - Boolean, defaults to true, and if false hides files inside of _"/system/"_, _"/misc/"_, _"/data/"_ and _"/config/"_
+
+This slot lists every file in a folder and in all of its subfolders, as child nodes holding the path of each file. Hidden files and system folders are left out unless you set **[display-hidden]** or **[display-system]**. Below is an example.
+
+```
+io.file.list-recursively:/misc/
+```
+
 
 ### How to use [io.file.search]
 
@@ -597,3 +618,21 @@ verifies its destination folder once, and then confines every entry the archive 
 which is what stops an archive escaping it with a `../` in an entry's name.
 
 Read more about **[whitelist]** in the magic.lambda project.
+
+## How to use [io.file.load.binary]
+
+This slot loads a file as raw bytes, which is what you use for images, PDF files and other binary content, and sets the value of its node to the bytes. Below is an example.
+
+```
+io.file.load.binary:/misc/logo.png
+```
+
+## How to use [io.file.save.binary]
+
+This slot saves raw bytes as a file. The first child node supplies the content, which must be bytes. Below is an example, copying an image.
+
+```
+io.file.load.binary:/misc/logo.png
+io.file.save.binary:/misc/logo-copy.png
+   .:x:@io.file.load.binary
+```

@@ -201,6 +201,13 @@ Returns the number of bytes the specified string occupies when UTF-8 encoded, as
 **[strings.length]**, which counts characters, since characters outside the ASCII range occupy more than
 one byte. The slot takes a value, which can be a constant or an expression.
 
+This slot returns the number of bytes a string takes as UTF-8, which differs from its length when it contains multi byte characters. Below is an example.
+
+```
+strings.byte-count:Hello world
+```
+
+
 ### How to use [strings.regex-replace]
 
 Replaces matches of the given regular expression with some static sequence of characters.
@@ -303,10 +310,24 @@ strings.url-decode:thomas@ainiro.io
 HTML encodes a string, replacing characters such as `<`, `>`, `&` and `"` with their HTML entities. The slot
 takes a value, which can be a constant or an expression, and replaces its value with the encoded string.
 
+This slot HTML encodes text, turning for instance `<` into `&lt;`, which makes it safe to render inside HTML. Below is an example.
+
+```
+strings.html-encode:"<b>Hello & welcome</b>"
+```
+
+
 ### How to use [strings.html-decode]
 
 HTML decodes a string, the opposite of **[strings.html-encode]**. The slot requires a value, which can be a
 constant or an expression, and replaces its value with the decoded string.
+
+This slot decodes HTML encoded text, turning for instance `&lt;` back into `<`. Below is an example.
+
+```
+strings.html-decode:"&lt;b&gt;Hello &amp; welcome&lt;/b&gt;"
+```
+
 
 ### How to use [strings.substring]
 

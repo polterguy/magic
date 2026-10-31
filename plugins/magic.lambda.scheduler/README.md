@@ -387,3 +387,29 @@ calculated 5 seconds from the time the task _finished_ executing, which might no
 are executed exactly every 5 seconds, depending upon how much time your task requires to execute. The interval
 pattern declares how many units to count to before executing the task again, from when the task _finished_ executing.
 
+## How to use [tasks.count]
+
+This slot returns the number of scheduled tasks, as its value. Below is an example.
+
+```
+tasks.count
+```
+
+## How to use [tasks.schedule.delete]
+
+This slot deletes one schedule by its ID, and leaves the task itself in place. Below is an example.
+
+```
+tasks.schedule.delete:42
+```
+
+## How to use [tasks.update]
+
+This slot replaces the body, and optionally the description, of an existing task, without changing its schedules. Below is an example.
+
+```
+tasks.update:foo-bar-task-1
+   description:An updated description.
+   .lambda
+      log.info:Executing the updated foo-bar-task-1
+```

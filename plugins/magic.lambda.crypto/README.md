@@ -529,3 +529,64 @@ to **[crypto.password.verify]** by for instance adding one random character to i
 Internally these are the slots Magic uses when it creates its JWT authentication database, and stores
 passswords into your Magic database.
 
+## How to use [crypto.fingerprint]
+
+This slot returns the SHA256 fingerprint of its input, formatted as colon separated hexadecimal, which is what you use to identify a public key. Below is an example, fingerprinting a newly created public key.
+
+```
+crypto.rsa.create-key
+   strength:512
+crypto.fingerprint:x:@crypto.rsa.create-key/*/public
+```
+
+## How to use [crypto.hash.md5]
+
+This slot hashes its input using MD5, and is the same as **[crypto.hash]** with **[algo]** set to _"md5"_. You can also hash a file by passing **[filename]**, and choose the output **[format]**. Below is an example.
+
+```
+crypto.hash.md5:Hello world
+```
+
+## How to use [crypto.hash.sha1]
+
+This slot hashes its input using SHA1, and is the same as **[crypto.hash]** with **[algo]** set to _"sha1"_. You can also hash a file by passing **[filename]**, and choose the output **[format]**. Below is an example.
+
+```
+crypto.hash.sha1:Hello world
+```
+
+## How to use [crypto.hash.sha256]
+
+This slot hashes its input using SHA256, and is the same as **[crypto.hash]** with **[algo]** set to _"sha256"_. You can also hash a file by passing **[filename]**, and choose the output **[format]**. Below is an example.
+
+```
+crypto.hash.sha256:Hello world
+```
+
+## How to use [crypto.hash.sha384]
+
+This slot hashes its input using SHA384, and is the same as **[crypto.hash]** with **[algo]** set to _"sha384"_. You can also hash a file by passing **[filename]**, and choose the output **[format]**. Below is an example.
+
+```
+crypto.hash.sha384:Hello world
+```
+
+## How to use [crypto.hash.sha512]
+
+This slot hashes its input using SHA512, and is the same as **[crypto.hash]** with **[algo]** set to _"sha512"_. You can also hash a file by passing **[filename]**, and choose the output **[format]**. Below is an example.
+
+```
+crypto.hash.sha512:Hello world
+```
+
+## How to use [crypto.sign]
+
+This slot signs its input with a private key, and is the high level companion of **[crypto.verify]**. It needs the private **[signing-key]**, and the **[signing-key-fingerprint]** identifying it. Below is an example.
+
+```
+crypto.rsa.create-key
+   strength:512
+crypto.sign:Some message to sign
+   signing-key:x:@crypto.rsa.create-key/*/private
+   signing-key-fingerprint:x:@crypto.rsa.create-key/*/fingerprint
+```

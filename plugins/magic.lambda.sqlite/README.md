@@ -56,3 +56,156 @@ Loads a SQLite extension into the connection opened by **[sqlite.connect]**. The
 * __[file]__ - Filename of the extension to load. Mandatory, the slot throws an exception if it is missing.
 * __[proc]__ - Optional entry point of the extension.
 * __[append-platform]__ - Boolean, defaults to `true`. If true, the slot appends `-arm64` or `-arm` to the filename when running on an ARM64 or ARM processor.
+
+Below is an example, loading an extension from the _"/data/extensions/"_ folder into a connection.
+
+```
+sqlite.connect:sakila
+   sqlite.load-extension
+      file:/data/extensions/vec0
+```
+
+
+## How to use [sqlite.connect]
+
+This slot opens a connection to a SQLite database, and evaluates its lambda object with that connection open. It works like **[data.connect]**, except it always uses SQLite. You can pass in only the name of the database, which is substituted for the `{database}` part of the generic connection string in your _"appsettings.json"_ file, or a complete connection string. Below is an example.
+
+```
+sqlite.connect:sakila
+   sqlite.select:select first_name, last_name from actor limit 5
+```
+
+## How to use [sqlite.select]
+
+This slot executes any SQL you give it against the open connection, and returns every record as a lambda object. It works like **[data.select]**, except it always uses SQLite. Below is an example.
+
+```
+sqlite.connect:sakila
+   sqlite.select:select first_name, last_name from actor limit 2
+
+// The result of the above looks like the following.
+sqlite.connect
+   sqlite.select
+      ""
+         first_name:PENELOPE
+         last_name:GUINESS
+      ""
+         first_name:NICK
+         last_name:WAHLBERG
+```
+
+## How to use [sqlite.scalar]
+
+This slot executes SQL returning a single value, such as an aggregate, and sets the value of its own node to the result. It works like **[data.scalar]**, except it always uses SQLite. Below is an example, counting the records of a table.
+
+```
+sqlite.connect:sakila
+   sqlite.scalar:select count(*) from actor
+```
+
+## How to use [sqlite.execute]
+
+This slot executes SQL you do not expect any result from, such as updates and deletes. It works like **[data.execute]**, except it always uses SQLite. Below is an example.
+
+```
+sqlite.connect:sakila
+   sqlite.execute:update actor set last_name = 'Smith' where actor_id = 1
+```
+
+## How to use [sqlite.transaction.create]
+
+This slot creates a database transaction, and evaluates its lambda object inside of it. It works like **[data.transaction.create]**. Unless the transaction is explicitly committed before it leaves scope, it is rolled back, which is what happens below.
+
+```
+sqlite.connect:sakila
+   sqlite.transaction.create
+      sqlite.execute:update actor set last_name = 'Smith' where actor_id = 1
+```
+
+## How to use [sqlite.transaction.commit]
+
+This slot commits the open transaction. It works like **[data.transaction.commit]**. Without it a transaction is rolled back when it leaves scope. Below is an example.
+
+```
+sqlite.connect:sakila
+   sqlite.transaction.create
+      sqlite.execute:update actor set last_name = 'Smith' where actor_id = 1
+      sqlite.transaction.commit
+```
+
+## How to use [sqlite.transaction.rollback]
+
+This slot explicitly rolls back the open transaction, discarding everything done since it was created. It works like **[data.transaction.rollback]**. Below is an example.
+
+```
+sqlite.connect:sakila
+   sqlite.transaction.create
+      sqlite.execute:update actor set last_name = 'Smith' where actor_id = 1
+      sqlite.transaction.rollback
+```
+
+## How to use [sqlite.create]
+
+This slot inserts a record into a table, generating the SQL for SQLite. It works like **[data.create]**, and its value becomes the ID of the new record unless **[return-id]** is false. Below is an example.
+
+```
+sqlite.connect:sakila
+   sqlite.create
+      table:actor
+      values
+         first_name:John
+         last_name:Doe
+```
+
+## How to use [sqlite.read]
+
+This slot reads records from a table, generating the SQL for SQLite, and returns them as a lambda object. It works like **[data.read]**, and limits the result to 25 records unless you supply **[limit]**. Below is an example.
+
+```
+sqlite.connect:sakila
+   sqlite.read
+      table:actor
+      columns
+         first_name
+         last_name
+      order:last_name
+      limit:5
+```
+
+## How to use [sqlite.update]
+
+This slot updates records in a table, generating the SQL for SQLite, and resolves to the number of records affected. It works like **[data.update]**. Always supply **[where]**, or every record in the table is updated. Below is an example.
+
+```
+sqlite.connect:sakila
+   sqlite.update
+      table:actor
+      values
+         last_name:Smith
+      where
+         and
+            first_name:John
+            last_name:Doe
+```
+
+## How to use [sqlite.delete]
+
+This slot deletes records from a table, generating the SQL for SQLite, and resolves to the number of records affected. It works like **[data.delete]**. Always supply **[where]**. Below is an example.
+
+```
+sqlite.connect:sakila
+   sqlite.delete
+      table:actor
+      where
+         and
+            first_name:John
+            last_name:Doe
+```
+
+## How to use [sqlite.connections.flush]
+
+This slot flushes the cached SQLite connections and schemas, which you typically need to do after you have replaced or deleted a database file on disc, since the old connection pool would otherwise keep pointing at the old file. Below is an example.
+
+```
+sqlite.connections.flush
+```

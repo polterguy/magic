@@ -194,3 +194,14 @@ execution.throttle.create:openai-budget
 since configuration belongs exclusively to **[execution.throttle.create]**. Enforcing a throttle
 that has not been declared also throws an exception, since this implies your endpoint expects a
 rate limit that does not exist.
+
+## How to use [execution.throttle.create]
+
+This slot creates, or replaces, a named throttle that **[execution.throttle]** then enforces. It takes a **[limit]**, the number of invocations allowed per **[window]** of seconds, and **[per]**, which decides if the limit is counted per user, per IP address or globally. Invoking it with no arguments deletes the throttle. Below is an example.
+
+```
+// At the top of your endpoint file, allowing 10 invocations per user per minute.
+execution.throttle.create:my-endpoint
+   limit:10
+execution.throttle:my-endpoint
+```

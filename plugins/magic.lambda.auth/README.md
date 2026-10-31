@@ -292,3 +292,13 @@ The above returns a **[keys]** node with one child per unique key, having **[kty
 * **[auth.ticket.refresh]** refreshes HS256 tokens only, and **[auth.token.read]** only checks roles, it does not return the token's claims. RS256 tokens are intended to be verified by other systems using your JWKS
 * Tokens carry no issuer or audience by default. If several apps share one key, add your own claims and check them
 * Rotating a key is up to you. Publish both the old and the new public key in your JWKS while tokens signed by the old key are still valid
+
+## How to use [auth.token.read]
+
+This slot validates a JWT token and verifies that it contains at least one of the roles in its **[roles]** argument, a comma separated list. Below is an example.
+
+```
+.token:YOUR_JWT_TOKEN_HERE
+auth.token.read:x:@.token
+   roles:admin, root
+```

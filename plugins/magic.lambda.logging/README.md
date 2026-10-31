@@ -129,3 +129,48 @@ each child has the following two arguments.
 
 If `tick` was logged twice today, the first returned node would have today's date as its **[when]** and 2 as its
 **[count]**, while the second node, representing yesterday, would have a **[count]** of 0.
+
+## How to use [log.capabilities]
+
+This slot tells you what your current log provider can do, for instance if it can filter and if it supports time shifting, as child nodes. Below is an example.
+
+```
+log.capabilities
+```
+
+## How to use [log.count]
+
+This slot returns the number of log entries, and the number of entries of one type if you pass the type as its value. Below is an example.
+
+```
+log.count
+
+log.count:error
+```
+
+## How to use [log.error]
+
+This slot writes an error level log entry, for exceptions you caught or operations that failed and need a follow up. Child nodes become meta data stored with the entry, and you can attach exception text with **[exception]**. The value of the node becomes the ID of the new entry. Below is an example.
+
+```
+log.error:Could not process the order
+   order-id:1234
+   exception:The payment provider did not answer
+```
+
+## How to use [log.fatal]
+
+This slot writes a fatal level log entry, which you should reserve for failures that cannot be recovered from and need attention at once. It works like **[log.error]**. Below is an example.
+
+```
+log.fatal:The database is unreachable
+   exception:Connection refused
+```
+
+## How to use [log.get]
+
+This slot returns one log entry by its ID, as child nodes holding its type, content, time and meta data. Below is an example.
+
+```
+log.get:1
+```

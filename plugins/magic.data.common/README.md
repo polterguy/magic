@@ -194,6 +194,20 @@ otherwise to null. It also accepts the following arguments.
 * __[generate]__ - If true, only generates the SQL and its parameters instead of executing it, default is false
 * __[return-id]__ - Whether or not to return the ID of the created row, default is true
 
+Below is an example, inserting a new record into the _"actor"_ table of the _"sakila"_ database.
+
+```
+data.connect:sakila
+   data.create
+      table:actor
+      values
+         first_name:John
+         last_name:Doe
+
+// The value of [data.create] becomes the ID of the new record.
+```
+
+
 ### How to use [data.update]
 
 This slot updates rows in your database, using the current open connection created by **[data.connect]**.
@@ -206,6 +220,44 @@ constrain the update to any specific row if you leave it out.
 * __[where]__ - Condition constraining which rows to update, see the **[where]** documentation below
 * __[database-type]__ - Database adapter to use instead of your default database type
 * __[generate]__ - If true, only generates the SQL and its parameters instead of executing it, default is false
+
+Below is an example, changing the last name of every actor called John Doe.
+
+```
+data.connect:sakila
+   data.update
+      table:actor
+      values
+         last_name:Smith
+      where
+         and
+            first_name:John
+            last_name:Doe
+
+// The value of [data.update] becomes the number of records affected.
+```
+
+
+### How to use [data.delete]
+
+This slot deletes rows in your database, using the current open connection created by **[data.connect]**. It takes the same arguments as **[sql.delete]**, and its value resolves to the number of rows affected. The **[where]** argument is mandatory, to make it impossible to delete every row in a table by accident.
+
+* __[table]__ - Name of the table to delete from. Mandatory, the slot throws if it is missing
+* __[where]__ - Condition constraining which rows to delete, see the **[where]** documentation below
+* __[database-type]__ - Database adapter to use instead of your default database type
+* __[generate]__ - If true, only generates the SQL and its parameters instead of executing it, default is false
+
+Below is an example.
+
+```
+data.connect:sakila
+   data.delete
+      table:actor
+      where
+         and
+            first_name:John
+            last_name:Doe
+```
 
 ### Database transactions
 
@@ -993,4 +1045,3 @@ If you create your own database implementation, you'll need to inherit from the 
 whatever parts of these classes that doesn't by default work as your database type needs it to work.
 If you wish to do this, you would probably benefit from looking at one of the existing specialised
 implementations, such as the MySQL, SQL Server or PostgreSQL specific implementations.
-

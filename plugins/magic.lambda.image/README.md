@@ -228,3 +228,11 @@ The above will produce the following chart.
 <img src="/assets/images/grouped-chart.webp" alt="Grouped chart" loading="lazy" width="600" height="300">
 
 This slot can also accept decimal, float, or double values for its individual values.
+
+## How to use [image.size]
+
+This slot returns the width and height of an image file, as two child nodes. Below is an example.
+
+```
+image.size:/misc/logo.png
+```

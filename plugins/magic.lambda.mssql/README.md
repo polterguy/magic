@@ -46,3 +46,156 @@ difference between this slot and **[mssql.execute]**, which executes its SQL as 
 
 After execution the slot's value is `null`, and it has one child per executed batch, each containing a
 **[Records affected]** node.
+
+This slot executes a script made of several batches against the open connection. A line containing only `GO` separates one batch from the next, which is what SQL Server tools do, and each batch is executed on its own. The slot adds one child node per batch, telling how many records the batch affected. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.execute-batch:@"update actor set last_name = 'Smith' where actor_id = 1
+GO
+update actor set last_name = 'Jones' where actor_id = 2"
+
+// The result of the above looks like the following.
+mssql.execute-batch
+   ""
+      Records affected:int:1
+   ""
+      Records affected:int:1
+```
+
+
+## How to use [mssql.connect]
+
+This slot opens a connection to a Microsoft SQL Server database, and evaluates its lambda object with that connection open. It works like **[data.connect]**, except it always uses Microsoft SQL Server. You can pass in only the name of the database, which is substituted for the `{database}` part of the generic connection string in your _"appsettings.json"_ file, or a complete connection string. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.select:select first_name, last_name from actor limit 5
+```
+
+## How to use [mssql.select]
+
+This slot executes any SQL you give it against the open connection, and returns every record as a lambda object. It works like **[data.select]**, except it always uses Microsoft SQL Server. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.select:select first_name, last_name from actor limit 2
+
+// The result of the above looks like the following.
+mssql.connect
+   mssql.select
+      ""
+         first_name:PENELOPE
+         last_name:GUINESS
+      ""
+         first_name:NICK
+         last_name:WAHLBERG
+```
+
+## How to use [mssql.scalar]
+
+This slot executes SQL returning a single value, such as an aggregate, and sets the value of its own node to the result. It works like **[data.scalar]**, except it always uses Microsoft SQL Server. Below is an example, counting the records of a table.
+
+```
+mssql.connect:sakila
+   mssql.scalar:select count(*) from actor
+```
+
+## How to use [mssql.execute]
+
+This slot executes SQL you do not expect any result from, such as updates and deletes. It works like **[data.execute]**, except it always uses Microsoft SQL Server. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.execute:update actor set last_name = 'Smith' where actor_id = 1
+```
+
+## How to use [mssql.transaction.create]
+
+This slot creates a database transaction, and evaluates its lambda object inside of it. It works like **[data.transaction.create]**. Unless the transaction is explicitly committed before it leaves scope, it is rolled back, which is what happens below.
+
+```
+mssql.connect:sakila
+   mssql.transaction.create
+      mssql.execute:update actor set last_name = 'Smith' where actor_id = 1
+```
+
+## How to use [mssql.transaction.commit]
+
+This slot commits the open transaction. It works like **[data.transaction.commit]**. Without it a transaction is rolled back when it leaves scope. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.transaction.create
+      mssql.execute:update actor set last_name = 'Smith' where actor_id = 1
+      mssql.transaction.commit
+```
+
+## How to use [mssql.transaction.rollback]
+
+This slot explicitly rolls back the open transaction, discarding everything done since it was created. It works like **[data.transaction.rollback]**. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.transaction.create
+      mssql.execute:update actor set last_name = 'Smith' where actor_id = 1
+      mssql.transaction.rollback
+```
+
+## How to use [mssql.create]
+
+This slot inserts a record into a table, generating the SQL for Microsoft SQL Server. It works like **[data.create]**, and its value becomes the ID of the new record unless **[return-id]** is false. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.create
+      table:actor
+      values
+         first_name:John
+         last_name:Doe
+```
+
+## How to use [mssql.read]
+
+This slot reads records from a table, generating the SQL for Microsoft SQL Server, and returns them as a lambda object. It works like **[data.read]**, and limits the result to 25 records unless you supply **[limit]**. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.read
+      table:actor
+      columns
+         first_name
+         last_name
+      order:last_name
+      limit:5
+```
+
+## How to use [mssql.update]
+
+This slot updates records in a table, generating the SQL for Microsoft SQL Server, and resolves to the number of records affected. It works like **[data.update]**. Always supply **[where]**, or every record in the table is updated. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.update
+      table:actor
+      values
+         last_name:Smith
+      where
+         and
+            first_name:John
+            last_name:Doe
+```
+
+## How to use [mssql.delete]
+
+This slot deletes records from a table, generating the SQL for Microsoft SQL Server, and resolves to the number of records affected. It works like **[data.delete]**. Always supply **[where]**. Below is an example.
+
+```
+mssql.connect:sakila
+   mssql.delete
+      table:actor
+      where
+         and
+            first_name:John
+            last_name:Doe
+```
