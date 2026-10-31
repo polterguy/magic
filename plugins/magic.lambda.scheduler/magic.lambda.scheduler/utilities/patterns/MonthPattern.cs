@@ -67,7 +67,8 @@ namespace magic.lambda.scheduler.utilities.patterns
                 utcNow.Day,
                 _hour,
                 _minute,
-                _second);
+                _second,
+                DateTimeKind.Utc);
 
             /*
              * Giving up after 4 years, which covers every possible combination of

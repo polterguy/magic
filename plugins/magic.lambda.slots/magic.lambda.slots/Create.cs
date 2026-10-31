@@ -34,7 +34,7 @@ namespace magic.lambda.slots
         SignatureType = typeof(global::magic.lambda.slots.signatures.CreateSlotSignature))]
     public class Create : ISlot
     {
-        internal static ConcurrentDictionary<string, Node> _slots = new ();
+        internal static readonly ConcurrentDictionary<string, Node> _slots = new ();
 
         /// <summary>
         /// Slot implementation.

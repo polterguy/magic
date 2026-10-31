@@ -42,7 +42,7 @@ namespace magic.endpoint.services
          * How long a cached endpoint is trusted without looking at its files again. Not a constant, since tests that edit an
          * endpoint and expect the very next request to see the edit set it to 0.
          */
-        internal static long RecheckMilliseconds = 1000;
+        internal static long RecheckMilliseconds { get; set; } = 1000;
 
         /// <summary>
         /// Creates an instance of your type.

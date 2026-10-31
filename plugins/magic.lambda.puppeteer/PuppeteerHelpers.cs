@@ -201,9 +201,10 @@ namespace magic.lambda.puppeteer
             var inQuotes = false;
             var quoteChar = '\0';
 
-            for (var i = 0; i < input.Length; i++)
+            var i = 0;
+            while (i < input.Length)
             {
-                var c = input[i];
+                var c = input[i++];
 
                 if (inQuotes)
                 {
@@ -211,7 +212,7 @@ namespace magic.lambda.puppeteer
                     {
                         inQuotes = false;
                     }
-                    else if (IsEscapedQuote(input, i, quoteChar))
+                    else if (IsEscapedQuote(input, i - 1, quoteChar))
                     {
                         current.Append(quoteChar);
                         i++;

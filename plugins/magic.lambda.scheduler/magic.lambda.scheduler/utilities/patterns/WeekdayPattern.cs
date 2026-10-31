@@ -61,7 +61,8 @@ namespace magic.lambda.scheduler.utilities.patterns
                 utcNow.Day,
                 _hour,
                 _minute,
-                _second);
+                _second,
+                DateTimeKind.Utc);
             while (true)
             {
                 if (result > DateTime.UtcNow &&

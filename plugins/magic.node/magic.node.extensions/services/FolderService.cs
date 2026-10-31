@@ -14,7 +14,7 @@ namespace magic.node.services
     /// <inheritdoc/>
     public class FolderService : IFolderService
     {
-        static IFileService _fileService;
+        readonly IFileService _fileService;
 
         /// <summary>
         /// Creates an instance of your type.

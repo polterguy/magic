@@ -15,7 +15,7 @@ import { EndpointField, EndpointMeta, listEndpointsDetailed } from '../../lib/ap
 export interface DataColumn {
   name: string;
   type: string;
-  lookup?: EndpointField['lookup'];
+  lookup?: NonNullable<EndpointField['lookup']>;
 }
 
 export interface DataSource {

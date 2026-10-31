@@ -75,7 +75,7 @@ namespace magic.signals.tests
         [Slot(Name = "test.instance.disposable")]
         public class DisposableSlot : ISlot, IDisposable
         {
-            public static int Disposed;
+            public static int Disposed { get; private set; }
 
             public void Signal(ISignaler signaler, Node input)
             {
