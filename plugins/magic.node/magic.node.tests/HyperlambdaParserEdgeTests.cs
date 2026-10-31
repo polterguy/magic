@@ -15,6 +15,9 @@ namespace magic.node.tests
      */
     public class HyperlambdaParserEdgeTests
     {
+        static readonly string[] Siblings = { "foo", "bar" };
+        static readonly string[] Children = { "bar", "qux" };
+
         [Theory]
         [InlineData("foo:\"bar\"x", "Garbage characters after string literal")]
         [InlineData("foo:@\"bar\"x", "Garbage characters after string literal")]
@@ -108,14 +111,14 @@ namespace magic.node.tests
         public void BlankLinesAndWindowsLineEndingsSeparateSiblings(string hl)
         {
             var names = HyperlambdaParser.Parse(hl).Children.Select(x => x.Name).ToArray();
-            Assert.Equal(new[] { "foo", "bar" }, names);
+            Assert.Equal(Siblings, names);
         }
 
         [Fact]
         public void IndentationBuildsTheTree()
         {
             var foo = HyperlambdaParser.Parse("foo\n   bar\n      baz:int:5\n   qux").Children.Single();
-            Assert.Equal(new[] { "bar", "qux" }, foo.Children.Select(x => x.Name).ToArray());
+            Assert.Equal(Children, foo.Children.Select(x => x.Name).ToArray());
             Assert.Equal(5, foo.Children.First().Children.Single().Value);
         }
 

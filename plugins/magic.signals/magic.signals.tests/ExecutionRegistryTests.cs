@@ -107,7 +107,9 @@ namespace magic.signals.tests
         [InlineData(null)]
         public void CompletingAnUnknownExecutionDoesNothing(string id)
         {
-            new ExecutionRegistry().Complete(id);
+            var registry = new ExecutionRegistry();
+            registry.Complete(id);
+            Assert.False(registry.TryGet(id, out _));
         }
     }
 }
