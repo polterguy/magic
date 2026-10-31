@@ -154,7 +154,7 @@ export function findDropSpot(
    * inserted before, or on the trailing edge of the last child when it goes
    * at the end.
    */
-  const anchor = rectOf(before ?? children[children.length - 1]);
+  const anchor = rectOf(before ?? children.at(-1)!);
   if (!anchor) {
     return null;
   }

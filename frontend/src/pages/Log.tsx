@@ -99,7 +99,7 @@ export default function Log() {
     const stack = [...fromStack];
     stack.pop();
     setFromStack(stack);
-    load(stack.length > 0 ? stack[stack.length - 1] : null, debouncedQuery);
+    load(stack.at(-1) ?? null, debouncedQuery);
   }
 
   return (

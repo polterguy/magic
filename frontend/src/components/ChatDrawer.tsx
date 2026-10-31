@@ -588,7 +588,7 @@ function hasContent(chunk: ChatChunk) {
 
 // Adds to the text the assistant is already writing, or starts a new run of text.
 function appendText(segments: Segment[], message: string) {
-  const tail = segments[segments.length - 1];
+  const tail = segments.at(-1)!;
   if (tail?.kind === 'text') {
     segments[segments.length - 1] = { kind: 'text', text: tail.text + message };
   } else {
@@ -631,7 +631,7 @@ function settleWaiting(segments: Segment[], failed: boolean) {
 // The messages once the chunk has been processed.
 function applyChunk(current: ChatMessage[], chunk: ChatChunk, done: boolean): ChatMessage[] {
   const next = [...current];
-  let last = next[next.length - 1];
+  let last = next.at(-1)!;
   if (last?.role !== 'assistant') {
     // Nothing to attach status-only chunks to — don't invent a bubble.
     if (!hasContent(chunk)) {

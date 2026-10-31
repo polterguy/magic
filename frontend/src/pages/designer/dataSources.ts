@@ -77,8 +77,8 @@ export function dataGridSources(endpoints: EndpointMeta[]): DataSource[] {
   return reads
     .map(read => {
       const segments = read.path.split('/');
-      const table = segments[segments.length - 1];
-      const module = segments[segments.length - 2];
+      const table = segments.at(-1)!;
+      const module = segments.at(-2)!;
       const count = endpoints.find(
         endpoint => endpoint.type === 'crud-count' && endpoint.path === read.path + '-count');
       /*

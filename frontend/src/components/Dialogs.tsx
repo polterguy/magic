@@ -171,7 +171,7 @@ export function Modal(props: Readonly<{
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' ||
-          modalStack[modalStack.length - 1] !== idRef.current) {
+          modalStack.at(-1) !== idRef.current) {
         return;
       }
       /*

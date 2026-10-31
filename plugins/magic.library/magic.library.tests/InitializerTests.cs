@@ -204,7 +204,7 @@ namespace magic.library.tests
 
         #region [ -- Middleware -- ]
 
-        static async Task<HttpContext> RunAsync(IApplicationBuilder app, Action<HttpContext> prepare = null)
+        static async Task<HttpContext> RunAsync(ApplicationBuilder app, Action<HttpContext> prepare = null)
         {
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();

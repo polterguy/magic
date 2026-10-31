@@ -108,7 +108,7 @@ function withRestored(current: OpenTab[], restored: OpenTab[]) {
 
 // The file that was selected, if it was restored, and otherwise the last one that was.
 function restoredSelection(restored: OpenTab[], selected: string | undefined) {
-  return restored.some(tab => tab.path === selected) ? selected! : restored[restored.length - 1].path;
+  return restored.some(tab => tab.path === selected) ? selected! : restored.at(-1)!.path;
 }
 
 export default function Files() {
