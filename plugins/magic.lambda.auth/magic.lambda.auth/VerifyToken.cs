@@ -132,7 +132,7 @@ namespace magic.backend.slots
         private static JwtSecurityToken Validate(
             string token, 
             string issuer, 
-            ICollection<string> audiences,
+            List<string> audiences,
             ICollection<SecurityKey> signingKeys)
         {
             var validationParameters = new TokenValidationParameters

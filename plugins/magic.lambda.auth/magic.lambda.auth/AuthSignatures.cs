@@ -163,13 +163,15 @@ namespace magic.lambda.auth.signatures
     /// </summary>
     public class VerifyTokenSignature : ISlotSignature
     {
+        const string Text = "string";
+
         public IEnumerable<SlotChild> Children => new[]
         {
-            CreateTicketSignature.Option("token", "string", "External JWT token to verify", true, "jwt"),
-            CreateTicketSignature.Option("issuer", "string", "Trusted issuer the token's issuer must equal; meta data is never fetched from issuers not supplied by the caller"),
-            CreateTicketSignature.List("issuers", "string", "Trusted issuers, the token's issuer must equal one of them; meta data is never fetched from issuers not supplied by the caller"),
-            CreateTicketSignature.Option("audience", "string", "Audience the token must have been issued to, typically the OAuth client ID; not validated unless [audience] or [audiences] is supplied"),
-            CreateTicketSignature.List("audiences", "string", "Audiences the token must have been issued to, it must match one of them; not validated unless [audience] or [audiences] is supplied"),
+            CreateTicketSignature.Option("token", Text, "External JWT token to verify", true, "jwt"),
+            CreateTicketSignature.Option("issuer", Text, "Trusted issuer the token's issuer must equal; meta data is never fetched from issuers not supplied by the caller"),
+            CreateTicketSignature.List("issuers", Text, "Trusted issuers, the token's issuer must equal one of them; meta data is never fetched from issuers not supplied by the caller"),
+            CreateTicketSignature.Option("audience", Text, "Audience the token must have been issued to, typically the OAuth client ID; not validated unless [audience] or [audiences] is supplied"),
+            CreateTicketSignature.List("audiences", Text, "Audiences the token must have been issued to, it must match one of them; not validated unless [audience] or [audiences] is supplied"),
         };
     }
 }
