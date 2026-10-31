@@ -44,6 +44,8 @@ namespace magic.lambda.git
             var gitArgs = GitSlotHelpers.Args("pull");
             if (args.Rebase)
                 gitArgs.Add("--rebase");
+            if (args.Merge)
+                gitArgs.Add("--no-rebase");
             if (args.FfOnly)
                 gitArgs.Add("--ff-only");
 
@@ -61,18 +63,19 @@ namespace magic.lambda.git
 
         #region [ -- Private helper methods -- ]
 
-        static (string Path, string Remote, string Branch, bool Rebase, bool FfOnly) GetArgs(Node input)
+        static (string Path, string Remote, string Branch, bool Rebase, bool Merge, bool FfOnly) GetArgs(Node input)
         {
             var path = GitSlotHelpers.GetRequiredPrimaryValue(input);
             var remote = input.Children.FirstOrDefault(x => x.Name == "remote")?.GetEx<string>() ?? "origin";
             var branch = input.Children.FirstOrDefault(x => x.Name == "branch")?.GetEx<string>();
             var rebase = input.Children.FirstOrDefault(x => x.Name == "rebase")?.GetEx<bool>() ?? false;
+            var merge = input.Children.FirstOrDefault(x => x.Name == "merge")?.GetEx<bool>() ?? false;
             var ffOnly = input.Children.FirstOrDefault(x => x.Name == "ff-only")?.GetEx<bool>() ?? false;
 
             input.Clear();
             input.Value = null;
 
-            return (path, remote, branch, rebase, ffOnly);
+            return (path, remote, branch, rebase, merge, ffOnly);
         }
 
         #endregion

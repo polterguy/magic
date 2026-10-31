@@ -12,6 +12,9 @@
    // Optional branch to pull. Defaults to the currently checked out branch.
    branch:string
 
+   // Optional argument being a boolean. If true the remote is merged into the branch, which is required when the branch and the remote have diverged.
+   merge:bool
+
 // Ensuring user is root.
 auth.ticket.verify:root
 
@@ -36,6 +39,7 @@ if
 add:x:./*/git.pull
    get-nodes:x:@.arguments/*/remote
    get-nodes:x:@.arguments/*/branch
+   get-nodes:x:@.arguments/*/merge
 
 // Invoking slot.
 git.pull:x:@.arguments/*/path

@@ -71,6 +71,7 @@ namespace magic.lambda.git.signatures
             Option("remote", "string", "Remote to pull from", defaultValue: "origin", kind: "git-remote"),
             Option("branch", "string", "Branch to pull", kind: "git-branch"),
             Option("rebase", "bool", "Use rebase while pulling", defaultValue: "false"),
+            Option("merge", "bool", "Merge while pulling, which is what lets a diverged branch be pulled", defaultValue: "false"),
             Option("ff-only", "bool", "Only allow fast-forward pulls", defaultValue: "false"),
         };
     }

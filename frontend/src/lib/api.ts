@@ -1958,7 +1958,7 @@ export function gitPush(path: string, branch?: string) {
 }
 
 export function gitPull(path: string, branch?: string) {
-  return http.post<MagicResponse>('/magic/system/git/pull', branch ? { path, branch } : { path });
+  return http.post<MagicResponse>('/magic/system/git/pull', branch ? { path, branch, merge: true } : { path, merge: true });
 }
 
 export function gitFetch(path: string) {
