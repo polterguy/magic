@@ -97,7 +97,7 @@ namespace magic.lambda.pgsql.tests
         {
             var node = new Node(".db-factory.connection.pgsql");
             BuildSignaler().Signal(".db-factory.connection.pgsql", node);
-            var connection = Assert.IsAssignableFrom<DbConnection>(node.Value);
+            var connection = Assert.IsType<DbConnection>(node.Value, exactMatch: false);
             Assert.Equal(System.Data.ConnectionState.Closed, connection.State);
             connection.Dispose();
         }
