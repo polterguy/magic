@@ -130,209 +130,133 @@ namespace magic.lambda.logging.services
         #region [ -- ILogQuery interface implementation -- ]
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<LogItem>> QueryAsync(int max, object fromId, string content = null)
+        public Task<IEnumerable<LogItem>> QueryAsync(int max, object fromId, string content = null)
         {
-            var dbNode = new Node();
-            using (var shutdownLock = new ShutdownLock())
+            return WithCommandAsync<IEnumerable<LogItem>>(async command =>
             {
-                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
-                using (var connection = dbNode.Get<DbConnection>())
+                var builder = new StringBuilder();
+                var mid = _dataSettings.DefaultDatabaseType == MsSql ? $" top {max}" : "";
+                builder.Append($"select{mid} id, created, type, content, exception, meta from log_entries");
+                if (fromId != null)
                 {
-                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
-                    await connection.OpenAsync();
-                    using (var command = connection.CreateCommand())
-                    {
-                        var builder = new StringBuilder();
-                        var mid = _dataSettings.DefaultDatabaseType == MsSql ? $" top {max}" : "";
-                        builder.Append($"select{mid} id, created, type, content, exception, meta from log_entries");
-                        if (fromId != null)
-                        {
-                            builder.Append(" where ");
-                            builder.Append($"id < {Convert.ToInt64(fromId)}");
-                        }
-                        if (!string.IsNullOrEmpty(content))
-                        {
-                            if (fromId == null)
-                                builder.Append(" where ");
-                            else
-                                builder.Append(" and ");
-                            builder.Append("content like @content");
-                            var contentArg = command.CreateParameter();
-                            contentArg.ParameterName = ContentParameter;
-                            contentArg.Value = content;
-                            command.Parameters.Add(contentArg);
-                        }
-                        builder.Append(" order by id desc");
-                        if (_dataSettings.DefaultDatabaseType != MsSql)
-                            builder.Append($" limit {max}");
-                        command.CommandText = builder.ToString();
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            var result = new List<LogItem>();
-                            while (await reader.ReadAsync())
-                            {
-                                var dt = reader.GetDateTime(1);
-                                if (_dataSettings.DefaultDatabaseType == MySql)
-                                    dt = dt.ToUniversalTime(); // MySQL always returns items in local server time.
-                                else if (_dataSettings.DefaultDatabaseType == Sqlite)
-                                    dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // SQLite always stores dates as UTC
-
-                                var jString = reader["meta"] as string;
-                                var metaObj = jString == null ? null : ParseMeta(jString);
-                                result.Add(new LogItem
-                                {
-                                    Id = Convert.ToString(reader["id"]),
-                                    Created = dt,
-                                    Type = reader["type"] as string,
-                                    Content = reader["content"] as string,
-                                    Exception = reader["exception"] as string,
-                                    Meta = metaObj,
-                                });
-                            }
-                            return result;
-                        }
-                    }
+                    builder.Append(" where ");
+                    builder.Append($"id < {Convert.ToInt64(fromId)}");
                 }
-            }
+                if (!string.IsNullOrEmpty(content))
+                {
+                    if (fromId == null)
+                        builder.Append(" where ");
+                    else
+                        builder.Append(" and ");
+                    builder.Append("content like @content");
+                    var contentArg = command.CreateParameter();
+                    contentArg.ParameterName = ContentParameter;
+                    contentArg.Value = content;
+                    command.Parameters.Add(contentArg);
+                }
+                builder.Append(" order by id desc");
+                if (_dataSettings.DefaultDatabaseType != MsSql)
+                    builder.Append($" limit {max}");
+                command.CommandText = builder.ToString();
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    var result = new List<LogItem>();
+                    while (await reader.ReadAsync())
+                    {
+                        result.Add(ReadLogItem(reader));
+                    }
+                    return result;
+                }
+            });
         }
 
         /// <inheritdoc/>
-        public async Task<long> CountAsync(string content = null)
+        public Task<long> CountAsync(string content = null)
         {
-            var dbNode = new Node();
-            using (var shutdownLock = new ShutdownLock())
+            return WithCommandAsync(async command =>
             {
-                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
-                using (var connection = dbNode.Get<DbConnection>())
+                var builder = new StringBuilder();
+                builder.Append("select count(id) from log_entries");
+                if (!string.IsNullOrEmpty(content))
                 {
-                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
-                    await connection.OpenAsync();
-                    using (var command = connection.CreateCommand())
-                    {
-                        var builder = new StringBuilder();
-                        builder.Append("select count(id) from log_entries");
-                        if (!string.IsNullOrEmpty(content))
-                        {
-                            builder.Append(" where content like @content");
-                            var contentArg = command.CreateParameter();
-                            contentArg.ParameterName = ContentParameter;
-                            contentArg.Value = content;
-                            command.Parameters.Add(contentArg);
-                        }
-                        command.CommandText = builder.ToString();
-                        return Convert.ToInt64(await command.ExecuteScalarAsync());
-                    }
+                    builder.Append(" where content like @content");
+                    var contentArg = command.CreateParameter();
+                    contentArg.ParameterName = ContentParameter;
+                    contentArg.Value = content;
+                    command.Parameters.Add(contentArg);
                 }
-            }
+                command.CommandText = builder.ToString();
+                return Convert.ToInt64(await command.ExecuteScalarAsync());
+            });
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<(string When, long Count)>> Timeshift(string content)
+        public Task<IEnumerable<(string When, long Count)>> Timeshift(string content)
         {
-            var dbNode = new Node();
-            using (var shutdownLock = new ShutdownLock())
+            return WithCommandAsync<IEnumerable<(string When, long Count)>>(async command =>
             {
-                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
-                using (var connection = dbNode.Get<DbConnection>())
+                var date = "";
+                var tail = "";
+                switch (_dataSettings.DefaultDatabaseType)
                 {
-                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
-                    await connection.OpenAsync();
-                    using (var command = connection.CreateCommand())
-                    {
-                        var date = "";
-                        var tail = "";
-                        switch (_dataSettings.DefaultDatabaseType)
-                        {
-                            case MySql:
-                                date = "date_format(created, '%Y-%m-%d')";
-                                tail = " limit 14";
-                                break;
+                    case MySql:
+                        date = "date_format(created, '%Y-%m-%d')";
+                        tail = " limit 14";
+                        break;
 
-                            case MsSql:
-                                date = "convert(char(10), created, 126)";
-                                tail = " offset 0 rows fetch first 14 rows only";
-                                break;
+                    case MsSql:
+                        date = "convert(char(10), created, 126)";
+                        tail = " offset 0 rows fetch first 14 rows only";
+                        break;
 
-                            case "pgsql":
-                                date = "to_char(created, 'YYYY-MM-dd')";
-                                tail = " limit 14";
-                                break;
+                    case "pgsql":
+                        date = "to_char(created, 'YYYY-MM-dd')";
+                        tail = " limit 14";
+                        break;
 
-                            case Sqlite:
-                                date = "date(created)";
-                                tail = " limit 14";
-                                break;
-                        }
-                        var contentArg = command.CreateParameter();
-                        contentArg.ParameterName = ContentParameter;
-                        contentArg.Value = content;
-                        command.Parameters.Add(contentArg);
-                        command.CommandText = $"select {date} as date, count(*) as count from log_entries where " + 
-                            (_dataSettings.DefaultDatabaseType == MsSql ? "convert(nvarchar(max), content)" : "content") +
-                            $" = @content group by {date} order by {date} desc{tail}";
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            var result = new List<(string When, long Count)>();
-                            while (await reader.ReadAsync())
-                            {
-                                var when = reader["date"] as string;
-                                var count = Convert.ToInt64(reader["count"]);
-                                result.Add((when, count));
-                            }
-                            return result;
-                        }
-                    }
+                    case Sqlite:
+                        date = "date(created)";
+                        tail = " limit 14";
+                        break;
                 }
-            }
+                var contentArg = command.CreateParameter();
+                contentArg.ParameterName = ContentParameter;
+                contentArg.Value = content;
+                command.Parameters.Add(contentArg);
+                command.CommandText = $"select {date} as date, count(*) as count from log_entries where " + 
+                    (_dataSettings.DefaultDatabaseType == MsSql ? "convert(nvarchar(max), content)" : "content") +
+                    $" = @content group by {date} order by {date} desc{tail}";
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    var result = new List<(string When, long Count)>();
+                    while (await reader.ReadAsync())
+                    {
+                        var when = reader["date"] as string;
+                        var count = Convert.ToInt64(reader["count"]);
+                        result.Add((when, count));
+                    }
+                    return result;
+                }
+            });
         }
 
         /// <inheritdoc/>
-        public async Task<LogItem> Get(object id)
+        public Task<LogItem> Get(object id)
         {
-            var dbNode = new Node();
-            using (var shutdownLock = new ShutdownLock())
+            return WithCommandAsync(async command =>
             {
-                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
-                using (var connection = dbNode.Get<DbConnection>())
+                command.CommandText = "select id, created, type, content, exception, meta from log_entries where id = @id";
+                var filter = command.CreateParameter();
+                filter.ParameterName = "@id";
+                filter.Value = id;
+                command.Parameters.Add(filter);
+                using (var reader = await command.ExecuteReaderAsync())
                 {
-                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
-                    await connection.OpenAsync();
-                    using (var command = connection.CreateCommand())
-                    {
-                        var builder = new StringBuilder();
-                        builder.Append("select id, created, type, content, exception, meta from log_entries where id = @id");
-                        var filter = command.CreateParameter();
-                        filter.ParameterName = "@id";
-                        filter.Value = id;
-                        command.Parameters.Add(filter);
-                        command.CommandText = builder.ToString();
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            if (await reader.ReadAsync())
-                            {
-                                var dt = reader.GetDateTime(1);
-                                if (_dataSettings.DefaultDatabaseType == MySql)
-                                    dt = dt.ToUniversalTime(); // MySQL always returns items in local server time.
-                                else if (_dataSettings.DefaultDatabaseType == Sqlite)
-                                    dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // SQLite always stores dates as UTC
-
-                                var jString = reader["meta"] as string;
-                                var metaObj = jString == null ? null : ParseMeta(jString);
-                                return new LogItem
-                                {
-                                    Id = Convert.ToString(reader["id"]),
-                                    Created = dt,
-                                    Type = reader["type"] as string,
-                                    Content = reader["content"] as string,
-                                    Exception = reader["exception"] as string,
-                                    Meta = metaObj,
-                                };
-                            }
-                            throw new HyperlambdaException($"Couldn't find log item with ID '{id}'");
-                        }
-                    }
+                    if (await reader.ReadAsync())
+                        return ReadLogItem(reader);
+                    throw new HyperlambdaException($"Couldn't find log item with ID '{id}'");
                 }
-            }
+            });
         }
 
         /// <inheritdoc/>
@@ -350,6 +274,51 @@ namespace magic.lambda.logging.services
         #endregion
 
         #region [ -- Private helper methods and properties -- ]
+
+        /*
+         * Opens a connection to the log database, hands a command on it to the body, and closes everything again afterwards.
+         */
+        async Task<T> WithCommandAsync<T>(Func<DbCommand, Task<T>> body)
+        {
+            var dbNode = new Node();
+            using (var shutdownLock = new ShutdownLock())
+            {
+                await _signaler.SignalAsync($".db-factory.connection.{_dataSettings.DefaultDatabaseType}", dbNode, skipWhitelist: true);
+                using (var connection = dbNode.Get<DbConnection>())
+                {
+                    connection.ConnectionString = _dataSettings.ConnectionString(GenericConnection).Replace(DatabasePlaceholder, MagicDatabase);
+                    await connection.OpenAsync();
+                    using (var command = connection.CreateCommand())
+                    {
+                        return await body(command);
+                    }
+                }
+            }
+        }
+
+        /*
+         * Creates a log item from the row the reader currently is positioned at.
+         */
+        LogItem ReadLogItem(DbDataReader reader)
+        {
+            var dt = reader.GetDateTime(1);
+            if (_dataSettings.DefaultDatabaseType == MySql)
+                dt = dt.ToUniversalTime(); // MySQL always returns items in local server time.
+            else if (_dataSettings.DefaultDatabaseType == Sqlite)
+                dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc); // SQLite always stores dates as UTC
+
+            var jString = reader["meta"] as string;
+            var metaObj = jString == null ? null : ParseMeta(jString);
+            return new LogItem
+            {
+                Id = Convert.ToString(reader["id"]),
+                Created = dt,
+                Type = reader["type"] as string,
+                Content = reader["content"] as string,
+                Exception = reader["exception"] as string,
+                Meta = metaObj,
+            };
+        }
 
         /*
          * Parses the JSON object stored as meta information with a log entry into a dictionary of strings.

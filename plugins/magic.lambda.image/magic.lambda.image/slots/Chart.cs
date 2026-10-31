@@ -179,6 +179,18 @@ namespace magic.lambda.image.slots
             plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericManual(ticks.ToArray());
 
             // Creating our legend.
+            AddLegendAndDefaults(input, plot, palette);
+
+            // Creating our instance.
+            plot.Add.Bars(bars);
+            plot.Axes.Margins(bottom: 0, top: .3);
+        }
+
+        /*
+         * Adds the legend, one entry per item in [legend] coloured with the palette, and the defaults shared by every kind of bar chart.
+         */
+        private static void AddLegendAndDefaults(Node input, Plot plot, ScottPlot.Palettes.Category10 palette)
+        {
             var idxNo = 0;
             foreach(var idxLegend in input.Children.First(x => x.Name == LegendName).Children)
             {
@@ -194,13 +206,8 @@ namespace magic.lambda.image.slots
             plot.Legend.Orientation = Orientation.Horizontal;
             plot.ShowLegend(Alignment.UpperRight);
 
-            // Applying common defaults.
             plot.Axes.Bottom.MajorTickStyle.Length = 10;
             plot.HideGrid();
-
-            // Creating our instance.
-            plot.Add.Bars(bars);
-            plot.Axes.Margins(bottom: 0, top: .3);
         }
 
         private static void CreateGrouped(Node input, Plot plot)
@@ -242,24 +249,7 @@ namespace magic.lambda.image.slots
             // Creating our legend.
             plot.Legend.IsVisible = true;
             plot.Legend.Alignment = Alignment.UpperLeft;
-            var idxNo = 0;
-            foreach(var idxLegend in input.Children.First(x => x.Name == LegendName).Children)
-            {
-                var idx = new LegendItem
-                {
-                    LabelText = idxLegend.GetEx<string>(),
-                    FillColor = palette.GetColor(idxNo++),
-                    LabelOffsetY = 2,
-                    
-                };
-                plot.Legend.ManualItems.Add(idx);
-            }
-            plot.Legend.Orientation = Orientation.Horizontal;
-            plot.ShowLegend(Alignment.UpperRight);
-
-            // Applying common defaults.
-            plot.Axes.Bottom.MajorTickStyle.Length = 10;
-            plot.HideGrid();
+            AddLegendAndDefaults(input, plot, palette);
 
             // Creating our ticks.
             var ticks = new List<Tick>();

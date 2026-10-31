@@ -1252,23 +1252,14 @@ function SqlEndpointTab() {
       )}
       <div className="toolbar">
         <DatabaseSelectors selection={selection} />
-        <Select value={verb} onChange={value => setVerb(value)}>
-          {['get', 'post', 'put', 'delete', 'patch'].map(option => (
-            <option key={option} value={option}>{option.toUpperCase()}</option>
-          ))}
-        </Select>
-        <input
-          type="text"
-          placeholder="Module name…"
-          value={moduleName}
-          onChange={e => setModuleName(e.target.value)}
-          style={{ width: 150 }} />
-        <input
-          type="text"
-          placeholder="Endpoint name…"
-          value={endpointName}
-          onChange={e => setEndpointName(e.target.value)}
-          style={{ width: 150 }} />
+        <EndpointNameFields
+          verbs={['get', 'post', 'put', 'delete', 'patch']}
+          verb={verb}
+          onVerb={setVerb}
+          moduleName={moduleName}
+          onModuleName={setModuleName}
+          endpointName={endpointName}
+          onEndpointName={setEndpointName} />
         <span className="spacer" />
         <button className="btn" onClick={generate} disabled={busy || !selection.database}>
           {busy ? 'Generating…' : '⚙ Generate endpoint'}
@@ -2379,6 +2370,82 @@ const TIER2_WIZARDS: Record<string, WizardSpec> = {
   },
 };
 
+/*
+ * The verb, module and endpoint name inputs every endpoint generator starts its toolbar with.
+ */
+function EndpointNameFields(props: Readonly<{
+  verbs: string[];
+  verb: string;
+  onVerb: (verb: string) => void;
+  moduleName: string;
+  onModuleName: (name: string) => void;
+  endpointName: string;
+  onEndpointName: (name: string) => void;
+}>) {
+  return (
+    <>
+      <Select value={props.verb} onChange={value => props.onVerb(value)}>
+        {props.verbs.map(option => (
+          <option key={option} value={option}>{option.toUpperCase()}</option>
+        ))}
+      </Select>
+      <input
+        type="text"
+        placeholder="Module name…"
+        value={props.moduleName}
+        onChange={e => props.onModuleName(e.target.value)}
+        style={{ width: 150 }} />
+      <input
+        type="text"
+        placeholder="Endpoint name…"
+        value={props.endpointName}
+        onChange={e => props.onEndpointName(e.target.value)}
+        style={{ width: 150 }} />
+    </>
+  );
+}
+
+/*
+ * The read-only preview of an endpoint that was just generated, with shortcuts to open it where it can be run or edited.
+ */
+function GeneratedEndpoint(props: Readonly<{
+  preview: string;
+  generated: { path: string; file: string; verb: string } | null;
+  endpointsTitle?: string;
+}>) {
+  const navigate = useNavigate();
+  const { generated } = props;
+  return (
+    <>
+      <div className="toolbar" style={{ marginTop: 12 }}>
+        <div style={{ fontWeight: 600, fontSize: 13 }}>Generated endpoint</div>
+        <span className="muted" style={{ fontSize: 12 }}>read-only preview of what was saved</span>
+        <span className="spacer" />
+        {generated && (
+          <>
+            <button
+              className="btn btn-secondary btn-small"
+              title={props.endpointsTitle}
+              onClick={() => navigate(
+                '/endpoints?filter=' + encodeURIComponent(generated.path) +
+                '&expand=' + encodeURIComponent(generated.verb))}>
+              Open in Endpoints
+            </button>
+            <button
+              className="btn btn-secondary btn-small"
+              onClick={() => navigate('/hyper-ide?open=' + encodeURIComponent(generated.file))}>
+              Open in Hyper IDE
+            </button>
+          </>
+        )}
+      </div>
+      <div style={{ height: 320, display: 'flex', flexDirection: 'column' }}>
+        <CodeEditor value={props.preview} mode="hyperlambda" readOnly={true} />
+      </div>
+    </>
+  );
+}
+
 function SandboxTab() {
 
   const [moduleName, setModuleName] = useState('');
@@ -2407,7 +2474,6 @@ function SandboxTab() {
   const [preview, setPreview] = useState('');
   // The endpoint that was just generated, so it can be opened straight from here.
   const [generated, setGenerated] = useState<{ path: string; file: string; verb: string } | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     listRoles()
@@ -2490,23 +2556,14 @@ function SandboxTab() {
   return (
     <>
       <div className="toolbar">
-        <Select value={verb} onChange={value => setVerb(value)}>
-          {['post', 'get', 'put', 'delete', 'patch'].map(option => (
-            <option key={option} value={option}>{option.toUpperCase()}</option>
-          ))}
-        </Select>
-        <input
-          type="text"
-          placeholder="Module name…"
-          value={moduleName}
-          onChange={e => setModuleName(e.target.value)}
-          style={{ width: 150 }} />
-        <input
-          type="text"
-          placeholder="Endpoint name…"
-          value={endpointName}
-          onChange={e => setEndpointName(e.target.value)}
-          style={{ width: 150 }} />
+        <EndpointNameFields
+          verbs={['post', 'get', 'put', 'delete', 'patch']}
+          verb={verb}
+          onVerb={setVerb}
+          moduleName={moduleName}
+          onModuleName={setModuleName}
+          endpointName={endpointName}
+          onEndpointName={setEndpointName} />
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="What the endpoint accepts — this shapes its arguments and description">
           Input
           <Select value={inputMode} onChange={value => setInputMode(value)}>
@@ -2747,33 +2804,10 @@ function SandboxTab() {
         </span>
       </div>
       {preview && (
-        <>
-          <div className="toolbar" style={{ marginTop: 12 }}>
-            <div style={{ fontWeight: 600, fontSize: 13 }}>Generated endpoint</div>
-            <span className="muted" style={{ fontSize: 12 }}>read-only preview of what was saved</span>
-            <span className="spacer" />
-            {generated && (
-              <>
-                <button
-                  className="btn btn-secondary btn-small"
-                  title="Invoke it, or describe what each role can call"
-                  onClick={() => navigate(
-                    '/endpoints?filter=' + encodeURIComponent(generated.path) +
-                    '&expand=' + encodeURIComponent(generated.verb))}>
-                  Open in Endpoints
-                </button>
-                <button
-                  className="btn btn-secondary btn-small"
-                  onClick={() => navigate('/hyper-ide?open=' + encodeURIComponent(generated.file))}>
-                  Open in Hyper IDE
-                </button>
-              </>
-            )}
-          </div>
-          <div style={{ height: 320, display: 'flex', flexDirection: 'column' }}>
-            <CodeEditor value={preview} mode="hyperlambda" readOnly={true} />
-          </div>
-        </>
+        <GeneratedEndpoint
+          preview={preview}
+          generated={generated}
+          endpointsTitle="Invoke it, or describe what each role can call" />
       )}
       {busy && <AiWaiter />}
     </>
@@ -2811,7 +2845,6 @@ function SearchTab() {
   const [preview, setPreview] = useState('');
   // The endpoint that was just generated, so it can be opened straight from here.
   const [generated, setGenerated] = useState<{ path: string; file: string; verb: string } | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     mlTypes()
@@ -2859,22 +2892,14 @@ function SearchTab() {
   return (
     <>
       <div className="toolbar">
-        <Select value={verb} onChange={value => setVerb(value)}>
-          <option value="get">GET</option>
-          <option value="post">POST</option>
-        </Select>
-        <input
-          type="text"
-          placeholder="Module name…"
-          value={moduleName}
-          onChange={e => setModuleName(e.target.value)}
-          style={{ width: 150 }} />
-        <input
-          type="text"
-          placeholder="Endpoint name…"
-          value={endpointName}
-          onChange={e => setEndpointName(e.target.value)}
-          style={{ width: 150 }} />
+        <EndpointNameFields
+          verbs={['get', 'post']}
+          verb={verb}
+          onVerb={setVerb}
+          moduleName={moduleName}
+          onModuleName={setModuleName}
+          endpointName={endpointName}
+          onEndpointName={setEndpointName} />
         <span className="spacer" />
         <button className="btn" onClick={generate} disabled={busy || !moduleName || !endpointName || !type}>
           {busy ? 'Generating…' : '⚙ Generate endpoint'}
@@ -2968,34 +2993,7 @@ function SearchTab() {
           ? 'Keyword search needs no OpenAI key, and costs nothing per call.'
           : 'Searching by meaning spends one OpenAI embedding on every call, so keep a rate limit on a public endpoint.'}
       </span>
-      {preview && (
-        <>
-          <div className="toolbar" style={{ marginTop: 12 }}>
-            <div style={{ fontWeight: 600, fontSize: 13 }}>Generated endpoint</div>
-            <span className="muted" style={{ fontSize: 12 }}>read-only preview of what was saved</span>
-            <span className="spacer" />
-            {generated && (
-              <>
-                <button
-                  className="btn btn-secondary btn-small"
-                  onClick={() => navigate(
-                    '/endpoints?filter=' + encodeURIComponent(generated.path) +
-                    '&expand=' + encodeURIComponent(generated.verb))}>
-                  Open in Endpoints
-                </button>
-                <button
-                  className="btn btn-secondary btn-small"
-                  onClick={() => navigate('/hyper-ide?open=' + encodeURIComponent(generated.file))}>
-                  Open in Hyper IDE
-                </button>
-              </>
-            )}
-          </div>
-          <div style={{ height: 320, display: 'flex', flexDirection: 'column' }}>
-            <CodeEditor value={preview} mode="hyperlambda" readOnly={true} />
-          </div>
-        </>
-      )}
+      {preview && <GeneratedEndpoint preview={preview} generated={generated} />}
       {busy && <AiWaiter />}
     </>
   );

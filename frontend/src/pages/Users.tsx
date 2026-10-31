@@ -309,6 +309,23 @@ function UsersTab(props: Readonly<{ roles: Role[] }>) {
 }
 
 /*
+ * The optional roles picker the invite and create user dialogs share.
+ */
+function RolesField(props: Readonly<{ roles: Role[]; selected: string[]; onChange: (selected: string[]) => void }>) {
+  return (
+    <div>
+      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles (optional)</div>
+      <RoleChips
+        roles={props.roles}
+        selected={props.selected}
+        onToggle={(role, selected) => props.onChange(selected
+          ? [...props.selected, role]
+          : props.selected.filter(candidate => candidate !== role))} />
+    </div>
+  );
+}
+
+/*
  * Invites someone by email: creates the account with a random password
  * nobody knows, and mails a magic sign-in link — they pick their own
  * password once they arrive. The email doubles as the username.
@@ -373,15 +390,7 @@ function InviteUserDialog(props: Readonly<{
         <label>Full name (optional)
           <input type="text" value={name} onChange={e => setName(e.target.value)} />
         </label>
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles (optional)</div>
-          <RoleChips
-            roles={props.roles}
-            selected={selectedRoles}
-            onToggle={(role, selected) => setSelectedRoles(selected
-              ? [...selectedRoles, role]
-              : selectedRoles.filter(candidate => candidate !== role))} />
-        </div>
+        <RolesField roles={props.roles} selected={selectedRoles} onChange={setSelectedRoles} />
       </div>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
@@ -466,15 +475,7 @@ function NewUserDialog(props: Readonly<{
         <label>Email (optional)
           <input type="text" value={email} onChange={e => setEmail(e.target.value)} />
         </label>
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles (optional)</div>
-          <RoleChips
-            roles={props.roles}
-            selected={selectedRoles}
-            onToggle={(role, selected) => setSelectedRoles(selected
-              ? [...selectedRoles, role]
-              : selectedRoles.filter(candidate => candidate !== role))} />
-        </div>
+        <RolesField roles={props.roles} selected={selectedRoles} onChange={setSelectedRoles} />
       </div>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
