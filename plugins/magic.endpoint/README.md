@@ -525,7 +525,7 @@ endpoints.list
 
 ## How to use [request.cookies.get]
 
-This slot returns the value of a cookie sent with the current request. Below is an example, to use inside of an endpoint.
+This slot returns the value of a cookie sent with the current request, or null if the request has no such cookie. Below is an example, to use inside of an endpoint.
 
 ```
 request.cookies.get:my-cookie
@@ -584,7 +584,7 @@ request.scheme
 
 ## How to use [request.url]
 
-This slot returns the URL path of the current request as its value, and each query string parameter as a child node. Below is an example, to use inside of an endpoint.
+This slot returns the URL of the current request as its value, and each query string parameter as a child node. Below is an example, to use inside of an endpoint.
 
 ```
 request.url

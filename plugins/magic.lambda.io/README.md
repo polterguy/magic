@@ -94,7 +94,7 @@ path relative to the root folder of your backend, and accepts the following opti
 * **[display-hidden]** - Boolean, defaults to false, which hides folders starting with a `.`
 * **[display-system]** - Boolean, defaults to true, and if false hides folders inside of _"/system/"_, _"/misc/"_, _"/data/"_ and _"/config/"_
 
-This slot lists every folder below a folder, at any depth, as child nodes holding the path of each folder. Hidden folders and system folders are left out unless you set **[display-hidden]** or **[display-system]**. Below is an example.
+This slot lists every folder below a folder, at any depth, as child nodes holding the path of each folder. Folders whose names start with a dot are left out unless you set **[display-hidden]** to true, and you can leave out the _"/system/"_, _"/misc/"_, _"/data/"_ and _"/config/"_ folders by setting **[display-system]** to false. Below is an example.
 
 ```
 io.folder.list-recursively:/misc/
@@ -146,7 +146,7 @@ has the following two children.
 
 As with **[io.file.load]**, you should not use this slot on binary files.
 
-This slot loads every file in a folder and its subfolders, and returns one child node per file, holding its path and content. Below is an example.
+This slot loads every file in a folder and its subfolders, and returns one child node per file, holding the path of the file as **[name]**, and its content as text in **[content]**. Below is an example.
 
 ```
 io.file.load-recursively:/misc/snippets/
@@ -350,7 +350,7 @@ file's path relative to the root folder of your backend, and accepts the followi
 * **[display-hidden]** - Boolean, defaults to false, which hides files starting with a `.`
 * **[display-system]** - Boolean, defaults to true, and if false hides files inside of _"/system/"_, _"/misc/"_, _"/data/"_ and _"/config/"_
 
-This slot lists every file in a folder and in all of its subfolders, as child nodes holding the path of each file. Hidden files and system folders are left out unless you set **[display-hidden]** or **[display-system]**. Below is an example.
+This slot lists every file in a folder and in all of its subfolders, as child nodes holding the path of each file. Files whose names start with a dot are left out unless you set **[display-hidden]** to true, and you can leave out the files in the _"/system/"_, _"/misc/"_, _"/data/"_ and _"/config/"_ folders by setting **[display-system]** to false. Below is an example.
 
 ```
 io.file.list-recursively:/misc/
