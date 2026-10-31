@@ -25,14 +25,13 @@ namespace magic.lambda.auth.helpers
         /// </summary>
         /// <param name="settings">Configuration settings</param>
         /// <param name="ticket">Existing user ticket, containing username and roles</param>
+        /// <param name="privateKey">RSA private key as PEM, base64 DER or byte[] to sign with using RS256, or null to sign with HS256 using the auth secret</param>
         /// <returns>A JWT token</returns>
         public static string CreateTicket(
             IAuthSettings settings,
-            Ticket ticket)
+            Ticket ticket,
+            object privateKey = null)
         {
-            // Getting data to put into token.
-            var key = AuthKeyDerivation.GetKeyBytes(settings.Secret);
-
             // Creating our token descriptor.
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -41,7 +40,7 @@ namespace magic.lambda.auth.helpers
                 {
                     new(ClaimTypes.Name, ticket.Username),
                 }),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                SigningCredentials = AuthSigningKeys.GetSigningCredentials(settings.Secret, privateKey),
             };
 
             // Setting expiration date of ticket.

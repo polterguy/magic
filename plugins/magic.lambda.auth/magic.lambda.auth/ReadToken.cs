@@ -55,9 +55,23 @@ namespace magic.backend.slots
                 ValidateIssuerSigningKey = true,
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                IssuerSigningKey = new SymmetricSecurityKey(AuthKeyDerivation.GetKeyBytes(_configuration["magic:auth:secret"])),
                 ValidateLifetime = true,
             };
+
+            /*
+             * If caller supplies a public key we ONLY accept RS256 tokens signed by its private half,
+             * otherwise we validate HS256 tokens using the auth secret, exactly as before.
+             */
+            var publicKey = AuthSigningKeys.GetKeyArgument(input, "public-key");
+            if (publicKey != null)
+            {
+                validationParameters.IssuerSigningKey = AuthSigningKeys.GetVerificationKey(publicKey);
+                validationParameters.AlgorithmValidator = (algorithm, key, secToken, valParams) => AuthSigningKeys.IsValidRsaAlgorithm(algorithm);
+            }
+            else
+            {
+                validationParameters.IssuerSigningKey = new SymmetricSecurityKey(AuthKeyDerivation.GetKeyBytes(_configuration["magic:auth:secret"]));
+            }
 
             ClaimsPrincipal principal;
             SecurityToken validatedToken;
