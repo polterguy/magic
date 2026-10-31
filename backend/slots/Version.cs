@@ -25,7 +25,7 @@ namespace magic.backend.slots
         /// <param name="input">Parameters passed from signaler</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            input.Value = "v24.1.5";
+            input.Value = "v24.2.0";
         }
     }
 }
