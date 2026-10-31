@@ -53,16 +53,6 @@ namespace magic.data.common.slots.crud
         RequiresScope = "data.connection",
         ScopeDescription = "Requires an open database connection created by [data.connect]",
         SignatureType = typeof(global::magic.data.common.signatures.DataDeleteSignature))]
-    [Slot(
-        Name = "data.scan",
-        Description = "Scans rows from the current open database connection; returns all columns unless [columns] is supplied and limits to 25 rows unless [limit] is supplied",
-        ReturnsMode = SlotReturnsMode.Lambda,
-        ReturnsKind = "node-list",
-        ReturnsElementKind = "row-object,lambda-tree",
-        ReturnsDescription = "Resolves to scanned rows as child nodes",
-        RequiresScope = "data.connection",
-        ScopeDescription = "Requires an open database connection created by [data.connect]",
-        SignatureType = typeof(global::magic.data.common.signatures.DataReadSignature))]
     public class Crud : ISlotAsync
     {
         readonly IDataSettings _settings;

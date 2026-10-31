@@ -36,7 +36,6 @@ The following CRUD slots are documented in their own sections below.
 
 * __[data.create]__ - Inserts a new row into the current open database connection
 * __[data.update]__ - Updates rows in the current open database connection, use **[where]** to constrain which rows are affected
-* __[data.scan]__ - Scans rows from the current open database connection
 
 ### How to use [data.connect]
 
@@ -205,23 +204,6 @@ constrain the update to any specific row if you leave it out.
 * __[table]__ - Name of the table to update. Mandatory, the slot throws if it is missing
 * __[values]__ - Column names and their new values, as children nodes. Mandatory, the slot throws if it is missing
 * __[where]__ - Condition constraining which rows to update, see the **[where]** documentation below
-* __[database-type]__ - Database adapter to use instead of your default database type
-* __[generate]__ - If true, only generates the SQL and its parameters instead of executing it, default is false
-
-### How to use [data.scan]
-
-This slot scans rows from your database, using the current open connection created by **[data.connect]**.
-It takes the same arguments as **[data.read]** and **[sql.read]**, and returns the matching rows as children nodes.
-It returns all columns unless you supply **[columns]**, and limits the result to 25 rows unless you supply **[limit]**.
-
-* __[table]__ - Name of the table to scan. Mandatory, the slot throws if it is missing
-* __[columns]__ - Columns to select
-* __[where]__ - Where condition
-* __[order]__ - Which column(s) to order the results by
-* __[limit]__ - How many records to return, default is 25. Set this value to -1 to avoid having the parser inject its default value
-* __[offset]__ - Offset of where to start returning records
-* __[group]__ - Group by declaration
-* __[distinct]__ - Removes duplicate rows from the result when true
 * __[database-type]__ - Database adapter to use instead of your default database type
 * __[generate]__ - If true, only generates the SQL and its parameters instead of executing it, default is false
 

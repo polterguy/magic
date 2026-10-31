@@ -832,7 +832,7 @@ namespace magic.data.common.signatures
     }
 
     /// <summary>
-    /// Child signature for dispatching data read and scan slots.
+    /// Child signature for dispatching data read slots.
     /// </summary>
     public class DataReadSignature : DbReadSignature
     {

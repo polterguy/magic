@@ -57,7 +57,7 @@ const NAMESPACED =
   'crypto.hash.md5 crypto.hash.sha1 crypto.hash.sha256 crypto.hash.sha384 crypto.hash.sha512 ' +
   'crypto.password.hash crypto.password.verify crypto.random crypto.random.int crypto.rsa.create-key ' +
   'crypto.rsa.decrypt crypto.rsa.encrypt crypto.rsa.sign crypto.rsa.verify crypto.seed crypto.sign ' +
-  'crypto.verify data.connect data.create data.delete data.execute data.read data.scalar data.scan ' +
+  'crypto.verify data.connect data.create data.delete data.execute data.read data.scalar ' +
   'data.select data.transaction.commit data.transaction.create data.transaction.rollback data.update ' +
   'date.format date.from-unix date.max date.min date.now date.unix endpoints.list execution.kill ' +
   'execution.throttle execution.throttle.create execution.timeout git.branch.list git.checkout ' +
