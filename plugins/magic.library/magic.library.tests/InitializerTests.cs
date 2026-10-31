@@ -275,6 +275,81 @@ namespace magic.library.tests
 
         #endregion
 
+        #region [ -- CORS policy -- ]
+
+        static async Task<CorsPolicy> CorsPolicyFor(IConfiguration configuration, string origin, string host = "api.example.com")
+        {
+            using var provider = Build(configuration);
+            var context = new DefaultHttpContext();
+            context.Request.Host = new HostString(host);
+            if (origin != null)
+                context.Request.Headers.Origin = origin;
+            return await provider.GetRequiredService<ICorsPolicyProvider>().GetPolicyAsync(context, null);
+        }
+
+        [Fact]
+        public async Task AnyOriginIsAllowedWhenNoFrontendIsConfigured()
+        {
+            var policy = await CorsPolicyFor(Configuration(), "https://anywhere.example.org");
+            Assert.True(policy.IsOriginAllowed("https://anywhere.example.org"));
+            Assert.True(policy.IsOriginAllowed(""));
+            Assert.True(policy.AllowAnyHeader);
+            Assert.True(policy.AllowAnyMethod);
+        }
+
+        [Fact]
+        public async Task OnlyConfiguredFrontendsAreAllowed()
+        {
+            var policy = await CorsPolicyFor(
+                Configuration(new() { ["magic:frontend:urls"] = "https://app.one.org, https://app.two.org" }),
+                "https://app.one.org");
+            Assert.True(policy.IsOriginAllowed("https://app.one.org"));
+            Assert.True(policy.IsOriginAllowed("https://APP.TWO.org"));
+            Assert.False(policy.IsOriginAllowed("https://evil.example.org"));
+            Assert.True(policy.IsOriginAllowed(""));
+        }
+
+        [Fact]
+        public async Task BlankFrontendConfigurationAllowsAnyOrigin()
+        {
+            var policy = await CorsPolicyFor(Configuration(new() { ["magic:frontend:urls"] = "  " }), "https://anywhere.example.org");
+            Assert.True(policy.IsOriginAllowed("https://anywhere.example.org"));
+        }
+
+        [Fact]
+        public async Task CredentialsAreSupportedForConfiguredFrontends()
+        {
+            var policy = await CorsPolicyFor(
+                Configuration(new() { ["magic:frontend:urls"] = "https://app.one.org" }),
+                "https://APP.one.org");
+            Assert.True(policy.SupportsCredentials);
+        }
+
+        [Fact]
+        public async Task CredentialsAreNotSupportedForUnconfiguredCrossSiteOrigins()
+        {
+            var policy = await CorsPolicyFor(Configuration(), "https://evil.example.org");
+            Assert.False(policy.SupportsCredentials);
+        }
+
+        [Theory]
+        [InlineData("https://api.example.com", "api.example.com", true)]
+        [InlineData("https://app.example.com", "example.com", true)]
+        [InlineData("https://example.com", "api.example.com", true)]
+        [InlineData("https://API.example.com", "api.example.com", true)]
+        [InlineData("https://app.example.com", "api.example.com", false)]
+        [InlineData("https://notexample.com", "example.com", false)]
+        [InlineData("null", "api.example.com", false)]
+        [InlineData("", "api.example.com", false)]
+        [InlineData(null, "api.example.com", false)]
+        public async Task CredentialsAreSupportedOnlyForOriginsOnTheSameSite(string origin, string host, bool expected)
+        {
+            var policy = await CorsPolicyFor(Configuration(), origin, host);
+            Assert.Equal(expected, policy.SupportsCredentials);
+        }
+
+        #endregion
+
         #region [ -- Exceptions -- ]
 
         static ApplicationBuilder ThrowingPipeline(IServiceProvider provider, Exception error)

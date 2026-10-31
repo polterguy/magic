@@ -154,6 +154,12 @@ namespace magic.lambda.io.tests
         }
 
         [Fact]
+        public void RemovingEveryLineLeavesAnEmptyFile()
+        {
+            Assert.Equal("", Patch("@@ -1,4 +0,0 @@\n-line0\n-line1\n-line2\n-line3"));
+        }
+
+        [Fact]
         public void LongLinesAreShortenedInErrors()
         {
             var longLine = new string('x', 300);
