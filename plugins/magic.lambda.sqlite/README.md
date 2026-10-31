@@ -57,12 +57,17 @@ Loads a SQLite extension into the connection opened by **[sqlite.connect]**. The
 * __[proc]__ - Optional entry point of the extension.
 * __[append-platform]__ - Boolean, defaults to `true`. If true, the slot appends `-arm64` or `-arm` to the filename when running on an ARM64 or ARM processor.
 
-Below is an example, loading an extension from the _"/data/extensions/"_ folder into a connection.
+The path in **[file]** is a plain file system path, resolved relative to the working directory of your backend, and _not_ relative to
+your cloudlet's root folder, which means a leading `/` makes it an absolute path on the server. It can point into a folder, and you should leave out the
+file extension, since SQLite adds the one your operating system uses, such as _".so"_, _".dylib"_ or _".dll"_. On ARM processors the slot first appends
+`-arm64` or `-arm` to the filename, unless **[append-platform]** is false. Magic ships the vector extension in the _"sqlite-plugins"_ folder, and
+below is how Magic itself loads it, using **[proc]** to name the extension's entry point.
 
 ```
-sqlite.connect:sakila
+sqlite.connect:[generic|magic]
    sqlite.load-extension
-      file:/data/extensions/vec0
+      file:sqlite-plugins/vector
+      proc:sqlite3_vector_init
 ```
 
 
@@ -204,7 +209,7 @@ sqlite.connect:sakila
 
 ## How to use [sqlite.connections.flush]
 
-This slot flushes the cached SQLite connections and schemas, which you typically need to do after you have replaced or deleted a database file on disc, since the old connection pool would otherwise keep pointing at the old file. Below is an example.
+This slot clears all of SQLite's pooled connections, which you typically need to do after you have replaced or deleted a database file on disc, since a pooled connection would otherwise keep pointing at the old file. Below is an example.
 
 ```
 sqlite.connections.flush
