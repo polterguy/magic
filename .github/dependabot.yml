@@ -1,0 +1,34 @@
+version: 2
+
+# Updates are proposed once a week, with the minor and patch updates of an ecosystem together in one pull request, and
+# every major update on its own, since those are the ones that can break something.
+updates:
+  - package-ecosystem: nuget
+    directories:
+      - /
+      - /backend
+      - /backend.tests
+      - /plugins/*/*
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      nuget-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]

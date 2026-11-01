@@ -1,0 +1,6 @@
+# Who is asked to review a pull request that touches the files. The last matching line wins.
+*                      @polterguy
+/.github/              @polterguy
+/backend/files/config/ @polterguy
+/Directory.Build.props @polterguy
+/.editorconfig         @polterguy

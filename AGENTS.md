@@ -32,7 +32,8 @@ cd frontend && npm run test
   the severities of `.editorconfig`. A violation fails `dotnet build`, so fix it, or, for a rule that is not meant for
   that code, say so in `.editorconfig` with the reason. The SonarCloud workflow builds with `-p:SonarGate=false`
 - Default login: root / root
-- CI triggers only on version tags (v*.*.*), not on branch pushes or PRs
+- A version tag (v*.*.*) builds and publishes the Docker images. Pushes to master and pull requests run the analyzer
+  build, the frontend build and tests, SonarCloud, CodeQL and the secret scan
 - Running `dotnet test magic.sln` from the repo root builds and tests all
   backend projects including plugins
 
