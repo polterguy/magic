@@ -17,7 +17,7 @@ namespace magic.lambda.image.slots
     /// </summary>
     [Slot(
         Name = "image.crop",
-        Description = "Cuts a rectangular region out of an image at the given x, y, width, and height",
+        Description = "Cuts margins off an image, removing the given left, top, right and bottom pixels",
         ValueKind = "image-file",
         ValueDescription = "Source image filename or stream to crop",
         ValueRequired = true,

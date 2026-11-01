@@ -67,7 +67,7 @@ namespace magic.lambda.image.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Type(true),
+            Type(),
             Dest(),
         };
     }

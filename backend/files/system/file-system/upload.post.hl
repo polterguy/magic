@@ -61,11 +61,28 @@ if
       set-value:x:@.type
          .:jpeg
 
-// Checking if caller wants to resize, convert, or save the file as is.
+// Resizing and converting is only possible for the types the image slots can write, any other image is saved as it is.
+.transformable:bool:false
 if
    or
-      exists:x:@.arguments/*/width
-      exists:x:@.arguments/*/height
+      eq:x:@.type
+         .:png
+      eq:x:@.type
+         .:jpeg
+      eq:x:@.type
+         .:webp
+   .lambda
+      set-value:x:@.transformable
+         .:bool:true
+
+// Checking if caller wants to resize, convert, or save the file as is.
+if
+   and
+      or
+         exists:x:@.arguments/*/width
+         exists:x:@.arguments/*/height
+      eq:x:@.transformable
+         .:bool:true
    .lambda
 
       // Adding width and/or height as supplied by caller.
@@ -82,8 +99,11 @@ if
          get-value:x:@image.resize
 
 else-if
-   eq:x:@.arguments/*/convert
-      .:bool:true
+   and
+      eq:x:@.arguments/*/convert
+         .:bool:true
+      eq:x:@.transformable
+         .:bool:true
    .lambda
 
       // Converting image to the format implied by its destination filename, returning it as a stream.
