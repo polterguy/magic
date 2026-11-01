@@ -31,11 +31,11 @@ namespace magic.lambda.system.tests
                 RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "OSX" : "LINUX";
             var yes = new Node("system.is-os", current);
             _runtime.Signaler.Signal("system.is-os", yes);
-            Assert.Equal(true, yes.Value);
+            Assert.True(yes.Get<bool>());
 
             var no = new Node("system.is-os", "NOT-AN-OS");
             _runtime.Signaler.Signal("system.is-os", no);
-            Assert.Equal(false, no.Value);
+            Assert.False(no.Get<bool>());
         }
 
         [Fact]

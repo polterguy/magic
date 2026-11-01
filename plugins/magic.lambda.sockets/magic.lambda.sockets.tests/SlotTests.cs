@@ -19,6 +19,13 @@ namespace magic.lambda.sockets.tests
 {
     public class SlotTests
     {
+        static readonly string[] RoleGroups = ["role:admin", "role:root"];
+        static readonly string[] JohnAndJane = ["john", "jane"];
+        static readonly string[] Team1Group = ["group:team1"];
+        static readonly string[] TwoClients = ["c1", "c2"];
+        static readonly string[] AConnections = ["conn-a1", "conn-a2"];
+        static readonly string[] SecondConnection = ["c2"];
+
         static async Task<(FakeHub Hub, Node Lambda)> Run(string hl, bool enabled = true)
         {
             var hub = new FakeHub();
@@ -104,7 +111,7 @@ namespace magic.lambda.sockets.tests
             var (hub, _) = await Run("sockets.signal:foo.bar\n   roles:admin, root");
             var sent = Assert.Single(hub.Sent);
             Assert.Equal("groups", sent.Target);
-            Assert.Equal(new[] { "role:admin", "role:root" }, sent.Names);
+            Assert.Equal(RoleGroups, sent.Names);
         }
 
         [Fact]
@@ -113,7 +120,7 @@ namespace magic.lambda.sockets.tests
             var (hub, _) = await Run("sockets.signal:foo.bar\n   users:john, jane");
             var sent = Assert.Single(hub.Sent);
             Assert.Equal("users", sent.Target);
-            Assert.Equal(new[] { "john", "jane" }, sent.Names);
+            Assert.Equal(JohnAndJane, sent.Names);
         }
 
         [Fact]
@@ -122,7 +129,7 @@ namespace magic.lambda.sockets.tests
             var (hub, _) = await Run("sockets.signal:foo.bar\n   groups:team1");
             var sent = Assert.Single(hub.Sent);
             Assert.Equal("groups", sent.Target);
-            Assert.Equal(new[] { "group:team1" }, sent.Names);
+            Assert.Equal(Team1Group, sent.Names);
         }
 
         [Fact]
@@ -131,7 +138,7 @@ namespace magic.lambda.sockets.tests
             var (hub, _) = await Run("sockets.signal:foo.bar\n   clients:c1, c2");
             var sent = Assert.Single(hub.Sent);
             Assert.Equal("clients", sent.Target);
-            Assert.Equal(new[] { "c1", "c2" }, sent.Names);
+            Assert.Equal(TwoClients, sent.Names);
         }
 
         [Fact]
@@ -170,7 +177,7 @@ namespace magic.lambda.sockets.tests
             var list = users.Children.First().Children.ToList();
             Assert.Equal(2, list.Count);
             var a = list.Single(x => x.Children.First().Get<string>() == prefix + "a");
-            Assert.Equal(new[] { "conn-a1", "conn-a2" }, a.Children.Skip(1).First().Children.Select(x => x.Get<string>()).ToArray());
+            Assert.Equal(AConnections, a.Children.Skip(1).First().Children.Select(x => x.Get<string>()).ToArray());
 
             var (_, limited) = await Run("sockets.users\n   filter:" + prefix + "\n   limit:1");
             Assert.Single(limited.Children.First().Children);
@@ -188,7 +195,7 @@ namespace magic.lambda.sockets.tests
 
             var fake = new FakeHub();
             await NewHub(fake, "c1", name).OnDisconnectedAsync(null);
-            Assert.Equal(new[] { "c2" }, await Connections(name));
+            Assert.Equal(SecondConnection, await Connections(name));
             await NewHub(fake, "c2", name).OnDisconnectedAsync(null);
             Assert.Empty(await Connections(name));
         }
@@ -198,7 +205,7 @@ namespace magic.lambda.sockets.tests
         {
             var connection = "anon-" + Guid.NewGuid().ToString("N");
             await Connect(null, connection);
-            Assert.Equal(new[] { connection }, await Connections(connection));
+            Assert.Equal([connection], await Connections(connection));
             await NewHub(new FakeHub(), connection, null).OnDisconnectedAsync(null);
             Assert.Empty(await Connections(connection));
         }
@@ -210,7 +217,7 @@ namespace magic.lambda.sockets.tests
             StubTicket.Roles = new[] { "admin", "root" };
             var fake = new FakeHub();
             await NewHub(fake, "conn-r", StubTicket.Username).OnConnectedAsync();
-            Assert.Equal(new[] { "role:admin", "role:root" }, fake.Groups.Select(x => x.Group).ToArray());
+            Assert.Equal(RoleGroups, fake.Groups.Select(x => x.Group).ToArray());
             Assert.All(fake.Groups, x => Assert.Equal("conn-r", x.Connection));
         }
 

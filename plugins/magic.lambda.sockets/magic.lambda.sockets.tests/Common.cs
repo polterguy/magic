@@ -24,8 +24,8 @@ namespace magic.lambda.sockets.tests
     [Slot(Name = "auth.ticket.get")]
     public class StubTicket : ISlot
     {
-        public static string Username;
-        public static string[] Roles = Array.Empty<string>();
+        public static string Username { get; set; }
+        public static string[] Roles { get; set; } = Array.Empty<string>();
 
         public void Signal(ISignaler signaler, Node input)
         {
@@ -42,8 +42,8 @@ namespace magic.lambda.sockets.tests
     [Slot(Name = "test.sockets.record")]
     public class StubRecord : ISlot
     {
-        public static string Connection;
-        public static string Payload;
+        public static string Connection { get; set; }
+        public static string Payload { get; set; }
 
         public void Signal(ISignaler signaler, Node input)
         {

@@ -46,7 +46,7 @@ namespace Plugin" + Guid.NewGuid().ToString("N") + @"
 }";
         }
 
-        Node CompileNode(string code, string assemblyName)
+        static Node CompileNode(string code, string assemblyName)
         {
             var node = new Node("system.compile");
             node.Add(new Node("code", code));

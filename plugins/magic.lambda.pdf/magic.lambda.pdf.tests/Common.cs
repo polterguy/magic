@@ -18,8 +18,8 @@ namespace magic.lambda.pdf.tests
     [Slot(Name = "io.file.load.binary")]
     public class StubLoadBinary : ISlot
     {
-        public static string Requested;
-        public static byte[] Content = Array.Empty<byte>();
+        public static string Requested { get; set; }
+        public static byte[] Content { get; set; } = Array.Empty<byte>();
 
         public void Signal(ISignaler signaler, Node input)
         {
@@ -34,8 +34,8 @@ namespace magic.lambda.pdf.tests
     [Slot(Name = "http.get")]
     public class StubHttpGet : ISlot
     {
-        public static string Requested;
-        public static byte[] Content = Array.Empty<byte>();
+        public static string Requested { get; set; }
+        public static byte[] Content { get; set; } = Array.Empty<byte>();
 
         public void Signal(ISignaler signaler, Node input)
         {
