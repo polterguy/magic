@@ -9,4 +9,8 @@
     <ProjectReference Include="..\..\magic.data.common\magic.data.common\magic.data.common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="magic.lambda.mysql.tests" />
+  </ItemGroup>
+
 </Project>
