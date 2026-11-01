@@ -2,11 +2,15 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Linq;
 using System.Text;
 using Xunit;
 using magic.node;
+using magic.node.extensions;
+using magic.node.extensions.hyperlambda;
 
 namespace magic.lambda.pdf.tests
 {
@@ -93,6 +97,85 @@ namespace magic.lambda.pdf.tests
         {
             var bytes = Common.Pdf("<html><body><p>ok</p><img src=\"ftp://example.test/pic.png\"/></body></html>");
             Assert.StartsWith("%PDF", Encoding.ASCII.GetString(bytes, 0, 4));
+        }
+
+        [Fact]
+        public void RetrieverRejectsUnsupportedScheme()
+        {
+            var retriever = new SignalerResourceRetriever(Common.GetSignaler());
+            var ex = Assert.Throws<HyperlambdaException>(() => retriever.GetByteArrayByUrl(new Uri("ftp://example.test/pic.png")));
+            Assert.Contains("ftp", ex.Message);
+        }
+
+        [Fact]
+        public void RetrieverThrowsWhenHttpReturnsNoContent()
+        {
+            StubHttpGet.OmitContent = true;
+            try
+            {
+                var retriever = new SignalerResourceRetriever(Common.GetSignaler());
+                var ex = Assert.Throws<HyperlambdaException>(() => retriever.GetByteArrayByUrl(new Uri("https://example.test/pic.png")));
+                Assert.Contains("got no content", ex.Message);
+            }
+            finally
+            {
+                StubHttpGet.OmitContent = false;
+            }
+        }
+
+        [Fact]
+        public void RetrieverReturnsBytesAndStreamsForFileAndHttp()
+        {
+            var retriever = new SignalerResourceRetriever(Common.GetSignaler());
+            StubLoadBinary.Content = Common.Png;
+            StubHttpGet.Content = Common.Png;
+            Assert.Equal(Common.Png, retriever.GetByteArrayByUrl(new Uri("file:///images/pic.png")));
+            Assert.Equal(Common.Png, retriever.GetByteArrayByUrl(new Uri("http://example.test/pic.png")));
+            using var stream = retriever.GetInputStreamByUrl(new Uri("https://example.test/pic.png"));
+            Assert.Equal(Common.Png.Length, stream.Length);
+        }
+
+        static async Task EvaluateWhitelisted(string vocabulary, string lambda)
+        {
+            var hl = "whitelist\n   vocabulary\n" + vocabulary + "   .lambda\n" + lambda;
+            await Common.GetSignaler().SignalAsync("eval", HyperlambdaParser.Parse(hl));
+        }
+
+        [Fact]
+        public async Task WhitelistWithoutFileLoadBlocksPdf2TextFile()
+        {
+            StubLoadBinary.Content = Common.Pdf(Html);
+            StubLoadBinary.Requested = null;
+            await Assert.ThrowsAnyAsync<Exception>(
+                () => EvaluateWhitelisted("      pdf2text\n", "      pdf2text:/files/foo.pdf\n"));
+            Assert.Null(StubLoadBinary.Requested);
+        }
+
+        [Fact]
+        public async Task WhitelistWithFileLoadAllowsPdf2TextFile()
+        {
+            StubLoadBinary.Content = Common.Pdf(Html);
+            StubLoadBinary.Requested = null;
+            await EvaluateWhitelisted("      pdf2text\n      io.file.load.binary\n", "      pdf2text:/files/foo.pdf\n");
+            Assert.Equal("/files/foo.pdf", StubLoadBinary.Requested);
+        }
+
+        [Fact]
+        public async Task WhitelistWithoutHttpGetBlocksHtml2PdfResources()
+        {
+            StubHttpGet.Content = Common.Png;
+            StubHttpGet.Requested = null;
+            await EvaluateWhitelisted("      html2pdf\n", "      html2pdf:@\"<img src=\"\"https://example.test/pic.png\"\"/>\"\n");
+            Assert.Null(StubHttpGet.Requested);
+        }
+
+        [Fact]
+        public async Task WhitelistWithHttpGetAllowsHtml2PdfResources()
+        {
+            StubHttpGet.Content = Common.Png;
+            StubHttpGet.Requested = null;
+            await EvaluateWhitelisted("      html2pdf\n      http.get\n", "      html2pdf:@\"<img src=\"\"https://example.test/pic.png\"\"/>\"\n");
+            Assert.Equal("https://example.test/pic.png", StubHttpGet.Requested);
         }
     }
 }

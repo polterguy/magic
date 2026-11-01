@@ -68,5 +68,16 @@ namespace magic.lambda.system.tests
             Assert.Equal("oops", error.Value);
             Assert.Equal(typeof(HyperlambdaException).FullName, error.Children.First(x => x.Name == "type").Value);
         }
+
+        [Fact]
+        public async Task DebugStepsCarrySlotPathElapsedAndLambda()
+        {
+            var lambda = HyperlambdaParser.Parse("system.debug\n   .foo:bar\n   set-value:x:@.foo\n      .:changed");
+            await _runtime.Signaler.SignalAsync("eval", lambda);
+            foreach (var step in lambda.Children.First().Children)
+            {
+                Assert.Equal(new[] { "slot", "path", "elapsed", "lambda" }, step.Children.Select(x => x.Name).ToArray());
+            }
+        }
     }
 }

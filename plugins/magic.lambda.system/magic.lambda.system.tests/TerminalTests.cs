@@ -3,7 +3,9 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using magic.node;
@@ -99,6 +101,43 @@ namespace magic.lambda.system.tests
         public async Task MissingCommandThrows()
         {
             await Assert.ThrowsAsync<HyperlambdaException>(() => Execute(" "));
+        }
+
+        [Fact]
+        public async Task CancellationKillsTheProcess()
+        {
+            if (OperatingSystem.IsWindows())
+                return;
+            using var cts = new CancellationTokenSource();
+            var context = new magic.signals.contracts.ExecutionContext("exec-1", cts);
+            var node = new Node("system.execute", "sleep");
+            node.Add(new Node("args", "30"));
+            var watch = Stopwatch.StartNew();
+            cts.CancelAfter(300);
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(
+                () => _runtime.Signaler.ScopeAsync("execution.context", context,
+                    async () => await _runtime.Signaler.SignalAsync("system.execute", node)));
+            Assert.True(watch.Elapsed < TimeSpan.FromSeconds(20));
+        }
+
+        [Fact]
+        public async Task FailureMessageIsStandardError()
+        {
+            if (OperatingSystem.IsWindows())
+                return;
+            var ex = await Assert.ThrowsAsync<HyperlambdaException>(
+                () => Execute("sh", x => x.Add(new Node("args", "-c \"echo out; echo err 1>&2; exit 3\""))));
+            Assert.Equal("err", ex.Message);
+        }
+
+        [Fact]
+        public async Task FailureMessageFallsBackToStandardOutput()
+        {
+            if (OperatingSystem.IsWindows())
+                return;
+            var ex = await Assert.ThrowsAsync<HyperlambdaException>(
+                () => Execute("sh", x => x.Add(new Node("args", "-c \"echo out; exit 3\""))));
+            Assert.Equal("out", ex.Message);
         }
     }
 }

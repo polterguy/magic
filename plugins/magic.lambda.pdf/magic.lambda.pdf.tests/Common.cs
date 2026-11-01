@@ -36,11 +36,13 @@ namespace magic.lambda.pdf.tests
     {
         public static string Requested { get; set; }
         public static byte[] Content { get; set; } = Array.Empty<byte>();
+        public static bool OmitContent { get; set; }
 
         public void Signal(ISignaler signaler, Node input)
         {
             Requested = input.GetEx<string>();
-            input.Add(new Node("content", Content));
+            if (!OmitContent)
+                input.Add(new Node("content", Content));
         }
     }
 

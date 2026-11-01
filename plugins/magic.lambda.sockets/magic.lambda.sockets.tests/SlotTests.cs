@@ -97,6 +97,23 @@ namespace magic.lambda.sockets.tests
         }
 
         [Fact]
+        public async Task SignalWithNestedArgs()
+        {
+            var (hub, _) = await Run("sockets.signal:foo.bar\n   args\n      outer\n         inner:deep");
+            var json = Assert.Single(hub.Sent).Argument as string;
+            Assert.Contains("\"outer\"", json);
+            Assert.Contains("\"inner\"", json);
+            Assert.Contains("\"deep\"", json);
+        }
+
+        [Fact]
+        public async Task AddingUnconnectedUserToGroupDoesNothing()
+        {
+            var (hub, _) = await Run("sockets.user.add-to-group:nobody" + Guid.NewGuid().ToString("N") + "\n   group:team");
+            Assert.Empty(hub.Groups);
+        }
+
+        [Fact]
         public async Task SignalWithoutArgs()
         {
             var (hub, lambda) = await Run("sockets.signal:foo.bar");

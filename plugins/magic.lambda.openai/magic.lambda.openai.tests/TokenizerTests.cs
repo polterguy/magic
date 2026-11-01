@@ -43,5 +43,25 @@ namespace magic.lambda.openai.tests
             Common.GetSignaler().Signal("openai.tokenize", node);
             Assert.Equal(2, node.Value);
         }
+
+        [Fact]
+        public void CountsTokensForCl100kModel()
+        {
+            var node = new Node("openai.tokenize", "Hello world");
+            node.Add(new Node("model", "gpt-4"));
+            Common.GetSignaler().Signal("openai.tokenize", node);
+            Assert.Equal(2, node.Value);
+        }
+
+        [Fact]
+        public void UnicodeAndLongTextAreCounted()
+        {
+            var emoji = new Node("openai.tokenize", "\U0001F600 h\u00e9llo w\u00f6rld");
+            Common.GetSignaler().Signal("openai.tokenize", emoji);
+            var many = new Node("openai.tokenize", string.Concat(System.Linq.Enumerable.Repeat("Hello world. ", 500)));
+            Common.GetSignaler().Signal("openai.tokenize", many);
+            Assert.True((int)emoji.Value >= 3);
+            Assert.True((int)many.Value > 1000);
+        }
     }
 }
