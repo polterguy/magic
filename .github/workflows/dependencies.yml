@@ -1,0 +1,61 @@
+name: Dependency report
+
+# Audits every NuGet and npm dependency, transitive ones included, against the public advisory databases, and publishes
+# the result as deps.json on the health-data branch, which hyperlambda.dev/health reads. The report also lists the
+# advisories suppressed in Directory.Build.props, each with its reason, so a suppression is shown and never hidden.
+# It runs on a schedule as well as on pushes, since an advisory can appear for a dependency that has not changed.
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write   # only to push deps.json to the health-data branch
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+
+      - name: Audit NuGet packages
+        run: dotnet list magic.sln package --vulnerable --include-transitive --format json > "$RUNNER_TEMP/dotnet-vulnerable.json"
+
+      - name: Audit npm packages
+        working-directory: frontend
+        # npm audit exits with 1 when it finds something, which is the result and not a failure.
+        run: npm audit --package-lock-only --json > "$RUNNER_TEMP/npm-audit.json" || true
+
+      - name: Build the report
+        run: python3 -I .github/scripts/deps_report.py "$RUNNER_TEMP/dotnet-vulnerable.json" "$RUNNER_TEMP/npm-audit.json" Directory.Build.props "$GITHUB_SHA" > "$RUNNER_TEMP/deps.json"
+
+      - name: Publish to the health-data branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin health-data || true
+          if git rev-parse --verify origin/health-data >/dev/null 2>&1; then
+            git checkout -B health-data origin/health-data
+          else
+            git checkout --orphan health-data
+            git rm -rf . >/dev/null
+          fi
+          cp "$RUNNER_TEMP/deps.json" deps.json
+          git add deps.json
+          git commit -m "Dependency report for $GITHUB_SHA" || exit 0
+          git push origin health-data
