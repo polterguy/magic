@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using magic.node;
 using magic.signals.services;
+
 using magic.signals.contracts;
 using magic.node.extensions.hyperlambda;
 
@@ -38,6 +39,7 @@ namespace magic.lambda.threading.tests
             _ = typeof(ExecutionTimeout);
             var services = new ServiceCollection();
             services.AddTransient<ISignaler, Signaler>();
+            services.AddSingleton<IExecutionRegistry, ExecutionRegistry>();
             var type1 = typeof(ISlot);
             var type2 = typeof(ISlotAsync);
             var types = AppDomain.CurrentDomain.GetAssemblies()
@@ -95,6 +97,24 @@ namespace magic.lambda.threading.tests
             }));
             await Task.WhenAll(tasks);
             Assert.Equal(1, StubEnter.Max);
+        }
+
+        [Fact]
+        public async Task KillCancelsARunningExecutionByItsId()
+        {
+            var signaler = GetSignaler();
+            var registry = new ExecutionRegistry();
+            var execution = registry.Create();
+            var kill = new ExecutionKill(registry);
+            var node = new Node("execution.kill", execution.ExecutionId);
+            kill.Signal(signaler, node);
+            Assert.Equal(true, node.Value);
+            Assert.True(execution.IsCancellationRequested);
+            var unknown = new Node("execution.kill", "no-such-execution");
+            kill.Signal(signaler, unknown);
+            Assert.Equal(false, unknown.Value);
+            registry.Complete(execution.ExecutionId);
+            await Task.CompletedTask;
         }
     }
 }

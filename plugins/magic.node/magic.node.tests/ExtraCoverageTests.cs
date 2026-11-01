@@ -168,5 +168,18 @@ namespace magic.node.tests
             var ex = Assert.Throws<HyperlambdaException>(() => Tokens(hl));
             Assert.Contains("Garbage characters after", ex.Message);
         }
+
+        [Fact]
+        public void ChildAtReturnsTheChildAtTheIndex()
+        {
+            var node = new Node("root", null, [new Node("a"), new Node("b")]);
+            Assert.Equal("b", node.ChildAt(1).Name);
+        }
+
+        [Fact]
+        public void ChildAtOfNodeWithoutChildrenThrows()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Node("root").ChildAt(0));
+        }
     }
 }

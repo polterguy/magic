@@ -177,5 +177,24 @@ namespace magic.lambda.pdf.tests
             await EvaluateWhitelisted("      html2pdf\n      http.get\n", "      html2pdf:@\"<img src=\"\"https://example.test/pic.png\"\"/>\"\n");
             Assert.Equal("https://example.test/pic.png", StubHttpGet.Requested);
         }
+
+        [Fact]
+        public void PageWithUnreadableContentIsSkipped()
+        {
+            // A page whose content stream claims to be Flate compressed but is not, which cannot be read.
+            using var memory = new MemoryStream();
+            using (var writer = new iText.Kernel.Pdf.PdfWriter(memory))
+            {
+                writer.SetCloseStream(false);
+                using var doc = new iText.Kernel.Pdf.PdfDocument(writer);
+                var page = doc.AddNewPage();
+                var broken = new iText.Kernel.Pdf.PdfStream(Encoding.ASCII.GetBytes("this is not deflate data"));
+                broken.Put(iText.Kernel.Pdf.PdfName.Filter, iText.Kernel.Pdf.PdfName.FlateDecode);
+                page.GetPdfObject().Put(iText.Kernel.Pdf.PdfName.Contents, broken);
+            }
+            var node = new Node("pdf2text", memory.ToArray());
+            Common.GetSignaler().Signal("pdf2text", node);
+            Assert.Equal("", node.Value);
+        }
     }
 }

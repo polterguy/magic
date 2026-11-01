@@ -41,6 +41,25 @@ namespace magic.lambda.crypto.tests
             Assert.Equal("Hello World", verifier.VerifyToString(signature));
         }
 
+        [Fact]
+        public void VerifyAcceptsBase64AndBytes()
+        {
+            var key = new KeyGenerator().Generate(1024);
+            var signer = new Combinations.Signer(key.PrivateKey, key.FingerprintRaw);
+            var verifier = new Combinations.Verifier(key.PublicKey);
+            var fromBase64 = verifier.Verify(signer.SignToString(Encoding.UTF8.GetBytes("Hello World")));
+            Assert.Equal("Hello World", Encoding.UTF8.GetString(fromBase64));
+            Assert.Equal("Hello World", verifier.VerifyToString(signer.Sign(Encoding.UTF8.GetBytes("Hello World"))));
+        }
+
+        [Fact]
+        public void EncryptAcceptsText()
+        {
+            var key = new KeyGenerator().Generate(1024);
+            var encrypted = new Combinations.Encrypter(key.PublicKey).Encrypt("Hello World");
+            Assert.NotEmpty(encrypted);
+        }
+
         static string Encrypt(string fingerprint)
         {
             var lambda = Common.Evaluate(@"
