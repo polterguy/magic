@@ -313,7 +313,7 @@
           this.rawFiles = files;
           attBtn.classList.add('ainiro_hidden');
           attRem.classList.remove('ainiro_hidden');
-          lbl.innerHTML = ev.target.files[0].name;
+          lbl.textContent = ev.target.files[0].name;
         });
         chatForm.appendChild(fileInp);
 
@@ -397,7 +397,7 @@
       } else {
 
         // Creating a new user ID.
-        this.userId = 'u_' + Date.now() + Math.random();
+        this.userId = 'u_' + crypto.randomUUID();
         localStorage.setItem('ainiroUserId', this.userId);
       }
 
@@ -982,7 +982,7 @@
       questions.forEach(idx => {
         const el = document.createElement('button');
         el.className = 'ainiro_starter';
-        el.innerHTML = idx;
+        el.textContent = idx;
         el.setAttribute('onclick', `window.ask_follow_up(event)`);
         wrp.appendChild(el);
       });
@@ -1760,7 +1760,7 @@
       };
 
       const findNextScript = (s, from) => {
-        const re = /<script\b[^>]*>[\s\S]*?<\/script\s*>/i;
+        const re = /<script\b[^>]*>[\s\S]*?<\/script[^>]*>/i;
         const slice = s.slice(from);
         const m = re.exec(slice);
         if (!m) return null;

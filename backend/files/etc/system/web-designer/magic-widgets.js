@@ -624,7 +624,7 @@
         return;
       }
       var filterQuery = this._filterQuery();
-      var url = countUrl + (countUrl.indexOf('?') === -1 ? filterQuery.replace('&', '?') : filterQuery);
+      var url = countUrl + (countUrl.indexOf('?') === -1 ? filterQuery.replace(/^&/, '?') : filterQuery);
       var self = this;
       authedFetch(url)
         .then(function (response) { return response.ok ? response.json() : null; })
@@ -665,6 +665,14 @@
       this._pager.appendChild(info);
       this._pager.appendChild(next);
     }
+  }
+
+  /*
+   * Redirect targets come from an attribute, so only a path on this site is
+   * followed - never a javascript: URL or another site.
+   */
+  function sitePath(value) {
+    return /^\/(?![\/\\])/.test(value) ? value : '/';
   }
 
   function escapeHtml(text) {
@@ -869,7 +877,7 @@
           })
           .then(function (result) {
             setTicket(result.ticket);
-            location.href = self.getAttribute('data-redirect') || '/';
+            location.href = sitePath(self.getAttribute('data-redirect') || '/');
           })
           .catch(function (err) {
             error.textContent = String(err.message || err);
@@ -920,7 +928,7 @@
       }
       this._checked = true;
 
-      var redirect = this.getAttribute('data-redirect') || '/';
+      var redirect = sitePath(this.getAttribute('data-redirect') || '/');
       // Never bounce the login page back to itself.
       if (location.pathname === redirect) {
         this.replaceChildren();
