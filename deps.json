@@ -1,0 +1,118 @@
+{
+ "generated": "2026-11-01T10:34:36Z",
+ "commit": "d93168d174eba341b77dba282903ca6c12063bd0",
+ "open": {
+  "low": 2,
+  "moderate": 2
+ },
+ "suppressed": {
+  "high": 4,
+  "moderate": 2
+ },
+ "findings": [
+  {
+   "ecosystem": "npm",
+   "package": "katex",
+   "version": "0.11.0 - 0.18.1",
+   "severity": "low",
+   "advisory": "https://github.com/advisories/GHSA-238p-pmpm-9mq7",
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "mermaid@10.8.0"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "mermaid",
+   "version": "10.9.0-rc.1 - 12.1.0",
+   "severity": "low",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "mermaid@10.8.0"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "react-router",
+   "version": "6.0.0 - 7.17.0",
+   "severity": "moderate",
+   "advisory": "https://github.com/advisories/GHSA-wrjc-x8rr-h8h6",
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "react-router-dom@7.18.5"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "react-router-dom",
+   "version": "6.0.0-alpha.0 - 7.17.0",
+   "severity": "moderate",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "react-router-dom@7.18.5"
+  },
+  {
+   "ecosystem": "nuget",
+   "package": "SixLabors.ImageSharp",
+   "version": "3.1.12",
+   "severity": "moderate",
+   "advisory": "https://github.com/advisories/GHSA-gwg2-r3hj-4w44",
+   "projects": 6,
+   "suppressed": true,
+   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
+  },
+  {
+   "ecosystem": "nuget",
+   "package": "SixLabors.ImageSharp",
+   "version": "3.1.12",
+   "severity": "high",
+   "advisory": "https://github.com/advisories/GHSA-j3p4-wp97-rph4",
+   "projects": 6,
+   "suppressed": true,
+   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
+  },
+  {
+   "ecosystem": "nuget",
+   "package": "SixLabors.ImageSharp",
+   "version": "3.1.12",
+   "severity": "high",
+   "advisory": "https://github.com/advisories/GHSA-j9gm-c75j-xc9q",
+   "projects": 6,
+   "suppressed": true,
+   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
+  },
+  {
+   "ecosystem": "nuget",
+   "package": "SixLabors.ImageSharp",
+   "version": "3.1.12",
+   "severity": "high",
+   "advisory": "https://github.com/advisories/GHSA-jjfr-hcj7-qf5w",
+   "projects": 6,
+   "suppressed": true,
+   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
+  },
+  {
+   "ecosystem": "nuget",
+   "package": "SixLabors.ImageSharp",
+   "version": "3.1.12",
+   "severity": "high",
+   "advisory": "https://github.com/advisories/GHSA-v76p-62qx-wwq2",
+   "projects": 6,
+   "suppressed": true,
+   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
+  },
+  {
+   "ecosystem": "nuget",
+   "package": "SixLabors.ImageSharp",
+   "version": "3.1.12",
+   "severity": "moderate",
+   "advisory": "https://github.com/advisories/GHSA-wmxv-xphr-5c9g",
+   "projects": 6,
+   "suppressed": true,
+   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
+  }
+ ]
+}
