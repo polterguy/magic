@@ -36,7 +36,7 @@ recorded in the public [Sigstore](https://www.sigstore.dev/) transparency log.
 To check an image with [cosign](https://docs.sigstore.dev/cosign/installation/), use its tag or digest:
 
 ```bash
-cosign verify servergardens/magic-aio:v24.2.3 \
+cosign verify servergardens/magic-aio:v24.4.0 \
   --certificate-identity-regexp "https://github.com/polterguy/magic/.github/workflows/create-release.yml@.*" \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
@@ -44,12 +44,21 @@ cosign verify servergardens/magic-aio:v24.2.3 \
 To read its software bill of materials:
 
 ```bash
-cosign verify-attestation servergardens/magic-aio:v24.2.3 --type cyclonedx \
+cosign verify-attestation servergardens/magic-aio:v24.4.0 --type cyclonedx \
   --certificate-identity-regexp "https://github.com/polterguy/magic/.github/workflows/create-release.yml@.*" \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
 
-Releases before this was added are not signed.
+Each version also has a GitHub release with the deployment zip, a cosign signature for it, and the SBOMs of the images.
+To check the zip:
+
+```bash
+cosign verify-blob magic-<version>.zip --bundle magic-<version>.zip.sigstore.json \
+  --certificate-identity-regexp "https://github.com/polterguy/magic/.github/workflows/create-release.yml@.*" \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
+The images are signed from v24.4.0, and the GitHub release with the signed zip starts with the version after it. Earlier releases are not signed.
 
 ## Good-faith research
 

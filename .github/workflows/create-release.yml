@@ -157,6 +157,13 @@ jobs:
           # Also create magic.zip for "latest"
           cp magic-$VERSION.zip magic.zip
 
+      # Kept with the run, for the release job, which signs it and attaches it to the GitHub release.
+      - name: Keep the deployment zip
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-zip
+          path: magic-${{ steps.get_version.outputs.VERSION }}.zip
+
       # ==========================
       # Upload release zips (Cloudflare-safe)
       # ==========================
@@ -271,3 +278,53 @@ jobs:
         with:
           name: sboms
           path: sboms/*.cdx.json
+
+  # ==========================
+  # Creates the GitHub release of the tag, with the deployment zip and its keyless cosign signature, and the SBOMs of
+  # the images. Runs after the images are signed, as a job of its own, so a problem here is reported without
+  # touching the images, which are already published and signed.
+  #
+  # The signature of the zip is a Sigstore bundle, which is what lets anyone check that the zip was built by this
+  # workflow: cosign verify-blob --bundle magic-<version>.zip.sigstore.json magic-<version>.zip, see SECURITY.md.
+  # ==========================
+  release:
+    needs: sign
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # Creates the release, and nothing else
+      id-token: write # Lets the job ask for its signing certificate, which is what makes the signing keyless
+
+    steps:
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Get the deployment zip
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-zip
+
+      - name: Get the SBOMs
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: sboms
+          path: sboms
+
+      - name: Sign the zip
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          cosign sign-blob --yes --bundle "magic-$VERSION.zip.sigstore.json" "magic-$VERSION.zip"
+
+      # A run that is repeated finds the release from before, and replaces its files.
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          FILES=("magic-$VERSION.zip" "magic-$VERSION.zip.sigstore.json" sboms/*.cdx.json)
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            gh release upload "$VERSION" "${FILES[@]}" --clobber
+          else
+            gh release create "$VERSION" "${FILES[@]}" --title "$VERSION" --generate-notes --verify-tag
+          fi
