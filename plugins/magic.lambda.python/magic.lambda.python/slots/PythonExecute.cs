@@ -52,7 +52,9 @@ namespace magic.lambda.python
             if (timeoutSeconds <= 0)
                 throw new HyperlambdaException("[timeout] must be a positive integer");
 
-            var startInfo = new ProcessStartInfo("python3")
+            var python = Executables.Find("python3") ??
+                throw new HyperlambdaException("Failed to start python3 process, since python3 was not found in the PATH");
+            var startInfo = new ProcessStartInfo(python)
             {
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -96,6 +98,30 @@ namespace magic.lambda.python
             var stdoutTask = process.StandardOutput.ReadToEndAsync();
             var stderrTask = process.StandardError.ReadToEndAsync();
 
+            await WaitForExitAsync(process, cancellationToken, timeoutSeconds);
+
+            await Task.WhenAll(stdoutTask, stderrTask);
+
+            if (process.ExitCode != 0)
+            {
+                var error = string.IsNullOrWhiteSpace(stderrTask.Result)
+                    ? stdoutTask.Result
+                    : stderrTask.Result;
+                throw new HyperlambdaException(error?.TrimEnd());
+            }
+
+            input.Clear();
+            input.Value = stdoutTask.Result?.TrimEnd();
+            input.Add(new Node("stderr", stderrTask.Result?.TrimEnd()));
+            input.Add(new Node("exit_code", process.ExitCode));
+        }
+
+        /*
+         * Waits for the process to exit, killing it if it takes longer than the timeout, which is reported as a
+         * timeout, or if the execution is cancelled, which is passed on as the cancellation it is.
+         */
+        static async Task WaitForExitAsync(Process process, CancellationToken cancellationToken, int timeoutSeconds)
+        {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             cts.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
             try
@@ -116,21 +142,6 @@ namespace magic.lambda.python
                     throw;
                 throw new HyperlambdaException($"Python execution timed out after {timeoutSeconds} seconds");
             }
-
-            await Task.WhenAll(stdoutTask, stderrTask);
-
-            if (process.ExitCode != 0)
-            {
-                var error = string.IsNullOrWhiteSpace(stderrTask.Result)
-                    ? stdoutTask.Result
-                    : stderrTask.Result;
-                throw new HyperlambdaException(error?.TrimEnd());
-            }
-
-            input.Clear();
-            input.Value = stdoutTask.Result?.TrimEnd();
-            input.Add(new Node("stderr", stderrTask.Result?.TrimEnd()));
-            input.Add(new Node("exit_code", process.ExitCode));
         }
 
         static IEnumerable<string> GetArgs(Node argsNode)
@@ -138,7 +149,7 @@ namespace magic.lambda.python
             if (argsNode == null)
                 yield break;
 
-            if (argsNode.Children.Count() > 0)
+            if (argsNode.Children.Any())
             {
                 foreach (var child in argsNode.Children)
                 {
@@ -157,59 +168,52 @@ namespace magic.lambda.python
                 yield return arg;
         }
 
-        static IEnumerable<string> SplitArgs(string input)
+        static List<string> SplitArgs(string input)
         {
             var args = new List<string>();
             var current = new StringBuilder();
-            var inQuotes = false;
-            var quoteChar = '\0';
+            var quote = '\0';
 
-            for (var i = 0; i < input.Length; i++)
+            var i = 0;
+            while (i < input.Length)
             {
-                var c = input[i];
+                var c = input[i++];
 
-                if (inQuotes)
+                if (quote != '\0')
                 {
-                    if (c == quoteChar)
+                    if (c == quote)
+                        quote = '\0';
+                    else if (IsEscapedQuote(input, i - 1, quote))
                     {
-                        inQuotes = false;
-                    }
-                    else if (c == '\\' && i + 1 < input.Length && input[i + 1] == quoteChar)
-                    {
-                        current.Append(quoteChar);
+                        current.Append(quote);
                         i++;
                     }
                     else
-                    {
                         current.Append(c);
-                    }
-                    continue;
                 }
-
-                if (char.IsWhiteSpace(c))
-                {
-                    if (current.Length > 0)
-                    {
-                        args.Add(current.ToString());
-                        current.Clear();
-                    }
-                    continue;
-                }
-
-                if (c == '"' || c == '\'')
-                {
-                    inQuotes = true;
-                    quoteChar = c;
-                    continue;
-                }
-
-                current.Append(c);
+                else if (char.IsWhiteSpace(c))
+                    AddArg(args, current);
+                else if (c == '"' || c == '\'')
+                    quote = c;
+                else
+                    current.Append(c);
             }
 
-            if (current.Length > 0)
-                args.Add(current.ToString());
-
+            AddArg(args, current);
             return args;
+        }
+
+        static bool IsEscapedQuote(string input, int index, char quote)
+        {
+            return input[index] == '\\' && index + 1 < input.Length && input[index + 1] == quote;
+        }
+
+        static void AddArg(List<string> args, StringBuilder current)
+        {
+            if (current.Length == 0)
+                return;
+            args.Add(current.ToString());
+            current.Clear();
         }
 
         string ResolvePath(string relativePath)

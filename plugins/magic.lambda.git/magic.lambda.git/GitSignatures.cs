@@ -9,7 +9,11 @@ namespace magic.lambda.git.signatures
 {
     public abstract class GitSignature : ISlotSignature
     {
-        public virtual IEnumerable<SlotChild> Children => new SlotChild[0];
+        protected const string StringType = "string";
+        protected const string BoolType = "bool";
+        protected const string False = "false";
+
+        public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
         protected static SlotChild Option(string name, string type, string description, bool required = false, string defaultValue = null, string kind = null)
         {
@@ -33,8 +37,8 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("remote", "bool", "List remote branches", defaultValue: "false"),
-            Option("all", "bool", "List all branches", defaultValue: "false"),
+            Option("remote", BoolType, "List remote branches", defaultValue: False),
+            Option("all", BoolType, "List all branches", defaultValue: False),
         };
     }
 
@@ -42,9 +46,9 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("porcelain", "bool", "Use porcelain status output", defaultValue: "false"),
-            Option("branch", "bool", "Include branch information", defaultValue: "false"),
-            Option("structured", "bool", "Return status lines as child nodes", defaultValue: "false"),
+            Option("porcelain", BoolType, "Use porcelain status output", defaultValue: False),
+            Option("branch", BoolType, "Include branch information", defaultValue: False),
+            Option("structured", BoolType, "Return status lines as child nodes", defaultValue: False),
         };
     }
 
@@ -52,7 +56,7 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("file", "string", "Repository-relative path of one file to diff; omitted diffs the whole repository", kind: "git-file-path"),
+            Option("file", StringType, "Repository-relative path of one file to diff; omitted diffs the whole repository", kind: "git-file-path"),
         };
     }
 
@@ -60,7 +64,7 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("file", "string", "Repository-relative path of one file to restore from HEAD; omitted resets the whole working tree to HEAD and removes untracked files", kind: "git-file-path"),
+            Option("file", StringType, "Repository-relative path of one file to restore from HEAD; omitted resets the whole working tree to HEAD and removes untracked files", kind: "git-file-path"),
         };
     }
 
@@ -68,13 +72,13 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("remote", "string", "Remote to pull from", defaultValue: "origin", kind: "git-remote"),
-            Option("branch", "string", "Branch to pull", kind: "git-branch"),
-            Option("rebase", "bool", "Use rebase while pulling", defaultValue: "false"),
-            Option("merge", "bool", "Merge while pulling, which is what lets a diverged branch be pulled", defaultValue: "false"),
-            Option("ff-only", "bool", "Only allow fast-forward pulls", defaultValue: "false"),
-            Option("name", "string", "Author name of the merge commit a merging pull creates"),
-            Option("email", "string", "Author email of the merge commit a merging pull creates"),
+            Option("remote", StringType, "Remote to pull from", defaultValue: "origin", kind: "git-remote"),
+            Option("branch", StringType, "Branch to pull", kind: "git-branch"),
+            Option("rebase", BoolType, "Use rebase while pulling", defaultValue: False),
+            Option("merge", BoolType, "Merge while pulling, which is what lets a diverged branch be pulled", defaultValue: False),
+            Option("ff-only", BoolType, "Only allow fast-forward pulls", defaultValue: False),
+            Option("name", StringType, "Author name of the merge commit a merging pull creates"),
+            Option("email", StringType, "Author email of the merge commit a merging pull creates"),
         };
     }
 
@@ -82,10 +86,10 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("branch", "string", "Branch to merge into the current branch, required unless [abort] is true", kind: "git-branch"),
-            Option("abort", "bool", "Abort a merge that stopped on conflicts", defaultValue: "false"),
-            Option("name", "string", "Author name of the merge commit"),
-            Option("email", "string", "Author email of the merge commit"),
+            Option("branch", StringType, "Branch to merge into the current branch, required unless [abort] is true", kind: "git-branch"),
+            Option("abort", BoolType, "Abort a merge that stopped on conflicts", defaultValue: False),
+            Option("name", StringType, "Author name of the merge commit"),
+            Option("email", StringType, "Author email of the merge commit"),
         };
     }
 
@@ -93,7 +97,7 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("range", "string", "Revision range, such as 'HEAD...@{u}' for the commits that differ from the upstream; omitted lists the current branch"),
+            Option("range", StringType, "Revision range, such as 'HEAD...@{u}' for the commits that differ from the upstream; omitted lists the current branch"),
             Option("limit", "int", "Maximum number of commits to return", defaultValue: "30"),
         };
     }
@@ -102,8 +106,8 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("remote", "string", "Remote to fetch from", defaultValue: "origin", kind: "git-remote"),
-            Option("refspec", "string", "Optional refspec to fetch", kind: "git-refspec"),
+            Option("remote", StringType, "Remote to fetch from", defaultValue: "origin", kind: "git-remote"),
+            Option("refspec", StringType, "Optional refspec to fetch", kind: "git-refspec"),
         };
     }
 
@@ -111,8 +115,8 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("name", "string", "Remote name", defaultValue: "origin", kind: "git-remote"),
-            Option("url", "string", "Remote URL", true, kind: "git-url"),
+            Option("name", StringType, "Remote name", defaultValue: "origin", kind: "git-remote"),
+            Option("url", StringType, "Remote URL", true, kind: "git-url"),
         };
     }
 
@@ -120,8 +124,8 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("path", "string", "Destination repository folder", kind: "git-repo-path"),
-            Option("branch", "string", "Branch to clone", kind: "git-branch"),
+            Option("path", StringType, "Destination repository folder", kind: "git-repo-path"),
+            Option("branch", StringType, "Branch to clone", kind: "git-branch"),
             Option("depth", "int", "Shallow clone depth"),
         };
     }
@@ -130,8 +134,8 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("branch", "string", "Initial branch name", kind: "git-branch"),
-            Option("bare", "bool", "Create a bare repository", defaultValue: "false"),
+            Option("branch", StringType, "Initial branch name", kind: "git-branch"),
+            Option("bare", BoolType, "Create a bare repository", defaultValue: False),
         };
     }
 
@@ -139,11 +143,11 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("message", "string", "Commit message", true, kind: "commit-message"),
-            Option("all", "bool", "Stage all changed files before committing", defaultValue: "true"),
-            Option("amend", "bool", "Amend the previous commit", defaultValue: "false"),
-            Option("name", "string", "Author name for the commit; omitted falls back to git's configured identity"),
-            Option("email", "string", "Author email for the commit; omitted falls back to git's configured identity"),
+            Option("message", StringType, "Commit message", true, kind: "commit-message"),
+            Option("all", BoolType, "Stage all changed files before committing", defaultValue: "true"),
+            Option("amend", BoolType, "Amend the previous commit", defaultValue: False),
+            Option("name", StringType, "Author name for the commit; omitted falls back to git's configured identity"),
+            Option("email", StringType, "Author email for the commit; omitted falls back to git's configured identity"),
         };
     }
 
@@ -151,9 +155,9 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("remote", "string", "Remote to push to", defaultValue: "origin", kind: "git-remote"),
-            Option("branch", "string", "Branch to push", kind: "git-branch"),
-            Option("set-upstream", "bool", "Set upstream while pushing", defaultValue: "false"),
+            Option("remote", StringType, "Remote to push to", defaultValue: "origin", kind: "git-remote"),
+            Option("branch", StringType, "Branch to push", kind: "git-branch"),
+            Option("set-upstream", BoolType, "Set upstream while pushing", defaultValue: False),
         };
     }
 
@@ -161,8 +165,8 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("branch", "string", "Branch to check out", true, kind: "git-branch"),
-            Option("create", "bool", "Create the branch while checking it out", defaultValue: "false"),
+            Option("branch", StringType, "Branch to check out", true, kind: "git-branch"),
+            Option("create", BoolType, "Create the branch while checking it out", defaultValue: False),
         };
     }
 
@@ -170,14 +174,14 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("owner", "string", "Organization owner; omit to create under the authenticated user", kind: "github-owner"),
-            Option("private", "bool", "Whether the repository is private", defaultValue: "false"),
-            Option("description", "string", "Repository description", kind: "git-repo-description"),
-            Option("homepage", "string", "Repository homepage URL", kind: "url"),
-            Option("auto-init", "bool", "Initialize the repository", defaultValue: "false"),
-            Option("default-branch", "string", "Default branch name", kind: "git-branch"),
-            Option("gitignore-template", "string", "GitHub gitignore template", kind: "gitignore-template"),
-            Option("license-template", "string", "GitHub license template", kind: "license-template"),
+            Option("owner", StringType, "Organization owner; omit to create under the authenticated user", kind: "github-owner"),
+            Option("private", BoolType, "Whether the repository is private", defaultValue: False),
+            Option("description", StringType, "Repository description", kind: "git-repo-description"),
+            Option("homepage", StringType, "Repository homepage URL", kind: "url"),
+            Option("auto-init", BoolType, "Initialize the repository", defaultValue: False),
+            Option("default-branch", StringType, "Default branch name", kind: "git-branch"),
+            Option("gitignore-template", StringType, "GitHub gitignore template", kind: "gitignore-template"),
+            Option("license-template", StringType, "GitHub license template", kind: "license-template"),
         };
     }
 
@@ -185,7 +189,7 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("owner", "string", "Repository owner; omit to delete from the authenticated user", kind: "github-owner"),
+            Option("owner", StringType, "Repository owner; omit to delete from the authenticated user", kind: "github-owner"),
         };
     }
 
@@ -193,9 +197,9 @@ namespace magic.lambda.git.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("owner", "string", "Organization owner; omit to list authenticated user repositories", kind: "github-owner"),
-            Option("visibility", "string", "Repository visibility filter", kind: "repo-visibility"),
-            Option("type", "string", "Repository type filter", kind: "repo-type"),
+            Option("owner", StringType, "Organization owner; omit to list authenticated user repositories", kind: "github-owner"),
+            Option("visibility", StringType, "Repository visibility filter", kind: "repo-visibility"),
+            Option("type", StringType, "Repository type filter", kind: "repo-type"),
             Option("per-page", "int", "Number of repositories per page"),
             Option("page", "int", "Page number"),
         };

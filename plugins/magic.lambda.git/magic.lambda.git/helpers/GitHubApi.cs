@@ -29,10 +29,10 @@ namespace magic.lambda.git
             if (string.IsNullOrWhiteSpace(token))
                 throw new HyperlambdaException("Missing configuration value 'magic:git:github:token'");
 
-            var username = configuration?["magic:git:github:username"];
+            var username = configuration["magic:git:github:username"];
             var userAgent = string.IsNullOrWhiteSpace(username) ? "magic.lambda.git" : $"magic.lambda.git ({username})";
 
-            var url = apiBase + "/" + path.TrimStart('/');
+            var url = apiBase + '/' + path.TrimStart('/');
 
             using var request = new HttpRequestMessage(method, url);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));

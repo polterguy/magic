@@ -12,14 +12,16 @@ namespace magic.lambda.python.signatures
     /// </summary>
     public class PythonExecuteSignature : ISlotSignature
     {
+        const string StringType = "string";
+
         /// <inheritdoc />
         public IEnumerable<SlotChild> Children => new[]
         {
-            Option("code", "string", "Inline Python code to execute", kind: "python-code"),
-            Option("file", "string", "Python file to execute", kind: "python-file"),
+            Option("code", StringType, "Inline Python code to execute", kind: "python-code"),
+            Option("file", StringType, "Python file to execute", kind: "python-file"),
             Args(),
-            Option("stdin", "string", "Text written to standard input", kind: "stdin-text"),
-            Option("working-directory", "string", "Working directory for the Python process", kind: "folder-path"),
+            Option("stdin", StringType, "Text written to standard input", kind: "stdin-text"),
+            Option("working-directory", StringType, "Working directory for the Python process", kind: "folder-path"),
             Option("timeout", "int", "Execution timeout in seconds", "30"),
         };
 
@@ -33,7 +35,7 @@ namespace magic.lambda.python.signatures
                     Kind = SlotConstraintKind.ExactlyOneOf,
                     Description = "Exactly one code source must be supplied",
                 };
-                result.Values.AddRange(new[] { "code", "file" });
+                result.Values.AddRange(["code", "file"]);
                 return new[] { result };
             }
         }
@@ -73,7 +75,7 @@ namespace magic.lambda.python.signatures
                     new SlotChild
                     {
                         Name = "*",
-                        Type = "string",
+                        Type = StringType,
                         Kind = "terminal-argument",
                         Description = "Single command-line argument",
                         Required = false,

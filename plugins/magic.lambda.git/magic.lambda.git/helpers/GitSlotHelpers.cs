@@ -118,7 +118,9 @@ namespace magic.lambda.git
 
         public static async Task<string> RunGitAsync(string workingDirectory, IEnumerable<string> args, IEnumerable<string> extraArgs = null)
         {
-            var startInfo = new ProcessStartInfo("git")
+            var git = Executables.Find("git") ??
+                throw new HyperlambdaException("Failed to start git process, since git was not found in the PATH");
+            var startInfo = new ProcessStartInfo(git)
             {
                 WorkingDirectory = workingDirectory,
                 RedirectStandardOutput = true,
@@ -186,9 +188,9 @@ namespace magic.lambda.git
         {
             if (string.IsNullOrWhiteSpace(path))
                 throw new HyperlambdaException("Folder path is missing");
-            if (!path.StartsWith("/", StringComparison.Ordinal))
+            if (!path.StartsWith('/'))
                 throw new HyperlambdaException("Folder paths must start with '/'");
-            if (!path.EndsWith("/", StringComparison.Ordinal))
+            if (!path.EndsWith('/'))
                 throw new HyperlambdaException("Folder paths must end with '/'");
         }
     }

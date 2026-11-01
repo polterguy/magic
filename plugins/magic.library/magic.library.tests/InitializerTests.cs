@@ -544,7 +544,7 @@ namespace magic.library.tests
             using var provider = Build(Configuration());
             var resolver = provider.GetService<IRootResolver>();
             var parent = _folder.Replace("\\", "/");
-            parent = parent.Substring(0, parent.LastIndexOf('/')) + "/";
+            parent = string.Concat(parent.AsSpan(0, parent.LastIndexOf('/')), "/");
             Assert.Equal(parent + "foo/bar.txt", resolver.RuntimePath("/foo\\bar.txt"));
         }
 
@@ -561,7 +561,7 @@ namespace magic.library.tests
             Assert.True(comparers.Count >= 20, "Expected the slots with a whitelist comparer, found " + comparers.Count);
             foreach (var type in comparers)
             {
-                var comparer = Assert.IsAssignableFrom<IWhitelistComparer>(scope.ServiceProvider.GetService(type)).Comparer;
+                var comparer = Assert.IsType<IWhitelistComparer>(scope.ServiceProvider.GetService(type), exactMatch: false).Comparer;
                 Assert.NotNull(comparer);
                 Assert.True(comparer("/foo/bar", "/foo/bar"), type.Name + " does not match identical values");
                 Assert.False(comparer("/foo/bar", "/other/place"), type.Name + " matches different values");

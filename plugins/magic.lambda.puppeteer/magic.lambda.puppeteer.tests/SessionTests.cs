@@ -70,11 +70,11 @@ namespace magic.lambda.puppeteer.tests
         }
 
         [Fact]
-        public void GetReturnsTheSessionAndTouchesIt()
+        public async Task GetReturnsTheSessionAndTouchesIt()
         {
             using var session = new FakeSession();
             var before = session.Session.LastAccessUtc;
-            System.Threading.Thread.Sleep(15);
+            await Task.Delay(15);
             var found = PuppeteerSessions.Get(session.Id);
             Assert.Same(session.Session, found);
             Assert.True(found.LastAccessUtc > before);
@@ -146,7 +146,7 @@ namespace magic.lambda.puppeteer.tests
             var fake = new FakeSession();
             // The timeout is counted in minutes, so the timer is fired by hand instead of waiting for it.
             fake.Session.Timer.Change(TimeSpan.Zero, System.Threading.Timeout.InfiniteTimeSpan);
-            for (var idx = 0; idx < 50 && fake.Page.Invocations.Count(x => x.Method.Name == "CloseAsync") == 0; idx++)
+            for (var idx = 0; idx < 50 && !fake.Page.Invocations.Any(x => x.Method.Name == "CloseAsync"); idx++)
             {
                 await Task.Delay(50);
             }

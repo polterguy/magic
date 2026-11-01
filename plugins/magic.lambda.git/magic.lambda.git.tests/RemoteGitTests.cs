@@ -107,6 +107,8 @@ namespace magic.lambda.git.tests
             await runtime.Call("git.remote.add", "/local/", ("url", remote));
             await runtime.Call("git.push", "/local/", ("branch", "main"));
             await runtime.Call("git.fetch", "/local/", ("remote", "origin"), ("refspec", "main"));
+            var remoteBranches = await runtime.Call("git.branch.list", "/local/", ("remote", true));
+            Assert.Contains(remoteBranches.Children, x => x.Get<string>().Contains("origin/main"));
         }
 
         [GitFact]

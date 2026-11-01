@@ -50,7 +50,8 @@ namespace magic.lambda.mysql.tests
         [Fact]
         public void DisposingAWrapperThatNeverConnectedIsFine()
         {
-            new MySqlConnectionWrapper("Server=127.0.0.1;Port=1;Database=x;User Id=a;Password=b").Dispose();
+            var wrapper = new MySqlConnectionWrapper("Server=127.0.0.1;Port=1;Database=x;User Id=a;Password=b");
+            Assert.Null(Record.Exception(wrapper.Dispose));
         }
     }
 }

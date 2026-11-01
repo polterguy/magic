@@ -81,7 +81,7 @@ namespace magic.signals.tests
         {
             var node = new Node("extra.with-provider");
             Signaler(typeof(WithProviderSlot)).Signal("extra.with-provider", node);
-            Assert.Equal(true, node.Value);
+            Assert.True((bool)node.Value);
         }
 
         [Fact]

@@ -51,7 +51,7 @@ namespace magic.lambda.git
 
         #region [ -- Private helper methods -- ]
 
-        (string Owner, string Visibility, string Type, int? PerPage, int? Page) GetArgs(Node input)
+        static (string Owner, string Visibility, string Type, int? PerPage, int? Page) GetArgs(Node input)
         {
             var owner = input.Children.FirstOrDefault(x => x.Name == "owner")?.GetEx<string>();
             var visibility = input.Children.FirstOrDefault(x => x.Name == "visibility")?.GetEx<string>();
@@ -100,7 +100,7 @@ namespace magic.lambda.git
             return $"orgs/{args.Owner}/repos" + queryString;
         }
 
-        IEnumerable<Node> ProjectRepos(string json)
+        static IEnumerable<Node> ProjectRepos(string json)
         {
             using var doc = JsonDocument.Parse(json);
             if (doc.RootElement.ValueKind != JsonValueKind.Array)

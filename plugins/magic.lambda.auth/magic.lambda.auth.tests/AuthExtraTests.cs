@@ -162,13 +162,13 @@ namespace magic.lambda.auth.tests
         [Fact]
         public void VerifyTicketAllowsRootRegardlessOfRoles()
         {
-            Run("auth.ticket.verify", new Node("", "admin"), Ticket("boss", "root"));
+            Assert.Null(Record.Exception(() => Run("auth.ticket.verify", new Node("", "admin"), Ticket("boss", "root"))));
         }
 
         [Fact]
         public void VerifyTicketAllowsMatchingRole()
         {
-            Run("auth.ticket.verify", new Node("", "other,admin"), Ticket("foo", "admin"));
+            Assert.Null(Record.Exception(() => Run("auth.ticket.verify", new Node("", "other,admin"), Ticket("foo", "admin"))));
         }
 
         [Fact]
@@ -182,20 +182,20 @@ namespace magic.lambda.auth.tests
         public void InRoleWithoutRolesIsTrueForAnyContextTicket()
         {
             var node = Run("auth.ticket.in-role", new Node(), Ticket("foo", "admin"));
-            Assert.Equal(true, node.Value);
+            Assert.True((bool)node.Value);
         }
 
         [Fact]
         public void InRoleChecksContextRoles()
         {
-            Assert.Equal(true, Run("auth.ticket.in-role", new Node("", "dev,admin"), Ticket("foo", "admin")).Value);
-            Assert.Equal(false, Run("auth.ticket.in-role", new Node("", "dev"), Ticket("foo", "admin")).Value);
+            Assert.True((bool)Run("auth.ticket.in-role", new Node("", "dev,admin"), Ticket("foo", "admin")).Value);
+            Assert.False((bool)Run("auth.ticket.in-role", new Node("", "dev"), Ticket("foo", "admin")).Value);
         }
 
         [Fact]
         public void InRoleWithoutTicketOnNonHttpProviderIsFalse()
         {
-            Assert.Equal(false, Run("auth.ticket.in-role", new Node("", "admin")).Value);
+            Assert.False((bool)Run("auth.ticket.in-role", new Node("", "admin")).Value);
         }
 
         #endregion

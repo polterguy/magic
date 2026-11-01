@@ -160,7 +160,7 @@ namespace magic.endpoint.tests
             Assert.Equal("value", _captured.Payload.Children.First(x => x.Name == "field").Value);
             var fileNode = _captured.Payload.Children.First(x => x.Name == "file");
             Assert.Equal("doc.txt", fileNode.Children.First(x => x.Name == "name").Value);
-            Assert.IsAssignableFrom<Stream>(fileNode.Children.First(x => x.Name == "stream").Value);
+            Assert.IsType<Stream>(fileNode.Children.First(x => x.Name == "stream").Value, exactMatch: false);
         }
 
         [Fact]
@@ -168,7 +168,7 @@ namespace magic.endpoint.tests
         {
             Body(_context.Request, "raw", "application/x-unknown-thing");
             await Run("POST");
-            Assert.IsAssignableFrom<Stream>(_captured.Payload.Children.First(x => x.Name == "body").Value);
+            Assert.IsType<Stream>(_captured.Payload.Children.First(x => x.Name == "body").Value, exactMatch: false);
         }
 
         [Fact]

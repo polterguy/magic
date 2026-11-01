@@ -63,7 +63,7 @@ namespace magic.lambda.threading.tests
             var context = new magic.signals.contracts.ExecutionContext("exec", new CancellationTokenSource());
             var lambda = HyperlambdaParser.Parse("execution.timeout:int:60000");
             await signaler.ScopeAsync("execution.context", context, async () => await signaler.SignalAsync("eval", lambda));
-            Assert.Equal(true, lambda.Children.First().Value);
+            Assert.True((bool)lambda.Children.First().Value);
             Assert.NotNull(context.DeadlineUtc);
             context.Cleanup();
         }
@@ -108,11 +108,11 @@ namespace magic.lambda.threading.tests
             var kill = new ExecutionKill(registry);
             var node = new Node("execution.kill", execution.ExecutionId);
             kill.Signal(signaler, node);
-            Assert.Equal(true, node.Value);
+            Assert.True((bool)node.Value);
             Assert.True(execution.IsCancellationRequested);
             var unknown = new Node("execution.kill", "no-such-execution");
             kill.Signal(signaler, unknown);
-            Assert.Equal(false, unknown.Value);
+            Assert.False((bool)unknown.Value);
             registry.Complete(execution.ExecutionId);
             await Task.CompletedTask;
         }

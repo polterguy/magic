@@ -128,7 +128,7 @@ namespace magic.lambda.git.tests
             var repos = node.Children.ToList();
             Assert.Equal(2, repos.Count);
             Assert.Equal(["name", "full_name", "private", "html_url", "default_branch"], repos[0].Children.Select(x => x.Name).ToArray());
-            Assert.Equal(true, repos[0].Children.First(x => x.Name == "private").Value);
+            Assert.True((bool)repos[0].Children.First(x => x.Name == "private").Value);
             Assert.Equal(["name", "private"], repos[1].Children.Select(x => x.Name).ToArray());
         }
 
@@ -164,7 +164,7 @@ namespace magic.lambda.git.tests
             var node = await runtime.Call("github.repo.delete", "demo");
             Assert.Equal(HttpMethod.Delete, handler.Request.Method);
             Assert.Equal("https://api.example.test/repos/octocat/demo", handler.Request.RequestUri.ToString());
-            Assert.Equal(true, node.Value);
+            Assert.True((bool)node.Value);
         }
 
         [Fact]

@@ -114,7 +114,7 @@ namespace magic.endpoint.tests
         [Fact]
         public void MimeTypesCanBeAddedAndListed()
         {
-            var extension = "." + Guid.NewGuid().ToString("N").Substring(0, 8);
+            var extension = string.Concat(".", Guid.NewGuid().ToString("N").AsSpan(0, 8));
             Signal("mime.add", Request(), x =>
             {
                 x.Value = extension;
