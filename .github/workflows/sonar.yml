@@ -37,6 +37,7 @@ jobs:
       - run: dotnet tool install --global dotnet-sonarscanner
       - env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          MAGIC_TEST_CHROME: /usr/bin/google-chrome
         run: |
           dotnet sonarscanner begin \
             /k:"polterguy_magic" /o:"polterguy" \
@@ -45,7 +46,7 @@ jobs:
             /d:sonar.qualitygate.wait=true \
             /d:sonar.qualitygate.timeout=600 \
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
-            /d:sonar.coverage.exclusions="frontend/**,backend/**,**/magic.lambda.puppeteer/**" \
+            /d:sonar.coverage.exclusions="frontend/**,backend/**" \
             /d:sonar.exclusions="update-deployments.sh,**/*.sql,.do/**,.vscode/**,backend/files/system/openai/front.files/chat/*.css,**/*.tests/**"
           dotnet build magic.sln
           dotnet test magic.sln --no-build --collect:"XPlat Code Coverage" \

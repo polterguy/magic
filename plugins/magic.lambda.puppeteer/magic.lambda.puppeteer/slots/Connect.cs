@@ -107,7 +107,7 @@ namespace magic.lambda.puppeteer
             }
         }
 
-        LaunchOptions BuildLaunchOptions(Node input)
+        internal LaunchOptions BuildLaunchOptions(Node input)
         {
             var headless = PuppeteerHelpers.GetOptionalBool(input, "headless") ?? true;
             var executablePath = GetExecutablePath(input);
@@ -142,7 +142,7 @@ namespace magic.lambda.puppeteer
             return string.IsNullOrWhiteSpace(userDataDir) ? null : _rootResolver.AbsolutePath(userDataDir);
         }
 
-        static string GetExecutablePath(Node input)
+        internal static string GetExecutablePath(Node input)
         {
             var explicitPath = PuppeteerHelpers.GetOptionalString(input, "executable")
                 ?? PuppeteerHelpers.GetOptionalString(input, "executable-path");
