@@ -82,6 +82,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\magic.lambda.strings\magic.lambda.strings\magic.lambda.strings.csproj" />
     <ProjectReference Include="..\..\magic.lambda.json\magic.lambda.json\magic.lambda.json.csproj" />
     <ProjectReference Include="..\..\magic.lambda.slots\magic.lambda.slots\magic.lambda.slots.csproj" />
@@ -89,6 +93,7 @@
     <ProjectReference Include="..\..\magic.signals\magic.signals.services\magic.signals.services.csproj" />
     <ProjectReference Include="..\magic.endpoint\magic.endpoint.contracts\magic.endpoint.contracts.csproj" />
     <ProjectReference Include="..\magic.endpoint\magic.endpoint.services\magic.endpoint.services.csproj" />
+    <ProjectReference Include="..\magic.endpoint\magic.endpoint.controller\magic.endpoint.controller.csproj" />
   </ItemGroup>
 
 </Project>

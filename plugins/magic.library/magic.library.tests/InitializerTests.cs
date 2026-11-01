@@ -20,6 +20,7 @@ using Moq;
 using Xunit;
 using magic.node;
 using magic.node.contracts;
+using magic.node.extensions;
 using magic.signals.contracts;
 using magic.endpoint.contracts;
 using magic.data.common.contracts;
@@ -473,5 +474,71 @@ namespace magic.library.tests
         }
 
         #endregion
+
+        [Fact]
+        public void AuthSettingsReadTheConfiguration()
+        {
+            using var provider = Build(Configuration(new()
+            {
+                ["magic:auth:secret"] = "s3cret",
+                ["magic:auth:https-only"] = "True",
+                ["magic:auth:valid-minutes"] = "45",
+                ["magic:auth:authentication"] = "auth.slot",
+                ["magic:auth:ldap"] = "ldap.slot",
+                ["magic:auth:auto-auth"] = "auto.slot",
+                ["magic:auth:registration:allow"] = "True",
+                ["magic:auth:registration:confirm-email"] = "confirm@example.com",
+            }));
+            var settings = provider.GetService<IAuthSettings>();
+            Assert.Equal("s3cret", settings.Secret);
+            Assert.True(settings.HttpsOnly);
+            Assert.Equal(45, settings.ValidMinutes);
+            Assert.Equal("auth.slot", settings.AuthenticationSlot);
+            Assert.Equal("ldap.slot", settings.LDAP);
+            Assert.Equal("auto.slot", settings.AutoAuthSlot);
+            Assert.True(settings.AllowRegistration);
+            Assert.Equal("confirm@example.com", settings.ConfirmEmailAddress);
+        }
+
+        [Fact]
+        public void AuthSettingsHaveSafeDefaults()
+        {
+            using var provider = Build(Configuration(new() { ["magic:auth:secret"] = null }));
+            var settings = provider.GetService<IAuthSettings>();
+            Assert.Equal("", settings.Secret);
+            Assert.False(settings.HttpsOnly);
+            Assert.Equal(20, settings.ValidMinutes);
+            Assert.False(settings.AllowRegistration);
+            Assert.Null(settings.ConfirmEmailAddress);
+        }
+
+        [Theory]
+        [InlineData("/../etc/passwd")]
+        [InlineData("/foo/../../bar")]
+        [InlineData("..\\bar")]
+        public void RootResolverRejectsPathTraversal(string path)
+        {
+            using var provider = Build(Configuration());
+            var resolver = provider.GetService<IRootResolver>();
+            Assert.Throws<HyperlambdaException>(() => resolver.AbsolutePath(path));
+        }
+
+        [Fact]
+        public void RootResolverRejectsRelativePathOutsideTheRoot()
+        {
+            using var provider = Build(Configuration());
+            var resolver = provider.GetService<IRootResolver>();
+            Assert.Throws<HyperlambdaException>(() => resolver.RelativePath("/somewhere/else/file.txt"));
+        }
+
+        [Fact]
+        public void RootResolverRuntimePathIsRelativeToTheParentOfTheDynamicFolder()
+        {
+            using var provider = Build(Configuration());
+            var resolver = provider.GetService<IRootResolver>();
+            var parent = _folder.Replace("\\", "/");
+            parent = parent.Substring(0, parent.LastIndexOf('/')) + "/";
+            Assert.Equal(parent + "foo/bar.txt", resolver.RuntimePath("/foo\\bar.txt"));
+        }
     }
 }
