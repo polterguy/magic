@@ -4,7 +4,7 @@
 # Build the frontend on the BUILD host's native platform: the output is pure
 # static files (arch-neutral), and this avoids running Node under QEMU for
 # arm64, which crashes with 'uncaught target signal 4'.
-FROM --platform=$BUILDPLATFORM node:20-alpine AS frontend
+FROM --platform=$BUILDPLATFORM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS frontend
 WORKDIR /app
 COPY frontend/ ./
 
@@ -15,7 +15,7 @@ RUN npm ci --ignore-scripts && npm run build
 # =========================
 # Backend build stage
 # =========================
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:de4fe90a98845d75910b9769662465c84de1a934665c431279d1382b2bddc02b AS build
 WORKDIR /app
 
 COPY backend/ /backend/
@@ -30,7 +30,7 @@ COPY backend/sqlite-plugins/ /magic/sqlite-plugins/
 # =========================
 # Runtime stage
 # =========================
-FROM mcr.microsoft.com/dotnet/aspnet:10.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:de0ee358cdd672f7017a003bed21e9ac9ed48a27c922a59b18175b6e82fa7fee
 
 WORKDIR /magic
 COPY --from=build /magic ./

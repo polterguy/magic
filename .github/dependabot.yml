@@ -37,3 +37,9 @@ updates:
     groups:
       actions:
         patterns: ["*"]
+
+  # The base images of the Docker build are pinned by digest, so without this they would never be updated.
+  - package-ecosystem: docker
+    directory: /.do
+    schedule:
+      interval: weekly

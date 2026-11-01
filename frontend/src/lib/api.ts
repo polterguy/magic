@@ -10,7 +10,12 @@ let baseUrl = '';
 let bearerToken: string | null = null;
 
 export function configureApi(url: string, token: string | null) {
-  baseUrl = url;
+  /*
+   * The one place a backend URL enters the API layer, and it ends up in hrefs
+   * all over the dashboard - so anything that isn't an http(s) URL, such as a
+   * javascript: URL typed at the login screen, is dropped here.
+   */
+  baseUrl = /^https?:\/\//i.test(url) ? url : '';
   bearerToken = token;
 }
 
