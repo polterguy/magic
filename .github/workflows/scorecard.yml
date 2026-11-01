@@ -1,0 +1,40 @@
+name: OpenSSF Scorecard
+
+# Scores the repository against the supply-chain checks of the OpenSSF Scorecard (branch protection, pinned
+# dependencies, token permissions, security policy, signed releases and so on), and publishes the result, so that
+# anyone can read it from api.securityscorecards.dev, which is also what hyperlambda.dev/health shows.
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: '41 5 * * 2'   # weekly, since the checks look at settings and history, not only at what a push changed
+  branch_protection_rule:
+  workflow_dispatch:
+
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  scorecard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      security-events: write   # uploads the result to code scanning
+      id-token: write          # needed to publish the result, as it is signed with the identity of this workflow
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+      - uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: results.sarif
