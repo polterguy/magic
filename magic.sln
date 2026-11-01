@@ -141,15 +141,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.mysql", "plugi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.odbc", "magic.lambda.odbc", "{A58872AD-3E1F-46ED-8D61-C043599CC8A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.odbc", "plugins\magic.lambda.odbc\magic.lambda.odbc.csproj", "{75679A2A-2391-441F-8961-5899C2930FCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.odbc", "plugins\magic.lambda.odbc\magic.lambda.odbc\magic.lambda.odbc.csproj", "{75679A2A-2391-441F-8961-5899C2930FCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.odbc.tests", "plugins\magic.lambda.odbc\magic.lambda.odbc.tests\magic.lambda.odbc.tests.csproj", "{3C79B5C8-9977-430F-8C09-4ED5D58D439F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.openai", "magic.lambda.openai", "{CB996DBC-FE5D-48E5-978B-61A4F5287979}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.openai", "plugins\magic.lambda.openai\magic.lambda.openai.csproj", "{85F3A833-DCAC-41C5-92E8-959C0B19B73D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.openai", "plugins\magic.lambda.openai\magic.lambda.openai\magic.lambda.openai.csproj", "{85F3A833-DCAC-41C5-92E8-959C0B19B73D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.openai.tests", "plugins\magic.lambda.openai\magic.lambda.openai.tests\magic.lambda.openai.tests.csproj", "{0E40BB2B-FD1E-46ED-A3DC-79B4590881C9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.pdf", "magic.lambda.pdf", "{BB44B931-5CF3-4447-AD6C-7F73281073A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.pdf", "plugins\magic.lambda.pdf\magic.lambda.pdf.csproj", "{7659CE83-D645-4C3A-9DA4-338DD416B4AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.pdf", "plugins\magic.lambda.pdf\magic.lambda.pdf\magic.lambda.pdf.csproj", "{7659CE83-D645-4C3A-9DA4-338DD416B4AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.pdf.tests", "plugins\magic.lambda.pdf\magic.lambda.pdf.tests\magic.lambda.pdf.tests.csproj", "{52B9FFF1-FD5F-449A-BBEA-9758CDF136A4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.pgsql", "magic.lambda.pgsql", "{EE0AA3CB-901F-4AB2-B537-B5C35CEA63D5}"
 EndProject
@@ -171,7 +177,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.slots", "plugi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.sockets", "magic.lambda.sockets", "{4E57F37B-21EA-4F2A-9B6C-A757F2B52CE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.sockets", "plugins\magic.lambda.sockets\magic.lambda.sockets.csproj", "{55224341-E912-4BB5-8351-44CD68B59CFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.sockets", "plugins\magic.lambda.sockets\magic.lambda.sockets\magic.lambda.sockets.csproj", "{55224341-E912-4BB5-8351-44CD68B59CFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.sockets.tests", "plugins\magic.lambda.sockets\magic.lambda.sockets.tests\magic.lambda.sockets.tests.csproj", "{63F53891-3CE7-4070-971E-07B2DB5811EA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.sqlite", "magic.lambda.sqlite", "{E0706327-14B2-45EA-8FA3-AA47032D94DE}"
 EndProject
@@ -187,7 +195,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.strings", "plu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.system", "magic.lambda.system", "{733B815C-DE18-40A0-9442-8FF41FC461DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.system", "plugins\magic.lambda.system\magic.lambda.system.csproj", "{956FD346-6BC5-4C50-9153-25FCAE494A81}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.system", "plugins\magic.lambda.system\magic.lambda.system\magic.lambda.system.csproj", "{956FD346-6BC5-4C50-9153-25FCAE494A81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.system.tests", "plugins\magic.lambda.system\magic.lambda.system.tests\magic.lambda.system.tests.csproj", "{3A2A64B3-27CB-4B6E-8C2A-2AA84D6389A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.threading", "magic.lambda.threading", "{B747856F-E767-48F5-891C-09398A996AD9}"
 EndProject
@@ -554,6 +564,26 @@ Global
 		{117D4D04-924D-4C94-92B8-B3C42E4E58E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{117D4D04-924D-4C94-92B8-B3C42E4E58E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{117D4D04-924D-4C94-92B8-B3C42E4E58E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C79B5C8-9977-430F-8C09-4ED5D58D439F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C79B5C8-9977-430F-8C09-4ED5D58D439F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C79B5C8-9977-430F-8C09-4ED5D58D439F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C79B5C8-9977-430F-8C09-4ED5D58D439F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E40BB2B-FD1E-46ED-A3DC-79B4590881C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E40BB2B-FD1E-46ED-A3DC-79B4590881C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E40BB2B-FD1E-46ED-A3DC-79B4590881C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E40BB2B-FD1E-46ED-A3DC-79B4590881C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52B9FFF1-FD5F-449A-BBEA-9758CDF136A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52B9FFF1-FD5F-449A-BBEA-9758CDF136A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52B9FFF1-FD5F-449A-BBEA-9758CDF136A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52B9FFF1-FD5F-449A-BBEA-9758CDF136A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63F53891-3CE7-4070-971E-07B2DB5811EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63F53891-3CE7-4070-971E-07B2DB5811EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63F53891-3CE7-4070-971E-07B2DB5811EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63F53891-3CE7-4070-971E-07B2DB5811EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A2A64B3-27CB-4B6E-8C2A-2AA84D6389A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A2A64B3-27CB-4B6E-8C2A-2AA84D6389A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A2A64B3-27CB-4B6E-8C2A-2AA84D6389A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A2A64B3-27CB-4B6E-8C2A-2AA84D6389A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{00511FC9-4A33-49B8-95D7-10E376DA25CF} = {A3694049-F12E-4E38-A3C2-4001F0C6EC04}
@@ -671,5 +701,10 @@ Global
 		{4D7DB8B0-59C3-438F-9C57-41C57C4B28FC} = {36C86FEA-1DEE-438F-AD4E-6FB9079F9A16}
 		{418BABDE-241D-474E-9FE3-9708A3DE04C9} = {36C86FEA-1DEE-438F-AD4E-6FB9079F9A16}
 		{117D4D04-924D-4C94-92B8-B3C42E4E58E3} = {A3694049-F12E-4E38-A3C2-4001F0C6EC04}
+		{3C79B5C8-9977-430F-8C09-4ED5D58D439F} = {A58872AD-3E1F-46ED-8D61-C043599CC8A7}
+		{0E40BB2B-FD1E-46ED-A3DC-79B4590881C9} = {CB996DBC-FE5D-48E5-978B-61A4F5287979}
+		{52B9FFF1-FD5F-449A-BBEA-9758CDF136A4} = {BB44B931-5CF3-4447-AD6C-7F73281073A4}
+		{63F53891-3CE7-4070-971E-07B2DB5811EA} = {4E57F37B-21EA-4F2A-9B6C-A757F2B52CE4}
+		{3A2A64B3-27CB-4B6E-8C2A-2AA84D6389A7} = {733B815C-DE18-40A0-9442-8FF41FC461DF}
 	EndGlobalSection
 EndGlobal

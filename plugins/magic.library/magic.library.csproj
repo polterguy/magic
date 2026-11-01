@@ -24,7 +24,7 @@
     <ProjectReference Include="..\magic.lambda.mime\magic.lambda.mime\magic.lambda.mime.csproj" />
     <ProjectReference Include="..\magic.lambda.mssql\magic.lambda.mssql\magic.lambda.mssql.csproj" />
     <ProjectReference Include="..\magic.lambda.mysql\magic.lambda.mysql\magic.lambda.mysql.csproj" />
-    <ProjectReference Include="..\magic.lambda.odbc\magic.lambda.odbc.csproj" />
+    <ProjectReference Include="..\magic.lambda.odbc\magic.lambda.odbc\magic.lambda.odbc.csproj" />
     <ProjectReference Include="..\magic.lambda.pgsql\magic.lambda.pgsql\magic.lambda.pgsql.csproj" />
     <ProjectReference Include="..\magic.lambda.sqlite\magic.lambda.sqlite\magic.lambda.sqlite.csproj" />
     <ProjectReference Include="..\magic.lambda.scheduler\magic.lambda.scheduler\magic.lambda.scheduler.csproj" />
@@ -33,12 +33,12 @@
     <ProjectReference Include="..\magic.lambda.dates\magic.lambda.dates\magic.lambda.dates.csproj" />
     <ProjectReference Include="..\magic.lambda.validators\magic.lambda.validators\magic.lambda.validators.csproj" />
     <ProjectReference Include="..\magic.lambda\magic.lambda\magic.lambda.csproj" />
-    <ProjectReference Include="..\magic.lambda.sockets\magic.lambda.sockets.csproj" />
-    <ProjectReference Include="..\magic.lambda.system\magic.lambda.system.csproj" />
+    <ProjectReference Include="..\magic.lambda.sockets\magic.lambda.sockets\magic.lambda.sockets.csproj" />
+    <ProjectReference Include="..\magic.lambda.system\magic.lambda.system\magic.lambda.system.csproj" />
     <ProjectReference Include="..\magic.lambda.threading\magic.lambda.threading\magic.lambda.threading.csproj" />
     <ProjectReference Include="..\magic.lambda.xml\magic.lambda.xml\magic.lambda.xml.csproj" />
-    <ProjectReference Include="..\magic.lambda.pdf\magic.lambda.pdf.csproj" />
-    <ProjectReference Include="..\magic.lambda.openai\magic.lambda.openai.csproj" />
+    <ProjectReference Include="..\magic.lambda.pdf\magic.lambda.pdf\magic.lambda.pdf.csproj" />
+    <ProjectReference Include="..\magic.lambda.openai\magic.lambda.openai\magic.lambda.openai.csproj" />
     <ProjectReference Include="..\magic.lambda.git\magic.lambda.git.csproj" />
     <ProjectReference Include="..\magic.lambda.puppeteer\magic.lambda.puppeteer.csproj" />
   </ItemGroup>

@@ -14,8 +14,8 @@
     <PackageReference Include="Microsoft.ML.Tokenizers.Data.Cl100kBase" Version="2.0.1" />
     <!-- Pinned above the vulnerable 9.0.4 pulled in transitively by Microsoft.ML.Tokenizers. -->
     <PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.13" />
-    <ProjectReference Include="..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
-    <ProjectReference Include="..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
+    <ProjectReference Include="..\..\magic.node\magic.node.extensions\magic.node.extensions.csproj" />
+    <ProjectReference Include="..\..\magic.signals\magic.signals.contracts\magic.signals.contracts.csproj" />
   </ItemGroup>
 
 </Project>
