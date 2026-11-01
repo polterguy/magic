@@ -21,7 +21,7 @@ WORKDIR /app
 COPY backend/ /backend/
 COPY plugins/ /plugins/
 
-RUN dotnet restore /backend/backend.csproj
+RUN dotnet restore /backend/backend.csproj --locked-mode
 RUN dotnet publish /backend/backend.csproj -c Release -o /magic
 
 COPY backend/sqlite-plugins/ /magic/sqlite-plugins/
