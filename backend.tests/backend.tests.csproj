@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="10.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.13" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.13" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\backend\backend.csproj" />
+    <ProjectReference Include="..\plugins\magic.signals\magic.signals.services\magic.signals.services.csproj" />
+  </ItemGroup>
+
+  <!--
+    The backend copies its "files" folder, which is gigabytes of runtime content, to the output of everything that
+    references it. The tests only need its assembly, so what comes from that folder is left out.
+  -->
+  <Target Name="LeaveOutBackendFiles" AfterTargets="GetCopyToOutputDirectoryItems">
+    <ItemGroup>
+      <AllItemsFullPathWithTargetPath Remove="@(AllItemsFullPathWithTargetPath)" Condition="$([System.String]::new('%(AllItemsFullPathWithTargetPath.FullPath)').Replace('\', '/').Contains('/backend/files/'))" />
+      <_SourceItemsToCopyToOutputDirectory Remove="@(_SourceItemsToCopyToOutputDirectory)" Condition="$([System.String]::new('%(_SourceItemsToCopyToOutputDirectory.FullPath)').Replace('\', '/').Contains('/backend/files/'))" />
+      <_SourceItemsToCopyToOutputDirectoryAlways Remove="@(_SourceItemsToCopyToOutputDirectoryAlways)" Condition="$([System.String]::new('%(_SourceItemsToCopyToOutputDirectoryAlways.FullPath)').Replace('\', '/').Contains('/backend/files/'))" />
+    </ItemGroup>
+  </Target>
+</Project>

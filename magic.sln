@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backend", "backend\backend.csproj", "{321CBC8C-EB38-40FB-8FB7-32BA12837DF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backend.tests", "backend.tests\backend.tests.csproj", "{0D5537CB-2538-4994-89E3-BB8F9941A79C}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{A3694049-F12E-4E38-A3C2-4001F0C6EC04}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.data.common", "magic.data.common", "{00511FC9-4A33-49B8-95D7-10E376DA25CF}"
@@ -620,6 +622,10 @@ Global
 		{9F13E857-92FB-45CC-B790-93807118CC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F13E857-92FB-45CC-B790-93807118CC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F13E857-92FB-45CC-B790-93807118CC5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D5537CB-2538-4994-89E3-BB8F9941A79C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D5537CB-2538-4994-89E3-BB8F9941A79C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D5537CB-2538-4994-89E3-BB8F9941A79C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D5537CB-2538-4994-89E3-BB8F9941A79C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{00511FC9-4A33-49B8-95D7-10E376DA25CF} = {A3694049-F12E-4E38-A3C2-4001F0C6EC04}

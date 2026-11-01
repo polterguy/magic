@@ -98,7 +98,7 @@ namespace magic.lambda.python
             var stdoutTask = process.StandardOutput.ReadToEndAsync();
             var stderrTask = process.StandardError.ReadToEndAsync();
 
-            await WaitForExitAsync(process, cancellationToken, timeoutSeconds);
+            await WaitForExitAsync(process, timeoutSeconds, cancellationToken);
 
             await Task.WhenAll(stdoutTask, stderrTask);
 
@@ -120,7 +120,7 @@ namespace magic.lambda.python
          * Waits for the process to exit, killing it if it takes longer than the timeout, which is reported as a
          * timeout, or if the execution is cancelled, which is passed on as the cancellation it is.
          */
-        static async Task WaitForExitAsync(Process process, CancellationToken cancellationToken, int timeoutSeconds)
+        static async Task WaitForExitAsync(Process process, int timeoutSeconds, CancellationToken cancellationToken)
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             cts.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
