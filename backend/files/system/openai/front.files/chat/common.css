@@ -409,6 +409,7 @@ button.ainiro.ainiro_blink::after {
   Touched: 2021
 */
 .ainiro_machine pre.hljs {
+  overflow-x: auto;
   padding: 2rem;
   position: relative;
   border-radius: 5px;
