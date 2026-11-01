@@ -24,6 +24,17 @@ updates:
     groups:
       npm-minor-and-patch:
         update-types: [minor, patch]
+    # React stays on 18 until the frontend is moved to 19 in one go. react, react-dom and their types have to be
+    # upgraded together, and a lone major bump of one of them breaks npm ci.
+    ignore:
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
