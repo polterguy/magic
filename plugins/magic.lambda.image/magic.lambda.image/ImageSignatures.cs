@@ -30,7 +30,7 @@ namespace magic.lambda.image.signatures
 
         protected static SlotChild Type(bool required = false)
         {
-            return Option("type", "string", "Output image format: png, jpeg, bmp, gif, tga, pbm, tiff, or webp", required, "png", "image-format");
+            return Option("type", "string", "Output image format: png, jpeg, or webp", required, "png", "image-format");
         }
 
         protected static SlotChild Dest()

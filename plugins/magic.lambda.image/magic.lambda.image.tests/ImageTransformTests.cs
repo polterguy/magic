@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using SixLabors.ImageSharp;
+using SkiaSharp;
 using Xunit;
 using magic.node;
 using magic.node.extensions;
@@ -39,25 +39,43 @@ namespace magic.lambda.image.tests
             return node;
         }
 
-        static ImageInfo Identify(object stream)
+        static SKImageInfo Identify(object stream)
         {
-            return Image.Identify((Stream)stream);
+            using (var codec = SKCodec.Create((Stream)stream))
+            {
+                return codec.Info;
+            }
         }
 
         [Theory]
         [InlineData("png")]
         [InlineData("jpeg")]
+        [InlineData("webp")]
+        public async Task ConvertWritesEverySupportedFormat(string type)
+        {
+            var node = await Run("image.convert", new MemoryStream(Qr()), ("type", type));
+            Assert.True(((Stream)node.Value).Length > 0);
+            Assert.Empty(node.Children);
+        }
+
+        [Theory]
         [InlineData("bmp")]
         [InlineData("gif")]
         [InlineData("tga")]
         [InlineData("pbm")]
         [InlineData("tiff")]
-        [InlineData("webp")]
-        public async Task ConvertWritesEveryFormat(string type)
+        public async Task ConvertRejectsUnsupportedFormats(string type)
         {
-            var node = await Run("image.convert", new MemoryStream(Qr()), ("type", type));
-            Assert.True(((Stream)node.Value).Length > 0);
-            Assert.Empty(node.Children);
+            var exception = await Assert.ThrowsAsync<HyperlambdaException>(
+                () => Run("image.convert", new MemoryStream(Qr()), ("type", type)));
+            Assert.Equal($"Unsupported image type '{type}', supported types are png, jpeg and webp", exception.Message);
+        }
+
+        [Fact]
+        public async Task ConvertRejectsInputThatIsNotAnImage()
+        {
+            await Assert.ThrowsAsync<HyperlambdaException>(
+                () => Run("image.convert", new MemoryStream(new byte[] { 1, 2, 3, 4 })));
         }
 
         [Fact]
@@ -71,9 +89,9 @@ namespace magic.lambda.image.tests
         [Fact]
         public async Task ConvertSavesToDestination()
         {
-            await Run("image.convert", new MemoryStream(Qr()), ("type", "bmp"), ("dest", "/converted/qr.bmp"));
-            var bytes = StubFiles.Files["/converted/qr.bmp"];
-            Assert.Equal(new byte[] { 0x42, 0x4D }, bytes.Take(2));
+            await Run("image.convert", new MemoryStream(Qr()), ("type", "webp"), ("dest", "/converted/qr.webp"));
+            var bytes = StubFiles.Files["/converted/qr.webp"];
+            Assert.Equal(new byte[] { 0x52, 0x49, 0x46, 0x46 }, bytes.Take(4));
         }
 
         [Fact]
@@ -123,7 +141,7 @@ namespace magic.lambda.image.tests
         [Fact]
         public async Task CropRemovesTheGivenMargins()
         {
-            var original = Image.Identify(new MemoryStream(Qr()));
+            var original = Identify(new MemoryStream(Qr()));
             var node = await Run("image.crop", new MemoryStream(Qr()), ("left", 2), ("top", 3), ("right", 4), ("bottom", 5));
             var info = Identify(node.Value);
             Assert.Equal(original.Width - 6, info.Width);
@@ -133,7 +151,7 @@ namespace magic.lambda.image.tests
         [Fact]
         public async Task CropWithoutMarginsKeepsTheSize()
         {
-            var original = Image.Identify(new MemoryStream(Qr()));
+            var original = Identify(new MemoryStream(Qr()));
             var node = await Run("image.crop", new MemoryStream(Qr()));
             var info = Identify(node.Value);
             Assert.Equal(original.Width, info.Width);
@@ -143,7 +161,7 @@ namespace magic.lambda.image.tests
         [Fact]
         public async Task CropRejectsMarginsWiderThanTheImage()
         {
-            var width = Image.Identify(new MemoryStream(Qr())).Width;
+            var width = Identify(new MemoryStream(Qr())).Width;
             var exception = await Assert.ThrowsAsync<HyperlambdaException>(
                 () => Run("image.crop", new MemoryStream(Qr()), ("left", width)));
             Assert.Equal("[left] + [right] is larger than image width", exception.Message);
@@ -152,7 +170,7 @@ namespace magic.lambda.image.tests
         [Fact]
         public async Task CropRejectsMarginsTallerThanTheImage()
         {
-            var height = Image.Identify(new MemoryStream(Qr())).Height;
+            var height = Identify(new MemoryStream(Qr())).Height;
             var exception = await Assert.ThrowsAsync<HyperlambdaException>(
                 () => Run("image.crop", new MemoryStream(Qr()), ("top", height)));
             Assert.Equal("[top] + [bottom] is larger than image height", exception.Message);
@@ -162,7 +180,7 @@ namespace magic.lambda.image.tests
         public async Task SizeReturnsWidthAndHeight()
         {
             var bytes = Qr();
-            var expected = Image.Identify(new MemoryStream(bytes));
+            var expected = Identify(new MemoryStream(bytes));
             StubFiles.Files["/in/size-source.png"] = bytes;
             var node = await Run("image.size", "/in/size-source.png");
             Assert.Null(node.Value);

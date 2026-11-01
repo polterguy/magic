@@ -2,7 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
-using SixLabors.ImageSharp;
+using SkiaSharp;
 using System.IO;
 using magic.node;
 using magic.node.contracts;
@@ -43,9 +43,12 @@ namespace magic.lambda.image.slots
             await signaler.SignalAsync("io.stream.open-file", file);
             using (var stream = (Stream)file.Value)
             {
-                var image = await Image.IdentifyAsync(stream);
-                input.Add(new Node("width", image.Width));
-                input.Add(new Node("height", image.Height));
+                // Reads only the header of the image, without decoding its pixels.
+                using (var codec = SKCodec.Create(stream) ?? throw new HyperlambdaException("The input is not an image that could be decoded"))
+                {
+                    input.Add(new Node("width", codec.Info.Width));
+                    input.Add(new Node("height", codec.Info.Height));
+                }
             }
             input.Value = null;
         }

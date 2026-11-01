@@ -2,9 +2,10 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
 using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
@@ -44,10 +45,13 @@ namespace magic.lambda.image.slots
             var height = heightNode?.GetEx<int>() ?? 0;
 
             // Resizing image.
-            await Utilities.TransformImageAsync(input, signaler, (img) => 
+            await Utilities.TransformImageAsync(input, signaler, (img) =>
             {
-                img.Mutate(x => x.Resize(width, height));
-                return Task.CompletedTask;
+                // A missing width or height is calculated from the other, keeping the aspect ratio.
+                var newWidth = width > 0 ? width : Math.Max(1, (int)Math.Round(img.Width * (double)height / img.Height));
+                var newHeight = height > 0 ? height : Math.Max(1, (int)Math.Round(img.Height * (double)width / img.Width));
+                return img.Resize(new SKImageInfo(newWidth, newHeight), new SKSamplingOptions(SKCubicResampler.Mitchell))
+                    ?? throw new HyperlambdaException("Could not resize the image");
             });
         }
     }

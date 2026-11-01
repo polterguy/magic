@@ -21,11 +21,6 @@ types are as follows.
 
 * png
 * jpeg
-* bmp
-* gif
-* tga
-* pbm
-* tiff
 * webp
 
 In addition you can provide a **[dest]** argument, which if specified, becomes the relative path of where to

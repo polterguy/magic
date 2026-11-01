@@ -4,8 +4,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
 using magic.node;
 using magic.node.contracts;
 using magic.node.extensions;
@@ -43,14 +42,18 @@ namespace magic.lambda.image.slots
             var bottom = input.Children.FirstOrDefault(n => n.Name == "bottom")?.GetEx<int>() ?? 0;
 
             // Resizing image.
-            await Utilities.TransformImageAsync(input, signaler, (img) => 
+            await Utilities.TransformImageAsync(input, signaler, (img) =>
             {
                 if (left + right >= img.Width)
                     throw new HyperlambdaException("[left] + [right] is larger than image width");
                 if (top + bottom >= img.Height)
                     throw new HyperlambdaException("[top] + [bottom] is larger than image height");
-                img.Mutate(n => n.Crop(new Rectangle(left, top, img.Width - left - right, img.Height - top - bottom)));
-                return Task.CompletedTask;
+                var result = new SKBitmap(img.Width - left - right, img.Height - top - bottom, img.ColorType, img.AlphaType);
+                using (var canvas = new SKCanvas(result))
+                {
+                    canvas.DrawBitmap(img, -left, -top);
+                }
+                return result;
             });
         }
     }
