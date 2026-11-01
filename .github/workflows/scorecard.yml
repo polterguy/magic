@@ -11,7 +11,8 @@ on:
   branch_protection_rule:
   workflow_dispatch:
 
-permissions: read-all
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}
