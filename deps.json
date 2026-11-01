@@ -1,32 +1,7 @@
 {
- "generated": "2026-11-01T11:50:23Z",
- "commit": "95afa485ed5092596920c04a5552f9948b87252a",
- "open": {
-  "low": 2
- },
+ "generated": "2026-11-01T12:21:35Z",
+ "commit": "6037fe04ef0aefc12ba666f069526b93f172351b",
+ "open": {},
  "suppressed": {},
- "findings": [
-  {
-   "ecosystem": "npm",
-   "package": "katex",
-   "version": "0.11.0 - 0.18.1",
-   "severity": "low",
-   "advisory": "https://github.com/advisories/GHSA-238p-pmpm-9mq7",
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "mermaid@10.8.0"
-  },
-  {
-   "ecosystem": "npm",
-   "package": "mermaid",
-   "version": "10.9.0-rc.1 - 12.1.0",
-   "severity": "low",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "mermaid@10.8.0"
-  }
- ]
+ "findings": []
 }
