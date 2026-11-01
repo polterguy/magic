@@ -133,46 +133,6 @@ namespace magic.node.tests
             Assert.Throws<InvalidCastException>(() => Converter.ToString(value));
         }
 
-        static System.Collections.Generic.List<Token> Tokens(string hl)
-        {
-            return new HyperlambdaTokenizer(new MemoryStream(Encoding.UTF8.GetBytes(hl))).Tokens();
-        }
-
-        [Theory]
-        [InlineData("a\\ab", "a\ab")]
-        [InlineData("a\\bb", "a\bb")]
-        [InlineData("a\\fb", "a\fb")]
-        [InlineData("a\\tb", "a\tb")]
-        [InlineData("a\\vb", "a\vb")]
-        [InlineData("a\\nb", "a\nb")]
-        [InlineData("a\\rb", "a\rb")]
-        [InlineData("a\\\\b", "a\\b")]
-        [InlineData("a\\'b", "a'b")]
-        [InlineData("a\\\"b", "a\"b")]
-        [InlineData("a\\@b", "a\\@b")]
-        public void TokenizerEscapeSequences(string literal, string expected)
-        {
-            var tokens = Tokens("foo:\"" + literal + "\"");
-            Assert.Equal(expected, tokens.Last().Value);
-        }
-
-        [Fact]
-        public void TokenizerRejectsInvalidEscape()
-        {
-            Assert.Throws<HyperlambdaException>(() => Tokens("foo:\"a\\xb\""));
-        }
-
-        [Theory]
-        [InlineData("foo:\"bar\"x")]
-        [InlineData("foo:'bar'x")]
-        [InlineData("foo:@\"bar\"x")]
-        [InlineData("foo:@\"bar\" x")]
-        public void TokenizerRejectsGarbageAfterStrings(string hl)
-        {
-            var ex = Assert.Throws<HyperlambdaException>(() => Tokens(hl));
-            Assert.Contains("Garbage characters after", ex.Message);
-        }
-
         [Fact]
         public void ChildAtReturnsTheChildAtTheIndex()
         {

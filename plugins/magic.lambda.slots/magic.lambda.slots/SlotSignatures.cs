@@ -38,22 +38,6 @@ namespace magic.lambda.slots.signatures
             };
         }
 
-        internal static SlotChild LambdaBlock()
-        {
-            return new SlotChild
-            {
-                Name = ".lambda",
-                Type = "lambda",
-                Description = "Executable dynamic slot body",
-                Required = true,
-                Mode = SlotChildMode.ExecutableLambda,
-                Cardinality = SlotChildCardinality.ExactlyOne,
-                Role = SlotChildRole.LambdaBlock,
-                Evaluation = SlotChildEvaluation.SerializeLambda,
-                Projection = SlotChildProjection.Children,
-            };
-        }
-
         internal static SlotChild ResultNode(string kind, string description)
         {
             return new SlotChild
