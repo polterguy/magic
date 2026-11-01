@@ -53,9 +53,13 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
       - run: dotnet build magic.sln
 
+  # Runs the tests and has SonarCloud analyse the result. Pull requests from Dependabot and from forks get no secrets,
+  # so SONAR_TOKEN is empty there, and the tests are run without the scanner instead.
   sonar:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -69,9 +73,15 @@ jobs:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props') }}
           restore-keys: nuget-${{ runner.os }}-
-      - run: dotnet tool install --global dotnet-sonarscanner
-      - env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Run the tests without SonarCloud
+        if: env.SONAR_TOKEN == ''
+        env:
+          MAGIC_TEST_CHROME: /usr/bin/google-chrome
+        run: dotnet test magic.sln
+      - if: env.SONAR_TOKEN != ''
+        run: dotnet tool install --global dotnet-sonarscanner
+      - if: env.SONAR_TOKEN != ''
+        env:
           MAGIC_TEST_CHROME: /usr/bin/google-chrome
         run: |
           dotnet sonarscanner begin \

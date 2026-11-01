@@ -2128,7 +2128,7 @@ export default function WebDesigner() {
           */}
         <div
           className={railClass('left', railsShut)}
-          ref={node => node?.toggleAttribute('inert', view !== 'design')}>
+          ref={node => { node?.toggleAttribute('inert', view !== 'design'); }}>
           <div className="designer-section">
             <h3>Blocks</h3>
             <p className="designer-note">
@@ -2344,7 +2344,7 @@ export default function WebDesigner() {
 
         <div
           className={railClass('right', railsShut)}
-          ref={node => node?.toggleAttribute('inert', view !== 'design')}>
+          ref={node => { node?.toggleAttribute('inert', view !== 'design'); }}>
           <Tabs
             tabs={[
               { id: 'element', label: 'Element' },

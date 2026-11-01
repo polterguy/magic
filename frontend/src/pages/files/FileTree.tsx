@@ -129,7 +129,7 @@ export default function FileTree(props: Readonly<{
     return map;
   }, [folders, visibleFiles, visibleFolders]);
 
-    function renderChildren(path: string): JSX.Element {
+    function renderChildren(path: string): React.JSX.Element {
     const { folders: childFolders, files: childFiles } =
       childrenOf.get(path) ?? { folders: [], files: [] };
     const isOpen = (folder: string) => query ? true : expanded.has(folder);

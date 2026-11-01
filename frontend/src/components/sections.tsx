@@ -25,7 +25,7 @@ import {
 export interface Section {
   to: string;
   label: string;
-  Icon: () => JSX.Element;
+  Icon: () => React.JSX.Element;
   // Shown on the Welcome guide. The Dashboard itself needs no description.
   description?: string;
 }

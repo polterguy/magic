@@ -195,7 +195,7 @@ function StepTable(props: Readonly<{
   hasReturn: boolean;
   onReturn: boolean;
   returnIndex: number;
-  currentRow: React.RefObject<HTMLTableRowElement>;
+  currentRow: React.RefObject<HTMLTableRowElement | null>;
   onSelect: (index: number) => void;
 }>) {
   const { steps, index, errorIndex, onReturn, returnIndex, currentRow } = props;
