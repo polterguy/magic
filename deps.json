@@ -1,71 +1,7 @@
 {
- "generated": "2026-11-01T10:48:04Z",
- "commit": "bc31346f81f8f8265edb28451a8aba4ccff9cf68",
+ "generated": "2026-11-01T10:59:17Z",
+ "commit": "7cb89319de0ac6e7d5a2f288890eaf922aaae0e9",
  "open": {},
- "suppressed": {
-  "high": 4,
-  "moderate": 2
- },
- "findings": [
-  {
-   "ecosystem": "nuget",
-   "package": "SixLabors.ImageSharp",
-   "version": "3.1.12",
-   "severity": "moderate",
-   "advisory": "https://github.com/advisories/GHSA-gwg2-r3hj-4w44",
-   "projects": 6,
-   "suppressed": true,
-   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
-  },
-  {
-   "ecosystem": "nuget",
-   "package": "SixLabors.ImageSharp",
-   "version": "3.1.12",
-   "severity": "high",
-   "advisory": "https://github.com/advisories/GHSA-j3p4-wp97-rph4",
-   "projects": 6,
-   "suppressed": true,
-   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
-  },
-  {
-   "ecosystem": "nuget",
-   "package": "SixLabors.ImageSharp",
-   "version": "3.1.12",
-   "severity": "high",
-   "advisory": "https://github.com/advisories/GHSA-j9gm-c75j-xc9q",
-   "projects": 6,
-   "suppressed": true,
-   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
-  },
-  {
-   "ecosystem": "nuget",
-   "package": "SixLabors.ImageSharp",
-   "version": "3.1.12",
-   "severity": "high",
-   "advisory": "https://github.com/advisories/GHSA-jjfr-hcj7-qf5w",
-   "projects": 6,
-   "suppressed": true,
-   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
-  },
-  {
-   "ecosystem": "nuget",
-   "package": "SixLabors.ImageSharp",
-   "version": "3.1.12",
-   "severity": "high",
-   "advisory": "https://github.com/advisories/GHSA-v76p-62qx-wwq2",
-   "projects": 6,
-   "suppressed": true,
-   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
-  },
-  {
-   "ecosystem": "nuget",
-   "package": "SixLabors.ImageSharp",
-   "version": "3.1.12",
-   "severity": "moderate",
-   "advisory": "https://github.com/advisories/GHSA-wmxv-xphr-5c9g",
-   "projects": 6,
-   "suppressed": true,
-   "reason": "SixLabors.ImageSharp 3.1.12 is the last open-source release, and the versions fixing these advisories are closed source, so the package stays on 3.1.12. Suppressed here, since every project that references magic.lambda.image reports them too."
-  }
- ]
+ "suppressed": {},
+ "findings": []
 }
