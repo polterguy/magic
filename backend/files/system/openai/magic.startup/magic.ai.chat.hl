@@ -214,7 +214,7 @@ select prompt, max(completion) as completion
                get-value:x:@.arguments/*/max_tokens
                openai.tokenize:x:@lambda2hyper
                get-value:x:@.extra-tokens
-            get-value:x:@.arguments/*/model_size
+            get-value:x:@.arguments/*/tokens
          .lambda
 
             // Context is small enough to answer according to max_tokens.
@@ -222,6 +222,22 @@ select prompt, max(completion) as completion
                .:bool:false
 
       else
+
+         /*
+          * Only the fixed messages and the user's current prompt are left, so there is nothing
+          * more to remove. Removing the prompt too would never make the rest fit, and would
+          * keep this loop running until it hits its iteration limit.
+          */
+         if
+            lte
+               get-count:x:@.session/*
+               math.add
+                  get-value:x:@.fixed
+                  .:int:1
+            .lambda
+               throw:The system message and your prompt do not fit inside the context window of the model together with the tokens reserved for the answer. Lower the max tokens of the type, or shorten the system message.
+                  public:bool:true
+                  status:int:400
 
          /*
           * We need to remove one of our previous messages to have OpenAI return max_tokens.

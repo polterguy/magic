@@ -78,7 +78,7 @@ signal:magic.ai.endpoint-common
       if
          not-null:x:@.tokens
          .lambda
-            set-value:x:@.lambda/@.lambda/*/signal/*/model_size
+            set-value:x:@.lambda/@.lambda/*/signal/*/tokens
                convert:x:@.tokens
                   type:int
 
