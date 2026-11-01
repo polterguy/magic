@@ -1,0 +1,60 @@
+root = true
+
+# The rules of the build. Everything in here is about C# code, and a warning fails the build (see Directory.Build.props),
+# so what is listed below decides what the build lets through.
+
+[*.cs]
+
+# .NET analyzers that are off by default, which have all been found in this code by SonarCloud before.
+dotnet_diagnostic.CA1068.severity = warning
+dotnet_diagnostic.CA1822.severity = warning
+dotnet_diagnostic.CA1825.severity = warning
+dotnet_diagnostic.CA1827.severity = warning
+dotnet_diagnostic.CA1845.severity = warning
+dotnet_diagnostic.CA1859.severity = warning
+dotnet_diagnostic.CA1861.severity = warning
+dotnet_diagnostic.CA1865.severity = warning
+dotnet_diagnostic.CA2211.severity = warning
+dotnet_diagnostic.xUnit2032.severity = warning
+
+# Sonar rules that the code of the product breaks in places, which SonarCloud already tracks. They stay off here, until
+# the code is changed, since they would otherwise fail a build for code nobody is touching.
+dotnet_diagnostic.S1172.severity = none
+dotnet_diagnostic.S1854.severity = none
+dotnet_diagnostic.S2077.severity = none
+dotnet_diagnostic.S2092.severity = none
+dotnet_diagnostic.S2094.severity = none
+dotnet_diagnostic.S2696.severity = none
+dotnet_diagnostic.S2955.severity = none
+dotnet_diagnostic.S3011.severity = none
+dotnet_diagnostic.S3241.severity = none
+dotnet_diagnostic.S3267.severity = none
+dotnet_diagnostic.S3330.severity = none
+dotnet_diagnostic.S3925.severity = none
+dotnet_diagnostic.S4790.severity = none
+dotnet_diagnostic.S5693.severity = none
+dotnet_diagnostic.S6932.severity = none
+dotnet_diagnostic.S6934.severity = none
+
+# Tests are held to fewer of the Sonar rules than the product is, as they are on SonarCloud, and what the existing tests
+# break stays off until they are changed.
+[{**.tests/**.cs,backend.tests/**.cs}]
+dotnet_diagnostic.S108.severity = none
+dotnet_diagnostic.S927.severity = none
+dotnet_diagnostic.S1118.severity = none
+dotnet_diagnostic.S1481.severity = none
+dotnet_diagnostic.S1905.severity = none
+dotnet_diagnostic.S2219.severity = none
+dotnet_diagnostic.S3218.severity = none
+dotnet_diagnostic.S3358.severity = none
+dotnet_diagnostic.S3881.severity = none
+dotnet_diagnostic.S3887.severity = none
+dotnet_diagnostic.S3928.severity = none
+dotnet_diagnostic.S3993.severity = none
+dotnet_diagnostic.S4144.severity = none
+dotnet_diagnostic.S4487.severity = none
+dotnet_diagnostic.S4581.severity = none
+dotnet_diagnostic.S6562.severity = none
+dotnet_diagnostic.S6608.severity = none
+dotnet_diagnostic.S6966.severity = none
+dotnet_diagnostic.S8970.severity = none

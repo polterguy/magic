@@ -13,4 +13,28 @@
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-v76p-62qx-wwq2" />
   </ItemGroup>
 
+  <!--
+    A warning fails the build. NuGet audit warnings are the exception, since a new advisory published for a package we
+    already use would otherwise break every build without anyone having changed anything.
+  -->
+  <PropertyGroup>
+    <SonarGate Condition="'$(SonarGate)' == ''">true</SonarGate>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(SonarGate)' != 'false'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <!--
+    The C# rules of SonarCloud, run by the build, so a violation is found while compiling instead of after a push.
+    Which rules fail the build, and which are only reported, is decided in .editorconfig.
+
+    The SonarCloud build passes -p:SonarGate=false, since the scanner brings the rules of the quality profile with it,
+    and a second copy of them, with other severities, would change what SonarCloud reports.
+  -->
+  <ItemGroup Condition="'$(SonarGate)' != 'false'">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+  </ItemGroup>
+
 </Project>

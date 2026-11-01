@@ -28,6 +28,9 @@ cd frontend && npm run test
 
 - .NET 10 SDK required (no global.json pins it)
 - Frontend uses Vite + React + TypeScript, not Angular CLI
+- The C# build treats warnings as errors, and runs the Sonar rules (SonarAnalyzer.CSharp) next to the Roslyn ones, with
+  the severities of `.editorconfig`. A violation fails `dotnet build`, so fix it, or, for a rule that is not meant for
+  that code, say so in `.editorconfig` with the reason. The SonarCloud workflow builds with `-p:SonarGate=false`
 - Default login: root / root
 - CI triggers only on version tags (v*.*.*), not on branch pushes or PRs
 - Running `dotnet test magic.sln` from the repo root builds and tests all

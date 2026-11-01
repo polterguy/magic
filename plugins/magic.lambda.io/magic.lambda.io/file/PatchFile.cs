@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using magic.node;
@@ -569,7 +570,7 @@ namespace magic.lambda.io.file
                     return true;
 
                 if (!headerPath.StartsWith('/'))
-                    headerPath = "/" + headerPath;
+                    headerPath = Path.AltDirectorySeparatorChar + headerPath;
 
                 return normalizedTarget.EndsWith(headerPath, StringComparison.InvariantCulture);
             }

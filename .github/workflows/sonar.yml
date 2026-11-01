@@ -25,6 +25,17 @@ jobs:
       - run: npm run build   # tsc, then vite build
       - run: npm run test
 
+  # Builds the solution with the Roslyn and Sonar rules of .editorconfig and warnings as errors, which is what lets a
+  # violation fail the run, before SonarCloud has looked at anything. See Directory.Build.props.
+  analyzers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet build magic.sln
+
   sonar:
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +59,7 @@ jobs:
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
             /d:sonar.coverage.exclusions="frontend/**,backend/files/**,backend/Program.cs,backend/Startup.cs" \
             /d:sonar.exclusions="update-deployments.sh,**/*.sql,.do/**,.vscode/**,backend/files/system/openai/front.files/chat/*.css,**/*.tests/**"
-          dotnet build magic.sln
+          dotnet build magic.sln -p:SonarGate=false
           dotnet test magic.sln --no-build --collect:"XPlat Code Coverage" \
             -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"

@@ -48,7 +48,10 @@ namespace magic.lambda.dates.signatures
             Option("milliseconds", "int", "Number of milliseconds", defaultValue: "0"),
         };
 
+        // Implements the constraints of the signature interface, which cannot be static.
+#pragma warning disable CA1822
         public IEnumerable<SlotConstraint> Constraints
+#pragma warning restore CA1822
         {
             get
             {

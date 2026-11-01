@@ -19,7 +19,10 @@ namespace magic.lambda.caching.helpers
          */
         readonly static SemaphoreSlim _semaphore = new(1, 1);
 
+        // Kept as an instance method, since callers lock through the instance, the same way they do with the other lockers.
+#pragma warning disable S2325, CA1822
         public async Task LockAsync()
+#pragma warning restore S2325, CA1822
         {
             await _semaphore.WaitAsync();
         }
