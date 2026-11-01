@@ -34,15 +34,15 @@ jobs:
           node-version: 20
 
       - name: Audit NuGet packages
-        run: dotnet list magic.sln package --vulnerable --include-transitive --format json > "$RUNNER_TEMP/dotnet-vulnerable.json"
+        run: dotnet list magic.sln package --vulnerable --include-transitive --format json > dotnet-vulnerable.json
 
       - name: Audit npm packages
         working-directory: frontend
         # npm audit exits with 1 when it finds something, which is the result and not a failure.
-        run: npm audit --package-lock-only --json > "$RUNNER_TEMP/npm-audit.json" || true
+        run: npm audit --package-lock-only --json > ../npm-audit.json || true
 
       - name: Build the report
-        run: python3 -I .github/scripts/deps_report.py "$RUNNER_TEMP/dotnet-vulnerable.json" "$RUNNER_TEMP/npm-audit.json" Directory.Build.props "$GITHUB_SHA" > "$RUNNER_TEMP/deps.json"
+        run: python3 -I .github/scripts/deps_report.py > "$RUNNER_TEMP/deps.json"
 
       - name: Publish to the health-data branch
         run: |

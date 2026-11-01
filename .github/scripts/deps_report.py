@@ -2,31 +2,44 @@
 """
 Merges the NuGet and npm vulnerability audits into one small JSON report, deps.json.
 
-Usage: deps_report.py <dotnet-vulnerable.json> <npm-audit.json> <Directory.Build.props> <commit-sha> > deps.json
+Run it from the root of the repository, with the two audits in the files named below, and the commit in the
+GITHUB_SHA environment variable. It writes the report to standard output. The files are fixed names and not arguments,
+so nothing a caller passes in decides which file is read.
 
 The NuGet audit is the output of `dotnet list package --vulnerable --include-transitive --format json`, which lists
 every advisory, also the ones suppressed with NuGetAuditSuppress. The suppressed ones are marked with the reason
 written in the comment above them in Directory.Build.props, so a suppression is shown, never hidden.
 """
 import json
+import os
 import re
 import sys
 from datetime import datetime, timezone
 
 
-def suppressed_advisories(props_path):
+DOTNET_AUDIT = 'dotnet-vulnerable.json'
+NPM_AUDIT = 'npm-audit.json'
+PROPS = 'Directory.Build.props'
+
+
+def suppressed_advisories():
     """Advisory URL -> the text of the XML comment directly above the group of suppressions it belongs to."""
-    text = open(props_path, encoding='utf-8').read()
+    text = open(PROPS, encoding='utf-8').read()
     result = {}
-    for comment, block in re.findall(r'<!--(.*?)-->\s*<ItemGroup>(.*?)</ItemGroup>', text, re.S):
-        reason = ' '.join(comment.split())
-        for url in re.findall(r'<NuGetAuditSuppress\s+Include="([^"]+)"', block):
-            result[url] = reason
+    for match in re.finditer(r'<NuGetAuditSuppress\s+Include="([^"]+)"', text):
+        start = text.rfind('<!--', 0, match.start())
+        end = text.find('-->', start) if start >= 0 else -1
+        # The comment counts only when nothing but the group tag and other suppressions sit between it and this one.
+        between = text[end + 3:match.start()] if 0 <= end < match.start() else None
+        if between is not None and re.sub(r'<ItemGroup>|<NuGetAuditSuppress[^>]*/>|\s', '', between) == '':
+            result[match.group(1)] = ' '.join(text[start + 4:end].split())
+        else:
+            result[match.group(1)] = None
     return result
 
 
-def nuget_findings(path, suppressed):
-    audit = json.load(open(path, encoding='utf-8'))
+def nuget_findings(suppressed):
+    audit = json.load(open(DOTNET_AUDIT, encoding='utf-8'))
     found = {}
     for project in audit.get('projects', []):
         for framework in project.get('frameworks', []):
@@ -48,8 +61,8 @@ def nuget_findings(path, suppressed):
     return list(found.values())
 
 
-def npm_findings(path):
-    audit = json.load(open(path, encoding='utf-8'))
+def npm_findings():
+    audit = json.load(open(NPM_AUDIT, encoding='utf-8'))
     found = []
     for name, vuln in (audit.get('vulnerabilities') or {}).items():
         fix = vuln.get('fixAvailable')
@@ -68,8 +81,8 @@ def npm_findings(path):
 
 
 def main():
-    dotnet_json, npm_json, props, sha = sys.argv[1:5]
-    findings = nuget_findings(dotnet_json, suppressed_advisories(props)) + npm_findings(npm_json)
+    sha = os.environ.get('GITHUB_SHA', 'unknown')
+    findings = nuget_findings(suppressed_advisories()) + npm_findings()
     counts = {}
     for f in findings:
         if not f['suppressed']:
