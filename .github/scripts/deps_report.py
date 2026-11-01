@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 DOTNET_AUDIT = 'dotnet-vulnerable.json'
 NPM_AUDIT = 'npm-audit.json'
 PROPS = 'Directory.Build.props'
+SEVERITIES = ('critical', 'high', 'moderate', 'low')
 
 
 def suppressed_advisories():
@@ -83,19 +84,20 @@ def npm_findings():
 def main():
     sha = os.environ.get('GITHUB_SHA', 'unknown')
     findings = nuget_findings(suppressed_advisories()) + npm_findings()
-    counts = {}
+    # Every severity is always there, as a number, so an empty result reads as zeros and not as a missing value.
+    counts = dict.fromkeys(SEVERITIES, 0)
+    suppressed = dict.fromkeys(SEVERITIES, 0)
     for f in findings:
-        if not f['suppressed']:
-            counts[f['severity']] = counts.get(f['severity'], 0) + 1
-    suppressed = {}
-    for f in findings:
-        if f['suppressed']:
-            suppressed[f['severity']] = suppressed.get(f['severity'], 0) + 1
+        bucket = suppressed if f['suppressed'] else counts
+        bucket[f['severity']] = bucket.get(f['severity'], 0) + 1
     report = {
         'generated': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
         'commit': sha,
         'open': counts,
+        'open-count': sum(counts.values()),
         'suppressed': suppressed,
+        'suppressed-count': sum(suppressed.values()),
+        'findings-count': len(findings),
         'findings': sorted(findings, key=lambda f: (f['suppressed'], f['ecosystem'], f['package'], f['advisory'] or '')),
     }
     json.dump(report, sys.stdout, indent=1)
