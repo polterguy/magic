@@ -31,7 +31,7 @@ import {
 } from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
 import { openSupport } from '../lib/support';
-import { withoutTrailingSlashes } from '../lib/backend';
+import { httpUrl, withoutTrailingSlashes } from '../lib/backend';
 import { RobotIcon, SearchIcon } from '../components/Icons';
 import { openChatOps, openPalette, setDashboardTourRunner } from '../lib/shellActions';
 import Tour from '../components/Tour';
@@ -515,7 +515,7 @@ export default function Dashboard() {
           </div>
           <a
             className="btn btn-large"
-            href={backend?.url}
+            href={httpUrl(backend?.url)}
             target="_blank"
             rel="noreferrer">
             Open

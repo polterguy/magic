@@ -4,18 +4,14 @@
  * Angular service layer.
  */
 
-import { loadBackend, withoutTrailingSlashes } from './backend';
+import { httpUrl, loadBackend, withoutTrailingSlashes } from './backend';
 
 let baseUrl = '';
 let bearerToken: string | null = null;
 
 export function configureApi(url: string, token: string | null) {
-  /*
-   * The one place a backend URL enters the API layer, and it ends up in hrefs
-   * all over the dashboard - so anything that isn't an http(s) URL, such as a
-   * javascript: URL typed at the login screen, is dropped here.
-   */
-  baseUrl = /^https?:\/\//i.test(url) ? url : '';
+  // The one place a backend URL enters the API layer, and it ends up in hrefs.
+  baseUrl = httpUrl(url);
   bearerToken = token;
 }
 

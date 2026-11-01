@@ -87,6 +87,18 @@ function importFromPreviousDashboard(): StoredBackend[] {
 }
 
 /*
+ * The URL itself when it is an http(s) URL, and an empty string otherwise.
+ * Backend URLs are typed by the user and end up in hrefs, so this keeps
+ * javascript: and data: URLs out of them.
+ */
+export function httpUrl(url: string | null | undefined): string {
+  if (url && /^https?:\/\//i.test(url)) {
+    return url;
+  }
+  return '';
+}
+
+/*
  * Strips trailing slashes. A loop rather than a /\/+$/ regex, which backtracks
  * quadratically on a long run of slashes that doesn't end the string.
  */

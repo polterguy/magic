@@ -672,7 +672,10 @@
    * followed - never a javascript: URL or another site.
    */
   function sitePath(value) {
-    return /^\/(?![\/\\])/.test(value) ? value : '/';
+    if (/^\/(?![\/\\])/.test(value)) {
+      return value;
+    }
+    return '/';
   }
 
   function escapeHtml(text) {
