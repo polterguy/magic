@@ -339,8 +339,9 @@ export default function GitPanel(props: Readonly<{
       {!busy && mode === 'repo' && (
         <>
           <p className="mono" title="Branch and tracking status">{branchLine}</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <select
+              style={{ flex: '0 1 220px', minWidth: 0 }}
               value={currentBranch}
               disabled={busy || unborn}
               onChange={e =>
