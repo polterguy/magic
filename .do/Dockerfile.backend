@@ -18,6 +18,9 @@ RUN npm ci --ignore-scripts && npm run build
 FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:de4fe90a98845d75910b9769662465c84de1a934665c431279d1382b2bddc02b AS build
 WORKDIR /app
 
+# The build settings and the analyzer package of the solution live next to the folders below, and the lock file was
+# written with them, so --locked-mode needs them too.
+COPY Directory.Build.props .editorconfig /
 COPY backend/ /backend/
 COPY plugins/ /plugins/
 
