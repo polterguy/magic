@@ -223,6 +223,57 @@ namespace magic.lambda.mssql.tests
         }
 
         [Fact]
+        public async Task ReadWithTwoOffsetsThrows()
+        {
+            var ex = await Assert.ThrowsAnyAsync<Exception>(async () => await EvaluateAsync(@"mssql.connect:foo
+   mssql.read
+      table:foo
+      offset:1
+      offset:2"));
+            Assert.Contains("too many [offset] nodes", ex.Message);
+        }
+
+        [Fact]
+        public async Task ReadWithTwoLimitsThrows()
+        {
+            var ex = await Assert.ThrowsAnyAsync<Exception>(async () => await EvaluateAsync(@"mssql.connect:foo
+   mssql.read
+      table:foo
+      limit:1
+      limit:2"));
+            Assert.Contains("too many [limit] nodes", ex.Message);
+        }
+
+        [Fact]
+        public void BatchesOfEmptyScriptAreNone()
+        {
+            Assert.Empty(ExecuteBatch.GetBatches(null));
+            Assert.Empty(ExecuteBatch.GetBatches(""));
+        }
+
+        [Fact]
+        public void BatchesOfScriptWithoutGoIsOneBatch()
+        {
+            var batches = ExecuteBatch.GetBatches("update foo set bar = 1").ToList();
+            Assert.Single(batches);
+            Assert.Equal("update foo set bar = 1\r\n", batches[0]);
+        }
+
+        [Fact]
+        public void BatchesAreSplitOnGoIgnoringCase()
+        {
+            var batches = ExecuteBatch.GetBatches("select 1\nGO\nselect 2\ngo\nselect 3").ToList();
+            Assert.Equal(["select 1\r\n", "select 2\r\n", "select 3\r\n"], batches);
+        }
+
+        [Fact]
+        public void BatchesDoNotIncludeEmptyTail()
+        {
+            var batches = ExecuteBatch.GetBatches("select 1\nGO").ToList();
+            Assert.Single(batches);
+        }
+
+        [Fact]
         public async Task ExecuteBatchNeedsTheConnection()
         {
             await Assert.ThrowsAnyAsync<Exception>(async () => await EvaluateAsync(@"mssql.connect:foo

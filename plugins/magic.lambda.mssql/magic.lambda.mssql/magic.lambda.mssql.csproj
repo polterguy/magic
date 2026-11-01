@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="magic.lambda.mssql.tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\magic.data.common\magic.data.common\magic.data.common.csproj" />
   </ItemGroup>
 

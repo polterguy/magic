@@ -62,7 +62,7 @@ namespace magic.lambda.mssql
 
         #region [ -- Private helper methods -- ]
 
-        static IEnumerable<string> GetBatches(string sql)
+        internal static IEnumerable<string> GetBatches(string sql)
         {
             if (string.IsNullOrEmpty(sql))
                 yield break; // Nothing to do here ...
