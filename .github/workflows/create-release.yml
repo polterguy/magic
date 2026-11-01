@@ -217,4 +217,57 @@ jobs:
       - name: Publish server to MCP Registry
         run: ./mcp-publisher publish
 
+  # ==========================
+  # Signs the three images and attaches a software bill of materials (SBOM) to each.
+  # Runs AFTER the images are pushed, as a job of its own, so a problem with signing is reported without stopping
+  # the images, the zips or the MCP registry entry from being published.
+  #
+  # Signing is keyless: the signature is made with a short-lived certificate tied to the identity of this workflow,
+  # through OIDC, and is recorded in the public Sigstore transparency log, so there is no key to store or to rotate.
+  # Anyone can check an image with cosign, see SECURITY.md.
+  # ==========================
+  sign:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write # Lets the job ask for its signing certificate, which is what makes the signing keyless
 
+    steps:
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Install syft
+        id: syft
+        uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+
+      # The signatures and the SBOMs are stored in the registry next to the images, so the job has to be allowed to push.
+      - name: Login to DockerHub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      # Always by digest, since a tag can be moved, and the digest of the tag is what was just pushed.
+      - name: Sign the images and attach their SBOMs
+        env:
+          SYFT: ${{ steps.syft.outputs.cmd }}
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          mkdir sboms
+          for IMAGE in magic-backend magic-frontend magic-aio; do
+            REF=servergardens/$IMAGE
+            DIGEST=$(docker buildx imagetools inspect "$REF:$VERSION" --format '{{.Manifest.Digest}}')
+            echo "Signing $REF@$DIGEST"
+            cosign sign --yes "$REF@$DIGEST"
+            "$SYFT" "$REF@$DIGEST" -o "cyclonedx-json=sboms/$IMAGE-$VERSION.cdx.json"
+            cosign attest --yes --type cyclonedx --predicate "sboms/$IMAGE-$VERSION.cdx.json" "$REF@$DIGEST"
+          done
+
+      # A copy of the SBOMs that can be read without cosign, kept with the run.
+      - name: Keep the SBOMs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sboms
+          path: sboms/*.cdx.json

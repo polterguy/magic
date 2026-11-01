@@ -26,6 +26,31 @@ In scope: the Magic Cloud runtime and its plugins, the Hyperlambda sandbox and i
 
 Out of scope: what a user with the `root` role can do by design, such as reading files and running code on their own server, and findings in third-party dependencies that do not affect this project. The state of dependency advisories, including the ones that are suppressed with a reason, is public at [hyperlambda.dev/health](https://hyperlambda.dev/health).
 
+## Verifying a release
+
+From the first release after this was added, the Docker images `servergardens/magic-backend`, `servergardens/magic-frontend`
+and `servergardens/magic-aio` are signed by the release workflow of this repository, and carry a software bill of materials
+(CycloneDX) as a signed attestation. Signing is keyless, so there is no key to trust, only the identity of the workflow,
+recorded in the public [Sigstore](https://www.sigstore.dev/) transparency log.
+
+To check an image with [cosign](https://docs.sigstore.dev/cosign/installation/), use its tag or digest:
+
+```bash
+cosign verify servergardens/magic-aio:v24.2.3 \
+  --certificate-identity-regexp "https://github.com/polterguy/magic/.github/workflows/create-release.yml@.*" \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
+To read its software bill of materials:
+
+```bash
+cosign verify-attestation servergardens/magic-aio:v24.2.3 --type cyclonedx \
+  --certificate-identity-regexp "https://github.com/polterguy/magic/.github/workflows/create-release.yml@.*" \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
+Releases before this was added are not signed.
+
 ## Good-faith research
 
 If you act in good faith, stay within your own installation or a test account, and give me reasonable time to fix a problem before you disclose it, I will not pursue any action against you.
