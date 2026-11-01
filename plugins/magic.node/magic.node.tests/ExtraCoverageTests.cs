@@ -33,7 +33,9 @@ namespace magic.node.tests
         [Fact]
         public void SortWithoutChildrenDoesNothing()
         {
-            new Node("root").Sort((x, y) => 0);
+            var node = new Node("root");
+            node.Sort((x, y) => 0);
+            Assert.Empty(node.Children);
         }
 
         [Fact]
@@ -53,7 +55,9 @@ namespace magic.node.tests
         [Fact]
         public void MaxWithoutChildrenDoesNothing()
         {
-            new Node("root").Max(1);
+            var node = new Node("root");
+            node.Max(1);
+            Assert.Empty(node.Children);
         }
 
         [Theory]
