@@ -16,6 +16,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Http;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Moq;
 using Xunit;
 using magic.node;
@@ -540,5 +547,168 @@ namespace magic.library.tests
             parent = parent.Substring(0, parent.LastIndexOf('/')) + "/";
             Assert.Equal(parent + "foo/bar.txt", resolver.RuntimePath("/foo\\bar.txt"));
         }
+
+        [Fact]
+        public void EveryWhitelistComparerIsUsable()
+        {
+            using var provider = Build(Configuration(new() { ["magic:sockets:url"] = "/sockets" }));
+            using var scope = provider.CreateScope();
+            var comparers = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => !x.IsDynamic && !x.FullName.StartsWith("Microsoft", StringComparison.Ordinal) && !x.FullName.StartsWith("System", StringComparison.Ordinal))
+                .SelectMany(x => x.GetTypes())
+                .Where(x => typeof(IWhitelistComparer).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
+                .ToList();
+            Assert.True(comparers.Count >= 20, "Expected the slots with a whitelist comparer, found " + comparers.Count);
+            foreach (var type in comparers)
+            {
+                var comparer = Assert.IsAssignableFrom<IWhitelistComparer>(scope.ServiceProvider.GetService(type)).Comparer;
+                Assert.NotNull(comparer);
+                Assert.True(comparer("/foo/bar", "/foo/bar"), type.Name + " does not match identical values");
+                Assert.False(comparer("/foo/bar", "/other/place"), type.Name + " matches different values");
+            }
+        }
+
+        #region [ -- Certificate validation of the HTTP client -- ]
+
+        static SocketsHttpHandler PrimaryHandler(ServiceProvider provider)
+        {
+            var handler = provider.GetRequiredService<IHttpMessageHandlerFactory>().CreateHandler();
+            while (handler is DelegatingHandler delegating)
+            {
+                handler = delegating.InnerHandler;
+            }
+            return Assert.IsType<SocketsHttpHandler>(handler);
+        }
+
+        static X509Certificate2 SelfSigned()
+        {
+            using var key = RSA.Create(2048);
+            var request = new CertificateRequest("CN=magic-test", key, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            return request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1));
+        }
+
+        static bool Validate(ServiceProvider provider, X509Certificate2 cert, System.Net.Security.SslPolicyErrors errors)
+        {
+            return PrimaryHandler(provider).SslOptions.RemoteCertificateValidationCallback(null, cert, null, errors);
+        }
+
+        [Fact]
+        public void ValidCertificatesAreAlwaysAccepted()
+        {
+            using var provider = Build(Configuration());
+            using var cert = SelfSigned();
+            Assert.True(Validate(provider, cert, System.Net.Security.SslPolicyErrors.None));
+        }
+
+        [Fact]
+        public void UntrustedCertificatesAreRejectedByDefault()
+        {
+            using var provider = Build(Configuration());
+            using var cert = SelfSigned();
+            Assert.False(Validate(provider, cert, System.Net.Security.SslPolicyErrors.RemoteCertificateChainErrors));
+            Assert.False(Validate(provider, null, System.Net.Security.SslPolicyErrors.RemoteCertificateChainErrors));
+        }
+
+        [Fact]
+        public void WildcardTrustAcceptsEverything()
+        {
+            using var provider = Build(Configuration(new() { ["magic:trusted-certs"] = "*" }));
+            using var cert = SelfSigned();
+            Assert.True(Validate(provider, cert, System.Net.Security.SslPolicyErrors.RemoteCertificateChainErrors));
+        }
+
+        [Fact]
+        public void CertificatesCanBeTrustedByTheirHash()
+        {
+            using var cert = SelfSigned();
+            using var other = SelfSigned();
+            using var provider = Build(Configuration(new() { ["magic:trusted-certs"] = "ABCDEF, " + cert.GetCertHashString() }));
+            Assert.True(Validate(provider, cert, System.Net.Security.SslPolicyErrors.RemoteCertificateChainErrors));
+            Assert.False(Validate(provider, other, System.Net.Security.SslPolicyErrors.RemoteCertificateChainErrors));
+        }
+
+        #endregion
+
+        #region [ -- Choosing the executor and reading JWT tokens -- ]
+
+        [Theory]
+        [InlineData("/magic/modules/foo/bar", "HttpApiExecutorAsync")]
+        [InlineData("/index.html", "HttpFileExecutorAsync")]
+        [InlineData("/", "HttpFileExecutorAsync")]
+        public void ExecutorDependsOnWhetherTheUrlIsUnderMagic(string path, string expected)
+        {
+            using var provider = Build(Configuration());
+            using var scope = provider.CreateScope();
+            var accessor = provider.GetRequiredService<IHttpContextAccessor>();
+            accessor.HttpContext = new DefaultHttpContext();
+            accessor.HttpContext.Request.Path = path;
+            Assert.Equal(expected, scope.ServiceProvider.GetRequiredService<IHttpExecutorAsync>().GetType().Name);
+        }
+
+        static async Task<string> Token(ServiceProvider provider, Action<HttpContext> setup)
+        {
+            var options = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerDefaults.AuthenticationScheme);
+            var http = new DefaultHttpContext();
+            http.Request.Host = new HostString("example.com");
+            setup(http);
+            var context = new MessageReceivedContext(http, new AuthenticationScheme(JwtBearerDefaults.AuthenticationScheme, null, typeof(JwtBearerHandler)), options);
+            await options.Events.OnMessageReceived(context);
+            return context.Token;
+        }
+
+        [Fact]
+        public async Task TicketCookieIsUsedWithoutAnOrigin()
+        {
+            using var provider = Build(Configuration());
+            Assert.Equal("abc", await Token(provider, http => http.Request.Headers.Cookie = "ticket=abc"));
+        }
+
+        [Fact]
+        public async Task TicketCookieIsUsedFromTheSameSiteOnly()
+        {
+            using var provider = Build(Configuration());
+            Assert.Equal("abc", await Token(provider, http =>
+            {
+                http.Request.Headers.Cookie = "ticket=abc";
+                http.Request.Headers.Origin = "https://example.com";
+            }));
+            Assert.Null(await Token(provider, http =>
+            {
+                http.Request.Headers.Cookie = "ticket=abc";
+                http.Request.Headers.Origin = "https://evil.test";
+            }));
+        }
+
+        [Fact]
+        public async Task SocketsMayAuthenticateWithAQueryParameterButNothingElseMay()
+        {
+            using var provider = Build(Configuration());
+            Assert.Equal("from-query", await Token(provider, http =>
+            {
+                http.Request.Path = "/sockets";
+                http.Request.QueryString = new QueryString("?access_token=from-query");
+            }));
+            Assert.Null(await Token(provider, http =>
+            {
+                http.Request.Path = "/magic/modules/foo";
+                http.Request.QueryString = new QueryString("?access_token=from-query");
+            }));
+        }
+
+        [Fact]
+        public void JwtOptionsFollowTheConfiguration()
+        {
+            using var provider = Build(Configuration(new() { ["magic:auth:https-only"] = "TRUE" }));
+            var options = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerDefaults.AuthenticationScheme);
+            Assert.True(options.RequireHttpsMetadata);
+            Assert.True(options.SaveToken);
+            var key = Assert.Single(options.TokenValidationParameters.IssuerSigningKeyResolver(null, null, null, null));
+            Assert.IsType<Microsoft.IdentityModel.Tokens.SymmetricSecurityKey>(key);
+
+            using var relaxed = Build(Configuration());
+            Assert.False(relaxed.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerDefaults.AuthenticationScheme).RequireHttpsMetadata);
+        }
+
+        #endregion
     }
 }

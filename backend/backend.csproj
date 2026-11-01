@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\plugins\magic.lambda.python\magic.lambda.python.csproj" />
+    <ProjectReference Include="..\plugins\magic.lambda.python\magic.lambda.python\magic.lambda.python.csproj" />
     <ProjectReference Include="..\plugins\magic.lambda.system\magic.lambda.system\magic.lambda.system.csproj" />
     <ProjectReference Include="..\plugins\magic.library\magic.library\magic.library.csproj" />
   </ItemGroup>

@@ -84,5 +84,45 @@ namespace magic.endpoint.tests
             var ex = Assert.Throws<HyperlambdaException>(() => Signal("server.ip", Request(), x => x.Add(new Node("version", "ipv9"))));
             Assert.Contains("ipv9", ex.Message);
         }
+
+        [Fact]
+        public void VerbIsReturned()
+        {
+            var request = Request();
+            request.Verb = "post";
+            Assert.Equal("post", Signal("request.verb", request).Value);
+        }
+
+        [Fact]
+        public void CookiesAreLookedUpByName()
+        {
+            var request = Request();
+            request.Cookies["session"] = "abc";
+            Assert.Equal("abc", Signal("request.cookies.get", request, x => x.Value = "session").Value);
+            Assert.Null(Signal("request.cookies.get", request, x => x.Value = "missing").Value);
+        }
+
+        [Fact]
+        public void HeadersAreLookedUpByName()
+        {
+            var request = Request();
+            request.Headers["X-Custom"] = "yes";
+            Assert.Equal("yes", Signal("request.headers.get", request, x => x.Value = "X-Custom").Value);
+            Assert.Null(Signal("request.headers.get", request, x => x.Value = "X-Missing").Value);
+        }
+
+        [Fact]
+        public void MimeTypesCanBeAddedAndListed()
+        {
+            var extension = "." + Guid.NewGuid().ToString("N").Substring(0, 8);
+            Signal("mime.add", Request(), x =>
+            {
+                x.Value = extension;
+                x.Add(new Node("", "application/x-magic-test"));
+            });
+            var listed = Signal("mime.list", Request());
+            Assert.Equal("application/x-magic-test", listed.Children.First(x => x.Name == extension).Value);
+            Assert.Contains(listed.Children, x => x.Name == "json");
+        }
     }
 }

@@ -257,6 +257,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.git.tests", "p
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.git", "plugins\magic.lambda.git\magic.lambda.git\magic.lambda.git.csproj", "{4AAE59CD-98AD-41D8-A2FA-8AE405DAFA22}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "magic.lambda.python", "magic.lambda.python", "{28E8873D-ECBA-4308-9C12-43C6D8EF7652}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.python.tests", "plugins\magic.lambda.python\magic.lambda.python.tests\magic.lambda.python.tests.csproj", "{9F13E857-92FB-45CC-B790-93807118CC5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "magic.lambda.python", "plugins\magic.lambda.python\magic.lambda.python\magic.lambda.python.csproj", "{FD33112A-B481-4ABC-B70D-B0B933B8D55A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -606,6 +612,14 @@ Global
 		{9B8FAB1F-F050-44DE-8F38-9A9F3AA81ADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B8FAB1F-F050-44DE-8F38-9A9F3AA81ADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B8FAB1F-F050-44DE-8F38-9A9F3AA81ADB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD33112A-B481-4ABC-B70D-B0B933B8D55A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD33112A-B481-4ABC-B70D-B0B933B8D55A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD33112A-B481-4ABC-B70D-B0B933B8D55A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD33112A-B481-4ABC-B70D-B0B933B8D55A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F13E857-92FB-45CC-B790-93807118CC5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F13E857-92FB-45CC-B790-93807118CC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F13E857-92FB-45CC-B790-93807118CC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F13E857-92FB-45CC-B790-93807118CC5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{00511FC9-4A33-49B8-95D7-10E376DA25CF} = {A3694049-F12E-4E38-A3C2-4001F0C6EC04}
@@ -733,5 +747,8 @@ Global
 		{6D53E5D3-4F23-4CCD-AEF6-3D693D7E2A0C} = {A3694049-F12E-4E38-A3C2-4001F0C6EC04}
 		{4AAE59CD-98AD-41D8-A2FA-8AE405DAFA22} = {6D53E5D3-4F23-4CCD-AEF6-3D693D7E2A0C}
 		{9B8FAB1F-F050-44DE-8F38-9A9F3AA81ADB} = {6D53E5D3-4F23-4CCD-AEF6-3D693D7E2A0C}
+		{28E8873D-ECBA-4308-9C12-43C6D8EF7652} = {A3694049-F12E-4E38-A3C2-4001F0C6EC04}
+		{FD33112A-B481-4ABC-B70D-B0B933B8D55A} = {28E8873D-ECBA-4308-9C12-43C6D8EF7652}
+		{9F13E857-92FB-45CC-B790-93807118CC5F} = {28E8873D-ECBA-4308-9C12-43C6D8EF7652}
 	EndGlobalSection
 EndGlobal

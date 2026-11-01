@@ -231,6 +231,38 @@ namespace magic.lambda.auth.tests
             Assert.Contains("not among the trusted issuers", ex.Message);
         }
 
+        static async Task<HyperlambdaException> VerifyWith(params Node[] extra)
+        {
+            var token = Run("auth.ticket.create", new Node("", null, [new Node("username", "foo")])).Get<string>();
+            var args = new Node("auth.token.verify", null, [new Node("token", token)]);
+            args.AddRange(extra);
+            return await Assert.ThrowsAsync<HyperlambdaException>(() => Common.Initialize().SignalAsync("auth.token.verify", args));
+        }
+
+        static Node List(string name, params string[] values) => new Node(name, null, values.Select(x => new Node(".", x)));
+
+        [Fact]
+        public async Task VerifyTokenAcceptsIssuersAsAList()
+        {
+            var ex = await VerifyWith(List("issuers", "https://one.example", "https://two.example"));
+            Assert.True(ex.Status == 401, ex.Message);
+            Assert.Contains("not among the trusted issuers", ex.Message);
+        }
+
+        [Fact]
+        public async Task VerifyTokenIgnoresEmptyIssuers()
+        {
+            var ex = await VerifyWith(new Node("issuer", ""), List("issuers", ""));
+            Assert.Contains("trusted [issuer]", ex.Message);
+        }
+
+        [Fact]
+        public async Task VerifyTokenAcceptsAudiences()
+        {
+            var ex = await VerifyWith(new Node("issuer", "https://one.example"), new Node("audience", "magic"), List("audiences", "one", "two"));
+            Assert.True(ex.Status == 401, ex.Message);
+        }
+
         #endregion
     }
 }
