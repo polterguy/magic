@@ -14,6 +14,8 @@ namespace magic.lambda.system.tests
 {
     public class MiscTests
     {
+        static readonly string[] StepChildren = ["slot", "path", "elapsed", "lambda"];
+
         readonly Runtime _runtime = new Runtime();
 
         [Fact]
@@ -76,7 +78,7 @@ namespace magic.lambda.system.tests
             await _runtime.Signaler.SignalAsync("eval", lambda);
             foreach (var step in lambda.Children.First().Children)
             {
-                Assert.Equal(new[] { "slot", "path", "elapsed", "lambda" }, step.Children.Select(x => x.Name).ToArray());
+                Assert.Equal(StepChildren, step.Children.Select(x => x.Name).ToArray());
             }
         }
     }
