@@ -1,7 +1,20 @@
 {
- "generated": "2026-11-01T13:26:03Z",
- "commit": "10f5408f703c76cd37073623e1e37e877cff4f0a",
- "open": {},
- "suppressed": {},
+ "generated": "2026-11-01T14:29:44Z",
+ "commit": "78ac470826675c49526a93fd45a8cf028bfaf8ba",
+ "open": {
+  "critical": 0,
+  "high": 0,
+  "moderate": 0,
+  "low": 0
+ },
+ "open-count": 0,
+ "suppressed": {
+  "critical": 0,
+  "high": 0,
+  "moderate": 0,
+  "low": 0
+ },
+ "suppressed-count": 0,
+ "findings-count": 0,
  "findings": []
 }
