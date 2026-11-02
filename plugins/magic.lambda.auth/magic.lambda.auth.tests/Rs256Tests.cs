@@ -219,6 +219,15 @@ namespace magic.lambda.auth.tests
         }
 
         [Fact]
+        public void Jwks_UnknownArgument_Throws()
+        {
+            // A key passed as [private-key] used to be silently ignored.
+            var args = new Node("auth.jwks", null, [new Node("public-key", _publicKey), new Node("private-key", _privateKey)]);
+            var ex = Assert.Throws<HyperlambdaException>(() => Common.Initialize().Signal("auth.jwks", args));
+            Assert.Contains("[private-key]", ex.Message);
+        }
+
+        [Fact]
         public void Jwks_DuplicateKeys_ReturnedOnce()
         {
             // The same key pair given as public and private key has the same kid.

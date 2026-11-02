@@ -284,7 +284,7 @@ auth.jwks
 ```
 
 The above returns a **[keys]** node with one child per unique key, having **[kty]**, **[use]**, **[alg]**, **[kid]**,
-**[n]** and **[e]**. If you pass in a private key, only its public half is returned. Notice the following.
+**[n]** and **[e]**. If you pass in a private key, only its public half is returned. Any argument other than **[public-key]** throws, so pass a private key as the value of **[public-key]**. Notice the following.
 
 * Without a **[private-key]** or **[public-key]** everything works exactly as before, using HS256 and the auth secret
 * If you pass in **[private-key]** or **[public-key]** and it has no value, for instance because your expression found no key, the slot throws instead of falling back to the auth secret
