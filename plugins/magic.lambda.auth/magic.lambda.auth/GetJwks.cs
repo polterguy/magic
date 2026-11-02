@@ -29,6 +29,11 @@ namespace magic.lambda.auth
         /// <param name="input">Arguments to your signal.</param>
         public void Signal(ISignaler signaler, Node input)
         {
+            // Throwing on unknown arguments, since a silently ignored key would be missing from the key set.
+            var unknown = input.Children.FirstOrDefault(x => x.Name != "public-key");
+            if (unknown != null)
+                throw new HyperlambdaException($"[auth.jwks] does not understand [{unknown.Name}], pass keys as [public-key], a private key as its value is accepted too");
+
             // Notice, a private key is accepted too, but only its public half is ever returned.
             var jwks = input.Children
                 .Where(x => x.Name == "public-key")
