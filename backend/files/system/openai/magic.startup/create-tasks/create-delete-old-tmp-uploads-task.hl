@@ -1,0 +1,81 @@
+
+/*
+ * Creates a scheduled task that periodically deletes chat upload files from
+ * /etc/www/tmp/ that are older than 24 hours.
+ *
+ * Files uploaded through the chat endpoint are only needed for the duration of
+ * the request that created them (the model fetches them while answering), yet
+ * they are saved under a publicly served folder and were previously never
+ * cleaned up, so they accumulated on a public URL indefinitely.
+ *
+ * Each upload filename is prefixed with its creation time as a Unix millisecond
+ * timestamp ("{unix-ms}-{random}.{ext}"), which lets this task delete only the
+ * files that are older than the retention window.
+ */
+try
+
+   // Deleting old task if it exists, so we can (re)create it idempotently.
+   tasks.list:delete-old-tmp-uploads
+   if
+      exists:x:@tasks.list/*
+      .lambda
+         tasks.delete:x:@tasks.list/0/*/id
+
+   // Creating task that periodically deletes old upload files.
+   tasks.create:delete-old-tmp-uploads
+      description:Periodically deletes chat upload files older than 24 hours
+      repeats:6.hours
+      .lambda
+
+         // Only doing anything if the upload folder actually exists.
+         if
+            io.folder.exists:/etc/www/tmp/
+            .lambda
+
+               // Cutoff is "now minus 24 hours", in Unix milliseconds.
+               .cutoff
+               set-value:x:@.cutoff
+                  math.subtract
+                     date.unix
+                     .:long:86400000
+
+               // Counter for how many files we delete.
+               .deleted:int:0
+
+               // Looping through every file in the upload folder.
+               io.file.list:/etc/www/tmp/
+               for-each:x:@io.file.list/*
+
+                  /*
+                   * Stripping the "/etc/www/tmp/" prefix (13 characters) to get the
+                   * bare filename, then taking the leading Unix millisecond timestamp.
+                   */
+                  .name
+                  set-value:x:@.name
+                     strings.substring:x:@.dp/#
+                        .:13
+                  strings.split:x:@.name
+                     .:-
+
+                  /*
+                   * Guarding against any file that does not follow the naming
+                   * convention, so a malformed name never aborts the sweep.
+                   */
+                  try
+                     .ts
+                     set-value:x:@.ts
+                        convert:x:@strings.split/0
+                           type:long
+                     if
+                        lt:x:@.ts
+                           get-value:x:@.cutoff
+                        .lambda
+                           io.file.delete:x:@.dp/#
+                           math.increment:x:@.deleted
+                  .catch
+                     log.info:Skipped a file in /etc/www/tmp/ that did not match the upload naming convention
+                        file:x:@.dp/#
+
+               // Logging how many files the sweep deleted.
+               log.info:Task to cleanup old chat upload files executed successfully
+                  deleted:x:@.deleted
