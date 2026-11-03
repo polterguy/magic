@@ -129,5 +129,60 @@ csv2lambda:x:@lambda2csv
             Assert.Null(result.Children.Last().Children.Skip(1).First().Children.Skip(1).First().Value);
             Assert.Contains("foo,", result.Children.Skip(1).First().GetEx<string>());
         }
+
+        [Fact]
+        public void FormulaInjectionNeutralisedByDefault()
+        {
+            var result = Common.Evaluate(@"
+.data
+   .
+      name:Thomas
+      note:=1+1
+lambda2csv:x:-/*
+");
+            var csv = result.Children.First(x => x.Name == "lambda2csv").GetEx<string>();
+
+            // Formula-leading cell must be prefixed with a single quote so spreadsheets treat it as text.
+            Assert.Contains("\"'=1+1\"", csv);
+        }
+
+        [Fact]
+        public void FormulaInjectionCanBeDisabled()
+        {
+            var result = Common.Evaluate(@"
+.data
+   .
+      name:Thomas
+      note:=1+1
+lambda2csv:x:-/*
+   escape-formulas:bool:false
+");
+            var csv = result.Children.First(x => x.Name == "lambda2csv").GetEx<string>();
+
+            // With the opt-out the value is left intact (still CSV-quoted, but not neutralised).
+            Assert.Contains("\"=1+1\"", csv);
+            Assert.DoesNotContain("'=1+1", csv);
+        }
+
+        [Fact]
+        public void HeaderWithSpecialCharsIsQuotedAndRoundTrips()
+        {
+            var result = Common.Evaluate(@"
+.data
+   .
+      ""a,b"":Thomas
+lambda2csv:x:-/*
+csv2lambda:x:@lambda2csv
+");
+            var csv = result.Children.First(x => x.Name == "lambda2csv").GetEx<string>();
+
+            // Header containing a comma must be quoted so it does not corrupt CSV structure.
+            Assert.Contains("\"a,b\"", csv);
+
+            // And it must survive a round-trip back through csv2lambda.
+            var row = result.Children.Last().Children.First();
+            Assert.Equal("a,b", row.Children.First().Name);
+            Assert.Equal("Thomas", row.Children.First().Value);
+        }
     }
 }

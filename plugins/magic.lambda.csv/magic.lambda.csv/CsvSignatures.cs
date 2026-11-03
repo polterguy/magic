@@ -107,6 +107,19 @@ namespace magic.lambda.csv.signatures
         public override IEnumerable<SlotChild> Children => new[]
         {
             NullValue(),
+            new SlotChild
+            {
+                Name = "escape-formulas",
+                Type = "bool",
+                Kind = "escape-formulas",
+                Description = "Neutralise spreadsheet formula-injection by prefixing cells and headers that begin with a formula character; defaults to true",
+                Required = false,
+                DefaultValue = "true",
+                Mode = SlotChildMode.ValueOrExpression,
+                Cardinality = SlotChildCardinality.ZeroOrOne,
+                Role = SlotChildRole.Option,
+                Projection = SlotChildProjection.Value,
+            },
         };
     }
 }

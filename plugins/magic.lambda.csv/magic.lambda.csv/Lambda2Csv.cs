@@ -44,6 +44,9 @@ namespace magic.lambda.csv
             // Retrieving nullable argument.
             string nullValue = GetNullableValue(input);
 
+            // Checking if caller wants to neutralise spreadsheet formula-injection (defaults to true).
+            var escapeFormulas = GetEscapeFormulas(input);
+
             // Looping through each node we should transform to a CSV record.
             var first = true;
             foreach (var idx in input.Evaluate())
@@ -53,11 +56,11 @@ namespace magic.lambda.csv
                 {
                     // Creating CSV headers.
                     first = false;
-                    CreateHeaders(idx, builder, types);
+                    CreateHeaders(idx, builder, types, escapeFormulas);
                 }
 
                 // Looping through each child node of currently iterated record, to create our cells.
-                CreateRecord(idx, builder, nullValue, types);
+                CreateRecord(idx, builder, nullValue, types, escapeFormulas);
             }
 
             // Returning CSV content to caller.
@@ -74,7 +77,8 @@ namespace magic.lambda.csv
             Node current,
             StringBuilder builder,
             string nullValue,
-            List<Tuple<string, string>> types)
+            List<Tuple<string, string>> types,
+            bool escapeFormulas)
         {
             // Looping through each child node of currently iterated record, to create our cells.
             var firstValue = true;
@@ -95,7 +99,7 @@ namespace magic.lambda.csv
                 else
                 {
                     if (value is string)
-                        builder.Append("\"" + idxValue.GetEx<string>().ToString().Replace("\"", "\"\"") + "\"");
+                        builder.Append(EscapeString(idxValue.GetEx<string>(), escapeFormulas));
                     else
                         builder.Append(Converter.ToString(value).Item2);
                     if (types[index].Item2 == null)
@@ -112,7 +116,8 @@ namespace magic.lambda.csv
         static void CreateHeaders(
             Node current,
             StringBuilder builder,
-            List<Tuple<string, string>> types)
+            List<Tuple<string, string>> types,
+            bool escapeFormulas)
         {
             var firstHeader = true;
             foreach (var idxHeader in current.Children.Select(x => x.Name))
@@ -121,7 +126,7 @@ namespace magic.lambda.csv
                     firstHeader = false;
                 else
                     builder.Append(',');
-                builder.Append(idxHeader);
+                builder.Append(EscapeHeader(idxHeader, escapeFormulas));
                 types.Add(new Tuple<string, string>(idxHeader, null));
             }
             builder.Append("\r\n");
@@ -137,6 +142,56 @@ namespace magic.lambda.csv
             if (nullArgument != null)
                 nullValue = nullArgument.GetEx<string>();
             return nullValue;
+        }
+
+        /*
+         * Helper method to determine whether spreadsheet formula-injection should be
+         * neutralised. Defaults to true, and can be turned off with [escape-formulas]
+         * for pure data-interchange scenarios where lossless round-tripping matters.
+         */
+        static bool GetEscapeFormulas(Node input)
+        {
+            var argument = input.Children.FirstOrDefault(x => x.Name == "escape-formulas");
+            if (argument != null)
+                return argument.GetEx<bool>();
+            return true;
+        }
+
+        /*
+         * CSV-quotes a string cell, doubling embedded quotes, and optionally neutralises
+         * spreadsheet formula-injection first by prefixing a leading formula character
+         * with a single quote so Excel/Sheets/LibreOffice treat the cell as literal text.
+         */
+        static string EscapeString(string value, bool escapeFormulas)
+        {
+            if (escapeFormulas)
+                value = NeutraliseFormula(value);
+            return "\"" + value.Replace("\"", "\"\"") + "\"";
+        }
+
+        /*
+         * Escapes a header (column name). Formula-injection is neutralised the same way
+         * as cells, and the field is quoted only when it contains a character that would
+         * otherwise break the CSV structure (comma, quote, CR or LF).
+         */
+        static string EscapeHeader(string header, bool escapeFormulas)
+        {
+            if (escapeFormulas)
+                header = NeutraliseFormula(header);
+            if (header.IndexOfAny(new[] { ',', '"', '\r', '\n' }) != -1)
+                return "\"" + header.Replace("\"", "\"\"") + "\"";
+            return header;
+        }
+
+        /*
+         * Prefixes a leading formula character with a single quote so spreadsheet
+         * applications do not evaluate the value as a formula when the CSV is opened.
+         */
+        static string NeutraliseFormula(string value)
+        {
+            if (!string.IsNullOrEmpty(value) && "=+-@\t\r".IndexOf(value[0]) != -1)
+                return "'" + value;
+            return value;
         }
 
         #endregion
