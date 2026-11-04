@@ -2,7 +2,10 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -24,7 +27,7 @@ namespace magic.lambda.change
         ReturnsDescription = "Resolves to the sorted nodes selected by the expression as child nodes",
         PreservesInputShape = true,
         SignatureType = typeof(global::magic.lambda.signatures.SortSignature))]
-    public class Sort : ISlot
+    public class Sort : ISlotAsync
     {
         /// <summary>
         /// Implementation of signal
@@ -32,14 +35,14 @@ namespace magic.lambda.change
         /// <param name="signaler">Signaler used to signal</param>
         /// <param name="input">Parameters passed from signaler</param>
         /// <returns>An awaitable task.</returns>
-        public void Signal(ISignaler signaler, Node input)
+        public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Making sure we can reset back to original nodes after every single iteration.
             var old = input.Children.Select(x => x.Clone()).ToList();
 
             // Sorting nodes.
             var list = input.Evaluate().Select(x => x.Clone()).ToList();
-            list.Sort((lhs, rhs) =>
+            list = await MergeSortAsync(list, async (lhs, rhs) =>
             {
                 // Inserting "data pointers".
                 var result = new Node(".result");
@@ -48,8 +51,7 @@ namespace magic.lambda.change
                 input.Insert(2, new Node(".rhs", rhs));
 
                 // Evaluating "body" lambda of [for-each]
-                // Notice, List.Sort needs a synchronous comparer, so we wait for eval ourselves instead of hopping to another thread.
-                signaler.SignalAsync("eval", input, skipWhitelist: true).GetAwaiter().GetResult();
+                await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
                 // Resetting back to original nodes.
                 input.Clear();
@@ -68,5 +70,31 @@ namespace magic.lambda.change
             // Returning result to caller.
             input.AddRange(list);
         }
+
+        #region [ -- Private helper methods -- ]
+
+        /*
+         * Stable merge sort, since List.Sort needs a synchronous comparer and the comparer here is a lambda evaluated asynchronously.
+         */
+        static async Task<List<Node>> MergeSortAsync(List<Node> items, Func<Node, Node, Task<int>> compare)
+        {
+            if (items.Count < 2)
+                return items;
+
+            var middle = items.Count / 2;
+            var left = await MergeSortAsync(items.GetRange(0, middle), compare);
+            var right = await MergeSortAsync(items.GetRange(middle, items.Count - middle), compare);
+
+            var result = new List<Node>(items.Count);
+            int l = 0, r = 0;
+            while (l < left.Count && r < right.Count)
+                result.Add(await compare(left[l], right[r]) <= 0 ? left[l++] : right[r++]);
+
+            result.AddRange(left.GetRange(l, left.Count - l));
+            result.AddRange(right.GetRange(r, right.Count - r));
+            return result;
+        }
+
+        #endregion
     }
 }

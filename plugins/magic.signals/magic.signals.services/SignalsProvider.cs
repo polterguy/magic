@@ -70,8 +70,19 @@ namespace magic.signals.services
         public object GetStatelessSlot(string name)
         {
             if (_stateless.TryGetValue(name, out var slot))
-                return slot.Instance ??= Activator.CreateInstance(slot.Type);
+                return slot.Resolve().Instance;
             return null;
+        }
+
+        /// <inheritdoc />
+        public (ISlot Sync, ISlotAsync Async) GetSharedSlot(string name)
+        {
+            if (_stateless.TryGetValue(name, out var slot))
+            {
+                var resolved = slot.Resolve();
+                return (resolved.Sync, resolved.Async);
+            }
+            return default;
         }
 
         /// <summary>
@@ -150,8 +161,24 @@ namespace magic.signals.services
         {
             public Type Type { get; init; }
 
-            public object Instance { get; set; }
+            Shared _shared;
+
+            /*
+             * Creates the shared instance the first time it is needed, and checks which slot interfaces it implements, once.
+             * Published as one object, so a concurrent caller never sees the instance without its interfaces.
+             */
+            public Shared Resolve()
+            {
+                if (_shared == null)
+                {
+                    var instance = Activator.CreateInstance(Type);
+                    _shared = new Shared(instance, instance as ISlot, instance as ISlotAsync);
+                }
+                return _shared;
+            }
         }
+
+        sealed record Shared(object Instance, ISlot Sync, ISlotAsync Async);
 
         #endregion
     }

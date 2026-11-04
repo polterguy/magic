@@ -51,13 +51,13 @@ namespace magic.signals.services
         public void Signal(string name, Node input, Action functor = null, bool skipWhitelist = false)
         {
             // Retrieves service for slot.
-            object svc = GetService(name, input, skipWhitelist);
+            var (slot, slotAsync) = GetService(name, input, skipWhitelist);
 
             // Invoking slot while prioritizing synchronized implementation.
-            if (svc is ISlot slot)
+            if (slot != null)
                 slot.Signal(this, input);
-            else if (svc is ISlotAsync slotAsync)
-                Task.Run(() => slotAsync.SignalAsync(this, input)).GetAwaiter().GetResult();
+            else if (slotAsync != null)
+                SignalBlocking(slotAsync, input);
             else
                 throw new HyperlambdaException($"[{name}] type does not implement ISlot or ISlotAsync interface");
 
@@ -78,12 +78,12 @@ namespace magic.signals.services
         public async Task SignalAsync(string name, Node input, Action functor = null, bool skipWhitelist = false)
         {
             // Retrieves service for slot.
-            object svc = GetService(name, input, skipWhitelist);
+            var (slot, slotAsync) = GetService(name, input, skipWhitelist);
 
             // Invoking slot while prioritizing async implementation.
-            if (svc is ISlotAsync slotAsync)
+            if (slotAsync != null)
                 await slotAsync.SignalAsync(this, input);
-            else if (svc is ISlot slot)
+            else if (slot != null)
                 slot.Signal(this, input);
             else
                 throw new HyperlambdaException($"[{name}] type does not implement ISlot or ISlotAsync interface");
@@ -215,7 +215,7 @@ namespace magic.signals.services
         /*
          * Returns service for specified slot.
          */
-        private object GetService(string name, Node input, bool skipWhitelist)
+        private (ISlot Sync, ISlotAsync Async) GetService(string name, Node input, bool skipWhitelist)
         {
             /*
              * A whitelist restricts the vocabulary a user's Hyperlambda may reference, and not how
@@ -232,31 +232,41 @@ namespace magic.signals.services
              * comparison for the slots not caring.
              */
             if (whitelist != null)
-                VerifyWhitelisted(whitelist, svc, name, input);
+                VerifyWhitelisted(whitelist, (object)svc.Sync ?? svc.Async, name, input);
 
             return svc;
         }
 
         /*
+         * Invokes an async slot from synchronous code, blocking the calling thread until it is done.
+         *
+         * Notice, no hop to another thread, since ASP.NET Core has no synchronization context to deadlock on, and
+         * a hop would hold a second thread for the entire duration of the call.
+         */
+        private void SignalBlocking(ISlotAsync slot, Node input)
+        {
+            slot.SignalAsync(this, input).GetAwaiter().GetResult();
+        }
+
+        /*
          * Returns the shared instance of a stateless slot, or creates a new instance of any other slot.
          */
-        private object CreateService(string name)
+        private (ISlot Sync, ISlotAsync Async) CreateService(string name)
         {
             // Slots holding no state are shared, all others are created for each invocation.
-            var svc = _signals.GetStatelessSlot(name);
-            if (svc != null)
-                return svc;
+            var shared = _signals.GetSharedSlot(name);
+            if (shared.Sync != null || shared.Async != null)
+                return shared;
 
             var type = _signals.GetSlot(name) ?? throw new HyperlambdaException($"[{name}] slot does not exist");
-            svc = _provider.GetService(type);
+            var svc = _provider.GetService(type);
             if (svc != null)
-                return svc;
+                return (svc as ISlot, svc as ISlotAsync);
 
             // Dynamically compiled and loaded assemblies cannot be registered in DI container.
             var ctor = type.GetConstructor([]);
-            if (ctor != null)
-                return Activator.CreateInstance(type);
-            return Activator.CreateInstance(type, [_provider]);
+            svc = ctor != null ? Activator.CreateInstance(type) : Activator.CreateInstance(type, [_provider]);
+            return (svc as ISlot, svc as ISlotAsync);
         }
 
         private static void VerifyWhitelisted(List<Node> whitelist, object svc, string name, Node input)
@@ -271,7 +281,7 @@ namespace magic.signals.services
                     return true;
                 return comparer(x.Get<string>(), input.GetEx<string>());
             }))
-                throw new HyperlambdaException($"Slot [{name}] doesn't exist in currrent scope, or argument `{input.GetEx<string>()}` not allowed");
+                throw new HyperlambdaException($"Slot [{name}] doesn't exist in current scope, or argument `{input.GetEx<string>()}` not allowed");
         }
 
         #endregion

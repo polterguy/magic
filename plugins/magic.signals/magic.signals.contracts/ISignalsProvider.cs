@@ -29,6 +29,18 @@ namespace magic.signals.contracts
         object GetStatelessSlot(string name) => null;
 
         /// <summary>
+        /// Same as <see cref="GetStatelessSlot"/>, but with the shared instance already resolved to the slot interfaces
+        /// it implements, saving the caller from type-checking it for each invocation.
+        /// </summary>
+        /// <param name="name">Slot name for the instance to return.</param>
+        /// <returns>The shared instance as each interface it implements, or both null if a new instance must be created.</returns>
+        (ISlot Sync, ISlotAsync Async) GetSharedSlot(string name)
+        {
+            var instance = GetStatelessSlot(name);
+            return (instance as ISlot, instance as ISlotAsync);
+        }
+
+        /// <summary>
         /// Returns all keys, implying names registered for your signals
         /// implementation.
         /// </summary>

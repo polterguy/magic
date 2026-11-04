@@ -62,29 +62,29 @@ namespace magic.lambda.http.services
         };
 
         // Lambda to request object converters, to semantically transform from a lambda object to an object value of some sort.
-        readonly static Dictionary<string, Func<ISignaler, Dictionary<string, string>, Node, string, object>> _requestTransformers =
-            new Dictionary<string, Func<ISignaler, Dictionary<string, string>, Node, string, object>>
+        readonly static Dictionary<string, Func<ISignaler, Dictionary<string, string>, Node, string, Task<object>>> _requestTransformers =
+            new Dictionary<string, Func<ISignaler, Dictionary<string, string>, Node, string, Task<object>>>
             {
                 {
-                    ApplicationJson, RequestTransformers.TransformToJson
+                    ApplicationJson, Sync(RequestTransformers.TransformToJson)
                 },
                 {
-                    "application/x-json", RequestTransformers.TransformToJson
+                    "application/x-json", Sync(RequestTransformers.TransformToJson)
                 },
                 {
-                    "application/hyperlambda", RequestTransformers.TransformToHyperlambda
+                    "application/hyperlambda", Sync(RequestTransformers.TransformToHyperlambda)
                 },
                 {
-                    "application/x-hyperlambda", RequestTransformers.TransformToHyperlambda
+                    "application/x-hyperlambda", Sync(RequestTransformers.TransformToHyperlambda)
                 },
                 {
-                    "application/www-form-urlencoded", RequestTransformers.TransformToUrlEncoded
+                    "application/www-form-urlencoded", Sync(RequestTransformers.TransformToUrlEncoded)
                 },
                 {
-                    "application/x-www-form-urlencoded", RequestTransformers.TransformToUrlEncoded
+                    "application/x-www-form-urlencoded", Sync(RequestTransformers.TransformToUrlEncoded)
                 },
                 {
-                    "multipart/form-data", RequestTransformers.MultipartFormData
+                    "multipart/form-data", RequestTransformers.MultipartFormDataAsync
                 },
             };
         
@@ -347,6 +347,19 @@ namespace magic.lambda.http.services
             string contentType,
             Func<ISignaler, Dictionary<string, string>, Node, string, object> functor)
         {
+            _requestTransformers[contentType] = Sync(functor);
+        }
+
+        /// <summary>
+        /// Registers a semantic request Content-Type handler allowing you to transform from a lambda object
+        /// to some sort of request content object automatically, for handlers that need to await other slots.
+        /// </summary>
+        /// <param name="contentType">Content-Type to handle</param>
+        /// <param name="functor">Function to create a request object for Content-Type</param>
+        public static void AddRequestHandler(
+            string contentType,
+            Func<ISignaler, Dictionary<string, string>, Node, string, Task<object>> functor)
+        {
             _requestTransformers[contentType] = functor;
         }
 
@@ -364,6 +377,15 @@ namespace magic.lambda.http.services
         }
 
         #region [ -- Private helper methods -- ]
+
+        /*
+         * Adapts a request transformer that has nothing to await.
+         */
+        static Func<ISignaler, Dictionary<string, string>, Node, string, Task<object>> Sync(
+            Func<ISignaler, Dictionary<string, string>, Node, string, object> functor)
+        {
+            return (signaler, headers, payload, slotName) => Task.FromResult(functor(signaler, headers, payload, slotName));
+        }
 
         /*
          * Adds default HTTP request headers.
@@ -509,7 +531,7 @@ namespace magic.lambda.http.services
 
             // Prioritising [payload] argument.
             var content = payloadNode != null ?
-                GetRequestContentContent(signaler, input, payloadNode, headers) :
+                await GetRequestContentContentAsync(signaler, input, payloadNode, headers) :
                 await GetRequestFileContentAsync(signaler, input);
 
             // Making sure we support our 3 primary content types.
@@ -525,7 +547,7 @@ namespace magic.lambda.http.services
         /*
          * Creates an HTTP content object from some sort of inline, and/or stream content object.
          */
-        static object GetRequestContentContent(
+        static async Task<object> GetRequestContentContentAsync(
             ISignaler signaler,
             Node input,
             Node payloadNode,
@@ -540,7 +562,7 @@ namespace magic.lambda.http.services
                     ContentType.Parse(ApplicationJson);
 
                 if (_requestTransformers.TryGetValue(contentType.MimeType, out var functor))
-                    return functor(signaler, headers, payloadNode, input.Name);
+                    return await functor(signaler, headers, payloadNode, input.Name);
 
                 // No transformer for specified Content-Type exists.
                 throw new HyperlambdaException($"I don't know how to transform a lambda object to Content-Type of '{contentType}'");

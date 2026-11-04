@@ -7,6 +7,7 @@ using System.Web;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MimeKit;
 using magic.node;
 using magic.node.extensions;
@@ -92,7 +93,7 @@ namespace magic.lambda.http.services.helpers
         /*
          * Transforms a [payload] node into a URL encoded string and returns to caller.
          */
-        internal static object MultipartFormData(
+        internal static async Task<object> MultipartFormDataAsync(
             ISignaler signaler,
             Dictionary<string, string> headers,
             Node payloadNode,
@@ -100,7 +101,7 @@ namespace magic.lambda.http.services.helpers
         {
             // Invoking slot responsible for creating our MIME entity.
             payloadNode.Value = headers["Content-Type"];
-            signaler.Signal(".mime.create", payloadNode, skipWhitelist: true);
+            await signaler.SignalAsync(".mime.create", payloadNode, skipWhitelist: true);
             using (var entity = payloadNode.Get<MimeEntity>())
             {
                 // Attaching MIME envelope headers to HTTP envelope.
@@ -118,7 +119,7 @@ namespace magic.lambda.http.services.helpers
                  * return into a StreamContent object, and disposes it once the request has been transmitted.
                  */
                 var stream = new MemoryStream();
-                entity.WriteTo(new FormatOptions { MaxLineLength = 100, NewLineFormat = NewLineFormat.Dos }, stream, true);
+                await entity.WriteToAsync(new FormatOptions { MaxLineLength = 100, NewLineFormat = NewLineFormat.Dos }, stream, true);
                 stream.Position = 0;
                 return stream;
             }
