@@ -36,13 +36,15 @@ npm run format:check
   runtime, not hardcoded in source.
 - `public/ngsw-worker.js` is a generated PWA service worker. Do not edit
   manually.
-
 - ESLint runs with `--max-warnings 0`. A rule that does not fit is turned off in
   `eslint.config.js` with the reason, not with inline disables.
 - `npm install` installs the husky git hooks (commit-msg: commitlint;
   pre-commit: lint-staged; pre-push: format check, lint, typecheck, tests).
 - Page components live in `src/pages/` and stay thin; their child components,
   hooks and helpers live in `src/components/<page>/`.
+- Tests are colocated as `*.test.ts(x)` and run in Node by default. Component and
+  hook tests opt into a DOM with `// @vitest-environment jsdom` on their first
+  line, and use Testing Library (`src/test/setup.ts` adds the jest-dom matchers).
 
 ## Risk controls
 
