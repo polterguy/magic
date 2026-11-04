@@ -305,7 +305,15 @@ namespace magic.lambda.hyperlambda
             if (child.Name == "*")
                 result.AcceptsAnyChild = true;
             else
-                result.ChildNames.Add(child.Name == "." ? "" : child.Name);
+            {
+                /*
+                 * A signature's "." child is ambiguous: [strings.split] and [strings.substring]
+                 * take literal "[.]" arguments, while other slots take anonymous children.
+                 */
+                result.ChildNames.Add(child.Name);
+                if (child.Name == ".")
+                    result.ChildNames.Add("");
+            }
 
             /*
              * Note that SourceContainer bodies ([add]/[insert-before]/[insert-after]/

@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Globalization;
 using Xunit;
 using magic.node;
@@ -629,6 +630,48 @@ missing.slot");
             AssertInvalidInvocation(result, "hyper2lambda", "maximum", 2);
         }
 
+        [Fact]
+        public void VerifySlots_DotChildArgument()
+        {
+            var result = VerifySlots(@"
+test.dot-child:hi there you
+   .:"" """);
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_ExecutedFromHyperlambda_DotChildArgument()
+        {
+            var lambda = Common.Evaluate(@"
+.split-code:@""strings.split:hi there you
+   .:"""" """"""
+hyperlambda.verify-slots:x:@.split-code");
+            var result = lambda.Children.Skip(1).First();
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_AnonymousChildForDotArgument()
+        {
+            var lambda = new Node("", null);
+            var invocation = new Node("test.dot-child", "hi there you");
+            invocation.Add(new Node("", " "));
+            lambda.Add(invocation);
+            Common.GetSignaler().Signal("hyperlambda.verify-slots", lambda);
+            Assert.True(lambda.Get<bool>());
+        }
+
+        [Fact]
+        public void VerifySlots_UndeclaredChildWithDotArgument()
+        {
+            var result = VerifySlots(@"
+test.dot-child:hi there you
+   .foo:x");
+            AssertInvalidInvocation(result, "test.dot-child", "[.foo]");
+        }
+
         static void AssertInvalidInvocation(
             Node result,
             string slot,
@@ -699,6 +742,25 @@ foo:date:'2019-07-10T08:12:39'").Children.ToList();
         ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression)]
     public class ValueOrChildrenTestSlot : ISlot
+    {
+        public void Signal(ISignaler signaler, Node input)
+        {
+        }
+    }
+
+    public class DotChildTestSignature : ISlotSignature
+    {
+        public IEnumerable<SlotChild> Children => new[]
+        {
+            new SlotChild { Name = ".", Type = "string", Description = "Separator" }
+        };
+    }
+
+    [Slot(
+        Name = "test.dot-child",
+        ValueMode = SlotValueMode.ValueOrExpression,
+        SignatureType = typeof(DotChildTestSignature))]
+    public class DotChildTestSlot : ISlot
     {
         public void Signal(ISignaler signaler, Node input)
         {
