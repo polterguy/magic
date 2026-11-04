@@ -42,7 +42,8 @@ npm run format:check
   pre-commit: lint-staged; pre-push: format check, lint, typecheck, tests).
 - Page components live in `src/pages/` and stay thin; their child components,
   hooks and helpers live in `src/components/<page>/`.
-- Tests are colocated as `*.test.ts(x)` and run in Node by default. Component and
+- Tests live in a `test/` folder inside their feature folder (e.g.
+  `src/components/sql/test/`, `src/lib/test/`) and run in Node by default. Component and
   hook tests opt into a DOM with `// @vitest-environment jsdom` on their first
   line, and use Testing Library (`src/test/setup.ts` adds the jest-dom matchers).
 
