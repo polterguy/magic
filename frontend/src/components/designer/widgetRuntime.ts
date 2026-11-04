@@ -23,7 +23,7 @@ export const WIDGET_ASSET_HREFS = ['/assets/magic-widgets.js', '/assets/magic-wi
  * These files are edited directly under backend/files/etc/system/web-designer/,
  * not through the Designer's own Code view, so no save anywhere can see that
  * one of them just changed - the Designer only ever bumps the one file ITS
- * OWN session just wrote (see bumpAsset() in WebDesigner.tsx). This is the
+ * OWN session just wrote (see bumpAsset() in assets.ts). This is the
  * other half of that: WHOEVER edits one of these files bumps its number
  * here, in the same change, and every page's next save then notices its own
  * link is behind and corrects just that one link - never a page's other,
