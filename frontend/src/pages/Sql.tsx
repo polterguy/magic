@@ -1,38 +1,21 @@
-import { copyToClipboard, showToast } from '../lib/toast';
-import { showError } from '../lib/errors';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import AiPrompt from '../components/AiPrompt';
-import AiWaiter from '../components/AiWaiter';
-import { useSessionState } from '../lib/useSessionState';
+import { useMemo, useRef, useState } from 'react';
 import type { EditorView } from '@codemirror/view';
-import CodeEditor from '../components/CodeEditor';
-import { editorSelection, useEditToken } from '../lib/editor';
-import { SparkIcon } from '../components/Icons';
-import { Modal } from '../components/Dialogs';
-import { useDialog } from '../lib/useDialog';
+import AiWaiter from '../components/AiWaiter';
 import Tabs from '../components/Tabs';
-import Select from '../components/Select';
 import { CardGridSkeleton } from '../components/Skeleton';
-import { FIELD_TYPES, PK_TYPES } from '../lib/dbTypes';
-import { exportCsv } from '../lib/download';
-import { buildSqlAiContext, sqlHintTables, useDatabaseSelection, useSqlSnippets } from '../lib/sql';
-import {
-  SqlRow,
-  TableMeta,
-  addColumn,
-  addForeignKey,
-  addTable,
-  aiQuery,
-  dropColumn,
-  dropTable,
-  executeSql,
-  exportDdl,
-  flushSchemaCache,
-  importCsvFile,
-  loadFile,
-  openaiIsConfigured,
-  saveFile,
-} from '../lib/api';
+import { useSessionState } from '../lib/useSessionState';
+import { useEditToken } from '../lib/editor';
+import { buildSqlAiContext, sqlHintTables, useDatabaseSelection } from '../lib/sql';
+import DesignerView from '../components/sql/DesignerView';
+import SnippetToolbar from '../components/sql/SnippetToolbar';
+import SqlEditorArea from '../components/sql/SqlEditorArea';
+import SqlHeader from '../components/sql/SqlHeader';
+import SqlResults from '../components/sql/SqlResults';
+import { useSchemaDesigner } from '../components/sql/hooks/useSchemaDesigner';
+import { useSqlExecution } from '../components/sql/hooks/useSqlExecution';
+import { useSqlGenerator } from '../components/sql/hooks/useSqlGenerator';
+import { useSqlHistory } from '../components/sql/hooks/useSqlHistory';
+import { useSqlSnippetFiles } from '../components/sql/hooks/useSqlSnippetFiles';
 
 export default function Sql() {
   // Prefers magic — the SQL editor's most common target, unlike the
@@ -48,384 +31,66 @@ export default function Sql() {
   const [sqlEditId, bumpSqlEditId] = useEditToken();
   // What the editor last loaded or saved — differing content means unsaved changes.
   const [savedSql, setSavedSql] = useSessionState('magic2.sql-studio.saved', '');
-  const [safeMode, setSafeMode] = useState(true);
-  const [result, setResult] = useState<SqlRow[][] | null>(null);
-  const [busy, setBusy] = useState(false);
   // Click-triggered round-trips outside Run — DDL exports, schema changes,
   // imports and snippet I/O.
   const [waiting, setWaiting] = useState(false);
-  // Generating is its own flag, so a CSV import in flight doesn't relabel the
-  // Generate button.
-  const [generating, setGenerating] = useState(false);
-  const [hasSelection, setHasSelection] = useState(false);
-  /*
-   * Generating SQL goes through the OpenAI proxy, unlike Hyper IDE's generator,
-   * which loads its own instruction — so without a key there is nothing to ask,
-   * and the button hides the same way the prompt bar below the editor does.
-   */
-  const [aiConfigured, setAiConfigured] = useState(false);
-  const { snippets, setSnippets } = useSqlSnippets(type);
-  const [selectedSnippet, setSelectedSnippet] = useSessionState('magic2.sql-studio.snippet', '');
   const [view, setView] = useState<'sql' | 'tables'>('sql');
-  const [ddl, setDdl] = useState<{ title: string; sql: string } | null>(null);
-  const [newTable, setNewTable] = useState(false);
-  const [addingColumn, setAddingColumn] = useState<string | null>(null);
   const editorRef = useRef<EditorView | null>(null);
-  const { prompt, confirm, confirmTyped } = useDialog();
 
   const tables = selection.selectedMeta?.tables ?? [];
   const reloadSchema = selection.reloadSchema;
 
-  useEffect(() => {
-    openaiIsConfigured()
-      .then(response => setAiConfigured(response.result))
-      .catch(() => setAiConfigured(false));
-  }, []);
-
-  async function flushCache() {
-    if (
-      !(await confirm({
-        title: 'Flush server-side cache?',
-        message:
-          'This clears the cached database schema on the server, then reloads the ' +
-          'page so the dashboard picks up the fresh schema everywhere. Any unsaved changes ' +
-          'in the editor will be lost.',
-        confirmText: 'Flush and reload',
-      }))
-    ) {
-      return;
-    }
-    setWaiting(true);
-    try {
-      await flushSchemaCache(type, connectionString);
-      window.location.reload();
-    } catch (err) {
-      showError(err);
-      setWaiting(false);
-    }
-  }
-
-  async function importCsv(file: File) {
-    setWaiting(true);
-    try {
-      await importCsvFile(type, connectionString, database, file);
-      showToast('Importing ' + file.name + " — you'll be notified when it completes");
-    } catch (err) {
-      showError(err);
-    } finally {
-      setWaiting(false);
-    }
-  }
-
-  async function dropTableConfirmed(tableName: string) {
-    if (
-      !(await confirmTyped({
-        title: 'Drop table?',
-        message: 'This permanently deletes ' + tableName + '. Type the table name to confirm.',
-        label: 'Table name',
-        expected: tableName,
-        confirmText: 'Drop',
-        mismatch: 'Name did not match — nothing dropped',
-      }))
-    ) {
-      return;
-    }
-    setWaiting(true);
-    try {
-      await dropTable(type, connectionString, database, tableName);
-      showToast('Table ' + tableName + ' dropped');
-      await reloadSchema();
-    } catch (err) {
-      showError(err);
-    } finally {
-      setWaiting(false);
-    }
-  }
-
-  async function dropColumnConfirmed(tableName: string, columnName: string) {
-    if (
-      !(await confirm({
-        title: 'Drop column?',
-        message: tableName + '.' + columnName + ' will be permanently removed.',
-        confirmText: 'Drop',
-        danger: true,
-      }))
-    ) {
-      return;
-    }
-    setWaiting(true);
-    try {
-      await dropColumn(type, connectionString, database, tableName, columnName);
-      showToast('Column ' + columnName + ' dropped');
-      await reloadSchema();
-    } catch (err) {
-      showError(err);
-    } finally {
-      setWaiting(false);
-    }
-  }
+  const snippetFiles = useSqlSnippetFiles({
+    type,
+    sql,
+    savedSql,
+    setSql,
+    setSavedSql,
+    bumpSqlEditId,
+    setWaiting,
+  });
 
   function createAiContext() {
     return buildSqlAiContext({ type, connectionString, database, tables, sql });
   }
 
-  async function viewDdl(tables: string[], full: boolean, title: string) {
-    setWaiting(true);
-    try {
-      const response = await exportDdl(type, connectionString, database, tables, full);
-      setDdl({ title, sql: response.result });
-    } catch (err) {
-      showError(err);
-    } finally {
-      setWaiting(false);
-    }
-  }
+  const generator = useSqlGenerator({ editorRef, createAiContext, setSql, bumpSqlEditId });
+  const designer = useSchemaDesigner({
+    type,
+    connectionString,
+    database,
+    reloadSchema,
+    setWaiting,
+  });
 
   // Table → columns map for Ctrl-Space SQL autocomplete.
   const hintTables = useMemo(() => sqlHintTables(selection.selectedMeta), [selection.selectedMeta]);
 
-  /*
-   * The last 20 executed statements, newest first — failures included, since
-   * the query you want back is often the one that just broke. Session-scoped:
-   * a scratch log, not a snippet collection.
-   */
-  const [history, setHistory] = useState<{ sql: string; when: string }[]>(() => {
-    try {
-      return JSON.parse(sessionStorage.getItem('magic2.sql-studio.history') ?? '[]') as {
-        sql: string;
-        when: string;
-      }[];
-    } catch {
-      return [];
-    }
+  const { history, pushHistory, openHistory } = useSqlHistory(setSql, bumpSqlEditId);
+  const execution = useSqlExecution({
+    type,
+    connectionString,
+    database,
+    sql,
+    editorRef,
+    pushHistory,
   });
-
-  function pushHistory(statement: string) {
-    setHistory(current => {
-      // Re-running a statement moves it to the top instead of duplicating it.
-      const next = [
-        { sql: statement, when: new Date().toISOString() },
-        ...current.filter(entry => entry.sql !== statement),
-      ].slice(0, 20);
-      sessionStorage.setItem('magic2.sql-studio.history', JSON.stringify(next));
-      return next;
-    });
-  }
-
-  /*
-   * No discard-confirmation here, unlike snippets: everything in history was
-   * executed, so the statement being replaced is either already in history
-   * itself or a few keystrokes of scratch — the dialog would cost more than
-   * the loss it prevents.
-   */
-  function openHistory(index: number) {
-    const entry = history[index];
-    if (entry) {
-      setSql(entry.sql);
-      bumpSqlEditId();
-    }
-  }
-
-  /*
-   * Whatever is selected is the specification, and nothing else is sent. The
-   * answer is a whole statement, so it becomes the whole buffer — replacing only
-   * the selection would leave the description sitting around the SQL it asked
-   * for. Selecting text therefore means two things in this page: Run treats it
-   * as the fragment to execute, Generate as the request to fulfil.
-   */
-  async function generateFromSelection() {
-    const selected = editorSelection(editorRef.current);
-    if (!selected.trim()) {
-      return;
-    }
-    setGenerating(true);
-    try {
-      const response = await aiQuery(selected, 'sql', await createAiContext(), 'sql-studio.editor');
-      setSql(response.result);
-      bumpSqlEditId();
-    } catch (err) {
-      showError(err);
-    } finally {
-      setGenerating(false);
-    }
-  }
-
-  async function execute() {
-    const selected = editorSelection(editorRef.current);
-    const toExecute = selected !== '' ? selected : sql;
-    if (!toExecute.trim()) {
-      showToast('Write some SQL first', true);
-      return;
-    }
-    pushHistory(toExecute);
-    setBusy(true);
-    try {
-      // Batch mode only when a line actually IS a GO statement — merely
-      // containing the letters "go" (category, algorithm…) doesn't count.
-      const batch = type === 'mssql' && /^[ \t]*go(?:[ \t]*;)?[ \t]*$/im.test(toExecute);
-      const response = await executeSql(
-        type,
-        '[' + connectionString + '|' + database + ']',
-        toExecute,
-        safeMode,
-        batch,
-      );
-      setResult(response ?? []);
-      const count = (response ?? []).reduce((total, set) => total + (set?.length ?? 0), 0);
-      let message = count + ' records returned';
-      if (response === null) {
-        message = 'SQL executed successfully, no result';
-      } else if (count === 200 && safeMode) {
-        message = 'First 200 records returned. Turn off safe mode to return all records.';
-      }
-      showToast(message);
-    } catch (err) {
-      showError(err);
-      setResult(null);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function openSnippet(filename: string) {
-    if (!filename) {
-      return;
-    }
-    // Loading over unsaved work destroys it — the navigation guard can't see
-    // this, so ask the same question it would.
-    if (
-      sql !== savedSql &&
-      !(await confirm({
-        title: 'Discard unsaved changes?',
-        message:
-          'Your SQL has unsaved changes. Loading ' +
-          filename.substring(filename.lastIndexOf('/') + 1) +
-          ' replaces them.',
-        confirmText: 'Discard',
-        danger: true,
-      }))
-    ) {
-      return;
-    }
-    setSelectedSnippet(filename);
-    setWaiting(true);
-    try {
-      const text = await loadFile(filename);
-      setSql(text);
-      bumpSqlEditId();
-      setSavedSql(text);
-    } catch (err) {
-      showError(err);
-    } finally {
-      setWaiting(false);
-    }
-  }
-
-  async function saveSnippet() {
-    // Saving over the snippet you loaded is the common case, so its name is
-    // suggested — the dialog selects it, so typing replaces it outright.
-    const suggestion = selectedSnippet
-      ? selectedSnippet.substring(selectedSnippet.lastIndexOf('/') + 1).replace(/\.sql$/, '')
-      : '';
-    const name = await prompt({
-      title: 'Save SQL snippet',
-      label: 'Snippet name',
-      initial: suggestion,
-    });
-    if (!name) {
-      return;
-    }
-    const filename = '/etc/' + type + '/templates/' + name + (name.endsWith('.sql') ? '' : '.sql');
-    setWaiting(true);
-    try {
-      await saveFile(filename, sql);
-      setSavedSql(sql);
-      setSelectedSnippet(filename);
-      showToast('Saved ' + filename);
-      if (!snippets.includes(filename)) {
-        setSnippets([...snippets, filename].sort((a, b) => a.localeCompare(b)));
-      }
-    } catch (err) {
-      showError(err);
-    } finally {
-      setWaiting(false);
-    }
-  }
-
-  function importSqlFile(file: File) {
-    void file.text().then(text => {
-      setSql(text);
-      bumpSqlEditId();
-    });
-  }
 
   return (
     <>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div className="page-title">
-          <h1>SQL Studio</h1>
-          <p>Execute SQL towards your databases, and design them</p>
-        </div>
-        <div className="page-tools">
-          <Select value={type} onChange={selection.setType}>
-            {selection.types.map(option => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </Select>
-          <Select value={connectionString} onChange={selection.setConnectionString}>
-            {selection.connectionStrings.map(option => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </Select>
-          <Select value={database} onChange={selection.setDatabase}>
-            {selection.databasesMeta.map(db => (
-              <option key={db.name} value={db.name}>
-                {db.name}
-              </option>
-            ))}
-          </Select>
-          {/*
-           * Executing is the SQL tab's business — the Designer has no buffer to
-           * run and no rows to cap. The database Selects stay, since the
-           * Designer needs them.
-           */}
-          {view === 'sql' && (
-            <>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <input
-                  type="checkbox"
-                  checked={safeMode}
-                  onChange={e => setSafeMode(e.target.checked)}
-                />
-                Safe mode
-              </label>
-              {aiConfigured && (
-                <button
-                  className="btn btn-secondary btn-small"
-                  title="Run the selected text through the SQL generator"
-                  onClick={generateFromSelection}
-                  disabled={generating || !hasSelection}
-                >
-                  <SparkIcon />
-                  {generating ? 'Generating…' : 'Generate'}
-                </button>
-              )}
-              {/*
-               * Empty buffer means nothing to run — and no selection either,
-               * since a selection is always a substring of [sql]. The keyboard
-               * shortcut bypasses this, so execute() keeps its own guard.
-               */}
-              <button className="btn" onClick={execute} disabled={busy || !database || !sql.trim()}>
-                {busy ? 'Running…' : '▷ Run'}
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+      <SqlHeader
+        selection={selection}
+        view={view}
+        sql={sql}
+        safeMode={execution.safeMode}
+        onSafeModeChange={execution.setSafeMode}
+        aiConfigured={generator.aiConfigured}
+        generating={generator.generating}
+        hasSelection={generator.hasSelection}
+        onGenerate={generator.generateFromSelection}
+        busy={execution.busy}
+        onExecute={execution.execute}
+      />
       <Tabs
         tabs={[
           { id: 'sql', label: 'SQL' },
@@ -441,643 +106,40 @@ export default function Sql() {
       )}
       {selection.schemaLoading && view === 'tables' && <CardGridSkeleton />}
       {view === 'tables' && !selection.schemaLoading && (
-        <>
-          <div className="toolbar">
-            <span className="muted">
-              {tables.length} tables in {database}
-            </span>
-            <span className="spacer" />
-            <button className="btn btn-secondary btn-small" onClick={() => setNewTable(true)}>
-              + New table
-            </button>
-            <label
-              className={'btn btn-secondary btn-small' + (database ? '' : ' disabled')}
-              style={{ cursor: database ? 'pointer' : 'not-allowed' }}
-              title="Create a table from a CSV file, named after the file"
-            >
-              Import .csv
-              <input
-                type="file"
-                accept=".csv"
-                disabled={!database}
-                style={{ display: 'none' }}
-                onChange={e => {
-                  if (e.target.files?.[0]) {
-                    void importCsv(e.target.files[0]);
-                    e.target.value = '';
-                  }
-                }}
-              />
-            </label>
-            <button
-              className="btn btn-secondary btn-small"
-              title="Flush the server-side schema cache and reload"
-              disabled={!connectionString}
-              onClick={flushCache}
-            >
-              Flush cache
-            </button>
-            <button
-              className="btn btn-secondary btn-small"
-              onClick={() =>
-                viewDdl(
-                  tables.map(table => table.name),
-                  true,
-                  database + ' — full DDL',
-                )
-              }
-            >
-              Database DDL
-            </button>
-          </div>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-              gap: 14,
-              overflow: 'auto',
-            }}
-          >
-            {tables.map(table => (
-              <div className="card" key={table.name} style={{ padding: 14 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
-                  <strong style={{ flex: 1 }}>{table.name}</strong>
-                  <button
-                    className="btn btn-secondary btn-small"
-                    title="Add column"
-                    onClick={() => setAddingColumn(table.name)}
-                  >
-                    + Col
-                  </button>
-                  <button
-                    className="btn btn-secondary btn-small"
-                    onClick={() => viewDdl([table.name], false, table.name + ' — DDL')}
-                  >
-                    DDL
-                  </button>
-                  <button
-                    className="btn btn-danger btn-small"
-                    title="Drop table"
-                    onClick={() => dropTableConfirmed(table.name)}
-                  >
-                    ✕
-                  </button>
-                </div>
-                {(table.columns ?? []).map(column => (
-                  <div
-                    key={column.name}
-                    className="col-row"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      fontSize: 13,
-                      padding: '2px 0',
-                    }}
-                  >
-                    <span style={{ width: 14, flexShrink: 0 }}>{column.primary ? '🔑' : ''}</span>
-                    <span
-                      style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}
-                      className={column.primary ? '' : 'muted'}
-                    >
-                      {column.name}
-                    </span>
-                    <span className="muted mono" style={{ fontSize: 12 }}>
-                      {column.db}
-                    </span>
-                    {/* Not-null marker in its own fixed slot, so the dots line up. */}
-                    <span
-                      className="mono"
-                      title={column.nullable ? 'Nullable' : 'Not null'}
-                      style={{
-                        width: 8,
-                        textAlign: 'center',
-                        flexShrink: 0,
-                        fontSize: 12,
-                        color: 'var(--text-soft)',
-                      }}
-                    >
-                      {column.nullable ? '' : '•'}
-                    </span>
-                    {/* Drop control always reserves its slot — empty for the primary
-                        key — so every row's type column ends at the same place. */}
-                    <span
-                      style={{
-                        width: 18,
-                        flexShrink: 0,
-                        display: 'inline-flex',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      {!column.primary && (
-                        <button
-                          className="icon-btn danger col-drop"
-                          title="Drop column"
-                          onClick={() => dropColumnConfirmed(table.name, column.name)}
-                          style={{ padding: 2 }}
-                        >
-                          <span style={{ fontSize: 12 }}>✕</span>
-                        </button>
-                      )}
-                    </span>
-                  </div>
-                ))}
-                {(table.foreign_keys ?? []).length > 0 && (
-                  <div
-                    style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 6 }}
-                  >
-                    {(table.foreign_keys ?? []).map((fk, index: number) => (
-                      <div key={index} className="muted" style={{ fontSize: 12 }}>
-                        {fk.column} → {fk.foreign_table}.{fk.foreign_column}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          {newTable && (
-            <NewTableDialog
-              onClose={() => setNewTable(false)}
-              onCreate={async (tableName, pkName, pkType, pkLength) => {
-                setWaiting(true);
-                try {
-                  await addTable(
-                    type,
-                    connectionString,
-                    database,
-                    tableName,
-                    pkName,
-                    pkType,
-                    pkLength,
-                  );
-                  setNewTable(false);
-                  showToast('Table ' + tableName + ' created');
-                  await reloadSchema();
-                } catch (err) {
-                  showError(err);
-                } finally {
-                  setWaiting(false);
-                }
-              }}
-            />
-          )}
-          {addingColumn && (
-            <AddColumnDialog
-              databaseType={type}
-              tableName={addingColumn}
-              tables={tables}
-              onClose={() => setAddingColumn(null)}
-              onSubmit={async payload => {
-                setWaiting(true);
-                try {
-                  const target = {
-                    databaseType: type,
-                    connectionString,
-                    databaseName: database,
-                    tableName: addingColumn,
-                  };
-                  if (payload.foreignTable) {
-                    await addForeignKey(target, { ...payload, foreignTable: payload.foreignTable });
-                  } else {
-                    await addColumn(target, payload);
-                  }
-                  setAddingColumn(null);
-                  showToast('Column ' + payload.columnName + ' added');
-                  await reloadSchema();
-                } catch (err) {
-                  showError(err);
-                } finally {
-                  setWaiting(false);
-                }
-              }}
-            />
-          )}
-          {ddl && (
-            <Modal width={760} onClose={() => setDdl(null)}>
-              <h2>{ddl.title}</h2>
-              <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
-                <CodeEditor value={ddl.sql} mode="text/x-sql" readOnly />
-              </div>
-              <div className="modal-actions">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => copyToClipboard(ddl.sql, 'The DDL')}
-                >
-                  Copy
-                </button>
-                <button className="btn" onClick={() => setDdl(null)}>
-                  Close
-                </button>
-              </div>
-            </Modal>
-          )}
-        </>
+        <DesignerView
+          type={type}
+          connectionString={connectionString}
+          database={database}
+          tables={tables}
+          designer={designer}
+        />
       )}
       {view === 'sql' && (
         <>
-          <div className="toolbar">
-            <Select value={selectedSnippet} onChange={value => openSnippet(value)}>
-              <option value="">Load snippet…</option>
-              {snippets.map(snippet => (
-                <option key={snippet} value={snippet}>
-                  {snippet.substring(snippet.lastIndexOf('/') + 1)}
-                </option>
-              ))}
-            </Select>
-            {history.length > 0 && (
-              <Select value="" onChange={value => openHistory(Number(value))}>
-                <option value="">History…</option>
-                {history.map((entry, index) => (
-                  <option key={entry.when + index} value={String(index)}>
-                    {new Date(entry.when).toTimeString().substring(0, 5) +
-                      ' — ' +
-                      entry.sql.replace(/\s+/g, ' ').substring(0, 60)}
-                  </option>
-                ))}
-              </Select>
-            )}
-            <button className="btn btn-secondary btn-small" onClick={saveSnippet}>
-              Save snippet
-            </button>
-            <label className="btn btn-secondary btn-small" style={{ cursor: 'pointer' }}>
-              Import .sql
-              <input
-                type="file"
-                accept=".sql"
-                style={{ display: 'none' }}
-                onChange={e => {
-                  if (e.target.files?.[0]) {
-                    importSqlFile(e.target.files[0]);
-                    e.target.value = '';
-                  }
-                }}
-              />
-            </label>
-          </div>
-          <div style={{ height: 260, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
-            <CodeEditor
-              value={sql}
-              onChange={setSql}
-              mode="text/x-sql"
-              onExecute={execute}
-              hintTables={hintTables}
-              undoableEditId={sqlEditId}
-              onInstance={instance => {
-                if (editorRef.current === instance) {
-                  return;
-                }
-                editorRef.current = instance;
-              }}
-              onSelectionChange={setHasSelection}
-            />
-          </div>
-          <AiPrompt
-            fileType="sql"
-            getContext={createAiContext}
-            session="sql-studio.editor"
-            onResult={value => {
-              setSql(value);
-              bumpSqlEditId();
-            }}
-            onError={message => showToast(message, true)}
-            style={{ marginTop: 8 }}
+          <SnippetToolbar
+            snippets={snippetFiles.snippets}
+            selectedSnippet={snippetFiles.selectedSnippet}
+            onOpenSnippet={snippetFiles.openSnippet}
+            history={history}
+            onOpenHistory={openHistory}
+            onSaveSnippet={snippetFiles.saveSnippet}
+            onImportSqlFile={snippetFiles.importSqlFile}
+          />
+          <SqlEditorArea
+            sql={sql}
+            setSql={setSql}
+            sqlEditId={sqlEditId}
+            bumpSqlEditId={bumpSqlEditId}
+            hintTables={hintTables}
+            editorRef={editorRef}
+            onExecute={execution.execute}
+            onSelectionChange={generator.setHasSelection}
+            createAiContext={createAiContext}
           />
         </>
       )}
-      {view === 'sql' &&
-        result?.map((resultSet, index) => (
-          <div key={index} style={{ marginTop: 16 }}>
-            <div className="toolbar" style={{ marginBottom: 6 }}>
-              <span className="muted">{(resultSet ?? []).length} rows</span>
-              <span className="spacer" />
-              <button
-                className="btn btn-secondary btn-small"
-                disabled={(resultSet ?? []).length === 0}
-                onClick={() => exportCsv(resultSet ?? [], 'sql-export.csv')}
-              >
-                Export as CSV
-              </button>
-            </div>
-            <div className="card" style={{ overflow: 'auto', padding: 0 }}>
-              <ResultTable rows={resultSet ?? []} />
-            </div>
-          </div>
-        ))}
-      {(waiting || generating) && <AiWaiter />}
+      {view === 'sql' && <SqlResults result={execution.result} />}
+      {(waiting || generator.generating) && <AiWaiter />}
     </>
-  );
-}
-
-/*
- * With safe mode off a query can answer with hundreds of thousands of rows,
- * and rendering them all freezes the tab — the data is all still there for
- * the CSV export, only the DOM is capped.
- */
-const MAX_RENDERED_ROWS = 1000;
-
-function ResultTable({ rows }: Readonly<{ rows: SqlRow[] }>) {
-  if (rows.length === 0) {
-    return (
-      <div className="muted" style={{ padding: 16 }}>
-        Empty result set
-      </div>
-    );
-  }
-  const columns = Object.keys(rows[0]);
-  const visible = rows.length > MAX_RENDERED_ROWS ? rows.slice(0, MAX_RENDERED_ROWS) : rows;
-  return (
-    <>
-      <table className="sql-result">
-        <thead>
-          <tr>
-            {columns.map(column => (
-              <th key={column}>{column}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {visible.map((row, index) => (
-            <tr key={index}>
-              {columns.map(column => (
-                <td className="mono" key={column} data-label={column}>
-                  {formatCell(row[column])}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {rows.length > MAX_RENDERED_ROWS && (
-        <div className="muted" style={{ padding: 12 }}>
-          Showing the first {MAX_RENDERED_ROWS} of {rows.length} rows — export as CSV to get all of
-          them.
-        </div>
-      )}
-    </>
-  );
-}
-
-function formatCell(value: unknown) {
-  if (value === null || value === undefined) {
-    return <span className="muted">null</span>;
-  }
-  if (typeof value === 'object') {
-    return JSON.stringify(value);
-  }
-  // A JSON result cell: what is left is a string, number or boolean.
-  const scalar = value as string | number | boolean;
-  return String(scalar);
-}
-
-/*
- * Create-table dialog — a primary key column, auto-increment or varchar,
- * matching the old designer.
- */
-function NewTableDialog(
-  props: Readonly<{
-    onClose: () => void;
-    onCreate: (tableName: string, pkName: string, pkType: string, pkLength: number) => void;
-  }>,
-) {
-  const [tableName, setTableName] = useState('');
-  const [pkName, setPkName] = useState('');
-  const [pkType, setPkType] = useState('auto_increment');
-  const [pkLength, setPkLength] = useState('10');
-
-  // Derive the PK name from the table name like the old dialog does.
-  function onTableName(value: string) {
-    setTableName(value);
-    if (value) {
-      const singular = value.endsWith('s') ? value.substring(0, value.length - 1) : value;
-      setPkName(singular + '_id');
-    }
-  }
-
-  return (
-    <Modal
-      onClose={props.onClose}
-      onSubmit={() => {
-        if (tableName && pkName) props.onCreate(tableName, pkName, pkType, Number(pkLength));
-      }}
-    >
-      <h2>New table</h2>
-      <div className="form-grid">
-        <label>
-          Table name
-          <input type="text" value={tableName} onChange={e => onTableName(e.target.value)} />
-        </label>
-        <label>
-          Primary key name
-          <input type="text" value={pkName} onChange={e => setPkName(e.target.value)} />
-        </label>
-        <label>
-          Primary key type
-          <Select value={pkType} onChange={value => setPkType(value)}>
-            {PK_TYPES.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.name}
-              </option>
-            ))}
-          </Select>
-        </label>
-        {pkType === 'varchar' && (
-          <label>
-            Primary key length
-            <input type="number" value={pkLength} onChange={e => setPkLength(e.target.value)} />
-          </label>
-        )}
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button
-          className="btn"
-          disabled={!tableName || !pkName}
-          onClick={() => props.onCreate(tableName, pkName, pkType, Number(pkLength))}
-        >
-          Create
-        </button>
-      </div>
-    </Modal>
-  );
-}
-
-/*
- * Add-column dialog — a plain field, or a foreign key referencing another
- * table (Field vs Foreign key tab).
- */
-function AddColumnDialog(
-  props: Readonly<{
-    databaseType: string;
-    tableName: string;
-    tables: TableMeta[];
-    onClose: () => void;
-    onSubmit: (payload: {
-      columnName: string;
-      columnType: string;
-      defaultValue: string | null;
-      nullable: boolean;
-      columnLength: number | null;
-      foreignTable: string;
-      foreignField: string;
-      cascading: boolean;
-    }) => void;
-  }>,
-) {
-  const fieldTypes = FIELD_TYPES[props.databaseType] ?? FIELD_TYPES.sqlite;
-  const [mode, setMode] = useState('field');
-  const [columnName, setColumnName] = useState('');
-  // Default to a text column — the most common case — rather than the first
-  // (numeric) type: the exact `text` where a dialect has it, else varchar/nvarchar.
-  const [fieldType, setFieldType] = useState(
-    fieldTypes.find(t => t.name === 'text') ??
-      fieldTypes.find(t => /char|text/.test(t.name)) ??
-      fieldTypes[0],
-  );
-  const [columnLength, setColumnLength] = useState('255');
-  const [defaultValue, setDefaultValue] = useState('');
-  const [nullable, setNullable] = useState(true);
-  const [foreignTable, setForeignTable] = useState('');
-  const [cascading, setCascading] = useState(true);
-
-  // The foreign field is the referenced table's primary key.
-  const foreignMeta = props.tables.find(table => table.name === foreignTable);
-  const foreignPk = (foreignMeta?.columns ?? []).find(column => column.primary);
-
-  function submit() {
-    if (mode === 'foreign') {
-      if (!columnName || !foreignTable || !foreignPk) {
-        return;
-      }
-      props.onSubmit({
-        columnName,
-        columnType: foreignPk.hl === 'string' ? 'varchar' : fieldTypes[0].name,
-        defaultValue: null,
-        nullable,
-        columnLength: foreignPk.hl === 'string' ? Number(columnLength) : null,
-        foreignTable,
-        foreignField: foreignPk.name,
-        cascading,
-      });
-    } else {
-      props.onSubmit({
-        columnName,
-        columnType: fieldType.name,
-        defaultValue: defaultValue || null,
-        nullable,
-        columnLength: fieldType.size ? Number(columnLength) : null,
-        foreignTable: '',
-        foreignField: '',
-        cascading: false,
-      });
-    }
-  }
-
-  return (
-    <Modal width={520} onClose={props.onClose} onSubmit={submit}>
-      <h2>Add column to {props.tableName}</h2>
-      <Tabs
-        tabs={[
-          { id: 'field', label: 'Field' },
-          { id: 'foreign', label: 'Foreign key' },
-        ]}
-        active={mode}
-        onChange={setMode}
-      />
-      <div className="form-grid">
-        <label>
-          Column name
-          <input type="text" value={columnName} onChange={e => setColumnName(e.target.value)} />
-        </label>
-        {mode === 'field' ? (
-          <>
-            <label>
-              Type
-              <Select
-                value={fieldType.name}
-                onChange={value => {
-                  const next = fieldTypes.find(candidate => candidate.name === value)!;
-                  setFieldType(next);
-                  if (next.varcharDefault) {
-                    setColumnLength(String(next.varcharDefault));
-                  }
-                }}
-              >
-                {fieldTypes.map(candidate => (
-                  <option key={candidate.name} value={candidate.name}>
-                    {candidate.name}
-                  </option>
-                ))}
-              </Select>
-            </label>
-            {fieldType.size && (
-              <label>
-                Length
-                <input
-                  type="number"
-                  value={columnLength}
-                  onChange={e => setColumnLength(e.target.value)}
-                />
-              </label>
-            )}
-            <label>
-              Default value (optional)
-              <input
-                type="text"
-                value={defaultValue}
-                onChange={e => setDefaultValue(e.target.value)}
-              />
-            </label>
-          </>
-        ) : (
-          <>
-            <label>
-              References table
-              <Select value={foreignTable} onChange={value => setForeignTable(value)}>
-                <option value="">Select table…</option>
-                {props.tables
-                  .filter(table => (table.columns ?? []).some(c => c.primary))
-                  .map(table => (
-                    <option key={table.name} value={table.name}>
-                      {table.name}
-                    </option>
-                  ))}
-              </Select>
-            </label>
-            {foreignPk && (
-              <div className="muted" style={{ fontSize: 13 }}>
-                References {foreignTable}.{foreignPk.name} ({foreignPk.hl})
-              </div>
-            )}
-            <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <input
-                type="checkbox"
-                checked={cascading}
-                onChange={e => setCascading(e.target.checked)}
-              />
-              Cascade on delete
-            </label>
-          </>
-        )}
-        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input type="checkbox" checked={nullable} onChange={e => setNullable(e.target.checked)} />
-          Nullable
-        </label>
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button
-          className="btn"
-          disabled={!columnName || (mode === 'foreign' && !foreignPk)}
-          onClick={submit}
-        >
-          Add
-        </button>
-      </div>
-    </Modal>
   );
 }
