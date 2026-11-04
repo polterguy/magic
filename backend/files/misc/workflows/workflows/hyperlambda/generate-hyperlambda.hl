@@ -92,6 +92,32 @@ try
       math.subtract
          date.now
          get-value:x:@.start
+
+   /*
+    * Guarding against a failed generation. On a non-success HTTP status, or when the
+    * generator service returns an empty result, there is no code to work with, so we
+    * throw a clear error here instead of letting the later [hyper2lambda]/[invoke] fail
+    * on a null value with an opaque "Object reference not set to an instance of an object".
+    */
+   .code
+   set-value:x:@.code
+      get-value:x:@http.post/*/content/*/result
+   if
+      or
+         not
+            and
+               mte:x:@http.post
+                  .:int:200
+               lt:x:@http.post
+                  .:int:300
+         null:x:@.code
+         eq:x:@.code
+            .:
+      .lambda
+         throw:"The Hyperlambda generator returned no code for this prompt. The generator service responded with an error or an empty result, which usually means the prompt was too complex or triggered a server-side error. Simplify the prompt to a single focused task and retry."
+            status:int:502
+            public:bool:true
+
    if
       and
          exists:x:@.arguments/*/filename
