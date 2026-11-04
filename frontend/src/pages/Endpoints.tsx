@@ -1,13 +1,12 @@
 import { showError } from '../lib/errors';
 import SearchInput from '../components/SearchInput';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AiWaiter from '../components/AiWaiter';
 import OpenApiDialog from '../components/OpenApiDialog';
-import InvokePanel, { InvokeResult } from '../components/InvokePanel';
+import type { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
 import DebugDialog from '../components/DebugDialog';
-import { BracesIcon, ChevronIcon } from '../components/Icons';
 import { ModuleListSkeleton } from '../components/Skeleton';
 import {
   DebugRecording,
@@ -17,97 +16,8 @@ import {
   listEndpoints,
   loadFile,
 } from '../lib/api';
-
-/*
- * The module an endpoint belongs to — magic/system/<module>/… is a system
- * module, magic/modules/<module>/… and magic/<module>/… are user modules.
- */
-function moduleOf(endpoint: Endpoint): { name: string; system: boolean } {
-  const parts = endpoint.path.split('/');
-  if (parts[1] === 'system') {
-    return { name: parts[2] ?? 'system', system: true };
-  }
-  if (parts[1] === 'modules') {
-    return { name: parts[2] ?? 'modules', system: false };
-  }
-  return { name: parts[1] ?? endpoint.path, system: false };
-}
-
-/*
- * The Hyperlambda file backing an endpoint — "magic/modules/foo/bar" invoked
- * as GET is "/modules/foo/bar.get.hl" on disk.
- */
-function sourceFile(endpoint: Endpoint) {
-  return '/' + endpoint.path.substring('magic/'.length) + '.' + endpoint.verb.toLowerCase() + '.hl';
-}
-
-interface ModuleGroup {
-  key: string;
-  name: string;
-  system: boolean;
-  folder: string;
-  endpoints: Endpoint[];
-}
-
-// Whether an endpoint passes the filters the page has been given.
-function isVisible(
-  endpoint: Endpoint,
-  module: { name: string; system: boolean },
-  query: string,
-  showSystem: boolean,
-  publicOnly: boolean,
-) {
-  if (module.system && !showSystem) {
-    return false;
-  }
-  if (publicOnly && (endpoint.auth?.length ?? 0) > 0) {
-    return false;
-  }
-  return (
-    !query ||
-    endpoint.path.toLowerCase().includes(query) ||
-    endpoint.verb.toLowerCase().includes(query) ||
-    module.name.toLowerCase().includes(query)
-  );
-}
-
-// The visible endpoints, grouped by module, user modules first and system modules last.
-function groupEndpoints(
-  endpoints: Endpoint[],
-  query: string,
-  showSystem: boolean,
-  publicOnly: boolean,
-) {
-  const map = new Map<string, ModuleGroup>();
-  for (const endpoint of endpoints) {
-    const module = moduleOf(endpoint);
-    if (!isVisible(endpoint, module, query, showSystem, publicOnly)) {
-      continue;
-    }
-    const key = (module.system ? 'system:' : 'user:') + module.name;
-    if (!map.has(key)) {
-      map.set(key, {
-        key,
-        name: module.name,
-        system: module.system,
-        folder: (module.system ? '/system/' : '/modules/') + module.name + '/',
-        endpoints: [],
-      });
-    }
-    map.get(key)!.endpoints.push(endpoint);
-  }
-  const list = [...map.values()];
-  for (const group of list) {
-    group.endpoints.sort(
-      (left, right) => left.path.localeCompare(right.path) || left.verb.localeCompare(right.verb),
-    );
-  }
-  // Alphabetical within each.
-  return list.sort(
-    (left, right) =>
-      Number(left.system) - Number(right.system) || left.name.localeCompare(right.name),
-  );
-}
+import ModuleCard from '../components/endpoints/ModuleCard';
+import { groupEndpoints, sourceFile } from '../components/endpoints/helpers';
 
 export default function Endpoints() {
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
@@ -261,123 +171,21 @@ export default function Endpoints() {
       <div>
         {!loading &&
           groups.map(group => (
-            <div
-              className="card"
+            <ModuleCard
               key={group.key}
-              style={{ padding: 0, overflow: 'hidden', marginBottom: 10 }}
-            >
-              <div
-                className={'module-header' + (group.system ? ' system' : '')}
-                tabIndex={0}
-                role="button"
-                aria-expanded={isOpen(group.key)}
-                onClick={() => toggleModule(group.key)}
-                onKeyDown={event => {
-                  if (
-                    event.target === event.currentTarget &&
-                    (event.key === 'Enter' || event.key === ' ')
-                  ) {
-                    event.preventDefault();
-                    toggleModule(group.key);
-                  }
-                }}
-              >
-                <span className="tree-chevron">
-                  <ChevronIcon open={isOpen(group.key)} />
-                </span>
-                <strong>{group.name}</strong>
-                {group.system && <span className="badge badge-debug">system</span>}
-                <span className="muted">
-                  {group.endpoints.length} endpoint{group.endpoints.length === 1 ? '' : 's'}
-                </span>
-                <span style={{ flex: 1 }} />
-                <button
-                  className="icon-btn"
-                  title={'OpenAPI specification for ' + group.folder}
-                  onClick={e => {
-                    e.stopPropagation();
-                    void showOpenApi(group.folder);
-                  }}
-                >
-                  <BracesIcon />
-                </button>
-              </div>
-              {isOpen(group.key) && (
-                <table>
-                  <tbody>
-                    {group.endpoints.map(endpoint => {
-                      const key = endpoint.verb + ' ' + endpoint.path;
-                      return (
-                        <Fragment key={key}>
-                          <tr
-                            className="clickable"
-                            tabIndex={0}
-                            ref={element => {
-                              // One-shot: the palette's deep link lands here.
-                              if (element && scrollTarget.current === key) {
-                                scrollTarget.current = null;
-                                element.scrollIntoView({ block: 'center' });
-                              }
-                            }}
-                            onClick={() => setExpanded(expanded === key ? null : key)}
-                            onKeyDown={event => {
-                              if (
-                                event.target === event.currentTarget &&
-                                (event.key === 'Enter' || event.key === ' ')
-                              ) {
-                                event.preventDefault();
-                                setExpanded(expanded === key ? null : key);
-                              }
-                            }}
-                          >
-                            <td className="verb-cell" style={{ width: 90 }}>
-                              <span className={'badge badge-' + endpoint.verb.toLowerCase()}>
-                                {endpoint.verb}
-                              </span>
-                            </td>
-                            <td className="mono" data-label="Path">
-                              {endpoint.path}
-                            </td>
-                            <td style={{ textAlign: 'right' }} data-label="Auth">
-                              <span className="role-chips">
-                                {(endpoint.auth ?? []).map(role => (
-                                  <span className="chip" key={role}>
-                                    {role}
-                                  </span>
-                                ))}
-                              </span>
-                            </td>
-                          </tr>
-                          {expanded === key && (
-                            <tr>
-                              <td
-                                colSpan={3}
-                                style={{ background: 'var(--accent-soft)', padding: 12 }}
-                              >
-                                <div className="card" style={{ padding: 16 }}>
-                                  <InvokePanel
-                                    endpoint={endpoint}
-                                    onResult={setResult}
-                                    onDebug={args => runDebug(endpoint, args)}
-                                    onEdit={() =>
-                                      navigate(
-                                        '/hyper-ide?open=' +
-                                          encodeURIComponent(sourceFile(endpoint)),
-                                      )
-                                    }
-                                    onOpenApi={() => showOpenApi(sourceFile(endpoint))}
-                                  />
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                        </Fragment>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              )}
-            </div>
+              group={group}
+              open={isOpen(group.key)}
+              onToggle={() => toggleModule(group.key)}
+              expanded={expanded}
+              setExpanded={setExpanded}
+              scrollTarget={scrollTarget}
+              onResult={setResult}
+              onDebug={runDebug}
+              onEdit={endpoint =>
+                navigate('/hyper-ide?open=' + encodeURIComponent(sourceFile(endpoint)))
+              }
+              onOpenApi={showOpenApi}
+            />
           ))}
       </div>
       {result !== null && (
