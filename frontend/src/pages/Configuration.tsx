@@ -13,7 +13,6 @@ const CONFIG_FOLDER = '/config/';
 const CONFIG_FILE = 'appsettings.json';
 
 export default function Configuration() {
-
   const [config, setConfig] = useState('');
   const [busy, setBusy] = useState(false);
   const [smtpOpen, setSmtpOpen] = useState(false);
@@ -97,9 +96,9 @@ export default function Configuration() {
         </div>
         <div className="page-tools">
           {/*
-            * The individual settings dialogs and backup actions live in one
-            * hamburger menu — six buttons crowded the header.
-            */}
+           * The individual settings dialogs and backup actions live in one
+           * hamburger menu — six buttons crowded the header.
+           */}
           <Menu
             title="Settings dialogs and backup"
             className="btn btn-secondary"
@@ -111,7 +110,8 @@ export default function Configuration() {
               { label: 'Git', onClick: () => setGitOpen(true) },
               { label: 'Download backup', onClick: downloadBackup },
               { label: 'Upload backup', onClick: () => uploadInput.current?.click() },
-            ]} />
+            ]}
+          />
           <input
             ref={uploadInput}
             type="file"
@@ -124,7 +124,8 @@ export default function Configuration() {
               if (file) {
                 void uploadBackup(file);
               }
-            }} />
+            }}
+          />
           <button className="btn" onClick={() => save()} disabled={busy || !config}>
             Save
           </button>
@@ -135,37 +136,54 @@ export default function Configuration() {
           value={config}
           onChange={setConfig}
           mode="application/json"
-          onSave={() => save()} />
+          onSave={() => save()}
+        />
       </div>
       {smtpOpen && (
         <SmtpDialog
           config={config}
           onClose={() => setSmtpOpen(false)}
-          onSave={next => { setSmtpOpen(false); void save(next); }} />
+          onSave={next => {
+            setSmtpOpen(false);
+            void save(next);
+          }}
+        />
       )}
       {recaptchaOpen && (
         <RecaptchaDialog
           config={config}
           onClose={() => setRecaptchaOpen(false)}
-          onSave={next => { setRecaptchaOpen(false); void save(next); }} />
+          onSave={next => {
+            setRecaptchaOpen(false);
+            void save(next);
+          }}
+        />
       )}
       {gitOpen && (
         <GitDialog
           config={config}
           onClose={() => setGitOpen(false)}
-          onSave={next => { setGitOpen(false); void save(next); }} />
+          onSave={next => {
+            setGitOpen(false);
+            void save(next);
+          }}
+        />
       )}
       {openidOpen && (
         <OpenIdDialog
           config={config}
           onClose={() => setOpenidOpen(false)}
-          onSave={next => { setOpenidOpen(false); void save(next); }} />
+          onSave={next => {
+            setOpenidOpen(false);
+            void save(next);
+          }}
+        />
       )}
       {/*
-        * Unlike the others this writes its own key through the OpenAI
-        * endpoint rather than patching the JSON, so the editor is reloaded
-        * afterwards to pick up what the backend stored.
-        */}
+       * Unlike the others this writes its own key through the OpenAI
+       * endpoint rather than patching the JSON, so the editor is reloaded
+       * afterwards to pick up what the backend stored.
+       */}
       {openaiOpen && (
         <OpenAiKeyDialog
           onClose={() => setOpenaiOpen(false)}
@@ -173,7 +191,8 @@ export default function Configuration() {
             setOpenaiOpen(false);
             reload();
             showToast('OpenAI API key saved');
-          }} />
+          }}
+        />
       )}
     </>
   );
@@ -182,12 +201,13 @@ export default function Configuration() {
 /*
  * Patches magic.smtp in the configuration, like the old SMTP dialog.
  */
-function SmtpDialog(props: Readonly<{
-  config: string;
-  onClose: () => void;
-  onSave: (config: string) => void;
-}>) {
-
+function SmtpDialog(
+  props: Readonly<{
+    config: string;
+    onClose: () => void;
+    onSave: (config: string) => void;
+  }>,
+) {
   const existing = (() => {
     try {
       return JSON.parse(props.config)?.magic?.smtp ?? {};
@@ -227,40 +247,48 @@ function SmtpDialog(props: Readonly<{
     <Modal onClose={props.onClose} onSubmit={save}>
       <h2>SMTP settings</h2>
       <div className="form-grid">
-        <label>Host
+        <label>
+          Host
           <input type="text" value={host} onChange={e => setHost(e.target.value)} />
         </label>
-        <label>Port
+        <label>
+          Port
           <input type="number" value={port} onChange={e => setPort(e.target.value)} />
         </label>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input
-            type="checkbox"
-            checked={secure}
-            onChange={e => setSecure(e.target.checked)} />
+          <input type="checkbox" checked={secure} onChange={e => setSecure(e.target.checked)} />
           Secure (TLS)
         </label>
-        <label>Username
+        <label>
+          Username
           <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
         </label>
-        <label>Password
+        <label>
+          Password
           <input
             type="text"
             className="secret"
             autoComplete="off"
             value={password}
-            onChange={e => setPassword(e.target.value)} />
+            onChange={e => setPassword(e.target.value)}
+          />
         </label>
-        <label>From name
+        <label>
+          From name
           <input type="text" value={fromName} onChange={e => setFromName(e.target.value)} />
         </label>
-        <label>From address
+        <label>
+          From address
           <input type="text" value={fromAddress} onChange={e => setFromAddress(e.target.value)} />
         </label>
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-        <button className="btn" onClick={save}>Save</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
+        <button className="btn" onClick={save}>
+          Save
+        </button>
       </div>
     </Modal>
   );
@@ -270,12 +298,13 @@ function SmtpDialog(props: Readonly<{
  * Patches magic.git.github in the configuration — the credentials Hyper IDE's
  * Git support authenticates with towards GitHub.
  */
-function GitDialog(props: Readonly<{
-  config: string;
-  onClose: () => void;
-  onSave: (config: string) => void;
-}>) {
-
+function GitDialog(
+  props: Readonly<{
+    config: string;
+    onClose: () => void;
+    onSave: (config: string) => void;
+  }>,
+) {
   const existing = (() => {
     try {
       return JSON.parse(props.config)?.magic?.git?.github ?? {};
@@ -311,44 +340,56 @@ function GitDialog(props: Readonly<{
       <h2>Git settings</h2>
       <p className="muted" style={{ marginTop: 0 }}>
         GitHub credentials for Hyper IDE's Git support. Create a{' '}
-        <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noreferrer">
+        <a
+          href="https://github.com/settings/personal-access-tokens"
+          target="_blank"
+          rel="noreferrer"
+        >
           fine-grained personal access token
         </a>{' '}
-        with <em>Contents</em> read and write access to the repositories your
-        cloudlet manages. The token only authenticates transport — commits are
-        authored as the signed-in user's profile name and email.
+        with <em>Contents</em> read and write access to the repositories your cloudlet manages. The
+        token only authenticates transport — commits are authored as the signed-in user's profile
+        name and email.
       </p>
-      <label className="modal-label">Username
+      <label className="modal-label">
+        Username
         <input
           type="text"
           autoComplete="off"
           value={username}
-          onChange={e => setUsername(e.target.value)} />
+          onChange={e => setUsername(e.target.value)}
+        />
       </label>
-      <label className="modal-label">Token
+      <label className="modal-label">
+        Token
         <input
           type="text"
           className="secret"
           autoComplete="off"
           value={token}
-          onChange={e => setToken(e.target.value)} />
+          onChange={e => setToken(e.target.value)}
+        />
       </label>
-      <label className="modal-label">Host
-        <input
-          type="text"
-          value={host}
-          onChange={e => setHost(e.target.value)} />
+      <label className="modal-label">
+        Host
+        <input type="text" value={host} onChange={e => setHost(e.target.value)} />
       </label>
-      <label className="modal-label">API base (optional, for GitHub Enterprise)
+      <label className="modal-label">
+        API base (optional, for GitHub Enterprise)
         <input
           type="text"
           placeholder="https://api.github.com"
           value={apiBase}
-          onChange={e => setApiBase(e.target.value)} />
+          onChange={e => setApiBase(e.target.value)}
+        />
       </label>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-        <button className="btn" onClick={save}>Save</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
+        <button className="btn" onClick={save}>
+          Save
+        </button>
       </div>
     </Modal>
   );
@@ -358,12 +399,13 @@ function GitDialog(props: Readonly<{
  * Patches magic.auth.recaptcha in the configuration, like the old reCAPTCHA
  * dialog. reCAPTCHA is optional — clearing both fields turns it off.
  */
-function RecaptchaDialog(props: Readonly<{
-  config: string;
-  onClose: () => void;
-  onSave: (config: string) => void;
-}>) {
-
+function RecaptchaDialog(
+  props: Readonly<{
+    config: string;
+    onClose: () => void;
+    onSave: (config: string) => void;
+  }>,
+) {
   const existing = (() => {
     try {
       return JSON.parse(props.config)?.magic?.auth?.recaptcha ?? {};
@@ -395,26 +437,30 @@ function RecaptchaDialog(props: Readonly<{
         Your Google reCAPTCHA v3 keys, from{' '}
         <a href="https://www.google.com/recaptcha/admin" target="_blank" rel="noreferrer">
           the reCAPTCHA admin console
-        </a>. Leave both fields empty to turn reCAPTCHA off.
+        </a>
+        . Leave both fields empty to turn reCAPTCHA off.
       </p>
-      <label className="modal-label">Site key
-        <input
-          type="text"
-          autoComplete="off"
-          value={key}
-          onChange={e => setKey(e.target.value)} />
+      <label className="modal-label">
+        Site key
+        <input type="text" autoComplete="off" value={key} onChange={e => setKey(e.target.value)} />
       </label>
-      <label className="modal-label">Secret key
+      <label className="modal-label">
+        Secret key
         <input
           type="text"
           className="secret"
           autoComplete="off"
           value={secret}
-          onChange={e => setSecret(e.target.value)} />
+          onChange={e => setSecret(e.target.value)}
+        />
       </label>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-        <button className="btn" onClick={save}>Save</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
+        <button className="btn" onClick={save}>
+          Save
+        </button>
       </div>
     </Modal>
   );
@@ -442,10 +488,19 @@ const OIDC_SLOT_PREFIX = 'magic.openid.providers.';
 
 // Where to create a client ID, for the providers we know the console URL of.
 const OIDC_CONSOLES: Record<string, { url: string; name: string }> = {
-  google: { url: 'https://console.cloud.google.com/apis/credentials', name: 'the Google Cloud console' },
-  microsoft: { url: 'https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade', name: 'the Microsoft Entra admin center' },
+  google: {
+    url: 'https://console.cloud.google.com/apis/credentials',
+    name: 'the Google Cloud console',
+  },
+  microsoft: {
+    url: 'https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade',
+    name: 'the Microsoft Entra admin center',
+  },
   github: { url: 'https://github.com/settings/developers', name: 'GitHub developer settings' },
-  linkedin: { url: 'https://www.linkedin.com/developers/apps', name: 'the LinkedIn developer portal' },
+  linkedin: {
+    url: 'https://www.linkedin.com/developers/apps',
+    name: 'the LinkedIn developer portal',
+  },
   slack: { url: 'https://api.slack.com/apps', name: 'the Slack API dashboard' },
 };
 
@@ -491,15 +546,9 @@ const OIDC_FIELDS: Record<string, OidcField[]> = {
     },
     { key: 'client-secret', label: 'Client secret (optional)', secret: true },
   ],
-  linkedin: [
-    { key: 'client-secret', label: 'Client secret', secret: true },
-  ],
-  slack: [
-    { key: 'client-secret', label: 'Client secret', secret: true },
-  ],
-  github: [
-    { key: 'client-secret', label: 'Client secret', secret: true },
-  ],
+  linkedin: [{ key: 'client-secret', label: 'Client secret', secret: true }],
+  slack: [{ key: 'client-secret', label: 'Client secret', secret: true }],
+  github: [{ key: 'client-secret', label: 'Client secret', secret: true }],
 };
 
 // What a stored setting is shown as in a text field: nothing for none, JSON for a structure.
@@ -516,12 +565,13 @@ function fieldText(value: unknown): string {
   return '';
 }
 
-function OpenIdDialog(props: Readonly<{
-  config: string;
-  onClose: () => void;
-  onSave: (config: string) => void;
-}>) {
-
+function OpenIdDialog(
+  props: Readonly<{
+    config: string;
+    onClose: () => void;
+    onSave: (config: string) => void;
+  }>,
+) {
   const existing: Record<string, any> = (() => {
     try {
       return JSON.parse(props.config)?.magic?.oidc ?? {};
@@ -538,9 +588,15 @@ function OpenIdDialog(props: Readonly<{
    * accumulate across providers, and one Save writes all of them.
    */
   const [values, setValues] = useState<Record<string, Record<string, string>>>(() =>
-    Object.fromEntries(Object.keys(existing).map(name =>
-      [name, Object.fromEntries(Object.entries(existing[name] ?? {})
-        .map(([key, value]) => [key, fieldText(value)]))])));
+    Object.fromEntries(
+      Object.keys(existing).map(name => [
+        name,
+        Object.fromEntries(
+          Object.entries(existing[name] ?? {}).map(([key, value]) => [key, fieldText(value)]),
+        ),
+      ]),
+    ),
+  );
 
   // The selected provider's fields — client ID first, then whatever else it needs.
   const fields: OidcField[] = [
@@ -556,7 +612,8 @@ function OpenIdDialog(props: Readonly<{
   }
 
   useEffect(() => {
-    http.get<string[]>('/magic/system/evaluator/slots')
+    http
+      .get<string[]>('/magic/system/evaluator/slots')
       .then(slots => {
         const found = (slots ?? [])
           .filter(name => name.startsWith(OIDC_SLOT_PREFIX))
@@ -609,9 +666,9 @@ function OpenIdDialog(props: Readonly<{
     <Modal width={560} onClose={props.onClose} onSubmit={save}>
       <h2>OpenID sign-in</h2>
       <p className="muted" style={{ marginTop: 0 }}>
-        Providers users can sign in to the dashboard with. A provider is on
-        when it has a client ID, and its sign-in button disappears when the
-        field is cleared. Register this redirect URI with the provider:
+        Providers users can sign in to the dashboard with. A provider is on when it has a client ID,
+        and its sign-in button disappears when the field is cleared. Register this redirect URI with
+        the provider:
       </p>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <span className="mono" style={{ fontSize: 13, overflowWrap: 'anywhere' }}>
@@ -619,7 +676,8 @@ function OpenIdDialog(props: Readonly<{
         </span>
         <button
           className="btn btn-secondary btn-small"
-          onClick={() => copyToClipboard(callbackUrl, 'The redirect URI')}>
+          onClick={() => copyToClipboard(callbackUrl, 'The redirect URI')}
+        >
           Copy
         </button>
       </div>
@@ -630,17 +688,16 @@ function OpenIdDialog(props: Readonly<{
       )}
       {providers !== null && providers.length === 0 && (
         <div className="info-box">
-          No OpenID providers are registered. The backend supports any
-          provider for which a slot named{' '}
-          <span className="mono">magic.openid.providers.&lt;name&gt;</span>{' '}
-          exists — see the Google slot under{' '}
-          <span className="mono">/system/auth/magic.startup/</span> for the
+          No OpenID providers are registered. The backend supports any provider for which a slot
+          named <span className="mono">magic.openid.providers.&lt;name&gt;</span> exists — see the
+          Google slot under <span className="mono">/system/auth/magic.startup/</span> for the
           pattern.
         </div>
       )}
       {providers !== null && providers.length > 0 && (
         <>
-          <label className="modal-label">Provider
+          <label className="modal-label">
+            Provider
             <Select value={provider} onChange={setProvider}>
               {providers.map(name => (
                 <option key={name} value={name}>
@@ -656,10 +713,13 @@ function OpenIdDialog(props: Readonly<{
                 type="text"
                 className={field.secret ? 'secret' : undefined}
                 autoComplete="off"
-                placeholder={field.placeholder ??
-                  (index === 0 ? 'Empty — sign-in with this provider is off' : undefined)}
+                placeholder={
+                  field.placeholder ??
+                  (index === 0 ? 'Empty — sign-in with this provider is off' : undefined)
+                }
                 value={values[provider]?.[field.key] ?? ''}
-                onChange={e => setValue(field.key, e.target.value)} />
+                onChange={e => setValue(field.key, e.target.value)}
+              />
             </label>
           ))}
           {OIDC_CONSOLES[provider] && (
@@ -667,18 +727,21 @@ function OpenIdDialog(props: Readonly<{
               Create an OAuth client (web application type) in{' '}
               <a href={OIDC_CONSOLES[provider].url} target="_blank" rel="noreferrer">
                 {OIDC_CONSOLES[provider].name}
-              </a>, with the redirect URI above registered as an authorised
-              redirect URI.
+              </a>
+              , with the redirect URI above registered as an authorised redirect URI.
             </p>
           )}
         </>
       )}
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
         <button
           className="btn"
           disabled={providers === null || providers.length === 0}
-          onClick={save}>
+          onClick={save}
+        >
           Save
         </button>
       </div>

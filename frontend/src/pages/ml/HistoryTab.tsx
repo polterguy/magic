@@ -9,10 +9,11 @@ import { TableSkeleton } from '../../components/Skeleton';
 import { mlRequests, mlRequestsCount } from '../../lib/api';
 import { usePagedList } from '../../lib/usePagedList';
 
-export default function HistoryTab(props: Readonly<{
-  types: any[];
-}>) {
-
+export default function HistoryTab(
+  props: Readonly<{
+    types: any[];
+  }>,
+) {
   const PAGE_SIZE = 15;
   const [type, setType] = useState('');
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -44,7 +45,9 @@ export default function HistoryTab(props: Readonly<{
       <div className="toolbar">
         <Select value={type} onChange={value => setType(value)}>
           {props.types.map(candidate => (
-            <option key={candidate.type} value={candidate.type}>{candidate.type}</option>
+            <option key={candidate.type} value={candidate.type}>
+              {candidate.type}
+            </option>
           ))}
         </Select>
         <span className="spacer" />
@@ -67,11 +70,14 @@ export default function HistoryTab(props: Readonly<{
                   key={request.id}
                   request={request}
                   expanded={expanded === request.id}
-                  onToggle={() => setExpanded(expanded === request.id ? null : request.id)} />
+                  onToggle={() => setExpanded(expanded === request.id ? null : request.id)}
+                />
               ))}
               {list.rows.length === 0 && (
                 <tr>
-                  <td className="muted" colSpan={2}>No requests yet.</td>
+                  <td className="muted" colSpan={2}>
+                    No requests yet.
+                  </td>
                 </tr>
               )}
             </tbody>
@@ -98,19 +104,27 @@ function RequestRow(props: Readonly<{ request: any; expanded: boolean; onToggle:
         aria-expanded={props.expanded}
         onClick={props.onToggle}
         onKeyDown={event => {
-          if (event.target === event.currentTarget &&
-              (event.key === 'Enter' || event.key === ' ')) {
+          if (
+            event.target === event.currentTarget &&
+            (event.key === 'Enter' || event.key === ' ')
+          ) {
             event.preventDefault();
             props.onToggle();
           }
-        }}>
-        <td className="mono" data-label="When">{new Date(props.request.created).toLocaleString()}</td>
-        <td data-label="Prompt" style={{
-          maxWidth: 620,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}>
+        }}
+      >
+        <td className="mono" data-label="When">
+          {new Date(props.request.created).toLocaleString()}
+        </td>
+        <td
+          data-label="Prompt"
+          style={{
+            maxWidth: 620,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
           {props.request.prompt}
         </td>
       </tr>

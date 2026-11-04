@@ -45,7 +45,8 @@ function matching(root: Element, query: string) {
   }
   const visit = (node: Node) => {
     const children = designableChildren(node);
-    let found = labelOf(node).toLowerCase().includes(needle) ||
+    let found =
+      labelOf(node).toLowerCase().includes(needle) ||
       (isText(node) && (node.textContent ?? '').toLowerCase().includes(needle));
     children.forEach(child => {
       if (visit(child)) {
@@ -61,17 +62,18 @@ function matching(root: Element, query: string) {
   return keep;
 }
 
-export default function Layers(props: Readonly<{
-  root: Element | null;
-  selected: Node | null;
-  // Elements the page renders as display:none, shown greyed.
-  hidden: Set<Element>;
-  onSelect: (node: Node) => void;
-  onHover: (node: Node | null) => void;
-  // Double click — take me to it on the canvas.
-  onReveal: (node: Node) => void;
-}>) {
-
+export default function Layers(
+  props: Readonly<{
+    root: Element | null;
+    selected: Node | null;
+    // Elements the page renders as display:none, shown greyed.
+    hidden: Set<Element>;
+    onSelect: (node: Node) => void;
+    onHover: (node: Node | null) => void;
+    // Double click — take me to it on the canvas.
+    onReveal: (node: Node) => void;
+  }>,
+) {
   // Nodes whose open state the user has flipped away from the default.
   const [flipped, setFlipped] = useState<Set<Node>>(new Set());
   const [query, setQuery] = useState('');
@@ -127,22 +129,24 @@ export default function Layers(props: Readonly<{
     const children = searching
       ? designableChildren(node).filter(child => found.has(child))
       : designableChildren(node);
-    const open = searching || path.has(node) ||
-      ((depth < OPEN_TO) !== flipped.has(node));
+    const open = searching || path.has(node) || depth < OPEN_TO !== flipped.has(node);
     const text = isText(node);
     return (
       <div key={depth + ':' + labelOf(node)}>
         <div
           ref={node === props.selected ? selectedRow : undefined}
-          className={'designer-layer' +
+          className={
+            'designer-layer' +
             (node === props.selected ? ' selected' : '') +
             (text ? ' text' : '') +
-            (!text && props.hidden.has(node as Element) ? ' invisible' : '')}
+            (!text && props.hidden.has(node as Element) ? ' invisible' : '')
+          }
           style={{ paddingLeft: 6 + depth * 12 }}
           onMouseEnter={() => props.onHover(node)}
           onMouseLeave={() => props.onHover(null)}
           onClick={() => props.onSelect(node)}
-          onDoubleClick={() => props.onReveal(node)}>
+          onDoubleClick={() => props.onReveal(node)}
+        >
           {children.length > 0 ? (
             <button
               className="designer-layer-chevron"
@@ -150,7 +154,8 @@ export default function Layers(props: Readonly<{
               onClick={event => {
                 event.stopPropagation();
                 flip(node);
-              }}>
+              }}
+            >
               <ChevronIcon open={open} />
             </button>
           ) : (
@@ -158,9 +163,7 @@ export default function Layers(props: Readonly<{
           )}
           <span className="designer-layer-name">{labelOf(node)}</span>
         </div>
-        {open && children.map((child, index) => (
-          <div key={index}>{row(child, depth + 1)}</div>
-        ))}
+        {open && children.map((child, index) => <div key={index}>{row(child, depth + 1)}</div>)}
       </div>
     );
   }
@@ -172,11 +175,14 @@ export default function Layers(props: Readonly<{
         className="designer-tree-search"
         placeholder="Search the tree…"
         value={query}
-        onChange={event => setQuery(event.target.value)} />
+        onChange={event => setQuery(event.target.value)}
+      />
       <div className="designer-layers">
-        {searching && found.size === 0
-          ? <p className="designer-muted">Nothing matches “{query.trim()}”.</p>
-          : row(root, 0)}
+        {searching && found.size === 0 ? (
+          <p className="designer-muted">Nothing matches “{query.trim()}”.</p>
+        ) : (
+          row(root, 0)
+        )}
       </div>
     </>
   );

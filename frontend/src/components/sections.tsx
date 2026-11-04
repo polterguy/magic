@@ -52,91 +52,100 @@ export const SECTIONS: Section[] = [
     to: '/sql-studio',
     label: 'SQL Studio',
     Icon: TerminalIcon,
-    description: 'Query your databases, and design them — create tables, add ' +
+    description:
+      'Query your databases, and design them — create tables, add ' +
       'columns and foreign keys without writing the DDL yourself.',
   },
   {
     to: '/generator',
     label: 'Endpoint Generator',
     Icon: BoltIcon,
-    description: 'Generate complete CRUD APIs from your database tables, or wrap ' +
+    description:
+      'Generate complete CRUD APIs from your database tables, or wrap ' +
       'a custom SQL statement in an endpoint of its own.',
   },
   {
     to: '/endpoints',
     label: 'Endpoints',
     Icon: ExchangeIcon,
-    description: 'Browse every endpoint by module, invoke them with real ' +
+    description:
+      'Browse every endpoint by module, invoke them with real ' +
       'arguments, and grab their OpenAPI specification.',
   },
   {
     to: '/machine-learning',
     label: 'Machine Learning',
     Icon: NeuralIcon,
-    description: 'Train AI models on your own content by crawling a site or ' +
+    description:
+      'Train AI models on your own content by crawling a site or ' +
       'uploading files, then embed them as chatbots.',
   },
   {
     to: '/web-designer',
     label: 'Web Designer',
     Icon: LayoutIcon,
-    description: 'Design the pages your cloudlet serves — pick an element, drag ' +
+    description:
+      'Design the pages your cloudlet serves — pick an element, drag ' +
       'blocks into place, and edit what it says and how it looks.',
   },
   {
     to: '/hyper-ide',
     label: 'Hyper IDE',
     Icon: CodeFileIcon,
-    description: 'Edit any file on your server, execute Hyperlambda, and turn ' +
+    description:
+      'Edit any file on your server, execute Hyperlambda, and turn ' +
       'your endpoints into AI functions.',
   },
   {
     to: '/hyperlambda-playground',
     label: 'Playground',
     Icon: PlayIcon,
-    description: 'Execute Hyperlambda on your server and see what it returns, ' +
+    description:
+      'Execute Hyperlambda on your server and see what it returns, ' +
       'without saving anything first.',
   },
   {
     to: '/task-manager',
     label: 'Task Manager',
     Icon: ClockIcon,
-    description: 'Write Hyperlambda tasks and schedule them to run on a repeating ' +
+    description:
+      'Write Hyperlambda tasks and schedule them to run on a repeating ' +
       'pattern, or once at a fixed date.',
   },
   {
     to: '/user-roles-management',
     label: 'Users & roles',
     Icon: UserIcon,
-    description: 'Decide who can reach your backend, and which roles gate which ' +
-      'endpoints.',
+    description: 'Decide who can reach your backend, and which roles gate which ' + 'endpoints.',
   },
   {
     to: '/plugins',
     label: 'Plugins',
     Icon: PuzzleIcon,
-    description: 'Install plugins from the plugin repository to extend what ' +
-      'your cloudlet can do.',
+    description:
+      'Install plugins from the plugin repository to extend what ' + 'your cloudlet can do.',
   },
   {
     to: '/configuration',
     label: 'Configuration',
     Icon: GearIcon,
-    description: 'Edit your appsettings.json directly — connection strings, SMTP, ' +
+    description:
+      'Edit your appsettings.json directly — connection strings, SMTP, ' +
       'authentication and everything else your server runs on.',
   },
   {
     to: '/user-profile',
     label: 'Profile',
     Icon: ProfileIcon,
-    description: 'Change your password, and generate long-lived access tokens ' +
+    description:
+      'Change your password, and generate long-lived access tokens ' +
       'for pipelines, service accounts and integrations.',
   },
   {
     to: '/log',
     label: 'Log',
     Icon: ListIcon,
-    description: 'Read what your backend has been doing, and dig into errors when ' +
-      'something goes wrong.',
+    description:
+      'Read what your backend has been doing, and dig into errors when ' + 'something goes wrong.',
   },
 ];

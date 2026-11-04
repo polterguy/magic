@@ -10,13 +10,14 @@ import { Modal } from '../../components/Dialogs';
 import { mlSnippetCreate, mlSnippetUpdate, vectoriseSnippet } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 
-export default function EditSnippetDialog(props: Readonly<{
-  type: string;
-  existing: any;
-  onClose: () => void;
-  onSaved: () => void;
-}>) {
-
+export default function EditSnippetDialog(
+  props: Readonly<{
+    type: string;
+    existing: any;
+    onClose: () => void;
+    onSaved: () => void;
+  }>,
+) {
   const [prompt, setPrompt] = useState(props.existing?.prompt ?? '');
   const [completion, setCompletion] = useState(props.existing?.completion ?? '');
   const [completionEditId, bumpCompletionEditId] = useEditToken();
@@ -38,8 +39,11 @@ export default function EditSnippetDialog(props: Readonly<{
     '  "completion": the transformed content.\n' +
     'Do not wrap the JSON in markdown fences, and add no commentary before or after it.\n\n' +
     '--- EXISTING SNIPPET ---\n' +
-    'Prompt: ' + prompt + '\n' +
-    'Completion:\n' + completion;
+    'Prompt: ' +
+    prompt +
+    '\n' +
+    'Completion:\n' +
+    completion;
 
   /*
    * The model is asked for raw JSON, but tolerate fences and stray prose: pull the
@@ -69,7 +73,6 @@ export default function EditSnippetDialog(props: Readonly<{
     setBusy(true);
     try {
       if (props.existing) {
-
         /*
          * Whether this snippet carried an embedding before the edit. The update
          * clears it either way, since a vector describes the wording it was
@@ -99,10 +102,12 @@ export default function EditSnippetDialog(props: Readonly<{
             showToast('Snippet saved and re-vectorised');
           } catch (err: any) {
             showToast(
-              'Snippet saved, but re-vectorising it failed — it will not be matched until you '
-                + 'vectorise the model. ' + err.message,
+              'Snippet saved, but re-vectorising it failed — it will not be matched until you ' +
+                'vectorise the model. ' +
+                err.message,
               true,
-              err.logId);
+              err.logId,
+            );
           }
         }
       } else {
@@ -118,10 +123,17 @@ export default function EditSnippetDialog(props: Readonly<{
   }
 
   return (
-    <Modal width={820} onClose={props.onClose} onSubmit={() => { if (prompt) void save(); }}>
+    <Modal
+      width={820}
+      onClose={props.onClose}
+      onSubmit={() => {
+        if (prompt) void save();
+      }}
+    >
       <h2>{props.existing ? 'Edit snippet' : 'New snippet'}</h2>
       <div className="form-grid">
-        <label>Prompt
+        <label>
+          Prompt
           <input type="text" value={prompt} onChange={e => setPrompt(e.target.value)} />
         </label>
         <div>
@@ -131,27 +143,29 @@ export default function EditSnippetDialog(props: Readonly<{
               value={completion}
               onChange={setCompletion}
               mode="markdown"
-              undoableEditId={completionEditId} />
+              undoableEditId={completionEditId}
+            />
           </div>
           {/*
-            * Ask the Machine to transform the snippet — the typed instruction is
-            * the user message, the current snippet + JSON contract is the system
-            * override, and the returned {prompt, completion} is written back in.
-            */}
+           * Ask the Machine to transform the snippet — the typed instruction is
+           * the user message, the current snippet + JSON contract is the system
+           * override, and the returned {prompt, completion} is written back in.
+           */}
           <AiPrompt
             fileType={props.type}
             getContext={transformInstruction}
             session={'ml-snippet-transform.' + props.type}
             onResult={applyTransform}
             onError={message => showToast(message, true)}
-            style={{ marginTop: 8 }} />
+            style={{ marginTop: 8 }}
+          />
         </div>
       </div>
       <div className="modal-actions">
-        {props.existing?.meta && (
-          <span className="snippet-meta">{props.existing.meta}</span>
-        )}
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        {props.existing?.meta && <span className="snippet-meta">{props.existing.meta}</span>}
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
         <button className="btn" onClick={save} disabled={!prompt || busy}>
           {busy ? 'Saving…' : 'Save'}
         </button>

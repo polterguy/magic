@@ -9,14 +9,17 @@ import CodeEditor from './CodeEditor';
 import { Modal } from './Dialogs';
 import { backendInfo } from '../lib/api';
 
-export default function OpenApiDialog(props: Readonly<{
-  json: string;
-  target: string;
-  onClose: () => void;
-}>) {
-
-  const specUrl = backendInfo().url +
-    '/magic/system/endpoints/openapi?system=true&filter=' + encodeURIComponent(props.target);
+export default function OpenApiDialog(
+  props: Readonly<{
+    json: string;
+    target: string;
+    onClose: () => void;
+  }>,
+) {
+  const specUrl =
+    backendInfo().url +
+    '/magic/system/endpoints/openapi?system=true&filter=' +
+    encodeURIComponent(props.target);
 
   return (
     <Modal width={800} onClose={props.onClose}>
@@ -30,17 +33,21 @@ export default function OpenApiDialog(props: Readonly<{
           title="Copies a URL always returning the current spec — note it requires authentication"
           onClick={() => {
             void copyToClipboard(specUrl, 'The spec URL');
-          }}>
+          }}
+        >
           Copy spec URL
         </button>
         <button
           className="btn btn-secondary"
           onClick={() => {
             void copyToClipboard(props.json, 'The specification');
-          }}>
+          }}
+        >
           Copy JSON
         </button>
-        <button className="btn" onClick={props.onClose}>Close</button>
+        <button className="btn" onClick={props.onClose}>
+          Close
+        </button>
       </div>
     </Modal>
   );

@@ -34,10 +34,17 @@ function samplePayload(endpoint: Endpoint) {
   const payload: Record<string, any> = {};
   for (const argument of endpoint.input ?? []) {
     switch (argument.type) {
-      case 'int': case 'long': case 'uint': case 'ulong': case 'short': case 'ushort':
+      case 'int':
+      case 'long':
+      case 'uint':
+      case 'ulong':
+      case 'short':
+      case 'ushort':
         payload[argument.name] = 42;
         break;
-      case 'decimal': case 'float': case 'double':
+      case 'decimal':
+      case 'float':
+      case 'double':
         payload[argument.name] = 5.5;
         break;
       case 'bool':
@@ -71,46 +78,55 @@ function isValidJson(text: string) {
   }
 }
 
-function ArgumentField(props: Readonly<{
-  argument: { name: string; type?: string };
-  value: string;
-  onChange: (value: string) => void;
-  autoFocus?: boolean;
-}>) {
+function ArgumentField(
+  props: Readonly<{
+    argument: { name: string; type?: string };
+    value: string;
+    onChange: (value: string) => void;
+    autoFocus?: boolean;
+  }>,
+) {
   return (
-    <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, fontWeight: 600 }}>
+    <label
+      style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, fontWeight: 600 }}
+    >
       <span>
         {props.argument.name}
-        <span className="muted" style={{ fontWeight: 400 }}> — {props.argument.type}</span>
+        <span className="muted" style={{ fontWeight: 400 }}>
+          {' '}
+          — {props.argument.type}
+        </span>
       </span>
       <input
         type="text"
         autoFocus={props.autoFocus}
         value={props.value}
-        onChange={e => props.onChange(e.target.value)} />
+        onChange={e => props.onChange(e.target.value)}
+      />
     </label>
   );
 }
 
-export default function InvokePanel(props: Readonly<{
-  endpoint: Endpoint;
-  onResult: (result: InvokeResult) => void;
-  onOpenApi: () => void;
-  /*
-   * When supplied, the panel offers a Debug action alongside Invoke, handing
-   * back the arguments it collected instead of sending them. Hyper IDE uses it
-   * so debugging an endpoint is filled in through the same form as invoking it,
-   * rather than through a second dialog that merely looks similar.
-   */
-  onDebug?: (args: Record<string, any>) => void;
-  /*
-   * When supplied, the panel offers to open the endpoint's source file. Hyper
-   * IDE does not supply it — the file is already open there — so the action
-   * exists only where it leads somewhere new.
-   */
-  onEdit?: () => void;
-}>) {
-
+export default function InvokePanel(
+  props: Readonly<{
+    endpoint: Endpoint;
+    onResult: (result: InvokeResult) => void;
+    onOpenApi: () => void;
+    /*
+     * When supplied, the panel offers a Debug action alongside Invoke, handing
+     * back the arguments it collected instead of sending them. Hyper IDE uses it
+     * so debugging an endpoint is filled in through the same form as invoking it,
+     * rather than through a second dialog that merely looks similar.
+     */
+    onDebug?: (args: Record<string, any>) => void;
+    /*
+     * When supplied, the panel offers to open the endpoint's source file. Hyper
+     * IDE does not supply it — the file is already open there — so the action
+     * exists only where it leads somewhere new.
+     */
+    onEdit?: () => void;
+  }>,
+) {
   const { endpoint } = props;
   const verb = endpoint.verb.toLowerCase();
   const usesQuery = verb === 'get' || verb === 'delete';
@@ -201,9 +217,13 @@ export default function InvokePanel(props: Readonly<{
   const shortDescription = period === -1 ? description : description.substring(0, period + 1);
 
   // Socket endpoints and binary payloads can't be invoked from here.
-  const canInvoke = verb !== 'socket' &&
-    (usesQuery || isMultipart || consumesJson ||
-      endpoint.consumes?.includes('hyperlambda') || endpoint.consumes?.startsWith('text/'));
+  const canInvoke =
+    verb !== 'socket' &&
+    (usesQuery ||
+      isMultipart ||
+      consumesJson ||
+      endpoint.consumes?.includes('hyperlambda') ||
+      endpoint.consumes?.startsWith('text/'));
 
   // The path plus the current arguments as a query string — what a GET or
   // DELETE invocation actually requests.
@@ -215,9 +235,7 @@ export default function InvokePanel(props: Readonly<{
       if (value === undefined || value === '') {
         continue;
       }
-      const encoded = argument.type === 'date'
-        ? new Date(value).toISOString()
-        : value;
+      const encoded = argument.type === 'date' ? new Date(value).toISOString() : value;
       parts.push(encodeURIComponent(argument.name) + '=' + encodeURIComponent(encoded));
     }
     if (parts.length > 0) {
@@ -243,8 +261,13 @@ export default function InvokePanel(props: Readonly<{
       }
     }
     const lines = [
-      'curl -X ' + endpoint.verb.toUpperCase() + ' "' +
-        apiBaseUrl() + '/' + (usesQuery ? queryUrl() : endpoint.path) + '"',
+      'curl -X ' +
+        endpoint.verb.toUpperCase() +
+        ' "' +
+        apiBaseUrl() +
+        '/' +
+        (usesQuery ? queryUrl() : endpoint.path) +
+        '"',
       '-H "Authorization: Bearer ' + token + '"',
     ];
     if (isMultipart) {
@@ -260,7 +283,8 @@ export default function InvokePanel(props: Readonly<{
     } else if (!usesQuery) {
       lines.push(
         '-H "Content-Type: ' + (endpoint.consumes ?? 'application/json') + '"',
-        "-d '" + payload.replace(/'/g, String.raw`'\''`) + "'");
+        "-d '" + payload.replace(/'/g, String.raw`'\''`) + "'",
+      );
     }
     void copyToClipboard(lines.join(' \\\n  '), 'The cURL command');
   }
@@ -300,7 +324,8 @@ export default function InvokePanel(props: Readonly<{
         if (consumesJson && !isValidJson(payload)) {
           setInvokeError(
             'The payload is not valid JSON — replace the * wildcard arguments ' +
-            'with real values (objects, lists or scalars), or remove them.');
+              'with real values (objects, lists or scalars), or remove them.',
+          );
           return;
         }
         body = payload;
@@ -308,7 +333,12 @@ export default function InvokePanel(props: Readonly<{
       // A fresh short lived token per invocation, so an impersonation never goes stale.
       const token = runAs ? await generateRoleToken(runAs) : undefined;
       const response = await invokeEndpoint(
-        endpoint.verb, url, body, endpoint.consumes ?? 'application/json', token);
+        endpoint.verb,
+        url,
+        body,
+        endpoint.consumes ?? 'application/json',
+        token,
+      );
       props.onResult({ ...response, runAs });
     } catch (err: any) {
       setInvokeError(err.message);
@@ -331,7 +361,13 @@ export default function InvokePanel(props: Readonly<{
      * newlines, so multi-line payloads are unaffected.
      */
     <form
-      onSubmit={e => { e.preventDefault(); if (canInvoke && !busy) { void invoke(); } }}>
+      onSubmit={e => {
+        e.preventDefault();
+        if (canInvoke && !busy) {
+          void invoke();
+        }
+      }}
+    >
       {description && (
         <p style={{ marginTop: 0 }}>
           {fullDescription ? description : shortDescription}
@@ -340,7 +376,8 @@ export default function InvokePanel(props: Readonly<{
               type="button"
               className="btn btn-secondary btn-small"
               style={{ marginLeft: 8 }}
-              onClick={() => setFullDescription(!fullDescription)}>
+              onClick={() => setFullDescription(!fullDescription)}
+            >
               {fullDescription ? 'less' : 'more'}
             </button>
           )}
@@ -349,7 +386,11 @@ export default function InvokePanel(props: Readonly<{
       <div className="muted" style={{ marginBottom: 10 }}>
         Consumes: {endpoint.consumes ?? 'n/a'} — Produces: {endpoint.produces ?? 'n/a'}
       </div>
-      {invokeError && <Banner onClose={() => setInvokeError('')} style={{ marginBottom: 10 }}>{invokeError}</Banner>}
+      {invokeError && (
+        <Banner onClose={() => setInvokeError('')} style={{ marginBottom: 10 }}>
+          {invokeError}
+        </Banner>
+      )}
       {usesQuery && standardArgs.length > 0 && (
         <div style={argGrid}>
           {standardArgs.map((argument, index) => (
@@ -359,7 +400,8 @@ export default function InvokePanel(props: Readonly<{
               // Typing can start straight away on the first argument.
               autoFocus={index === 0}
               value={args[argument.name] ?? ''}
-              onChange={value => setArgs({ ...args, [argument.name]: value })} />
+              onChange={value => setArgs({ ...args, [argument.name]: value })}
+            />
           ))}
         </div>
       )}
@@ -368,9 +410,12 @@ export default function InvokePanel(props: Readonly<{
           <button
             type="button"
             className="btn btn-secondary btn-small"
-            onClick={() => setShowFilters(!showFilters)}>
+            onClick={() => setShowFilters(!showFilters)}
+          >
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <span className="tree-chevron"><ChevronIcon open={showFilters} /></span>
+              <span className="tree-chevron">
+                <ChevronIcon open={showFilters} />
+              </span>
               Filter arguments ({filterArgs.length})
             </span>
           </button>
@@ -381,7 +426,8 @@ export default function InvokePanel(props: Readonly<{
                   key={argument.name}
                   argument={argument}
                   value={args[argument.name] ?? ''}
-                  onChange={value => setArgs({ ...args, [argument.name]: value })} />
+                  onChange={value => setArgs({ ...args, [argument.name]: value })}
+                />
               ))}
             </div>
           )}
@@ -396,7 +442,8 @@ export default function InvokePanel(props: Readonly<{
                   key={argument.name}
                   argument={argument}
                   value={args[argument.name] ?? ''}
-                  onChange={value => setArgs({ ...args, [argument.name]: value })} />
+                  onChange={value => setArgs({ ...args, [argument.name]: value })}
+                />
               ))}
             </div>
           )}
@@ -408,16 +455,26 @@ export default function InvokePanel(props: Readonly<{
               return (
                 <div
                   key={argument.name}
-                  style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13, fontWeight: 600 }}>
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 4,
+                    fontSize: 13,
+                    fontWeight: 600,
+                  }}
+                >
                   <span>
                     {argument.name}
-                    <span className="muted" style={{ fontWeight: 400 }}> — one or more files</span>
+                    <span className="muted" style={{ fontWeight: 400 }}>
+                      {' '}
+                      — one or more files
+                    </span>
                   </span>
                   {/*
-                    * The native file input can't be styled, so it's hidden
-                    * inside a label — clicking the label opens the picker
-                    * just the same, and the label can look like any button.
-                    */}
+                   * The native file input can't be styled, so it's hidden
+                   * inside a label — clicking the label opens the picker
+                   * just the same, and the label can look like any button.
+                   */}
                   <label className="btn btn-secondary" style={{ alignSelf: 'flex-start' }}>
                     Choose files…
                     <input
@@ -429,24 +486,30 @@ export default function InvokePanel(props: Readonly<{
                         const picked = Array.from(e.target.files ?? []);
                         setFiles({ ...files, [argument.name]: [...selected, ...picked] });
                         e.target.value = '';
-                      }} />
+                      }}
+                    />
                   </label>
                   {selected.length > 0 && (
-                    <div style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      // Or a text-only chip stretches to an image chip's height.
-                      alignItems: 'flex-start',
-                      gap: 4,
-                    }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        // Or a text-only chip stretches to an image chip's height.
+                        alignItems: 'flex-start',
+                        gap: 4,
+                      }}
+                    >
                       {selected.map((file, index) => (
                         <FileChip
                           key={index}
                           file={file}
-                          onRemove={() => setFiles({
-                            ...files,
-                            [argument.name]: selected.filter((_, i) => i !== index),
-                          })} />
+                          onRemove={() =>
+                            setFiles({
+                              ...files,
+                              [argument.name]: selected.filter((_, i) => i !== index),
+                            })
+                          }
+                        />
                       ))}
                     </div>
                   )}
@@ -461,7 +524,8 @@ export default function InvokePanel(props: Readonly<{
           <CodeEditor
             value={payload}
             onChange={setPayload}
-            mode={consumesJson ? 'application/json' : 'hyperlambda'} />
+            mode={consumesJson ? 'application/json' : 'hyperlambda'}
+          />
         </div>
       )}
       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -475,12 +539,15 @@ export default function InvokePanel(props: Readonly<{
         {canInvoke && roles.length > 0 && (
           <label
             style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-            title="Invoke as a caller holding only this role, using a short lived token minted for it. Debug always runs as you.">
+            title="Invoke as a caller holding only this role, using a short lived token minted for it. Debug always runs as you."
+          >
             Run as
             <Select value={runAs} onChange={value => changeRunAs(value)}>
               <option value="">me</option>
               {roles.map(role => (
-                <option key={role} value={role}>{role}</option>
+                <option key={role} value={role}>
+                  {role}
+                </option>
               ))}
             </Select>
           </label>
@@ -490,7 +557,8 @@ export default function InvokePanel(props: Readonly<{
             type="button"
             className="btn btn-secondary"
             title="Run it while recording every slot, then step through what happened"
-            onClick={() => props.onDebug!(collectedArgs())}>
+            onClick={() => props.onDebug!(collectedArgs())}
+          >
             Debug
           </button>
         )}
@@ -499,7 +567,8 @@ export default function InvokePanel(props: Readonly<{
             type="button"
             className="btn btn-secondary"
             title="OpenAPI specification for this endpoint"
-            onClick={props.onOpenApi}>
+            onClick={props.onOpenApi}
+          >
             OpenAPI
           </button>
         )}
@@ -508,7 +577,8 @@ export default function InvokePanel(props: Readonly<{
             type="button"
             className="btn btn-secondary"
             title="Copy this invocation as a curl command, with $TOKEN standing in for your bearer token - or a 5 minute token for the role selected in Run as"
-            onClick={copyCurl}>
+            onClick={copyCurl}
+          >
             Copy as cURL
           </button>
         )}
@@ -518,7 +588,8 @@ export default function InvokePanel(props: Readonly<{
             type="button"
             className="btn btn-secondary"
             title="Open this endpoint's source file in Hyper IDE"
-            onClick={props.onEdit}>
+            onClick={props.onEdit}
+          >
             Edit in Hyper IDE
           </button>
         )}
@@ -533,7 +604,6 @@ export default function InvokePanel(props: Readonly<{
  * so what's about to be uploaded is visible without opening anything.
  */
 function FileChip({ file, onRemove }: Readonly<{ file: File; onRemove: () => void }>) {
-
   const [thumbnail, setThumbnail] = useState<string | null>(null);
 
   /*
@@ -559,15 +629,20 @@ function FileChip({ file, onRemove }: Readonly<{ file: File; onRemove: () => voi
      */
     <span
       className="chip"
-      style={thumbnail
-        ? { flexDirection: 'column', alignItems: 'stretch', borderRadius: 12, padding: 8, gap: 6 }
-        : undefined}>
+      style={
+        thumbnail
+          ? { flexDirection: 'column', alignItems: 'stretch', borderRadius: 12, padding: 8, gap: 6 }
+          : undefined
+      }
+    >
       <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         {file.name}
         <span className="muted" style={{ fontWeight: 400 }}>
           {Math.ceil(file.size / 1024)} KB
         </span>
-        <button title="Remove" onClick={onRemove}>×</button>
+        <button title="Remove" onClick={onRemove}>
+          ×
+        </button>
       </span>
       {thumbnail && (
         <img
@@ -580,7 +655,8 @@ function FileChip({ file, onRemove }: Readonly<{ file: File; onRemove: () => voi
             borderRadius: 8,
             display: 'block',
             background: 'var(--surface)',
-          }} />
+          }}
+        />
       )}
     </span>
   );

@@ -23,25 +23,30 @@ function connected(token: string | null) {
 }
 
 export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => void }>) {
-
   const { backend, backends, switchBackend, removeBackend, addBackend } = useAuth();
   const { confirm } = useDialog();
   const [filter, setFilter] = useState('');
 
   const visible = useMemo(() => {
     const query = filter.trim().toLowerCase();
-    return backends
-      .filter(candidate =>
-        !query ||
-        candidate.url.toLowerCase().includes(query) ||
-        candidate.username.toLowerCase().includes(query))
-      /*
-       * Signed in first, then alphabetically — a live cloudlet should never
-       * be buried under dozens of expired ones.
-       */
-      .sort((left, right) =>
-        Number(connected(right.token)) - Number(connected(left.token)) ||
-        left.url.localeCompare(right.url));
+    return (
+      backends
+        .filter(
+          candidate =>
+            !query ||
+            candidate.url.toLowerCase().includes(query) ||
+            candidate.username.toLowerCase().includes(query),
+        )
+        /*
+         * Signed in first, then alphabetically — a live cloudlet should never
+         * be buried under dozens of expired ones.
+         */
+        .sort(
+          (left, right) =>
+            Number(connected(right.token)) - Number(connected(left.token)) ||
+            left.url.localeCompare(right.url),
+        )
+    );
   }, [backends, filter]);
 
   const signedOut = backends.filter(candidate => !connected(candidate.token));
@@ -57,7 +62,8 @@ export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => vo
           placeholder="Filter backends…"
           value={filter}
           onChange={setFilter}
-          style={{ flex: 1 }} />
+          style={{ flex: 1 }}
+        />
         <span className="muted" style={{ whiteSpace: 'nowrap' }}>
           {visible.length} of {backends.length}
         </span>
@@ -78,14 +84,18 @@ export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => vo
               <tr key={candidate.url}>
                 <td>{candidate.username || <span className="muted">—</span>}</td>
                 {/*
-                  * Long cloudlet URLs wrap rather than widen the dialog. They
-                  * have no spaces to break at, so the break has to be allowed
-                  * mid-word — otherwise the table pushes past the dialog and
-                  * the whole thing scrolls sideways.
-                  */}
-                <td className="mono" style={{ wordBreak: 'break-all' }}>{candidate.url}</td>
+                 * Long cloudlet URLs wrap rather than widen the dialog. They
+                 * have no spaces to break at, so the break has to be allowed
+                 * mid-word — otherwise the table pushes past the dialog and
+                 * the whole thing scrolls sideways.
+                 */}
+                <td className="mono" style={{ wordBreak: 'break-all' }}>
+                  {candidate.url}
+                </td>
                 <td>
-                  <span className={'badge ' + (connected(candidate.token) ? 'badge-ok' : 'badge-idle')}>
+                  <span
+                    className={'badge ' + (connected(candidate.token) ? 'badge-ok' : 'badge-idle')}
+                  >
                     {connected(candidate.token) ? 'connected' : 'signed out'}
                   </span>
                 </td>
@@ -96,50 +106,57 @@ export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => vo
                     title={active ? 'This is the backend you are using' : 'Use this backend'}
                     onClick={async () => {
                       /*
-                        * Switching rebuilds every page from scratch, so an
-                        * editor with unsaved work loses it — the same guard
-                        * the nav links use gets to object first.
-                        */
+                       * Switching rebuilds every page from scratch, so an
+                       * editor with unsaved work loses it — the same guard
+                       * the nav links use gets to object first.
+                       */
                       const guard = getNavGuard();
-                      if (guard && !await guard()) {
+                      if (guard && !(await guard())) {
                         return;
                       }
                       switchBackend(candidate.url);
                       onClose();
-                    }}>
+                    }}
+                  >
                     {active ? 'Current' : 'Switch'}
-                  </button>
-                  {' '}
+                  </button>{' '}
                   {/*
-                    * Icons rather than labels for the two secondary actions —
-                    * three text buttons per row made the table wider than the
-                    * dialog, and the whole thing scrolled sideways.
-                    */}
+                   * Icons rather than labels for the two secondary actions —
+                   * three text buttons per row made the table wider than the
+                   * dialog, and the whole thing scrolled sideways.
+                   */}
                   <button
                     className="btn btn-secondary btn-small"
                     aria-label="Copy link to this backend"
                     title="A link that opens the dashboard against this backend"
-                    onClick={() => copyToClipboard(
-                      window.location.origin + '?backend=' + encodeURIComponent(candidate.url),
-                      'The link')}>
+                    onClick={() =>
+                      copyToClipboard(
+                        window.location.origin + '?backend=' + encodeURIComponent(candidate.url),
+                        'The link',
+                      )
+                    }
+                  >
                     <CopyIcon />
-                  </button>
-                  {' '}
+                  </button>{' '}
                   <button
                     className="btn btn-danger btn-small"
                     aria-label="Forget this backend"
                     title="Forget this backend"
                     onClick={async () => {
-                      if (await confirm({
-                        title: 'Forget ' + candidate.url + '?',
-                        message: 'This removes it from the list and discards its token. ' +
-                          'Nothing on the server is changed.',
-                        confirmText: 'Forget it',
-                        danger: true,
-                      })) {
+                      if (
+                        await confirm({
+                          title: 'Forget ' + candidate.url + '?',
+                          message:
+                            'This removes it from the list and discards its token. ' +
+                            'Nothing on the server is changed.',
+                          confirmText: 'Forget it',
+                          danger: true,
+                        })
+                      ) {
                         removeBackend(candidate.url);
                       }
-                    }}>
+                    }}
+                  >
                     <TrashIcon />
                   </button>
                 </td>
@@ -148,7 +165,9 @@ export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => vo
           })}
           {visible.length === 0 && (
             <tr>
-              <td colSpan={4} className="muted">Nothing matches that filter.</td>
+              <td colSpan={4} className="muted">
+                Nothing matches that filter.
+              </td>
             </tr>
           )}
         </tbody>
@@ -159,24 +178,34 @@ export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => vo
             className="btn btn-secondary"
             title="Remove every backend you are no longer signed in to"
             onClick={async () => {
-              if (await confirm({
-                title: 'Forget ' + signedOut.length + ' signed out backends?',
-                message: 'They are removed from this list only — nothing on any server '
-                  + 'is changed, and signing in again adds them back.',
-                confirmText: 'Forget them',
-                danger: true,
-              })) {
+              if (
+                await confirm({
+                  title: 'Forget ' + signedOut.length + ' signed out backends?',
+                  message:
+                    'They are removed from this list only — nothing on any server ' +
+                    'is changed, and signing in again adds them back.',
+                  confirmText: 'Forget them',
+                  danger: true,
+                })
+              ) {
                 signedOut.forEach(candidate => removeBackend(candidate.url));
               }
-            }}>
+            }}
+          >
             Forget signed out ({signedOut.length})
           </button>
         )}
-        <button className="btn btn-secondary" onClick={onClose}>Close</button>
+        <button className="btn btn-secondary" onClick={onClose}>
+          Close
+        </button>
         <button
           className="btn"
           title="Sign in to another cloudlet"
-          onClick={() => { addBackend(); onClose(); }}>
+          onClick={() => {
+            addBackend();
+            onClose();
+          }}
+        >
           Add backend
         </button>
       </div>

@@ -10,7 +10,6 @@ import { showToast } from './toast';
 import { defaultDatabaseType, exportDdl, http, listDatabases, listFiles } from './api';
 
 export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
-
   const preferMagic = options?.preferMagic ?? false;
   const [searchParams] = useSearchParams();
   // Deep-link parameters from e.g. the Databases screen, consumed once.
@@ -42,14 +41,16 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
   const schemaSeq = useRef(0);
 
   useEffect(() => {
-    defaultDatabaseType().then(response => {
-      setTypes(response.options);
-      setType(deepLink.current.type ?? response.default);
-    }).catch(err => {
-      setError(err.message);
-      setConnectionsLoaded(true);
-      setSchemaLoading(false);
-    });
+    defaultDatabaseType()
+      .then(response => {
+        setTypes(response.options);
+        setType(deepLink.current.type ?? response.default);
+      })
+      .catch(err => {
+        setError(err.message);
+        setConnectionsLoaded(true);
+        setSchemaLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -58,8 +59,10 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
     }
     const current = ++connectionsSeq.current;
     setConnectionsLoaded(false);
-    http.get<Record<string, string>>(
-      '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type))
+    http
+      .get<Record<string, string>>(
+        '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type),
+      )
       .then(response => {
         if (current !== connectionsSeq.current) {
           return;
@@ -72,7 +75,7 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
         if (wanted && names.includes(wanted)) {
           setConnectionString(wanted);
         } else {
-          setConnectionString(names.includes('generic') ? 'generic' : names[0] ?? '');
+          setConnectionString(names.includes('generic') ? 'generic' : (names[0] ?? ''));
         }
         if (names.length === 0) {
           setDatabasesMeta([]);
@@ -106,31 +109,33 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
      */
     const current = ++schemaSeq.current;
     setSchemaLoading(true);
-    listDatabases(type, connectionString).then(response => {
-      if (current !== schemaSeq.current) {
-        return;
-      }
-      setSchemaLoading(false);
-      const meta = response.databases ?? [];
-      setDatabasesMeta(meta);
-      const names = meta.map((db: any) => db.name);
-      const wanted = deepLink.current.database;
-      deepLink.current.database = null;
-      if (wanted && names.includes(wanted)) {
-        setDatabase(wanted);
-      } else if (preferMagic) {
-        setDatabase(names.includes('magic') ? 'magic' : names[0] ?? '');
-      } else {
-        setDatabase(names.find((name: string) => name !== 'magic') ?? names[0] ?? '');
-      }
-    }).catch(() => {
-      if (current !== schemaSeq.current) {
-        return;
-      }
-      setSchemaLoading(false);
-      setDatabasesMeta([]);
-      setDatabase('');
-    });
+    listDatabases(type, connectionString)
+      .then(response => {
+        if (current !== schemaSeq.current) {
+          return;
+        }
+        setSchemaLoading(false);
+        const meta = response.databases ?? [];
+        setDatabasesMeta(meta);
+        const names = meta.map((db: any) => db.name);
+        const wanted = deepLink.current.database;
+        deepLink.current.database = null;
+        if (wanted && names.includes(wanted)) {
+          setDatabase(wanted);
+        } else if (preferMagic) {
+          setDatabase(names.includes('magic') ? 'magic' : (names[0] ?? ''));
+        } else {
+          setDatabase(names.find((name: string) => name !== 'magic') ?? names[0] ?? '');
+        }
+      })
+      .catch(() => {
+        if (current !== schemaSeq.current) {
+          return;
+        }
+        setSchemaLoading(false);
+        setDatabasesMeta([]);
+        setDatabase('');
+      });
   }, [type, connectionString, preferMagic]);
 
   // Refetches the schema in place — after DDL changes like new tables.
@@ -146,11 +151,20 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
   const selectedMeta = databasesMeta.find(db => db.name === database);
 
   return {
-    types, type, setType,
-    connectionStrings, connectionString, setConnectionString,
-    databasesMeta, database, setDatabase,
-    selectedMeta, error, reloadSchema,
-    connectionsLoaded, schemaLoading,
+    types,
+    type,
+    setType,
+    connectionStrings,
+    connectionString,
+    setConnectionString,
+    databasesMeta,
+    database,
+    setDatabase,
+    selectedMeta,
+    error,
+    reloadSchema,
+    connectionsLoaded,
+    schemaLoading,
     loading: !connectionsLoaded || schemaLoading,
   };
 }
@@ -199,30 +213,38 @@ export async function buildSqlAiContext(options: {
   sql: string;
   args?: { name: string; type: string }[];
 }): Promise<string> {
-  const dialect = {
-    sqlite: 'SQLite',
-    mysql: 'MySQL',
-    mssql: 'Microsoft SQL Server',
-    pgsql: 'PostgreSQL',
-  }[options.type] ?? options.type;
+  const dialect =
+    {
+      sqlite: 'SQLite',
+      mysql: 'MySQL',
+      mssql: 'Microsoft SQL Server',
+      pgsql: 'PostgreSQL',
+    }[options.type] ?? options.type;
   let result = '';
   if (options.tables.length > 0) {
     const ddl = await exportDdl(
-      options.type, options.connectionString, options.database,
-      options.tables.map((table: any) => table.name), true);
+      options.type,
+      options.connectionString,
+      options.database,
+      options.tables.map((table: any) => table.name),
+      true,
+    );
     result += 'Current schema:\n\n' + ddl.result + '\n\n';
   }
   result += 'SQL dialect: ' + dialect + '\n\n';
   const declared = (options.args ?? []).filter(argument => argument.name);
   if (declared.length > 0) {
-    result += 'Declared endpoint arguments, reference them in the SQL as @name: ' +
-      declared.map(argument => argument.name + ' (' + argument.type + ')').join(', ') + '\n\n';
+    result +=
+      'Declared endpoint arguments, reference them in the SQL as @name: ' +
+      declared.map(argument => argument.name + ' (' + argument.type + ')').join(', ') +
+      '\n\n';
   }
   if (options.sql.length > 0) {
     result += 'Current code: \n\n' + options.sql;
   }
   if (options.tables.length > 0) {
-    result += '\n\n**IMPORTANT** - Return ONLY SQL! No ``` characters, or explanations, ' +
+    result +=
+      '\n\n**IMPORTANT** - Return ONLY SQL! No ``` characters, or explanations, ' +
       'ONLY the SQL! In the next message you will be given a natural language query being ' +
       "a request from the user. Return only the RAW SQL that solves the user' problem";
   }

@@ -90,11 +90,13 @@ function attributes(doc: Document, context: Element, tag: string, extra = '') {
  * icon, so a dropped image shows its own box while it waits for a real source.
  */
 const PLACEHOLDER =
-  'data:image/svg+xml;utf8,' + encodeURIComponent(
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200">' +
-    '<rect width="320" height="200" fill="%23d8d8d8"/>' +
-    '<path d="M110 130l30-38 24 30 18-20 28 28z" fill="%23fff"/>' +
-    '<circle cx="118" cy="74" r="12" fill="%23fff"/></svg>');
+      '<rect width="320" height="200" fill="%23d8d8d8"/>' +
+      '<path d="M110 130l30-38 24 30 18-20 28 28z" fill="%23fff"/>' +
+      '<circle cx="118" cy="74" r="12" fill="%23fff"/></svg>',
+  );
 
 /*
  * Most blocks are the bare element and nothing else — the house-style rule
@@ -123,8 +125,14 @@ function simple(name: string, label: string, inner = ''): Block {
 }
 
 function field(key: string, label: string, type: string, placeholder?: string): Block {
-  return block(key, label, (doc, at) => empty(doc, at, 'input',
-    ' type="' + type + '"' + (placeholder ? ' placeholder="' + placeholder + '"' : '')));
+  return block(key, label, (doc, at) =>
+    empty(
+      doc,
+      at,
+      'input',
+      ' type="' + type + '"' + (placeholder ? ' placeholder="' + placeholder + '"' : ''),
+    ),
+  );
 }
 
 // Both widgets share one runtime and one default stylesheet.
@@ -139,7 +147,8 @@ export const GROUPS: BlockGroup[] = [
     blocks: [
       block('text', '#text', () => 'Some text'),
       ...['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map(name =>
-        simple(name, name.toUpperCase(), 'Heading')),
+        simple(name, name.toUpperCase(), 'Heading'),
+      ),
       simple('p', 'Paragraph', 'Some text to edit.'),
       simple('strong', 'Strong', 'Important'),
       simple('em', 'Emphasis', 'Emphasised'),
@@ -171,19 +180,40 @@ export const GROUPS: BlockGroup[] = [
     blocks: [
       block('ul', 'Bullet list', (doc, at) => {
         const item = attributes(doc, at, 'li');
-        return tag(doc, at, 'ul',
-          '<li' + item + '>First item</li><li' + item + '>Second item</li>' +
-          '<li' + item + '>Third item</li>');
+        return tag(
+          doc,
+          at,
+          'ul',
+          '<li' +
+            item +
+            '>First item</li><li' +
+            item +
+            '>Second item</li>' +
+            '<li' +
+            item +
+            '>Third item</li>',
+        );
       }),
       block('ol', 'Numbered list', (doc, at) => {
         const item = attributes(doc, at, 'li');
-        return tag(doc, at, 'ol',
-          '<li' + item + '>First item</li><li' + item + '>Second item</li>' +
-          '<li' + item + '>Third item</li>');
+        return tag(
+          doc,
+          at,
+          'ol',
+          '<li' +
+            item +
+            '>First item</li><li' +
+            item +
+            '>Second item</li>' +
+            '<li' +
+            item +
+            '>Third item</li>',
+        );
       }),
       simple('li', 'List item', 'Item'),
       block('dl', 'Definition list', (doc, at) =>
-        tag(doc, at, 'dl', '<dt>Term</dt><dd>Definition</dd>')),
+        tag(doc, at, 'dl', '<dt>Term</dt><dd>Definition</dd>'),
+      ),
       simple('dt', 'Term', 'Term'),
       simple('dd', 'Definition', 'Definition'),
     ],
@@ -203,9 +233,11 @@ export const GROUPS: BlockGroup[] = [
       field('input-file', 'File', 'file'),
       field('input-range', 'Range', 'range'),
       block('textarea', 'Text area', (doc, at) =>
-        tag(doc, at, 'textarea', '', ' placeholder="Text"')),
+        tag(doc, at, 'textarea', '', ' placeholder="Text"'),
+      ),
       block('select', 'Dropdown', (doc, at) =>
-        tag(doc, at, 'select', '<option>First</option><option>Second</option>')),
+        tag(doc, at, 'select', '<option>First</option><option>Second</option>'),
+      ),
       simple('option', 'Option', 'Option'),
       simple('button', 'Button', 'Button'),
       simple('fieldset', 'Fieldset'),
@@ -234,18 +266,29 @@ export const GROUPS: BlockGroup[] = [
         ...block('magic-data-grid', 'Data grid', (doc, at) => {
           const headCell = attributes(doc, at, 'th');
           const cell = attributes(doc, at, 'td');
-          return '<magic-data-grid' + attributes(doc, at, 'table',
+          return (
+            '<magic-data-grid' +
+            attributes(
+              doc,
+              at,
+              'table',
               ' data-read-url="/magic/modules/REPLACE_ME/REPLACE_ME"' +
-              ' data-count-url="/magic/modules/REPLACE_ME/REPLACE_ME-count"' +
-              ' data-columns=\'[{"name":"Column","label":"Column"}]\'' +
-              ' data-page-size="10"') + '>' +
+                ' data-count-url="/magic/modules/REPLACE_ME/REPLACE_ME-count"' +
+                ' data-columns=\'[{"name":"Column","label":"Column"}]\'' +
+                ' data-page-size="10"',
+            ) +
+            '>' +
             '<table part="table"><thead><tr part="head-row">' +
-            '<th part="head-cell"' + headCell + '>Column</th>' +
+            '<th part="head-cell"' +
+            headCell +
+            '>Column</th>' +
             '</tr></thead><tbody>' +
-            '<tr part="row"><td part="cell"' + cell +
+            '<tr part="row"><td part="cell"' +
+            cell +
             '>Set data-read-url in the Inspector to a real endpoint</td></tr>' +
             '</tbody></table>' +
-            '</magic-data-grid>';
+            '</magic-data-grid>'
+          );
         }),
         requires: WIDGET_ASSETS,
       },
@@ -255,15 +298,30 @@ export const GROUPS: BlockGroup[] = [
           const input = attributes(doc, at, 'input');
           const button = attributes(doc, at, 'button');
           const message = attributes(doc, at, 'p');
-          return '<magic-data-create' + attributes(doc, at, 'form',
+          return (
+            '<magic-data-create' +
+            attributes(
+              doc,
+              at,
+              'form',
               ' data-create-url="/magic/modules/REPLACE_ME/REPLACE_ME"' +
-              ' data-columns=\'[{"name":"Column","label":"Column"}]\'') + '>' +
-            '<label part="label"' + label + '>Column' +
-            '<input part="input" type="text" name="Column"' + input + '></label>' +
-            '<button part="button" type="submit"' + button + '>Create</button>' +
-            '<p part="message"' + message +
+                ' data-columns=\'[{"name":"Column","label":"Column"}]\'',
+            ) +
+            '>' +
+            '<label part="label"' +
+            label +
+            '>Column' +
+            '<input part="input" type="text" name="Column"' +
+            input +
+            '></label>' +
+            '<button part="button" type="submit"' +
+            button +
+            '>Create</button>' +
+            '<p part="message"' +
+            message +
             '>Set data-create-url (and data-columns) in the Inspector to a real endpoint</p>' +
-            '</magic-data-create>';
+            '</magic-data-create>'
+          );
         }),
         requires: WIDGET_ASSETS,
       },
@@ -272,26 +330,48 @@ export const GROUPS: BlockGroup[] = [
           const label = attributes(doc, at, 'label');
           const input = attributes(doc, at, 'input');
           const button = attributes(doc, at, 'button');
-          return '<magic-login-form' + attributes(doc, at, 'form',
-              ' data-auth-url="/magic/system/auth/authenticate" data-redirect="/"') + '>' +
-            '<label part="label"' + label + '>Username' +
-            '<input part="input" type="text" name="username"' + input + '></label>' +
-            '<label part="label"' + label + '>Password' +
-            '<input part="input" type="password" name="password"' + input + '></label>' +
-            '<button part="button" type="submit"' + button + '>Log in</button>' +
+          return (
+            '<magic-login-form' +
+            attributes(
+              doc,
+              at,
+              'form',
+              ' data-auth-url="/magic/system/auth/authenticate" data-redirect="/"',
+            ) +
+            '>' +
+            '<label part="label"' +
+            label +
+            '>Username' +
+            '<input part="input" type="text" name="username"' +
+            input +
+            '></label>' +
+            '<label part="label"' +
+            label +
+            '>Password' +
+            '<input part="input" type="password" name="password"' +
+            input +
+            '></label>' +
+            '<button part="button" type="submit"' +
+            button +
+            '>Log in</button>' +
             '<p part="error" hidden></p>' +
-            '</magic-login-form>';
+            '</magic-login-form>'
+          );
         }),
         requires: WIDGET_ASSETS,
       },
       {
         ...block('magic-require-login', 'Require login', (doc, at) => {
           const text = attributes(doc, at, 'p');
-          return '<magic-require-login data-redirect="/login" data-role="">' +
-            '<p part="notice"' + text + '>' +
+          return (
+            '<magic-require-login data-redirect="/login" data-role="">' +
+            '<p part="notice"' +
+            text +
+            '>' +
             'Requires login — redirects to data-redirect if not signed in, ' +
             'or signed in without data-role' +
-            '</p></magic-require-login>';
+            '</p></magic-require-login>'
+          );
         }),
         requires: WIDGET_ASSETS,
       },
@@ -302,7 +382,8 @@ export const GROUPS: BlockGroup[] = [
     blocks: [
       block('a', 'Link', (doc, at) => tag(doc, at, 'a', 'Link', ' href="/"')),
       block('img', 'Image', (doc, at) =>
-        empty(doc, at, 'img', ' src="' + PLACEHOLDER + '" alt=""')),
+        empty(doc, at, 'img', ' src="' + PLACEHOLDER + '" alt=""'),
+      ),
       block('video', 'Video', (doc, at) => tag(doc, at, 'video', '', ' controls width="320"')),
       block('audio', 'Audio', (doc, at) => tag(doc, at, 'audio', '', ' controls')),
     ],
@@ -310,10 +391,16 @@ export const GROUPS: BlockGroup[] = [
   {
     label: 'Table',
     blocks: [
-      block('table', 'Table', (doc, at) => tag(doc, at, 'table',
-        '<thead><tr><th>First</th><th>Second</th><th>Third</th></tr></thead>' +
-        '<tbody><tr><td>Cell</td><td>Cell</td><td>Cell</td></tr>' +
-        '<tr><td>Cell</td><td>Cell</td><td>Cell</td></tr></tbody>')),
+      block('table', 'Table', (doc, at) =>
+        tag(
+          doc,
+          at,
+          'table',
+          '<thead><tr><th>First</th><th>Second</th><th>Third</th></tr></thead>' +
+            '<tbody><tr><td>Cell</td><td>Cell</td><td>Cell</td></tr>' +
+            '<tr><td>Cell</td><td>Cell</td><td>Cell</td></tr></tbody>',
+        ),
+      ),
       simple('thead', 'Head'),
       simple('tbody', 'Body'),
       block('tr', 'Row', (doc, at) => tag(doc, at, 'tr', '<td>Cell</td><td>Cell</td>')),
@@ -326,7 +413,8 @@ export const GROUPS: BlockGroup[] = [
     label: 'Interactive',
     blocks: [
       block('details', 'Details', (doc, at) =>
-        tag(doc, at, 'details', '<summary>Summary</summary>Hidden until opened.')),
+        tag(doc, at, 'details', '<summary>Summary</summary>Hidden until opened.'),
+      ),
       simple('summary', 'Summary', 'Summary'),
     ],
   },
@@ -338,10 +426,12 @@ export const GROUPS: BlockGroup[] = [
  * still one typed tag name away.
  */
 export function customBlock(name: string): Block | null {
-  const tagName = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+  const tagName = name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '');
   if (tagName === '') {
     return null;
   }
-  return block('custom:' + tagName, '<' + tagName + '>',
-    (doc, at) => tag(doc, at, tagName, ''));
+  return block('custom:' + tagName, '<' + tagName + '>', (doc, at) => tag(doc, at, tagName, ''));
 }

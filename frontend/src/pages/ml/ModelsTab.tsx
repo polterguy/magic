@@ -20,13 +20,14 @@ import EditModelDialog from './EditModelDialog';
 import EmbedDialog from './EmbedDialog';
 import ImportDialog from './ImportDialog';
 
-export default function ModelsTab(props: Readonly<{
-  types: any[];
-  onChanged: () => void;
-  // A model the command palette asked to open, resolved by the page above.
-  editOnOpen?: string | null;
-}>) {
-
+export default function ModelsTab(
+  props: Readonly<{
+    types: any[];
+    onChanged: () => void;
+    // A model the command palette asked to open, resolved by the page above.
+    editOnOpen?: string | null;
+  }>,
+) {
   const [editing, setEditing] = useState<any>(null);
 
   /*
@@ -37,9 +38,7 @@ export default function ModelsTab(props: Readonly<{
    */
   const consumed = useRef<string | null>(null);
   useEffect(() => {
-    if (!props.editOnOpen
-      || props.types.length === 0
-      || consumed.current === props.editOnOpen) {
+    if (!props.editOnOpen || props.types.length === 0 || consumed.current === props.editOnOpen) {
       return;
     }
     consumed.current = props.editOnOpen;
@@ -50,8 +49,11 @@ export default function ModelsTab(props: Readonly<{
       showToast('No model named ' + props.editOnOpen, true);
     }
   }, [props.editOnOpen, props.types]);
-  const [vectorising, setVectorising] =
-    useState<{ type: string; channel: string; total: number } | null>(null);
+  const [vectorising, setVectorising] = useState<{
+    type: string;
+    channel: string;
+    total: number;
+  } | null>(null);
   const [importing, setImporting] = useState<string | null>(null);
   const [embedding, setEmbedding] = useState<string | null>(null);
   // Round-trips before a dialog/terminal appears — counts, vector resets, deletes.
@@ -59,13 +61,15 @@ export default function ModelsTab(props: Readonly<{
   const { confirm, confirmTyped } = useDialog();
 
   async function remove(type: string) {
-    if (!await confirmTyped({
-      title: 'Delete model?',
-      message: 'This deletes the model and its training data. Type the model name to confirm.',
-      label: 'Model name',
-      expected: type,
-      confirmText: 'Delete',
-    })) {
+    if (
+      !(await confirmTyped({
+        title: 'Delete model?',
+        message: 'This deletes the model and its training data. Type the model name to confirm.',
+        label: 'Model name',
+        expected: type,
+        confirmText: 'Delete',
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -101,14 +105,23 @@ export default function ModelsTab(props: Readonly<{
         }
         // Waiter off while the confirm dialog awaits the user.
         setWaiting(false);
-        if (!await confirm({
-          title: 'Re-vectorise ' + type + '?',
-          message: 'Every snippet in ' + type + ' is already vectorised. Continuing ' +
-            'deletes all ' + all + ' existing vectors and creates ' + all + ' new embeddings, ' +
-            'which costs OpenAI credits.',
-          confirmText: 'Delete vectors and re-vectorise',
-          danger: true,
-        })) {
+        if (
+          !(await confirm({
+            title: 'Re-vectorise ' + type + '?',
+            message:
+              'Every snippet in ' +
+              type +
+              ' is already vectorised. Continuing ' +
+              'deletes all ' +
+              all +
+              ' existing vectors and creates ' +
+              all +
+              ' new embeddings, ' +
+              'which costs OpenAI credits.',
+            confirmText: 'Delete vectors and re-vectorise',
+            danger: true,
+          }))
+        ) {
           return;
         }
         setWaiting(true);
@@ -129,7 +142,9 @@ export default function ModelsTab(props: Readonly<{
       <div className="toolbar">
         <span className="muted">{props.types.length} models</span>
         <span className="spacer" />
-        <button className="btn" onClick={() => setEditing('new')}>+ New model</button>
+        <button className="btn" onClick={() => setEditing('new')}>
+          + New model
+        </button>
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         <table>
@@ -145,26 +160,36 @@ export default function ModelsTab(props: Readonly<{
           <tbody>
             {props.types.map(type => (
               <tr key={type.type}>
-                <td><strong>{type.type}</strong></td>
-                <td className="mono" data-label="Model">{type.model}</td>
+                <td>
+                  <strong>{type.type}</strong>
+                </td>
+                <td className="mono" data-label="Model">
+                  {type.model}
+                </td>
                 {/* Tokenised server-side by the backend (the endpoint runs the
                     system message through its GPT tokenizer per row). */}
                 <td
                   className="mono"
                   data-label="Tokens"
-                  title="Size of this model's system instruction, in tokens">
-                  {typeof type.system_message_token_count === 'number'
-                    ? type.system_message_token_count.toLocaleString()
-                    : <span className="muted">—</span>}
+                  title="Size of this model's system instruction, in tokens"
+                >
+                  {typeof type.system_message_token_count === 'number' ? (
+                    type.system_message_token_count.toLocaleString()
+                  ) : (
+                    <span className="muted">—</span>
+                  )}
                 </td>
                 <td data-label="Embeddings">
                   <span
                     className={'state-icon ' + (type.use_embeddings ? 'on' : 'off')}
                     role="img"
                     aria-label={type.use_embeddings ? 'Embeddings on' : 'Embeddings off'}
-                    title={type.use_embeddings
-                      ? 'This model retrieves from its vectorised training data'
-                      : 'This model answers without retrieving training data'}>
+                    title={
+                      type.use_embeddings
+                        ? 'This model retrieves from its vectorised training data'
+                        : 'This model answers without retrieving training data'
+                    }
+                  >
                     {type.use_embeddings ? <CheckIcon /> : <DashIcon />}
                   </span>
                 </td>
@@ -172,27 +197,29 @@ export default function ModelsTab(props: Readonly<{
                   <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                     <button
                       className="btn btn-secondary btn-small"
-                      onClick={() => setImporting(type.type)}>
+                      onClick={() => setImporting(type.type)}
+                    >
                       Import
                     </button>
                     <button
                       className="btn btn-secondary btn-small"
-                      onClick={() => vectorise(type.type)}>
+                      onClick={() => vectorise(type.type)}
+                    >
                       Vectorise
                     </button>
                     <button
                       className="btn btn-secondary btn-small"
-                      onClick={() => setEmbedding(type.type)}>
+                      onClick={() => setEmbedding(type.type)}
+                    >
                       Embed
                     </button>
                     <button
                       className="btn btn-secondary btn-small"
-                      onClick={() => setEditing(type)}>
+                      onClick={() => setEditing(type)}
+                    >
                       Edit
                     </button>
-                    <button
-                      className="btn btn-danger btn-small"
-                      onClick={() => remove(type.type)}>
+                    <button className="btn btn-danger btn-small" onClick={() => remove(type.type)}>
                       Delete
                     </button>
                   </div>
@@ -206,7 +233,11 @@ export default function ModelsTab(props: Readonly<{
         <EditModelDialog
           existing={editing === 'new' ? null : editing}
           onClose={() => setEditing(null)}
-          onSaved={() => { setEditing(null); props.onChanged(); }} />
+          onSaved={() => {
+            setEditing(null);
+            props.onChanged();
+          }}
+        />
       )}
       {vectorising && (
         <SocketFeedback
@@ -219,19 +250,15 @@ export default function ModelsTab(props: Readonly<{
             counts: message => message.message.startsWith('Vectorizing:'),
           }}
           onReady={() => {
-            vectoriseType(vectorising.type, vectorising.channel)
-              .catch(err => showToast(err.message, true, err.logId));
+            vectoriseType(vectorising.type, vectorising.channel).catch(err =>
+              showToast(err.message, true, err.logId),
+            );
           }}
-          onClose={() => setVectorising(null)} />
+          onClose={() => setVectorising(null)}
+        />
       )}
-      {importing && (
-        <ImportDialog
-          type={importing}
-          onClose={() => setImporting(null)} />
-      )}
-      {embedding && (
-        <EmbedDialog type={embedding} onClose={() => setEmbedding(null)} />
-      )}
+      {importing && <ImportDialog type={importing} onClose={() => setImporting(null)} />}
+      {embedding && <EmbedDialog type={embedding} onClose={() => setEmbedding(null)} />}
       {waiting && <AiWaiter />}
     </>
   );

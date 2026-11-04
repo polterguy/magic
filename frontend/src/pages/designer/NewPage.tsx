@@ -99,32 +99,44 @@ export function blankPage(url: string, companions: { css?: boolean; js?: boolean
   // Same folder as the page itself, not the site root — "/docs/pricing" gets
   // "/docs/pricing.css", a true sibling, the same way fileForUrl() places it.
   const base = tidyUrl(url);
-  return '<!doctype html>\n' +
+  return (
+    '<!doctype html>\n' +
     '<html lang="en">\n' +
     '<head>\n' +
     '<meta charset="utf-8">\n' +
     '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
-    '<title>' + title + '</title>\n' +
+    '<title>' +
+    title +
+    '</title>\n' +
     (companions.css ? '<link rel="stylesheet" href="' + base + '.css">\n' : '') +
     '</head>\n' +
     '<body>\n' +
-    '<h1>' + title + '</h1>\n' +
+    '<h1>' +
+    title +
+    '</h1>\n' +
     (companions.js ? '<script src="' + base + '.js"></script>\n' : '') +
     '</body>\n' +
-    '</html>\n';
+    '</html>\n'
+  );
 }
 
 // What will happen on Create, or what is wrong with the address typed.
-function NewPageNote(props: Readonly<{
-  url: string;
-  problem: ReturnType<typeof urlProblem>;
-  blank: boolean;
-  addCss: boolean;
-  addJs: boolean;
-}>) {
+function NewPageNote(
+  props: Readonly<{
+    url: string;
+    problem: ReturnType<typeof urlProblem>;
+    blank: boolean;
+    addCss: boolean;
+    addJs: boolean;
+  }>,
+) {
   const { url, problem, blank, addCss, addJs } = props;
   if (url.trim() === '') {
-    return <p className="designer-note">The address the page will be served at — type / for the site’s own home page.</p>;
+    return (
+      <p className="designer-note">
+        The address the page will be served at — type / for the site’s own home page.
+      </p>
+    );
   }
   if (problem) {
     return <p className="designer-note">{problem}</p>;
@@ -132,20 +144,37 @@ function NewPageNote(props: Readonly<{
   return (
     <p className="designer-note">
       Creates <code>{fileForUrl(url)}</code>, served at <code>{tidyUrl(url)}</code>.
-      {blank && (addCss || addJs) && <> And <code>{tidyUrl(url)}{addCss ? '.css' : ''}{addCss && addJs ? ' / ' : ''}{addJs ? '.js' : ''}</code>, linked from it.</>}
+      {blank && (addCss || addJs) && (
+        <>
+          {' '}
+          And{' '}
+          <code>
+            {tidyUrl(url)}
+            {addCss ? '.css' : ''}
+            {addCss && addJs ? ' / ' : ''}
+            {addJs ? '.js' : ''}
+          </code>
+          , linked from it.
+        </>
+      )}
     </p>
   );
 }
 
-export default function NewPage(props: Readonly<{
-  // Canonical URLs already in use, so a collision is refused before writing.
-  taken: string[];
-  // Page file → the URL it is served at, for the "copy of" list.
-  pages: { file: string; url: string }[];
-  onCancel: () => void;
-  onCreate: (file: string, copyFrom: string | null, companions: { css: boolean; js: boolean }) => void;
-}>) {
-
+export default function NewPage(
+  props: Readonly<{
+    // Canonical URLs already in use, so a collision is refused before writing.
+    taken: string[];
+    // Page file → the URL it is served at, for the "copy of" list.
+    pages: { file: string; url: string }[];
+    onCancel: () => void;
+    onCreate: (
+      file: string,
+      copyFrom: string | null,
+      companions: { css: boolean; js: boolean },
+    ) => void;
+  }>,
+) {
   // Empty, not "/" — "/" is now itself a real, meaningful answer (the home
   // page), so it can no longer also stand for "nothing typed yet".
   const [url, setUrl] = useState('');
@@ -165,7 +194,10 @@ export default function NewPage(props: Readonly<{
 
   function create() {
     if (!problem) {
-      props.onCreate(fileForUrl(url), blank ? null : copyFrom, { css: blank && addCss, js: blank && addJs });
+      props.onCreate(fileForUrl(url), blank ? null : copyFrom, {
+        css: blank && addCss,
+        js: blank && addJs,
+      });
     }
   }
 
@@ -180,7 +212,8 @@ export default function NewPage(props: Readonly<{
             autoFocus
             value={url}
             placeholder="/pricing, or / for the home page"
-            onChange={event => setUrl(event.target.value)} />
+            onChange={event => setUrl(event.target.value)}
+          />
         </label>
 
         <label className="designer-field">
@@ -188,20 +221,30 @@ export default function NewPage(props: Readonly<{
           <select value={copyFrom} onChange={event => setCopyFrom(event.target.value)}>
             <option value="">A blank page</option>
             {props.pages.map(page => (
-              <option key={page.file} value={page.file}>A copy of {page.url}</option>
+              <option key={page.file} value={page.file}>
+                A copy of {page.url}
+              </option>
             ))}
           </select>
         </label>
 
         {blank && (
           <label className="checkbox-row">
-            <input type="checkbox" checked={addCss} onChange={event => setAddCss(event.target.checked)} />
+            <input
+              type="checkbox"
+              checked={addCss}
+              onChange={event => setAddCss(event.target.checked)}
+            />
             Create a stylesheet for it too
           </label>
         )}
         {blank && (
           <label className="checkbox-row">
-            <input type="checkbox" checked={addJs} onChange={event => setAddJs(event.target.checked)} />
+            <input
+              type="checkbox"
+              checked={addJs}
+              onChange={event => setAddJs(event.target.checked)}
+            />
             Create a script for it too
           </label>
         )}
@@ -209,8 +252,12 @@ export default function NewPage(props: Readonly<{
         <NewPageNote url={url} problem={problem} blank={blank} addCss={addCss} addJs={addJs} />
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onCancel}>Cancel</button>
-        <button className="btn" onClick={create} disabled={!!problem}>Create</button>
+        <button className="btn btn-secondary" onClick={props.onCancel}>
+          Cancel
+        </button>
+        <button className="btn" onClick={create} disabled={!!problem}>
+          Create
+        </button>
       </div>
     </Modal>
   );

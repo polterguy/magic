@@ -8,12 +8,11 @@ import { backendInfo } from './api';
 
 export function createSocket(options?: { reconnect?: boolean }): HubConnection {
   const backend = backendInfo();
-  const builder = new HubConnectionBuilder()
-    .withUrl(backend.url + '/sockets', {
-      accessTokenFactory: () => backend.token ?? '',
-      skipNegotiation: true,
-      transport: HttpTransportType.WebSockets,
-    });
+  const builder = new HubConnectionBuilder().withUrl(backend.url + '/sockets', {
+    accessTokenFactory: () => backend.token ?? '',
+    skipNegotiation: true,
+    transport: HttpTransportType.WebSockets,
+  });
   if (options?.reconnect) {
     builder.withAutomaticReconnect();
   }

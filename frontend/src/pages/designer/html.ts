@@ -16,8 +16,20 @@
 
 // Elements that cannot have children, so they never get a closing tag.
 const VOID = new Set([
-  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
-  'link', 'meta', 'param', 'source', 'track', 'wbr',
+  'area',
+  'base',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'link',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr',
 ]);
 
 /*
@@ -33,11 +45,52 @@ const RAW = new Set(['script', 'style', 'pre', 'textarea']);
  * way block elements are — doing so would insert or remove real spaces.
  */
 const INLINE = new Set([
-  'a', 'abbr', 'b', 'bdi', 'bdo', 'br', 'button', 'cite', 'code', 'data',
-  'datalist', 'dfn', 'em', 'i', 'img', 'input', 'kbd', 'label', 'map', 'mark',
-  'meter', 'noscript', 'object', 'output', 'picture', 'progress', 'q', 'rp',
-  'rt', 'ruby', 's', 'samp', 'select', 'slot', 'small', 'span', 'strong',
-  'sub', 'sup', 'svg', 'template', 'textarea', 'time', 'u', 'var', 'wbr',
+  'a',
+  'abbr',
+  'b',
+  'bdi',
+  'bdo',
+  'br',
+  'button',
+  'cite',
+  'code',
+  'data',
+  'datalist',
+  'dfn',
+  'em',
+  'i',
+  'img',
+  'input',
+  'kbd',
+  'label',
+  'map',
+  'mark',
+  'meter',
+  'noscript',
+  'object',
+  'output',
+  'picture',
+  'progress',
+  'q',
+  'rp',
+  'rt',
+  'ruby',
+  's',
+  'samp',
+  'select',
+  'slot',
+  'small',
+  'span',
+  'strong',
+  'sub',
+  'sup',
+  'svg',
+  'template',
+  'textarea',
+  'time',
+  'u',
+  'var',
+  'wbr',
 ]);
 
 const INDENT = '  ';
@@ -95,8 +148,7 @@ export function slotsDropped(before: string, after: string): string[] {
 }
 
 export function isSlot(node: Node): node is Element {
-  return node.nodeType === Node.ELEMENT_NODE &&
-    (node as Element).hasAttribute(SLOT_ATTRIBUTE);
+  return node.nodeType === Node.ELEMENT_NODE && (node as Element).hasAttribute(SLOT_ATTRIBUTE);
 }
 
 /*
@@ -328,7 +380,8 @@ export function serializeDocument(doc: Document): string {
    * {{expression}} inside it, where leaving it costs a stray span and nothing
    * more. A visible mess beats a silent loss.
    */
-  copy.querySelectorAll('[data-magic-editing], [' + SLOT_ATTRIBUTE + ']')
+  copy
+    .querySelectorAll('[data-magic-editing], [' + SLOT_ATTRIBUTE + ']')
     .forEach(node => node.replaceWith(...Array.from(node.childNodes)));
   /*
    * A stylesheet the designer took over is switched back on. While editing,
@@ -336,8 +389,7 @@ export function serializeDocument(doc: Document): string {
    * instead, so that the panel is the only thing describing the designer's
    * block — but the link is the author's, and the file gets it back working.
    */
-  copy.querySelectorAll('[data-magic-disabled]')
-    .forEach(node => node.removeAttribute('disabled'));
+  copy.querySelectorAll('[data-magic-disabled]').forEach(node => node.removeAttribute('disabled'));
   copy.querySelectorAll('[' + TOOL_ATTRIBUTE + ']').forEach(node => node.remove());
   const out: string[] = [];
   if (copy.doctype) {
@@ -354,8 +406,7 @@ export function serializeDocument(doc: Document): string {
  * nothing about the page.
  */
 function isBlockContext(element: Element) {
-  return Array.from(element.children)
-    .some(child => !INLINE.has(child.tagName.toLowerCase()));
+  return Array.from(element.children).some(child => !INLINE.has(child.tagName.toLowerCase()));
 }
 
 function escapeText(text: string) {
@@ -370,8 +421,14 @@ function escapeText(text: string) {
 function writeAttributes(element: Element) {
   return Array.from(element.attributes)
     .filter(attribute => !attribute.name.startsWith('data-magic-'))
-    .map(attribute => ' ' + attribute.name + '="' +
-      attribute.value.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '"')
+    .map(
+      attribute =>
+        ' ' +
+        attribute.name +
+        '="' +
+        attribute.value.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
+        '"',
+    )
     .join('');
 }
 

@@ -251,8 +251,7 @@ export const SHORTCUTS: Shortcut[] = [
 ];
 
 // macOS reports as Mac (or an iDevice) — decides which combo to display.
-export const isMac =
-  typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+export const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
 export function shortcutDisplay(shortcut: Shortcut): string {
   return isMac && shortcut.mac ? shortcut.mac : shortcut.display;

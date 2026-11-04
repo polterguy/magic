@@ -30,7 +30,6 @@ import {
 } from '../lib/api';
 
 export default function Sql() {
-
   // Prefers magic — the SQL editor's most common target, unlike the
   // generators which deliberately avoid it.
   const selection = useDatabaseSelection({ preferMagic: true });
@@ -61,8 +60,7 @@ export default function Sql() {
    */
   const [aiConfigured, setAiConfigured] = useState(false);
   const { snippets, setSnippets } = useSqlSnippets(type);
-  const [selectedSnippet, setSelectedSnippet] =
-    useSessionState('magic2.sql-studio.snippet', '');
+  const [selectedSnippet, setSelectedSnippet] = useSessionState('magic2.sql-studio.snippet', '');
   const [view, setView] = useState<'sql' | 'tables'>('sql');
   const [ddl, setDdl] = useState<{ title: string; sql: string } | null>(null);
   const [newTable, setNewTable] = useState(false);
@@ -80,13 +78,16 @@ export default function Sql() {
   }, []);
 
   async function flushCache() {
-    if (!await confirm({
-      title: 'Flush server-side cache?',
-      message: 'This clears the cached database schema on the server, then reloads the ' +
-        'page so the dashboard picks up the fresh schema everywhere. Any unsaved changes ' +
-        'in the editor will be lost.',
-      confirmText: 'Flush and reload',
-    })) {
+    if (
+      !(await confirm({
+        title: 'Flush server-side cache?',
+        message:
+          'This clears the cached database schema on the server, then reloads the ' +
+          'page so the dashboard picks up the fresh schema everywhere. Any unsaved changes ' +
+          'in the editor will be lost.',
+        confirmText: 'Flush and reload',
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -103,7 +104,7 @@ export default function Sql() {
     setWaiting(true);
     try {
       await importCsvFile(type, connectionString, database, file);
-      showToast('Importing ' + file.name + ' — you\'ll be notified when it completes');
+      showToast('Importing ' + file.name + " — you'll be notified when it completes");
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     } finally {
@@ -112,14 +113,16 @@ export default function Sql() {
   }
 
   async function dropTableConfirmed(tableName: string) {
-    if (!await confirmTyped({
-      title: 'Drop table?',
-      message: 'This permanently deletes ' + tableName + '. Type the table name to confirm.',
-      label: 'Table name',
-      expected: tableName,
-      confirmText: 'Drop',
-      mismatch: 'Name did not match — nothing dropped',
-    })) {
+    if (
+      !(await confirmTyped({
+        title: 'Drop table?',
+        message: 'This permanently deletes ' + tableName + '. Type the table name to confirm.',
+        label: 'Table name',
+        expected: tableName,
+        confirmText: 'Drop',
+        mismatch: 'Name did not match — nothing dropped',
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -135,12 +138,14 @@ export default function Sql() {
   }
 
   async function dropColumnConfirmed(tableName: string, columnName: string) {
-    if (!await confirm({
-      title: 'Drop column?',
-      message: tableName + '.' + columnName + ' will be permanently removed.',
-      confirmText: 'Drop',
-      danger: true,
-    })) {
+    if (
+      !(await confirm({
+        title: 'Drop column?',
+        message: tableName + '.' + columnName + ' will be permanently removed.',
+        confirmText: 'Drop',
+        danger: true,
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -172,8 +177,7 @@ export default function Sql() {
   }
 
   // Table → columns map for Ctrl-Space SQL autocomplete.
-  const hintTables = useMemo(
-    () => sqlHintTables(selection.selectedMeta), [selection.selectedMeta]);
+  const hintTables = useMemo(() => sqlHintTables(selection.selectedMeta), [selection.selectedMeta]);
 
   /*
    * The last 20 executed statements, newest first — failures included, since
@@ -228,8 +232,7 @@ export default function Sql() {
     }
     setGenerating(true);
     try {
-      const response = await aiQuery(
-        selected, 'sql', await createAiContext(), 'sql-studio.editor');
+      const response = await aiQuery(selected, 'sql', await createAiContext(), 'sql-studio.editor');
       setSql(response.result);
       bumpSqlEditId();
     } catch (err: any) {
@@ -253,7 +256,12 @@ export default function Sql() {
       // containing the letters "go" (category, algorithm…) doesn't count.
       const batch = type === 'mssql' && /^[ \t]*go(?:[ \t]*;)?[ \t]*$/im.test(toExecute);
       const response = await executeSql(
-        type, '[' + connectionString + '|' + database + ']', toExecute, safeMode, batch);
+        type,
+        '[' + connectionString + '|' + database + ']',
+        toExecute,
+        safeMode,
+        batch,
+      );
       setResult(response ?? []);
       const count = (response ?? []).reduce((total, set) => total + (set?.length ?? 0), 0);
       let message = count + ' records returned';
@@ -277,13 +285,18 @@ export default function Sql() {
     }
     // Loading over unsaved work destroys it — the navigation guard can't see
     // this, so ask the same question it would.
-    if (sql !== savedSql && !await confirm({
-      title: 'Discard unsaved changes?',
-      message: 'Your SQL has unsaved changes. Loading ' +
-        filename.substring(filename.lastIndexOf('/') + 1) + ' replaces them.',
-      confirmText: 'Discard',
-      danger: true,
-    })) {
+    if (
+      sql !== savedSql &&
+      !(await confirm({
+        title: 'Discard unsaved changes?',
+        message:
+          'Your SQL has unsaved changes. Loading ' +
+          filename.substring(filename.lastIndexOf('/') + 1) +
+          ' replaces them.',
+        confirmText: 'Discard',
+        danger: true,
+      }))
+    ) {
       return;
     }
     setSelectedSnippet(filename);
@@ -314,8 +327,7 @@ export default function Sql() {
     if (!name) {
       return;
     }
-    const filename = '/etc/' + type + '/templates/' + name +
-      (name.endsWith('.sql') ? '' : '.sql');
+    const filename = '/etc/' + type + '/templates/' + name + (name.endsWith('.sql') ? '' : '.sql');
     setWaiting(true);
     try {
       await saveFile(filename, sql);
@@ -348,29 +360,39 @@ export default function Sql() {
         </div>
         <div className="page-tools">
           <Select value={type} onChange={selection.setType}>
-            {selection.types.map(option => <option key={option} value={option}>{option}</option>)}
+            {selection.types.map(option => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
           </Select>
           <Select value={connectionString} onChange={selection.setConnectionString}>
-            {selection.connectionStrings.map(option =>
-              <option key={option} value={option}>{option}</option>)}
+            {selection.connectionStrings.map(option => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
           </Select>
           <Select value={database} onChange={selection.setDatabase}>
             {selection.databasesMeta.map((db: any) => (
-              <option key={db.name} value={db.name}>{db.name}</option>
+              <option key={db.name} value={db.name}>
+                {db.name}
+              </option>
             ))}
           </Select>
           {/*
-            * Executing is the SQL tab's business — the Designer has no buffer to
-            * run and no rows to cap. The database Selects stay, since the
-            * Designer needs them.
-            */}
+           * Executing is the SQL tab's business — the Designer has no buffer to
+           * run and no rows to cap. The database Selects stay, since the
+           * Designer needs them.
+           */}
           {view === 'sql' && (
             <>
               <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <input
                   type="checkbox"
                   checked={safeMode}
-                  onChange={e => setSafeMode(e.target.checked)} />
+                  onChange={e => setSafeMode(e.target.checked)}
+                />
                 Safe mode
               </label>
               {aiConfigured && (
@@ -378,20 +400,18 @@ export default function Sql() {
                   className="btn btn-secondary btn-small"
                   title="Run the selected text through the SQL generator"
                   onClick={generateFromSelection}
-                  disabled={generating || !hasSelection}>
+                  disabled={generating || !hasSelection}
+                >
                   <SparkIcon />
                   {generating ? 'Generating…' : 'Generate'}
                 </button>
               )}
               {/*
-                * Empty buffer means nothing to run — and no selection either,
-                * since a selection is always a substring of [sql]. The keyboard
-                * shortcut bypasses this, so execute() keeps its own guard.
-                */}
-              <button
-                className="btn"
-                onClick={execute}
-                disabled={busy || !database || !sql.trim()}>
+               * Empty buffer means nothing to run — and no selection either,
+               * since a selection is always a substring of [sql]. The keyboard
+               * shortcut bypasses this, so execute() keeps its own guard.
+               */}
+              <button className="btn" onClick={execute} disabled={busy || !database || !sql.trim()}>
                 {busy ? 'Running…' : '▷ Run'}
               </button>
             </>
@@ -404,7 +424,8 @@ export default function Sql() {
           { id: 'tables', label: 'Designer' },
         ]}
         active={view}
-        onChange={id => setView(id as 'sql' | 'tables')} />
+        onChange={id => setView(id as 'sql' | 'tables')}
+      />
       {selection.connectionsLoaded && selection.connectionStrings.length === 0 && (
         <div className="info-box" style={{ marginBottom: 12 }}>
           No connection strings are configured for {type}. Add one under Databases → External.
@@ -414,7 +435,9 @@ export default function Sql() {
       {view === 'tables' && !selection.schemaLoading && (
         <>
           <div className="toolbar">
-            <span className="muted">{tables.length} tables in {database}</span>
+            <span className="muted">
+              {tables.length} tables in {database}
+            </span>
             <span className="spacer" />
             <button className="btn btn-secondary btn-small" onClick={() => setNewTable(true)}>
               + New table
@@ -422,7 +445,8 @@ export default function Sql() {
             <label
               className={'btn btn-secondary btn-small' + (database ? '' : ' disabled')}
               style={{ cursor: database ? 'pointer' : 'not-allowed' }}
-              title="Create a table from a CSV file, named after the file">
+              title="Create a table from a CSV file, named after the file"
+            >
               Import .csv
               <input
                 type="file"
@@ -434,28 +458,38 @@ export default function Sql() {
                     void importCsv(e.target.files[0]);
                     e.target.value = '';
                   }
-                }} />
+                }}
+              />
             </label>
             <button
               className="btn btn-secondary btn-small"
               title="Flush the server-side schema cache and reload"
               disabled={!connectionString}
-              onClick={flushCache}>
+              onClick={flushCache}
+            >
               Flush cache
             </button>
             <button
               className="btn btn-secondary btn-small"
-              onClick={() => viewDdl(
-                tables.map((table: any) => table.name), true, database + ' — full DDL')}>
+              onClick={() =>
+                viewDdl(
+                  tables.map((table: any) => table.name),
+                  true,
+                  database + ' — full DDL',
+                )
+              }
+            >
               Database DDL
             </button>
           </div>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: 14,
-            overflow: 'auto',
-          }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: 14,
+              overflow: 'auto',
+            }}
+          >
             {tables.map((table: any) => (
               <div className="card" key={table.name} style={{ padding: 14 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
@@ -463,18 +497,21 @@ export default function Sql() {
                   <button
                     className="btn btn-secondary btn-small"
                     title="Add column"
-                    onClick={() => setAddingColumn(table.name)}>
+                    onClick={() => setAddingColumn(table.name)}
+                  >
                     + Col
                   </button>
                   <button
                     className="btn btn-secondary btn-small"
-                    onClick={() => viewDdl([table.name], false, table.name + ' — DDL')}>
+                    onClick={() => viewDdl([table.name], false, table.name + ' — DDL')}
+                  >
                     DDL
                   </button>
                   <button
                     className="btn btn-danger btn-small"
                     title="Drop table"
-                    onClick={() => dropTableConfirmed(table.name)}>
+                    onClick={() => dropTableConfirmed(table.name)}
+                  >
                     ✕
                   </button>
                 </div>
@@ -482,13 +519,19 @@ export default function Sql() {
                   <div
                     key={column.name}
                     className="col-row"
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, padding: '2px 0' }}>
-                    <span style={{ width: 14, flexShrink: 0 }}>
-                      {column.primary ? '🔑' : ''}
-                    </span>
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      fontSize: 13,
+                      padding: '2px 0',
+                    }}
+                  >
+                    <span style={{ width: 14, flexShrink: 0 }}>{column.primary ? '🔑' : ''}</span>
                     <span
                       style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}
-                      className={column.primary ? '' : 'muted'}>
+                      className={column.primary ? '' : 'muted'}
+                    >
                       {column.name}
                     </span>
                     <span className="muted mono" style={{ fontSize: 12 }}>
@@ -498,18 +541,33 @@ export default function Sql() {
                     <span
                       className="mono"
                       title={column.nullable ? 'Nullable' : 'Not null'}
-                      style={{ width: 8, textAlign: 'center', flexShrink: 0, fontSize: 12, color: 'var(--text-soft)' }}>
+                      style={{
+                        width: 8,
+                        textAlign: 'center',
+                        flexShrink: 0,
+                        fontSize: 12,
+                        color: 'var(--text-soft)',
+                      }}
+                    >
                       {column.nullable ? '' : '•'}
                     </span>
                     {/* Drop control always reserves its slot — empty for the primary
                         key — so every row's type column ends at the same place. */}
-                    <span style={{ width: 18, flexShrink: 0, display: 'inline-flex', justifyContent: 'center' }}>
+                    <span
+                      style={{
+                        width: 18,
+                        flexShrink: 0,
+                        display: 'inline-flex',
+                        justifyContent: 'center',
+                      }}
+                    >
                       {!column.primary && (
                         <button
                           className="icon-btn danger col-drop"
                           title="Drop column"
                           onClick={() => dropColumnConfirmed(table.name, column.name)}
-                          style={{ padding: 2 }}>
+                          style={{ padding: 2 }}
+                        >
                           <span style={{ fontSize: 12 }}>✕</span>
                         </button>
                       )}
@@ -517,7 +575,9 @@ export default function Sql() {
                   </div>
                 ))}
                 {(table.foreign_keys ?? []).length > 0 && (
-                  <div style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 6 }}>
+                  <div
+                    style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 6 }}
+                  >
                     {(table.foreign_keys ?? []).map((fk: any, index: number) => (
                       <div key={index} className="muted" style={{ fontSize: 12 }}>
                         {fk.column} → {fk.foreign_table}.{fk.foreign_column}
@@ -534,7 +594,15 @@ export default function Sql() {
               onCreate={async (tableName, pkName, pkType, pkLength) => {
                 setWaiting(true);
                 try {
-                  await addTable(type, connectionString, database, tableName, pkName, pkType, pkLength);
+                  await addTable(
+                    type,
+                    connectionString,
+                    database,
+                    tableName,
+                    pkName,
+                    pkType,
+                    pkLength,
+                  );
                   setNewTable(false);
                   showToast('Table ' + tableName + ' created');
                   await reloadSchema();
@@ -543,7 +611,8 @@ export default function Sql() {
                 } finally {
                   setWaiting(false);
                 }
-              }} />
+              }}
+            />
           )}
           {addingColumn && (
             <AddColumnDialog
@@ -555,7 +624,10 @@ export default function Sql() {
                 setWaiting(true);
                 try {
                   const target = {
-                    databaseType: type, connectionString, databaseName: database, tableName: addingColumn,
+                    databaseType: type,
+                    connectionString,
+                    databaseName: database,
+                    tableName: addingColumn,
                   };
                   if (payload.foreignTable) {
                     await addForeignKey(target, { ...payload, foreignTable: payload.foreignTable });
@@ -570,7 +642,8 @@ export default function Sql() {
                 } finally {
                   setWaiting(false);
                 }
-              }} />
+              }}
+            />
           )}
           {ddl && (
             <Modal width={760} onClose={() => setDdl(null)}>
@@ -581,94 +654,108 @@ export default function Sql() {
               <div className="modal-actions">
                 <button
                   className="btn btn-secondary"
-                  onClick={() => copyToClipboard(ddl.sql, 'The DDL')}>
+                  onClick={() => copyToClipboard(ddl.sql, 'The DDL')}
+                >
                   Copy
                 </button>
-                <button className="btn" onClick={() => setDdl(null)}>Close</button>
+                <button className="btn" onClick={() => setDdl(null)}>
+                  Close
+                </button>
               </div>
             </Modal>
           )}
         </>
       )}
-      {view === 'sql' && <>
-      <div className="toolbar">
-        <Select value={selectedSnippet} onChange={value => openSnippet(value)}>
-          <option value="">Load snippet…</option>
-          {snippets.map(snippet => (
-            <option key={snippet} value={snippet}>
-              {snippet.substring(snippet.lastIndexOf('/') + 1)}
-            </option>
-          ))}
-        </Select>
-        {history.length > 0 && (
-          <Select value="" onChange={value => openHistory(Number(value))}>
-            <option value="">History…</option>
-            {history.map((entry, index) => (
-              <option key={entry.when + index} value={String(index)}>
-                {new Date(entry.when).toTimeString().substring(0, 5) + ' — ' +
-                  entry.sql.replace(/\s+/g, ' ').substring(0, 60)}
-              </option>
-            ))}
-          </Select>
-        )}
-        <button className="btn btn-secondary btn-small" onClick={saveSnippet}>
-          Save snippet
-        </button>
-        <label className="btn btn-secondary btn-small" style={{ cursor: 'pointer' }}>
-          Import .sql
-          <input
-            type="file"
-            accept=".sql"
-            style={{ display: 'none' }}
-            onChange={e => {
-              if (e.target.files?.[0]) {
-                importSqlFile(e.target.files[0]);
-                e.target.value = '';
-              }
-            }} />
-        </label>
-      </div>
-      <div style={{ height: 260, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
-        <CodeEditor
-          value={sql}
-          onChange={setSql}
-          mode="text/x-sql"
-          onExecute={execute}
-          hintTables={hintTables}
-          undoableEditId={sqlEditId}
-          onInstance={instance => {
-            if (editorRef.current === instance) {
-              return;
-            }
-            editorRef.current = instance;
-          }}
-          onSelectionChange={setHasSelection} />
-      </div>
-      <AiPrompt
-        fileType="sql"
-        getContext={createAiContext}
-        session="sql-studio.editor"
-        onResult={value => { setSql(value); bumpSqlEditId(); }}
-        onError={message => showToast(message, true)}
-        style={{ marginTop: 8 }} />
-      </>}
-      {view === 'sql' && result?.map((resultSet, index) => (
-        <div key={index} style={{ marginTop: 16 }}>
-          <div className="toolbar" style={{ marginBottom: 6 }}>
-            <span className="muted">{(resultSet ?? []).length} rows</span>
-            <span className="spacer" />
-            <button
-              className="btn btn-secondary btn-small"
-              disabled={(resultSet ?? []).length === 0}
-              onClick={() => exportCsv(resultSet ?? [], 'sql-export.csv')}>
-              Export as CSV
+      {view === 'sql' && (
+        <>
+          <div className="toolbar">
+            <Select value={selectedSnippet} onChange={value => openSnippet(value)}>
+              <option value="">Load snippet…</option>
+              {snippets.map(snippet => (
+                <option key={snippet} value={snippet}>
+                  {snippet.substring(snippet.lastIndexOf('/') + 1)}
+                </option>
+              ))}
+            </Select>
+            {history.length > 0 && (
+              <Select value="" onChange={value => openHistory(Number(value))}>
+                <option value="">History…</option>
+                {history.map((entry, index) => (
+                  <option key={entry.when + index} value={String(index)}>
+                    {new Date(entry.when).toTimeString().substring(0, 5) +
+                      ' — ' +
+                      entry.sql.replace(/\s+/g, ' ').substring(0, 60)}
+                  </option>
+                ))}
+              </Select>
+            )}
+            <button className="btn btn-secondary btn-small" onClick={saveSnippet}>
+              Save snippet
             </button>
+            <label className="btn btn-secondary btn-small" style={{ cursor: 'pointer' }}>
+              Import .sql
+              <input
+                type="file"
+                accept=".sql"
+                style={{ display: 'none' }}
+                onChange={e => {
+                  if (e.target.files?.[0]) {
+                    importSqlFile(e.target.files[0]);
+                    e.target.value = '';
+                  }
+                }}
+              />
+            </label>
           </div>
-          <div className="card" style={{ overflow: 'auto', padding: 0 }}>
-            <ResultTable rows={resultSet ?? []} />
+          <div style={{ height: 260, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+            <CodeEditor
+              value={sql}
+              onChange={setSql}
+              mode="text/x-sql"
+              onExecute={execute}
+              hintTables={hintTables}
+              undoableEditId={sqlEditId}
+              onInstance={instance => {
+                if (editorRef.current === instance) {
+                  return;
+                }
+                editorRef.current = instance;
+              }}
+              onSelectionChange={setHasSelection}
+            />
           </div>
-        </div>
-      ))}
+          <AiPrompt
+            fileType="sql"
+            getContext={createAiContext}
+            session="sql-studio.editor"
+            onResult={value => {
+              setSql(value);
+              bumpSqlEditId();
+            }}
+            onError={message => showToast(message, true)}
+            style={{ marginTop: 8 }}
+          />
+        </>
+      )}
+      {view === 'sql' &&
+        result?.map((resultSet, index) => (
+          <div key={index} style={{ marginTop: 16 }}>
+            <div className="toolbar" style={{ marginBottom: 6 }}>
+              <span className="muted">{(resultSet ?? []).length} rows</span>
+              <span className="spacer" />
+              <button
+                className="btn btn-secondary btn-small"
+                disabled={(resultSet ?? []).length === 0}
+                onClick={() => exportCsv(resultSet ?? [], 'sql-export.csv')}
+              >
+                Export as CSV
+              </button>
+            </div>
+            <div className="card" style={{ overflow: 'auto', padding: 0 }}>
+              <ResultTable rows={resultSet ?? []} />
+            </div>
+          </div>
+        ))}
       {(waiting || generating) && <AiWaiter />}
     </>
   );
@@ -683,7 +770,11 @@ const MAX_RENDERED_ROWS = 1000;
 
 function ResultTable({ rows }: Readonly<{ rows: any[] }>) {
   if (rows.length === 0) {
-    return <div className="muted" style={{ padding: 16 }}>Empty result set</div>;
+    return (
+      <div className="muted" style={{ padding: 16 }}>
+        Empty result set
+      </div>
+    );
   }
   const columns = Object.keys(rows[0]);
   const visible = rows.length > MAX_RENDERED_ROWS ? rows.slice(0, MAX_RENDERED_ROWS) : rows;
@@ -691,13 +782,19 @@ function ResultTable({ rows }: Readonly<{ rows: any[] }>) {
     <>
       <table className="sql-result">
         <thead>
-          <tr>{columns.map(column => <th key={column}>{column}</th>)}</tr>
+          <tr>
+            {columns.map(column => (
+              <th key={column}>{column}</th>
+            ))}
+          </tr>
         </thead>
         <tbody>
           {visible.map((row, index) => (
             <tr key={index}>
               {columns.map(column => (
-                <td className="mono" key={column} data-label={column}>{formatCell(row[column])}</td>
+                <td className="mono" key={column} data-label={column}>
+                  {formatCell(row[column])}
+                </td>
               ))}
             </tr>
           ))}
@@ -705,8 +802,8 @@ function ResultTable({ rows }: Readonly<{ rows: any[] }>) {
       </table>
       {rows.length > MAX_RENDERED_ROWS && (
         <div className="muted" style={{ padding: 12 }}>
-          Showing the first {MAX_RENDERED_ROWS} of {rows.length} rows — export as CSV to
-          get all of them.
+          Showing the first {MAX_RENDERED_ROWS} of {rows.length} rows — export as CSV to get all of
+          them.
         </div>
       )}
     </>
@@ -727,11 +824,12 @@ function formatCell(value: any) {
  * Create-table dialog — a primary key column, auto-increment or varchar,
  * matching the old designer.
  */
-function NewTableDialog(props: Readonly<{
-  onClose: () => void;
-  onCreate: (tableName: string, pkName: string, pkType: string, pkLength: number) => void;
-}>) {
-
+function NewTableDialog(
+  props: Readonly<{
+    onClose: () => void;
+    onCreate: (tableName: string, pkName: string, pkType: string, pkLength: number) => void;
+  }>,
+) {
   const [tableName, setTableName] = useState('');
   const [pkName, setPkName] = useState('');
   const [pkType, setPkType] = useState('auto_increment');
@@ -751,34 +849,44 @@ function NewTableDialog(props: Readonly<{
       onClose={props.onClose}
       onSubmit={() => {
         if (tableName && pkName) props.onCreate(tableName, pkName, pkType, Number(pkLength));
-      }}>
+      }}
+    >
       <h2>New table</h2>
       <div className="form-grid">
-        <label>Table name
+        <label>
+          Table name
           <input type="text" value={tableName} onChange={e => onTableName(e.target.value)} />
         </label>
-        <label>Primary key name
+        <label>
+          Primary key name
           <input type="text" value={pkName} onChange={e => setPkName(e.target.value)} />
         </label>
-        <label>Primary key type
+        <label>
+          Primary key type
           <Select value={pkType} onChange={value => setPkType(value)}>
             {PK_TYPES.map(option => (
-              <option key={option.value} value={option.value}>{option.name}</option>
+              <option key={option.value} value={option.value}>
+                {option.name}
+              </option>
             ))}
           </Select>
         </label>
         {pkType === 'varchar' && (
-          <label>Primary key length
+          <label>
+            Primary key length
             <input type="number" value={pkLength} onChange={e => setPkLength(e.target.value)} />
           </label>
         )}
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
         <button
           className="btn"
           disabled={!tableName || !pkName}
-          onClick={() => props.onCreate(tableName, pkName, pkType, Number(pkLength))}>
+          onClick={() => props.onCreate(tableName, pkName, pkType, Number(pkLength))}
+        >
           Create
         </button>
       </div>
@@ -790,32 +898,34 @@ function NewTableDialog(props: Readonly<{
  * Add-column dialog — a plain field, or a foreign key referencing another
  * table (Field vs Foreign key tab).
  */
-function AddColumnDialog(props: Readonly<{
-  databaseType: string;
-  tableName: string;
-  tables: any[];
-  onClose: () => void;
-  onSubmit: (payload: {
-    columnName: string;
-    columnType: string;
-    defaultValue: string | null;
-    nullable: boolean;
-    columnLength: number | null;
-    foreignTable: string;
-    foreignField: string;
-    cascading: boolean;
-  }) => void;
-}>) {
-
+function AddColumnDialog(
+  props: Readonly<{
+    databaseType: string;
+    tableName: string;
+    tables: any[];
+    onClose: () => void;
+    onSubmit: (payload: {
+      columnName: string;
+      columnType: string;
+      defaultValue: string | null;
+      nullable: boolean;
+      columnLength: number | null;
+      foreignTable: string;
+      foreignField: string;
+      cascading: boolean;
+    }) => void;
+  }>,
+) {
   const fieldTypes = FIELD_TYPES[props.databaseType] ?? FIELD_TYPES.sqlite;
   const [mode, setMode] = useState('field');
   const [columnName, setColumnName] = useState('');
   // Default to a text column — the most common case — rather than the first
   // (numeric) type: the exact `text` where a dialect has it, else varchar/nvarchar.
   const [fieldType, setFieldType] = useState(
-    fieldTypes.find(t => t.name === 'text')
-      ?? fieldTypes.find(t => /char|text/.test(t.name))
-      ?? fieldTypes[0]);
+    fieldTypes.find(t => t.name === 'text') ??
+      fieldTypes.find(t => /char|text/.test(t.name)) ??
+      fieldTypes[0],
+  );
   const [columnLength, setColumnLength] = useState('255');
   const [defaultValue, setDefaultValue] = useState('');
   const [nullable, setNullable] = useState(true);
@@ -833,7 +943,7 @@ function AddColumnDialog(props: Readonly<{
       }
       props.onSubmit({
         columnName,
-        columnType: foreignPk.hl === 'string' ? 'varchar' : (fieldTypes[0].name),
+        columnType: foreignPk.hl === 'string' ? 'varchar' : fieldTypes[0].name,
         defaultValue: null,
         nullable,
         columnLength: foreignPk.hl === 'string' ? Number(columnLength) : null,
@@ -864,14 +974,17 @@ function AddColumnDialog(props: Readonly<{
           { id: 'foreign', label: 'Foreign key' },
         ]}
         active={mode}
-        onChange={setMode} />
+        onChange={setMode}
+      />
       <div className="form-grid">
-        <label>Column name
+        <label>
+          Column name
           <input type="text" value={columnName} onChange={e => setColumnName(e.target.value)} />
         </label>
         {mode === 'field' ? (
           <>
-            <label>Type
+            <label>
+              Type
               <Select
                 value={fieldType.name}
                 onChange={value => {
@@ -880,36 +993,46 @@ function AddColumnDialog(props: Readonly<{
                   if (next.varcharDefault) {
                     setColumnLength(String(next.varcharDefault));
                   }
-                }}>
+                }}
+              >
                 {fieldTypes.map(candidate => (
-                  <option key={candidate.name} value={candidate.name}>{candidate.name}</option>
+                  <option key={candidate.name} value={candidate.name}>
+                    {candidate.name}
+                  </option>
                 ))}
               </Select>
             </label>
             {fieldType.size && (
-              <label>Length
+              <label>
+                Length
                 <input
                   type="number"
                   value={columnLength}
-                  onChange={e => setColumnLength(e.target.value)} />
+                  onChange={e => setColumnLength(e.target.value)}
+                />
               </label>
             )}
-            <label>Default value (optional)
+            <label>
+              Default value (optional)
               <input
                 type="text"
                 value={defaultValue}
-                onChange={e => setDefaultValue(e.target.value)} />
+                onChange={e => setDefaultValue(e.target.value)}
+              />
             </label>
           </>
         ) : (
           <>
-            <label>References table
+            <label>
+              References table
               <Select value={foreignTable} onChange={value => setForeignTable(value)}>
                 <option value="">Select table…</option>
                 {props.tables
                   .filter((table: any) => (table.columns ?? []).some((c: any) => c.primary))
                   .map((table: any) => (
-                    <option key={table.name} value={table.name}>{table.name}</option>
+                    <option key={table.name} value={table.name}>
+                      {table.name}
+                    </option>
                   ))}
               </Select>
             </label>
@@ -922,25 +1045,26 @@ function AddColumnDialog(props: Readonly<{
               <input
                 type="checkbox"
                 checked={cascading}
-                onChange={e => setCascading(e.target.checked)} />
+                onChange={e => setCascading(e.target.checked)}
+              />
               Cascade on delete
             </label>
           </>
         )}
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input
-            type="checkbox"
-            checked={nullable}
-            onChange={e => setNullable(e.target.checked)} />
+          <input type="checkbox" checked={nullable} onChange={e => setNullable(e.target.checked)} />
           Nullable
         </label>
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
         <button
           className="btn"
           disabled={!columnName || (mode === 'foreign' && !foreignPk)}
-          onClick={submit}>
+          onClick={submit}
+        >
           Add
         </button>
       </div>

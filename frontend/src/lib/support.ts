@@ -25,7 +25,8 @@ const SCRIPT_ID = 'ainiro-support-chatbot';
  */
 function scriptSrc() {
   const dark = getTheme() === 'dark';
-  return 'https://ainiro.io/magic/system/openai/include-chatbot.js' +
+  return (
+    'https://ainiro.io/magic/system/openai/include-chatbot.js' +
     '?type=magic-documentation' +
     '&header=Ask%20about%20Hyperlambda%20or%20Magic' +
     '&placeholder=Ask%20me%20about%20Hyperlambda%20...' +
@@ -58,7 +59,9 @@ function scriptSrc() {
       ? '&color=%23f5f5f4&start=%233a322c&end=%23262019&link=%23f5f5f4'
       : '&color=%231c1917&start=%23ffffff&end=%23f0eeea&link=%231c1917') +
     '&hidden=true' +
-    '&v=' + (dark ? 'drkthm5' : 'lgtthm1');
+    '&v=' +
+    (dark ? 'drkthm5' : 'lgtthm1')
+  );
 }
 
 let loading: Promise<void> | null = null;

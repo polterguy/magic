@@ -5,7 +5,15 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { Annotation, Compartment, EditorState, Prec, StateEffect, StateField, Transaction } from '@codemirror/state';
+import {
+  Annotation,
+  Compartment,
+  EditorState,
+  Prec,
+  StateEffect,
+  StateField,
+  Transaction,
+} from '@codemirror/state';
 import type { Extension } from '@codemirror/state';
 import {
   Decoration,
@@ -18,7 +26,13 @@ import {
   tooltips,
 } from '@codemirror/view';
 import type { DecorationSet } from '@codemirror/view';
-import { defaultKeymap, history, historyKeymap, indentLess, indentMore } from '@codemirror/commands';
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentLess,
+  indentMore,
+} from '@codemirror/commands';
 import {
   HighlightStyle,
   LanguageSupport,
@@ -70,24 +84,31 @@ function ensureVocabulary() {
     return Promise.resolve();
   }
   vocabularyFrom = apiBaseUrl();
-  http.get<Record<string, string | null>>('/magic/system/evaluator/vocabulary-verbose')
-    .then(docs => { slotDocs = docs ?? {}; })
-    .catch(() => { slotDocs = {}; });
+  http
+    .get<Record<string, string | null>>('/magic/system/evaluator/vocabulary-verbose')
+    .then(docs => {
+      slotDocs = docs ?? {};
+    })
+    .catch(() => {
+      slotDocs = {};
+    });
   vocabularyPromise ??= Promise.all([
     http.get<string[]>('/magic/system/evaluator/vocabulary'),
     http.get<string[]>('/magic/system/evaluator/slots'),
-  ]).then(([vocabulary, slots]) => {
-    (window as any)._vocabulary = vocabulary;
-    // The completion source reads _slots to offer [execute:...] completions
-    // for dynamic slots.
-    (window as any)._slots = slots;
-  }).catch(err => {
-    // A failed fetch must not stay cached, or highlighting silently stays
-    // broken until reload — clearing lets the next editor mount try again.
-    vocabularyPromise = null;
-    vocabularyFrom = null;
-    throw err;
-  });
+  ])
+    .then(([vocabulary, slots]) => {
+      (window as any)._vocabulary = vocabulary;
+      // The completion source reads _slots to offer [execute:...] completions
+      // for dynamic slots.
+      (window as any)._slots = slots;
+    })
+    .catch(err => {
+      // A failed fetch must not stay cached, or highlighting silently stays
+      // broken until reload — clearing lets the next editor mount try again.
+      vocabularyPromise = null;
+      vocabularyFrom = null;
+      throw err;
+    });
   return vocabularyPromise;
 }
 
@@ -112,7 +133,7 @@ function showSlotDoc(anchor: HTMLElement, name: string, description: string) {
   slotDocTip.append(title, body);
   const rect = anchor.getBoundingClientRect();
   slotDocTip.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 340)) + 'px';
-  slotDocTip.style.top = (rect.bottom + 6) + 'px';
+  slotDocTip.style.top = rect.bottom + 6 + 'px';
   slotDocTip.style.display = 'block';
 }
 
@@ -131,8 +152,10 @@ function hideSlotDoc() {
 function attachSlotDocs(dom: HTMLElement) {
   dom.addEventListener('mouseover', event => {
     const target = event.target as HTMLElement;
-    if (!target.classList ||
-        (!target.classList.contains('cm-keyword') && !target.classList.contains('cm-variable-2'))) {
+    if (
+      !target.classList ||
+      (!target.classList.contains('cm-keyword') && !target.classList.contains('cm-variable-2'))
+    ) {
       hideSlotDoc();
       return;
     }
@@ -198,8 +221,9 @@ const lineHighlightField = StateField.define<DecorationSet>({
         const spec = effect.value;
         if (spec && spec.line >= 0 && spec.line < transaction.state.doc.lines) {
           decorations = Decoration.set([
-            Decoration.line({ attributes: { class: spec.className } })
-              .range(transaction.state.doc.line(spec.line + 1).from),
+            Decoration.line({ attributes: { class: spec.className } }).range(
+              transaction.state.doc.line(spec.line + 1).from,
+            ),
           ]);
         }
       }
@@ -311,7 +335,6 @@ export function useEditToken(): [number, () => void] {
 }
 
 export default function CodeEditor(props: Readonly<CodeEditorProps>) {
-
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<EditorView | null>(null);
   const compartments = useRef<{
@@ -455,27 +478,35 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
              * keymap below without re-triggering this handler. Prec.high makes
              * sure this runs before the keymap sees the mangled original.
              */
-            Prec.high(EditorView.domEventHandlers({
-              keydown(event, view) {
-                if (event.altKey && !event.ctrlKey && !event.metaKey &&
-                    /^Key[A-Z]$/.test(event.code ?? '')) {
-                  const letter = event.code!.slice(3).toLowerCase();
-                  if (event.key !== letter) {
-                    view.contentDOM.dispatchEvent(new KeyboardEvent('keydown', {
-                      key: letter,
-                      code: event.code,
-                      altKey: true,
-                      shiftKey: event.shiftKey,
-                      bubbles: true,
-                      cancelable: true,
-                    }));
-                    event.preventDefault();
-                    return true;
+            Prec.high(
+              EditorView.domEventHandlers({
+                keydown(event, view) {
+                  if (
+                    event.altKey &&
+                    !event.ctrlKey &&
+                    !event.metaKey &&
+                    /^Key[A-Z]$/.test(event.code ?? '')
+                  ) {
+                    const letter = event.code!.slice(3).toLowerCase();
+                    if (event.key !== letter) {
+                      view.contentDOM.dispatchEvent(
+                        new KeyboardEvent('keydown', {
+                          key: letter,
+                          code: event.code,
+                          altKey: true,
+                          shiftKey: event.shiftKey,
+                          bubbles: true,
+                          cancelable: true,
+                        }),
+                      );
+                      event.preventDefault();
+                      return true;
+                    }
                   }
-                }
-                return false;
-              },
-            })),
+                  return false;
+                },
+              }),
+            ),
             // Our bindings first — they win over the default keymap.
             keymap.of(bindings),
             history(),
@@ -498,14 +529,15 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
             numbers.of((current.lineNumbers ?? true) ? lineNumbers() : []),
             readOnly.of(EditorState.readOnly.of(current.readOnly ?? false)),
             wrapping.of(
-              (current.lineWrapping ?? wrapsByDefault(current.mode))
-                ? EditorView.lineWrapping
-                : []),
+              (current.lineWrapping ?? wrapsByDefault(current.mode)) ? EditorView.lineWrapping : [],
+            ),
             language.of(languageFor(current.mode, current.hintTables)),
             lineHighlightField,
             EditorView.updateListener.of(update => {
-              if (update.docChanged &&
-                  !update.transactions.some(tr => tr.annotation(externalChange))) {
+              if (
+                update.docChanged &&
+                !update.transactions.some(tr => tr.annotation(externalChange))
+              ) {
                 callbacks.current.onChange?.(update.state.doc.toString());
               }
               if (update.selectionSet || update.docChanged) {
@@ -545,8 +577,8 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
     }
     const current = view.state.doc.toString();
     if (props.value !== current) {
-      const undoable = props.undoableEditId !== undefined &&
-        props.undoableEditId !== lastUndoableEditId.current;
+      const undoable =
+        props.undoableEditId !== undefined && props.undoableEditId !== lastUndoableEditId.current;
       lastUndoableEditId.current = props.undoableEditId;
       view.dispatch({
         changes: { from: 0, to: current.length, insert: props.value },
@@ -580,7 +612,8 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
     if (view && compartments.current) {
       view.dispatch({
         effects: compartments.current.readOnly.reconfigure(
-          EditorState.readOnly.of(props.readOnly ?? false)),
+          EditorState.readOnly.of(props.readOnly ?? false),
+        ),
       });
     }
   }, [props.readOnly]);
@@ -590,9 +623,8 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
     if (view && compartments.current) {
       view.dispatch({
         effects: compartments.current.wrapping.reconfigure(
-          (props.lineWrapping ?? wrapsByDefault(props.mode))
-            ? EditorView.lineWrapping
-            : []),
+          (props.lineWrapping ?? wrapsByDefault(props.mode)) ? EditorView.lineWrapping : [],
+        ),
       });
     }
   }, [props.mode, props.lineWrapping]);
@@ -602,7 +634,8 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
     if (view && compartments.current) {
       view.dispatch({
         effects: compartments.current.language.reconfigure(
-          languageFor(props.mode, props.hintTables)),
+          languageFor(props.mode, props.hintTables),
+        ),
       });
     }
   }, [props.mode, props.hintTables]);
@@ -622,13 +655,24 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
 export function modeForFile(filename: string): string {
   const extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
   switch (extension) {
-    case 'hl': return 'hyperlambda';
-    case 'sql': return 'text/x-sql';
-    case 'js': case 'ts': return 'javascript';
-    case 'json': return 'application/json';
-    case 'html': case 'htm': return 'htmlmixed';
-    case 'css': case 'scss': return 'css';
-    case 'md': return 'markdown';
-    default: return 'text/plain';
+    case 'hl':
+      return 'hyperlambda';
+    case 'sql':
+      return 'text/x-sql';
+    case 'js':
+    case 'ts':
+      return 'javascript';
+    case 'json':
+      return 'application/json';
+    case 'html':
+    case 'htm':
+      return 'htmlmixed';
+    case 'css':
+    case 'scss':
+      return 'css';
+    case 'md':
+      return 'markdown';
+    default:
+      return 'text/plain';
   }
 }

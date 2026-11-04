@@ -21,7 +21,6 @@ import QuestionnairesTab from './ml/QuestionnairesTab';
 type Tab = 'types' | 'training' | 'history' | 'questionnaires';
 
 export default function MachineLearning() {
-
   const [params, setParams] = useSearchParams();
 
   /*
@@ -35,11 +34,10 @@ export default function MachineLearning() {
    * race and one would resurrect the parameter the other had just removed.
    */
   const [tab, setTab] = useState<Tab>((params.get('tab') as Tab) ?? 'types');
-  const [deepLink, setDeepLink] =
-    useState<{ edit: string | null; type: string | null }>({
-      edit: params.get('edit'),
-      type: params.get('type'),
-    });
+  const [deepLink, setDeepLink] = useState<{ edit: string | null; type: string | null }>({
+    edit: params.get('edit'),
+    type: params.get('type'),
+  });
   const [types, setTypes] = useState<any[]>([]);
   const [configured, setConfigured] = useState(true);
 
@@ -60,7 +58,7 @@ export default function MachineLearning() {
 
   const refreshTypes = useCallback(async () => {
     try {
-      setTypes(await mlTypes() ?? []);
+      setTypes((await mlTypes()) ?? []);
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     }
@@ -87,21 +85,20 @@ export default function MachineLearning() {
           { id: 'history', label: 'History' },
         ]}
         active={tab}
-        onChange={id => setTab(id as Tab)} />
+        onChange={id => setTab(id as Tab)}
+      />
       {!configured && (
         <div className="error-box" style={{ marginBottom: 12 }}>
-          OpenAI is not configured — add your API key in Configuration before
-          training or querying models.
+          OpenAI is not configured — add your API key in Configuration before training or querying
+          models.
         </div>
       )}
-      {tab === 'types' &&
-        <ModelsTab types={types} onChanged={refreshTypes} editOnOpen={deepLink.edit} />}
-      {tab === 'training' &&
-        <TrainingTab types={types} initialType={deepLink.type} />}
-      {tab === 'questionnaires' &&
-        <QuestionnairesTab />}
-      {tab === 'history' &&
-        <HistoryTab types={types} />}
+      {tab === 'types' && (
+        <ModelsTab types={types} onChanged={refreshTypes} editOnOpen={deepLink.edit} />
+      )}
+      {tab === 'training' && <TrainingTab types={types} initialType={deepLink.type} />}
+      {tab === 'questionnaires' && <QuestionnairesTab />}
+      {tab === 'history' && <HistoryTab types={types} />}
     </>
   );
 }

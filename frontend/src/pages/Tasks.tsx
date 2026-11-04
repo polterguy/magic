@@ -34,13 +34,10 @@ log.info:Task executed
 
 // "every 5.minutes" for repeating schedules, the due date for one-off ones.
 function scheduleLabel(schedule: { due: string; repeats?: string }) {
-  return schedule.repeats
-    ? 'every ' + schedule.repeats
-    : new Date(schedule.due).toLocaleString();
+  return schedule.repeats ? 'every ' + schedule.repeats : new Date(schedule.due).toLocaleString();
 }
 
 export default function Tasks() {
-
   const [params, setParams] = useSearchParams();
   const [filter, setFilter] = useState(params.get('filter') ?? '');
   const [editing, setEditing] = useState<{ task: Task; isNew: boolean } | null>(null);
@@ -102,11 +99,13 @@ export default function Tasks() {
    * effects it has, so it's confirmed first.
    */
   async function execute(task: Task) {
-    if (!await confirm({
-      title: 'Execute task?',
-      message: task.id + ' will run on your server right now.',
-      confirmText: 'Execute',
-    })) {
+    if (
+      !(await confirm({
+        title: 'Execute task?',
+        message: task.id + ' will run on your server right now.',
+        confirmText: 'Execute',
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -121,13 +120,17 @@ export default function Tasks() {
   }
 
   async function remove(task: Task) {
-    if (!await confirmTyped({
-      title: 'Delete task?',
-      message: 'This permanently deletes ' + task.id +
-        ' and its Hyperlambda. Type the task name to confirm.',
-      label: 'Task name',
-      expected: task.id,
-    })) {
+    if (
+      !(await confirmTyped({
+        title: 'Delete task?',
+        message:
+          'This permanently deletes ' +
+          task.id +
+          ' and its Hyperlambda. Type the task name to confirm.',
+        label: 'Task name',
+        expected: task.id,
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -146,13 +149,18 @@ export default function Tasks() {
    * Removing a schedule silently unschedules a possibly-production job, and
    * the schedule itself is gone for good — so it's confirmed first.
    */
-  async function removeSchedule(task: Task, schedule: { id: number; due: string; repeats?: string }) {
-    if (!await confirm({
-      title: 'Remove schedule?',
-      message: task.id + ' will no longer run ' + scheduleLabel(schedule) + '.',
-      confirmText: 'Remove',
-      danger: true,
-    })) {
+  async function removeSchedule(
+    task: Task,
+    schedule: { id: number; due: string; repeats?: string },
+  ) {
+    if (
+      !(await confirm({
+        title: 'Remove schedule?',
+        message: task.id + ' will no longer run ' + scheduleLabel(schedule) + '.',
+        confirmText: 'Remove',
+        danger: true,
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -190,98 +198,99 @@ export default function Tasks() {
         <p>Hyperlambda tasks your server can run on demand or on a schedule</p>
       </div>
       <div className="toolbar">
-        <SearchInput
-          placeholder="Filter tasks…"
-          value={filter}
-          onChange={setFilter} />
+        <SearchInput placeholder="Filter tasks…" value={filter} onChange={setFilter} />
         <span className="muted">{list.count} tasks</span>
         <span className="spacer" />
-        <button className="btn" onClick={openNew}>+ New task</button>
+        <button className="btn" onClick={openNew}>
+          + New task
+        </button>
         <Pagination page={list.page} pageCount={list.pageCount} onPage={list.setPage} />
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         {list.rows === null ? (
-        <TableSkeleton columns={5} />
+          <TableSkeleton columns={5} />
         ) : (
-        <table>
-          <thead>
-            <tr>
-              <th style={{ width: 260 }}>Name</th>
-              <th>Description</th>
-              <th style={{ width: 260 }}>Schedules</th>
-              <th style={{ width: 120 }}>Created</th>
-              <th style={{ width: 300 }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {list.rows.length === 0 && (
+          <table>
+            <thead>
               <tr>
-                <td colSpan={5} className="muted" style={{ textAlign: 'center', padding: 24 }}>
-                  {filter ? 'No tasks match your filter' : 'No tasks yet'}
-                </td>
+                <th style={{ width: 260 }}>Name</th>
+                <th>Description</th>
+                <th style={{ width: 260 }}>Schedules</th>
+                <th style={{ width: 120 }}>Created</th>
+                <th style={{ width: 300 }}></th>
               </tr>
-            )}
-            {list.rows.map(task => (
-              <tr key={task.id}>
-                <td><strong>{task.id}</strong></td>
-                <td
-                  className="truncate"
-                  title={task.description}
-                  style={{ maxWidth: 0 }}
-                  data-label="Description">
-                  {task.description || <span className="muted">—</span>}
-                </td>
-                <td data-label="Schedules">
-                  {(task.schedules ?? []).length === 0 ? (
-                    <span className="muted">not scheduled</span>
-                  ) : (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                      {(task.schedules ?? []).map(schedule => (
-                        <span className="chip" key={schedule.id}>
-                          {scheduleLabel(schedule)}
-                          <button
-                            title="Remove schedule"
-                            onClick={() => removeSchedule(task, schedule)}>
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </td>
-                <td className="muted" data-label="Created">
-                  {task.created ? task.created.substring(0, 10) : ''}
-                </td>
-                <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                  <button
-                    className="btn btn-secondary btn-small"
-                    title="Run this task on your server now"
-                    onClick={() => execute(task)}>
-                    Execute
-                  </button>
-                  {' '}
-                  <button
-                    className="btn btn-secondary btn-small"
-                    onClick={() => openEdit(task.id)}>
-                    Edit
-                  </button>
-                  {' '}
-                  <button
-                    className="btn btn-secondary btn-small"
-                    onClick={() => setScheduling(task)}>
-                    Schedule
-                  </button>
-                  {' '}
-                  <button
-                    className="btn btn-danger btn-small"
-                    onClick={() => remove(task)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {list.rows.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="muted" style={{ textAlign: 'center', padding: 24 }}>
+                    {filter ? 'No tasks match your filter' : 'No tasks yet'}
+                  </td>
+                </tr>
+              )}
+              {list.rows.map(task => (
+                <tr key={task.id}>
+                  <td>
+                    <strong>{task.id}</strong>
+                  </td>
+                  <td
+                    className="truncate"
+                    title={task.description}
+                    style={{ maxWidth: 0 }}
+                    data-label="Description"
+                  >
+                    {task.description || <span className="muted">—</span>}
+                  </td>
+                  <td data-label="Schedules">
+                    {(task.schedules ?? []).length === 0 ? (
+                      <span className="muted">not scheduled</span>
+                    ) : (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                        {(task.schedules ?? []).map(schedule => (
+                          <span className="chip" key={schedule.id}>
+                            {scheduleLabel(schedule)}
+                            <button
+                              title="Remove schedule"
+                              onClick={() => removeSchedule(task, schedule)}
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </td>
+                  <td className="muted" data-label="Created">
+                    {task.created ? task.created.substring(0, 10) : ''}
+                  </td>
+                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <button
+                      className="btn btn-secondary btn-small"
+                      title="Run this task on your server now"
+                      onClick={() => execute(task)}
+                    >
+                      Execute
+                    </button>{' '}
+                    <button
+                      className="btn btn-secondary btn-small"
+                      onClick={() => openEdit(task.id)}
+                    >
+                      Edit
+                    </button>{' '}
+                    <button
+                      className="btn btn-secondary btn-small"
+                      onClick={() => setScheduling(task)}
+                    >
+                      Schedule
+                    </button>{' '}
+                    <button className="btn btn-danger btn-small" onClick={() => remove(task)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
       {editing && (
@@ -293,26 +302,29 @@ export default function Tasks() {
             setEditing(null);
             showToast('Task ' + id + (wasNew ? ' created' : ' updated'));
             list.refresh();
-          }} />
+          }}
+        />
       )}
       {scheduling && (
         <ScheduleDialog
           taskId={scheduling.id}
           onClose={() => setScheduling(null)}
-          onSave={addSchedule} />
+          onSave={addSchedule}
+        />
       )}
       {waiting && <AiWaiter />}
     </>
   );
 }
 
-function TaskDialog(props: Readonly<{
-  task: Task;
-  isNew: boolean;
-  onClose: () => void;
-  onSaved: (id: string, wasNew: boolean) => void;
-}>) {
-
+function TaskDialog(
+  props: Readonly<{
+    task: Task;
+    isNew: boolean;
+    onClose: () => void;
+    onSaved: (id: string, wasNew: boolean) => void;
+  }>,
+) {
   const [id, setId] = useState(props.task.id);
   const [description, setDescription] = useState(props.task.description ?? '');
   const [code, setCode] = useState(props.task.hyperlambda ?? '');
@@ -329,12 +341,15 @@ function TaskDialog(props: Readonly<{
     : description !== saved.description || code !== saved.code;
 
   async function close() {
-    if (dirty && !await confirm({
-      title: 'Discard unsaved changes?',
-      message: (id || 'This task') + ' has unsaved changes.',
-      confirmText: 'Discard',
-      danger: true,
-    })) {
+    if (
+      dirty &&
+      !(await confirm({
+        title: 'Discard unsaved changes?',
+        message: (id || 'This task') + ' has unsaved changes.',
+        confirmText: 'Discard',
+        danger: true,
+      }))
+    ) {
       return;
     }
     props.onClose();
@@ -365,7 +380,10 @@ function TaskDialog(props: Readonly<{
     <Modal
       width={1100}
       onClose={close}
-      onSubmit={() => { if (!busy && (!props.isNew || id)) void save(); }}>
+      onSubmit={() => {
+        if (!busy && (!props.isNew || id)) void save();
+      }}
+    >
       <h2>{props.isNew ? 'New task' : 'Edit ' + props.task.id}</h2>
       <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
         <input
@@ -377,14 +395,16 @@ function TaskDialog(props: Readonly<{
           readOnly={!props.isNew}
           value={id}
           onChange={e => setId(e.target.value)}
-          style={{ width: 260 }} />
+          style={{ width: 260 }}
+        />
         <input
           type="text"
           placeholder="Description"
           autoComplete="off"
           value={description}
           onChange={e => setDescription(e.target.value)}
-          style={{ flex: 1 }} />
+          style={{ flex: 1 }}
+        />
       </div>
       <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
         <CodeEditor
@@ -392,17 +412,24 @@ function TaskDialog(props: Readonly<{
           onChange={setCode}
           mode="hyperlambda"
           onSave={save}
-          undoableEditId={codeEditId} />
+          undoableEditId={codeEditId}
+        />
       </div>
       <AiPrompt
         fileType="hl"
         getOldCode={() => code}
         session="task-editor.editor"
-        onResult={value => { setCode(value); bumpCodeEditId(); }}
+        onResult={value => {
+          setCode(value);
+          bumpCodeEditId();
+        }}
         onError={message => showToast(message, true)}
-        style={{ marginTop: 8 }} />
+        style={{ marginTop: 8 }}
+      />
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={close}>Close</button>
+        <button className="btn btn-secondary" onClick={close}>
+          Close
+        </button>
         <button className="btn" onClick={save} disabled={busy || (props.isNew && !id)}>
           {busy ? 'Saving…' : 'Save'}
         </button>
@@ -418,12 +445,13 @@ const REPEAT_PERIODS = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'months'
  * The old dashboard's 3-mode schedule dialog: fixed date, simple repetition,
  * or a custom repetition pattern.
  */
-function ScheduleDialog(props: Readonly<{
-  taskId: string;
-  onClose: () => void;
-  onSave: (due: string | undefined, repeats: string | undefined) => void;
-}>) {
-
+function ScheduleDialog(
+  props: Readonly<{
+    taskId: string;
+    onClose: () => void;
+    onSave: (due: string | undefined, repeats: string | undefined) => void;
+  }>,
+) {
   const [mode, setMode] = useState<'fixed' | 'repeat' | 'custom'>('repeat');
   const [due, setDue] = useState('');
   const [number, setNumber] = useState(5);
@@ -433,9 +461,7 @@ function ScheduleDialog(props: Readonly<{
   // The active mode's value, present or not — the Schedule button follows it,
   // rather than silently doing nothing when clicked with an empty value.
   const valid =
-    mode === 'repeat' ||
-    (mode === 'fixed' && !!due) ||
-    (mode === 'custom' && !!pattern);
+    mode === 'repeat' || (mode === 'fixed' && !!due) || (mode === 'custom' && !!pattern);
 
   function save() {
     if (!valid) {
@@ -459,44 +485,36 @@ function ScheduleDialog(props: Readonly<{
       <h2>Schedule {props.taskId}</h2>
       <div className="form-grid">
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input
-            type="radio"
-            checked={mode === 'fixed'}
-            onChange={() => setMode('fixed')} />
+          <input type="radio" checked={mode === 'fixed'} onChange={() => setMode('fixed')} />
           Once, at a fixed date
         </label>
         {mode === 'fixed' && (
-          <DateTimePicker
-            value={due}
-            onChange={setDue}
-            placeholder="Pick a date and time" />
+          <DateTimePicker value={due} onChange={setDue} placeholder="Pick a date and time" />
         )}
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input
-            type="radio"
-            checked={mode === 'repeat'}
-            onChange={() => setMode('repeat')} />
+          <input type="radio" checked={mode === 'repeat'} onChange={() => setMode('repeat')} />
           Repeating
         </label>
         {mode === 'repeat' && (
           <div style={{ display: 'flex', gap: 8 }}>
             <Select value={String(number)} onChange={value => setNumber(Number(value))}>
               {REPEAT_NUMBERS.map(option => (
-                <option key={option} value={option}>{option}</option>
+                <option key={option} value={option}>
+                  {option}
+                </option>
               ))}
             </Select>
             <Select value={period} onChange={value => setPeriod(value)}>
               {REPEAT_PERIODS.map(option => (
-                <option key={option} value={option}>{option}</option>
+                <option key={option} value={option}>
+                  {option}
+                </option>
               ))}
             </Select>
           </div>
         )}
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input
-            type="radio"
-            checked={mode === 'custom'}
-            onChange={() => setMode('custom')} />
+          <input type="radio" checked={mode === 'custom'} onChange={() => setMode('custom')} />
           Custom repetition pattern
         </label>
         {mode === 'custom' && (
@@ -505,7 +523,8 @@ function ScheduleDialog(props: Readonly<{
               type="text"
               placeholder="e.g. **.**.17.30.00 or Monday|Friday.09.00.00"
               value={pattern}
-              onChange={e => setPattern(e.target.value)} />
+              onChange={e => setPattern(e.target.value)}
+            />
             <div className="muted" style={{ fontSize: 12, lineHeight: 1.6 }}>
               <div>
                 <strong>MM.dd.HH.mm.ss</strong> — months.days.hours.minutes.seconds
@@ -514,19 +533,21 @@ function ScheduleDialog(props: Readonly<{
                 <strong>ww.HH.mm.ss</strong> — weekdays.hours.minutes.seconds
               </div>
               <div style={{ marginTop: 6 }}>
-                Use <strong className="mono">**</strong> as a wildcard for the months,
-                days or weekdays part, meaning "every one of them". Give several values
-                with <strong className="mono">|</strong> between them. Hours, minutes and
-                seconds are always exact — they take no wildcard.
+                Use <strong className="mono">**</strong> as a wildcard for the months, days or
+                weekdays part, meaning "every one of them". Give several values with{' '}
+                <strong className="mono">|</strong> between them. Hours, minutes and seconds are
+                always exact — they take no wildcard.
               </div>
               <div style={{ marginTop: 6 }}>
-                <span className="mono">**.**.17.30.00</span> — every day at 17:30<br />
-                <span className="mono">**.01|15.02.00.00</span> — the 1st and 15th of every
-                month at 02:00<br />
-                <span className="mono">01|07.01.00.00.00</span> — 1 January and 1 July at
-                midnight<br />
-                <span className="mono">Monday|Friday.09.00.00</span> — Mondays and Fridays
-                at 09:00<br />
+                <span className="mono">**.**.17.30.00</span> — every day at 17:30
+                <br />
+                <span className="mono">**.01|15.02.00.00</span> — the 1st and 15th of every month at
+                02:00
+                <br />
+                <span className="mono">01|07.01.00.00.00</span> — 1 January and 1 July at midnight
+                <br />
+                <span className="mono">Monday|Friday.09.00.00</span> — Mondays and Fridays at 09:00
+                <br />
                 <span className="mono">**.22.00.00</span> — every weekday at 22:00
               </div>
             </div>
@@ -534,8 +555,12 @@ function ScheduleDialog(props: Readonly<{
         )}
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
-        <button className="btn" onClick={save} disabled={!valid}>Schedule</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
+        <button className="btn" onClick={save} disabled={!valid}>
+          Schedule
+        </button>
       </div>
     </Modal>
   );

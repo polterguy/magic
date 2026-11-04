@@ -4,11 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronIcon } from '../components/Icons';
 import { useAuth } from '../lib/AuthContext';
 import { useDebounced } from '../lib/usePagedList';
-import {
-  backendUrls,
-  rememberPendingOidc,
-  takePendingOidc,
-} from '../lib/backend';
+import { backendUrls, rememberPendingOidc, takePendingOidc } from '../lib/backend';
 import {
   OidcProvider,
   canResetPassword,
@@ -71,7 +67,6 @@ function takeCodeFromUrl() {
 }
 
 export default function Login() {
-
   const { backend, login, loginWithTicket } = useAuth();
   const navigate = useNavigate();
   const [previousUrls] = useState(backendUrls);
@@ -85,8 +80,9 @@ export default function Login() {
    * With backends already stored the field starts empty instead: the only way
    * to get here is adding another one, and the dropdown offers the rest.
    */
-  const [url, setUrl] = useState(() =>
-    backend?.url ?? (previousUrls.length === 0 ? window.location.origin : ''));
+  const [url, setUrl] = useState(
+    () => backend?.url ?? (previousUrls.length === 0 ? window.location.origin : ''),
+  );
   const [username, setUsername] = useState(backend?.username ?? 'root');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -141,8 +137,12 @@ export default function Login() {
     }
     setBusy(true);
     const exchange = code
-      ? openidExchange(pending.backendUrl, code.code, code.state,
-          window.location.origin + OIDC_CALLBACK_PATH)
+      ? openidExchange(
+          pending.backendUrl,
+          code.code,
+          code.state,
+          window.location.origin + OIDC_CALLBACK_PATH,
+        )
       : openidLogin(pending.backendUrl, idToken!);
     exchange
       .then(response => {
@@ -164,9 +164,15 @@ export default function Login() {
   useEffect(() => {
     let cancelled = false;
     canResetPassword(probeUrl)
-      .then(value => { if (!cancelled) { setCanReset(value); } })
+      .then(value => {
+        if (!cancelled) {
+          setCanReset(value);
+        }
+      })
       .catch(error => console.error('Could not check password reset:', error));
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [probeUrl]);
 
   /*
@@ -176,9 +182,19 @@ export default function Login() {
   useEffect(() => {
     let cancelled = false;
     openidProviders(probeUrl)
-      .then(list => { if (!cancelled) { setProviders(list); } })
-      .catch(() => { if (!cancelled) { setProviders([]); } });
-    return () => { cancelled = true; };
+      .then(list => {
+        if (!cancelled) {
+          setProviders(list);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setProviders([]);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [probeUrl]);
 
   async function submit(event: FormEvent) {
@@ -258,24 +274,23 @@ export default function Login() {
         <form className="login-card" onSubmit={sendLink}>
           <h1>magic</h1>
           <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
-            {forgotSent
-              ? 'Check your inbox'
-              : "We'll email you a link that signs you in"}
+            {forgotSent ? 'Check your inbox' : "We'll email you a link that signs you in"}
           </p>
           {error && <Banner onClose={() => setError('')}>{error}</Banner>}
-          {forgotSent
-            ? <p style={{ textAlign: 'center', margin: 0 }}>{forgotSent}</p>
-            : (
-              <label>
-                Username or email
-                <input
-                  type="text"
-                  autoFocus
-                  value={forgotUser}
-                  onChange={e => setForgotUser(e.target.value)}
-                  required />
-              </label>
-            )}
+          {forgotSent ? (
+            <p style={{ textAlign: 'center', margin: 0 }}>{forgotSent}</p>
+          ) : (
+            <label>
+              Username or email
+              <input
+                type="text"
+                autoFocus
+                value={forgotUser}
+                onChange={e => setForgotUser(e.target.value)}
+                required
+              />
+            </label>
+          )}
           {!forgotSent && (
             <button className="btn" type="submit" disabled={busy || !forgotUser.trim()}>
               {busy ? 'Sending…' : 'Send link'}
@@ -284,7 +299,11 @@ export default function Login() {
           <button
             type="button"
             className="link-like"
-            onClick={() => { setForgotOpen(false); setError(''); }}>
+            onClick={() => {
+              setForgotOpen(false);
+              setError('');
+            }}
+          >
             Back to sign in
           </button>
         </form>
@@ -303,23 +322,25 @@ export default function Login() {
         <label>
           Backend URL
           {/*
-            * A plain input with its own dropdown rather than a datalist —
-            * a datalist filters its options by whatever is already typed,
-            * so picking a different backend meant clearing the field first.
-            */}
+           * A plain input with its own dropdown rather than a datalist —
+           * a datalist filters its options by whatever is already typed,
+           * so picking a different backend meant clearing the field first.
+           */}
           <div className="combo" ref={pickerRef}>
             <input
               type="text"
               value={url}
               onChange={e => setUrl(e.target.value)}
               placeholder="http://localhost:5000"
-              required />
+              required
+            />
             {previousUrls.length > 0 && (
               <button
                 type="button"
                 className={'combo-toggle' + (pickerOpen ? ' open' : '')}
                 title="Backends you have signed in to"
-                onClick={() => setPickerOpen(!pickerOpen)}>
+                onClick={() => setPickerOpen(!pickerOpen)}
+              >
                 <ChevronIcon />
               </button>
             )}
@@ -330,7 +351,11 @@ export default function Login() {
                     type="button"
                     key={candidate}
                     className={'combo-option' + (candidate === url ? ' active' : '')}
-                    onClick={() => { setUrl(candidate); setPickerOpen(false); }}>
+                    onClick={() => {
+                      setUrl(candidate);
+                      setPickerOpen(false);
+                    }}
+                  >
                     {candidate}
                   </button>
                 ))}
@@ -345,7 +370,8 @@ export default function Login() {
             value={username}
             onChange={e => setUsername(e.target.value)}
             autoComplete="username"
-            required />
+            required
+          />
         </label>
         <label>
           Password
@@ -354,7 +380,8 @@ export default function Login() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             autoComplete="current-password"
-            required />
+            required
+          />
         </label>
         <button className="btn" type="submit" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
@@ -369,20 +396,24 @@ export default function Login() {
               setForgotSent('');
               setError('');
               setForgotOpen(true);
-            }}>
+            }}
+          >
             Login using magic link
           </button>
         )}
         {providers.length > 0 && (
           <>
-            <div className="login-divider"><span>or</span></div>
+            <div className="login-divider">
+              <span>or</span>
+            </div>
             {providers.map(provider => (
               <button
                 key={provider.issuer}
                 type="button"
                 className="btn btn-secondary"
                 disabled={busy}
-                onClick={() => signInWith(provider)}>
+                onClick={() => signInWith(provider)}
+              >
                 Continue with {provider.name}
               </button>
             ))}

@@ -30,7 +30,6 @@ const EXTERNAL_TYPES = [
 ];
 
 export default function Databases() {
-
   const [tab, setTab] = useState<'internal' | 'external'>('internal');
 
   return (
@@ -45,7 +44,8 @@ export default function Databases() {
           { id: 'external', label: 'External' },
         ]}
         active={tab}
-        onChange={id => setTab(id as 'internal' | 'external')} />
+        onChange={id => setTab(id as 'internal' | 'external')}
+      />
       {tab === 'internal' ? <InternalTab /> : <ExternalTab />}
     </>
   );
@@ -55,7 +55,6 @@ export default function Databases() {
  * Internal SQLite databases — list, create, delete, backup up/down.
  */
 function InternalTab() {
-
   const [databases, setDatabases] = useState<any[]>([]);
   const [name, setName] = useState('');
   const [busy, setBusy] = useState(false);
@@ -144,13 +143,18 @@ function InternalTab() {
             keeps the input and button as direct flex children of the toolbar. */}
         <form
           style={{ display: 'contents' }}
-          onSubmit={e => { e.preventDefault(); if (!busy && name) void create(); }}>
+          onSubmit={e => {
+            e.preventDefault();
+            if (!busy && name) void create();
+          }}
+        >
           <input
             type="text"
             placeholder="New database name…"
             value={name}
             onChange={e => setName(e.target.value)}
-            style={{ width: 260 }} />
+            style={{ width: 260 }}
+          />
           <button className="btn" type="submit" disabled={busy || !name}>
             Create
           </button>
@@ -167,51 +171,57 @@ function InternalTab() {
                 void upload(e.target.files[0]);
                 e.target.value = '';
               }
-            }} />
+            }}
+          />
         </label>
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         {loading ? (
-        <TableSkeleton columns={3} />
+          <TableSkeleton columns={3} />
         ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th style={{ width: 100 }}>Tables</th>
-              <th style={{ width: 320 }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {databases.map(database => (
-              <tr key={database.name}>
-                <td><strong>{database.name}</strong></td>
-                <td data-label="Tables">{database.tables?.length ?? 0}</td>
-                <td>
-                  <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-                    <Link
-                      className="btn btn-secondary btn-small"
-                      to={'/sql-studio?dbType=sqlite&dbCString=generic&dbName=' + database.name}>
-                      Edit
-                    </Link>
-                    <a
-                      className="btn btn-secondary btn-small"
-                      href={fileWithTokenUrl('/data/' + database.name + '.db')}
-                      download>
-                      Backup
-                    </a>
-                    <button
-                      className="btn btn-danger btn-small"
-                      disabled={database.name === 'magic'}
-                      onClick={() => remove(database.name)}>
-                      Delete
-                    </button>
-                  </div>
-                </td>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th style={{ width: 100 }}>Tables</th>
+                <th style={{ width: 320 }}></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {databases.map(database => (
+                <tr key={database.name}>
+                  <td>
+                    <strong>{database.name}</strong>
+                  </td>
+                  <td data-label="Tables">{database.tables?.length ?? 0}</td>
+                  <td>
+                    <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                      <Link
+                        className="btn btn-secondary btn-small"
+                        to={'/sql-studio?dbType=sqlite&dbCString=generic&dbName=' + database.name}
+                      >
+                        Edit
+                      </Link>
+                      <a
+                        className="btn btn-secondary btn-small"
+                        href={fileWithTokenUrl('/data/' + database.name + '.db')}
+                        download
+                      >
+                        Backup
+                      </a>
+                      <button
+                        className="btn btn-danger btn-small"
+                        disabled={database.name === 'magic'}
+                        onClick={() => remove(database.name)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
       {busy && <AiWaiter />}
@@ -231,7 +241,6 @@ interface ConnectionRow {
  * and catalog management.
  */
 function ExternalTab() {
-
   const [rows, setRows] = useState<ConnectionRow[]>([]);
   const [type, setType] = useState('mysql');
   const [name, setName] = useState('');
@@ -271,10 +280,13 @@ function ExternalTab() {
   }, []);
 
   function updateStatus(row: ConnectionRow, status: 'live' | 'down') {
-    setRows(current => current.map(candidate =>
-      candidate.type === row.type && candidate.name === row.name
-        ? { ...candidate, status }
-        : candidate));
+    setRows(current =>
+      current.map(candidate =>
+        candidate.type === row.type && candidate.name === row.name
+          ? { ...candidate, status }
+          : candidate,
+      ),
+    );
   }
 
   useEffect(() => {
@@ -420,7 +432,9 @@ function ExternalTab() {
       <div className="toolbar">
         <Select value={type} onChange={value => setType(value)}>
           {EXTERNAL_TYPES.map(entry => (
-            <option key={entry.type} value={entry.type}>{entry.name}</option>
+            <option key={entry.type} value={entry.type}>
+              {entry.name}
+            </option>
           ))}
         </Select>
         <input
@@ -428,13 +442,15 @@ function ExternalTab() {
           placeholder="Name…"
           value={name}
           onChange={e => setName(e.target.value)}
-          style={{ width: 140 }} />
+          style={{ width: 140 }}
+        />
         <input
           type="text"
           placeholder="Connection string with {database} placeholder…"
           value={connectionString}
           onChange={e => setConnectionString(e.target.value)}
-          style={{ flex: 1 }} />
+          style={{ flex: 1 }}
+        />
         <button className="btn btn-secondary" onClick={() => testOrConnect(false)} disabled={busy}>
           Test
         </button>
@@ -444,97 +460,117 @@ function ExternalTab() {
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         {loading ? (
-        <TableSkeleton columns={5} />
+          <TableSkeleton columns={5} />
         ) : (
-        <table>
-          <thead>
-            <tr>
-              <th style={{ width: 90 }}>Type</th>
-              <th style={{ width: 140 }}>Name</th>
-              <th>Connection string</th>
-              <th style={{ width: 90 }}>Status</th>
-              <th style={{ width: 330 }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 && (
+          <table>
+            <thead>
               <tr>
-                <td colSpan={5} className="muted">
-                  You have not connected to any external databases.
-                </td>
+                <th style={{ width: 90 }}>Type</th>
+                <th style={{ width: 140 }}>Name</th>
+                <th>Connection string</th>
+                <th style={{ width: 90 }}>Status</th>
+                <th style={{ width: 330 }}></th>
               </tr>
-            )}
-            {rows.map(row => (
-              <tr key={row.type + '/' + row.name}>
-                <td data-label="Type">{row.type}</td>
-                <td data-label="Name"><strong>{row.name}</strong></td>
-                <td className="mono" data-label="Connection">{row.connectionString}</td>
-                <td data-label="Status">
-                  <span className={'badge ' + (STATUS_BADGES[row.status] ?? 'badge-debug')}>
-                    {row.status}
-                  </span>
-                </td>
-                <td>
-                  <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-                    <button
-                      className="btn btn-secondary btn-small"
-                      disabled={row.status !== 'live' || managing !== null}
-                      onClick={() => manageCatalogs(row)}>
-                      {managing === row.type + '/' + row.name ? 'Loading…' : 'Manage'}
-                    </button>
-                    <button
-                      className="btn btn-secondary btn-small"
-                      disabled={row.status !== 'live'}
-                      onClick={() => createCatalog(row)}>
-                      + Catalog
-                    </button>
-                    <button
-                      className="btn btn-secondary btn-small"
-                      onClick={() => {
-                        void copyToClipboard(row.connectionString, 'The connection string');
-                        showToast('Connection string copied');
-                      }}>
-                      Copy
-                    </button>
-                    <button
-                      className="btn btn-danger btn-small"
-                      onClick={() => remove(row)}>
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="muted">
+                    You have not connected to any external databases.
+                  </td>
+                </tr>
+              )}
+              {rows.map(row => (
+                <tr key={row.type + '/' + row.name}>
+                  <td data-label="Type">{row.type}</td>
+                  <td data-label="Name">
+                    <strong>{row.name}</strong>
+                  </td>
+                  <td className="mono" data-label="Connection">
+                    {row.connectionString}
+                  </td>
+                  <td data-label="Status">
+                    <span className={'badge ' + (STATUS_BADGES[row.status] ?? 'badge-debug')}>
+                      {row.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                      <button
+                        className="btn btn-secondary btn-small"
+                        disabled={row.status !== 'live' || managing !== null}
+                        onClick={() => manageCatalogs(row)}
+                      >
+                        {managing === row.type + '/' + row.name ? 'Loading…' : 'Manage'}
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-small"
+                        disabled={row.status !== 'live'}
+                        onClick={() => createCatalog(row)}
+                      >
+                        + Catalog
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-small"
+                        onClick={() => {
+                          void copyToClipboard(row.connectionString, 'The connection string');
+                          showToast('Connection string copied');
+                        }}
+                      >
+                        Copy
+                      </button>
+                      <button className="btn btn-danger btn-small" onClick={() => remove(row)}>
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
       {catalogs && (
         <Modal width={700} onClose={() => setCatalogs(null)}>
-          <h2>Catalogs — {catalogs.row.name} ({catalogs.row.type})</h2>
+          <h2>
+            Catalogs — {catalogs.row.name} ({catalogs.row.type})
+          </h2>
           <div style={{ maxHeight: '55vh', overflow: 'auto' }}>
             <table>
               <thead>
-                <tr><th>Name</th><th style={{ width: 100 }}>Tables</th><th style={{ width: 200 }}></th></tr>
+                <tr>
+                  <th>Name</th>
+                  <th style={{ width: 100 }}>Tables</th>
+                  <th style={{ width: 200 }}></th>
+                </tr>
               </thead>
               <tbody>
                 {catalogs.list.map(catalog => (
                   <tr key={catalog.name}>
-                    <td><strong>{catalog.name}</strong></td>
+                    <td>
+                      <strong>{catalog.name}</strong>
+                    </td>
                     <td data-label="Tables">{catalog.tables?.length ?? 0}</td>
                     <td>
                       <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                         <Link
                           className="btn btn-secondary btn-small"
-                          to={'/sql-studio?dbType=' + catalogs.row.type +
-                            '&dbCString=' + catalogs.row.name +
-                            '&dbName=' + catalog.name}
-                          onClick={() => setCatalogs(null)}>
+                          to={
+                            '/sql-studio?dbType=' +
+                            catalogs.row.type +
+                            '&dbCString=' +
+                            catalogs.row.name +
+                            '&dbName=' +
+                            catalog.name
+                          }
+                          onClick={() => setCatalogs(null)}
+                        >
                           Edit
                         </Link>
                         <button
                           className="btn btn-danger btn-small"
-                          onClick={() => removeCatalog(catalogs.row, catalog.name)}>
+                          onClick={() => removeCatalog(catalogs.row, catalog.name)}
+                        >
                           Delete
                         </button>
                       </div>
@@ -545,7 +581,9 @@ function ExternalTab() {
             </table>
           </div>
           <div className="modal-actions">
-            <button className="btn" onClick={() => setCatalogs(null)}>Close</button>
+            <button className="btn" onClick={() => setCatalogs(null)}>
+              Close
+            </button>
           </div>
         </Modal>
       )}

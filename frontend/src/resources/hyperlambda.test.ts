@@ -56,7 +56,6 @@ beforeAll(() => {
 });
 
 describe('hyperlambda tokenizer', () => {
-
   it('styles slots from the vocabulary as keywords', () => {
     expect(styleOf('if', ['if', 'while'])).toBe('keyword');
   });
@@ -161,7 +160,6 @@ describe('hyperlambda tokenizer', () => {
 });
 
 describe('hyperlambdaCompletions', () => {
-
   function complete(doc: string, explicit = true) {
     const state = EditorState.create({ doc });
     const context = new CompletionContext(state, doc.length, explicit);
@@ -182,8 +180,7 @@ describe('hyperlambdaCompletions', () => {
 
   it('matches by containment, not just prefix', () => {
     const result = complete('o');
-    expect(result?.options.map(option => option.label))
-      .toEqual(['log.error', 'execute:foo-bar']);
+    expect(result?.options.map(option => option.label)).toEqual(['log.error', 'execute:foo-bar']);
   });
 
   it('starts after the indentation on indented lines', () => {
@@ -193,8 +190,12 @@ describe('hyperlambdaCompletions', () => {
 
   it('offers everything on an explicitly opened empty line', () => {
     const result = complete('', true);
-    expect(result?.options.map(option => option.label))
-      .toEqual(['if', 'while', 'log.error', 'execute:foo-bar']);
+    expect(result?.options.map(option => option.label)).toEqual([
+      'if',
+      'while',
+      'log.error',
+      'execute:foo-bar',
+    ]);
   });
 
   it('stays closed on an empty line that was not explicitly opened', () => {

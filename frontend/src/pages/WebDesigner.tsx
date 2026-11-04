@@ -24,7 +24,14 @@ import { useAuth } from '../lib/AuthContext';
 import { useUnsavedGuard } from '../lib/navGuard';
 import { onChatOpsDone } from '../lib/chatOps';
 import { showToast } from '../lib/toast';
-import { aiContextForFile, createFolder, ensureWidgetAssets, listFilesRecursively, loadFile, saveFile } from '../lib/api';
+import {
+  aiContextForFile,
+  createFolder,
+  ensureWidgetAssets,
+  listFilesRecursively,
+  loadFile,
+  saveFile,
+} from '../lib/api';
 import { ChevronIcon, RedoIcon, SaveIcon, UndoIcon } from '../components/Icons';
 import Canvas from './designer/Canvas';
 import Menu, { MenuItem } from './designer/Menu';
@@ -38,9 +45,32 @@ import Website from './designer/Website';
 import Styles, { INLINE } from './designer/Styles';
 import { Block, GROUPS, customBlock } from './designer/palette';
 import { DropSpot } from './designer/dropTarget';
-import { canContainChildren, liveSandbox, prepareDocument, serializeDocument, slotsDropped } from './designer/html';
-import { designableChildren, elementOf, isText, labelOf, nodeAt, pathTo, writeText } from './designer/nodes';
-import { Overrides, joinCss, overrideCss, ownStylesheet, scriptPaths, selectorsFor, splitCss, stylesheetPaths } from './designer/css';
+import {
+  canContainChildren,
+  liveSandbox,
+  prepareDocument,
+  serializeDocument,
+  slotsDropped,
+} from './designer/html';
+import {
+  designableChildren,
+  elementOf,
+  isText,
+  labelOf,
+  nodeAt,
+  pathTo,
+  writeText,
+} from './designer/nodes';
+import {
+  Overrides,
+  joinCss,
+  overrideCss,
+  ownStylesheet,
+  scriptPaths,
+  selectorsFor,
+  splitCss,
+  stylesheetPaths,
+} from './designer/css';
 import { CANONICAL_VERSIONS, WIDGET_ASSET_HREFS } from './designer/widgetRuntime';
 
 const WEB_ROOT = '/etc/www';
@@ -61,7 +91,11 @@ const HISTORY = 50;
 const VIEWS: { id: string; label: string; hint: string }[] = [
   { id: 'design', label: 'Design', hint: 'Edit the page by pointing at it' },
   { id: 'code', label: 'Code', hint: 'Edit the same file as HTML' },
-  { id: 'live', label: 'Live', hint: 'Run the page for real, scripts and all — look, do not touch' },
+  {
+    id: 'live',
+    label: 'Live',
+    hint: 'Run the page for real, scripts and all — look, do not touch',
+  },
 ];
 
 const VIEWPORTS: { id: string; label: string; width: number | null }[] = [
@@ -114,7 +148,10 @@ function companionFile(file: string, kind: 'js' | 'css') {
  * even if it could be edited.
  */
 function isServed(file: string) {
-  return !file.substring(WEB_ROOT.length).split('/').some(part => part.startsWith('.'));
+  return !file
+    .substring(WEB_ROOT.length)
+    .split('/')
+    .some(part => part.startsWith('.'));
 }
 
 /*
@@ -131,9 +168,13 @@ function reportDropped(before: string, after: string) {
   if (gone.length === 0) {
     return;
   }
-  showToast(gone.join(' and ') + (gone.length === 1 ? ' was' : ' were') +
-    ' filled in by the server. Fixed text means the page stops asking — undo ' +
-    'if that was not the idea.', true);
+  showToast(
+    gone.join(' and ') +
+      (gone.length === 1 ? ' was' : ' were') +
+      ' filled in by the server. Fixed text means the page stops asking — undo ' +
+      'if that was not the idea.',
+    true,
+  );
 }
 
 // The items of the menu holding the viewport, the page and the canvas.
@@ -152,8 +193,21 @@ function designerMenuItems(o: {
   setReveal: (reveal: boolean) => void;
   view: string;
 }): MenuItem[] {
-  const { viewport, setViewport, setCreating, origin, path, busy, scripts, sheets,
-    openPage, addCompanionFile, reveal, setReveal, view } = o;
+  const {
+    viewport,
+    setViewport,
+    setCreating,
+    origin,
+    path,
+    busy,
+    scripts,
+    sheets,
+    openPage,
+    addCompanionFile,
+    reveal,
+    setReveal,
+    view,
+  } = o;
   return [
     { heading: 'Width' },
     ...VIEWPORTS.map(entry => ({
@@ -219,21 +273,24 @@ function designerMenuItems(o: {
 }
 
 // The blocks that can be dragged onto the page, filtered or by drawer, and any other tag.
-function BlockPalette(props: Readonly<{
-  filter: string;
-  onFilter: (filter: string) => void;
-  customTag: string;
-  onCustomTag: (tag: string) => void;
-  disabled: boolean;
-  onPending: (block: Block) => void;
-}>) {
+function BlockPalette(
+  props: Readonly<{
+    filter: string;
+    onFilter: (filter: string) => void;
+    customTag: string;
+    onCustomTag: (tag: string) => void;
+    disabled: boolean;
+    onPending: (block: Block) => void;
+  }>,
+) {
   return (
     <>
       <SearchInput
         placeholder="Filter blocks…"
         value={props.filter}
         onChange={props.onFilter}
-        style={{ width: '100%' }} />
+        style={{ width: '100%' }}
+      />
       {(() => {
         /*
          * A block whose runtime depends on a script used to be withheld
@@ -255,7 +312,8 @@ function BlockPalette(props: Readonly<{
             onMouseDown={event => {
               event.preventDefault();
               props.onPending(block);
-            }}>
+            }}
+          >
             {block.label}
           </button>
         );
@@ -266,9 +324,9 @@ function BlockPalette(props: Readonly<{
          * think about.
          */
         if (needle !== '') {
-          const hits = GROUPS.flatMap(group => group.blocks)
-            .filter(block => block.label.toLowerCase().includes(needle) ||
-              block.key.includes(needle));
+          const hits = GROUPS.flatMap(group => group.blocks).filter(
+            block => block.label.toLowerCase().includes(needle) || block.key.includes(needle),
+          );
           return (
             <div className="designer-palette">
               {hits.map(pill)}
@@ -299,7 +357,8 @@ function BlockPalette(props: Readonly<{
           type="text"
           placeholder="figcaption, my-widget…"
           value={props.customTag}
-          onChange={event => props.onCustomTag(event.target.value)} />
+          onChange={event => props.onCustomTag(event.target.value)}
+        />
         {customBlock(props.customTag) && (
           <div className="designer-palette">
             {[customBlock(props.customTag)!].map(block => (
@@ -311,7 +370,8 @@ function BlockPalette(props: Readonly<{
                 onMouseDown={event => {
                   event.preventDefault();
                   props.onPending(block);
-                }}>
+                }}
+              >
                 {block.label}
               </button>
             ))}
@@ -323,20 +383,23 @@ function BlockPalette(props: Readonly<{
 }
 
 // The handle on the edge of a rail, which folds and unfolds it.
-function RailToggle(props: Readonly<{
-  side: 'left' | 'right';
-  shut: boolean;
-  showTitle: string;
-  hideTitle: string;
-  onToggle: () => void;
-}>) {
+function RailToggle(
+  props: Readonly<{
+    side: 'left' | 'right';
+    shut: boolean;
+    showTitle: string;
+    hideTitle: string;
+    onToggle: () => void;
+  }>,
+) {
   // The chevron points away from the rail when it is open on the left, and when it is folded on the right.
   const rotated = props.side === 'left' ? !props.shut : props.shut;
   return (
     <button
       className={'designer-rail-toggle ' + props.side}
       title={props.shut ? props.showTitle : props.hideTitle}
-      onClick={props.onToggle}>
+      onClick={props.onToggle}
+    >
       <span style={{ display: 'flex', transform: rotated ? 'rotate(180deg)' : undefined }}>
         <ChevronIcon />
       </span>
@@ -350,7 +413,6 @@ function railClass(side: 'left' | 'right', railsShut: Record<'left' | 'right', b
 }
 
 export default function WebDesigner() {
-
   const { backend } = useAuth();
   const { choice, confirm } = useDialog();
 
@@ -419,8 +481,7 @@ export default function WebDesigner() {
    * absolute address rather than a path because somebody else's server
    * fetches it.
    */
-  const [choosingMedia, setChoosingMedia] =
-    useState<{ kind: MediaKind; home?: Home } | null>(null);
+  const [choosingMedia, setChoosingMedia] = useState<{ kind: MediaKind; home?: Home } | null>(null);
   // Every local stylesheet this page links that is actually on disk.
   const [sheets, setSheets] = useState<string[]>([]);
   // Every local script this page runs, readable in the code view beside it.
@@ -510,8 +571,7 @@ export default function WebDesigner() {
    */
   const sameOrigin = origin !== '' && origin === window.location.origin;
   const warnedKey = 'magic2.designer.live-warning.' + (backend?.url ?? '');
-  const [liveWarned, setLiveWarned] = useState(
-    () => localStorage.getItem(warnedKey) === 'seen');
+  const [liveWarned, setLiveWarned] = useState(() => localStorage.getItem(warnedKey) === 'seen');
   const doc = docRef.current;
   const width = VIEWPORTS.find(entry => entry.id === viewport)?.width ?? null;
 
@@ -524,7 +584,7 @@ export default function WebDesigner() {
   /* -- Loading ------------------------------------------------------------ */
 
   async function loadPages() {
-    const files = await listFilesRecursively(WEB_ROOT, false) ?? [];
+    const files = (await listFilesRecursively(WEB_ROOT, false)) ?? [];
     // Sorted by the URL they are served at, which is how the picker lists them.
     const html = files
       .filter(file => /\.html?$/i.test(file) && isServed(file))
@@ -534,12 +594,16 @@ export default function WebDesigner() {
   }
 
   async function openPage(file: string, force = false) {
-    if (!force && dirty && !(await confirm({
-      title: 'Discard unsaved changes?',
-      message: 'The design changes to ' + path + ' have not been saved.',
-      confirmText: 'Discard',
-      danger: true,
-    }))) {
+    if (
+      !force &&
+      dirty &&
+      !(await confirm({
+        title: 'Discard unsaved changes?',
+        message: 'The design changes to ' + path + ' have not been saved.',
+        confirmText: 'Discard',
+        danger: true,
+      }))
+    ) {
       return;
     }
     setBusy(true);
@@ -607,17 +671,21 @@ export default function WebDesigner() {
    * it says so and waits, because the alternative is silently throwing away
    * what the user just did.
    */
-  useEffect(() => onChatOpsDone(() => {
-    if (dirtyRef.current) {
-      setStale(true);
-      showToast('Chat Ops changed files on the server — reload when you are ready');
-      return;
-    }
-    if (pathRef.current) {
-      void openPage(pathRef.current, true);
-    }
-    loadPages().catch(() => {});
-  }), []);
+  useEffect(
+    () =>
+      onChatOpsDone(() => {
+        if (dirtyRef.current) {
+          setStale(true);
+          showToast('Chat Ops changed files on the server — reload when you are ready');
+          return;
+        }
+        if (pathRef.current) {
+          void openPage(pathRef.current, true);
+        }
+        loadPages().catch(() => {});
+      }),
+    [],
+  );
 
   /*
    * The canvas frame has a document. Its stylesheet is read through the file
@@ -644,14 +712,18 @@ export default function WebDesigner() {
      * rather than guessed from the markup: no text anywhere, and none of the
      * elements that show something without needing text.
      */
-    setShell(loaded.body.textContent?.trim() === '' &&
-      loaded.body.querySelectorAll('img, svg, video, canvas, input, textarea, iframe').length === 0);
+    setShell(
+      loaded.body.textContent?.trim() === '' &&
+        loaded.body.querySelectorAll('img, svg, video, canvas, input, textarea, iframe').length ===
+          0,
+    );
     // Resolved against the document's own base, so this cannot disagree with
     // how the browser just resolved the very same hrefs. The shared widget
     // runtime is excluded here, not just filtered out of the dropdown later —
     // it must never become [cssPath], the file the Style panel writes into.
-    const linked = stylesheetPaths(loaded, loaded.baseURI)
-      .filter(file => !SHARED_ASSET_FILES.has(file));
+    const linked = stylesheetPaths(loaded, loaded.baseURI).filter(
+      file => !SHARED_ASSET_FILES.has(file),
+    );
     const readable: string[] = [];
     const absent: string[] = [];
     for (const sheet of linked) {
@@ -766,7 +838,7 @@ export default function WebDesigner() {
   async function switchView(next: string) {
     // Asked before anything else happens, because the answer may be to stay
     // put, and the transitions below have side effects worth not having.
-    if (!await confirmLeavingForLive(next)) {
+    if (!(await confirmLeavingForLive(next))) {
       return;
     }
     const current = docRef.current;
@@ -790,7 +862,10 @@ export default function WebDesigner() {
     if (next === 'live' && dirty) {
       const answer = await choice({
         title: 'Unsaved changes',
-        message: 'Live loads ' + canonicalUrl(path) + ' from the server, so it shows the ' +
+        message:
+          'Live loads ' +
+          canonicalUrl(path) +
+          ' from the server, so it shows the ' +
           'page as it was last saved. The changes you have made here will not be in it.',
         buttons: [
           { label: 'Save, then open Live', value: 'save', kind: 'primary' },
@@ -802,7 +877,7 @@ export default function WebDesigner() {
       if (answer === null || answer === 'stay') {
         return false;
       }
-      if (answer === 'save' && !await save()) {
+      if (answer === 'save' && !(await save())) {
         return false;
       }
     }
@@ -828,8 +903,13 @@ export default function WebDesigner() {
      * the author's CSS describing different moments. Saving behaves the same
      * way for the same reason.
      */
-    if (view === 'code' && next !== 'code' && cssPath &&
-        codeTarget === cssPath && code !== codeOriginal) {
+    if (
+      view === 'code' &&
+      next !== 'code' &&
+      cssPath &&
+      codeTarget === cssPath &&
+      code !== codeOriginal
+    ) {
       const split = splitCss(code);
       setCssHead(split.head);
       setCssTail(split.tail);
@@ -893,7 +973,9 @@ export default function WebDesigner() {
       } else if (joined !== code) {
         showToast(
           'The Style panel has changes this editor does not. Saving here writes what ' +
-          'you see and drops them — save from the design view first to keep both.', true);
+            'you see and drops them — save from the design view first to keep both.',
+          true,
+        );
       }
     }
   }
@@ -909,11 +991,15 @@ export default function WebDesigner() {
   async function createPage(
     file: string,
     copyFrom: string | null,
-    companions: { css: boolean; js: boolean }) {
+    companions: { css: boolean; js: boolean },
+  ) {
     setCreating(false);
     setBusy(true);
     try {
-      const folders = file.substring(WEB_ROOT.length + 1).split('/').slice(0, -1);
+      const folders = file
+        .substring(WEB_ROOT.length + 1)
+        .split('/')
+        .slice(0, -1);
       let sofar = WEB_ROOT;
       for (const folder of folders) {
         sofar += '/' + folder;
@@ -962,8 +1048,12 @@ export default function WebDesigner() {
     setBusy(true);
     try {
       await saveFile(file, '');
-      mutate(() => ensureRequiredAssets(
-        current, kind === 'js' ? { scripts: [href] } : { stylesheets: [href] }));
+      mutate(() =>
+        ensureRequiredAssets(
+          current,
+          kind === 'js' ? { scripts: [href] } : { stylesheets: [href] },
+        ),
+      );
       if (kind === 'js') {
         setScripts(list => [...list, file]);
       } else {
@@ -1175,7 +1265,8 @@ export default function WebDesigner() {
       return;
     }
     const element = elementOf(node);
-    const inline = isText(node) ||
+    const inline =
+      isText(node) ||
       (element === node && getComputedStyle(element as Element).display.startsWith('inline'));
     mutate(() => {
       const wrapper = current.createElement(inline ? 'span' : 'div');
@@ -1192,8 +1283,13 @@ export default function WebDesigner() {
   function unwrap() {
     const element = elementOf(selected);
     const current = docRef.current;
-    if (!element || !current || element === current.body ||
-        element === current.documentElement || !element.parentNode) {
+    if (
+      !element ||
+      !current ||
+      element === current.body ||
+      element === current.documentElement ||
+      !element.parentNode
+    ) {
       return;
     }
     mutate(() => {
@@ -1214,14 +1310,20 @@ export default function WebDesigner() {
   function changeTag(tag: string) {
     const element = elementOf(selected);
     const current = docRef.current;
-    if (!element || !current || element.tagName.toLowerCase() === tag ||
-        element === current.body || element === current.documentElement) {
+    if (
+      !element ||
+      !current ||
+      element.tagName.toLowerCase() === tag ||
+      element === current.body ||
+      element === current.documentElement
+    ) {
       return;
     }
     mutate(() => {
       const replacement = current.createElement(tag);
-      Array.from(element.attributes).forEach(
-        attribute => replacement.setAttribute(attribute.name, attribute.value));
+      Array.from(element.attributes).forEach(attribute =>
+        replacement.setAttribute(attribute.name, attribute.value),
+      );
       replacement.append(...Array.from(element.childNodes));
       element.replaceWith(replacement);
       setSelected(replacement);
@@ -1235,8 +1337,10 @@ export default function WebDesigner() {
    */
   function setMeta(home: Home, value: string) {
     reportDropped(readMeta(docRef.current!, home), value);
-    mutate(() => writeMeta(docRef.current!, home, value),
-      'meta:' + home.at + ('key' in home ? home.key : ''));
+    mutate(
+      () => writeMeta(docRef.current!, home, value),
+      'meta:' + home.at + ('key' in home ? home.key : ''),
+    );
   }
 
   function removeAttribute(name: string) {
@@ -1298,11 +1402,11 @@ export default function WebDesigner() {
       const copy = node.cloneNode(true);
       if (!isText(copy)) {
         const element = copy as Element;
-      /*
-       * An id identifies one element. A copy that keeps it leaves two elements
-       * answering to the same name, which breaks the page's own CSS and
-       * scripts in ways that only show up later.
-       */
+        /*
+         * An id identifies one element. A copy that keeps it leaves two elements
+         * answering to the same name, which breaks the page's own CSS and
+         * scripts in ways that only show up later.
+         */
         element.removeAttribute('id');
         element.querySelectorAll('[id]').forEach(child => child.removeAttribute('id'));
       }
@@ -1387,8 +1491,11 @@ export default function WebDesigner() {
     mutate(() => {
       if (!selected || !into) {
         current.body.append(...nodes);
-      } else if (into === selected && canContainChildren(into) &&
-                 designableChildren(into).length === 0) {
+      } else if (
+        into === selected &&
+        canContainChildren(into) &&
+        designableChildren(into).length === 0
+      ) {
         into.append(...nodes);
       } else {
         (selected as ChildNode).after(...nodes);
@@ -1454,25 +1561,33 @@ export default function WebDesigner() {
   function ensureRequiredAssets(doc: Document, requires: Block['requires']) {
     let addedAny = false;
     (requires?.stylesheets ?? []).forEach(href => {
-      const linked = Array.from(doc.querySelectorAll('link[rel~="stylesheet"][href]'))
-        .some(link => new URL(link.getAttribute('href') ?? '', doc.baseURI).pathname === href);
+      const linked = Array.from(doc.querySelectorAll('link[rel~="stylesheet"][href]')).some(
+        link => new URL(link.getAttribute('href') ?? '', doc.baseURI).pathname === href,
+      );
       if (!linked) {
         const link = doc.createElement('link');
         link.setAttribute('rel', 'stylesheet');
         // Versioned from the start where there is a known version to start
         // at, so a brand new link is never a save behind the shared file it
         // already points at.
-        link.setAttribute('href', href + (CANONICAL_VERSIONS[href] ? '?v=' + CANONICAL_VERSIONS[href] : ''));
+        link.setAttribute(
+          'href',
+          href + (CANONICAL_VERSIONS[href] ? '?v=' + CANONICAL_VERSIONS[href] : ''),
+        );
         doc.head.appendChild(link);
         addedAny = true;
       }
     });
     (requires?.scripts ?? []).forEach(src => {
-      const linked = Array.from(doc.querySelectorAll('script[src]'))
-        .some(script => new URL(script.getAttribute('src') ?? '', doc.baseURI).pathname === src);
+      const linked = Array.from(doc.querySelectorAll('script[src]')).some(
+        script => new URL(script.getAttribute('src') ?? '', doc.baseURI).pathname === src,
+      );
       if (!linked) {
         const script = doc.createElement('script');
-        script.setAttribute('src', src + (CANONICAL_VERSIONS[src] ? '?v=' + CANONICAL_VERSIONS[src] : ''));
+        script.setAttribute(
+          'src',
+          src + (CANONICAL_VERSIONS[src] ? '?v=' + CANONICAL_VERSIONS[src] : ''),
+        );
         doc.body.appendChild(script);
         addedAny = true;
       }
@@ -1568,11 +1683,13 @@ export default function WebDesigner() {
    * forever. This takes the whole entry away.
    */
   function removeRule(selector: string) {
-    mutate(() => setOverrides(current => {
-      const next = { ...current };
-      delete next[selector];
-      return next;
-    }));
+    mutate(() =>
+      setOverrides(current => {
+        const next = { ...current };
+        delete next[selector];
+        return next;
+      }),
+    );
     if (target === selector) {
       setTarget(INLINE);
     }
@@ -1623,15 +1740,19 @@ export default function WebDesigner() {
       }, 'style:' + property);
       return;
     }
-    mutate(() => setOverrides(current => {
-      const declarations = { ...current[target] };
-      if (value === '') {
-        delete declarations[property];
-      } else {
-        declarations[property] = value;
-      }
-      return { ...current, [target]: declarations };
-    }), 'rule:' + target + ':' + property);
+    mutate(
+      () =>
+        setOverrides(current => {
+          const declarations = { ...current[target] };
+          if (value === '') {
+            delete declarations[property];
+          } else {
+            declarations[property] = value;
+          }
+          return { ...current, [target]: declarations };
+        }),
+      'rule:' + target + ':' + property,
+    );
   }
 
   /* -- Effects ------------------------------------------------------------ */
@@ -1666,7 +1787,8 @@ export default function WebDesigner() {
     if (!current || !view) {
       return;
     }
-    current.querySelectorAll('[data-magic-force]')
+    current
+      .querySelectorAll('[data-magic-force]')
       .forEach(element => delete (element as HTMLElement).dataset.magicForce);
     if (reveal) {
       current.body.querySelectorAll('*').forEach(element => {
@@ -1693,7 +1815,8 @@ export default function WebDesigner() {
     if (!current) {
       return;
     }
-    current.querySelectorAll('[data-magic-empty]')
+    current
+      .querySelectorAll('[data-magic-empty]')
       .forEach(element => delete (element as HTMLElement).dataset.magicEmpty);
     current.body.querySelectorAll('*').forEach(element => {
       if (canContainChildren(element) && designableChildren(element).length === 0) {
@@ -1709,8 +1832,10 @@ export default function WebDesigner() {
       return found;
     }
     doc.body.querySelectorAll('*').forEach(element => {
-      if ((element as HTMLElement).dataset.magicForce !== undefined ||
-          view.getComputedStyle(element).display === 'none') {
+      if (
+        (element as HTMLElement).dataset.magicForce !== undefined ||
+        view.getComputedStyle(element).display === 'none'
+      ) {
         found.add(element);
       }
     });
@@ -1736,7 +1861,8 @@ export default function WebDesigner() {
      * a page that links no local stylesheet offers this element only.
      */
     () => (styleTarget && cssPath ? selectorsFor(styleTarget, cssHead, overrides) : []),
-    [styleTarget, cssPath, cssHead, overrides, version]);
+    [styleTarget, cssPath, cssHead, overrides, version],
+  );
 
   // A selector that styled the last element rarely styles the next one.
   useEffect(() => {
@@ -1767,10 +1893,12 @@ export default function WebDesigner() {
    */
   function bumpAsset(current: Document, file: string) {
     const elements: [Element, string][] = [
-      ...Array.from(current.querySelectorAll('link[rel~="stylesheet"][href]'))
-        .map(element => [element, 'href'] as [Element, string]),
-      ...Array.from(current.querySelectorAll('script[src]'))
-        .map(element => [element, 'src'] as [Element, string]),
+      ...Array.from(current.querySelectorAll('link[rel~="stylesheet"][href]')).map(
+        element => [element, 'href'] as [Element, string],
+      ),
+      ...Array.from(current.querySelectorAll('script[src]')).map(
+        element => [element, 'src'] as [Element, string],
+      ),
     ];
     const here = new URL(current.baseURI).origin;
     for (const [element, attribute] of elements) {
@@ -1798,23 +1926,28 @@ export default function WebDesigner() {
    */
   function syncSharedAssetVersions(current: Document) {
     const elements: [Element, string][] = [
-      ...Array.from(current.querySelectorAll('link[rel~="stylesheet"][href]'))
-        .map(element => [element, 'href'] as [Element, string]),
-      ...Array.from(current.querySelectorAll('script[src]'))
-        .map(element => [element, 'src'] as [Element, string]),
+      ...Array.from(current.querySelectorAll('link[rel~="stylesheet"][href]')).map(
+        element => [element, 'href'] as [Element, string],
+      ),
+      ...Array.from(current.querySelectorAll('script[src]')).map(
+        element => [element, 'src'] as [Element, string],
+      ),
     ];
     const here = new URL(current.baseURI).origin;
     for (const [element, attribute] of elements) {
       const url = new URL(element.getAttribute(attribute) ?? '', current.baseURI);
       const version = CANONICAL_VERSIONS[url.pathname];
-      if (url.origin !== here || version === undefined || url.searchParams.get('v') === String(version)) {
+      if (
+        url.origin !== here ||
+        version === undefined ||
+        url.searchParams.get('v') === String(version)
+      ) {
         continue;
       }
       url.searchParams.set('v', String(version));
       element.setAttribute(attribute, url.pathname + url.search);
     }
   }
-
 
   // Returns whether the file reached disk, for callers waiting on it.
   async function save(): Promise<boolean> {
@@ -1847,7 +1980,7 @@ export default function WebDesigner() {
           setOverrides(split.overrides);
         }
         savedRevisionRef.current = revisionRef.current;
-      setDirty(false);
+        setDirty(false);
         showToast('Saved ' + codeTarget);
         return true;
       }
@@ -1953,8 +2086,19 @@ export default function WebDesigner() {
   });
 
   const menuItems = designerMenuItems({
-    viewport, setViewport, setCreating, origin, path, busy, scripts, sheets,
-    openPage, addCompanionFile, reveal, setReveal, view,
+    viewport,
+    setViewport,
+    setCreating,
+    origin,
+    path,
+    busy,
+    scripts,
+    sheets,
+    openPage,
+    addCompanionFile,
+    reveal,
+    setReveal,
+    view,
   });
 
   // What the right rail shows, according to its selected tab.
@@ -1974,15 +2118,19 @@ export default function WebDesigner() {
             onDelete={remove}
             onMove={nudge}
             onAddText={addText}
-            canAddText={!!elementOf(selected) && !isText(selected!) &&
+            canAddText={
+              !!elementOf(selected) &&
+              !isText(selected!) &&
               canContainChildren(elementOf(selected)!) &&
-              designableChildren(elementOf(selected)!).length === 0}
+              designableChildren(elementOf(selected)!).length === 0
+            }
             origin={origin}
             onChooseMedia={kind => setChoosingMedia({ kind })}
             onWrap={wrap}
             onUnwrap={unwrap}
             onChangeTag={changeTag}
-            urls={pages.map(canonicalUrl)} />
+            urls={pages.map(canonicalUrl)}
+          />
         );
       case 'meta':
         return (
@@ -1991,7 +2139,8 @@ export default function WebDesigner() {
             origin={origin}
             urls={pages.map(canonicalUrl)}
             onSet={setMeta}
-            onChooseImage={home => setChoosingMedia({ kind: 'image', home })} />
+            onChooseImage={home => setChoosingMedia({ kind: 'image', home })}
+          />
         );
       case 'quality':
         return (
@@ -2009,12 +2158,11 @@ export default function WebDesigner() {
               if (view === 'design') {
                 setRevealSelected(value => value + 1);
               }
-            }} />
+            }}
+          />
         );
       case 'website':
-        return (
-          <Website urls={pages.map(canonicalUrl)} />
-        );
+        return <Website urls={pages.map(canonicalUrl)} />;
       default:
         return (
           <Styles
@@ -2029,7 +2177,8 @@ export default function WebDesigner() {
             onTarget={setTarget}
             onSet={setStyle}
             onEditRule={editRule}
-            onRemoveRule={removeRule} />
+            onRemoveRule={removeRule}
+          />
         );
     }
   }
@@ -2038,14 +2187,20 @@ export default function WebDesigner() {
 
   return (
     <>
-      <div className="page-header ide-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div
+        className="page-header ide-header"
+        style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+      >
         <div className="page-title ide-title">
           <h1>Web Designer</h1>
           {!path && <p>Design the pages your cloudlet serves</p>}
         </div>
         <span className="spacer" style={{ flex: 1 }} />
         {stale && (
-          <span className="badge badge-put" title="Chat Ops wrote files while you had unsaved changes">
+          <span
+            className="badge badge-put"
+            title="Chat Ops wrote files while you had unsaved changes"
+          >
             Changed on server
           </span>
         )}
@@ -2054,10 +2209,13 @@ export default function WebDesigner() {
           value={path}
           title="The page being designed"
           disabled={pages.length === 0}
-          onChange={event => openPage(event.target.value)}>
+          onChange={event => openPage(event.target.value)}
+        >
           {pages.length === 0 && <option value="">No pages in /etc/www/</option>}
           {pages.map(file => (
-            <option key={file} value={file}>{canonicalUrl(file)}</option>
+            <option key={file} value={file}>
+              {canonicalUrl(file)}
+            </option>
           ))}
         </select>
         <div className="tabs designer-viewports">
@@ -2068,7 +2226,8 @@ export default function WebDesigner() {
               className={'tab' + (entry.id === view ? ' active' : '')}
               title={entry.hint}
               disabled={!path}
-              onClick={() => switchView(entry.id)}>
+              onClick={() => switchView(entry.id)}
+            >
               {entry.label}
             </button>
           ))}
@@ -2077,7 +2236,8 @@ export default function WebDesigner() {
           className="btn btn-secondary btn-small"
           title="Undo the last change"
           onClick={undo}
-          disabled={history.length === 0}>
+          disabled={history.length === 0}
+        >
           <UndoIcon />
           Undo
         </button>
@@ -2085,7 +2245,8 @@ export default function WebDesigner() {
           className="btn btn-secondary btn-small"
           title="Redo the change that was undone"
           onClick={redo}
-          disabled={future.length === 0}>
+          disabled={future.length === 0}
+        >
           <RedoIcon />
           Redo
         </button>
@@ -2102,7 +2263,8 @@ export default function WebDesigner() {
           origin={origin}
           current={elementOf(selected)?.getAttribute('src') ?? ''}
           onPick={pickMedia}
-          onCancel={() => setChoosingMedia(null)} />
+          onCancel={() => setChoosingMedia(null)}
+        />
       )}
 
       {creating && (
@@ -2110,30 +2272,34 @@ export default function WebDesigner() {
           taken={pages.map(canonicalUrl)}
           pages={pages.map(file => ({ file, url: canonicalUrl(file) }))}
           onCancel={() => setCreating(false)}
-          onCreate={createPage} />
+          onCreate={createPage}
+        />
       )}
 
       <div className="designer-layout">
         {/*
-          * Inert unless the canvas is the thing being edited. In the code view
-          * the FILE is what you are changing, and a property edited over here
-          * would be written into the document and then thrown away the moment
-          * the code text was applied on the way out. In the live view nothing
-          * here corresponds to what is on screen at all.
-          *
-          * Set through a ref because React 18 has no typing for [inert], which
-          * is the one attribute that makes a subtree neither clickable nor
-          * focusable — a pointer-events rule alone would still let the keyboard
-          * tab straight into it.
-          */}
+         * Inert unless the canvas is the thing being edited. In the code view
+         * the FILE is what you are changing, and a property edited over here
+         * would be written into the document and then thrown away the moment
+         * the code text was applied on the way out. In the live view nothing
+         * here corresponds to what is on screen at all.
+         *
+         * Set through a ref because React 18 has no typing for [inert], which
+         * is the one attribute that makes a subtree neither clickable nor
+         * focusable — a pointer-events rule alone would still let the keyboard
+         * tab straight into it.
+         */}
         <div
           className={railClass('left', railsShut)}
-          ref={node => { node?.toggleAttribute('inert', view !== 'design'); }}>
+          ref={node => {
+            node?.toggleAttribute('inert', view !== 'design');
+          }}
+        >
           <div className="designer-section">
             <h3>Blocks</h3>
             <p className="designer-note">
-              Drag onto the page. Each one arrives wearing the classes this page
-              already puts on that kind of element.
+              Drag onto the page. Each one arrives wearing the classes this page already puts on
+              that kind of element.
             </p>
             <BlockPalette
               filter={blockFilter}
@@ -2141,7 +2307,8 @@ export default function WebDesigner() {
               customTag={customTag}
               onCustomTag={setCustomTag}
               disabled={view !== 'design' || !doc}
-              onPending={setPending} />
+              onPending={setPending}
+            />
           </div>
           <div className="designer-section grow">
             <h3>Tree</h3>
@@ -2159,180 +2326,199 @@ export default function WebDesigner() {
               onReveal={node => {
                 setSelected(node);
                 setRevealSelected(count => count + 1);
-              }} />
+              }}
+            />
           </div>
         </div>
 
         {/*
-          * The handle sits between the rail and the canvas rather than inside
-          * either, so it is reachable whether the rail is open or folded — a
-          * button living in the thing it hides can only ever hide it.
-          */}
+         * The handle sits between the rail and the canvas rather than inside
+         * either, so it is reachable whether the rail is open or folded — a
+         * button living in the thing it hides can only ever hide it.
+         */}
         <RailToggle
           side="left"
           shut={railsShut.left}
           showTitle="Show blocks and tree"
           hideTitle="Hide blocks and tree"
-          onToggle={() => toggleRail('left')} />
+          onToggle={() => toggleRail('left')}
+        />
 
         <div className="designer-middle">
-        {/*
-          * An empty srcDoc still parses as a tiny, valid, totally blank HTML
-          * document — which is indistinguishable from a real page whose body
-          * is a compiled app's empty mount point, the one case this canvas
-          * already has a message for. Without this, "no page is open" and
-          * "a page is open and it happens to render nothing" looked
-          * identical, and only one of those is actually true here.
-          */}
-        {!path && (
-          <div className="designer-empty" style={{ margin: 'auto', textAlign: 'center' }}>
-            <p>This cloudlet serves no pages yet.</p>
-            <button className="btn" onClick={() => setCreating(true)}>
-              Create the first one…
-            </button>
-          </div>
-        )}
-        {path && view === 'code' && (
-          <div className="designer-code">
-            <div className="designer-code-bar">
-              <span>Editing</span>
-              <select
-                value={codeTarget || path}
-                title="The file in the editor"
-                onChange={event => switchCodeTarget(event.target.value)}>
-                <option value={path}>{path.substring(WEB_ROOT.length)}</option>
-                {[...sheets, ...scripts].map(file => (
-                  <option key={file} value={file}>{file.substring(WEB_ROOT.length)}</option>
-                ))}
-              </select>
-              {codeTarget !== '' && codeTarget === cssPath && (
-                <span className="designer-muted">the whole file, not just the designer's block</span>
-              )}
-              {codeTarget !== '' && scripts.includes(codeTarget) && (
-                <span className="designer-muted">runs in Live view, never on the design canvas</span>
-              )}
+          {/*
+           * An empty srcDoc still parses as a tiny, valid, totally blank HTML
+           * document — which is indistinguishable from a real page whose body
+           * is a compiled app's empty mount point, the one case this canvas
+           * already has a message for. Without this, "no page is open" and
+           * "a page is open and it happens to render nothing" looked
+           * identical, and only one of those is actually true here.
+           */}
+          {!path && (
+            <div className="designer-empty" style={{ margin: 'auto', textAlign: 'center' }}>
+              <p>This cloudlet serves no pages yet.</p>
+              <button className="btn" onClick={() => setCreating(true)}>
+                Create the first one…
+              </button>
             </div>
-            <CodeEditor
-              key={codeTarget || path}
-              value={code}
-              onChange={value => {
+          )}
+          {path && view === 'code' && (
+            <div className="designer-code">
+              <div className="designer-code-bar">
+                <span>Editing</span>
+                <select
+                  value={codeTarget || path}
+                  title="The file in the editor"
+                  onChange={event => switchCodeTarget(event.target.value)}
+                >
+                  <option value={path}>{path.substring(WEB_ROOT.length)}</option>
+                  {[...sheets, ...scripts].map(file => (
+                    <option key={file} value={file}>
+                      {file.substring(WEB_ROOT.length)}
+                    </option>
+                  ))}
+                </select>
+                {codeTarget !== '' && codeTarget === cssPath && (
+                  <span className="designer-muted">
+                    the whole file, not just the designer's block
+                  </span>
+                )}
+                {codeTarget !== '' && scripts.includes(codeTarget) && (
+                  <span className="designer-muted">
+                    runs in Live view, never on the design canvas
+                  </span>
+                )}
+              </div>
+              <CodeEditor
+                key={codeTarget || path}
+                value={code}
+                onChange={value => {
+                  setCode(value);
+                  setDirty(true);
+                }}
+                mode={modeForFile(codeTarget || path)}
+                onSave={save}
+                undoableEditId={codeEditId}
+              />
+            </div>
+          )}
+          {path && view === 'live' && (
+            <div className="designer-canvas">
+              {sameOrigin && !liveWarned && (
+                <div className="designer-live-warning">
+                  <p>
+                    <strong>This page runs for real here.</strong> Its JavaScript executes, unlike
+                    in Design — so open a page you did not write only if you trust it.
+                  </p>
+                  <p>
+                    This cloudlet also serves the dashboard, so Live runs the page with no origin of
+                    its own to keep it away from your session. Storage and calls the page makes to
+                    its own API will not behave as they do in production; open it in a new tab from
+                    the menu to see it work properly.
+                  </p>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      localStorage.setItem(warnedKey, 'seen');
+                      setLiveWarned(true);
+                    }}
+                  >
+                    Got it
+                  </button>
+                </div>
+              )}
+              <iframe
+                className="designer-frame"
+                title="Live preview"
+                sandbox={liveSandbox(sameOrigin)}
+                src={origin + canonicalUrl(path)}
+                style={width ? { width } : undefined}
+              />
+            </div>
+          )}
+          {path && (
+            <Canvas
+              srcDoc={srcDoc}
+              width={width}
+              selected={selected}
+              hovered={hovered}
+              version={version}
+              inserting={pending !== null}
+              revealHovered={revealHovered}
+              revealSelected={revealSelected}
+              note={
+                shell
+                  ? 'This page draws nothing by itself — its interface is built by ' +
+                    'JavaScript, which the canvas does not run. That is what makes ' +
+                    'everything else here safe to edit, and it means a compiled app ' +
+                    'like this one has nothing on it to design. Its markup is still ' +
+                    'yours to edit in Hyper IDE.'
+                  : null
+              }
+              onReady={onReady}
+              /*
+               * Only while the Style tab is showing a stylesheet selector.
+               * Outlining matches when nobody is choosing one would be noise
+               * over the page rather than an answer to a question.
+               */
+              highlight={tab === 'style' && target !== INLINE ? target : ''}
+              onHover={setHovered}
+              onSelect={setSelected}
+              onMove={move}
+              onInsert={spot => {
+                if (pending) {
+                  insert(pending, spot);
+                }
+              }}
+              onPendingDone={() => setPending(null)}
+              onEditText={(node, text) => {
+                reportDropped(node.data, text);
+                mutate(() => writeText(node, text));
+              }}
+              onKey={onKey}
+              hidden={view !== 'design'}
+            />
+          )}
+
+          {/*
+           * One prompt bar for the middle column, pointed at whatever is being
+           * edited: the file in the code view, the selected element in the
+           * design view. Not shown over Live, which is a real page on another
+           * origin and not ours to rewrite.
+           */}
+          {path && view === 'code' && (
+            <AiPrompt
+              key={'code:' + (codeTarget || path)}
+              fileType={(codeTarget || path).endsWith('.css') ? 'css' : 'html'}
+              getContext={() => aiContextForFile(codeTarget || path, code)}
+              getOldCode={() => code}
+              session={codeTarget || path}
+              onResult={value => {
                 setCode(value);
+                bumpCodeEditId();
                 setDirty(true);
               }}
-              mode={modeForFile(codeTarget || path)}
-              onSave={save}
-              undoableEditId={codeEditId} />
-          </div>
-        )}
-        {path && view === 'live' && (
-          <div className="designer-canvas">
-            {sameOrigin && !liveWarned && (
-              <div className="designer-live-warning">
-                <p>
-                  <strong>This page runs for real here.</strong> Its JavaScript executes, unlike
-                  in Design — so open a page you did not write only if you trust it.
-                </p>
-                <p>
-                  This cloudlet also serves the dashboard, so Live runs the page with no origin
-                  of its own to keep it away from your session. Storage and calls the page makes
-                  to its own API will not behave as they do in production; open it in a new tab
-                  from the menu to see it work properly.
-                </p>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    localStorage.setItem(warnedKey, 'seen');
-                    setLiveWarned(true);
-                  }}>
-                  Got it
-                </button>
-              </div>
-            )}
-            <iframe
-              className="designer-frame"
-              title="Live preview"
-              sandbox={liveSandbox(sameOrigin)}
-              src={origin + canonicalUrl(path)}
-              style={width ? { width } : undefined} />
-          </div>
-        )}
-        {path && (
-        <Canvas
-            srcDoc={srcDoc}
-            width={width}
-            selected={selected}
-            hovered={hovered}
-            version={version}
-            inserting={pending !== null}
-            revealHovered={revealHovered}
-            revealSelected={revealSelected}
-            note={shell
-              ? 'This page draws nothing by itself — its interface is built by ' +
-                'JavaScript, which the canvas does not run. That is what makes ' +
-                'everything else here safe to edit, and it means a compiled app ' +
-                'like this one has nothing on it to design. Its markup is still ' +
-                'yours to edit in Hyper IDE.'
-              : null}
-            onReady={onReady}
-            /*
-             * Only while the Style tab is showing a stylesheet selector.
-             * Outlining matches when nobody is choosing one would be noise
-             * over the page rather than an answer to a question.
-             */
-            highlight={tab === 'style' && target !== INLINE ? target : ''}
-            onHover={setHovered}
-            onSelect={setSelected}
-            onMove={move}
-            onInsert={spot => {
-              if (pending) {
-                insert(pending, spot);
-              }
-            }}
-            onPendingDone={() => setPending(null)}
-            onEditText={(node, text) => {
-              reportDropped(node.data, text);
-              mutate(() => writeText(node, text));
-            }}
-            onKey={onKey}
-            hidden={view !== 'design'} />
-        )}
-
-        {/*
-          * One prompt bar for the middle column, pointed at whatever is being
-          * edited: the file in the code view, the selected element in the
-          * design view. Not shown over Live, which is a real page on another
-          * origin and not ours to rewrite.
-          */}
-        {path && view === 'code' && (
-          <AiPrompt
-            key={'code:' + (codeTarget || path)}
-            fileType={(codeTarget || path).endsWith('.css') ? 'css' : 'html'}
-            getContext={() => aiContextForFile(codeTarget || path, code)}
-            getOldCode={() => code}
-            session={codeTarget || path}
-            onResult={value => {
-              setCode(value);
-              bumpCodeEditId();
-              setDirty(true);
-            }}
-            onError={message => showToast(message, true)}
-            style={{ flexShrink: 0 }} />
-        )}
-        {path && view === 'design' && (styleTarget ? (
-          <AiPrompt
-            key="design"
-            fileType="html"
-            getContext={() => aiContextForFile(path, styleTarget.outerHTML)}
-            getOldCode={() => styleTarget.outerHTML}
-            session={path + ' element'}
-            onResult={rewriteSelected}
-            onError={message => showToast(message, true)}
-            style={{ flexShrink: 0 }} />
-        ) : (
-          <p className="designer-note" style={{ flexShrink: 0, padding: '0 2px' }}>
-            Select something on the canvas, and the Machine will change that.
-          </p>
-        ))}
+              onError={message => showToast(message, true)}
+              style={{ flexShrink: 0 }}
+            />
+          )}
+          {path &&
+            view === 'design' &&
+            (styleTarget ? (
+              <AiPrompt
+                key="design"
+                fileType="html"
+                getContext={() => aiContextForFile(path, styleTarget.outerHTML)}
+                getOldCode={() => styleTarget.outerHTML}
+                session={path + ' element'}
+                onResult={rewriteSelected}
+                onError={message => showToast(message, true)}
+                style={{ flexShrink: 0 }}
+              />
+            ) : (
+              <p className="designer-note" style={{ flexShrink: 0, padding: '0 2px' }}>
+                Select something on the canvas, and the Machine will change that.
+              </p>
+            ))}
         </div>
 
         <RailToggle
@@ -2340,11 +2526,15 @@ export default function WebDesigner() {
           shut={railsShut.right}
           showTitle="Show properties"
           hideTitle="Hide properties"
-          onToggle={() => toggleRail('right')} />
+          onToggle={() => toggleRail('right')}
+        />
 
         <div
           className={railClass('right', railsShut)}
-          ref={node => { node?.toggleAttribute('inert', view !== 'design'); }}>
+          ref={node => {
+            node?.toggleAttribute('inert', view !== 'design');
+          }}
+        >
           <Tabs
             tabs={[
               { id: 'element', label: 'Element' },
@@ -2354,7 +2544,8 @@ export default function WebDesigner() {
               { id: 'website', label: 'Website' },
             ]}
             active={tab}
-            onChange={setTab} />
+            onChange={setTab}
+          />
           {rightPanel()}
         </div>
       </div>

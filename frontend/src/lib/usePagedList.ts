@@ -48,7 +48,6 @@ export function usePagedList<T>(options: {
   // Immediate dependencies — sort state, the active tab, and so on.
   deps?: unknown[];
 }): PagedList<T> {
-
   const [rows, setRows] = useState<T[] | null>(null);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
@@ -74,7 +73,8 @@ export function usePagedList<T>(options: {
     }
     const current = ++seq.current;
     setLoading(true);
-    loadRef.current(page * options.pageSize, options.pageSize)
+    loadRef
+      .current(page * options.pageSize, options.pageSize)
       .then(result => {
         if (current !== seq.current) {
           return;

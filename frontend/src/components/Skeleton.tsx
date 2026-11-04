@@ -11,7 +11,8 @@ export function SkeletonBar(props: Readonly<{ width?: string | number; height?: 
   return (
     <span
       className="skeleton-bar"
-      style={{ width: props.width ?? '100%', height: props.height ?? 12 }} />
+      style={{ width: props.width ?? '100%', height: props.height ?? 12 }}
+    />
   );
 }
 

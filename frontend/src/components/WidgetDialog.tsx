@@ -84,7 +84,6 @@ function widgetDocument(html: string, id: string) {
 }
 
 export default function WidgetDialog(props: Readonly<{ html: string; onClose: () => void }>) {
-
   // Stable per dialog, so a height message can be matched to this widget.
   const [id] = useState(() => 'w' + Math.random().toString(36).slice(2));
   const [height, setHeight] = useState(240);
@@ -133,9 +132,12 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
          * display:block because an iframe is inline by default, which leaves it
          * sitting on a text baseline with a few pixels of descender gap below.
          */
-        style={{ display: 'block', width: '100%', height, border: 0, background: 'transparent' }} />
+        style={{ display: 'block', width: '100%', height, border: 0, background: 'transparent' }}
+      />
       <div className="modal-actions">
-        <button className="btn" onClick={props.onClose}>Close</button>
+        <button className="btn" onClick={props.onClose}>
+          Close
+        </button>
       </div>
     </Modal>
   );

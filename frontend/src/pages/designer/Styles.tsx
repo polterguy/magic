@@ -47,22 +47,26 @@ function isValid(property: string, value: string) {
 /*
  * The control for one property: a menu, a colour picker next to a text field, or just a text field.
  */
-function StyleControl(props: Readonly<{
-  property: StyleProperty;
-  value: string;
-  invalid: boolean;
-  resolved: string;
-  onPick: (value: string) => void;
-  onType: (value: string) => void;
-  onCommit: () => void;
-}>) {
+function StyleControl(
+  props: Readonly<{
+    property: StyleProperty;
+    value: string;
+    invalid: boolean;
+    resolved: string;
+    onPick: (value: string) => void;
+    onType: (value: string) => void;
+    onCommit: () => void;
+  }>,
+) {
   const { property, value, invalid, resolved } = props;
   if (property.kind === 'select') {
     return (
       <select value={value} onChange={event => props.onPick(event.target.value)}>
         <option value="">{resolved || 'inherit'}</option>
         {property.options?.map(option => (
-          <option key={option} value={option}>{option}</option>
+          <option key={option} value={option}>
+            {option}
+          </option>
         ))}
       </select>
     );
@@ -80,7 +84,8 @@ function StyleControl(props: Readonly<{
         if (event.key === 'Enter') {
           props.onCommit();
         }
-      }} />
+      }}
+    />
   );
   if (property.kind === 'color') {
     return (
@@ -88,7 +93,8 @@ function StyleControl(props: Readonly<{
         <input
           type="color"
           value={toHexColor(value, toHexColor(resolved))}
-          onChange={event => props.onPick(event.target.value)} />
+          onChange={event => props.onPick(event.target.value)}
+        />
         {text}
       </span>
     );
@@ -96,28 +102,29 @@ function StyleControl(props: Readonly<{
   return text;
 }
 
-export default function Styles(props: Readonly<{
-  element: Element | null;
-  // The canvas frame's window, for asking what the browser resolved a
-  // property to — which needs the frame's own layout, not the dashboard's.
-  frameWindow: Window | null;
-  selectors: string[];
-  target: string;
-  overrides: Overrides;
-  stylesheet: string | null;
-  // True when a run of text is selected and these styles belong to its parent.
-  onText: boolean;
-  // The page's stylesheets that are not on this cloudlet, when none could be
-  // read. The page renders unstyled here because it renders unstyled anywhere.
-  missing: string[];
-  onTarget: (target: string) => void;
-  onSet: (property: string, value: string) => void;
-  // Opens a rule, moving the selection to something it applies to.
-  onEditRule: (selector: string) => void;
-  // Drops a whole rule from the block, not one property at a time.
-  onRemoveRule: (selector: string) => void;
-}>) {
-
+export default function Styles(
+  props: Readonly<{
+    element: Element | null;
+    // The canvas frame's window, for asking what the browser resolved a
+    // property to — which needs the frame's own layout, not the dashboard's.
+    frameWindow: Window | null;
+    selectors: string[];
+    target: string;
+    overrides: Overrides;
+    stylesheet: string | null;
+    // True when a run of text is selected and these styles belong to its parent.
+    onText: boolean;
+    // The page's stylesheets that are not on this cloudlet, when none could be
+    // read. The page renders unstyled here because it renders unstyled anywhere.
+    missing: string[];
+    onTarget: (target: string) => void;
+    onSet: (property: string, value: string) => void;
+    // Opens a rule, moving the selection to something it applies to.
+    onEditRule: (selector: string) => void;
+    // Drops a whole rule from the block, not one property at a time.
+    onRemoveRule: (selector: string) => void;
+  }>,
+) {
   /*
    * What has been typed but not yet committed, and what it was typed against.
    * Carrying the element and target means moving the selection discards the
@@ -145,7 +152,10 @@ export default function Styles(props: Readonly<{
 
   // Typing changes nothing but the field, and clears any mark on it.
   function type(property: string, value: string) {
-    update({ ...typed, [property]: value }, invalid.filter(name => name !== property));
+    update(
+      { ...typed, [property]: value },
+      invalid.filter(name => name !== property),
+    );
   }
 
   /*
@@ -172,7 +182,10 @@ export default function Styles(props: Readonly<{
     }
     const rest = { ...typed };
     delete rest[property];
-    update(rest, invalid.filter(name => name !== property));
+    update(
+      rest,
+      invalid.filter(name => name !== property),
+    );
     props.onSet(property, value.trim());
   }
 
@@ -180,14 +193,20 @@ export default function Styles(props: Readonly<{
   // as soon as it changes — there is nothing to wait for, and so nothing to
   // hold in the draft either.
   function pick(property: string, value: string) {
-    update(typed, invalid.filter(name => name !== property));
+    update(
+      typed,
+      invalid.filter(name => name !== property),
+    );
     props.onSet(property, value);
   }
 
   function clear(property: string) {
     const values = { ...typed };
     delete values[property];
-    update(values, invalid.filter(name => name !== property));
+    update(
+      values,
+      invalid.filter(name => name !== property),
+    );
     props.onSet(property, '');
   }
 
@@ -210,8 +229,9 @@ export default function Styles(props: Readonly<{
   }
 
   // Rules with something in them. An emptied one is not worth listing.
-  const rules = Object.entries(props.overrides)
-    .filter(([, values]) => Object.keys(values).length > 0);
+  const rules = Object.entries(props.overrides).filter(
+    ([, values]) => Object.keys(values).length > 0,
+  );
 
   // One of the toolbox's own widgets adds its own group, after the ordinary ones.
   const groups = [...STYLE_GROUPS, ...widgetGroupFor(element.tagName.toLowerCase())];
@@ -231,14 +251,12 @@ export default function Styles(props: Readonly<{
       </label>
       {props.target !== INLINE && props.stylesheet && (
         <p className="designer-note">
-          Saved to <code>{props.stylesheet}</code>, below the Web Designer marker
-          at the end of the file. Nothing above it is touched.
+          Saved to <code>{props.stylesheet}</code>, below the Web Designer marker at the end of the
+          file. Nothing above it is touched.
         </p>
       )}
       {props.target === INLINE && (
-        <p className="designer-note">
-          Saved as a style attribute on this one element.
-        </p>
+        <p className="designer-note">Saved as a style attribute on this one element.</p>
       )}
       {props.onText && (
         <p className="designer-note">
@@ -248,16 +266,14 @@ export default function Styles(props: Readonly<{
       )}
       {props.missing.length > 0 && (
         <p className="designer-note">
-          This page links {props.missing.join(' and ')}, which could not be read
-          from this cloudlet. That is why it looks unstyled here — a visitor
-          sees the same thing. Only inline styles can be edited until the file
-          is there.
+          This page links {props.missing.join(' and ')}, which could not be read from this cloudlet.
+          That is why it looks unstyled here — a visitor sees the same thing. Only inline styles can
+          be edited until the file is there.
         </p>
       )}
       {props.missing.length === 0 && !props.stylesheet && (
         <p className="designer-note">
-          This page links no stylesheet of its own, so only inline styles can
-          be edited.
+          This page links no stylesheet of its own, so only inline styles can be edited.
         </p>
       )}
 
@@ -277,18 +293,20 @@ export default function Styles(props: Readonly<{
                   resolved={resolved(property.name)}
                   onPick={next => pick(property.name, next)}
                   onType={next => type(property.name, next)}
-                  onCommit={() => commit(property.name)} />
+                  onCommit={() => commit(property.name)}
+                />
                 {/*
-                  * Shown only once the property carries a value. A disabled
-                  * control on every row made a live panel look switched off,
-                  * and this way its presence tells you at a glance which
-                  * properties you have set and which are inherited.
-                  */}
+                 * Shown only once the property carries a value. A disabled
+                 * control on every row made a live panel look switched off,
+                 * and this way its presence tells you at a glance which
+                 * properties you have set and which are inherited.
+                 */}
                 {value ? (
                   <button
                     className="icon-btn designer-clear"
                     title={'Clear ' + property.name}
-                    onClick={() => clear(property.name)}>
+                    onClick={() => clear(property.name)}
+                  >
                     &times;
                   </button>
                 ) : (
@@ -301,12 +319,12 @@ export default function Styles(props: Readonly<{
       ))}
 
       {/*
-        * Everything this page has been given a rule for, which is otherwise
-        * invisible: the panel shows one selector at a time, so a rule written
-        * ten minutes ago cannot be found again unless you happen to select
-        * something it matches. Clearing properties one by one also leaves an
-        * empty rule behind, and this is the only way to take one away whole.
-        */}
+       * Everything this page has been given a rule for, which is otherwise
+       * invisible: the panel shows one selector at a time, so a rule written
+       * ten minutes ago cannot be found again unless you happen to select
+       * something it matches. Clearing properties one by one also leaves an
+       * empty rule behind, and this is the only way to take one away whole.
+       */}
       {rules.length > 0 && (
         <div className="designer-field">
           <span>Rules on this page</span>
@@ -315,14 +333,16 @@ export default function Styles(props: Readonly<{
               <button
                 className={'designer-rule-name' + (selector === props.target ? ' current' : '')}
                 title="Edit this rule"
-                onClick={() => props.onEditRule(selector)}>
+                onClick={() => props.onEditRule(selector)}
+              >
                 <code>{selector}</code>
                 <em>{Object.keys(values).length}</em>
               </button>
               <button
                 className="icon-btn"
                 title={'Remove the whole ' + selector + ' rule'}
-                onClick={() => props.onRemoveRule(selector)}>
+                onClick={() => props.onRemoveRule(selector)}
+              >
                 <TrashIcon />
               </button>
             </div>

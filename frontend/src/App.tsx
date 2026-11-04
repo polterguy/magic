@@ -31,7 +31,6 @@ const Tasks = lazy(() => import('./pages/Tasks'));
 const Log = lazy(() => import('./pages/Log'));
 
 export default function App() {
-
   const { authenticated, isRoot, setupNeeded, backend } = useAuth();
   /*
    * Through the router rather than window.location, so this re-renders when
@@ -77,11 +76,13 @@ export default function App() {
    * at the previous cloudlet's files, tables and results.
    */
   return (
-    <Suspense fallback={
-      <div className="spinner-panel" style={{ height: '100vh' }}>
-        <div className="spinner" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="spinner-panel" style={{ height: '100vh' }}>
+          <div className="spinner" />
+        </div>
+      }
+    >
       <Layout key={backend?.url}>
         <Routes>
           <Route path="/" element={<Dashboard />} />

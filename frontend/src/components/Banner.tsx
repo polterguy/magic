@@ -5,18 +5,23 @@
 
 import { CSSProperties, ReactNode } from 'react';
 
-export default function Banner(props: Readonly<{
-  isError?: boolean;
-  onClose: () => void;
-  style?: CSSProperties;
-  children: ReactNode;
-}>) {
+export default function Banner(
+  props: Readonly<{
+    isError?: boolean;
+    onClose: () => void;
+    style?: CSSProperties;
+    children: ReactNode;
+  }>,
+) {
   return (
     <div
       className={((props.isError ?? true) ? 'error-box' : 'success-box') + ' closable'}
-      style={props.style}>
+      style={props.style}
+    >
       <span style={{ flex: 1 }}>{props.children}</span>
-      <button className="banner-close" title="Dismiss" onClick={props.onClose}>×</button>
+      <button className="banner-close" title="Dismiss" onClick={props.onClose}>
+        ×
+      </button>
     </div>
   );
 }

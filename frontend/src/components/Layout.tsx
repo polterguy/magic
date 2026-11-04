@@ -6,7 +6,17 @@ import { openaiIsConfigured } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
 import { canRunDashboardTour, runDashboardTour, setShellActions } from '../lib/shellActions';
-import { ChevronIcon, DatabaseIcon, HelpIcon, KeyboardIcon, LogoutIcon, MoonIcon, RobotIcon, SearchIcon, SunIcon } from './Icons';
+import {
+  ChevronIcon,
+  DatabaseIcon,
+  HelpIcon,
+  KeyboardIcon,
+  LogoutIcon,
+  MoonIcon,
+  RobotIcon,
+  SearchIcon,
+  SunIcon,
+} from './Icons';
 import { applyTheme, getTheme } from '../lib/theme';
 import BackendsDialog from './BackendsDialog';
 import ChatDrawer from './ChatDrawer';
@@ -16,12 +26,12 @@ import { openSupport } from '../lib/support';
 import { SECTIONS } from './sections';
 
 export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
-
   const { backend, logout, backends, version } = useAuth();
   const [switching, setSwitching] = useState(false);
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(
-    () => localStorage.getItem('magic2.navCollapsed') === 'true');
+    () => localStorage.getItem('magic2.navCollapsed') === 'true',
+  );
   // Separate from the desktop collapse: the phone drawer, closed by default.
   const [mobileNav, setMobileNav] = useState(false);
 
@@ -43,19 +53,24 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
    * every programmatic jump — nav clicks and palette picks alike — asks it
    * before leaving.
    */
-  const go = useCallback((to: string) => {
-    const guard = getNavGuard();
-    if (!guard) {
-      navigate(to);
-      return;
-    }
-    guard().then(proceed => {
-      if (proceed) {
-        setNavGuard(null);
+  const go = useCallback(
+    (to: string) => {
+      const guard = getNavGuard();
+      if (!guard) {
         navigate(to);
+        return;
       }
-    }).catch(error => console.error('Navigation guard failed:', error));
-  }, [navigate]);
+      guard()
+        .then(proceed => {
+          if (proceed) {
+            setNavGuard(null);
+            navigate(to);
+          }
+        })
+        .catch(error => console.error('Navigation guard failed:', error));
+    },
+    [navigate],
+  );
 
   function onNavClick(event: React.MouseEvent, to: string) {
     // Without a guard the NavLink's own SPA navigation is fine as it is.
@@ -121,7 +136,9 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
    * and payload as the old dashboard: {type: 'success'|'error', message}.
    * Each message becomes its own toast so several can stack.
    */
-  const [toasts, setToasts] = useState<{ id: number; text: string; isError: boolean; logId?: number }[]>([]);
+  const [toasts, setToasts] = useState<
+    { id: number; text: string; isError: boolean; logId?: number }[]
+  >([]);
   const nextToastId = useRef(0);
   // Auto-dismiss timer per toast, so dismissing by hand also stops its timer.
   const timers = useRef(new Map<number, number>());
@@ -140,10 +157,16 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
   const pushToast = useCallback((text: string, isError: boolean, logId?: number) => {
     const id = ++nextToastId.current;
     setToasts(current => [...current, { id, text, isError, logId }]);
-    timers.current.set(id, window.setTimeout(() => {
-      timers.current.delete(id);
-      setToasts(current => current.filter(toast => toast.id !== id));
-    }, isError ? 10000 : 5000));
+    timers.current.set(
+      id,
+      window.setTimeout(
+        () => {
+          timers.current.delete(id);
+          setToasts(current => current.filter(toast => toast.id !== id));
+        },
+        isError ? 10000 : 5000,
+      ),
+    );
   }, []);
 
   // Toasts raised from anywhere in the app — clipboard copies, and so on.
@@ -186,8 +209,18 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
         <button
           className="hamburger"
           aria-label="Open navigation"
-          onClick={() => setMobileNav(true)}>
-          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          onClick={() => setMobileNav(true)}
+        >
+          <svg
+            aria-hidden="true"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
             <line x1="3" y1="6" x2="21" y2="6" />
             <line x1="3" y1="12" x2="21" y2="12" />
             <line x1="3" y1="18" x2="21" y2="18" />
@@ -208,9 +241,15 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
               key={section.to}
               to={section.to}
               end={section.to === '/'}
-              onClick={event => { onNavClick(event, section.to); setMobileNav(false); }}
-              className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-              <span className="nav-icon"><section.Icon /></span>
+              onClick={event => {
+                onNavClick(event, section.to);
+                setMobileNav(false);
+              }}
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            >
+              <span className="nav-icon">
+                <section.Icon />
+              </span>
               {section.label}
             </NavLink>
           ))}
@@ -221,58 +260,77 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
             className="backend-info"
             style={{ textDecoration: 'none', color: 'inherit' }}
             title="Your profile"
-            onClick={() => setMobileNav(false)}>
+            onClick={() => setMobileNav(false)}
+          >
             <div className="backend-user">{backend?.username}</div>
             <div className="backend-url">{backend?.url.replace(/^https?:\/\//, '')}</div>
           </NavLink>
           {/*
-            * Tools (find, learn, ask), then environment (theme, cloudlet),
-            * and logout isolated last — the one session-ending button never
-            * sits between two casually-clicked ones.
-            */}
+           * Tools (find, learn, ask), then environment (theme, cloudlet),
+           * and logout isolated last — the one session-ending button never
+           * sits between two casually-clicked ones.
+           */}
           <div className="footer-actions">
             {chatAvailable && (
               <button
                 className="btn btn-ghost btn-small"
                 title="Chat Ops — talk to your cloudlet (Ctrl+. / Cmd+.)"
-                onClick={() => { setChatOpen(open => !open); setMobileNav(false); }}>
+                onClick={() => {
+                  setChatOpen(open => !open);
+                  setMobileNav(false);
+                }}
+              >
                 <RobotIcon />
               </button>
             )}
             <button
               className="btn btn-ghost btn-small"
               title="Command palette — jump to any page, file or endpoint (Ctrl+K / Cmd+K)"
-              onClick={() => { setPaletteOpen(true); setMobileNav(false); }}>
+              onClick={() => {
+                setPaletteOpen(true);
+                setMobileNav(false);
+              }}
+            >
               <SearchIcon />
             </button>
             <button
               className="btn btn-ghost btn-small"
               title="Keyboard shortcuts (Ctrl+/ / Cmd+/)"
-              onClick={() => { setShortcutsOpen(true); setMobileNav(false); }}>
+              onClick={() => {
+                setShortcutsOpen(true);
+                setMobileNav(false);
+              }}
+            >
               <KeyboardIcon />
             </button>
             <button
               className="btn btn-ghost btn-small"
               title="Ask Frank about Hyperlambda and Magic"
-              onClick={() => { void openSupport(); setMobileNav(false); }}>
+              onClick={() => {
+                void openSupport();
+                setMobileNav(false);
+              }}
+            >
               <HelpIcon />
             </button>
             <button
               className="btn btn-ghost btn-small"
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              onClick={toggleTheme}>
+              onClick={toggleTheme}
+            >
               {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
             </button>
             <button
               className="btn btn-ghost btn-small"
               title={'Switch cloudlet — ' + backends.length + ' signed in'}
-              onClick={() => { setSwitching(true); setMobileNav(false); }}>
+              onClick={() => {
+                setSwitching(true);
+                setMobileNav(false);
+              }}
+            >
               <DatabaseIcon />
             </button>
-            <button
-              className="btn btn-ghost btn-small"
-              title="Logout"
-              onClick={logout}>
+            <button className="btn btn-ghost btn-small" title="Logout" onClick={logout}>
               <LogoutIcon />
             </button>
           </div>
@@ -296,30 +354,33 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
             { label: 'Create an API from your data', action: () => go('/generator?guided=1') },
             { label: 'Keyboard shortcuts', action: () => setShortcutsOpen(true) },
           ]}
-          onClose={() => setPaletteOpen(false)} />
+          onClose={() => setPaletteOpen(false)}
+        />
       )}
       {shortcutsOpen && <ShortcutsDialog onClose={() => setShortcutsOpen(false)} />}
       <button
         className="nav-toggle"
         style={{ left: collapsed ? 0 : 256 }}
         title={collapsed ? 'Show navigation' : 'Hide navigation'}
-        onClick={toggleCollapsed}>
-        <span style={{
-          display: 'flex',
-          transform: collapsed ? undefined : 'rotate(180deg)',
-        }}>
+        onClick={toggleCollapsed}
+      >
+        <span
+          style={{
+            display: 'flex',
+            transform: collapsed ? undefined : 'rotate(180deg)',
+          }}
+        >
           <ChevronIcon />
         </span>
       </button>
-      <main className="content">
-        {children}
-      </main>
+      <main className="content">{children}</main>
       {/* Mounted while closed too — the conversation survives closing it. */}
       {chatAvailable && (
         <ChatDrawer
           open={chatOpen}
           userId={backend?.username ?? 'root'}
-          onClose={() => setChatOpen(false)} />
+          onClose={() => setChatOpen(false)}
+        />
       )}
       {toasts.length > 0 && (
         /*
@@ -331,14 +392,13 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
             <div
               key={toast.id}
               className={'toast' + (toast.isError ? ' error' : '')}
-              role={toast.isError ? 'alert' : undefined}>
+              role={toast.isError ? 'alert' : undefined}
+            >
               <span>
                 {toast.text}
                 {toast.logId && (
                   // Backend errors carry the id of the log entry they wrote.
-                  <Link
-                    to={'/log?id=' + toast.logId}
-                    onClick={() => dismissToast(toast.id)}>
+                  <Link to={'/log?id=' + toast.logId} onClick={() => dismissToast(toast.id)}>
                     View log entry →
                   </Link>
                 )}
@@ -346,7 +406,8 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
               <button
                 className="toast-close"
                 title="Dismiss"
-                onClick={() => dismissToast(toast.id)}>
+                onClick={() => dismissToast(toast.id)}
+              >
                 ×
               </button>
             </div>

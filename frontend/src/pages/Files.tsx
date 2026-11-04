@@ -11,7 +11,18 @@ import InvokePanel, { InvokeResult } from '../components/InvokePanel';
 import ResponseDialog from '../components/ResponseDialog';
 import DebugDialog from '../components/DebugDialog';
 import type { DebugRecording } from '../lib/api';
-import { BracesIcon, CopyIcon, DownloadIcon, FilePlusIcon, FolderPlusIcon, ModuleUploadIcon, PlayIcon, SaveIcon, SparkIcon, UploadIcon } from '../components/Icons';
+import {
+  BracesIcon,
+  CopyIcon,
+  DownloadIcon,
+  FilePlusIcon,
+  FolderPlusIcon,
+  ModuleUploadIcon,
+  PlayIcon,
+  SaveIcon,
+  SparkIcon,
+  UploadIcon,
+} from '../components/Icons';
 import { Modal, useDialog } from '../components/Dialogs';
 import OpenApiDialog from '../components/OpenApiDialog';
 import GitPanel from '../components/GitPanel';
@@ -49,7 +60,15 @@ import FileTree from './files/FileTree';
 import SelectModelDialog from './files/SelectModelDialog';
 import { nameOf, parentOf } from './files/paths';
 
-const PROTECTED_FOLDERS = new Set(['/', '/system/', '/misc/', '/data/', '/config/', '/etc/', '/modules/']);
+const PROTECTED_FOLDERS = new Set([
+  '/',
+  '/system/',
+  '/misc/',
+  '/data/',
+  '/config/',
+  '/etc/',
+  '/modules/',
+]);
 
 /*
  * Converts a form value to the argument type the Hyperlambda expects.
@@ -100,10 +119,7 @@ interface OpenTab {
 
 // The open files with the restored ones in front, except those that are already open.
 function withRestored(current: OpenTab[], restored: OpenTab[]) {
-  return [
-    ...restored.filter(tab => !current.some(file => file.path === tab.path)),
-    ...current,
-  ];
+  return [...restored.filter(tab => !current.some(file => file.path === tab.path)), ...current];
 }
 
 // The file that was selected, if it was restored, and otherwise the last one that was.
@@ -112,7 +128,6 @@ function restoredSelection(restored: OpenTab[], selected: string | undefined) {
 }
 
 export default function Files() {
-
   const { backend } = useAuth();
 
   /*
@@ -146,7 +161,8 @@ export default function Files() {
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(workspace.expanded ?? []));
   const [filter, setFilter] = useState('');
   const [treeWidth, setTreeWidth] = useState(
-    () => Number(localStorage.getItem('magic2.treeWidth')) || 340);
+    () => Number(localStorage.getItem('magic2.treeWidth')) || 340,
+  );
 
   useEffect(() => {
     localStorage.setItem('magic2.treeWidth', String(treeWidth));
@@ -155,7 +171,9 @@ export default function Files() {
    * Every open file, in the order they were opened. A file is dirty when its
    * content differs from what was last loaded or saved.
    */
-  const [openFiles, setOpenFiles] = useState<{ path: string; content: string; saved: string }[]>([]);
+  const [openFiles, setOpenFiles] = useState<{ path: string; content: string; saved: string }[]>(
+    [],
+  );
   const [selectedFile, setSelectedFile] = useState('');
   // Bumped whenever updateContent runs, so an AI-generated replacement of the
   // open file becomes one undo step — harmless on ordinary keystrokes, which
@@ -202,7 +220,9 @@ export default function Files() {
 
   // Keeps the active tab visible when many files are open.
   useEffect(() => {
-    document.querySelector('.file-tab.active')?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+    document
+      .querySelector('.file-tab.active')
+      ?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   }, [selectedFile]);
 
   /*
@@ -220,29 +240,37 @@ export default function Files() {
     if (paths.length === 0) {
       return;
     }
-    Promise.all(paths.map(path =>
-      loadFile(path)
-        .then(text => ({ path, content: text, saved: text }))
-        .catch(() => null)))
+    Promise.all(
+      paths.map(path =>
+        loadFile(path)
+          .then(text => ({ path, content: text, saved: text }))
+          .catch(() => null),
+      ),
+    )
       .then(loaded => {
         const tabs = loaded.filter(Boolean) as OpenTab[];
         if (tabs.length === 0) {
           return;
         }
         setOpenFiles(current => withRestored(current, tabs));
-        setSelectedFile(current => current !== '' ? current : restoredSelection(tabs, workspace.selected));
+        setSelectedFile(current =>
+          current !== '' ? current : restoredSelection(tabs, workspace.selected),
+        );
       })
       .catch(error => showToast('Could not restore open files: ' + error.message, true));
   }, []);
 
   // Remembers the workspace shape — file contents deliberately excluded.
   useEffect(() => {
-    localStorage.setItem(workspaceKey, JSON.stringify({
-      open: openFiles.map(file => file.path),
-      selected: selectedFile,
-      expanded: [...expanded],
-      sys: systemFiles,
-    }));
+    localStorage.setItem(
+      workspaceKey,
+      JSON.stringify({
+        open: openFiles.map(file => file.path),
+        selected: selectedFile,
+        expanded: [...expanded],
+        sys: systemFiles,
+      }),
+    );
   }, [workspaceKey, openFiles, selectedFile, expanded, systemFiles]);
 
   /*
@@ -259,7 +287,10 @@ export default function Files() {
     }
     const ancestors: string[] = [];
     let ancestor = '/';
-    for (const part of target.split('/').filter(part => part !== '').slice(0, -1)) {
+    for (const part of target
+      .split('/')
+      .filter(part => part !== '')
+      .slice(0, -1)) {
       ancestor += part + '/';
       ancestors.push(ancestor);
     }
@@ -298,9 +329,10 @@ export default function Files() {
    */
   const query = useDebounced(filter, 250).trim().toLowerCase();
 
-  const visibleFiles = useMemo(() =>
-    query ? files.filter(file => file.toLowerCase().includes(query)) : files,
-    [files, query]);
+  const visibleFiles = useMemo(
+    () => (query ? files.filter(file => file.toLowerCase().includes(query)) : files),
+    [files, query],
+  );
 
   const visibleFolders = useMemo(() => {
     if (!query) {
@@ -356,9 +388,11 @@ export default function Files() {
     try {
       const text = await loadFile(path);
       // Two concurrent opens of the same file must not become two tabs.
-      setOpenFiles(current => current.some(file => file.path === path)
-        ? current
-        : [...current, { path, content: text, saved: text }]);
+      setOpenFiles(current =>
+        current.some(file => file.path === path)
+          ? current
+          : [...current, { path, content: text, saved: text }],
+      );
       setSelectedFile(path);
     } catch (err: any) {
       showToast(err.message, true);
@@ -378,16 +412,21 @@ export default function Files() {
     if (affected.length === 0) {
       return;
     }
-    const loaded = await Promise.all(affected.map(file =>
-      loadFile(file.path)
-        .then(text => ({ path: file.path, text: text as string | null }))
-        .catch(() => ({ path: file.path, text: null }))));
+    const loaded = await Promise.all(
+      affected.map(file =>
+        loadFile(file.path)
+          .then(text => ({ path: file.path, text: text as string | null }))
+          .catch(() => ({ path: file.path, text: null })),
+      ),
+    );
     const gone = new Set(loaded.filter(file => file.text === null).map(file => file.path));
     const remaining = openFiles
       .filter(file => !gone.has(file.path))
       .map(file => {
         const fresh = loaded.find(candidate => candidate.path === file.path);
-        return fresh && fresh.text !== null ? { ...file, content: fresh.text, saved: fresh.text } : file;
+        return fresh && fresh.text !== null
+          ? { ...file, content: fresh.text, saved: fresh.text }
+          : file;
       });
     setOpenFiles(remaining);
     if (gone.has(selectedFile)) {
@@ -396,8 +435,9 @@ export default function Files() {
   }
 
   function updateContent(value: string) {
-    setOpenFiles(files => files.map(file =>
-      file.path === selectedFile ? { ...file, content: value } : file));
+    setOpenFiles(files =>
+      files.map(file => (file.path === selectedFile ? { ...file, content: value } : file)),
+    );
     bumpContentEditId();
   }
 
@@ -411,8 +451,11 @@ export default function Files() {
     setSaving(true);
     try {
       await saveFile(file.path, file.content);
-      setOpenFiles(files => files.map(candidate =>
-        candidate.path === file.path ? { ...candidate, saved: file.content } : candidate));
+      setOpenFiles(files =>
+        files.map(candidate =>
+          candidate.path === file.path ? { ...candidate, saved: file.content } : candidate,
+        ),
+      );
       showToast('Saved ' + file.path);
       return true;
     } catch (err: any) {
@@ -484,7 +527,7 @@ export default function Files() {
       const selection = editorSelection(editorRef.current);
       const code = selection !== '' ? selection : content;
       setWaiting(true);
-      const argSpec = await getHyperlambdaArguments(code) ?? {};
+      const argSpec = (await getHyperlambdaArguments(code)) ?? {};
       // Waiter off while the parametrise form awaits the user.
       setWaiting(false);
       const names = Object.keys(argSpec);
@@ -568,7 +611,9 @@ export default function Files() {
     if (current && current.content !== current.saved) {
       const answer = await confirm({
         title: 'Save before invoking?',
-        message: selectedFile + ' has unsaved changes. Invoking runs the file ' +
+        message:
+          selectedFile +
+          ' has unsaved changes. Invoking runs the file ' +
           'as it is on the server, so unsaved changes are not included.',
         confirmText: 'Save and invoke',
       });
@@ -578,7 +623,7 @@ export default function Files() {
       setWaiting(true);
       // A failed save means the server still runs yesterday's code — the
       // exact situation this dialog exists to prevent, so stop here.
-      if (!await save()) {
+      if (!(await save())) {
         setWaiting(false);
         return;
       }
@@ -586,12 +631,19 @@ export default function Files() {
     setWaiting(true);
     try {
       const all = await listEndpoints();
-      const meta = all.find((candidate: Endpoint) =>
-        candidate.path === endpoint.path &&
-        candidate.verb.toLowerCase() === endpoint.verb);
+      const meta = all.find(
+        (candidate: Endpoint) =>
+          candidate.path === endpoint.path && candidate.verb.toLowerCase() === endpoint.verb,
+      );
       if (!meta) {
-        showToast('The server does not list ' + endpoint.verb.toUpperCase() + ' ' +
-          endpoint.path + ' as an endpoint', true);
+        showToast(
+          'The server does not list ' +
+            endpoint.verb.toUpperCase() +
+            ' ' +
+            endpoint.path +
+            ' as an endpoint',
+          true,
+        );
         return;
       }
       setInvokeTarget(meta);
@@ -637,12 +689,14 @@ export default function Files() {
   }
 
   async function removeFile(path: string) {
-    if (!await confirm({
-      title: 'Delete file?',
-      message: path,
-      confirmText: 'Delete',
-      danger: true,
-    })) {
+    if (
+      !(await confirm({
+        title: 'Delete file?',
+        message: path,
+        confirmText: 'Delete',
+        danger: true,
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -671,14 +725,16 @@ export default function Files() {
      * confirm is too easy to click through — the user types the folder's
      * name back before anything happens.
      */
-    if (!await confirmTyped({
-      title: 'Delete folder?',
-      message: path + ' and everything inside it will be permanently deleted.',
-      label: 'Folder name',
-      expected: nameOf(path),
-      confirmText: 'Delete',
-      mismatch: 'Name did not match — nothing deleted',
-    })) {
+    if (
+      !(await confirmTyped({
+        title: 'Delete folder?',
+        message: path + ' and everything inside it will be permanently deleted.',
+        label: 'Folder name',
+        expected: nameOf(path),
+        confirmText: 'Delete',
+        mismatch: 'Name did not match — nothing deleted',
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -757,8 +813,9 @@ export default function Files() {
     try {
       const targets = target.endsWith('.hl')
         ? [target]
-        : (await listFilesRecursively(target, systemFiles) ?? [])
-            .filter(file => file.endsWith('.hl'));
+        : ((await listFilesRecursively(target, systemFiles)) ?? []).filter(file =>
+            file.endsWith('.hl'),
+          );
       for (const file of targets) {
         await mlSnippetCreate({
           prompt: file.split('/').pop()!.replace(/\.hl$/, ''),
@@ -790,19 +847,23 @@ export default function Files() {
 
   return (
     <>
-      <div className="page-header ide-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div
+        className="page-header ide-header"
+        style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+      >
         <div className="page-title ide-title">
           <h1>Hyper IDE</h1>
           {/*
-            * The subtitle is guidance for an empty IDE, and once a file is open
-            * it only competes with the toolbar for horizontal space — which is
-            * what used to wrap the header onto extra lines.
-            */}
+           * The subtitle is guidance for an empty IDE, and once a file is open
+           * it only competes with the toolbar for horizontal space — which is
+           * what used to wrap the header onto extra lines.
+           */}
           {!selectedFile && <p>Browse and edit any file on your server</p>}
         </div>
         <span className="spacer" style={{ flex: 1 }} />
         <span className="mono ide-path">
-          {selectedFile || 'No file open'}{dirty ? ' •' : ''}
+          {selectedFile || 'No file open'}
+          {dirty ? ' •' : ''}
         </span>
         {selectedFile && (
           <>
@@ -811,7 +872,8 @@ export default function Files() {
               title="Copy path"
               onClick={() => {
                 void copyToClipboard(selectedFile, 'The path');
-              }}>
+              }}
+            >
               <CopyIcon />
               Copy path
             </button>
@@ -824,13 +886,15 @@ export default function Files() {
                   const raw = await downloadFileRaw(selectedFile);
                   downloadBlob(
                     raw.blob,
-                    dispositionFilename(raw.disposition) ?? nameOf(selectedFile));
+                    dispositionFilename(raw.disposition) ?? nameOf(selectedFile),
+                  );
                 } catch (err: any) {
                   showToast(err.message, true);
                 } finally {
                   setWaiting(false);
                 }
-              }}>
+              }}
+            >
               <DownloadIcon />
               Download
             </button>
@@ -840,7 +904,8 @@ export default function Files() {
           <button
             className="btn btn-secondary btn-small"
             title="OpenAPI specification for this endpoint"
-            onClick={() => showOpenApi(selectedFile)}>
+            onClick={() => showOpenApi(selectedFile)}
+          >
             <BracesIcon />
             OpenAPI
           </button>
@@ -850,7 +915,8 @@ export default function Files() {
             className="btn btn-secondary btn-small"
             title="Run the selected text through the Hyperlambda generator"
             onClick={generateFromSelection}
-            disabled={generating || !hasSelection}>
+            disabled={generating || !hasSelection}
+          >
             <SparkIcon />
             {generating ? 'Generating…' : 'Generate'}
           </button>
@@ -861,7 +927,11 @@ export default function Files() {
             Execute
           </button>
         )}
-        <button className="btn btn-small" onClick={save} disabled={!selectedFile || !dirty || saving}>
+        <button
+          className="btn btn-small"
+          onClick={save}
+          disabled={!selectedFile || !dirty || saving}
+        >
           <SaveIcon />
           {saving ? 'Saving…' : 'Save'}
         </button>
@@ -872,27 +942,32 @@ export default function Files() {
             placeholder="Filter files…"
             value={filter}
             onChange={setFilter}
-            style={{ width: '100%', marginBottom: 8 }} />
+            style={{ width: '100%', marginBottom: 8 }}
+          />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '2px 4px 8px' }}>
             <label
               style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}
-              title="Also show /system/, /misc/, /data/ and /config/ — be careful!">
+              title="Also show /system/, /misc/, /data/ and /config/ — be careful!"
+            >
               <input
                 type="checkbox"
                 checked={systemFiles}
-                onChange={e => setSystemFiles(e.target.checked)} />
+                onChange={e => setSystemFiles(e.target.checked)}
+              />
               System files
             </label>
             <button
               className="icon-btn"
               title={'New file in ' + activeFolder}
-              onClick={() => newFile(activeFolder)}>
+              onClick={() => newFile(activeFolder)}
+            >
               <FilePlusIcon />
             </button>
             <button
               className="icon-btn"
               title={'New folder in ' + activeFolder}
-              onClick={() => newFolder(activeFolder)}>
+              onClick={() => newFolder(activeFolder)}
+            >
               <FolderPlusIcon />
             </button>
             <label className="icon-btn" title={'Upload files to ' + activeFolder}>
@@ -916,7 +991,8 @@ export default function Files() {
                   } finally {
                     setWaiting(false);
                   }
-                }} />
+                }}
+              />
             </label>
             <label className="icon-btn" title="Install module from a ZIP file…">
               <ModuleUploadIcon />
@@ -937,10 +1013,12 @@ export default function Files() {
                   const moduleName = moduleNameFromZip(file);
                   if (!moduleName) {
                     showToast(
-                      file.name + ' cannot be a module name — it must be ' +
-                      '<name>.zip, using only lowercase letters, digits, ' +
-                      'hyphens or underscores, and no further dots',
-                      true);
+                      file.name +
+                        ' cannot be a module name — it must be ' +
+                        '<name>.zip, using only lowercase letters, digits, ' +
+                        'hyphens or underscores, and no further dots',
+                      true,
+                    );
                     return;
                   }
                   setWaiting(true);
@@ -953,7 +1031,8 @@ export default function Files() {
                   } finally {
                     setWaiting(false);
                   }
-                }} />
+                }}
+              />
             </label>
             <button
               className="icon-btn"
@@ -962,15 +1041,14 @@ export default function Files() {
                 setWaiting(true);
                 try {
                   const raw = await downloadFolderRaw(activeFolder);
-                  downloadBlob(
-                    raw.blob,
-                    dispositionFilename(raw.disposition) ?? 'folder.zip');
+                  downloadBlob(raw.blob, dispositionFilename(raw.disposition) ?? 'folder.zip');
                 } catch (err: any) {
                   showToast(err.message, true);
                 } finally {
                   setWaiting(false);
                 }
-              }}>
+              }}
+            >
               <DownloadIcon />
             </button>
           </div>
@@ -983,8 +1061,14 @@ export default function Files() {
             activeFolder={activeFolder}
             selectedFile={selectedFile}
             backendUrl={backend!.url}
-            onToggleFolder={folder => { toggle(folder); setOpenFolder(folder); }}
-            onOpenFile={file => { setOpenFolder(null); void openFile(file); }}
+            onToggleFolder={folder => {
+              toggle(folder);
+              setOpenFolder(folder);
+            }}
+            onOpenFile={file => {
+              setOpenFolder(null);
+              void openFile(file);
+            }}
             onNewFile={newFile}
             onNewFolder={newFolder}
             onGit={setGitTarget}
@@ -992,7 +1076,8 @@ export default function Files() {
             onAiFunctions={setAiFunctionTarget}
             onRename={rename}
             onDeleteFolder={removeFolder}
-            onDeleteFile={removeFile} />
+            onDeleteFile={removeFile}
+          />
         </div>
         <div
           className="splitter"
@@ -1022,14 +1107,16 @@ export default function Files() {
             };
             window.addEventListener('mousemove', move);
             window.addEventListener('mouseup', up);
-          }} />
+          }}
+        />
         <div className="file-editor">
           {openFiles.length > 0 && (
             <FileTabs
               openFiles={openFiles}
               selectedFile={selectedFile}
               onSelect={setSelectedFile}
-              onClose={closeFile} />
+              onClose={closeFile}
+            />
           )}
           {current ? (
             <CodeEditor
@@ -1058,16 +1145,33 @@ export default function Files() {
               onSelectionChange={setHasSelection}
               onAction={action => {
                 switch (action) {
-                  case 'newFile': void newFile(activeFolder); break;
-                  case 'newFolder': void newFolder(activeFolder); break;
-                  case 'renameFile': void rename(selectedFile, false); break;
-                  case 'deleteFile': void removeFile(selectedFile); break;
-                  case 'deleteFolder': void removeFolder(activeFolder); break;
-                  case 'close': void closeFile(selectedFile); break;
-                  case 'nextTab': switchTab(1); break;
-                  case 'previousTab': switchTab(-1); break;
+                  case 'newFile':
+                    void newFile(activeFolder);
+                    break;
+                  case 'newFolder':
+                    void newFolder(activeFolder);
+                    break;
+                  case 'renameFile':
+                    void rename(selectedFile, false);
+                    break;
+                  case 'deleteFile':
+                    void removeFile(selectedFile);
+                    break;
+                  case 'deleteFolder':
+                    void removeFolder(activeFolder);
+                    break;
+                  case 'close':
+                    void closeFile(selectedFile);
+                    break;
+                  case 'nextTab':
+                    switchTab(1);
+                    break;
+                  case 'previousTab':
+                    switchTab(-1);
+                    break;
                 }
-              }} />
+              }}
+            />
           ) : (
             <div className="card muted" style={{ flex: 1 }}>
               Select a file in the tree to start editing.
@@ -1081,7 +1185,8 @@ export default function Files() {
               session={selectedFile}
               onResult={updateContent}
               onError={message => showToast(message, true)}
-              style={{ marginTop: 8 }} />
+              style={{ marginTop: 8 }}
+            />
           )}
         </div>
       </div>
@@ -1089,13 +1194,15 @@ export default function Files() {
         <SelectModelDialog
           target={aiFunctionTarget}
           onClose={() => setAiFunctionTarget(null)}
-          onSelected={type => createAiFunctions(aiFunctionTarget, type)} />
+          onSelected={type => createAiFunctions(aiFunctionTarget, type)}
+        />
       )}
       {openApiSpec !== null && (
         <OpenApiDialog
           json={openApiSpec.json}
           target={openApiSpec.target}
-          onClose={() => setOpenApiSpec(null)} />
+          onClose={() => setOpenApiSpec(null)}
+        />
       )}
       {gitTarget !== null && (
         <GitPanel
@@ -1104,7 +1211,8 @@ export default function Files() {
           onChanged={async () => {
             await loadTree(systemFiles);
             await reloadOpenFiles(gitTarget);
-          }} />
+          }}
+        />
       )}
       {(generating || waiting) && <AiWaiter />}
       {invokeTarget && (
@@ -1129,7 +1237,8 @@ export default function Files() {
               setResultWasHttp(true);
               setExecuteResult(result);
             }}
-            onOpenApi={() => showOpenApi(selectedFile)} />
+            onOpenApi={() => showOpenApi(selectedFile)}
+          />
           <div className="modal-actions">
             <button className="btn btn-secondary" onClick={() => setInvokeTarget(null)}>
               Close
@@ -1141,13 +1250,15 @@ export default function Files() {
         <DebugDialog
           filename={selectedFile}
           recording={recording}
-          onClose={() => setRecording(null)} />
+          onClose={() => setRecording(null)}
+        />
       )}
       {executeResult !== null && (
         <ResponseDialog
           result={executeResult}
           httpInvocation={resultWasHttp}
-          onClose={() => setExecuteResult(null)} />
+          onClose={() => setExecuteResult(null)}
+        />
       )}
     </>
   );

@@ -9,7 +9,14 @@ import Banner from './Banner';
 import Select from './Select';
 import { useEffect, useState } from 'react';
 import { Modal } from './Dialogs';
-import { mlTypeUpdate, mlTypes, modelPriceLabel, openaiGetKey, openaiModels, openaiSetKey } from '../lib/api';
+import {
+  mlTypeUpdate,
+  mlTypes,
+  modelPriceLabel,
+  openaiGetKey,
+  openaiModels,
+  openaiSetKey,
+} from '../lib/api';
 import type { OpenAiModel } from '../lib/api';
 
 /*
@@ -19,11 +26,12 @@ import type { OpenAiModel } from '../lib/api';
  */
 const DEFAULT_MODEL = 'gpt-6.1-terra';
 
-export default function OpenAiKeyDialog(props: Readonly<{
-  onClose: () => void;
-  onSaved: () => void;
-}>) {
-
+export default function OpenAiKeyDialog(
+  props: Readonly<{
+    onClose: () => void;
+    onSaved: () => void;
+  }>,
+) {
   const [key, setKey] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -81,14 +89,16 @@ export default function OpenAiKeyDialog(props: Readonly<{
       <h2>Configure OpenAI</h2>
       <p className="muted" style={{ marginTop: 0 }}>
         Supply your OpenAI API key. You can get one{' '}
-        <a
-          href="https://platform.openai.com/account/api-keys"
-          target="_blank"
-          rel="noreferrer">
+        <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">
           here
-        </a>.
+        </a>
+        .
       </p>
-      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
+      {error && (
+        <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
+          {error}
+        </Banner>
+      )}
       <label className="modal-label">
         OpenAI API key
         <input
@@ -99,24 +109,30 @@ export default function OpenAiKeyDialog(props: Readonly<{
           placeholder="sk-…"
           value={key}
           onChange={e => setKey(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') void save(); }} />
+          onKeyDown={e => {
+            if (e.key === 'Enter') void save();
+          }}
+        />
       </label>
       <label className="modal-label">
         Model
         <Select value={model} onChange={value => setModel(value)}>
           {models.map(candidate => (
             <option key={candidate.id} value={candidate.id}>
-              {candidate.id}{modelPriceLabel(candidate)}
+              {candidate.id}
+              {modelPriceLabel(candidate)}
             </option>
           ))}
         </Select>
       </label>
       <p className="muted" style={{ marginTop: 8, marginBottom: 0, fontSize: 'var(--text-sm)' }}>
-        Saving also switches the <strong>default</strong> model — the one behind
-        Chat Ops and the dashboard's AI tools.
+        Saving also switches the <strong>default</strong> model — the one behind Chat Ops and the
+        dashboard's AI tools.
       </p>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
         <button className="btn" onClick={save} disabled={busy || !key}>
           {busy ? 'Saving…' : 'Save key'}
         </button>

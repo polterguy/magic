@@ -109,9 +109,11 @@ function buildCrudifyPayload(
   database: string,
   table: any,
   verb: string,
-  options: CrudifyOptions) {
-
-  const columns = (table.columns ?? []).map((column: any) => withVerbDefaults(column, options.locks));
+  options: CrudifyOptions,
+) {
+  const columns = (table.columns ?? []).map((column: any) =>
+    withVerbDefaults(column, options.locks),
+  );
 
   const payload: any = {
     databaseType,
@@ -251,22 +253,27 @@ function addArgumentColumn(payload: any, verb: string, column: any) {
  */
 function canGenerate(payload: any, verb: string) {
   switch (verb) {
-    case 'post': return payload.args.columns.length > 0;
-    case 'get': return payload.args.columns.length > 0;
-    case 'put': return payload.args.primary.length > 0 && payload.args.columns.length > 0;
-    case 'delete': return payload.args.primary.length > 0;
-    default: return false;
+    case 'post':
+      return payload.args.columns.length > 0;
+    case 'get':
+      return payload.args.columns.length > 0;
+    case 'put':
+      return payload.args.primary.length > 0 && payload.args.columns.length > 0;
+    case 'delete':
+      return payload.args.primary.length > 0;
+    default:
+      return false;
   }
 }
 
 export default function Generator() {
-
   /*
    * ?tab= — which generator to open on, so the Dashboard can link straight to
    * any one of the three rather than always landing on CRUD.
    */
   const [tab, setTab] = useState(
-    () => new URLSearchParams(window.location.search).get('tab') ?? 'crud');
+    () => new URLSearchParams(window.location.search).get('tab') ?? 'crud',
+  );
   /*
    * ?guided=1 — the Dashboard's "API from your data" flow: the same CRUD
    * generator wearing a step header, with every table preselected and a
@@ -281,7 +288,8 @@ export default function Generator() {
    * belongs to.
    */
   const [guided] = useState(
-    () => new URLSearchParams(window.location.search).get('guided') === '1');
+    () => new URLSearchParams(window.location.search).get('guided') === '1',
+  );
   const guiding = guided && tab === 'crud';
   return (
     <>
@@ -290,9 +298,9 @@ export default function Generator() {
         <p>
           {guiding
             ? 'Turn a database into secured REST endpoints'
-            : 'Generate a CRUD backend from a database, publish your own SQL as an '
-              + 'endpoint, expose a sandboxed Hyperlambda endpoint, search a machine '
-              + 'learning type, or wrap a third-party API from its OpenAPI specification'}
+            : 'Generate a CRUD backend from a database, publish your own SQL as an ' +
+              'endpoint, expose a sandboxed Hyperlambda endpoint, search a machine ' +
+              'learning type, or wrap a third-party API from its OpenAPI specification'}
         </p>
       </div>
       <Tabs
@@ -304,7 +312,8 @@ export default function Generator() {
           { id: 'import', label: 'Import API' },
         ]}
         active={tab}
-        onChange={setTab} />
+        onChange={setTab}
+      />
       {tab === 'crud' && <CrudTab guided={guiding} />}
       {tab === 'sql' && <SqlEndpointTab />}
       {tab === 'sandbox' && <SandboxTab />}
@@ -319,26 +328,31 @@ function DatabaseSelectors({ selection }: Readonly<{ selection: DatabaseSelectio
     <>
       <Select value={selection.type} onChange={value => selection.setType(value)}>
         {selection.types.map((option: string) => (
-          <option key={option} value={option}>{option}</option>
+          <option key={option} value={option}>
+            {option}
+          </option>
         ))}
       </Select>
       <Select
         value={selection.connectionString}
-        onChange={value => selection.setConnectionString(value)}>
+        onChange={value => selection.setConnectionString(value)}
+      >
         {selection.connectionStrings.map((option: string) => (
-          <option key={option} value={option}>{option}</option>
+          <option key={option} value={option}>
+            {option}
+          </option>
         ))}
       </Select>
       <Select value={selection.database} onChange={value => selection.setDatabase(value)}>
         {selection.databasesMeta.map((db: any) => (
-          <option key={db.name} value={db.name}>{db.name}</option>
+          <option key={db.name} value={db.name}>
+            {db.name}
+          </option>
         ))}
       </Select>
       {selection.loading && <div className="spinner" />}
       {!selection.loading && selection.type && selection.connectionStrings.length === 0 && (
-        <span className="muted">
-          No connection strings configured for {selection.type}.
-        </span>
+        <span className="muted">No connection strings configured for {selection.type}.</span>
       )}
     </>
   );
@@ -370,14 +384,12 @@ function WizardSteps({ step }: Readonly<{ step: number }>) {
  */
 function endpointsForVerb(
   verb: string,
-  options: { aggregate: boolean; distinct: boolean; search: boolean }) {
+  options: { aggregate: boolean; distinct: boolean; search: boolean },
+) {
   if (verb !== 'get') {
     return 1;
   }
-  return 2 +
-    (options.aggregate ? 2 : 0) +
-    (options.distinct ? 2 : 0) +
-    (options.search ? 1 : 0);
+  return 2 + (options.aggregate ? 2 : 0) + (options.distinct ? 2 : 0) + (options.search ? 1 : 0);
 }
 
 function crudSummary(tables: number, verbs: number, endpoints: number, module: string) {
@@ -387,17 +399,21 @@ function crudSummary(tables: number, verbs: number, endpoints: number, module: s
   if (verbs === 0) {
     return 'Select at least one HTTP verb.';
   }
-  return `${endpoints} endpoint${endpoints === 1 ? '' : 's'} across ` +
+  return (
+    `${endpoints} endpoint${endpoints === 1 ? '' : 's'} across ` +
     `${tables} table${tables > 1 ? 's' : ''} ` +
-    `→ /magic/${module}/`;
+    `→ /magic/${module}/`
+  );
 }
 
 // One column of an expanded table: what it is, and, unless it is a primary key, what it is locked to.
-function ColumnRow(props: Readonly<{
-  column: any;
-  lock: ColumnLock;
-  onLock: (lock: ColumnLock) => void;
-}>) {
+function ColumnRow(
+  props: Readonly<{
+    column: any;
+    lock: ColumnLock;
+    onLock: (lock: ColumnLock) => void;
+  }>,
+) {
   const { column, lock } = props;
   return (
     <div
@@ -409,30 +425,38 @@ function ColumnRow(props: Readonly<{
         fontSize: 13,
         // The lock controls drop to their own line when the row is too narrow for them.
         flexWrap: 'wrap',
-      }}>
+      }}
+    >
       <span className="mono">{column.name}</span>
       <span className="muted">{column.db}</span>
       {column.primary && <span className="badge badge-get">PK</span>}
       {column.automatic && <span className="badge badge-debug">auto</span>}
       {column.foreign_key && (
         <span className="badge badge-info">
-          FK → {column.foreign_key.foreign_table}.
-          {column.foreign_key.foreign_column}
+          FK → {column.foreign_key.foreign_table}.{column.foreign_key.foreign_column}
         </span>
       )}
       {column.nullable && <span className="muted">nullable</span>}
       {/*
-        * Primary keys identify the row in PUT and DELETE, so they cannot
-        * be locked. Every other column can hold its row's owner.
-        */}
+       * Primary keys identify the row in PUT and DELETE, so they cannot
+       * be locked. Every other column can hold its row's owner.
+       */}
       {!column.primary && (
-        <span style={{
-          marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8,
-        }}>
-          <span className="muted" style={{ whiteSpace: 'nowrap' }}>Lock to</span>
+        <span
+          style={{
+            marginLeft: 'auto',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <span className="muted" style={{ whiteSpace: 'nowrap' }}>
+            Lock to
+          </span>
           <Select
             value={lock.mode}
-            onChange={value => props.onLock({ mode: value as ColumnLock['mode'], slot: lock.slot })}>
+            onChange={value => props.onLock({ mode: value as ColumnLock['mode'], slot: lock.slot })}
+          >
             <option value="none">Not locked</option>
             <option value="username">Current username</option>
             <option value="custom">Custom slot…</option>
@@ -443,7 +467,8 @@ function ColumnRow(props: Readonly<{
               placeholder="slot name"
               style={{ minWidth: 160 }}
               value={lock.slot}
-              onChange={e => props.onLock({ mode: 'custom', slot: e.target.value })} />
+              onChange={e => props.onLock({ mode: 'custom', slot: e.target.value })}
+            />
           )}
         </span>
       )}
@@ -452,11 +477,13 @@ function ColumnRow(props: Readonly<{
 }
 
 // The guided flow's final step, saying what was generated and where it lives.
-function DonePanel(props: Readonly<{
-  done: { generated: number; loc: number; module: string };
-  auth: string[];
-  onMore: () => void;
-}>) {
+function DonePanel(
+  props: Readonly<{
+    done: { generated: number; loc: number; module: string };
+    auth: string[];
+    onMore: () => void;
+  }>,
+) {
   const { done, auth } = props;
   return (
     <>
@@ -464,11 +491,14 @@ function DonePanel(props: Readonly<{
       <div className="card" style={{ maxWidth: 640 }}>
         <h2 style={{ marginTop: 0 }}>Your API is live</h2>
         <p className="muted" style={{ marginTop: 0 }}>
-          {done.generated} endpoints ({done.loc} lines of Hyperlambda) were
-          generated under <span className="mono">/magic/{done.module}/</span>,
-          secured for {auth.length > 0
-            ? <strong>{auth.join(', ')}</strong>
-            : <em>everyone — no roles required</em>}.
+          {done.generated} endpoints ({done.loc} lines of Hyperlambda) were generated under{' '}
+          <span className="mono">/magic/{done.module}/</span>, secured for{' '}
+          {auth.length > 0 ? (
+            <strong>{auth.join(', ')}</strong>
+          ) : (
+            <em>everyone — no roles required</em>
+          )}
+          .
         </p>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <Link className="btn" to={'/endpoints?filter=' + encodeURIComponent(done.module)}>
@@ -487,14 +517,16 @@ function DonePanel(props: Readonly<{
 }
 
 // The module and component segments of the URL the endpoints are generated under.
-function UrlFields(props: Readonly<{
-  database: string;
-  moduleName: string;
-  onModuleName: (name: string) => void;
-  singleTable: string | null;
-  componentUrl: string;
-  onComponentUrl: (url: string) => void;
-}>) {
+function UrlFields(
+  props: Readonly<{
+    database: string;
+    moduleName: string;
+    onModuleName: (name: string) => void;
+    singleTable: string | null;
+    componentUrl: string;
+    onComponentUrl: (url: string) => void;
+  }>,
+) {
   return (
     <div>
       <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>URL</div>
@@ -505,21 +537,25 @@ function UrlFields(props: Readonly<{
           title="Module segment of the URL — defaults to the database name"
           value={props.moduleName}
           onChange={e => props.onModuleName(e.target.value)}
-          style={{ width: 160 }} />
+          style={{ width: 160 }}
+        />
         <span className="muted">/</span>
         <input
           type="text"
           placeholder="table name"
-          title={props.singleTable
-            ? 'Component segment of the URL — defaults to the table name'
-            : 'Editable when exactly one table is selected — otherwise each table uses its own name'}
+          title={
+            props.singleTable
+              ? 'Component segment of the URL — defaults to the table name'
+              : 'Editable when exactly one table is selected — otherwise each table uses its own name'
+          }
           value={props.singleTable ? props.componentUrl : ''}
           disabled={!props.singleTable}
           onChange={e => props.onComponentUrl(e.target.value)}
-          style={{ width: 160 }} />
+          style={{ width: 160 }}
+        />
         <span className="muted mono" style={{ fontSize: 12 }}>
           → /magic/{props.moduleName || props.database}/
-          {props.singleTable ? (props.componentUrl || props.singleTable) : '<table>'}
+          {props.singleTable ? props.componentUrl || props.singleTable : '<table>'}
         </span>
       </div>
     </div>
@@ -527,22 +563,26 @@ function UrlFields(props: Readonly<{
 }
 
 // The roles the generated endpoints are restricted to, which can be edited in place.
-function AuthorisationField(props: Readonly<{
-  roles: string[];
-  auth: string[];
-  onAuth: (auth: string[]) => void;
-}>) {
+function AuthorisationField(
+  props: Readonly<{
+    roles: string[];
+    auth: string[];
+    onAuth: (auth: string[]) => void;
+  }>,
+) {
   const [open, setOpen] = useState(false);
   return (
     <div>
       <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Authorisation</div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
         <span>
-          {props.auth.length > 0 ? props.auth.join(', ') : <em className="muted">public — no roles</em>}
+          {props.auth.length > 0 ? (
+            props.auth.join(', ')
+          ) : (
+            <em className="muted">public — no roles</em>
+          )}
         </span>
-        <button
-          className="btn btn-secondary btn-small"
-          onClick={() => setOpen(!open)}>
+        <button className="btn btn-secondary btn-small" onClick={() => setOpen(!open)}>
           {open ? 'Done' : 'Edit'}
         </button>
       </div>
@@ -551,9 +591,14 @@ function AuthorisationField(props: Readonly<{
           <RoleChips
             roles={props.roles}
             selected={props.auth}
-            onToggle={(role, selected) => props.onAuth(selected
-              ? [...props.auth, role]
-              : props.auth.filter(candidate => candidate !== role))} />
+            onToggle={(role, selected) =>
+              props.onAuth(
+                selected
+                  ? [...props.auth, role]
+                  : props.auth.filter(candidate => candidate !== role),
+              )
+            }
+          />
         </div>
       )}
     </div>
@@ -561,7 +606,6 @@ function AuthorisationField(props: Readonly<{
 }
 
 function CrudTab(props: Readonly<{ guided: boolean }>) {
-
   const selection = useDatabaseSelection();
   const [selectedTables, setSelectedTables] = useState<Set<string>>(new Set());
   const [expandedTables, setExpandedTables] = useState<Set<string>>(new Set());
@@ -608,9 +652,11 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
    * "which tables?" is almost always "all of them".
    */
   useEffect(() => {
-    setSelectedTables(props.guided
-      ? new Set<string>((selection.selectedMeta?.tables ?? []).map((table: any) => table.name))
-      : new Set<string>());
+    setSelectedTables(
+      props.guided
+        ? new Set<string>((selection.selectedMeta?.tables ?? []).map((table: any) => table.name))
+        : new Set<string>(),
+    );
     setExpandedTables(new Set());
     setLocks({});
     setModuleName(selection.database);
@@ -646,19 +692,53 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
     for (const table of tables.filter((candidate: any) => selectedTables.has(candidate.name))) {
       for (const verb of ALL_VERBS.filter(candidate => verbs.has(candidate))) {
         const payload = buildCrudifyPayload(
-          selection.type, selection.connectionString, selection.database, table, verb,
-          { ...options, auth, logging, cache: Number(cache), publicCache, overwrite,
-            paging, sorting, verbose, moduleName, moduleUrl: null,
-            locks: resolveLocks(locks[table.name], table) });
+          selection.type,
+          selection.connectionString,
+          selection.database,
+          table,
+          verb,
+          {
+            ...options,
+            auth,
+            logging,
+            cache: Number(cache),
+            publicCache,
+            overwrite,
+            paging,
+            sorting,
+            verbose,
+            moduleName,
+            moduleUrl: null,
+            locks: resolveLocks(locks[table.name], table),
+          },
+        );
         if (canGenerate(payload, verb)) {
           total += endpointsForVerb(verb, options);
         }
       }
     }
     return total;
-  }, [tables, selectedTables, verbs, aggregate, distinct, search, selection.type,
-      selection.connectionString, selection.database, auth, logging, cache, publicCache,
-      overwrite, paging, sorting, verbose, moduleName, locks]);
+  }, [
+    tables,
+    selectedTables,
+    verbs,
+    aggregate,
+    distinct,
+    search,
+    selection.type,
+    selection.connectionString,
+    selection.database,
+    auth,
+    logging,
+    cache,
+    publicCache,
+    overwrite,
+    paging,
+    sorting,
+    verbose,
+    moduleName,
+    locks,
+  ]);
 
   function toggleExpanded(name: string) {
     const next = new Set(expandedTables);
@@ -703,15 +783,18 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
       return 'Select at least one table and one verb';
     }
     for (const table of targets) {
-      const blank = (table.columns ?? []).find((column: any) =>
-        !column.primary && locks[table.name]?.[column.name]?.mode === 'custom'
-          && !locks[table.name][column.name].slot.trim());
+      const blank = (table.columns ?? []).find(
+        (column: any) =>
+          !column.primary &&
+          locks[table.name]?.[column.name]?.mode === 'custom' &&
+          !locks[table.name][column.name].slot.trim(),
+      );
       if (blank) {
         return 'Enter the slot ' + table.name + '.' + blank.name + ' is locked to';
       }
     }
     if (live && liveAudience !== 'inherited' && !liveValues.trim()) {
-      return 'Enter who should be notified, or choose the endpoint\'s own roles';
+      return "Enter who should be notified, or choose the endpoint's own roles";
     }
     return null;
   }
@@ -730,8 +813,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
     for (const table of targets) {
       for (const verb of active) {
         if (cancelRequested.current) {
-          push('warning',
-            'Cancelled — the ' + generated + ' endpoints generated so far are kept.');
+          push('warning', 'Cancelled — the ' + generated + ' endpoints generated so far are kept.');
           return { generated, loc, failed: false };
         }
         step++;
@@ -763,23 +845,42 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
     push: (type: string, message: string) => void,
   ): Promise<{ count: number; loc: number } | 'skipped' | 'failed'> {
     const payload = buildCrudifyPayload(
-      selection.type, selection.connectionString, selection.database, table, verb,
-      { ...options, locks: resolveLocks(locks[table.name], table) });
+      selection.type,
+      selection.connectionString,
+      selection.database,
+      table,
+      verb,
+      { ...options, locks: resolveLocks(locks[table.name], table) },
+    );
     if (!canGenerate(payload, verb)) {
       // Surfacing what used to be silently skipped — the answer to "why
       // did I get fewer endpoints than tables × verbs?".
-      push('warning', verb.toUpperCase() + ' ' + table.name + ' — skipped, ' +
-        (payload.args.primary.length === 0 && (verb === 'put' || verb === 'delete')
-          ? 'no primary key'
-          : 'no columns for this verb'));
+      push(
+        'warning',
+        verb.toUpperCase() +
+          ' ' +
+          table.name +
+          ' — skipped, ' +
+          (payload.args.primary.length === 0 && (verb === 'put' || verb === 'delete')
+            ? 'no primary key'
+            : 'no columns for this verb'),
+      );
       return 'skipped';
     }
     try {
       const response = await crudify(payload);
       const count = endpointsForVerb(verb, options);
-      push('information', verb.toUpperCase() + ' ' + table.name + ' — ' +
-        count + (count === 1 ? ' endpoint, ' : ' endpoints, ') +
-        (response.loc ?? 0) + ' lines');
+      push(
+        'information',
+        verb.toUpperCase() +
+          ' ' +
+          table.name +
+          ' — ' +
+          count +
+          (count === 1 ? ' endpoint, ' : ' endpoints, ') +
+          (response.loc ?? 0) +
+          ' lines',
+      );
       return { count, loc: response.loc ?? 0 };
     } catch (err: any) {
       push('error', verb.toUpperCase() + ' ' + table.name + ' — ' + err.message);
@@ -830,9 +931,18 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
     const { generated, loc, failed } = await generateAll(targets, active, options, push);
     if (!failed && !cancelRequested.current) {
       const elapsed = ((Date.now() - started) / 1000).toFixed(1);
-      push('success', 'Done — ' + generated + ' endpoints, ' + loc +
-        ' lines of Hyperlambda, in ' + elapsed + 's → /magic/' +
-        (moduleName || selection.database) + '/');
+      push(
+        'success',
+        'Done — ' +
+          generated +
+          ' endpoints, ' +
+          loc +
+          ' lines of Hyperlambda, in ' +
+          elapsed +
+          's → /magic/' +
+          (moduleName || selection.database) +
+          '/',
+      );
       if (props.guided) {
         pendingDone.current = { generated, loc, module: moduleName || selection.database };
       }
@@ -847,291 +957,329 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
 
   return (
     <>
-      {props.guided && (
-        <WizardSteps step={selectedTables.size > 0 ? 2 : 1} />
-      )}
+      {props.guided && <WizardSteps step={selectedTables.size > 0 ? 2 : 1} />}
       {selection.error && (
         <div className="error-box" style={{ marginBottom: 12 }}>
           {selection.error}
         </div>
       )}
       {/*
-        * Guided visitors without a database of their own have nothing useful
-        * to generate from — send them to create one first, without blocking
-        * the screen for those who want Magic's internal database anyway.
-        */}
-      {props.guided && !selection.loading &&
+       * Guided visitors without a database of their own have nothing useful
+       * to generate from — send them to create one first, without blocking
+       * the screen for those who want Magic's internal database anyway.
+       */}
+      {props.guided &&
+        !selection.loading &&
         !selection.databasesMeta.some((db: any) => db.name !== 'magic') && (
-        <div className="info-box" style={{ marginBottom: 12 }}>
-          No database of your own yet — <Link to="/databases">create or
-          connect one</Link> first, then come back here.
-        </div>
-      )}
+          <div className="info-box" style={{ marginBottom: 12 }}>
+            No database of your own yet — <Link to="/databases">create or connect one</Link> first,
+            then come back here.
+          </div>
+        )}
       <div className="toolbar">
         <DatabaseSelectors selection={selection} />
       </div>
       {selection.loading && (
-        <div className="card gen-table-card" style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}>
+        <div
+          className="card gen-table-card"
+          style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}
+        >
           <TableSkeleton columns={2} />
         </div>
       )}
       {!selection.loading && !selection.database && (
-        <div className="info-box">
-          Select a database with tables to generate a CRUD backend.
-        </div>
+        <div className="info-box">Select a database with tables to generate a CRUD backend.</div>
       )}
       {!selection.loading && !!selection.database && (
-      <div className="editor-split" style={{ flex: 'unset', alignItems: 'flex-start' }}>
-        <div className="card gen-table-card" style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}>
-          <table className="compact-table">
-            <thead>
-              <tr>
-                <th style={{ width: 40 }}>
-                  <input
-                    type="checkbox"
-                    checked={allSelected}
-                    onChange={() => setSelectedTables(allSelected
-                      ? new Set()
-                      : new Set(tables.map((table: any) => table.name)))} />
-                </th>
-                <th>Table</th>
-                <th style={{ width: 130 }}>
-                  {selectedTables.size} of {tables.length} selected
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {tables.map((table: any) => (
-                <Fragment key={table.name}>
-                  <tr
-                    className="clickable"
-                    title="Click to show columns"
-                    onClick={() => toggleExpanded(table.name)}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedTables.has(table.name)}
-                        onChange={() => toggleTable(table.name)}
-                        onClick={e => e.stopPropagation()} />
-                    </td>
-                    <td>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                        <span className="tree-chevron">
-                          <ChevronIcon open={expandedTables.has(table.name)} />
-                        </span>
-                        <strong>{table.name}</strong>
-                      </span>
-                    </td>
-                    <td>{table.columns?.length ?? 0} columns</td>
-                  </tr>
-                  {expandedTables.has(table.name) && (
-                    <tr>
-                      {/*
-                        * 80px left padding lines the column names up directly
-                        * under the table name above: 40px checkbox column +
-                        * cell padding + the expand chevron and its gap.
-                        */}
-                      <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
-                        {(table.columns ?? []).map((column: any) => (
-                          <ColumnRow
-                            key={column.name}
-                            column={column}
-                            lock={locks[table.name]?.[column.name] ?? defaultLock(column)}
-                            onLock={next => setColumnLock(table.name, column.name, next)} />
-                        ))}
-                      </td>
-                    </tr>
-                  )}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="card">
-          <div className="form-grid" style={{ gap: 18 }}>
-            <UrlFields
-              database={selection.database}
-              moduleName={moduleName}
-              onModuleName={setModuleName}
-              singleTable={singleTable}
-              componentUrl={componentUrl}
-              onComponentUrl={setComponentUrl} />
-            <div>
-              <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>HTTP verbs</div>
-              <div style={{ display: 'flex', gap: 14 }}>
-                {ALL_VERBS.map(verb => (
-                  <label
-                    key={verb}
-                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+        <div className="editor-split" style={{ flex: 'unset', alignItems: 'flex-start' }}>
+          <div
+            className="card gen-table-card"
+            style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}
+          >
+            <table className="compact-table">
+              <thead>
+                <tr>
+                  <th style={{ width: 40 }}>
                     <input
                       type="checkbox"
-                      checked={verbs.has(verb)}
-                      onChange={() => toggleVerb(verb)} />
-                    {verb.toUpperCase()}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <AuthorisationField roles={roles} auth={auth} onAuth={setAuth} />
-            <div>
-              <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
-                Endpoints (GET)
-              </div>
-              <div style={{
-                display: 'grid',
-                // auto-fit so it collapses to fewer columns on a phone instead
-                // of forcing a fixed 3-wide minimum that overflows.
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                gap: '6px 20px',
-              }}>
-                <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <input
-                    type="checkbox"
-                    checked={paging}
-                    onChange={e => setPaging(e.target.checked)} />
-                  Paging
-                </label>
-                <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <input
-                    type="checkbox"
-                    checked={sorting}
-                    onChange={e => setSorting(e.target.checked)} />
-                  Sorting
-                </label>
-                <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <input
-                    type="checkbox"
-                    checked={aggregate}
-                    onChange={e => setAggregate(e.target.checked)} />
-                  Aggregate
-                </label>
-                <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <input
-                    type="checkbox"
-                    checked={distinct}
-                    onChange={e => setDistinct(e.target.checked)} />
-                  Distinct
-                </label>
-                <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <input
-                    type="checkbox"
-                    checked={search}
-                    onChange={e => setSearch(e.target.checked)} />
-                  Search
-                </label>
-                {/*
-                  * Verbose adds the less common comparison operators (neq, mt, lt,
-                  * mteq, lteq) as filtering arguments, on top of the eq and like
-                  * arguments you always get.
-                  */}
-                <label
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
-                  title="Add neq, mt, lt, mteq and lteq filtering arguments for every column">
-                  <input
-                    type="checkbox"
-                    checked={verbose}
-                    onChange={e => setVerbose(e.target.checked)} />
-                  Verbose
-                </label>
-              </div>
-            </div>
-            <div>
-              <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Generation</div>
-              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-                <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <input
-                    type="checkbox"
-                    checked={logging}
-                    onChange={e => setLogging(e.target.checked)} />
-                  Log create/update/delete
-                </label>
-                <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <input
-                    type="checkbox"
-                    checked={overwrite}
-                    onChange={e => setOverwrite(e.target.checked)} />
-                  Overwrite existing files
-                </label>
-                <label
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
-                  title="Publish a web socket message after every create, update and delete">
-                  <input
-                    type="checkbox"
-                    checked={live}
-                    onChange={e => setLive(e.target.checked)} />
-                  Publish live updates
-                </label>
-              </div>
-              {live && (
-                <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <span>Notify</span>
-                    <Select value={liveAudience} onChange={value => setLiveAudience(value)}>
-                      <option value="inherited">The endpoint's own roles</option>
-                      <option value="roles">Roles</option>
-                      <option value="groups">Groups</option>
-                      <option value="users">Users</option>
-                    </Select>
-                    {liveAudience !== 'inherited' && (
-                      <input
-                        type="text"
-                        placeholder="comma separated"
-                        value={liveValues}
-                        onChange={e => setLiveValues(e.target.value)} />
+                      checked={allSelected}
+                      onChange={() =>
+                        setSelectedTables(
+                          allSelected ? new Set() : new Set(tables.map((table: any) => table.name)),
+                        )
+                      }
+                    />
+                  </th>
+                  <th>Table</th>
+                  <th style={{ width: 130 }}>
+                    {selectedTables.size} of {tables.length} selected
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {tables.map((table: any) => (
+                  <Fragment key={table.name}>
+                    <tr
+                      className="clickable"
+                      title="Click to show columns"
+                      onClick={() => toggleExpanded(table.name)}
+                    >
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedTables.has(table.name)}
+                          onChange={() => toggleTable(table.name)}
+                          onClick={e => e.stopPropagation()}
+                        />
+                      </td>
+                      <td>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                          <span className="tree-chevron">
+                            <ChevronIcon open={expandedTables.has(table.name)} />
+                          </span>
+                          <strong>{table.name}</strong>
+                        </span>
+                      </td>
+                      <td>{table.columns?.length ?? 0} columns</td>
+                    </tr>
+                    {expandedTables.has(table.name) && (
+                      <tr>
+                        {/*
+                         * 80px left padding lines the column names up directly
+                         * under the table name above: 40px checkbox column +
+                         * cell padding + the expand chevron and its gap.
+                         */}
+                        <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
+                          {(table.columns ?? []).map((column: any) => (
+                            <ColumnRow
+                              key={column.name}
+                              column={column}
+                              lock={locks[table.name]?.[column.name] ?? defaultLock(column)}
+                              onLock={next => setColumnLock(table.name, column.name, next)}
+                            />
+                          ))}
+                        </td>
+                      </tr>
                     )}
-                  </div>
-                  {liveAudience === 'inherited' && auth.length === 0 && (
-                    <em className="muted">
-                      The endpoints are public, so every connected client receives these messages.
-                    </em>
-                  )}
-                  <span className="muted">
-                    Messages are named {'<module>.<table>.<post|put|delete>'}, carrying the
-                    request's arguments as JSON.
-                  </span>
+                  </Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="card">
+            <div className="form-grid" style={{ gap: 18 }}>
+              <UrlFields
+                database={selection.database}
+                moduleName={moduleName}
+                onModuleName={setModuleName}
+                singleTable={singleTable}
+                componentUrl={componentUrl}
+                onComponentUrl={setComponentUrl}
+              />
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>HTTP verbs</div>
+                <div style={{ display: 'flex', gap: 14 }}>
+                  {ALL_VERBS.map(verb => (
+                    <label
+                      key={verb}
+                      style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={verbs.has(verb)}
+                        onChange={() => toggleVerb(verb)}
+                      />
+                      {verb.toUpperCase()}
+                    </label>
+                  ))}
                 </div>
-              )}
-            </div>
-            <div>
-              <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
-                GET cache (seconds, 0 = off)
               </div>
-              <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-                <input
-                  type="number"
-                  value={cache}
-                  onChange={e => setCache(e.target.value)}
-                  style={{ width: 120 }} />
-                <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <AuthorisationField roles={roles} auth={auth} onAuth={setAuth} />
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
+                  Endpoints (GET)
+                </div>
+                <div
+                  style={{
+                    display: 'grid',
+                    // auto-fit so it collapses to fewer columns on a phone instead
+                    // of forcing a fixed 3-wide minimum that overflows.
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                    gap: '6px 20px',
+                  }}
+                >
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <input
+                      type="checkbox"
+                      checked={paging}
+                      onChange={e => setPaging(e.target.checked)}
+                    />
+                    Paging
+                  </label>
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <input
+                      type="checkbox"
+                      checked={sorting}
+                      onChange={e => setSorting(e.target.checked)}
+                    />
+                    Sorting
+                  </label>
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <input
+                      type="checkbox"
+                      checked={aggregate}
+                      onChange={e => setAggregate(e.target.checked)}
+                    />
+                    Aggregate
+                  </label>
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <input
+                      type="checkbox"
+                      checked={distinct}
+                      onChange={e => setDistinct(e.target.checked)}
+                    />
+                    Distinct
+                  </label>
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <input
+                      type="checkbox"
+                      checked={search}
+                      onChange={e => setSearch(e.target.checked)}
+                    />
+                    Search
+                  </label>
+                  {/*
+                   * Verbose adds the less common comparison operators (neq, mt, lt,
+                   * mteq, lteq) as filtering arguments, on top of the eq and like
+                   * arguments you always get.
+                   */}
+                  <label
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                    title="Add neq, mt, lt, mteq and lteq filtering arguments for every column"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={verbose}
+                      onChange={e => setVerbose(e.target.checked)}
+                    />
+                    Verbose
+                  </label>
+                </div>
+              </div>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Generation</div>
+                <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <input
+                      type="checkbox"
+                      checked={logging}
+                      onChange={e => setLogging(e.target.checked)}
+                    />
+                    Log create/update/delete
+                  </label>
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <input
+                      type="checkbox"
+                      checked={overwrite}
+                      onChange={e => setOverwrite(e.target.checked)}
+                    />
+                    Overwrite existing files
+                  </label>
+                  <label
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                    title="Publish a web socket message after every create, update and delete"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={live}
+                      onChange={e => setLive(e.target.checked)}
+                    />
+                    Publish live updates
+                  </label>
+                </div>
+                {live && (
+                  <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div
+                      style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}
+                    >
+                      <span>Notify</span>
+                      <Select value={liveAudience} onChange={value => setLiveAudience(value)}>
+                        <option value="inherited">The endpoint's own roles</option>
+                        <option value="roles">Roles</option>
+                        <option value="groups">Groups</option>
+                        <option value="users">Users</option>
+                      </Select>
+                      {liveAudience !== 'inherited' && (
+                        <input
+                          type="text"
+                          placeholder="comma separated"
+                          value={liveValues}
+                          onChange={e => setLiveValues(e.target.value)}
+                        />
+                      )}
+                    </div>
+                    {liveAudience === 'inherited' && auth.length === 0 && (
+                      <em className="muted">
+                        The endpoints are public, so every connected client receives these messages.
+                      </em>
+                    )}
+                    <span className="muted">
+                      Messages are named {'<module>.<table>.<post|put|delete>'}, carrying the
+                      request's arguments as JSON.
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
+                  GET cache (seconds, 0 = off)
+                </div>
+                <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
                   <input
-                    type="checkbox"
-                    checked={publicCache}
-                    onChange={e => setPublicCache(e.target.checked)} />
-                  Public cache
-                </label>
+                    type="number"
+                    value={cache}
+                    onChange={e => setCache(e.target.value)}
+                    style={{ width: 120 }}
+                  />
+                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <input
+                      type="checkbox"
+                      checked={publicCache}
+                      onChange={e => setPublicCache(e.target.checked)}
+                    />
+                    Public cache
+                  </label>
+                </div>
               </div>
-            </div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              borderTop: '1px solid var(--border)',
-              paddingTop: 14,
-            }}>
-              <span className="muted">
-                {crudSummary(selectedTables.size, verbs.size, plannedEndpoints, moduleName || selection.database)}
-              </span>
-              <span style={{ flex: 1 }} />
-              <button
-                className="btn"
-                onClick={generate}
-                disabled={busy || selectedTables.size === 0 || verbs.size === 0}>
-                {busy ? 'Generating…' : '⚙ Generate backend'}
-              </button>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  borderTop: '1px solid var(--border)',
+                  paddingTop: 14,
+                }}
+              >
+                <span className="muted">
+                  {crudSummary(
+                    selectedTables.size,
+                    verbs.size,
+                    plannedEndpoints,
+                    moduleName || selection.database,
+                  )}
+                </span>
+                <span style={{ flex: 1 }} />
+                <button
+                  className="btn"
+                  onClick={generate}
+                  disabled={busy || selectedTables.size === 0 || verbs.size === 0}
+                >
+                  {busy ? 'Generating…' : '⚙ Generate backend'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       )}
       {feed !== null && (
         <ProgressDialog
@@ -1139,21 +1287,26 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
           label={'/modules/' + (moduleName || selection.database) + '/'}
           lines={feed}
           progress={busy ? progressText : undefined}
-          actions={busy && (
-            <button
-              className="btn btn-secondary"
-              onClick={() => { cancelRequested.current = true; }}>
-              Cancel
-            </button>
-          )}
-          onClose={closeFeed} />
+          actions={
+            busy && (
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  cancelRequested.current = true;
+                }}
+              >
+                Cancel
+              </button>
+            )
+          }
+          onClose={closeFeed}
+        />
       )}
     </>
   );
 }
 
 function SqlEndpointTab() {
-
   const selection = useDatabaseSelection();
   const [roles, setRoles] = useState<string[]>([]);
   const [auth, setAuth] = useState<string[]>(['root', 'admin']);
@@ -1200,8 +1353,7 @@ function SqlEndpointTab() {
     }
   }, [selection.database]);
 
-  const hintTables = useMemo(
-    () => sqlHintTables(selection.selectedMeta), [selection.selectedMeta]);
+  const hintTables = useMemo(() => sqlHintTables(selection.selectedMeta), [selection.selectedMeta]);
 
   function createAiContext() {
     return buildSqlAiContext({
@@ -1259,33 +1411,33 @@ function SqlEndpointTab() {
           moduleName={moduleName}
           onModuleName={setModuleName}
           endpointName={endpointName}
-          onEndpointName={setEndpointName} />
+          onEndpointName={setEndpointName}
+        />
         <span className="spacer" />
         <button className="btn" onClick={generate} disabled={busy || !selection.database}>
           {busy ? 'Generating…' : '⚙ Generate endpoint'}
         </button>
       </div>
       {/*
-        * Authorisation reads the way it does on the CRUD tab: the roles as a
-        * summary, and the chips only once you ask to change them. The chips
-        * take a full flex basis so they break onto their own line rather than
-        * pushing the rest of the toolbar along.
-        */}
+       * Authorisation reads the way it does on the CRUD tab: the roles as a
+       * summary, and the chips only once you ask to change them. The chips
+       * take a full flex basis so they break onto their own line rather than
+       * pushing the rest of the toolbar along.
+       */}
       <div className="toolbar">
         <div style={{ fontWeight: 600, fontSize: 13 }}>Authorisation:</div>
         <span>
           {auth.length > 0 ? auth.join(', ') : <em className="muted">public — no roles</em>}
         </span>
-        <button
-          className="btn btn-secondary btn-small"
-          onClick={() => setAuthOpen(!authOpen)}>
+        <button className="btn btn-secondary btn-small" onClick={() => setAuthOpen(!authOpen)}>
           {authOpen ? 'Done' : 'Edit'}
         </button>
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input
             type="checkbox"
             checked={overwrite}
-            onChange={e => setOverwrite(e.target.checked)} />
+            onChange={e => setOverwrite(e.target.checked)}
+          />
           Overwrite
         </label>
         {authOpen && (
@@ -1293,9 +1445,10 @@ function SqlEndpointTab() {
             <RoleChips
               roles={roles}
               selected={auth}
-              onToggle={(role, selected) => setAuth(selected
-                ? [...auth, role]
-                : auth.filter(candidate => candidate !== role))} />
+              onToggle={(role, selected) =>
+                setAuth(selected ? [...auth, role] : auth.filter(candidate => candidate !== role))
+              }
+            />
           </div>
         )}
       </div>
@@ -1307,27 +1460,43 @@ function SqlEndpointTab() {
               type="text"
               placeholder="name"
               value={argument.name}
-              onChange={e => setArgs(args.map((candidate, i) =>
-                i === index ? { ...candidate, name: e.target.value } : candidate))}
-              style={{ width: 120 }} />
+              onChange={e =>
+                setArgs(
+                  args.map((candidate, i) =>
+                    i === index ? { ...candidate, name: e.target.value } : candidate,
+                  ),
+                )
+              }
+              style={{ width: 120 }}
+            />
             <Select
               value={argument.type}
-              onChange={value => setArgs(args.map((candidate, i) =>
-                i === index ? { ...candidate, type: value } : candidate))}>
+              onChange={value =>
+                setArgs(
+                  args.map((candidate, i) =>
+                    i === index ? { ...candidate, type: value } : candidate,
+                  ),
+                )
+              }
+            >
               {['string', 'long', 'int', 'decimal', 'double', 'bool', 'date'].map(type => (
-                <option key={type} value={type}>{type}</option>
+                <option key={type} value={type}>
+                  {type}
+                </option>
               ))}
             </Select>
             <button
               className="btn btn-danger btn-small"
-              onClick={() => setArgs(args.filter((_, i) => i !== index))}>
+              onClick={() => setArgs(args.filter((_, i) => i !== index))}
+            >
               ✕
             </button>
           </span>
         ))}
         <button
           className="btn btn-secondary btn-small"
-          onClick={() => setArgs([...args, { name: '', type: 'string' }])}>
+          onClick={() => setArgs([...args, { name: '', type: 'string' }])}
+        >
           + Argument
         </button>
         <span className="muted" style={{ fontSize: 12 }}>
@@ -1353,7 +1522,8 @@ function SqlEndpointTab() {
                 importSqlFile(e.target.files[0]);
                 e.target.value = '';
               }
-            }} />
+            }}
+          />
         </label>
       </div>
       <div style={{ height: 280, display: 'flex', flexDirection: 'column' }}>
@@ -1362,20 +1532,24 @@ function SqlEndpointTab() {
           onChange={setSql}
           mode="text/x-sql"
           hintTables={hintTables}
-          undoableEditId={sqlEditId} />
+          undoableEditId={sqlEditId}
+        />
       </div>
       <AiPrompt
         fileType="sql"
         getContext={createAiContext}
         session="generator-sql.editor"
-        onResult={value => { setSql(value); bumpSqlEditId(); }}
+        onResult={value => {
+          setSql(value);
+          bumpSqlEditId();
+        }}
         onError={message => showToast(message, true)}
-        style={{ marginTop: 8 }} />
+        style={{ marginTop: 8 }}
+      />
       {busy && <AiWaiter />}
     </>
   );
 }
-
 
 /*
  * The Sandbox API generator: one endpoint that takes caller-supplied Hyperlambda
@@ -1420,43 +1594,157 @@ function SqlEndpointTab() {
  * memory. Grant it per role only where untrusted callers cannot reach it.
  */
 const DEFAULT_BASE_SLOTS = [
-  'add', 'and', 'apply', 'case', 'compose', 'convert', 'csv2lambda', 'default',
-  'else', 'else-if', 'eq', 'exists', 'floatArray2bytes', 'for-each', 'format',
-  'get-count', 'get-first-value', 'get-name', 'get-nodes', 'get-value', 'html-decode',
-  'html2lambda', 'html2markdown', 'hyper2lambda', 'if', 'include',
-  'insert-after', 'insert-before', 'int2words', 'json2lambda',
-  'lambda2csv', 'lambda2html', 'lambda2hyper', 'lambda2json', 'lambda2xml',
-  'lt', 'lte', 'markdown2html', 'mt', 'mte', 'neq', 'not',
-  'not-exists', 'not-null', 'null', 'or', 'reference', 'remove-nodes',
-  'return', 'return-nodes', 'return-value', 'set-name', 'set-value',
-  'set-x', 'sort', 'switch', 'throw', 'time', 'try', 'type', 'types',
-  'unwrap', 'vocabulary', 'xml2lambda',
+  'add',
+  'and',
+  'apply',
+  'case',
+  'compose',
+  'convert',
+  'csv2lambda',
+  'default',
+  'else',
+  'else-if',
+  'eq',
+  'exists',
+  'floatArray2bytes',
+  'for-each',
+  'format',
+  'get-count',
+  'get-first-value',
+  'get-name',
+  'get-nodes',
+  'get-value',
+  'html-decode',
+  'html2lambda',
+  'html2markdown',
+  'hyper2lambda',
+  'if',
+  'include',
+  'insert-after',
+  'insert-before',
+  'int2words',
+  'json2lambda',
+  'lambda2csv',
+  'lambda2html',
+  'lambda2hyper',
+  'lambda2json',
+  'lambda2xml',
+  'lt',
+  'lte',
+  'markdown2html',
+  'mt',
+  'mte',
+  'neq',
+  'not',
+  'not-exists',
+  'not-null',
+  'null',
+  'or',
+  'reference',
+  'remove-nodes',
+  'return',
+  'return-nodes',
+  'return-value',
+  'set-name',
+  'set-value',
+  'set-x',
+  'sort',
+  'switch',
+  'throw',
+  'time',
+  'try',
+  'type',
+  'types',
+  'unwrap',
+  'vocabulary',
+  'xml2lambda',
   'yield',
-  'auth.ticket.get', 'auth.ticket.in-role',
-  'crypto.hash', 'crypto.hash.md5',
-  'crypto.hash.sha1', 'crypto.hash.sha256', 'crypto.hash.sha384', 'crypto.hash.sha512',
-  'crypto.password.hash', 'crypto.random', 'crypto.random.int',
-  'date.format', 'date.from-unix', 'date.max', 'date.min', 'date.now', 'date.unix',
+  'auth.ticket.get',
+  'auth.ticket.in-role',
+  'crypto.hash',
+  'crypto.hash.md5',
+  'crypto.hash.sha1',
+  'crypto.hash.sha256',
+  'crypto.hash.sha384',
+  'crypto.hash.sha512',
+  'crypto.password.hash',
+  'crypto.random',
+  'crypto.random.int',
+  'date.format',
+  'date.from-unix',
+  'date.max',
+  'date.min',
+  'date.now',
+  'date.unix',
   'guid.new',
-  'math.abs', 'math.add', 'math.ceil', 'math.cos', 'math.decrement', 'math.divide',
-  'math.dot', 'math.floor', 'math.increment', 'math.max', 'math.min', 'math.modulo',
-  'math.multiply', 'math.random', 'math.round', 'math.sin', 'math.sqrt', 'math.subtract',
-  'request.cookies.get', 'request.cookies.list', 'request.headers.get',
-  'request.headers.list', 'request.host', 'request.ip', 'request.scheme',
-  'request.url', 'request.verb',
-  'response.cookies.set', 'response.headers.set', 'response.status.set',
+  'math.abs',
+  'math.add',
+  'math.ceil',
+  'math.cos',
+  'math.decrement',
+  'math.divide',
+  'math.dot',
+  'math.floor',
+  'math.increment',
+  'math.max',
+  'math.min',
+  'math.modulo',
+  'math.multiply',
+  'math.random',
+  'math.round',
+  'math.sin',
+  'math.sqrt',
+  'math.subtract',
+  'request.cookies.get',
+  'request.cookies.list',
+  'request.headers.get',
+  'request.headers.list',
+  'request.host',
+  'request.ip',
+  'request.scheme',
+  'request.url',
+  'request.verb',
+  'response.cookies.set',
+  'response.headers.set',
+  'response.status.set',
   'slots.vocabulary',
-  'strings.builder', 'strings.builder.append', 'strings.byte-count', 'strings.capitalize',
-  'strings.concat', 'strings.contains', 'strings.ends-with', 'strings.html-decode',
-  'strings.html-encode', 'strings.join', 'strings.length', 'strings.matches',
-  'strings.regex-replace', 'strings.replace', 'strings.replace-not-of',
-  'strings.split', 'strings.starts-with', 'strings.substring', 'strings.to-lower',
-  'strings.to-upper', 'strings.trim', 'strings.trim-end', 'strings.trim-start',
-  'strings.url-decode', 'strings.url-encode',
-  'time.format', 'time.total-milliseconds',
-  'validators.date', 'validators.default', 'validators.email', 'validators.enum',
-  'validators.integer', 'validators.mandatory', 'validators.recaptcha',
-  'validators.regex', 'validators.string', 'validators.url',
+  'strings.builder',
+  'strings.builder.append',
+  'strings.byte-count',
+  'strings.capitalize',
+  'strings.concat',
+  'strings.contains',
+  'strings.ends-with',
+  'strings.html-decode',
+  'strings.html-encode',
+  'strings.join',
+  'strings.length',
+  'strings.matches',
+  'strings.regex-replace',
+  'strings.replace',
+  'strings.replace-not-of',
+  'strings.split',
+  'strings.starts-with',
+  'strings.substring',
+  'strings.to-lower',
+  'strings.to-upper',
+  'strings.trim',
+  'strings.trim-end',
+  'strings.trim-start',
+  'strings.url-decode',
+  'strings.url-encode',
+  'time.format',
+  'time.total-milliseconds',
+  'validators.date',
+  'validators.default',
+  'validators.email',
+  'validators.enum',
+  'validators.integer',
+  'validators.mandatory',
+  'validators.recaptcha',
+  'validators.regex',
+  'validators.string',
+  'validators.url',
 ].join('\n');
 
 interface RoleRule {
@@ -1472,7 +1760,10 @@ interface RoleRule {
 }
 
 function linesToSlots(text: string) {
-  return text.split('\n').map(line => line.trim()).filter(Boolean);
+  return text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean);
 }
 
 /*
@@ -1491,7 +1782,12 @@ function ruleIsIncomplete(rule: RoleRule) {
  * never duplicates a line and never disturbs what is already there.
  */
 function mergeSlots(existing: string, additions: string[]) {
-  const have = new Set(existing.split('\n').map(line => line.trim()).filter(Boolean));
+  const have = new Set(
+    existing
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean),
+  );
   const fresh = additions.filter(line => !have.has(line));
   if (fresh.length === 0) {
     return existing;
@@ -1506,8 +1802,9 @@ function mergeSlots(existing: string, additions: string[]) {
  * per ticked operation. Raw SQL adds [data.select]/[data.scalar]. Reuses the shared
  * database-selection hook so the dropdowns match the rest of the Generator.
  */
-function DbAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
-
+function DbAccessWizard(
+  props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>,
+) {
   const selection = useDatabaseSelection();
   const [read, setRead] = useState(true);
   const [create, setCreate] = useState(false);
@@ -1545,43 +1842,74 @@ function DbAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCa
         <div style={{ fontWeight: 600, fontSize: 13 }}>Database access</div>
         {selection.types.length > 1 && (
           <Select value={selection.type} onChange={value => selection.setType(value)}>
-            {selection.types.map(type => <option key={type} value={type}>{type}</option>)}
+            {selection.types.map(type => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
           </Select>
         )}
         {selection.connectionStrings.length > 1 && (
-          <Select value={selection.connectionString} onChange={value => selection.setConnectionString(value)}>
-            {selection.connectionStrings.map(cs => <option key={cs} value={cs}>{cs}</option>)}
+          <Select
+            value={selection.connectionString}
+            onChange={value => selection.setConnectionString(value)}
+          >
+            {selection.connectionStrings.map(cs => (
+              <option key={cs} value={cs}>
+                {cs}
+              </option>
+            ))}
           </Select>
         )}
         <Select value={selection.database} onChange={value => selection.setDatabase(value)}>
           <option value="">database…</option>
-          {selection.databasesMeta.map((db: any) => <option key={db.name} value={db.name}>{db.name}</option>)}
+          {selection.databasesMeta.map((db: any) => (
+            <option key={db.name} value={db.name}>
+              {db.name}
+            </option>
+          ))}
         </Select>
-        {selection.loading && <span className="muted" style={{ fontSize: 12 }}>loading…</span>}
+        {selection.loading && (
+          <span className="muted" style={{ fontSize: 12 }}>
+            loading…
+          </span>
+        )}
       </div>
       <div className="toolbar">
         <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} />Read
+          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} />
+          Read
         </label>
         <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={create} onChange={e => setCreate(e.target.checked)} />Create
+          <input type="checkbox" checked={create} onChange={e => setCreate(e.target.checked)} />
+          Create
         </label>
         <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={update} onChange={e => setUpdate(e.target.checked)} />Update
+          <input type="checkbox" checked={update} onChange={e => setUpdate(e.target.checked)} />
+          Update
         </label>
         <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={remove} onChange={e => setRemove(e.target.checked)} />Delete
+          <input type="checkbox" checked={remove} onChange={e => setRemove(e.target.checked)} />
+          Delete
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="Adds data.select and data.scalar — raw SQL against this database">
-          <input type="checkbox" checked={rawSql} onChange={e => setRawSql(e.target.checked)} />Raw&nbsp;SQL
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+          title="Adds data.select and data.scalar — raw SQL against this database"
+        >
+          <input type="checkbox" checked={rawSql} onChange={e => setRawSql(e.target.checked)} />
+          Raw&nbsp;SQL
         </label>
         <span className="spacer" />
-        <button className="btn btn-small" onClick={add} disabled={!selection.database}>Add</button>
-        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+        <button className="btn btn-small" onClick={add} disabled={!selection.database}>
+          Add
+        </button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>
+          Close
+        </button>
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
-        Grants <span className="mono">data.connect:{selection.database || '…'}</span> pinned to
-        this one database, plus a slot per ticked operation.
+        Grants <span className="mono">data.connect:{selection.database || '…'}</span> pinned to this
+        one database, plus a slot per ticked operation.
       </span>
     </div>
   );
@@ -1591,16 +1919,25 @@ function DbAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCa
  * Wizard granting outbound HTTP. Verb-level only - the whitelist cannot pin a URL, so a
  * granted verb reaches any address; the note says so.
  */
-function HttpAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
-
-  const [verbs, setVerbs] = useState<Record<string, boolean>>({ get: true, post: false, put: false, patch: false, delete: false });
+function HttpAccessWizard(
+  props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>,
+) {
+  const [verbs, setVerbs] = useState<Record<string, boolean>>({
+    get: true,
+    post: false,
+    put: false,
+    patch: false,
+    delete: false,
+  });
 
   function toggle(verb: string, on: boolean) {
     setVerbs({ ...verbs, [verb]: on });
   }
 
   function add() {
-    const lines = Object.keys(verbs).filter(verb => verbs[verb]).map(verb => 'http.' + verb);
+    const lines = Object.keys(verbs)
+      .filter(verb => verbs[verb])
+      .map(verb => 'http.' + verb);
     if (lines.length === 0) {
       showToast('Tick at least one verb', true);
       return;
@@ -1614,13 +1951,21 @@ function HttpAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; on
         <div style={{ fontWeight: 600, fontSize: 13 }}>Outbound HTTP</div>
         {['get', 'post', 'put', 'patch', 'delete'].map(verb => (
           <label key={verb} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <input type="checkbox" checked={verbs[verb]} onChange={e => toggle(verb, e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={verbs[verb]}
+              onChange={e => toggle(verb, e.target.checked)}
+            />
             {verb.toUpperCase()}
           </label>
         ))}
         <span className="spacer" />
-        <button className="btn btn-small" onClick={add}>Add</button>
-        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+        <button className="btn btn-small" onClick={add}>
+          Add
+        </button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>
+          Close
+        </button>
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
         A granted verb can call any URL.
@@ -1645,20 +1990,40 @@ function HttpAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; on
  * granted unconditionally alongside Read instead of forced into either shape.
  */
 const FOLDER_KIND_SLOTS = new Set([
-  'io.file.list', 'io.file.list-recursively', 'io.file.search',
-  'io.folder.exists', 'io.folder.list', 'io.folder.list-recursively',
-  'io.folder.create', 'io.folder.copy', 'io.folder.move', 'io.folder.delete',
+  'io.file.list',
+  'io.file.list-recursively',
+  'io.file.search',
+  'io.folder.exists',
+  'io.folder.list',
+  'io.folder.list-recursively',
+  'io.folder.create',
+  'io.folder.copy',
+  'io.folder.move',
+  'io.folder.delete',
 ]);
 
 const FILE_SLOTS: Record<string, string[]> = {
   read: [
-    'io.file.load', 'io.file.load.binary', 'io.file.exists', 'io.file.list',
-    'io.file.list-recursively', 'io.file.search', 'io.folder.exists', 'io.folder.list',
+    'io.file.load',
+    'io.file.load.binary',
+    'io.file.exists',
+    'io.file.list',
+    'io.file.list-recursively',
+    'io.file.search',
+    'io.folder.exists',
+    'io.folder.list',
     'io.folder.list-recursively',
   ],
   write: [
-    'io.file.save', 'io.file.save.binary', 'io.file.copy', 'io.file.move', 'io.file.patch',
-    'io.file.unzip', 'io.folder.create', 'io.folder.copy', 'io.folder.move',
+    'io.file.save',
+    'io.file.save.binary',
+    'io.file.copy',
+    'io.file.move',
+    'io.file.patch',
+    'io.file.unzip',
+    'io.folder.create',
+    'io.folder.copy',
+    'io.folder.move',
   ],
   delete: ['io.file.delete', 'io.folder.delete'],
 };
@@ -1689,10 +2054,16 @@ function fileSystemPin(slot: string, folder: string, extension: string): string 
  * line (no ":value") or one ending right after the colon is unpinned.
  */
 const UNPINNED_RISK_SLOTS = new Set([
-  'execute', 'signal', 'try-signal', 'execute-file', 'io.file.execute',
+  'execute',
+  'signal',
+  'try-signal',
+  'execute-file',
+  'io.file.execute',
   'data.connect',
   ...FOLDER_KIND_SLOTS,
-  ...FILE_SLOTS.read, ...FILE_SLOTS.write, ...FILE_SLOTS.delete,
+  ...FILE_SLOTS.read,
+  ...FILE_SLOTS.write,
+  ...FILE_SLOTS.delete,
 ]);
 
 /*
@@ -1707,15 +2078,21 @@ function lintSlotLines(lines: string): string[] {
     const pin = colon === -1 ? '' : raw.slice(colon + 1).trim();
     if (UNPINNED_RISK_SLOTS.has(name) && !pin) {
       warnings.push(
-        '"' + name + '" has no pinned argument — it would reach ANY file, folder, database ' +
-        'or slot on the server instead of just one. Pin it, e.g. "' + name + ':the-one-thing".');
+        '"' +
+          name +
+          '" has no pinned argument — it would reach ANY file, folder, database ' +
+          'or slot on the server instead of just one. Pin it, e.g. "' +
+          name +
+          ':the-one-thing".',
+      );
     }
   }
   return warnings;
 }
 
-function FilesAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
-
+function FilesAccessWizard(
+  props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>,
+) {
   const [path, setPath] = useState('');
   const [extension, setExtension] = useState('');
   const [read, setRead] = useState(true);
@@ -1749,46 +2126,69 @@ function FilesAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; o
     <div className="card" style={{ padding: 10, marginBottom: 6 }}>
       <div className="toolbar" style={{ marginBottom: 6 }}>
         <div style={{ fontWeight: 600, fontSize: 13 }}>File system</div>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="Load, list, search files and folders">
-          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} />Read
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+          title="Load, list, search files and folders"
+        >
+          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} />
+          Read
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="Save, copy, move, patch, unzip; create folders">
-          <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} />Write
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+          title="Save, copy, move, patch, unzip; create folders"
+        >
+          <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} />
+          Write
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="Delete files and folders">
-          <input type="checkbox" checked={remove} onChange={e => setRemove(e.target.checked)} />Delete
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+          title="Delete files and folders"
+        >
+          <input type="checkbox" checked={remove} onChange={e => setRemove(e.target.checked)} />
+          Delete
         </label>
         <span className="spacer" />
-        <button className="btn btn-small" onClick={add}>Add</button>
-        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+        <button className="btn btn-small" onClick={add}>
+          Add
+        </button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>
+          Close
+        </button>
       </div>
       <div className="toolbar">
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }} title="Folder operations are pinned to exactly this folder, not its subfolders; file operations are pinned to any file directly inside it">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}
+          title="Folder operations are pinned to exactly this folder, not its subfolders; file operations are pinned to any file directly inside it"
+        >
           Folder
           <input
             type="text"
             placeholder="/etc/data/  (blank = any path)"
             value={path}
             onChange={e => setPath(e.target.value)}
-            style={{ flex: 1 }} />
+            style={{ flex: 1 }}
+          />
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Narrows file operations to this extension only, e.g. conf for *.conf; blank allows any file in the folder">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="Narrows file operations to this extension only, e.g. conf for *.conf; blank allows any file in the folder"
+        >
           Extension
           <input
             type="text"
             placeholder="any"
             value={extension}
             onChange={e => setExtension(e.target.value)}
-            style={{ width: 70 }} />
+            style={{ width: 70 }}
+          />
         </label>
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
         Folder operations (list, exists, create, delete, copy, move on folders) are pinned to
-        exactly this folder — not its subfolders. File operations (load, save, delete, copy,
-        move, exists, patch, unzip) are pinned to any file directly inside it; add an
-        extension above to narrow that further. For a deeper folder, run this wizard again
-        with that folder; for one exact file, edit the list below directly. Leave Folder
-        blank to allow any path.
+        exactly this folder — not its subfolders. File operations (load, save, delete, copy, move,
+        exists, patch, unzip) are pinned to any file directly inside it; add an extension above to
+        narrow that further. For a deeper folder, run this wizard again with that folder; for one
+        exact file, edit the list below directly. Leave Folder blank to allow any path.
       </span>
     </div>
   );
@@ -1799,7 +2199,6 @@ function FilesAccessWizard(props: Readonly<{ onAdd: (lines: string[]) => void; o
  * message; Receive pairs [mail.pop3.fetch] with [mime.parse] to read one.
  */
 function EmailWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
-
   const [send, setSend] = useState(true);
   const [receive, setReceive] = useState(false);
 
@@ -1822,15 +2221,27 @@ function EmailWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCance
     <div className="card" style={{ padding: 10, marginBottom: 6 }}>
       <div className="toolbar" style={{ marginBottom: 6 }}>
         <div style={{ fontWeight: 600, fontSize: 13 }}>Email</div>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="Send mail through the configured SMTP server">
-          <input type="checkbox" checked={send} onChange={e => setSend(e.target.checked)} />Send
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+          title="Send mail through the configured SMTP server"
+        >
+          <input type="checkbox" checked={send} onChange={e => setSend(e.target.checked)} />
+          Send
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="Fetch mail over POP3">
-          <input type="checkbox" checked={receive} onChange={e => setReceive(e.target.checked)} />Receive
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+          title="Fetch mail over POP3"
+        >
+          <input type="checkbox" checked={receive} onChange={e => setReceive(e.target.checked)} />
+          Receive
         </label>
         <span className="spacer" />
-        <button className="btn btn-small" onClick={add}>Add</button>
-        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+        <button className="btn btn-small" onClick={add}>
+          Add
+        </button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>
+          Close
+        </button>
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
         Send uses the server's configured SMTP account; recipients are set per call.
@@ -1852,9 +2263,13 @@ const IMAGE_OPS: { key: string; label: string }[] = [
 ];
 
 function ImagesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
-
   const [ops, setOps] = useState<Record<string, boolean>>({
-    resize: true, crop: true, convert: true, size: true, chart: false, 'generate-qr': false,
+    resize: true,
+    crop: true,
+    convert: true,
+    size: true,
+    chart: false,
+    'generate-qr': false,
   });
 
   function add() {
@@ -1872,14 +2287,21 @@ function ImagesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCanc
         <div style={{ fontWeight: 600, fontSize: 13 }}>Images</div>
         {IMAGE_OPS.map(op => (
           <label key={op.key} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <input type="checkbox" checked={ops[op.key]}
-              onChange={e => setOps({ ...ops, [op.key]: e.target.checked })} />
+            <input
+              type="checkbox"
+              checked={ops[op.key]}
+              onChange={e => setOps({ ...ops, [op.key]: e.target.checked })}
+            />
             {op.label}
           </label>
         ))}
         <span className="spacer" />
-        <button className="btn btn-small" onClick={add}>Add</button>
-        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+        <button className="btn btn-small" onClick={add}>
+          Add
+        </button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>
+          Close
+        </button>
       </div>
     </div>
   );
@@ -1888,8 +2310,9 @@ function ImagesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCanc
 /*
  * Wizard granting logging. Write covers the four severities; Read covers querying the log.
  */
-function LoggingWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
-
+function LoggingWizard(
+  props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>,
+) {
   const [write, setWrite] = useState(true);
 
   function add() {
@@ -1904,12 +2327,20 @@ function LoggingWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCan
     <div className="card" style={{ padding: 10, marginBottom: 6 }}>
       <div className="toolbar" style={{ marginBottom: 6 }}>
         <div style={{ fontWeight: 600, fontSize: 13 }}>Logging</div>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }} title="log.info / debug / error / fatal">
-          <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} />Write
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+          title="log.info / debug / error / fatal"
+        >
+          <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} />
+          Write
         </label>
         <span className="spacer" />
-        <button className="btn btn-small" onClick={add}>Add</button>
-        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+        <button className="btn btn-small" onClick={add}>
+          Add
+        </button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>
+          Close
+        </button>
       </div>
     </div>
   );
@@ -1926,8 +2357,9 @@ function LoggingWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCan
  * from [slots.vocabulary] (GET /magic/system/evaluator/slots), fetched once per wizard
  * open so the list always reflects what the server currently has.
  */
-function DynamicSlotsWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
-
+function DynamicSlotsWizard(
+  props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>,
+) {
   const [slots, setSlots] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
@@ -1949,7 +2381,11 @@ function DynamicSlotsWizard(props: Readonly<{ onAdd: (lines: string[]) => void; 
       showToast('Pick at least one dynamic slot', true);
       return;
     }
-    const lines = picked.flatMap(name => ['execute:' + name, 'signal:' + name, 'try-signal:' + name]);
+    const lines = picked.flatMap(name => [
+      'execute:' + name,
+      'signal:' + name,
+      'try-signal:' + name,
+    ]);
     props.onAdd(lines);
   }
 
@@ -1958,32 +2394,53 @@ function DynamicSlotsWizard(props: Readonly<{ onAdd: (lines: string[]) => void; 
       <div className="toolbar" style={{ marginBottom: 6 }}>
         <div style={{ fontWeight: 600, fontSize: 13 }}>Dynamic slots</div>
         <span className="spacer" />
-        <button className="btn btn-small" onClick={add} disabled={count === 0}>Add</button>
-        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+        <button className="btn btn-small" onClick={add} disabled={count === 0}>
+          Add
+        </button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>
+          Close
+        </button>
       </div>
       <div className="toolbar" style={{ marginBottom: 6 }}>
         <SearchInput placeholder="Filter dynamic slots…" value={filter} onChange={setFilter} />
-        {count > 0 && <span className="muted" style={{ fontSize: 12 }}>{count} selected</span>}
+        {count > 0 && (
+          <span className="muted" style={{ fontSize: 12 }}>
+            {count} selected
+          </span>
+        )}
       </div>
       <div className="card" style={{ maxHeight: 180, overflow: 'auto', padding: 6 }}>
-        {loading && <span className="muted" style={{ fontSize: 12 }}>loading…</span>}
+        {loading && (
+          <span className="muted" style={{ fontSize: 12 }}>
+            loading…
+          </span>
+        )}
         {!loading && shown.length === 0 && (
-          <span className="muted" style={{ fontSize: 12 }}>No dynamic slots found.</span>
+          <span className="muted" style={{ fontSize: 12 }}>
+            No dynamic slots found.
+          </span>
         )}
         {shown.map(name => (
-          <label key={name} className="checkbox-row wizard-pick-row" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
+          <label
+            key={name}
+            className="checkbox-row wizard-pick-row"
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}
+          >
             <input
               type="checkbox"
               checked={!!chosen[name]}
-              onChange={e => setChosen({ ...chosen, [name]: e.target.checked })} />
+              onChange={e => setChosen({ ...chosen, [name]: e.target.checked })}
+            />
             <span className="mono">{name}</span>
           </label>
         ))}
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
-        Each pick pins all three aliases to this exact slot — <span className="mono">execute:&lt;name&gt;</span>,{' '}
-        <span className="mono">signal:&lt;name&gt;</span>, <span className="mono">try-signal:&lt;name&gt;</span> — never a
-        bare alias, so this role can never name a different dynamic slot at either check.
+        Each pick pins all three aliases to this exact slot —{' '}
+        <span className="mono">execute:&lt;name&gt;</span>,{' '}
+        <span className="mono">signal:&lt;name&gt;</span>,{' '}
+        <span className="mono">try-signal:&lt;name&gt;</span> — never a bare alias, so this role can
+        never name a different dynamic slot at either check.
       </span>
     </div>
   );
@@ -2057,7 +2514,13 @@ function formatEndpointMeta(meta: EndpointMeta): string {
   if (meta.input && meta.input.length > 0) {
     lines.push('', 'Arguments:');
     for (const field of meta.input) {
-      lines.push('  ' + field.name + ': ' + field.type + (field.description ? ' — ' + field.description : ''));
+      lines.push(
+        '  ' +
+          field.name +
+          ': ' +
+          field.type +
+          (field.description ? ' — ' + field.description : ''),
+      );
     }
   }
   return lines.join('\n');
@@ -2072,21 +2535,29 @@ function formatFallbackMeta(
   if (names.length > 0) {
     lines.push('', 'Arguments:');
     for (const name of names) {
-      lines.push('  ' + name + ': ' + args![name].type + (args![name].mandatory ? ' (mandatory)' : ''));
+      lines.push(
+        '  ' + name + ': ' + args![name].type + (args![name].mandatory ? ' (mandatory)' : ''),
+      );
     }
   }
   return lines.join('\n');
 }
 
-function ExecuteFilesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>) {
-
+function ExecuteFilesWizard(
+  props: Readonly<{ onAdd: (lines: string[]) => void; onCancel: () => void }>,
+) {
   const [files, setFiles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [chosen, setChosen] = useState<Record<string, boolean>>({});
   // The description + arguments currently shown as a tooltip, and where to anchor it;
   // resolved lazily on click and cached per path so re-opening the same file is instant.
-  const [tooltip, setTooltip] = useState<{ path: string; text: string; x: number; y: number } | null>(null);
+  const [tooltip, setTooltip] = useState<{
+    path: string;
+    text: string;
+    x: number;
+    y: number;
+  } | null>(null);
   const [descLoading, setDescLoading] = useState<string | null>(null);
   const descCache = useRef<Record<string, string>>({});
   // One /magic/system/endpoints/list fetch, keyed by {path, verb} — the same backend-
@@ -2130,7 +2601,10 @@ function ExecuteFilesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; 
       return;
     }
     const lines = picked.flatMap(path => [
-      'execute-file:' + path, 'io.file.execute:' + path, 'io.file.load:' + path]);
+      'execute-file:' + path,
+      'io.file.execute:' + path,
+      'io.file.load:' + path,
+    ]);
     props.onAdd(lines);
   }
 
@@ -2144,7 +2618,10 @@ function ExecuteFilesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; 
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     // Right-aligns the tooltip to the icon, then clamps it to stay inside the viewport —
     // the icon sits at the far right of its row, so left-aligning it would run off-screen.
-    const x = Math.max(8, Math.min(rect.right - TOOLTIP_WIDTH, window.innerWidth - TOOLTIP_WIDTH - 8));
+    const x = Math.max(
+      8,
+      Math.min(rect.right - TOOLTIP_WIDTH, window.innerWidth - TOOLTIP_WIDTH - 8),
+    );
     const position = { x, y: rect.bottom + 4 };
     const cached = descCache.current[path];
     if (cached !== undefined) {
@@ -2179,8 +2656,12 @@ function ExecuteFilesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; 
       <div className="toolbar" style={{ marginBottom: 6 }}>
         <div style={{ fontWeight: 600, fontSize: 13 }}>Execute files</div>
         <span className="spacer" />
-        <button className="btn btn-small" onClick={add} disabled={count === 0}>Add</button>
-        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+        <button className="btn btn-small" onClick={add} disabled={count === 0}>
+          Add
+        </button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>
+          Close
+        </button>
       </div>
       <div className="toolbar" style={{ marginBottom: 6 }}>
         <SearchInput placeholder="Filter files…" value={filter} onChange={setFilter} />
@@ -2189,55 +2670,91 @@ function ExecuteFilesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; 
             <input
               type="checkbox"
               checked={allShownChosen}
-              onChange={e => toggleShown(e.target.checked)} />
-            {filter ? 'Select all filtered (' + shown.length + ')' : 'Select all (' + shown.length + ')'}
+              onChange={e => toggleShown(e.target.checked)}
+            />
+            {filter
+              ? 'Select all filtered (' + shown.length + ')'
+              : 'Select all (' + shown.length + ')'}
           </label>
         )}
-        {count > 0 && <span className="muted" style={{ fontSize: 12 }}>{count} selected</span>}
+        {count > 0 && (
+          <span className="muted" style={{ fontSize: 12 }}>
+            {count} selected
+          </span>
+        )}
       </div>
-      <div className="card" style={{ maxHeight: 180, overflow: 'auto', padding: '6px 14px 6px 6px' }}>
-        {loading && <span className="muted" style={{ fontSize: 12 }}>loading…</span>}
+      <div
+        className="card"
+        style={{ maxHeight: 180, overflow: 'auto', padding: '6px 14px 6px 6px' }}
+      >
+        {loading && (
+          <span className="muted" style={{ fontSize: 12 }}>
+            loading…
+          </span>
+        )}
         {!loading && shown.length === 0 && (
-          <span className="muted" style={{ fontSize: 12 }}>No .hl files found under /modules/.</span>
+          <span className="muted" style={{ fontSize: 12 }}>
+            No .hl files found under /modules/.
+          </span>
         )}
         {shown.map(path => (
-          <label key={path} className="checkbox-row wizard-pick-row" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
+          <label
+            key={path}
+            className="checkbox-row wizard-pick-row"
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}
+          >
             <input
               type="checkbox"
               checked={!!chosen[path]}
-              onChange={e => setChosen({ ...chosen, [path]: e.target.checked })} />
+              onChange={e => setChosen({ ...chosen, [path]: e.target.checked })}
+            />
             <span className="mono">{path}</span>
             <button
               type="button"
               className="btn btn-secondary btn-small"
               title="Show this file's file-level comment"
               style={{ marginLeft: 'auto', padding: '0 6px', minWidth: 20 }}
-              onClick={e => toggleDescription(path, e)}>
+              onClick={e => toggleDescription(path, e)}
+            >
               {descLoading === path ? '…' : '?'}
             </button>
           </label>
         ))}
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
-        Pins <span className="mono">execute-file</span>, <span className="mono">io.file.execute</span> and{' '}
-        <span className="mono">io.file.load</span> to each chosen path, so a caller can read a
-        file's source to learn how to execute it. This is how a role gets complex domain logic
-        without being granted the raw slots that logic uses (data.read and so on): once a path
-        is admitted its own code runs fully trusted, not re-sandboxed — only whitelist files
-        whose logic, and source, you have reviewed for this role.
+        Pins <span className="mono">execute-file</span>,{' '}
+        <span className="mono">io.file.execute</span> and <span className="mono">io.file.load</span>{' '}
+        to each chosen path, so a caller can read a file's source to learn how to execute it. This
+        is how a role gets complex domain logic without being granted the raw slots that logic uses
+        (data.read and so on): once a path is admitted its own code runs fully trusted, not
+        re-sandboxed — only whitelist files whose logic, and source, you have reviewed for this
+        role.
       </span>
       {tooltip && (
         <div
           className="card"
           style={{
-            position: 'fixed', left: tooltip.x, top: tooltip.y, zIndex: 1000,
-            width: TOOLTIP_WIDTH, maxHeight: 280, overflow: 'auto',
-            padding: 8, fontSize: 12, whiteSpace: 'pre-wrap', boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          }}>
+            position: 'fixed',
+            left: tooltip.x,
+            top: tooltip.y,
+            zIndex: 1000,
+            width: TOOLTIP_WIDTH,
+            maxHeight: 280,
+            overflow: 'auto',
+            padding: 8,
+            fontSize: 12,
+            whiteSpace: 'pre-wrap',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          }}
+        >
           <div className="toolbar" style={{ marginBottom: 4 }}>
-            <span className="mono" style={{ fontWeight: 600 }}>{tooltip.path}</span>
+            <span className="mono" style={{ fontWeight: 600 }}>
+              {tooltip.path}
+            </span>
             <span className="spacer" />
-            <button className="btn btn-secondary btn-small" onClick={() => setTooltip(null)}>×</button>
+            <button className="btn btn-secondary btn-small" onClick={() => setTooltip(null)}>
+              ×
+            </button>
           </div>
           {tooltip.text}
         </div>
@@ -2251,13 +2768,26 @@ function ExecuteFilesWizard(props: Readonly<{ onAdd: (lines: string[]) => void; 
  * pressing Add merges that group's slots into the editor. Drives the Tier-2 wizards,
  * which are all "pick which sub-capabilities" with no extra parameters.
  */
-interface SlotGroup { key: string; label: string; title?: string; slots: string[]; }
-interface WizardSpec { label: string; title: string; note?: string; defaults: string[]; groups: SlotGroup[]; }
+interface SlotGroup {
+  key: string;
+  label: string;
+  title?: string;
+  slots: string[];
+}
+interface WizardSpec {
+  label: string;
+  title: string;
+  note?: string;
+  defaults: string[];
+  groups: SlotGroup[];
+}
 
-function GroupWizard(props: Readonly<{ spec: WizardSpec; onAdd: (lines: string[]) => void; onCancel: () => void }>) {
-
+function GroupWizard(
+  props: Readonly<{ spec: WizardSpec; onAdd: (lines: string[]) => void; onCancel: () => void }>,
+) {
   const [on, setOn] = useState<Record<string, boolean>>(
-    Object.fromEntries(props.spec.groups.map(g => [g.key, props.spec.defaults.includes(g.key)])));
+    Object.fromEntries(props.spec.groups.map(g => [g.key, props.spec.defaults.includes(g.key)])),
+  );
 
   function add() {
     const lines: string[] = [];
@@ -2278,18 +2808,31 @@ function GroupWizard(props: Readonly<{ spec: WizardSpec; onAdd: (lines: string[]
       <div className="toolbar" style={{ marginBottom: props.spec.note ? 6 : 0 }}>
         <div style={{ fontWeight: 600, fontSize: 13 }}>{props.spec.title}</div>
         {props.spec.groups.map(group => (
-          <label key={group.key} style={{ display: 'flex', alignItems: 'center', gap: 4 }} title={group.title}>
-            <input type="checkbox" checked={on[group.key]}
-              onChange={e => setOn({ ...on, [group.key]: e.target.checked })} />
+          <label
+            key={group.key}
+            style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+            title={group.title}
+          >
+            <input
+              type="checkbox"
+              checked={on[group.key]}
+              onChange={e => setOn({ ...on, [group.key]: e.target.checked })}
+            />
             {group.label}
           </label>
         ))}
         <span className="spacer" />
-        <button className="btn btn-small" onClick={add}>Add</button>
-        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>Close</button>
+        <button className="btn btn-small" onClick={add}>
+          Add
+        </button>
+        <button className="btn btn-secondary btn-small" onClick={props.onCancel}>
+          Close
+        </button>
       </div>
       {props.spec.note && (
-        <span className="muted" style={{ fontSize: 12 }}>{props.spec.note}</span>
+        <span className="muted" style={{ fontSize: 12 }}>
+          {props.spec.note}
+        </span>
       )}
     </div>
   );
@@ -2302,70 +2845,207 @@ function GroupWizard(props: Readonly<{ spec: WizardSpec; onAdd: (lines: string[]
  */
 const TIER2_WIZARDS: Record<string, WizardSpec> = {
   tasks: {
-    label: 'Tasks', title: 'Scheduled tasks', defaults: ['read'],
+    label: 'Tasks',
+    title: 'Scheduled tasks',
+    defaults: ['read'],
     groups: [
-      { key: 'read', label: 'Read', title: 'List and read tasks', slots: ['tasks.list', 'tasks.get', 'tasks.count'] },
-      { key: 'manage', label: 'Manage', title: 'Create, update, delete, schedule and run tasks', slots: ['tasks.create', 'tasks.update', 'tasks.delete', 'tasks.schedule', 'tasks.schedule.delete', 'tasks.execute'] },
+      {
+        key: 'read',
+        label: 'Read',
+        title: 'List and read tasks',
+        slots: ['tasks.list', 'tasks.get', 'tasks.count'],
+      },
+      {
+        key: 'manage',
+        label: 'Manage',
+        title: 'Create, update, delete, schedule and run tasks',
+        slots: [
+          'tasks.create',
+          'tasks.update',
+          'tasks.delete',
+          'tasks.schedule',
+          'tasks.schedule.delete',
+          'tasks.execute',
+        ],
+      },
     ],
   },
   cache: {
-    label: 'Cache', title: 'Caching', defaults: ['read'],
+    label: 'Cache',
+    title: 'Caching',
+    defaults: ['read'],
     groups: [
-      { key: 'read', label: 'Read', slots: ['cache.get', 'cache.try-get', 'cache.list', 'cache.count'] },
+      {
+        key: 'read',
+        label: 'Read',
+        slots: ['cache.get', 'cache.try-get', 'cache.list', 'cache.count'],
+      },
       { key: 'write', label: 'Write', slots: ['cache.set', 'cache.clear'] },
     ],
   },
   sockets: {
-    label: 'Sockets', title: 'Web sockets', defaults: ['signal'],
+    label: 'Sockets',
+    title: 'Web sockets',
+    defaults: ['signal'],
     groups: [
-      { key: 'signal', label: 'Signal', title: 'Publish messages to connected clients', slots: ['sockets.signal'] },
-      { key: 'groups', label: 'Groups', slots: ['sockets.connection.enter-group', 'sockets.connection.leave-group', 'sockets.user.add-to-group', 'sockets.user.remove-from-group'] },
+      {
+        key: 'signal',
+        label: 'Signal',
+        title: 'Publish messages to connected clients',
+        slots: ['sockets.signal'],
+      },
+      {
+        key: 'groups',
+        label: 'Groups',
+        slots: [
+          'sockets.connection.enter-group',
+          'sockets.connection.leave-group',
+          'sockets.user.add-to-group',
+          'sockets.user.remove-from-group',
+        ],
+      },
       { key: 'users', label: 'Users', slots: ['sockets.users', 'sockets.users.count'] },
     ],
   },
   identity: {
-    label: 'Identity', title: 'Identity (read only)', defaults: ['read'],
+    label: 'Identity',
+    title: 'Identity (read only)',
+    defaults: ['read'],
     note: 'Reads the caller identity only. Minting or refreshing a ticket is never offered — that is the escalation the sandbox exists to prevent. [auth.token.verify] is deliberately excluded: it trusts caller-supplied issuers and would turn the endpoint into an SSRF oracle.',
     groups: [
-      { key: 'read', label: 'Read identity', slots: ['auth.ticket.get', 'auth.ticket.in-role', 'auth.ticket.verify', 'auth.token.read'] },
+      {
+        key: 'read',
+        label: 'Read identity',
+        slots: ['auth.ticket.get', 'auth.ticket.in-role', 'auth.ticket.verify', 'auth.token.read'],
+      },
     ],
   },
   crypto: {
-    label: 'Crypto', title: 'Cryptography', defaults: ['hashing', 'random'],
+    label: 'Crypto',
+    title: 'Cryptography',
+    defaults: ['hashing', 'random'],
     groups: [
-      { key: 'hashing', label: 'Hashing', slots: ['crypto.hash', 'crypto.hash.md5', 'crypto.hash.sha1', 'crypto.hash.sha256', 'crypto.hash.sha384', 'crypto.hash.sha512', 'crypto.password.hash', 'crypto.password.verify'] },
-      { key: 'symmetric', label: 'Symmetric', slots: ['crypto.aes.encrypt', 'crypto.aes.decrypt', 'crypto.encrypt', 'crypto.decrypt'] },
-      { key: 'rsa', label: 'RSA', slots: ['crypto.rsa.create-key', 'crypto.rsa.encrypt', 'crypto.rsa.decrypt', 'crypto.rsa.sign', 'crypto.rsa.verify', 'crypto.sign', 'crypto.verify', 'crypto.get-key', 'crypto.fingerprint'] },
-      { key: 'random', label: 'Random', slots: ['crypto.random', 'crypto.random.int', 'crypto.seed'] },
+      {
+        key: 'hashing',
+        label: 'Hashing',
+        slots: [
+          'crypto.hash',
+          'crypto.hash.md5',
+          'crypto.hash.sha1',
+          'crypto.hash.sha256',
+          'crypto.hash.sha384',
+          'crypto.hash.sha512',
+          'crypto.password.hash',
+          'crypto.password.verify',
+        ],
+      },
+      {
+        key: 'symmetric',
+        label: 'Symmetric',
+        slots: ['crypto.aes.encrypt', 'crypto.aes.decrypt', 'crypto.encrypt', 'crypto.decrypt'],
+      },
+      {
+        key: 'rsa',
+        label: 'RSA',
+        slots: [
+          'crypto.rsa.create-key',
+          'crypto.rsa.encrypt',
+          'crypto.rsa.decrypt',
+          'crypto.rsa.sign',
+          'crypto.rsa.verify',
+          'crypto.sign',
+          'crypto.verify',
+          'crypto.get-key',
+          'crypto.fingerprint',
+        ],
+      },
+      {
+        key: 'random',
+        label: 'Random',
+        slots: ['crypto.random', 'crypto.random.int', 'crypto.seed'],
+      },
     ],
   },
   misc: {
-    label: 'Misc', title: 'Other capabilities', defaults: [],
+    label: 'Misc',
+    title: 'Other capabilities',
+    defaults: [],
     groups: [
-      { key: 'html2pdf', label: 'HTML → PDF', title: 'Render an HTML string to a PDF document', slots: ['html2pdf'] },
-      { key: 'semaphore', label: 'Semaphore', title: 'Serialize concurrent invocations through a named lock', slots: ['semaphore'] },
+      {
+        key: 'html2pdf',
+        label: 'HTML → PDF',
+        title: 'Render an HTML string to a PDF document',
+        slots: ['html2pdf'],
+      },
+      {
+        key: 'semaphore',
+        label: 'Semaphore',
+        title: 'Serialize concurrent invocations through a named lock',
+        slots: ['semaphore'],
+      },
       { key: 'version', label: 'Version', title: 'Return the server version', slots: ['version'] },
     ],
   },
   templating: {
-    label: 'Templating', title: 'String templating', defaults: [],
+    label: 'Templating',
+    title: 'String templating',
+    defaults: [],
     note: 'strings.mixin executes every {{ }} snippet in its template as Hyperlambda, using whatever slots this rule already grants — it does not add any new ones. Only feed it template strings the endpoint itself authored, never caller-supplied or stored text, or the caller effectively picks which of those slots run.',
     groups: [
-      { key: 'mixin', label: 'Mixin', title: 'Interpolate {{ }} Hyperlambda snippets into a string', slots: ['strings.mixin'] },
+      {
+        key: 'mixin',
+        label: 'Mixin',
+        title: 'Interpolate {{ }} Hyperlambda snippets into a string',
+        slots: ['strings.mixin'],
+      },
     ],
   },
   ai: {
-    label: 'AI', title: 'AI helpers', defaults: ['tokenize'],
+    label: 'AI',
+    title: 'AI helpers',
+    defaults: ['tokenize'],
     groups: [
       { key: 'tokenize', label: 'Tokenize', slots: ['openai.tokenize'] },
-      { key: 'whisper', label: 'Transcribe', title: 'Speech-to-text with Whisper', slots: ['openai.whisper'] },
+      {
+        key: 'whisper',
+        label: 'Transcribe',
+        title: 'Speech-to-text with Whisper',
+        slots: ['openai.whisper'],
+      },
     ],
   },
   puppeteer: {
-    label: 'Browser', title: 'Headless browser', defaults: ['browse'],
+    label: 'Browser',
+    title: 'Headless browser',
+    defaults: ['browse'],
     groups: [
-      { key: 'browse', label: 'Browse & read', slots: ['puppeteer.connect', 'puppeteer.goto', 'puppeteer.close', 'puppeteer.url', 'puppeteer.title', 'puppeteer.content', 'puppeteer.evaluate', 'puppeteer.screenshot', 'puppeteer.wait-for-selector', 'puppeteer.wait-for-url'] },
-      { key: 'interact', label: 'Interact', slots: ['puppeteer.click', 'puppeteer.type', 'puppeteer.fill', 'puppeteer.select', 'puppeteer.press'] },
+      {
+        key: 'browse',
+        label: 'Browse & read',
+        slots: [
+          'puppeteer.connect',
+          'puppeteer.goto',
+          'puppeteer.close',
+          'puppeteer.url',
+          'puppeteer.title',
+          'puppeteer.content',
+          'puppeteer.evaluate',
+          'puppeteer.screenshot',
+          'puppeteer.wait-for-selector',
+          'puppeteer.wait-for-url',
+        ],
+      },
+      {
+        key: 'interact',
+        label: 'Interact',
+        slots: [
+          'puppeteer.click',
+          'puppeteer.type',
+          'puppeteer.fill',
+          'puppeteer.select',
+          'puppeteer.press',
+        ],
+      },
     ],
   },
 };
@@ -2373,20 +3053,24 @@ const TIER2_WIZARDS: Record<string, WizardSpec> = {
 /*
  * The verb, module and endpoint name inputs every endpoint generator starts its toolbar with.
  */
-function EndpointNameFields(props: Readonly<{
-  verbs: string[];
-  verb: string;
-  onVerb: (verb: string) => void;
-  moduleName: string;
-  onModuleName: (name: string) => void;
-  endpointName: string;
-  onEndpointName: (name: string) => void;
-}>) {
+function EndpointNameFields(
+  props: Readonly<{
+    verbs: string[];
+    verb: string;
+    onVerb: (verb: string) => void;
+    moduleName: string;
+    onModuleName: (name: string) => void;
+    endpointName: string;
+    onEndpointName: (name: string) => void;
+  }>,
+) {
   return (
     <>
       <Select value={props.verb} onChange={value => props.onVerb(value)}>
         {props.verbs.map(option => (
-          <option key={option} value={option}>{option.toUpperCase()}</option>
+          <option key={option} value={option}>
+            {option.toUpperCase()}
+          </option>
         ))}
       </Select>
       <input
@@ -2394,13 +3078,15 @@ function EndpointNameFields(props: Readonly<{
         placeholder="Module name…"
         value={props.moduleName}
         onChange={e => props.onModuleName(e.target.value)}
-        style={{ width: 150 }} />
+        style={{ width: 150 }}
+      />
       <input
         type="text"
         placeholder="Endpoint name…"
         value={props.endpointName}
         onChange={e => props.onEndpointName(e.target.value)}
-        style={{ width: 150 }} />
+        style={{ width: 150 }}
+      />
     </>
   );
 }
@@ -2408,32 +3094,43 @@ function EndpointNameFields(props: Readonly<{
 /*
  * The read-only preview of an endpoint that was just generated, with shortcuts to open it where it can be run or edited.
  */
-function GeneratedEndpoint(props: Readonly<{
-  preview: string;
-  generated: { path: string; file: string; verb: string } | null;
-  endpointsTitle?: string;
-}>) {
+function GeneratedEndpoint(
+  props: Readonly<{
+    preview: string;
+    generated: { path: string; file: string; verb: string } | null;
+    endpointsTitle?: string;
+  }>,
+) {
   const navigate = useNavigate();
   const { generated } = props;
   return (
     <>
       <div className="toolbar" style={{ marginTop: 12 }}>
         <div style={{ fontWeight: 600, fontSize: 13 }}>Generated endpoint</div>
-        <span className="muted" style={{ fontSize: 12 }}>read-only preview of what was saved</span>
+        <span className="muted" style={{ fontSize: 12 }}>
+          read-only preview of what was saved
+        </span>
         <span className="spacer" />
         {generated && (
           <>
             <button
               className="btn btn-secondary btn-small"
               title={props.endpointsTitle}
-              onClick={() => navigate(
-                '/endpoints?filter=' + encodeURIComponent(generated.path) +
-                '&expand=' + encodeURIComponent(generated.verb))}>
+              onClick={() =>
+                navigate(
+                  '/endpoints?filter=' +
+                    encodeURIComponent(generated.path) +
+                    '&expand=' +
+                    encodeURIComponent(generated.verb),
+                )
+              }
+            >
               Open in Endpoints
             </button>
             <button
               className="btn btn-secondary btn-small"
-              onClick={() => navigate('/hyper-ide?open=' + encodeURIComponent(generated.file))}>
+              onClick={() => navigate('/hyper-ide?open=' + encodeURIComponent(generated.file))}
+            >
               Open in Hyper IDE
             </button>
           </>
@@ -2447,7 +3144,6 @@ function GeneratedEndpoint(props: Readonly<{
 }
 
 function SandboxTab() {
-
   const [moduleName, setModuleName] = useState('');
   const [endpointName, setEndpointName] = useState('run');
   const [verb, setVerb] = useState('post');
@@ -2473,7 +3169,9 @@ function SandboxTab() {
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState('');
   // The endpoint that was just generated, so it can be opened straight from here.
-  const [generated, setGenerated] = useState<{ path: string; file: string; verb: string } | null>(null);
+  const [generated, setGenerated] = useState<{ path: string; file: string; verb: string } | null>(
+    null,
+  );
 
   useEffect(() => {
     listRoles()
@@ -2482,12 +3180,11 @@ function SandboxTab() {
   }, []);
 
   function updateRule(index: number, patch: Partial<RoleRule>) {
-    setRuleList(ruleList.map((rule, i) => i === index ? { ...rule, ...patch } : rule));
+    setRuleList(ruleList.map((rule, i) => (i === index ? { ...rule, ...patch } : rule)));
   }
 
   // Rules carrying slots/overrides but no role would be dropped silently — block on them.
   const hasIncompleteRule = ruleList.some(ruleIsIncomplete);
-
 
   async function generate() {
     if (!moduleName || !endpointName) {
@@ -2563,8 +3260,12 @@ function SandboxTab() {
           moduleName={moduleName}
           onModuleName={setModuleName}
           endpointName={endpointName}
-          onEndpointName={setEndpointName} />
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="What the endpoint accepts — this shapes its arguments and description">
+          onEndpointName={setEndpointName}
+        />
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="What the endpoint accepts — this shapes its arguments and description"
+        >
           Input
           <Select value={inputMode} onChange={value => setInputMode(value)}>
             <option value="both">Hyperlambda + Natural language</option>
@@ -2577,33 +3278,50 @@ function SandboxTab() {
           className="btn"
           onClick={generate}
           disabled={busy || hasIncompleteRule}
-          title={hasIncompleteRule ? 'A role rule has slots but no role — choose a role or remove it' : undefined}>
+          title={
+            hasIncompleteRule
+              ? 'A role rule has slots but no role — choose a role or remove it'
+              : undefined
+          }
+        >
           {busy ? 'Generating…' : '⚙ Generate endpoint'}
         </button>
       </div>
       <div className="toolbar">
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="When on, a root caller runs with the server's full vocabulary and no sandbox">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="When on, a root caller runs with the server's full vocabulary and no sandbox"
+        >
           Root bypasses the sandbox
           <input
             type="checkbox"
             checked={overrideRoot}
-            onChange={e => setOverrideRoot(e.target.checked)} />
+            onChange={e => setOverrideRoot(e.target.checked)}
+          />
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="When on, the response includes the executed code; otherwise it returns only state and result">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="When on, the response includes the executed code; otherwise it returns only state and result"
+        >
           Return code
           <input
             type="checkbox"
             checked={returnCode}
-            onChange={e => setReturnCode(e.target.checked)} />
+            onChange={e => setReturnCode(e.target.checked)}
+          />
         </label>
         {inputMode !== 'nl' && (
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Maximum characters accepted in [hyperlambda] — longer code is rejected with a 400 before anything is parsed or executed">
+          <label
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            title="Maximum characters accepted in [hyperlambda] — longer code is rejected with a 400 before anything is parsed or executed"
+          >
             Max Hyperlambda length
             <input
               type="number"
               value={maxHyperlambda}
               onChange={e => setMaxHyperlambda(e.target.value)}
-              style={{ width: 90 }} />
+              style={{ width: 90 }}
+            />
           </label>
         )}
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -2611,7 +3329,8 @@ function SandboxTab() {
           <input
             type="checkbox"
             checked={overwrite}
-            onChange={e => setOverwrite(e.target.checked)} />
+            onChange={e => setOverwrite(e.target.checked)}
+          />
         </label>
       </div>
       {/* Who may call the endpoint at all — empty leaves it public. */}
@@ -2620,9 +3339,7 @@ function SandboxTab() {
         <span>
           {auth.length > 0 ? auth.join(', ') : <em className="muted">public — anyone</em>}
         </span>
-        <button
-          className="btn btn-secondary btn-small"
-          onClick={() => setAuthOpen(!authOpen)}>
+        <button className="btn btn-secondary btn-small" onClick={() => setAuthOpen(!authOpen)}>
           {authOpen ? 'Done' : 'Edit'}
         </button>
         {authOpen && (
@@ -2630,9 +3347,10 @@ function SandboxTab() {
             <RoleChips
               roles={roles}
               selected={auth}
-              onToggle={(role, selected) => setAuth(selected
-                ? [...auth, role]
-                : auth.filter(candidate => candidate !== role))} />
+              onToggle={(role, selected) =>
+                setAuth(selected ? [...auth, role] : auth.filter(candidate => candidate !== role))
+              }
+            />
           </div>
         )}
       </div>
@@ -2641,24 +3359,48 @@ function SandboxTab() {
         <div className="toolbar" style={{ marginBottom: 6 }}>
           <div style={{ fontWeight: 600, fontSize: 13 }}>Everybody (base vocabulary)</div>
           <span className="spacer" />
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Fallback invocations per window, per IP, for callers with no matching role rule">
+          <label
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            title="Fallback invocations per window, per IP, for callers with no matching role rule"
+          >
             Limit
-            <input type="number" value={baseLimit}
-              onChange={e => setBaseLimit(e.target.value)} style={{ width: 80 }} />
+            <input
+              type="number"
+              value={baseLimit}
+              onChange={e => setBaseLimit(e.target.value)}
+              style={{ width: 80 }}
+            />
           </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Window length in seconds">
+          <label
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            title="Window length in seconds"
+          >
             Window&nbsp;s
-            <input type="number" value={baseWindow}
-              onChange={e => setBaseWindow(e.target.value)} style={{ width: 80 }} />
+            <input
+              type="number"
+              value={baseWindow}
+              onChange={e => setBaseWindow(e.target.value)}
+              style={{ width: 80 }}
+            />
           </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Fallback timeout in milliseconds — root is exempt">
+          <label
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            title="Fallback timeout in milliseconds — root is exempt"
+          >
             Timeout&nbsp;ms
-            <input type="number" step={1000} value={baseTimeout}
-              onChange={e => setBaseTimeout(e.target.value)} style={{ width: 90 }} />
+            <input
+              type="number"
+              step={1000}
+              value={baseTimeout}
+              onChange={e => setBaseTimeout(e.target.value)}
+              style={{ width: 90 }}
+            />
           </label>
         </div>
         {lintSlotLines(baseSlots).map((warning, i) => (
-          <div key={i} className="error-box" style={{ marginBottom: 6, fontSize: 13 }}>{warning}</div>
+          <div key={i} className="error-box" style={{ marginBottom: 6, fontSize: 13 }}>
+            {warning}
+          </div>
         ))}
         <div style={{ height: 240, display: 'flex', flexDirection: 'column' }}>
           <CodeEditor value={baseSlots} onChange={setBaseSlots} mode="hyperlambda" />
@@ -2668,29 +3410,59 @@ function SandboxTab() {
       {ruleList.map((rule, index) => (
         <div key={index} className="card" style={{ padding: 12, marginTop: 8 }}>
           <div className="toolbar" style={{ marginBottom: 6 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Callers in this role also get these slots">
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+              title="Callers in this role also get these slots"
+            >
               Role
               <Select value={rule.role} onChange={value => updateRule(index, { role: value })}>
                 <option value="">choose role…</option>
                 {roles.map(role => (
-                  <option key={role} value={role}>{role}</option>
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
                 ))}
               </Select>
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Invocations per window, per IP — blank inherits the base">
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+              title="Invocations per window, per IP — blank inherits the base"
+            >
               Limit
-              <input type="number" placeholder="base" value={rule.limit}
-                onChange={e => updateRule(index, { limit: e.target.value })} style={{ width: 70 }} />
+              <input
+                type="number"
+                placeholder="base"
+                value={rule.limit}
+                onChange={e => updateRule(index, { limit: e.target.value })}
+                style={{ width: 70 }}
+              />
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Window length in seconds — used only when this role sets a limit">
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+              title="Window length in seconds — used only when this role sets a limit"
+            >
               Window&nbsp;s
-              <input type="number" placeholder="base" value={rule.window}
-                onChange={e => updateRule(index, { window: e.target.value })} style={{ width: 70 }} />
+              <input
+                type="number"
+                placeholder="base"
+                value={rule.window}
+                onChange={e => updateRule(index, { window: e.target.value })}
+                style={{ width: 70 }}
+              />
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Timeout in milliseconds — blank inherits the base">
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+              title="Timeout in milliseconds — blank inherits the base"
+            >
               Timeout&nbsp;ms
-              <input type="number" step={1000} placeholder="base" value={rule.timeout}
-                onChange={e => updateRule(index, { timeout: e.target.value })} style={{ width: 80 }} />
+              <input
+                type="number"
+                step={1000}
+                placeholder="base"
+                value={rule.timeout}
+                onChange={e => updateRule(index, { timeout: e.target.value })}
+                style={{ width: 80 }}
+              />
             </label>
             <span className="spacer" />
             <button
@@ -2698,7 +3470,8 @@ function SandboxTab() {
               onClick={() => {
                 setRuleList(ruleList.filter((_, i) => i !== index));
                 setWizard(null);
-              }}>
+              }}
+            >
               Remove
             </button>
           </div>
@@ -2714,21 +3487,43 @@ function SandboxTab() {
               placeholder="What can this role do? (e.g. Can send email and read ticket data)"
               value={rule.description}
               onChange={e => updateRule(index, { description: e.target.value })}
-              style={{ flex: 1 }} />
+              style={{ flex: 1 }}
+            />
           </div>
           {lintSlotLines(rule.slots).map((warning, i) => (
-            <div key={i} className="error-box" style={{ marginBottom: 6, fontSize: 13 }}>{warning}</div>
+            <div key={i} className="error-box" style={{ marginBottom: 6, fontSize: 13 }}>
+              {warning}
+            </div>
           ))}
           <div className="toolbar" style={{ marginBottom: 6 }}>
-            <span className="muted" style={{ fontSize: 12, marginRight: 4 }}>Add capability:</span>
-            {([['db', 'Database'], ['http', 'HTTP'], ['files', 'Files'], ['email', 'Email'], ['images', 'Images'], ['logging', 'Logging'],
-              ['dynslots', 'Dynamic slots'], ['execfiles', 'Execute files'],
-              ...Object.entries(TIER2_WIZARDS).map(([kind, spec]) => [kind, spec.label])] as [string, string][]).map(([kind, label]) => (
+            <span className="muted" style={{ fontSize: 12, marginRight: 4 }}>
+              Add capability:
+            </span>
+            {(
+              [
+                ['db', 'Database'],
+                ['http', 'HTTP'],
+                ['files', 'Files'],
+                ['email', 'Email'],
+                ['images', 'Images'],
+                ['logging', 'Logging'],
+                ['dynslots', 'Dynamic slots'],
+                ['execfiles', 'Execute files'],
+                ...Object.entries(TIER2_WIZARDS).map(([kind, spec]) => [kind, spec.label]),
+              ] as [string, string][]
+            ).map(([kind, label]) => (
               <button
                 key={kind}
-                className={'btn btn-small' + (wizard?.index === index && wizard?.kind === kind ? '' : ' btn-secondary')}
-                onClick={() => setWizard(
-                  wizard?.index === index && wizard?.kind === kind ? null : { index, kind })}>
+                className={
+                  'btn btn-small' +
+                  (wizard?.index === index && wizard?.kind === kind ? '' : ' btn-secondary')
+                }
+                onClick={() =>
+                  setWizard(
+                    wizard?.index === index && wizard?.kind === kind ? null : { index, kind },
+                  )
+                }
+              >
                 {label}
               </button>
             ))}
@@ -2736,78 +3531,101 @@ function SandboxTab() {
           {wizard?.index === index && wizard.kind === 'db' && (
             <DbAccessWizard
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
-              onCancel={() => setWizard(null)} />
+              onCancel={() => setWizard(null)}
+            />
           )}
           {wizard?.index === index && wizard.kind === 'http' && (
             <HttpAccessWizard
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
-              onCancel={() => setWizard(null)} />
+              onCancel={() => setWizard(null)}
+            />
           )}
           {wizard?.index === index && wizard.kind === 'files' && (
             <FilesAccessWizard
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
-              onCancel={() => setWizard(null)} />
+              onCancel={() => setWizard(null)}
+            />
           )}
           {wizard?.index === index && wizard.kind === 'email' && (
             <EmailWizard
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
-              onCancel={() => setWizard(null)} />
+              onCancel={() => setWizard(null)}
+            />
           )}
           {wizard?.index === index && wizard.kind === 'images' && (
             <ImagesWizard
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
-              onCancel={() => setWizard(null)} />
+              onCancel={() => setWizard(null)}
+            />
           )}
           {wizard?.index === index && wizard.kind === 'logging' && (
             <LoggingWizard
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
-              onCancel={() => setWizard(null)} />
+              onCancel={() => setWizard(null)}
+            />
           )}
           {wizard?.index === index && wizard.kind === 'dynslots' && (
             <DynamicSlotsWizard
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
-              onCancel={() => setWizard(null)} />
+              onCancel={() => setWizard(null)}
+            />
           )}
           {wizard?.index === index && wizard.kind === 'execfiles' && (
             <ExecuteFilesWizard
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
-              onCancel={() => setWizard(null)} />
+              onCancel={() => setWizard(null)}
+            />
           )}
           {wizard?.index === index && TIER2_WIZARDS[wizard.kind] && (
             <GroupWizard
               key={wizard.kind}
               spec={TIER2_WIZARDS[wizard.kind]}
               onAdd={lines => updateRule(index, { slots: mergeSlots(rule.slots, lines) })}
-              onCancel={() => setWizard(null)} />
+              onCancel={() => setWizard(null)}
+            />
           )}
           <div style={{ height: 160, display: 'flex', flexDirection: 'column' }}>
             <CodeEditor
               value={rule.slots}
               onChange={value => updateRule(index, { slots: value })}
-              mode="hyperlambda" />
+              mode="hyperlambda"
+            />
           </div>
         </div>
       ))}
       <div className="toolbar" style={{ marginTop: 8 }}>
         <button
           className="btn btn-secondary btn-small"
-          onClick={() => setRuleList([...ruleList,
-            { role: '', limit: baseLimit, window: baseWindow, timeout: baseTimeout, slots: '', description: '' }])}>
+          onClick={() =>
+            setRuleList([
+              ...ruleList,
+              {
+                role: '',
+                limit: baseLimit,
+                window: baseWindow,
+                timeout: baseTimeout,
+                slots: '',
+                description: '',
+              },
+            ])
+          }
+        >
           + Add role rule
         </button>
         <span className="muted" style={{ fontSize: 12, flexBasis: '100%' }}>
-          Slots are added on top of the base for callers in the role. Limit and timeout
-          are optional — blank inherits from a later rule or the base; rules are matched
-          top to bottom, so order the most-privileged first. One slot per line —{' '}
-          <span className="mono">slot</span>, or <span className="mono">slot:value</span>{' '}
-          to pin an argument (e.g. <span className="mono">data.connect:xyz</span>).
+          Slots are added on top of the base for callers in the role. Limit and timeout are optional
+          — blank inherits from a later rule or the base; rules are matched top to bottom, so order
+          the most-privileged first. One slot per line — <span className="mono">slot</span>, or{' '}
+          <span className="mono">slot:value</span> to pin an argument (e.g.{' '}
+          <span className="mono">data.connect:xyz</span>).
         </span>
       </div>
       {preview && (
         <GeneratedEndpoint
           preview={preview}
           generated={generated}
-          endpointsTitle="Invoke it, or describe what each role can call" />
+          endpointsTitle="Invoke it, or describe what each role can call"
+        />
       )}
       {busy && <AiWaiter />}
     </>
@@ -2820,7 +3638,6 @@ function SandboxTab() {
  * the endpoint, so callers cannot choose the type, the search mode or how much comes back.
  */
 function SearchTab() {
-
   const [moduleName, setModuleName] = useState('');
   const [endpointName, setEndpointName] = useState('search');
   const [verb, setVerb] = useState('get');
@@ -2844,7 +3661,9 @@ function SearchTab() {
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState('');
   // The endpoint that was just generated, so it can be opened straight from here.
-  const [generated, setGenerated] = useState<{ path: string; file: string; verb: string } | null>(null);
+  const [generated, setGenerated] = useState<{ path: string; file: string; verb: string } | null>(
+    null,
+  );
 
   useEffect(() => {
     mlTypes()
@@ -2899,21 +3718,36 @@ function SearchTab() {
           moduleName={moduleName}
           onModuleName={setModuleName}
           endpointName={endpointName}
-          onEndpointName={setEndpointName} />
+          onEndpointName={setEndpointName}
+        />
         <span className="spacer" />
-        <button className="btn" onClick={generate} disabled={busy || !moduleName || !endpointName || !type}>
+        <button
+          className="btn"
+          onClick={generate}
+          disabled={busy || !moduleName || !endpointName || !type}
+        >
           {busy ? 'Generating…' : '⚙ Generate endpoint'}
         </button>
       </div>
       <div className="toolbar">
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="The machine learning type whose training snippets are searched">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="The machine learning type whose training snippets are searched"
+        >
           Type
           <Select value={type} onChange={value => setType(value)}>
             <option value="">choose type…</option>
-            {types.map(t => <option key={t.type} value={t.type}>{t.type}</option>)}
+            {types.map(t => (
+              <option key={t.type} value={t.type}>
+                {t.type}
+              </option>
+            ))}
           </Select>
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="How the endpoint searches. Keyword search needs no OpenAI key and costs nothing per call">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="How the endpoint searches. Keyword search needs no OpenAI key and costs nothing per call"
+        >
           Search by
           <Select value={retrieval} onChange={value => setRetrieval(value)}>
             <option value="">the type's own setting</option>
@@ -2922,7 +3756,10 @@ function SearchTab() {
             <option value="embeddings">Meaning</option>
           </Select>
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="What each match gives out">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="What each match gives out"
+        >
           Returns
           <Select value={result} onChange={value => setResult(value)}>
             <option value="references">Prompt and URI</option>
@@ -2931,22 +3768,57 @@ function SearchTab() {
         </label>
       </div>
       <div className="toolbar">
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="The most matches returned">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="The most matches returned"
+        >
           Limit
-          <input type="number" value={limit} onChange={e => setLimit(e.target.value)} style={{ width: 70 }} />
+          <input
+            type="number"
+            value={limit}
+            onChange={e => setLimit(e.target.value)}
+            style={{ width: 70 }}
+          />
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Similarity cutoff between 0 and 1, where lower is stricter. Blank uses the type's own">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="Similarity cutoff between 0 and 1, where lower is stricter. Blank uses the type's own"
+        >
           Threshold
-          <input type="number" step={0.05} placeholder="type's" value={threshold}
-            onChange={e => setThreshold(e.target.value)} style={{ width: 80 }} />
+          <input
+            type="number"
+            step={0.05}
+            placeholder="type's"
+            value={threshold}
+            onChange={e => setThreshold(e.target.value)}
+            style={{ width: 80 }}
+          />
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Only matches belonging to exactly this URL or reference">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="Only matches belonging to exactly this URL or reference"
+        >
           URI
-          <input type="text" placeholder="any" value={uri} onChange={e => setUri(e.target.value)} style={{ width: 200 }} />
+          <input
+            type="text"
+            placeholder="any"
+            value={uri}
+            onChange={e => setUri(e.target.value)}
+            style={{ width: 200 }}
+          />
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Only matches whose meta fits this pattern, where % matches any text, such as FACT ==> %">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="Only matches whose meta fits this pattern, where % matches any text, such as FACT ==> %"
+        >
           Meta
-          <input type="text" placeholder="any" value={meta} onChange={e => setMeta(e.target.value)} style={{ width: 200 }} />
+          <input
+            type="text"
+            placeholder="any"
+            value={meta}
+            onChange={e => setMeta(e.target.value)}
+            style={{ width: 200 }}
+          />
         </label>
       </div>
       {/* Who may call the endpoint at all - empty leaves it public. */}
@@ -2963,33 +3835,63 @@ function SearchTab() {
             <RoleChips
               roles={roles}
               selected={auth}
-              onToggle={(role, selected) => setAuth(selected
-                ? [...auth, role]
-                : auth.filter(candidate => candidate !== role))} />
+              onToggle={(role, selected) =>
+                setAuth(selected ? [...auth, role] : auth.filter(candidate => candidate !== role))
+              }
+            />
           </div>
         )}
       </div>
       <div className="toolbar">
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Calls an IP may make per window - root is exempt. 0 means no limit">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="Calls an IP may make per window - root is exempt. 0 means no limit"
+        >
           Rate limit
-          <input type="number" value={rateLimit} onChange={e => setRateLimit(e.target.value)} style={{ width: 70 }} />
+          <input
+            type="number"
+            value={rateLimit}
+            onChange={e => setRateLimit(e.target.value)}
+            style={{ width: 70 }}
+          />
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="Window length in seconds">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="Window length in seconds"
+        >
           Window&nbsp;s
-          <input type="number" value={rateWindow} onChange={e => setRateWindow(e.target.value)} style={{ width: 70 }} />
+          <input
+            type="number"
+            value={rateWindow}
+            onChange={e => setRateWindow(e.target.value)}
+            style={{ width: 70 }}
+          />
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }} title="How long the caller may cache an answer. 0 means not at all">
+        <label
+          style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          title="How long the caller may cache an answer. 0 means not at all"
+        >
           Cache&nbsp;s
-          <input type="number" value={cacheSeconds} onChange={e => setCacheSeconds(e.target.value)} style={{ width: 70 }} />
+          <input
+            type="number"
+            value={cacheSeconds}
+            onChange={e => setCacheSeconds(e.target.value)}
+            style={{ width: 70 }}
+          />
         </label>
         <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={overwrite}
+            onChange={e => setOverwrite(e.target.checked)}
+          />
           Overwrite
         </label>
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
         The endpoint takes one argument, <span className="mono">query</span>, and everything else is
-        fixed in it. {effective === 'bm25'
+        fixed in it.{' '}
+        {effective === 'bm25'
           ? 'Keyword search needs no OpenAI key, and costs nothing per call.'
           : 'Searching by meaning spends one OpenAI embedding on every call, so keep a rate limit on a public endpoint.'}
       </span>

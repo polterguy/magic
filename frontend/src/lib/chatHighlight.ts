@@ -126,7 +126,8 @@ hljs.registerLanguage('hyperlambda', () => ({
     // Type declarations such as :int: and :bool:
     {
       className: 'type',
-      begin: /:(?:int|uint|long|ulong|short|ushort|decimal|double|float|single|bool|date|time|guid|char|byte|sbyte|string|node|expression)\b/,
+      begin:
+        /:(?:int|uint|long|ulong|short|ushort|decimal|double|float|single|bool|date|time|guid|char|byte|sbyte|string|node|expression)\b/,
     },
 
     // Data nodes - names starting with a period at the beginning of a line.
@@ -139,9 +140,7 @@ hljs.registerLanguage('hyperlambda', () => ({
       begin: /:/,
       end: /$/,
       excludeBegin: true,
-      contains: [
-        { begin: /@"/, end: /"/, contains: [{ begin: /""/ }] },
-      ],
+      contains: [{ begin: /@"/, end: /"/, contains: [{ begin: /""/ }] }],
     },
   ],
 }));

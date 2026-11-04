@@ -36,14 +36,31 @@ export const GROUPS: { title: string; note?: string; fields: MetaField[] }[] = [
   {
     title: 'Page',
     fields: [
-      { label: 'Title', home: { at: 'title' }, control: 'text',
-        hint: 'Shown in the browser tab and as the headline in search results.' },
-      { label: 'Description', home: { at: 'name', key: 'description' }, control: 'textarea',
-        hint: 'The paragraph under the headline in search results.' },
-      { label: 'Canonical', home: { at: 'canonical' }, control: 'text', links: true,
-        hint: 'The address this page should be indexed under, when more than one reaches it.' },
-      { label: 'Language', home: { at: 'lang' }, control: 'text',
-        options: ['en', 'en-GB', 'en-US', 'nb', 'de', 'fr', 'es', 'it', 'nl', 'sv', 'da'] },
+      {
+        label: 'Title',
+        home: { at: 'title' },
+        control: 'text',
+        hint: 'Shown in the browser tab and as the headline in search results.',
+      },
+      {
+        label: 'Description',
+        home: { at: 'name', key: 'description' },
+        control: 'textarea',
+        hint: 'The paragraph under the headline in search results.',
+      },
+      {
+        label: 'Canonical',
+        home: { at: 'canonical' },
+        control: 'text',
+        links: true,
+        hint: 'The address this page should be indexed under, when more than one reaches it.',
+      },
+      {
+        label: 'Language',
+        home: { at: 'lang' },
+        control: 'text',
+        options: ['en', 'en-GB', 'en-US', 'nb', 'de', 'fr', 'es', 'it', 'nl', 'sv', 'da'],
+      },
       /*
        * The suggestions stop short of user-scalable=no and maximum-scale=1,
        * which are the two every copied snippet carries and the two that take
@@ -51,32 +68,55 @@ export const GROUPS: { title: string; note?: string; fields: MetaField[] }[] = [
        * this is a text field, not a menu — they are just not put in front of
        * someone who is reaching for the ordinary answer.
        */
-      { label: 'Viewport', home: { at: 'name', key: 'viewport' }, control: 'text',
-        hint: 'How a phone lays the page out. Without it a phone assumes a desktop ' +
+      {
+        label: 'Viewport',
+        home: { at: 'name', key: 'viewport' },
+        control: 'text',
+        hint:
+          'How a phone lays the page out. Without it a phone assumes a desktop ' +
           'width and shrinks the result, which is what makes an otherwise fine page ' +
           'arrive as unreadable small print.',
         options: [
           'width=device-width, initial-scale=1',
           'width=device-width, initial-scale=1, viewport-fit=cover',
           'width=1024',
-        ] },
+        ],
+      },
     ],
   },
   {
     title: 'Sharing',
-    note: 'What a link to this page looks like when it is pasted into a chat, ' +
+    note:
+      'What a link to this page looks like when it is pasted into a chat, ' +
       'a post or a message. Anything left empty falls back to the page fields above.',
     fields: [
       { label: 'Title', home: { at: 'property', key: 'og:title' }, control: 'text' },
-      { label: 'Description', home: { at: 'property', key: 'og:description' }, control: 'textarea' },
-      { label: 'Image', home: { at: 'property', key: 'og:image' }, control: 'image',
-        hint: 'Wide and at least 1200 pixels across. An absolute address, because it is ' +
-          'fetched by somebody else’s server.' },
+      {
+        label: 'Description',
+        home: { at: 'property', key: 'og:description' },
+        control: 'textarea',
+      },
+      {
+        label: 'Image',
+        home: { at: 'property', key: 'og:image' },
+        control: 'image',
+        hint:
+          'Wide and at least 1200 pixels across. An absolute address, because it is ' +
+          'fetched by somebody else’s server.',
+      },
       { label: 'Address', home: { at: 'property', key: 'og:url' }, control: 'text', links: true },
-      { label: 'Type', home: { at: 'property', key: 'og:type' }, control: 'text',
-        options: ['website', 'article', 'profile', 'video.other'] },
-      { label: 'Card', home: { at: 'name', key: 'twitter:card' }, control: 'text',
-        options: ['summary_large_image', 'summary'] },
+      {
+        label: 'Type',
+        home: { at: 'property', key: 'og:type' },
+        control: 'text',
+        options: ['website', 'article', 'profile', 'video.other'],
+      },
+      {
+        label: 'Card',
+        home: { at: 'name', key: 'twitter:card' },
+        control: 'text',
+        options: ['summary_large_image', 'summary'],
+      },
       { label: 'Card image', home: { at: 'name', key: 'twitter:image' }, control: 'image' },
     ],
   },
@@ -85,11 +125,16 @@ export const GROUPS: { title: string; note?: string; fields: MetaField[] }[] = [
 // The element a field lives in, when there is one.
 function holder(doc: Document, home: Home): Element | null {
   switch (home.at) {
-    case 'title': return doc.querySelector('head title');
-    case 'lang': return doc.documentElement;
-    case 'canonical': return doc.querySelector('head link[rel="canonical"]');
-    case 'name': return doc.querySelector('head meta[name="' + home.key + '"]');
-    case 'property': return doc.querySelector('head meta[property="' + home.key + '"]');
+    case 'title':
+      return doc.querySelector('head title');
+    case 'lang':
+      return doc.documentElement;
+    case 'canonical':
+      return doc.querySelector('head link[rel="canonical"]');
+    case 'name':
+      return doc.querySelector('head meta[name="' + home.key + '"]');
+    case 'property':
+      return doc.querySelector('head meta[property="' + home.key + '"]');
   }
 }
 
@@ -99,10 +144,14 @@ export function readMeta(doc: Document, home: Home): string {
     return '';
   }
   switch (home.at) {
-    case 'title': return element.textContent ?? '';
-    case 'lang': return element.getAttribute('lang') ?? '';
-    case 'canonical': return element.getAttribute('href') ?? '';
-    default: return element.getAttribute('content') ?? '';
+    case 'title':
+      return element.textContent ?? '';
+    case 'lang':
+      return element.getAttribute('lang') ?? '';
+    case 'canonical':
+      return element.getAttribute('href') ?? '';
+    default:
+      return element.getAttribute('content') ?? '';
   }
 }
 
@@ -174,15 +223,16 @@ function listFor(field: { options?: unknown; links?: unknown }, id: string) {
   return field.links ? 'designer-page-urls' : undefined;
 }
 
-export default function Meta(props: Readonly<{
-  doc: Document | null;
-  // Absolute origin of the cloudlet, so a preview loads from where the page will.
-  origin: string;
-  urls: string[];
-  onSet: (home: Home, value: string) => void;
-  onChooseImage: (home: Home) => void;
-}>) {
-
+export default function Meta(
+  props: Readonly<{
+    doc: Document | null;
+    // Absolute origin of the cloudlet, so a preview loads from where the page will.
+    origin: string;
+    urls: string[];
+    onSet: (home: Home, value: string) => void;
+    onChooseImage: (home: Home) => void;
+  }>,
+) {
   /*
    * The one field whose server-filled value has been deliberately unlocked.
    * A page's canonical URL and its og:url are routinely filled in by the
@@ -208,19 +258,21 @@ export default function Meta(props: Readonly<{
           <button
             className="designer-image-preview"
             title="Choose an image"
-            onClick={() => props.onChooseImage(field.home)}>
-            {value === ''
-              ? <span className="designer-muted">Nothing chosen</span>
-              : <img src={value} alt="" />}
+            onClick={() => props.onChooseImage(field.home)}
+          >
+            {value === '' ? (
+              <span className="designer-muted">Nothing chosen</span>
+            ) : (
+              <img src={value} alt="" />
+            )}
           </button>
           <input
             type="text"
             value={value}
             placeholder="None"
-            onChange={event => props.onSet(field.home, event.target.value)} />
-          <button
-            className="btn btn-secondary"
-            onClick={() => props.onChooseImage(field.home)}>
+            onChange={event => props.onSet(field.home, event.target.value)}
+          />
+          <button className="btn btn-secondary" onClick={() => props.onChooseImage(field.home)}>
             Choose image…
           </button>
           {field.hint && <p className="designer-note">{field.hint}</p>}
@@ -240,7 +292,8 @@ export default function Meta(props: Readonly<{
             readOnly={locked}
             value={value}
             placeholder="None"
-            onChange={event => props.onSet(field.home, event.target.value)} />
+            onChange={event => props.onSet(field.home, event.target.value)}
+          />
         ) : (
           <input
             type="text"
@@ -248,7 +301,8 @@ export default function Meta(props: Readonly<{
             readOnly={locked}
             value={value}
             placeholder="None"
-            onChange={event => props.onSet(field.home, event.target.value)} />
+            onChange={event => props.onSet(field.home, event.target.value)}
+          />
         )}
         {filled && (
           <p className="designer-note">
@@ -256,7 +310,11 @@ export default function Meta(props: Readonly<{
             {locked && (
               <button
                 className="btn btn-secondary btn-small designer-unlock"
-                onClick={event => { event.preventDefault(); setUnlocked(id); }}>
+                onClick={event => {
+                  event.preventDefault();
+                  setUnlocked(id);
+                }}
+              >
                 Edit anyway
               </button>
             )}
@@ -264,7 +322,9 @@ export default function Meta(props: Readonly<{
         )}
         {field.options && (
           <datalist id={id + '-options'}>
-            {field.options.map(option => <option key={option} value={option} />)}
+            {field.options.map(option => (
+              <option key={option} value={option} />
+            ))}
           </datalist>
         )}
         {field.hint && <p className="designer-note">{field.hint}</p>}
@@ -276,7 +336,9 @@ export default function Meta(props: Readonly<{
     <div className="designer-fields">
       {/* Absolute, because these are read by other people's servers. */}
       <datalist id="designer-page-urls">
-        {props.urls.map(url => <option key={url} value={props.origin + url} />)}
+        {props.urls.map(url => (
+          <option key={url} value={props.origin + url} />
+        ))}
       </datalist>
       {GROUPS.map((group, groupIndex) => (
         <div key={group.title}>

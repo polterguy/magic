@@ -20,7 +20,6 @@ import { verifyTicket } from '../lib/api';
 export const MAGIC_LINK_PATH = '/authentication/magic-link';
 
 export default function MagicLink() {
-
   const { backend, loginWithTicket, logout } = useAuth();
   const navigate = useNavigate();
   /*
@@ -32,8 +31,7 @@ export default function MagicLink() {
    * The token stops travelling with the page a moment later anyway, when
    * this navigates away.
    */
-  const [token] = useState(
-    () => new URLSearchParams(window.location.search).get('token'));
+  const [token] = useState(() => new URLSearchParams(window.location.search).get('token'));
 
   // Attaching the token to the backend the link named.
   useEffect(() => {
@@ -75,7 +73,9 @@ export default function MagicLink() {
     <div className="login-wrapper">
       <div className="login-card" style={{ textAlign: 'center' }}>
         <h1>magic</h1>
-        <p className="muted" style={{ margin: 0 }}>Signing you in…</p>
+        <p className="muted" style={{ margin: 0 }}>
+          Signing you in…
+        </p>
       </div>
     </div>
   );

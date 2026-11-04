@@ -31,13 +31,16 @@ export type MediaKind = 'image' | 'video' | 'audio';
  * container carries either, and which one a given file holds is not knowable
  * from its name.
  */
-const KINDS: Record<MediaKind, {
-  title: string;
-  noun: string;
-  extensions: string[];
-  // Whether the element should carry the file's own width and height.
-  sized: boolean;
-}> = {
+const KINDS: Record<
+  MediaKind,
+  {
+    title: string;
+    noun: string;
+    extensions: string[];
+    // Whether the element should carry the file's own width and height.
+    sized: boolean;
+  }
+> = {
   image: {
     title: 'Choose an image',
     noun: 'image',
@@ -92,16 +95,17 @@ function countLabel(shown: number, total: number) {
   return shown === total ? total + ' files' : shown + ' of ' + total;
 }
 
-export default function Media(props: Readonly<{
-  kind: MediaKind;
-  // Absolute origin of the cloudlet, so previews load from where the page will.
-  origin: string;
-  // What the element points at now, so the current file can be marked.
-  current: string;
-  onPick: (picked: Picked) => void;
-  onCancel: () => void;
-}>) {
-
+export default function Media(
+  props: Readonly<{
+    kind: MediaKind;
+    // Absolute origin of the cloudlet, so previews load from where the page will.
+    origin: string;
+    // What the element points at now, so the current file can be marked.
+    current: string;
+    onPick: (picked: Picked) => void;
+    onCancel: () => void;
+  }>,
+) {
   const kind = KINDS[props.kind];
   const [files, setFiles] = useState<string[] | null>(null);
   const [error, setError] = useState('');
@@ -163,8 +167,9 @@ export default function Media(props: Readonly<{
    */
   const groups = useMemo(() => {
     const needle = filter.trim().toLowerCase();
-    const matching = (files ?? [])
-      .filter(file => needle === '' || file.toLowerCase().includes(needle));
+    const matching = (files ?? []).filter(
+      file => needle === '' || file.toLowerCase().includes(needle),
+    );
     const byFolder = new Map<string, string[]>();
     matching.forEach(file => {
       const at = webPath(file.substring(0, file.lastIndexOf('/'))) || '/';
@@ -206,7 +211,10 @@ export default function Media(props: Readonly<{
           src={props.origin + path}
           alt=""
           loading="lazy"
-          onLoad={event => measured(file, event.currentTarget.naturalWidth, event.currentTarget.naturalHeight)} />
+          onLoad={event =>
+            measured(file, event.currentTarget.naturalWidth, event.currentTarget.naturalHeight)
+          }
+        />
       );
     }
     if (props.kind === 'video') {
@@ -221,13 +229,23 @@ export default function Media(props: Readonly<{
           preload="metadata"
           muted
           playsInline
-          onLoadedMetadata={event => measured(file, event.currentTarget.videoWidth, event.currentTarget.videoHeight)} />
+          onLoadedMetadata={event =>
+            measured(file, event.currentTarget.videoWidth, event.currentTarget.videoHeight)
+          }
+        />
       );
     }
     // Audio has nothing to look at, so the tile says what it is instead.
     return (
       <span className="designer-media-audio" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <svg
+          viewBox="0 0 24 24"
+          width="28"
+          height="28"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        >
           <path d="M9 18V5l10-2v13" />
           <circle cx="6" cy="18" r="3" />
           <circle cx="16" cy="16" r="3" />
@@ -245,14 +263,15 @@ export default function Media(props: Readonly<{
         className="designer-image-filter"
         placeholder="Filter by name or folder…"
         value={filter}
-        onChange={event => setFilter(event.target.value)} />
+        onChange={event => setFilter(event.target.value)}
+      />
 
       {error !== '' && <p className="designer-note error">{error}</p>}
       {files === null && error === '' && <p className="designer-note">Loading…</p>}
       {files !== null && total === 0 && (
         <p className="designer-note">
-          There is no {kind.noun} under <code>{WEB_ROOT}</code> yet. Upload one below and it
-          will show up here.
+          There is no {kind.noun} under <code>{WEB_ROOT}</code> yet. Upload one below and it will
+          show up here.
         </p>
       )}
       {files !== null && total > 0 && shown === 0 && (
@@ -272,9 +291,12 @@ export default function Media(props: Readonly<{
                     key={file}
                     className={'designer-image' + (path === props.current ? ' current' : '')}
                     title={path}
-                    onClick={() => pick(file)}>
+                    onClick={() => pick(file)}
+                  >
                     {preview(file, path)}
-                    <span className="designer-image-name">{path.substring(path.lastIndexOf('/') + 1)}</span>
+                    <span className="designer-image-name">
+                      {path.substring(path.lastIndexOf('/') + 1)}
+                    </span>
                     <span className="designer-image-size">
                       {size ? size[0] + ' × ' + size[1] : ''}
                     </span>
@@ -302,23 +324,30 @@ export default function Media(props: Readonly<{
             }
             // So the same file can be chosen twice in a row.
             event.target.value = '';
-          }} />
+          }}
+        />
         <select
           value={folder}
           title="Where an upload goes"
           disabled={uploading}
-          onChange={event => setFolder(event.target.value)}>
+          onChange={event => setFolder(event.target.value)}
+        >
           {folders.map(name => (
-            <option key={name} value={name}>{name === '' ? '/' : name}</option>
+            <option key={name} value={name}>
+              {name === '' ? '/' : name}
+            </option>
           ))}
         </select>
         <button
           className="btn btn-secondary"
           disabled={uploading}
-          onClick={() => fileRef.current?.click()}>
+          onClick={() => fileRef.current?.click()}
+        >
           {uploading ? 'Uploading…' : 'Upload…'}
         </button>
-        <button className="btn btn-secondary" onClick={props.onCancel}>Cancel</button>
+        <button className="btn btn-secondary" onClick={props.onCancel}>
+          Cancel
+        </button>
       </div>
     </Modal>
   );

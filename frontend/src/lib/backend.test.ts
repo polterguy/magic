@@ -104,8 +104,9 @@ describe('modelPriceLabel', () => {
   });
 
   it('formats known prices per million tokens', () => {
-    expect(modelPriceLabel({ input_price: 2.5, output_price: 15 }))
-      .toBe('  ·  $2.50 in / $15.00 out per 1M');
+    expect(modelPriceLabel({ input_price: 2.5, output_price: 15 })).toBe(
+      '  ·  $2.50 in / $15.00 out per 1M',
+    );
   });
 });
 
@@ -123,7 +124,8 @@ describe('unfence', () => {
   });
 
   it('drops explanation before and after the fence', () => {
-    const answer = 'Sure! Here is the updated markup:\n\n```html\n<h1>Hi</h1>\n```\n\n' +
+    const answer =
+      'Sure! Here is the updated markup:\n\n```html\n<h1>Hi</h1>\n```\n\n' +
       'Let me know if you would like anything else.';
     expect(unfence(answer, 'html')).toBe('<h1>Hi</h1>');
   });
@@ -133,8 +135,9 @@ describe('unfence', () => {
   });
 
   it('keeps indentation inside the block', () => {
-    expect(unfence('```html\n<div>\n  <p>Hi</p>\n</div>\n```', 'html'))
-      .toBe('<div>\n  <p>Hi</p>\n</div>');
+    expect(unfence('```html\n<div>\n  <p>Hi</p>\n</div>\n```', 'html')).toBe(
+      '<div>\n  <p>Hi</p>\n</div>',
+    );
   });
 
   it('leaves an unfenced answer exactly as it came', () => {

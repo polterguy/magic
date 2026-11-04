@@ -73,25 +73,38 @@ export function loadEndpoints(refresh = false): Promise<EndpointMeta[]> {
  * just not showing a total.
  */
 export function dataGridSources(endpoints: EndpointMeta[]): DataSource[] {
-  const reads = endpoints.filter(endpoint => endpoint.type === 'crud-read' && endpoint.verb === 'get');
+  const reads = endpoints.filter(
+    endpoint => endpoint.type === 'crud-read' && endpoint.verb === 'get',
+  );
   return reads
     .map(read => {
       const segments = read.path.split('/');
       const table = segments.at(-1)!;
       const module = segments.at(-2)!;
       const count = endpoints.find(
-        endpoint => endpoint.type === 'crud-count' && endpoint.path === read.path + '-count');
+        endpoint => endpoint.type === 'crud-count' && endpoint.path === read.path + '-count',
+      );
       /*
        * Delete and update share the read endpoint's own path exactly —
        * crudify puts all four verbs for a table at the same URL, only the
        * suffixed siblings (count, aggregate, ...) get a different path.
        */
       const del = endpoints.find(
-        endpoint => endpoint.type === 'crud-delete' && endpoint.verb === 'delete' && endpoint.path === read.path);
+        endpoint =>
+          endpoint.type === 'crud-delete' &&
+          endpoint.verb === 'delete' &&
+          endpoint.path === read.path,
+      );
       const update = endpoints.find(
-        endpoint => endpoint.type === 'crud-update' && endpoint.verb === 'put' && endpoint.path === read.path);
+        endpoint =>
+          endpoint.type === 'crud-update' && endpoint.verb === 'put' && endpoint.path === read.path,
+      );
       const create = endpoints.find(
-        endpoint => endpoint.type === 'crud-create' && endpoint.verb === 'post' && endpoint.path === read.path);
+        endpoint =>
+          endpoint.type === 'crud-create' &&
+          endpoint.verb === 'post' &&
+          endpoint.path === read.path,
+      );
       const primaryKey = (del?.input ?? []).map(field => field.name);
       const editableColumns = (update?.input ?? [])
         .map(field => field.name)
@@ -106,11 +119,17 @@ export function dataGridSources(endpoints: EndpointMeta[]): DataSource[] {
         updateUrl: update && editableColumns.length > 0 ? '/' + update.path : null,
         editableColumns,
         primaryKey,
-        columns: (read.output ?? []).map(column => (
-          { name: column.name, type: column.type, lookup: column.lookup })),
+        columns: (read.output ?? []).map(column => ({
+          name: column.name,
+          type: column.type,
+          lookup: column.lookup,
+        })),
         createUrl: create ? '/' + create.path : null,
-        createColumns: (create?.input ?? []).map(column => (
-          { name: column.name, type: column.type, lookup: column.lookup })),
+        createColumns: (create?.input ?? []).map(column => ({
+          name: column.name,
+          type: column.type,
+          lookup: column.lookup,
+        })),
       };
     })
     .sort((a, b) => a.label.localeCompare(b.label));

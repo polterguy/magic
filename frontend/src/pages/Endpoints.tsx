@@ -18,7 +18,6 @@ import {
   loadFile,
 } from '../lib/api';
 
-
 /*
  * The module an endpoint belongs to — magic/system/<module>/… is a system
  * module, magic/modules/<module>/… and magic/<module>/… are user modules.
@@ -34,16 +33,13 @@ function moduleOf(endpoint: Endpoint): { name: string; system: boolean } {
   return { name: parts[1] ?? endpoint.path, system: false };
 }
 
-
 /*
  * The Hyperlambda file backing an endpoint — "magic/modules/foo/bar" invoked
  * as GET is "/modules/foo/bar.get.hl" on disk.
  */
 function sourceFile(endpoint: Endpoint) {
-  return '/' + endpoint.path.substring('magic/'.length)
-    + '.' + endpoint.verb.toLowerCase() + '.hl';
+  return '/' + endpoint.path.substring('magic/'.length) + '.' + endpoint.verb.toLowerCase() + '.hl';
 }
-
 
 interface ModuleGroup {
   key: string;
@@ -54,21 +50,34 @@ interface ModuleGroup {
 }
 
 // Whether an endpoint passes the filters the page has been given.
-function isVisible(endpoint: Endpoint, module: { name: string; system: boolean }, query: string, showSystem: boolean, publicOnly: boolean) {
+function isVisible(
+  endpoint: Endpoint,
+  module: { name: string; system: boolean },
+  query: string,
+  showSystem: boolean,
+  publicOnly: boolean,
+) {
   if (module.system && !showSystem) {
     return false;
   }
   if (publicOnly && (endpoint.auth?.length ?? 0) > 0) {
     return false;
   }
-  return !query ||
+  return (
+    !query ||
     endpoint.path.toLowerCase().includes(query) ||
     endpoint.verb.toLowerCase().includes(query) ||
-    module.name.toLowerCase().includes(query);
+    module.name.toLowerCase().includes(query)
+  );
 }
 
 // The visible endpoints, grouped by module, user modules first and system modules last.
-function groupEndpoints(endpoints: Endpoint[], query: string, showSystem: boolean, publicOnly: boolean) {
+function groupEndpoints(
+  endpoints: Endpoint[],
+  query: string,
+  showSystem: boolean,
+  publicOnly: boolean,
+) {
   const map = new Map<string, ModuleGroup>();
   for (const endpoint of endpoints) {
     const module = moduleOf(endpoint);
@@ -89,16 +98,18 @@ function groupEndpoints(endpoints: Endpoint[], query: string, showSystem: boolea
   }
   const list = [...map.values()];
   for (const group of list) {
-    group.endpoints.sort((left, right) =>
-      left.path.localeCompare(right.path) || left.verb.localeCompare(right.verb));
+    group.endpoints.sort(
+      (left, right) => left.path.localeCompare(right.path) || left.verb.localeCompare(right.verb),
+    );
   }
   // Alphabetical within each.
-  return list.sort((left, right) =>
-    Number(left.system) - Number(right.system) || left.name.localeCompare(right.name));
+  return list.sort(
+    (left, right) =>
+      Number(left.system) - Number(right.system) || left.name.localeCompare(right.name),
+  );
 }
 
 export default function Endpoints() {
-
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
   const [filter, setFilter] = useState('');
   const [showSystem, setShowSystem] = useState(false);
@@ -160,10 +171,11 @@ export default function Endpoints() {
 
   const groups = useMemo(
     () => groupEndpoints(endpoints, query, showSystem, publicOnly),
-    [endpoints, query, showSystem, publicOnly]);
+    [endpoints, query, showSystem, publicOnly],
+  );
 
   const shown = groups.reduce((total, group) => total + group.endpoints.length, 0);
-  const isOpen = (key: string) => query ? true : expandedModules.has(key);
+  const isOpen = (key: string) => (query ? true : expandedModules.has(key));
 
   function toggleModule(key: string) {
     const next = new Set(expandedModules);
@@ -219,120 +231,148 @@ export default function Endpoints() {
             <input
               type="checkbox"
               checked={showSystem}
-              onChange={e => setShowSystem(e.target.checked)} />
+              onChange={e => setShowSystem(e.target.checked)}
+            />
             Show system endpoints
           </label>
           <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <input
               type="checkbox"
               checked={publicOnly}
-              onChange={e => setPublicOnly(e.target.checked)} />
+              onChange={e => setPublicOnly(e.target.checked)}
+            />
             Public only
           </label>
           <SearchInput
             placeholder="Filter endpoints…"
             value={filter}
             onChange={setFilter}
-            style={{ width: 300 }} />
+            style={{ width: 300 }}
+          />
         </div>
       </div>
       {loading && <ModuleListSkeleton />}
       <div>
-      {!loading && groups.map(group => (
-        <div
-          className="card"
-          key={group.key}
-          style={{ padding: 0, overflow: 'hidden', marginBottom: 10 }}>
-          <div
-            className={'module-header' + (group.system ? ' system' : '')}
-            tabIndex={0}
-            role="button"
-            aria-expanded={isOpen(group.key)}
-            onClick={() => toggleModule(group.key)}
-            onKeyDown={event => {
-              if (event.target === event.currentTarget &&
-                  (event.key === 'Enter' || event.key === ' ')) {
-                event.preventDefault();
-                toggleModule(group.key);
-              }
-            }}>
-            <span className="tree-chevron">
-              <ChevronIcon open={isOpen(group.key)} />
-            </span>
-            <strong>{group.name}</strong>
-            {group.system && <span className="badge badge-debug">system</span>}
-            <span className="muted">
-              {group.endpoints.length} endpoint{group.endpoints.length === 1 ? '' : 's'}
-            </span>
-            <span style={{ flex: 1 }} />
-            <button
-              className="icon-btn"
-              title={'OpenAPI specification for ' + group.folder}
-              onClick={e => { e.stopPropagation(); void showOpenApi(group.folder); }}>
-              <BracesIcon />
-            </button>
-          </div>
-          {isOpen(group.key) && (
-            <table>
-              <tbody>
-                {group.endpoints.map(endpoint => {
-                  const key = endpoint.verb + ' ' + endpoint.path;
-                  return (
-                    <Fragment key={key}>
-                      <tr
-                        className="clickable"
-                        tabIndex={0}
-                        ref={element => {
-                          // One-shot: the palette's deep link lands here.
-                          if (element && scrollTarget.current === key) {
-                            scrollTarget.current = null;
-                            element.scrollIntoView({ block: 'center' });
-                          }
-                        }}
-                        onClick={() => setExpanded(expanded === key ? null : key)}
-                        onKeyDown={event => {
-                          if (event.target === event.currentTarget &&
-                              (event.key === 'Enter' || event.key === ' ')) {
-                            event.preventDefault();
-                            setExpanded(expanded === key ? null : key);
-                          }
-                        }}>
-                        <td className="verb-cell" style={{ width: 90 }}>
-                          <span className={'badge badge-' + endpoint.verb.toLowerCase()}>
-                            {endpoint.verb}
-                          </span>
-                        </td>
-                        <td className="mono" data-label="Path">{endpoint.path}</td>
-                        <td style={{ textAlign: 'right' }} data-label="Auth">
-                          <span className="role-chips">
-                            {(endpoint.auth ?? []).map(role =>
-                              <span className="chip" key={role}>{role}</span>)}
-                          </span>
-                        </td>
-                      </tr>
-                      {expanded === key && (
-                        <tr>
-                          <td colSpan={3} style={{ background: 'var(--accent-soft)', padding: 12 }}>
-                            <div className="card" style={{ padding: 16 }}>
-                              <InvokePanel
-                                endpoint={endpoint}
-                                onResult={setResult}
-                                onDebug={args => runDebug(endpoint, args)}
-                                onEdit={() => navigate(
-                                  '/hyper-ide?open=' + encodeURIComponent(sourceFile(endpoint)))}
-                                onOpenApi={() => showOpenApi(sourceFile(endpoint))} />
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
-        </div>
-      ))}
+        {!loading &&
+          groups.map(group => (
+            <div
+              className="card"
+              key={group.key}
+              style={{ padding: 0, overflow: 'hidden', marginBottom: 10 }}
+            >
+              <div
+                className={'module-header' + (group.system ? ' system' : '')}
+                tabIndex={0}
+                role="button"
+                aria-expanded={isOpen(group.key)}
+                onClick={() => toggleModule(group.key)}
+                onKeyDown={event => {
+                  if (
+                    event.target === event.currentTarget &&
+                    (event.key === 'Enter' || event.key === ' ')
+                  ) {
+                    event.preventDefault();
+                    toggleModule(group.key);
+                  }
+                }}
+              >
+                <span className="tree-chevron">
+                  <ChevronIcon open={isOpen(group.key)} />
+                </span>
+                <strong>{group.name}</strong>
+                {group.system && <span className="badge badge-debug">system</span>}
+                <span className="muted">
+                  {group.endpoints.length} endpoint{group.endpoints.length === 1 ? '' : 's'}
+                </span>
+                <span style={{ flex: 1 }} />
+                <button
+                  className="icon-btn"
+                  title={'OpenAPI specification for ' + group.folder}
+                  onClick={e => {
+                    e.stopPropagation();
+                    void showOpenApi(group.folder);
+                  }}
+                >
+                  <BracesIcon />
+                </button>
+              </div>
+              {isOpen(group.key) && (
+                <table>
+                  <tbody>
+                    {group.endpoints.map(endpoint => {
+                      const key = endpoint.verb + ' ' + endpoint.path;
+                      return (
+                        <Fragment key={key}>
+                          <tr
+                            className="clickable"
+                            tabIndex={0}
+                            ref={element => {
+                              // One-shot: the palette's deep link lands here.
+                              if (element && scrollTarget.current === key) {
+                                scrollTarget.current = null;
+                                element.scrollIntoView({ block: 'center' });
+                              }
+                            }}
+                            onClick={() => setExpanded(expanded === key ? null : key)}
+                            onKeyDown={event => {
+                              if (
+                                event.target === event.currentTarget &&
+                                (event.key === 'Enter' || event.key === ' ')
+                              ) {
+                                event.preventDefault();
+                                setExpanded(expanded === key ? null : key);
+                              }
+                            }}
+                          >
+                            <td className="verb-cell" style={{ width: 90 }}>
+                              <span className={'badge badge-' + endpoint.verb.toLowerCase()}>
+                                {endpoint.verb}
+                              </span>
+                            </td>
+                            <td className="mono" data-label="Path">
+                              {endpoint.path}
+                            </td>
+                            <td style={{ textAlign: 'right' }} data-label="Auth">
+                              <span className="role-chips">
+                                {(endpoint.auth ?? []).map(role => (
+                                  <span className="chip" key={role}>
+                                    {role}
+                                  </span>
+                                ))}
+                              </span>
+                            </td>
+                          </tr>
+                          {expanded === key && (
+                            <tr>
+                              <td
+                                colSpan={3}
+                                style={{ background: 'var(--accent-soft)', padding: 12 }}
+                              >
+                                <div className="card" style={{ padding: 16 }}>
+                                  <InvokePanel
+                                    endpoint={endpoint}
+                                    onResult={setResult}
+                                    onDebug={args => runDebug(endpoint, args)}
+                                    onEdit={() =>
+                                      navigate(
+                                        '/hyper-ide?open=' +
+                                          encodeURIComponent(sourceFile(endpoint)),
+                                      )
+                                    }
+                                    onOpenApi={() => showOpenApi(sourceFile(endpoint))}
+                                  />
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </Fragment>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          ))}
       </div>
       {result !== null && (
         <ResponseDialog result={result} httpInvocation onClose={() => setResult(null)} />
@@ -341,13 +381,15 @@ export default function Endpoints() {
         <DebugDialog
           filename={recording.file}
           recording={recording.steps}
-          onClose={() => setRecording(null)} />
+          onClose={() => setRecording(null)}
+        />
       )}
       {openApiSpec !== null && (
         <OpenApiDialog
           json={openApiSpec.json}
           target={openApiSpec.target}
-          onClose={() => setOpenApiSpec(null)} />
+          onClose={() => setOpenApiSpec(null)}
+        />
       )}
       {waiting && <AiWaiter />}
     </>

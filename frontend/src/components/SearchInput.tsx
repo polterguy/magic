@@ -5,12 +5,14 @@
 
 import { CSSProperties } from 'react';
 
-export default function SearchInput(props: Readonly<{
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  style?: CSSProperties;
-}>) {
+export default function SearchInput(
+  props: Readonly<{
+    value: string;
+    onChange: (value: string) => void;
+    placeholder?: string;
+    style?: CSSProperties;
+  }>,
+) {
   return (
     <span className="search-input" style={props.style}>
       <input
@@ -18,7 +20,8 @@ export default function SearchInput(props: Readonly<{
         placeholder={props.placeholder}
         autoComplete="off"
         value={props.value}
-        onChange={event => props.onChange(event.target.value)} />
+        onChange={event => props.onChange(event.target.value)}
+      />
       {props.value !== '' && (
         <button type="button" title="Clear search" onClick={() => props.onChange('')}>
           ×

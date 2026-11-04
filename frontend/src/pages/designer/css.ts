@@ -125,9 +125,11 @@ function parse(text: string) {
 export function matchingSelectors(css: string, element: Element): string[] {
   const found: string[] = [];
   for (const rule of Array.from(parse(css).cssRules)) {
-    if (!(rule instanceof CSSStyleRule) ||
-        rule.selectorText.includes(':') ||
-        rule.selectorText.trim() === '*') {
+    if (
+      !(rule instanceof CSSStyleRule) ||
+      rule.selectorText.includes(':') ||
+      rule.selectorText.trim() === '*'
+    ) {
       continue;
     }
     if (element.matches(rule.selectorText) && !found.includes(rule.selectorText)) {
@@ -156,7 +158,8 @@ function resolve(address: string, href: string) {
 
 export function absoluteUrls(css: string, href: string): string {
   return css
-    .replace(/\burl\(\s*(?:"([^"]*)"|'([^']*)'|([^'")\s]+))\s*\)/gi,
+    .replace(
+      /\burl\(\s*(?:"([^"]*)"|'([^']*)'|([^'")\s]+))\s*\)/gi,
       (whole, doubleQuoted, singleQuoted, bare) => {
         const address = doubleQuoted ?? singleQuoted ?? bare;
         let quote = '';
@@ -168,11 +171,11 @@ export function absoluteUrls(css: string, href: string): string {
         return ABSOLUTE.test(address)
           ? whole
           : 'url(' + quote + resolve(address, href) + quote + ')';
-      })
-    .replace(/@import\s+(['"])([^'"]+)\1/gi,
-      (whole, quote, address) => ABSOLUTE.test(address)
-        ? whole
-        : '@import ' + quote + resolve(address, href) + quote);
+      },
+    )
+    .replace(/@import\s+(['"])([^'"]+)\1/gi, (whole, quote, address) =>
+      ABSOLUTE.test(address) ? whole : '@import ' + quote + resolve(address, href) + quote,
+    );
 }
 
 /*
@@ -200,14 +203,13 @@ export function absoluteUrls(css: string, href: string): string {
  * author wrote it.
  */
 export function ownStylesheet(doc: Document, file: string, head: string, tail: string) {
-  const link = Array.from(doc.querySelectorAll('link[rel~="stylesheet"][href]'))
-    .find(candidate => {
-      try {
-        return '/etc/www' + new URL((candidate as HTMLLinkElement).href).pathname === file;
-      } catch {
-        return false;
-      }
-    }) as HTMLLinkElement | undefined;
+  const link = Array.from(doc.querySelectorAll('link[rel~="stylesheet"][href]')).find(candidate => {
+    try {
+      return '/etc/www' + new URL((candidate as HTMLLinkElement).href).pathname === file;
+    } catch {
+      return false;
+    }
+  }) as HTMLLinkElement | undefined;
   if (!link) {
     return;
   }
@@ -238,11 +240,7 @@ export function ownStylesheet(doc: Document, file: string, head: string, tail: s
  * you styled a minute ago would be missing from the list the next time the
  * page was opened, and its rule would sit there uneditable.
  */
-export function selectorsFor(
-  element: Element,
-  css: string,
-  overrides: Overrides): string[] {
-
+export function selectorsFor(element: Element, css: string, overrides: Overrides): string[] {
   const found: string[] = [];
   const add = (selector: string) => {
     if (selector && !found.includes(selector)) {
@@ -331,11 +329,15 @@ export function splitCss(css: string): { head: string; overrides: Overrides; tai
 export function overrideCss(overrides: Overrides): string {
   return Object.entries(overrides)
     .filter(([, declarations]) => Object.keys(declarations).length > 0)
-    .map(([selector, declarations]) => selector + ' {\n' +
-      Object.entries(declarations)
-        .map(([property, value]) => '  ' + property + ': ' + value + ';')
-        .join('\n') +
-      '\n}')
+    .map(
+      ([selector, declarations]) =>
+        selector +
+        ' {\n' +
+        Object.entries(declarations)
+          .map(([property, value]) => '  ' + property + ': ' + value + ';')
+          .join('\n') +
+        '\n}',
+    )
     .join('\n\n');
 }
 
@@ -353,7 +355,9 @@ export function joinCss(head: string, overrides: Overrides, tail = ''): string {
   if (block === '') {
     return [author, rest].filter(part => part !== '').join('\n\n') + '\n';
   }
-  return [author, OPEN + '\n' + WARNING + '\n' + block + '\n' + CLOSE, rest]
-    .filter(part => part !== '')
-    .join('\n\n') + '\n';
+  return (
+    [author, OPEN + '\n' + WARNING + '\n' + block + '\n' + CLOSE, rest]
+      .filter(part => part !== '')
+      .join('\n\n') + '\n'
+  );
 }

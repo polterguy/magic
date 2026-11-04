@@ -11,7 +11,6 @@ import { useAuth } from '../lib/AuthContext';
 import { tokenRoles } from '../lib/backend';
 
 export default function NoAccess() {
-
   const { backend, logout } = useAuth();
   const roles = backend?.token ? tokenRoles(backend.token) : [];
 
@@ -21,18 +20,23 @@ export default function NoAccess() {
         <div className="no-access-mark">!</div>
         <h1 style={{ margin: 0 }}>No dashboard access</h1>
         <p style={{ margin: 0 }}>
-          You are signed in as <strong>{backend?.username}</strong>, but this
-          account cannot use the dashboard.
+          You are signed in as <strong>{backend?.username}</strong>, but this account cannot use the
+          dashboard.
         </p>
         <p className="muted" style={{ margin: 0 }}>
-          The dashboard requires the <strong>root</strong> role. This account
-          has{' '}
-          {roles.length > 0
-            ? <>only <strong>{roles.join(', ')}</strong></>
-            : <strong>no roles at all</strong>}.
-          Ask an administrator to grant your account access, then sign in again.
+          The dashboard requires the <strong>root</strong> role. This account has{' '}
+          {roles.length > 0 ? (
+            <>
+              only <strong>{roles.join(', ')}</strong>
+            </>
+          ) : (
+            <strong>no roles at all</strong>
+          )}
+          . Ask an administrator to grant your account access, then sign in again.
         </p>
-        <button className="btn" onClick={logout}>Sign out</button>
+        <button className="btn" onClick={logout}>
+          Sign out
+        </button>
       </div>
     </div>
   );

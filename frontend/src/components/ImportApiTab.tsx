@@ -44,7 +44,6 @@ function importLabel(count: number) {
 }
 
 export default function ImportApiTab() {
-
   const [url, setUrl] = useState('');
   const [spec, setSpec] = useState<OpenApiSpec | null>(null);
   const [busy, setBusy] = useState(false);
@@ -95,7 +94,9 @@ export default function ImportApiTab() {
       setBaseUrl(withoutTrailingSlashes(absolute));
 
       const guess = (result.title ?? 'imported-api')
-        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
       setModuleName(guess);
       setConfigKey('magic:integrations:' + guess + ':key');
 
@@ -207,11 +208,13 @@ export default function ImportApiTab() {
   }
 
   const operations = spec?.operations ?? [];
-  const shown = operations.filter(op =>
-    !filter ||
-    op.id.toLowerCase().includes(filter.toLowerCase()) ||
-    (op.summary ?? '').toLowerCase().includes(filter.toLowerCase()) ||
-    (op.tag ?? '').toLowerCase().includes(filter.toLowerCase()));
+  const shown = operations.filter(
+    op =>
+      !filter ||
+      op.id.toLowerCase().includes(filter.toLowerCase()) ||
+      (op.summary ?? '').toLowerCase().includes(filter.toLowerCase()) ||
+      (op.tag ?? '').toLowerCase().includes(filter.toLowerCase()),
+  );
 
   /*
    * Grouped by the specification's own tags, which is how its authors organised it — but plenty of
@@ -222,7 +225,12 @@ export default function ImportApiTab() {
     if (op.tag) {
       return op.tag;
     }
-    return op.path.split('/').filter(Boolean).find(s => !/^v\d+$/i.test(s)) ?? 'Other';
+    return (
+      op.path
+        .split('/')
+        .filter(Boolean)
+        .find(s => !/^v\d+$/i.test(s)) ?? 'Other'
+    );
   }
   const groups: Record<string, OpenApiOperation[]> = {};
   shown.forEach(op => {
@@ -256,7 +264,8 @@ export default function ImportApiTab() {
 
       {/* Wrapped in a form-grid so the caption gets the same styling as every other field's. */}
       <div className="form-grid" style={{ marginTop: 20 }}>
-        <label>OpenAPI specification URL
+        <label>
+          OpenAPI specification URL
           <div style={{ display: 'flex', gap: 8 }}>
             <input
               type="text"
@@ -264,7 +273,13 @@ export default function ImportApiTab() {
               placeholder="https://api.example.com/openapi.json"
               value={url}
               onChange={e => setUrl(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void read(); } }} />
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  void read();
+                }
+              }}
+            />
             <button className="btn" onClick={read} disabled={busy}>
               {busy && !running ? 'Reading…' : 'Read'}
             </button>
@@ -279,15 +294,22 @@ export default function ImportApiTab() {
           </div>
 
           <div className="form-grid columns">
-            <label>Module name
+            <label>
+              Module name
               <input type="text" value={moduleName} onChange={e => setModuleName(e.target.value)} />
             </label>
-            <label>Base URL
+            <label>
+              Base URL
               <input type="text" value={baseUrl} onChange={e => setBaseUrl(e.target.value)} />
             </label>
-            <label>Upstream authentication
+            <label>
+              Upstream authentication
               <Select value={scheme} onChange={setScheme}>
-                {SCHEMES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                {SCHEMES.map(s => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
+                  </option>
+                ))}
               </Select>
             </label>
             {/* Nothing to configure without a credential, so the whole field goes — keeping its
@@ -299,26 +321,25 @@ export default function ImportApiTab() {
                   type="text"
                   style={{ flex: 1, minWidth: 0 }}
                   value={configKey}
-                  onChange={e => setConfigKey(e.target.value)} />
+                  onChange={e => setConfigKey(e.target.value)}
+                />
                 <button className="btn btn-secondary" onClick={() => setCredential('')}>
                   Set
                 </button>
               </div>
             </label>
             {/*
-              * The name only means anything for the two API-key schemes, so it is hidden for the
-              * rest — but it keeps its cell rather than unmounting, since removing it reflowed
-              * everything below every time the scheme changed.
-              */}
+             * The name only means anything for the two API-key schemes, so it is hidden for the
+             * rest — but it keeps its cell rather than unmounting, since removing it reflowed
+             * everything below every time the scheme changed.
+             */}
             <label
               style={{
                 visibility: scheme === 'header' || scheme === 'query' ? 'visible' : 'hidden',
-              }}>
+              }}
+            >
               {scheme === 'query' ? 'Query parameter name' : 'Header name'}
-              <input
-                type="text"
-                value={authName}
-                onChange={e => setAuthName(e.target.value)} />
+              <input type="text" value={authName} onChange={e => setAuthName(e.target.value)} />
             </label>
             <div>
               <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
@@ -326,13 +347,12 @@ export default function ImportApiTab() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <span>
-                  {auth.length > 0
-                    ? auth.join(', ')
-                    : <em className="muted">public — no roles</em>}
+                  {auth.length > 0 ? auth.join(', ') : <em className="muted">public — no roles</em>}
                 </span>
                 <button
                   className="btn btn-secondary btn-small"
-                  onClick={() => setAuthOpen(!authOpen)}>
+                  onClick={() => setAuthOpen(!authOpen)}
+                >
                   {authOpen ? 'Done' : 'Edit'}
                 </button>
               </div>
@@ -343,7 +363,8 @@ export default function ImportApiTab() {
             <input
               type="checkbox"
               checked={overwrite}
-              onChange={e => setOverwrite(e.target.checked)} />
+              onChange={e => setOverwrite(e.target.checked)}
+            />
             Overwrite existing files
           </label>
 
@@ -352,9 +373,10 @@ export default function ImportApiTab() {
               <RoleChips
                 roles={roles}
                 selected={auth}
-                onToggle={(role, selected) => setAuth(selected
-                  ? [...auth, role]
-                  : auth.filter(candidate => candidate !== role))} />
+                onToggle={(role, selected) =>
+                  setAuth(selected ? [...auth, role] : auth.filter(candidate => candidate !== role))
+                }
+              />
             </div>
           )}
 
@@ -364,7 +386,8 @@ export default function ImportApiTab() {
 
           <div
             className="card gen-table-card"
-            style={{ padding: 0, overflow: 'auto', maxHeight: 420 }}>
+            style={{ padding: 0, overflow: 'auto', maxHeight: 420 }}
+          >
             <table className="compact-table">
               <thead>
                 <tr>
@@ -372,7 +395,8 @@ export default function ImportApiTab() {
                     <input
                       type="checkbox"
                       checked={allShownSelected}
-                      onChange={() => setMany(shown, !allShownSelected)} />
+                      onChange={() => setMany(shown, !allShownSelected)}
+                    />
                   </th>
                   <th>Operation</th>
                   <th style={{ width: 130 }}>
@@ -381,85 +405,96 @@ export default function ImportApiTab() {
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(groups).sort((a, b) => a.localeCompare(b)).map(tag => {
-                  const ops = groups[tag];
-                  const allInGroup = ops.every(op => chosen[op.id]);
-                  return (
-                    <Fragment key={tag}>
-                      <tr
-                        className="clickable"
-                        title="Click to show operations"
-                        onClick={() => setExpandedTags(previous => {
-                          const next = new Set(previous);
-                          next.has(tag) ? next.delete(tag) : next.add(tag);
-                          return next;
-                        })}>
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={allInGroup}
-                            onChange={() => setMany(ops, !allInGroup)}
-                            onClick={e => e.stopPropagation()} />
-                        </td>
-                        <td>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                            <span className="tree-chevron">
-                              <ChevronIcon open={expandedTags.has(tag)} />
+                {Object.keys(groups)
+                  .sort((a, b) => a.localeCompare(b))
+                  .map(tag => {
+                    const ops = groups[tag];
+                    const allInGroup = ops.every(op => chosen[op.id]);
+                    return (
+                      <Fragment key={tag}>
+                        <tr
+                          className="clickable"
+                          title="Click to show operations"
+                          onClick={() =>
+                            setExpandedTags(previous => {
+                              const next = new Set(previous);
+                              next.has(tag) ? next.delete(tag) : next.add(tag);
+                              return next;
+                            })
+                          }
+                        >
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={allInGroup}
+                              onChange={() => setMany(ops, !allInGroup)}
+                              onClick={e => e.stopPropagation()}
+                            />
+                          </td>
+                          <td>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                              <span className="tree-chevron">
+                                <ChevronIcon open={expandedTags.has(tag)} />
+                              </span>
+                              <strong>{tag}</strong>
                             </span>
-                            <strong>{tag}</strong>
-                          </span>
-                        </td>
-                        <td>
-                          {ops.length} operation{ops.length === 1 ? '' : 's'}
-                        </td>
-                      </tr>
-                      {expandedTags.has(tag) && (
-                        <tr>
-                          {/*
-                            * Matching the CRUD table's detail row: 80px of left padding lines the
-                            * operations up under the tag name above.
-                            */}
-                          <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
-                            {ops.map(op => (
-                              <label
-                                key={op.id}
-                                className="checkbox-row"
-                                title={op.summary ?? op.id}
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: 8,
-                                  padding: '3px 0',
-                                  fontSize: 13,
-                                }}>
-                                <input
-                                  type="checkbox"
-                                  checked={!!chosen[op.id]}
-                                  onChange={e => setMany([op], e.target.checked)} />
-                                <span className="mono" style={{ minWidth: 56, flexShrink: 0 }}>
-                                  {op.verb.toUpperCase()}
-                                </span>
-                                <span className="mono" style={{ flexShrink: 0 }}>{op.path}</span>
-                                {op.summary && (
-                                  <span
-                                    className="muted"
-                                    style={{
-                                      minWidth: 0,
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                    }}>
-                                    — {op.summary}
-                                  </span>
-                                )}
-                              </label>
-                            ))}
+                          </td>
+                          <td>
+                            {ops.length} operation{ops.length === 1 ? '' : 's'}
                           </td>
                         </tr>
-                      )}
-                    </Fragment>
-                  );
-                })}
+                        {expandedTags.has(tag) && (
+                          <tr>
+                            {/*
+                             * Matching the CRUD table's detail row: 80px of left padding lines the
+                             * operations up under the tag name above.
+                             */}
+                            <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
+                              {ops.map(op => (
+                                <label
+                                  key={op.id}
+                                  className="checkbox-row"
+                                  title={op.summary ?? op.id}
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    padding: '3px 0',
+                                    fontSize: 13,
+                                  }}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={!!chosen[op.id]}
+                                    onChange={e => setMany([op], e.target.checked)}
+                                  />
+                                  <span className="mono" style={{ minWidth: 56, flexShrink: 0 }}>
+                                    {op.verb.toUpperCase()}
+                                  </span>
+                                  <span className="mono" style={{ flexShrink: 0 }}>
+                                    {op.path}
+                                  </span>
+                                  {op.summary && (
+                                    <span
+                                      className="muted"
+                                      style={{
+                                        minWidth: 0,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      — {op.summary}
+                                    </span>
+                                  )}
+                                </label>
+                              ))}
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    );
+                  })}
                 {shown.length === 0 && (
                   <tr>
                     <td colSpan={3} className="muted" style={{ textAlign: 'center', padding: 16 }}>
@@ -490,27 +525,27 @@ export default function ImportApiTab() {
             total: running.count,
             counts: message => message.message.startsWith('Generated '),
           }}
-          onClose={() => setRunning(null)} />
+          onClose={() => setRunning(null)}
+        />
       )}
       {credential !== null && (
-        <Modal
-          width={520}
-          onClose={() => setCredential(null)}
-          onSubmit={storeCredential}>
+        <Modal width={520} onClose={() => setCredential(null)} onSubmit={storeCredential}>
           <h2>Store credential</h2>
           <p className="muted" style={{ marginTop: 0 }}>
-            Saved into your cloudlet's configuration under{' '}
-            <span className="mono">{configKey}</span>, which is where the generated endpoints read
-            it from as they are invoked. It is never written into the generated files.
+            Saved into your cloudlet's configuration under <span className="mono">{configKey}</span>
+            , which is where the generated endpoints read it from as they are invoked. It is never
+            written into the generated files.
           </p>
           <div className="form-grid" style={{ marginTop: 16 }}>
-            <label>Credential
+            <label>
+              Credential
               <input
                 type="password"
                 autoFocus
                 autoComplete="off"
                 value={credential}
-                onChange={e => setCredential(e.target.value)} />
+                onChange={e => setCredential(e.target.value)}
+              />
             </label>
           </div>
           <div className="modal-actions">

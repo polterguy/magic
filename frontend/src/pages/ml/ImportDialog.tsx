@@ -26,7 +26,8 @@ const UPLOAD_CATEGORIES = {
   structured: {
     label: 'Structured data (CSV, XML, YAML, JSON)',
     accept: '.csv,.xml,.yaml,.yml,.json',
-    help: 'Files containing lists of objects with at least two fields. ' +
+    help:
+      'Files containing lists of objects with at least two fields. ' +
       'Declare which field becomes the prompt and which the completion below.',
   },
   text: {
@@ -42,7 +43,8 @@ const UPLOAD_CATEGORIES = {
   csv: {
     label: 'CSV — first column prompt, rest completion',
     accept: '.csv',
-    help: 'Imports every row using the first column as prompt, and all ' +
+    help:
+      'Imports every row using the first column as prompt, and all ' +
       'remaining columns concatenated as the completion.',
   },
   images: {
@@ -53,16 +55,18 @@ const UPLOAD_CATEGORIES = {
   urls: {
     label: 'URL list (CSV of URLs to scrape)',
     accept: '.csv',
-    help: 'Scrapes every URL in the file. The CSV must have a header row and ' +
+    help:
+      'Scrapes every URL in the file. The CSV must have a header row and ' +
       'exactly one column, containing nothing but http:// or https:// URLs.',
   },
 };
 
-export default function ImportDialog(props: Readonly<{
-  type: string;
-  onClose: () => void;
-}>) {
-
+export default function ImportDialog(
+  props: Readonly<{
+    type: string;
+    onClose: () => void;
+  }>,
+) {
   const [tab, setTab] = useState('crawl');
   // Crawl-tab options, defaulted the way the old dashboard defaults them.
   const [url, setUrl] = useState('');
@@ -164,7 +168,13 @@ export default function ImportDialog(props: Readonly<{
 
   return (
     <>
-      <Modal width={620} onClose={props.onClose} onSubmit={() => { if (url) void crawl(); }}>
+      <Modal
+        width={620}
+        onClose={props.onClose}
+        onSubmit={() => {
+          if (url) void crawl();
+        }}
+      >
         <h2>Import into {props.type}</h2>
         <Tabs
           tabs={[
@@ -172,31 +182,39 @@ export default function ImportDialog(props: Readonly<{
             { id: 'upload', label: 'Upload files' },
           ]}
           active={tab}
-          onChange={setTab} />
+          onChange={setTab}
+        />
         {tab === 'crawl' && (
           <div className="form-grid">
-            <label>Website URL
+            <label>
+              Website URL
               <input
                 type="text"
                 placeholder="https://example.com"
                 value={url}
-                onChange={e => setUrl(e.target.value)} />
+                onChange={e => setUrl(e.target.value)}
+              />
             </label>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 12,
-            }}>
-              <label>Max pages
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: 12,
+              }}
+            >
+              <label>
+                Max pages
                 <input
                   type="number"
                   min={1}
                   max={5000}
                   title="Maximum number of URLs to crawl"
                   value={max}
-                  onChange={e => setMax(e.target.value)} />
+                  onChange={e => setMax(e.target.value)}
+                />
               </label>
-              <label>Delay (seconds)
+              <label>
+                Delay (seconds)
                 <input
                   type="number"
                   min={0.5}
@@ -204,41 +222,51 @@ export default function ImportDialog(props: Readonly<{
                   step={0.5}
                   title="Delay between each page requested"
                   value={delay}
-                  onChange={e => setDelay(e.target.value)} />
+                  onChange={e => setDelay(e.target.value)}
+                />
               </label>
             </div>
-            <label>Meta value
+            <label>
+              Meta value
               <input
                 type="text"
                 placeholder="AINIRO-Website-Crawler"
                 title="Tag associated with every snippet the crawl creates"
                 value={meta}
-                onChange={e => setMeta(e.target.value)} />
+                onChange={e => setMeta(e.target.value)}
+              />
             </label>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, max-content)',
-              gap: '6px 24px',
-            }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, max-content)',
+                gap: '6px 24px',
+              }}
+            >
               <label
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                title="Insert the source URL into the completion of each snippet">
+                title="Insert the source URL into the completion of each snippet"
+              >
                 <input
                   type="checkbox"
                   checked={insertUrl}
-                  onChange={e => setInsertUrl(e.target.checked)} />
+                  onChange={e => setInsertUrl(e.target.checked)}
+                />
                 Insert source URL
               </label>
               <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <input
                   type="checkbox"
                   checked={images}
-                  onChange={e => setImages(e.target.checked)} />
+                  onChange={e => setImages(e.target.checked)}
+                />
                 Import images
               </label>
             </div>
             <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+              <button className="btn btn-secondary" onClick={props.onClose}>
+                Cancel
+              </button>
               <button className="btn" onClick={crawl} disabled={!url || uploading}>
                 {uploading ? 'Starting…' : 'Start crawling'}
               </button>
@@ -247,12 +275,16 @@ export default function ImportDialog(props: Readonly<{
         )}
         {tab === 'upload' && (
           <div className="form-grid">
-            <label>File category
+            <label>
+              File category
               <Select
                 value={category}
-                onChange={value => setCategory(value as keyof typeof UPLOAD_CATEGORIES)}>
+                onChange={value => setCategory(value as keyof typeof UPLOAD_CATEGORIES)}
+              >
                 {Object.entries(UPLOAD_CATEGORIES).map(([key, value]) => (
-                  <option key={key} value={key}>{value.label}</option>
+                  <option key={key} value={key}>
+                    {value.label}
+                  </option>
                 ))}
               </Select>
             </label>
@@ -261,17 +293,21 @@ export default function ImportDialog(props: Readonly<{
             </p>
             {category === 'structured' && (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <label>Prompt field
+                <label>
+                  Prompt field
                   <input
                     type="text"
                     value={promptField}
-                    onChange={e => setPromptField(e.target.value)} />
+                    onChange={e => setPromptField(e.target.value)}
+                  />
                 </label>
-                <label>Completion field
+                <label>
+                  Completion field
                   <input
                     type="text"
                     value={completionField}
-                    onChange={e => setCompletionField(e.target.value)} />
+                    onChange={e => setCompletionField(e.target.value)}
+                  />
                 </label>
               </div>
             )}
@@ -280,18 +316,21 @@ export default function ImportDialog(props: Readonly<{
                 <input
                   type="checkbox"
                   checked={textSummarize}
-                  onChange={e => setTextSummarize(e.target.checked)} />
+                  onChange={e => setTextSummarize(e.target.checked)}
+                />
                 Summarize each file for better retrieval
               </label>
             )}
             {category === 'urls' && (
               <label
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                title="Create summary prompts for each snippet, improving RAG and VSS lookups">
+                title="Create summary prompts for each snippet, improving RAG and VSS lookups"
+              >
                 <input
                   type="checkbox"
                   checked={urlListVectorize}
-                  onChange={e => setUrlListVectorize(e.target.checked)} />
+                  onChange={e => setUrlListVectorize(e.target.checked)}
+                />
                 Vectorise when done
               </label>
             )}
@@ -302,33 +341,41 @@ export default function ImportDialog(props: Readonly<{
                     <input
                       type="checkbox"
                       checked={pdfPreservePages}
-                      onChange={e => setPdfPreservePages(e.target.checked)} />
+                      onChange={e => setPdfPreservePages(e.target.checked)}
+                    />
                     One snippet per page
                   </label>
                   <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <input
                       type="checkbox"
                       checked={pdfSummarize}
-                      onChange={e => setPdfSummarize(e.target.checked)} />
+                      onChange={e => setPdfSummarize(e.target.checked)}
+                    />
                     Summarize
                   </label>
                   <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <input
                       type="checkbox"
                       checked={pdfOverwrite}
-                      onChange={e => setPdfOverwrite(e.target.checked)} />
+                      onChange={e => setPdfOverwrite(e.target.checked)}
+                    />
                     Overwrite existing
                   </label>
                 </div>
-                <label>Massage prompt (optional — reshapes content with AI first)
+                <label>
+                  Massage prompt (optional — reshapes content with AI first)
                   <input
                     type="text"
                     value={pdfMassage}
-                    onChange={e => setPdfMassage(e.target.value)} />
+                    onChange={e => setPdfMassage(e.target.value)}
+                  />
                 </label>
               </>
             )}
-            <label className="btn btn-secondary" style={{ cursor: 'pointer', alignSelf: 'flex-start' }}>
+            <label
+              className="btn btn-secondary"
+              style={{ cursor: 'pointer', alignSelf: 'flex-start' }}
+            >
               {uploading ? 'Uploading…' : 'Select files'}
               <input
                 type="file"
@@ -342,10 +389,13 @@ export default function ImportDialog(props: Readonly<{
                   if (files.length > 0) {
                     void upload(files);
                   }
-                }} />
+                }}
+              />
             </label>
             <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={props.onClose}>Close</button>
+              <button className="btn btn-secondary" onClick={props.onClose}>
+                Close
+              </button>
             </div>
           </div>
         )}
@@ -367,17 +417,26 @@ export default function ImportDialog(props: Readonly<{
               channel: crawling,
             }).catch(err => showToast(err.message, true, err.logId));
           }}
-          onClose={() => { setCrawling(null); props.onClose(); }} />
+          onClose={() => {
+            setCrawling(null);
+            props.onClose();
+          }}
+        />
       )}
       {scraping && urlListFile && (
         <SocketFeedback
           title={'Scraping URLs from ' + urlListFile.name}
           channel={scraping}
           onReady={() => {
-            uploadUrlList(props.type, urlListFile, scraping, urlListVectorize)
-              .catch(err => showToast(err.message, true, err.logId));
+            uploadUrlList(props.type, urlListFile, scraping, urlListVectorize).catch(err =>
+              showToast(err.message, true, err.logId),
+            );
           }}
-          onClose={() => { setScraping(null); props.onClose(); }} />
+          onClose={() => {
+            setScraping(null);
+            props.onClose();
+          }}
+        />
       )}
     </>
   );

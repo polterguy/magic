@@ -11,7 +11,14 @@
  * rather than a second kind of dropdown.
  */
 
-import { KeyboardEvent as ReactKeyboardEvent, ReactNode, useEffect, useId, useRef, useState } from 'react';
+import {
+  KeyboardEvent as ReactKeyboardEvent,
+  ReactNode,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { MenuIcon } from '../../components/Icons';
 
@@ -26,8 +33,9 @@ export interface MenuItem {
   onClick?: () => void;
 }
 
-export default function Menu(props: Readonly<{ items: MenuItem[]; title: string; className?: string }>) {
-
+export default function Menu(
+  props: Readonly<{ items: MenuItem[]; title: string; className?: string }>,
+) {
   const [open, setOpen] = useState(false);
   // The item the keyboard is on, or -1 for none.
   const [active, setActive] = useState(-1);
@@ -132,34 +140,52 @@ export default function Menu(props: Readonly<{ items: MenuItem[]; title: string;
     }
   }
 
-  const menu: ReactNode = open && rect ? createPortal(
-    <ul
-      ref={menuRef}
-      id={menuId}
-      className="select-menu designer-menu"
-      role="menu"
-      style={{ position: 'fixed', top: rect.bottom + 4, right: window.innerWidth - rect.right }}>
-      {props.items.map((item, index) => item.heading !== undefined ? (
-        <li key={item.heading} className="designer-menu-heading">{item.heading}</li>
-      ) : (
-        <li
-          key={item.label}
-          id={menuId + '-' + index}
-          role="menuitem"
-          title={item.hint}
-          className={'select-option' +
-            (item.checked ? ' selected' : '') +
-            (index === active ? ' active' : '') +
-            (item.disabled ? ' disabled' : '')}
-          onMouseEnter={() => selectable(index) && setActive(index)}
-          onMouseDown={event => event.preventDefault()}
-          onClick={() => choose(item)}>
-          <span className="select-check" aria-hidden="true">{item.checked ? '✓' : ''}</span>
-          <span className="select-option-label">{item.label}</span>
-        </li>
-      ))}
-    </ul>,
-    document.body) : null;
+  const menu: ReactNode =
+    open && rect
+      ? createPortal(
+          <ul
+            ref={menuRef}
+            id={menuId}
+            className="select-menu designer-menu"
+            role="menu"
+            style={{
+              position: 'fixed',
+              top: rect.bottom + 4,
+              right: window.innerWidth - rect.right,
+            }}
+          >
+            {props.items.map((item, index) =>
+              item.heading !== undefined ? (
+                <li key={item.heading} className="designer-menu-heading">
+                  {item.heading}
+                </li>
+              ) : (
+                <li
+                  key={item.label}
+                  id={menuId + '-' + index}
+                  role="menuitem"
+                  title={item.hint}
+                  className={
+                    'select-option' +
+                    (item.checked ? ' selected' : '') +
+                    (index === active ? ' active' : '') +
+                    (item.disabled ? ' disabled' : '')
+                  }
+                  onMouseEnter={() => selectable(index) && setActive(index)}
+                  onMouseDown={event => event.preventDefault()}
+                  onClick={() => choose(item)}
+                >
+                  <span className="select-check" aria-hidden="true">
+                    {item.checked ? '✓' : ''}
+                  </span>
+                  <span className="select-option-label">{item.label}</span>
+                </li>
+              ),
+            )}
+          </ul>,
+          document.body,
+        )
+      : null;
 
   return (
     <>
@@ -175,7 +201,8 @@ export default function Menu(props: Readonly<{ items: MenuItem[]; title: string;
         onClick={() => {
           place();
           setOpen(current => !current);
-        }}>
+        }}
+      >
         <MenuIcon />
       </button>
       {menu}

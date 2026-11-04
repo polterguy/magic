@@ -83,7 +83,6 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
-
   const [backend, setBackend] = useState<StoredBackend | null>(() => {
     /*
      * A "?backend=" link wins over whatever was last active, since it is an
@@ -127,8 +126,14 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
         }
       })
       // An unreachable or older backend shouldn't trap anyone on setup.
-      .catch(() => { if (!cancelled) { setSetupNeeded(false); } });
-    return () => { cancelled = true; };
+      .catch(() => {
+        if (!cancelled) {
+          setSetupNeeded(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [isRoot, token]);
 
   /*
@@ -146,9 +151,19 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
     }
     let cancelled = false;
     getVersion()
-      .then(response => { if (!cancelled) { setVersion(response.version); } })
-      .catch(() => { if (!cancelled) { setVersion('?'); } });
-    return () => { cancelled = true; };
+      .then(response => {
+        if (!cancelled) {
+          setVersion(response.version);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setVersion('?');
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [backend?.url, token, isRoot]);
 
   /*
@@ -191,9 +206,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
       return;
     }
     // An expired token is no better than none — fall through to the login.
-    const next = stored.token && tokenExpired(stored.token)
-      ? { ...stored, token: null }
-      : stored;
+    const next = stored.token && tokenExpired(stored.token) ? { ...stored, token: null } : stored;
     configureApi(next.url, next.token);
     setBackend(next);
     setBackends(loadBackends());
@@ -224,8 +237,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
     }
     params.delete('backend');
     const query = params.toString();
-    window.history.replaceState(
-      null, '', window.location.pathname + (query ? '?' + query : ''));
+    window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : ''));
   }, []);
 
   /*
@@ -259,7 +271,9 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
       .catch(() => {
         // Offline or unreachable, which says nothing about the token.
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   // Refreshes the JWT token one minute before it expires.
@@ -301,17 +315,23 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
     };
   }, [backend, applyBackend]);
 
-  const login = useCallback(async (url: string, username: string, password: string) => {
-    url = withoutTrailingSlashes(url);
-    const response = await authenticate(url, username, password);
-    applyBackend({ url, username, token: response.ticket });
-  }, [applyBackend]);
+  const login = useCallback(
+    async (url: string, username: string, password: string) => {
+      url = withoutTrailingSlashes(url);
+      const response = await authenticate(url, username, password);
+      applyBackend({ url, username, token: response.ticket });
+    },
+    [applyBackend],
+  );
 
-  const loginWithTicket = useCallback((url: string, ticket: string) => {
-    url = withoutTrailingSlashes(url);
-    // Whoever the ticket belongs to — the caller has no better source.
-    applyBackend({ url, username: tokenUsername(ticket), token: ticket });
-  }, [applyBackend]);
+  const loginWithTicket = useCallback(
+    (url: string, ticket: string) => {
+      url = withoutTrailingSlashes(url);
+      // Whoever the ticket belongs to — the caller has no better source.
+      applyBackend({ url, username: tokenUsername(ticket), token: ticket });
+    },
+    [applyBackend],
+  );
 
   const logout = useCallback(() => {
     if (backend) {
@@ -321,28 +341,37 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
 
   const setupCompleted = useCallback(() => setSetupNeeded(false), []);
 
-  const value = useMemo(() => ({
-    backend,
-    authenticated: !!backend?.token,
-    isRoot,
-    setupNeeded,
-    setupCompleted,
-    version,
-    login,
-    loginWithTicket,
-    logout,
-    backends,
-    switchBackend,
-    removeBackend,
-    addBackend,
-  }), [
-    backend, isRoot, setupNeeded, setupCompleted, version, login, loginWithTicket, logout,
-    backends, switchBackend, removeBackend, addBackend,
-  ]);
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      backend,
+      authenticated: !!backend?.token,
+      isRoot,
+      setupNeeded,
+      setupCompleted,
+      version,
+      login,
+      loginWithTicket,
+      logout,
+      backends,
+      switchBackend,
+      removeBackend,
+      addBackend,
+    }),
+    [
+      backend,
+      isRoot,
+      setupNeeded,
+      setupCompleted,
+      version,
+      login,
+      loginWithTicket,
+      logout,
+      backends,
+      switchBackend,
+      removeBackend,
+      addBackend,
+    ],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

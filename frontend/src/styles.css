@@ -14,7 +14,7 @@
    */
   --accent: #ffffff;
   --accent-dark: #d9d9d9;
-  --accent-soft: rgba(255, 255, 255, 0.10);
+  --accent-soft: rgba(255, 255, 255, 0.1);
   --bg: #120d0a;
   --surface: #1a1410;
   /* Slightly lifted surface for inputs and elevated blocks. */
@@ -22,8 +22,8 @@
   --text: #f5f5f4;
   /* Muted text — neutral zinc, matching the site's --muted. */
   --text-soft: #a1a1aa;
-  --border: rgba(255, 255, 255, 0.10);
-  --border-strong: rgba(255, 255, 255, 0.20);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
   --danger: #ff5d6a;
   --ok: #35d07f;
   --warn: #ffcf7a;
@@ -88,7 +88,8 @@
   --shadow-hard: 0 10px 30px var(--shadow-color);
 
   /* Monospace-first: the terminal voice. Sans kept for long-form prose. */
-  --font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-mono:
+    ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
   /*
@@ -105,7 +106,7 @@
  * Light theme — the same warm monochrome, inverted: a near-black accent on a
  * warm paper canvas. Activated by lib/theme.ts stamping data-theme on <html>.
  */
-html[data-theme="light"] {
+html[data-theme='light'] {
   --accent: #17120e;
   --accent-dark: #3d332a;
   --accent-soft: rgba(23, 18, 14, 0.08);
@@ -136,11 +137,11 @@ html[data-theme="light"] {
   --tint-green-bg: rgba(26, 154, 92, 0.12);
   --tint-green-text: #157a49;
   --tint-green-border: rgba(26, 154, 92, 0.45);
-  --tint-blue-bg: rgba(39, 97, 196, 0.10);
+  --tint-blue-bg: rgba(39, 97, 196, 0.1);
   --tint-blue-text: #2761c4;
   --tint-amber-bg: rgba(161, 98, 7, 0.12);
   --tint-amber-text: #9a6207;
-  --tint-red-bg: rgba(214, 54, 68, 0.10);
+  --tint-red-bg: rgba(214, 54, 68, 0.1);
   --tint-red-text: #c02e3c;
   --tint-red-border: rgba(214, 54, 68, 0.45);
   --tint-tan-bg: rgba(138, 106, 59, 0.12);
@@ -150,7 +151,9 @@ html[data-theme="light"] {
   color-scheme: light;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 /*
  * No image overflows its column, wherever it came from. Chat answers and HTML
@@ -164,7 +167,9 @@ img {
   height: auto;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   margin: 0;
   height: 100%;
 }
@@ -255,8 +260,16 @@ body {
 }
 
 /* Bracket the wordmark: reads as "[ magic ]" — the hyperlambda.dev signature. */
-.brand-magic::before { content: '['; color: var(--accent); margin-right: 5px; }
-.brand-magic::after { content: ']'; color: var(--accent); margin-left: 5px; }
+.brand-magic::before {
+  content: '[';
+  color: var(--accent);
+  margin-right: 5px;
+}
+.brand-magic::after {
+  content: ']';
+  color: var(--accent);
+  margin-left: 5px;
+}
 
 .brand-version {
   font-size: var(--text-xs);
@@ -434,7 +447,10 @@ h1 {
     gap: 0;
     padding: 8px;
   }
-  .ide-header .btn svg { width: 17px; height: 17px; }
+  .ide-header .btn svg {
+    width: 17px;
+    height: 17px;
+  }
 }
 
 /*
@@ -466,7 +482,9 @@ a:hover {
   flex-wrap: wrap;
 }
 
-.toolbar .spacer { flex: 1; }
+.toolbar .spacer {
+  flex: 1;
+}
 
 /* inline-flex so a button can carry an icon beside its label. */
 .btn {
@@ -487,7 +505,11 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.06s;
+  transition:
+    background 0.12s,
+    border-color 0.12s,
+    color 0.12s,
+    transform 0.06s;
 }
 
 .btn svg {
@@ -501,12 +523,18 @@ a:hover {
   height: 13px;
 }
 
-.btn:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.btn:hover {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
 
-.btn:active { transform: translateY(1px); }
+.btn:active {
+  transform: translateY(1px);
+}
 
 /* The class covers labels acting as buttons, which can't be :disabled. */
-.btn:disabled, .btn.disabled {
+.btn:disabled,
+.btn.disabled {
   opacity: 0.4;
   cursor: default;
   pointer-events: none;
@@ -531,16 +559,26 @@ a:hover {
   color: var(--danger);
 }
 
-.btn-danger:hover { background: var(--danger); color: #fff; }
+.btn-danger:hover {
+  background: var(--danger);
+  color: #fff;
+}
 
 /*
  * Links wearing button classes: a:hover outranks .btn (pseudo-class beats
  * plain class), which painted accent-dark labels onto accent-dark primary
  * buttons — so each variant's label colour is restated at anchor specificity.
  */
-a.btn:hover { color: var(--accent-contrast); }
-a.btn-secondary:hover, a.btn-ghost:hover { color: var(--text); }
-a.btn-danger:hover { color: #fff; }
+a.btn:hover {
+  color: var(--accent-contrast);
+}
+a.btn-secondary:hover,
+a.btn-ghost:hover {
+  color: var(--text);
+}
+a.btn-danger:hover {
+  color: #fff;
+}
 
 .btn-ghost {
   background: transparent;
@@ -564,7 +602,11 @@ a.btn-danger:hover { color: #fff; }
  * email — silently fell back to the browser's own styling until someone
  * noticed. Only the types that are not text boxes are excluded.
  */
-input:where(:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="range"]):not([type="color"])),
+input:where(
+  :not([type='checkbox']):not([type='radio']):not([type='file']):not([type='submit']):not(
+      [type='button']
+    ):not([type='reset']):not([type='range']):not([type='color'])
+),
 select,
 textarea {
   border: 1px solid var(--border);
@@ -582,7 +624,7 @@ textarea {
  * specificity — without it these base rules beat every component-level
  * override (and silently ate .search-input's and .combo's padding).
  */
-input:where(:not([type="checkbox"]):not([type="radio"]):not([type="file"])):focus,
+input:where(:not([type='checkbox']):not([type='radio']):not([type='file'])):focus,
 select:focus,
 textarea:focus {
   border-color: var(--accent);
@@ -594,7 +636,11 @@ textarea:focus {
  * click it. Dimmed, flattened against the surface, and carrying the cursor that
  * says so, matching how .btn:disabled already reads.
  */
-input:where(:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="range"]):not([type="color"])):disabled,
+input:where(
+    :not([type='checkbox']):not([type='radio']):not([type='file']):not([type='submit']):not(
+        [type='button']
+      ):not([type='reset']):not([type='range']):not([type='color'])
+  ):disabled,
 select:disabled,
 textarea:disabled {
   opacity: 0.45;
@@ -610,8 +656,8 @@ label:has(> select:disabled) {
 }
 
 /* Native controls (checkboxes, date pickers) render in the accent, not white. */
-input[type="checkbox"],
-input[type="radio"] {
+input[type='checkbox'],
+input[type='radio'] {
   accent-color: var(--accent);
 }
 
@@ -620,20 +666,23 @@ input[type="radio"] {
  * vanishes on the dark field. Inverting it to white pulls it onto the brand's
  * accent; it sits muted and brightens on hover so it reads as a button.
  */
-input[type="datetime-local"]::-webkit-calendar-picker-indicator,
-input[type="date"]::-webkit-calendar-picker-indicator,
-input[type="time"]::-webkit-calendar-picker-indicator {
+input[type='datetime-local']::-webkit-calendar-picker-indicator,
+input[type='date']::-webkit-calendar-picker-indicator,
+input[type='time']::-webkit-calendar-picker-indicator {
   filter: var(--picker-filter);
   opacity: 0.65;
   cursor: pointer;
 }
-input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
-input[type="date"]::-webkit-calendar-picker-indicator:hover,
-input[type="time"]::-webkit-calendar-picker-indicator:hover {
+input[type='datetime-local']::-webkit-calendar-picker-indicator:hover,
+input[type='date']::-webkit-calendar-picker-indicator:hover,
+input[type='time']::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
 }
 
-::placeholder { color: var(--text-soft); opacity: 0.7; }
+::placeholder {
+  color: var(--text-soft);
+  opacity: 0.7;
+}
 
 /*
  * Secrets that belong to someone or something else — API keys, SMTP
@@ -680,8 +729,12 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   text-align: left;
 }
 
-.select-trigger:hover { border-color: var(--border-strong); }
-.select-trigger[aria-expanded="true"] { border-color: var(--accent); }
+.select-trigger:hover {
+  border-color: var(--border-strong);
+}
+.select-trigger[aria-expanded='true'] {
+  border-color: var(--accent);
+}
 
 .select.disabled .select-trigger {
   opacity: 0.5;
@@ -750,10 +803,19 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   margin-bottom: 3px;
 }
 
-.select-option:hover { background: var(--accent-soft); }
-.select-option.active { background: var(--accent-soft); }
-.select-option.selected { color: var(--accent); }
-.select-option.disabled { opacity: 0.4; cursor: default; }
+.select-option:hover {
+  background: var(--accent-soft);
+}
+.select-option.active {
+  background: var(--accent-soft);
+}
+.select-option.selected {
+  color: var(--accent);
+}
+.select-option.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
 
 .select-check {
   display: inline-block;
@@ -762,12 +824,20 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   color: var(--accent);
 }
 
-.select-option-label { flex: 1; }
+.select-option-label {
+  flex: 1;
+}
 
 /* ---------- Date / time picker ---------- */
 
-.dtp { display: inline-block; width: 100%; }
-.dtp.disabled { opacity: 0.5; pointer-events: none; }
+.dtp {
+  display: inline-block;
+  width: 100%;
+}
+.dtp.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
 
 .dtp-trigger {
   display: flex;
@@ -785,9 +855,16 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   cursor: pointer;
   text-align: left;
 }
-.dtp-trigger:hover { border-color: var(--border-strong); }
-.dtp-value.placeholder { color: var(--text-soft); }
-.dtp-icon { color: var(--text-soft); flex-shrink: 0; }
+.dtp-trigger:hover {
+  border-color: var(--border-strong);
+}
+.dtp-value.placeholder {
+  color: var(--text-soft);
+}
+.dtp-icon {
+  color: var(--text-soft);
+  flex-shrink: 0;
+}
 
 .dtp-pop {
   z-index: 2000002;
@@ -809,7 +886,10 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   justify-content: space-between;
   margin-bottom: 8px;
 }
-.dtp-month { font-weight: 700; font-size: var(--text-base); }
+.dtp-month {
+  font-weight: 700;
+  font-size: var(--text-base);
+}
 .dtp-nav {
   width: 30px;
   height: 30px;
@@ -821,14 +901,18 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   font-size: var(--text-lg);
   line-height: 1;
 }
-.dtp-nav:hover { border-color: var(--accent); }
+.dtp-nav:hover {
+  border-color: var(--accent);
+}
 
 .dtp-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 2px;
 }
-.dtp-dow { margin-bottom: 2px; }
+.dtp-dow {
+  margin-bottom: 2px;
+}
 .dtp-dow-cell {
   text-align: center;
   font-size: var(--text-xs);
@@ -849,10 +933,20 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   font-size: var(--text-sm);
   cursor: pointer;
 }
-.dtp-day:hover:not(:disabled) { background: var(--accent-soft); }
-.dtp-day:disabled { opacity: 0.25; cursor: default; }
-.dtp-day.muted { color: var(--text-soft); opacity: 0.45; }
-.dtp-day.today { border-color: var(--border-strong); }
+.dtp-day:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+.dtp-day:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+.dtp-day.muted {
+  color: var(--text-soft);
+  opacity: 0.45;
+}
+.dtp-day.today {
+  border-color: var(--border-strong);
+}
 /* Selected day — the brand's accent pill with contrasting glyph, like primary buttons. */
 .dtp-day.selected {
   background: var(--accent);
@@ -869,9 +963,17 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   padding-top: 12px;
   border-top: 1px solid var(--border);
 }
-.dtp-time-label { color: var(--text-soft); font-size: var(--text-sm); margin-right: auto; }
-.dtp-time .select { width: 68px; }
-.dtp-colon { color: var(--text-soft); }
+.dtp-time-label {
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  margin-right: auto;
+}
+.dtp-time .select {
+  width: 68px;
+}
+.dtp-colon {
+  color: var(--text-soft);
+}
 
 .dtp-foot {
   display: flex;
@@ -888,8 +990,14 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   font-size: var(--text-sm);
   cursor: pointer;
 }
-.dtp-link:hover { color: var(--text); }
-.dtp-link.strong { color: var(--accent); font-weight: 700; margin-left: auto; }
+.dtp-link:hover {
+  color: var(--text);
+}
+.dtp-link.strong {
+  color: var(--accent);
+  font-weight: 700;
+  margin-left: auto;
+}
 
 /* ---------- Tabs ---------- */
 
@@ -980,11 +1088,17 @@ td {
  * stronger accent tint plus a pointer, keeping "you can click this" distinct
  * from "this is the row you are on".
  */
-tbody tr:hover > td { background: var(--overlay-faint); }
+tbody tr:hover > td {
+  background: var(--overlay-faint);
+}
 
-tr.clickable { cursor: pointer; }
+tr.clickable {
+  cursor: pointer;
+}
 
-tr.clickable:hover td { background: var(--accent-soft); }
+tr.clickable:hover td {
+  background: var(--accent-soft);
+}
 
 /* ---------- Badges ---------- */
 
@@ -998,26 +1112,60 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 /* Verb / log-level badges — translucent tints on the canvas, bordered. */
-.badge-get { background: var(--tint-green-bg); color: var(--tint-green-text); }
-.badge-post { background: var(--tint-blue-bg); color: var(--tint-blue-text); }
-.badge-put { background: var(--tint-amber-bg); color: var(--tint-amber-text); }
-.badge-delete { background: var(--tint-red-bg); color: var(--tint-red-text); }
-.badge-patch { background: var(--tint-tan-bg); color: var(--tint-tan-text); }
-.badge-error, .badge-fatal { background: var(--tint-red-bg); color: var(--tint-red-text); }
-.badge-info { background: var(--tint-blue-bg); color: var(--tint-blue-text); }
-.badge-debug { background: var(--tint-neutral-bg); color: var(--text-soft); }
+.badge-get {
+  background: var(--tint-green-bg);
+  color: var(--tint-green-text);
+}
+.badge-post {
+  background: var(--tint-blue-bg);
+  color: var(--tint-blue-text);
+}
+.badge-put {
+  background: var(--tint-amber-bg);
+  color: var(--tint-amber-text);
+}
+.badge-delete {
+  background: var(--tint-red-bg);
+  color: var(--tint-red-text);
+}
+.badge-patch {
+  background: var(--tint-tan-bg);
+  color: var(--tint-tan-text);
+}
+.badge-error,
+.badge-fatal {
+  background: var(--tint-red-bg);
+  color: var(--tint-red-text);
+}
+.badge-info {
+  background: var(--tint-blue-bg);
+  color: var(--tint-blue-text);
+}
+.badge-debug {
+  background: var(--tint-neutral-bg);
+  color: var(--text-soft);
+}
 
 /* Plugin category tag — warm light-brown, on brand, no blue. */
-.badge-module { background: var(--tint-tan-bg); color: var(--tint-tan-text); }
+.badge-module {
+  background: var(--tint-tan-bg);
+  color: var(--tint-tan-text);
+}
 
 /*
  * State, as opposed to the verb and log-level badges above. They happen to
  * share colours today, but borrowing badge-get to mean "connected" tied the
  * two together for whoever next changes the verb palette.
  */
-.badge-ok { background: var(--tint-green-bg); color: var(--tint-green-text); }
+.badge-ok {
+  background: var(--tint-green-bg);
+  color: var(--tint-green-text);
+}
 
-.badge-idle { background: var(--tint-neutral-bg); color: var(--text-soft); }
+.badge-idle {
+  background: var(--tint-neutral-bg);
+  color: var(--text-soft);
+}
 
 /*
  * A done/not-done state in a narrow column, where a colour is read faster than
@@ -1032,9 +1180,13 @@ tr.clickable:hover td { background: var(--accent-soft); }
   box-shadow: 0 0 0 3px var(--overlay-faint);
 }
 
-.status-dot.ok { background: var(--ok); }
+.status-dot.ok {
+  background: var(--ok);
+}
 
-.status-dot.pending { background: var(--warn); }
+.status-dot.pending {
+  background: var(--warn);
+}
 
 /*
  * An on/off setting, as opposed to the done/not-done state above. The icons
@@ -1049,9 +1201,14 @@ tr.clickable:hover td { background: var(--accent-soft); }
   height: 15px;
 }
 
-.state-icon.on { color: var(--ok); }
+.state-icon.on {
+  color: var(--ok);
+}
 
-.state-icon.off { color: var(--text-soft); opacity: 0.55; }
+.state-icon.off {
+  color: var(--text-soft);
+  opacity: 0.55;
+}
 
 /* ---------- Login ---------- */
 
@@ -1714,7 +1871,9 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 @keyframes spinner-rotate {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .spinner-panel {
@@ -1732,10 +1891,18 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 @keyframes spinner-dots {
-  0% { content: ''; }
-  25% { content: '.'; }
-  50% { content: '..'; }
-  75% { content: '...'; }
+  0% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
 }
 
 /* ---------- Skeleton ---------- */
@@ -1743,14 +1910,23 @@ tr.clickable:hover td { background: var(--accent-soft); }
 .skeleton-bar {
   display: inline-block;
   border-radius: 4px;
-  background: linear-gradient(90deg, var(--surface-2) 25%, var(--accent-soft) 37%, var(--surface-2) 63%);
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 25%,
+    var(--accent-soft) 37%,
+    var(--surface-2) 63%
+  );
   background-size: 400% 100%;
   animation: skeleton-shimmer 1.4s ease infinite;
 }
 
 @keyframes skeleton-shimmer {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0 50%; }
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }
 
 .skeleton-table {
@@ -1915,7 +2091,9 @@ tr.clickable:hover td { background: var(--accent-soft); }
   font-size: var(--text-sm);
 }
 
-.tree-row:hover { background: var(--accent-soft); }
+.tree-row:hover {
+  background: var(--accent-soft);
+}
 
 .tree-row.selected {
   background: var(--selection-bg);
@@ -1943,7 +2121,9 @@ tr.clickable:hover td { background: var(--accent-soft); }
   color: var(--text-soft);
 }
 
-.tree-icon.folder { color: var(--accent); }
+.tree-icon.folder {
+  color: var(--accent);
+}
 
 .tree-icon svg {
   width: 14px;
@@ -1951,15 +2131,23 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 .tree-row.selected .tree-chevron,
-.tree-row.selected .tree-icon { color: var(--selection-text); }
+.tree-row.selected .tree-icon {
+  color: var(--selection-text);
+}
 
 /* Column drop button appears only on row hover. */
-.col-drop { opacity: 0; }
-.col-row:hover .col-drop { opacity: 1; }
+.col-drop {
+  opacity: 0;
+}
+.col-row:hover .col-drop {
+  opacity: 1;
+}
 
 /* System folders are tinted red like the old dashboard. */
 .tree-row.system .tree-name,
-.tree-row.system .tree-icon { color: var(--danger); }
+.tree-row.system .tree-icon {
+  color: var(--danger);
+}
 
 .tree-name {
   flex: 1;
@@ -2017,7 +2205,9 @@ tr.clickable:hover td { background: var(--accent-soft); }
   color: var(--danger);
 }
 
-.tree-row.selected .icon-btn { color: var(--selection-text); }
+.tree-row.selected .icon-btn {
+  color: var(--selection-text);
+}
 
 .tree-row.selected .icon-btn:hover {
   background: var(--overlay-strong);
@@ -2058,7 +2248,9 @@ tr.clickable:hover td { background: var(--accent-soft); }
   position: relative;
 }
 
-.kpi-grid > .card:first-child { border-left: none; }
+.kpi-grid > .card:first-child {
+  border-left: none;
+}
 
 .kpi-value {
   font-size: var(--text-xl);
@@ -2070,7 +2262,9 @@ tr.clickable:hover td { background: var(--accent-soft); }
 }
 
 /* Endpoint count past what MCP clients cope with. */
-.kpi-value.warn { color: var(--danger); }
+.kpi-value.warn {
+  color: var(--danger);
+}
 
 /*
  * The clickable "!" badge opening the explanation, pinned to the cell's
@@ -2105,7 +2299,9 @@ tr.clickable:hover td { background: var(--accent-soft); }
 
 /* ---------- Misc ---------- */
 
-.muted { color: var(--text-soft); }
+.muted {
+  color: var(--text-soft);
+}
 
 /*
  * Log "When" cell: the timestamp and its expand caret travel together as one
@@ -2195,7 +2391,9 @@ tr.clickable:hover td { background: var(--accent-soft); }
   cursor: pointer;
 }
 
-.git-change-row:hover { background: var(--accent-soft); }
+.git-change-row:hover {
+  background: var(--accent-soft);
+}
 
 .git-change-row svg {
   width: 12px;
@@ -2210,9 +2408,13 @@ tr.clickable:hover td { background: var(--accent-soft); }
   align-items: center;
 }
 
-.git-change-line .git-change-row { flex: 1; }
+.git-change-line .git-change-row {
+  flex: 1;
+}
 
-.git-change-line:hover .git-change-row { background: var(--accent-soft); }
+.git-change-line:hover .git-change-row {
+  background: var(--accent-soft);
+}
 
 .git-change-row .git-status {
   width: 2ch;
@@ -2221,8 +2423,12 @@ tr.clickable:hover td { background: var(--accent-soft); }
   color: var(--text-soft);
 }
 
-.git-change-row .git-status.add { color: var(--ok); }
-.git-change-row .git-status.del { color: var(--danger); }
+.git-change-row .git-status.add {
+  color: var(--ok);
+}
+.git-change-row .git-status.del {
+  color: var(--danger);
+}
 
 .git-diff {
   margin: 0;
@@ -2234,10 +2440,16 @@ tr.clickable:hover td { background: var(--accent-soft); }
   overflow-x: auto;
 }
 
-.git-diff .add { color: var(--ok); }
-.git-diff .del { color: var(--danger); }
+.git-diff .add {
+  color: var(--ok);
+}
+.git-diff .del {
+  color: var(--danger);
+}
 .git-diff .hunk,
-.git-diff .meta { color: var(--text-soft); }
+.git-diff .meta {
+  color: var(--text-soft);
+}
 
 pre.result-json {
   background: var(--surface);
@@ -2839,7 +3051,10 @@ kbd {
 a.kpi-link {
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.12s, background 0.12s, transform 0.06s;
+  transition:
+    border-color 0.12s,
+    background 0.12s,
+    transform 0.06s;
 }
 
 a.kpi-link .kpi-label::after {
@@ -2981,11 +3196,16 @@ tr.log-target > td:first-child {
   animation: ai-bounce 1.2s infinite;
 }
 
-.ai-waiter-dots span:nth-child(2) { animation-delay: 0.2s; }
-.ai-waiter-dots span:nth-child(3) { animation-delay: 0.4s; }
+.ai-waiter-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.ai-waiter-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes ai-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(6px);
     opacity: 0.3;
   }
@@ -3001,7 +3221,9 @@ tr.log-target > td:first-child {
  * 10). On phones the card's `.content td` padding out-specifies this, so the
  * badge stays at the card's left edge there.
  */
-.verb-cell { padding-left: 38px; }
+.verb-cell {
+  padding-left: 38px;
+}
 
 /* Collapsible module sections on the Endpoints screen. */
 .module-header {
@@ -3049,9 +3271,7 @@ tr.log-target > td:first-child {
   margin-bottom: 16px;
   border: 1px solid var(--border-strong);
   border-left: 4px solid var(--accent);
-  background:
-    linear-gradient(90deg, var(--accent-soft), transparent 60%),
-    var(--surface);
+  background: linear-gradient(90deg, var(--accent-soft), transparent 60%), var(--surface);
   box-shadow: var(--shadow-hard);
 }
 
@@ -3163,7 +3383,10 @@ button.guide-card {
   text-decoration: none;
   color: inherit;
   background: var(--surface);
-  transition: border-color 0.12s, box-shadow 0.12s, transform 0.12s;
+  transition:
+    border-color 0.12s,
+    box-shadow 0.12s,
+    transform 0.12s;
 }
 
 .guide-card:hover {
@@ -3415,7 +3638,9 @@ tr.vss-irrelevant td {
   font-weight: 600;
 }
 
-.tree-row.active-folder .tree-icon { color: var(--accent-dark); }
+.tree-row.active-folder .tree-icon {
+  color: var(--accent-dark);
+}
 
 /* ---------- Terminal ---------- */
 
@@ -3469,10 +3694,18 @@ tr.vss-irrelevant td {
   overflow-wrap: anywhere;
 }
 
-.terminal-line.error { color: #ff8a8a; }
-.terminal-line.warning { color: #ffcf7a; }
-.terminal-line.success { color: #7be0a2; }
-.terminal-line.waiting { color: #9a9a92; }
+.terminal-line.error {
+  color: #ff8a8a;
+}
+.terminal-line.warning {
+  color: #ffcf7a;
+}
+.terminal-line.success {
+  color: #7be0a2;
+}
+.terminal-line.waiting {
+  color: #9a9a92;
+}
 
 /* Blinks while the job is still sending, so a pause never reads as finished. */
 .terminal-caret {
@@ -3485,8 +3718,13 @@ tr.vss-irrelevant td {
 }
 
 @keyframes terminal-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* ---------- Responsive / mobile ---------- */
@@ -3496,13 +3734,21 @@ tr.vss-irrelevant td {
  * desktop, where the sidebar keeps its normal fixed column. Collapsing the
  * sidebar removes it entirely, exactly as the old unmount did.
  */
-.mobile-topbar { display: none; }
-.nav-backdrop { display: none; }
-.sidebar.collapsed { display: none; }
+.mobile-topbar {
+  display: none;
+}
+.nav-backdrop {
+  display: none;
+}
+.sidebar.collapsed {
+  display: none;
+}
 
 @media (max-width: 768px) {
   /* Stack the shell so the top bar sits above the scrolling content. */
-  .shell { flex-direction: column; }
+  .shell {
+    flex-direction: column;
+  }
 
   .mobile-topbar {
     display: flex;
@@ -3513,7 +3759,9 @@ tr.vss-irrelevant td {
     color: var(--text);
     flex-shrink: 0;
   }
-  .mobile-topbar .brand-magic { font-size: var(--text-lg); }
+  .mobile-topbar .brand-magic {
+    font-size: var(--text-lg);
+  }
 
   .hamburger {
     display: inline-flex;
@@ -3528,7 +3776,9 @@ tr.vss-irrelevant td {
     color: var(--text);
     cursor: pointer;
   }
-  .hamburger:hover { background: var(--overlay); }
+  .hamburger:hover {
+    background: var(--overlay);
+  }
 
   /* The sidebar becomes an off-canvas drawer, shown by the .open class. */
   .sidebar,
@@ -3545,7 +3795,9 @@ tr.vss-irrelevant td {
     transition: transform 0.22s ease;
     overflow-y: auto;
   }
-  .sidebar.open { transform: translateX(0); }
+  .sidebar.open {
+    transform: translateX(0);
+  }
 
   .nav-backdrop {
     display: block;
@@ -3563,22 +3815,41 @@ tr.vss-irrelevant td {
   }
 
   /* The desktop collapse chevron has no place on a phone. */
-  .nav-toggle { display: none; }
+  .nav-toggle {
+    display: none;
+  }
 
   /* Tighter gutters, and dialogs that fit a narrow screen. */
-  .content { padding: 16px 14px; }
-  .modal-box { min-width: 0; max-width: 94vw; padding: 20px 18px; }
-  .login-card { max-width: 94vw; }
+  .content {
+    padding: 16px 14px;
+  }
+  .modal-box {
+    min-width: 0;
+    max-width: 94vw;
+    padding: 20px 18px;
+  }
+  .login-card {
+    max-width: 94vw;
+  }
 
   /* Toasts stretch across the bottom instead of clinging to a corner. */
-  .toast-stack { left: 14px; right: 14px; bottom: 14px; align-items: stretch; }
-  .toast { max-width: none; }
+  .toast-stack {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    align-items: stretch;
+  }
+  .toast {
+    max-width: none;
+  }
 }
 
 /* ---------- Responsive: per-screen fixes ---------- */
 @media (max-width: 768px) {
   /* KPI cards keep the compact two-up wrap on a phone. */
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   /* Dashboard — the agent banners stack instead of squeezing the heading. */
   /* Keep the MCP hero's button centered on phones — the desktop bottom-right
@@ -3604,9 +3875,15 @@ tr.vss-irrelevant td {
    * and go (Hyper IDE). The flex:1 spacer that pushes the toolbar right on
    * desktop is removed so it doesn't eat the second row.
    */
-  .page-header { flex-wrap: wrap; }
-  .page-header > *:first-child { flex-basis: 100%; }
-  .page-header > span[style*="flex: 1"] { display: none; }
+  .page-header {
+    flex-wrap: wrap;
+  }
+  .page-header > *:first-child {
+    flex-basis: 100%;
+  }
+  .page-header > span[style*='flex: 1'] {
+    display: none;
+  }
   /*
    * Phones: drop the page title and its subtitle to reclaim vertical space.
    * Descendant selectors so this works whether they sit directly in the
@@ -3614,25 +3891,48 @@ tr.vss-irrelevant td {
    * filters) are left untouched.
    */
   .page-header h1,
-  .page-header p { display: none; }
+  .page-header p {
+    display: none;
+  }
   /* Hyper IDE header on a phone: drop the path entirely. The toolbar is already
      icon-only from 1200px down — see that breakpoint. */
-  .ide-path { display: none; }
+  .ide-path {
+    display: none;
+  }
 
   /* Hyper IDE — stack the file tree above the editor; drop the drag splitter. */
-  .files-layout { flex-direction: column; }
-  .file-tree { width: auto !important; max-height: 38vh; }
-  .splitter { display: none; }
-  .file-editor { min-height: 55vh; }
+  .files-layout {
+    flex-direction: column;
+  }
+  .file-tree {
+    width: auto !important;
+    max-height: 38vh;
+  }
+  .splitter {
+    display: none;
+  }
+  .file-editor {
+    min-height: 55vh;
+  }
 
   /* Playground & SQL Studio — stack the two editor panes vertically. The split
      sizes to its content (not flex:1) so the Ask bar below stays in flow rather
      than being overlapped by an editor that spilled past its box. */
-  .editor-split { flex-direction: column; flex: none; align-items: stretch !important; }
+  .editor-split {
+    flex-direction: column;
+    flex: none;
+    align-items: stretch !important;
+  }
   /* Editor panes get a fixed height so CodeMirror fills exactly; cards
      (Profile/Generator reuse .editor-split) keep their content height. */
-  .editor-split > *:not(.card) { height: 44vh; min-height: 0; flex: none; }
-  .editor-split > .card { flex: none; }
+  .editor-split > *:not(.card) {
+    height: 44vh;
+    min-height: 0;
+    flex: none;
+  }
+  .editor-split > .card {
+    flex: none;
+  }
 
   /*
    * Data tables become stacked cards on a phone: each row is a card and each
@@ -3640,7 +3940,9 @@ tr.vss-irrelevant td {
    * nothing has to scroll sideways. The header row is hidden since every cell
    * now carries its own label.
    */
-  .content thead { display: none; }
+  .content thead {
+    display: none;
+  }
   .content table,
   .content tbody,
   .content tr,
@@ -3685,10 +3987,18 @@ tr.vss-irrelevant td {
    * labelled rows. Drop the pseudo entirely so e.g. the database name lines up
    * with the "Tables" label beneath it.
    */
-  .content td:not([data-label])::before { content: none; }
+  .content td:not([data-label])::before {
+    content: none;
+  }
   /* First cell is the card title; last unlabelled cell holds the actions. */
-  .content td:first-child { font-size: var(--text-md); padding-top: 3px; }
-  .content td:not([data-label]) { justify-content: flex-start; text-align: left; }
+  .content td:first-child {
+    font-size: var(--text-md);
+    padding-top: 3px;
+  }
+  .content td:not([data-label]) {
+    justify-content: flex-start;
+    text-align: left;
+  }
   .content td:last-child:not([data-label]) {
     justify-content: flex-end;
     flex-wrap: wrap;
@@ -3696,22 +4006,33 @@ tr.vss-irrelevant td {
   }
   /* Log's rightmost caret cell: on non-expandable rows it's empty, so drop it
      from the phone card instead of leaving a blank line. */
-  .content td.log-caret-cell:empty { display: none; }
+  .content td.log-caret-cell:empty {
+    display: none;
+  }
   /* Full-width detail rows (log/history/endpoint expansions) are plain blocks. */
-  .content td[colspan] { display: block; text-align: left; }
-  .content td[colspan]::before { content: none; }
+  .content td[colspan] {
+    display: block;
+    text-align: left;
+  }
+  .content td[colspan]::before {
+    content: none;
+  }
   /* Code never inherits the card's right-alignment. */
   .content pre,
   .content code,
   .content .result-json,
-  .content .cm-editor { text-align: left; }
+  .content .cm-editor {
+    text-align: left;
+  }
   /* SQL result: dynamic columns, so left-align every "column: value" line. */
   .content table.sql-result td {
     justify-content: flex-start;
     text-align: left;
     gap: 8px;
   }
-  .content table.sql-result td::before { color: var(--accent-dark); }
+  .content table.sql-result td::before {
+    color: var(--accent-dark);
+  }
   /* Cells that truncate on desktop expand fully in a card. */
   .content td.truncate {
     white-space: normal;
@@ -3723,10 +4044,19 @@ tr.vss-irrelevant td {
    * Narrow tables that already fit a phone opt out of card-stacking and stay
    * a normal (full-width) table. The Generator's table picker is one.
    */
-  .gen-table-card { max-width: none !important; }
-  .content table.compact-table { display: table; width: 100%; }
-  .content table.compact-table thead { display: table-header-group; }
-  .content table.compact-table tbody { display: table-row-group; }
+  .gen-table-card {
+    max-width: none !important;
+  }
+  .content table.compact-table {
+    display: table;
+    width: 100%;
+  }
+  .content table.compact-table thead {
+    display: table-header-group;
+  }
+  .content table.compact-table tbody {
+    display: table-row-group;
+  }
   .content table.compact-table tr {
     display: table-row;
     border: none;
@@ -3742,18 +4072,29 @@ tr.vss-irrelevant td {
     overflow-wrap: normal;
     white-space: normal !important;
   }
-  .content table.compact-table td::before { content: none; }
+  .content table.compact-table td::before {
+    content: none;
+  }
   /*
    * Column sizing: checkbox fixed, count column shrinks to its content on the
    * right, and the table-name column (width:100%) absorbs all the space that
    * remains so it fills the row instead of floating in the middle.
    */
   .content table.compact-table th:first-child,
-  .content table.compact-table td:first-child { width: 44px; text-align: center; }
+  .content table.compact-table td:first-child {
+    width: 44px;
+    text-align: center;
+  }
   .content table.compact-table th:nth-child(2),
-  .content table.compact-table td:nth-child(2) { width: 100%; text-align: left; }
+  .content table.compact-table td:nth-child(2) {
+    width: 100%;
+    text-align: left;
+  }
   .content table.compact-table th:last-child,
-  .content table.compact-table td:last-child { width: 1%; white-space: nowrap; }
+  .content table.compact-table td:last-child {
+    width: 1%;
+    white-space: nowrap;
+  }
 
   /*
    * Fixed multi-column inline grids (1fr 1fr, repeat(3, ...), repeat(2,
@@ -3761,9 +4102,9 @@ tr.vss-irrelevant td {
    * hardcoded ones by their inline value; the responsive auto-fit / auto-fill
    * grids don't contain these patterns and are left to size themselves.
    */
-  [style*="grid-template-columns: 1fr 1fr"],
-  [style*="grid-template-columns: repeat(3"],
-  [style*="grid-template-columns: repeat(2, max-content"] {
+  [style*='grid-template-columns: 1fr 1fr'],
+  [style*='grid-template-columns: repeat(3'],
+  [style*='grid-template-columns: repeat(2, max-content'] {
     grid-template-columns: 1fr !important;
   }
 }
@@ -3781,7 +4122,10 @@ tr.vss-irrelevant td {
 .debug-steps tbody tr.current td:first-child {
   box-shadow: inset 3px 0 0 var(--accent);
 }
-.debug-steps tbody tr.current .muted { color: var(--selection-text); opacity: 0.75; }
+.debug-steps tbody tr.current .muted {
+  color: var(--selection-text);
+  opacity: 0.75;
+}
 
 /* Rewind marks the statement a recorded step was executing. */
 .cm-editor .cm-current-step {
@@ -3800,8 +4144,12 @@ tr.vss-irrelevant td {
 }
 
 /* Rewind marks the statement that threw, in the step list and in the code. */
-.debug-steps tbody tr.failed td { color: var(--danger); }
-.debug-steps tbody tr.failed.current td { color: var(--selection-text); }
+.debug-steps tbody tr.failed td {
+  color: var(--danger);
+}
+.debug-steps tbody tr.failed.current td {
+  color: var(--selection-text);
+}
 .debug-steps tbody tr.failed.current td:first-child {
   box-shadow: inset 3px 0 0 var(--danger);
 }
@@ -4136,7 +4484,9 @@ tr.vss-irrelevant td {
 .designer-outline.selected {
   outline: 2px solid #3068e6;
   outline-offset: -1px;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 0 2px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 0 0 2px rgba(0, 0, 0, 0.35);
 }
 
 .designer-drop {
@@ -4324,7 +4674,9 @@ tr.vss-irrelevant td {
     linear-gradient(45deg, #e9e9e9 25%, transparent 25%, transparent 75%, #e9e9e9 75%),
     linear-gradient(45deg, #e9e9e9 25%, transparent 25%, transparent 75%, #e9e9e9 75%);
   background-size: 14px 14px;
-  background-position: 0 0, 7px 7px;
+  background-position:
+    0 0,
+    7px 7px;
   border-radius: 4px;
 }
 
@@ -4438,7 +4790,7 @@ tr.vss-irrelevant td {
   min-width: 0;
 }
 
-.designer-colour input[type="color"] {
+.designer-colour input[type='color'] {
   width: 30px;
   flex-shrink: 0;
   padding: 2px;

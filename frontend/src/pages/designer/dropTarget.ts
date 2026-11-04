@@ -85,17 +85,19 @@ export function findDropSpot(
   doc: Document,
   x: number,
   y: number,
-  dragged: Node | null): DropSpot | null {
-
+  dragged: Node | null,
+): DropSpot | null {
   /*
    * Every element under the pointer, nearest first, with the element being
    * dragged and everything inside it skipped — it is about to be somewhere
    * else, and it must not be able to swallow itself.
    */
-  const target = (doc.elementsFromPoint(x, y) as Element[]).find(element =>
-    element.tagName !== 'HTML' &&
-    (element as HTMLElement).dataset.magicTool === undefined &&
-    (!dragged || (element !== dragged && !dragged.contains(element))));
+  const target = (doc.elementsFromPoint(x, y) as Element[]).find(
+    element =>
+      element.tagName !== 'HTML' &&
+      (element as HTMLElement).dataset.magicTool === undefined &&
+      (!dragged || (element !== dragged && !dragged.contains(element))),
+  );
   if (!target) {
     return null;
   }
@@ -111,8 +113,10 @@ export function findDropSpot(
    * it" forever until something has already landed inside it once.
    */
   let parent: Element | null = target.parentElement;
-  if (canContainChildren(target) &&
-      (designableChildren(target).length === 0 || !nearEdge(target, x, y, dragged))) {
+  if (
+    canContainChildren(target) &&
+    (designableChildren(target).length === 0 || !nearEdge(target, x, y, dragged))
+  ) {
     parent = target;
   }
   if (!parent) {
@@ -139,15 +143,14 @@ export function findDropSpot(
   }
 
   const horizontal = isHorizontal(children);
-  const before = children.find(child => {
-    const rect = rectOf(child);
-    if (!rect) {
-      return false;
-    }
-    return horizontal
-      ? x < rect.left + rect.width / 2
-      : y < rect.top + rect.height / 2;
-  }) ?? null;
+  const before =
+    children.find(child => {
+      const rect = rectOf(child);
+      if (!rect) {
+        return false;
+      }
+      return horizontal ? x < rect.left + rect.width / 2 : y < rect.top + rect.height / 2;
+    }) ?? null;
 
   /*
    * The indicator sits on the leading edge of whatever the element will be

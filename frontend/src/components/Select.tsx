@@ -5,9 +5,7 @@
  * is never clipped by a card or modal. Keyboard: Up/Down/Enter/Escape, plus
  * type-ahead by first letter.
  */
-import {
-  Children, isValidElement, ReactNode, useEffect, useMemo, useRef, useState,
-} from 'react';
+import { Children, isValidElement, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface Opt {
@@ -37,17 +35,18 @@ function collectOptions(children: ReactNode): Opt[] {
   return out;
 }
 
-export default function Select(props: Readonly<{
-  value: string;
-  onChange: (value: string) => void;
-  children: ReactNode;
-  disabled?: boolean;
-  title?: string;
-  className?: string;
-  style?: React.CSSProperties;
-  placeholder?: string;
-}>) {
-
+export default function Select(
+  props: Readonly<{
+    value: string;
+    onChange: (value: string) => void;
+    children: ReactNode;
+    disabled?: boolean;
+    title?: string;
+    className?: string;
+    style?: React.CSSProperties;
+    placeholder?: string;
+  }>,
+) {
   const options = useMemo(() => collectOptions(props.children), [props.children]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
@@ -137,8 +136,13 @@ export default function Select(props: Readonly<{
 
   return (
     <div
-      className={'select' + (props.disabled ? ' disabled' : '') + (props.className ? ' ' + props.className : '')}
-      style={props.style}>
+      className={
+        'select' +
+        (props.disabled ? ' disabled' : '') +
+        (props.className ? ' ' + props.className : '')
+      }
+      style={props.style}
+    >
       <button
         ref={triggerRef}
         type="button"
@@ -148,36 +152,53 @@ export default function Select(props: Readonly<{
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => (open ? setOpen(false) : openMenu())}
-        onKeyDown={onKeyDown}>
+        onKeyDown={onKeyDown}
+      >
         <span className="select-value">
           {selected ? selected.label : (props.placeholder ?? '')}
         </span>
-        <span className="select-caret" aria-hidden="true">▾</span>
+        <span className="select-caret" aria-hidden="true">
+          ▾
+        </span>
       </button>
-      {open && rect && createPortal(
-        <ul
-          ref={menuRef}
-          className="select-menu"
-          role="listbox"
-          style={{ position: 'fixed', top: rect.bottom + 4, left: rect.left, minWidth: rect.width }}>
-          {options.map((o, i) => (
-            <li
-              key={o.value + '·' + i}
-              role="option"
-              aria-selected={o.value === props.value}
-              className={'select-option'
-                + (o.value === props.value ? ' selected' : '')
-                + (i === active ? ' active' : '')
-                + (o.disabled ? ' disabled' : '')}
-              onMouseEnter={() => setActive(i)}
-              onMouseDown={e => e.preventDefault()}
-              onClick={() => !o.disabled && choose(o.value)}>
-              <span className="select-check" aria-hidden="true">{o.value === props.value ? '✓' : ''}</span>
-              <span className="select-option-label">{o.label}</span>
-            </li>
-          ))}
-        </ul>,
-        document.body)}
+      {open &&
+        rect &&
+        createPortal(
+          <ul
+            ref={menuRef}
+            className="select-menu"
+            role="listbox"
+            style={{
+              position: 'fixed',
+              top: rect.bottom + 4,
+              left: rect.left,
+              minWidth: rect.width,
+            }}
+          >
+            {options.map((o, i) => (
+              <li
+                key={o.value + '·' + i}
+                role="option"
+                aria-selected={o.value === props.value}
+                className={
+                  'select-option' +
+                  (o.value === props.value ? ' selected' : '') +
+                  (i === active ? ' active' : '') +
+                  (o.disabled ? ' disabled' : '')
+                }
+                onMouseEnter={() => setActive(i)}
+                onMouseDown={e => e.preventDefault()}
+                onClick={() => !o.disabled && choose(o.value)}
+              >
+                <span className="select-check" aria-hidden="true">
+                  {o.value === props.value ? '✓' : ''}
+                </span>
+                <span className="select-option-label">{o.label}</span>
+              </li>
+            ))}
+          </ul>,
+          document.body,
+        )}
     </div>
   );
 }

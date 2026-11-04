@@ -20,8 +20,9 @@ import { nameOf, parentOf } from './paths';
  * tinted red in the tree, like the old dashboard.
  */
 function isSystemPath(path: string) {
-  return ['/system/', '/misc/', '/data/', '/config/'].some(prefix =>
-    path === prefix || path.startsWith(prefix));
+  return ['/system/', '/misc/', '/data/', '/config/'].some(
+    prefix => path === prefix || path.startsWith(prefix),
+  );
 }
 
 /*
@@ -50,8 +51,7 @@ function previewUrl(path: string): string | null {
    * Hidden paths are not served — except .well-known, which the backend
    * exempts because discovery documents have to be publicly reachable.
    */
-  if (relative.split('/').some(entity =>
-      entity.startsWith('.') && entity !== '.well-known')) {
+  if (relative.split('/').some(entity => entity.startsWith('.') && entity !== '.well-known')) {
     return null;
   }
   return relative;
@@ -65,8 +65,7 @@ function previewUrl(path: string): string | null {
  */
 function keyActivate(action: () => void) {
   return (event: React.KeyboardEvent) => {
-    if (event.target !== event.currentTarget ||
-        (event.key !== 'Enter' && event.key !== ' ')) {
+    if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) {
       return;
     }
     event.preventDefault();
@@ -78,29 +77,30 @@ function keyActivate(action: () => void) {
  * The recursive folder/file tree of the Hyper IDE. All state lives in the
  * page — the tree only renders it and reports clicks back through callbacks.
  */
-export default function FileTree(props: Readonly<{
-  folders: string[];
-  visibleFiles: string[];
-  // Null when no filter is active — every folder shows.
-  visibleFolders: Set<string> | null;
-  query: string;
-  expanded: Set<string>;
-  activeFolder: string;
-  selectedFile: string;
-  // For opening /etc/www previews in a browser tab.
-  backendUrl: string;
-  onToggleFolder: (folder: string) => void;
-  onOpenFile: (file: string) => void;
-  onNewFile: (folder: string) => void;
-  onNewFolder: (folder: string) => void;
-  onGit: (folder: string) => void;
-  onOpenApi: (target: string) => void;
-  onAiFunctions: (target: string) => void;
-  onRename: (path: string, isFolder: boolean) => void;
-  onDeleteFolder: (folder: string) => void;
-  onDeleteFile: (file: string) => void;
-}>) {
-
+export default function FileTree(
+  props: Readonly<{
+    folders: string[];
+    visibleFiles: string[];
+    // Null when no filter is active — every folder shows.
+    visibleFolders: Set<string> | null;
+    query: string;
+    expanded: Set<string>;
+    activeFolder: string;
+    selectedFile: string;
+    // For opening /etc/www previews in a browser tab.
+    backendUrl: string;
+    onToggleFolder: (folder: string) => void;
+    onOpenFile: (file: string) => void;
+    onNewFile: (folder: string) => void;
+    onNewFolder: (folder: string) => void;
+    onGit: (folder: string) => void;
+    onOpenApi: (target: string) => void;
+    onAiFunctions: (target: string) => void;
+    onRename: (path: string, isFolder: boolean) => void;
+    onDeleteFolder: (folder: string) => void;
+    onDeleteFile: (file: string) => void;
+  }>,
+) {
   const { folders, visibleFiles, visibleFolders, query, expanded } = props;
 
   /*
@@ -129,24 +129,29 @@ export default function FileTree(props: Readonly<{
     return map;
   }, [folders, visibleFiles, visibleFolders]);
 
-    function renderChildren(path: string): React.JSX.Element {
-    const { folders: childFolders, files: childFiles } =
-      childrenOf.get(path) ?? { folders: [], files: [] };
-    const isOpen = (folder: string) => query ? true : expanded.has(folder);
+  function renderChildren(path: string): React.JSX.Element {
+    const { folders: childFolders, files: childFiles } = childrenOf.get(path) ?? {
+      folders: [],
+      files: [],
+    };
+    const isOpen = (folder: string) => (query ? true : expanded.has(folder));
     return (
       <div className={'tree-children' + (path === '/' ? ' root' : '')}>
         {childFolders.map(folder => (
           <div className="tree-node" key={folder}>
             <div
-              className={'tree-row'
-                + (isSystemPath(folder) ? ' system' : '')
-                + (folder === props.activeFolder ? ' active-folder' : '')}
+              className={
+                'tree-row' +
+                (isSystemPath(folder) ? ' system' : '') +
+                (folder === props.activeFolder ? ' active-folder' : '')
+              }
               title={folder}
               tabIndex={0}
               role="treeitem"
               aria-selected={folder === props.activeFolder}
               onClick={() => props.onToggleFolder(folder)}
-              onKeyDown={keyActivate(() => props.onToggleFolder(folder))}>
+              onKeyDown={keyActivate(() => props.onToggleFolder(folder))}
+            >
               <span className="tree-chevron">
                 <ChevronIcon open={isOpen(folder)} />
               </span>
@@ -158,16 +163,15 @@ export default function FileTree(props: Readonly<{
                 onNewFile={() => props.onNewFile(folder)}
                 onNewFolder={() => props.onNewFolder(folder)}
                 // Git repos can only live inside /modules/ and /etc/.
-                onGit={canBeGitRepo(folder)
-                  ? () => props.onGit(folder)
-                  : undefined}
+                onGit={canBeGitRepo(folder) ? () => props.onGit(folder) : undefined}
                 onOpenApi={() => props.onOpenApi(folder)}
                 // Only modules hold endpoints worth exposing as AI functions.
-                onAiFunctions={folder.startsWith('/modules/')
-                  ? () => props.onAiFunctions(folder)
-                  : undefined}
+                onAiFunctions={
+                  folder.startsWith('/modules/') ? () => props.onAiFunctions(folder) : undefined
+                }
                 onRename={() => props.onRename(folder, true)}
-                onDelete={() => props.onDeleteFolder(folder)} />
+                onDelete={() => props.onDeleteFolder(folder)}
+              />
             </div>
             {isOpen(folder) && renderChildren(folder)}
           </div>
@@ -181,22 +185,39 @@ export default function FileTree(props: Readonly<{
             role="treeitem"
             aria-selected={file === props.selectedFile}
             onClick={() => props.onOpenFile(file)}
-            onKeyDown={keyActivate(() => props.onOpenFile(file))}>
+            onKeyDown={keyActivate(() => props.onOpenFile(file))}
+          >
             <span className="tree-chevron" />
-            <span className="tree-icon"><FileIcon /></span>
+            <span className="tree-icon">
+              <FileIcon />
+            </span>
             <span className="tree-name">{nameOf(file)}</span>
             <FileActions
-              onPreview={previewUrl(file)
-                ? e => {
-                    e.stopPropagation();
-                    window.open(props.backendUrl + previewUrl(file), '_blank', 'noopener');
-                  }
-                : undefined}
-              onAiFunction={file.endsWith('.hl')
-                ? e => { e.stopPropagation(); props.onAiFunctions(file); }
-                : undefined}
-              onRename={e => { e.stopPropagation(); props.onRename(file, false); }}
-              onDelete={e => { e.stopPropagation(); props.onDeleteFile(file); }} />
+              onPreview={
+                previewUrl(file)
+                  ? e => {
+                      e.stopPropagation();
+                      window.open(props.backendUrl + previewUrl(file), '_blank', 'noopener');
+                    }
+                  : undefined
+              }
+              onAiFunction={
+                file.endsWith('.hl')
+                  ? e => {
+                      e.stopPropagation();
+                      props.onAiFunctions(file);
+                    }
+                  : undefined
+              }
+              onRename={e => {
+                e.stopPropagation();
+                props.onRename(file, false);
+              }}
+              onDelete={e => {
+                e.stopPropagation();
+                props.onDeleteFile(file);
+              }}
+            />
           </div>
         ))}
       </div>
@@ -206,52 +227,74 @@ export default function FileTree(props: Readonly<{
   return renderChildren('/');
 }
 
-function FolderActions(props: Readonly<{
-  onNewFile: () => void;
-  onNewFolder: () => void;
-  onGit?: () => void;
-  onOpenApi?: () => void;
-  onAiFunctions?: () => void;
-  onRename?: () => void;
-  onDelete?: () => void;
-}>) {
+function FolderActions(
+  props: Readonly<{
+    onNewFile: () => void;
+    onNewFolder: () => void;
+    onGit?: () => void;
+    onOpenApi?: () => void;
+    onAiFunctions?: () => void;
+    onRename?: () => void;
+    onDelete?: () => void;
+  }>,
+) {
   return (
     <span className="row-actions" role="presentation" onClick={e => e.stopPropagation()}>
-      <button className="icon-btn" title="New file" onClick={props.onNewFile}><FilePlusIcon /></button>
-      <button className="icon-btn" title="New folder" onClick={props.onNewFolder}><FolderPlusIcon /></button>
-      {props.onGit &&
-        <button className="icon-btn" title="Git" onClick={props.onGit}><GitBranchIcon /></button>}
-      {props.onOpenApi &&
-        <button className="icon-btn" title="OpenAPI specification" onClick={props.onOpenApi}><BracesIcon /></button>}
+      <button className="icon-btn" title="New file" onClick={props.onNewFile}>
+        <FilePlusIcon />
+      </button>
+      <button className="icon-btn" title="New folder" onClick={props.onNewFolder}>
+        <FolderPlusIcon />
+      </button>
+      {props.onGit && (
+        <button className="icon-btn" title="Git" onClick={props.onGit}>
+          <GitBranchIcon />
+        </button>
+      )}
+      {props.onOpenApi && (
+        <button className="icon-btn" title="OpenAPI specification" onClick={props.onOpenApi}>
+          <BracesIcon />
+        </button>
+      )}
       {props.onAiFunctions && (
         <button
           className="icon-btn"
           title="Create AI functions for all Hyperlambda files in folder…"
-          onClick={props.onAiFunctions}>
+          onClick={props.onAiFunctions}
+        >
           <SparkIcon />
         </button>
       )}
-      {props.onRename &&
-        <button className="icon-btn" title="Rename" onClick={props.onRename}><PencilIcon /></button>}
-      {props.onDelete &&
-        <button className="icon-btn danger" title="Delete" onClick={props.onDelete}><TrashIcon /></button>}
+      {props.onRename && (
+        <button className="icon-btn" title="Rename" onClick={props.onRename}>
+          <PencilIcon />
+        </button>
+      )}
+      {props.onDelete && (
+        <button className="icon-btn danger" title="Delete" onClick={props.onDelete}>
+          <TrashIcon />
+        </button>
+      )}
     </span>
   );
 }
 
-function FileActions(props: Readonly<{
-  onPreview?: (e: React.MouseEvent) => void;
-  onAiFunction?: (e: React.MouseEvent) => void;
-  onRename: (e: React.MouseEvent) => void;
-  onDelete: (e: React.MouseEvent) => void;
-}>) {
+function FileActions(
+  props: Readonly<{
+    onPreview?: (e: React.MouseEvent) => void;
+    onAiFunction?: (e: React.MouseEvent) => void;
+    onRename: (e: React.MouseEvent) => void;
+    onDelete: (e: React.MouseEvent) => void;
+  }>,
+) {
   return (
     <span className="row-actions">
       {props.onPreview && (
         <button
           className="icon-btn"
           title="Open in a browser, as a visitor sees it"
-          onClick={props.onPreview}>
+          onClick={props.onPreview}
+        >
           <EyeIcon />
         </button>
       )}
@@ -259,12 +302,17 @@ function FileActions(props: Readonly<{
         <button
           className="icon-btn"
           title="Create AI function for this file…"
-          onClick={props.onAiFunction}>
+          onClick={props.onAiFunction}
+        >
           <SparkIcon />
         </button>
       )}
-      <button className="icon-btn" title="Rename" onClick={props.onRename}><PencilIcon /></button>
-      <button className="icon-btn" title="Delete" onClick={props.onDelete}><TrashIcon /></button>
+      <button className="icon-btn" title="Rename" onClick={props.onRename}>
+        <PencilIcon />
+      </button>
+      <button className="icon-btn" title="Delete" onClick={props.onDelete}>
+        <TrashIcon />
+      </button>
     </span>
   );
 }

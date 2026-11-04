@@ -8,13 +8,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SECTIONS } from './sections';
-import {
-  apiBaseUrl,
-  listEndpoints,
-  listFilesRecursively,
-  listTasks,
-  mlTypes,
-} from '../lib/api';
+import { apiBaseUrl, listEndpoints, listFilesRecursively, listTasks, mlTypes } from '../lib/api';
 
 export interface PaletteCommand {
   group: string;
@@ -67,8 +61,11 @@ async function loadDynamic(): Promise<DynamicCommand[]> {
       verb: endpoint.verb.toUpperCase(),
       // The verb travels along, so the Endpoints page can expand and scroll
       // to the exact row rather than just filtering to it.
-      to: '/endpoints?filter=' + encodeURIComponent(endpoint.path) +
-        '&expand=' + encodeURIComponent(endpoint.verb),
+      to:
+        '/endpoints?filter=' +
+        encodeURIComponent(endpoint.path) +
+        '&expand=' +
+        encodeURIComponent(endpoint.verb),
     })),
     ...[...moduleFiles, ...wwwFiles].map(file => ({
       group: 'Files',
@@ -83,8 +80,11 @@ async function loadDynamic(): Promise<DynamicCommand[]> {
       group: 'Tasks',
       label: task.id,
       hint: task.description ?? undefined,
-      to: '/task-manager?edit=' + encodeURIComponent(task.id) +
-        '&filter=' + encodeURIComponent(task.id),
+      to:
+        '/task-manager?edit=' +
+        encodeURIComponent(task.id) +
+        '&filter=' +
+        encodeURIComponent(task.id),
     })),
     /*
      * Two ways in per model, told apart by their group rather than by a
@@ -161,18 +161,18 @@ function highlight(text: string, query: string) {
   if (positions.size === 0) {
     return text;
   }
-  return [...text].map((char, at) =>
-    positions.has(at) ? <b key={at}>{char}</b> : char);
+  return [...text].map((char, at) => (positions.has(at) ? <b key={at}>{char}</b> : char));
 }
 
-export default function CommandPalette(props: Readonly<{
-  // Guard-aware navigation supplied by Layout.
-  go: (to: string) => void;
-  // Extra commands only the layout can perform — theme, cloudlet, Frank.
-  actions: { label: string; action: () => void }[];
-  onClose: () => void;
-}>) {
-
+export default function CommandPalette(
+  props: Readonly<{
+    // Guard-aware navigation supplied by Layout.
+    go: (to: string) => void;
+    // Extra commands only the layout can perform — theme, cloudlet, Frank.
+    actions: { label: string; action: () => void }[];
+    onClose: () => void;
+  }>,
+) {
   const [query, setQuery] = useState(lastQuery);
   const [selected, setSelected] = useState(0);
   const [dynamic, setDynamic] = useState<DynamicCommand[]>([]);
@@ -190,47 +190,53 @@ export default function CommandPalette(props: Readonly<{
 
   useEffect(() => {
     let cancelled = false;
-    loadDynamic().then(commands => {
-      if (!cancelled) {
-        setDynamic(commands);
-      }
-    }).catch(error => console.error('Could not load commands:', error));
-    return () => { cancelled = true; };
+    loadDynamic()
+      .then(commands => {
+        if (!cancelled) {
+          setDynamic(commands);
+        }
+      })
+      .catch(error => console.error('Could not load commands:', error));
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const commands: PaletteCommand[] = useMemo(() => [
-    ...SECTIONS.map(section => ({
-      group: 'Go to',
-      label: section.label,
-      action: () => props.go(section.to),
-    })),
-    ...props.actions.map(entry => ({
-      group: 'Actions',
-      label: entry.label,
-      action: entry.action,
-    })),
-    ...dynamic.map(entry => ({
-      group: entry.group,
-      label: entry.label,
-      hint: entry.hint,
-      verb: entry.verb,
-      action: () => props.go(entry.to),
-    })),
-  ], [dynamic, props.go, props.actions]);
+  const commands: PaletteCommand[] = useMemo(
+    () => [
+      ...SECTIONS.map(section => ({
+        group: 'Go to',
+        label: section.label,
+        action: () => props.go(section.to),
+      })),
+      ...props.actions.map(entry => ({
+        group: 'Actions',
+        label: entry.label,
+        action: entry.action,
+      })),
+      ...dynamic.map(entry => ({
+        group: entry.group,
+        label: entry.label,
+        hint: entry.hint,
+        verb: entry.verb,
+        action: () => props.go(entry.to),
+      })),
+    ],
+    [dynamic, props.go, props.actions],
+  );
 
   const matches = useMemo(() => {
     if (!query.trim()) {
       // Empty query shows the navigation and actions, not thousands of files.
-      return commands.filter(command =>
-        command.group === 'Go to' || command.group === 'Actions');
+      return commands.filter(command => command.group === 'Go to' || command.group === 'Actions');
     }
     const ranked = commands
       .map(command => ({
         command,
         rank: score(
           query,
-          (command.verb ? command.verb + ' ' : '') +
-            command.label + ' ' + (command.hint ?? '')),
+          (command.verb ? command.verb + ' ' : '') + command.label + ' ' + (command.hint ?? ''),
+        ),
       }))
       .filter(entry => entry.rank >= 0)
       .sort((left, right) => right.rank - left.rank)
@@ -256,8 +262,7 @@ export default function CommandPalette(props: Readonly<{
   }, [matches.length]);
 
   useEffect(() => {
-    listRef.current?.querySelector('.palette-row.selected')
-      ?.scrollIntoView({ block: 'nearest' });
+    listRef.current?.querySelector('.palette-row.selected')?.scrollIntoView({ block: 'nearest' });
   }, [selected]);
 
   function run(command: PaletteCommand) {
@@ -292,9 +297,12 @@ export default function CommandPalette(props: Readonly<{
         className="palette"
         role="dialog"
         aria-label="Command palette"
-        onMouseDown={event => event.stopPropagation()}>
+        onMouseDown={event => event.stopPropagation()}
+      >
         <div className="palette-input">
-          <span className="palette-prompt" aria-hidden="true">&gt;</span>
+          <span className="palette-prompt" aria-hidden="true">
+            &gt;
+          </span>
           <input
             ref={inputRef}
             role="combobox"
@@ -305,13 +313,15 @@ export default function CommandPalette(props: Readonly<{
             type="text"
             placeholder="Jump to a page, file, endpoint, task or model…"
             value={query}
-            onChange={event => { setQuery(event.target.value); setSelected(0); }}
-            onKeyDown={onKeyDown} />
+            onChange={event => {
+              setQuery(event.target.value);
+              setSelected(0);
+            }}
+            onKeyDown={onKeyDown}
+          />
         </div>
         <div className="palette-list" id="palette-list" role="listbox" ref={listRef}>
-          {matches.length === 0 && (
-            <div className="palette-empty">Nothing matches</div>
-          )}
+          {matches.length === 0 && <div className="palette-empty">Nothing matches</div>}
           {matches.map((command, index) => {
             const header = command.group !== previousGroup ? command.group : null;
             previousGroup = command.group;
@@ -331,27 +341,29 @@ export default function CommandPalette(props: Readonly<{
                       run(command);
                     }
                   }}
-                  onClick={() => run(command)}>
+                  onClick={() => run(command)}
+                >
                   {command.verb && (
                     <span className={'badge badge-' + command.verb.toLowerCase()}>
                       {command.verb}
                     </span>
                   )}
-                  {command.group === 'Files' && command.label.includes('/')
-                    ? (
-                      // The directory whispers, the filename talks.
-                      <span className="palette-label">
-                        <span className="palette-file-dir">
-                          {command.label.substring(0, command.label.lastIndexOf('/') + 1)}
-                        </span>
-                        <span className="palette-file-name">
-                          {highlight(
-                            command.label.substring(command.label.lastIndexOf('/') + 1),
-                            query)}
-                        </span>
+                  {command.group === 'Files' && command.label.includes('/') ? (
+                    // The directory whispers, the filename talks.
+                    <span className="palette-label">
+                      <span className="palette-file-dir">
+                        {command.label.substring(0, command.label.lastIndexOf('/') + 1)}
                       </span>
-                    )
-                    : <span className="palette-label">{highlight(command.label, query)}</span>}
+                      <span className="palette-file-name">
+                        {highlight(
+                          command.label.substring(command.label.lastIndexOf('/') + 1),
+                          query,
+                        )}
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="palette-label">{highlight(command.label, query)}</span>
+                  )}
                   {command.hint && <span className="palette-hint">{command.hint}</span>}
                 </div>
               </div>

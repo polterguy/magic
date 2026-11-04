@@ -145,8 +145,11 @@ export function clearBackend() {
   if (!active) {
     return;
   }
-  persist(loadBackends().map(candidate =>
-    candidate.url === active.url ? { ...candidate, token: null } : candidate));
+  persist(
+    loadBackends().map(candidate =>
+      candidate.url === active.url ? { ...candidate, token: null } : candidate,
+    ),
+  );
 }
 
 // Switches to another backend already in the list.

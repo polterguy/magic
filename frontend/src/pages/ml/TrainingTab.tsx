@@ -41,17 +41,20 @@ function vssClass(relevant: boolean) {
 
 function vssTitle(relevant: boolean, threshold: unknown) {
   return relevant
-    ? 'Close enough to be included in the model\'s context'
-    : 'Too distant for the model\'s ' + threshold + ' threshold — ' +
-      'this would not be included in the context';
+    ? "Close enough to be included in the model's context"
+    : "Too distant for the model's " +
+        threshold +
+        ' threshold — ' +
+        'this would not be included in the context';
 }
 
-export default function TrainingTab(props: Readonly<{
-  types: any[];
-  // A model the command palette asked to filter by, resolved by the page above.
-  initialType?: string | null;
-}>) {
-
+export default function TrainingTab(
+  props: Readonly<{
+    types: any[];
+    // A model the command palette asked to filter by, resolved by the page above.
+    initialType?: string | null;
+  }>,
+) {
   const PAGE_SIZE = 12;
   const [type, setType] = useState(props.initialType ?? '');
 
@@ -116,12 +119,14 @@ export default function TrainingTab(props: Readonly<{
   const count = list.count;
 
   async function remove(snippet: any) {
-    if (!await confirm({
-      title: 'Delete training snippet?',
-      message: snippet.prompt?.substring(0, 100),
-      confirmText: 'Delete',
-      danger: true,
-    })) {
+    if (
+      !(await confirm({
+        title: 'Delete training snippet?',
+        message: snippet.prompt?.substring(0, 100),
+        confirmText: 'Delete',
+        danger: true,
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -140,15 +145,22 @@ export default function TrainingTab(props: Readonly<{
    * screen — so it asks for the count to be typed back.
    */
   async function removeFiltered() {
-    if (!await confirmTyped({
-      title: 'Delete all filtered snippets?',
-      message: 'This permanently deletes all ' + count + ' snippet(s) matching the ' +
-        'current filter in ' + type + '. Type the number to confirm.',
-      label: 'Number of snippets',
-      expected: String(count),
-      confirmText: 'Delete',
-      mismatch: 'Number did not match — nothing deleted',
-    })) {
+    if (
+      !(await confirmTyped({
+        title: 'Delete all filtered snippets?',
+        message:
+          'This permanently deletes all ' +
+          count +
+          ' snippet(s) matching the ' +
+          'current filter in ' +
+          type +
+          '. Type the number to confirm.',
+        label: 'Number of snippets',
+        expected: String(count),
+        confirmText: 'Delete',
+        mismatch: 'Number did not match — nothing deleted',
+      }))
+    ) {
       return;
     }
     setWaiting(true);
@@ -194,21 +206,26 @@ export default function TrainingTab(props: Readonly<{
       <div className="toolbar">
         <Select value={type} onChange={value => setType(value)}>
           {props.types.map(candidate => (
-            <option key={candidate.type} value={candidate.type}>{candidate.type}</option>
+            <option key={candidate.type} value={candidate.type}>
+              {candidate.type}
+            </option>
           ))}
         </Select>
         <SearchInput
           placeholder={vectorSearch ? 'Search meaning…' : 'Filter prompts…'}
           value={filter}
           onChange={setFilter}
-          style={{ width: 240 }} />
+          style={{ width: 240 }}
+        />
         <label
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          title="Use vector semantic search to find snippets by meaning rather than by text — only works once you have vectorised this model">
+          title="Use vector semantic search to find snippets by meaning rather than by text — only works once you have vectorised this model"
+        >
           <input
             type="checkbox"
             checked={vectorSearch}
-            onChange={e => setVectorSearch(e.target.checked)} />
+            onChange={e => setVectorSearch(e.target.checked)}
+          />
           Vector search
         </label>
         <span className="muted">{count} snippets</span>
@@ -217,36 +234,42 @@ export default function TrainingTab(props: Readonly<{
           className="btn btn-danger btn-small"
           disabled={count === 0 || searchingByVector}
           title={deleteTitle(searchingByVector, filter, type)}
-          onClick={removeFiltered}>
+          onClick={removeFiltered}
+        >
           {filter ? 'Delete filtered' : 'Delete all'}
         </button>
         <button
           className="btn btn-secondary btn-small"
           disabled={count === 0 || searchingByVector}
-          title={searchingByVector
-            ? 'Vector search ranks snippets rather than filtering them, so there is no filter to export'
-            : 'Download every snippet matching the filter as CSV'}
-          onClick={exportSnippets}>
+          title={
+            searchingByVector
+              ? 'Vector search ranks snippets rather than filtering them, so there is no filter to export'
+              : 'Download every snippet matching the filter as CSV'
+          }
+          onClick={exportSnippets}
+        >
           Export
         </button>
         <button
           className="btn btn-secondary"
           title="Scrape a single web page into this model"
-          onClick={() => setSpicing(true)}>
+          onClick={() => setSpicing(true)}
+        >
           + Spice
         </button>
         <button
           className="btn btn-secondary"
           title="Add an HTML widget this model can render"
-          onClick={() => setPickingWidget(true)}>
+          onClick={() => setPickingWidget(true)}
+        >
           + Widget
         </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setPickingFunction(true)}>
+        <button className="btn btn-secondary" onClick={() => setPickingFunction(true)}>
           + AI function
         </button>
-        <button className="btn" onClick={() => setEditing('new')}>+ New snippet</button>
+        <button className="btn" onClick={() => setEditing('new')}>
+          + New snippet
+        </button>
         <Pagination page={list.page} pageCount={list.pageCount} onPage={list.setPage} />
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
@@ -269,21 +292,26 @@ export default function TrainingTab(props: Readonly<{
                 <tr
                   key={snippet.id}
                   className={searchingByVector ? vssClass(inContext(snippet)) : undefined}
-                  title={searchingByVector ? vssTitle(inContext(snippet), threshold) : undefined}>
-                  <td style={{
-                    maxWidth: 520,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}>
+                  title={searchingByVector ? vssTitle(inContext(snippet), threshold) : undefined}
+                >
+                  <td
+                    style={{
+                      maxWidth: 520,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {snippet.prompt}
                   </td>
                   <td data-label="Tokens">{snippet.tokens}</td>
                   {searchingByVector && (
                     <td className="mono" data-label="Distance">
-                      {typeof snippet.distance === 'number'
-                        ? snippet.distance.toFixed(3)
-                        : <span className="muted">—</span>}
+                      {typeof snippet.distance === 'number' ? (
+                        snippet.distance.toFixed(3)
+                      ) : (
+                        <span className="muted">—</span>
+                      )}
                     </td>
                   )}
                   <td data-label="Embedded">
@@ -291,20 +319,22 @@ export default function TrainingTab(props: Readonly<{
                       className={'status-dot ' + (snippet.embedding_vss ? 'ok' : 'pending')}
                       role="img"
                       aria-label={snippet.embedding_vss ? 'Embedded' : 'Not embedded'}
-                      title={snippet.embedding_vss
-                        ? 'Embedded — this snippet is vectorised and searchable'
-                        : 'Not embedded — vectorise this model to include it'} />
+                      title={
+                        snippet.embedding_vss
+                          ? 'Embedded — this snippet is vectorised and searchable'
+                          : 'Not embedded — vectorise this model to include it'
+                      }
+                    />
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                       <button
                         className="btn btn-secondary btn-small"
-                        onClick={() => setEditing(snippet)}>
+                        onClick={() => setEditing(snippet)}
+                      >
                         Edit
                       </button>
-                      <button
-                        className="btn btn-danger btn-small"
-                        onClick={() => remove(snippet)}>
+                      <button className="btn btn-danger btn-small" onClick={() => remove(snippet)}>
                         Delete
                       </button>
                     </div>
@@ -327,40 +357,52 @@ export default function TrainingTab(props: Readonly<{
           type={type}
           existing={editing === 'new' ? null : editing}
           onClose={() => setEditing(null)}
-          onSaved={() => { setEditing(null); list.refresh(); }} />
+          onSaved={() => {
+            setEditing(null);
+            list.refresh();
+          }}
+        />
       )}
       {pickingFunction && (
         <AddFunctionDialog
           type={type}
           onClose={() => setPickingFunction(false)}
-          onInstalled={() => { setPickingFunction(false); list.refresh(); }} />
+          onInstalled={() => {
+            setPickingFunction(false);
+            list.refresh();
+          }}
+        />
       )}
       {pickingWidget && (
         <AddWidgetDialog
           type={type}
           onClose={() => setPickingWidget(false)}
-          onAdded={() => { setPickingWidget(false); list.refresh(); }} />
+          onAdded={() => {
+            setPickingWidget(false);
+            list.refresh();
+          }}
+        />
       )}
-      {spicing && (
-        <SpiceDialog
-          type={type}
-          onClose={() => setSpicing(false)}
-          onScrape={spice} />
-      )}
+      {spicing && <SpiceDialog type={type} onClose={() => setSpicing(false)} onScrape={spice} />}
       {scraping && (
         <SocketFeedback
           title={'Scraping ' + scraping.options.url}
           channel={scraping.channel}
           onReady={() => {
-            importPage({ ...scraping.options, type, channel: scraping.channel })
-              .catch(err => showToast(err.message, true, err.logId));
+            importPage({ ...scraping.options, type, channel: scraping.channel }).catch(err =>
+              showToast(err.message, true, err.logId),
+            );
           }}
-          onClose={() => { setScraping(null); list.refresh(); }} />
+          onClose={() => {
+            setScraping(null);
+            list.refresh();
+          }}
+        />
       )}
       {/*
-        * Vector search embeds the query through OpenAI first, so unlike the
-        * text filter it's slow enough to need a waiter.
-        */}
+       * Vector search embeds the query through OpenAI first, so unlike the
+       * text filter it's slow enough to need a waiter.
+       */}
       {(waiting || (searchingByVector && list.loading)) && <AiWaiter />}
     </>
   );

@@ -41,23 +41,28 @@ function editorMode(contentType: string) {
 }
 
 function isText(contentType: string) {
-  return contentType.startsWith('text/') ||
+  return (
+    contentType.startsWith('text/') ||
     contentType.includes('json') ||
     contentType.includes('xml') ||
     contentType.includes('hyperlambda') ||
-    contentType.includes('javascript');
+    contentType.includes('javascript')
+  );
 }
 
-export default function ResultViewer(
-  { result, height = '55vh', onText }:
-  Readonly<{ result: RawResult; height?: string; onText?: (text: string | null) => void }>) {
-
+export default function ResultViewer({
+  result,
+  height = '55vh',
+  onText,
+}: Readonly<{ result: RawResult; height?: string; onText?: (text: string | null) => void }>) {
   const [text, setText] = useState<string | null>(null);
   const [preview, setPreview] = useState(false);
 
   // Surface the displayed text (null for binaries/images) so a parent can offer
   // a "Copy response" action without re-reading and re-formatting the blob.
-  useEffect(() => { onText?.(text); }, [text]);
+  useEffect(() => {
+    onText?.(text);
+  }, [text]);
 
   const contentType = result.contentType.split(';')[0].trim().toLowerCase();
   const attachment = result.disposition.includes('attachment');
@@ -71,35 +76,44 @@ export default function ResultViewer(
       return;
     }
     let cancelled = false;
-    result.blob.text().then(value => {
-      if (cancelled) {
-        return;
-      }
-      if (contentType.includes('json')) {
-        try {
-          value = JSON.stringify(JSON.parse(value), null, 2);
-        } catch {
-          // Malformed JSON — show raw.
+    result.blob
+      .text()
+      .then(value => {
+        if (cancelled) {
+          return;
         }
-      }
-      setText(value === '' ? 'OK — no result' : value);
-    }).catch(error => {
-      if (!cancelled) {
-        setText('Could not read the result: ' + error.message);
-      }
-    });
-    return () => { cancelled = true; };
+        if (contentType.includes('json')) {
+          try {
+            value = JSON.stringify(JSON.parse(value), null, 2);
+          } catch {
+            // Malformed JSON — show raw.
+          }
+        }
+        setText(value === '' ? 'OK — no result' : value);
+      })
+      .catch(error => {
+        if (!cancelled) {
+          setText('Could not read the result: ' + error.message);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [result, textual, contentType]);
 
   const imageUrl = useMemo(
-    () => image ? URL.createObjectURL(result.blob) : null,
-    [image, result]);
+    () => (image ? URL.createObjectURL(result.blob) : null),
+    [image, result],
+  );
 
-  useEffect(() => () => {
-    if (imageUrl) {
-      URL.revokeObjectURL(imageUrl);
-    }
-  }, [imageUrl]);
+  useEffect(
+    () => () => {
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+      }
+    },
+    [imageUrl],
+  );
 
   if (attachment || (!textual && !image)) {
     const filename = dispositionFilename(result.disposition) ?? 'result.bin';
@@ -107,9 +121,7 @@ export default function ResultViewer(
       <div className="card" style={{ textAlign: 'center' }}>
         <p style={{ marginTop: 0 }}>
           The response is a file — <span className="mono">{filename}</span>
-          <span className="muted">
-            {' — ' + contentType + ', ' + formatSize(result.blob.size)}
-          </span>
+          <span className="muted">{' — ' + contentType + ', ' + formatSize(result.blob.size)}</span>
         </p>
         <button className="btn" onClick={() => downloadBlob(result.blob, filename)}>
           Download
@@ -133,12 +145,14 @@ export default function ResultViewer(
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             className={'btn btn-small ' + (preview ? 'btn-secondary' : '')}
-            onClick={() => setPreview(false)}>
+            onClick={() => setPreview(false)}
+          >
             Source
           </button>
           <button
             className={'btn btn-small ' + (preview ? '' : 'btn-secondary')}
-            onClick={() => setPreview(true)}>
+            onClick={() => setPreview(true)}
+          >
             Preview
           </button>
         </div>
@@ -153,7 +167,8 @@ export default function ResultViewer(
             border: '1px solid var(--border)',
             borderRadius: 'var(--radius)',
             background: '#fff',
-          }} />
+          }}
+        />
       ) : (
         text !== null && <CodeEditor value={text} mode={editorMode(contentType)} readOnly />
       )}

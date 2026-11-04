@@ -14,30 +14,31 @@ interface FeedbackMessage {
   message: string;
 }
 
-export default function SocketFeedback(props: Readonly<{
-  title: string;
-  channel: string;
-  // Invoked once the socket listens — the caller starts the backend job here.
-  onReady: () => void;
-  onClose: () => void;
-  // Marks the terminal message (e.g. the "Done!" line). Once one arrives,
-  // `renderDone` is shown in the action bar — used for a follow-up link.
-  isComplete?: (message: FeedbackMessage) => boolean;
-  renderDone?: (messages: FeedbackMessage[]) => ReactNode;
-  /*
-   * Turns the terminal bar into a progress readout. `total` is how many items
-   * the job will work through, and `counts` picks out the one message the job
-   * emits per item — the vectoriser announces every snippet it embeds, so
-   * counting those tells us how far it has come.
-   */
-  progress?: {
-    total: number;
-    counts: (message: FeedbackMessage) => boolean;
-    // What the job is working through, singular — "snippet", "endpoint".
-    noun: string;
-  };
-}>) {
-
+export default function SocketFeedback(
+  props: Readonly<{
+    title: string;
+    channel: string;
+    // Invoked once the socket listens — the caller starts the backend job here.
+    onReady: () => void;
+    onClose: () => void;
+    // Marks the terminal message (e.g. the "Done!" line). Once one arrives,
+    // `renderDone` is shown in the action bar — used for a follow-up link.
+    isComplete?: (message: FeedbackMessage) => boolean;
+    renderDone?: (messages: FeedbackMessage[]) => ReactNode;
+    /*
+     * Turns the terminal bar into a progress readout. `total` is how many items
+     * the job will work through, and `counts` picks out the one message the job
+     * emits per item — the vectoriser announces every snippet it embeds, so
+     * counting those tells us how far it has come.
+     */
+    progress?: {
+      total: number;
+      counts: (message: FeedbackMessage) => boolean;
+      // What the job is working through, singular — "snippet", "endpoint".
+      noun: string;
+    };
+  }>,
+) {
   const [messages, setMessages] = useState<FeedbackMessage[]>([]);
   const [error, setError] = useState('');
   const readyFired = useRef(false);
@@ -47,10 +48,13 @@ export default function SocketFeedback(props: Readonly<{
 
     connection.on(props.channel, (args: string) => {
       const parsed = JSON.parse(args);
-      setMessages(current => [...current, {
-        type: parsed.type ?? 'information',
-        message: parsed.message ?? args,
-      }]);
+      setMessages(current => [
+        ...current,
+        {
+          type: parsed.type ?? 'information',
+          message: parsed.message ?? args,
+        },
+      ]);
     });
 
     /*
@@ -62,7 +66,8 @@ export default function SocketFeedback(props: Readonly<{
      */
     let cancelled = false;
 
-    connection.start()
+    connection
+      .start()
       .then(() => {
         if (cancelled) {
           return;
@@ -92,13 +97,22 @@ export default function SocketFeedback(props: Readonly<{
       lines={messages}
       error={error}
       onDismissError={() => setError('')}
-      progress={props.progress
-        ? 'Processing ' + props.progress.noun + ' ' +
-          messages.filter(props.progress.counts).length + ' of ' + props.progress.total
-        : undefined}
-      actions={props.isComplete && messages.some(props.isComplete)
-        ? props.renderDone?.(messages)
-        : undefined}
-      onClose={props.onClose} />
+      progress={
+        props.progress
+          ? 'Processing ' +
+            props.progress.noun +
+            ' ' +
+            messages.filter(props.progress.counts).length +
+            ' of ' +
+            props.progress.total
+          : undefined
+      }
+      actions={
+        props.isComplete && messages.some(props.isComplete)
+          ? props.renderDone?.(messages)
+          : undefined
+      }
+      onClose={props.onClose}
+    />
   );
 }

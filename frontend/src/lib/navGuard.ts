@@ -27,12 +27,14 @@ export function useUnsavedGuard(dirty: boolean, message: string) {
       setNavGuard(null);
       return;
     }
-    setNavGuard(() => confirm({
-      title: 'Discard unsaved changes?',
-      message,
-      confirmText: 'Discard',
-      danger: true,
-    }));
+    setNavGuard(() =>
+      confirm({
+        title: 'Discard unsaved changes?',
+        message,
+        confirmText: 'Discard',
+        danger: true,
+      }),
+    );
     const beforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = '';

@@ -58,13 +58,26 @@ export function audit(doc: Document, urls: string[]): Finding[] {
 
   // -- The head, which the canvas cannot show ------------------------------
   if ((doc.querySelector('head title')?.textContent ?? '').trim() === '') {
-    findings.push({ kind: 'Page', detail: 'No title. Search results and browser tabs need one.', node: null });
+    findings.push({
+      kind: 'Page',
+      detail: 'No title. Search results and browser tabs need one.',
+      node: null,
+    });
   }
   if (!doc.querySelector('head meta[name="description"]')) {
-    findings.push({ kind: 'Page', detail: 'No description. Search results fall back to whatever text they find.', node: null });
+    findings.push({
+      kind: 'Page',
+      detail: 'No description. Search results fall back to whatever text they find.',
+      node: null,
+    });
   }
   if (!doc.querySelector('head meta[name="viewport"]')) {
-    findings.push({ kind: 'Page', detail: 'No viewport. Phones assume a desktop width and shrink the result, which is what turns a page that looks right here into small print on a phone.', node: null });
+    findings.push({
+      kind: 'Page',
+      detail:
+        'No viewport. Phones assume a desktop width and shrink the result, which is what turns a page that looks right here into small print on a phone.',
+      node: null,
+    });
   }
 
   // -- Images --------------------------------------------------------------
@@ -102,8 +115,12 @@ export function audit(doc: Document, urls: string[]): Finding[] {
   // -- Links ---------------------------------------------------------------
   body.querySelectorAll('a').forEach(link => {
     const words = (link.textContent ?? '').trim();
-    if (words === '' && !link.getAttribute('aria-label') && !link.getAttribute('title') &&
-        !link.querySelector('img, svg')) {
+    if (
+      words === '' &&
+      !link.getAttribute('aria-label') &&
+      !link.getAttribute('title') &&
+      !link.querySelector('img, svg')
+    ) {
       findings.push({ kind: 'Link', detail: 'Nothing to click and nothing to read.', node: link });
     }
     const href = link.getAttribute('href');
@@ -141,10 +158,12 @@ export function audit(doc: Document, urls: string[]): Finding[] {
   // -- Elements holding nothing --------------------------------------------
   const opaque = NOT_CONTENT.join(',');
   body.querySelectorAll('*').forEach(element => {
-    if (!canContainChildren(element) ||
-        NOT_CONTENT.includes(element.tagName.toLowerCase()) ||
-        element.closest(opaque) !== null ||
-        element.children.length > 0) {
+    if (
+      !canContainChildren(element) ||
+      NOT_CONTENT.includes(element.tagName.toLowerCase()) ||
+      element.closest(opaque) !== null ||
+      element.children.length > 0
+    ) {
       return;
     }
     if ((element.textContent ?? '').trim() === '') {
@@ -155,12 +174,13 @@ export function audit(doc: Document, urls: string[]): Finding[] {
   return findings;
 }
 
-export default function Quality(props: Readonly<{
-  doc: Document | null;
-  urls: string[];
-  onSelect: (node: Node) => void;
-}>) {
-
+export default function Quality(
+  props: Readonly<{
+    doc: Document | null;
+    urls: string[];
+    onSelect: (node: Node) => void;
+  }>,
+) {
   if (!props.doc) {
     return <p className="designer-empty">No page open.</p>;
   }
@@ -181,25 +201,28 @@ export default function Quality(props: Readonly<{
   return (
     <div className="designer-fields">
       <p className="designer-note">
-        {findings.length === 1 ? 'One thing' : findings.length + ' things'} worth a look.
-        Nothing here is changed for you.
+        {findings.length === 1 ? 'One thing' : findings.length + ' things'} worth a look. Nothing
+        here is changed for you.
       </p>
       {kinds.map(kind => (
         <div key={kind}>
           <div className="designer-meta-group">{kind}</div>
-          {findings.filter(finding => finding.kind === kind).map((finding, index) => (
-            <button
-              key={index}
-              className="designer-finding"
-              disabled={!finding.node}
-              title={finding.node ? 'Select it' : 'This is about the page itself'}
-              onClick={() => finding.node && props.onSelect(finding.node)}>
-              <span className="designer-finding-where">
-                {finding.node ? labelOf(elementOf(finding.node) ?? finding.node) : 'Page'}
-              </span>
-              <span>{finding.detail}</span>
-            </button>
-          ))}
+          {findings
+            .filter(finding => finding.kind === kind)
+            .map((finding, index) => (
+              <button
+                key={index}
+                className="designer-finding"
+                disabled={!finding.node}
+                title={finding.node ? 'Select it' : 'This is about the page itself'}
+                onClick={() => finding.node && props.onSelect(finding.node)}
+              >
+                <span className="designer-finding-where">
+                  {finding.node ? labelOf(elementOf(finding.node) ?? finding.node) : 'Page'}
+                </span>
+                <span>{finding.detail}</span>
+              </button>
+            ))}
         </div>
       ))}
     </div>

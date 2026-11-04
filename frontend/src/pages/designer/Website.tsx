@@ -16,7 +16,12 @@
  */
 
 import { useEffect, useState } from 'react';
-import { listFilesRecursively, loadWebsiteConfig, saveWebsiteConfig, WebsiteRedirect } from '../../lib/api';
+import {
+  listFilesRecursively,
+  loadWebsiteConfig,
+  saveWebsiteConfig,
+  WebsiteRedirect,
+} from '../../lib/api';
 import { showToast } from '../../lib/toast';
 import { TrashIcon } from '../../components/Icons';
 import { WEB_ROOT } from './NewPage';
@@ -40,14 +45,16 @@ function stripOwnPageExt(value: string) {
   return /^https?:\/\//i.test(value) ? value : stripHtmlExt(value);
 }
 
-export default function Website(props: Readonly<{
-  // Every page this site serves, already the designer's usual canonical
-  // form ("/pricing", not "/etc/www/pricing.html") - the same list Meta and
-  // Quality already get. Hidden folders, .well-known included, are already
-  // excluded from this by the same rule that keeps them out of the page
-  // picker everywhere else.
-  urls: string[];
-}>) {
+export default function Website(
+  props: Readonly<{
+    // Every page this site serves, already the designer's usual canonical
+    // form ("/pricing", not "/etc/www/pricing.html") - the same list Meta and
+    // Quality already get. Hidden folders, .well-known included, are already
+    // excluded from this by the same rule that keeps them out of the page
+    // picker everywhere else.
+    urls: string[];
+  }>,
+) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -57,7 +64,11 @@ export default function Website(props: Readonly<{
   const [redirects, setRedirects] = useState<WebsiteRedirect[]>([]);
   // Whatever was last read from, or written to, the server — compared
   // against the fields above to know whether there is anything to save.
-  const [saved, setSaved] = useState<{ spaEnabled: boolean; notFound: string; redirects: WebsiteRedirect[] } | null>(null);
+  const [saved, setSaved] = useState<{
+    spaEnabled: boolean;
+    notFound: string;
+    redirects: WebsiteRedirect[];
+  } | null>(null);
 
   /*
    * Every .html file actually on the cloudlet, extension stripped, as
@@ -90,21 +101,32 @@ export default function Website(props: Readonly<{
         setSaved(normalised);
       })
       .catch(() => setLoadError(true))
-      .finally(() => { if (!cancelled) setLoading(false); });
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     listFilesRecursively(WEB_ROOT, false)
       .then(files => {
         if (!cancelled) {
-          setHtmlFiles(files
-            .filter(file => /\.html?$/i.test(file) && !file.includes('/.well-known/'))
-            .map(stripHtmlExt)
-            .sort((a, b) => a.localeCompare(b)));
+          setHtmlFiles(
+            files
+              .filter(file => /\.html?$/i.test(file) && !file.includes('/.well-known/'))
+              .map(stripHtmlExt)
+              .sort((a, b) => a.localeCompare(b)),
+          );
         }
       })
-      .catch(() => { /* Autocomplete is a convenience - the field still works typed by hand. */ });
-    return () => { cancelled = true; };
+      .catch(() => {
+        /* Autocomplete is a convenience - the field still works typed by hand. */
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const dirty = !saved || saved.spaEnabled !== spaEnabled || saved.notFound !== notFound ||
+  const dirty =
+    !saved ||
+    saved.spaEnabled !== spaEnabled ||
+    saved.notFound !== notFound ||
     JSON.stringify(saved.redirects) !== JSON.stringify(redirects);
   // Stacking a second blank row on top of one nobody has filled in yet
   // would just be more rows to abandon - finish the one that is there first.
@@ -115,7 +137,9 @@ export default function Website(props: Readonly<{
   }
 
   function updateRedirect(index: number, field: 'from' | 'to', value: string) {
-    setRedirects(list => list.map((entry, i) => i === index ? { ...entry, [field]: value } : entry));
+    setRedirects(list =>
+      list.map((entry, i) => (i === index ? { ...entry, [field]: value } : entry)),
+    );
   }
 
   function removeRedirect(index: number) {
@@ -161,14 +185,15 @@ export default function Website(props: Readonly<{
         <input
           type="checkbox"
           checked={spaEnabled}
-          onChange={event => setSpaEnabled(event.target.checked)} />
+          onChange={event => setSpaEnabled(event.target.checked)}
+        />
         Serve this site as a single-page app
       </label>
       <p className="designer-note">
-        Applies to the WHOLE cloudlet, not just the page open right now — every URL this site
-        cannot otherwise resolve falls back to serving /index.html, rather than a 404. Turning
-        this on while the site also has ordinary, separate pages means a mistyped or removed
-        page's URL silently serves the home page instead of failing loudly.
+        Applies to the WHOLE cloudlet, not just the page open right now — every URL this site cannot
+        otherwise resolve falls back to serving /index.html, rather than a 404. Turning this on
+        while the site also has ordinary, separate pages means a mistyped or removed page's URL
+        silently serves the home page instead of failing loudly.
       </p>
 
       <label className="designer-field">
@@ -178,15 +203,17 @@ export default function Website(props: Readonly<{
           list="website-not-found-options"
           value={notFound}
           placeholder="/etc/www/.components/404"
-          onChange={event => setNotFound(stripHtmlExt(event.target.value))} />
+          onChange={event => setNotFound(stripHtmlExt(event.target.value))}
+        />
         <datalist id="website-not-found-options">
-          {htmlFiles.map(file => <option key={file} value={file} />)}
+          {htmlFiles.map(file => (
+            <option key={file} value={file} />
+          ))}
         </datalist>
       </label>
       <p className="designer-note">
-        A file path under /etc/www/, not a page URL — the default above is served if this is
-        left empty. No extension here, same as a page's own address — it is added back
-        automatically.
+        A file path under /etc/www/, not a page URL — the default above is served if this is left
+        empty. No extension here, same as a page's own address — it is added back automatically.
       </p>
 
       <div className="designer-field">
@@ -197,29 +224,39 @@ export default function Website(props: Readonly<{
               type="text"
               value={redirect.from}
               placeholder="/old-page"
-              onChange={event => updateRedirect(index, 'from', event.target.value)} />
+              onChange={event => updateRedirect(index, 'from', event.target.value)}
+            />
             <input
               type="text"
               list="website-redirect-to-options"
               value={redirect.to}
               placeholder="/new-page or https://…"
-              onChange={event => updateRedirect(index, 'to', stripOwnPageExt(event.target.value))} />
+              onChange={event => updateRedirect(index, 'to', stripOwnPageExt(event.target.value))}
+            />
             <button
               className="icon-btn"
               title="Remove this redirect"
-              onClick={() => removeRedirect(index)}>
+              onClick={() => removeRedirect(index)}
+            >
               <TrashIcon />
             </button>
           </div>
         ))}
         <datalist id="website-redirect-to-options">
-          {props.urls.map(url => <option key={url} value={url} />)}
+          {props.urls.map(url => (
+            <option key={url} value={url} />
+          ))}
         </datalist>
         <button
           className="btn btn-secondary btn-small"
           onClick={addRedirect}
           disabled={!canAddRedirect}
-          title={canAddRedirect ? undefined : 'Finish the redirect above first — both its fields need a value'}>
+          title={
+            canAddRedirect
+              ? undefined
+              : 'Finish the redirect above first — both its fields need a value'
+          }
+        >
           Add a redirect
         </button>
       </div>

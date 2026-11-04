@@ -125,12 +125,17 @@ function caretNode(doc: Document, x: number, y: number): Node | null {
  */
 export function nodeAtPoint(doc: Document, x: number, y: number, element: Element): Node {
   const candidate = caretNode(doc, x, y);
-  if (!candidate || !isText(candidate) || candidate.data.trim() === '' ||
-      !element.contains(candidate)) {
+  if (
+    !candidate ||
+    !isText(candidate) ||
+    candidate.data.trim() === '' ||
+    !element.contains(candidate)
+  ) {
     return element;
   }
-  const over = clientRects(candidate).some(rect =>
-    x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom);
+  const over = clientRects(candidate).some(
+    rect => x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom,
+  );
   return over ? candidate : element;
 }
 

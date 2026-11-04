@@ -17,7 +17,12 @@ import { HubConnection } from '@microsoft/signalr';
 import { createSocket } from '../lib/socket';
 import { getTheme } from '../lib/theme';
 import {
-  ChatChunk, MAX_CHAT_FILES, chatDownloadUrl, chatPrompt, gibberish, killExecution,
+  ChatChunk,
+  MAX_CHAT_FILES,
+  chatDownloadUrl,
+  chatPrompt,
+  gibberish,
+  killExecution,
 } from '../lib/api';
 import { copyToClipboard, showToast } from '../lib/toast';
 import { notifyChatOpsDone } from '../lib/chatOps';
@@ -78,25 +83,46 @@ const COPY_SVG =
 renderer.code = ({ text, lang }) => {
   if (lang === 'mermaid') {
     // Placeholder rendered into an SVG once the answer has finished streaming.
-    return '<div class="chat-mermaid">' +
-      '<code class="chat-mermaid-code" style="display:none">' + escapeHtml(text) + '</code>' +
-      '<div class="chat-mermaid-placeholder muted">Rendering diagram…</div></div>';
+    return (
+      '<div class="chat-mermaid">' +
+      '<code class="chat-mermaid-code" style="display:none">' +
+      escapeHtml(text) +
+      '</code>' +
+      '<div class="chat-mermaid-placeholder muted">Rendering diagram…</div></div>'
+    );
   }
   const language = lang || 'plaintext';
-  return '<div class="chat-code chat-hl">' +
-    '<div class="chat-code-header"><span>' + escapeHtml(language) + '</span>' +
+  return (
+    '<div class="chat-code chat-hl">' +
+    '<div class="chat-code-header"><span>' +
+    escapeHtml(language) +
+    '</span>' +
     '<button type="button" class="chat-copy-btn" title="Copy code" data-code="' +
-    encodeURIComponent(text) + '">' + COPY_SVG + '</button></div>' +
-    '<pre><code class="language-' + escapeHtml(language) + '">' +
-    escapeHtml(text) + '</code></pre></div>';
+    encodeURIComponent(text) +
+    '">' +
+    COPY_SVG +
+    '</button></div>' +
+    '<pre><code class="language-' +
+    escapeHtml(language) +
+    '">' +
+    escapeHtml(text) +
+    '</code></pre></div>'
+  );
 };
 
 renderer.codespan = ({ text }) => '<code>' + escapeHtml(text) + '</code>';
 
 renderer.link = function ({ href, title, tokens }) {
   const text = this.parser.parseInline(tokens);
-  return '<a href="' + href + '"' + (title ? ' title="' + title + '"' : '') +
-    ' target="_blank" rel="noreferrer">' + (text || href) + '</a>';
+  return (
+    '<a href="' +
+    href +
+    '"' +
+    (title ? ' title="' + title + '"' : '') +
+    ' target="_blank" rel="noreferrer">' +
+    (text || href) +
+    '</a>'
+  );
 };
 
 marked.setOptions({ renderer, breaks: true, gfm: true });
@@ -155,12 +181,13 @@ function onListClick(event: React.MouseEvent) {
   }
 }
 
-export default function ChatDrawer(props: Readonly<{
-  open: boolean;
-  userId: string;
-  onClose: () => void;
-}>) {
-
+export default function ChatDrawer(
+  props: Readonly<{
+    open: boolean;
+    userId: string;
+    onClose: () => void;
+  }>,
+) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
@@ -348,14 +375,22 @@ export default function ChatDrawer(props: Readonly<{
     pinned.current = true;
     setInput('');
     setFiles([]);
-    setMessages(current => [...current, {
-      role: 'user',
-      segments: [{ kind: 'text', text: prompt }],
-      // Object URLs carry over to the sent message rather than being revoked.
-      files: attached.length > 0
-        ? attached.map(entry => ({ name: entry.file.name, size: entry.file.size, url: entry.url }))
-        : undefined,
-    }]);
+    setMessages(current => [
+      ...current,
+      {
+        role: 'user',
+        segments: [{ kind: 'text', text: prompt }],
+        // Object URLs carry over to the sent message rather than being revoked.
+        files:
+          attached.length > 0
+            ? attached.map(entry => ({
+                name: entry.file.name,
+                size: entry.file.size,
+                url: entry.url,
+              }))
+            : undefined,
+      },
+    ]);
     setStreaming(true);
     try {
       const session = await ensureSession();
@@ -364,7 +399,8 @@ export default function ChatDrawer(props: Readonly<{
         prompt,
         props.userId,
         attached.length > 0 ? attached.map(entry => entry.file) : undefined,
-        attached.length > 0 && !analyse);
+        attached.length > 0 && !analyse,
+      );
       setExecutionId(response?.execution_id ?? null);
     } catch (err: any) {
       setStreaming(false);
@@ -406,7 +442,8 @@ export default function ChatDrawer(props: Readonly<{
     <aside
       className={'chat-drawer' + (props.open ? ' open' : '')}
       aria-label="Chat with your cloudlet"
-      aria-hidden={!props.open}>
+      aria-hidden={!props.open}
+    >
       <div className="chat-drawer-header">
         <strong>Chat Ops</strong>
         <span style={{ flex: 1 }} />
@@ -414,21 +451,25 @@ export default function ChatDrawer(props: Readonly<{
           className="btn btn-ghost btn-small"
           title="New chat"
           disabled={streaming}
-          onClick={newChat}>
+          onClick={newChat}
+        >
           <FilePlusIcon />
         </button>
-        <button
-          className="btn btn-ghost btn-small"
-          title="Close (Esc)"
-          onClick={props.onClose}>
+        <button className="btn btn-ghost btn-small" title="Close (Esc)" onClick={props.onClose}>
           ×
         </button>
       </div>
-      <div className="chat-messages" role="presentation" ref={listRef} onClick={onListClick} onScroll={onListScroll}>
+      <div
+        className="chat-messages"
+        role="presentation"
+        ref={listRef}
+        onClick={onListClick}
+        onScroll={onListScroll}
+      >
         {messages.length === 0 && (
           <p className="muted" style={{ textAlign: 'center', marginTop: 48 }}>
-            Talk to your cloudlet — generate endpoints, query your databases,
-            or ask what your backend can do.
+            Talk to your cloudlet — generate endpoints, query your databases, or ask what your
+            backend can do.
           </p>
         )}
         {messages.map((message, index) => {
@@ -443,7 +484,8 @@ export default function ChatDrawer(props: Readonly<{
                 <button
                   className="icon-btn chat-response-copy"
                   title="Copy response"
-                  onClick={() => copyToClipboard(raw, 'Response')}>
+                  onClick={() => copyToClipboard(raw, 'Response')}
+                >
                   <CopyIcon />
                 </button>
               )}
@@ -451,7 +493,8 @@ export default function ChatDrawer(props: Readonly<{
                 <ChatSegment
                   key={segmentIndex}
                   segment={segment}
-                  markdown={message.role === 'assistant'} />
+                  markdown={message.role === 'assistant'}
+                />
               ))}
               {message.files && (
                 <div className="chat-tiles" style={{ marginTop: 10 }}>
@@ -465,7 +508,8 @@ export default function ChatDrawer(props: Readonly<{
         })}
         {streaming && (
           <div className="muted" style={{ padding: '4px 2px' }}>
-            Thinking<span className="spinner-dots" />
+            Thinking
+            <span className="spinner-dots" />
           </div>
         )}
       </div>
@@ -478,7 +522,8 @@ export default function ChatDrawer(props: Readonly<{
                 name={entry.file.name}
                 size={entry.file.size}
                 url={entry.url}
-                onRemove={() => removeFile(index)} />
+                onRemove={() => removeFile(index)}
+              />
             ))}
           </div>
           <div className="chat-mode" role="group" aria-label="How the model should treat the files">
@@ -486,14 +531,16 @@ export default function ChatDrawer(props: Readonly<{
               type="button"
               className={analyse ? '' : 'active'}
               title="Saves the files on the cloudlet and tells the model where they landed. Works anywhere."
-              onClick={() => setAnalyse(false)}>
+              onClick={() => setAnalyse(false)}
+            >
               Upload
             </button>
             <button
               type="button"
               className={analyse ? 'active' : ''}
               title="Exposes the files over HTTP for the model to read — needs a publicly reachable backend, so not localhost."
-              onClick={() => setAnalyse(true)}>
+              onClick={() => setAnalyse(true)}
+            >
               Analyse
             </button>
           </div>
@@ -505,12 +552,17 @@ export default function ChatDrawer(props: Readonly<{
           type="file"
           multiple
           style={{ display: 'none' }}
-          onChange={event => { addFiles(event.target.files); event.target.value = ''; }} />
+          onChange={event => {
+            addFiles(event.target.files);
+            event.target.value = '';
+          }}
+        />
         <button
           className="btn btn-secondary chat-attach"
           title={'Attach files (max ' + MAX_CHAT_FILES + ')'}
           disabled={streaming || files.length >= MAX_CHAT_FILES}
-          onClick={() => fileRef.current?.click()}>
+          onClick={() => fileRef.current?.click()}
+        >
           <PaperclipIcon />
         </button>
         <textarea
@@ -524,7 +576,8 @@ export default function ChatDrawer(props: Readonly<{
               event.preventDefault();
               void send();
             }
-          }} />
+          }}
+        />
         {streaming ? (
           <button className="btn btn-secondary" onClick={stop} disabled={!executionId}>
             Stop
@@ -553,23 +606,27 @@ function formatSize(bytes: number): string {
  * One attached file — a thumbnail for images, the extension otherwise.
  * Removable while pending, read-only once the message has been sent.
  */
-function FileTile(props: Readonly<{ name: string; size: number; url?: string; onRemove?: () => void }>) {
-
+function FileTile(
+  props: Readonly<{ name: string; size: number; url?: string; onRemove?: () => void }>,
+) {
   const extension = props.name.includes('.')
     ? props.name.split('.').pop()!.toUpperCase().slice(0, 4)
     : 'FILE';
   return (
     <div className="chat-tile" title={props.name}>
       <div className="chat-tile-preview">
-        {props.url
-          ? <img src={props.url} alt={props.name} />
-          : <span className="chat-tile-ext">{extension}</span>}
+        {props.url ? (
+          <img src={props.url} alt={props.name} />
+        ) : (
+          <span className="chat-tile-ext">{extension}</span>
+        )}
         {props.onRemove && (
           <button
             type="button"
             className="chat-tile-remove"
             title={'Remove ' + props.name}
-            onClick={props.onRemove}>
+            onClick={props.onRemove}
+          >
             ×
           </button>
         )}
@@ -582,8 +639,14 @@ function FileTile(props: Readonly<{ name: string; size: number; url?: string; on
 
 // Whether a chunk carries anything to put in a bubble, as opposed to only status.
 function hasContent(chunk: ChatChunk) {
-  return !!chunk.message || !!chunk.html || !!(chunk.ticket && chunk.filename) ||
-    !!chunk.function_waiting || !!chunk.function_result || !!chunk.function_error;
+  return (
+    !!chunk.message ||
+    !!chunk.html ||
+    !!(chunk.ticket && chunk.filename) ||
+    !!chunk.function_waiting ||
+    !!chunk.function_result ||
+    !!chunk.function_error
+  );
 }
 
 // Adds to the text the assistant is already writing, or starts a new run of text.
@@ -602,9 +665,11 @@ function resolveFunction(segments: Segment[], chunk: ChatChunk) {
   // Trimmed — the server's payloads arrive with leading whitespace.
   const detail = [prettyJson(chunk.invocation), chunk.function_error]
     .map(part => part?.trim())
-    .filter(Boolean).join('\n\n');
+    .filter(Boolean)
+    .join('\n\n');
   const waiting = segments.findIndex(
-    segment => segment.kind === 'function' && segment.state === 'waiting');
+    segment => segment.kind === 'function' && segment.state === 'waiting',
+  );
   const resolved: Segment = {
     kind: 'function',
     state,
@@ -708,7 +773,6 @@ function functionName(file?: string): string | undefined {
  * gives you the same widget rather than losing it.
  */
 function WidgetButton({ html }: Readonly<{ html: string }>) {
-
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -721,7 +785,6 @@ function WidgetButton({ html }: Readonly<{ html: string }>) {
 }
 
 function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdown: boolean }>) {
-
   // Collapsed by default — the pill is the summary, the payload one click away.
   const [showDetail, setShowDetail] = useState(false);
   const detailRef = useRef<HTMLDivElement>(null);
@@ -735,23 +798,27 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
     const root = detailRef.current;
     if (showDetail && root) {
       import('../lib/chatHighlight')
-      .then(module => module.highlightUnder(root))
-      .catch(error => console.error('Could not highlight code:', error));
+        .then(module => module.highlightUnder(root))
+        .catch(error => console.error('Could not highlight code:', error));
     }
   }, [showDetail]);
   // Model output is untrusted — raw HTML must never reach the page, so the
   // markdown passes through DOMPurify before dangerouslySetInnerHTML.
   const html = useMemo(
-    () => segment.kind === 'text' && markdown
-      ? DOMPurify.sanitize(marked.parse(segment.text) as string)
-      : '',
-    [segment, markdown]);
+    () =>
+      segment.kind === 'text' && markdown
+        ? DOMPurify.sanitize(marked.parse(segment.text) as string)
+        : '',
+    [segment, markdown],
+  );
 
   switch (segment.kind) {
     case 'text':
-      return markdown
-        ? <div className="chat-text chat-markdown" dangerouslySetInnerHTML={{ __html: html }} />
-        : <div className="chat-text">{segment.text}</div>;
+      return markdown ? (
+        <div className="chat-text chat-markdown" dangerouslySetInnerHTML={{ __html: html }} />
+      ) : (
+        <div className="chat-text">{segment.text}</div>
+      );
     case 'function': {
       const expandable = !!segment.detail;
       return (
@@ -762,9 +829,17 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
             disabled={!expandable}
             aria-expanded={expandable ? showDetail : undefined}
             title={expandable ? 'Show the invocation' : undefined}
-            onClick={() => setShowDetail(current => !current)}>
-            {segment.state === 'waiting' && <>Executing function<span className="spinner-dots" /></>}
-            {segment.state === 'success' && <>✓ {functionName(segment.file) ?? 'Function executed'}</>}
+            onClick={() => setShowDetail(current => !current)}
+          >
+            {segment.state === 'waiting' && (
+              <>
+                Executing function
+                <span className="spinner-dots" />
+              </>
+            )}
+            {segment.state === 'success' && (
+              <>✓ {functionName(segment.file) ?? 'Function executed'}</>
+            )}
             {segment.state === 'error' && <>✕ {functionName(segment.file) ?? 'Function failed'}</>}
             {expandable && (
               <span className="chat-pill-caret" aria-hidden="true">
@@ -774,7 +849,9 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
           </button>
           {showDetail && segment.detail && (
             <div className="chat-function-detail chat-hl" ref={detailRef}>
-              <pre><code className="language-json">{segment.detail}</code></pre>
+              <pre>
+                <code className="language-json">{segment.detail}</code>
+              </pre>
             </div>
           )}
         </div>
@@ -794,7 +871,8 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
           href={segment.url}
           target="_blank"
           rel="noreferrer"
-          title={segment.filename}>
+          title={segment.filename}
+        >
           <DownloadIcon /> {segment.filename.split('/').pop()}
         </a>
       );

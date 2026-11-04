@@ -28,7 +28,9 @@ function thresholdHint(useEmbeddings: boolean, retrieval: string) {
   if (!useEmbeddings) {
     return 'Only used when "Use embeddings" is on';
   }
-  return retrieval === 'bm25' ? 'Keyword retrieval has no threshold — BM25 rank order decides' : undefined;
+  return retrieval === 'bm25'
+    ? 'Keyword retrieval has no threshold — BM25 rank order decides'
+    : undefined;
 }
 
 // The roles the model being edited is restricted to.
@@ -77,12 +79,13 @@ function initialExtra(existing: any) {
   };
 }
 
-export default function EditModelDialog(props: Readonly<{
-  existing: any;
-  onClose: () => void;
-  onSaved: () => void;
-}>) {
-
+export default function EditModelDialog(
+  props: Readonly<{
+    existing: any;
+    onClose: () => void;
+    onSaved: () => void;
+  }>,
+) {
   const existing = props.existing;
   const [models, setModels] = useState<{ id: string }[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
@@ -95,15 +98,16 @@ export default function EditModelDialog(props: Readonly<{
    * split threshold during crawling (snippets above 80% of it are split by
    * subject), so it decides corpus granularity as much as answer grounding.
    */
-  const [maxContextTokens, setMaxContextTokens] =
-    useState(String(existing?.max_context_tokens ?? 2000));
-  const [maxRequestTokens, setMaxRequestTokens] =
-    useState(String(existing?.max_request_tokens ?? 1000));
+  const [maxContextTokens, setMaxContextTokens] = useState(
+    String(existing?.max_context_tokens ?? 2000),
+  );
+  const [maxRequestTokens, setMaxRequestTokens] = useState(
+    String(existing?.max_request_tokens ?? 1000),
+  );
   const [auth, setAuth] = useState<string[]>(() => rolesOf(existing));
   const [authOpen, setAuthOpen] = useState(false);
   const [supervised, setSupervised] = useState(() => flagOf(existing, 'supervised'));
-  const [useEmbeddings, setUseEmbeddings] =
-    useState(() => flagOf(existing, 'use_embeddings'));
+  const [useEmbeddings, setUseEmbeddings] = useState(() => flagOf(existing, 'use_embeddings'));
   /*
    * How get-context finds snippets: semantic (cosine over embeddings),
    * keyword (BM25 over an FTS index, needing no OpenAI key), or both merged
@@ -111,18 +115,21 @@ export default function EditModelDialog(props: Readonly<{
    */
   const [retrieval, setRetrieval] = useState(existing?.retrieval ?? 'embeddings');
   const [cached, setCached] = useState(existing?.cached === 1);
-  const [greeting, setGreeting] =
-    useState(existing?.greeting ?? 'Hi there, how can I help you?');
-  const [systemMessage, setSystemMessage] = useState(existing?.system_message ??
-    'You are a helpful assistant, and you will answer the users questions ' +
-    'based upon the information found in your context');
+  const [greeting, setGreeting] = useState(existing?.greeting ?? 'Hi there, how can I help you?');
+  const [systemMessage, setSystemMessage] = useState(
+    existing?.system_message ??
+      'You are a helpful assistant, and you will answer the users questions ' +
+        'based upon the information found in your context',
+  );
   const [dialogTab, setDialogTab] = useState('general');
   const [busy, setBusy] = useState(false);
   const [flavors, setFlavors] = useState<any[]>([]);
   const [completionSlots, setCompletionSlots] = useState<string[]>([]);
   const [largeEditor, setLargeEditor] = useState(false);
-  const [dynamicFlavor, setDynamicFlavor] =
-    useState<{ instruction: string; template: string } | null>(null);
+  const [dynamicFlavor, setDynamicFlavor] = useState<{
+    instruction: string;
+    template: string;
+  } | null>(null);
   // The instruction as loaded — used to flag unsaved changes in the dialog.
   const [addingFunction, setAddingFunction] = useState(false);
   const [initialSystemMessage] = useState(() => systemMessage);
@@ -147,8 +154,9 @@ export default function EditModelDialog(props: Readonly<{
       .then(list => setFlavors(list ?? []))
       .catch(() => {});
     openaiCompletionSlots()
-      .then(response => setCompletionSlots(
-        Array.isArray(response) ? response : response?.llms ?? []))
+      .then(response =>
+        setCompletionSlots(Array.isArray(response) ? response : (response?.llms ?? [])),
+      )
       .catch(() => {});
     listQuestionnaires()
       .then(list => setQuestionnaires(list ?? []))
@@ -232,45 +240,55 @@ export default function EditModelDialog(props: Readonly<{
           { id: 'integrations', label: 'Integrations' },
         ]}
         active={dialogTab}
-        onChange={setDialogTab} />
+        onChange={setDialogTab}
+      />
       <div style={{ maxHeight: '55vh', overflow: 'auto', paddingRight: 6 }}>
         <div className="form-grid" style={tabStyle('general')}>
           {!existing && (
-            <label>Type name
+            <label>
+              Type name
               <input type="text" value={type} onChange={e => setType(e.target.value)} />
             </label>
           )}
           {/*
-            * Model and its instruction share the first row — together they ARE
-            * the model, and at the old bottom position the instruction button
-            * sat below the fold on common window heights. The greeting follows
-            * directly: it's the model's voice, not a tuning knob.
-            */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, alignItems: 'end' }}>
+           * Model and its instruction share the first row — together they ARE
+           * the model, and at the old bottom position the instruction button
+           * sat below the fold on common window heights. The greeting follows
+           * directly: it's the model's voice, not a tuning knob.
+           */}
+          <div
+            style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, alignItems: 'end' }}
+          >
             {/* minWidth 0, or the model name's intrinsic width keeps the 1fr
                 column from shrinking and pushes the button out of the modal. */}
-            <label style={{ minWidth: 0 }}>OpenAI model
+            <label style={{ minWidth: 0 }}>
+              OpenAI model
               {/* The models endpoint flags chat-capable models with [chat]; only
                   those belong here (the rest are embeddings, audio, realtime,
                   etc.), mirroring how Vector model filters on [vector]. The
                   current value is kept selectable even if it isn't flagged. */}
               <Select value={model} onChange={value => setModel(value)}>
                 <option value="">Select model…</option>
-                {model && !models.some(candidate => candidate.id === model && (candidate as any).chat) && (
-                  <option value={model}>{model}</option>
-                )}
-                {models.filter(candidate => (candidate as any).chat).map(candidate => (
-                  <option key={candidate.id} value={candidate.id}>
-                    {candidate.id}{modelPriceLabel(candidate as any)}
-                  </option>
-                ))}
+                {model &&
+                  !models.some(candidate => candidate.id === model && (candidate as any).chat) && (
+                    <option value={model}>{model}</option>
+                  )}
+                {models
+                  .filter(candidate => (candidate as any).chat)
+                  .map(candidate => (
+                    <option key={candidate.id} value={candidate.id}>
+                      {candidate.id}
+                      {modelPriceLabel(candidate as any)}
+                    </option>
+                  ))}
               </Select>
             </label>
             <button
               type="button"
               className="btn btn-secondary"
               style={{ padding: '12px 16px' }}
-              onClick={() => setLargeEditor(true)}>
+              onClick={() => setLargeEditor(true)}
+            >
               ✎ System instruction
             </button>
           </div>
@@ -279,43 +297,48 @@ export default function EditModelDialog(props: Readonly<{
               System instruction changed — remember to save your model.
             </div>
           )}
-          <label>Greeting
+          <label>
+            Greeting
             <input type="text" value={greeting} onChange={e => setGreeting(e.target.value)} />
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {/* Threshold is dead weight when embeddings are off — and for pure
                 keyword retrieval, which takes BM25 rank order as it comes. In
                 mixed mode it doubles as the keyword leg's relative cutoff. */}
-            <label style={fadedUnlessVectors}>Threshold
+            <label style={fadedUnlessVectors}>
+              Threshold
               <input
                 type="number"
                 step="0.1"
                 value={threshold}
                 disabled={!useEmbeddings || retrieval === 'bm25'}
                 title={thresholdHint(useEmbeddings, retrieval)}
-                onChange={e => setThreshold(e.target.value)} />
+                onChange={e => setThreshold(e.target.value)}
+              />
             </label>
-            <label>Max tokens
-              <input
-                type="number"
-                value={maxTokens}
-                onChange={e => setMaxTokens(e.target.value)} />
+            <label>
+              Max tokens
+              <input type="number" value={maxTokens} onChange={e => setMaxTokens(e.target.value)} />
             </label>
             {/* Context tokens bound how much retrieved (embedded) material is
                 injected, so it too is irrelevant without embeddings. */}
-            <label style={fadedUnlessEmbeddings}>Max context tokens
+            <label style={fadedUnlessEmbeddings}>
+              Max context tokens
               <input
                 type="number"
                 value={maxContextTokens}
                 disabled={!useEmbeddings}
                 title={embeddingsHint}
-                onChange={e => setMaxContextTokens(e.target.value)} />
+                onChange={e => setMaxContextTokens(e.target.value)}
+              />
             </label>
-            <label>Max request tokens
+            <label>
+              Max request tokens
               <input
                 type="number"
                 value={maxRequestTokens}
-                onChange={e => setMaxRequestTokens(e.target.value)} />
+                onChange={e => setMaxRequestTokens(e.target.value)}
+              />
             </label>
           </div>
           {/* Collapsed behind a summary, same as the Generator's auth section —
@@ -329,7 +352,8 @@ export default function EditModelDialog(props: Readonly<{
               <button
                 type="button"
                 className="btn btn-secondary btn-small"
-                onClick={() => setAuthOpen(!authOpen)}>
+                onClick={() => setAuthOpen(!authOpen)}
+              >
                 {authOpen ? 'Done' : 'Edit'}
               </button>
             </div>
@@ -338,9 +362,12 @@ export default function EditModelDialog(props: Readonly<{
                 <RoleChips
                   roles={roles}
                   selected={auth}
-                  onToggle={(role, selected) => setAuth(selected
-                    ? [...auth, role]
-                    : auth.filter(candidate => candidate !== role))} />
+                  onToggle={(role, selected) =>
+                    setAuth(
+                      selected ? [...auth, role] : auth.filter(candidate => candidate !== role),
+                    )
+                  }
+                />
               </div>
             )}
           </div>
@@ -349,90 +376,107 @@ export default function EditModelDialog(props: Readonly<{
               <input
                 type="checkbox"
                 checked={supervised}
-                onChange={e => setSupervised(e.target.checked)} />
+                onChange={e => setSupervised(e.target.checked)}
+              />
               Supervised
             </label>
             <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <input
                 type="checkbox"
                 checked={useEmbeddings}
-                onChange={e => setUseEmbeddings(e.target.checked)} />
+                onChange={e => setUseEmbeddings(e.target.checked)}
+              />
               Use embeddings
             </label>
             <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <input
-                type="checkbox"
-                checked={cached}
-                onChange={e => setCached(e.target.checked)} />
+              <input type="checkbox" checked={cached} onChange={e => setCached(e.target.checked)} />
               Cached
             </label>
           </div>
         </div>
         <div className="form-grid" style={tabStyle('behaviour')}>
-          <label>Conversation starters (markdown list)
+          <label>
+            Conversation starters (markdown list)
             <textarea
               rows={4}
               value={extra.conversation_starters}
-              onChange={e => setField('conversation_starters', e.target.value)} />
+              onChange={e => setField('conversation_starters', e.target.value)}
+            />
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <label>Completion slot
+            <label>
+              Completion slot
               <Select
                 value={extra.completion_slot}
-                onChange={value => setField('completion_slot', value)}>
+                onChange={value => setField('completion_slot', value)}
+              >
                 {!completionSlots.includes(extra.completion_slot) && (
                   <option value={extra.completion_slot}>{extra.completion_slot}</option>
                 )}
                 {completionSlots.map(slot => (
-                  <option key={slot} value={slot}>{slot}</option>
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
                 ))}
               </Select>
             </label>
-            <label>Max requests (-1 = unlimited)
+            <label>
+              Max requests (-1 = unlimited)
               <input
                 type="number"
                 value={extra.max_requests}
-                onChange={e => setField('max_requests', e.target.value)} />
+                onChange={e => setField('max_requests', e.target.value)}
+              />
             </label>
-            <label>Max function invocations
+            <label>
+              Max function invocations
               <input
                 type="number"
                 value={extra.max_function_invocations}
-                onChange={e => setField('max_function_invocations', e.target.value)} />
+                onChange={e => setField('max_function_invocations', e.target.value)}
+              />
             </label>
-            <label>Max session items
+            <label>
+              Max session items
               <input
                 type="number"
                 value={extra.max_session_items}
-                onChange={e => setField('max_session_items', e.target.value)} />
+                onChange={e => setField('max_session_items', e.target.value)}
+              />
             </label>
-            <label>Session timeout
+            <label>
+              Session timeout
               <input
                 type="number"
                 min="0"
                 title="Seconds a conversation's history is remembered between questions. Defaults to 1200, twenty minutes."
                 value={extra.session_timeout}
-                onChange={e => setField('session_timeout', e.target.value)} />
+                onChange={e => setField('session_timeout', e.target.value)}
+              />
             </label>
-            <label>No requests served
+            <label>
+              No requests served
               <input
                 type="number"
                 title="How many requests this model has answered so far"
                 value={extra.no_requests}
-                onChange={e => setField('no_requests', e.target.value)} />
+                onChange={e => setField('no_requests', e.target.value)}
+              />
             </label>
             {/* The single value carries three modes: negative → no captcha,
                 0 → Magic's built-in captcha, above 0 → Google reCAPTCHA using
                 this as the minimum score. It is persisted exactly as typed —
                 ml_types.recaptcha is NOT NULL, so "no captcha" is a negative
                 number rather than null. */}
-            <label>Captcha
+            <label>
+              Captcha
               <input
                 type="number"
                 step="0.1"
                 title="Below 0: no captcha. 0: Magic's built-in captcha. Above 0: Google reCAPTCHA, using this as the minimum score (0-1)."
                 value={extra.recaptcha}
-                onChange={e => setField('recaptcha', e.target.value)} />
+                onChange={e => setField('recaptcha', e.target.value)}
+              />
             </label>
           </div>
         </div>
@@ -441,37 +485,45 @@ export default function EditModelDialog(props: Readonly<{
             {/* base_url is the site the daily "ainiro-crawl-machine-learning-models"
                 task re-crawls to keep the model's training data fresh — not an
                 LLM API base. */}
-            <label>Auto-crawl URL
+            <label>
+              Auto-crawl URL
               <input
                 type="text"
                 placeholder="https://example.com"
                 title="If set, this site is re-crawled once a day to add new pages to the model"
                 value={extra.base_url}
-                onChange={e => setField('base_url', e.target.value)} />
+                onChange={e => setField('base_url', e.target.value)}
+              />
             </label>
-            <label>API key override
+            <label>
+              API key override
               <input
                 type="text"
                 className="secret"
                 autoComplete="off"
                 value={extra.api_key}
-                onChange={e => setField('api_key', e.target.value)} />
+                onChange={e => setField('api_key', e.target.value)}
+              />
             </label>
-            <label>Initial questionnaire
+            <label>
+              Initial questionnaire
               <Select
                 value={extra.initial_questionnaire}
-                onChange={value => setField('initial_questionnaire', value)}>
+                onChange={value => setField('initial_questionnaire', value)}
+              >
                 <option value="">No questionnaire</option>
                 {/* A questionnaire that has since been deleted still shows,
                     so saving doesn't silently drop it. */}
                 {extra.initial_questionnaire !== '' &&
                   !questionnaires.some(q => q.name === extra.initial_questionnaire) && (
-                  <option value={extra.initial_questionnaire}>
-                    {extra.initial_questionnaire}
-                  </option>
-                )}
+                    <option value={extra.initial_questionnaire}>
+                      {extra.initial_questionnaire}
+                    </option>
+                  )}
                 {questionnaires.map(item => (
-                  <option key={item.name} value={item.name}>{item.name}</option>
+                  <option key={item.name} value={item.name}>
+                    {item.name}
+                  </option>
                 ))}
               </Select>
             </label>
@@ -479,12 +531,14 @@ export default function EditModelDialog(props: Readonly<{
                 OpenAI key at all; Hybrid merges both with rank fusion. "Use
                 embeddings" is the master switch for retrieval as such, so
                 without it there is nothing here to choose between. */}
-            <label style={fadedUnlessEmbeddings}>Retrieval
+            <label style={fadedUnlessEmbeddings}>
+              Retrieval
               <Select
                 value={retrieval}
                 disabled={!useEmbeddings}
                 title={embeddingsHint}
-                onChange={value => setRetrieval(value)}>
+                onChange={value => setRetrieval(value)}
+              >
                 <option value="embeddings">Semantic (embeddings)</option>
                 <option value="bm25">Keyword (BM25)</option>
                 <option value="mixed">Hybrid (mixed)</option>
@@ -492,18 +546,22 @@ export default function EditModelDialog(props: Readonly<{
             </label>
             {/* Only relevant when embeddings are involved — it's the model
                 used to vectorise the training snippets. */}
-            <label style={fadedUnlessVectors}>Vector model
+            <label style={fadedUnlessVectors}>
+              Vector model
               <Select
                 value={extra.vector_model}
                 disabled={!useEmbeddings || retrieval === 'bm25'}
-                onChange={value => setField('vector_model', value)}>
+                onChange={value => setField('vector_model', value)}
+              >
                 {!models.some(candidate => candidate.id === extra.vector_model) && (
                   <option value={extra.vector_model}>{extra.vector_model}</option>
                 )}
                 {models
                   .filter(candidate => (candidate as any).vector)
                   .map(candidate => (
-                    <option key={candidate.id} value={candidate.id}>{candidate.id}</option>
+                    <option key={candidate.id} value={candidate.id}>
+                      {candidate.id}
+                    </option>
                   ))}
               </Select>
             </label>
@@ -511,21 +569,22 @@ export default function EditModelDialog(props: Readonly<{
         </div>
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Cancel</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Cancel
+        </button>
         <button
           className="btn"
           onClick={save}
           disabled={busy || !canSave}
-          title={canSave ? undefined : 'Give the model a name, and select an LLM'}>
+          title={canSave ? undefined : 'Give the model a name, and select an LLM'}
+        >
           {busy ? 'Saving…' : 'Save'}
         </button>
       </div>
       {largeEditor && (
         <Modal width={1100} onClose={() => setLargeEditor(false)}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-            <h2 style={{ margin: 0, flex: 1 }}>
-              System instruction — {type || 'new model'}
-            </h2>
+            <h2 style={{ margin: 0, flex: 1 }}>System instruction — {type || 'new model'}</h2>
             <Select
               value=""
               onChange={value => {
@@ -545,9 +604,11 @@ export default function EditModelDialog(props: Readonly<{
                 }
                 // A DYNAMIC "templated template" (contains [[...]] placeholders)
                 // is generated from a URL rather than inserted directly.
-                if (flavor.name.includes('DYNAMIC') &&
-                    flavor.instruction &&
-                    flavor.prefix.includes('[[')) {
+                if (
+                  flavor.name.includes('DYNAMIC') &&
+                  flavor.instruction &&
+                  flavor.prefix.includes('[[')
+                ) {
                   setDynamicFlavor({
                     instruction: flavor.instruction,
                     template: flavor.prefix,
@@ -560,27 +621,30 @@ export default function EditModelDialog(props: Readonly<{
                   message = message.replace('YOUR_TYPE_NAME_HERE', type || 'default');
                 }
                 setSystemMessage(message);
-              }}>
+              }}
+            >
               <option value="">Apply a template…</option>
               {flavors.map(flavor => (
-                <option key={flavor.name} value={flavor.name}>{flavor.name}</option>
+                <option key={flavor.name} value={flavor.name}>
+                  {flavor.name}
+                </option>
               ))}
             </Select>
           </div>
           <div style={{ height: '65vh', display: 'flex', flexDirection: 'column' }}>
-            <CodeEditor
-              value={systemMessage}
-              onChange={setSystemMessage}
-              mode="markdown" />
+            <CodeEditor value={systemMessage} onChange={setSystemMessage} mode="markdown" />
           </div>
           <div className="modal-actions">
             <button
               className="btn btn-secondary"
               title="Append an AI function's declaration to the system instruction"
-              onClick={() => setAddingFunction(true)}>
+              onClick={() => setAddingFunction(true)}
+            >
               + AI function
             </button>
-            <button className="btn" onClick={() => setLargeEditor(false)}>Done</button>
+            <button className="btn" onClick={() => setLargeEditor(false)}>
+              Done
+            </button>
           </div>
           {addingFunction && (
             <AddFunctionDialog
@@ -600,7 +664,8 @@ export default function EditModelDialog(props: Readonly<{
                 });
                 setAddingFunction(false);
                 showToast('AI function added to your system instruction');
-              }} />
+              }}
+            />
           )}
           {dynamicFlavor && (
             <CreateSystemMessageDialog
@@ -610,12 +675,11 @@ export default function EditModelDialog(props: Readonly<{
                 setSystemMessage(message);
                 setDynamicFlavor(null);
               }}
-              onClose={() => setDynamicFlavor(null)} />
+              onClose={() => setDynamicFlavor(null)}
+            />
           )}
         </Modal>
       )}
     </Modal>
   );
 }
-
-

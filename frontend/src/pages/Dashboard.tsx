@@ -67,7 +67,7 @@ const EXPERT_SYSTEM_POLLS = 30;
  * either way the root URL is taken.
  */
 async function rootIsServed() {
-  const files = await listFiles('/etc/www/') ?? [];
+  const files = (await listFiles('/etc/www/')) ?? [];
   return files.includes('/etc/www/index.html');
 }
 
@@ -77,11 +77,12 @@ async function rootIsServed() {
  */
 const TASK_PAGE_SIZE = 6;
 
-function TaskSection(props: Readonly<{
-  // Total task count, so paging knows where the list ends.
-  count: number | null;
-}>) {
-
+function TaskSection(
+  props: Readonly<{
+    // Total task count, so paging knows where the list ends.
+    count: number | null;
+  }>,
+) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [page, setPage] = useState(0);
   const [running, setRunning] = useState<string | null>(null);
@@ -94,11 +95,13 @@ function TaskSection(props: Readonly<{
   }, [page]);
 
   async function execute(task: Task) {
-    if (!await confirm({
-      title: 'Execute task?',
-      message: task.id + ' will run on your server right now.',
-      confirmText: 'Execute',
-    })) {
+    if (
+      !(await confirm({
+        title: 'Execute task?',
+        message: task.id + ' will run on your server right now.',
+        confirmText: 'Execute',
+      }))
+    ) {
       return;
     }
     setRunning(task.id);
@@ -117,31 +120,28 @@ function TaskSection(props: Readonly<{
     return null;
   }
 
-  const pageCount = props.count === null
-    ? 1
-    : Math.max(1, Math.ceil(props.count / TASK_PAGE_SIZE));
+  const pageCount = props.count === null ? 1 : Math.max(1, Math.ceil(props.count / TASK_PAGE_SIZE));
 
   return (
     <div className="card">
       <h2 style={{ marginTop: 0 }}>Tasks</h2>
       <p className="muted" style={{ marginTop: 0 }}>
-        Run one of your tasks now. <Link to="/task-manager">Task Manager</Link> is
-        where you write and schedule them.
+        Run one of your tasks now. <Link to="/task-manager">Task Manager</Link> is where you write
+        and schedule them.
       </p>
       <div className="guide-grid">
         {tasks.map(task => (
           <div className="guide-card task-card" key={task.id}>
             <span style={{ flex: 1, minWidth: 0 }}>
               <span className="guide-title">{task.id}</span>
-              <span className="guide-text line-clamp">
-                {task.description || 'No description'}
-              </span>
+              <span className="guide-text line-clamp">{task.description || 'No description'}</span>
             </span>
             <button
               className="btn btn-secondary btn-small"
               disabled={running === task.id}
               title={'Run ' + task.id + ' on your server now'}
-              onClick={() => execute(task)}>
+              onClick={() => execute(task)}
+            >
               {running === task.id ? 'Running…' : '▷ Execute'}
             </button>
           </div>
@@ -157,7 +157,6 @@ function TaskSection(props: Readonly<{
 }
 
 export default function Dashboard() {
-
   const { backend, version } = useAuth();
   const [endpoints, setEndpoints] = useState<number | null>(null);
   const [publicEndpoints, setPublicEndpoints] = useState<number | null>(null);
@@ -232,9 +231,8 @@ export default function Dashboard() {
    */
   const checkPlugins = useCallback(async () => {
     try {
-      const folders = await listFolders('/modules/') ?? [];
-      setMissingPlugins(
-        AGENT_PLUGINS.filter(name => !folders.includes('/modules/' + name + '/')));
+      const folders = (await listFolders('/modules/')) ?? [];
+      setMissingPlugins(AGENT_PLUGINS.filter(name => !folders.includes('/modules/' + name + '/')));
     } catch {
       // Without a folder listing we can't tell — say nothing rather than nag.
       setMissingPlugins([]);
@@ -242,22 +240,34 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    countEndpoints().then(r => setEndpoints(r.count)).catch(() => {});
-    countPublicEndpoints().then(r => setPublicEndpoints(r.count)).catch(() => {});
-    countUsers('').then(r => setUsers(r.count)).catch(() => {});
-    countTasks().then(r => setTasks(r.count)).catch(() => {});
-    countLog().then(r => setLogItems(r.count)).catch(() => {});
+    countEndpoints()
+      .then(r => setEndpoints(r.count))
+      .catch(() => {});
+    countPublicEndpoints()
+      .then(r => setPublicEndpoints(r.count))
+      .catch(() => {});
+    countUsers('')
+      .then(r => setUsers(r.count))
+      .catch(() => {});
+    countTasks()
+      .then(r => setTasks(r.count))
+      .catch(() => {});
+    countLog()
+      .then(r => setLogItems(r.count))
+      .catch(() => {});
     checkPlugins();
     openaiIsConfigured()
       .then(response => setOpenaiConfigured(response.result))
       .catch(() => setOpenaiConfigured(null));
-    rootIsServed().then(setRootServed).catch(() => setRootServed(null));
+    rootIsServed()
+      .then(setRootServed)
+      .catch(() => setRootServed(null));
   }, [checkPlugins]);
 
   async function installAgentPlugins() {
     setInstalling(true);
-        try {
-      const available = await availablePlugins() ?? [];
+    try {
+      const available = (await availablePlugins()) ?? [];
       for (const name of missingPlugins) {
         const app = available.find((candidate: any) => candidate.name === name);
         if (!app) {
@@ -265,7 +275,9 @@ export default function Dashboard() {
         }
         await installPlugin(app);
       }
-      showToast('Installing ' + missingPlugins.join(' and ') + " — you'll be notified when it completes.");
+      showToast(
+        'Installing ' + missingPlugins.join(' and ') + " — you'll be notified when it completes.",
+      );
       /*
        * Installation continues on a background thread, so the module folders
        * won't exist yet — flip the card now rather than leaving it asking
@@ -282,9 +294,8 @@ export default function Dashboard() {
   async function installExpertSystem() {
     setInstallingExpertSystem(true);
     try {
-      const available = await availablePlugins() ?? [];
-      const app = available.find(
-        (candidate: any) => candidate.name === EXPERT_SYSTEM_PLUGIN);
+      const available = (await availablePlugins()) ?? [];
+      const app = available.find((candidate: any) => candidate.name === EXPERT_SYSTEM_PLUGIN);
       if (!app) {
         throw new Error('The AI Expert System is not available in the plugin repository');
       }
@@ -305,7 +316,8 @@ export default function Dashboard() {
       }
       showToast(
         'The AI Expert System is taking longer than expected to install — check your log',
-        true);
+        true,
+      );
     } catch (err: any) {
       showToast(err.message, true, err.logId);
     } finally {
@@ -327,11 +339,14 @@ export default function Dashboard() {
               localStorage.setItem(tourKey, '1');
             }
             setTour(null);
-          }} />
+          }}
+        />
       )}
       <div className="page-header">
         <h1>Dashboard</h1>
-        <p>Connected to {backend?.url} as {backend?.username}</p>
+        <p>
+          Connected to {backend?.url} as {backend?.username}
+        </p>
       </div>
       <div className="kpi-grid">
         <div className="card">
@@ -339,9 +354,13 @@ export default function Dashboard() {
           <div className="kpi-label">Magic version</div>
         </div>
         <Link className="card kpi-link" to="/endpoints">
-          <div className={endpoints !== null && endpoints > MCP_ENDPOINT_WARNING
-            ? 'kpi-value warn'
-            : 'kpi-value'}>
+          <div
+            className={
+              endpoints !== null && endpoints > MCP_ENDPOINT_WARNING
+                ? 'kpi-value warn'
+                : 'kpi-value'
+            }
+          >
             {endpoints ?? '…'}
           </div>
           <div className="kpi-label">Endpoints</div>
@@ -354,15 +373,18 @@ export default function Dashboard() {
                 event.preventDefault();
                 event.stopPropagation();
                 setShowEndpointWarning(true);
-              }}>
+              }}
+            >
               !
             </button>
           )}
         </Link>
         <Link className="card kpi-link" to="/endpoints?publicOnly=1">
-          <div className={publicEndpoints !== null && publicEndpoints > 0
-            ? 'kpi-value warn'
-            : 'kpi-value'}>
+          <div
+            className={
+              publicEndpoints !== null && publicEndpoints > 0 ? 'kpi-value warn' : 'kpi-value'
+            }
+          >
             {publicEndpoints ?? '…'}
           </div>
           <div className="kpi-label">Public endpoints</div>
@@ -375,7 +397,8 @@ export default function Dashboard() {
                 event.preventDefault();
                 event.stopPropagation();
                 setShowPublicEndpointWarning(true);
-              }}>
+              }}
+            >
               !
             </button>
           )}
@@ -398,18 +421,13 @@ export default function Dashboard() {
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>Turn this cloudlet into an AI agent</h2>
             <p className="muted" style={{ margin: 0 }}>
-              The <strong>MCP</strong> plugin exposes your endpoints as tools AI agents
-              can invoke, and the <strong>OAuth</strong> plugin secures them. You're
-              missing {missingPlugins.join(' and ')}.
+              The <strong>MCP</strong> plugin exposes your endpoints as tools AI agents can invoke,
+              and the <strong>OAuth</strong> plugin secures them. You're missing{' '}
+              {missingPlugins.join(' and ')}.
             </p>
           </div>
-          <button
-            className="btn btn-large"
-            onClick={installAgentPlugins}
-            disabled={installing}>
-            {installing
-              ? 'Installing…'
-              : 'Install ' + missingPlugins.join(' + ')}
+          <button className="btn btn-large" onClick={installAgentPlugins} disabled={installing}>
+            {installing ? 'Installing…' : 'Install ' + missingPlugins.join(' + ')}
           </button>
         </div>
       ) : (
@@ -417,16 +435,14 @@ export default function Dashboard() {
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>This cloudlet is an AI agent</h2>
             <p className="muted" style={{ margin: 0 }}>
-              MCP and OAuth are installed. Give an AI agent the URL below to let it
-              discover and invoke your endpoints as tools.
+              MCP and OAuth are installed. Give an AI agent the URL below to let it discover and
+              invoke your endpoints as tools.
             </p>
             <div className="mono" style={{ marginTop: 8, overflowWrap: 'anywhere' }}>
               {mcpUrl}
             </div>
           </div>
-          <button
-            className="btn btn-large"
-            onClick={() => copyToClipboard(mcpUrl, 'The MCP URL')}>
+          <button className="btn btn-large" onClick={() => copyToClipboard(mcpUrl, 'The MCP URL')}>
             Copy MCP URL
           </button>
         </div>
@@ -436,16 +452,17 @@ export default function Dashboard() {
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>Add your OpenAI API key</h2>
             <p className="muted" style={{ margin: 0 }}>
-              Machine Learning needs an OpenAI API key before you can train models,
-              crawl content, or run chatbots — retrieval itself can run without one
-              using keyword (BM25) search, but answers still come from a model.
-              You can get one{' '}
+              Machine Learning needs an OpenAI API key before you can train models, crawl content,
+              or run chatbots — retrieval itself can run without one using keyword (BM25) search,
+              but answers still come from a model. You can get one{' '}
               <a
                 href="https://platform.openai.com/account/api-keys"
                 target="_blank"
-                rel="noreferrer">
+                rel="noreferrer"
+              >
                 here
-              </a>.
+              </a>
+              .
             </p>
           </div>
           <button className="btn btn-large" onClick={() => setConfiguringOpenai(true)}>
@@ -458,11 +475,10 @@ export default function Dashboard() {
         <div>
           <h2 style={{ margin: '0 0 6px 0' }}>API Wizard</h2>
           <p className="muted" style={{ margin: 0 }}>
-            Three ways to get endpoints: turn every table in a database into
-            secured REST endpoints, publish your own SQL as an endpoint, or wrap
-            somebody else's API from its OpenAPI specification. Whatever you
-            generate is published to your AI agent as MCP tools. No database
-            yet? <Link to="/databases">Connect or create one first</Link>.
+            Three ways to get endpoints: turn every table in a database into secured REST endpoints,
+            publish your own SQL as an endpoint, or wrap somebody else's API from its OpenAPI
+            specification. Whatever you generate is published to your AI agent as MCP tools. No
+            database yet? <Link to="/databases">Connect or create one first</Link>.
           </p>
         </div>
         <div className="agent-prompt-actions">
@@ -478,26 +494,26 @@ export default function Dashboard() {
         </div>
       </div>
       {/*
-        * Offered whenever the cloudlet's root URL is free, regardless of
-        * whether an OpenAI key exists yet. Installing the frontend and
-        * configuring a key are separate steps, and gating the offer on the
-        * key hid it from exactly the people who have not set anything up.
-        */}
+       * Offered whenever the cloudlet's root URL is free, regardless of
+       * whether an OpenAI key exists yet. Installing the frontend and
+       * configuring a key are separate steps, and gating the offer on the
+       * key hid it from exactly the people who have not set anything up.
+       */}
       {rootServed === false && (
         <div className="card agent-prompt" data-tour="expert-system">
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 6px 0' }}>AI Expert System</h2>
             <p className="muted" style={{ margin: 0 }}>
-              A complete chat client for your cloudlet — streaming answers from
-              your own models, AI functions that actually do things, logins,
-              and your own branding. Installing it serves the app from your
-              cloudlet's root URL.
+              A complete chat client for your cloudlet — streaming answers from your own models, AI
+              functions that actually do things, logins, and your own branding. Installing it serves
+              the app from your cloudlet's root URL.
             </p>
           </div>
           <button
             className="btn btn-large"
             onClick={installExpertSystem}
-            disabled={installingExpertSystem}>
+            disabled={installingExpertSystem}
+          >
             {installingExpertSystem ? 'Installing…' : 'Install Expert System'}
           </button>
         </div>
@@ -517,16 +533,17 @@ export default function Dashboard() {
             className="btn btn-large"
             href={httpUrl(backend?.url)}
             target="_blank"
-            rel="noreferrer">
+            rel="noreferrer"
+          >
             Open
           </a>
         </div>
       )}
       {/*
-        * Folded away rather than always open. It restates the navigation for
-        * somebody seeing the dashboard for the first time, which is worth a
-        * click to reach and not worth scrolling past every day after that.
-        */}
+       * Folded away rather than always open. It restates the navigation for
+       * somebody seeing the dashboard for the first time, which is worth a
+       * click to reach and not worth scrolling past every day after that.
+       */}
       <details className="card guide-details" style={{ marginBottom: 16 }}>
         <summary>
           <span className="guide-summary-title">What everything does</span>
@@ -535,7 +552,9 @@ export default function Dashboard() {
         <div className="guide-grid">
           {SECTIONS.filter(section => section.description).map(section => (
             <Link className="guide-card" key={section.to} to={section.to}>
-              <span className="guide-icon"><section.Icon /></span>
+              <span className="guide-icon">
+                <section.Icon />
+              </span>
               <span>
                 <span className="guide-title">{section.label}</span>
                 <span className="guide-text">{section.description}</span>
@@ -543,43 +562,46 @@ export default function Dashboard() {
             </Link>
           ))}
           {/*
-            * The last cards are the ones that aren't routes — overlays that
-            * open over whatever you are looking at, wearing the same clothes
-            * as their neighbours.
-            */}
+           * The last cards are the ones that aren't routes — overlays that
+           * open over whatever you are looking at, wearing the same clothes
+           * as their neighbours.
+           */}
           {openaiConfigured === true && (
             <button className="guide-card" type="button" onClick={openChatOps}>
-              <span className="guide-icon"><RobotIcon /></span>
+              <span className="guide-icon">
+                <RobotIcon />
+              </span>
               <span>
                 <span className="guide-title">Chat Ops</span>
                 <span className="guide-text">
-                  Talk to your cloudlet from any screen — generate endpoints,
-                  query your databases, or ask what your backend can do. It runs
-                  AI functions on your behalf and stays open as you navigate.
-                  Ctrl+. / Cmd+.
+                  Talk to your cloudlet from any screen — generate endpoints, query your databases,
+                  or ask what your backend can do. It runs AI functions on your behalf and stays
+                  open as you navigate. Ctrl+. / Cmd+.
                 </span>
               </span>
             </button>
           )}
           <button className="guide-card" type="button" onClick={openPalette}>
-            <span className="guide-icon"><SearchIcon /></span>
+            <span className="guide-icon">
+              <SearchIcon />
+            </span>
             <span>
               <span className="guide-title">Command palette</span>
               <span className="guide-text">
-                One box that finds anything — pages, files, endpoints, tasks and
-                models — plus quick actions like switching cloudlet or theme.
-                Ctrl+K / Cmd+K
+                One box that finds anything — pages, files, endpoints, tasks and models — plus quick
+                actions like switching cloudlet or theme. Ctrl+K / Cmd+K
               </span>
             </span>
           </button>
           <button className="guide-card" type="button" onClick={openSupport}>
-            <span className="guide-icon"><RobotIcon /></span>
+            <span className="guide-icon">
+              <RobotIcon />
+            </span>
             <span>
               <span className="guide-title">Ask Frank</span>
               <span className="guide-text">
-                Magic's AI support agent, trained on the Hyperlambda and Magic
-                documentation. Ask it how something works and it answers with
-                code you can paste.
+                Magic's AI support agent, trained on the Hyperlambda and Magic documentation. Ask it
+                how something works and it answers with code you can paste.
               </span>
             </span>
           </button>
@@ -590,12 +612,11 @@ export default function Dashboard() {
         <Modal width={560} onClose={() => setShowEndpointWarning(false)}>
           <h2>Too many endpoints for MCP</h2>
           <p className="muted" style={{ marginTop: 0 }}>
-            This cloudlet has {endpoints} HTTP endpoints. Most MCP clients cannot
-            deal effectively with much more than {MCP_ENDPOINT_WARNING} — AI
-            agents drown in the tool list, making tool discovery and selection
-            slow and unreliable, and some clients refuse to connect at all.
-            Consider deleting endpoints you don't need, or restricting how many
-            your MCP plugin exposes.
+            This cloudlet has {endpoints} HTTP endpoints. Most MCP clients cannot deal effectively
+            with much more than {MCP_ENDPOINT_WARNING} — AI agents drown in the tool list, making
+            tool discovery and selection slow and unreliable, and some clients refuse to connect at
+            all. Consider deleting endpoints you don't need, or restricting how many your MCP plugin
+            exposes.
           </p>
           <div className="modal-actions">
             <button className="btn" onClick={() => setShowEndpointWarning(false)}>
@@ -608,13 +629,11 @@ export default function Dashboard() {
         <Modal width={560} onClose={() => setShowPublicEndpointWarning(false)}>
           <h2>This cloudlet has public endpoints</h2>
           <p className="muted" style={{ marginTop: 0 }}>
-            This cloudlet has {publicEndpoints} endpoints that require no
-            authentication whatsoever — anyone who finds the URL can invoke
-            them, with no login, token, or role check standing in their way.
-            Make sure none of them can read, change, or delete data they
-            shouldn't, run up costs, or otherwise cause damage in the hands
-            of a stranger. If an endpoint doesn't need to be public, add an
-            [auth] requirement to it.
+            This cloudlet has {publicEndpoints} endpoints that require no authentication whatsoever
+            — anyone who finds the URL can invoke them, with no login, token, or role check standing
+            in their way. Make sure none of them can read, change, or delete data they shouldn't,
+            run up costs, or otherwise cause damage in the hands of a stranger. If an endpoint
+            doesn't need to be public, add an [auth] requirement to it.
           </p>
           <div className="modal-actions">
             <button className="btn" onClick={() => setShowPublicEndpointWarning(false)}>
@@ -623,9 +642,7 @@ export default function Dashboard() {
           </div>
         </Modal>
       )}
-      {mustSetPassword && (
-        <SetPasswordDialog onClose={() => setMustSetPassword(false)} />
-      )}
+      {mustSetPassword && <SetPasswordDialog onClose={() => setMustSetPassword(false)} />}
       {configuringOpenai && (
         <OpenAiKeyDialog
           onClose={() => setConfiguringOpenai(false)}
@@ -633,7 +650,8 @@ export default function Dashboard() {
             setConfiguringOpenai(false);
             setOpenaiConfigured(true);
             showToast('Your OpenAI API key was saved to your configuration');
-          }} />
+          }}
+        />
       )}
     </>
   );
@@ -659,7 +677,6 @@ const DEFAULT_BOT_MODEL = 'gpt-6-luna';
  * the next emailed link works just as well.
  */
 function SetPasswordDialog(props: Readonly<{ onClose: () => void }>) {
-
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -684,28 +701,32 @@ function SetPasswordDialog(props: Readonly<{ onClose: () => void }>) {
     <Modal
       width={460}
       onClose={props.onClose}
-      onSubmit={() => { if (!busy && password) void save(); }}>
+      onSubmit={() => {
+        if (!busy && password) void save();
+      }}
+    >
       <h2>Set your password</h2>
       <p className="muted" style={{ marginTop: 0 }}>
-        You signed in through an emailed link, which only works once. Set a
-        password so you can sign in normally next time.
+        You signed in through an emailed link, which only works once. Set a password so you can sign
+        in normally next time.
       </p>
       <div className="form-grid">
-        <label>New password (min {MIN_PASSWORD} characters)
+        <label>
+          New password (min {MIN_PASSWORD} characters)
           <input
             type="password"
             autoFocus
             autoComplete="new-password"
             value={password}
-            onChange={e => setPassword(e.target.value)} />
+            onChange={e => setPassword(e.target.value)}
+          />
         </label>
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Not now</button>
-        <button
-          className="btn"
-          onClick={save}
-          disabled={busy || password.length < MIN_PASSWORD}>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Not now
+        </button>
+        <button className="btn" onClick={save} disabled={busy || password.length < MIN_PASSWORD}>
           {busy ? 'Saving…' : 'Set password'}
         </button>
       </div>
@@ -714,7 +735,6 @@ function SetPasswordDialog(props: Readonly<{ onClose: () => void }>) {
 }
 
 function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
-
   const [url, setUrl] = useState('');
   const [model, setModel] = useState(DEFAULT_BOT_MODEL);
   // The chat models the backend's catalogue lists, newest first, with their pricing.
@@ -762,137 +782,140 @@ function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
      */
     <div className="card agent-prompt" data-tour="chatbot-wizard">
       <div style={{ flex: 1, minWidth: 0 }}>
-      <h2 style={{ marginTop: 0 }}>Chatbot Wizard</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Crawls the site, turns what it finds into training data, and gives you
-        a chatbot you can embed. Takes a few minutes.{' '}
-        <button type="button" className="link-btn" onClick={props.onTour}>
-          What do these fields do?
-        </button>
-      </p>
-      <form
-        onFocus={loadOptions}
-        onSubmit={e => {
-          e.preventDefault();
-          if (url.trim() && !crawl) {
-            setCrawl({ channel: 'create-bot-' + Date.now() });
-          }
-        }}>
-        <div className="form-grid columns">
-        <label data-tour="chatbot-url">Website URL
-          <input
-            type="text"
-            placeholder="https://example.com"
-            value={url}
-            onChange={e => setUrl(e.target.value)} />
-        </label>
-        <label data-tour="chatbot-model">OpenAI model
-          <Select value={model} onChange={value => setModel(value)}>
-            {models.map(candidate => (
-              <option key={candidate.id} value={candidate.id}>{candidate.id}{modelPriceLabel(candidate)}</option>
-            ))}
-          </Select>
-        </label>
-        <label data-tour="chatbot-persona">Persona
-          <Select value={flavor} onChange={value => setFlavor(value)}>
-            {flavors.map(candidate => (
-              <option key={candidate.name} value={candidate.name}>{candidate.name}</option>
-            ))}
-          </Select>
-        </label>
-        <label data-tour="chatbot-pages">Max pages
-          <input
-            type="number"
-            min="1"
-            value={max}
-            onChange={e => setMax(e.target.value)} />
-        </label>
-        </div>
-        {/*
-          * Below the captioned fields rather than inside them. A checkbox and
-          * a button have no caption, so sitting them in that grid meant
-          * faking one and forcing the height to match an input.
-          */}
-        <div className="form-row" data-tour="chatbot-create">
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              checked={autoDestruct}
-              onChange={e => setAutoDestruct(e.target.checked)} />
-            Delete after 7 days
-          </label>
-          {/* Submits the form, so Enter in any field starts the crawl too. */}
-          <button
-            className="btn"
-            type="submit"
-            disabled={!url.trim() || !!crawl}>
-            Create chatbot
+        <h2 style={{ marginTop: 0 }}>Chatbot Wizard</h2>
+        <p className="muted" style={{ marginTop: 0 }}>
+          Crawls the site, turns what it finds into training data, and gives you a chatbot you can
+          embed. Takes a few minutes.{' '}
+          <button type="button" className="link-btn" onClick={props.onTour}>
+            What do these fields do?
           </button>
-        </div>
-      </form>
-      {selected?.description && (
-        <p className="muted" style={{ fontSize: 13, marginBottom: 0 }}>
-          {selected.description}
         </p>
-      )}
-      {crawl && (
-        <SocketFeedback
-          title={'Creating a chatbot from ' + url}
-          channel={crawl.channel}
-          onReady={() => {
-            createBot({
-              url: url.trim(),
-              model,
-              // The persona's template, and the instruction that has OpenAI
-              // fill its placeholders from the crawled site.
-              flavor: selected?.prefix ?? '',
-              instruction: selected?.instruction ?? '',
-              max: Number(max) || 25,
-              autoDestruct,
-              channel: crawl.channel,
-            }).catch(err => showToast(err.message, true, err.logId));
-          }}
-          isComplete={message => message.message.trim() === 'Done!'}
-          renderDone={messages => {
-            /*
-             * The wizard builds a landing page named after the model and
-             * announces it: "Creating default landing page for <model> by
-             * copying <url>". The page lives at the backend URL + that name.
-             * Fall back to the vectorised model name if the wording changes.
-             */
-            const text = messages.map(m => m.message).join('\n');
-            const model = /landing page for (\S+)/.exec(text)?.[1]
-              ?? /model '([^']+)'/.exec(text)?.[1];
-            if (!model) {
-              return null;
+        <form
+          onFocus={loadOptions}
+          onSubmit={e => {
+            e.preventDefault();
+            if (url.trim() && !crawl) {
+              setCrawl({ channel: 'create-bot-' + Date.now() });
             }
-            const href = withoutTrailingSlashes(backendInfo().url) + '/' + model;
-            /*
-             * Seeing the result comes before tuning it, so opening the chatbot
-             * leads. Editing is offered next to it because everything the
-             * wizard chose - persona, greeting, temperature, thresholds - is a
-             * default, and the model page is not somewhere you would think to
-             * look for a chatbot you just made.
-             */
-            return (
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <a
-                  className="btn"
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer">
-                  Open chatbot ↗
-                </a>
-                <Link
-                  className="btn btn-secondary"
-                  to={'/machine-learning?edit=' + encodeURIComponent(model)}>
-                  Edit model
-                </Link>
-              </div>
-            );
           }}
-          onClose={() => setCrawl(null)} />
-      )}
+        >
+          <div className="form-grid columns">
+            <label data-tour="chatbot-url">
+              Website URL
+              <input
+                type="text"
+                placeholder="https://example.com"
+                value={url}
+                onChange={e => setUrl(e.target.value)}
+              />
+            </label>
+            <label data-tour="chatbot-model">
+              OpenAI model
+              <Select value={model} onChange={value => setModel(value)}>
+                {models.map(candidate => (
+                  <option key={candidate.id} value={candidate.id}>
+                    {candidate.id}
+                    {modelPriceLabel(candidate)}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <label data-tour="chatbot-persona">
+              Persona
+              <Select value={flavor} onChange={value => setFlavor(value)}>
+                {flavors.map(candidate => (
+                  <option key={candidate.name} value={candidate.name}>
+                    {candidate.name}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <label data-tour="chatbot-pages">
+              Max pages
+              <input type="number" min="1" value={max} onChange={e => setMax(e.target.value)} />
+            </label>
+          </div>
+          {/*
+           * Below the captioned fields rather than inside them. A checkbox and
+           * a button have no caption, so sitting them in that grid meant
+           * faking one and forcing the height to match an input.
+           */}
+          <div className="form-row" data-tour="chatbot-create">
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={autoDestruct}
+                onChange={e => setAutoDestruct(e.target.checked)}
+              />
+              Delete after 7 days
+            </label>
+            {/* Submits the form, so Enter in any field starts the crawl too. */}
+            <button className="btn" type="submit" disabled={!url.trim() || !!crawl}>
+              Create chatbot
+            </button>
+          </div>
+        </form>
+        {selected?.description && (
+          <p className="muted" style={{ fontSize: 13, marginBottom: 0 }}>
+            {selected.description}
+          </p>
+        )}
+        {crawl && (
+          <SocketFeedback
+            title={'Creating a chatbot from ' + url}
+            channel={crawl.channel}
+            onReady={() => {
+              createBot({
+                url: url.trim(),
+                model,
+                // The persona's template, and the instruction that has OpenAI
+                // fill its placeholders from the crawled site.
+                flavor: selected?.prefix ?? '',
+                instruction: selected?.instruction ?? '',
+                max: Number(max) || 25,
+                autoDestruct,
+                channel: crawl.channel,
+              }).catch(err => showToast(err.message, true, err.logId));
+            }}
+            isComplete={message => message.message.trim() === 'Done!'}
+            renderDone={messages => {
+              /*
+               * The wizard builds a landing page named after the model and
+               * announces it: "Creating default landing page for <model> by
+               * copying <url>". The page lives at the backend URL + that name.
+               * Fall back to the vectorised model name if the wording changes.
+               */
+              const text = messages.map(m => m.message).join('\n');
+              const model =
+                /landing page for (\S+)/.exec(text)?.[1] ?? /model '([^']+)'/.exec(text)?.[1];
+              if (!model) {
+                return null;
+              }
+              const href = withoutTrailingSlashes(backendInfo().url) + '/' + model;
+              /*
+               * Seeing the result comes before tuning it, so opening the chatbot
+               * leads. Editing is offered next to it because everything the
+               * wizard chose - persona, greeting, temperature, thresholds - is a
+               * default, and the model page is not somewhere you would think to
+               * look for a chatbot you just made.
+               */
+              return (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <a className="btn" href={href} target="_blank" rel="noopener noreferrer">
+                    Open chatbot ↗
+                  </a>
+                  <Link
+                    className="btn btn-secondary"
+                    to={'/machine-learning?edit=' + encodeURIComponent(model)}
+                  >
+                    Edit model
+                  </Link>
+                </div>
+              );
+            }}
+            onClose={() => setCrawl(null)}
+          />
+        )}
       </div>
     </div>
   );

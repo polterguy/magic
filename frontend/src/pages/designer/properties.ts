@@ -38,7 +38,14 @@ export const STYLE_GROUPS: StyleGroup[] = [
         name: 'justify-content',
         label: 'Justify',
         kind: 'select',
-        options: ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'],
+        options: [
+          'flex-start',
+          'center',
+          'flex-end',
+          'space-between',
+          'space-around',
+          'space-evenly',
+        ],
       },
       {
         name: 'align-items',
@@ -153,15 +160,28 @@ export function toHexColor(value: string, fallback = '#000000'): string {
     return trimmed.toLowerCase();
   }
   if (/^#[0-9a-f]{3}$/i.test(trimmed)) {
-    return ('#' + trimmed[1] + trimmed[1] + trimmed[2] + trimmed[2] + trimmed[3] + trimmed[3])
-      .toLowerCase();
+    return (
+      '#' +
+      trimmed[1] +
+      trimmed[1] +
+      trimmed[2] +
+      trimmed[2] +
+      trimmed[3] +
+      trimmed[3]
+    ).toLowerCase();
   }
   const rgb = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i.exec(trimmed);
   if (rgb) {
-    return '#' + [rgb[1], rgb[2], rgb[3]]
-      .map(part => Math.max(0, Math.min(255, Math.round(Number(part))))
-        .toString(16).padStart(2, '0'))
-      .join('');
+    return (
+      '#' +
+      [rgb[1], rgb[2], rgb[3]]
+        .map(part =>
+          Math.max(0, Math.min(255, Math.round(Number(part))))
+            .toString(16)
+            .padStart(2, '0'),
+        )
+        .join('')
+    );
   }
   return fallback;
 }

@@ -13,12 +13,13 @@ import { ListSkeleton } from '../../components/Skeleton';
 import { availableWidgets, mlSnippetCreate } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 
-export default function AddWidgetDialog(props: Readonly<{
-  type: string;
-  onClose: () => void;
-  onAdded: () => void;
-}>) {
-
+export default function AddWidgetDialog(
+  props: Readonly<{
+    type: string;
+    onClose: () => void;
+    onAdded: () => void;
+  }>,
+) {
   const [widgets, setWidgets] = useState<any[]>([]);
   const [filter, setFilter] = useState('');
   const [error, setError] = useState('');
@@ -46,8 +47,7 @@ export default function AddWidgetDialog(props: Readonly<{
         type: props.type,
         meta: 'WIDGET ==> ' + widget.file,
       });
-      showToast(
-        'Widget added to ' + props.type + ' — edit its prompt to describe when to use it');
+      showToast('Widget added to ' + props.type + ' — edit its prompt to describe when to use it');
       props.onAdded();
     } catch (err: any) {
       showToast(err.message, true, err.logId);
@@ -57,48 +57,60 @@ export default function AddWidgetDialog(props: Readonly<{
   }
 
   const query = filter.toLowerCase();
-  const visible = widgets.filter(widget =>
-    !query ||
-    widget.name?.toLowerCase().includes(query) ||
-    widget.description?.toLowerCase().includes(query));
+  const visible = widgets.filter(
+    widget =>
+      !query ||
+      widget.name?.toLowerCase().includes(query) ||
+      widget.description?.toLowerCase().includes(query),
+  );
 
   return (
     <Modal width={720} onClose={props.onClose}>
       <h2>Add widget to {props.type}</h2>
-      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
+      {error && (
+        <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
+          {error}
+        </Banner>
+      )}
       <SearchInput
         placeholder="Filter widgets…"
         value={filter}
         onChange={setFilter}
-        style={{ width: '100%', marginBottom: 10 }} />
+        style={{ width: '100%', marginBottom: 10 }}
+      />
       <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
         {loading && <ListSkeleton withAction />}
-        {!loading && visible.map(widget => (
-          <div
-            key={widget.file}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '8px 0',
-              borderBottom: '1px solid var(--border)',
-            }}>
-            <div style={{ flex: 1 }}>
-              <strong>{widget.name}</strong>
-              {widget.description && <div className="muted">{widget.description}</div>}
+        {!loading &&
+          visible.map(widget => (
+            <div
+              key={widget.file}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '8px 0',
+                borderBottom: '1px solid var(--border)',
+              }}
+            >
+              <div style={{ flex: 1 }}>
+                <strong>{widget.name}</strong>
+                {widget.description && <div className="muted">{widget.description}</div>}
+              </div>
+              <button
+                className="btn btn-secondary btn-small"
+                onClick={() => install(widget)}
+                disabled={busy}
+              >
+                Add
+              </button>
             </div>
-            <button
-              className="btn btn-secondary btn-small"
-              onClick={() => install(widget)}
-              disabled={busy}>
-              Add
-            </button>
-          </div>
-        ))}
+          ))}
         {!loading && visible.length === 0 && <div className="muted">No widgets available.</div>}
       </div>
       <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>Close</button>
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Close
+        </button>
       </div>
     </Modal>
   );

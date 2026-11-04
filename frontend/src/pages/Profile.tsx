@@ -3,11 +3,17 @@ import Banner from '../components/Banner';
 import { useEffect, useState } from 'react';
 import DateTimePicker from '../components/DateTimePicker';
 import { Modal } from '../components/Dialogs';
-import { MIN_PASSWORD, changePassword, http, listRoles, listUsers, saveUserExtra } from '../lib/api';
+import {
+  MIN_PASSWORD,
+  changePassword,
+  http,
+  listRoles,
+  listUsers,
+  saveUserExtra,
+} from '../lib/api';
 import { useAuth } from '../lib/AuthContext';
 
 export default function Profile() {
-
   const { backend, logout } = useAuth();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -68,59 +74,71 @@ export default function Profile() {
     <>
       <div className="page-header">
         <h1>Profile</h1>
-        <p>Signed in as {backend?.username} on {backend?.url}</p>
+        <p>
+          Signed in as {backend?.username} on {backend?.url}
+        </p>
       </div>
       <div className="editor-split" style={{ flex: 'unset', alignItems: 'flex-start' }}>
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Your details</h2>
           <div className="form-grid">
-            <label>Full name
+            <label>
+              Full name
               <input
                 type="text"
                 autoComplete="name"
                 value={name}
-                onChange={e => setName(e.target.value)} />
+                onChange={e => setName(e.target.value)}
+              />
             </label>
-            <label>Email
+            <label>
+              Email
               <input
                 type="email"
                 autoComplete="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)} />
+                onChange={e => setEmail(e.target.value)}
+              />
             </label>
           </div>
           <button
             className="btn"
             style={{ marginTop: 12 }}
             onClick={saveDetails}
-            disabled={savingDetails}>
+            disabled={savingDetails}
+          >
             {savingDetails ? 'Saving…' : 'Save details'}
           </button>
         </div>
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Change password</h2>
           <div className="form-grid">
-            <label>New password (min {MIN_PASSWORD} characters)
+            <label>
+              New password (min {MIN_PASSWORD} characters)
               <input
                 type="password"
                 // Tells the browser this sets a password rather than logging
                 // in, so it doesn't autofill saved credentials.
                 autoComplete="new-password"
                 value={password}
-                onChange={e => setPassword(e.target.value)} />
+                onChange={e => setPassword(e.target.value)}
+              />
             </label>
-            <label>Confirm password
+            <label>
+              Confirm password
               <input
                 type="password"
                 autoComplete="new-password"
                 value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)} />
+                onChange={e => setConfirmPassword(e.target.value)}
+              />
             </label>
             <div>
               <button
                 className="btn"
                 disabled={!password || changingPassword}
-                onClick={submitPassword}>
+                onClick={submitPassword}
+              >
                 {changingPassword ? 'Changing…' : 'Change password'}
               </button>
             </div>
@@ -129,8 +147,7 @@ export default function Profile() {
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Access tokens</h2>
           <p className="muted">
-            Generate a long-lived JWT token for service accounts, CI/CD, or
-            integrations.
+            Generate a long-lived JWT token for service accounts, CI/CD, or integrations.
           </p>
           <button className="btn btn-secondary" onClick={() => setTokenOpen(true)}>
             Generate token…
@@ -143,7 +160,6 @@ export default function Profile() {
 }
 
 function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
-
   const [username, setUsername] = useState('service');
   const [roles, setRoles] = useState<string[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<string[]>(['admin']);
@@ -170,9 +186,13 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
     setBusy(true);
     try {
       const response = await http.get<{ ticket: string }>(
-        '/magic/system/auth/generate-token?username=' + encodeURIComponent(username) +
-        '&role=' + encodeURIComponent(selectedRoles.join(',')) +
-        '&expires=' + encodeURIComponent(new Date(expires).toISOString()));
+        '/magic/system/auth/generate-token?username=' +
+          encodeURIComponent(username) +
+          '&role=' +
+          encodeURIComponent(selectedRoles.join(',')) +
+          '&expires=' +
+          encodeURIComponent(new Date(expires).toISOString()),
+      );
       setToken(response.ticket);
     } catch (err: any) {
       setError(err.message);
@@ -185,11 +205,19 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
     <Modal
       width={560}
       onClose={onClose}
-      onSubmit={() => { if (username && selectedRoles.length > 0) void generate(); }}>
+      onSubmit={() => {
+        if (username && selectedRoles.length > 0) void generate();
+      }}
+    >
       <h2>Generate token</h2>
-      {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
+      {error && (
+        <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
+          {error}
+        </Banner>
+      )}
       <div className="form-grid">
-        <label>Username
+        <label>
+          Username
           <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
         </label>
         <div>
@@ -205,26 +233,34 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
                   alignItems: 'center',
                   cursor: 'pointer',
                   userSelect: 'none',
-                }}>
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={selectedRoles.includes(role)}
-                  onChange={e => setSelectedRoles(e.target.checked
-                    ? [...selectedRoles, role]
-                    : selectedRoles.filter(candidate => candidate !== role))} />
+                  onChange={e =>
+                    setSelectedRoles(
+                      e.target.checked
+                        ? [...selectedRoles, role]
+                        : selectedRoles.filter(candidate => candidate !== role),
+                    )
+                  }
+                />
                 {role}
               </label>
             ))}
           </div>
         </div>
-        <label>Expires
+        <label>
+          Expires
           {/* A token that expired before it was issued is never what's wanted. */}
           <DateTimePicker
             dateOnly
             value={expires}
             min={new Date().toISOString().substring(0, 10)}
             onChange={setExpires}
-            placeholder="Pick an expiry date" />
+            placeholder="Pick an expiry date"
+          />
         </label>
         {token && (
           <div className="success-box mono" style={{ overflowWrap: 'anywhere', fontSize: 12 }}>
@@ -234,17 +270,18 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
       </div>
       <div className="modal-actions">
         {token && (
-          <button
-            className="btn btn-secondary"
-            onClick={() => copyToClipboard(token, 'The token')}>
+          <button className="btn btn-secondary" onClick={() => copyToClipboard(token, 'The token')}>
             Copy
           </button>
         )}
-        <button className="btn btn-secondary" onClick={onClose}>Close</button>
+        <button className="btn btn-secondary" onClick={onClose}>
+          Close
+        </button>
         <button
           className="btn"
           onClick={generate}
-          disabled={!username || selectedRoles.length === 0 || busy}>
+          disabled={!username || selectedRoles.length === 0 || busy}
+        >
           {busy ? 'Generating…' : 'Generate'}
         </button>
       </div>

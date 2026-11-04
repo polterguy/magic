@@ -33,14 +33,15 @@ export function nextSort(current: SortState, column: string): SortState {
 const ARROWS = { asc: ' ↑', desc: ' ↓' } as const;
 const ARIA_SORT = { asc: 'ascending', desc: 'descending' } as const;
 
-export default function SortHeader(props: Readonly<{
-  column: string;
-  label: string;
-  sort: SortState;
-  onSort: (sort: SortState) => void;
-  style?: React.CSSProperties;
-}>) {
-
+export default function SortHeader(
+  props: Readonly<{
+    column: string;
+    label: string;
+    sort: SortState;
+    onSort: (sort: SortState) => void;
+    style?: React.CSSProperties;
+  }>,
+) {
   const active = props.sort.column === props.column;
   const arrow = active ? ARROWS[props.sort.direction] : '';
 
@@ -60,7 +61,8 @@ export default function SortHeader(props: Readonly<{
           event.preventDefault();
           advance();
         }
-      }}>
+      }}
+    >
       {props.label}
       <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{arrow}</span>
     </th>

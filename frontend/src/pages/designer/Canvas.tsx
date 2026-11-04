@@ -65,7 +65,6 @@ export interface CanvasProps {
 const THRESHOLD = 4;
 
 export default function Canvas(props: Readonly<CanvasProps>) {
-
   const frameRef = useRef<HTMLIFrameElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const docRef = useRef<Document | null>(null);
@@ -155,16 +154,21 @@ export default function Canvas(props: Readonly<CanvasProps>) {
       return;
     }
     const press = pressRef.current;
-    if (press && !dragRef.current &&
-        (Math.abs(event.clientX - press.x) > THRESHOLD ||
-         Math.abs(event.clientY - press.y) > THRESHOLD)) {
+    if (
+      press &&
+      !dragRef.current &&
+      (Math.abs(event.clientX - press.x) > THRESHOLD ||
+        Math.abs(event.clientY - press.y) > THRESHOLD)
+    ) {
       dragRef.current = press.node;
     }
     if (dragRef.current) {
       showSpot(findDropSpot(doc, event.clientX, event.clientY, dragRef.current));
       return;
     }
-    propsRef.current.onHover(nodeAtPoint(doc, event.clientX, event.clientY, event.target as Element));
+    propsRef.current.onHover(
+      nodeAtPoint(doc, event.clientX, event.clientY, event.target as Element),
+    );
   }
 
   function onDoubleClick(event: MouseEvent) {
@@ -510,7 +514,8 @@ export default function Canvas(props: Readonly<CanvasProps>) {
     <div
       className="designer-canvas"
       ref={wrapRef}
-      style={props.hidden ? { display: 'none' } : undefined}>
+      style={props.hidden ? { display: 'none' } : undefined}
+    >
       <iframe
         ref={frameRef}
         className="designer-frame"
@@ -519,35 +524,41 @@ export default function Canvas(props: Readonly<CanvasProps>) {
         sandbox={CANVAS_SANDBOX}
         srcDoc={props.srcDoc}
         onLoad={onLoad}
-        style={props.width ? { width: props.width } : undefined} />
+        style={props.width ? { width: props.width } : undefined}
+      />
       {props.note && <p className="designer-canvas-note">{props.note}</p>}
       {boxes.matching.map((box, index) => (
         <div key={index} className="designer-outline matching" style={box} />
       ))}
       {boxes.hover && <div className="designer-outline hover" style={boxes.hover} />}
       {/*
-        * The badge naming what is outlined, and how big it is — the one part
-        * of a browser inspector that turns an outline into an identification.
-        * It sits above the element, or inside the top when there is no room
-        * above, so it is never cut off at the top of the canvas.
-        */}
+       * The badge naming what is outlined, and how big it is — the one part
+       * of a browser inspector that turns an outline into an identification.
+       * It sits above the element, or inside the top when there is no room
+       * above, so it is never cut off at the top of the canvas.
+       */}
       {boxes.hover && props.hovered && (
         <span
           className="designer-tag"
           style={{
             left: boxes.hover.left,
             top: boxes.hover.top >= 22 ? boxes.hover.top - 22 : boxes.hover.top + 2,
-          }}>
+          }}
+        >
           {labelOf(props.hovered)}
-          <em>{Math.round(boxes.hover.width)} × {Math.round(boxes.hover.height)}</em>
+          <em>
+            {Math.round(boxes.hover.width)} × {Math.round(boxes.hover.height)}
+          </em>
         </span>
       )}
       {boxes.selected && <div className="designer-outline selected" style={boxes.selected} />}
       {boxes.spot && (
         <div
-          className={'designer-drop' + (spot?.before === null && boxes.spot.height > 8
-            ? ' area' : '')}
-          style={boxes.spot} />
+          className={
+            'designer-drop' + (spot?.before === null && boxes.spot.height > 8 ? ' area' : '')
+          }
+          style={boxes.spot}
+        />
       )}
     </div>
   );

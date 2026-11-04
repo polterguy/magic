@@ -40,24 +40,23 @@ function visibleTarget(step: TourStep): HTMLElement | null {
  * step, or an explicit Skip. Escaping out, or a tour with nothing to point at,
  * does not count, so the caller can offer it again.
  */
-export default function Tour(props: Readonly<{
-  steps: TourStep[];
-  onClose: (completed: boolean) => void;
-}>) {
-
+export default function Tour(
+  props: Readonly<{
+    steps: TourStep[];
+    onClose: (completed: boolean) => void;
+  }>,
+) {
   /*
    * Resolved once on open. Re-resolving per render would reshuffle the tour
    * mid-flight when a step's action makes another widget appear.
    */
-  const [steps] = useState(
-    () => props.steps.filter(step => !step.target || visibleTarget(step)));
+  const [steps] = useState(() => props.steps.filter(step => !step.target || visibleTarget(step)));
   const [index, setIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const step = steps[index];
 
-  const close = useCallback(
-    (completed: boolean) => props.onClose(completed), [props]);
+  const close = useCallback((completed: boolean) => props.onClose(completed), [props]);
 
   // Nothing to show — a tour with no visible targets should not open at all.
   useEffect(() => {
@@ -139,9 +138,9 @@ export default function Tour(props: Readonly<{
   return (
     <div className="tour" role="dialog" aria-modal="true" aria-label="Guided tour">
       {/*
-        * The dimming normally comes from the spotlight's box-shadow — but a
-        * step with no target has no spotlight, so the scrim carries it.
-        */}
+       * The dimming normally comes from the spotlight's box-shadow — but a
+       * step with no target has no spotlight, so the scrim carries it.
+       */}
       <div className={'tour-scrim' + (rect ? '' : ' dim')} />
       {rect && (
         <div
@@ -151,10 +150,13 @@ export default function Tour(props: Readonly<{
             left: rect.left - 6,
             width: rect.width + 12,
             height: rect.height + 12,
-          }} />
+          }}
+        />
       )}
       <div className="tour-card" style={cardStyle} tabIndex={-1} ref={cardRef}>
-        <div className="tour-step-count">Step {index + 1} of {steps.length}</div>
+        <div className="tour-step-count">
+          Step {index + 1} of {steps.length}
+        </div>
         <h3>{step.title}</h3>
         <p>{step.body}</p>
         <div className="tour-actions">
@@ -164,7 +166,8 @@ export default function Tour(props: Readonly<{
           <span style={{ flex: 1 }} />
           <button
             className="btn btn-small"
-            onClick={() => (last ? close(true) : setIndex(index + 1))}>
+            onClick={() => (last ? close(true) : setIndex(index + 1))}
+          >
             {last ? 'Done' : 'Next'}
           </button>
         </div>

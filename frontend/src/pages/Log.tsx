@@ -10,7 +10,6 @@ import { useDebounced } from '../lib/usePagedList';
 const PAGE_SIZE = 20;
 
 export default function Log() {
-
   // Null until the first response, so loading and "no items" look different.
   const [items, setItems] = useState<LogItem[] | null>(null);
   const [count, setCount] = useState(0);
@@ -113,53 +112,57 @@ export default function Log() {
           placeholder="Filter log…"
           value={query}
           onChange={setQuery}
-          style={{ width: 320 }} />
+          style={{ width: 320 }}
+        />
         <span className="spacer" />
         <button
           className="btn btn-secondary btn-small"
           disabled={fromStack.length === 0 || loading}
-          onClick={previousPage}>
+          onClick={previousPage}
+        >
           ‹ Newer
         </button>
         <button
           className="btn btn-secondary btn-small"
           disabled={(items ?? []).length < PAGE_SIZE || loading}
-          onClick={nextPage}>
+          onClick={nextPage}
+        >
           Older ›
         </button>
       </div>
       <div className="card" style={{ padding: 0, overflow: 'auto' }}>
         {items === null ? (
-        <TableSkeleton columns={5} />
+          <TableSkeleton columns={5} />
         ) : (
-        <table>
-          <thead>
-            <tr>
-              <th style={{ width: 150 }}>When</th>
-              <th style={{ width: 200 }}>Timestamp</th>
-              <th style={{ width: 80 }}>Type</th>
-              <th>Content</th>
-              <th style={{ width: 36 }} aria-hidden="true"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.length === 0 && (
+          <table>
+            <thead>
               <tr>
-                <td colSpan={5} className="muted" style={{ textAlign: 'center', padding: 24 }}>
-                  {query ? 'No log items match your filter' : 'The log is empty'}
-                </td>
+                <th style={{ width: 150 }}>When</th>
+                <th style={{ width: 200 }}>Timestamp</th>
+                <th style={{ width: 80 }}>Type</th>
+                <th>Content</th>
+                <th style={{ width: 36 }} aria-hidden="true"></th>
               </tr>
-            )}
-            {items.map(item => (
-              <LogRow
-                key={item.id}
-                item={item}
-                highlighted={Number(item.id) === highlight}
-                expanded={expanded === item.id}
-                onToggle={() => setExpanded(expanded === item.id ? null : item.id)} />
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {items.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="muted" style={{ textAlign: 'center', padding: 24 }}>
+                    {query ? 'No log items match your filter' : 'The log is empty'}
+                  </td>
+                </tr>
+              )}
+              {items.map(item => (
+                <LogRow
+                  key={item.id}
+                  item={item}
+                  highlighted={Number(item.id) === highlight}
+                  expanded={expanded === item.id}
+                  onToggle={() => setExpanded(expanded === item.id ? null : item.id)}
+                />
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </>
@@ -190,14 +193,15 @@ function isoDate(created: string): string {
   return new Date(created).toISOString().replace(/\.\d{3}Z$/, 'Z');
 }
 
-function LogRow(props: Readonly<{
-  item: LogItem;
-  // The entry a deep link pointed at, marked so the visitor can spot it.
-  highlighted: boolean;
-  expanded: boolean;
-  onToggle: () => void;
-}>) {
-
+function LogRow(
+  props: Readonly<{
+    item: LogItem;
+    // The entry a deep link pointed at, marked so the visitor can spot it.
+    highlighted: boolean;
+    expanded: boolean;
+    onToggle: () => void;
+  }>,
+) {
   const { item } = props;
   const meta = Object.entries(item.meta ?? {});
   // Rows carrying a stack trace and/or meta information have something to reveal.
@@ -209,15 +213,26 @@ function LogRow(props: Readonly<{
         tabIndex={canExpand ? 0 : undefined}
         aria-expanded={canExpand ? props.expanded : undefined}
         onClick={canExpand ? props.onToggle : undefined}
-        onKeyDown={canExpand ? event => {
-          if (event.target === event.currentTarget &&
-              (event.key === 'Enter' || event.key === ' ')) {
-            event.preventDefault();
-            props.onToggle();
-          }
-        } : undefined}>
-        <td className="mono" data-label="When">{timeAgo(item.created)}</td>
-        <td className="mono muted" data-label="Timestamp">{isoDate(item.created)}</td>
+        onKeyDown={
+          canExpand
+            ? event => {
+                if (
+                  event.target === event.currentTarget &&
+                  (event.key === 'Enter' || event.key === ' ')
+                ) {
+                  event.preventDefault();
+                  props.onToggle();
+                }
+              }
+            : undefined
+        }
+      >
+        <td className="mono" data-label="When">
+          {timeAgo(item.created)}
+        </td>
+        <td className="mono muted" data-label="Timestamp">
+          {isoDate(item.created)}
+        </td>
         <td data-label="Type">
           <span className={'badge badge-' + item.type.toLowerCase()}>{item.type}</span>
         </td>
@@ -226,13 +241,12 @@ function LogRow(props: Readonly<{
           {meta.length > 0 && (
             <span
               className="log-meta-pill"
-              title={meta.length + ' meta value' + (meta.length === 1 ? '' : 's')}>
+              title={meta.length + ' meta value' + (meta.length === 1 ? '' : 's')}
+            >
               {meta.length}
             </span>
           )}
-          {canExpand && (
-            <span className="log-caret">{props.expanded ? '▾' : '▸'}</span>
-          )}
+          {canExpand && <span className="log-caret">{props.expanded ? '▾' : '▸'}</span>}
         </td>
       </tr>
       {props.expanded && (
@@ -254,12 +268,14 @@ function LogRow(props: Readonly<{
                   className="icon-btn"
                   title="Copy exception"
                   style={{ position: 'absolute', top: 6, right: 6 }}
-                  onClick={() => copyToClipboard(item.exception!, 'Exception')}>
+                  onClick={() => copyToClipboard(item.exception!, 'Exception')}
+                >
                   <CopyIcon />
                 </button>
                 <pre
                   className="result-json"
-                  style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', paddingRight: 44 }}>
+                  style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', paddingRight: 44 }}
+                >
                   {item.exception}
                 </pre>
               </div>

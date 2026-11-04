@@ -18,12 +18,13 @@ import type { DebugRecording, DebugStep } from '../lib/api';
  */
 const PANE_HEIGHT = 460;
 
-export default function DebugDialog(props: Readonly<{
-  filename: string;
-  recording: DebugRecording;
-  onClose: () => void;
-}>) {
-
+export default function DebugDialog(
+  props: Readonly<{
+    filename: string;
+    recording: DebugRecording;
+    onClose: () => void;
+  }>,
+) {
   const steps = props.recording.steps ?? [];
   const error = props.recording.error;
 
@@ -95,9 +96,7 @@ export default function DebugDialog(props: Readonly<{
         </span>
       </h2>
       {steps.length === 0 ? (
-        <div className="info-box">
-          Nothing was recorded. The lambda invoked no slots.
-        </div>
+        <div className="info-box">Nothing was recorded. The lambda invoked no slots.</div>
       ) : (
         <>
           <div className="toolbar" style={{ marginBottom: 10 }}>
@@ -109,7 +108,8 @@ export default function DebugDialog(props: Readonly<{
                 className="badge badge-error"
                 style={{ border: 0, cursor: 'pointer' }}
                 title={error.type + ' — click to jump to the statement that threw'}
-                onClick={() => setIndex(errorIndex)}>
+                onClick={() => setIndex(errorIndex)}
+              >
                 {error.message}
               </button>
             )}
@@ -118,7 +118,8 @@ export default function DebugDialog(props: Readonly<{
                 className="badge badge-get"
                 style={{ border: 0, cursor: 'pointer' }}
                 title="Click to see what it returned"
-                onClick={() => setIndex(returnIndex)}>
+                onClick={() => setIndex(returnIndex)}
+              >
                 returned {preview(returned, 40)}
               </button>
             )}
@@ -126,14 +127,18 @@ export default function DebugDialog(props: Readonly<{
             <button
               className="btn btn-secondary btn-small"
               onClick={() => setIndex(i => Math.max(0, i - 1))}
-              disabled={index === 0}>
+              disabled={index === 0}
+            >
               ‹ Prev
             </button>
-            <span className="mono">{index + 1} / {lastIndex + 1}</span>
+            <span className="mono">
+              {index + 1} / {lastIndex + 1}
+            </span>
             <button
               className="btn btn-secondary btn-small"
               onClick={() => setIndex(i => Math.min(lastIndex, i + 1))}
-              disabled={index >= lastIndex}>
+              disabled={index >= lastIndex}
+            >
               Next ›
             </button>
           </div>
@@ -145,15 +150,15 @@ export default function DebugDialog(props: Readonly<{
             value={index}
             onChange={e => setIndex(Number(e.target.value))}
             style={{ width: '100%', marginBottom: 12 }}
-            aria-label="Execution step" />
+            aria-label="Execution step"
+          />
 
           {/*
-            * Explicit widths rather than the shared editor-split, whose
-            * "flex: 1 on every child" rule collapses the editor pane to zero
-            * width - and a CodeMirror with no width paints nothing at all.
-            */}
+           * Explicit widths rather than the shared editor-split, whose
+           * "flex: 1 on every child" rule collapses the editor pane to zero
+           * width - and a CodeMirror with no width paints nothing at all.
+           */}
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-
             <StepTable
               steps={steps}
               index={index}
@@ -162,47 +167,54 @@ export default function DebugDialog(props: Readonly<{
               onReturn={onReturn}
               returnIndex={returnIndex}
               currentRow={currentRow}
-              onSelect={setIndex} />
+              onSelect={setIndex}
+            />
 
             {/*
-              * The whole lambda, as it looked after the selected step ran. No
-              * caption above it — the step list already says which step is
-              * selected, and the heading counts it, so a third statement of the
-              * same fact only cost the editor the height to say it.
-              */}
+             * The whole lambda, as it looked after the selected step ran. No
+             * caption above it — the step list already says which step is
+             * selected, and the heading counts it, so a third statement of the
+             * same fact only cost the editor the height to say it.
+             */}
             <div style={{ flex: '1 1 auto', minWidth: 0 }}>
               <LambdaPane
                 onReturn={onReturn}
                 returned={returned}
                 current={current}
-                failed={index === errorIndex} />
+                failed={index === errorIndex}
+              />
             </div>
           </div>
         </>
       )}
       <div className="modal-actions">
-        <button className="btn" onClick={props.onClose}>Close</button>
+        <button className="btn" onClick={props.onClose}>
+          Close
+        </button>
       </div>
     </Modal>
   );
 }
 
 // The steps themselves, newest work at the bottom, as they ran.
-function StepTable(props: Readonly<{
-  steps: DebugRecording['steps'];
-  index: number;
-  errorIndex: number;
-  hasReturn: boolean;
-  onReturn: boolean;
-  returnIndex: number;
-  currentRow: React.RefObject<HTMLTableRowElement | null>;
-  onSelect: (index: number) => void;
-}>) {
+function StepTable(
+  props: Readonly<{
+    steps: DebugRecording['steps'];
+    index: number;
+    errorIndex: number;
+    hasReturn: boolean;
+    onReturn: boolean;
+    returnIndex: number;
+    currentRow: React.RefObject<HTMLTableRowElement | null>;
+    onSelect: (index: number) => void;
+  }>,
+) {
   const { steps, index, errorIndex, onReturn, returnIndex, currentRow } = props;
   return (
     <div
       className="card"
-      style={{ padding: 0, overflow: 'auto', height: PANE_HEIGHT, flex: '0 0 300px' }}>
+      style={{ padding: 0, overflow: 'auto', height: PANE_HEIGHT, flex: '0 0 300px' }}
+    >
       <table className="compact-table debug-steps">
         <thead>
           <tr>
@@ -216,10 +228,13 @@ function StepTable(props: Readonly<{
             <tr
               key={idx}
               ref={idx === index ? currentRow : undefined}
-              className={'clickable'
-                + (idx === index ? ' current' : '')
-                + (idx === errorIndex ? ' failed' : '')}
-              onClick={() => props.onSelect(idx)}>
+              className={
+                'clickable' +
+                (idx === index ? ' current' : '') +
+                (idx === errorIndex ? ' failed' : '')
+              }
+              onClick={() => props.onSelect(idx)}
+            >
               <td className="mono muted">{idx + 1}</td>
               <td className="mono">{step.slot}</td>
               <td className="mono muted">{step.elapsed}</td>
@@ -230,7 +245,8 @@ function StepTable(props: Readonly<{
             <tr
               ref={onReturn ? currentRow : undefined}
               className={'clickable returned' + (onReturn ? ' current' : '')}
-              onClick={() => props.onSelect(returnIndex)}>
+              onClick={() => props.onSelect(returnIndex)}
+            >
               <td className="mono muted">↩</td>
               <td className="mono">returned</td>
               <td />
@@ -252,26 +268,25 @@ function StepTable(props: Readonly<{
  * one keystroke separates the final lambda from the value it
  * produced, and comparing them is the point.
  */
-function LambdaPane(props: Readonly<{
-  onReturn: boolean;
-  returned: any;
-  current: DebugStep;
-  failed: boolean;
-}>) {
+function LambdaPane(
+  props: Readonly<{
+    onReturn: boolean;
+    returned: any;
+    current: DebugStep;
+    failed: boolean;
+  }>,
+) {
   const { onReturn, returned, current } = props;
   return (
     <CodeEditor
-      value={onReturn
-        ? JSON.stringify(returned, null, 2)
-        : (current.lambda ?? '')}
+      value={onReturn ? JSON.stringify(returned, null, 2) : (current.lambda ?? '')}
       mode={onReturn ? 'application/json' : 'hyperlambda'}
       readOnly
       lineNumbers={false}
-      highlightLine={onReturn
-        ? -1
-        : verifiedLine(current.lambda ?? '', current.path, current.slot)}
+      highlightLine={onReturn ? -1 : verifiedLine(current.lambda ?? '', current.path, current.slot)}
       highlightClass={props.failed ? 'cm-error-step' : 'cm-current-step'}
-      height={PANE_HEIGHT + 'px'} />
+      height={PANE_HEIGHT + 'px'}
+    />
   );
 }
 

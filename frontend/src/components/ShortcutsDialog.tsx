@@ -9,9 +9,17 @@ import { SHORTCUTS, shortcutDisplay } from '../lib/shortcuts';
 
 const GROUPS: { id: string; title: string; note?: string }[] = [
   { id: 'Global', title: 'Everywhere' },
-  { id: 'Editor', title: 'Code editors', note: 'With the editor focused — Hyper IDE, Playground, SQL Studio, Web Designer\u2019s code view.' },
+  {
+    id: 'Editor',
+    title: 'Code editors',
+    note: 'With the editor focused — Hyper IDE, Playground, SQL Studio, Web Designer\u2019s code view.',
+  },
   { id: 'Hyper IDE', title: 'Hyper IDE file actions', note: 'With the editor focused.' },
-  { id: 'Web Designer', title: 'Web Designer', note: 'On the canvas, or with an element selected.' },
+  {
+    id: 'Web Designer',
+    title: 'Web Designer',
+    note: 'On the canvas, or with an element selected.',
+  },
 ];
 
 export default function ShortcutsDialog(props: Readonly<{ onClose: () => void }>) {
@@ -30,12 +38,14 @@ export default function ShortcutsDialog(props: Readonly<{ onClose: () => void }>
               {SHORTCUTS.filter(shortcut => shortcut.group === group.id).map(shortcut => (
                 <div className="shortcut-row" key={group.id + shortcut.display}>
                   <span className="shortcut-keys">
-                    {shortcutDisplay(shortcut).split(' + ').map((key, index) => (
-                      <span key={index}>
-                        {index > 0 && <span className="muted"> + </span>}
-                        <kbd>{key}</kbd>
-                      </span>
-                    ))}
+                    {shortcutDisplay(shortcut)
+                      .split(' + ')
+                      .map((key, index) => (
+                        <span key={index}>
+                          {index > 0 && <span className="muted"> + </span>}
+                          <kbd>{key}</kbd>
+                        </span>
+                      ))}
                   </span>
                   <span className="muted">{shortcut.description}</span>
                 </div>
@@ -45,7 +55,9 @@ export default function ShortcutsDialog(props: Readonly<{ onClose: () => void }>
         ))}
       </div>
       <div className="modal-actions" style={{ marginBottom: 10 }}>
-        <button className="btn" onClick={props.onClose}>Close</button>
+        <button className="btn" onClick={props.onClose}>
+          Close
+        </button>
       </div>
     </Modal>
   );

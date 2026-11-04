@@ -9,12 +9,14 @@ import { Link } from 'react-router-dom';
 export default function NotFound() {
   return (
     <div style={{ textAlign: 'center', margin: 'auto', padding: 40 }}>
-      <div style={{
-        fontSize: 96,
-        fontWeight: 800,
-        lineHeight: 1,
-        color: 'var(--accent-soft)',
-      }}>
+      <div
+        style={{
+          fontSize: 96,
+          fontWeight: 800,
+          lineHeight: 1,
+          color: 'var(--accent-soft)',
+        }}
+      >
         404
       </div>
       <h1 style={{ marginTop: 8 }}>There's nothing here</h1>

@@ -104,17 +104,18 @@ let modalSeq = 0;
  * Shared modal shell — every dialog in the app renders through this, so
  * Escape and backdrop-click always close.
  */
-export function Modal(props: Readonly<{
-  onClose: () => void;
-  // When set, Enter pressed inside a plain <input> confirms the dialog — the
-  // carriage-return behaviour every text field is expected to have. Textareas,
-  // the code editor, buttons and custom Selects are left alone, since they are
-  // not <input> elements and handle Enter themselves.
-  onSubmit?: () => void;
-  width?: number;
-  children: ReactNode;
-}>) {
-
+export function Modal(
+  props: Readonly<{
+    onClose: () => void;
+    // When set, Enter pressed inside a plain <input> confirms the dialog — the
+    // carriage-return behaviour every text field is expected to have. Textareas,
+    // the code editor, buttons and custom Selects are left alone, since they are
+    // not <input> elements and handle Enter themselves.
+    onSubmit?: () => void;
+    width?: number;
+    children: ReactNode;
+  }>,
+) {
   const idRef = useRef(Symbol('modal'));
   const [zIndex] = useState(() => OVERLAY_BASE_Z + ++modalSeq);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -153,7 +154,8 @@ export function Modal(props: Readonly<{
     }
     const focusable = boxRef.current.querySelectorAll<HTMLElement>(
       'a[href], button:not([disabled]), input:not([disabled]), ' +
-      'textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])');
+        'textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    );
     if (focusable.length === 0) {
       return;
     }
@@ -170,8 +172,7 @@ export function Modal(props: Readonly<{
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape' ||
-          modalStack.at(-1) !== idRef.current) {
+      if (event.key !== 'Escape' || modalStack.at(-1) !== idRef.current) {
         return;
       }
       /*
@@ -181,8 +182,11 @@ export function Modal(props: Readonly<{
        * Same for an open date-picker popover. This runs in the capture
        * phase, while all of them are still in the DOM to be seen.
        */
-      if (document.querySelector(
-          '.cm-tooltip-autocomplete, .cm-fullscreen, .cm-panel.cm-search, .dtp-pop')) {
+      if (
+        document.querySelector(
+          '.cm-tooltip-autocomplete, .cm-fullscreen, .cm-panel.cm-search, .dtp-pop',
+        )
+      ) {
         return;
       }
       onCloseRef.current();
@@ -200,7 +204,8 @@ export function Modal(props: Readonly<{
         if (event.target === event.currentTarget) {
           props.onClose();
         }
-      }}>
+      }}
+    >
       <div
         ref={boxRef}
         className="modal-box"
@@ -211,17 +216,20 @@ export function Modal(props: Readonly<{
         onKeyDown={event => {
           trapTab(event);
           const target = event.target as HTMLElement;
-          if (props.onSubmit &&
-              event.key === 'Enter' &&
-              !event.shiftKey &&
-              target.tagName === 'INPUT' &&
-              // An input inside a nested <form> (e.g. the AiPrompt bar) owns its
-              // own Enter — don't hijack it to confirm the whole dialog.
-              !target.closest('form')) {
+          if (
+            props.onSubmit &&
+            event.key === 'Enter' &&
+            !event.shiftKey &&
+            target.tagName === 'INPUT' &&
+            // An input inside a nested <form> (e.g. the AiPrompt bar) owns its
+            // own Enter — don't hijack it to confirm the whole dialog.
+            !target.closest('form')
+          ) {
             event.preventDefault();
             props.onSubmit();
           }
-        }}>
+        }}
+      >
         {props.children}
       </div>
     </div>
@@ -235,14 +243,15 @@ export function useDialog() {
 const BUTTON_CLASSES: Record<string, string> = { primary: 'btn', danger: 'btn btn-danger' };
 
 export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) {
-
   const [active, setActive] = useState<ActiveDialog | null>(null);
   const [draft, setDraft] = useState('');
   const [formDraft, setFormDraft] = useState<Record<string, string>>({});
 
-  const confirm = useCallback((options: ConfirmOptions) =>
-    new Promise<boolean>(resolve =>
-      setActive({ kind: 'confirm', options, resolve })), []);
+  const confirm = useCallback(
+    (options: ConfirmOptions) =>
+      new Promise<boolean>(resolve => setActive({ kind: 'confirm', options, resolve })),
+    [],
+  );
 
   /*
    * Deleting something irreversible follows the old dashboard's rule of
@@ -265,11 +274,14 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
     return true;
   }, []);
 
-  const prompt = useCallback((options: PromptOptions) =>
-    new Promise<string | null>(resolve => {
-      setDraft(options.initial ?? '');
-      setActive({ kind: 'prompt', options, resolve });
-    }), []);
+  const prompt = useCallback(
+    (options: PromptOptions) =>
+      new Promise<string | null>(resolve => {
+        setDraft(options.initial ?? '');
+        setActive({ kind: 'prompt', options, resolve });
+      }),
+    [],
+  );
 
   /*
    * A prompt that suggests a value selects it as it opens, so typing replaces
@@ -281,15 +293,20 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
     input?.select();
   }, []);
 
-  const form = useCallback((options: FormOptions) =>
-    new Promise<Record<string, string> | null>(resolve => {
-      setFormDraft({});
-      setActive({ kind: 'form', options, resolve });
-    }), []);
+  const form = useCallback(
+    (options: FormOptions) =>
+      new Promise<Record<string, string> | null>(resolve => {
+        setFormDraft({});
+        setActive({ kind: 'form', options, resolve });
+      }),
+    [],
+  );
 
-  const choice = useCallback((options: ChoiceOptions) =>
-    new Promise<string | null>(resolve =>
-      setActive({ kind: 'choice', options, resolve })), []);
+  const choice = useCallback(
+    (options: ChoiceOptions) =>
+      new Promise<string | null>(resolve => setActive({ kind: 'choice', options, resolve })),
+    [],
+  );
 
   function dismiss() {
     if (!active) {
@@ -302,16 +319,23 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
   function submit(event: FormEvent) {
     event.preventDefault();
     switch (active!.kind) {
-      case 'confirm': active!.resolve(true); break;
-      case 'prompt': active!.resolve(draft); break;
-      case 'form': active!.resolve(formDraft); break;
+      case 'confirm':
+        active!.resolve(true);
+        break;
+      case 'prompt':
+        active!.resolve(draft);
+        break;
+      case 'form':
+        active!.resolve(formDraft);
+        break;
     }
     setActive(null);
   }
 
   const dialogs = useMemo(
     () => ({ confirm, confirmTyped, prompt, form, choice }),
-    [confirm, confirmTyped, prompt, form, choice]);
+    [confirm, confirmTyped, prompt, form, choice],
+  );
 
   return (
     <DialogContext.Provider value={dialogs}>
@@ -332,7 +356,8 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
                   // a prompt that merely happens to mask its input.
                   autoComplete={active.options.password ? 'new-password' : 'off'}
                   value={draft}
-                  onChange={event => setDraft(event.target.value)} />
+                  onChange={event => setDraft(event.target.value)}
+                />
               </label>
             )}
             {active.kind === 'form' && (
@@ -348,13 +373,17 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
                     </span>
                     <input
                       autoFocus={index === 0}
-                      type={/^(u?int|u?long|u?short|decimal|double|float)$/.test(field.type ?? '')
-                        ? 'number'
-                        : 'text'}
+                      type={
+                        /^(u?int|u?long|u?short|decimal|double|float)$/.test(field.type ?? '')
+                          ? 'number'
+                          : 'text'
+                      }
                       required={field.mandatory ?? false}
                       value={formDraft[field.name] ?? ''}
                       onChange={event =>
-                        setFormDraft({ ...formDraft, [field.name]: event.target.value })} />
+                        setFormDraft({ ...formDraft, [field.name]: event.target.value })
+                      }
+                    />
                   </label>
                 ))}
               </div>
@@ -366,7 +395,11 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
                     key={button.value}
                     type="button"
                     className={BUTTON_CLASSES[button.kind as string] ?? 'btn btn-secondary'}
-                    onClick={() => { active.resolve(button.value); setActive(null); }}>
+                    onClick={() => {
+                      active.resolve(button.value);
+                      setActive(null);
+                    }}
+                  >
                     {button.label}
                   </button>
                 ))
@@ -377,7 +410,8 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
                   </button>
                   <button
                     type="submit"
-                    className={'btn' + (active.options.danger ? ' btn-danger' : '')}>
+                    className={'btn' + (active.options.danger ? ' btn-danger' : '')}
+                  >
                     {active.options.confirmText ?? 'OK'}
                   </button>
                 </>

@@ -3,12 +3,13 @@
  * (users, generators, ML types, token generation) renders.
  */
 
-export default function RoleChips(props: Readonly<{
-  roles: (string | { name: string; description?: string })[];
-  selected: string[];
-  onToggle: (role: string, selected: boolean) => void;
-}>) {
-
+export default function RoleChips(
+  props: Readonly<{
+    roles: (string | { name: string; description?: string })[];
+    selected: string[];
+    onToggle: (role: string, selected: boolean) => void;
+  }>,
+) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
       {props.roles.map(entry => {
@@ -26,11 +27,13 @@ export default function RoleChips(props: Readonly<{
               alignItems: 'center',
               cursor: 'pointer',
               userSelect: 'none',
-            }}>
+            }}
+          >
             <input
               type="checkbox"
               checked={isMember}
-              onChange={() => props.onToggle(role, !isMember)} />
+              onChange={() => props.onToggle(role, !isMember)}
+            />
             {role}
           </label>
         );
