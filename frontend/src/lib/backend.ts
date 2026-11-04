@@ -32,12 +32,12 @@ const ANGULAR_KEY = 'magic.backends';
 export function loadBackends(): StoredBackend[] {
   const raw = localStorage.getItem(BACKENDS_KEY);
   if (raw) {
-    return JSON.parse(raw);
+    return JSON.parse(raw) as StoredBackend[];
   }
   // First run after the upgrade — carry the one backend across.
   const legacy = localStorage.getItem(LEGACY_KEY);
   if (legacy) {
-    const backend: StoredBackend = JSON.parse(legacy);
+    const backend = JSON.parse(legacy) as StoredBackend;
     localStorage.setItem(BACKENDS_KEY, JSON.stringify([backend]));
     localStorage.setItem(ACTIVE_KEY, backend.url);
     localStorage.removeItem(LEGACY_KEY);
@@ -60,7 +60,13 @@ function importFromPreviousDashboard(): StoredBackend[] {
   if (!raw) {
     return [];
   }
-  let previous: any[];
+  // Untrusted: written by another application, so every field is checked before use.
+  interface PreviousBackend {
+    url?: unknown;
+    username?: unknown;
+    token?: unknown;
+  }
+  let previous: unknown;
   try {
     previous = JSON.parse(raw);
   } catch {
@@ -69,8 +75,11 @@ function importFromPreviousDashboard(): StoredBackend[] {
   if (!Array.isArray(previous)) {
     return [];
   }
-  const list: StoredBackend[] = previous
-    .filter(candidate => typeof candidate?.url === 'string' && candidate.url !== '')
+  const list: StoredBackend[] = (previous as (PreviousBackend | null)[])
+    .filter(
+      (candidate): candidate is PreviousBackend & { url: string } =>
+        typeof candidate?.url === 'string' && candidate.url !== '',
+    )
     .map(candidate => ({
       url: withoutTrailingSlashes(candidate.url),
       username: typeof candidate.username === 'string' ? candidate.username : '',
@@ -145,8 +154,11 @@ export function clearBackend() {
   if (!active) {
     return;
   }
-  persist(loadBackends().map(candidate =>
-    candidate.url === active.url ? { ...candidate, token: null } : candidate));
+  persist(
+    loadBackends().map(candidate =>
+      candidate.url === active.url ? { ...candidate, token: null } : candidate,
+    ),
+  );
 }
 
 // Switches to another backend already in the list.
@@ -169,7 +181,7 @@ export function activateBackend(url: string): StoredBackend | null {
  * whatever it guessed instead of the cloudlet the link asked for.
  */
 export function backendFromUrl(): StoredBackend | null {
-  const target = new URLSearchParams(window.location.search).get('backend');
+  const target = new URLSearchParams(globalThis.location.search).get('backend');
   /*
    * The link is untrusted input, so anything that isn't an http(s) URL is
    * ignored rather than stored, keeping javascript: and data: URLs out.
@@ -250,7 +262,7 @@ export function rememberPendingOidc(pending: PendingOidc) {
 export function takePendingOidc(): PendingOidc | null {
   const raw = sessionStorage.getItem(PENDING_OIDC_KEY);
   sessionStorage.removeItem(PENDING_OIDC_KEY);
-  return raw ? JSON.parse(raw) : null;
+  return raw ? (JSON.parse(raw) as PendingOidc) : null;
 }
 
 /*
@@ -266,7 +278,7 @@ export function servedByBackend(): boolean {
   if (!url) {
     return false;
   }
-  return new URL(url).origin === window.location.origin;
+  return new URL(url).origin === globalThis.location.origin;
 }
 
 /*
@@ -274,12 +286,23 @@ export function servedByBackend(): boolean {
  * or null if the token can't be parsed.
  */
 export function tokenExpiration(token: string): number | null {
+  const payload = tokenClaims(token);
+  return typeof payload?.exp === 'number' ? payload.exp : null;
+}
+
+/*
+ * The decoded payload of a JWT, or null when the token doesn't have three parts.
+ * The signature is never verified here; that is the backend's job.
+ */
+function tokenClaims(token: string): Record<string, unknown> | null {
   const parts = token.split('.');
   if (parts.length !== 3) {
     return null;
   }
-  const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-  return typeof payload.exp === 'number' ? payload.exp : null;
+  return JSON.parse(atob(parts[1].replaceAll('-', '+').replaceAll('_', '/'))) as Record<
+    string,
+    unknown
+  >;
 }
 
 export function tokenExpired(token: string): boolean {
@@ -289,12 +312,8 @@ export function tokenExpired(token: string): boolean {
 
 // The user a token belongs to, from its [unique_name] claim.
 export function tokenUsername(token: string): string {
-  const parts = token.split('.');
-  if (parts.length !== 3) {
-    return '';
-  }
-  const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-  return typeof payload.unique_name === 'string' ? payload.unique_name : '';
+  const payload = tokenClaims(token);
+  return typeof payload?.unique_name === 'string' ? payload.unique_name : '';
 }
 
 /*
@@ -303,14 +322,9 @@ export function tokenUsername(token: string): string {
  * to be handled.
  */
 export function tokenRoles(token: string): string[] {
-  const parts = token.split('.');
-  if (parts.length !== 3) {
-    return [];
-  }
-  const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-  const role = payload.role;
+  const role = tokenClaims(token)?.role;
   if (Array.isArray(role)) {
-    return role;
+    return role as string[];
   }
   return typeof role === 'string' ? [role] : [];
 }

@@ -1,0 +1,2 @@
+# Formats and lints staged frontend files only (lint-staged ignores files outside frontend/).
+cd frontend && node_modules/.bin/lint-staged

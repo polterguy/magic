@@ -1,10 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { useAuth } from './lib/AuthContext';
+
+import { useAuth } from './lib/useAuth';
 import Login from './pages/Login';
+import MagicLink, { MAGIC_LINK_PATH } from './pages/MagicLink';
 import NoAccess from './pages/NoAccess';
 import NotFound from './pages/NotFound';
-import MagicLink, { MAGIC_LINK_PATH } from './pages/MagicLink';
 import Setup from './pages/Setup';
 
 /*
@@ -31,7 +32,6 @@ const Tasks = lazy(() => import('./pages/Tasks'));
 const Log = lazy(() => import('./pages/Log'));
 
 export default function App() {
-
   const { authenticated, isRoot, setupNeeded, backend } = useAuth();
   /*
    * Through the router rather than window.location, so this re-renders when
@@ -77,11 +77,13 @@ export default function App() {
    * at the previous cloudlet's files, tables and results.
    */
   return (
-    <Suspense fallback={
-      <div className="spinner-panel" style={{ height: '100vh' }}>
-        <div className="spinner" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="spinner-panel" style={{ height: '100vh' }}>
+          <div className="spinner" />
+        </div>
+      }
+    >
       <Layout key={backend?.url}>
         <Routes>
           <Route path="/" element={<Dashboard />} />

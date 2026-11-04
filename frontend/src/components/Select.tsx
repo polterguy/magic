@@ -5,9 +5,7 @@
  * is never clipped by a card or modal. Keyboard: Up/Down/Enter/Escape, plus
  * type-ahead by first letter.
  */
-import {
-  Children, isValidElement, ReactNode, useEffect, useMemo, useRef, useState,
-} from 'react';
+import { Children, isValidElement, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface Opt {
@@ -18,36 +16,45 @@ interface Opt {
   text: string;
 }
 
+// The props an <option> child (or a wrapper such as <optgroup>) can carry.
+interface OptionProps {
+  value?: string | number;
+  children?: ReactNode;
+  disabled?: boolean;
+}
+
 function collectOptions(children: ReactNode): Opt[] {
   const out: Opt[] = [];
-  Children.forEach(children, (child: any) => {
-    if (!isValidElement(child)) return;
+  Children.forEach(children, child => {
+    if (!isValidElement<OptionProps>(child)) return;
+    const childProps = child.props;
     if (child.type === 'option') {
-      const label = (child.props as any).children;
+      const label = childProps.children;
       out.push({
-        value: String((child.props as any).value ?? ''),
+        value: String(childProps.value ?? ''),
         label,
-        disabled: (child.props as any).disabled,
-        text: typeof label === 'string' ? label : String((child.props as any).value ?? ''),
+        disabled: childProps.disabled,
+        text: typeof label === 'string' ? label : String(childProps.value ?? ''),
       });
-    } else if ((child.props as any)?.children) {
-      out.push(...collectOptions((child.props as any).children));
+    } else if (childProps?.children) {
+      out.push(...collectOptions(childProps.children));
     }
   });
   return out;
 }
 
-export default function Select(props: Readonly<{
-  value: string;
-  onChange: (value: string) => void;
-  children: ReactNode;
-  disabled?: boolean;
-  title?: string;
-  className?: string;
-  style?: React.CSSProperties;
-  placeholder?: string;
-}>) {
-
+export default function Select(
+  props: Readonly<{
+    value: string;
+    onChange: (value: string) => void;
+    children: ReactNode;
+    disabled?: boolean;
+    title?: string;
+    className?: string;
+    style?: React.CSSProperties;
+    placeholder?: string;
+  }>,
+) {
   const options = useMemo(() => collectOptions(props.children), [props.children]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
@@ -137,8 +144,13 @@ export default function Select(props: Readonly<{
 
   return (
     <div
-      className={'select' + (props.disabled ? ' disabled' : '') + (props.className ? ' ' + props.className : '')}
-      style={props.style}>
+      className={
+        'select' +
+        (props.disabled ? ' disabled' : '') +
+        (props.className ? ' ' + props.className : '')
+      }
+      style={props.style}
+    >
       <button
         ref={triggerRef}
         type="button"
@@ -148,36 +160,64 @@ export default function Select(props: Readonly<{
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => (open ? setOpen(false) : openMenu())}
-        onKeyDown={onKeyDown}>
+        onKeyDown={onKeyDown}
+      >
         <span className="select-value">
           {selected ? selected.label : (props.placeholder ?? '')}
         </span>
-        <span className="select-caret" aria-hidden="true">▾</span>
+        <span className="select-caret" aria-hidden="true">
+          ▾
+        </span>
       </button>
-      {open && rect && createPortal(
-        <ul
-          ref={menuRef}
-          className="select-menu"
-          role="listbox"
-          style={{ position: 'fixed', top: rect.bottom + 4, left: rect.left, minWidth: rect.width }}>
-          {options.map((o, i) => (
-            <li
-              key={o.value + '·' + i}
-              role="option"
-              aria-selected={o.value === props.value}
-              className={'select-option'
-                + (o.value === props.value ? ' selected' : '')
-                + (i === active ? ' active' : '')
-                + (o.disabled ? ' disabled' : '')}
-              onMouseEnter={() => setActive(i)}
-              onMouseDown={e => e.preventDefault()}
-              onClick={() => !o.disabled && choose(o.value)}>
-              <span className="select-check" aria-hidden="true">{o.value === props.value ? '✓' : ''}</span>
-              <span className="select-option-label">{o.label}</span>
-            </li>
-          ))}
-        </ul>,
-        document.body)}
+      {open &&
+        rect &&
+        createPortal(
+          <ul
+            ref={menuRef}
+            className="select-menu"
+            role="listbox"
+            style={{
+              position: 'fixed',
+              top: rect.bottom + 4,
+              left: rect.left,
+              minWidth: rect.width,
+            }}
+          >
+            {options.map((o, i) => (
+              <li
+                // The options mirror the <option> children in order, and values may repeat
+                // across groups just as a native <select> allows.
+                // eslint-disable-next-line react/no-array-index-key -- positional, values not unique
+                key={o.value + '·' + i}
+                role="option"
+                aria-selected={o.value === props.value}
+                className={
+                  'select-option' +
+                  (o.value === props.value ? ' selected' : '') +
+                  (i === active ? ' active' : '') +
+                  (o.disabled ? ' disabled' : '')
+                }
+                onMouseEnter={() => setActive(i)}
+                onMouseDown={e => e.preventDefault()}
+                onClick={() => !o.disabled && choose(o.value)}
+                // Focus stays on the trigger, whose onKeyDown drives the menu; this
+                // only covers an option that receives key events directly.
+                onKeyDown={e => {
+                  if ((e.key === 'Enter' || e.key === ' ') && !o.disabled) {
+                    e.preventDefault();
+                    choose(o.value);
+                  }
+                }}
+              >
+                <span className="select-check" aria-hidden="true">
+                  {o.value === props.value ? '✓' : ''}
+                </span>
+                <span className="select-option-label">{o.label}</span>
+              </li>
+            ))}
+          </ul>,
+          document.body,
+        )}
     </div>
   );
 }

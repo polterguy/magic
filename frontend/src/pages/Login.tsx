@@ -1,77 +1,32 @@
-import Banner from '../components/Banner';
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { type SubmitEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronIcon } from '../components/Icons';
-import { useAuth } from '../lib/AuthContext';
-import { useDebounced } from '../lib/usePagedList';
+
+import Banner from '../components/Banner';
+import BackendUrlField from '../components/login/BackendUrlField';
+import ForgotPasswordForm from '../components/login/ForgotPasswordForm';
 import {
-  backendUrls,
-  rememberPendingOidc,
-  takePendingOidc,
-} from '../lib/backend';
+  isConfiguredProvider,
+  OIDC_CALLBACK_PATH,
+  oidcAuthorizeUrl,
+  takeCodeFromUrl,
+  takeIdTokenFromUrl,
+  takeOidcErrorFromUrl,
+} from '../components/login/oidc';
+import ProviderButtons from '../components/login/ProviderButtons';
 import {
-  OidcProvider,
   canResetPassword,
+  OidcProvider,
   openidExchange,
   openidLogin,
   openidProviders,
   sendResetPasswordLink,
 } from '../lib/api';
-
-/*
- * Where providers send the user back to. This has to match what's registered
- * for the client with the provider, character for character.
- */
-const OIDC_CALLBACK_PATH = '/authentication/oidc-callback';
-
-/*
- * The provider returns its id_token in the URL fragment, since these are
- * "id_token" response-type providers. Reads it, then drops both the token and
- * the callback path from the address bar so a reload can't replay it.
- */
-function takeIdTokenFromUrl() {
-  if (!window.location.hash.includes('id_token=')) {
-    return null;
-  }
-  const token = new URLSearchParams(window.location.hash.substring(1)).get('id_token');
-  // Strip the token from the address bar; the route is set below by the router.
-  window.history.replaceState(null, '', window.location.pathname);
-  return token;
-}
-
-/*
- * A provider that refuses the sign-in outright bounces back with
- * ?error=...&error_description=... instead of a code — surfaced rather than
- * silently dropped, or a refused redirect just looks like nothing happened.
- */
-function takeOidcErrorFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const error = params.get('error');
-  if (!error) {
-    return null;
-  }
-  const description = params.get('error_description');
-  window.history.replaceState(null, '', window.location.pathname);
-  return description ? error + ' — ' + description : error;
-}
-
-/*
- * Code-flow providers answer with ?code=...&state=... in the query string
- * instead. Reads both, then strips them from the address bar the same way.
- */
-function takeCodeFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
-  const state = params.get('state');
-  if (!code || !state) {
-    return null;
-  }
-  window.history.replaceState(null, '', window.location.pathname);
-  return { code, state };
-}
+import { backendUrls, rememberPendingOidc, takePendingOidc } from '../lib/backend';
+import { errorMessage } from '../lib/errors';
+import { useAuth } from '../lib/useAuth';
+import { useDebounced } from '../lib/usePagedList';
 
 export default function Login() {
-
   const { backend, login, loginWithTicket } = useAuth();
   const navigate = useNavigate();
   const [previousUrls] = useState(backendUrls);
@@ -85,8 +40,9 @@ export default function Login() {
    * With backends already stored the field starts empty instead: the only way
    * to get here is adding another one, and the dropdown offers the rest.
    */
-  const [url, setUrl] = useState(() =>
-    backend?.url ?? (previousUrls.length === 0 ? window.location.origin : ''));
+  const [url, setUrl] = useState(
+    () => backend?.url ?? (previousUrls.length === 0 ? globalThis.location.origin : ''),
+  );
   const [username, setUsername] = useState(backend?.username ?? 'root');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -109,8 +65,8 @@ export default function Login() {
         setPickerOpen(false);
       }
     };
-    window.addEventListener('mousedown', handler);
-    return () => window.removeEventListener('mousedown', handler);
+    globalThis.addEventListener('mousedown', handler);
+    return () => globalThis.removeEventListener('mousedown', handler);
   }, [pickerOpen]);
 
   /*
@@ -124,6 +80,7 @@ export default function Login() {
     if (providerError) {
       // The redirect is over — consume the pending entry so it can't go stale.
       takePendingOidc();
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- the provider's answer is read from, and stripped off, the URL exactly once on mount; doing that during render would be impure and replay under StrictMode
       setError('The provider refused the sign-in: ' + providerError);
       return;
     }
@@ -141,16 +98,20 @@ export default function Login() {
     }
     setBusy(true);
     const exchange = code
-      ? openidExchange(pending.backendUrl, code.code, code.state,
-          window.location.origin + OIDC_CALLBACK_PATH)
+      ? openidExchange(
+          pending.backendUrl,
+          code.code,
+          code.state,
+          globalThis.location.origin + OIDC_CALLBACK_PATH,
+        )
       : openidLogin(pending.backendUrl, idToken!);
-    exchange
+    void exchange
       .then(response => {
         // Back to whatever the user was trying to reach before signing in.
-        navigate(pending.returnPath, { replace: true });
+        void navigate(pending.returnPath, { replace: true });
         loginWithTicket(pending.backendUrl, response.ticket);
       })
-      .catch(err => setError(err.message ?? 'Could not complete sign-in'))
+      .catch((err: unknown) => setError(errorMessage(err, 'Could not complete sign-in')))
       .finally(() => setBusy(false));
   }, [loginWithTicket, navigate]);
 
@@ -164,9 +125,15 @@ export default function Login() {
   useEffect(() => {
     let cancelled = false;
     canResetPassword(probeUrl)
-      .then(value => { if (!cancelled) { setCanReset(value); } })
+      .then(value => {
+        if (!cancelled) {
+          setCanReset(value);
+        }
+      })
       .catch(error => console.error('Could not check password reset:', error));
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [probeUrl]);
 
   /*
@@ -176,33 +143,43 @@ export default function Login() {
   useEffect(() => {
     let cancelled = false;
     openidProviders(probeUrl)
-      .then(list => { if (!cancelled) { setProviders(list); } })
-      .catch(() => { if (!cancelled) { setProviders([]); } });
-    return () => { cancelled = true; };
+      .then(list => {
+        if (!cancelled) {
+          setProviders(list);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setProviders([]);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [probeUrl]);
 
-  async function submit(event: FormEvent) {
+  async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
     setBusy(true);
     try {
       await login(url, username, password);
-    } catch (err: any) {
-      setError(err.message ?? 'Could not authenticate');
+    } catch (err) {
+      setError(errorMessage(err, 'Could not authenticate'));
     } finally {
       setBusy(false);
     }
   }
 
-  async function sendLink(event: FormEvent) {
+  async function sendLink(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
     setBusy(true);
     try {
       const response = await sendResetPasswordLink(url, forgotUser.trim());
       setForgotSent(response.result);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(errorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -210,7 +187,7 @@ export default function Login() {
 
   // Hands off to the provider, having remembered which backend to come back to.
   function signInWith(provider: OidcProvider) {
-    if (!provider.url || !provider.client_id) {
+    if (!isConfiguredProvider(provider)) {
       setError(provider.name + ' is not fully configured on this backend');
       return;
     }
@@ -221,74 +198,36 @@ export default function Login() {
      */
     rememberPendingOidc({
       backendUrl: url,
-      returnPath: window.location.pathname + window.location.search,
+      returnPath: globalThis.location.pathname + globalThis.location.search,
     });
-    const query = new URLSearchParams({
-      client_id: provider.client_id,
-      response_type: provider.response_type ?? 'id_token',
-      scope: provider.scope ?? 'openid email profile',
-      /*
-       * Built from the origin rather than the current location — the route
-       * the user logged out from is irrelevant, and providers match this
-       * string exactly against what's registered.
-       */
-      redirect_uri: window.location.origin + OIDC_CALLBACK_PATH,
-    });
-    /*
-     * Implicit providers bind the sign-in through a nonce, code providers
-     * through their state + PKCE challenge — each redirect carries only what
-     * its flow needs.
-     */
-    if (provider.nonce) {
-      query.set('nonce', provider.nonce);
-    }
-    if (provider.state) {
-      query.set('state', provider.state);
-    }
-    if (provider.code_challenge) {
-      query.set('code_challenge', provider.code_challenge);
-      query.set('code_challenge_method', 'S256');
-    }
-    window.location.href = provider.url + '?' + query.toString();
+    globalThis.location.assign(
+      oidcAuthorizeUrl(
+        provider,
+        /*
+         * Built from the origin rather than the current location — the route
+         * the user logged out from is irrelevant, and providers match this
+         * string exactly against what's registered.
+         */
+        globalThis.location.origin + OIDC_CALLBACK_PATH,
+      ),
+    );
   }
 
   if (forgotOpen) {
     return (
-      <div className="login-wrapper">
-        <form className="login-card" onSubmit={sendLink}>
-          <h1>magic</h1>
-          <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
-            {forgotSent
-              ? 'Check your inbox'
-              : "We'll email you a link that signs you in"}
-          </p>
-          {error && <Banner onClose={() => setError('')}>{error}</Banner>}
-          {forgotSent
-            ? <p style={{ textAlign: 'center', margin: 0 }}>{forgotSent}</p>
-            : (
-              <label>
-                Username or email
-                <input
-                  type="text"
-                  autoFocus
-                  value={forgotUser}
-                  onChange={e => setForgotUser(e.target.value)}
-                  required />
-              </label>
-            )}
-          {!forgotSent && (
-            <button className="btn" type="submit" disabled={busy || !forgotUser.trim()}>
-              {busy ? 'Sending…' : 'Send link'}
-            </button>
-          )}
-          <button
-            type="button"
-            className="link-like"
-            onClick={() => { setForgotOpen(false); setError(''); }}>
-            Back to sign in
-          </button>
-        </form>
-      </div>
+      <ForgotPasswordForm
+        error={error}
+        onDismissError={() => setError('')}
+        busy={busy}
+        forgotUser={forgotUser}
+        onForgotUser={setForgotUser}
+        forgotSent={forgotSent}
+        onSubmit={sendLink}
+        onBack={() => {
+          setForgotOpen(false);
+          setError('');
+        }}
+      />
     );
   }
 
@@ -300,61 +239,33 @@ export default function Login() {
           Sign in to your backend
         </p>
         {error && <Banner onClose={() => setError('')}>{error}</Banner>}
+        <BackendUrlField
+          url={url}
+          onUrl={setUrl}
+          previousUrls={previousUrls}
+          pickerOpen={pickerOpen}
+          onPickerOpen={setPickerOpen}
+          ref={pickerRef}
+        />
         <label>
-          Backend URL
-          {/*
-            * A plain input with its own dropdown rather than a datalist —
-            * a datalist filters its options by whatever is already typed,
-            * so picking a different backend meant clearing the field first.
-            */}
-          <div className="combo" ref={pickerRef}>
-            <input
-              type="text"
-              value={url}
-              onChange={e => setUrl(e.target.value)}
-              placeholder="http://localhost:5000"
-              required />
-            {previousUrls.length > 0 && (
-              <button
-                type="button"
-                className={'combo-toggle' + (pickerOpen ? ' open' : '')}
-                title="Backends you have signed in to"
-                onClick={() => setPickerOpen(!pickerOpen)}>
-                <ChevronIcon />
-              </button>
-            )}
-            {pickerOpen && (
-              <div className="combo-list">
-                {previousUrls.map(candidate => (
-                  <button
-                    type="button"
-                    key={candidate}
-                    className={'combo-option' + (candidate === url ? ' active' : '')}
-                    onClick={() => { setUrl(candidate); setPickerOpen(false); }}>
-                    {candidate}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </label>
-        <label>
-          Username
+          Username{' '}
           <input
             type="text"
             value={username}
             onChange={e => setUsername(e.target.value)}
             autoComplete="username"
-            required />
+            required
+          />
         </label>
         <label>
-          Password
+          Password{' '}
           <input
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             autoComplete="current-password"
-            required />
+            required
+          />
         </label>
         <button className="btn" type="submit" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
@@ -369,24 +280,13 @@ export default function Login() {
               setForgotSent('');
               setError('');
               setForgotOpen(true);
-            }}>
+            }}
+          >
             Login using magic link
           </button>
         )}
         {providers.length > 0 && (
-          <>
-            <div className="login-divider"><span>or</span></div>
-            {providers.map(provider => (
-              <button
-                key={provider.issuer}
-                type="button"
-                className="btn btn-secondary"
-                disabled={busy}
-                onClick={() => signInWith(provider)}>
-                Continue with {provider.name}
-              </button>
-            ))}
-          </>
+          <ProviderButtons providers={providers} busy={busy} onSignIn={signInWith} />
         )}
       </form>
     </div>

@@ -14,10 +14,13 @@ const base = {
 
 export function ChevronIcon({ open }: Readonly<{ open?: boolean }>) {
   return (
-    <svg {...base} style={{
-      transform: open ? 'rotate(90deg)' : undefined,
-      transition: 'transform 0.12s',
-    }}>
+    <svg
+      {...base}
+      style={{
+        transform: open ? 'rotate(90deg)' : undefined,
+        transition: 'transform 0.12s',
+      }}
+    >
       <polyline points="9 6 15 12 9 18" />
     </svg>
   );

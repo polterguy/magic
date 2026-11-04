@@ -10,17 +10,24 @@
  * independently — one chunk may carry several of them at once.
  */
 
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { HubConnection } from '@microsoft/signalr';
+import DOMPurify from 'dompurify';
+import { marked } from 'marked';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
+import {
+  ChatChunk,
+  chatDownloadUrl,
+  chatPrompt,
+  gibberish,
+  killExecution,
+  MAX_CHAT_FILES,
+} from '../lib/api';
+import { notifyChatOpsDone } from '../lib/chatOps';
+import { showError } from '../lib/errors';
 import { createSocket } from '../lib/socket';
 import { getTheme } from '../lib/theme';
-import {
-  ChatChunk, MAX_CHAT_FILES, chatDownloadUrl, chatPrompt, gibberish, killExecution,
-} from '../lib/api';
 import { copyToClipboard, showToast } from '../lib/toast';
-import { notifyChatOpsDone } from '../lib/chatOps';
 import { CopyIcon, DownloadIcon, FilePlusIcon, PaperclipIcon } from './Icons';
 import WidgetDialog from './WidgetDialog';
 
@@ -43,12 +50,16 @@ type Segment =
  * created is revoked when the conversation is cleared or the drawer unmounts.
  */
 interface Attachment {
+  // Unique for the lifetime of the page — the attachment's React key.
+  id: number;
   name: string;
   size: number;
   url?: string;
 }
 
 interface ChatMessage {
+  // Unique for the lifetime of the page — the message's React key.
+  id: number;
   role: 'user' | 'assistant';
   segments: Segment[];
   // Files sent along with a user message.
@@ -61,6 +72,13 @@ interface ChatMessage {
  * list, since this HTML enters the page as a string.
  */
 const renderer = new marked.Renderer();
+
+// Source of the ids messages, attachments and diagrams are told apart by.
+let lastId = 0;
+function nextId() {
+  lastId += 1;
+  return lastId;
+}
 
 function escapeHtml(text: string): string {
   const div = document.createElement('div');
@@ -78,25 +96,46 @@ const COPY_SVG =
 renderer.code = ({ text, lang }) => {
   if (lang === 'mermaid') {
     // Placeholder rendered into an SVG once the answer has finished streaming.
-    return '<div class="chat-mermaid">' +
-      '<code class="chat-mermaid-code" style="display:none">' + escapeHtml(text) + '</code>' +
-      '<div class="chat-mermaid-placeholder muted">Rendering diagram…</div></div>';
+    return (
+      '<div class="chat-mermaid">' +
+      '<code class="chat-mermaid-code" style="display:none">' +
+      escapeHtml(text) +
+      '</code>' +
+      '<div class="chat-mermaid-placeholder muted">Rendering diagram…</div></div>'
+    );
   }
   const language = lang || 'plaintext';
-  return '<div class="chat-code chat-hl">' +
-    '<div class="chat-code-header"><span>' + escapeHtml(language) + '</span>' +
+  return (
+    '<div class="chat-code chat-hl">' +
+    '<div class="chat-code-header"><span>' +
+    escapeHtml(language) +
+    '</span>' +
     '<button type="button" class="chat-copy-btn" title="Copy code" data-code="' +
-    encodeURIComponent(text) + '">' + COPY_SVG + '</button></div>' +
-    '<pre><code class="language-' + escapeHtml(language) + '">' +
-    escapeHtml(text) + '</code></pre></div>';
+    encodeURIComponent(text) +
+    '">' +
+    COPY_SVG +
+    '</button></div>' +
+    '<pre><code class="language-' +
+    escapeHtml(language) +
+    '">' +
+    escapeHtml(text) +
+    '</code></pre></div>'
+  );
 };
 
 renderer.codespan = ({ text }) => '<code>' + escapeHtml(text) + '</code>';
 
 renderer.link = function ({ href, title, tokens }) {
   const text = this.parser.parseInline(tokens);
-  return '<a href="' + href + '"' + (title ? ' title="' + title + '"' : '') +
-    ' target="_blank" rel="noreferrer">' + (text || href) + '</a>';
+  return (
+    '<a href="' +
+    href +
+    '"' +
+    (title ? ' title="' + title + '"' : '') +
+    ' target="_blank" rel="noreferrer">' +
+    (text || href) +
+    '</a>'
+  );
 };
 
 marked.setOptions({ renderer, breaks: true, gfm: true });
@@ -106,13 +145,16 @@ marked.setOptions({ renderer, breaks: true, gfm: true });
  * do, so `A[my (label)]` becomes `A["my (label)"]` before rendering.
  */
 function sanitiseMermaid(code: string): string {
-  return code.replace(/(?<!\w)(\w+)\[([^[\]]+)\]/g, (_match: string, id: string, label: string) => {
-    const clean = label.replace(/(?:^["'])|(?:["']$)/g, '');
-    if (/[()/"'[\]]/.test(clean)) {
-      return id + '["' + clean.replace(/"/g, String.raw`\"`) + '"]';
-    }
-    return id + '[' + clean + ']';
-  });
+  return code.replaceAll(
+    /(?<!\w)(\w+)\[([^[\]]+)\]/g,
+    (_match: string, id: string, label: string) => {
+      const clean = label.replaceAll(/(?:^["'])|(?:["']$)/g, '');
+      if (/[()/"'[\]]/.test(clean)) {
+        return id + '["' + clean.replaceAll('"', String.raw`\"`) + '"]';
+      }
+      return id + '[' + clean + ']';
+    },
+  );
 }
 
 /*
@@ -137,7 +179,7 @@ async function renderMermaidDiagrams(root: HTMLElement, dark: boolean) {
     const code = (container.querySelector('.chat-mermaid-code')?.textContent ?? '').trim();
     (container as HTMLElement).dataset.rendered = 'true';
     try {
-      const id = 'chat-mermaid-' + Math.random().toString(36).slice(2, 10);
+      const id = 'chat-mermaid-' + nextId();
       const { svg } = await mermaid.render(id, sanitiseMermaid(code));
       container.innerHTML = DOMPurify.sanitize(svg);
     } catch {
@@ -155,17 +197,18 @@ function onListClick(event: React.MouseEvent) {
   }
 }
 
-export default function ChatDrawer(props: Readonly<{
-  open: boolean;
-  userId: string;
-  onClose: () => void;
-}>) {
-
+export default function ChatDrawer(
+  props: Readonly<{
+    open: boolean;
+    userId: string;
+    onClose: () => void;
+  }>,
+) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [executionId, setExecutionId] = useState<string | null>(null);
-  const [files, setFiles] = useState<{ file: File; url?: string }[]>([]);
+  const [files, setFiles] = useState<{ id: number; file: File; url?: string }[]>([]);
   // Every object URL handed out, so none of them leak.
   const objectUrls = useRef<string[]>([]);
   /*
@@ -188,18 +231,19 @@ export default function ChatDrawer(props: Readonly<{
   const wroteRef = useRef(false);
 
   // Escape closes — plain listener, so open dialogs above still get it first.
+  const { open, onClose } = props;
   useEffect(() => {
-    if (!props.open) {
+    if (!open) {
       return;
     }
     function onKey(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        props.onClose();
+        onClose();
       }
     }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [props.open, props.onClose]);
+    globalThis.addEventListener('keydown', onKey);
+    return () => globalThis.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
 
   useEffect(() => {
     if (props.open) {
@@ -255,7 +299,7 @@ export default function ChatDrawer(props: Readonly<{
   useEffect(() => {
     return () => {
       connectionRef.current?.stop().catch(() => {});
-      objectUrls.current.forEach(URL.revokeObjectURL);
+      objectUrls.current.forEach(url => URL.revokeObjectURL(url));
       objectUrls.current = [];
     };
   }, []);
@@ -288,7 +332,9 @@ export default function ChatDrawer(props: Readonly<{
 
   // Chunk handler behind a ref, so the socket subscription never goes stale.
   const onChunkRef = useRef(onChunk);
-  onChunkRef.current = onChunk;
+  useLayoutEffect(() => {
+    onChunkRef.current = onChunk;
+  });
 
   async function ensureSession(): Promise<string> {
     if (sessionRef.current) {
@@ -301,7 +347,7 @@ export default function ChatDrawer(props: Readonly<{
     }
     connectionRef.current.on(session, (raw: string) => {
       try {
-        onChunkRef.current(JSON.parse(raw));
+        onChunkRef.current(JSON.parse(raw) as ChatChunk);
       } catch {
         // A chunk that doesn't parse carries nothing we can render.
       }
@@ -320,11 +366,11 @@ export default function ChatDrawer(props: Readonly<{
     }
     const added = Array.from(picked).map(file => {
       if (!file.type.startsWith('image/')) {
-        return { file };
+        return { id: nextId(), file };
       }
       const url = URL.createObjectURL(file);
       objectUrls.current.push(url);
-      return { file, url };
+      return { id: nextId(), file, url };
     });
     setFiles([...files, ...added]);
   }
@@ -348,14 +394,24 @@ export default function ChatDrawer(props: Readonly<{
     pinned.current = true;
     setInput('');
     setFiles([]);
-    setMessages(current => [...current, {
-      role: 'user',
-      segments: [{ kind: 'text', text: prompt }],
-      // Object URLs carry over to the sent message rather than being revoked.
-      files: attached.length > 0
-        ? attached.map(entry => ({ name: entry.file.name, size: entry.file.size, url: entry.url }))
-        : undefined,
-    }]);
+    setMessages(current => [
+      ...current,
+      {
+        id: nextId(),
+        role: 'user',
+        segments: [{ kind: 'text', text: prompt }],
+        // Object URLs carry over to the sent message rather than being revoked.
+        files:
+          attached.length > 0
+            ? attached.map(entry => ({
+                id: entry.id,
+                name: entry.file.name,
+                size: entry.file.size,
+                url: entry.url,
+              }))
+            : undefined,
+      },
+    ]);
     setStreaming(true);
     try {
       const session = await ensureSession();
@@ -364,11 +420,12 @@ export default function ChatDrawer(props: Readonly<{
         prompt,
         props.userId,
         attached.length > 0 ? attached.map(entry => entry.file) : undefined,
-        attached.length > 0 && !analyse);
+        attached.length > 0 && !analyse,
+      );
       setExecutionId(response?.execution_id ?? null);
-    } catch (err: any) {
+    } catch (err) {
       setStreaming(false);
-      showToast(err.message, true, err.logId);
+      showError(err);
     }
   }
 
@@ -378,8 +435,8 @@ export default function ChatDrawer(props: Readonly<{
     }
     try {
       await killExecution(executionId);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setStreaming(false);
       setExecutionId(null);
@@ -397,7 +454,7 @@ export default function ChatDrawer(props: Readonly<{
     setMessages([]);
     setFiles([]);
     // Every thumbnail belonged to the conversation being thrown away.
-    objectUrls.current.forEach(URL.revokeObjectURL);
+    objectUrls.current.forEach(url => URL.revokeObjectURL(url));
     objectUrls.current = [];
     inputRef.current?.focus();
   }
@@ -406,7 +463,8 @@ export default function ChatDrawer(props: Readonly<{
     <aside
       className={'chat-drawer' + (props.open ? ' open' : '')}
       aria-label="Chat with your cloudlet"
-      aria-hidden={!props.open}>
+      aria-hidden={!props.open}
+    >
       <div className="chat-drawer-header">
         <strong>Chat Ops</strong>
         <span style={{ flex: 1 }} />
@@ -414,21 +472,25 @@ export default function ChatDrawer(props: Readonly<{
           className="btn btn-ghost btn-small"
           title="New chat"
           disabled={streaming}
-          onClick={newChat}>
+          onClick={newChat}
+        >
           <FilePlusIcon />
         </button>
-        <button
-          className="btn btn-ghost btn-small"
-          title="Close (Esc)"
-          onClick={props.onClose}>
+        <button className="btn btn-ghost btn-small" title="Close (Esc)" onClick={props.onClose}>
           ×
         </button>
       </div>
-      <div className="chat-messages" role="presentation" ref={listRef} onClick={onListClick} onScroll={onListScroll}>
+      <div
+        className="chat-messages"
+        role="presentation"
+        ref={listRef}
+        onClick={onListClick}
+        onScroll={onListScroll}
+      >
         {messages.length === 0 && (
           <p className="muted" style={{ textAlign: 'center', marginTop: 48 }}>
-            Talk to your cloudlet — generate endpoints, query your databases,
-            or ask what your backend can do.
+            Talk to your cloudlet — generate endpoints, query your databases, or ask what your
+            backend can do.
           </p>
         )}
         {messages.map((message, index) => {
@@ -438,25 +500,30 @@ export default function ChatDrawer(props: Readonly<{
             .join('');
           const finished = !(streaming && index === messages.length - 1);
           return (
-            <div key={index} className={'chat-message ' + message.role}>
+            <div key={message.id} className={'chat-message ' + message.role}>
               {message.role === 'assistant' && finished && raw && (
                 <button
                   className="icon-btn chat-response-copy"
                   title="Copy response"
-                  onClick={() => copyToClipboard(raw, 'Response')}>
+                  onClick={() => copyToClipboard(raw, 'Response')}
+                >
                   <CopyIcon />
                 </button>
               )}
               {message.segments.map((segment, segmentIndex) => (
                 <ChatSegment
+                  // Segments are only ever appended or replaced in place, so a
+                  // position is a segment's identity — and keeps its toggler open.
+                  // eslint-disable-next-line react/no-array-index-key -- positional, never reordered or removed
                   key={segmentIndex}
                   segment={segment}
-                  markdown={message.role === 'assistant'} />
+                  markdown={message.role === 'assistant'}
+                />
               ))}
               {message.files && (
                 <div className="chat-tiles" style={{ marginTop: 10 }}>
-                  {message.files.map((file, fileIndex) => (
-                    <FileTile key={fileIndex} name={file.name} size={file.size} url={file.url} />
+                  {message.files.map(file => (
+                    <FileTile key={file.id} name={file.name} size={file.size} url={file.url} />
                   ))}
                 </div>
               )}
@@ -465,7 +532,7 @@ export default function ChatDrawer(props: Readonly<{
         })}
         {streaming && (
           <div className="muted" style={{ padding: '4px 2px' }}>
-            Thinking<span className="spinner-dots" />
+            <span className="spinner-dots">Thinking</span>
           </div>
         )}
       </div>
@@ -474,11 +541,12 @@ export default function ChatDrawer(props: Readonly<{
           <div className="chat-tiles">
             {files.map((entry, index) => (
               <FileTile
-                key={index}
+                key={entry.id}
                 name={entry.file.name}
                 size={entry.file.size}
                 url={entry.url}
-                onRemove={() => removeFile(index)} />
+                onRemove={() => removeFile(index)}
+              />
             ))}
           </div>
           <div className="chat-mode" role="group" aria-label="How the model should treat the files">
@@ -486,14 +554,16 @@ export default function ChatDrawer(props: Readonly<{
               type="button"
               className={analyse ? '' : 'active'}
               title="Saves the files on the cloudlet and tells the model where they landed. Works anywhere."
-              onClick={() => setAnalyse(false)}>
+              onClick={() => setAnalyse(false)}
+            >
               Upload
             </button>
             <button
               type="button"
               className={analyse ? 'active' : ''}
               title="Exposes the files over HTTP for the model to read — needs a publicly reachable backend, so not localhost."
-              onClick={() => setAnalyse(true)}>
+              onClick={() => setAnalyse(true)}
+            >
               Analyse
             </button>
           </div>
@@ -505,12 +575,17 @@ export default function ChatDrawer(props: Readonly<{
           type="file"
           multiple
           style={{ display: 'none' }}
-          onChange={event => { addFiles(event.target.files); event.target.value = ''; }} />
+          onChange={event => {
+            addFiles(event.target.files);
+            event.target.value = '';
+          }}
+        />
         <button
           className="btn btn-secondary chat-attach"
           title={'Attach files (max ' + MAX_CHAT_FILES + ')'}
           disabled={streaming || files.length >= MAX_CHAT_FILES}
-          onClick={() => fileRef.current?.click()}>
+          onClick={() => fileRef.current?.click()}
+        >
           <PaperclipIcon />
         </button>
         <textarea
@@ -524,7 +599,8 @@ export default function ChatDrawer(props: Readonly<{
               event.preventDefault();
               void send();
             }
-          }} />
+          }}
+        />
         {streaming ? (
           <button className="btn btn-secondary" onClick={stop} disabled={!executionId}>
             Stop
@@ -553,23 +629,27 @@ function formatSize(bytes: number): string {
  * One attached file — a thumbnail for images, the extension otherwise.
  * Removable while pending, read-only once the message has been sent.
  */
-function FileTile(props: Readonly<{ name: string; size: number; url?: string; onRemove?: () => void }>) {
-
+function FileTile(
+  props: Readonly<{ name: string; size: number; url?: string; onRemove?: () => void }>,
+) {
   const extension = props.name.includes('.')
     ? props.name.split('.').pop()!.toUpperCase().slice(0, 4)
     : 'FILE';
   return (
     <div className="chat-tile" title={props.name}>
       <div className="chat-tile-preview">
-        {props.url
-          ? <img src={props.url} alt={props.name} />
-          : <span className="chat-tile-ext">{extension}</span>}
+        {props.url ? (
+          <img src={props.url} alt={props.name} />
+        ) : (
+          <span className="chat-tile-ext">{extension}</span>
+        )}
         {props.onRemove && (
           <button
             type="button"
             className="chat-tile-remove"
             title={'Remove ' + props.name}
-            onClick={props.onRemove}>
+            onClick={props.onRemove}
+          >
             ×
           </button>
         )}
@@ -582,8 +662,14 @@ function FileTile(props: Readonly<{ name: string; size: number; url?: string; on
 
 // Whether a chunk carries anything to put in a bubble, as opposed to only status.
 function hasContent(chunk: ChatChunk) {
-  return !!chunk.message || !!chunk.html || !!(chunk.ticket && chunk.filename) ||
-    !!chunk.function_waiting || !!chunk.function_result || !!chunk.function_error;
+  return (
+    !!chunk.message ||
+    !!chunk.html ||
+    !!(chunk.ticket && chunk.filename) ||
+    !!chunk.function_waiting ||
+    !!chunk.function_result ||
+    !!chunk.function_error
+  );
 }
 
 // Adds to the text the assistant is already writing, or starts a new run of text.
@@ -602,9 +688,11 @@ function resolveFunction(segments: Segment[], chunk: ChatChunk) {
   // Trimmed — the server's payloads arrive with leading whitespace.
   const detail = [prettyJson(chunk.invocation), chunk.function_error]
     .map(part => part?.trim())
-    .filter(Boolean).join('\n\n');
+    .filter(Boolean)
+    .join('\n\n');
   const waiting = segments.findIndex(
-    segment => segment.kind === 'function' && segment.state === 'waiting');
+    segment => segment.kind === 'function' && segment.state === 'waiting',
+  );
   const resolved: Segment = {
     kind: 'function',
     state,
@@ -632,16 +720,16 @@ function settleWaiting(segments: Segment[], failed: boolean) {
 function applyChunk(current: ChatMessage[], chunk: ChatChunk, done: boolean): ChatMessage[] {
   const next = [...current];
   let last = next.at(-1)!;
-  if (last?.role !== 'assistant') {
+  if (last?.role === 'assistant') {
+    last = { ...last, segments: [...last.segments] };
+    next[next.length - 1] = last;
+  } else {
     // Nothing to attach status-only chunks to — don't invent a bubble.
     if (!hasContent(chunk)) {
       return current;
     }
-    last = { role: 'assistant', segments: [] };
+    last = { id: nextId(), role: 'assistant', segments: [] };
     next.push(last);
-  } else {
-    last = { ...last, segments: [...last.segments] };
-    next[next.length - 1] = last;
   }
   const segments = last.segments;
 
@@ -708,7 +796,6 @@ function functionName(file?: string): string | undefined {
  * gives you the same widget rather than losing it.
  */
 function WidgetButton({ html }: Readonly<{ html: string }>) {
-
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -721,7 +808,6 @@ function WidgetButton({ html }: Readonly<{ html: string }>) {
 }
 
 function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdown: boolean }>) {
-
   // Collapsed by default — the pill is the summary, the payload one click away.
   const [showDetail, setShowDetail] = useState(false);
   const detailRef = useRef<HTMLDivElement>(null);
@@ -735,23 +821,27 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
     const root = detailRef.current;
     if (showDetail && root) {
       import('../lib/chatHighlight')
-      .then(module => module.highlightUnder(root))
-      .catch(error => console.error('Could not highlight code:', error));
+        .then(module => module.highlightUnder(root))
+        .catch(error => console.error('Could not highlight code:', error));
     }
   }, [showDetail]);
   // Model output is untrusted — raw HTML must never reach the page, so the
   // markdown passes through DOMPurify before dangerouslySetInnerHTML.
   const html = useMemo(
-    () => segment.kind === 'text' && markdown
-      ? DOMPurify.sanitize(marked.parse(segment.text) as string)
-      : '',
-    [segment, markdown]);
+    () =>
+      segment.kind === 'text' && markdown
+        ? DOMPurify.sanitize(marked.parse(segment.text) as string)
+        : '',
+    [segment, markdown],
+  );
 
   switch (segment.kind) {
     case 'text':
-      return markdown
-        ? <div className="chat-text chat-markdown" dangerouslySetInnerHTML={{ __html: html }} />
-        : <div className="chat-text">{segment.text}</div>;
+      return markdown ? (
+        <div className="chat-text chat-markdown" dangerouslySetInnerHTML={{ __html: html }} />
+      ) : (
+        <div className="chat-text">{segment.text}</div>
+      );
     case 'function': {
       const expandable = !!segment.detail;
       return (
@@ -762,9 +852,16 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
             disabled={!expandable}
             aria-expanded={expandable ? showDetail : undefined}
             title={expandable ? 'Show the invocation' : undefined}
-            onClick={() => setShowDetail(current => !current)}>
-            {segment.state === 'waiting' && <>Executing function<span className="spinner-dots" /></>}
-            {segment.state === 'success' && <>✓ {functionName(segment.file) ?? 'Function executed'}</>}
+            onClick={() => setShowDetail(current => !current)}
+          >
+            {segment.state === 'waiting' && (
+              <>
+                <span className="spinner-dots">Executing function</span>
+              </>
+            )}
+            {segment.state === 'success' && (
+              <>✓ {functionName(segment.file) ?? 'Function executed'}</>
+            )}
             {segment.state === 'error' && <>✕ {functionName(segment.file) ?? 'Function failed'}</>}
             {expandable && (
               <span className="chat-pill-caret" aria-hidden="true">
@@ -774,7 +871,9 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
           </button>
           {showDetail && segment.detail && (
             <div className="chat-function-detail chat-hl" ref={detailRef}>
-              <pre><code className="language-json">{segment.detail}</code></pre>
+              <pre>
+                <code className="language-json">{segment.detail}</code>
+              </pre>
             </div>
           )}
         </div>
@@ -794,7 +893,8 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
           href={segment.url}
           target="_blank"
           rel="noreferrer"
-          title={segment.filename}>
+          title={segment.filename}
+        >
           <DownloadIcon /> {segment.filename.split('/').pop()}
         </a>
       );

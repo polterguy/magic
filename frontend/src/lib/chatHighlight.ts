@@ -11,6 +11,7 @@
 // The --cm-* theme variables chat code colors resolve against — normally
 // pulled in by CodeEditor, but chat may highlight before any editor loads.
 import '../resources/ainiro.css';
+
 import hljs from 'highlight.js/lib/core';
 import bash from 'highlight.js/lib/languages/bash';
 import csharp from 'highlight.js/lib/languages/csharp';
@@ -126,7 +127,8 @@ hljs.registerLanguage('hyperlambda', () => ({
     // Type declarations such as :int: and :bool:
     {
       className: 'type',
-      begin: /:(?:int|uint|long|ulong|short|ushort|decimal|double|float|single|bool|date|time|guid|char|byte|sbyte|string|node|expression)\b/,
+      begin:
+        /:(?:int|uint|long|ulong|short|ushort|decimal|double|float|single|bool|date|time|guid|char|byte|sbyte|string|node|expression)\b/,
     },
 
     // Data nodes - names starting with a period at the beginning of a line.
@@ -139,9 +141,7 @@ hljs.registerLanguage('hyperlambda', () => ({
       begin: /:/,
       end: /$/,
       excludeBegin: true,
-      contains: [
-        { begin: /@"/, end: /"/, contains: [{ begin: /""/ }] },
-      ],
+      contains: [{ begin: /@"/, end: /"/, contains: [{ begin: /""/ }] }],
     },
   ],
 }));

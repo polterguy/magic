@@ -5,19 +5,21 @@
  */
 
 import { useState } from 'react';
-import { Modal } from './Dialogs';
-import ResultViewer from './ResultViewer';
-import { InvokeResult } from './InvokePanel';
+
 import { servedByBackend } from '../lib/backend';
 import { copyToClipboard } from '../lib/toast';
+import { Modal } from './Dialogs';
+import { InvokeResult } from './InvokePanel';
+import ResultViewer from './ResultViewer';
 
-export default function ResponseDialog(props: Readonly<{
-  result: InvokeResult;
-  onClose: () => void;
-  // Only a real HTTP invocation has headers worth qualifying.
-  httpInvocation?: boolean;
-}>) {
-
+export default function ResponseDialog(
+  props: Readonly<{
+    result: InvokeResult;
+    onClose: () => void;
+    // Only a real HTTP invocation has headers worth qualifying.
+    httpInvocation?: boolean;
+  }>,
+) {
   const { result, onClose } = props;
   // The displayed body, when textual — null for images/binaries, which have
   // nothing to copy. Kept here so the Copy button can sit beside Close.
@@ -26,7 +28,7 @@ export default function ResponseDialog(props: Readonly<{
   return (
     <Modal width={860} onClose={onClose}>
       <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 0 }}>
-        Response
+        Response{' '}
         <span className={'badge ' + (result.status < 400 ? 'badge-get' : 'badge-error')}>
           {result.status}
         </span>
@@ -42,9 +44,8 @@ export default function ResponseDialog(props: Readonly<{
       <ResponseHeaders headers={result.headers} />
       {props.httpInvocation && !servedByBackend() && (
         <p className="muted" style={{ fontSize: 12, margin: '0 0 8px 0' }}>
-          The dashboard and this backend are on different domains, so the
-          browser only exposes some of the response headers — the server may
-          have sent more.
+          The dashboard and this backend are on different domains, so the browser only exposes some
+          of the response headers — the server may have sent more.
         </p>
       )}
       <ResultViewer result={result} height="42vh" onText={setBody} />
@@ -52,11 +53,14 @@ export default function ResponseDialog(props: Readonly<{
         {body !== null && (
           <button
             className="btn btn-secondary"
-            onClick={() => copyToClipboard(body, 'The response')}>
+            onClick={() => copyToClipboard(body, 'The response')}
+          >
             Copy response
           </button>
         )}
-        <button className="btn" onClick={onClose}>Close</button>
+        <button className="btn" onClick={onClose}>
+          Close
+        </button>
       </div>
     </Modal>
   );
@@ -68,7 +72,6 @@ export default function ResponseDialog(props: Readonly<{
  * content-type problems are only diagnosable from here.
  */
 function ResponseHeaders({ headers }: Readonly<{ headers?: Record<string, string> }>) {
-
   const [open, setOpen] = useState(false);
 
   const names = Object.keys(headers ?? {}).sort((a, b) => a.localeCompare(b));
@@ -78,9 +81,7 @@ function ResponseHeaders({ headers }: Readonly<{ headers?: Record<string, string
 
   return (
     <div style={{ marginBottom: 8 }}>
-      <button
-        className="btn btn-small btn-secondary"
-        onClick={() => setOpen(!open)}>
+      <button className="btn btn-small btn-secondary" onClick={() => setOpen(!open)}>
         {open ? 'Hide' : 'Show'} response headers ({names.length})
       </button>
       {open && (
@@ -94,7 +95,8 @@ function ResponseHeaders({ headers }: Readonly<{ headers?: Record<string, string
             borderRadius: 'var(--radius)',
             padding: '8px 12px',
             fontSize: 12,
-          }}>
+          }}
+        >
           {names.map(name => (
             <div key={name} style={{ display: 'flex', gap: 8, padding: '2px 0' }}>
               <span style={{ color: 'var(--accent)', flexShrink: 0 }}>{name}:</span>

@@ -1,12 +1,15 @@
-import { showToast } from '../lib/toast';
-import Select from '../components/Select';
-import { explainHyperlambda } from '../lib/support';
 import { useEffect, useState } from 'react';
+
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
-import CodeEditor, { useEditToken } from '../components/CodeEditor';
-import { useDialog } from '../components/Dialogs';
+import CodeEditor from '../components/CodeEditor';
+import Select from '../components/Select';
 import { aiContextForFile, evaluate, listFiles, loadFile, saveFile } from '../lib/api';
+import { useEditToken } from '../lib/editor';
+import { showError } from '../lib/errors';
+import { explainHyperlambda } from '../lib/support';
+import { showToast } from '../lib/toast';
+import { useDialog } from '../lib/useDialog';
 import { useSessionState } from '../lib/useSessionState';
 
 const DEFAULT_CODE = `/*
@@ -29,7 +32,6 @@ data.connect:magic
 `;
 
 export default function Playground() {
-
   // The editor's buffer outlives the page — leaving and coming back restores
   // it, instead of a discard-changes dialog standing in the way.
   const [code, setCode] = useSessionState('magic2.playground.code', DEFAULT_CODE);
@@ -40,8 +42,7 @@ export default function Playground() {
   const [resultMode, setResultMode] = useState('hyperlambda');
   const [busy, setBusy] = useState(false);
   const [snippets, setSnippets] = useState<string[]>([]);
-  const [selectedSnippet, setSelectedSnippet] =
-    useSessionState('magic2.playground.snippet', '');
+  const [selectedSnippet, setSelectedSnippet] = useSessionState('magic2.playground.snippet', '');
   const { confirm, prompt } = useDialog();
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function Playground() {
 
   async function execute() {
     setBusy(true);
-        try {
+    try {
       /*
        * When the executed Hyperlambda returns nothing, the endpoint answers
        * {"result": "<hyperlambda>"} — unwrap and display as Hyperlambda.
@@ -62,9 +63,14 @@ export default function Playground() {
       let display = raw;
       let mode = 'text/plain';
       try {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object' &&
-            typeof parsed.result === 'string' && Object.keys(parsed).length === 1) {
+        const parsed: unknown = JSON.parse(raw);
+        if (
+          parsed &&
+          typeof parsed === 'object' &&
+          'result' in parsed &&
+          typeof parsed.result === 'string' &&
+          Object.keys(parsed).length === 1
+        ) {
           display = parsed.result;
           mode = 'hyperlambda';
         } else {
@@ -75,8 +81,8 @@ export default function Playground() {
       }
       setResult(display);
       setResultMode(mode);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
       setResult('');
     } finally {
       setBusy(false);
@@ -89,13 +95,18 @@ export default function Playground() {
     }
     // Loading over unsaved work destroys it — the navigation guard can't see
     // this, so ask the same question it would.
-    if (code !== savedCode && !await confirm({
-      title: 'Discard unsaved changes?',
-      message: 'Your Hyperlambda has unsaved changes. Loading ' +
-        filename.substring(filename.lastIndexOf('/') + 1) + ' replaces them.',
-      confirmText: 'Discard',
-      danger: true,
-    })) {
+    if (
+      code !== savedCode &&
+      !(await confirm({
+        title: 'Discard unsaved changes?',
+        message:
+          'Your Hyperlambda has unsaved changes. Loading ' +
+          filename.slice(filename.lastIndexOf('/') + 1) +
+          ' replaces them.',
+        confirmText: 'Discard',
+        danger: true,
+      }))
+    ) {
       return;
     }
     setSelectedSnippet(filename);
@@ -105,8 +116,8 @@ export default function Playground() {
       setCode(text);
       bumpCodeEditId();
       setSavedCode(text);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -114,7 +125,7 @@ export default function Playground() {
 
   async function save() {
     const suggestion = selectedSnippet
-      ? selectedSnippet.substring(selectedSnippet.lastIndexOf('/') + 1).replace(/\.hl$/, '')
+      ? selectedSnippet.slice(selectedSnippet.lastIndexOf('/') + 1).replace(/\.hl$/, '')
       : '';
     const name = await prompt({
       title: 'Save snippet',
@@ -134,8 +145,8 @@ export default function Playground() {
         setSnippets([...snippets, filename].sort((a, b) => a.localeCompare(b)));
       }
       showToast('Saved ' + filename, false);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -153,11 +164,13 @@ export default function Playground() {
             <option value="">Load snippet…</option>
             {snippets.map(snippet => (
               <option key={snippet} value={snippet}>
-                {snippet.substring(snippet.lastIndexOf('/') + 1)}
+                {snippet.slice(snippet.lastIndexOf('/') + 1)}
               </option>
             ))}
           </Select>
-          <button className="btn btn-secondary" onClick={save}>Save snippet</button>
+          <button className="btn btn-secondary" onClick={save}>
+            Save snippet
+          </button>
           <button className="btn" onClick={execute} disabled={busy}>
             {busy ? 'Running…' : '▷ Run'}
           </button>
@@ -172,7 +185,8 @@ export default function Playground() {
             mode="hyperlambda"
             onExecute={execute}
             onHelp={explainHyperlambda}
-            undoableEditId={codeEditId} />
+            undoableEditId={codeEditId}
+          />
         </div>
         <div>
           <div className="editor-pane-title">Result</div>
@@ -185,9 +199,13 @@ export default function Playground() {
         getContext={() => aiContextForFile('/playground.hl', code)}
         getOldCode={() => code}
         session="hyperlambda-playground.editor"
-        onResult={value => { setCode(value); bumpCodeEditId(); }}
+        onResult={value => {
+          setCode(value);
+          bumpCodeEditId();
+        }}
         onError={message => showToast(message, true)}
-        style={{ marginTop: 8 }} />
+        style={{ marginTop: 8 }}
+      />
       {/* Execution can be slow — cover the screen so the wait reads clearly. */}
       {busy && <AiWaiter />}
     </>

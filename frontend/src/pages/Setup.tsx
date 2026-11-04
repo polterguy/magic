@@ -8,13 +8,21 @@
  * magic database exists, and answers with a ticket signed by the new secret.
  */
 
-import Banner from '../components/Banner';
-import { FormEvent, useState } from 'react';
-import { EyeIcon, EyeOffIcon } from '../components/Icons';
-import { useAuth } from '../lib/AuthContext';
-import { ApiError, MIN_PASSWORD, saveUserExtra, setupSystem } from '../lib/api';
+import { type SubmitEvent, useState } from 'react';
 
-function firstProblem(name: string, email: string, password: string, repeat: string, showPassword: boolean) {
+import Banner from '../components/Banner';
+import { EyeIcon, EyeOffIcon } from '../components/Icons';
+import { ApiError, MIN_PASSWORD, saveUserExtra, setupSystem } from '../lib/api';
+import { errorMessage } from '../lib/errors';
+import { useAuth } from '../lib/useAuth';
+
+function firstProblem(
+  name: string,
+  email: string,
+  password: string,
+  repeat: string,
+  showPassword: boolean,
+) {
   if (name.trim() === '') {
     return 'Your name is required';
   }
@@ -28,7 +36,6 @@ function firstProblem(name: string, email: string, password: string, repeat: str
 }
 
 export default function Setup() {
-
   const { backend, loginWithTicket, setupCompleted } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -41,7 +48,7 @@ export default function Setup() {
 
   const problem = firstProblem(name, email, password, repeat, showPassword);
 
-  async function submit(event: FormEvent) {
+  async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (problem) {
       setError(problem);
@@ -64,13 +71,13 @@ export default function Setup() {
       await saveUserExtra('root', 'name', name);
       await saveUserExtra('root', 'email', email);
       setupCompleted();
-    } catch (err: any) {
+    } catch (err) {
       // Already configured — let them through rather than trapping them here.
       if (err instanceof ApiError && err.status === 401) {
         setupCompleted();
         return;
       }
-      setError(err.message);
+      setError(errorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -81,26 +88,28 @@ export default function Setup() {
       <form className="login-card" style={{ width: 520 }} onSubmit={submit}>
         <h1>Set up your cloudlet</h1>
         <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
-          Your backend is still using its default password. Choose a real one
-          for <strong>root</strong> to lock it down.
+          Your backend is still using its default password. Choose a real one for{' '}
+          <strong>root</strong> to lock it down.
         </p>
         {error && <Banner onClose={() => setError('')}>{error}</Banner>}
         <label>
-          Full name
+          Full name{' '}
           <input
             type="text"
             autoFocus
             autoComplete="name"
             value={name}
-            onChange={e => setName(e.target.value)} />
+            onChange={e => setName(e.target.value)}
+          />
         </label>
         <label>
-          Email
+          Email{' '}
           <input
             type="email"
             autoComplete="email"
             value={email}
-            onChange={e => setEmail(e.target.value)} />
+            onChange={e => setEmail(e.target.value)}
+          />
         </label>
         <label>
           Password (min {MIN_PASSWORD} characters)
@@ -110,7 +119,8 @@ export default function Setup() {
               autoComplete="new-password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              style={{ flex: 1, minWidth: 0 }} />
+              style={{ flex: 1, minWidth: 0 }}
+            />
             <button
               type="button"
               className="icon-btn"
@@ -123,7 +133,8 @@ export default function Setup() {
                  */
                 setRepeat(password);
                 setShowPassword(!showPassword);
-              }}>
+              }}
+            >
               {showPassword ? <EyeOffIcon /> : <EyeIcon />}
             </button>
           </div>
@@ -131,27 +142,29 @@ export default function Setup() {
         {/* Confirming is pointless while the password is legible. */}
         {!showPassword && (
           <label>
-            Repeat password
+            Repeat password{' '}
             <input
               type="password"
               autoComplete="new-password"
               value={repeat}
-              onChange={e => setRepeat(e.target.value)} />
+              onChange={e => setRepeat(e.target.value)}
+            />
           </label>
         )}
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <input
             type="checkbox"
             checked={subscribe}
-            onChange={e => setSubscribe(e.target.checked)} />
+            onChange={e => setSubscribe(e.target.checked)}
+          />{' '}
           Subscribe to the newsletter
         </label>
         <button className="btn" type="submit" disabled={busy}>
           {busy ? 'Setting up…' : 'Save'}
         </button>
         <p className="muted" style={{ fontSize: 12, textAlign: 'center', margin: 0 }}>
-          This takes a few seconds — the server generates a new signing key and
-          prepares its database.
+          This takes a few seconds — the server generates a new signing key and prepares its
+          database.
         </p>
       </form>
     </div>

@@ -4,7 +4,8 @@
  */
 
 import { useEffect } from 'react';
-import { useDialog } from '../components/Dialogs';
+
+import { useDialog } from './useDialog';
 
 let guard: (() => Promise<boolean>) | null = null;
 
@@ -27,14 +28,17 @@ export function useUnsavedGuard(dirty: boolean, message: string) {
       setNavGuard(null);
       return;
     }
-    setNavGuard(() => confirm({
-      title: 'Discard unsaved changes?',
-      message,
-      confirmText: 'Discard',
-      danger: true,
-    }));
+    setNavGuard(() =>
+      confirm({
+        title: 'Discard unsaved changes?',
+        message,
+        confirmText: 'Discard',
+        danger: true,
+      }),
+    );
     const beforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
+      // eslint-disable-next-line sonarjs/deprecation -- older browsers (Chromium before 119) only prompt when returnValue is set
       event.returnValue = '';
     };
     window.addEventListener('beforeunload', beforeUnload);

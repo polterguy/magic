@@ -41,7 +41,7 @@
  * color instead: blue keywords, gold slot invocations, green strings,
  * orange numbers, teal properties, crimson types. Still zero violet.
  */
-html[data-theme="light"] {
+html[data-theme='light'] {
   --cm-bg: #fdfbf7;
   --cm-text: #2a2118;
   --cm-selection: rgba(23, 18, 14, 0.12);
@@ -66,11 +66,16 @@ html[data-theme="light"] {
 }
 
 /* Editor chrome — the .cm-s-ainiro scope class sits on the .cm-editor root. */
-.cm-s-ainiro.cm-editor { background: var(--cm-bg); color: var(--cm-text); }
+.cm-s-ainiro.cm-editor {
+  background: var(--cm-bg);
+  color: var(--cm-text);
+}
 /* Doubled scope class: must out-specificy CM6's own focused-selection rule,
    which loads after this sheet. */
 .cm-s-ainiro.cm-editor .cm-selectionBackground,
-.cm-s-ainiro.cm-editor .cm-content ::selection { background: var(--cm-selection); }
+.cm-s-ainiro.cm-editor .cm-content ::selection {
+  background: var(--cm-selection);
+}
 .cm-s-ainiro .cm-gutters {
   background: var(--cm-bg);
   color: var(--cm-linenumber);
@@ -80,30 +85,69 @@ html[data-theme="light"] {
   background: transparent;
   color: var(--cm-guttermarker);
 }
-.cm-s-ainiro .cm-cursor { border-left: 2px solid var(--cm-cursor); }
-.cm-s-ainiro .cm-activeLine { background: var(--cm-activeline); }
+.cm-s-ainiro .cm-cursor {
+  border-left: 2px solid var(--cm-cursor);
+}
+.cm-s-ainiro .cm-activeLine {
+  background: var(--cm-activeline);
+}
 
 /* Token colours — same class names the CM5 theme used. */
-.cm-s-ainiro span.cm-comment { color: var(--cm-comment); font-style: italic; }
-.cm-s-ainiro span.cm-atom { color: var(--cm-number); }
-.cm-s-ainiro span.cm-number { color: var(--cm-number); }
+.cm-s-ainiro span.cm-comment {
+  color: var(--cm-comment);
+  font-style: italic;
+}
+.cm-s-ainiro span.cm-atom {
+  color: var(--cm-number);
+}
+.cm-s-ainiro span.cm-number {
+  color: var(--cm-number);
+}
 
-.cm-s-ainiro span.cm-property, .cm-s-ainiro span.cm-attribute { color: var(--cm-property); }
+.cm-s-ainiro span.cm-property,
+.cm-s-ainiro span.cm-attribute {
+  color: var(--cm-property);
+}
 /* Non-dotted slots ([if], [add], [while]) — the important control keywords: yellow. */
-.cm-s-ainiro span.cm-keyword { color: var(--cm-keyword); }
-.cm-s-ainiro span.cm-string { color: var(--cm-string); }
-.cm-s-ainiro span.cm-string.cm-property { color: var(--cm-text); }
+.cm-s-ainiro span.cm-keyword {
+  color: var(--cm-keyword);
+}
+.cm-s-ainiro span.cm-string {
+  color: var(--cm-string);
+}
+.cm-s-ainiro span.cm-string.cm-property {
+  color: var(--cm-text);
+}
 
-.cm-s-ainiro span.cm-type { color: var(--cm-type); }
-.cm-s-ainiro span.cm-variable { color: var(--cm-text); }
+.cm-s-ainiro span.cm-type {
+  color: var(--cm-type);
+}
+.cm-s-ainiro span.cm-variable {
+  color: var(--cm-text);
+}
 /* Dotted slots / Active Event invocations (log.error, data.connect): warm gold. */
-.cm-s-ainiro span.cm-variable-2 { color: var(--cm-variable-2); }
-.cm-s-ainiro span.cm-def { color: var(--cm-string); }
-.cm-s-ainiro span.cm-bracket { color: var(--cm-text); font-weight: bold; }
-.cm-s-ainiro span.cm-tag { color: var(--cm-property); }
-.cm-s-ainiro span.cm-link { color: var(--cm-link); }
-.cm-s-ainiro span.cm-error { color: var(--cm-error); }
-.cm-s-ainiro span.cm-qualifier { color: var(--cm-text); }
+.cm-s-ainiro span.cm-variable-2 {
+  color: var(--cm-variable-2);
+}
+.cm-s-ainiro span.cm-def {
+  color: var(--cm-string);
+}
+.cm-s-ainiro span.cm-bracket {
+  color: var(--cm-text);
+  font-weight: bold;
+}
+.cm-s-ainiro span.cm-tag {
+  color: var(--cm-property);
+}
+.cm-s-ainiro span.cm-link {
+  color: var(--cm-link);
+}
+.cm-s-ainiro span.cm-error {
+  color: var(--cm-error);
+}
+.cm-s-ainiro span.cm-qualifier {
+  color: var(--cm-text);
+}
 
 .cm-s-ainiro .cm-matchingBracket {
   color: var(--cm-matchingbracket) !important;

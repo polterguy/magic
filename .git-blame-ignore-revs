@@ -1,0 +1,5 @@
+# Bulk formatting commits, skipped by `git blame` (git config blame.ignoreRevsFile .git-blame-ignore-revs).
+# style(frontend): apply prettier
+f82d367ed69f7b8c93658f6b27d065dc8228224b
+# style(frontend): sort imports and exports
+f6ca78deac83575a87b67bb7a67a612a6b026456

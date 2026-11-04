@@ -8,11 +8,13 @@ export interface TabDefinition {
   label: string;
 }
 
-export default function Tabs(props: Readonly<{
-  tabs: TabDefinition[];
-  active: string;
-  onChange: (id: string) => void;
-}>) {
+export default function Tabs(
+  props: Readonly<{
+    tabs: TabDefinition[];
+    active: string;
+    onChange: (id: string) => void;
+  }>,
+) {
   return (
     <div className="tabs">
       {props.tabs.map(tab => (
@@ -20,7 +22,8 @@ export default function Tabs(props: Readonly<{
           key={tab.id}
           type="button"
           className={'tab' + (tab.id === props.active ? ' active' : '')}
-          onClick={() => props.onChange(tab.id)}>
+          onClick={() => props.onChange(tab.id)}
+        >
           {tab.label}
         </button>
       ))}

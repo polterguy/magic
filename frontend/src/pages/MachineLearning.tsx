@@ -10,18 +10,18 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+
+import HistoryTab from '../components/ml/HistoryTab';
+import ModelsTab from '../components/ml/ModelsTab';
+import QuestionnairesTab from '../components/ml/QuestionnairesTab';
+import TrainingTab from '../components/ml/TrainingTab';
 import Tabs from '../components/Tabs';
-import { mlTypes, openaiIsConfigured } from '../lib/api';
-import { showToast } from '../lib/toast';
-import HistoryTab from './ml/HistoryTab';
-import TrainingTab from './ml/TrainingTab';
-import ModelsTab from './ml/ModelsTab';
-import QuestionnairesTab from './ml/QuestionnairesTab';
+import { type MlType, mlTypes, openaiIsConfigured } from '../lib/api';
+import { showError } from '../lib/errors';
 
 type Tab = 'types' | 'training' | 'history' | 'questionnaires';
 
 export default function MachineLearning() {
-
   const [params, setParams] = useSearchParams();
 
   /*
@@ -35,43 +35,54 @@ export default function MachineLearning() {
    * race and one would resurrect the parameter the other had just removed.
    */
   const [tab, setTab] = useState<Tab>((params.get('tab') as Tab) ?? 'types');
-  const [deepLink, setDeepLink] =
-    useState<{ edit: string | null; type: string | null }>({
-      edit: params.get('edit'),
-      type: params.get('type'),
-    });
-  const [types, setTypes] = useState<any[]>([]);
+  const [deepLink, setDeepLink] = useState<{ edit: string | null; type: string | null }>({
+    edit: params.get('edit'),
+    type: params.get('type'),
+  });
+  const [types, setTypes] = useState<MlType[]>([]);
   const [configured, setConfigured] = useState(true);
 
+  // Picking the link up while rendering, the moment the query changes, rather than in an effect.
+  const wanted = params.get('tab');
+  const linkEdit = params.get('edit');
+  const linkType = params.get('type');
+  const hasLink = !!(wanted || linkEdit || linkType);
+  const [seenParams, setSeenParams] = useState(params);
+  if (seenParams !== params) {
+    setSeenParams(params);
+    if (hasLink) {
+      if (wanted) {
+        setTab(wanted as Tab);
+      }
+      setDeepLink({ edit: linkEdit, type: linkType });
+    }
+  }
+
   useEffect(() => {
-    const wanted = params.get('tab');
-    const edit = params.get('edit');
-    const type = params.get('type');
-    if (!wanted && !edit && !type) {
+    if (!hasLink) {
       return;
     }
-    if (wanted) {
-      setTab(wanted as Tab);
-    }
-    setDeepLink({ edit, type });
-    ['tab', 'edit', 'type'].forEach(name => params.delete(name));
-    setParams(params, { replace: true });
-  }, [params, setParams]);
+    const next = new URLSearchParams(params);
+    ['tab', 'edit', 'type'].forEach(name => next.delete(name));
+    setParams(next, { replace: true });
+  }, [hasLink, params, setParams]);
 
   const refreshTypes = useCallback(async () => {
     try {
-      setTypes(await mlTypes() ?? []);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+      setTypes((await mlTypes()) ?? []);
+    } catch (err) {
+      showError(err);
     }
   }, []);
 
   useEffect(() => {
-    refreshTypes();
+    mlTypes()
+      .then(result => setTypes(result ?? []))
+      .catch((err: unknown) => showError(err));
     openaiIsConfigured()
       .then(response => setConfigured(response.result))
       .catch(() => {});
-  }, [refreshTypes]);
+  }, []);
 
   return (
     <>
@@ -87,21 +98,20 @@ export default function MachineLearning() {
           { id: 'history', label: 'History' },
         ]}
         active={tab}
-        onChange={id => setTab(id as Tab)} />
+        onChange={id => setTab(id as Tab)}
+      />
       {!configured && (
         <div className="error-box" style={{ marginBottom: 12 }}>
-          OpenAI is not configured — add your API key in Configuration before
-          training or querying models.
+          OpenAI is not configured — add your API key in Configuration before training or querying
+          models.
         </div>
       )}
-      {tab === 'types' &&
-        <ModelsTab types={types} onChanged={refreshTypes} editOnOpen={deepLink.edit} />}
-      {tab === 'training' &&
-        <TrainingTab types={types} initialType={deepLink.type} />}
-      {tab === 'questionnaires' &&
-        <QuestionnairesTab />}
-      {tab === 'history' &&
-        <HistoryTab types={types} />}
+      {tab === 'types' && (
+        <ModelsTab types={types} onChanged={refreshTypes} editOnOpen={deepLink.edit} />
+      )}
+      {tab === 'training' && <TrainingTab types={types} initialType={deepLink.type} />}
+      {tab === 'questionnaires' && <QuestionnairesTab />}
+      {tab === 'history' && <HistoryTab types={types} />}
     </>
   );
 }

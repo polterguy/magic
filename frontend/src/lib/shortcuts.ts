@@ -250,9 +250,22 @@ export const SHORTCUTS: Shortcut[] = [
   },
 ];
 
-// macOS reports as Mac (or an iDevice) — decides which combo to display.
-export const isMac =
-  typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+/*
+ * macOS reports as Mac (or an iDevice) — decides which combo to display.
+ * Chromium names the platform through User-Agent Client Hints; the other
+ * browsers only through the user agent string, which carries the same words.
+ */
+function detectMac() {
+  if (typeof navigator === 'undefined') {
+    return false;
+  }
+  const hinted = (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData
+    ?.platform;
+  // The client hint spells it "macOS"; the user agent "Macintosh", "iPhone" or "iPad".
+  return hinted ? hinted === 'macOS' : /Mac|iPhone|iPad/.test(navigator.userAgent);
+}
+
+export const isMac = detectMac();
 
 export function shortcutDisplay(shortcut: Shortcut): string {
   return isMac && shortcut.mac ? shortcut.mac : shortcut.display;

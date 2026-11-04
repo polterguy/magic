@@ -7,11 +7,21 @@
  * content shape to preview.
  */
 
+/*
+ * Keys for n identical placeholders. They have no identity beyond their slot,
+ * never reorder and are replaced wholesale once data arrives, so the slot's
+ * name is all a key needs to be.
+ */
+function slots(count: number, name: string) {
+  return Array.from({ length: count }, (_, at) => name + '-' + at);
+}
+
 export function SkeletonBar(props: Readonly<{ width?: string | number; height?: number }>) {
   return (
     <span
       className="skeleton-bar"
-      style={{ width: props.width ?? '100%', height: props.height ?? 12 }} />
+      style={{ width: props.width ?? '100%', height: props.height ?? 12 }}
+    />
   );
 }
 
@@ -23,11 +33,11 @@ export function TableSkeleton(props: Readonly<{ columns: number; rows?: number }
   return (
     <table className="skeleton-table">
       <tbody>
-        {Array.from({ length: rowCount }).map((_, row) => (
+        {slots(rowCount, 'row').map(row => (
           <tr className="skeleton-row" key={row}>
-            {Array.from({ length: props.columns }).map((_, col) => (
+            {slots(props.columns, 'col').map((col, at) => (
               <td key={col}>
-                <SkeletonBar width={col === 0 ? '60%' : '85%'} />
+                <SkeletonBar width={at === 0 ? '60%' : '85%'} />
               </td>
             ))}
           </tr>
@@ -43,7 +53,7 @@ export function ListSkeleton(props: Readonly<{ rows?: number; withAction?: boole
   const rowCount = props.rows ?? 5;
   return (
     <>
-      {Array.from({ length: rowCount }).map((_, row) => (
+      {slots(rowCount, 'row').map(row => (
         <div className="skeleton-list-row" key={row}>
           <div className="skeleton-list-row-text">
             <SkeletonBar width="40%" height={13} />
@@ -61,8 +71,8 @@ export function CardGridSkeleton(props: Readonly<{ cards?: number }>) {
   const cardCount = props.cards ?? 6;
   return (
     <div className="skeleton-card-grid">
-      {Array.from({ length: cardCount }).map((_, i) => (
-        <div className="card skeleton-card" key={i}>
+      {slots(cardCount, 'card').map(card => (
+        <div className="card skeleton-card" key={card}>
           <SkeletonBar width="60%" height={16} />
           <SkeletonBar width="100%" />
           <SkeletonBar width="90%" />
@@ -78,8 +88,8 @@ export function ModuleListSkeleton(props: Readonly<{ modules?: number }>) {
   const moduleCount = props.modules ?? 5;
   return (
     <>
-      {Array.from({ length: moduleCount }).map((_, i) => (
-        <div className="card skeleton-module" key={i} style={{ marginBottom: 10 }}>
+      {slots(moduleCount, 'module').map(module => (
+        <div className="card skeleton-module" key={module} style={{ marginBottom: 10 }}>
           <SkeletonBar width={18} height={18} />
           <SkeletonBar width="22%" height={14} />
           <SkeletonBar width="14%" height={12} />

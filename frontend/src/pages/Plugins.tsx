@@ -1,17 +1,21 @@
-import { showToast } from '../lib/toast';
-import SearchInput from '../components/SearchInput';
-import { useEffect, useMemo, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
-import { Modal, useDialog } from '../components/Dialogs';
+import { useEffect, useMemo, useState } from 'react';
+
+import { Modal } from '../components/Dialogs';
+import SearchInput from '../components/SearchInput';
 import { CardGridSkeleton } from '../components/Skeleton';
 import {
   availablePlugins,
-  installModule,
+  BazarApp,
   installedPlugins,
+  installModule,
   installPlugin,
   moduleNameFromZip,
 } from '../lib/api';
+import { showError } from '../lib/errors';
+import { showToast } from '../lib/toast';
+import { useDialog } from '../lib/useDialog';
 
 /*
  * Descriptions come from the Bazar's manifests, which are markdown, so they
@@ -20,23 +24,23 @@ import {
  * markup. Markdown permits raw HTML, so a manifest can carry a script tag or
  * an onerror attribute, and every description is put through this first.
  */
-function safeHtml(description: string) {
+function safeHtml(description: string | undefined) {
   return DOMPurify.sanitize(marked.parse(description ?? '') as string);
 }
 
 // Card intro: render the markdown description, extract its plain text, and
 // show the first sentence, capped at 150 characters.
-function intro(description: string) {
+function intro(description: string | undefined) {
   /*
    * Parsed into an inert document rather than assigned to an element's
    * innerHTML: an inert document neither runs scripts nor fetches anything,
    * so an <img onerror> can't fire while we're only after the text.
    */
   const parsed = new DOMParser().parseFromString(safeHtml(description), 'text/html');
-  const text = (parsed.body.textContent ?? '').replace(/\s+/g, ' ').trim();
+  const text = (parsed.body.textContent ?? '').replaceAll(/\s+/g, ' ').trim();
   const period = text.indexOf('.');
-  const sentence = period === -1 ? text : text.substring(0, period + 1);
-  return sentence.length > 150 ? sentence.substring(0, 150) + '…' : sentence;
+  const sentence = period === -1 ? text : text.slice(0, period + 1);
+  return sentence.length > 150 ? sentence.slice(0, 150) + '…' : sentence;
 }
 
 function installLabel(installing: boolean, installed: boolean) {
@@ -47,36 +51,37 @@ function installLabel(installing: boolean, installed: boolean) {
 }
 
 export default function Plugins() {
-
-  const [available, setAvailable] = useState<any[]>([]);
+  const [available, setAvailable] = useState<BazarApp[]>([]);
   // The Bazar listing is a slow remote call, so we show a spinner until it lands.
   const [loading, setLoading] = useState(true);
   const [installed, setInstalled] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState('');
   const [installing, setInstalling] = useState<string | null>(null);
-  const [details, setDetails] = useState<any>(null);
+  const [details, setDetails] = useState<BazarApp | null>(null);
   const [uploading, setUploading] = useState(false);
   const { confirm } = useDialog();
 
   useEffect(() => {
     availablePlugins()
       .then(list => setAvailable(list ?? []))
-      .catch(err => showToast(err.message, true, err.logId))
+      .catch((err: unknown) => showError(err))
       .finally(() => setLoading(false));
     installedPlugins()
       // A manifest's module_name is the folder it installed into, which is
       // what the Bazar calls the plugin — its name is a friendlier label.
-      .then(list => setInstalled(new Set((list ?? []).map((app: any) => app.module_name))))
+      .then(list => setInstalled(new Set((list ?? []).flatMap(app => app.module_name ?? []))))
       .catch(() => {});
   }, []);
 
   const visible = useMemo(() => {
     const query = filter.toLowerCase();
-    return available.filter(app =>
-      !query ||
-      app.name?.toLowerCase().includes(query) ||
-      app.type?.toLowerCase().includes(query) ||
-      app.description?.toLowerCase().includes(query));
+    return available.filter(
+      app =>
+        !query ||
+        app.name?.toLowerCase().includes(query) ||
+        app.type?.toLowerCase().includes(query) ||
+        app.description?.toLowerCase().includes(query),
+    );
   }, [available, filter]);
 
   /*
@@ -87,18 +92,28 @@ export default function Plugins() {
   async function installFromFile(file: File) {
     const name = moduleNameFromZip(file);
     if (!name) {
-      showToast(file.name + ' cannot be a module — the archive must be named ' +
-        '<name>.zip, using only lowercase letters, digits, hyphens or ' +
-        'underscores, and no further dots', true);
+      showToast(
+        file.name +
+          ' cannot be a module — the archive must be named ' +
+          '<name>.zip, using only lowercase letters, digits, hyphens or ' +
+          'underscores, and no further dots',
+        true,
+      );
       return;
     }
-    if (installed.has(name) && !await confirm({
-      title: 'Overwrite ' + name + '?',
-      message: 'A module called ' + name + ' is already installed. Installing ' +
-        'this archive replaces its files.',
-      confirmText: 'Yes, overwrite',
-      danger: true,
-    })) {
+    if (
+      installed.has(name) &&
+      !(await confirm({
+        title: 'Overwrite ' + name + '?',
+        message:
+          'A module called ' +
+          name +
+          ' is already installed. Installing ' +
+          'this archive replaces its files.',
+        confirmText: 'Yes, overwrite',
+        danger: true,
+      }))
+    ) {
       return;
     }
     setUploading(true);
@@ -106,35 +121,44 @@ export default function Plugins() {
       await installModule(file);
       showToast('Module ' + name + ' installed');
       const list = await installedPlugins();
-      setInstalled(new Set((list ?? []).map((app: any) => app.module_name)));
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+      setInstalled(new Set((list ?? []).flatMap(app => app.module_name ?? [])));
+    } catch (err) {
+      showError(err);
     } finally {
       setUploading(false);
     }
   }
 
-  async function install(app: any) {
+  async function install(app: BazarApp) {
     const again = installed.has(app.name);
-    if (app.type === 'frontend' && !await confirm({
-      title: 'Confirm installation',
-      message: 'This overwrites all existing frontend files in your /etc/www/ folder. Are you sure?',
-      confirmText: 'Yes, install',
-      danger: true,
-    })) {
+    if (
+      app.type === 'frontend' &&
+      !(await confirm({
+        title: 'Confirm installation',
+        message:
+          'This overwrites all existing frontend files in your /etc/www/ folder. Are you sure?',
+        confirmText: 'Yes, install',
+        danger: true,
+      }))
+    ) {
       return;
     }
     /*
      * Reinstalling is how a plugin is updated, so it stays available — but
      * it overwrites the module's files, which takes any local edits with it.
      */
-    if (again && app.type !== 'frontend' && !await confirm({
-      title: 'Reinstall ' + app.name + '?',
-      message: 'This overwrites the files in the module with the plugin ' +
-        'repository\'s current version. Any changes you have made to them are lost.',
-      confirmText: 'Yes, reinstall',
-      danger: true,
-    })) {
+    if (
+      again &&
+      app.type !== 'frontend' &&
+      !(await confirm({
+        title: 'Reinstall ' + app.name + '?',
+        message:
+          'This overwrites the files in the module with the plugin ' +
+          "repository's current version. Any changes you have made to them are lost.",
+        confirmText: 'Yes, reinstall',
+        danger: true,
+      }))
+    ) {
       return;
     }
     setInstalling(app.name);
@@ -142,8 +166,8 @@ export default function Plugins() {
       await installPlugin(app);
       showToast(app.name + ' is installing — you will be notified when it completes');
       setInstalled(current => new Set(current).add(app.name));
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setInstalling(null);
     }
@@ -171,22 +195,26 @@ export default function Plugins() {
                 if (file) {
                   void installFromFile(file);
                 }
-              }} />
+              }}
+            />
           </label>
           <SearchInput
             placeholder="Search plugins…"
             value={filter}
             onChange={setFilter}
-            style={{ width: 300 }} />
+            style={{ width: 300 }}
+          />
           <span className="muted">{visible.length} shown</span>
         </div>
       </div>
       {loading && <CardGridSkeleton />}
-      <div style={{
-        display: loading ? 'none' : 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-        gap: 14,
-      }}>
+      <div
+        style={{
+          display: loading ? 'none' : 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+          gap: 14,
+        }}
+      >
         {visible.map(app => (
           <div className="card" key={app.name} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
@@ -197,18 +225,19 @@ export default function Plugins() {
               {intro(app.description)}
             </p>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button
-                className="btn btn-secondary btn-small"
-                onClick={() => setDetails(app)}>
+              <button className="btn btn-secondary btn-small" onClick={() => setDetails(app)}>
                 Details
               </button>
               <button
                 className={'btn btn-small' + (installed.has(app.name) ? ' btn-secondary' : '')}
                 disabled={installing === app.name}
-                title={installed.has(app.name)
-                  ? 'Install the plugin repository\'s current version over the one you have'
-                  : undefined}
-                onClick={() => install(app)}>
+                title={
+                  installed.has(app.name)
+                    ? "Install the plugin repository's current version over the one you have"
+                    : undefined
+                }
+                onClick={() => install(app)}
+              >
                 {installLabel(installing === app.name, installed.has(app.name))}
               </button>
             </div>
@@ -221,12 +250,20 @@ export default function Plugins() {
           <div
             className="markdown-body"
             style={{ maxHeight: '60vh', overflowY: 'auto' }}
-            dangerouslySetInnerHTML={{ __html: safeHtml(details.description) }} />
+            dangerouslySetInnerHTML={{ __html: safeHtml(details.description) }}
+          />
           <div className="modal-actions">
-            <button className="btn btn-secondary" onClick={() => setDetails(null)}>Close</button>
+            <button className="btn btn-secondary" onClick={() => setDetails(null)}>
+              Close
+            </button>
             <button
               className="btn"
-              onClick={() => { const app = details; setDetails(null); void install(app); }}>
+              onClick={() => {
+                const app = details;
+                setDetails(null);
+                void install(app);
+              }}
+            >
               {installed.has(details.name) ? 'Reinstall' : 'Install'}
             </button>
           </div>

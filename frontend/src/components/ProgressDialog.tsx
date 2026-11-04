@@ -4,8 +4,9 @@
  * client-side loop — feed it directly, without a socket in between.
  */
 
-import Banner from './Banner';
 import { ReactNode, useEffect, useRef } from 'react';
+
+import Banner from './Banner';
 import { Modal } from './Dialogs';
 
 export interface ProgressLine {
@@ -14,22 +15,23 @@ export interface ProgressLine {
   message: string;
 }
 
-export default function ProgressDialog(props: Readonly<{
-  title: string;
-  // Label in the terminal's title bar — a channel name, a module path.
-  label: string;
-  lines: ProgressLine[];
-  // Right-hand side of the terminal bar, e.g. "Processing 3 of 54".
-  progress?: string;
-  // Rendered in the action bar next to Close — a follow-up link, a Cancel.
-  actions?: ReactNode;
-  // Shown above the terminal when the transport itself failed.
-  error?: string;
-  onDismissError?: () => void;
-  waitingText?: string;
-  onClose: () => void;
-}>) {
-
+export default function ProgressDialog(
+  props: Readonly<{
+    title: string;
+    // Label in the terminal's title bar — a channel name, a module path.
+    label: string;
+    lines: ProgressLine[];
+    // Right-hand side of the terminal bar, e.g. "Processing 3 of 54".
+    progress?: string;
+    // Rendered in the action bar next to Close — a follow-up link, a Cancel.
+    actions?: ReactNode;
+    // Shown above the terminal when the transport itself failed.
+    error?: string;
+    onDismissError?: () => void;
+    waitingText?: string;
+    onClose: () => void;
+  }>,
+) {
   const listRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
@@ -46,26 +48,30 @@ export default function ProgressDialog(props: Readonly<{
       <div className="terminal">
         <div className="terminal-bar">
           <span className="terminal-title">{props.label}</span>
-          {props.progress && (
-            <span className="terminal-progress">{props.progress}</span>
-          )}
+          {props.progress && <span className="terminal-progress">{props.progress}</span>}
         </div>
         <div ref={listRef} className="terminal-body">
-          {props.lines.length === 0
-            ? <div className="terminal-line waiting">
-                {props.waitingText ?? 'Waiting for your server…'}
-              </div>
-            : props.lines.map((line, index) => (
+          {props.lines.length === 0 ? (
+            <div className="terminal-line waiting">
+              {props.waitingText ?? 'Waiting for your server…'}
+            </div>
+          ) : (
+            props.lines.map((line, index) => (
+              // An append-only log whose lines may repeat word for word; position is the identity.
+              // eslint-disable-next-line react/no-array-index-key -- append-only, never reordered
               <div key={index} className={'terminal-line ' + line.type}>
                 {line.message}
               </div>
-            ))}
+            ))
+          )}
           <span className="terminal-caret" />
         </div>
       </div>
       <div className="modal-actions">
         {props.actions}
-        <button className="btn" onClick={props.onClose}>Close</button>
+        <button className="btn" onClick={props.onClose}>
+          Close
+        </button>
       </div>
     </Modal>
   );

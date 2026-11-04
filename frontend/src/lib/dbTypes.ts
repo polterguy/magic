@@ -19,12 +19,7 @@ export const FIELD_TYPES: Record<string, FieldType[]> = {
     { name: 'decimal' },
     { name: 'datetime' },
   ],
-  sqlite: [
-    { name: 'integer' },
-    { name: 'numeric' },
-    { name: 'text' },
-    { name: 'timestamp' },
-  ],
+  sqlite: [{ name: 'integer' }, { name: 'numeric' }, { name: 'text' }, { name: 'timestamp' }],
   pgsql: [
     { name: 'integer' },
     { name: 'numeric' },

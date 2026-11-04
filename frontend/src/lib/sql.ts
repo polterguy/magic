@@ -6,11 +6,19 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { showToast } from './toast';
-import { defaultDatabaseType, exportDdl, http, listDatabases, listFiles } from './api';
+
+import {
+  type DatabaseMeta,
+  defaultDatabaseType,
+  exportDdl,
+  http,
+  listDatabases,
+  listFiles,
+  type TableMeta,
+} from './api';
+import { errorMessage, showError } from './errors';
 
 export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
-
   const preferMagic = options?.preferMagic ?? false;
   const [searchParams] = useSearchParams();
   // Deep-link parameters from e.g. the Databases screen, consumed once.
@@ -22,17 +30,13 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
   const [types, setTypes] = useState<string[]>([]);
   const [type, setType] = useState('');
   const [connectionStrings, setConnectionStrings] = useState<string[]>([]);
-  /*
-   * Whether the connection strings for the current type have been fetched.
-   * The type arrives a round trip before they do, so without this the "none
-   * configured" notice shows during that gap and then disappears, shoving
-   * the page down behind it.
-   */
-  const [connectionsLoaded, setConnectionsLoaded] = useState(false);
+  // The type whose connection strings are in connectionStrings.
+  const [connectionsFor, setConnectionsFor] = useState<string | null>(null);
   const [connectionString, setConnectionString] = useState('');
-  const [databasesMeta, setDatabasesMeta] = useState<any[]>([]);
+  const [databasesMeta, setDatabasesMeta] = useState<DatabaseMeta[]>([]);
   const [database, setDatabase] = useState('');
-  const [schemaLoading, setSchemaLoading] = useState(true);
+  // The type and connection string the schema in databasesMeta was fetched for.
+  const [schemaFor, setSchemaFor] = useState<string | null>(null);
   const [error, setError] = useState('');
   /*
    * Guards, one per fetch chain — a slow answer for a selection the user has
@@ -42,14 +46,14 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
   const schemaSeq = useRef(0);
 
   useEffect(() => {
-    defaultDatabaseType().then(response => {
-      setTypes(response.options);
-      setType(deepLink.current.type ?? response.default);
-    }).catch(err => {
-      setError(err.message);
-      setConnectionsLoaded(true);
-      setSchemaLoading(false);
-    });
+    defaultDatabaseType()
+      .then(response => {
+        setTypes(response.options);
+        setType(deepLink.current.type ?? response.default);
+      })
+      .catch((err: unknown) => {
+        setError(errorMessage(err));
+      });
   }, []);
 
   useEffect(() => {
@@ -57,14 +61,15 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
       return;
     }
     const current = ++connectionsSeq.current;
-    setConnectionsLoaded(false);
-    http.get<Record<string, string>>(
-      '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type))
+    http
+      .get<Record<string, string>>(
+        '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type),
+      )
       .then(response => {
         if (current !== connectionsSeq.current) {
           return;
         }
-        setConnectionsLoaded(true);
+        setConnectionsFor(type);
         const names = Object.keys(response ?? {});
         setConnectionStrings(names);
         const wanted = deepLink.current.connectionString;
@@ -72,12 +77,11 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
         if (wanted && names.includes(wanted)) {
           setConnectionString(wanted);
         } else {
-          setConnectionString(names.includes('generic') ? 'generic' : names[0] ?? '');
+          setConnectionString(names.includes('generic') ? 'generic' : (names[0] ?? ''));
         }
         if (names.length === 0) {
           setDatabasesMeta([]);
           setDatabase('');
-          setSchemaLoading(false);
         }
       })
       .catch(() => {
@@ -86,12 +90,11 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
         }
         // A database type with no configured connection strings (e.g. the
         // config has it as null) — clear the selection, no scary error.
-        setConnectionsLoaded(true);
+        setConnectionsFor(type);
         setConnectionStrings([]);
         setConnectionString('');
         setDatabasesMeta([]);
         setDatabase('');
-        setSchemaLoading(false);
       });
   }, [type]);
 
@@ -105,32 +108,33 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
      * and it is the third in a chain, so it is worth saying something.
      */
     const current = ++schemaSeq.current;
-    setSchemaLoading(true);
-    listDatabases(type, connectionString).then(response => {
-      if (current !== schemaSeq.current) {
-        return;
-      }
-      setSchemaLoading(false);
-      const meta = response.databases ?? [];
-      setDatabasesMeta(meta);
-      const names = meta.map((db: any) => db.name);
-      const wanted = deepLink.current.database;
-      deepLink.current.database = null;
-      if (wanted && names.includes(wanted)) {
-        setDatabase(wanted);
-      } else if (preferMagic) {
-        setDatabase(names.includes('magic') ? 'magic' : names[0] ?? '');
-      } else {
-        setDatabase(names.find((name: string) => name !== 'magic') ?? names[0] ?? '');
-      }
-    }).catch(() => {
-      if (current !== schemaSeq.current) {
-        return;
-      }
-      setSchemaLoading(false);
-      setDatabasesMeta([]);
-      setDatabase('');
-    });
+    listDatabases(type, connectionString)
+      .then(response => {
+        if (current !== schemaSeq.current) {
+          return;
+        }
+        setSchemaFor(schemaKey(type, connectionString));
+        const meta = response.databases ?? [];
+        setDatabasesMeta(meta);
+        const names = meta.map(db => db.name);
+        const wanted = deepLink.current.database;
+        deepLink.current.database = null;
+        if (wanted && names.includes(wanted)) {
+          setDatabase(wanted);
+        } else if (preferMagic) {
+          setDatabase(names.includes('magic') ? 'magic' : (names[0] ?? ''));
+        } else {
+          setDatabase(names.find(name => name !== 'magic') ?? names[0] ?? '');
+        }
+      })
+      .catch(() => {
+        if (current !== schemaSeq.current) {
+          return;
+        }
+        setSchemaFor(schemaKey(type, connectionString));
+        setDatabasesMeta([]);
+        setDatabase('');
+      });
   }, [type, connectionString, preferMagic]);
 
   // Refetches the schema in place — after DDL changes like new tables.
@@ -138,24 +142,47 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
     try {
       const response = await listDatabases(type, connectionString);
       setDatabasesMeta(response.databases ?? []);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }, [type, connectionString]);
 
   const selectedMeta = databasesMeta.find(db => db.name === database);
+  /*
+   * Loading states are derived from what has been fetched for the current selection, rather than
+   * flagged on and off around each fetch. Without connections loaded the "none configured" notice
+   * would flash while the type is still a round trip ahead of its connection strings.
+   */
+  const connectionsLoaded = error !== '' || connectionsFor === type;
+  const schemaLoading =
+    error === '' &&
+    !(connectionsLoaded && connectionStrings.length === 0) &&
+    schemaFor !== schemaKey(type, connectionString);
 
   return {
-    types, type, setType,
-    connectionStrings, connectionString, setConnectionString,
-    databasesMeta, database, setDatabase,
-    selectedMeta, error, reloadSchema,
-    connectionsLoaded, schemaLoading,
+    types,
+    type,
+    setType,
+    connectionStrings,
+    connectionString,
+    setConnectionString,
+    databasesMeta,
+    database,
+    setDatabase,
+    selectedMeta,
+    error,
+    reloadSchema,
+    connectionsLoaded,
+    schemaLoading,
     loading: !connectionsLoaded || schemaLoading,
   };
 }
 
 export type DatabaseSelection = ReturnType<typeof useDatabaseSelection>;
+
+function schemaKey(type: string, connectionString: string) {
+  return type + '\n' + connectionString;
+}
 
 /*
  * SQL snippet files under /etc/{type}/templates/ — SQL Studio and the SQL
@@ -177,10 +204,10 @@ export function useSqlSnippets(type: string) {
 /*
  * Table → columns map for Ctrl-Space SQL autocomplete.
  */
-export function sqlHintTables(meta: any): Record<string, string[]> {
+export function sqlHintTables(meta: DatabaseMeta | undefined): Record<string, string[]> {
   const tables: Record<string, string[]> = {};
   for (const table of meta?.tables ?? []) {
-    tables[table.name] = (table.columns ?? []).map((column: any) => column.name);
+    tables[table.name] = (table.columns ?? []).map(column => column.name);
   }
   return tables;
 }
@@ -195,34 +222,42 @@ export async function buildSqlAiContext(options: {
   type: string;
   connectionString: string;
   database: string;
-  tables: any[];
+  tables: TableMeta[];
   sql: string;
   args?: { name: string; type: string }[];
 }): Promise<string> {
-  const dialect = {
-    sqlite: 'SQLite',
-    mysql: 'MySQL',
-    mssql: 'Microsoft SQL Server',
-    pgsql: 'PostgreSQL',
-  }[options.type] ?? options.type;
+  const dialect =
+    {
+      sqlite: 'SQLite',
+      mysql: 'MySQL',
+      mssql: 'Microsoft SQL Server',
+      pgsql: 'PostgreSQL',
+    }[options.type] ?? options.type;
   let result = '';
   if (options.tables.length > 0) {
     const ddl = await exportDdl(
-      options.type, options.connectionString, options.database,
-      options.tables.map((table: any) => table.name), true);
+      options.type,
+      options.connectionString,
+      options.database,
+      options.tables.map(table => table.name),
+      true,
+    );
     result += 'Current schema:\n\n' + ddl.result + '\n\n';
   }
   result += 'SQL dialect: ' + dialect + '\n\n';
   const declared = (options.args ?? []).filter(argument => argument.name);
   if (declared.length > 0) {
-    result += 'Declared endpoint arguments, reference them in the SQL as @name: ' +
-      declared.map(argument => argument.name + ' (' + argument.type + ')').join(', ') + '\n\n';
+    result +=
+      'Declared endpoint arguments, reference them in the SQL as @name: ' +
+      declared.map(argument => argument.name + ' (' + argument.type + ')').join(', ') +
+      '\n\n';
   }
   if (options.sql.length > 0) {
     result += 'Current code: \n\n' + options.sql;
   }
   if (options.tables.length > 0) {
-    result += '\n\n**IMPORTANT** - Return ONLY SQL! No ``` characters, or explanations, ' +
+    result +=
+      '\n\n**IMPORTANT** - Return ONLY SQL! No ``` characters, or explanations, ' +
       'ONLY the SQL! In the next message you will be given a natural language query being ' +
       "a request from the user. Return only the RAW SQL that solves the user' problem";
   }

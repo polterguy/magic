@@ -22,10 +22,12 @@ export function runDashboardTour() {
   dashboardTourRunner?.();
 }
 
-export function setShellActions(actions: {
-  openPalette: () => void;
-  openChatOps: () => void;
-} | null) {
+export function setShellActions(
+  actions: {
+    openPalette: () => void;
+    openChatOps: () => void;
+  } | null,
+) {
   paletteOpener = actions?.openPalette ?? null;
   chatOpsOpener = actions?.openChatOps ?? null;
 }

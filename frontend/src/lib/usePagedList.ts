@@ -5,8 +5,9 @@
  * a guard whichever answers LAST wins, stale or not.
  */
 
-import { useEffect, useRef, useState } from 'react';
-import { showToast } from './toast';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+
+import { showError } from './errors';
 
 /*
  * The value, trailing its source by delayMs. The initial render passes
@@ -15,8 +16,8 @@ import { showToast } from './toast';
 export function useDebounced<T>(value: T, delayMs = 300): T {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
-    const timer = window.setTimeout(() => setDebounced(value), delayMs);
-    return () => window.clearTimeout(timer);
+    const timer = globalThis.setTimeout(() => setDebounced(value), delayMs);
+    return () => globalThis.clearTimeout(timer);
   }, [value, delayMs]);
   return debounced;
 }
@@ -48,33 +49,46 @@ export function usePagedList<T>(options: {
   // Immediate dependencies — sort state, the active tab, and so on.
   deps?: unknown[];
 }): PagedList<T> {
-
   const [rows, setRows] = useState<T[] | null>(null);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
 
+  /*
+   * The newest load function, kept in a ref so a page passing an inline
+   * closure doesn't refetch on every render. Updated in a layout effect, which
+   * runs before the fetching effect below sees it.
+   */
   const loadRef = useRef(options.load);
-  loadRef.current = options.load;
+  useLayoutEffect(() => {
+    loadRef.current = options.load;
+  });
 
   const filter = useDebounced(options.filter);
   const key = JSON.stringify([filter, ...(options.deps ?? [])]);
-  const lastKey = useRef(key);
+
+  // A changed filter or sort starts over from the first page.
+  const [pageKey, setPageKey] = useState(key);
+  if (pageKey !== key) {
+    setPageKey(key);
+    if (page !== 0) {
+      setPage(0);
+    }
+  }
+
+  /*
+   * Loading is derived: the list is loading until the request for the current
+   * page, filter and refresh tick has settled.
+   */
+  const requestKey = JSON.stringify([key, page, tick, options.pageSize]);
+  const [settledKey, setSettledKey] = useState<string | null>(null);
+  const loading = settledKey !== requestKey;
   const seq = useRef(0);
 
   useEffect(() => {
-    // A changed filter or sort starts over from the first page.
-    if (lastKey.current !== key) {
-      lastKey.current = key;
-      if (page !== 0) {
-        setPage(0);
-        return;
-      }
-    }
     const current = ++seq.current;
-    setLoading(true);
-    loadRef.current(page * options.pageSize, options.pageSize)
+    loadRef
+      .current(page * options.pageSize, options.pageSize)
       .then(result => {
         if (current !== seq.current) {
           return;
@@ -82,17 +96,17 @@ export function usePagedList<T>(options: {
         setRows(result.rows ?? []);
         setCount(result.count);
       })
-      .catch(err => {
+      .catch((err: unknown) => {
         if (current === seq.current) {
-          showToast(err.message, true, err.logId);
+          showError(err);
         }
       })
       .finally(() => {
         if (current === seq.current) {
-          setLoading(false);
+          setSettledKey(requestKey);
         }
       });
-  }, [key, page, tick, options.pageSize]);
+  }, [requestKey, page, options.pageSize]);
 
   return {
     rows,

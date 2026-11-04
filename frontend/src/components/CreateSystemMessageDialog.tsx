@@ -5,23 +5,28 @@
  * flavor's instruction, and streams the result back over a socket.
  */
 
-import Banner from './Banner';
+import type { HubConnection } from '@microsoft/signalr';
 import { useRef, useState } from 'react';
-import { createSocket } from '../lib/socket';
-import { Modal, useDialog } from './Dialogs';
+
 import { createSystemMessage, gibberish } from '../lib/api';
+import { errorMessage } from '../lib/errors';
+import { createSocket } from '../lib/socket';
+import { useDialog } from '../lib/useDialog';
+import Banner from './Banner';
+import { Modal } from './Dialogs';
 
-export default function CreateSystemMessageDialog(props: Readonly<{
-  instruction: string;
-  template: string;
-  onGenerated: (message: string) => void;
-  onClose: () => void;
-}>) {
-
+export default function CreateSystemMessageDialog(
+  props: Readonly<{
+    instruction: string;
+    template: string;
+    onGenerated: (message: string) => void;
+    onClose: () => void;
+  }>,
+) {
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const connectionRef = useRef<any>(null);
+  const connectionRef = useRef<HubConnection | null>(null);
   const { confirm } = useDialog();
 
   async function generate() {
@@ -36,17 +41,17 @@ export default function CreateSystemMessageDialog(props: Readonly<{
     let channel: string;
     try {
       channel = 'c_' + (await gibberish()).result;
-    } catch (err: any) {
+    } catch (err) {
       setBusy(false);
-      setError(err?.message ?? 'Could not create a feedback channel');
+      setError(errorMessage(err, 'Could not create a feedback channel'));
       return;
     }
     const connection = createSocket();
     connectionRef.current = connection;
 
     connection.on(channel, (raw: string) => {
-      const args = JSON.parse(raw);
-      connection.stop();
+      const args = JSON.parse(raw) as { message: string; extra?: string };
+      void connection.stop();
       setBusy(false);
       if (args.message === 'ERROR') {
         setError(args.extra ?? 'Generation failed');
@@ -55,12 +60,13 @@ export default function CreateSystemMessageDialog(props: Readonly<{
       props.onGenerated(args.message);
     });
 
-    connection.start()
+    connection
+      .start()
       .then(() => createSystemMessage(props.instruction, props.template, url, channel))
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         setBusy(false);
-        setError(err?.message ?? 'Could not connect to socket');
-        connection.stop();
+        setError(errorMessage(err, 'Could not connect to socket'));
+        void connection.stop();
       });
   }
 
@@ -71,15 +77,18 @@ export default function CreateSystemMessageDialog(props: Readonly<{
    * on server-side either way; only the result is lost.
    */
   async function close() {
-    if (busy && !await confirm({
-      title: 'Stop waiting?',
-      message: 'The generation continues on the server, but its result will be lost.',
-      confirmText: 'Stop waiting',
-      danger: true,
-    })) {
+    if (
+      busy &&
+      !(await confirm({
+        title: 'Stop waiting?',
+        message: 'The generation continues on the server, but its result will be lost.',
+        confirmText: 'Stop waiting',
+        danger: true,
+      }))
+    ) {
       return;
     }
-    connectionRef.current?.stop();
+    void connectionRef.current?.stop();
     props.onClose();
   }
 
@@ -91,7 +100,8 @@ export default function CreateSystemMessageDialog(props: Readonly<{
           <div className="spinner" />
           <div>
             <div style={{ fontWeight: 600 }}>
-              Generating from {url}<span className="spinner-dots" />
+              Generating from {url}
+              <span className="spinner-dots" />
             </div>
             <div className="muted" style={{ marginTop: 4 }}>
               This can take a minute or two. Please keep this window open.
@@ -101,24 +111,35 @@ export default function CreateSystemMessageDialog(props: Readonly<{
       ) : (
         <>
           <p className="muted" style={{ marginTop: 0 }}>
-            This template builds a personalised instruction from a website. Enter a
-            URL — the server will crawl it and fill in the template. This takes a
-            minute or two; keep this window open.
+            This template builds a personalised instruction from a website. Enter a URL — the server
+            will crawl it and fill in the template. This takes a minute or two; keep this window
+            open.
           </p>
-          {error && <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>{error}</Banner>}
+          {error && (
+            <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
+              {error}
+            </Banner>
+          )}
           <label className="modal-label">
-            Website URL
+            Website URL{' '}
             <input
               type="text"
               placeholder="https://example.com"
               value={url}
               autoFocus
               onChange={e => setUrl(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') void generate(); }} />
+              onKeyDown={e => {
+                if (e.key === 'Enter') void generate();
+              }}
+            />
           </label>
           <div className="modal-actions">
-            <button className="btn btn-secondary" onClick={close}>Cancel</button>
-            <button className="btn" onClick={generate} disabled={!url}>Generate</button>
+            <button className="btn btn-secondary" onClick={close}>
+              Cancel
+            </button>
+            <button className="btn" onClick={generate} disabled={!url}>
+              Generate
+            </button>
           </div>
         </>
       )}

@@ -3,32 +3,8 @@
  * and keeps the JWT token refreshed before it expires.
  */
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  ReactNode,
-} from 'react';
-import {
-  StoredBackend,
-  activateBackend,
-  backendFromUrl,
-  deactivateBackend,
-  forgetBackend,
-  loadBackend,
-  loadBackends,
-  saveBackend,
-  clearBackend,
-  isRootToken,
-  tokenUsername,
-  tokenExpiration,
-  tokenExpired,
-  withoutTrailingSlashes,
-} from './backend';
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import {
   authenticate,
   configureApi,
@@ -38,52 +14,26 @@ import {
   setUnauthorizedHandler,
   verifyTicket,
 } from './api';
+import {
+  activateBackend,
+  backendFromUrl,
+  clearBackend,
+  deactivateBackend,
+  forgetBackend,
+  isRootToken,
+  loadBackend,
+  loadBackends,
+  saveBackend,
+  StoredBackend,
+  tokenExpiration,
+  tokenExpired,
+  tokenUsername,
+  withoutTrailingSlashes,
+} from './backend';
 import { showToast } from './toast';
-
-interface AuthState {
-  backend: StoredBackend | null;
-  authenticated: boolean;
-  /*
-   * Whether the signed-in user can actually use the dashboard. Every
-   * dashboard endpoint verifies root, so anyone else is authenticated but
-   * unable to do anything — however they signed in.
-   */
-  isRoot: boolean;
-  /*
-   * Whether the backend still needs its first-run setup. Null until the
-   * status has been fetched — the endpoint requires root, so this can only
-   * be asked once signed in.
-   */
-  setupNeeded: boolean | null;
-  // Called when setup completes, so the app stops showing the setup screen.
-  setupCompleted: () => void;
-  /*
-   * The connected backend's Magic version. Owned here because two unrelated
-   * places want it — the sidebar and the dashboard's KPI card — and asking
-   * the backend once per interested component meant fetching the same
-   * unchanging string twice on every dashboard visit.
-   */
-  version: string;
-  login: (url: string, username: string, password: string) => Promise<void>;
-  // Signs in with a ticket the backend already issued, as OpenID login does.
-  loginWithTicket: (url: string, ticket: string) => void;
-  logout: () => void;
-  // Every backend signed into, so the user can move between cloudlets.
-  backends: StoredBackend[];
-  switchBackend: (url: string) => void;
-  removeBackend: (url: string) => void;
-  // Shows the login screen without disturbing the backends already stored.
-  addBackend: () => void;
-}
-
-const AuthContext = createContext<AuthState>(null!);
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
+import { AuthContext } from './useAuth';
 
 export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
-
   const [backend, setBackend] = useState<StoredBackend | null>(() => {
     /*
      * A "?backend=" link wins over whatever was last active, since it is an
@@ -114,9 +64,12 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
    */
   const token = backend?.token ?? null;
   const isRoot = !!token && isRootToken(token);
+  // Signing out of root forgets the answer, so the next root session asks again.
+  if (!isRoot && setupNeeded !== null) {
+    setSetupNeeded(null);
+  }
   useEffect(() => {
     if (!isRoot) {
-      setSetupNeeded(null);
       return;
     }
     let cancelled = false;
@@ -127,8 +80,14 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
         }
       })
       // An unreachable or older backend shouldn't trap anyone on setup.
-      .catch(() => { if (!cancelled) { setSetupNeeded(false); } });
-    return () => { cancelled = true; };
+      .catch(() => {
+        if (!cancelled) {
+          setSetupNeeded(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [isRoot, token]);
 
   /*
@@ -139,16 +98,28 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
    * Root only — the endpoint verifies root, and non-root sign-ins land on
    * the NoAccess screen, which deliberately calls nothing.
    */
+  if ((!token || !isRoot) && version !== '…') {
+    setVersion('…');
+  }
   useEffect(() => {
     if (!token || !isRoot) {
-      setVersion('…');
       return;
     }
     let cancelled = false;
     getVersion()
-      .then(response => { if (!cancelled) { setVersion(response.version); } })
-      .catch(() => { if (!cancelled) { setVersion('?'); } });
-    return () => { cancelled = true; };
+      .then(response => {
+        if (!cancelled) {
+          setVersion(response.version);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setVersion('?');
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [backend?.url, token, isRoot]);
 
   /*
@@ -191,9 +162,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
       return;
     }
     // An expired token is no better than none — fall through to the login.
-    const next = stored.token && tokenExpired(stored.token)
-      ? { ...stored, token: null }
-      : stored;
+    const next = stored.token && tokenExpired(stored.token) ? { ...stored, token: null } : stored;
     configureApi(next.url, next.token);
     setBackend(next);
     setBackends(loadBackends());
@@ -218,14 +187,17 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
    * repeat the switch, and the address should not keep advertising it.
    */
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(globalThis.location.search);
     if (!params.has('backend')) {
       return;
     }
     params.delete('backend');
     const query = params.toString();
-    window.history.replaceState(
-      null, '', window.location.pathname + (query ? '?' + query : ''));
+    globalThis.history.replaceState(
+      null,
+      '',
+      globalThis.location.pathname + (query ? '?' + query : ''),
+    );
   }, []);
 
   /*
@@ -259,7 +231,9 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
       .catch(() => {
         // Offline or unreachable, which says nothing about the token.
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   // Refreshes the JWT token one minute before it expires.
@@ -288,12 +262,12 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
          * while the token still works.
          */
         if (!tokenExpired(backend.token!)) {
-          refreshTimer.current = window.setTimeout(refresh, 10000);
+          refreshTimer.current = globalThis.setTimeout(refresh, 10000);
         }
       }
     };
     const millisecondsUntilRefresh = Math.max(0, (exp - 60) * 1000 - Date.now());
-    refreshTimer.current = window.setTimeout(refresh, millisecondsUntilRefresh);
+    refreshTimer.current = globalThis.setTimeout(refresh, millisecondsUntilRefresh);
     return () => {
       if (refreshTimer.current) {
         clearTimeout(refreshTimer.current);
@@ -301,17 +275,23 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
     };
   }, [backend, applyBackend]);
 
-  const login = useCallback(async (url: string, username: string, password: string) => {
-    url = withoutTrailingSlashes(url);
-    const response = await authenticate(url, username, password);
-    applyBackend({ url, username, token: response.ticket });
-  }, [applyBackend]);
+  const login = useCallback(
+    async (url: string, username: string, password: string) => {
+      url = withoutTrailingSlashes(url);
+      const response = await authenticate(url, username, password);
+      applyBackend({ url, username, token: response.ticket });
+    },
+    [applyBackend],
+  );
 
-  const loginWithTicket = useCallback((url: string, ticket: string) => {
-    url = withoutTrailingSlashes(url);
-    // Whoever the ticket belongs to — the caller has no better source.
-    applyBackend({ url, username: tokenUsername(ticket), token: ticket });
-  }, [applyBackend]);
+  const loginWithTicket = useCallback(
+    (url: string, ticket: string) => {
+      url = withoutTrailingSlashes(url);
+      // Whoever the ticket belongs to — the caller has no better source.
+      applyBackend({ url, username: tokenUsername(ticket), token: ticket });
+    },
+    [applyBackend],
+  );
 
   const logout = useCallback(() => {
     if (backend) {
@@ -321,28 +301,37 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
 
   const setupCompleted = useCallback(() => setSetupNeeded(false), []);
 
-  const value = useMemo(() => ({
-    backend,
-    authenticated: !!backend?.token,
-    isRoot,
-    setupNeeded,
-    setupCompleted,
-    version,
-    login,
-    loginWithTicket,
-    logout,
-    backends,
-    switchBackend,
-    removeBackend,
-    addBackend,
-  }), [
-    backend, isRoot, setupNeeded, setupCompleted, version, login, loginWithTicket, logout,
-    backends, switchBackend, removeBackend, addBackend,
-  ]);
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      backend,
+      authenticated: !!backend?.token,
+      isRoot,
+      setupNeeded,
+      setupCompleted,
+      version,
+      login,
+      loginWithTicket,
+      logout,
+      backends,
+      switchBackend,
+      removeBackend,
+      addBackend,
+    }),
+    [
+      backend,
+      isRoot,
+      setupNeeded,
+      setupCompleted,
+      version,
+      login,
+      loginWithTicket,
+      logout,
+      backends,
+      switchBackend,
+      removeBackend,
+      addBackend,
+    ],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

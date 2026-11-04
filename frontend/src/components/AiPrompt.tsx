@@ -6,9 +6,11 @@
  * Renders nothing when OpenAI isn't configured on the backend.
  */
 
-import AiWaiter from './AiWaiter';
-import { CSSProperties, FormEvent, useEffect, useState } from 'react';
+import { CSSProperties, SubmitEvent, useEffect, useState } from 'react';
+
 import { aiQuery, openaiIsConfigured } from '../lib/api';
+import { errorMessage } from '../lib/errors';
+import AiWaiter from './AiWaiter';
 
 const TOOLTIPS: Record<string, string> = {
   hl: 'Ask the Machine to create some Hyperlambda code for you',
@@ -21,24 +23,25 @@ const TOOLTIPS: Record<string, string> = {
   md: 'Ask the Machine to create Markdown for you',
 };
 
-export default function AiPrompt(props: Readonly<{
-  fileType: string;
-  // System message for the generation — schema, framing, etc. May be async
-  // (SQL Studio exports the schema DDL on demand).
-  getContext?: () => string | Promise<string> | undefined;
-  /*
-   * The code being changed, when there is any. Sent as its own field rather
-   * than folded into the system message, so the generator can tell a change
-   * request from a fresh one — it keeps the file's existing comment instead of
-   * replacing it with the instruction describing the change.
-   */
-  getOldCode?: () => string;
-  session?: string;
-  onResult: (snippet: string) => void;
-  onError: (message: string) => void;
-  style?: CSSProperties;
-}>) {
-
+export default function AiPrompt(
+  props: Readonly<{
+    fileType: string;
+    // System message for the generation — schema, framing, etc. May be async
+    // (SQL Studio exports the schema DDL on demand).
+    getContext?: () => string | Promise<string> | undefined;
+    /*
+     * The code being changed, when there is any. Sent as its own field rather
+     * than folded into the system message, so the generator can tell a change
+     * request from a fresh one — it keeps the file's existing comment instead of
+     * replacing it with the instruction describing the change.
+     */
+    getOldCode?: () => string;
+    session?: string;
+    onResult: (snippet: string) => void;
+    onError: (message: string) => void;
+    style?: CSSProperties;
+  }>,
+) {
   const [configured, setConfigured] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [busy, setBusy] = useState(false);
@@ -49,7 +52,7 @@ export default function AiPrompt(props: Readonly<{
       .catch(() => setConfigured(false));
   }, []);
 
-  async function ask(event: FormEvent) {
+  async function ask(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!prompt.trim() || busy) {
       return;
@@ -58,11 +61,16 @@ export default function AiPrompt(props: Readonly<{
     try {
       const context = await props.getContext?.();
       const response = await aiQuery(
-        prompt, props.fileType, context, props.session, props.getOldCode?.());
+        prompt,
+        props.fileType,
+        context,
+        props.session,
+        props.getOldCode?.(),
+      );
       props.onResult(response.result);
       setPrompt('');
-    } catch (err: any) {
-      props.onError(err.message);
+    } catch (err) {
+      props.onError(errorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -76,7 +84,8 @@ export default function AiPrompt(props: Readonly<{
     <>
       <form
         onSubmit={ask}
-        style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0, ...props.style }}>
+        style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0, ...props.style }}
+      >
         <input
           type="text"
           placeholder="Where the Machine Creates the Code ..."
@@ -84,12 +93,14 @@ export default function AiPrompt(props: Readonly<{
           value={prompt}
           disabled={busy}
           onChange={event => setPrompt(event.target.value)}
-          style={{ flex: 1, minWidth: 200 }} />
+          style={{ flex: 1, minWidth: 200 }}
+        />
         <button
           className="btn btn-secondary"
           type="submit"
           title="Ask the AI to generate code"
-          disabled={busy || !prompt.trim()}>
+          disabled={busy || !prompt.trim()}
+        >
           {busy ? 'Asking…' : 'Ask'}
         </button>
       </form>

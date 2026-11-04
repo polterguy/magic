@@ -14,10 +14,10 @@
  *    @codemirror/autocomplete.
  */
 
-import { StreamLanguage } from '@codemirror/language';
+import type { Completion, CompletionContext, CompletionResult } from '@codemirror/autocomplete';
 import type { StreamParser, StringStream } from '@codemirror/language';
+import { StreamLanguage } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
-import type { CompletionContext, CompletionResult, Completion } from '@codemirror/autocomplete';
 
 /*
  * The style names the tokenizer returns. legacy-modes maps them through
@@ -48,7 +48,7 @@ const styles = {
   lambda: 'variable-3',
 } as const;
 
-type StyleName = typeof styles[keyof typeof styles];
+type StyleName = (typeof styles)[keyof typeof styles];
 
 interface HyperlambdaState {
   mode: 'name' | 'value' | 'mcomment' | 'mstring-name' | 'mstring-value' | 'error';
@@ -77,7 +77,6 @@ function startState(): HyperlambdaState {
  * Checks for indentation bugs in Hyperlambda.
  */
 function checkIndentation(state: HyperlambdaState, pos: number): boolean {
-
   /*
    * Verifying that indentation is modulo 3, since everything else is a
    * syntactic error for sure.
@@ -153,7 +152,6 @@ function parseSingleLineComment(stream: StringStream): StyleName {
  * Invoked when parser is parsing a multi line comment.
  */
 function tokenizeMultiCommentMode(stream: StringStream, state: HyperlambdaState): StyleName {
-
   /*
    * No needs to be "fancy" here, simply skip til "end of line", and then
    * parse content, to see if we passed "end of multi line comment" or not.
@@ -173,7 +171,6 @@ function tokenizeMultiCommentMode(stream: StringStream, state: HyperlambdaState)
   stream.skipToEnd();
   const cur = stream.current();
   if (cur.includes('*/', cur.length - 2)) {
-
     // End of comment, hence name must follow.
     state.indent = state.oldIndent;
     state.mode = 'name';
@@ -184,8 +181,11 @@ function tokenizeMultiCommentMode(stream: StringStream, state: HyperlambdaState)
 /*
  * Invoked when parser is parsing a multi line string name entity.
  */
-function tokenizeMultilineStringMode(stream: StringStream, state: HyperlambdaState, more: boolean): StyleName {
-
+function tokenizeMultilineStringMode(
+  stream: StringStream,
+  state: HyperlambdaState,
+  more: boolean,
+): StyleName {
   // Not at the end of the multi line string literal yet, so it carries on over the next line.
   if (!readToEndOfMultilineString(stream)) {
     return styles.string;
@@ -197,21 +197,17 @@ function tokenizeMultilineStringMode(stream: StringStream, state: HyperlambdaSta
   // Checking if there's a value or a type declaration behind multi line string name.
   const cr = stream.peek();
   if (!more && cr != null) {
-
     // "Garbage data" found after closing of multi line string literal as value.
     state.mode = 'error';
     return styles.error;
   }
   if (cr == null) {
-
     // No value for this guy!
     state.mode = 'name';
   } else if (cr === ':') {
-
     // Value follows.
     state.mode = 'value';
   } else {
-
     // "Garbage data" found after closing of multi line string literal.
     state.mode = 'error';
     return styles.error;
@@ -260,39 +256,43 @@ function quoteRunLength(stream: StringStream): number {
  * invocation, a "variable", etc, at which point the style of the element is
  * overridden from its default.
  */
-function getNodeNameType(word: string | null): StyleName | null {
+declare global {
+  // The slot names the editor highlights and completes, loaded by CodeEditor.
+  var _vocabulary: string[] | null | undefined;
+  // Dynamic slots, offered as [execute:...] completions.
+  var _slots: string[] | undefined;
+}
 
+function getNodeNameType(word: string | null): StyleName | null {
   /*
    * Checking if there are any autocomplete keywords, and if not, returning
    * early.
    */
-  const win = window as any;
+  const win = globalThis;
   if (win._vocabulary === undefined || win._vocabulary === null) {
     const vocabulary = localStorage.getItem('vocabulary');
-    if (vocabulary === null || vocabulary === undefined || vocabulary === '') {
+    if (vocabulary === null || vocabulary === '') {
       return null;
     }
-    win._vocabulary = JSON.parse(vocabulary);
+    win._vocabulary = JSON.parse(vocabulary) as string[];
   }
 
   /*
    * Default handling, simply checks if current name is either a "variable"
    * (starts with "_") or an Active Event invocation (contains ".").
    */
-  if (win._vocabulary.includes(word)) {
-
+  if (word !== null && win._vocabulary.includes(word)) {
     /*
      * The name was found in our Active Events JSON declaration, and is either
      * a "keyword" or an Active Event. Which type it is, depends upon if it
      * contains a "." or not.
      */
-    if (!word!.includes('.')) {
-      return styles.keyword;
-    } else {
+    if (word.includes('.')) {
       return styles.activeevent;
+    } else {
+      return styles.keyword;
     }
   } else if (word?.[0] === '.') {
-
     /*
      * The name of the node starts with a period ".", and hence is a lambda
      * segment (data segment).
@@ -306,7 +306,6 @@ function getNodeNameType(word: string | null): StyleName | null {
  * Invoked when parser is parsing a "name" entity.
  */
 function tokenizeNameMode(stream: StringStream, state: HyperlambdaState): StyleName | null {
-
   /*
    * Figuring out indentation by seeking forward into stream, as long as we
    * have space " ", storing the number of spaces we find, since no node can
@@ -348,7 +347,6 @@ function tokenizeNameMode(stream: StringStream, state: HyperlambdaState): StyleN
   while (true) {
     cr = stream.peek();
     if (cr == null) {
-
       // End of line, next node is name, hence no needs to update state.
       stream.next();
       break;
@@ -366,7 +364,6 @@ function tokenizeNameMode(stream: StringStream, state: HyperlambdaState): StyleN
    */
   let retVal: StyleName | null = null;
   if (cr === ':') {
-
     /*
      * Stream did not end with "end of line", hence next token will have to be
      * some sort of value. Changing state of tokenizer to reflect that fact.
@@ -400,9 +397,7 @@ function tokenizeSpecialName(
   first: string | null | undefined,
 ): SpecialName {
   switch (first) {
-
     case '"':
-
       /*
        * This is a single line string literal (hopefully, unless there's a bug
        * in it), checking for indentation bugs first.
@@ -420,7 +415,6 @@ function tokenizeSpecialName(
       return tokenizeAtName(stream, state, pos, first);
 
     case ':':
-
       /*
        * This is a node with an "empty" name, first checking indentation for
        * bugs, WITHOUT removing ":" from stream.
@@ -442,7 +436,8 @@ function tokenizeSpecialName(
   return { done: false, cr: first };
 }
 
-type SpecialName = { done: true; style: StyleName | null } | { done: false; cr: string | null | undefined };
+type SpecialName =
+  { done: true; style: StyleName | null } | { done: false; cr: string | null | undefined };
 
 // A name starting with "@", which is a multi line string literal, or just a name starting with "@".
 function tokenizeAtName(
@@ -451,7 +446,6 @@ function tokenizeAtName(
   pos: number,
   first: string | null | undefined,
 ): SpecialName {
-
   /*
    * This is (possibly) a multi line string literal (hopefully, unless
    * there's a bug in it). First checking for indentation bugs.
@@ -488,7 +482,6 @@ function tokenizeSlashName(
   pos: number,
   first: string | null | undefined,
 ): SpecialName {
-
   /*
    * Possibly a comment, either multi line comment, or single line
    * comment, but first checking next character before we determine if it
@@ -496,12 +489,10 @@ function tokenizeSlashName(
    */
   stream.next();
   if (stream.peek() === '/') {
-
     // Single line comment.
     state.indent = pos;
     return { done: true, style: parseSingleLineComment(stream) };
   } else if (stream.peek() === '*') {
-
     // Multi line comment.
     state.oldIndent = pos;
     state.indent = pos + 1;
@@ -520,10 +511,8 @@ function tokenizeSlashName(
  * Invoked when parser is parsing a "value" entity.
  */
 function tokenizeValueMode(stream: StringStream, state: HyperlambdaState): StyleName | null {
-
   // Checking if this is an expression.
   if (state.is_ex === true) {
-
     /*
      * After expression is parsed, next token must be a name, hence updating
      * state, before parsing until end of expression.
@@ -535,20 +524,16 @@ function tokenizeValueMode(stream: StringStream, state: HyperlambdaState): Style
 
   // Getting next token out of stream, and figuring out what type of value token this is.
   switch (stream.next()) {
-
     case '"':
-
       // Single line string literal.
       state.mode = 'name';
       return parseSingleLineStringLiteral(stream, state);
 
     case '@':
-
       // Possibly a multi line string literal, but we don't quite know yet!
       return tokenizeValueStartingWithAt(stream, state);
 
     case ':':
-
       /*
        * Possible "type carry over" from value tokenizer logic, we don't know
        * quite yet.
@@ -567,9 +552,11 @@ function tokenizeValueMode(stream: StringStream, state: HyperlambdaState): Style
  * A value starting with "@", which is either a multi line string literal, or a
  * value that just happens to start with "@".
  */
-function tokenizeValueStartingWithAt(stream: StringStream, state: HyperlambdaState): StyleName | null {
+function tokenizeValueStartingWithAt(
+  stream: StringStream,
+  state: HyperlambdaState,
+): StyleName | null {
   if (stream.peek() === '"') {
-
     // Multi line string literal.
     stream.next();
     state.mode = 'mstring-value';
@@ -596,11 +583,9 @@ function tokenizeValueStartingWithAt(stream: StringStream, state: HyperlambdaSta
  */
 function tokenizeTypeOrValue(stream: StringStream, state: HyperlambdaState): StyleName | null {
   while (true) {
-
     // Fetching next character out of stream.
     const cr = stream.next();
     if (cr == null) {
-
       // We're at "end of line", hence next mode is "name".
       state.mode = 'name';
       return styles.value;
@@ -623,7 +608,8 @@ function tokenizeTypeOrValue(stream: StringStream, state: HyperlambdaState): Sty
      * particular type is a lambda expression or not. Expressions have
      * special treatment.
      */
-    if (stream.string.substring(stream.start, stream.pos - 1) === 'x') {
+    // The ':' was just consumed, so pos - 1 never falls before start.
+    if (stream.string.slice(stream.start, stream.pos - 1) === 'x') {
       state.is_ex = true;
     } // else, some arbitrary type, such as "bool", "int", etc ...
 
@@ -653,7 +639,6 @@ function token(stream: StringStream, state: HyperlambdaState): string | null {
     case 'mstring-value':
       return tokenizeMultilineStringMode(stream, state, false);
     case 'error':
-
       /*
        * No need to continue parsing, rest of document is erroneous, and there
        * are no ways we can recover anyway. Yielding "error" for the rest of
@@ -679,7 +664,7 @@ function token(stream: StringStream, state: HyperlambdaState): string | null {
  * languageData.
  */
 export function hyperlambdaCompletions(context: CompletionContext): CompletionResult | null {
-  const vocabulary = (window as any)._vocabulary as string[] | undefined;
+  const vocabulary = globalThis._vocabulary;
   if (!vocabulary) {
     return null;
   }
@@ -692,7 +677,7 @@ export function hyperlambdaCompletions(context: CompletionContext): CompletionRe
   const options: Completion[] = vocabulary
     .filter(word => word.includes(curWord))
     .map(word => ({ label: word, type: 'keyword' }));
-  const slots = ((window as any)._slots as string[] | undefined) ?? [];
+  const slots = globalThis._slots ?? [];
   for (const slot of slots) {
     if (slot.includes(curWord)) {
       options.push({ label: 'execute:' + slot, type: 'function' });
@@ -715,7 +700,7 @@ export const hyperlambdaParser: StreamParser<HyperlambdaState> = {
   name: 'hyperlambda',
   startState,
   token,
-  indent: (state) => state.indent,
+  indent: state => state.indent,
   languageData: {
     commentTokens: { line: '//', block: { open: '/*', close: '*/' } },
     autocomplete: hyperlambdaCompletions,

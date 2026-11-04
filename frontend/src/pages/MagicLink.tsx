@@ -14,13 +14,13 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../lib/AuthContext';
+
 import { verifyTicket } from '../lib/api';
+import { useAuth } from '../lib/useAuth';
 
 export const MAGIC_LINK_PATH = '/authentication/magic-link';
 
 export default function MagicLink() {
-
   const { backend, loginWithTicket, logout } = useAuth();
   const navigate = useNavigate();
   /*
@@ -32,8 +32,7 @@ export default function MagicLink() {
    * The token stops travelling with the page a moment later anyway, when
    * this navigates away.
    */
-  const [token] = useState(
-    () => new URLSearchParams(window.location.search).get('token'));
+  const [token] = useState(() => new URLSearchParams(globalThis.location.search).get('token'));
 
   // Attaching the token to the backend the link named.
   useEffect(() => {
@@ -58,16 +57,16 @@ export default function MagicLink() {
            * never pass through this screen, so they never see it.
            */
           sessionStorage.setItem('magic2.magic-link-arrival', '1');
-          navigate('/', { replace: true });
+          void navigate('/', { replace: true });
         } else {
           // Not a token worth keeping.
           logout();
-          navigate('/', { replace: true });
+          void navigate('/', { replace: true });
         }
       })
       .catch(() => {
         logout();
-        navigate('/', { replace: true });
+        void navigate('/', { replace: true });
       });
   }, [token, backend?.token, logout, navigate]);
 
@@ -75,7 +74,9 @@ export default function MagicLink() {
     <div className="login-wrapper">
       <div className="login-card" style={{ textAlign: 'center' }}>
         <h1>magic</h1>
-        <p className="muted" style={{ margin: 0 }}>Signing you in…</p>
+        <p className="muted" style={{ margin: 0 }}>
+          Signing you in…
+        </p>
       </div>
     </div>
   );

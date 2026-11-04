@@ -1,0 +1,5 @@
+dist
+node_modules
+public/ngsw-worker.js
+package-lock.json
+*.md

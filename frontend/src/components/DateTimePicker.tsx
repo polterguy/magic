@@ -13,12 +13,31 @@
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+
 import Select from './Select';
 
-const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const WEEKDAYS = [
+  { key: 'mon', label: 'M' },
+  { key: 'tue', label: 'T' },
+  { key: 'wed', label: 'W' },
+  { key: 'thu', label: 'T' },
+  { key: 'fri', label: 'F' },
+  { key: 'sat', label: 'S' },
+  { key: 'sun', label: 'S' },
+];
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -34,22 +53,25 @@ function parseValue(v: string): Date | null {
 }
 
 const sameDay = (a: Date, b: Date) =>
-  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
 
 // Midnight of the given day, for day-granularity comparisons (e.g. the min bound).
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 
-export default function DateTimePicker(props: Readonly<{
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  disabled?: boolean;
-  // Date-only: no time row, value is "YYYY-MM-DD", and picking a day closes.
-  dateOnly?: boolean;
-  // Earliest selectable day, "YYYY-MM-DD"; earlier days are disabled.
-  min?: string;
-}>) {
-
+export default function DateTimePicker(
+  props: Readonly<{
+    value: string;
+    onChange: (value: string) => void;
+    placeholder?: string;
+    disabled?: boolean;
+    // Date-only: no time row, value is "YYYY-MM-DD", and picking a day closes.
+    dateOnly?: boolean;
+    // Earliest selectable day, "YYYY-MM-DD"; earlier days are disabled.
+    min?: string;
+  }>,
+) {
   const dateOnly = !!props.dateOnly;
   const selected = useMemo(() => parseValue(props.value), [props.value]);
   const minTime = useMemo(() => {
@@ -99,7 +121,9 @@ export default function DateTimePicker(props: Readonly<{
   }
 
   // Re-measure once the popover has painted, so the clamp uses its real height.
-  useLayoutEffect(() => { if (open) place(); }, [open]);
+  useLayoutEffect(() => {
+    if (open) place();
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -119,12 +143,12 @@ export default function DateTimePicker(props: Readonly<{
     window.addEventListener('scroll', reflow, true);
     window.addEventListener('resize', reflow);
     document.addEventListener('mousedown', onDown);
-    window.addEventListener('keydown', onKey, true);
+    globalThis.addEventListener('keydown', onKey, true);
     return () => {
       window.removeEventListener('scroll', reflow, true);
       window.removeEventListener('resize', reflow);
       document.removeEventListener('mousedown', onDown);
-      window.removeEventListener('keydown', onKey, true);
+      globalThis.removeEventListener('keydown', onKey, true);
     };
   }, [open]);
 
@@ -135,8 +159,10 @@ export default function DateTimePicker(props: Readonly<{
     const days = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
     const weeks = Math.ceil((offset + days) / 7);
     const start = new Date(view.getFullYear(), view.getMonth(), 1 - offset);
-    return Array.from({ length: weeks * 7 }, (_, i) =>
-      new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
+    return Array.from(
+      { length: weeks * 7 },
+      (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i),
+    );
   }, [view]);
 
   function emit(day: Date, t: { h: number; min: number }) {
@@ -180,89 +206,122 @@ export default function DateTimePicker(props: Readonly<{
         disabled={props.disabled}
         aria-haspopup="dialog"
         aria-expanded={open}
-        onClick={() => (open ? setOpen(false) : openPop())}>
+        onClick={() => (open ? setOpen(false) : openPop())}
+      >
         <span className={'dtp-value' + (selected ? '' : ' placeholder')}>{label}</span>
-        <span className="dtp-icon" aria-hidden="true">▦</span>
+        <span className="dtp-icon" aria-hidden="true">
+          ▦
+        </span>
       </button>
 
-      {open && box && createPortal(
-        <div
-          ref={popRef}
-          className="dtp-pop"
-          style={{ position: 'fixed', top: box.top, left: box.left }}>
-
-          <div className="dtp-head">
-            <button
-              type="button"
-              className="dtp-nav"
-              title="Previous month"
-              onClick={() => setView(new Date(view.getFullYear(), view.getMonth() - 1, 1))}>‹</button>
-            <span className="dtp-month">{MONTHS[view.getMonth()]} {view.getFullYear()}</span>
-            <button
-              type="button"
-              className="dtp-nav"
-              title="Next month"
-              onClick={() => setView(new Date(view.getFullYear(), view.getMonth() + 1, 1))}>›</button>
-          </div>
-
-          <div className="dtp-grid dtp-dow">
-            {WEEKDAYS.map((d, i) => <span key={i} className="dtp-dow-cell">{d}</span>)}
-          </div>
-          <div className="dtp-grid">
-            {cells.map((d, i) => (
+      {open &&
+        box &&
+        createPortal(
+          <div
+            ref={popRef}
+            className="dtp-pop"
+            style={{ position: 'fixed', top: box.top, left: box.left }}
+          >
+            <div className="dtp-head">
               <button
-                key={i}
                 type="button"
-                disabled={disabledDay(d)}
-                className={'dtp-day'
-                  + (d.getMonth() === view.getMonth() ? '' : ' muted')
-                  + (selected && sameDay(d, selected) ? ' selected' : '')
-                  + (sameDay(d, today) ? ' today' : '')}
-                onClick={() => pickDay(d)}>
-                {d.getDate()}
+                className="dtp-nav"
+                title="Previous month"
+                onClick={() => setView(new Date(view.getFullYear(), view.getMonth() - 1, 1))}
+              >
+                ‹
               </button>
-            ))}
-          </div>
-
-          {!dateOnly && (
-            <div className="dtp-time">
-              <span className="dtp-time-label">Time</span>
-              <Select value={pad(time.h)} onChange={v => setPart('h', Number(v))}>
-                {Array.from({ length: 24 }, (_, h) => (
-                  <option key={h} value={pad(h)}>{pad(h)}</option>
-                ))}
-              </Select>
-              <span className="dtp-colon">:</span>
-              <Select value={pad(time.min)} onChange={v => setPart('min', Number(v))}>
-                {Array.from({ length: 60 }, (_, m) => (
-                  <option key={m} value={pad(m)}>{pad(m)}</option>
-                ))}
-              </Select>
+              <span className="dtp-month">
+                {MONTHS[view.getMonth()]} {view.getFullYear()}
+              </span>
+              <button
+                type="button"
+                className="dtp-nav"
+                title="Next month"
+                onClick={() => setView(new Date(view.getFullYear(), view.getMonth() + 1, 1))}
+              >
+                ›
+              </button>
             </div>
-          )}
 
-          <div className="dtp-foot">
-            <button
-              type="button"
-              className="dtp-link"
-              onClick={() => { props.onChange(''); setOpen(false); }}>Clear</button>
-            <button
-              type="button"
-              className="dtp-link"
-              onClick={() => {
-                const n = new Date();
-                setView(n);
-                setTime({ h: n.getHours(), min: n.getMinutes() });
-                emit(n, { h: n.getHours(), min: n.getMinutes() });
-                if (dateOnly) setOpen(false);
-              }}>{dateOnly ? 'Today' : 'Now'}</button>
-            <button
-              type="button"
-              className="dtp-link strong"
-              onClick={() => setOpen(false)}>Done</button>
-          </div>
-        </div>,
-        document.body)}
+            <div className="dtp-grid dtp-dow">
+              {WEEKDAYS.map(day => (
+                <span key={day.key} className="dtp-dow-cell">
+                  {day.label}
+                </span>
+              ))}
+            </div>
+            <div className="dtp-grid">
+              {cells.map(d => (
+                <button
+                  key={d.getTime()}
+                  type="button"
+                  disabled={disabledDay(d)}
+                  className={
+                    'dtp-day' +
+                    (d.getMonth() === view.getMonth() ? '' : ' muted') +
+                    (selected && sameDay(d, selected) ? ' selected' : '') +
+                    (sameDay(d, today) ? ' today' : '')
+                  }
+                  onClick={() => pickDay(d)}
+                >
+                  {d.getDate()}
+                </button>
+              ))}
+            </div>
+
+            {!dateOnly && (
+              <div className="dtp-time">
+                <span className="dtp-time-label">Time</span>
+                <Select value={pad(time.h)} onChange={v => setPart('h', Number(v))}>
+                  {Array.from({ length: 24 }, (_, h) => (
+                    <option key={h} value={pad(h)}>
+                      {pad(h)}
+                    </option>
+                  ))}
+                </Select>
+                <span className="dtp-colon">:</span>
+                <Select value={pad(time.min)} onChange={v => setPart('min', Number(v))}>
+                  {Array.from({ length: 60 }, (_, m) => (
+                    <option key={m} value={pad(m)}>
+                      {pad(m)}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            )}
+
+            <div className="dtp-foot">
+              <button
+                type="button"
+                className="dtp-link"
+                onClick={() => {
+                  props.onChange('');
+                  setOpen(false);
+                }}
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                className="dtp-link"
+                onClick={() => {
+                  const n = new Date();
+                  setView(n);
+                  setTime({ h: n.getHours(), min: n.getMinutes() });
+                  emit(n, { h: n.getHours(), min: n.getMinutes() });
+                  if (dateOnly) setOpen(false);
+                }}
+              >
+                {dateOnly ? 'Today' : 'Now'}
+              </button>
+              <button type="button" className="dtp-link strong" onClick={() => setOpen(false)}>
+                Done
+              </button>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

@@ -8,10 +8,16 @@
  * never fetches it at all.
  */
 
-import { showToast } from './toast';
 import { getTheme } from './theme';
+import { showToast } from './toast';
 
 const SCRIPT_ID = 'ainiro-support-chatbot';
+
+// What the widget script hangs off window once it has loaded.
+declare global {
+  var ainiro: { show: () => void } | undefined;
+  var ainiro_faq_question: ((event: unknown, question: string) => void) | undefined;
+}
 
 /*
  * Included with hidden=true, so nothing renders until show() is called - the
@@ -25,7 +31,8 @@ const SCRIPT_ID = 'ainiro-support-chatbot';
  */
 function scriptSrc() {
   const dark = getTheme() === 'dark';
-  return 'https://ainiro.io/magic/system/openai/include-chatbot.js' +
+  return (
+    'https://ainiro.io/magic/system/openai/include-chatbot.js' +
     '?type=magic-documentation' +
     '&header=Ask%20about%20Hyperlambda%20or%20Magic' +
     '&placeholder=Ask%20me%20about%20Hyperlambda%20...' +
@@ -58,7 +65,9 @@ function scriptSrc() {
       ? '&color=%23f5f5f4&start=%233a322c&end=%23262019&link=%23f5f5f4'
       : '&color=%231c1917&start=%23ffffff&end=%23f0eeea&link=%231c1917') +
     '&hidden=true' +
-    '&v=' + (dark ? 'drkthm5' : 'lgtthm1');
+    '&v=' +
+    (dark ? 'drkthm5' : 'lgtthm1')
+  );
 }
 
 let loading: Promise<void> | null = null;
@@ -69,7 +78,7 @@ let loading: Promise<void> | null = null;
  * don't append two tags.
  */
 function load(): Promise<void> {
-  if ((window as any).ainiro) {
+  if (globalThis.ainiro) {
     return Promise.resolve();
   }
   loading ??= new Promise<void>((resolve, reject) => {
@@ -84,7 +93,7 @@ function load(): Promise<void> {
       script.remove();
       reject(new Error('Could not load the support chatbot'));
     };
-    document.body.appendChild(script);
+    document.body.append(script);
   });
   return loading;
 }
@@ -93,7 +102,7 @@ function load(): Promise<void> {
 export async function openSupport() {
   try {
     await load();
-    (window as any).ainiro?.show();
+    globalThis.ainiro?.show();
   } catch {
     showToast('Could not reach the support chatbot', true);
   }
@@ -106,7 +115,7 @@ export async function openSupport() {
 export async function askSupport(question: string) {
   try {
     await load();
-    (window as any).ainiro_faq_question?.(null, question);
+    globalThis.ainiro_faq_question?.(null, question);
   } catch {
     showToast('Could not reach the support chatbot', true);
   }

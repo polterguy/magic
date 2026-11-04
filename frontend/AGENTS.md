@@ -19,6 +19,14 @@ npm run preview
 # Run tests (single run, no watch)
 npm run test
 
+# Lint (zero warnings) / auto-fix
+npm run lint
+npm run lint:fix
+
+# Prettier: write / check
+npm run format
+npm run format:check
+
 ## Project facts
 
 - Vite dev server runs on port 4201, not the Vite default 5173.
@@ -28,6 +36,16 @@ npm run test
   runtime, not hardcoded in source.
 - `public/ngsw-worker.js` is a generated PWA service worker. Do not edit
   manually.
+- ESLint runs with `--max-warnings 0`. A rule that does not fit is turned off in
+  `eslint.config.js` with the reason, not with inline disables.
+- `npm install` installs the husky git hooks (commit-msg: commitlint;
+  pre-commit: lint-staged; pre-push: format check, lint, typecheck, tests).
+- Page components live in `src/pages/` and stay thin; their child components,
+  hooks and helpers live in `src/components/<page>/`.
+- Tests live in a `test/` folder inside their feature folder (e.g.
+  `src/components/sql/test/`, `src/lib/test/`) and run in Node by default. Component and
+  hook tests opt into a DOM with `// @vitest-environment jsdom` on their first
+  line, and use Testing Library (`src/test/setup.ts` adds the jest-dom matchers).
 
 ## Risk controls
 

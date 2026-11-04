@@ -12,6 +12,7 @@
  */
 
 import { useEffect, useState } from 'react';
+
 import { Modal } from './Dialogs';
 
 /*
@@ -84,13 +85,17 @@ function widgetDocument(html: string, id: string) {
 }
 
 export default function WidgetDialog(props: Readonly<{ html: string; onClose: () => void }>) {
-
   // Stable per dialog, so a height message can be matched to this widget.
-  const [id] = useState(() => 'w' + Math.random().toString(36).slice(2));
+  const [id] = useState(() => {
+    const random = crypto.getRandomValues(new Uint32Array(2));
+    return 'w' + Array.from(random, part => part.toString(36)).join('');
+  });
   const [height, setHeight] = useState(240);
 
   useEffect(() => {
-    function onMessage(event: MessageEvent) {
+    function onMessage(
+      event: MessageEvent<{ type?: unknown; id?: unknown; height?: unknown } | null>,
+    ) {
       if (event.data?.type !== 'widget-height' || event.data?.id !== id) {
         return;
       }
@@ -112,6 +117,7 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
         setHeight(Math.min(Math.max(120, Math.ceil(reported)), Math.round(available)));
       }
     }
+    // eslint-disable-next-line sonarjs/post-message -- messages are matched by type and this dialog's random id, not by sender
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
   }, [id]);
@@ -133,9 +139,12 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
          * display:block because an iframe is inline by default, which leaves it
          * sitting on a text baseline with a few pixels of descender gap below.
          */
-        style={{ display: 'block', width: '100%', height, border: 0, background: 'transparent' }} />
+        style={{ display: 'block', width: '100%', height, border: 0, background: 'transparent' }}
+      />
       <div className="modal-actions">
-        <button className="btn" onClick={props.onClose}>Close</button>
+        <button className="btn" onClick={props.onClose}>
+          Close
+        </button>
       </div>
     </Modal>
   );

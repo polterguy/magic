@@ -10,7 +10,9 @@ export default function AiWaiter() {
   return (
     <div className="ai-waiter">
       <div className="ai-waiter-dots">
-        <span /><span /><span />
+        <span />
+        <span />
+        <span />
       </div>
     </div>
   );

@@ -5,14 +5,33 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { Modal, useDialog } from './Dialogs';
-import { ChevronIcon, UndoIcon } from './Icons';
-import { showToast } from '../lib/toast';
+
 import {
-  gitBranches, gitCheckout, gitClone, gitCommit, gitDiff, gitFetch, gitGithubCreate,
-  gitInit, gitLog, gitMerge, gitMergeAbort, gitPull, gitPush, gitRemoteAdd, gitRestore, gitStatus,
-  listFiles, listFolders, loadFile,
+  gitBranches,
+  gitCheckout,
+  gitClone,
+  gitCommit,
+  gitDiff,
+  gitFetch,
+  gitGithubCreate,
+  gitInit,
+  gitLog,
+  gitMerge,
+  gitMergeAbort,
+  gitPull,
+  gitPush,
+  gitRemoteAdd,
+  gitRestore,
+  gitStatus,
+  listFiles,
+  listFolders,
+  loadFile,
 } from '../lib/api';
+import { showError } from '../lib/errors';
+import { showToast } from '../lib/toast';
+import { useDialog } from '../lib/useDialog';
+import { Modal } from './Dialogs';
+import { ChevronIcon, UndoIcon } from './Icons';
 
 // Status codes of a file a merge could not combine, which leave the merge waiting for the user.
 const UNMERGED = new Set(['DD', 'AU', 'UD', 'UA', 'DU', 'AA', 'UU']);
@@ -23,13 +42,13 @@ const UNMERGED = new Set(['DD', 'AU', 'UD', 'UA', 'DU', 'AA', 'UU']);
  * paths with unusual characters arrive quoted.
  */
 function parseChange(line: string) {
-  const code = line.substring(0, 2);
-  let path = line.substring(3);
+  const code = line.slice(0, 2);
+  let path = line.slice(3);
   if (path.includes(' -> ')) {
-    path = path.substring(path.indexOf(' -> ') + 4);
+    path = path.slice(path.indexOf(' -> ') + 4);
   }
-  if (path.startsWith('"') && path.endsWith('"')) {
-    path = path.substring(1, path.length - 1);
+  if (path.length > 1 && path.startsWith('"') && path.endsWith('"')) {
+    path = path.slice(1, -1);
   }
   return { line, code: code.trim(), path, untracked: code === '??' };
 }
@@ -40,11 +59,16 @@ function diffLineClass(line: string) {
     return 'meta';
   }
   switch (line[0]) {
-    case '+': return 'add';
-    case '-': return 'del';
-    case '@': return 'hunk';
-    case ' ': return '';
-    default: return 'meta';
+    case '+':
+      return 'add';
+    case '-':
+      return 'del';
+    case '@':
+      return 'hunk';
+    case ' ':
+      return '';
+    default:
+      return 'meta';
   }
 }
 
@@ -66,19 +90,25 @@ function DiffLines(props: Readonly<{ diff: string | undefined }>) {
   return (
     <>
       {props.diff.split('\n').map((line, index) => (
-        <span key={index} className={diffLineClass(line)}>{line}{'\n'}</span>
+        // A diff is read-only text whose lines repeat freely; position is the only identity.
+        // eslint-disable-next-line react/no-array-index-key -- positional, never reordered
+        <span key={index} className={diffLineClass(line)}>
+          {line}
+          {'\n'}
+        </span>
       ))}
     </>
   );
 }
 
-export default function GitPanel(props: Readonly<{
-  path: string;
-  onClose: () => void;
-  // Invoked after operations that can change files on disk, so the owner can reload its file tree.
-  onChanged: () => void;
-}>) {
-
+export default function GitPanel(
+  props: Readonly<{
+    path: string;
+    onClose: () => void;
+    // Invoked after operations that can change files on disk, so the owner can reload its file tree.
+    onChanged: () => void;
+  }>,
+) {
   const { prompt, confirm } = useDialog();
   const [mode, setMode] = useState<'loading' | 'repo' | 'norepo'>('loading');
   const [branchLine, setBranchLine] = useState('');
@@ -103,14 +133,14 @@ export default function GitPanel(props: Readonly<{
 
   const refresh = useCallback(async () => {
     try {
-      const lines = await gitStatus(props.path) ?? [];
-      setBranchLine(lines.find(line => line.startsWith('## '))?.substring(3) ?? '');
+      const lines = (await gitStatus(props.path)) ?? [];
+      setBranchLine(lines.find(line => line.startsWith('## '))?.slice(3) ?? '');
       setChanges(lines.filter(line => !line.startsWith('## ')));
       // Whatever was fetched describes the old working tree.
       setOpen({});
       setDiffs({});
       setHistory(null);
-      setBranches(await gitBranches(props.path) ?? []);
+      setBranches((await gitBranches(props.path)) ?? []);
       setMode('repo');
     } catch {
       // Status failing means the folder is not a repository (yet).
@@ -123,7 +153,11 @@ export default function GitPanel(props: Readonly<{
     }
   }, [props.path]);
 
-  useEffect(() => { refresh(); }, [refresh]);
+  useEffect(() => {
+    // refresh() handles its own failures.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- every setState in refresh() runs after an await, so none happens synchronously in this effect
+    void refresh();
+  }, [refresh]);
 
   // While an operation runs the dialog must stay open — Escape, backdrop
   // clicks and the Close button all funnel through here.
@@ -134,7 +168,7 @@ export default function GitPanel(props: Readonly<{
   }
 
   // Runs one git operation with busy-state, toast and refresh handled.
-  async function run(action: () => Promise<any>, done: string, changesTree = false) {
+  async function run(action: () => Promise<unknown>, done: string, changesTree = false) {
     setBusy(true);
     try {
       await action();
@@ -143,8 +177,8 @@ export default function GitPanel(props: Readonly<{
       if (changesTree) {
         props.onChanged();
       }
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -164,13 +198,12 @@ export default function GitPanel(props: Readonly<{
    */
   const hasUpstream = branchLine.includes('...');
   const nothingToPush = hasUpstream && !branchLine.includes('[ahead');
-  const merging = changes.some(line => UNMERGED.has(line.substring(0, 2)));
+  const merging = changes.some(line => UNMERGED.has(line.slice(0, 2)));
   const currentBranch = unborn
-    ? branchLine.substring('No commits yet on '.length)
+    ? branchLine.slice('No commits yet on '.length)
     : branchLine.split('...')[0].split(' ')[0];
-  const branchOptions = branches.includes(currentBranch) || !currentBranch
-    ? branches
-    : [currentBranch, ...branches];
+  const branchOptions =
+    branches.includes(currentBranch) || !currentBranch ? branches : [currentBranch, ...branches];
 
   /*
    * Toggles one file's diff, fetching it the first time. Untracked files have
@@ -184,11 +217,14 @@ export default function GitPanel(props: Readonly<{
     }
     try {
       const diff = change.untracked
-        ? (await loadFile(props.path + change.path)).split('\n').map(line => '+' + line).join('\n')
+        ? (await loadFile(props.path + change.path))
+            .split('\n')
+            .map(line => '+' + line)
+            .join('\n')
         : await gitDiff(props.path, change.path);
       setDiffs(current => ({ ...current, [change.path]: diff }));
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }
 
@@ -210,7 +246,9 @@ export default function GitPanel(props: Readonly<{
   async function restoreAll() {
     const ok = await confirm({
       title: 'Reset repository to HEAD',
-      message: 'Discard every uncommitted change in ' + props.path +
+      message:
+        'Discard every uncommitted change in ' +
+        props.path +
         ' and delete all untracked files? This cannot be undone.',
       confirmText: 'Reset everything',
       danger: true,
@@ -268,16 +306,22 @@ export default function GitPanel(props: Readonly<{
       const diverged = hasUpstream && /\[(ahead|behind)/.test(branchLine);
       const text = await gitLog(props.path, diverged ? 'HEAD...@{u}' : undefined);
       setHistory({
-        title: diverged ? 'Not in sync with the remote — < only here, > only on the remote' : 'Latest commits',
+        title: diverged
+          ? 'Not in sync with the remote — < only here, > only on the remote'
+          : 'Latest commits',
         lines: text.split('\n').filter(Boolean),
       });
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }
 
   async function clone() {
-    const url = await prompt({ title: 'Clone repository', message: props.path, label: 'HTTPS repository URL' });
+    const url = await prompt({
+      title: 'Clone repository',
+      message: props.path,
+      label: 'HTTPS repository URL',
+    });
     if (!url) {
       return;
     }
@@ -285,7 +329,11 @@ export default function GitPanel(props: Readonly<{
   }
 
   async function addRemote() {
-    const url = await prompt({ title: 'Add remote', message: props.path, label: 'HTTPS repository URL' });
+    const url = await prompt({
+      title: 'Add remote',
+      message: props.path,
+      label: 'HTTPS repository URL',
+    });
     if (!url) {
       return;
     }
@@ -295,11 +343,14 @@ export default function GitPanel(props: Readonly<{
   // Creates a GitHub repository, wires it up as origin, and pushes.
   async function publish(name: string, isPrivate: boolean) {
     setPublishing(null);
-    await run(async () => {
-      const created = await gitGithubCreate(name, isPrivate);
-      await gitRemoteAdd(props.path, created.url);
-      await gitPush(props.path, currentBranch || undefined);
-    }, 'Published to ' + name + ' on GitHub');
+    await run(
+      async () => {
+        const created = await gitGithubCreate(name, isPrivate);
+        await gitRemoteAdd(props.path, created.url);
+        await gitPush(props.path, currentBranch || undefined);
+      },
+      'Published to ' + name + ' on GitHub',
+    );
   }
 
   return (
@@ -308,7 +359,11 @@ export default function GitPanel(props: Readonly<{
       {(mode === 'loading' || busy) && (
         <div className="spinner-panel">
           <div className="spinner" />
-          {busy && <div>Running Git operation<span className="spinner-dots" /></div>}
+          {busy && (
+            <div>
+              <span className="spinner-dots">Running Git operation</span>
+            </div>
+          )}
         </div>
       )}
       {!busy && mode === 'norepo' && (
@@ -318,16 +373,18 @@ export default function GitPanel(props: Readonly<{
             <button
               className="btn btn-secondary"
               disabled={busy || !empty}
-              title={empty
-                ? 'Clones a remote repository into this folder'
-                : 'Requires an empty folder'}
-              onClick={clone}>
+              title={
+                empty ? 'Clones a remote repository into this folder' : 'Requires an empty folder'
+              }
+              onClick={clone}
+            >
               Clone into folder
             </button>
             <button
               className="btn btn-secondary"
               disabled={busy}
-              onClick={() => run(() => gitInit(props.path), 'Repository initialized', true)}>
+              onClick={() => run(() => gitInit(props.path), 'Repository initialized', true)}
+            >
               Initialize repository
             </button>
             <button className="btn" onClick={close}>
@@ -338,16 +395,34 @@ export default function GitPanel(props: Readonly<{
       )}
       {!busy && mode === 'repo' && (
         <>
-          <p className="mono" title="Branch and tracking status">{branchLine}</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <p className="mono" title="Branch and tracking status">
+            {branchLine}
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: 8,
+              marginBottom: 12,
+            }}
+          >
             <select
               style={{ flex: '0 1 220px', minWidth: 0 }}
               value={currentBranch}
               disabled={busy || unborn}
               onChange={e =>
-                run(() => gitCheckout(props.path, e.target.value), 'Checked out ' + e.target.value, true)}>
+                run(
+                  () => gitCheckout(props.path, e.target.value),
+                  'Checked out ' + e.target.value,
+                  true,
+                )
+              }
+            >
               {branchOptions.map(branch => (
-                <option key={branch} value={branch}>{branch}</option>
+                <option key={branch} value={branch}>
+                  {branch}
+                </option>
               ))}
             </select>
             <button className="btn btn-secondary btn-small" disabled={busy} onClick={newBranch}>
@@ -357,33 +432,46 @@ export default function GitPanel(props: Readonly<{
               className="btn btn-secondary btn-small"
               disabled={busy || unborn || branchOptions.length < 2}
               title="Merges another branch into this one"
-              onClick={mergeBranch}>
+              onClick={mergeBranch}
+            >
               Merge
             </button>
             <span style={{ flex: 1 }} />
             <button
               className="btn btn-secondary btn-small"
               disabled={busy || unborn}
-              onClick={toggleHistory}>
+              onClick={toggleHistory}
+            >
               {history ? 'Hide history' : 'History'}
             </button>
             <button
               className="btn btn-secondary btn-small"
               disabled={busy || unborn}
-              onClick={() => run(() => gitFetch(props.path), 'Fetched from remote')}>
+              onClick={() => run(() => gitFetch(props.path), 'Fetched from remote')}
+            >
               Fetch
             </button>
             <button
               className="btn btn-secondary btn-small"
               disabled={busy || unborn}
-              onClick={() => run(() => gitPull(props.path, currentBranch || undefined), 'Pulled from remote', true)}>
+              onClick={() =>
+                run(
+                  () => gitPull(props.path, currentBranch || undefined),
+                  'Pulled from remote',
+                  true,
+                )
+              }
+            >
               Pull
             </button>
             <button
               className="btn btn-secondary btn-small"
               disabled={busy || unborn || nothingToPush}
               title={nothingToPush ? 'Nothing to push' : undefined}
-              onClick={() => run(() => gitPush(props.path, currentBranch || undefined), 'Pushed to remote')}>
+              onClick={() =>
+                run(() => gitPush(props.path, currentBranch || undefined), 'Pushed to remote')
+              }
+            >
               Push
             </button>
           </div>
@@ -397,7 +485,9 @@ export default function GitPanel(props: Readonly<{
                   return (
                     <div key={hash + side} className="git-change-line">
                       <span className="git-status">{side}</span>
-                      <span>{hash} {subject.join('\t')} — {author}, {age}</span>
+                      <span>
+                        {hash} {subject.join('\t')} — {author}, {age}
+                      </span>
                     </div>
                   );
                 })}
@@ -406,88 +496,98 @@ export default function GitPanel(props: Readonly<{
           )}
           {merging && (
             <p>
-              A merge stopped on conflicts. Resolve the files marked in the list below and commit, or{' '}
+              A merge stopped on conflicts. Resolve the files marked in the list below and commit,
+              or{' '}
               <button className="btn btn-secondary btn-small" disabled={busy} onClick={abortMerge}>
                 Abort merge
               </button>
             </p>
           )}
-          {changes.length === 0
-            ? <p>Working tree clean.</p>
-            : (
-              <div className="git-changes mono">
-                {changes.map(parseChange).map(change => (
-                  <div key={change.line}>
-                    <div className="git-change-line">
-                      <button className="git-change-row" onClick={() => toggle(change)}>
-                        <ChevronIcon open={open[change.path]} />
-                        <span
-                          className={'git-status ' + statusClass(change)}>
-                          {change.code}
-                        </span>
-                        <span>{change.path}</span>
+          {changes.length === 0 ? (
+            <p>Working tree clean.</p>
+          ) : (
+            <div className="git-changes mono">
+              {changes.map(parseChange).map(change => (
+                <div key={change.line}>
+                  <div className="git-change-line">
+                    <button className="git-change-row" onClick={() => toggle(change)}>
+                      <ChevronIcon open={open[change.path]} />
+                      <span className={'git-status ' + statusClass(change)}>{change.code}</span>
+                      <span>{change.path}</span>
+                    </button>
+                    {/* Untracked files have no HEAD version to go back to. */}
+                    {!change.untracked && (
+                      <button
+                        className="icon-btn"
+                        title="Reset to HEAD"
+                        disabled={busy}
+                        onClick={() => restoreFile(change)}
+                      >
+                        <UndoIcon />
                       </button>
-                      {/* Untracked files have no HEAD version to go back to. */}
-                      {!change.untracked && (
-                        <button
-                          className="icon-btn"
-                          title="Reset to HEAD"
-                          disabled={busy}
-                          onClick={() => restoreFile(change)}>
-                          <UndoIcon />
-                        </button>
-                      )}
-                    </div>
-                    {open[change.path] && (
-                      <pre className="git-diff">
-                        <DiffLines diff={change.path in diffs ? diffs[change.path] : undefined} />
-                      </pre>
                     )}
                   </div>
-                ))}
-              </div>
-            )}
+                  {open[change.path] && (
+                    <pre className="git-diff">
+                      <DiffLines diff={change.path in diffs ? diffs[change.path] : undefined} />
+                    </pre>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
           <textarea
             placeholder="Commit message…"
             value={message}
             rows={2}
             disabled={busy || changes.length === 0}
             style={{ width: '100%' }}
-            onChange={e => setMessage(e.target.value)} />
+            onChange={e => setMessage(e.target.value)}
+          />
           <div className="modal-actions">
             <button
               className="btn btn-secondary"
               disabled={busy || unborn || changes.length === 0}
               title="Discards every uncommitted change and deletes untracked files"
-              onClick={restoreAll}>
+              onClick={restoreAll}
+            >
               Reset to HEAD…
             </button>
             <button
               className="btn btn-secondary"
               disabled={busy || unborn || hasUpstream}
-              title={hasUpstream
-                ? 'Already has a remote'
-                : 'Creates a GitHub repository and pushes this folder to it'}
-              onClick={() => setPublishing({
-                name: props.path.split('/').findLast(Boolean) ?? '',
-                isPrivate: true,
-              })}>
+              title={
+                hasUpstream
+                  ? 'Already has a remote'
+                  : 'Creates a GitHub repository and pushes this folder to it'
+              }
+              onClick={() =>
+                setPublishing({
+                  name: props.path.split('/').findLast(Boolean) ?? '',
+                  isPrivate: true,
+                })
+              }
+            >
               Publish to GitHub…
             </button>
             <button
               className="btn btn-secondary"
               disabled={busy || hasUpstream}
               title={hasUpstream ? 'Already has a remote' : undefined}
-              onClick={addRemote}>
+              onClick={addRemote}
+            >
               Add remote
             </button>
             <button
               className="btn btn-secondary"
               disabled={busy || !message.trim() || changes.length === 0}
-              onClick={() => run(async () => {
-                await gitCommit(props.path, message.trim());
-                setMessage('');
-              }, 'Changes committed')}>
+              onClick={() =>
+                run(async () => {
+                  await gitCommit(props.path, message.trim());
+                  setMessage('');
+                }, 'Changes committed')
+              }
+            >
               Commit
             </button>
             <button className="btn" onClick={close}>
@@ -500,37 +600,40 @@ export default function GitPanel(props: Readonly<{
       {publishing && (
         <Modal
           width={520}
-          onSubmit={() => publishing.name.trim() !== '' &&
-            publish(publishing.name.trim(), publishing.isPrivate)}
-          onClose={() => setPublishing(null)}>
+          onSubmit={() =>
+            publishing.name.trim() !== '' && publish(publishing.name.trim(), publishing.isPrivate)
+          }
+          onClose={() => setPublishing(null)}
+        >
           <h2>Publish to GitHub</h2>
           <p>Creates a GitHub repository and pushes {props.path}</p>
           <label className="modal-label">
-            Repository name
+            Repository name{' '}
             <input
               autoFocus
               type="text"
               value={publishing.name}
-              onChange={event => setPublishing({ ...publishing, name: event.target.value })} />
+              onChange={event => setPublishing({ ...publishing, name: event.target.value })}
+            />
           </label>
           {/*
-            * Private by default. A repository made public cannot be made
-            * unpublished — whatever is in this folder is on the open internet
-            * from the moment it is pushed, and an editor's web root is exactly
-            * the kind of folder that quietly holds a key.
-            */}
+           * Private by default. A repository made public cannot be made
+           * unpublished — whatever is in this folder is on the open internet
+           * from the moment it is pushed, and an editor's web root is exactly
+           * the kind of folder that quietly holds a key.
+           */}
           <label className="modal-check">
             <input
               type="checkbox"
               checked={publishing.isPrivate}
-              onChange={event =>
-                setPublishing({ ...publishing, isPrivate: event.target.checked })} />
+              onChange={event => setPublishing({ ...publishing, isPrivate: event.target.checked })}
+            />
             <span>
-              Private
+              Private{' '}
               <span className="muted">
                 {publishing.isPrivate
-                  ? ' — only you can see it'
-                  : ' — anyone can see everything in this folder'}
+                  ? '— only you can see it'
+                  : '— anyone can see everything in this folder'}
               </span>
             </span>
           </label>
@@ -541,7 +644,8 @@ export default function GitPanel(props: Readonly<{
             <button
               className="btn"
               disabled={publishing.name.trim() === ''}
-              onClick={() => publish(publishing.name.trim(), publishing.isPrivate)}>
+              onClick={() => publish(publishing.name.trim(), publishing.isPrivate)}
+            >
               OK
             </button>
           </div>

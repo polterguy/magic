@@ -4,41 +4,58 @@
  * out of the box.
  */
 
-import { useEffect, useRef, useState } from 'react';
-import { Annotation, Compartment, EditorState, Prec, StateEffect, StateField, Transaction } from '@codemirror/state';
+import '../resources/ainiro.css';
+
+import { autocompletion, startCompletion } from '@codemirror/autocomplete';
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentLess,
+  indentMore,
+} from '@codemirror/commands';
+import { css } from '@codemirror/lang-css';
+import { html } from '@codemirror/lang-html';
+import { javascript } from '@codemirror/lang-javascript';
+import { json } from '@codemirror/lang-json';
+import { markdown } from '@codemirror/lang-markdown';
+import { sql } from '@codemirror/lang-sql';
+import {
+  bracketMatching,
+  HighlightStyle,
+  indentUnit,
+  LanguageSupport,
+  syntaxHighlighting,
+} from '@codemirror/language';
+import { closeSearchPanel, openSearchPanel, search, searchKeymap } from '@codemirror/search';
 import type { Extension } from '@codemirror/state';
 import {
+  Annotation,
+  Compartment,
+  EditorState,
+  Prec,
+  StateEffect,
+  StateField,
+  Transaction,
+} from '@codemirror/state';
+import type { DecorationSet } from '@codemirror/view';
+import {
   Decoration,
-  EditorView,
   drawSelection,
+  EditorView,
   highlightActiveLine,
   highlightActiveLineGutter,
   keymap,
   lineNumbers,
   tooltips,
 } from '@codemirror/view';
-import type { DecorationSet } from '@codemirror/view';
-import { defaultKeymap, history, historyKeymap, indentLess, indentMore } from '@codemirror/commands';
-import {
-  HighlightStyle,
-  LanguageSupport,
-  bracketMatching,
-  indentUnit,
-  syntaxHighlighting,
-} from '@codemirror/language';
 import { tags } from '@lezer/highlight';
-import { autocompletion, startCompletion } from '@codemirror/autocomplete';
-import { closeSearchPanel, openSearchPanel, search, searchKeymap } from '@codemirror/search';
-import { javascript } from '@codemirror/lang-javascript';
-import { json } from '@codemirror/lang-json';
-import { html } from '@codemirror/lang-html';
-import { css } from '@codemirror/lang-css';
-import { markdown } from '@codemirror/lang-markdown';
-import { sql } from '@codemirror/lang-sql';
-import { hyperlambdaLanguage } from '../resources/hyperlambda.js';
-import '../resources/ainiro.css';
-import { http, apiBaseUrl } from '../lib/api.js';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+
+import { apiBaseUrl, http } from '../lib/api.js';
+import { editorSelection } from '../lib/editor';
 import { SHORTCUTS } from '../lib/shortcuts';
+import { hyperlambdaLanguage } from '../resources/hyperlambda.js';
 
 /*
  * The hyperlambda mode colors slot invocations from window._vocabulary,
@@ -63,31 +80,38 @@ function ensureVocabulary() {
   if (vocabularyFrom !== apiBaseUrl()) {
     vocabularyPromise = null;
     slotDocs = {};
-    delete (window as any)._vocabulary;
-    delete (window as any)._slots;
+    delete globalThis._vocabulary;
+    delete globalThis._slots;
   }
-  if ((window as any)._vocabulary) {
+  if (globalThis._vocabulary) {
     return Promise.resolve();
   }
   vocabularyFrom = apiBaseUrl();
-  http.get<Record<string, string | null>>('/magic/system/evaluator/vocabulary-verbose')
-    .then(docs => { slotDocs = docs ?? {}; })
-    .catch(() => { slotDocs = {}; });
+  http
+    .get<Record<string, string | null>>('/magic/system/evaluator/vocabulary-verbose')
+    .then(docs => {
+      slotDocs = docs ?? {};
+    })
+    .catch(() => {
+      slotDocs = {};
+    });
   vocabularyPromise ??= Promise.all([
     http.get<string[]>('/magic/system/evaluator/vocabulary'),
     http.get<string[]>('/magic/system/evaluator/slots'),
-  ]).then(([vocabulary, slots]) => {
-    (window as any)._vocabulary = vocabulary;
-    // The completion source reads _slots to offer [execute:...] completions
-    // for dynamic slots.
-    (window as any)._slots = slots;
-  }).catch(err => {
-    // A failed fetch must not stay cached, or highlighting silently stays
-    // broken until reload — clearing lets the next editor mount try again.
-    vocabularyPromise = null;
-    vocabularyFrom = null;
-    throw err;
-  });
+  ])
+    .then(([vocabulary, slots]) => {
+      globalThis._vocabulary = vocabulary;
+      // The completion source reads _slots to offer [execute:...] completions
+      // for dynamic slots.
+      globalThis._slots = slots;
+    })
+    .catch(err => {
+      // A failed fetch must not stay cached, or highlighting silently stays
+      // broken until reload — clearing lets the next editor mount try again.
+      vocabularyPromise = null;
+      vocabularyFrom = null;
+      throw err;
+    });
   return vocabularyPromise;
 }
 
@@ -101,7 +125,7 @@ function showSlotDoc(anchor: HTMLElement, name: string, description: string) {
   if (!slotDocTip) {
     slotDocTip = document.createElement('div');
     slotDocTip.className = 'slot-doc';
-    document.body.appendChild(slotDocTip);
+    document.body.append(slotDocTip);
   }
   slotDocTip.replaceChildren();
   const title = document.createElement('div');
@@ -112,7 +136,7 @@ function showSlotDoc(anchor: HTMLElement, name: string, description: string) {
   slotDocTip.append(title, body);
   const rect = anchor.getBoundingClientRect();
   slotDocTip.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 340)) + 'px';
-  slotDocTip.style.top = (rect.bottom + 6) + 'px';
+  slotDocTip.style.top = rect.bottom + 6 + 'px';
   slotDocTip.style.display = 'block';
 }
 
@@ -131,8 +155,10 @@ function hideSlotDoc() {
 function attachSlotDocs(dom: HTMLElement) {
   dom.addEventListener('mouseover', event => {
     const target = event.target as HTMLElement;
-    if (!target.classList ||
-        (!target.classList.contains('cm-keyword') && !target.classList.contains('cm-variable-2'))) {
+    if (
+      !target.classList ||
+      (!target.classList.contains('cm-keyword') && !target.classList.contains('cm-variable-2'))
+    ) {
       hideSlotDoc();
       return;
     }
@@ -198,8 +224,9 @@ const lineHighlightField = StateField.define<DecorationSet>({
         const spec = effect.value;
         if (spec && spec.line >= 0 && spec.line < transaction.state.doc.lines) {
           decorations = Decoration.set([
-            Decoration.line({ attributes: { class: spec.className } })
-              .range(transaction.state.doc.line(spec.line + 1).from),
+            Decoration.line({ attributes: { class: spec.className } }).range(
+              transaction.state.doc.line(spec.line + 1).from,
+            ),
           ]);
         }
       }
@@ -235,15 +262,6 @@ function languageFor(mode: string, hintTables?: Record<string, string[]>): Exten
 // Markdown is prose, and prose wraps.
 function wrapsByDefault(mode: string) {
   return mode === 'markdown';
-}
-
-// The current selection's text, replacing CM5's getSelection().
-export function editorSelection(view: EditorView | null): string {
-  if (!view) {
-    return '';
-  }
-  const range = view.state.selection.main;
-  return view.state.sliceDoc(range.from, range.to);
 }
 
 function toggleFullscreen(view: EditorView) {
@@ -289,7 +307,7 @@ interface CodeEditorProps {
   // deleteFile, deleteFolder, close.
   onAction?: (action: string) => void;
   /*
-   * Change this (to any new value, from useEditToken below) in the same
+   * Change this (to any new value, from useEditToken in lib/editor) in the same
    * update that hands `value` a deliberate whole-buffer replacement — AI
    * generation, loading a saved snippet, opening a dropped/uploaded file —
    * and that replacement becomes one undo step. Leave it alone for a value
@@ -301,17 +319,7 @@ interface CodeEditorProps {
   undoableEditId?: number;
 }
 
-/*
- * Pairs with `undoableEditId` above. Call bump() in the same handler that
- * sets the state driving a deliberate `value` replacement.
- */
-export function useEditToken(): [number, () => void] {
-  const [token, setToken] = useState(0);
-  return [token, () => setToken(current => current + 1)];
-}
-
 export default function CodeEditor(props: Readonly<CodeEditorProps>) {
-
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<EditorView | null>(null);
   const compartments = useRef<{
@@ -326,7 +334,9 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
    */
   const [ready, setReady] = useState(false);
   const callbacks = useRef(props);
-  callbacks.current = props;
+  useLayoutEffect(() => {
+    callbacks.current = props;
+  });
   const lastUndoableEditId = useRef(props.undoableEditId);
 
   useEffect(() => {
@@ -455,27 +465,35 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
              * keymap below without re-triggering this handler. Prec.high makes
              * sure this runs before the keymap sees the mangled original.
              */
-            Prec.high(EditorView.domEventHandlers({
-              keydown(event, view) {
-                if (event.altKey && !event.ctrlKey && !event.metaKey &&
-                    /^Key[A-Z]$/.test(event.code ?? '')) {
-                  const letter = event.code!.slice(3).toLowerCase();
-                  if (event.key !== letter) {
-                    view.contentDOM.dispatchEvent(new KeyboardEvent('keydown', {
-                      key: letter,
-                      code: event.code,
-                      altKey: true,
-                      shiftKey: event.shiftKey,
-                      bubbles: true,
-                      cancelable: true,
-                    }));
-                    event.preventDefault();
-                    return true;
+            Prec.high(
+              EditorView.domEventHandlers({
+                keydown(event, view) {
+                  if (
+                    event.altKey &&
+                    !event.ctrlKey &&
+                    !event.metaKey &&
+                    /^Key[A-Z]$/.test(event.code ?? '')
+                  ) {
+                    const letter = event.code.slice(3).toLowerCase();
+                    if (event.key !== letter) {
+                      view.contentDOM.dispatchEvent(
+                        new KeyboardEvent('keydown', {
+                          key: letter,
+                          code: event.code,
+                          altKey: true,
+                          shiftKey: event.shiftKey,
+                          bubbles: true,
+                          cancelable: true,
+                        }),
+                      );
+                      event.preventDefault();
+                      return true;
+                    }
                   }
-                }
-                return false;
-              },
-            })),
+                  return false;
+                },
+              }),
+            ),
             // Our bindings first — they win over the default keymap.
             keymap.of(bindings),
             history(),
@@ -498,14 +516,15 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
             numbers.of((current.lineNumbers ?? true) ? lineNumbers() : []),
             readOnly.of(EditorState.readOnly.of(current.readOnly ?? false)),
             wrapping.of(
-              (current.lineWrapping ?? wrapsByDefault(current.mode))
-                ? EditorView.lineWrapping
-                : []),
+              (current.lineWrapping ?? wrapsByDefault(current.mode)) ? EditorView.lineWrapping : [],
+            ),
             language.of(languageFor(current.mode, current.hintTables)),
             lineHighlightField,
             EditorView.updateListener.of(update => {
-              if (update.docChanged &&
-                  !update.transactions.some(tr => tr.annotation(externalChange))) {
+              if (
+                update.docChanged &&
+                !update.transactions.some(tr => tr.annotation(externalChange))
+              ) {
                 callbacks.current.onChange?.(update.state.doc.toString());
               }
               if (update.selectionSet || update.docChanged) {
@@ -545,8 +564,8 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
     }
     const current = view.state.doc.toString();
     if (props.value !== current) {
-      const undoable = props.undoableEditId !== undefined &&
-        props.undoableEditId !== lastUndoableEditId.current;
+      const undoable =
+        props.undoableEditId !== undefined && props.undoableEditId !== lastUndoableEditId.current;
       lastUndoableEditId.current = props.undoableEditId;
       view.dispatch({
         changes: { from: 0, to: current.length, insert: props.value },
@@ -555,7 +574,7 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
           : [externalChange.of(true), Transaction.addToHistory.of(false)],
       });
     }
-  }, [props.value]);
+  }, [props.value, props.undoableEditId]);
 
   useEffect(() => {
     const view = editor.current;
@@ -580,7 +599,8 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
     if (view && compartments.current) {
       view.dispatch({
         effects: compartments.current.readOnly.reconfigure(
-          EditorState.readOnly.of(props.readOnly ?? false)),
+          EditorState.readOnly.of(props.readOnly ?? false),
+        ),
       });
     }
   }, [props.readOnly]);
@@ -590,9 +610,8 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
     if (view && compartments.current) {
       view.dispatch({
         effects: compartments.current.wrapping.reconfigure(
-          (props.lineWrapping ?? wrapsByDefault(props.mode))
-            ? EditorView.lineWrapping
-            : []),
+          (props.lineWrapping ?? wrapsByDefault(props.mode)) ? EditorView.lineWrapping : [],
+        ),
       });
     }
   }, [props.mode, props.lineWrapping]);
@@ -602,7 +621,8 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
     if (view && compartments.current) {
       view.dispatch({
         effects: compartments.current.language.reconfigure(
-          languageFor(props.mode, props.hintTables)),
+          languageFor(props.mode, props.hintTables),
+        ),
       });
     }
   }, [props.mode, props.hintTables]);
@@ -614,21 +634,4 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
   }, [props.height]);
 
   return <div className="code-editor" ref={host} />;
-}
-
-/*
- * Returns the CodeMirror mode to use for the given filename.
- */
-export function modeForFile(filename: string): string {
-  const extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
-  switch (extension) {
-    case 'hl': return 'hyperlambda';
-    case 'sql': return 'text/x-sql';
-    case 'js': case 'ts': return 'javascript';
-    case 'json': return 'application/json';
-    case 'html': case 'htm': return 'htmlmixed';
-    case 'css': case 'scss': return 'css';
-    case 'md': return 'markdown';
-    default: return 'text/plain';
-  }
 }
