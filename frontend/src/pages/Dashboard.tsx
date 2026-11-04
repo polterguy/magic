@@ -1,9 +1,10 @@
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import Select from '../components/Select';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Pagination from '../components/Pagination';
-import { Modal, useDialog } from '../components/Dialogs';
+import { Modal } from '../components/Dialogs';
+import { useDialog } from '../lib/useDialog';
 import { SECTIONS } from '../components/sections';
 import SocketFeedback from '../components/SocketFeedback';
 import {
@@ -28,8 +29,9 @@ import {
   listFolders,
   listTasks,
   openaiIsConfigured,
+  type SystemMessage,
 } from '../lib/api';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 import { openSupport } from '../lib/support';
 import { httpUrl, withoutTrailingSlashes } from '../lib/backend';
 import { RobotIcon, SearchIcon } from '../components/Icons';
@@ -37,6 +39,7 @@ import { openChatOps, openPalette, setDashboardTourRunner } from '../lib/shellAc
 import Tour from '../components/Tour';
 import { CHATBOT_TOUR, DASHBOARD_TOUR } from '../lib/tourSteps';
 import { copyToClipboard, showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 
 /*
  * Plugins that turn the cloudlet into an AI-agent endpoint — MCP exposes its
@@ -108,8 +111,8 @@ function TaskSection(
     try {
       await executeTask(task.id);
       showToast('Task ' + task.id + ' executed');
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setRunning(null);
     }
@@ -179,12 +182,12 @@ export default function Dashboard() {
    * dialog opens by itself. The flag is set by the magic-link screen only,
    * which OIDC and password sign-ins never pass through.
    */
-  const [mustSetPassword, setMustSetPassword] = useState(false);
+  const [mustSetPassword, setMustSetPassword] = useState(
+    () => sessionStorage.getItem('magic2.magic-link-arrival') === '1',
+  );
+  // The flag is consumed on arrival, so a reload does not ask again.
   useEffect(() => {
-    if (sessionStorage.getItem('magic2.magic-link-arrival') === '1') {
-      sessionStorage.removeItem('magic2.magic-link-arrival');
-      setMustSetPassword(true);
-    }
+    sessionStorage.removeItem('magic2.magic-link-arrival');
   }, []);
 
   /*
@@ -200,20 +203,18 @@ export default function Dashboard() {
    * Acting on a widget mid-tour changes the flags below, which would otherwise
    * re-enter this effect and restart the tour under the reader.
    */
-  const tourOffered = useRef(false);
-  useEffect(() => {
-    if (!backend?.url || mustSetPassword || tourOffered.current) {
-      return;
-    }
-    if (openaiConfigured === null || rootServed === null) {
-      return;
-    }
-    if (localStorage.getItem(tourKey) === '1') {
-      return;
-    }
-    tourOffered.current = true;
+  const [tourOffered, setTourOffered] = useState(false);
+  if (
+    !tourOffered &&
+    backend?.url &&
+    !mustSetPassword &&
+    openaiConfigured !== null &&
+    rootServed !== null &&
+    localStorage.getItem(tourKey) !== '1'
+  ) {
+    setTourOffered(true);
     setTour('dashboard');
-  }, [backend?.url, tourKey, openaiConfigured, rootServed, mustSetPassword]);
+  }
 
   // Re-runnable on demand, from the command palette.
   useEffect(() => {
@@ -229,16 +230,6 @@ export default function Dashboard() {
    * Bazar manifests instead would miss modules built by hand, which carry
    * no manifest.
    */
-  const checkPlugins = useCallback(async () => {
-    try {
-      const folders = (await listFolders('/modules/')) ?? [];
-      setMissingPlugins(AGENT_PLUGINS.filter(name => !folders.includes('/modules/' + name + '/')));
-    } catch {
-      // Without a folder listing we can't tell — say nothing rather than nag.
-      setMissingPlugins([]);
-    }
-  }, []);
-
   useEffect(() => {
     countEndpoints()
       .then(r => setEndpoints(r.count))
@@ -255,21 +246,29 @@ export default function Dashboard() {
     countLog()
       .then(r => setLogItems(r.count))
       .catch(() => {});
-    checkPlugins();
+    listFolders('/modules/')
+      .then(list => {
+        const folders = list ?? [];
+        setMissingPlugins(
+          AGENT_PLUGINS.filter(name => !folders.includes('/modules/' + name + '/')),
+        );
+      })
+      // Without a folder listing we can't tell — say nothing rather than nag.
+      .catch(() => setMissingPlugins([]));
     openaiIsConfigured()
       .then(response => setOpenaiConfigured(response.result))
       .catch(() => setOpenaiConfigured(null));
     rootIsServed()
       .then(setRootServed)
       .catch(() => setRootServed(null));
-  }, [checkPlugins]);
+  }, []);
 
   async function installAgentPlugins() {
     setInstalling(true);
     try {
       const available = (await availablePlugins()) ?? [];
       for (const name of missingPlugins) {
-        const app = available.find((candidate: any) => candidate.name === name);
+        const app = available.find(candidate => candidate.name === name);
         if (!app) {
           throw new Error(name + ' is not available in the plugin repository');
         }
@@ -284,8 +283,8 @@ export default function Dashboard() {
        * for something already on its way.
        */
       setMissingPlugins([]);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setInstalling(false);
     }
@@ -295,7 +294,7 @@ export default function Dashboard() {
     setInstallingExpertSystem(true);
     try {
       const available = (await availablePlugins()) ?? [];
-      const app = available.find((candidate: any) => candidate.name === EXPERT_SYSTEM_PLUGIN);
+      const app = available.find(candidate => candidate.name === EXPERT_SYSTEM_PLUGIN);
       if (!app) {
         throw new Error('The AI Expert System is not available in the plugin repository');
       }
@@ -318,8 +317,8 @@ export default function Dashboard() {
         'The AI Expert System is taking longer than expected to install — check your log',
         true,
       );
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setInstallingExpertSystem(false);
     }
@@ -422,7 +421,7 @@ export default function Dashboard() {
             <h2 style={{ margin: '0 0 6px 0' }}>Turn this cloudlet into an AI agent</h2>
             <p className="muted" style={{ margin: 0 }}>
               The <strong>MCP</strong> plugin exposes your endpoints as tools AI agents can invoke,
-              and the <strong>OAuth</strong> plugin secures them. You're missing{' '}
+              and the <strong>OAuth</strong> plugin secures them. You&apos;re missing{' '}
               {missingPlugins.join(' and ')}.
             </p>
           </div>
@@ -476,7 +475,7 @@ export default function Dashboard() {
           <h2 style={{ margin: '0 0 6px 0' }}>API Wizard</h2>
           <p className="muted" style={{ margin: 0 }}>
             Three ways to get endpoints: turn every table in a database into secured REST endpoints,
-            publish your own SQL as an endpoint, or wrap somebody else's API from its OpenAPI
+            publish your own SQL as an endpoint, or wrap somebody else&apos;s API from its OpenAPI
             specification. Whatever you generate is published to your AI agent as MCP tools. No
             database yet? <Link to="/databases">Connect or create one first</Link>.
           </p>
@@ -506,7 +505,7 @@ export default function Dashboard() {
             <p className="muted" style={{ margin: 0 }}>
               A complete chat client for your cloudlet — streaming answers from your own models, AI
               functions that actually do things, logins, and your own branding. Installing it serves
-              the app from your cloudlet's root URL.
+              the app from your cloudlet&apos;s root URL.
             </p>
           </div>
           <button
@@ -600,8 +599,8 @@ export default function Dashboard() {
             <span>
               <span className="guide-title">Ask Frank</span>
               <span className="guide-text">
-                Magic's AI support agent, trained on the Hyperlambda and Magic documentation. Ask it
-                how something works and it answers with code you can paste.
+                Magic&apos;s AI support agent, trained on the Hyperlambda and Magic documentation.
+                Ask it how something works and it answers with code you can paste.
               </span>
             </span>
           </button>
@@ -615,8 +614,8 @@ export default function Dashboard() {
             This cloudlet has {endpoints} HTTP endpoints. Most MCP clients cannot deal effectively
             with much more than {MCP_ENDPOINT_WARNING} — AI agents drown in the tool list, making
             tool discovery and selection slow and unreliable, and some clients refuse to connect at
-            all. Consider deleting endpoints you don't need, or restricting how many your MCP plugin
-            exposes.
+            all. Consider deleting endpoints you don&apos;t need, or restricting how many your MCP
+            plugin exposes.
           </p>
           <div className="modal-actions">
             <button className="btn" onClick={() => setShowEndpointWarning(false)}>
@@ -631,9 +630,9 @@ export default function Dashboard() {
           <p className="muted" style={{ marginTop: 0 }}>
             This cloudlet has {publicEndpoints} endpoints that require no authentication whatsoever
             — anyone who finds the URL can invoke them, with no login, token, or role check standing
-            in their way. Make sure none of them can read, change, or delete data they shouldn't,
-            run up costs, or otherwise cause damage in the hands of a stranger. If an endpoint
-            doesn't need to be public, add an [auth] requirement to it.
+            in their way. Make sure none of them can read, change, or delete data they
+            shouldn&apos;t, run up costs, or otherwise cause damage in the hands of a stranger. If
+            an endpoint doesn&apos;t need to be public, add an [auth] requirement to it.
           </p>
           <div className="modal-actions">
             <button className="btn" onClick={() => setShowPublicEndpointWarning(false)}>
@@ -690,8 +689,8 @@ function SetPasswordDialog(props: Readonly<{ onClose: () => void }>) {
       await changePassword(password);
       showToast('Your password is set');
       props.onClose();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -739,7 +738,7 @@ function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
   const [model, setModel] = useState(DEFAULT_BOT_MODEL);
   // The chat models the backend's catalogue lists, newest first, with their pricing.
   const [models, setModels] = useState<OpenAiModel[]>([]);
-  const [flavors, setFlavors] = useState<any[]>([]);
+  const [flavors, setFlavors] = useState<SystemMessage[]>([]);
   const [flavor, setFlavor] = useState('');
   const [max, setMax] = useState('25');
   const [autoDestruct, setAutoDestruct] = useState(true);
@@ -875,7 +874,7 @@ function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
                 max: Number(max) || 25,
                 autoDestruct,
                 channel: crawl.channel,
-              }).catch(err => showToast(err.message, true, err.logId));
+              }).catch((err: unknown) => showError(err));
             }}
             isComplete={message => message.message.trim() === 'Done!'}
             renderDone={messages => {

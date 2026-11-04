@@ -23,8 +23,9 @@ import {
   WebsiteRedirect,
 } from '../../lib/api';
 import { showToast } from '../../lib/toast';
+import { showError } from '../../lib/errors';
 import { TrashIcon } from '../../components/Icons';
-import { WEB_ROOT } from './NewPage';
+import { WEB_ROOT } from './pageUrls';
 
 // What the backend actually needs is always this plus ".html" - nobody
 // editing this tab thinks of a page as a file with an extension, so neither
@@ -165,8 +166,8 @@ export default function Website(
       setSaved({ spaEnabled, notFound: notFoundTrimmed, redirects: cleaned });
       setNotFound(notFoundTrimmed);
       showToast('Saved the website configuration');
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setSaving(false);
     }
@@ -192,7 +193,7 @@ export default function Website(
       <p className="designer-note">
         Applies to the WHOLE cloudlet, not just the page open right now — every URL this site cannot
         otherwise resolve falls back to serving /index.html, rather than a 404. Turning this on
-        while the site also has ordinary, separate pages means a mistyped or removed page's URL
+        while the site also has ordinary, separate pages means a mistyped or removed page&apos;s URL
         silently serves the home page instead of failing loudly.
       </p>
 
@@ -213,7 +214,8 @@ export default function Website(
       </label>
       <p className="designer-note">
         A file path under /etc/www/, not a page URL — the default above is served if this is left
-        empty. No extension here, same as a page's own address — it is added back automatically.
+        empty. No extension here, same as a page&apos;s own address — it is added back
+        automatically.
       </p>
 
       <div className="designer-field">

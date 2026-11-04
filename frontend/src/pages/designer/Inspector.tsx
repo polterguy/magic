@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react';
 import { SERVER_FILLED, hasSlot } from './html';
 import { CopyIcon, TrashIcon } from '../../components/Icons';
 import { isText, labelOf } from './nodes';
-import { KIND_FOR_TAG } from './Media';
+import { KIND_FOR_TAG } from './mediaKinds';
 import { DataSource, dataGridSources, loadEndpoints } from './dataSources';
 
 // Attributes with a control of their own, or that belong to the designer.
@@ -215,9 +215,14 @@ function gridColumns(value: string | null): GridColumn[] {
     return [];
   }
   try {
-    const parsed = JSON.parse(value);
+    const parsed: unknown = JSON.parse(value);
     return Array.isArray(parsed)
-      ? parsed.filter((entry): entry is GridColumn => !!entry && typeof entry.name === 'string')
+      ? parsed.filter(
+          (entry: unknown): entry is GridColumn =>
+            typeof entry === 'object' &&
+            entry !== null &&
+            typeof (entry as { name?: unknown }).name === 'string',
+        )
       : [];
   } catch {
     return [];
@@ -310,27 +315,27 @@ export default function Inspector(
    * below, because a Hook cannot be called from inside a condition.
    */
   const [sources, setSources] = useState<DataSource[] | null>(null);
-  const [sourcesLoading, setSourcesLoading] = useState(false);
   const [sourcesError, setSourcesError] = useState(false);
+  // Flips on, once, the first time a data widget is selected; that is what fetches.
+  const [sourcesWanted, setSourcesWanted] = useState(false);
+  const selectedTag =
+    props.node && !isText(props.node) ? (props.node as Element).tagName.toLowerCase() : null;
+  if (
+    !sourcesWanted &&
+    (selectedTag === 'magic-data-grid' || selectedTag === 'magic-data-create')
+  ) {
+    setSourcesWanted(true);
+  }
+  const sourcesLoading = sourcesWanted && sources === null && !sourcesError;
 
   useEffect(() => {
-    const element = props.node && !isText(props.node) ? (props.node as Element) : null;
-    const tag = element?.tagName.toLowerCase();
-    if (
-      !element ||
-      (tag !== 'magic-data-grid' && tag !== 'magic-data-create') ||
-      sources ||
-      sourcesLoading
-    ) {
+    if (!sourcesWanted) {
       return;
     }
-    setSourcesLoading(true);
-    setSourcesError(false);
     loadEndpoints()
       .then(list => setSources(dataGridSources(list)))
-      .catch(() => setSourcesError(true))
-      .finally(() => setSourcesLoading(false));
-  }, [props.node]);
+      .catch(() => setSourcesError(true));
+  }, [sourcesWanted]);
 
   const node = props.node;
   if (!node || !props.doc) {

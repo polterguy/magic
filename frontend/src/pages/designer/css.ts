@@ -160,7 +160,13 @@ export function absoluteUrls(css: string, href: string): string {
   return css
     .replace(
       /\burl\(\s*(?:"([^"]*)"|'([^']*)'|([^'")\s]+))\s*\)/gi,
-      (whole, doubleQuoted, singleQuoted, bare) => {
+      (
+        whole: string,
+        doubleQuoted: string | undefined,
+        singleQuoted: string | undefined,
+        // Defined whenever both quoted groups are not, since one of the three always matches.
+        bare: string,
+      ) => {
         const address = doubleQuoted ?? singleQuoted ?? bare;
         let quote = '';
         if (doubleQuoted !== undefined) {
@@ -173,7 +179,7 @@ export function absoluteUrls(css: string, href: string): string {
           : 'url(' + quote + resolve(address, href) + quote + ')';
       },
     )
-    .replace(/@import\s+(['"])([^'"]+)\1/gi, (whole, quote, address) =>
+    .replace(/@import\s+(['"])([^'"]+)\1/gi, (whole: string, quote: string, address: string) =>
       ABSOLUTE.test(address) ? whole : '@import ' + quote + resolve(address, href) + quote,
     );
 }

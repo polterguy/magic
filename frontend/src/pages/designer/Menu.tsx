@@ -59,11 +59,13 @@ export default function Menu(
       const target = event.target as Node;
       if (!triggerRef.current?.contains(target) && !menuRef.current?.contains(target)) {
         setOpen(false);
+        setActive(-1);
       }
     };
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setOpen(false);
+        setActive(-1);
       }
     };
     window.addEventListener('scroll', reposition, true);
@@ -76,12 +78,6 @@ export default function Menu(
       document.removeEventListener('mousedown', onDown);
       document.removeEventListener('keydown', onKey);
     };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) {
-      setActive(-1);
-    }
   }, [open]);
 
   const selectable = (index: number) => {
@@ -137,6 +133,7 @@ export default function Menu(
      */
     if (item.checked === undefined) {
       setOpen(false);
+      setActive(-1);
     }
   }
 
@@ -160,6 +157,7 @@ export default function Menu(
                   {item.heading}
                 </li>
               ) : (
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- keyboard lives on the trigger, which keeps focus and points here with aria-activedescendant
                 <li
                   key={item.label}
                   id={menuId + '-' + index}
@@ -200,7 +198,10 @@ export default function Menu(
         onKeyDown={onKeyDown}
         onClick={() => {
           place();
-          setOpen(current => !current);
+          if (open) {
+            setActive(-1);
+          }
+          setOpen(!open);
         }}
       >
         <MenuIcon />

@@ -1,10 +1,12 @@
 import SearchInput from '../components/SearchInput';
 import { useSearchParams } from 'react-router-dom';
 import { copyToClipboard, showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import { explainHyperlambda } from '../lib/support';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
-import CodeEditor, { editorSelection, modeForFile, useEditToken } from '../components/CodeEditor';
+import CodeEditor from '../components/CodeEditor';
+import { editorSelection, modeForFile, useEditToken } from '../lib/editor';
 import type { EditorView } from '@codemirror/view';
 import AiWaiter from '../components/AiWaiter';
 import InvokePanel, { InvokeResult } from '../components/InvokePanel';
@@ -23,12 +25,13 @@ import {
   SparkIcon,
   UploadIcon,
 } from '../components/Icons';
-import { Modal, useDialog } from '../components/Dialogs';
+import { Modal } from '../components/Dialogs';
+import { useDialog } from '../lib/useDialog';
 import OpenApiDialog from '../components/OpenApiDialog';
 import GitPanel from '../components/GitPanel';
 import { useUnsavedGuard } from '../lib/navGuard';
 import { useDebounced } from '../lib/usePagedList';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 import {
   Endpoint,
   createFolder,
@@ -54,7 +57,7 @@ import {
   saveFile,
   uploadFile,
 } from '../lib/api';
-import { dispositionFilename, downloadBlob } from '../components/ResultViewer';
+import { dispositionFilename, downloadBlob } from '../lib/download';
 import FileTabs from './files/FileTabs';
 import FileTree from './files/FileTree';
 import SelectModelDialog from './files/SelectModelDialog';
@@ -111,6 +114,33 @@ function endpointOf(path: string): { path: string; verb: string } | null {
   return { path: 'magic/' + parts[0], verb: parts[1] };
 }
 
+// Every folder above a file, outermost first: "/a/b/c.hl" gives "/a/" and "/a/b/".
+function ancestorsOf(file: string) {
+  const ancestors: string[] = [];
+  let ancestor = '/';
+  for (const part of file
+    .split('/')
+    .filter(part => part !== '')
+    .slice(0, -1)) {
+    ancestor += part + '/';
+    ancestors.push(ancestor);
+  }
+  return ancestors;
+}
+
+// The entire tree, folders and files, as the backend lists it recursively.
+function fetchTree(sys: boolean) {
+  return Promise.all([listFoldersRecursively('/', sys), listFilesRecursively('/', sys)]);
+}
+
+// The workspace shape remembered in localStorage, per backend.
+interface Workspace {
+  open?: string[];
+  selected?: string;
+  expanded?: string[];
+  sys?: boolean;
+}
+
 interface OpenTab {
   path: string;
   content: string;
@@ -140,14 +170,9 @@ export default function Files() {
    * doesn't come back.
    */
   const workspaceKey = 'magic2.ide.workspace.' + (backend?.url ?? '');
-  const [workspace] = useState<{
-    open?: string[];
-    selected?: string;
-    expanded?: string[];
-    sys?: boolean;
-  }>(() => {
+  const [workspace] = useState<Workspace>(() => {
     try {
-      return JSON.parse(localStorage.getItem(workspaceKey) ?? '{}');
+      return JSON.parse(localStorage.getItem(workspaceKey) ?? '{}') as Workspace;
     } catch {
       return {};
     }
@@ -257,8 +282,8 @@ export default function Files() {
           current !== '' ? current : restoredSelection(tabs, workspace.selected),
         );
       })
-      .catch(error => showToast('Could not restore open files: ' + error.message, true));
-  }, []);
+      .catch((err: unknown) => showError(err, 'Could not restore open files: '));
+  }, [workspace.open, workspace.selected]);
 
   // Remembers the workspace shape — file contents deliberately excluded.
   useEffect(() => {
@@ -280,41 +305,44 @@ export default function Files() {
    * tree expands down to the file so it is visible where it lives.
    */
   const [searchParams, setSearchParams] = useSearchParams();
-  useEffect(() => {
-    const target = searchParams.get('open');
-    if (!target) {
-      return;
+  const deepLink = searchParams.get('open');
+  // The deep link the tree was last expanded for, so it is expanded once per link.
+  const [expandedFor, setExpandedFor] = useState<string | null>(null);
+  if (deepLink !== expandedFor) {
+    setExpandedFor(deepLink);
+    if (deepLink) {
+      const ancestors = ancestorsOf(deepLink);
+      setExpanded(current => new Set([...current, ...ancestors]));
     }
-    const ancestors: string[] = [];
-    let ancestor = '/';
-    for (const part of target
-      .split('/')
-      .filter(part => part !== '')
-      .slice(0, -1)) {
-      ancestor += part + '/';
-      ancestors.push(ancestor);
-    }
-    setExpanded(current => new Set([...current, ...ancestors]));
+  }
+  const openDeepLink = useEffectEvent((target: string) => {
     void openFile(target);
     setSearchParams({}, { replace: true });
-  }, [searchParams, setSearchParams]);
+  });
+  useEffect(() => {
+    if (deepLink) {
+      openDeepLink(deepLink);
+    }
+  }, [deepLink]);
 
   const loadTree = useCallback(async (sys: boolean) => {
     try {
-      const [folderList, fileList] = await Promise.all([
-        listFoldersRecursively('/', sys),
-        listFilesRecursively('/', sys),
-      ]);
+      const [folderList, fileList] = await fetchTree(sys);
       setFolders(folderList ?? []);
       setFiles(fileList ?? []);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }, []);
 
   useEffect(() => {
-    loadTree(systemFiles);
-  }, [loadTree, systemFiles]);
+    fetchTree(systemFiles)
+      .then(([folderList, fileList]) => {
+        setFolders(folderList ?? []);
+        setFiles(fileList ?? []);
+      })
+      .catch((err: unknown) => showError(err));
+  }, [systemFiles]);
 
   // Guard in-app navigation and browser unload while any open file is dirty.
   const dirtyPaths = dirtyFiles.map(file => file.path).join(', ');
@@ -394,8 +422,8 @@ export default function Files() {
           : [...current, { path, content: text, saved: text }],
       );
       setSelectedFile(path);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -415,7 +443,7 @@ export default function Files() {
     const loaded = await Promise.all(
       affected.map(file =>
         loadFile(file.path)
-          .then(text => ({ path: file.path, text: text as string | null }))
+          .then(text => ({ path: file.path, text }))
           .catch(() => ({ path: file.path, text: null })),
       ),
     );
@@ -458,8 +486,8 @@ export default function Files() {
       );
       showToast('Saved ' + file.path);
       return true;
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
       return false;
     } finally {
       setSaving(false);
@@ -492,8 +520,8 @@ export default function Files() {
         setWaiting(true);
         try {
           await saveFile(path, file.content);
-        } catch (err: any) {
-          showToast(err.message, true);
+        } catch (err) {
+          showError(err);
           return;
         } finally {
           setWaiting(false);
@@ -531,7 +559,7 @@ export default function Files() {
       // Waiter off while the parametrise form awaits the user.
       setWaiting(false);
       const names = Object.keys(argSpec);
-      let args: any = null;
+      let args: Record<string, unknown> | null = null;
       if (names.length > 0) {
         const values = await form({
           title: 'Parametrise invocation',
@@ -558,8 +586,8 @@ export default function Files() {
       setResultWasHttp(false);
       setWaiting(true);
       setExecuteResult(await evaluateWithArgs(code, args));
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -569,12 +597,12 @@ export default function Files() {
    * Records an execution of the open file. The code defaults to the editor's
    * content, so the invoke panel can trigger it knowing only the arguments.
    */
-  async function runDebug(args: any, code?: string) {
+  async function runDebug(args: unknown, code?: string) {
     setWaiting(true);
     try {
       setRecording(await debugHyperlambda(code ?? content, args));
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -595,8 +623,8 @@ export default function Files() {
     try {
       const response = await aiQuery(selection, 'hl');
       updateContent(response.result);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setGenerating(false);
     }
@@ -647,8 +675,8 @@ export default function Files() {
         return;
       }
       setInvokeTarget(meta);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -665,8 +693,8 @@ export default function Files() {
       await saveFile(path, '');
       await loadTree(systemFiles);
       await openFile(path);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -681,8 +709,8 @@ export default function Files() {
     try {
       await createFolder(folder + name + '/');
       await loadTree(systemFiles);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -708,8 +736,8 @@ export default function Files() {
         setSelectedFile(remaining.length > 0 ? remaining[remaining.length - 1].path : '');
       }
       await loadTree(systemFiles);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -752,8 +780,8 @@ export default function Files() {
         setSelectedFile(remaining.length > 0 ? remaining[remaining.length - 1].path : '');
       }
       await loadTree(systemFiles);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -795,8 +823,8 @@ export default function Files() {
       setOpenFiles(files => files.map(file => ({ ...file, path: remap(file.path) })));
       setSelectedFile(remap(selectedFile));
       await loadTree(systemFiles);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -825,8 +853,8 @@ export default function Files() {
         });
       }
       showToast(targets.length + ' AI function(s) declared on ' + type);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -838,8 +866,8 @@ export default function Files() {
     try {
       const spec = await getOpenApiSpec(target);
       setOpenApiSpec({ json: JSON.stringify(spec, null, 2), target });
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -888,8 +916,8 @@ export default function Files() {
                     raw.blob,
                     dispositionFilename(raw.disposition) ?? nameOf(selectedFile),
                   );
-                } catch (err: any) {
-                  showToast(err.message, true);
+                } catch (err) {
+                  showError(err);
                 } finally {
                   setWaiting(false);
                 }
@@ -986,8 +1014,8 @@ export default function Files() {
                     }
                     showToast('Uploaded ' + files.length + ' file(s) to ' + activeFolder);
                     await loadTree(systemFiles);
-                  } catch (err: any) {
-                    showToast(err.message, true);
+                  } catch (err) {
+                    showError(err);
                   } finally {
                     setWaiting(false);
                   }
@@ -1026,8 +1054,8 @@ export default function Files() {
                     await installModule(file);
                     showToast('Module ' + moduleName + ' installed');
                     await loadTree(systemFiles);
-                  } catch (err: any) {
-                    showToast(err.message, true);
+                  } catch (err) {
+                    showError(err);
                   } finally {
                     setWaiting(false);
                   }
@@ -1042,8 +1070,8 @@ export default function Files() {
                 try {
                   const raw = await downloadFolderRaw(activeFolder);
                   downloadBlob(raw.blob, dispositionFilename(raw.disposition) ?? 'folder.zip');
-                } catch (err: any) {
-                  showToast(err.message, true);
+                } catch (err) {
+                  showError(err);
                 } finally {
                   setWaiting(false);
                 }
@@ -1079,6 +1107,7 @@ export default function Files() {
             onDeleteFile={removeFile}
           />
         </div>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- a focusable separator is the ARIA splitter pattern (a widget), which jsx-a11y does not model */}
         <div
           className="splitter"
           role="separator"
@@ -1087,6 +1116,7 @@ export default function Files() {
           aria-valuemin={220}
           aria-valuemax={640}
           aria-valuenow={treeWidth}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focusable so the arrow keys can resize it, per the ARIA splitter pattern
           tabIndex={0}
           onKeyDown={event => {
             if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {

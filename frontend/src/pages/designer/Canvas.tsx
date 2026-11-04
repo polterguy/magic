@@ -12,7 +12,7 @@
  * being edited, so nothing it draws can end up in the saved file.
  */
 
-import { useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useLayoutEffect, useReducer, useRef, useState } from 'react';
 import { DropSpot, findDropSpot } from './dropTarget';
 import { elementOf, isText, labelOf, nodeAtPoint, rectOf } from './nodes';
 import { CANVAS_SANDBOX, SLOT_EDITING, isSlot } from './html';
@@ -352,9 +352,10 @@ export default function Canvas(props: Readonly<CanvasProps>) {
    * not unmounted, so without this the wrapper would sit in the document while
    * the code view serialised it.
    */
+  const commitEditOnHide = useEffectEvent(() => commitEdit());
   useEffect(() => {
     if (props.hidden) {
-      commitEdit();
+      commitEditOnHide();
     }
   }, [props.hidden]);
 
@@ -385,7 +386,9 @@ export default function Canvas(props: Readonly<CanvasProps>) {
    * dragged from outside the frame to begin with, so the pointer is followed
    * at the window level too.
    */
+  const finishDragOutside = useEffectEvent(() => finishDrag());
   useEffect(() => {
+    const up = () => finishDragOutside();
     function move(event: MouseEvent) {
       const frame = frameRef.current;
       const doc = docRef.current;
@@ -402,11 +405,11 @@ export default function Canvas(props: Readonly<CanvasProps>) {
       showSpot(findDropSpot(doc, x, y, null));
     }
     window.addEventListener('mousemove', move);
-    window.addEventListener('mouseup', finishDrag);
+    window.addEventListener('mouseup', up);
     window.addEventListener('resize', remeasure);
     return () => {
       window.removeEventListener('mousemove', move);
-      window.removeEventListener('mouseup', finishDrag);
+      window.removeEventListener('mouseup', up);
       window.removeEventListener('resize', remeasure);
     };
   }, []);
@@ -491,6 +494,7 @@ export default function Canvas(props: Readonly<CanvasProps>) {
    * No dependency list: layout moves for reasons React never hears about, and
    * the signature check is what stops this from re-rendering forever.
    */
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- runs after every render on purpose (see above); the signature check stops the loop
   useLayoutEffect(() => {
     const next = {
       /*

@@ -17,13 +17,13 @@
  * preview of the real thing rather than a picture of one.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Modal } from '../../components/Dialogs';
 import { listFilesRecursively, uploadFile } from '../../lib/api';
+import { errorMessage } from '../../lib/errors';
+import type { MediaKind } from './mediaKinds';
 
 const WEB_ROOT = '/etc/www';
-
-export type MediaKind = 'image' | 'video' | 'audio';
 
 /*
  * What each kind is made of. The extension lists are what a browser will
@@ -61,13 +61,6 @@ const KINDS: Record<
   },
 };
 
-// The element each kind belongs to, so a selection can ask for its own picker.
-export const KIND_FOR_TAG: Record<string, MediaKind> = {
-  img: 'image',
-  video: 'video',
-  audio: 'audio',
-};
-
 function extensionOf(file: string) {
   return file.substring(file.lastIndexOf('.') + 1).toLowerCase();
 }
@@ -81,7 +74,7 @@ function extensionOf(file: string) {
  * the base a second time. Root-absolute is the one form that means the same
  * thing from every page on the site.
  */
-export function webPath(file: string) {
+function webPath(file: string) {
   return file.substring(WEB_ROOT.length);
 }
 
@@ -89,6 +82,16 @@ export interface Picked {
   src: string;
   width: number;
   height: number;
+}
+
+/*
+ * The folder a file sits in, relative to the web root. The folder the element's
+ * current file sits in is the likeliest home for its replacement, so uploads
+ * default there rather than to the web root.
+ */
+function folderOf(current: string) {
+  const at = current.lastIndexOf('/');
+  return at > 0 ? current.substring(0, at) : '';
 }
 
 function countLabel(shown: number, total: number) {
@@ -117,23 +120,27 @@ export default function Media(
    */
   const [sizes, setSizes] = useState<Record<string, [number, number]>>({});
   // Where an upload lands. Only folders that already hold this kind are offered.
-  const [folder, setFolder] = useState('');
+  const [folder, setFolder] = useState(() => folderOf(props.current));
+  // The kind the folder was defaulted for, so switching kind defaults it again.
+  const [folderKind, setFolderKind] = useState(props.kind);
+  if (folderKind !== props.kind) {
+    setFolderKind(props.kind);
+    setFolder(folderOf(props.current));
+  }
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  function reload() {
-    return listFilesRecursively(WEB_ROOT + '/', false)
-      .then(all => setFiles(all.filter(file => kind.extensions.includes(extensionOf(file)))))
-      .catch(err => setError(err.message));
-  }
+  const reload = useCallback(
+    () =>
+      listFilesRecursively(WEB_ROOT + '/', false)
+        .then(all => setFiles(all.filter(file => kind.extensions.includes(extensionOf(file)))))
+        .catch((err: unknown) => setError(errorMessage(err))),
+    [kind],
+  );
 
   useEffect(() => {
     void reload();
-    // The folder the element's current file sits in is the likeliest home for
-    // its replacement, so uploads default there rather than to the web root.
-    const at = props.current.lastIndexOf('/');
-    setFolder(at > 0 ? props.current.substring(0, at) : '');
-  }, [props.kind]);
+  }, [reload]);
 
   /*
    * Uploading keeps the dialog open and simply re-lists. The new file has to
@@ -153,8 +160,8 @@ export default function Media(
       await reload();
       // Narrowed to what just arrived, so it is the thing you are looking at.
       setFilter(names.length === 1 ? names[0] : '');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(errorMessage(err));
     } finally {
       setUploading(false);
     }

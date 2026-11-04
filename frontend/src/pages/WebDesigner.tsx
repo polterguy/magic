@@ -14,16 +14,18 @@
  * in the source, and saving is a serialization rather than a reconciliation.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Tabs from '../components/Tabs';
 import SearchInput from '../components/SearchInput';
-import CodeEditor, { modeForFile, useEditToken } from '../components/CodeEditor';
+import CodeEditor from '../components/CodeEditor';
+import { modeForFile, useEditToken } from '../lib/editor';
 import AiPrompt from '../components/AiPrompt';
-import { useDialog } from '../components/Dialogs';
-import { useAuth } from '../lib/AuthContext';
+import { useDialog } from '../lib/useDialog';
+import { useAuth } from '../lib/useAuth';
 import { useUnsavedGuard } from '../lib/navGuard';
 import { onChatOpsDone } from '../lib/chatOps';
 import { showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import {
   aiContextForFile,
   createFolder,
@@ -35,11 +37,14 @@ import {
 import { ChevronIcon, RedoIcon, SaveIcon, UndoIcon } from '../components/Icons';
 import Canvas from './designer/Canvas';
 import Menu, { MenuItem } from './designer/Menu';
-import NewPage, { blankPage } from './designer/NewPage';
+import NewPage from './designer/NewPage';
+import { blankPage } from './designer/pageUrls';
 import Inspector from './designer/Inspector';
 import Layers from './designer/Layers';
-import Media, { KIND_FOR_TAG, MediaKind, Picked } from './designer/Media';
-import Meta, { Home, readMeta, writeMeta } from './designer/Meta';
+import Media, { Picked } from './designer/Media';
+import { KIND_FOR_TAG, MediaKind } from './designer/mediaKinds';
+import Meta from './designer/Meta';
+import { Home, readMeta, writeMeta } from './designer/metaTags';
 import Quality from './designer/Quality';
 import Website from './designer/Website';
 import Styles, { INLINE } from './designer/Styles';
@@ -270,6 +275,19 @@ function designerMenuItems(o: {
       onClick: () => setReveal(!reveal),
     },
   ];
+}
+
+// Every page under the web root, sorted by the URL it is served at, which is how the picker lists them.
+async function listPages() {
+  const files = (await listFilesRecursively(WEB_ROOT, false)) ?? [];
+  return files
+    .filter(file => /\.html?$/i.test(file) && isServed(file))
+    .sort((left, right) => canonicalUrl(left).localeCompare(canonicalUrl(right)));
+}
+
+// The "more" menu in the toolbar, built from the designer's current state.
+function DesignerMenu(props: Readonly<Parameters<typeof designerMenuItems>[0]>) {
+  return <Menu title="Viewport, preview and the rest" items={designerMenuItems(props)} />;
 }
 
 // The blocks that can be dragged onto the page, filtered or by drawer, and any other tag.
@@ -546,18 +564,16 @@ export default function WebDesigner() {
   const docRef = useRef<Document | null>(null);
   // For onReady, which fires long after the render that set the view.
   const viewRef = useRef(view);
-  viewRef.current = view;
   /*
    * Consecutive edits of the same thing — dragging a slider, typing into a
    * field — share one undo step. Cleared whenever the selection moves, so the
    * next element starts a step of its own.
    */
   const coalesceRef = useRef<string | null>(null);
-  // For the Chat Ops listener, which is registered once and outlives renders.
-  const dirtyRef = useRef(dirty);
-  dirtyRef.current = dirty;
-  const pathRef = useRef(path);
-  pathRef.current = path;
+  // Kept current after every commit, before any effect or listener can read it.
+  useLayoutEffect(() => {
+    viewRef.current = view;
+  });
 
   const origin = backend ? new URL(backend.url).origin : '';
   // Per backend — every cloudlet has its own pages.
@@ -572,7 +588,11 @@ export default function WebDesigner() {
   const sameOrigin = origin !== '' && origin === window.location.origin;
   const warnedKey = 'magic2.designer.live-warning.' + (backend?.url ?? '');
   const [liveWarned, setLiveWarned] = useState(() => localStorage.getItem(warnedKey) === 'seen');
-  const doc = docRef.current;
+  /*
+   * The canvas document, for rendering. docRef holds the same document for
+   * handlers; this copy is what tells React a new one has loaded.
+   */
+  const [doc, setDoc] = useState<Document | null>(null);
   const width = VIEWPORTS.find(entry => entry.id === viewport)?.width ?? null;
 
   useUnsavedGuard(dirty, 'Your design changes have not been saved.');
@@ -584,11 +604,7 @@ export default function WebDesigner() {
   /* -- Loading ------------------------------------------------------------ */
 
   async function loadPages() {
-    const files = (await listFilesRecursively(WEB_ROOT, false)) ?? [];
-    // Sorted by the URL they are served at, which is how the picker lists them.
-    const html = files
-      .filter(file => /\.html?$/i.test(file) && isServed(file))
-      .sort((left, right) => canonicalUrl(left).localeCompare(canonicalUrl(right)));
+    const html = await listPages();
     setPages(html);
     return html;
   }
@@ -639,29 +655,32 @@ export default function WebDesigner() {
       setCssTail('');
       setOverrides({});
       setCssMissing([]);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
   }
 
+  const openRememberedPage = useEffectEvent((html: string[]) => {
+    /*
+     * Back to whichever page was open last, rather than to whichever page
+     * happens to sort first — which on a cloudlet serving a built app at
+     * the root is its empty mount point, the one page with nothing to
+     * design on it.
+     */
+    const remembered = localStorage.getItem(pageKey);
+    void openPage(remembered && html.includes(remembered) ? remembered : html[0], true);
+  });
   useEffect(() => {
-    loadPages()
+    listPages()
       .then(html => {
-        if (html.length === 0) {
-          return;
+        setPages(html);
+        if (html.length > 0) {
+          openRememberedPage(html);
         }
-        /*
-         * Back to whichever page was open last, rather than to whichever page
-         * happens to sort first — which on a cloudlet serving a built app at
-         * the root is its empty mount point, the one page with nothing to
-         * design on it.
-         */
-        const remembered = localStorage.getItem(pageKey);
-        void openPage(remembered && html.includes(remembered) ? remembered : html[0], true);
       })
-      .catch((err: any) => showToast(err.message, true));
+      .catch((err: unknown) => showError(err));
     // Mount only — the page list is refreshed by hand and after a Chat Ops turn.
   }, []);
 
@@ -671,21 +690,18 @@ export default function WebDesigner() {
    * it says so and waits, because the alternative is silently throwing away
    * what the user just did.
    */
-  useEffect(
-    () =>
-      onChatOpsDone(() => {
-        if (dirtyRef.current) {
-          setStale(true);
-          showToast('Chat Ops changed files on the server — reload when you are ready');
-          return;
-        }
-        if (pathRef.current) {
-          void openPage(pathRef.current, true);
-        }
-        loadPages().catch(() => {});
-      }),
-    [],
-  );
+  const onChatOpsTurn = useEffectEvent(() => {
+    if (dirty) {
+      setStale(true);
+      showToast('Chat Ops changed files on the server — reload when you are ready');
+      return;
+    }
+    if (path) {
+      void openPage(path, true);
+    }
+    loadPages().catch(() => {});
+  });
+  useEffect(() => onChatOpsDone(() => onChatOpsTurn()), []);
 
   /*
    * The canvas frame has a document. Its stylesheet is read through the file
@@ -702,6 +718,7 @@ export default function WebDesigner() {
    */
   async function onReady(loaded: Document) {
     docRef.current = loaded;
+    setDoc(loaded);
     setVersion(current => current + 1);
     // Reloading the page underneath the code view has to refresh its text too.
     if (viewRef.current === 'code') {
@@ -821,8 +838,8 @@ export default function WebDesigner() {
       setCodeTarget(file);
       applyCode(text);
       setCodeOriginal(text);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -1025,8 +1042,8 @@ export default function WebDesigner() {
       await loadPages();
       await openPage(file, true);
       showToast('Created ' + file);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -1078,8 +1095,8 @@ export default function WebDesigner() {
         setCssMissing([]);
       }
       showToast('Created ' + file);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -1266,8 +1283,7 @@ export default function WebDesigner() {
     }
     const element = elementOf(node);
     const inline =
-      isText(node) ||
-      (element === node && getComputedStyle(element as Element).display.startsWith('inline'));
+      isText(node) || (element === node && getComputedStyle(element).display.startsWith('inline'));
     mutate(() => {
       const wrapper = current.createElement(inline ? 'span' : 'div');
       (node as ChildNode).before(wrapper);
@@ -1624,7 +1640,7 @@ export default function WebDesigner() {
       linkedNewAsset = ensureRequiredAssets(current, block.requires);
     });
     if (linkedNewAsset) {
-      ensureWidgetAssets().catch(err => showToast(err.message, true));
+      ensureWidgetAssets().catch((err: unknown) => showError(err));
     }
     /*
      * An image dropped onto the page wants a picture, and the grey
@@ -1840,6 +1856,7 @@ export default function WebDesigner() {
       }
     });
     return found;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- version stands for edits to the live DOM, which the memo cannot otherwise see
   }, [doc, version]);
 
   // The page's own selectors this element is styled by, offered as edit targets.
@@ -1861,13 +1878,14 @@ export default function WebDesigner() {
      * a page that links no local stylesheet offers this element only.
      */
     () => (styleTarget && cssPath ? selectorsFor(styleTarget, cssHead, overrides) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- version stands for live DOM state (element.matches()), see above
     [styleTarget, cssPath, cssHead, overrides, version],
   );
 
   // A selector that styled the last element rarely styles the next one.
-  useEffect(() => {
-    setTarget(current => (current === INLINE || selectors.includes(current) ? current : INLINE));
-  }, [selectors]);
+  if (target !== INLINE && !selectors.includes(target)) {
+    setTarget(INLINE);
+  }
 
   /* -- Saving ------------------------------------------------------------- */
 
@@ -1996,7 +2014,7 @@ export default function WebDesigner() {
       if (view !== 'code') {
         syncSharedAssetVersions(current);
         if (cssChanged) {
-          bumpAsset(current, cssPath!);
+          bumpAsset(current, cssPath);
         }
       }
       /*
@@ -2006,7 +2024,7 @@ export default function WebDesigner() {
        */
       await saveFile(path, view === 'code' ? code : serializeDocument(current));
       if (cssChanged) {
-        await saveFile(cssPath!, css);
+        await saveFile(cssPath, css);
         setCssOriginal(css);
         // The code view may be holding this same file — move its draft onto
         // what was just written, or it would offer to save the old text back.
@@ -2019,8 +2037,8 @@ export default function WebDesigner() {
       setDirty(false);
       showToast('Saved ' + path);
       return true;
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
       return false;
     } finally {
       setSaving(false);
@@ -2083,22 +2101,6 @@ export default function WebDesigner() {
   useEffect(() => {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  });
-
-  const menuItems = designerMenuItems({
-    viewport,
-    setViewport,
-    setCreating,
-    origin,
-    path,
-    busy,
-    scripts,
-    sheets,
-    openPage,
-    addCompanionFile,
-    reveal,
-    setReveal,
-    view,
   });
 
   // What the right rail shows, according to its selected tab.
@@ -2250,7 +2252,21 @@ export default function WebDesigner() {
           <RedoIcon />
           Redo
         </button>
-        <Menu title="Viewport, preview and the rest" items={menuItems} />
+        <DesignerMenu
+          viewport={viewport}
+          setViewport={setViewport}
+          setCreating={setCreating}
+          origin={origin}
+          path={path}
+          busy={busy}
+          scripts={scripts}
+          sheets={sheets}
+          openPage={file => void openPage(file)}
+          addCompanionFile={kind => void addCompanionFile(kind)}
+          reveal={reveal}
+          setReveal={setReveal}
+          view={view}
+        />
         <button className="btn btn-small" onClick={save} disabled={!path || !dirty || saving}>
           <SaveIcon />
           {saving ? 'Saving…' : 'Save'}
@@ -2379,7 +2395,7 @@ export default function WebDesigner() {
                 </select>
                 {codeTarget !== '' && codeTarget === cssPath && (
                   <span className="designer-muted">
-                    the whole file, not just the designer's block
+                    the whole file, not just the designer&apos;s block
                   </span>
                 )}
                 {codeTarget !== '' && scripts.includes(codeTarget) && (

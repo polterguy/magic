@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import Banner from '../../components/Banner';
 import { Modal } from '../../components/Dialogs';
 import Select from '../../components/Select';
-import { mlTypes } from '../../lib/api';
+import { mlTypes, type MlType } from '../../lib/api';
+import { errorMessage } from '../../lib/errors';
 
 /*
  * Lets the user pick which AI model a generated function should be added to,
@@ -15,7 +16,7 @@ export default function SelectModelDialog(
     onSelected: (type: string) => void;
   }>,
 ) {
-  const [types, setTypes] = useState<any[]>([]);
+  const [types, setTypes] = useState<MlType[]>([]);
   const [type, setType] = useState('');
   const [error, setError] = useState('');
 
@@ -25,7 +26,7 @@ export default function SelectModelDialog(
         setTypes(list ?? []);
         setType(list?.[0]?.type ?? '');
       })
-      .catch(err => setError(err.message));
+      .catch((err: unknown) => setError(errorMessage(err)));
   }, []);
 
   return (

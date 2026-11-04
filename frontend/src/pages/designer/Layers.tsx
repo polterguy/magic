@@ -142,6 +142,20 @@ export default function Layers(
             (!text && props.hidden.has(node as Element) ? ' invisible' : '')
           }
           style={{ paddingLeft: 6 + depth * 12 }}
+          role="treeitem"
+          tabIndex={0}
+          aria-selected={node === props.selected}
+          aria-expanded={children.length > 0 ? open : undefined}
+          onKeyDown={event => {
+            // Only the row's own keys; the chevron button inside handles its own.
+            if (
+              event.target === event.currentTarget &&
+              (event.key === 'Enter' || event.key === ' ')
+            ) {
+              event.preventDefault();
+              props.onSelect(node);
+            }
+          }}
           onMouseEnter={() => props.onHover(node)}
           onMouseLeave={() => props.onHover(null)}
           onClick={() => props.onSelect(node)}
@@ -177,7 +191,7 @@ export default function Layers(
         value={query}
         onChange={event => setQuery(event.target.value)}
       />
-      <div className="designer-layers">
+      <div className="designer-layers" role="tree" aria-label="Page tree">
         {searching && found.size === 0 ? (
           <p className="designer-muted">Nothing matches “{query.trim()}”.</p>
         ) : (
