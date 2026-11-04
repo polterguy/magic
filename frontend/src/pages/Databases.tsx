@@ -256,7 +256,9 @@ function ExternalTab() {
       const config = await loadConfig();
       const found: ConnectionRow[] = [];
       for (const dbType of EXTERNAL_TYPES.map(entry => entry.type)) {
-        const connections = config?.magic?.databases?.[dbType] ?? {};
+        // Next to the per-type maps sits "default", a plain string naming the default type.
+        const entry = config?.magic?.databases?.[dbType];
+        const connections = typeof entry === 'object' ? entry : {};
         for (const key of Object.keys(connections)) {
           found.push({
             type: dbType,

@@ -51,7 +51,7 @@ async function throwApiError(response: Response): Promise<never> {
   let message = response.statusText;
   let logId: number | undefined;
   try {
-    const payload = await response.json();
+    const payload = (await response.json()) as { message?: string; 'log-id'?: number };
     message = payload.message ?? message;
     logId = payload['log-id'];
   } catch {
@@ -63,7 +63,7 @@ async function throwApiError(response: Response): Promise<never> {
 async function request<T>(
   method: string,
   url: string,
-  body?: any,
+  body?: unknown,
   opts?: { text?: boolean; noBase?: boolean },
 ): Promise<T> {
   const headers: Record<string, string> = {};
@@ -106,15 +106,66 @@ async function request<T>(
 export const http = {
   get: <T>(url: string) => request<T>('GET', url),
   getText: (url: string) => request<string>('GET', url, undefined, { text: true }),
-  post: <T>(url: string, body: any) => request<T>('POST', url, body),
-  put: <T>(url: string, body: any) => request<T>('PUT', url, body),
-  patch: <T>(url: string, body: any) => request<T>('PATCH', url, body),
+  post: <T>(url: string, body: unknown) => request<T>('POST', url, body),
+  put: <T>(url: string, body: unknown) => request<T>('PUT', url, body),
+  patch: <T>(url: string, body: unknown) => request<T>('PATCH', url, body),
   delete: <T>(url: string) => request<T>('DELETE', url),
 };
 
 export interface MagicResponse {
   result: string;
 }
+
+// Any JSON value, for payloads whose shape is only known at runtime.
+export type JsonValue =
+  string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+/*
+ * The backend's appsettings, as /magic/system/config/load returns it. Only the parts the
+ * dashboard reads are spelled out; the rest is passed through untouched.
+ */
+export interface MagicConfig {
+  magic?: {
+    smtp?: { host?: string; [key: string]: unknown };
+    // Connection strings per database type, plus "default" naming the default type.
+    databases?: Record<string, Record<string, string> | string | undefined>;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
+// A database, its tables, their columns, foreign keys and indexes, as /magic/system/sql/databases returns them.
+export interface ColumnMeta {
+  name: string;
+  db: string;
+  nullable?: boolean;
+  primary?: boolean;
+  automatic?: boolean;
+  // The Hyperlambda type crudify maps the column to.
+  hl?: string;
+}
+
+export interface ForeignKeyMeta {
+  column: string;
+  foreign_table: string;
+  foreign_column: string;
+  [key: string]: unknown;
+}
+
+export interface TableMeta {
+  name: string;
+  columns?: ColumnMeta[] | null;
+  foreign_keys?: ForeignKeyMeta[] | null;
+  indexes?: Record<string, unknown>[] | null;
+}
+
+export interface DatabaseMeta {
+  name: string;
+  tables?: TableMeta[] | null;
+}
+
+// One row of an SQL result set, column name to value.
+export type SqlRow = Record<string, unknown>;
 
 /*
  * Authentication.
@@ -186,7 +237,7 @@ export function getVersion() {
 }
 
 export function getSystemInformation() {
-  return http.get<any>('/magic/system/diagnostics/system-information');
+  return http.get<Record<string, unknown>>('/magic/system/diagnostics/system-information');
 }
 
 /*
@@ -238,7 +289,7 @@ export function moduleNameFromZip(file: File): string | null {
 export function installModule(file: File) {
   const formData = new FormData();
   formData.append('file', file, file.name);
-  return http.put<any>('/magic/system/file-system/install-module', formData);
+  return http.put<MagicResponse>('/magic/system/file-system/install-module', formData);
 }
 
 export function loadFile(filename: string) {
@@ -250,7 +301,7 @@ export function saveFile(filename: string, content: string) {
   const formData = new FormData();
   const blob = new Blob([content], { type: 'text/plain' });
   formData.append('file', blob, filename.substring(filename.lastIndexOf('/') + 1));
-  return http.put<any>(
+  return http.put<MagicResponse>(
     '/magic/system/file-system/file?folder=' + encodeURIComponent(folder),
     formData,
   );
@@ -279,7 +330,7 @@ export function deleteFolder(folder: string) {
 export function uploadFile(folder: string, file: File) {
   const formData = new FormData();
   formData.append('file', file);
-  return http.put<any>(
+  return http.put<MagicResponse>(
     '/magic/system/file-system/file?folder=' + encodeURIComponent(folder),
     formData,
   );
@@ -297,7 +348,7 @@ export function downloadFolderRaw(folder: string) {
 }
 
 export function getOpenApiSpec(filter: string) {
-  return http.get<any>(
+  return http.get<unknown>(
     '/magic/system/endpoints/openapi?system=true&filter=' + encodeURIComponent(filter),
   );
 }
@@ -478,7 +529,7 @@ export interface DebugStep {
 
 export interface DebugRecording {
   steps: DebugStep[] | null;
-  returned?: any;
+  returned?: unknown;
   error?: { message: string; type: string };
 }
 
@@ -487,11 +538,11 @@ export interface DebugRecording {
  * invokes. Wrapping happens server side, since indenting the source into a
  * [system.debug] block here would corrupt multi-line strings.
  */
-export function debugHyperlambda(hyperlambda: string, args: any) {
+export function debugHyperlambda(hyperlambda: string, args: unknown) {
   return http.post<DebugRecording>('/magic/system/evaluator/debug', { hyperlambda, args });
 }
 
-export function evaluateWithArgs(hyperlambda: string, args: any) {
+export function evaluateWithArgs(hyperlambda: string, args: unknown) {
   return requestRaw(
     'POST',
     '/magic/system/evaluator/evaluate-with-args',
@@ -542,7 +593,7 @@ export function defaultDatabaseType() {
 }
 
 export function listDatabases(databaseType: string, connectionString: string) {
-  return http.get<any>(
+  return http.get<{ databases: DatabaseMeta[] | null }>(
     '/magic/system/sql/databases?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
@@ -557,7 +608,7 @@ export function executeSql(
   safeMode: boolean,
   batch: boolean,
 ) {
-  return http.post<any[][]>('/magic/system/sql/evaluate', {
+  return http.post<SqlRow[][]>('/magic/system/sql/evaluate', {
     databaseType,
     database,
     sql,
@@ -610,14 +661,14 @@ export function fileWithTokenUrl(file: string) {
 export function uploadDatabaseBackup(file: File) {
   const formData = new FormData();
   formData.append('file', file);
-  return http.put<any>('/magic/system/sql/backup', formData);
+  return http.put<MagicResponse>('/magic/system/sql/backup', formData);
 }
 
 export function loadConfig() {
-  return http.get<any>('/magic/system/config/load');
+  return http.get<MagicConfig>('/magic/system/config/load');
 }
 
-export function saveConfig(config: any) {
+export function saveConfig(config: MagicConfig) {
   return http.post<MagicResponse>('/magic/system/config/save', config);
 }
 
@@ -712,7 +763,7 @@ export function importOpenApi(payload: {
   );
 }
 
-export function crudify(payload: any) {
+export function crudify(payload: Record<string, unknown>) {
   return http.post<{ loc: number; result: string }>('/magic/system/crudifier/crudify', payload);
 }
 
@@ -804,7 +855,7 @@ export function flushSchemaCache(databaseType: string, connectionString: string)
    * system/sql/databases.get.hl. A trailing ".*" wildcard silently matches
    * nothing, since the wildcard filter keeps the trailing dot.
    */
-  return http.delete<any>(
+  return http.delete<MagicResponse>(
     '/magic/system/cache/delete?id=' +
       encodeURIComponent('magic.sql.databases.' + databaseType + '.' + connectionString),
   );
@@ -827,7 +878,7 @@ export function importCsvFile(
   formData.append('connectionString', connectionString);
   formData.append('databaseName', databaseName);
   formData.append('file', file, file.name);
-  return http.post<any>('/magic/system/sql/import-csv-file', formData);
+  return http.post<MagicResponse>('/magic/system/sql/import-csv-file', formData);
 }
 
 function bustSchemaCache(databaseType: string, connectionString: string) {
@@ -843,7 +894,7 @@ export async function addTable(
   pkType: string,
   pkLength: number,
 ) {
-  const result = await http.post<any>('/magic/system/sql/ddl/table', {
+  const result = await http.post<MagicResponse>('/magic/system/sql/ddl/table', {
     databaseType,
     connectionString,
     databaseName,
@@ -863,7 +914,7 @@ export async function dropTable(
   databaseName: string,
   tableName: string,
 ) {
-  const result = await http.delete<any>(
+  const result = await http.delete<MagicResponse>(
     '/magic/system/sql/ddl/table?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
@@ -904,7 +955,7 @@ export interface NewForeignKey {
 }
 
 export async function addColumn(target: ColumnTarget, column: NewColumn) {
-  const result = await http.post<any>('/magic/system/sql/ddl/column', {
+  const result = await http.post<MagicResponse>('/magic/system/sql/ddl/column', {
     databaseType: target.databaseType,
     connectionString: target.connectionString,
     databaseName: target.databaseName,
@@ -920,7 +971,7 @@ export async function addColumn(target: ColumnTarget, column: NewColumn) {
   return result;
 }
 export async function addForeignKey(target: ColumnTarget, column: NewForeignKey) {
-  const result = await http.post<any>('/magic/system/sql/ddl/column', {
+  const result = await http.post<MagicResponse>('/magic/system/sql/ddl/column', {
     databaseType: target.databaseType,
     connectionString: target.connectionString,
     databaseName: target.databaseName,
@@ -944,7 +995,7 @@ export async function dropColumn(
   tableName: string,
   columnName: string,
 ) {
-  const result = await http.delete<any>(
+  const result = await http.delete<MagicResponse>(
     '/magic/system/sql/ddl/column?databaseType=' +
       encodeURIComponent(databaseType) +
       '&connectionString=' +
@@ -964,9 +1015,9 @@ export async function addLinkTable(
   databaseType: string,
   connectionString: string,
   databaseName: string,
-  args: any,
+  args: Record<string, unknown>,
 ) {
-  const result = await http.post<any>('/magic/system/sql/ddl/link-table', {
+  const result = await http.post<MagicResponse>('/magic/system/sql/ddl/link-table', {
     databaseType,
     connectionString,
     databaseName,
@@ -1063,15 +1114,17 @@ export function countUsers(filter: string) {
 }
 
 export function createUser(username: string, password: string) {
-  return http.post<any>('/magic/system/magic/users', { username, password });
+  return http.post<MagicResponse>('/magic/system/magic/users', { username, password });
 }
 
 export function deleteUser(username: string) {
-  return http.delete<any>('/magic/system/magic/users?username=' + encodeURIComponent(username));
+  return http.delete<MagicResponse>(
+    '/magic/system/magic/users?username=' + encodeURIComponent(username),
+  );
 }
 
 export function changeUserPassword(username: string, password: string) {
-  return http.put<any>('/magic/system/magic/users', { username, password });
+  return http.put<MagicResponse>('/magic/system/magic/users', { username, password });
 }
 
 export function listRoles() {
@@ -1079,15 +1132,15 @@ export function listRoles() {
 }
 
 export function createRole(name: string, description: string) {
-  return http.post<any>('/magic/system/magic/roles', { name, description });
+  return http.post<MagicResponse>('/magic/system/magic/roles', { name, description });
 }
 
 export function updateRole(name: string, description: string) {
-  return http.put<any>('/magic/system/magic/roles', { name, description });
+  return http.put<MagicResponse>('/magic/system/magic/roles', { name, description });
 }
 
 export function deleteRole(name: string) {
-  return http.delete<any>('/magic/system/magic/roles?name=' + encodeURIComponent(name));
+  return http.delete<MagicResponse>('/magic/system/magic/roles?name=' + encodeURIComponent(name));
 }
 
 /*
@@ -1095,15 +1148,15 @@ export function deleteRole(name: string) {
  * application wants to store per user.
  */
 export function addUserExtra(user: string, type: string, value: string) {
-  return http.post<any>('/magic/system/magic/users_extra', { user, type, value });
+  return http.post<MagicResponse>('/magic/system/magic/users_extra', { user, type, value });
 }
 
 export function updateUserExtra(user: string, type: string, value: string) {
-  return http.put<any>('/magic/system/magic/users_extra', { user, type, value });
+  return http.put<MagicResponse>('/magic/system/magic/users_extra', { user, type, value });
 }
 
 export function deleteUserExtra(user: string, type: string) {
-  return http.delete<any>(
+  return http.delete<MagicResponse>(
     '/magic/system/magic/users_extra?user=' +
       encodeURIComponent(user) +
       '&type=' +
@@ -1112,11 +1165,11 @@ export function deleteUserExtra(user: string, type: string) {
 }
 
 export function addUserToRole(user: string, role: string) {
-  return http.post<any>('/magic/system/magic/users_roles', { user, role });
+  return http.post<MagicResponse>('/magic/system/magic/users_roles', { user, role });
 }
 
 export function removeUserFromRole(user: string, role: string) {
-  return http.delete<any>(
+  return http.delete<MagicResponse>(
     '/magic/system/magic/users_roles?user=' +
       encodeURIComponent(user) +
       '&role=' +
@@ -1179,7 +1232,7 @@ export function executeTask(id: string) {
 }
 
 export function scheduleTask(id: string, due?: string, repeats?: string) {
-  const payload: any = { id };
+  const payload: { id: string; due?: string; repeats?: string } = { id };
   if (repeats) {
     payload.repeats = repeats;
   } else {
@@ -1200,20 +1253,104 @@ export function backendInfo() {
   return { url: baseUrl, token: bearerToken };
 }
 
+/*
+ * One machine learning type (a "model"), a row of ml_types. The table has grown columns
+ * over time, so the ones the dashboard does not use itself are carried along untyped.
+ */
+export interface MlType {
+  type: string;
+  model?: string;
+  max_tokens?: number;
+  temperature?: number;
+  auth?: string | null;
+  supervised?: number;
+  cached?: number;
+  use_embeddings?: number;
+  threshold?: number;
+  vector_model?: string;
+  max_context_tokens?: number | null;
+  max_request_tokens?: number | null;
+  greeting?: string | null;
+  system_message?: string | null;
+  initial_questionnaire?: string | null;
+  completion_slot?: string;
+  retrieval?: string;
+  system_message_token_count?: number;
+  [key: string]: unknown;
+}
+
+// A training snippet, a row of ml_training_snippets.
+export interface MlSnippet {
+  id: number;
+  created?: string;
+  type: string;
+  prompt: string;
+  completion: string;
+  uri?: string | null;
+  filename?: string | null;
+  meta?: string | null;
+  cached?: number | null;
+  pushed?: number;
+  embedding_vss?: unknown;
+  // Only on vector search results: how far the snippet is from the search text.
+  distance?: number;
+}
+
+// A logged question and answer, a row of ml_requests.
+export interface MlRequest {
+  id: number;
+  created: string;
+  type: string;
+  prompt: string;
+  completion: string;
+  finish_reason: string;
+  cached?: number | null;
+  session?: string | null;
+  questionnaire?: number;
+  user_id?: string | null;
+  context?: number;
+  referrer?: string | null;
+}
+
+/*
+ * A system message template ("flavor") a model can start from. Files under
+ * system-messages/ carry whatever fields they want, so the rest is untyped.
+ */
+export interface SystemMessage {
+  name: string;
+  description?: string;
+  instruction?: string;
+  prefix?: string;
+  max_context_tokens?: number;
+  max_request_tokens?: number;
+  [key: string]: unknown;
+}
+
+// A plugin, either one available from the Bazar or one installed manifest.
+export interface BazarApp {
+  name: string;
+  type: string;
+  description?: string;
+  module_name?: string;
+  [key: string]: unknown;
+}
+
 export function mlTypes() {
-  return http.get<any[]>('/magic/system/magic/ml_types?limit=-1&order=type');
+  return http.get<MlType[]>('/magic/system/magic/ml_types?limit=-1&order=type');
 }
 
-export function mlTypeCreate(type: any) {
-  return http.post<any>('/magic/system/magic/ml_types', type);
+export function mlTypeCreate(type: MlType) {
+  return http.post<MagicResponse>('/magic/system/magic/ml_types', type);
 }
 
-export function mlTypeUpdate(type: any) {
-  return http.put<any>('/magic/system/magic/ml_types', type);
+export function mlTypeUpdate(type: MlType) {
+  return http.put<MagicResponse>('/magic/system/magic/ml_types', type);
 }
 
 export function mlTypeDelete(type: string) {
-  return http.delete<any>('/magic/system/magic/ml_types?type=' + encodeURIComponent(type));
+  return http.delete<MagicResponse>(
+    '/magic/system/magic/ml_types?type=' + encodeURIComponent(type),
+  );
 }
 
 /*
@@ -1244,15 +1381,17 @@ export function listQuestionnaires() {
 }
 
 export function createQuestionnaire(item: Questionnaire) {
-  return http.post<any>('/magic/system/magic/questionnaires', item);
+  return http.post<MagicResponse>('/magic/system/magic/questionnaires', item);
 }
 
 export function updateQuestionnaire(item: Questionnaire) {
-  return http.put<any>('/magic/system/magic/questionnaires', item);
+  return http.put<MagicResponse>('/magic/system/magic/questionnaires', item);
 }
 
 export function deleteQuestionnaire(name: string) {
-  return http.delete<any>('/magic/system/magic/questionnaires?name=' + encodeURIComponent(name));
+  return http.delete<MagicResponse>(
+    '/magic/system/magic/questionnaires?name=' + encodeURIComponent(name),
+  );
 }
 
 export function listQuestions(questionnaire: string) {
@@ -1271,7 +1410,7 @@ export function createQuestion(item: {
   // 1 replays this answer as context in the user's later conversations.
   context: number;
 }) {
-  return http.post<any>('/magic/system/magic/questions', item);
+  return http.post<MagicResponse>('/magic/system/magic/questions', item);
 }
 
 export function updateQuestion(item: {
@@ -1282,11 +1421,11 @@ export function updateQuestion(item: {
   name?: string | null;
   context: number;
 }) {
-  return http.put<any>('/magic/system/magic/questions', item);
+  return http.put<MagicResponse>('/magic/system/magic/questions', item);
 }
 
 export function deleteQuestion(id: number) {
-  return http.delete<any>('/magic/system/magic/questions?question_id=' + id);
+  return http.delete<MagicResponse>('/magic/system/magic/questions?question_id=' + id);
 }
 
 /*
@@ -1324,7 +1463,7 @@ export function mlSnippets(
    * ordering or LIKE filters.
    */
   if (vectorSearch) {
-    return http.get<any[]>(
+    return http.get<MlSnippet[]>(
       '/magic/system/magic/ml_training_snippets-vss' +
         `?limit=${limit}&offset=${offset}` +
         '&type=' +
@@ -1342,7 +1481,7 @@ export function mlSnippets(
     '&ml_training_snippets.type.eq=' +
     encodeURIComponent(type) +
     snippetSearchQuery(filter);
-  return http.get<any[]>('/magic/system/magic/ml_training_snippets' + query);
+  return http.get<MlSnippet[]>('/magic/system/magic/ml_training_snippets' + query);
 }
 
 export function mlSnippetsCount(type: string, filter: string, vectorSearch = false) {
@@ -1373,7 +1512,7 @@ export function mlUnvectorisedCount(type: string) {
 export function mlSnippetsDeleteAll(type: string, filter: string) {
   const query =
     '?ml_training_snippets.type.eq=' + encodeURIComponent(type) + snippetSearchQuery(filter);
-  return http.delete<any>('/magic/system/magic/ml_training_snippets_all' + query);
+  return http.delete<MagicResponse>('/magic/system/magic/ml_training_snippets_all' + query);
 }
 
 /*
@@ -1386,20 +1525,20 @@ export function mlSnippetsExportRaw(type: string, filter: string) {
   return requestRaw('GET', '/magic/system/magic/ml_training_snippets_export' + query);
 }
 
-export function mlSnippetCreate(snippet: any) {
-  return http.post<any>('/magic/system/magic/ml_training_snippets', snippet);
+export function mlSnippetCreate(snippet: Omit<Partial<MlSnippet>, 'id'>) {
+  return http.post<MagicResponse>('/magic/system/magic/ml_training_snippets', snippet);
 }
 
-export function mlSnippetUpdate(snippet: any) {
-  return http.put<any>('/magic/system/magic/ml_training_snippets', snippet);
+export function mlSnippetUpdate(snippet: Partial<MlSnippet> & { id: number }) {
+  return http.put<MagicResponse>('/magic/system/magic/ml_training_snippets', snippet);
 }
 
 export function mlSnippetDelete(id: number) {
-  return http.delete<any>('/magic/system/magic/ml_training_snippets?id=' + id);
+  return http.delete<MagicResponse>('/magic/system/magic/ml_training_snippets?id=' + id);
 }
 
 export function mlRequests(type: string, offset: number, limit: number) {
-  return http.get<any[]>(
+  return http.get<MlRequest[]>(
     `/magic/system/magic/ml_requests?limit=${limit}&offset=${offset}` +
       '&order=created&direction=desc&ml_requests.type.eq=' +
       encodeURIComponent(type),
@@ -1447,7 +1586,7 @@ export async function canResetPassword(backendUrl: string) {
     if (!response.ok) {
       return false;
     }
-    return (await response.json()).result === true;
+    return ((await response.json()) as { result?: unknown }).result === true;
   } catch {
     return false;
   }
@@ -1542,7 +1681,7 @@ export function openaiGetKey() {
 
 // Stores the OpenAI API key in the backend's configuration.
 export function openaiSetKey(key: string) {
-  return http.post<any>('/magic/system/openai/key', { key });
+  return http.post<MagicResponse>('/magic/system/openai/key', { key });
 }
 
 /*
@@ -1580,7 +1719,7 @@ export async function aiQuery(
     if (!response.ok) {
       await throwApiError(response);
     }
-    const generated = await response.json();
+    const generated = (await response.json()) as { result?: string };
     return { ...generated, result: unfence(generated.result ?? '', fileType) };
   }
   /*
@@ -1767,7 +1906,9 @@ export function chatPrompt(
 }
 
 export function killExecution(executionId: string) {
-  return http.post<any>('/magic/system/misc/kill-execution', { execution_id: executionId });
+  return http.post<MagicResponse>('/magic/system/misc/kill-execution', {
+    execution_id: executionId,
+  });
 }
 
 // Short-lived download link for a file an AI function produced during chat.
@@ -1787,11 +1928,11 @@ export function chatDownloadUrl(ticket: string, file: string) {
  * describing text that no longer exists.
  */
 export function vectoriseSnippet(id: number) {
-  return http.post<any>('/magic/system/openai/vectorise-snippet', { id });
+  return http.post<MagicResponse>('/magic/system/openai/vectorise-snippet', { id });
 }
 
 export function vectoriseType(type: string, channel: string) {
-  return http.post<any>('/magic/system/openai/vectorise', {
+  return http.post<MagicResponse>('/magic/system/openai/vectorise', {
     type,
     'feedback-channel': channel,
   });
@@ -1803,7 +1944,9 @@ export function vectoriseType(type: string, channel: string) {
  * an already vectorised model actually do something.
  */
 export function deleteVectors(type: string) {
-  return http.delete<any>('/magic/system/openai/vectors?type=' + encodeURIComponent(type));
+  return http.delete<MagicResponse>(
+    '/magic/system/openai/vectors?type=' + encodeURIComponent(type),
+  );
 }
 
 /*
@@ -1818,7 +1961,7 @@ export function openaiChat(prompt: string, type: string, session: string, userna
   payload.append('type', type);
   payload.append('user_id', username);
   payload.append('stream', 'false');
-  return http.post<any>('/magic/system/openai/chat', payload);
+  return http.post<{ result: string }>('/magic/system/openai/chat', payload);
 }
 
 /*
@@ -1832,7 +1975,7 @@ export function uploadUrlList(type: string, file: File, channel: string, vectori
   formData.append('type', type);
   formData.append('feedback-channel', channel);
   formData.append('vectorize', vectorize ? 'true' : 'false');
-  return http.post<any>('/magic/system/openai/upload-url-list', formData);
+  return http.post<MagicResponse>('/magic/system/openai/upload-url-list', formData);
 }
 
 /*
@@ -1840,7 +1983,7 @@ export function uploadUrlList(type: string, file: File, channel: string, vectori
  * one more page rather than crawling a whole site.
  */
 export function importPage(args: { url: string; type: string; images: boolean; channel: string }) {
-  return http.post<any>('/magic/system/openai/import-page', {
+  return http.post<MagicResponse>('/magic/system/openai/import-page', {
     url: args.url,
     type: args.type,
     // The endpoint requires a minimum snippet length; the backend minimum.
@@ -1872,7 +2015,7 @@ export function importUrl(args: {
   // Tag associated with the generated snippets — the backend defaults it.
   meta?: string;
 }) {
-  return http.post<any>('/magic/system/openai/import-url', {
+  return http.post<MagicResponse>('/magic/system/openai/import-url', {
     url: args.url,
     type: args.type,
     delay: args.delay,
@@ -1977,7 +2120,7 @@ export function createBot(args: {
   autoDestruct: boolean;
   channel: string;
 }) {
-  return http.post<any>('/magic/system/openai/create-bot', {
+  return http.post<MagicResponse>('/magic/system/openai/create-bot', {
     url: args.url,
     model: args.model,
     flavor: args.flavor,
@@ -1991,7 +2134,7 @@ export function createBot(args: {
 }
 
 export function openaiSystemMessages() {
-  return http.get<any[]>('/magic/system/openai/system-messages');
+  return http.get<SystemMessage[]>('/magic/system/openai/system-messages');
 }
 
 /*
@@ -2024,13 +2167,13 @@ export function openaiCompletionSlots() {
 const BAZAR_URL = 'https://ainiro.io';
 
 export function availablePlugins() {
-  return request<any[]>('GET', BAZAR_URL + '/magic/modules/bazar/bazar-apps', undefined, {
+  return request<BazarApp[]>('GET', BAZAR_URL + '/magic/modules/bazar/bazar-apps', undefined, {
     noBase: true,
   });
 }
 
 export function installedPlugins() {
-  return http.get<any[]>('/magic/system/bazar/app-manifests');
+  return http.get<BazarApp[]>('/magic/system/bazar/app-manifests');
 }
 
 export function installPlugin(app: { name: string; type: string }) {

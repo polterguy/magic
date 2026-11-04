@@ -6,8 +6,16 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { showToast } from './toast';
-import { defaultDatabaseType, exportDdl, http, listDatabases, listFiles } from './api';
+import {
+  type DatabaseMeta,
+  type TableMeta,
+  defaultDatabaseType,
+  exportDdl,
+  http,
+  listDatabases,
+  listFiles,
+} from './api';
+import { errorMessage, showError } from './errors';
 
 export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
   const preferMagic = options?.preferMagic ?? false;
@@ -21,17 +29,13 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
   const [types, setTypes] = useState<string[]>([]);
   const [type, setType] = useState('');
   const [connectionStrings, setConnectionStrings] = useState<string[]>([]);
-  /*
-   * Whether the connection strings for the current type have been fetched.
-   * The type arrives a round trip before they do, so without this the "none
-   * configured" notice shows during that gap and then disappears, shoving
-   * the page down behind it.
-   */
-  const [connectionsLoaded, setConnectionsLoaded] = useState(false);
+  // The type whose connection strings are in connectionStrings.
+  const [connectionsFor, setConnectionsFor] = useState<string | null>(null);
   const [connectionString, setConnectionString] = useState('');
-  const [databasesMeta, setDatabasesMeta] = useState<any[]>([]);
+  const [databasesMeta, setDatabasesMeta] = useState<DatabaseMeta[]>([]);
   const [database, setDatabase] = useState('');
-  const [schemaLoading, setSchemaLoading] = useState(true);
+  // The type and connection string the schema in databasesMeta was fetched for.
+  const [schemaFor, setSchemaFor] = useState<string | null>(null);
   const [error, setError] = useState('');
   /*
    * Guards, one per fetch chain — a slow answer for a selection the user has
@@ -46,10 +50,8 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
         setTypes(response.options);
         setType(deepLink.current.type ?? response.default);
       })
-      .catch(err => {
-        setError(err.message);
-        setConnectionsLoaded(true);
-        setSchemaLoading(false);
+      .catch((err: unknown) => {
+        setError(errorMessage(err));
       });
   }, []);
 
@@ -58,7 +60,6 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
       return;
     }
     const current = ++connectionsSeq.current;
-    setConnectionsLoaded(false);
     http
       .get<Record<string, string>>(
         '/magic/system/sql/connection-strings?databaseType=' + encodeURIComponent(type),
@@ -67,7 +68,7 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
         if (current !== connectionsSeq.current) {
           return;
         }
-        setConnectionsLoaded(true);
+        setConnectionsFor(type);
         const names = Object.keys(response ?? {});
         setConnectionStrings(names);
         const wanted = deepLink.current.connectionString;
@@ -80,7 +81,6 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
         if (names.length === 0) {
           setDatabasesMeta([]);
           setDatabase('');
-          setSchemaLoading(false);
         }
       })
       .catch(() => {
@@ -89,12 +89,11 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
         }
         // A database type with no configured connection strings (e.g. the
         // config has it as null) — clear the selection, no scary error.
-        setConnectionsLoaded(true);
+        setConnectionsFor(type);
         setConnectionStrings([]);
         setConnectionString('');
         setDatabasesMeta([]);
         setDatabase('');
-        setSchemaLoading(false);
       });
   }, [type]);
 
@@ -108,16 +107,15 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
      * and it is the third in a chain, so it is worth saying something.
      */
     const current = ++schemaSeq.current;
-    setSchemaLoading(true);
     listDatabases(type, connectionString)
       .then(response => {
         if (current !== schemaSeq.current) {
           return;
         }
-        setSchemaLoading(false);
+        setSchemaFor(schemaKey(type, connectionString));
         const meta = response.databases ?? [];
         setDatabasesMeta(meta);
-        const names = meta.map((db: any) => db.name);
+        const names = meta.map(db => db.name);
         const wanted = deepLink.current.database;
         deepLink.current.database = null;
         if (wanted && names.includes(wanted)) {
@@ -125,14 +123,14 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
         } else if (preferMagic) {
           setDatabase(names.includes('magic') ? 'magic' : (names[0] ?? ''));
         } else {
-          setDatabase(names.find((name: string) => name !== 'magic') ?? names[0] ?? '');
+          setDatabase(names.find(name => name !== 'magic') ?? names[0] ?? '');
         }
       })
       .catch(() => {
         if (current !== schemaSeq.current) {
           return;
         }
-        setSchemaLoading(false);
+        setSchemaFor(schemaKey(type, connectionString));
         setDatabasesMeta([]);
         setDatabase('');
       });
@@ -143,12 +141,22 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
     try {
       const response = await listDatabases(type, connectionString);
       setDatabasesMeta(response.databases ?? []);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }, [type, connectionString]);
 
   const selectedMeta = databasesMeta.find(db => db.name === database);
+  /*
+   * Loading states are derived from what has been fetched for the current selection, rather than
+   * flagged on and off around each fetch. Without connections loaded the "none configured" notice
+   * would flash while the type is still a round trip ahead of its connection strings.
+   */
+  const connectionsLoaded = error !== '' || connectionsFor === type;
+  const schemaLoading =
+    error === '' &&
+    !(connectionsLoaded && connectionStrings.length === 0) &&
+    schemaFor !== schemaKey(type, connectionString);
 
   return {
     types,
@@ -171,6 +179,10 @@ export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
 
 export type DatabaseSelection = ReturnType<typeof useDatabaseSelection>;
 
+function schemaKey(type: string, connectionString: string) {
+  return type + '\n' + connectionString;
+}
+
 /*
  * SQL snippet files under /etc/{type}/templates/ — SQL Studio and the SQL
  * endpoint generator read and write the same folder.
@@ -191,10 +203,10 @@ export function useSqlSnippets(type: string) {
 /*
  * Table → columns map for Ctrl-Space SQL autocomplete.
  */
-export function sqlHintTables(meta: any): Record<string, string[]> {
+export function sqlHintTables(meta: DatabaseMeta | undefined): Record<string, string[]> {
   const tables: Record<string, string[]> = {};
   for (const table of meta?.tables ?? []) {
-    tables[table.name] = (table.columns ?? []).map((column: any) => column.name);
+    tables[table.name] = (table.columns ?? []).map(column => column.name);
   }
   return tables;
 }
@@ -209,7 +221,7 @@ export async function buildSqlAiContext(options: {
   type: string;
   connectionString: string;
   database: string;
-  tables: any[];
+  tables: TableMeta[];
   sql: string;
   args?: { name: string; type: string }[];
 }): Promise<string> {
@@ -226,7 +238,7 @@ export async function buildSqlAiContext(options: {
       options.type,
       options.connectionString,
       options.database,
-      options.tables.map((table: any) => table.name),
+      options.tables.map(table => table.name),
       true,
     );
     result += 'Current schema:\n\n' + ddl.result + '\n\n';

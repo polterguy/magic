@@ -39,6 +39,8 @@ export default tseslint.config(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
       ],
+      // Dialogs move focus to their first field on open, as the WAI-ARIA dialog pattern asks for.
+      'jsx-a11y/no-autofocus': 'off',
       // Fire-and-forget promises in event handlers are idiomatic in React (onClick={save}).
       '@typescript-eslint/no-misused-promises': [
         'error',
