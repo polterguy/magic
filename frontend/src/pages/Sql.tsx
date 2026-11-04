@@ -1,4 +1,5 @@
 import { copyToClipboard, showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
@@ -14,6 +15,8 @@ import { FIELD_TYPES, PK_TYPES } from '../lib/dbTypes';
 import { exportCsv } from '../lib/download';
 import { buildSqlAiContext, sqlHintTables, useDatabaseSelection, useSqlSnippets } from '../lib/sql';
 import {
+  SqlRow,
+  TableMeta,
   addColumn,
   addForeignKey,
   addTable,
@@ -44,7 +47,7 @@ export default function Sql() {
   // What the editor last loaded or saved — differing content means unsaved changes.
   const [savedSql, setSavedSql] = useSessionState('magic2.sql-studio.saved', '');
   const [safeMode, setSafeMode] = useState(true);
-  const [result, setResult] = useState<any[][] | null>(null);
+  const [result, setResult] = useState<SqlRow[][] | null>(null);
   const [busy, setBusy] = useState(false);
   // Click-triggered round-trips outside Run — DDL exports, schema changes,
   // imports and snippet I/O.
@@ -94,8 +97,8 @@ export default function Sql() {
     try {
       await flushSchemaCache(type, connectionString);
       window.location.reload();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
       setWaiting(false);
     }
   }
@@ -105,8 +108,8 @@ export default function Sql() {
     try {
       await importCsvFile(type, connectionString, database, file);
       showToast('Importing ' + file.name + " — you'll be notified when it completes");
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -130,8 +133,8 @@ export default function Sql() {
       await dropTable(type, connectionString, database, tableName);
       showToast('Table ' + tableName + ' dropped');
       await reloadSchema();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -153,8 +156,8 @@ export default function Sql() {
       await dropColumn(type, connectionString, database, tableName, columnName);
       showToast('Column ' + columnName + ' dropped');
       await reloadSchema();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -169,8 +172,8 @@ export default function Sql() {
     try {
       const response = await exportDdl(type, connectionString, database, tables, full);
       setDdl({ title, sql: response.result });
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -186,7 +189,10 @@ export default function Sql() {
    */
   const [history, setHistory] = useState<{ sql: string; when: string }[]>(() => {
     try {
-      return JSON.parse(sessionStorage.getItem('magic2.sql-studio.history') ?? '[]');
+      return JSON.parse(sessionStorage.getItem('magic2.sql-studio.history') ?? '[]') as {
+        sql: string;
+        when: string;
+      }[];
     } catch {
       return [];
     }
@@ -235,8 +241,8 @@ export default function Sql() {
       const response = await aiQuery(selected, 'sql', await createAiContext(), 'sql-studio.editor');
       setSql(response.result);
       bumpSqlEditId();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setGenerating(false);
     }
@@ -271,8 +277,8 @@ export default function Sql() {
         message = 'First 200 records returned. Turn off safe mode to return all records.';
       }
       showToast(message);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
       setResult(null);
     } finally {
       setBusy(false);
@@ -306,8 +312,8 @@ export default function Sql() {
       setSql(text);
       bumpSqlEditId();
       setSavedSql(text);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -337,8 +343,8 @@ export default function Sql() {
       if (!snippets.includes(filename)) {
         setSnippets([...snippets, filename].sort((a, b) => a.localeCompare(b)));
       }
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -374,7 +380,7 @@ export default function Sql() {
             ))}
           </Select>
           <Select value={database} onChange={selection.setDatabase}>
-            {selection.databasesMeta.map((db: any) => (
+            {selection.databasesMeta.map(db => (
               <option key={db.name} value={db.name}>
                 {db.name}
               </option>
@@ -473,7 +479,7 @@ export default function Sql() {
               className="btn btn-secondary btn-small"
               onClick={() =>
                 viewDdl(
-                  tables.map((table: any) => table.name),
+                  tables.map(table => table.name),
                   true,
                   database + ' — full DDL',
                 )
@@ -490,7 +496,7 @@ export default function Sql() {
               overflow: 'auto',
             }}
           >
-            {tables.map((table: any) => (
+            {tables.map(table => (
               <div className="card" key={table.name} style={{ padding: 14 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
                   <strong style={{ flex: 1 }}>{table.name}</strong>
@@ -515,7 +521,7 @@ export default function Sql() {
                     ✕
                   </button>
                 </div>
-                {(table.columns ?? []).map((column: any) => (
+                {(table.columns ?? []).map(column => (
                   <div
                     key={column.name}
                     className="col-row"
@@ -578,7 +584,7 @@ export default function Sql() {
                   <div
                     style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 6 }}
                   >
-                    {(table.foreign_keys ?? []).map((fk: any, index: number) => (
+                    {(table.foreign_keys ?? []).map((fk, index: number) => (
                       <div key={index} className="muted" style={{ fontSize: 12 }}>
                         {fk.column} → {fk.foreign_table}.{fk.foreign_column}
                       </div>
@@ -606,8 +612,8 @@ export default function Sql() {
                   setNewTable(false);
                   showToast('Table ' + tableName + ' created');
                   await reloadSchema();
-                } catch (err: any) {
-                  showToast(err.message, true, err.logId);
+                } catch (err) {
+                  showError(err);
                 } finally {
                   setWaiting(false);
                 }
@@ -637,8 +643,8 @@ export default function Sql() {
                   setAddingColumn(null);
                   showToast('Column ' + payload.columnName + ' added');
                   await reloadSchema();
-                } catch (err: any) {
-                  showToast(err.message, true, err.logId);
+                } catch (err) {
+                  showError(err);
                 } finally {
                   setWaiting(false);
                 }
@@ -768,7 +774,7 @@ export default function Sql() {
  */
 const MAX_RENDERED_ROWS = 1000;
 
-function ResultTable({ rows }: Readonly<{ rows: any[] }>) {
+function ResultTable({ rows }: Readonly<{ rows: SqlRow[] }>) {
   if (rows.length === 0) {
     return (
       <div className="muted" style={{ padding: 16 }}>
@@ -810,14 +816,15 @@ function ResultTable({ rows }: Readonly<{ rows: any[] }>) {
   );
 }
 
-function formatCell(value: any) {
+function formatCell(value: unknown) {
   if (value === null || value === undefined) {
     return <span className="muted">null</span>;
   }
   if (typeof value === 'object') {
     return JSON.stringify(value);
   }
-  return String(value);
+  // A JSON result cell: what is left is a string, number or boolean.
+  return String(value as string | number | boolean);
 }
 
 /*
@@ -902,7 +909,7 @@ function AddColumnDialog(
   props: Readonly<{
     databaseType: string;
     tableName: string;
-    tables: any[];
+    tables: TableMeta[];
     onClose: () => void;
     onSubmit: (payload: {
       columnName: string;
@@ -933,8 +940,8 @@ function AddColumnDialog(
   const [cascading, setCascading] = useState(true);
 
   // The foreign field is the referenced table's primary key.
-  const foreignMeta = props.tables.find((table: any) => table.name === foreignTable);
-  const foreignPk = (foreignMeta?.columns ?? []).find((column: any) => column.primary);
+  const foreignMeta = props.tables.find(table => table.name === foreignTable);
+  const foreignPk = (foreignMeta?.columns ?? []).find(column => column.primary);
 
   function submit() {
     if (mode === 'foreign') {
@@ -1028,8 +1035,8 @@ function AddColumnDialog(
               <Select value={foreignTable} onChange={value => setForeignTable(value)}>
                 <option value="">Select table…</option>
                 {props.tables
-                  .filter((table: any) => (table.columns ?? []).some((c: any) => c.primary))
-                  .map((table: any) => (
+                  .filter(table => (table.columns ?? []).some(c => c.primary))
+                  .map(table => (
                     <option key={table.name} value={table.name}>
                       {table.name}
                     </option>

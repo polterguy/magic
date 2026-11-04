@@ -41,6 +41,12 @@ export default tseslint.config(
       ],
       // Dialogs move focus to their first field on open, as the WAI-ARIA dialog pattern asks for.
       'jsx-a11y/no-autofocus': 'off',
+      // Select (components/Select.tsx) renders a button, which a wrapping <label> does label;
+      // the rule just cannot see inside custom components without being told.
+      'jsx-a11y/label-has-associated-control': [
+        'error',
+        { controlComponents: ['Select'], depth: 3 },
+      ],
       // Fire-and-forget promises in event handlers are idiomatic in React (onClick={save}).
       '@typescript-eslint/no-misused-promises': [
         'error',

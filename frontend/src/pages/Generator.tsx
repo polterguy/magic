@@ -1,4 +1,5 @@
 import { showToast } from '../lib/toast';
+import { errorMessage, showError } from '../lib/errors';
 import Select from '../components/Select';
 import { Link, useNavigate } from 'react-router-dom';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
@@ -20,7 +21,10 @@ import {
   useSqlSnippets,
 } from '../lib/sql';
 import {
+  ColumnMeta,
+  DatabaseMeta,
   EndpointMeta,
+  MlType,
   crudify,
   customSqlEndpoint,
   generateSandboxEndpoint,
@@ -45,8 +49,82 @@ interface ColumnLock {
   slot: string;
 }
 
+/*
+ * A column as crudify sees it: the schema's column, plus the foreign key lookup
+ * it may carry.
+ */
+interface CrudColumn extends ColumnMeta {
+  foreign_key?: {
+    foreign_table: string;
+    foreign_column: string;
+    foreign_name?: string | null;
+    long_data?: boolean;
+  } | null;
+}
+
+interface CrudTable {
+  name: string;
+  columns?: CrudColumn[] | null;
+}
+
+// A column decorated with which verbs take it, what it is locked to and how its value is handled.
+interface DecoratedColumn extends CrudColumn {
+  post?: boolean;
+  get?: boolean;
+  put?: boolean;
+  delete?: boolean;
+  locked?: string;
+  handling?: string;
+}
+
+// One argument of a generated endpoint.
+interface CrudifyArgument {
+  name: string;
+  type?: string;
+  locked?: string;
+  handling?: string;
+  foreign_key?: {
+    table: string;
+    column: string;
+    name: string;
+    long?: boolean;
+  };
+}
+
+// The body crudify takes, one per table and verb.
+type CrudifyPayload = {
+  databaseType: string;
+  database: string;
+  moduleName: string;
+  moduleUrl: string;
+  table: string;
+  verb: string;
+  returnId: boolean;
+  overwrite: boolean;
+  verbose: boolean;
+  join: boolean;
+  cqrs: boolean;
+  cqrsAuthorisation?: string;
+  cqrsAuthorisationValues?: string;
+  auth?: string;
+  log?: string;
+  template?: string;
+  paging?: boolean;
+  sorting?: boolean;
+  aggregate?: boolean;
+  distinct?: boolean;
+  search?: boolean;
+  cache?: number;
+  publicCache?: boolean;
+  args: {
+    columns: CrudifyArgument[];
+    // DELETE's primary keys are { column: type } pairs, PUT's are full arguments.
+    primary: (CrudifyArgument | Record<string, string | undefined>)[];
+  };
+};
+
 // What a string column named user or username gets unless the author says otherwise.
-function defaultLock(column: any): ColumnLock {
+function defaultLock(column: CrudColumn): ColumnLock {
   return (column.name === 'user' || column.name === 'username') && column.hl === 'string'
     ? { mode: 'username', slot: '' }
     : { mode: 'none', slot: '' };
@@ -63,7 +141,7 @@ function lockSlot(lock: ColumnLock) {
   return lock.mode === 'custom' ? lock.slot.trim() : '';
 }
 
-function resolveLocks(chosen: Record<string, ColumnLock> | undefined, table: any) {
+function resolveLocks(chosen: Record<string, ColumnLock> | undefined, table: CrudTable) {
   const locks: Record<string, string> = {};
   for (const column of table.columns ?? []) {
     const lock = chosen?.[column.name] ?? defaultLock(column);
@@ -107,15 +185,13 @@ function buildCrudifyPayload(
   databaseType: string,
   connectionString: string,
   database: string,
-  table: any,
+  table: CrudTable,
   verb: string,
   options: CrudifyOptions,
 ) {
-  const columns = (table.columns ?? []).map((column: any) =>
-    withVerbDefaults(column, options.locks),
-  );
+  const columns = (table.columns ?? []).map(column => withVerbDefaults(column, options.locks));
 
-  const payload: any = {
+  const payload: CrudifyPayload = {
     databaseType,
     // The backend expects the composite [connectionString|database] format.
     database: '[' + connectionString + '|' + database + ']',
@@ -123,7 +199,7 @@ function buildCrudifyPayload(
     moduleUrl: options.moduleUrl || table.name,
     table: table.name,
     verb,
-    returnId: columns.filter((c: any) => c.primary && !c.automatic).length === 0,
+    returnId: columns.filter(c => c.primary && !c.automatic).length === 0,
     overwrite: options.overwrite,
     verbose: options.verbose,
     join: true,
@@ -147,7 +223,7 @@ function buildCrudifyPayload(
   }
   addVerbOptions(payload, verb, options);
   if (options.logging && verb !== 'get') {
-    const past: any = { post: 'created', put: 'updated', delete: 'deleted' };
+    const past: Record<string, string> = { post: 'created', put: 'updated', delete: 'deleted' };
     payload.log = database + '.' + table.name + ' entry ' + past[verb];
   }
 
@@ -158,9 +234,9 @@ function buildCrudifyPayload(
 }
 
 // Old dashboard's per-column verb defaults.
-function withVerbDefaults(column: any, locks: Record<string, string>) {
+function withVerbDefaults(column: CrudColumn, locks: Record<string, string>) {
   const name = (column.name ?? '').toLowerCase();
-  const decorated: any = { ...column };
+  const decorated: DecoratedColumn = { ...column };
   decorated.post = !(column.automatic && column.primary);
   if (column.automatic && (name === 'created' || name === 'last_update')) {
     decorated.post = false;
@@ -182,7 +258,7 @@ function withVerbDefaults(column: any, locks: Record<string, string>) {
 }
 
 // What only a GET takes, and the template each verb is generated from.
-function addVerbOptions(payload: any, verb: string, options: CrudifyOptions) {
+function addVerbOptions(payload: CrudifyPayload, verb: string, options: CrudifyOptions) {
   if (verb !== 'get') {
     payload.template = '/system/crudifier/templates/crud.template.' + verb + '.hl';
     return;
@@ -200,8 +276,8 @@ function addVerbOptions(payload: any, verb: string, options: CrudifyOptions) {
 }
 
 // How a column appears in the arguments of the endpoint being generated.
-function crudifyColumnEntry(column: any) {
-  const entry: any = { name: column.name, type: column.hl };
+function crudifyColumnEntry(column: DecoratedColumn) {
+  const entry: CrudifyArgument = { name: column.name, type: column.hl };
   if (column.locked) {
     entry.locked = column.locked;
   }
@@ -220,7 +296,7 @@ function crudifyColumnEntry(column: any) {
 }
 
 // Puts the column among the arguments of the verb, if the verb takes it.
-function addArgumentColumn(payload: any, verb: string, column: any) {
+function addArgumentColumn(payload: CrudifyPayload, verb: string, column: DecoratedColumn) {
   switch (verb) {
     case 'post':
       if (column.post) {
@@ -251,7 +327,7 @@ function addArgumentColumn(payload: any, verb: string, column: any) {
  * Skips verb/table combinations that would generate meaningless endpoints,
  * like the old crudify service does.
  */
-function canGenerate(payload: any, verb: string) {
+function canGenerate(payload: CrudifyPayload, verb: string) {
   switch (verb) {
     case 'post':
       return payload.args.columns.length > 0;
@@ -344,7 +420,7 @@ function DatabaseSelectors({ selection }: Readonly<{ selection: DatabaseSelectio
         ))}
       </Select>
       <Select value={selection.database} onChange={value => selection.setDatabase(value)}>
-        {selection.databasesMeta.map((db: any) => (
+        {selection.databasesMeta.map(db => (
           <option key={db.name} value={db.name}>
             {db.name}
           </option>
@@ -409,7 +485,7 @@ function crudSummary(tables: number, verbs: number, endpoints: number, module: s
 // One column of an expanded table: what it is, and, unless it is a primary key, what it is locked to.
 function ColumnRow(
   props: Readonly<{
-    column: any;
+    column: CrudColumn;
     lock: ColumnLock;
     onLock: (lock: ColumnLock) => void;
   }>,
@@ -649,27 +725,44 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
   /*
    * Reset selection, details and URL overrides when the database changes.
    * The guided flow preselects every table instead — its user's answer to
-   * "which tables?" is almost always "all of them".
+   * "which tables?" is almost always "all of them". Done during render, when
+   * what the selection was last reset for changes, rather than in an effect.
    */
-  useEffect(() => {
+  const [resetFor, setResetFor] = useState<{
+    database: string;
+    meta: DatabaseMeta | undefined;
+    guided: boolean;
+  } | null>(null);
+  if (
+    resetFor?.database !== selection.database ||
+    resetFor.meta !== selection.selectedMeta ||
+    resetFor.guided !== props.guided
+  ) {
+    setResetFor({
+      database: selection.database,
+      meta: selection.selectedMeta,
+      guided: props.guided,
+    });
     setSelectedTables(
       props.guided
-        ? new Set<string>((selection.selectedMeta?.tables ?? []).map((table: any) => table.name))
+        ? new Set<string>((selection.selectedMeta?.tables ?? []).map(table => table.name))
         : new Set<string>(),
     );
     setExpandedTables(new Set());
     setLocks({});
     setModuleName(selection.database);
-  }, [selection.database, selection.selectedMeta, props.guided]);
+  }
 
-  const tables = selection.selectedMeta?.tables ?? [];
+  const tables = useMemo(() => selection.selectedMeta?.tables ?? [], [selection.selectedMeta]);
   const allSelected = tables.length > 0 && selectedTables.size === tables.length;
   const singleTable = selectedTables.size === 1 ? [...selectedTables][0] : null;
 
   // The component URL follows the single selected table until the user edits it.
-  useEffect(() => {
+  const [componentUrlFor, setComponentUrlFor] = useState<string | null | undefined>(undefined);
+  if (componentUrlFor !== singleTable) {
+    setComponentUrlFor(singleTable);
     setComponentUrl(singleTable ?? '');
-  }, [singleTable]);
+  }
 
   function toggleTable(name: string) {
     const next = new Set(selectedTables);
@@ -689,7 +782,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
   const plannedEndpoints = useMemo(() => {
     const options = { aggregate, distinct, search };
     let total = 0;
-    for (const table of tables.filter((candidate: any) => selectedTables.has(candidate.name))) {
+    for (const table of tables.filter(candidate => selectedTables.has(candidate.name))) {
       for (const verb of ALL_VERBS.filter(candidate => verbs.has(candidate))) {
         const payload = buildCrudifyPayload(
           selection.type,
@@ -778,13 +871,13 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
   }
 
   // What is wrong with what is about to be generated, if anything.
-  function generationProblem(targets: any[], active: string[]) {
+  function generationProblem(targets: CrudTable[], active: string[]) {
     if (targets.length === 0 || active.length === 0) {
       return 'Select at least one table and one verb';
     }
     for (const table of targets) {
       const blank = (table.columns ?? []).find(
-        (column: any) =>
+        column =>
           !column.primary &&
           locks[table.name]?.[column.name]?.mode === 'custom' &&
           !locks[table.name][column.name].slot.trim(),
@@ -801,7 +894,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
 
   // Generates every verb of every table, stopping at a failure or when cancelled, and says how far it got.
   async function generateAll(
-    targets: any[],
+    targets: CrudTable[],
     active: string[],
     options: Omit<CrudifyOptions, 'locks'>,
     push: (type: string, message: string) => void,
@@ -839,7 +932,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
 
   // Generates one verb for one table, reporting on it, and what came of it.
   async function generateVerb(
-    table: any,
+    table: CrudTable,
     verb: string,
     options: Omit<CrudifyOptions, 'locks'>,
     push: (type: string, message: string) => void,
@@ -882,14 +975,14 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
           ' lines',
       );
       return { count, loc: response.loc ?? 0 };
-    } catch (err: any) {
-      push('error', verb.toUpperCase() + ' ' + table.name + ' — ' + err.message);
+    } catch (err) {
+      push('error', verb.toUpperCase() + ' ' + table.name + ' — ' + errorMessage(err));
       return 'failed';
     }
   }
 
   async function generate() {
-    const targets = tables.filter((table: any) => selectedTables.has(table.name));
+    const targets = tables.filter(table => selectedTables.has(table.name));
     const active = ALL_VERBS.filter(candidate => verbs.has(candidate));
     const problem = generationProblem(targets, active);
     if (problem) {
@@ -970,7 +1063,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
        */}
       {props.guided &&
         !selection.loading &&
-        !selection.databasesMeta.some((db: any) => db.name !== 'magic') && (
+        !selection.databasesMeta.some(db => db.name !== 'magic') && (
           <div className="info-box" style={{ marginBottom: 12 }}>
             No database of your own yet — <Link to="/databases">create or connect one</Link> first,
             then come back here.
@@ -1005,7 +1098,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
                       checked={allSelected}
                       onChange={() =>
                         setSelectedTables(
-                          allSelected ? new Set() : new Set(tables.map((table: any) => table.name)),
+                          allSelected ? new Set() : new Set(tables.map(table => table.name)),
                         )
                       }
                     />
@@ -1017,7 +1110,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
                 </tr>
               </thead>
               <tbody>
-                {tables.map((table: any) => (
+                {tables.map(table => (
                   <Fragment key={table.name}>
                     <tr
                       className="clickable"
@@ -1050,7 +1143,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
                          * cell padding + the expand chevron and its gap.
                          */}
                         <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
-                          {(table.columns ?? []).map((column: any) => (
+                          {(table.columns ?? []).map(column => (
                             <ColumnRow
                               key={column.name}
                               column={column}
@@ -1204,7 +1297,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
                     >
                       <span>Notify</span>
                       <Select value={liveAudience} onChange={value => setLiveAudience(value)}>
-                        <option value="inherited">The endpoint's own roles</option>
+                        <option value="inherited">The endpoint&apos;s own roles</option>
                         <option value="roles">Roles</option>
                         <option value="groups">Groups</option>
                         <option value="users">Users</option>
@@ -1225,7 +1318,7 @@ function CrudTab(props: Readonly<{ guided: boolean }>) {
                     )}
                     <span className="muted">
                       Messages are named {'<module>.<table>.<post|put|delete>'}, carrying the
-                      request's arguments as JSON.
+                      request&apos;s arguments as JSON.
                     </span>
                   </div>
                 )}
@@ -1335,8 +1428,8 @@ function SqlEndpointTab() {
     try {
       setSql(await loadFile(filename));
       bumpSqlEditId();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }
 
@@ -1347,11 +1440,14 @@ function SqlEndpointTab() {
     });
   }
 
-  useEffect(() => {
+  // The module name follows the selected database, adjusted during render when it changes.
+  const [moduleNameFor, setModuleNameFor] = useState('');
+  if (moduleNameFor !== selection.database) {
+    setModuleNameFor(selection.database);
     if (selection.database) {
       setModuleName(selection.database);
     }
-  }, [selection.database]);
+  }
 
   const hintTables = useMemo(() => sqlHintTables(selection.selectedMeta), [selection.selectedMeta]);
 
@@ -1388,8 +1484,8 @@ function SqlEndpointTab() {
         overwrite,
       });
       showToast('Endpoint magic/' + moduleName + '/' + endpointName + ' created');
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -1759,6 +1855,24 @@ interface RoleRule {
   description: string;
 }
 
+// One rule of a sandbox endpoint's policy, as the generated endpoint reads it.
+interface PolicyRule {
+  role: string;
+  slots: string[];
+  limit?: number;
+  window?: number;
+  timeout?: number;
+  description?: string;
+}
+
+// The policy a sandbox endpoint is generated with, sent to the backend as JSON.
+interface SandboxPolicy {
+  overrideRoot: boolean;
+  returnCode: boolean;
+  rules: PolicyRule[];
+  maxHyperlambda?: number;
+}
+
 function linesToSlots(text: string) {
   return text
     .split('\n')
@@ -1863,7 +1977,7 @@ function DbAccessWizard(
         )}
         <Select value={selection.database} onChange={value => selection.setDatabase(value)}>
           <option value="">database…</option>
-          {selection.databasesMeta.map((db: any) => (
+          {selection.databasesMeta.map(db => (
             <option key={db.name} value={db.name}>
               {db.name}
             </option>
@@ -2244,7 +2358,7 @@ function EmailWizard(props: Readonly<{ onAdd: (lines: string[]) => void; onCance
         </button>
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
-        Send uses the server's configured SMTP account; recipients are set per call.
+        Send uses the server&apos;s configured SMTP account; recipients are set per call.
       </span>
     </div>
   );
@@ -2724,9 +2838,9 @@ function ExecuteFilesWizard(
       <span className="muted" style={{ fontSize: 12 }}>
         Pins <span className="mono">execute-file</span>,{' '}
         <span className="mono">io.file.execute</span> and <span className="mono">io.file.load</span>{' '}
-        to each chosen path, so a caller can read a file's source to learn how to execute it. This
-        is how a role gets complex domain logic without being granted the raw slots that logic uses
-        (data.read and so on): once a path is admitted its own code runs fully trusted, not
+        to each chosen path, so a caller can read a file&apos;s source to learn how to execute it.
+        This is how a role gets complex domain logic without being granted the raw slots that logic
+        uses (data.read and so on): once a path is admitted its own code runs fully trusted, not
         re-sandboxed — only whitelist files whose logic, and source, you have reviewed for this
         role.
       </span>
@@ -3201,7 +3315,7 @@ function SandboxTab() {
       ...ruleList
         .filter(rule => rule.role.trim())
         .map(rule => {
-          const out: any = { role: rule.role.trim(), slots: linesToSlots(rule.slots) };
+          const out: PolicyRule = { role: rule.role.trim(), slots: linesToSlots(rule.slots) };
           if (rule.limit.trim()) {
             out.limit = Number(rule.limit);
             out.window = Number(rule.window) || Number(baseWindow) || 60;
@@ -3222,7 +3336,7 @@ function SandboxTab() {
         slots: linesToSlots(baseSlots),
       },
     ];
-    const policy: any = { overrideRoot, returnCode, rules };
+    const policy: SandboxPolicy = { overrideRoot, returnCode, rules };
     // The hyperlambda length cap only applies when the endpoint accepts it; blank keeps the template default.
     const maxHl = Number(maxHyperlambda);
     if (inputMode !== 'nl' && Number.isFinite(maxHl) && maxHl > 0) {
@@ -3243,8 +3357,8 @@ function SandboxTab() {
       setPreview(response.hyperlambda);
       setGenerated({ path, file: response.file, verb });
       showToast('Endpoint ' + path + ' created');
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -3641,7 +3755,7 @@ function SearchTab() {
   const [moduleName, setModuleName] = useState('');
   const [endpointName, setEndpointName] = useState('search');
   const [verb, setVerb] = useState('get');
-  const [types, setTypes] = useState<any[]>([]);
+  const [types, setTypes] = useState<MlType[]>([]);
   const [type, setType] = useState('');
   // Empty searches the way the type itself is set to.
   const [retrieval, setRetrieval] = useState('');
@@ -3701,8 +3815,8 @@ function SearchTab() {
       setPreview(response.hyperlambda);
       setGenerated({ path, file: response.file, verb });
       showToast('Endpoint ' + path + ' created');
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -3750,7 +3864,7 @@ function SearchTab() {
         >
           Search by
           <Select value={retrieval} onChange={value => setRetrieval(value)}>
-            <option value="">the type's own setting</option>
+            <option value="">the type&apos;s own setting</option>
             <option value="bm25">Keyword</option>
             <option value="mixed">Keyword and meaning</option>
             <option value="embeddings">Meaning</option>
