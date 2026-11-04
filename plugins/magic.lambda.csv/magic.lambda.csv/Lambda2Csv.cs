@@ -170,6 +170,11 @@ namespace magic.lambda.csv
         }
 
         /*
+         * Characters that force a CSV field to be quoted per RFC 4180.
+         */
+        static readonly char[] _quotableChars = new[] { ',', '"', '\r', '\n' };
+
+        /*
          * Escapes a header (column name). Formula-injection is neutralised the same way
          * as cells, and the field is quoted only when it contains a character that would
          * otherwise break the CSV structure (comma, quote, CR or LF).
@@ -178,7 +183,7 @@ namespace magic.lambda.csv
         {
             if (escapeFormulas)
                 header = NeutraliseFormula(header);
-            if (header.IndexOfAny(new[] { ',', '"', '\r', '\n' }) != -1)
+            if (header.IndexOfAny(_quotableChars) != -1)
                 return "\"" + header.Replace("\"", "\"\"") + "\"";
             return header;
         }
