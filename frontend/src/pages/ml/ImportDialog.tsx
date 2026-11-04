@@ -16,6 +16,7 @@ import {
   uploadTrainingFile,
   uploadUrlList,
 } from '../../lib/api';
+import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 
 /*
@@ -103,8 +104,8 @@ export default function ImportDialog(
     try {
       const channel = (await gibberish()).result;
       setCrawling(channel);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setUploading(false);
     }
@@ -120,8 +121,8 @@ export default function ImportDialog(
       try {
         setUrlListFile(files[0]);
         setScraping((await gibberish()).result);
-      } catch (err: any) {
-        showToast(err.message, true, err.logId);
+      } catch (err) {
+        showError(err);
       } finally {
         setUploading(false);
       }
@@ -159,8 +160,8 @@ export default function ImportDialog(
       const noun = category === 'images' ? 'image(s) imported' : 'training snippets imported';
       showToast(count + ' ' + noun);
       props.onClose();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setUploading(false);
     }
@@ -415,7 +416,7 @@ export default function ImportDialog(
               images,
               meta,
               channel: crawling,
-            }).catch(err => showToast(err.message, true, err.logId));
+            }).catch((err: unknown) => showError(err));
           }}
           onClose={() => {
             setCrawling(null);
@@ -428,8 +429,8 @@ export default function ImportDialog(
           title={'Scraping URLs from ' + urlListFile.name}
           channel={scraping}
           onReady={() => {
-            uploadUrlList(props.type, urlListFile, scraping, urlListVectorize).catch(err =>
-              showToast(err.message, true, err.logId),
+            uploadUrlList(props.type, urlListFile, scraping, urlListVectorize).catch(
+              (err: unknown) => showError(err),
             );
           }}
           onClose={() => {

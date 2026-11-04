@@ -20,7 +20,11 @@ import {
   openaiCompletionSlots,
   openaiModels,
   openaiSystemMessages,
+  type MlType,
+  type OpenAiModel,
+  type SystemMessage,
 } from '../../lib/api';
+import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 import AddFunctionDialog from './AddFunctionDialog';
 
@@ -34,12 +38,12 @@ function thresholdHint(useEmbeddings: boolean, retrieval: string) {
 }
 
 // The roles the model being edited is restricted to.
-function rolesOf(existing: any): string[] {
+function rolesOf(existing: MlType | null): string[] {
   return existing?.auth ? existing.auth.split(',') : [];
 }
 
 // A 0 or 1 setting of the model being edited, which is on for a new one.
-function flagOf(existing: any, name: string) {
+function flagOf(existing: MlType | null, name: string) {
   return existing ? existing[name] === 1 : true;
 }
 
@@ -48,18 +52,42 @@ const FADED = { opacity: 0.45 };
 
 const EMBEDDINGS_HINT = 'Only used when "Use embeddings" is on';
 
+/*
+ * The settings without a field of their own above. Numbers arrive as numbers,
+ * and turn into the input's string once edited — save converts them back.
+ */
+interface Extra {
+  base_url: string;
+  conversation_starters: string;
+  api_key: string;
+  no_requests: number | string;
+  max_requests: number | string;
+  max_function_invocations: number | string;
+  max_session_items: number | string;
+  completion_slot: string;
+  session_timeout: number | string;
+  initial_questionnaire: string;
+  vector_model: string;
+  recaptcha: number | string;
+}
+
+// One of the ml_types columns the dashboard carries along untyped, or the fallback when unset.
+function columnOf<T>(existing: MlType | null, name: string, fallback: T): T {
+  return (existing?.[name] as T | null | undefined) ?? fallback;
+}
+
 // The settings without a field of their own above, from the model being edited, or the defaults for a new one.
-function initialExtra(existing: any) {
+function initialExtra(existing: MlType | null): Extra {
   return {
-    base_url: existing?.base_url ?? '',
-    conversation_starters: existing?.conversation_starters ?? '',
-    api_key: existing?.api_key ?? '',
-    no_requests: existing?.no_requests ?? 0,
-    max_requests: existing?.max_requests ?? -1,
-    max_function_invocations: existing?.max_function_invocations ?? 5,
-    max_session_items: existing?.max_session_items ?? 15,
+    base_url: columnOf(existing, 'base_url', ''),
+    conversation_starters: columnOf(existing, 'conversation_starters', ''),
+    api_key: columnOf(existing, 'api_key', ''),
+    no_requests: columnOf(existing, 'no_requests', 0),
+    max_requests: columnOf(existing, 'max_requests', -1),
+    max_function_invocations: columnOf(existing, 'max_function_invocations', 5),
+    max_session_items: columnOf(existing, 'max_session_items', 15),
     completion_slot: existing?.completion_slot ?? 'magic.ai.chat',
-    session_timeout: existing?.session_timeout ?? 1200,
+    session_timeout: columnOf(existing, 'session_timeout', 1200),
     /*
      * Empty string is this field's "no questionnaire", mapped back to null on
      * save — the column is a nullable foreign key into questionnaires.
@@ -75,19 +103,19 @@ function initialExtra(existing: any) {
     // A null captcha value ("no captcha") is shown as -1, the sentinel the field
     // maps back to null on save — so the three modes round-trip.
     // Magic's own captcha is the default for new models — 0 in this field.
-    recaptcha: existing?.recaptcha ?? 0,
+    recaptcha: columnOf(existing, 'recaptcha', 0),
   };
 }
 
 export default function EditModelDialog(
   props: Readonly<{
-    existing: any;
+    existing: MlType | null;
     onClose: () => void;
     onSaved: () => void;
   }>,
 ) {
   const existing = props.existing;
-  const [models, setModels] = useState<{ id: string }[]>([]);
+  const [models, setModels] = useState<OpenAiModel[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
   const [type, setType] = useState(existing?.type ?? '');
   const [model, setModel] = useState(existing?.model ?? '');
@@ -123,7 +151,7 @@ export default function EditModelDialog(
   );
   const [dialogTab, setDialogTab] = useState('general');
   const [busy, setBusy] = useState(false);
-  const [flavors, setFlavors] = useState<any[]>([]);
+  const [flavors, setFlavors] = useState<SystemMessage[]>([]);
   const [completionSlots, setCompletionSlots] = useState<string[]>([]);
   const [largeEditor, setLargeEditor] = useState(false);
   const [dynamicFlavor, setDynamicFlavor] = useState<{
@@ -137,10 +165,10 @@ export default function EditModelDialog(
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   // Twilio, webhooks, lead-gen, prefix and search-postfix are legacy —
   // dropped from the UI and no longer sent.
-  const [extra, setExtra] = useState<any>(() => initialExtra(existing));
+  const [extra, setExtra] = useState<Extra>(() => initialExtra(existing));
 
-  function setField(key: string, value: any) {
-    setExtra((current: any) => ({ ...current, [key]: value }));
+  function setField<K extends keyof Extra>(key: K, value: Extra[K]) {
+    setExtra(current => ({ ...current, [key]: value }));
   }
 
   useEffect(() => {
@@ -154,7 +182,8 @@ export default function EditModelDialog(
       .then(list => setFlavors(list ?? []))
       .catch(() => {});
     openaiCompletionSlots()
-      .then(response =>
+      // Older backends answer with the bare list.
+      .then((response: { llms: string[] } | string[] | null) =>
         setCompletionSlots(Array.isArray(response) ? response : (response?.llms ?? [])),
       )
       .catch(() => {});
@@ -179,7 +208,7 @@ export default function EditModelDialog(
       showToast('Give the model a name, and select an LLM', true);
       return;
     }
-    const payload: any = {
+    const payload: MlType = {
       type,
       model,
       max_context_tokens: Number(maxContextTokens),
@@ -217,8 +246,8 @@ export default function EditModelDialog(
       }
       showToast('Model ' + type + ' saved');
       props.onSaved();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -269,16 +298,15 @@ export default function EditModelDialog(
                   current value is kept selectable even if it isn't flagged. */}
               <Select value={model} onChange={value => setModel(value)}>
                 <option value="">Select model…</option>
-                {model &&
-                  !models.some(candidate => candidate.id === model && (candidate as any).chat) && (
-                    <option value={model}>{model}</option>
-                  )}
+                {model && !models.some(candidate => candidate.id === model && candidate.chat) && (
+                  <option value={model}>{model}</option>
+                )}
                 {models
-                  .filter(candidate => (candidate as any).chat)
+                  .filter(candidate => candidate.chat)
                   .map(candidate => (
                     <option key={candidate.id} value={candidate.id}>
                       {candidate.id}
-                      {modelPriceLabel(candidate as any)}
+                      {modelPriceLabel(candidate)}
                     </option>
                   ))}
               </Select>
@@ -557,7 +585,7 @@ export default function EditModelDialog(
                   <option value={extra.vector_model}>{extra.vector_model}</option>
                 )}
                 {models
-                  .filter(candidate => (candidate as any).vector)
+                  .filter(candidate => candidate.vector)
                   .map(candidate => (
                     <option key={candidate.id} value={candidate.id}>
                       {candidate.id}
@@ -599,8 +627,12 @@ export default function EditModelDialog(
                 if (flavor.max_request_tokens) {
                   setMaxRequestTokens(String(flavor.max_request_tokens));
                 }
-                if (flavor.max_function_invocations) {
-                  setField('max_function_invocations', flavor.max_function_invocations);
+                const invocations = flavor.max_function_invocations;
+                if (
+                  invocations &&
+                  (typeof invocations === 'number' || typeof invocations === 'string')
+                ) {
+                  setField('max_function_invocations', invocations);
                 }
                 // A DYNAMIC "templated template" (contains [[...]] placeholders)
                 // is generated from a URL rather than inserted directly.

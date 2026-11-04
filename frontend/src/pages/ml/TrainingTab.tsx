@@ -2,14 +2,15 @@
  * Training data tab.
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import AiWaiter from '../../components/AiWaiter';
-import { useDialog } from '../../components/Dialogs';
+import { useDialog } from '../../lib/useDialog';
 import Pagination from '../../components/Pagination';
 import SearchInput from '../../components/SearchInput';
 import Select from '../../components/Select';
 import SocketFeedback from '../../components/SocketFeedback';
-import SortHeader, { useSort } from '../../components/SortHeader';
+import SortHeader from '../../components/SortHeader';
+import { useSort } from '../../lib/sort';
 import { TableSkeleton } from '../../components/Skeleton';
 import {
   gibberish,
@@ -19,8 +20,11 @@ import {
   mlSnippetsCount,
   mlSnippetsDeleteAll,
   mlSnippetsExportRaw,
+  type MlSnippet,
+  type MlType,
 } from '../../lib/api';
 import { dispositionFilename, downloadBlob } from '../../lib/download';
+import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 import { usePagedList } from '../../lib/usePagedList';
 import AddFunctionDialog from './AddFunctionDialog';
@@ -39,7 +43,15 @@ function vssClass(relevant: boolean) {
   return relevant ? 'vss-relevant' : 'vss-irrelevant';
 }
 
-function vssTitle(relevant: boolean, threshold: unknown) {
+// The listing adds a computed token count to each snippet.
+type Snippet = MlSnippet & { tokens?: number };
+
+interface ScrapeOptions {
+  url: string;
+  images: boolean;
+}
+
+function vssTitle(relevant: boolean, threshold: number | undefined) {
   return relevant
     ? "Close enough to be included in the model's context"
     : "Too distant for the model's " +
@@ -50,26 +62,35 @@ function vssTitle(relevant: boolean, threshold: unknown) {
 
 export default function TrainingTab(
   props: Readonly<{
-    types: any[];
+    types: MlType[];
     // A model the command palette asked to filter by, resolved by the page above.
     initialType?: string | null;
   }>,
 ) {
   const PAGE_SIZE = 12;
-  const [type, setType] = useState(props.initialType ?? '');
+  const [picked, setType] = useState(props.initialType ?? '');
+  // Until one is picked, the first model is the one shown.
+  const type = picked || (props.types[0]?.type ?? '');
 
-  // The page stays mounted between palette jumps, so a later link still lands.
-  useEffect(() => {
+  /*
+   * The page stays mounted between palette jumps, so a later link still lands —
+   * picked up while rendering, the moment the link changes.
+   */
+  const [seenInitialType, setSeenInitialType] = useState(props.initialType);
+  if (seenInitialType !== props.initialType) {
+    setSeenInitialType(props.initialType);
     if (props.initialType) {
       setType(props.initialType);
     }
-  }, [props.initialType]);
+  }
   const [filter, setFilter] = useState('');
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<Snippet | 'new' | null>(null);
   const [pickingFunction, setPickingFunction] = useState(false);
   const [pickingWidget, setPickingWidget] = useState(false);
   const [spicing, setSpicing] = useState(false);
-  const [scraping, setScraping] = useState<{ channel: string; options: any } | null>(null);
+  const [scraping, setScraping] = useState<{ channel: string; options: ScrapeOptions } | null>(
+    null,
+  );
   const [vectorSearch, setVectorSearch] = useState(false);
   const [sort, setSort] = useSort();
   // Slow round-trips with nothing else on screen to show for them — deletes,
@@ -86,18 +107,12 @@ export default function TrainingTab(
    * anything past it is shown greyed out.
    */
   const threshold = props.types.find(candidate => candidate.type === type)?.threshold;
-  const inContext = (snippet: any) =>
+  const inContext = (snippet: Snippet) =>
     typeof snippet.distance !== 'number' || typeof threshold !== 'number'
       ? true
       : snippet.distance + threshold < 1;
 
-  useEffect(() => {
-    if (!type && props.types.length > 0) {
-      setType(props.types[0].type);
-    }
-  }, [props.types, type]);
-
-  const list = usePagedList<any>({
+  const list = usePagedList<Snippet>({
     load: async (offset, limit) => {
       // No type selected yet — nothing to ask the backend for.
       if (!type) {
@@ -118,7 +133,7 @@ export default function TrainingTab(
   const snippets = list.rows;
   const count = list.count;
 
-  async function remove(snippet: any) {
+  async function remove(snippet: Snippet) {
     if (
       !(await confirm({
         title: 'Delete training snippet?',
@@ -133,8 +148,8 @@ export default function TrainingTab(
     try {
       await mlSnippetDelete(snippet.id);
       list.refresh();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -169,21 +184,21 @@ export default function TrainingTab(
       showToast(count + ' snippet(s) deleted');
       list.setPage(0);
       list.refresh();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
   }
 
   // Scraping runs on a background thread, so it reports over a socket channel.
-  async function spice(options: any) {
+  async function spice(options: ScrapeOptions) {
     setSpicing(false);
     setWaiting(true);
     try {
       setScraping({ channel: (await gibberish()).result, options });
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -194,8 +209,8 @@ export default function TrainingTab(
     try {
       const raw = await mlSnippetsExportRaw(type, filter);
       downloadBlob(raw.blob, dispositionFilename(raw.disposition) ?? type + '.csv');
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -389,8 +404,8 @@ export default function TrainingTab(
           title={'Scraping ' + scraping.options.url}
           channel={scraping.channel}
           onReady={() => {
-            importPage({ ...scraping.options, type, channel: scraping.channel }).catch(err =>
-              showToast(err.message, true, err.logId),
+            importPage({ ...scraping.options, type, channel: scraping.channel }).catch(
+              (err: unknown) => showError(err),
             );
           }}
           onClose={() => {

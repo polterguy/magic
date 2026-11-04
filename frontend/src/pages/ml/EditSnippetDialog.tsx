@@ -5,21 +5,23 @@
 
 import { useState } from 'react';
 import AiPrompt from '../../components/AiPrompt';
-import CodeEditor, { useEditToken } from '../../components/CodeEditor';
+import CodeEditor from '../../components/CodeEditor';
+import { useEditToken } from '../../lib/editor';
 import { Modal } from '../../components/Dialogs';
-import { mlSnippetCreate, mlSnippetUpdate, vectoriseSnippet } from '../../lib/api';
+import { mlSnippetCreate, mlSnippetUpdate, vectoriseSnippet, type MlSnippet } from '../../lib/api';
+import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 
 export default function EditSnippetDialog(
   props: Readonly<{
     type: string;
-    existing: any;
+    existing: MlSnippet | null;
     onClose: () => void;
     onSaved: () => void;
   }>,
 ) {
-  const [prompt, setPrompt] = useState(props.existing?.prompt ?? '');
-  const [completion, setCompletion] = useState(props.existing?.completion ?? '');
+  const [prompt, setPrompt] = useState<string>(props.existing?.prompt ?? '');
+  const [completion, setCompletion] = useState<string>(props.existing?.completion ?? '');
   const [completionEditId, bumpCompletionEditId] = useEditToken();
   const [busy, setBusy] = useState(false);
 
@@ -54,7 +56,9 @@ export default function EditSnippetDialog(
     const start = result.indexOf('{');
     const end = result.lastIndexOf('}');
     try {
-      const parsed = JSON.parse(start >= 0 && end > start ? result.slice(start, end + 1) : result);
+      const parsed = JSON.parse(
+        start >= 0 && end > start ? result.slice(start, end + 1) : result,
+      ) as { prompt?: unknown; completion?: unknown };
       if (typeof parsed.prompt === 'string') setPrompt(parsed.prompt);
       if (typeof parsed.completion === 'string') setCompletion(parsed.completion);
       if (typeof parsed.prompt !== 'string' && typeof parsed.completion !== 'string') {
@@ -100,13 +104,11 @@ export default function EditSnippetDialog(
           try {
             await vectoriseSnippet(props.existing.id);
             showToast('Snippet saved and re-vectorised');
-          } catch (err: any) {
-            showToast(
+          } catch (err) {
+            showError(
+              err,
               'Snippet saved, but re-vectorising it failed — it will not be matched until you ' +
-                'vectorise the model. ' +
-                err.message,
-              true,
-              err.logId,
+                'vectorise the model. ',
             );
           }
         }
@@ -115,8 +117,8 @@ export default function EditSnippetDialog(
         showToast('Snippet saved');
       }
       props.onSaved();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }

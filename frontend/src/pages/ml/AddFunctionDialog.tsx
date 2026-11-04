@@ -11,7 +11,10 @@ import { Modal } from '../../components/Dialogs';
 import SearchInput from '../../components/SearchInput';
 import { ListSkeleton } from '../../components/Skeleton';
 import { availableWorkflows, mlSnippetCreate } from '../../lib/api';
+import { errorMessage, showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+
+type Workflow = Awaited<ReturnType<typeof availableWorkflows>>[number];
 
 export default function AddFunctionDialog(
   props: Readonly<{
@@ -25,7 +28,7 @@ export default function AddFunctionDialog(
     onDeclaration?: (file: string) => void;
   }>,
 ) {
-  const [workflows, setWorkflows] = useState<any[]>([]);
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [filter, setFilter] = useState('');
   const [error, setError] = useState('');
   // Distinguishes "still fetching the list" from a genuinely empty result.
@@ -35,11 +38,11 @@ export default function AddFunctionDialog(
   useEffect(() => {
     availableWorkflows()
       .then(list => setWorkflows(list ?? []))
-      .catch(err => setError(err.message))
+      .catch((err: unknown) => setError(errorMessage(err)))
       .finally(() => setLoading(false));
   }, []);
 
-  async function install(workflow: any) {
+  async function install(workflow: Workflow) {
     if (busy) {
       return;
     }
@@ -58,8 +61,8 @@ export default function AddFunctionDialog(
       });
       showToast('AI function ' + workflow.name + ' added to ' + props.type);
       props.onInstalled();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }

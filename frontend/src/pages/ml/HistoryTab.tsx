@@ -2,29 +2,25 @@
  * History tab — requests towards your models.
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Pagination from '../../components/Pagination';
 import Select from '../../components/Select';
 import { TableSkeleton } from '../../components/Skeleton';
-import { mlRequests, mlRequestsCount } from '../../lib/api';
+import { mlRequests, mlRequestsCount, type MlRequest, type MlType } from '../../lib/api';
 import { usePagedList } from '../../lib/usePagedList';
 
 export default function HistoryTab(
   props: Readonly<{
-    types: any[];
+    types: MlType[];
   }>,
 ) {
   const PAGE_SIZE = 15;
-  const [type, setType] = useState('');
+  const [picked, setType] = useState('');
+  // Until one is picked, the first model is the one shown.
+  const type = picked || (props.types[0]?.type ?? '');
   const [expanded, setExpanded] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (!type && props.types.length > 0) {
-      setType(props.types[0].type);
-    }
-  }, [props.types, type]);
-
-  const list = usePagedList<any>({
+  const list = usePagedList<MlRequest>({
     load: async (offset, limit) => {
       // No type selected yet — nothing to ask the backend for.
       if (!type) {
@@ -95,7 +91,9 @@ export default function HistoryTab(
  * screen as visible characters and never as live HTML. Never render any of
  * these values through dangerouslySetInnerHTML.
  */
-function RequestRow(props: Readonly<{ request: any; expanded: boolean; onToggle: () => void }>) {
+function RequestRow(
+  props: Readonly<{ request: MlRequest; expanded: boolean; onToggle: () => void }>,
+) {
   return (
     <>
       <tr

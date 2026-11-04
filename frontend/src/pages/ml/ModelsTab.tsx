@@ -4,7 +4,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import AiWaiter from '../../components/AiWaiter';
-import { useDialog } from '../../components/Dialogs';
+import { useDialog } from '../../lib/useDialog';
 import { CheckIcon, DashIcon } from '../../components/Icons';
 import SocketFeedback from '../../components/SocketFeedback';
 import {
@@ -14,7 +14,9 @@ import {
   mlTypeDelete,
   mlUnvectorisedCount,
   vectoriseType,
+  type MlType,
 } from '../../lib/api';
+import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 import EditModelDialog from './EditModelDialog';
 import EmbedDialog from './EmbedDialog';
@@ -22,13 +24,13 @@ import ImportDialog from './ImportDialog';
 
 export default function ModelsTab(
   props: Readonly<{
-    types: any[];
+    types: MlType[];
     onChanged: () => void;
     // A model the command palette asked to open, resolved by the page above.
     editOnOpen?: string | null;
   }>,
 ) {
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<MlType | 'new' | null>(null);
 
   /*
    * The types are loaded by the page above, so this waits for them to arrive
@@ -36,16 +38,23 @@ export default function ModelsTab(
    * second palette jump to a different model still opens - closing the dialog
    * must not reopen it, but arriving at another one must work.
    */
-  const consumed = useRef<string | null>(null);
-  useEffect(() => {
-    if (!props.editOnOpen || props.types.length === 0 || consumed.current === props.editOnOpen) {
-      return;
-    }
-    consumed.current = props.editOnOpen;
+  const [opened, setOpened] = useState<string | null>(null);
+  if (props.editOnOpen && props.types.length > 0 && opened !== props.editOnOpen) {
+    setOpened(props.editOnOpen);
     const match = props.types.find(candidate => candidate.type === props.editOnOpen);
     if (match) {
       setEditing(match);
-    } else {
+    }
+  }
+
+  // The toast is a side effect, so it waits for the commit, once per model asked for.
+  const warned = useRef<string | null>(null);
+  useEffect(() => {
+    if (!props.editOnOpen || props.types.length === 0 || warned.current === props.editOnOpen) {
+      return;
+    }
+    warned.current = props.editOnOpen;
+    if (!props.types.some(candidate => candidate.type === props.editOnOpen)) {
       showToast('No model named ' + props.editOnOpen, true);
     }
   }, [props.editOnOpen, props.types]);
@@ -77,8 +86,8 @@ export default function ModelsTab(
       await mlTypeDelete(type);
       showToast('Model ' + type + ' deleted');
       props.onChanged();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -130,8 +139,8 @@ export default function ModelsTab(
       }
       const channel = (await gibberish()).result;
       setVectorising({ type, channel, total });
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -250,8 +259,8 @@ export default function ModelsTab(
             counts: message => message.message.startsWith('Vectorizing:'),
           }}
           onReady={() => {
-            vectoriseType(vectorising.type, vectorising.channel).catch(err =>
-              showToast(err.message, true, err.logId),
+            vectoriseType(vectorising.type, vectorising.channel).catch((err: unknown) =>
+              showError(err),
             );
           }}
           onClose={() => setVectorising(null)}

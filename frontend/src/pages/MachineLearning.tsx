@@ -11,8 +11,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Tabs from '../components/Tabs';
-import { mlTypes, openaiIsConfigured } from '../lib/api';
-import { showToast } from '../lib/toast';
+import { mlTypes, openaiIsConfigured, type MlType } from '../lib/api';
+import { showError } from '../lib/errors';
 import HistoryTab from './ml/HistoryTab';
 import TrainingTab from './ml/TrainingTab';
 import ModelsTab from './ml/ModelsTab';
@@ -38,38 +38,50 @@ export default function MachineLearning() {
     edit: params.get('edit'),
     type: params.get('type'),
   });
-  const [types, setTypes] = useState<any[]>([]);
+  const [types, setTypes] = useState<MlType[]>([]);
   const [configured, setConfigured] = useState(true);
 
+  // Picking the link up while rendering, the moment the query changes, rather than in an effect.
+  const wanted = params.get('tab');
+  const linkEdit = params.get('edit');
+  const linkType = params.get('type');
+  const hasLink = !!(wanted || linkEdit || linkType);
+  const [seenParams, setSeenParams] = useState(params);
+  if (seenParams !== params) {
+    setSeenParams(params);
+    if (hasLink) {
+      if (wanted) {
+        setTab(wanted as Tab);
+      }
+      setDeepLink({ edit: linkEdit, type: linkType });
+    }
+  }
+
   useEffect(() => {
-    const wanted = params.get('tab');
-    const edit = params.get('edit');
-    const type = params.get('type');
-    if (!wanted && !edit && !type) {
+    if (!hasLink) {
       return;
     }
-    if (wanted) {
-      setTab(wanted as Tab);
-    }
-    setDeepLink({ edit, type });
-    ['tab', 'edit', 'type'].forEach(name => params.delete(name));
-    setParams(params, { replace: true });
-  }, [params, setParams]);
+    const next = new URLSearchParams(params);
+    ['tab', 'edit', 'type'].forEach(name => next.delete(name));
+    setParams(next, { replace: true });
+  }, [hasLink, params, setParams]);
 
   const refreshTypes = useCallback(async () => {
     try {
       setTypes((await mlTypes()) ?? []);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }, []);
 
   useEffect(() => {
-    refreshTypes();
+    mlTypes()
+      .then(result => setTypes(result ?? []))
+      .catch((err: unknown) => showError(err));
     openaiIsConfigured()
       .then(response => setConfigured(response.result))
       .catch(() => {});
-  }, [refreshTypes]);
+  }, []);
 
   return (
     <>

@@ -16,7 +16,8 @@ function boolParam(name: string, value: boolean) {
 export default function EmbedDialog(props: Readonly<{ type: string; onClose: () => void }>) {
   const backend = backendInfo();
   const [modernThemes, setModernThemes] = useState<string[]>([]);
-  const [copied, setCopied] = useState(false);
+  // The script last put on the clipboard, so the button can tell whether it is still current.
+  const [copiedScript, setCopiedScript] = useState<string | null>(null);
 
   // Modern chatbot options (old-dashboard defaults).
   const [modernTheme, setModernTheme] = useState('modern-square');
@@ -86,7 +87,7 @@ export default function EmbedDialog(props: Readonly<{ type: string; onClose: () 
    * to its normal label so it doesn't claim an outdated embed is on the
    * clipboard.
    */
-  useEffect(() => setCopied(false), [script]);
+  const copied = copiedScript === script;
 
   return (
     <Modal width={680} onClose={props.onClose}>
@@ -161,15 +162,17 @@ export default function EmbedDialog(props: Readonly<{ type: string; onClose: () 
             </label>
           </div>
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-            {[
-              ['References', references, setReferences],
-              ['Follow-up questions', followUp, setFollowUp],
-              ['Copy button', copyButton, setCopyButton],
-              ['Right-to-left', rtl, setRtl],
-              ['Sticky', sticky, setSticky],
-              ['History', history, setHistory],
-              ['Attachments', attachments, setAttachments],
-            ].map(([label, value, setter]: any) => (
+            {(
+              [
+                ['References', references, setReferences],
+                ['Follow-up questions', followUp, setFollowUp],
+                ['Copy button', copyButton, setCopyButton],
+                ['Right-to-left', rtl, setRtl],
+                ['Sticky', sticky, setSticky],
+                ['History', history, setHistory],
+                ['Attachments', attachments, setAttachments],
+              ] as [string, boolean, (checked: boolean) => void][]
+            ).map(([label, value, setter]) => (
               <label key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <input type="checkbox" checked={value} onChange={e => setter(e.target.checked)} />
                 {label}
@@ -191,7 +194,7 @@ export default function EmbedDialog(props: Readonly<{ type: string; onClose: () 
           className="btn btn-secondary"
           onClick={() => {
             void copyToClipboard(script, 'The embed script');
-            setCopied(true);
+            setCopiedScript(script);
           }}
         >
           {copied ? 'Copied!' : 'Copy embed code'}

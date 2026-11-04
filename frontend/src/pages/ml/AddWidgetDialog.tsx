@@ -11,7 +11,10 @@ import { Modal } from '../../components/Dialogs';
 import SearchInput from '../../components/SearchInput';
 import { ListSkeleton } from '../../components/Skeleton';
 import { availableWidgets, mlSnippetCreate } from '../../lib/api';
+import { errorMessage, showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+
+type Widget = Awaited<ReturnType<typeof availableWidgets>>[number];
 
 export default function AddWidgetDialog(
   props: Readonly<{
@@ -20,7 +23,7 @@ export default function AddWidgetDialog(
     onAdded: () => void;
   }>,
 ) {
-  const [widgets, setWidgets] = useState<any[]>([]);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
   const [filter, setFilter] = useState('');
   const [error, setError] = useState('');
   // Distinguishes "still fetching the list" from a genuinely empty result.
@@ -30,11 +33,11 @@ export default function AddWidgetDialog(
   useEffect(() => {
     availableWidgets()
       .then(list => setWidgets(list ?? []))
-      .catch(err => setError(err.message))
+      .catch((err: unknown) => setError(errorMessage(err)))
       .finally(() => setLoading(false));
   }, []);
 
-  async function install(widget: any) {
+  async function install(widget: Widget) {
     const completion = 'HTML widget at ' + widget.file + '.';
     if (busy) {
       return;
@@ -49,8 +52,8 @@ export default function AddWidgetDialog(
       });
       showToast('Widget added to ' + props.type + ' — edit its prompt to describe when to use it');
       props.onAdded();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }

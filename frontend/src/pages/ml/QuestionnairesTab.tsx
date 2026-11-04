@@ -5,7 +5,8 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { Modal, useDialog } from '../../components/Dialogs';
+import { Modal } from '../../components/Dialogs';
+import { useDialog } from '../../lib/useDialog';
 import Select from '../../components/Select';
 import AiWaiter from '../../components/AiWaiter';
 import {
@@ -20,6 +21,7 @@ import {
   updateQuestion,
   updateQuestionnaire,
 } from '../../lib/api';
+import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 
 /*
@@ -57,32 +59,50 @@ export default function QuestionnairesTab() {
       setItems(list);
       // Selecting the first one gives the detail pane something to show.
       setSelected(current => current ?? list[0]?.name ?? null);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
       setItems([]);
     }
   }, []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    listQuestionnaires()
+      .then(list => {
+        setItems(list ?? []);
+        // Selecting the first one gives the detail pane something to show.
+        setSelected(current => current ?? list?.[0]?.name ?? null);
+      })
+      .catch((err: unknown) => {
+        showError(err);
+        setItems([]);
+      });
+  }, []);
 
-  const loadQuestions = useCallback(async (name: string | null) => {
-    if (!name) {
-      setQuestions(null);
-      return;
-    }
+  const loadQuestions = useCallback(async (name: string) => {
     try {
       setQuestions((await listQuestions(name)) ?? []);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
       setQuestions([]);
     }
   }, []);
 
+  // With nothing selected there are no questions, adjusted while rendering rather than in an effect.
+  if (!selected && questions !== null) {
+    setQuestions(null);
+  }
+
   useEffect(() => {
-    loadQuestions(selected);
-  }, [selected, loadQuestions]);
+    if (!selected) {
+      return;
+    }
+    listQuestions(selected)
+      .then(list => setQuestions(list ?? []))
+      .catch((err: unknown) => {
+        showError(err);
+        setQuestions([]);
+      });
+  }, [selected]);
 
   async function removeQuestionnaire(name: string) {
     /*
@@ -108,9 +128,9 @@ export default function QuestionnairesTab() {
       await deleteQuestionnaire(name);
       showToast(name + ' deleted');
       setSelected(null);
-      load();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+      void load();
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -130,9 +150,11 @@ export default function QuestionnairesTab() {
     setWaiting(true);
     try {
       await deleteQuestion(question.question_id);
-      loadQuestions(selected);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+      if (selected) {
+        void loadQuestions(selected);
+      }
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -283,7 +305,7 @@ export default function QuestionnairesTab() {
             setCreating(false);
             setEditingQuestionnaire(null);
             setSelected(name);
-            load();
+            void load();
           }}
         />
       )}
@@ -294,7 +316,7 @@ export default function QuestionnairesTab() {
           onClose={() => setEditing(null)}
           onSaved={() => {
             setEditing(null);
-            loadQuestions(selected);
+            void loadQuestions(selected);
           }}
         />
       )}
@@ -337,8 +359,8 @@ function QuestionnaireDialog(
         showToast('Questionnaire ' + name + ' created');
       }
       props.onSaved(name);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -448,8 +470,8 @@ function QuestionDialog(
         });
       }
       props.onSaved();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
