@@ -7,9 +7,7 @@ import type { FieldType } from '../../lib/dbTypes';
 
 // Derive the PK name from the table name like the old dialog does.
 export function primaryKeyName(tableName: string) {
-  const singular = tableName.endsWith('s')
-    ? tableName.substring(0, tableName.length - 1)
-    : tableName;
+  const singular = tableName.endsWith('s') ? tableName.slice(0, -1) : tableName;
   return singular + '_id';
 }
 

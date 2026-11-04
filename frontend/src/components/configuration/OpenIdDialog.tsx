@@ -66,7 +66,7 @@ export default function OpenIdDialog(
       });
   }, []);
 
-  const callbackUrl = window.location.origin + OIDC_CALLBACK_PATH;
+  const callbackUrl = globalThis.location.origin + OIDC_CALLBACK_PATH;
 
   function save() {
     const next = applyOidcValues(props.config, values);
@@ -142,7 +142,7 @@ export default function OpenIdDialog(
               <a href={OIDC_CONSOLES[provider].url} target="_blank" rel="noreferrer">
                 {OIDC_CONSOLES[provider].name}
               </a>
-              , with the redirect URI above registered as an authorised redirect URI.
+              {', with the redirect URI above registered as an authorised redirect URI.'}
             </p>
           )}
         </>

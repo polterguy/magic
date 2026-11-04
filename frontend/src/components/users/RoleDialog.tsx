@@ -43,7 +43,7 @@ export default function RoleDialog(
       <h2>{isEdit ? 'Edit role ' + props.role.name : 'New role'}</h2>
       <div className="form-grid">
         <label>
-          Name
+          Name{' '}
           <input
             type="text"
             autoFocus={!isEdit}
@@ -54,7 +54,7 @@ export default function RoleDialog(
           />
         </label>
         <label>
-          Description
+          Description{' '}
           <textarea
             rows={4}
             autoFocus={isEdit}

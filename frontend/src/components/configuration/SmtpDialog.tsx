@@ -47,23 +47,21 @@ export default function SmtpDialog(
       <h2>SMTP settings</h2>
       <div className="form-grid">
         <label>
-          Host
-          <input type="text" value={host} onChange={e => setHost(e.target.value)} />
+          Host <input type="text" value={host} onChange={e => setHost(e.target.value)} />
         </label>
         <label>
-          Port
-          <input type="number" value={port} onChange={e => setPort(e.target.value)} />
+          Port <input type="number" value={port} onChange={e => setPort(e.target.value)} />
         </label>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input type="checkbox" checked={secure} onChange={e => setSecure(e.target.checked)} />
+          <input type="checkbox" checked={secure} onChange={e => setSecure(e.target.checked)} />{' '}
           Secure (TLS)
         </label>
         <label>
-          Username
+          Username{' '}
           <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
         </label>
         <label>
-          Password
+          Password{' '}
           <input
             type="text"
             className="secret"
@@ -73,11 +71,11 @@ export default function SmtpDialog(
           />
         </label>
         <label>
-          From name
+          From name{' '}
           <input type="text" value={fromName} onChange={e => setFromName(e.target.value)} />
         </label>
         <label>
-          From address
+          From address{' '}
           <input type="text" value={fromAddress} onChange={e => setFromAddress(e.target.value)} />
         </label>
       </div>

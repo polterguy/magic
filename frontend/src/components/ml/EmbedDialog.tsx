@@ -107,16 +107,15 @@ export default function EmbedDialog(props: Readonly<{ type: string; onClose: () 
             </Select>
           </label>
           <label>
-            Header
-            <input type="text" value={header} onChange={e => setHeader(e.target.value)} />
+            Header <input type="text" value={header} onChange={e => setHeader(e.target.value)} />
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             <label>
-              Button text
+              Button text{' '}
               <input type="text" value={buttonText} onChange={e => setButtonText(e.target.value)} />
             </label>
             <label>
-              Input placeholder
+              Input placeholder{' '}
               <input
                 type="text"
                 value={placeholder}
@@ -142,7 +141,7 @@ export default function EmbedDialog(props: Readonly<{ type: string; onClose: () 
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10 }}>
             <label style={{ fontSize: 12 }}>
-              Gradient start
+              Gradient start{' '}
               <input
                 type="color"
                 value={startColor}
@@ -150,15 +149,15 @@ export default function EmbedDialog(props: Readonly<{ type: string; onClose: () 
               />
             </label>
             <label style={{ fontSize: 12 }}>
-              Gradient end
+              Gradient end{' '}
               <input type="color" value={endColor} onChange={e => setEndColor(e.target.value)} />
             </label>
             <label style={{ fontSize: 12 }}>
-              Foreground
+              Foreground{' '}
               <input type="color" value={foreColor} onChange={e => setForeColor(e.target.value)} />
             </label>
             <label style={{ fontSize: 12 }}>
-              Links
+              Links{' '}
               <input type="color" value={linkColor} onChange={e => setLinkColor(e.target.value)} />
             </label>
           </div>

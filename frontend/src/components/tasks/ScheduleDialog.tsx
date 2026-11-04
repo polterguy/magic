@@ -44,14 +44,14 @@ export default function ScheduleDialog(
       <h2>Schedule {props.taskId}</h2>
       <div className="form-grid">
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input type="radio" checked={mode === 'fixed'} onChange={() => setMode('fixed')} />
-          Once, at a fixed date
+          <input type="radio" checked={mode === 'fixed'} onChange={() => setMode('fixed')} /> Once,
+          at a fixed date
         </label>
         {mode === 'fixed' && (
           <DateTimePicker value={due} onChange={setDue} placeholder="Pick a date and time" />
         )}
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input type="radio" checked={mode === 'repeat'} onChange={() => setMode('repeat')} />
+          <input type="radio" checked={mode === 'repeat'} onChange={() => setMode('repeat')} />{' '}
           Repeating
         </label>
         {mode === 'repeat' && (
@@ -73,7 +73,7 @@ export default function ScheduleDialog(
           </div>
         )}
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input type="radio" checked={mode === 'custom'} onChange={() => setMode('custom')} />
+          <input type="radio" checked={mode === 'custom'} onChange={() => setMode('custom')} />{' '}
           Custom repetition pattern
         </label>
         {mode === 'custom' && (

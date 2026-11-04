@@ -15,8 +15,14 @@ import type { SqlRow } from '../../lib/api';
 export const MAX_RENDERED_ROWS = 1000;
 
 export function formatCell(value: unknown): ReactNode {
+  const text = cellText(value);
+  return text ?? createElement('span', { className: 'muted' }, 'null');
+}
+
+// A cell's text, or null for a SQL NULL.
+function cellText(value: unknown): string | null {
   if (value === null || value === undefined) {
-    return createElement('span', { className: 'muted' }, 'null');
+    return null;
   }
   if (typeof value === 'object') {
     return JSON.stringify(value);

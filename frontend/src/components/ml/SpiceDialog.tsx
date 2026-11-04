@@ -31,7 +31,7 @@ export default function SpiceDialog(
       </p>
       <div className="form-grid">
         <label>
-          Page URL
+          Page URL{' '}
           <input
             type="text"
             autoFocus
@@ -41,7 +41,7 @@ export default function SpiceDialog(
           />
         </label>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input type="checkbox" checked={images} onChange={e => setImages(e.target.checked)} />
+          <input type="checkbox" checked={images} onChange={e => setImages(e.target.checked)} />{' '}
           Import images
         </label>
       </div>

@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { type SubmitEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Banner from '../components/Banner';
@@ -41,7 +41,7 @@ export default function Login() {
    * to get here is adding another one, and the dropdown offers the rest.
    */
   const [url, setUrl] = useState(
-    () => backend?.url ?? (previousUrls.length === 0 ? window.location.origin : ''),
+    () => backend?.url ?? (previousUrls.length === 0 ? globalThis.location.origin : ''),
   );
   const [username, setUsername] = useState(backend?.username ?? 'root');
   const [password, setPassword] = useState('');
@@ -65,8 +65,8 @@ export default function Login() {
         setPickerOpen(false);
       }
     };
-    window.addEventListener('mousedown', handler);
-    return () => window.removeEventListener('mousedown', handler);
+    globalThis.addEventListener('mousedown', handler);
+    return () => globalThis.removeEventListener('mousedown', handler);
   }, [pickerOpen]);
 
   /*
@@ -102,7 +102,7 @@ export default function Login() {
           pending.backendUrl,
           code.code,
           code.state,
-          window.location.origin + OIDC_CALLBACK_PATH,
+          globalThis.location.origin + OIDC_CALLBACK_PATH,
         )
       : openidLogin(pending.backendUrl, idToken!);
     void exchange
@@ -158,7 +158,7 @@ export default function Login() {
     };
   }, [probeUrl]);
 
-  async function submit(event: FormEvent) {
+  async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
     setBusy(true);
@@ -171,7 +171,7 @@ export default function Login() {
     }
   }
 
-  async function sendLink(event: FormEvent) {
+  async function sendLink(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
     setBusy(true);
@@ -198,9 +198,9 @@ export default function Login() {
      */
     rememberPendingOidc({
       backendUrl: url,
-      returnPath: window.location.pathname + window.location.search,
+      returnPath: globalThis.location.pathname + globalThis.location.search,
     });
-    window.location.assign(
+    globalThis.location.assign(
       oidcAuthorizeUrl(
         provider,
         /*
@@ -208,7 +208,7 @@ export default function Login() {
          * the user logged out from is irrelevant, and providers match this
          * string exactly against what's registered.
          */
-        window.location.origin + OIDC_CALLBACK_PATH,
+        globalThis.location.origin + OIDC_CALLBACK_PATH,
       ),
     );
   }
@@ -248,7 +248,7 @@ export default function Login() {
           ref={pickerRef}
         />
         <label>
-          Username
+          Username{' '}
           <input
             type="text"
             value={username}
@@ -258,7 +258,7 @@ export default function Login() {
           />
         </label>
         <label>
-          Password
+          Password{' '}
           <input
             type="password"
             value={password}

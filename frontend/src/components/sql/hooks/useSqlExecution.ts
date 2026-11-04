@@ -28,7 +28,7 @@ export function useSqlExecution(
 
   async function execute() {
     const selected = editorSelection(editorRef.current);
-    const toExecute = selected !== '' ? selected : sql;
+    const toExecute = selected === '' ? sql : selected;
     if (!toExecute.trim()) {
       showToast('Write some SQL first', true);
       return;

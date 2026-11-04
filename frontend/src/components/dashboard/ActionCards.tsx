@@ -63,7 +63,7 @@ export function OpenAiKeyCard(props: Readonly<{ onConfigure: () => void }>) {
           <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">
             here
           </a>
-          .
+          {'.'}
         </p>
       </div>
       <button className="btn btn-large" onClick={props.onConfigure}>

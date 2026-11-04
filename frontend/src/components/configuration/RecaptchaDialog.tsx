@@ -40,14 +40,14 @@ export default function RecaptchaDialog(
         <a href="https://www.google.com/recaptcha/admin" target="_blank" rel="noreferrer">
           the reCAPTCHA admin console
         </a>
-        . Leave both fields empty to turn reCAPTCHA off.
+        {'. Leave both fields empty to turn reCAPTCHA off.'}
       </p>
       <label className="modal-label">
-        Site key
+        Site key{' '}
         <input type="text" autoComplete="off" value={key} onChange={e => setKey(e.target.value)} />
       </label>
       <label className="modal-label">
-        Secret key
+        Secret key{' '}
         <input
           type="text"
           className="secret"

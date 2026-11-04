@@ -104,7 +104,7 @@ export function initialOidcValues(existing: JsonObject): OidcValues {
 export function oidcProvidersFromSlots(slots: string[] | null | undefined): string[] {
   return (slots ?? [])
     .filter(name => name.startsWith(OIDC_SLOT_PREFIX))
-    .map(name => name.substring(OIDC_SLOT_PREFIX.length))
+    .map(name => name.slice(OIDC_SLOT_PREFIX.length))
     .sort((a, b) => a.localeCompare(b));
 }
 

@@ -105,7 +105,7 @@ export default function UsersTab(props: Readonly<{ roles: Role[] }>) {
                     )}
                   </td>
                   <td className="muted" data-label="Created">
-                    {user.created ? user.created.substring(0, 10) : ''}
+                    {user.created ? user.created.slice(0, 10) : ''}
                   </td>
                   <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                     <button

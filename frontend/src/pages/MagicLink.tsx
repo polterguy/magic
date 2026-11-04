@@ -32,7 +32,7 @@ export default function MagicLink() {
    * The token stops travelling with the page a moment later anyway, when
    * this navigates away.
    */
-  const [token] = useState(() => new URLSearchParams(window.location.search).get('token'));
+  const [token] = useState(() => new URLSearchParams(globalThis.location.search).get('token'));
 
   // Attaching the token to the backend the link named.
   useEffect(() => {

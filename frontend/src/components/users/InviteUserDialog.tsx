@@ -70,7 +70,7 @@ export default function InviteUserDialog(
       </p>
       <div className="form-grid">
         <label>
-          Email — also becomes the username
+          Email — also becomes the username{' '}
           <input
             type="text"
             autoFocus
@@ -80,7 +80,7 @@ export default function InviteUserDialog(
           />
         </label>
         <label>
-          Full name (optional)
+          Full name (optional){' '}
           <input type="text" value={name} onChange={e => setName(e.target.value)} />
         </label>
         <RolesField roles={props.roles} selected={selectedRoles} onChange={setSelectedRoles} />

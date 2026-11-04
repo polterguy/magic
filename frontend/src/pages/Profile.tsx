@@ -85,7 +85,7 @@ export default function Profile() {
           <h2 style={{ marginTop: 0 }}>Your details</h2>
           <div className="form-grid">
             <label>
-              Full name
+              Full name{' '}
               <input
                 type="text"
                 autoComplete="name"
@@ -94,7 +94,7 @@ export default function Profile() {
               />
             </label>
             <label>
-              Email
+              Email{' '}
               <input
                 type="email"
                 autoComplete="email"
@@ -127,7 +127,7 @@ export default function Profile() {
               />
             </label>
             <label>
-              Confirm password
+              Confirm password{' '}
               <input
                 type="password"
                 autoComplete="new-password"
@@ -168,7 +168,7 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
   const [expires, setExpires] = useState(() => {
     const date = new Date();
     date.setFullYear(date.getFullYear() + 1);
-    return date.toISOString().substring(0, 10);
+    return date.toISOString().slice(0, 10);
   });
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
@@ -219,7 +219,7 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
       )}
       <div className="form-grid">
         <label>
-          Username
+          Username{' '}
           <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
         </label>
         <div>
@@ -259,7 +259,7 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
           <DateTimePicker
             dateOnly
             value={expires}
-            min={new Date().toISOString().substring(0, 10)}
+            min={new Date().toISOString().slice(0, 10)}
             onChange={setExpires}
             placeholder="Pick an expiry date"
           />

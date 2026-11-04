@@ -90,8 +90,12 @@ export default function TableCard(
       ))}
       {(table.foreign_keys ?? []).length > 0 && (
         <div style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 6 }}>
-          {(table.foreign_keys ?? []).map((fk, index: number) => (
-            <div key={index} className="muted" style={{ fontSize: 12 }}>
+          {(table.foreign_keys ?? []).map(fk => (
+            <div
+              key={fk.column + '>' + fk.foreign_table + '.' + fk.foreign_column}
+              className="muted"
+              style={{ fontSize: 12 }}
+            >
               {fk.column} → {fk.foreign_table}.{fk.foreign_column}
             </div>
           ))}

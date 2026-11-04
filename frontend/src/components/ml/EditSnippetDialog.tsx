@@ -94,9 +94,7 @@ export default function EditSnippetDialog(
           type: props.type,
         });
 
-        if (!wasEmbedded) {
-          showToast('Snippet saved');
-        } else {
+        if (wasEmbedded) {
           /*
            * Reported separately from the save, which has already succeeded by
            * this point — saying "could not save" would be a lie, and saying
@@ -112,6 +110,8 @@ export default function EditSnippetDialog(
                 'vectorise the model. ',
             );
           }
+        } else {
+          showToast('Snippet saved');
         }
       } else {
         await mlSnippetCreate({ prompt, completion, type: props.type, meta: null, uri: null });
@@ -136,8 +136,7 @@ export default function EditSnippetDialog(
       <h2>{props.existing ? 'Edit snippet' : 'New snippet'}</h2>
       <div className="form-grid">
         <label>
-          Prompt
-          <input type="text" value={prompt} onChange={e => setPrompt(e.target.value)} />
+          Prompt <input type="text" value={prompt} onChange={e => setPrompt(e.target.value)} />
         </label>
         <div>
           <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Completion</div>

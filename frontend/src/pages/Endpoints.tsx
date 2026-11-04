@@ -149,7 +149,7 @@ export default function Endpoints() {
               type="checkbox"
               checked={showSystem}
               onChange={e => setShowSystem(e.target.checked)}
-            />
+            />{' '}
             Show system endpoints
           </label>
           <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -157,7 +157,7 @@ export default function Endpoints() {
               type="checkbox"
               checked={publicOnly}
               onChange={e => setPublicOnly(e.target.checked)}
-            />
+            />{' '}
             Public only
           </label>
           <SearchInput

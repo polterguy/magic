@@ -276,8 +276,7 @@ export default function EditModelDialog(
         <div className="form-grid" style={tabStyle('general')}>
           {!existing && (
             <label>
-              Type name
-              <input type="text" value={type} onChange={e => setType(e.target.value)} />
+              Type name <input type="text" value={type} onChange={e => setType(e.target.value)} />
             </label>
           )}
           {/*
@@ -327,7 +326,7 @@ export default function EditModelDialog(
             </div>
           )}
           <label>
-            Greeting
+            Greeting{' '}
             <input type="text" value={greeting} onChange={e => setGreeting(e.target.value)} />
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -335,7 +334,7 @@ export default function EditModelDialog(
                 keyword retrieval, which takes BM25 rank order as it comes. In
                 mixed mode it doubles as the keyword leg's relative cutoff. */}
             <label style={fadedUnlessVectors}>
-              Threshold
+              Threshold{' '}
               <input
                 type="number"
                 step="0.1"
@@ -346,13 +345,13 @@ export default function EditModelDialog(
               />
             </label>
             <label>
-              Max tokens
+              Max tokens{' '}
               <input type="number" value={maxTokens} onChange={e => setMaxTokens(e.target.value)} />
             </label>
             {/* Context tokens bound how much retrieved (embedded) material is
                 injected, so it too is irrelevant without embeddings. */}
             <label style={fadedUnlessEmbeddings}>
-              Max context tokens
+              Max context tokens{' '}
               <input
                 type="number"
                 value={maxContextTokens}
@@ -362,7 +361,7 @@ export default function EditModelDialog(
               />
             </label>
             <label>
-              Max request tokens
+              Max request tokens{' '}
               <input
                 type="number"
                 value={maxRequestTokens}
@@ -406,7 +405,7 @@ export default function EditModelDialog(
                 type="checkbox"
                 checked={supervised}
                 onChange={e => setSupervised(e.target.checked)}
-              />
+              />{' '}
               Supervised
             </label>
             <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -414,18 +413,18 @@ export default function EditModelDialog(
                 type="checkbox"
                 checked={useEmbeddings}
                 onChange={e => setUseEmbeddings(e.target.checked)}
-              />
+              />{' '}
               Use embeddings
             </label>
             <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <input type="checkbox" checked={cached} onChange={e => setCached(e.target.checked)} />
+              <input type="checkbox" checked={cached} onChange={e => setCached(e.target.checked)} />{' '}
               Cached
             </label>
           </div>
         </div>
         <div className="form-grid" style={tabStyle('behaviour')}>
           <label>
-            Conversation starters (markdown list)
+            Conversation starters (markdown list){' '}
             <textarea
               rows={4}
               value={extra.conversation_starters}
@@ -450,7 +449,7 @@ export default function EditModelDialog(
               </Select>
             </label>
             <label>
-              Max requests (-1 = unlimited)
+              Max requests (-1 = unlimited){' '}
               <input
                 type="number"
                 value={extra.max_requests}
@@ -458,7 +457,7 @@ export default function EditModelDialog(
               />
             </label>
             <label>
-              Max function invocations
+              Max function invocations{' '}
               <input
                 type="number"
                 value={extra.max_function_invocations}
@@ -466,7 +465,7 @@ export default function EditModelDialog(
               />
             </label>
             <label>
-              Max session items
+              Max session items{' '}
               <input
                 type="number"
                 value={extra.max_session_items}
@@ -474,7 +473,7 @@ export default function EditModelDialog(
               />
             </label>
             <label>
-              Session timeout
+              Session timeout{' '}
               <input
                 type="number"
                 min="0"
@@ -484,7 +483,7 @@ export default function EditModelDialog(
               />
             </label>
             <label>
-              No requests served
+              No requests served{' '}
               <input
                 type="number"
                 title="How many requests this model has answered so far"
@@ -498,7 +497,7 @@ export default function EditModelDialog(
                 ml_types.recaptcha is NOT NULL, so "no captcha" is a negative
                 number rather than null. */}
             <label>
-              Captcha
+              Captcha{' '}
               <input
                 type="number"
                 step="0.1"
@@ -515,7 +514,7 @@ export default function EditModelDialog(
                 task re-crawls to keep the model's training data fresh — not an
                 LLM API base. */}
             <label>
-              Auto-crawl URL
+              Auto-crawl URL{' '}
               <input
                 type="text"
                 placeholder="https://example.com"
@@ -525,7 +524,7 @@ export default function EditModelDialog(
               />
             </label>
             <label>
-              API key override
+              API key override{' '}
               <input
                 type="text"
                 className="secret"

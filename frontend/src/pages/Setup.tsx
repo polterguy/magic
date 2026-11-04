@@ -8,7 +8,7 @@
  * magic database exists, and answers with a ticket signed by the new secret.
  */
 
-import { FormEvent, useState } from 'react';
+import { type SubmitEvent, useState } from 'react';
 
 import Banner from '../components/Banner';
 import { EyeIcon, EyeOffIcon } from '../components/Icons';
@@ -48,7 +48,7 @@ export default function Setup() {
 
   const problem = firstProblem(name, email, password, repeat, showPassword);
 
-  async function submit(event: FormEvent) {
+  async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (problem) {
       setError(problem);
@@ -93,7 +93,7 @@ export default function Setup() {
         </p>
         {error && <Banner onClose={() => setError('')}>{error}</Banner>}
         <label>
-          Full name
+          Full name{' '}
           <input
             type="text"
             autoFocus
@@ -103,7 +103,7 @@ export default function Setup() {
           />
         </label>
         <label>
-          Email
+          Email{' '}
           <input
             type="email"
             autoComplete="email"
@@ -142,7 +142,7 @@ export default function Setup() {
         {/* Confirming is pointless while the password is legible. */}
         {!showPassword && (
           <label>
-            Repeat password
+            Repeat password{' '}
             <input
               type="password"
               autoComplete="new-password"
@@ -156,7 +156,7 @@ export default function Setup() {
             type="checkbox"
             checked={subscribe}
             onChange={e => setSubscribe(e.target.checked)}
-          />
+          />{' '}
           Subscribe to the newsletter
         </label>
         <button className="btn" type="submit" disabled={busy}>

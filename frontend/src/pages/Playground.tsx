@@ -101,7 +101,7 @@ export default function Playground() {
         title: 'Discard unsaved changes?',
         message:
           'Your Hyperlambda has unsaved changes. Loading ' +
-          filename.substring(filename.lastIndexOf('/') + 1) +
+          filename.slice(filename.lastIndexOf('/') + 1) +
           ' replaces them.',
         confirmText: 'Discard',
         danger: true,
@@ -125,7 +125,7 @@ export default function Playground() {
 
   async function save() {
     const suggestion = selectedSnippet
-      ? selectedSnippet.substring(selectedSnippet.lastIndexOf('/') + 1).replace(/\.hl$/, '')
+      ? selectedSnippet.slice(selectedSnippet.lastIndexOf('/') + 1).replace(/\.hl$/, '')
       : '';
     const name = await prompt({
       title: 'Save snippet',
@@ -164,7 +164,7 @@ export default function Playground() {
             <option value="">Load snippet…</option>
             {snippets.map(snippet => (
               <option key={snippet} value={snippet}>
-                {snippet.substring(snippet.lastIndexOf('/') + 1)}
+                {snippet.slice(snippet.lastIndexOf('/') + 1)}
               </option>
             ))}
           </Select>

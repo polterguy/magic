@@ -12,12 +12,12 @@ export const OIDC_CALLBACK_PATH = '/authentication/oidc-callback';
  * the callback path from the address bar so a reload can't replay it.
  */
 export function takeIdTokenFromUrl() {
-  if (!window.location.hash.includes('id_token=')) {
+  if (!globalThis.location.hash.includes('id_token=')) {
     return null;
   }
-  const token = new URLSearchParams(window.location.hash.substring(1)).get('id_token');
+  const token = new URLSearchParams(globalThis.location.hash.slice(1)).get('id_token');
   // Strip the token from the address bar; the route is set below by the router.
-  window.history.replaceState(null, '', window.location.pathname);
+  globalThis.history.replaceState(null, '', globalThis.location.pathname);
   return token;
 }
 
@@ -27,13 +27,13 @@ export function takeIdTokenFromUrl() {
  * silently dropped, or a refused redirect just looks like nothing happened.
  */
 export function takeOidcErrorFromUrl() {
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(globalThis.location.search);
   const error = params.get('error');
   if (!error) {
     return null;
   }
   const description = params.get('error_description');
-  window.history.replaceState(null, '', window.location.pathname);
+  globalThis.history.replaceState(null, '', globalThis.location.pathname);
   return description ? error + ' — ' + description : error;
 }
 
@@ -42,13 +42,13 @@ export function takeOidcErrorFromUrl() {
  * instead. Reads both, then strips them from the address bar the same way.
  */
 export function takeCodeFromUrl() {
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(globalThis.location.search);
   const code = params.get('code');
   const state = params.get('state');
   if (!code || !state) {
     return null;
   }
-  window.history.replaceState(null, '', window.location.pathname);
+  globalThis.history.replaceState(null, '', globalThis.location.pathname);
   return { code, state };
 }
 

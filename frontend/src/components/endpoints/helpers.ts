@@ -25,7 +25,7 @@ export function moduleOf(endpoint: Endpoint): { name: string; system: boolean } 
  * as GET is "/modules/foo/bar.get.hl" on disk.
  */
 export function sourceFile(endpoint: Endpoint) {
-  return '/' + endpoint.path.substring('magic/'.length) + '.' + endpoint.verb.toLowerCase() + '.hl';
+  return '/' + endpoint.path.slice('magic/'.length) + '.' + endpoint.verb.toLowerCase() + '.hl';
 }
 
 export interface ModuleGroup {

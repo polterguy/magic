@@ -4,13 +4,13 @@
 
 // The file name without its folder, as the dropdown and dialogs show it.
 export function snippetLabel(filename: string) {
-  return filename.substring(filename.lastIndexOf('/') + 1);
+  return filename.slice(filename.lastIndexOf('/') + 1);
 }
 
 // Saving over the snippet you loaded is the common case, so its name is suggested.
 export function snippetSuggestion(selectedSnippet: string) {
   return selectedSnippet
-    ? selectedSnippet.substring(selectedSnippet.lastIndexOf('/') + 1).replace(/\.sql$/, '')
+    ? selectedSnippet.slice(selectedSnippet.lastIndexOf('/') + 1).replace(/\.sql$/, '')
     : '';
 }
 

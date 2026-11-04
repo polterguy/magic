@@ -1,4 +1,4 @@
-import { FormEvent } from 'react';
+import type { SubmitEvent } from 'react';
 
 import Banner from '../Banner';
 
@@ -14,7 +14,7 @@ export default function ForgotPasswordForm(
     forgotUser: string;
     onForgotUser: (value: string) => void;
     forgotSent: string;
-    onSubmit: (event: FormEvent) => void;
+    onSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
     onBack: () => void;
   }>,
 ) {
@@ -30,7 +30,7 @@ export default function ForgotPasswordForm(
           <p style={{ textAlign: 'center', margin: 0 }}>{props.forgotSent}</p>
         ) : (
           <label>
-            Username or email
+            Username or email{' '}
             <input
               type="text"
               autoFocus

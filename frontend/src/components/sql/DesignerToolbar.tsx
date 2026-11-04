@@ -26,7 +26,7 @@ export default function DesignerToolbar(
         style={{ cursor: database ? 'pointer' : 'not-allowed' }}
         title="Create a table from a CSV file, named after the file"
       >
-        Import .csv
+        Import .csv{' '}
         <input
           type="file"
           accept=".csv"

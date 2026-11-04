@@ -50,7 +50,7 @@ export function useSchemaDesigner(
     setWaiting(true);
     try {
       await flushSchemaCache(type, connectionString);
-      window.location.reload();
+      globalThis.location.reload();
     } catch (err) {
       showError(err);
       setWaiting(false);

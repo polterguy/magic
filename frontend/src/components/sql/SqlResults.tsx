@@ -7,6 +7,7 @@ export default function SqlResults({ result }: Readonly<{ result: SqlRow[][] | n
   return (
     <>
       {result?.map((resultSet, index) => (
+        // eslint-disable-next-line react/no-array-index-key -- result sets are identified only by their position in the response, and the whole list is replaced on each execution
         <div key={index} style={{ marginTop: 16 }}>
           <div className="toolbar" style={{ marginBottom: 6 }}>
             <span className="muted">{(resultSet ?? []).length} rows</span>

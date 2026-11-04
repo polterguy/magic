@@ -72,7 +72,7 @@ export default function AddColumnDialog(
       />
       <div className="form-grid">
         <label>
-          Column name
+          Column name{' '}
           <input type="text" value={columnName} onChange={e => setColumnName(e.target.value)} />
         </label>
         {mode === 'field' ? (
@@ -98,7 +98,7 @@ export default function AddColumnDialog(
             </label>
             {fieldType.size && (
               <label>
-                Length
+                Length{' '}
                 <input
                   type="number"
                   value={columnLength}
@@ -107,7 +107,7 @@ export default function AddColumnDialog(
               </label>
             )}
             <label>
-              Default value (optional)
+              Default value (optional){' '}
               <input
                 type="text"
                 value={defaultValue}
@@ -138,13 +138,13 @@ export default function AddColumnDialog(
                 type="checkbox"
                 checked={cascading}
                 onChange={e => setCascading(e.target.checked)}
-              />
+              />{' '}
               Cascade on delete
             </label>
           </>
         )}
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input type="checkbox" checked={nullable} onChange={e => setNullable(e.target.checked)} />
+          <input type="checkbox" checked={nullable} onChange={e => setNullable(e.target.checked)} />{' '}
           Nullable
         </label>
       </div>

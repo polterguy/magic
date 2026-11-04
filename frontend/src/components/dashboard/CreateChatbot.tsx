@@ -93,7 +93,7 @@ export default function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
         >
           <div className="form-grid columns">
             <label data-tour="chatbot-url">
-              Website URL
+              Website URL{' '}
               <input
                 type="text"
                 placeholder="https://example.com"
@@ -123,7 +123,7 @@ export default function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
               </Select>
             </label>
             <label data-tour="chatbot-pages">
-              Max pages
+              Max pages{' '}
               <input type="number" min="1" value={max} onChange={e => setMax(e.target.value)} />
             </label>
           </div>
@@ -138,7 +138,7 @@ export default function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
                 type="checkbox"
                 checked={autoDestruct}
                 onChange={e => setAutoDestruct(e.target.checked)}
-              />
+              />{' '}
               Delete after 7 days
             </label>
             {/* Submits the form, so Enter in any field starts the crawl too. */}

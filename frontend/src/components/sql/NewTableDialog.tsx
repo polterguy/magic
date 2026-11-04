@@ -39,11 +39,11 @@ export default function NewTableDialog(
       <h2>New table</h2>
       <div className="form-grid">
         <label>
-          Table name
+          Table name{' '}
           <input type="text" value={tableName} onChange={e => onTableName(e.target.value)} />
         </label>
         <label>
-          Primary key name
+          Primary key name{' '}
           <input type="text" value={pkName} onChange={e => setPkName(e.target.value)} />
         </label>
         <label>
@@ -58,7 +58,7 @@ export default function NewTableDialog(
         </label>
         {pkType === 'varchar' && (
           <label>
-            Primary key length
+            Primary key length{' '}
             <input type="number" value={pkLength} onChange={e => setPkLength(e.target.value)} />
           </label>
         )}

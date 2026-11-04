@@ -138,7 +138,7 @@ export default function TrainingTab(
     if (
       !(await confirm({
         title: 'Delete training snippet?',
-        message: snippet.prompt?.substring(0, 100),
+        message: snippet.prompt?.slice(0, 100),
         confirmText: 'Delete',
         danger: true,
       }))
@@ -241,7 +241,7 @@ export default function TrainingTab(
             type="checkbox"
             checked={vectorSearch}
             onChange={e => setVectorSearch(e.target.checked)}
-          />
+          />{' '}
           Vector search
         </label>
         <span className="muted">{count} snippets</span>

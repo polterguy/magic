@@ -36,8 +36,8 @@ export function addToHistory(current: HistoryEntry[], statement: string, when: s
 // The History… dropdown's label — local HH:MM, then the statement on one line.
 export function historyLabel(entry: HistoryEntry) {
   return (
-    new Date(entry.when).toTimeString().substring(0, 5) +
+    new Date(entry.when).toTimeString().slice(0, 5) +
     ' — ' +
-    entry.sql.replace(/\s+/g, ' ').substring(0, 60)
+    entry.sql.replaceAll(/\s+/g, ' ').slice(0, 60)
   );
 }

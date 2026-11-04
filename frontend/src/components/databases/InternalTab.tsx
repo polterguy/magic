@@ -37,7 +37,7 @@ export default function InternalTab() {
         </form>
         <span className="spacer" />
         <label className="btn btn-secondary" style={{ cursor: 'pointer' }}>
-          Upload backup
+          Upload backup{' '}
           <input
             type="file"
             accept=".db"

@@ -72,7 +72,7 @@ export default function TasksTable(
                   )}
                 </td>
                 <td className="muted" data-label="Created">
-                  {task.created ? task.created.substring(0, 10) : ''}
+                  {task.created ? task.created.slice(0, 10) : ''}
                 </td>
                 <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                   <button

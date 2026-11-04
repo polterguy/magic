@@ -23,6 +23,7 @@ export default function ResultTable({ rows }: Readonly<{ rows: SqlRow[] }>) {
         </thead>
         <tbody>
           {visible.map((row, index) => (
+            // eslint-disable-next-line react/no-array-index-key -- a result row has no identity of its own; rows are rendered in server order and never reordered, added or removed in place
             <tr key={index}>
               {columns.map(column => (
                 <td className="mono" key={column} data-label={column}>

@@ -36,6 +36,7 @@ export default function EditUserDialog(
    */
   async function toggleRole(role: string, member: boolean) {
     // Optimistic — the checkbox moves with the click; a failed call reverts it.
+    const previousRoles = memberRoles;
     setMemberRoles(
       member ? [...memberRoles, role] : memberRoles.filter(candidate => candidate !== role),
     );
@@ -46,7 +47,7 @@ export default function EditUserDialog(
         await removeUserFromRole(props.user.username, role);
       }
     } catch (err) {
-      setMemberRoles(memberRoles);
+      setMemberRoles(previousRoles);
       showError(err);
     }
   }

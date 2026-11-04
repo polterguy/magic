@@ -2,7 +2,7 @@
  * Unit tests for the login screen's OpenID helpers — reading what a provider
  * sent back from the URL, and building the URL that sends the user to it.
  *
- * Node environment: window is stubbed with just the location and history
+ * Node environment: location and history are stubbed as globals
  * the helpers touch.
  */
 
@@ -19,10 +19,8 @@ import {
 
 function stubLocation(location: { pathname?: string; search?: string; hash?: string }) {
   const replaceState = vi.fn();
-  vi.stubGlobal('window', {
-    location: { pathname: '/', search: '', hash: '', ...location },
-    history: { replaceState },
-  });
+  vi.stubGlobal('location', { pathname: '/', search: '', hash: '', ...location });
+  vi.stubGlobal('history', { replaceState });
   return replaceState;
 }
 

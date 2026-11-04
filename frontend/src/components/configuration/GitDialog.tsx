@@ -55,7 +55,7 @@ export default function GitDialog(
         profile name and email.
       </p>
       <label className="modal-label">
-        Username
+        Username{' '}
         <input
           type="text"
           autoComplete="off"
@@ -64,7 +64,7 @@ export default function GitDialog(
         />
       </label>
       <label className="modal-label">
-        Token
+        Token{' '}
         <input
           type="text"
           className="secret"
@@ -74,11 +74,10 @@ export default function GitDialog(
         />
       </label>
       <label className="modal-label">
-        Host
-        <input type="text" value={host} onChange={e => setHost(e.target.value)} />
+        Host <input type="text" value={host} onChange={e => setHost(e.target.value)} />
       </label>
       <label className="modal-label">
-        API base (optional, for GitHub Enterprise)
+        API base (optional, for GitHub Enterprise){' '}
         <input
           type="text"
           placeholder="https://api.github.com"

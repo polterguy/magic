@@ -37,10 +37,10 @@ function intro(description: string | undefined) {
    * so an <img onerror> can't fire while we're only after the text.
    */
   const parsed = new DOMParser().parseFromString(safeHtml(description), 'text/html');
-  const text = (parsed.body.textContent ?? '').replace(/\s+/g, ' ').trim();
+  const text = (parsed.body.textContent ?? '').replaceAll(/\s+/g, ' ').trim();
   const period = text.indexOf('.');
-  const sentence = period === -1 ? text : text.substring(0, period + 1);
-  return sentence.length > 150 ? sentence.substring(0, 150) + '…' : sentence;
+  const sentence = period === -1 ? text : text.slice(0, period + 1);
+  return sentence.length > 150 ? sentence.slice(0, 150) + '…' : sentence;
 }
 
 function installLabel(installing: boolean, installed: boolean) {

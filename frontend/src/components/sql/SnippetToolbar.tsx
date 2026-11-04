@@ -29,7 +29,7 @@ export default function SnippetToolbar(
         <Select value="" onChange={value => props.onOpenHistory(Number(value))}>
           <option value="">History…</option>
           {history.map((entry, index) => (
-            <option key={entry.when + index} value={String(index)}>
+            <option key={entry.sql} value={String(index)}>
               {historyLabel(entry)}
             </option>
           ))}
@@ -39,7 +39,7 @@ export default function SnippetToolbar(
         Save snippet
       </button>
       <label className="btn btn-secondary btn-small" style={{ cursor: 'pointer' }}>
-        Import .sql
+        Import .sql{' '}
         <input
           type="file"
           accept=".sql"

@@ -63,7 +63,7 @@ export default function SqlHeader(
                 type="checkbox"
                 checked={safeMode}
                 onChange={e => props.onSafeModeChange(e.target.checked)}
-              />
+              />{' '}
               Safe mode
             </label>
             {aiConfigured && (

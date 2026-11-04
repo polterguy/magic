@@ -189,7 +189,7 @@ export default function ImportDialog(
         {tab === 'crawl' && (
           <div className="form-grid">
             <label>
-              Website URL
+              Website URL{' '}
               <input
                 type="text"
                 placeholder="https://example.com"
@@ -205,7 +205,7 @@ export default function ImportDialog(
               }}
             >
               <label>
-                Max pages
+                Max pages{' '}
                 <input
                   type="number"
                   min={1}
@@ -216,7 +216,7 @@ export default function ImportDialog(
                 />
               </label>
               <label>
-                Delay (seconds)
+                Delay (seconds){' '}
                 <input
                   type="number"
                   min={0.5}
@@ -229,7 +229,7 @@ export default function ImportDialog(
               </label>
             </div>
             <label>
-              Meta value
+              Meta value{' '}
               <input
                 type="text"
                 placeholder="AINIRO-Website-Crawler"
@@ -253,7 +253,7 @@ export default function ImportDialog(
                   type="checkbox"
                   checked={insertUrl}
                   onChange={e => setInsertUrl(e.target.checked)}
-                />
+                />{' '}
                 Insert source URL
               </label>
               <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -261,7 +261,7 @@ export default function ImportDialog(
                   type="checkbox"
                   checked={images}
                   onChange={e => setImages(e.target.checked)}
-                />
+                />{' '}
                 Import images
               </label>
             </div>
@@ -296,7 +296,7 @@ export default function ImportDialog(
             {category === 'structured' && (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <label>
-                  Prompt field
+                  Prompt field{' '}
                   <input
                     type="text"
                     value={promptField}
@@ -304,7 +304,7 @@ export default function ImportDialog(
                   />
                 </label>
                 <label>
-                  Completion field
+                  Completion field{' '}
                   <input
                     type="text"
                     value={completionField}
@@ -319,7 +319,7 @@ export default function ImportDialog(
                   type="checkbox"
                   checked={textSummarize}
                   onChange={e => setTextSummarize(e.target.checked)}
-                />
+                />{' '}
                 Summarize each file for better retrieval
               </label>
             )}
@@ -332,7 +332,7 @@ export default function ImportDialog(
                   type="checkbox"
                   checked={urlListVectorize}
                   onChange={e => setUrlListVectorize(e.target.checked)}
-                />
+                />{' '}
                 Vectorise when done
               </label>
             )}
@@ -344,7 +344,7 @@ export default function ImportDialog(
                       type="checkbox"
                       checked={pdfPreservePages}
                       onChange={e => setPdfPreservePages(e.target.checked)}
-                    />
+                    />{' '}
                     One snippet per page
                   </label>
                   <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -352,7 +352,7 @@ export default function ImportDialog(
                       type="checkbox"
                       checked={pdfSummarize}
                       onChange={e => setPdfSummarize(e.target.checked)}
-                    />
+                    />{' '}
                     Summarize
                   </label>
                   <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -360,12 +360,12 @@ export default function ImportDialog(
                       type="checkbox"
                       checked={pdfOverwrite}
                       onChange={e => setPdfOverwrite(e.target.checked)}
-                    />
+                    />{' '}
                     Overwrite existing
                   </label>
                 </div>
                 <label>
-                  Massage prompt (optional — reshapes content with AI first)
+                  Massage prompt (optional — reshapes content with AI first){' '}
                   <input
                     type="text"
                     value={pdfMassage}

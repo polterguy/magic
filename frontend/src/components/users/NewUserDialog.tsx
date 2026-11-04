@@ -57,7 +57,7 @@ export default function NewUserDialog(
       <h2>New user</h2>
       <div className="form-grid">
         <label>
-          Username
+          Username{' '}
           <input
             type="text"
             autoFocus
@@ -79,11 +79,11 @@ export default function NewUserDialog(
           />
         </label>
         <label>
-          Full name (optional)
+          Full name (optional){' '}
           <input type="text" value={name} onChange={e => setName(e.target.value)} />
         </label>
         <label>
-          Email (optional)
+          Email (optional){' '}
           <input type="text" value={email} onChange={e => setEmail(e.target.value)} />
         </label>
         <RolesField roles={props.roles} selected={selectedRoles} onChange={setSelectedRoles} />

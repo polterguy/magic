@@ -13,7 +13,7 @@ export default function Generator() {
    * any one of the three rather than always landing on CRUD.
    */
   const [tab, setTab] = useState(
-    () => new URLSearchParams(window.location.search).get('tab') ?? 'crud',
+    () => new URLSearchParams(globalThis.location.search).get('tab') ?? 'crud',
   );
   /*
    * ?guided=1 — the Dashboard's "API from your data" flow: the same CRUD
@@ -29,7 +29,7 @@ export default function Generator() {
    * belongs to.
    */
   const [guided] = useState(
-    () => new URLSearchParams(window.location.search).get('guided') === '1',
+    () => new URLSearchParams(globalThis.location.search).get('guided') === '1',
   );
   const guiding = guided && tab === 'crud';
   return (

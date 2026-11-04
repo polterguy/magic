@@ -109,11 +109,11 @@ export default function Log() {
   }
 
   function nextPage() {
-    if (!items || items.length === 0) {
+    const last = items?.at(-1);
+    if (!last) {
       return;
     }
-    const last = items[items.length - 1].id;
-    setFromStack([...fromStack, last]);
+    setFromStack([...fromStack, last.id]);
   }
 
   function previousPage() {
@@ -162,7 +162,7 @@ export default function Log() {
                 <th style={{ width: 200 }}>Timestamp</th>
                 <th style={{ width: 80 }}>Type</th>
                 <th>Content</th>
-                <th style={{ width: 36 }} aria-hidden="true"></th>
+                <th style={{ width: 36 }}></th>
               </tr>
             </thead>
             <tbody>

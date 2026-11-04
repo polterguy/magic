@@ -186,7 +186,7 @@ export default function QuestionnairesTab() {
                 <tr>
                   <th>Questionnaire</th>
                   <th style={{ width: 110, whiteSpace: 'nowrap' }}>Type</th>
-                  <th style={{ width: 150 }} aria-hidden="true"></th>
+                  <th style={{ width: 150 }}></th>
                 </tr>
               </thead>
               <tbody>
@@ -255,7 +255,7 @@ export default function QuestionnairesTab() {
                         <th style={{ width: 100 }}>Type</th>
                         <th style={{ width: 120 }}>Name</th>
                         <th style={{ width: 90 }}>Context</th>
-                        <th style={{ width: 150 }} aria-hidden="true"></th>
+                        <th style={{ width: 150 }}></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -378,7 +378,7 @@ function QuestionnaireDialog(
       <h2>{existing ? 'Edit ' + existing.name : 'New questionnaire'}</h2>
       <div className="form-grid">
         <label>
-          Name
+          Name{' '}
           <input
             type="text"
             autoFocus={!existing}
@@ -412,7 +412,7 @@ function QuestionnaireDialog(
           </span>
         </label>
         <label>
-          Action (optional)
+          Action (optional){' '}
           <input
             type="text"
             autoComplete="off"
@@ -489,7 +489,7 @@ function QuestionDialog(
       <h2>{existing ? 'Edit question' : 'Add question'}</h2>
       <div className="form-grid">
         <label>
-          Question
+          Question{' '}
           <textarea
             autoFocus
             rows={3}
@@ -514,7 +514,7 @@ function QuestionDialog(
         </label>
         {/* A message has no answer, so there is nothing to name or remember. */}
         <label style={type === 'message' ? { opacity: 0.45 } : undefined}>
-          Name (optional)
+          Name (optional){' '}
           <input
             type="text"
             disabled={type === 'message'}
@@ -541,7 +541,7 @@ function QuestionDialog(
             disabled={type === 'message'}
             checked={context}
             onChange={e => setContext(e.target.checked)}
-          />
+          />{' '}
           Remember
         </label>
       </div>
