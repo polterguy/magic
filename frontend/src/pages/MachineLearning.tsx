@@ -13,10 +13,10 @@ import { useSearchParams } from 'react-router-dom';
 import Tabs from '../components/Tabs';
 import { mlTypes, openaiIsConfigured, type MlType } from '../lib/api';
 import { showError } from '../lib/errors';
-import HistoryTab from './ml/HistoryTab';
-import TrainingTab from './ml/TrainingTab';
-import ModelsTab from './ml/ModelsTab';
-import QuestionnairesTab from './ml/QuestionnairesTab';
+import HistoryTab from '../components/ml/HistoryTab';
+import TrainingTab from '../components/ml/TrainingTab';
+import ModelsTab from '../components/ml/ModelsTab';
+import QuestionnairesTab from '../components/ml/QuestionnairesTab';
 
 type Tab = 'types' | 'training' | 'history' | 'questionnaires';
 

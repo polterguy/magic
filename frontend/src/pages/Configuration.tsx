@@ -5,7 +5,7 @@ import CodeEditor from '../components/CodeEditor';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import Select from '../components/Select';
 import { Modal } from '../components/Dialogs';
-import Menu from './designer/Menu';
+import Menu from '../components/designer/Menu';
 import { downloadBlob } from '../lib/download';
 import {
   JsonValue,

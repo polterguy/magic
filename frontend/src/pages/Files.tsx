@@ -58,10 +58,10 @@ import {
   uploadFile,
 } from '../lib/api';
 import { dispositionFilename, downloadBlob } from '../lib/download';
-import FileTabs from './files/FileTabs';
-import FileTree from './files/FileTree';
-import SelectModelDialog from './files/SelectModelDialog';
-import { nameOf, parentOf } from './files/paths';
+import FileTabs from '../components/files/FileTabs';
+import FileTree from '../components/files/FileTree';
+import SelectModelDialog from '../components/files/SelectModelDialog';
+import { nameOf, parentOf } from '../components/files/paths';
 
 const PROTECTED_FOLDERS = new Set([
   '/',

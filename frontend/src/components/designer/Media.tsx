@@ -18,7 +18,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Modal } from '../../components/Dialogs';
+import { Modal } from '../Dialogs';
 import { listFilesRecursively, uploadFile } from '../../lib/api';
 import { errorMessage } from '../../lib/errors';
 import type { MediaKind } from './mediaKinds';

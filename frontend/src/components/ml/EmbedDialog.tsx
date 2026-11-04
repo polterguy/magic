@@ -4,8 +4,8 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Modal } from '../../components/Dialogs';
-import Select from '../../components/Select';
+import { Modal } from '../Dialogs';
+import Select from '../Select';
 import { backendInfo, openaiThemes } from '../../lib/api';
 import { copyToClipboard } from '../../lib/toast';
 

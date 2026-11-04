@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { Modal } from '../../components/Dialogs';
+import { Modal } from '../Dialogs';
 
 export default function SpiceDialog(
   props: Readonly<{

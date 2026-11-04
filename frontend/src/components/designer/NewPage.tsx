@@ -8,7 +8,7 @@
  */
 
 import { useState } from 'react';
-import { Modal } from '../../components/Dialogs';
+import { Modal } from '../Dialogs';
 import { fileForUrl, tidyUrl, urlProblem } from './pageUrls';
 
 // What will happen on Create, or what is wrong with the address typed.

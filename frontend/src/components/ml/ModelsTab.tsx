@@ -3,10 +3,10 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import AiWaiter from '../../components/AiWaiter';
+import AiWaiter from '../AiWaiter';
 import { useDialog } from '../../lib/useDialog';
-import { CheckIcon, DashIcon } from '../../components/Icons';
-import SocketFeedback from '../../components/SocketFeedback';
+import { CheckIcon, DashIcon } from '../Icons';
+import SocketFeedback from '../SocketFeedback';
 import {
   deleteVectors,
   gibberish,

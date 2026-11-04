@@ -3,9 +3,9 @@
  */
 
 import { useState } from 'react';
-import Pagination from '../../components/Pagination';
-import Select from '../../components/Select';
-import { TableSkeleton } from '../../components/Skeleton';
+import Pagination from '../Pagination';
+import Select from '../Select';
+import { TableSkeleton } from '../Skeleton';
 import { mlRequests, mlRequestsCount, type MlRequest, type MlType } from '../../lib/api';
 import { usePagedList } from '../../lib/usePagedList';
 

@@ -35,28 +35,28 @@ import {
   saveFile,
 } from '../lib/api';
 import { ChevronIcon, RedoIcon, SaveIcon, UndoIcon } from '../components/Icons';
-import Canvas from './designer/Canvas';
-import Menu, { MenuItem } from './designer/Menu';
-import NewPage from './designer/NewPage';
-import { blankPage } from './designer/pageUrls';
-import Inspector from './designer/Inspector';
-import Layers from './designer/Layers';
-import Media, { Picked } from './designer/Media';
-import { KIND_FOR_TAG, MediaKind } from './designer/mediaKinds';
-import Meta from './designer/Meta';
-import { Home, readMeta, writeMeta } from './designer/metaTags';
-import Quality from './designer/Quality';
-import Website from './designer/Website';
-import Styles, { INLINE } from './designer/Styles';
-import { Block, GROUPS, customBlock } from './designer/palette';
-import { DropSpot } from './designer/dropTarget';
+import Canvas from '../components/designer/Canvas';
+import Menu, { MenuItem } from '../components/designer/Menu';
+import NewPage from '../components/designer/NewPage';
+import { blankPage } from '../components/designer/pageUrls';
+import Inspector from '../components/designer/Inspector';
+import Layers from '../components/designer/Layers';
+import Media, { Picked } from '../components/designer/Media';
+import { KIND_FOR_TAG, MediaKind } from '../components/designer/mediaKinds';
+import Meta from '../components/designer/Meta';
+import { Home, readMeta, writeMeta } from '../components/designer/metaTags';
+import Quality from '../components/designer/Quality';
+import Website from '../components/designer/Website';
+import Styles, { INLINE } from '../components/designer/Styles';
+import { Block, GROUPS, customBlock } from '../components/designer/palette';
+import { DropSpot } from '../components/designer/dropTarget';
 import {
   canContainChildren,
   liveSandbox,
   prepareDocument,
   serializeDocument,
   slotsDropped,
-} from './designer/html';
+} from '../components/designer/html';
 import {
   designableChildren,
   elementOf,
@@ -65,7 +65,7 @@ import {
   nodeAt,
   pathTo,
   writeText,
-} from './designer/nodes';
+} from '../components/designer/nodes';
 import {
   Overrides,
   joinCss,
@@ -75,8 +75,8 @@ import {
   selectorsFor,
   splitCss,
   stylesheetPaths,
-} from './designer/css';
-import { CANONICAL_VERSIONS, WIDGET_ASSET_HREFS } from './designer/widgetRuntime';
+} from '../components/designer/css';
+import { CANONICAL_VERSIONS, WIDGET_ASSET_HREFS } from '../components/designer/widgetRuntime';
 
 const WEB_ROOT = '/etc/www';
 

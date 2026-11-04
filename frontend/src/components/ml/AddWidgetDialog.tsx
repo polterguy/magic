@@ -6,10 +6,10 @@
  */
 
 import { useEffect, useState } from 'react';
-import Banner from '../../components/Banner';
-import { Modal } from '../../components/Dialogs';
-import SearchInput from '../../components/SearchInput';
-import { ListSkeleton } from '../../components/Skeleton';
+import Banner from '../Banner';
+import { Modal } from '../Dialogs';
+import SearchInput from '../SearchInput';
+import { ListSkeleton } from '../Skeleton';
 import { availableWidgets, mlSnippetCreate } from '../../lib/api';
 import { errorMessage, showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';

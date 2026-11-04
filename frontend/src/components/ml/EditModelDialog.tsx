@@ -4,12 +4,12 @@
  */
 
 import { useEffect, useState } from 'react';
-import CodeEditor from '../../components/CodeEditor';
-import CreateSystemMessageDialog from '../../components/CreateSystemMessageDialog';
-import { Modal } from '../../components/Dialogs';
-import RoleChips from '../../components/RoleChips';
-import Select from '../../components/Select';
-import Tabs from '../../components/Tabs';
+import CodeEditor from '../CodeEditor';
+import CreateSystemMessageDialog from '../CreateSystemMessageDialog';
+import { Modal } from '../Dialogs';
+import RoleChips from '../RoleChips';
+import Select from '../Select';
+import Tabs from '../Tabs';
 import {
   Questionnaire,
   listQuestionnaires,

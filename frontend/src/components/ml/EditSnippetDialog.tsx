@@ -4,10 +4,10 @@
  */
 
 import { useState } from 'react';
-import AiPrompt from '../../components/AiPrompt';
-import CodeEditor from '../../components/CodeEditor';
+import AiPrompt from '../AiPrompt';
+import CodeEditor from '../CodeEditor';
 import { useEditToken } from '../../lib/editor';
-import { Modal } from '../../components/Dialogs';
+import { Modal } from '../Dialogs';
 import { mlSnippetCreate, mlSnippetUpdate, vectoriseSnippet, type MlSnippet } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';

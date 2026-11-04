@@ -24,7 +24,7 @@ import {
 } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 import { showError } from '../../lib/errors';
-import { TrashIcon } from '../../components/Icons';
+import { TrashIcon } from '../Icons';
 import { WEB_ROOT } from './pageUrls';
 
 // What the backend actually needs is always this plus ".html" - nobody

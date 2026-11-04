@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import Banner from '../../components/Banner';
-import { Modal } from '../../components/Dialogs';
-import Select from '../../components/Select';
+import Banner from '../Banner';
+import { Modal } from '../Dialogs';
+import Select from '../Select';
 import { mlTypes, type MlType } from '../../lib/api';
 import { errorMessage } from '../../lib/errors';
 

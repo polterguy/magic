@@ -3,15 +3,15 @@
  */
 
 import { useState } from 'react';
-import AiWaiter from '../../components/AiWaiter';
+import AiWaiter from '../AiWaiter';
 import { useDialog } from '../../lib/useDialog';
-import Pagination from '../../components/Pagination';
-import SearchInput from '../../components/SearchInput';
-import Select from '../../components/Select';
-import SocketFeedback from '../../components/SocketFeedback';
-import SortHeader from '../../components/SortHeader';
+import Pagination from '../Pagination';
+import SearchInput from '../SearchInput';
+import Select from '../Select';
+import SocketFeedback from '../SocketFeedback';
+import SortHeader from '../SortHeader';
 import { useSort } from '../../lib/sort';
-import { TableSkeleton } from '../../components/Skeleton';
+import { TableSkeleton } from '../Skeleton';
 import {
   gibberish,
   importPage,

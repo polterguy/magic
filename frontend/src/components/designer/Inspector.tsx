@@ -14,7 +14,7 @@
 
 import { useEffect, useState } from 'react';
 import { SERVER_FILLED, hasSlot } from './html';
-import { CopyIcon, TrashIcon } from '../../components/Icons';
+import { CopyIcon, TrashIcon } from '../Icons';
 import { isText, labelOf } from './nodes';
 import { KIND_FOR_TAG } from './mediaKinds';
 import { DataSource, dataGridSources, loadEndpoints } from './dataSources';

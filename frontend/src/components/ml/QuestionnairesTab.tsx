@@ -5,10 +5,10 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { Modal } from '../../components/Dialogs';
+import { Modal } from '../Dialogs';
 import { useDialog } from '../../lib/useDialog';
-import Select from '../../components/Select';
-import AiWaiter from '../../components/AiWaiter';
+import Select from '../Select';
+import AiWaiter from '../AiWaiter';
 import {
   Question,
   Questionnaire,

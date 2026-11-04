@@ -17,7 +17,7 @@
  */
 
 import { useState } from 'react';
-import { TrashIcon } from '../../components/Icons';
+import { TrashIcon } from '../Icons';
 import { Overrides } from './css';
 import { STYLE_GROUPS, StyleProperty, toHexColor, widgetGroupFor } from './properties';
 

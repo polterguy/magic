@@ -9,7 +9,7 @@
 import { describe, it, expect } from 'vitest';
 import { tokenExpiration, tokenExpired, tokenRoles, tokenUsername, isRootToken } from './backend';
 import { moduleNameFromZip, modelPriceLabel, unfence, aiContextForFile } from './api';
-import { CANVAS_SANDBOX, liveSandbox } from '../pages/designer/html';
+import { CANVAS_SANDBOX, liveSandbox } from '../components/designer/html';
 
 /*
  * Builds an unsigned JWT-shaped token. These helpers only decode the payload,

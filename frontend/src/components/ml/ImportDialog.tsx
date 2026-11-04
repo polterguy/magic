@@ -4,10 +4,10 @@
  */
 
 import { useState } from 'react';
-import { Modal } from '../../components/Dialogs';
-import Select from '../../components/Select';
-import SocketFeedback from '../../components/SocketFeedback';
-import Tabs from '../../components/Tabs';
+import { Modal } from '../Dialogs';
+import Select from '../Select';
+import SocketFeedback from '../SocketFeedback';
+import Tabs from '../Tabs';
 import {
   gibberish,
   importUrl,

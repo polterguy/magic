@@ -20,7 +20,7 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { MenuIcon } from '../../components/Icons';
+import { MenuIcon } from '../Icons';
 
 export interface MenuItem {
   // A heading above a run of items, rather than an item itself.

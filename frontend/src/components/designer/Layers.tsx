@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { ChevronIcon } from '../../components/Icons';
+import { ChevronIcon } from '../Icons';
 import { designableChildren, isText, labelOf } from './nodes';
 
 // How deep the tree stands open before anyone touches it.

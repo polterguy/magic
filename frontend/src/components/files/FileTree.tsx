@@ -12,7 +12,7 @@ import {
   PencilIcon,
   SparkIcon,
   TrashIcon,
-} from '../../components/Icons';
+} from '../Icons';
 import { nameOf, parentOf } from './paths';
 
 /*
