@@ -1,10 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
+
 import { useAuth } from './lib/useAuth';
 import Login from './pages/Login';
+import MagicLink, { MAGIC_LINK_PATH } from './pages/MagicLink';
 import NoAccess from './pages/NoAccess';
 import NotFound from './pages/NotFound';
-import MagicLink, { MAGIC_LINK_PATH } from './pages/MagicLink';
 import Setup from './pages/Setup';
 
 /*

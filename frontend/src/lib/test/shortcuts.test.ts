@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { SHORTCUTS, type Shortcut } from '../shortcuts';
+
+import { type Shortcut, SHORTCUTS } from '../shortcuts';
 
 // isMac is decided once, when the module loads — so each platform gets a fresh import.
 async function loadOn(platform: string) {

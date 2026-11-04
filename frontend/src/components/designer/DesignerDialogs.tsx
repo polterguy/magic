@@ -1,8 +1,8 @@
-import Media, { Picked } from './Media';
-import NewPage from './NewPage';
 import { canonicalUrl } from './designerFiles';
-import type { Home } from './metaTags';
+import Media, { Picked } from './Media';
 import type { MediaKind } from './mediaKinds';
+import type { Home } from './metaTags';
+import NewPage from './NewPage';
 import { elementOf } from './nodes';
 
 // The media picker and the new-page dialog, whichever of them is open.

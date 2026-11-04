@@ -11,6 +11,7 @@
 // The --cm-* theme variables chat code colors resolve against — normally
 // pulled in by CodeEditor, but chat may highlight before any editor loads.
 import '../resources/ainiro.css';
+
 import hljs from 'highlight.js/lib/core';
 import bash from 'highlight.js/lib/languages/bash';
 import csharp from 'highlight.js/lib/languages/csharp';

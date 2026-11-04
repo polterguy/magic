@@ -6,10 +6,11 @@
  * Renders nothing when OpenAI isn't configured on the backend.
  */
 
-import AiWaiter from './AiWaiter';
 import { CSSProperties, FormEvent, useEffect, useState } from 'react';
+
 import { aiQuery, openaiIsConfigured } from '../lib/api';
 import { errorMessage } from '../lib/errors';
+import AiWaiter from './AiWaiter';
 
 const TOOLTIPS: Record<string, string> = {
   hl: 'Ask the Machine to create some Hyperlambda code for you',

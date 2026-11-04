@@ -3,8 +3,8 @@
  * apart so that file exports only a component, as fast refresh wants.
  */
 
-import { useState } from 'react';
 import type { EditorView } from '@codemirror/view';
+import { useState } from 'react';
 
 // The current selection's text, replacing CM5's getSelection().
 export function editorSelection(view: EditorView | null): string {

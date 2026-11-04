@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Select from '../Select';
-import SocketFeedback from '../SocketFeedback';
+
 import {
   backendInfo,
   createBot,
   modelPriceLabel,
+  type OpenAiModel,
   openaiModels,
   openaiSystemMessages,
-  type OpenAiModel,
   type SystemMessage,
 } from '../../lib/api';
 import { withoutTrailingSlashes } from '../../lib/backend';
 import { showError } from '../../lib/errors';
-import { DEFAULT_BOT_MODEL, chatbotModelFromProgress } from './constants';
+import Select from '../Select';
+import SocketFeedback from '../SocketFeedback';
+import { chatbotModelFromProgress, DEFAULT_BOT_MODEL } from './constants';
 
 /*
  * The chatbot wizard, as one card: point it at a website, pick a model and a

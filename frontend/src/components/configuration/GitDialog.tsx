@@ -1,6 +1,7 @@
 import { useState } from 'react';
+
 import { Modal } from '../Dialogs';
-import { JsonObject, asObject, configSection, parseObject, settingText } from './json';
+import { asObject, configSection, JsonObject, parseObject, settingText } from './json';
 
 /*
  * Patches magic.git.github in the configuration — the credentials Hyper IDE's

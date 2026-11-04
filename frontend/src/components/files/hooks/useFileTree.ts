@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
-import { showError } from '../../../lib/errors';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { listFilesRecursively, listFoldersRecursively } from '../../../lib/api';
+import { showError } from '../../../lib/errors';
 import { useDebounced } from '../../../lib/usePagedList';
-import { parentOf } from '../paths';
 import type { Workspace } from '../helpers';
+import { parentOf } from '../paths';
 
 // The entire tree, folders and files, as the backend lists it recursively.
 function fetchTree(sys: boolean) {

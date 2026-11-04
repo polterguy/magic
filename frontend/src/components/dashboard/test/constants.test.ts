@@ -5,12 +5,13 @@
  * Run with `npm run test`. Node environment only.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import {
-  TASK_PAGE_SIZE,
   chatbotModelFromProgress,
   mcpEndpointUrl,
   missingAgentPlugins,
+  TASK_PAGE_SIZE,
   taskPageCount,
 } from '../constants';
 

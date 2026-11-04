@@ -13,7 +13,7 @@
  * type cover both.
  */
 
-import { TOOL_ATTRIBUTE, isSlot } from './html';
+import { isSlot, TOOL_ATTRIBUTE } from './html';
 
 export function isText(node: Node): node is Text {
   return node.nodeType === Node.TEXT_NODE;

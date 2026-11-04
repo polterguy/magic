@@ -1,5 +1,6 @@
-import { TIER2_WIZARDS } from './wizardSpecs';
+import { SandboxTabState } from './hooks/useSandboxTab';
 import { mergeSlots } from './slots';
+import { RoleRule } from './types';
 import DbAccessWizard from './wizards/DbAccessWizard';
 import DynamicSlotsWizard from './wizards/DynamicSlotsWizard';
 import EmailWizard from './wizards/EmailWizard';
@@ -9,8 +10,7 @@ import GroupWizard from './wizards/GroupWizard';
 import HttpAccessWizard from './wizards/HttpAccessWizard';
 import ImagesWizard from './wizards/ImagesWizard';
 import LoggingWizard from './wizards/LoggingWizard';
-import { SandboxTabState } from './hooks/useSandboxTab';
-import { RoleRule } from './types';
+import { TIER2_WIZARDS } from './wizardSpecs';
 
 // The capability wizard open on a role rule, if any, merging what it grants into the rule's slots.
 export default function RuleWizards(

@@ -14,8 +14,9 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../lib/useAuth';
+
 import { verifyTicket } from '../lib/api';
+import { useAuth } from '../lib/useAuth';
 
 export const MAGIC_LINK_PATH = '/authentication/magic-link';
 

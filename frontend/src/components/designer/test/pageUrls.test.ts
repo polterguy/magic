@@ -2,7 +2,8 @@
  * Unit tests for the URL rules behind making a new page. Pure string work.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { blankPage, fileForUrl, tidyUrl, urlProblem } from '../pageUrls';
 
 describe('tidyUrl', () => {

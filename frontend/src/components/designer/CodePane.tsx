@@ -1,5 +1,5 @@
-import CodeEditor from '../CodeEditor';
 import { modeForFile } from '../../lib/editor';
+import CodeEditor from '../CodeEditor';
 import { WEB_ROOT } from './designerFiles';
 
 // The code view: which file the editor holds, and the editor itself.

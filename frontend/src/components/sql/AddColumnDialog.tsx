@@ -1,12 +1,13 @@
 import { useState } from 'react';
+
+import type { TableMeta } from '../../lib/api';
+import { FIELD_TYPES } from '../../lib/dbTypes';
 import { Modal } from '../Dialogs';
 import Select from '../Select';
 import Tabs from '../Tabs';
-import { FIELD_TYPES } from '../../lib/dbTypes';
-import type { TableMeta } from '../../lib/api';
 import {
-  type ColumnPayload,
   canAddColumn,
+  type ColumnPayload,
   columnPayload,
   defaultFieldType,
   foreignPrimaryKey,

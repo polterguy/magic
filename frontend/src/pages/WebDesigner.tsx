@@ -14,14 +14,9 @@
  * in the source, and saving is a serialization rather than a reconciliation.
  */
 
-import { useDialog } from '../lib/useDialog';
-import { useUnsavedGuard } from '../lib/navGuard';
 import CanvasArea from '../components/designer/CanvasArea';
 import DesignerDialogs from '../components/designer/DesignerDialogs';
 import DesignerToolbar from '../components/designer/DesignerToolbar';
-import LeftRail from '../components/designer/LeftRail';
-import RailToggle from '../components/designer/RailToggle';
-import RightRail from '../components/designer/RightRail';
 import { useCanvasEffects } from '../components/designer/hooks/useCanvasEffects';
 import { useChatOpsReload } from '../components/designer/hooks/useChatOpsReload';
 import { useCloudlet } from '../components/designer/hooks/useCloudlet';
@@ -37,6 +32,11 @@ import { useStyleEdits } from '../components/designer/hooks/useStyleEdits';
 import { useStylesheetState } from '../components/designer/hooks/useStylesheetState';
 import { useTreeEdits } from '../components/designer/hooks/useTreeEdits';
 import { useUndoHistory } from '../components/designer/hooks/useUndoHistory';
+import LeftRail from '../components/designer/LeftRail';
+import RailToggle from '../components/designer/RailToggle';
+import RightRail from '../components/designer/RightRail';
+import { useUnsavedGuard } from '../lib/navGuard';
+import { useDialog } from '../lib/useDialog';
 
 /*
  * The page only wires its parts together. Each concern lives in a hook under

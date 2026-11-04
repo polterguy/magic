@@ -2,9 +2,9 @@
  * The items of the Web Designer's "more" menu, built from its current state.
  */
 
-import type { MenuItem } from './Menu';
+import { canonicalUrl, companionFile, WEB_ROOT } from './designerFiles';
 import { VIEWPORTS } from './layout';
-import { WEB_ROOT, canonicalUrl, companionFile } from './designerFiles';
+import type { MenuItem } from './Menu';
 
 // What the menu is built from.
 export interface DesignerMenuOptions {

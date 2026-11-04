@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { showToast } from '../../../lib/toast';
+
+import { createDatabase, type DatabaseMeta, dropDatabase, listDatabases } from '../../../lib/api';
 import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
 import { useDialog } from '../../../lib/useDialog';
-import { type DatabaseMeta, createDatabase, dropDatabase, listDatabases } from '../../../lib/api';
-import { CSTRING_NAME_PATTERN, type ConnectionRow } from '../connections';
+import { type ConnectionRow, CSTRING_NAME_PATTERN } from '../connections';
 
 /*
  * Catalog management on an external connection — create, list and delete

@@ -6,13 +6,14 @@
  */
 
 import { useEffect, useState } from 'react';
+
+import { availableWidgets, mlSnippetCreate } from '../../lib/api';
+import { errorMessage, showError } from '../../lib/errors';
+import { showToast } from '../../lib/toast';
 import Banner from '../Banner';
 import { Modal } from '../Dialogs';
 import SearchInput from '../SearchInput';
 import { ListSkeleton } from '../Skeleton';
-import { availableWidgets, mlSnippetCreate } from '../../lib/api';
-import { errorMessage, showError } from '../../lib/errors';
-import { showToast } from '../../lib/toast';
 
 type Widget = Awaited<ReturnType<typeof availableWidgets>>[number];
 

@@ -1,5 +1,5 @@
 import SearchInput from '../SearchInput';
-import { Block, GROUPS, customBlock } from './palette';
+import { Block, customBlock, GROUPS } from './palette';
 
 // The blocks that can be dragged onto the page, filtered or by drawer, and any other tag.
 export default function BlockPalette(

@@ -4,7 +4,8 @@
  * Run with `npm run test`. Node environment only.
  */
 
-import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { isoDate, timeAgo } from '../format';
 
 const NOW = new Date('2026-01-01T00:00:00.000Z').getTime();

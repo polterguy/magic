@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import Tabs from '../components/Tabs';
+
 import ExternalTab from '../components/databases/ExternalTab';
 import InternalTab from '../components/databases/InternalTab';
+import Tabs from '../components/Tabs';
 
 export default function Databases() {
   const [tab, setTab] = useState<'internal' | 'external'>('internal');

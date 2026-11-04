@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
+
+import { customSqlEndpoint, listRoles, loadFile } from '../../../lib/api';
 import { useEditToken } from '../../../lib/editor';
+import { showError } from '../../../lib/errors';
 import {
   buildSqlAiContext,
   sqlHintTables,
   useDatabaseSelection,
   useSqlSnippets,
 } from '../../../lib/sql';
-import { customSqlEndpoint, listRoles, loadFile } from '../../../lib/api';
+import { showToast } from '../../../lib/toast';
 
 // SqlEndpointTab's state: the database, the endpoint's name and arguments, its SQL, and generating it.
 export function useSqlEndpointTab() {

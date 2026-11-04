@@ -5,10 +5,7 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { Modal } from './Dialogs';
-import { useDialog } from '../lib/useDialog';
-import { ChevronIcon, UndoIcon } from './Icons';
-import { showToast } from '../lib/toast';
+
 import {
   gitBranches,
   gitCheckout,
@@ -31,6 +28,10 @@ import {
   loadFile,
 } from '../lib/api';
 import { showError } from '../lib/errors';
+import { showToast } from '../lib/toast';
+import { useDialog } from '../lib/useDialog';
+import { Modal } from './Dialogs';
+import { ChevronIcon, UndoIcon } from './Icons';
 
 // Status codes of a file a merge could not combine, which leave the merge waiting for the user.
 const UNMERGED = new Set(['DD', 'AU', 'UD', 'UA', 'DU', 'AA', 'UU']);

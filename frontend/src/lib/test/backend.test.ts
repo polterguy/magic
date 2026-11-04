@@ -6,10 +6,11 @@
  * localStorage, the DOM, or the network.
  */
 
-import { describe, it, expect } from 'vitest';
-import { tokenExpiration, tokenExpired, tokenRoles, tokenUsername, isRootToken } from '../backend';
-import { moduleNameFromZip, modelPriceLabel, unfence, aiContextForFile } from '../api';
+import { describe, expect, it } from 'vitest';
+
 import { CANVAS_SANDBOX, liveSandbox } from '../../components/designer/html';
+import { aiContextForFile, modelPriceLabel, moduleNameFromZip, unfence } from '../api';
+import { isRootToken, tokenExpiration, tokenExpired, tokenRoles, tokenUsername } from '../backend';
 
 /*
  * Builds an unsigned JWT-shaped token. These helpers only decode the payload,

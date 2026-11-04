@@ -1,6 +1,7 @@
 import { useState } from 'react';
+
+import { countTasks, listTasks, Task } from '../../../lib/api';
 import { usePagedList } from '../../../lib/usePagedList';
-import { Task, countTasks, listTasks } from '../../../lib/api';
 import { PAGE_SIZE } from '../constants';
 
 // The filter box and the server-paged task list it narrows.

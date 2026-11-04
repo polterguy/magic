@@ -18,9 +18,10 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Modal } from '../Dialogs';
+
 import { listFilesRecursively, uploadFile } from '../../lib/api';
 import { errorMessage } from '../../lib/errors';
+import { Modal } from '../Dialogs';
 import type { MediaKind } from './mediaKinds';
 
 const WEB_ROOT = '/etc/www';

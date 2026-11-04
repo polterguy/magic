@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import Select from '../Select';
+
 import DateTimePicker from '../DateTimePicker';
 import { Modal } from '../Dialogs';
+import Select from '../Select';
 import {
   REPEAT_NUMBERS,
   REPEAT_PERIODS,
-  type ScheduleMode,
   scheduleArgs,
   scheduleIsValid,
+  type ScheduleMode,
 } from './constants';
 
 /*

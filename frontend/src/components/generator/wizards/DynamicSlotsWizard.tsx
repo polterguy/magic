@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { showToast } from '../../../lib/toast';
+
 import { listDynamicSlots } from '../../../lib/api';
+import { showToast } from '../../../lib/toast';
 import SearchInput from '../../SearchInput';
 
 /*

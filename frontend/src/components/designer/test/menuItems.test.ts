@@ -2,9 +2,10 @@
  * Unit tests for the Web Designer's "more" menu and its layout constants.
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { DesignerMenuOptions, designerMenuItems } from '../menuItems';
-import { VIEWPORTS, VIEWS, railClass } from '../layout';
+import { describe, expect, it, vi } from 'vitest';
+
+import { railClass, VIEWPORTS, VIEWS } from '../layout';
+import { designerMenuItems, DesignerMenuOptions } from '../menuItems';
 
 function options(overrides: Partial<DesignerMenuOptions> = {}): DesignerMenuOptions {
   return {

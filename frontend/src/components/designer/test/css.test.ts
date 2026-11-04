@@ -4,7 +4,8 @@
  * fenced block, matching selectors) are left to the browser.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { absoluteUrls, joinCss, overrideCss, scriptPaths, splitCss, stylesheetPaths } from '../css';
 
 // A document stand-in that answers querySelectorAll from a table.

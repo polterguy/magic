@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SetURLSearchParams } from 'react-router-dom';
-import { Task, getTask } from '../../../lib/api';
+
+import { getTask, Task } from '../../../lib/api';
 import { showError } from '../../../lib/errors';
 import { NEW_TASK_CODE } from '../constants';
 

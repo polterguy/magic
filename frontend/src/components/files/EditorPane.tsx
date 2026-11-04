@@ -1,14 +1,14 @@
-import { showToast } from '../../lib/toast';
-import { explainHyperlambda } from '../../lib/support';
-import { modeForFile } from '../../lib/editor';
 import { aiContextForFile } from '../../lib/api';
+import { modeForFile } from '../../lib/editor';
+import { explainHyperlambda } from '../../lib/support';
+import { showToast } from '../../lib/toast';
 import AiPrompt from '../AiPrompt';
 import CodeEditor from '../CodeEditor';
 import FileTabs from './FileTabs';
-import type { OpenTabs } from './hooks/useOpenTabs';
-import type { TabActions } from './hooks/useTabActions';
 import type { Execution } from './hooks/useExecution';
 import type { FileOperations } from './hooks/useFileOperations';
+import type { OpenTabs } from './hooks/useOpenTabs';
+import type { TabActions } from './hooks/useTabActions';
 
 /*
  * The pane right of the file tree — the open tabs, the editor for the

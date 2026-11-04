@@ -1,8 +1,9 @@
-import { type RefObject, useEffect, useState } from 'react';
 import type { EditorView } from '@codemirror/view';
-import { showError } from '../../../lib/errors';
-import { editorSelection } from '../../../lib/editor';
+import { type RefObject, useEffect, useState } from 'react';
+
 import { aiQuery, openaiIsConfigured } from '../../../lib/api';
+import { editorSelection } from '../../../lib/editor';
+import { showError } from '../../../lib/errors';
 
 /*
  * The Generate button — turning the selected text into a statement through

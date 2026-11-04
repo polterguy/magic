@@ -1,22 +1,23 @@
 import { useState } from 'react';
-import { useDialog } from '../lib/useDialog';
-import { useUnsavedGuard } from '../lib/navGuard';
-import { useAuth } from '../lib/useAuth';
-import { parentOf } from '../components/files/paths';
-import IdeHeader from '../components/files/IdeHeader';
-import TreePane from '../components/files/TreePane';
-import Splitter from '../components/files/Splitter';
+
 import EditorPane from '../components/files/EditorPane';
-import IdeDialogs from '../components/files/IdeDialogs';
-import { useWorkspace } from '../components/files/hooks/useWorkspace';
+import { useAiFunctions } from '../components/files/hooks/useAiFunctions';
+import { useDeepLink } from '../components/files/hooks/useDeepLink';
+import { useExecution } from '../components/files/hooks/useExecution';
+import { useFileOperations } from '../components/files/hooks/useFileOperations';
 import { useFileTree, useTreeFilter, useTreeLoad } from '../components/files/hooks/useFileTree';
+import { useOpenApi } from '../components/files/hooks/useOpenApi';
 import { useOpenTabs } from '../components/files/hooks/useOpenTabs';
 import { useTabActions } from '../components/files/hooks/useTabActions';
-import { useDeepLink } from '../components/files/hooks/useDeepLink';
-import { useFileOperations } from '../components/files/hooks/useFileOperations';
-import { useExecution } from '../components/files/hooks/useExecution';
-import { useAiFunctions } from '../components/files/hooks/useAiFunctions';
-import { useOpenApi } from '../components/files/hooks/useOpenApi';
+import { useWorkspace } from '../components/files/hooks/useWorkspace';
+import IdeDialogs from '../components/files/IdeDialogs';
+import IdeHeader from '../components/files/IdeHeader';
+import { parentOf } from '../components/files/paths';
+import Splitter from '../components/files/Splitter';
+import TreePane from '../components/files/TreePane';
+import { useUnsavedGuard } from '../lib/navGuard';
+import { useAuth } from '../lib/useAuth';
+import { useDialog } from '../lib/useDialog';
 
 /*
  * Hyper IDE — the file tree, the open tabs and the editor. The hooks are

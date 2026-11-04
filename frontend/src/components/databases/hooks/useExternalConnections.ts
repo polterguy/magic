@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
-import { useDialog } from '../../../lib/useDialog';
+
 import {
   addConnectionString,
   deleteConnectionString,
   loadConfig,
   testConnectionString,
 } from '../../../lib/api';
-import { type ConnectionRow, connectionError, connectionRows, withStatus } from '../connections';
+import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
+import { useDialog } from '../../../lib/useDialog';
+import { connectionError, type ConnectionRow, connectionRows, withStatus } from '../connections';
 
 /*
  * External databases — connection strings with live status, and adding,

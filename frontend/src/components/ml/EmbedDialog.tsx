@@ -4,10 +4,11 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Modal } from '../Dialogs';
-import Select from '../Select';
+
 import { backendInfo, openaiThemes } from '../../lib/api';
 import { copyToClipboard } from '../../lib/toast';
+import { Modal } from '../Dialogs';
+import Select from '../Select';
 
 function boolParam(name: string, value: boolean) {
   return name + '=' + (value ? 'true' : 'false');

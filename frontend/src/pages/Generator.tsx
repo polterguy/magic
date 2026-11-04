@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import Tabs from '../components/Tabs';
-import ImportApiTab from '../components/ImportApiTab';
+
 import CrudTab from '../components/generator/CrudTab';
 import SandboxTab from '../components/generator/SandboxTab';
 import SearchTab from '../components/generator/SearchTab';
 import SqlEndpointTab from '../components/generator/SqlEndpointTab';
+import ImportApiTab from '../components/ImportApiTab';
+import Tabs from '../components/Tabs';
 
 export default function Generator() {
   /*

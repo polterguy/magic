@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Modal } from '../Dialogs';
+
 import type { DatabaseMeta } from '../../lib/api';
+import { Modal } from '../Dialogs';
 import { type ConnectionRow, sqlStudioUrl } from './connections';
 
 // The catalogs (databases) of one external connection.

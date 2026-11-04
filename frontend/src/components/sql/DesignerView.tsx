@@ -1,8 +1,8 @@
 import type { TableMeta } from '../../lib/api';
-import type { SchemaDesigner } from './hooks/useSchemaDesigner';
 import AddColumnDialog from './AddColumnDialog';
 import DdlDialog from './DdlDialog';
 import DesignerToolbar from './DesignerToolbar';
+import type { SchemaDesigner } from './hooks/useSchemaDesigner';
 import NewTableDialog from './NewTableDialog';
 import TableCard from './TableCard';
 

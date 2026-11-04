@@ -5,7 +5,8 @@
  * Run with `npm run test`. Node environment only.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { scheduleArgs, scheduleIsValid, scheduleLabel, taskIsDirty } from '../constants';
 
 describe('scheduleLabel', () => {

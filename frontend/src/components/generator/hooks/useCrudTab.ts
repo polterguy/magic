@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+
+import { DatabaseMeta, listRoles } from '../../../lib/api';
 import { useDatabaseSelection } from '../../../lib/sql';
-import { listRoles, DatabaseMeta } from '../../../lib/api';
 import {
   ALL_VERBS,
   buildCrudifyPayload,

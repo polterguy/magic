@@ -10,6 +10,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import prettier from 'eslint-config-prettier';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 export default tseslint.config(
   { ignores: ['dist', 'node_modules', 'public/ngsw-worker.js', 'coverage'] },
@@ -24,6 +25,7 @@ export default tseslint.config(
       reactRefresh.configs.vite,
       jsxA11y.flatConfigs.recommended,
     ],
+    plugins: { 'simple-import-sort': simpleImportSort },
     languageOptions: {
       ecmaVersion: 2023,
       globals: globals.browser,
@@ -34,6 +36,9 @@ export default tseslint.config(
     },
     settings: { react: { version: 'detect' } },
     rules: {
+      // Imports and exports are sorted (auto-fixable with `npm run lint:fix`).
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
       // Unused variables are errors, but a leading underscore marks a deliberate ignore.
       '@typescript-eslint/no-unused-vars': [
         'error',

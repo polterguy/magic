@@ -3,23 +3,8 @@
  * and keeps the JWT token refreshed before it expires.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState, ReactNode } from 'react';
-import {
-  StoredBackend,
-  activateBackend,
-  backendFromUrl,
-  deactivateBackend,
-  forgetBackend,
-  loadBackend,
-  loadBackends,
-  saveBackend,
-  clearBackend,
-  isRootToken,
-  tokenUsername,
-  tokenExpiration,
-  tokenExpired,
-  withoutTrailingSlashes,
-} from './backend';
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import {
   authenticate,
   configureApi,
@@ -29,6 +14,22 @@ import {
   setUnauthorizedHandler,
   verifyTicket,
 } from './api';
+import {
+  activateBackend,
+  backendFromUrl,
+  clearBackend,
+  deactivateBackend,
+  forgetBackend,
+  isRootToken,
+  loadBackend,
+  loadBackends,
+  saveBackend,
+  StoredBackend,
+  tokenExpiration,
+  tokenExpired,
+  tokenUsername,
+  withoutTrailingSlashes,
+} from './backend';
 import { showToast } from './toast';
 import { AuthContext } from './useAuth';
 

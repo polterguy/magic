@@ -1,5 +1,5 @@
-import Select from '../Select';
 import { DatabaseSelection } from '../../lib/sql';
+import Select from '../Select';
 
 export default function DatabaseSelectors({
   selection,

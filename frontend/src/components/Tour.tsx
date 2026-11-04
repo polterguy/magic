@@ -14,6 +14,7 @@
  */
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+
 import { TourStep } from '../lib/tourSteps';
 
 interface Rect {

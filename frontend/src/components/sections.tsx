@@ -14,10 +14,10 @@ import {
   HomeIcon,
   LayoutIcon,
   ListIcon,
+  NeuralIcon,
   PlayIcon,
   ProfileIcon,
   PuzzleIcon,
-  NeuralIcon,
   TerminalIcon,
   UserIcon,
 } from './Icons';

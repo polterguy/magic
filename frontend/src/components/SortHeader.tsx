@@ -4,7 +4,7 @@
  * Only columns the backend can actually sort on should use this.
  */
 
-import { type SortState, nextSort } from '../lib/sort';
+import { nextSort, type SortState } from '../lib/sort';
 
 const ARROWS = { asc: ' ↑', desc: ' ↓' } as const;
 const ARIA_SORT = { asc: 'ascending', desc: 'descending' } as const;

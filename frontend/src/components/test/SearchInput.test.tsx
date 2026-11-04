@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+
 import SearchInput from '../SearchInput';
 
 function Controlled(props: Readonly<{ onChange: (value: string) => void }>) {

@@ -1,5 +1,5 @@
-import { liveSandbox } from './html';
 import { canonicalUrl } from './designerFiles';
+import { liveSandbox } from './html';
 
 // The live view: the saved page run for real, and the warning when that is riskier than usual.
 export default function LivePane(

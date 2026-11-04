@@ -4,10 +4,11 @@
  */
 
 import { useMemo } from 'react';
+
 import { showToast } from '../../../lib/toast';
-import { INLINE } from '../Styles';
 import { selectorsFor } from '../css';
 import { elementOf } from '../nodes';
+import { INLINE } from '../Styles';
 import type { DocumentState } from './useDocumentState';
 import type { StylesheetState } from './useStylesheetState';
 import type { UndoHistory } from './useUndoHistory';

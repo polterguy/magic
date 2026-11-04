@@ -1,5 +1,5 @@
-import { exportCsv } from '../../lib/download';
 import type { SqlRow } from '../../lib/api';
+import { exportCsv } from '../../lib/download';
 import ResultTable from './ResultTable';
 
 // One toolbar and table per result set of the last execution.

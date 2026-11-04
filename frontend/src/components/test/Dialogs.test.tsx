@@ -3,9 +3,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { DialogProvider, Modal } from '../Dialogs';
-import { useDialog } from '../../lib/useDialog';
+
 import { setToastListener, type Toast } from '../../lib/toast';
+import { useDialog } from '../../lib/useDialog';
+import { DialogProvider, Modal } from '../Dialogs';
 
 type Dialogs = ReturnType<typeof useDialog>;
 

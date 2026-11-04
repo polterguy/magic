@@ -1,6 +1,6 @@
 import CodeEditor from '../CodeEditor';
-import { lintSlotLines } from './slots';
 import { SandboxTabState } from './hooks/useSandboxTab';
+import { lintSlotLines } from './slots';
 
 // The "everybody" base rule — the vocabulary and fallback limit every caller gets.
 export default function SandboxBaseRule({ sandbox }: Readonly<{ sandbox: SandboxTabState }>) {

@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
-import { copyToClipboard } from '../../lib/toast';
-import { showError } from '../../lib/errors';
-import Select from '../Select';
-import { Modal } from '../Dialogs';
+
 import { http } from '../../lib/api';
+import { showError } from '../../lib/errors';
+import { copyToClipboard } from '../../lib/toast';
+import { Modal } from '../Dialogs';
+import Select from '../Select';
 import { configSection } from './json';
 import {
+  applyOidcValues,
+  initialOidcValues,
   OIDC_CALLBACK_PATH,
   OIDC_CONSOLES,
   OIDC_FIELDS,
   OidcField,
-  OidcValues,
-  applyOidcValues,
-  initialOidcValues,
   oidcProvidersFromSlots,
+  OidcValues,
 } from './oidc';
 
 /*

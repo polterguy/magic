@@ -1,5 +1,5 @@
-import RoleChips from '../RoleChips';
 import { Role } from '../../lib/api';
+import RoleChips from '../RoleChips';
 
 /*
  * The optional roles picker the invite and create user dialogs share.

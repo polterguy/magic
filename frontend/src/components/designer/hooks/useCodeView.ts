@@ -3,13 +3,13 @@
  * code view can hold.
  */
 
-import type { useDialog } from '../../../lib/useDialog';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
 import { loadFile } from '../../../lib/api';
-import { prepareDocument, serializeDocument } from '../html';
+import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
+import type { useDialog } from '../../../lib/useDialog';
 import { joinCss, splitCss } from '../css';
 import { canonicalUrl } from '../designerFiles';
+import { prepareDocument, serializeDocument } from '../html';
 import type { CodeDraft } from './useCodeDraft';
 import type { DesignerUi } from './useDesignerUi';
 import type { DocumentState } from './useDocumentState';

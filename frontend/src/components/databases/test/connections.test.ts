@@ -3,14 +3,15 @@
  * parsing and the connection status bookkeeping.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import type { MagicConfig } from '../../../lib/api';
 import {
-  CSTRING_NAME_PATTERN,
-  type ConnectionRow,
-  DB_NAME_PATTERN,
   connectionError,
+  type ConnectionRow,
   connectionRows,
+  CSTRING_NAME_PATTERN,
+  DB_NAME_PATTERN,
   sqlStudioUrl,
   statusBadge,
   withStatus,

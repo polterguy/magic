@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import { ApiError } from '../api';
 import { errorMessage, showError } from '../errors';
 import { setToastListener } from '../toast';

@@ -5,16 +5,17 @@
  * Run with `npm run test`. Node environment only.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import {
   FILE_SLOTS,
-  FOLDER_KIND_SLOTS,
-  UNPINNED_RISK_SLOTS,
   fileSystemPin,
+  FOLDER_KIND_SLOTS,
   linesToSlots,
   lintSlotLines,
   mergeSlots,
   ruleIsIncomplete,
+  UNPINNED_RISK_SLOTS,
 } from '../slots';
 import { RoleRule } from '../types';
 

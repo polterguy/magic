@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
+
 import { generateSandboxEndpoint, listRoles } from '../../../lib/api';
+import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
 import { DEFAULT_BASE_SLOTS } from '../baseSlots';
 import { linesToSlots, ruleIsIncomplete } from '../slots';
 import { GeneratedInfo, PolicyRule, RoleRule, SandboxPolicy } from '../types';

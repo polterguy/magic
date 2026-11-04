@@ -1,9 +1,9 @@
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
-import { useSessionState } from '../../../lib/useSessionState';
-import { useSqlSnippets } from '../../../lib/sql';
-import { useDialog } from '../../../lib/useDialog';
 import { loadFile, saveFile } from '../../../lib/api';
+import { showError } from '../../../lib/errors';
+import { useSqlSnippets } from '../../../lib/sql';
+import { showToast } from '../../../lib/toast';
+import { useDialog } from '../../../lib/useDialog';
+import { useSessionState } from '../../../lib/useSessionState';
 import { snippetFilename, snippetLabel, snippetSuggestion } from '../snippets';
 
 /*

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { showError } from '../../../lib/errors';
+
 import { getOpenApiSpec } from '../../../lib/api';
+import { showError } from '../../../lib/errors';
 
 /*
  * The OpenAPI specification shown in a dialog, for a file or a folder.

@@ -5,7 +5,8 @@
  * Run with `npm run test`. Node environment only.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { DEFAULT_BASE_SLOTS } from '../baseSlots';
 import { linesToSlots, lintSlotLines } from '../slots';
 import { IMAGE_OPS, TIER2_WIZARDS } from '../wizardSpecs';

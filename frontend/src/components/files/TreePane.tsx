@@ -1,8 +1,8 @@
-import SearchInput from '../SearchInput';
 import { DownloadIcon, FilePlusIcon, FolderPlusIcon, ModuleUploadIcon, UploadIcon } from '../Icons';
+import SearchInput from '../SearchInput';
 import FileTree from './FileTree';
-import type { FileTreeState } from './hooks/useFileTree';
 import type { FileOperations } from './hooks/useFileOperations';
+import type { FileTreeState } from './hooks/useFileTree';
 
 /*
  * The pane left of the editor — the filter, the system-files toggle, the

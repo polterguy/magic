@@ -1,6 +1,6 @@
 import { copyToClipboard } from '../../lib/toast';
-import { Modal } from '../Dialogs';
 import CodeEditor from '../CodeEditor';
+import { Modal } from '../Dialogs';
 
 export default function DdlDialog(
   props: Readonly<{ ddl: { title: string; sql: string }; onClose: () => void }>,

@@ -1,5 +1,5 @@
-import { TableSkeleton } from '../Skeleton';
 import { Task } from '../../lib/api';
+import { TableSkeleton } from '../Skeleton';
 import { scheduleLabel } from './constants';
 
 type Schedule = { id: number; due: string; repeats?: string };

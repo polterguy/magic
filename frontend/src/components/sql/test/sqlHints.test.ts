@@ -3,7 +3,8 @@
  * Ctrl-Space SQL autocomplete.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { sqlHintTables } from '../../../lib/sql';
 
 describe('sqlHintTables', () => {

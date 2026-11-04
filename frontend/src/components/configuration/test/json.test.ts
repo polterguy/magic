@@ -3,7 +3,8 @@
  * editor's JSON text with. Node environment only.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { asObject, configSection, fieldText, parseObject, settingText } from '../json';
 
 describe('asObject', () => {

@@ -5,20 +5,21 @@
  * here rather than in either of them.
  */
 
-import Banner from './Banner';
-import Select from './Select';
 import { useEffect, useState } from 'react';
-import { Modal } from './Dialogs';
+
+import type { OpenAiModel } from '../lib/api';
 import {
-  mlTypeUpdate,
   mlTypes,
+  mlTypeUpdate,
   modelPriceLabel,
   openaiGetKey,
   openaiModels,
   openaiSetKey,
 } from '../lib/api';
-import type { OpenAiModel } from '../lib/api';
 import { errorMessage } from '../lib/errors';
+import Banner from './Banner';
+import { Modal } from './Dialogs';
+import Select from './Select';
 
 /*
  * Preselected until we know what the cloudlet already runs — Terra is the

@@ -1,9 +1,9 @@
 import AuthorisationField from './AuthorisationField';
 import CrudGenerationOptions from './CrudGenerationOptions';
 import CrudGetOptions from './CrudGetOptions';
-import UrlFields from './UrlFields';
 import { ALL_VERBS, crudSummary } from './crudify';
 import { CrudTabState } from './hooks/useCrudTab';
+import UrlFields from './UrlFields';
 
 // Everything about the endpoints to generate: URL, verbs, roles, options, and the Generate button.
 export default function CrudOptionsCard({ crud }: Readonly<{ crud: CrudTabState }>) {

@@ -1,8 +1,9 @@
 import { useState } from 'react';
+
 import {
+  addToHistory,
   HISTORY_KEY,
   type HistoryEntry,
-  addToHistory,
   parseHistory,
   serializeHistory,
 } from '../history';

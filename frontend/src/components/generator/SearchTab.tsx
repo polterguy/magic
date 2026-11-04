@@ -2,10 +2,10 @@ import AiWaiter from '../AiWaiter';
 import CallerRolesField from './CallerRolesField';
 import EndpointNameFields from './EndpointNameFields';
 import GeneratedEndpoint from './GeneratedEndpoint';
+import { useSearchTab } from './hooks/useSearchTab';
 import SearchFilterToolbar from './SearchFilterToolbar';
 import SearchLimitsToolbar from './SearchLimitsToolbar';
 import SearchSourceToolbar from './SearchSourceToolbar';
-import { useSearchTab } from './hooks/useSearchTab';
 
 /*
  * Search endpoint tab - generates an HTTP endpoint that searches the training snippets of one

@@ -3,10 +3,11 @@
  * Node environment only — sessionStorage is not touched here.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import {
-  HISTORY_LIMIT,
   addToHistory,
+  HISTORY_LIMIT,
   historyLabel,
   parseHistory,
   serializeHistory,

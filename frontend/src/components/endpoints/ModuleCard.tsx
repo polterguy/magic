@@ -1,11 +1,12 @@
-import { Fragment } from 'react';
 import type { RefObject } from 'react';
-import InvokePanel from '../InvokePanel';
-import type { InvokeResult } from '../InvokePanel';
-import { BracesIcon, ChevronIcon } from '../Icons';
+import { Fragment } from 'react';
+
 import type { Endpoint } from '../../lib/api';
-import { sourceFile } from './helpers';
+import { BracesIcon, ChevronIcon } from '../Icons';
+import type { InvokeResult } from '../InvokePanel';
+import InvokePanel from '../InvokePanel';
 import type { ModuleGroup } from './helpers';
+import { sourceFile } from './helpers';
 
 /*
  * One module on the Endpoints page — a header that expands it, and a table

@@ -5,11 +5,12 @@
  */
 
 import { useState } from 'react';
-import { Modal } from './Dialogs';
-import ResultViewer from './ResultViewer';
-import { InvokeResult } from './InvokePanel';
+
 import { servedByBackend } from '../lib/backend';
 import { copyToClipboard } from '../lib/toast';
+import { Modal } from './Dialogs';
+import { InvokeResult } from './InvokePanel';
+import ResultViewer from './ResultViewer';
 
 export default function ResponseDialog(
   props: Readonly<{

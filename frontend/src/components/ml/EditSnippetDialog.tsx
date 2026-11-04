@@ -4,13 +4,14 @@
  */
 
 import { useState } from 'react';
-import AiPrompt from '../AiPrompt';
-import CodeEditor from '../CodeEditor';
+
+import { type MlSnippet, mlSnippetCreate, mlSnippetUpdate, vectoriseSnippet } from '../../lib/api';
 import { useEditToken } from '../../lib/editor';
-import { Modal } from '../Dialogs';
-import { mlSnippetCreate, mlSnippetUpdate, vectoriseSnippet, type MlSnippet } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+import AiPrompt from '../AiPrompt';
+import CodeEditor from '../CodeEditor';
+import { Modal } from '../Dialogs';
 
 export default function EditSnippetDialog(
   props: Readonly<{

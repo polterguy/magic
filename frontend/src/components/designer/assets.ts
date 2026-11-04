@@ -3,8 +3,8 @@
  * dropped block needs, and keeping the cache-busting versions on them honest.
  */
 
-import type { Block } from './palette';
 import { WEB_ROOT } from './designerFiles';
+import type { Block } from './palette';
 import { CANONICAL_VERSIONS } from './widgetRuntime';
 
 /*

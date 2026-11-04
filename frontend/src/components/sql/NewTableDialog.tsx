@@ -1,7 +1,8 @@
 import { useState } from 'react';
+
+import { PK_TYPES } from '../../lib/dbTypes';
 import { Modal } from '../Dialogs';
 import Select from '../Select';
-import { PK_TYPES } from '../../lib/dbTypes';
 import { canCreateTable, primaryKeyName } from './schema';
 
 /*

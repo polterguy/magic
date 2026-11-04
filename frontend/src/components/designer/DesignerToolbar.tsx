@@ -1,6 +1,6 @@
 import { RedoIcon, SaveIcon, UndoIcon } from '../Icons';
-import DesignerMenu from './DesignerMenu';
 import { canonicalUrl } from './designerFiles';
+import DesignerMenu from './DesignerMenu';
 import { VIEWS } from './layout';
 import type { DesignerMenuOptions } from './menuItems';
 

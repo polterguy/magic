@@ -4,10 +4,7 @@
  */
 
 import { useState } from 'react';
-import { Modal } from '../Dialogs';
-import Select from '../Select';
-import SocketFeedback from '../SocketFeedback';
-import Tabs from '../Tabs';
+
 import {
   gibberish,
   importUrl,
@@ -18,6 +15,10 @@ import {
 } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+import { Modal } from '../Dialogs';
+import Select from '../Select';
+import SocketFeedback from '../SocketFeedback';
+import Tabs from '../Tabs';
 
 /*
  * The file categories the old dashboard supports, each mapping to its own

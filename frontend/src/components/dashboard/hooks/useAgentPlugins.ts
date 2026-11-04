@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+
 import { availablePlugins, installPlugin, listFolders } from '../../../lib/api';
-import { showToast } from '../../../lib/toast';
 import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
 import { missingAgentPlugins } from '../constants';
 
 // Which of the MCP and OAuth plugins are missing, and installing them.

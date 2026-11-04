@@ -1,11 +1,17 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { createSocket } from '../lib/socket';
-import { useAuth } from '../lib/useAuth';
+
 import { openaiIsConfigured } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
-import { setToastListener } from '../lib/toast';
 import { canRunDashboardTour, runDashboardTour, setShellActions } from '../lib/shellActions';
+import { createSocket } from '../lib/socket';
+import { openSupport } from '../lib/support';
+import { applyTheme, getTheme } from '../lib/theme';
+import { setToastListener } from '../lib/toast';
+import { useAuth } from '../lib/useAuth';
+import BackendsDialog from './BackendsDialog';
+import ChatDrawer from './ChatDrawer';
+import CommandPalette from './CommandPalette';
 import {
   ChevronIcon,
   DatabaseIcon,
@@ -17,13 +23,8 @@ import {
   SearchIcon,
   SunIcon,
 } from './Icons';
-import { applyTheme, getTheme } from '../lib/theme';
-import BackendsDialog from './BackendsDialog';
-import ChatDrawer from './ChatDrawer';
-import CommandPalette from './CommandPalette';
-import ShortcutsDialog from './ShortcutsDialog';
-import { openSupport } from '../lib/support';
 import { SECTIONS } from './sections';
+import ShortcutsDialog from './ShortcutsDialog';
 
 export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
   const { backend, logout, backends, version } = useAuth();

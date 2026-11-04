@@ -9,26 +9,27 @@
  */
 
 import { Fragment, useEffect, useState } from 'react';
-import Select from './Select';
-import SearchInput from './SearchInput';
-import AiWaiter from './AiWaiter';
-import RoleChips from './RoleChips';
-import { ChevronIcon } from './Icons';
-import SocketFeedback from './SocketFeedback';
-import { Modal } from './Dialogs';
+
 import {
-  OpenApiOperation,
-  OpenApiSpec,
   gibberish,
   importOpenApi,
   listRoles,
   loadConfig,
+  OpenApiOperation,
+  OpenApiSpec,
   parseOpenApi,
   saveConfig,
 } from '../lib/api';
-import { showToast } from '../lib/toast';
 import { withoutTrailingSlashes } from '../lib/backend';
 import { showError } from '../lib/errors';
+import { showToast } from '../lib/toast';
+import AiWaiter from './AiWaiter';
+import { Modal } from './Dialogs';
+import { ChevronIcon } from './Icons';
+import RoleChips from './RoleChips';
+import SearchInput from './SearchInput';
+import Select from './Select';
+import SocketFeedback from './SocketFeedback';
 
 // Schemes we can generate. OAuth2 needs a token exchange, which this does not do.
 const SCHEMES = [

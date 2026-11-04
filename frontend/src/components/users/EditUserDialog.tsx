@@ -1,19 +1,20 @@
 import { useState } from 'react';
-import { showToast } from '../../lib/toast';
-import { showError } from '../../lib/errors';
-import { Modal } from '../Dialogs';
-import { useDialog } from '../../lib/useDialog';
-import RoleChips from '../RoleChips';
+
 import {
-  Role,
-  User,
-  UserExtra,
   addUserExtra,
   addUserToRole,
   deleteUserExtra,
   removeUserFromRole,
+  Role,
   updateUserExtra,
+  User,
+  UserExtra,
 } from '../../lib/api';
+import { showError } from '../../lib/errors';
+import { showToast } from '../../lib/toast';
+import { useDialog } from '../../lib/useDialog';
+import { Modal } from '../Dialogs';
+import RoleChips from '../RoleChips';
 
 export default function EditUserDialog(
   props: Readonly<{

@@ -8,8 +8,8 @@
  * never fetches it at all.
  */
 
-import { showToast } from './toast';
 import { getTheme } from './theme';
+import { showToast } from './toast';
 
 const SCRIPT_ID = 'ainiro-support-chatbot';
 

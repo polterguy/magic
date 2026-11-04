@@ -6,9 +6,10 @@
  */
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import CodeEditor from './CodeEditor';
+
 import { dispositionFilename, downloadBlob } from '../lib/download';
 import { errorMessage } from '../lib/errors';
+import CodeEditor from './CodeEditor';
 
 export interface RawResult {
   blob: Blob;

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+
 import { availablePlugins, installPlugin, listFiles } from '../../../lib/api';
-import { showToast } from '../../../lib/toast';
 import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
 import { EXPERT_SYSTEM_PLUGIN, EXPERT_SYSTEM_POLLS } from '../constants';
 
 /*

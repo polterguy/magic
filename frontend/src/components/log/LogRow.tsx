@@ -1,6 +1,6 @@
+import type { LogItem } from '../../lib/api';
 import { copyToClipboard } from '../../lib/toast';
 import { CopyIcon } from '../Icons';
-import type { LogItem } from '../../lib/api';
 import { isoDate, timeAgo } from './format';
 
 /*

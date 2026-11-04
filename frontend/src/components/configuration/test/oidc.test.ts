@@ -3,11 +3,12 @@
  * list into providers, and reading and writing magic.oidc. Node environment only.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import {
-  OIDC_SLOT_PREFIX,
   applyOidcValues,
   initialOidcValues,
+  OIDC_SLOT_PREFIX,
   oidcProvidersFromSlots,
 } from '../oidc';
 

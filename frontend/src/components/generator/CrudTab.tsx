@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
+
 import ProgressDialog from '../ProgressDialog';
 import { TableSkeleton } from '../Skeleton';
 import CrudOptionsCard from './CrudOptionsCard';
 import CrudTablePicker from './CrudTablePicker';
 import DatabaseSelectors from './DatabaseSelectors';
 import DonePanel from './DonePanel';
-import WizardSteps from './WizardSteps';
 import { useCrudTab } from './hooks/useCrudTab';
+import WizardSteps from './WizardSteps';
 
 // The CRUD backend generator: pick a database's tables, and crudify every verb of each.
 export default function CrudTab(props: Readonly<{ guided: boolean }>) {

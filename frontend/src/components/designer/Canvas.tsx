@@ -13,9 +13,10 @@
  */
 
 import { useEffect, useEffectEvent, useLayoutEffect, useReducer, useRef, useState } from 'react';
+
 import { DropSpot, findDropSpot } from './dropTarget';
+import { CANVAS_SANDBOX, isSlot, SLOT_EDITING } from './html';
 import { elementOf, isText, labelOf, nodeAtPoint, rectOf } from './nodes';
-import { CANVAS_SANDBOX, SLOT_EDITING, isSlot } from './html';
 
 export interface CanvasProps {
   srcDoc: string;

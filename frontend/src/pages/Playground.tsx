@@ -1,14 +1,15 @@
-import { showToast } from '../lib/toast';
-import { showError } from '../lib/errors';
-import Select from '../components/Select';
-import { explainHyperlambda } from '../lib/support';
 import { useEffect, useState } from 'react';
+
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
 import CodeEditor from '../components/CodeEditor';
-import { useEditToken } from '../lib/editor';
-import { useDialog } from '../lib/useDialog';
+import Select from '../components/Select';
 import { aiContextForFile, evaluate, listFiles, loadFile, saveFile } from '../lib/api';
+import { useEditToken } from '../lib/editor';
+import { showError } from '../lib/errors';
+import { explainHyperlambda } from '../lib/support';
+import { showToast } from '../lib/toast';
+import { useDialog } from '../lib/useDialog';
 import { useSessionState } from '../lib/useSessionState';
 
 const DEFAULT_CODE = `/*

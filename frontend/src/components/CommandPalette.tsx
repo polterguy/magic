@@ -7,8 +7,9 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { SECTIONS } from './sections';
+
 import { apiBaseUrl, listEndpoints, listFilesRecursively, listTasks, mlTypes } from '../lib/api';
+import { SECTIONS } from './sections';
 
 export interface PaletteCommand {
   group: string;

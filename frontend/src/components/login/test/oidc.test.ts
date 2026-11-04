@@ -6,10 +6,11 @@
  * the helpers touch.
  */
 
-import { afterEach, describe, it, expect, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import {
-  OIDC_CALLBACK_PATH,
   isConfiguredProvider,
+  OIDC_CALLBACK_PATH,
   oidcAuthorizeUrl,
   takeCodeFromUrl,
   takeIdTokenFromUrl,

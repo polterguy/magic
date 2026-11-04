@@ -10,23 +10,24 @@
  * independently — one chunk may carry several of them at once.
  */
 
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { HubConnection } from '@microsoft/signalr';
-import { createSocket } from '../lib/socket';
-import { getTheme } from '../lib/theme';
+import DOMPurify from 'dompurify';
+import { marked } from 'marked';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
 import {
   ChatChunk,
-  MAX_CHAT_FILES,
   chatDownloadUrl,
   chatPrompt,
   gibberish,
   killExecution,
+  MAX_CHAT_FILES,
 } from '../lib/api';
-import { copyToClipboard, showToast } from '../lib/toast';
 import { notifyChatOpsDone } from '../lib/chatOps';
 import { showError } from '../lib/errors';
+import { createSocket } from '../lib/socket';
+import { getTheme } from '../lib/theme';
+import { copyToClipboard, showToast } from '../lib/toast';
 import { CopyIcon, DownloadIcon, FilePlusIcon, PaperclipIcon } from './Icons';
 import WidgetDialog from './WidgetDialog';
 

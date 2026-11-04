@@ -5,14 +5,15 @@
  * flavor's instruction, and streams the result back over a socket.
  */
 
-import Banner from './Banner';
-import { useRef, useState } from 'react';
 import type { HubConnection } from '@microsoft/signalr';
-import { createSocket } from '../lib/socket';
-import { errorMessage } from '../lib/errors';
-import { Modal } from './Dialogs';
-import { useDialog } from '../lib/useDialog';
+import { useRef, useState } from 'react';
+
 import { createSystemMessage, gibberish } from '../lib/api';
+import { errorMessage } from '../lib/errors';
+import { createSocket } from '../lib/socket';
+import { useDialog } from '../lib/useDialog';
+import Banner from './Banner';
+import { Modal } from './Dialogs';
 
 export default function CreateSystemMessageDialog(
   props: Readonly<{

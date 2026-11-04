@@ -1,23 +1,24 @@
-import { showError } from '../lib/errors';
-import SearchInput from '../components/SearchInput';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+
 import AiWaiter from '../components/AiWaiter';
-import OpenApiDialog from '../components/OpenApiDialog';
-import type { InvokeResult } from '../components/InvokePanel';
-import ResponseDialog from '../components/ResponseDialog';
 import DebugDialog from '../components/DebugDialog';
+import { groupEndpoints, sourceFile } from '../components/endpoints/helpers';
+import ModuleCard from '../components/endpoints/ModuleCard';
+import type { InvokeResult } from '../components/InvokePanel';
+import OpenApiDialog from '../components/OpenApiDialog';
+import ResponseDialog from '../components/ResponseDialog';
+import SearchInput from '../components/SearchInput';
 import { ModuleListSkeleton } from '../components/Skeleton';
 import {
+  debugHyperlambda,
   DebugRecording,
   Endpoint,
-  debugHyperlambda,
   getOpenApiSpec,
   listEndpoints,
   loadFile,
 } from '../lib/api';
-import ModuleCard from '../components/endpoints/ModuleCard';
-import { groupEndpoints, sourceFile } from '../components/endpoints/helpers';
+import { showError } from '../lib/errors';
 
 export default function Endpoints() {
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);

@@ -4,28 +4,29 @@
  */
 
 import { useEffect, useState } from 'react';
+
+import {
+  listQuestionnaires,
+  listRoles,
+  type MlType,
+  mlTypeCreate,
+  mlTypeUpdate,
+  modelPriceLabel,
+  openaiCompletionSlots,
+  type OpenAiModel,
+  openaiModels,
+  openaiSystemMessages,
+  Questionnaire,
+  type SystemMessage,
+} from '../../lib/api';
+import { showError } from '../../lib/errors';
+import { showToast } from '../../lib/toast';
 import CodeEditor from '../CodeEditor';
 import CreateSystemMessageDialog from '../CreateSystemMessageDialog';
 import { Modal } from '../Dialogs';
 import RoleChips from '../RoleChips';
 import Select from '../Select';
 import Tabs from '../Tabs';
-import {
-  Questionnaire,
-  listQuestionnaires,
-  listRoles,
-  mlTypeCreate,
-  mlTypeUpdate,
-  modelPriceLabel,
-  openaiCompletionSlots,
-  openaiModels,
-  openaiSystemMessages,
-  type MlType,
-  type OpenAiModel,
-  type SystemMessage,
-} from '../../lib/api';
-import { showError } from '../../lib/errors';
-import { showToast } from '../../lib/toast';
 import AddFunctionDialog from './AddFunctionDialog';
 
 function thresholdHint(useEmbeddings: boolean, retrieval: string) {

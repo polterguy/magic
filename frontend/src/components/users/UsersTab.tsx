@@ -1,17 +1,18 @@
 import { useState } from 'react';
+
+import { Role, User, userExtra } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 import AiWaiter from '../AiWaiter';
-import SearchInput from '../SearchInput';
-import SortHeader from '../SortHeader';
 import Pagination from '../Pagination';
+import SearchInput from '../SearchInput';
 import { TableSkeleton } from '../Skeleton';
-import { Role, User, userExtra } from '../../lib/api';
-import { PROTECTED_USERS } from './constants';
-import { useUserList } from './hooks/useUserList';
-import NewUserDialog from './NewUserDialog';
-import InviteUserDialog from './InviteUserDialog';
-import EditUserDialog from './EditUserDialog';
+import SortHeader from '../SortHeader';
 import ChangePasswordDialog from './ChangePasswordDialog';
+import { PROTECTED_USERS } from './constants';
+import EditUserDialog from './EditUserDialog';
+import { useUserList } from './hooks/useUserList';
+import InviteUserDialog from './InviteUserDialog';
+import NewUserDialog from './NewUserDialog';
 
 export default function UsersTab(props: Readonly<{ roles: Role[] }>) {
   const { filter, setFilter, sort, setSort, waiting, smtpReady, list, removeUser, exportUsers } =

@@ -1,13 +1,13 @@
 import AiWaiter from '../AiWaiter';
-import InvokePanel from '../InvokePanel';
-import ResponseDialog from '../ResponseDialog';
 import DebugDialog from '../DebugDialog';
-import OpenApiDialog from '../OpenApiDialog';
-import GitPanel from '../GitPanel';
 import { Modal } from '../Dialogs';
-import SelectModelDialog from './SelectModelDialog';
+import GitPanel from '../GitPanel';
+import InvokePanel from '../InvokePanel';
+import OpenApiDialog from '../OpenApiDialog';
+import ResponseDialog from '../ResponseDialog';
 import type { AiFunctions } from './hooks/useAiFunctions';
 import type { Execution } from './hooks/useExecution';
+import SelectModelDialog from './SelectModelDialog';
 
 /*
  * Every dialog the Hyper IDE opens over the page — the model picker, the

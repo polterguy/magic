@@ -1,10 +1,10 @@
 import CodeEditor from '../CodeEditor';
 import Select from '../Select';
+import { SandboxTabState } from './hooks/useSandboxTab';
 import RuleWizards from './RuleWizards';
 import { lintSlotLines, ruleIsIncomplete } from './slots';
-import { TIER2_WIZARDS } from './wizardSpecs';
-import { SandboxTabState } from './hooks/useSandboxTab';
 import { RoleRule } from './types';
+import { TIER2_WIZARDS } from './wizardSpecs';
 
 // One role rule: its role, limit overrides, description, capability wizards and slots.
 export default function RoleRuleCard(

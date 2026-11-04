@@ -1,4 +1,4 @@
-import { JsonObject, asObject, fieldText, parseObject } from './json';
+import { asObject, fieldText, JsonObject, parseObject } from './json';
 
 /*
  * The path OIDC providers send the id_token back to — must match what Login

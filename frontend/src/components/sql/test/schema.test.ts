@@ -2,9 +2,10 @@
  * Unit tests for the Designer's new-table and add-column helpers.
  */
 
-import { describe, it, expect } from 'vitest';
-import { FIELD_TYPES } from '../../../lib/dbTypes';
+import { describe, expect, it } from 'vitest';
+
 import type { TableMeta } from '../../../lib/api';
+import { FIELD_TYPES } from '../../../lib/dbTypes';
 import {
   canAddColumn,
   canCreateTable,

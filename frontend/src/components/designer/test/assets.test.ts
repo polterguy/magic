@@ -4,7 +4,8 @@
  * these functions make.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { bumpAsset, ensureRequiredAssets, syncSharedAssetVersions } from '../assets';
 
 interface FakeElement {

@@ -4,8 +4,9 @@
  * client-side loop — feed it directly, without a socket in between.
  */
 
-import Banner from './Banner';
 import { ReactNode, useEffect, useRef } from 'react';
+
+import Banner from './Banner';
 import { Modal } from './Dialogs';
 
 export interface ProgressLine {

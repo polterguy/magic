@@ -1,6 +1,5 @@
 import type { ChangeEvent } from 'react';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
+
 import {
   createFolder,
   deleteFile,
@@ -14,9 +13,11 @@ import {
   uploadFile,
 } from '../../../lib/api';
 import { dispositionFilename, downloadBlob } from '../../../lib/download';
+import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
 import type { useDialog } from '../../../lib/useDialog';
-import { nameOf, parentOf } from '../paths';
 import { PROTECTED_FOLDERS } from '../helpers';
+import { nameOf, parentOf } from '../paths';
 import type { OpenTabs } from './useOpenTabs';
 
 /*

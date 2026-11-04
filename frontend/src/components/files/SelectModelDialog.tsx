@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
+
+import { type MlType, mlTypes } from '../../lib/api';
+import { errorMessage } from '../../lib/errors';
 import Banner from '../Banner';
 import { Modal } from '../Dialogs';
 import Select from '../Select';
-import { mlTypes, type MlType } from '../../lib/api';
-import { errorMessage } from '../../lib/errors';
 
 /*
  * Lets the user pick which AI model a generated function should be added to,

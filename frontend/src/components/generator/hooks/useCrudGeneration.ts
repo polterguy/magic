@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
-import { showToast } from '../../../lib/toast';
+
+import { crudify } from '../../../lib/api';
 import { errorMessage } from '../../../lib/errors';
 import { DatabaseSelection } from '../../../lib/sql';
-import { crudify } from '../../../lib/api';
+import { showToast } from '../../../lib/toast';
 import { ProgressLine } from '../../ProgressDialog';
 import {
   ALL_VERBS,
@@ -11,7 +12,7 @@ import {
   endpointsForVerb,
   resolveLocks,
 } from '../crudify';
-import { ColumnLock, CrudDone, CrudTable, CrudifyOptions } from '../types';
+import { ColumnLock, CrudDone, CrudifyOptions, CrudTable } from '../types';
 
 // What a CRUD generation run reads from the rest of the tab.
 export interface CrudGenerationContext {

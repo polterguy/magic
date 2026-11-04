@@ -1,8 +1,8 @@
-import CodeEditor from '../CodeEditor';
-import AiPrompt from '../AiPrompt';
-import { Modal } from '../Dialogs';
 import { Task } from '../../lib/api';
 import { showToast } from '../../lib/toast';
+import AiPrompt from '../AiPrompt';
+import CodeEditor from '../CodeEditor';
+import { Modal } from '../Dialogs';
 import { useTaskDialog } from './hooks/useTaskDialog';
 
 export default function TaskDialog(

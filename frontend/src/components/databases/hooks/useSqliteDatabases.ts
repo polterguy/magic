@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
-import { useDialog } from '../../../lib/useDialog';
+
 import {
-  type DatabaseMeta,
   createDatabase,
+  type DatabaseMeta,
   dropDatabase,
   listDatabases,
   uploadDatabaseBackup,
 } from '../../../lib/api';
+import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
+import { useDialog } from '../../../lib/useDialog';
 import { DB_NAME_PATTERN } from '../connections';
 
 /*

@@ -8,12 +8,13 @@
  * magic database exists, and answers with a ticket signed by the new secret.
  */
 
-import Banner from '../components/Banner';
 import { FormEvent, useState } from 'react';
+
+import Banner from '../components/Banner';
 import { EyeIcon, EyeOffIcon } from '../components/Icons';
-import { useAuth } from '../lib/useAuth';
 import { ApiError, MIN_PASSWORD, saveUserExtra, setupSystem } from '../lib/api';
 import { errorMessage } from '../lib/errors';
+import { useAuth } from '../lib/useAuth';
 
 function firstProblem(
   name: string,

@@ -3,14 +3,15 @@
  * detection and the post-run toast. Node environment only.
  */
 
-import { describe, it, expect } from 'vitest';
 import { isValidElement, type ReactElement } from 'react';
+import { describe, expect, it } from 'vitest';
+
 import {
-  MAX_RENDERED_ROWS,
   countRecords,
   executionMessage,
   formatCell,
   isGoBatch,
+  MAX_RENDERED_ROWS,
 } from '../results';
 
 describe('formatCell', () => {

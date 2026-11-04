@@ -3,11 +3,12 @@
  */
 
 import { useState } from 'react';
+
+import { type MlRequest, mlRequests, mlRequestsCount, type MlType } from '../../lib/api';
+import { usePagedList } from '../../lib/usePagedList';
 import Pagination from '../Pagination';
 import Select from '../Select';
 import { TableSkeleton } from '../Skeleton';
-import { mlRequests, mlRequestsCount, type MlRequest, type MlType } from '../../lib/api';
-import { usePagedList } from '../../lib/usePagedList';
 
 export default function HistoryTab(
   props: Readonly<{

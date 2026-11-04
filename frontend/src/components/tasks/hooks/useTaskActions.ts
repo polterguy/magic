@@ -1,7 +1,7 @@
-import { Task, deleteTask, executeTask } from '../../../lib/api';
-import { useDialog } from '../../../lib/useDialog';
-import { showToast } from '../../../lib/toast';
+import { deleteTask, executeTask, Task } from '../../../lib/api';
 import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
+import { useDialog } from '../../../lib/useDialog';
 import type { PagedList } from '../../../lib/usePagedList';
 
 // Running and deleting tasks from the list, each confirmed first.

@@ -4,7 +4,8 @@
  * environment, so the tree is made of plain objects.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { nodeAt, pathTo, writeText } from '../nodes';
 
 interface FakeNode {

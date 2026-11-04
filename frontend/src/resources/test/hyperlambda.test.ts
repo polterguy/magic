@@ -7,10 +7,11 @@
  * Run with `npm run test`.
  */
 
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { CompletionContext } from '@codemirror/autocomplete';
 import { StringStream } from '@codemirror/language';
 import { EditorState } from '@codemirror/state';
-import { CompletionContext } from '@codemirror/autocomplete';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
+
 import { hyperlambdaCompletions, hyperlambdaParser } from '../hyperlambda';
 
 type State = NonNullable<ReturnType<NonNullable<typeof hyperlambdaParser.startState>>>;

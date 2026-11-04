@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
-import { SECTIONS } from '../sections';
-import { RobotIcon, SearchIcon } from '../Icons';
+
 import { openChatOps, openPalette } from '../../lib/shellActions';
 import { openSupport } from '../../lib/support';
+import { RobotIcon, SearchIcon } from '../Icons';
+import { SECTIONS } from '../sections';
 
 /*
  * Folded away rather than always open. It restates the navigation for

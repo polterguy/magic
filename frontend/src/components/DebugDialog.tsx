@@ -7,9 +7,10 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+
+import type { DebugRecording, DebugStep } from '../lib/api';
 import CodeEditor from './CodeEditor';
 import { Modal } from './Dialogs';
-import type { DebugRecording, DebugStep } from '../lib/api';
 
 /*
  * Height of both panes. One constant rather than two numbers, since the step

@@ -2,7 +2,8 @@
  * Unit tests for SQL Studio's snippet file naming.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import { snippetFilename, snippetLabel, snippetSuggestion } from '../snippets';
 
 describe('snippetLabel', () => {

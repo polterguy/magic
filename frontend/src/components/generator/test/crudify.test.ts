@@ -6,22 +6,23 @@
  * or the network.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import {
-  ALL_VERBS,
   addArgumentColumn,
   addVerbOptions,
+  ALL_VERBS,
   buildCrudifyPayload,
   canGenerate,
-  crudSummary,
   crudifyColumnEntry,
+  crudSummary,
   defaultLock,
   endpointsForVerb,
   lockSlot,
   resolveLocks,
   withVerbDefaults,
 } from '../crudify';
-import { CrudTable, CrudifyOptions, CrudifyPayload } from '../types';
+import { CrudifyOptions, CrudifyPayload, CrudTable } from '../types';
 
 const orders: CrudTable = {
   name: 'orders',

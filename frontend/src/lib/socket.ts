@@ -4,6 +4,7 @@
  */
 
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+
 import { backendInfo } from './api';
 
 export function createSocket(options?: { reconnect?: boolean }): HubConnection {

@@ -8,15 +8,16 @@
  * first, and offers to clear out the rest.
  */
 
-import SearchInput from './SearchInput';
-import { CopyIcon, TrashIcon } from './Icons';
-import { Modal } from './Dialogs';
-import { useDialog } from '../lib/useDialog';
 import { useMemo, useState } from 'react';
+
+import { tokenExpired } from '../lib/backend';
+import { getNavGuard } from '../lib/navGuard';
 import { copyToClipboard } from '../lib/toast';
 import { useAuth } from '../lib/useAuth';
-import { getNavGuard } from '../lib/navGuard';
-import { tokenExpired } from '../lib/backend';
+import { useDialog } from '../lib/useDialog';
+import { Modal } from './Dialogs';
+import { CopyIcon, TrashIcon } from './Icons';
+import SearchInput from './SearchInput';
 
 // Signed in means holding a token that hasn't run out.
 function connected(token: string | null) {

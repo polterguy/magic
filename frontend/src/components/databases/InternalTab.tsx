@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
+
+import { fileWithTokenUrl } from '../../lib/api';
 import AiWaiter from '../AiWaiter';
 import { TableSkeleton } from '../Skeleton';
-import { fileWithTokenUrl } from '../../lib/api';
 import { sqlStudioUrl } from './connections';
 import { useSqliteDatabases } from './hooks/useSqliteDatabases';
 

@@ -4,8 +4,8 @@
  * list the editor builds its keymap from, so this dialog cannot go stale.
  */
 
+import { shortcutDisplay, SHORTCUTS } from '../lib/shortcuts';
 import { Modal } from './Dialogs';
-import { SHORTCUTS, shortcutDisplay } from '../lib/shortcuts';
 
 const GROUPS: { id: string; title: string; note?: string }[] = [
   { id: 'Global', title: 'Everywhere' },

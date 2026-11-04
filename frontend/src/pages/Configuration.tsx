@@ -1,16 +1,17 @@
-import { showToast } from '../lib/toast';
-import { showError } from '../lib/errors';
 import { useEffect, useRef, useState } from 'react';
+
 import CodeEditor from '../components/CodeEditor';
-import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
-import Menu from '../components/designer/Menu';
-import { downloadBlob } from '../lib/download';
-import { MagicConfig, downloadFileRaw, loadConfig, saveConfig, uploadFile } from '../lib/api';
 import { CONFIG_FILE, CONFIG_FOLDER } from '../components/configuration/constants';
-import SmtpDialog from '../components/configuration/SmtpDialog';
 import GitDialog from '../components/configuration/GitDialog';
-import RecaptchaDialog from '../components/configuration/RecaptchaDialog';
 import OpenIdDialog from '../components/configuration/OpenIdDialog';
+import RecaptchaDialog from '../components/configuration/RecaptchaDialog';
+import SmtpDialog from '../components/configuration/SmtpDialog';
+import Menu from '../components/designer/Menu';
+import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
+import { downloadFileRaw, loadConfig, MagicConfig, saveConfig, uploadFile } from '../lib/api';
+import { downloadBlob } from '../lib/download';
+import { showError } from '../lib/errors';
+import { showToast } from '../lib/toast';
 
 export default function Configuration() {
   const [config, setConfig] = useState('');

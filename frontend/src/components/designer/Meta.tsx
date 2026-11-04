@@ -12,8 +12,9 @@
  */
 
 import { useState } from 'react';
-import { SERVER_FILLED, hasSlot } from './html';
-import { readMeta, type Home } from './metaTags';
+
+import { hasSlot, SERVER_FILLED } from './html';
+import { type Home, readMeta } from './metaTags';
 
 export interface MetaField {
   label: string;

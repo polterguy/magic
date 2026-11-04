@@ -2,8 +2,8 @@
  * Pure helpers behind the Designer's new-table and add-column dialogs.
  */
 
-import type { FieldType } from '../../lib/dbTypes';
 import type { ColumnMeta, TableMeta } from '../../lib/api';
+import type { FieldType } from '../../lib/dbTypes';
 
 // Derive the PK name from the table name like the old dialog does.
 export function primaryKeyName(tableName: string) {

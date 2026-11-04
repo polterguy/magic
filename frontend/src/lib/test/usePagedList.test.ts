@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useDebounced, usePagedList } from '../usePagedList';
+
 import { ApiError } from '../api';
 import { setToastListener } from '../toast';
+import { useDebounced, usePagedList } from '../usePagedList';
 
 type Page = { rows: string[]; count: number };
 

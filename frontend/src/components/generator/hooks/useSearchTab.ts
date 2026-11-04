@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { showToast } from '../../../lib/toast';
+
+import { generateSearchEndpoint, listRoles, MlType, mlTypes } from '../../../lib/api';
 import { showError } from '../../../lib/errors';
-import { MlType, generateSearchEndpoint, listRoles, mlTypes } from '../../../lib/api';
+import { showToast } from '../../../lib/toast';
 import { GeneratedInfo } from '../types';
 
 // SearchTab's state: the endpoint, the type it searches and how, who may call it, and generating it.

@@ -1,20 +1,21 @@
 import type { Dispatch, SetStateAction } from 'react';
+
 import Tabs from '../Tabs';
-import Inspector from './Inspector';
-import Meta from './Meta';
-import Quality from './Quality';
-import Styles from './Styles';
-import Website from './Website';
-import { canContainChildren } from './html';
-import { canonicalUrl } from './designerFiles';
-import { railClass } from './layout';
-import type { Home } from './metaTags';
-import type { MediaKind } from './mediaKinds';
-import { designableChildren, elementOf, isText } from './nodes';
 import type { Overrides } from './css';
+import { canonicalUrl } from './designerFiles';
 import type { useElementEdits } from './hooks/useElementEdits';
 import type { useStyleEdits } from './hooks/useStyleEdits';
 import type { useTreeEdits } from './hooks/useTreeEdits';
+import { canContainChildren } from './html';
+import Inspector from './Inspector';
+import { railClass } from './layout';
+import type { MediaKind } from './mediaKinds';
+import Meta from './Meta';
+import type { Home } from './metaTags';
+import { designableChildren, elementOf, isText } from './nodes';
+import Quality from './Quality';
+import Styles from './Styles';
+import Website from './Website';
 
 // The right rail: the tabs of properties for the selection, the page and the site.
 export default function RightRail(

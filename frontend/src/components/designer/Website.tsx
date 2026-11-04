@@ -16,14 +16,15 @@
  */
 
 import { useEffect, useState } from 'react';
+
 import {
   listFilesRecursively,
   loadWebsiteConfig,
   saveWebsiteConfig,
   WebsiteRedirect,
 } from '../../lib/api';
-import { showToast } from '../../lib/toast';
 import { showError } from '../../lib/errors';
+import { showToast } from '../../lib/toast';
 import { TrashIcon } from '../Icons';
 import { WEB_ROOT } from './pageUrls';
 

@@ -4,6 +4,7 @@
  */
 
 import { useEffect } from 'react';
+
 import { useDialog } from './useDialog';
 
 let guard: (() => Promise<boolean>) | null = null;

@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { showToast } from '../../lib/toast';
+
+import { addUserExtra, addUserToRole, createUser, MIN_PASSWORD, Role } from '../../lib/api';
 import { showError } from '../../lib/errors';
+import { showToast } from '../../lib/toast';
 import { Modal } from '../Dialogs';
-import { MIN_PASSWORD, Role, addUserExtra, addUserToRole, createUser } from '../../lib/api';
 import RolesField from './RolesField';
 
 export default function NewUserDialog(

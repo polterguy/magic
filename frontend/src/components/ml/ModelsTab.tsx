@@ -3,21 +3,22 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import AiWaiter from '../AiWaiter';
-import { useDialog } from '../../lib/useDialog';
-import { CheckIcon, DashIcon } from '../Icons';
-import SocketFeedback from '../SocketFeedback';
+
 import {
   deleteVectors,
   gibberish,
   mlSnippetsCount,
+  type MlType,
   mlTypeDelete,
   mlUnvectorisedCount,
   vectoriseType,
-  type MlType,
 } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+import { useDialog } from '../../lib/useDialog';
+import AiWaiter from '../AiWaiter';
+import { CheckIcon, DashIcon } from '../Icons';
+import SocketFeedback from '../SocketFeedback';
 import EditModelDialog from './EditModelDialog';
 import EmbedDialog from './EmbedDialog';
 import ImportDialog from './ImportDialog';

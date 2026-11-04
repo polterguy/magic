@@ -1,5 +1,5 @@
 import type { SqlRow } from '../../lib/api';
-import { MAX_RENDERED_ROWS, formatCell } from './results';
+import { formatCell, MAX_RENDERED_ROWS } from './results';
 
 export default function ResultTable({ rows }: Readonly<{ rows: SqlRow[] }>) {
   if (rows.length === 0) {

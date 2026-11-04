@@ -4,7 +4,31 @@
  * out of the box.
  */
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import '../resources/ainiro.css';
+
+import { autocompletion, startCompletion } from '@codemirror/autocomplete';
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentLess,
+  indentMore,
+} from '@codemirror/commands';
+import { css } from '@codemirror/lang-css';
+import { html } from '@codemirror/lang-html';
+import { javascript } from '@codemirror/lang-javascript';
+import { json } from '@codemirror/lang-json';
+import { markdown } from '@codemirror/lang-markdown';
+import { sql } from '@codemirror/lang-sql';
+import {
+  bracketMatching,
+  HighlightStyle,
+  indentUnit,
+  LanguageSupport,
+  syntaxHighlighting,
+} from '@codemirror/language';
+import { closeSearchPanel, openSearchPanel, search, searchKeymap } from '@codemirror/search';
+import type { Extension } from '@codemirror/state';
 import {
   Annotation,
   Compartment,
@@ -14,46 +38,24 @@ import {
   StateField,
   Transaction,
 } from '@codemirror/state';
-import type { Extension } from '@codemirror/state';
+import type { DecorationSet } from '@codemirror/view';
 import {
   Decoration,
-  EditorView,
   drawSelection,
+  EditorView,
   highlightActiveLine,
   highlightActiveLineGutter,
   keymap,
   lineNumbers,
   tooltips,
 } from '@codemirror/view';
-import type { DecorationSet } from '@codemirror/view';
-import {
-  defaultKeymap,
-  history,
-  historyKeymap,
-  indentLess,
-  indentMore,
-} from '@codemirror/commands';
-import {
-  HighlightStyle,
-  LanguageSupport,
-  bracketMatching,
-  indentUnit,
-  syntaxHighlighting,
-} from '@codemirror/language';
 import { tags } from '@lezer/highlight';
-import { autocompletion, startCompletion } from '@codemirror/autocomplete';
-import { closeSearchPanel, openSearchPanel, search, searchKeymap } from '@codemirror/search';
-import { javascript } from '@codemirror/lang-javascript';
-import { json } from '@codemirror/lang-json';
-import { html } from '@codemirror/lang-html';
-import { css } from '@codemirror/lang-css';
-import { markdown } from '@codemirror/lang-markdown';
-import { sql } from '@codemirror/lang-sql';
-import { hyperlambdaLanguage } from '../resources/hyperlambda.js';
-import '../resources/ainiro.css';
-import { http, apiBaseUrl } from '../lib/api.js';
-import { SHORTCUTS } from '../lib/shortcuts';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+
+import { apiBaseUrl, http } from '../lib/api.js';
 import { editorSelection } from '../lib/editor';
+import { SHORTCUTS } from '../lib/shortcuts';
+import { hyperlambdaLanguage } from '../resources/hyperlambda.js';
 
 /*
  * The hyperlambda mode colors slot invocations from window._vocabulary,

@@ -1,21 +1,22 @@
-import { useMemo, useRef, useState } from 'react';
 import type { EditorView } from '@codemirror/view';
+import { useMemo, useRef, useState } from 'react';
+
 import AiWaiter from '../components/AiWaiter';
-import Tabs from '../components/Tabs';
 import { CardGridSkeleton } from '../components/Skeleton';
-import { useSessionState } from '../lib/useSessionState';
-import { useEditToken } from '../lib/editor';
-import { buildSqlAiContext, sqlHintTables, useDatabaseSelection } from '../lib/sql';
 import DesignerView from '../components/sql/DesignerView';
-import SnippetToolbar from '../components/sql/SnippetToolbar';
-import SqlEditorArea from '../components/sql/SqlEditorArea';
-import SqlHeader from '../components/sql/SqlHeader';
-import SqlResults from '../components/sql/SqlResults';
 import { useSchemaDesigner } from '../components/sql/hooks/useSchemaDesigner';
 import { useSqlExecution } from '../components/sql/hooks/useSqlExecution';
 import { useSqlGenerator } from '../components/sql/hooks/useSqlGenerator';
 import { useSqlHistory } from '../components/sql/hooks/useSqlHistory';
 import { useSqlSnippetFiles } from '../components/sql/hooks/useSqlSnippetFiles';
+import SnippetToolbar from '../components/sql/SnippetToolbar';
+import SqlEditorArea from '../components/sql/SqlEditorArea';
+import SqlHeader from '../components/sql/SqlHeader';
+import SqlResults from '../components/sql/SqlResults';
+import Tabs from '../components/Tabs';
+import { useEditToken } from '../lib/editor';
+import { buildSqlAiContext, sqlHintTables, useDatabaseSelection } from '../lib/sql';
+import { useSessionState } from '../lib/useSessionState';
 
 export default function Sql() {
   // Prefers magic — the SQL editor's most common target, unlike the

@@ -1,31 +1,32 @@
-import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import { useState } from 'react';
-import { useAuth } from '../lib/useAuth';
-import Tour from '../components/Tour';
-import { CHATBOT_TOUR, DASHBOARD_TOUR } from '../lib/tourSteps';
-import { showToast } from '../lib/toast';
-import { mcpEndpointUrl } from '../components/dashboard/constants';
-import { useMagicLinkPassword } from '../components/dashboard/hooks/useMagicLinkPassword';
-import { useDashboardCounts } from '../components/dashboard/hooks/useDashboardCounts';
-import { useAgentPlugins } from '../components/dashboard/hooks/useAgentPlugins';
-import { useOpenAiConfigured } from '../components/dashboard/hooks/useOpenAiConfigured';
-import { useExpertSystem } from '../components/dashboard/hooks/useExpertSystem';
-import { useDashboardTour } from '../components/dashboard/hooks/useDashboardTour';
-import KpiCards from '../components/dashboard/KpiCards';
+
 import {
   AgentPluginsCard,
   ApiWizardCard,
   ExpertSystemCard,
   OpenAiKeyCard,
 } from '../components/dashboard/ActionCards';
+import { mcpEndpointUrl } from '../components/dashboard/constants';
 import CreateChatbot from '../components/dashboard/CreateChatbot';
 import GuideDetails from '../components/dashboard/GuideDetails';
-import TaskSection from '../components/dashboard/TaskSection';
+import { useAgentPlugins } from '../components/dashboard/hooks/useAgentPlugins';
+import { useDashboardCounts } from '../components/dashboard/hooks/useDashboardCounts';
+import { useDashboardTour } from '../components/dashboard/hooks/useDashboardTour';
+import { useExpertSystem } from '../components/dashboard/hooks/useExpertSystem';
+import { useMagicLinkPassword } from '../components/dashboard/hooks/useMagicLinkPassword';
+import { useOpenAiConfigured } from '../components/dashboard/hooks/useOpenAiConfigured';
+import KpiCards from '../components/dashboard/KpiCards';
 import SetPasswordDialog from '../components/dashboard/SetPasswordDialog';
+import TaskSection from '../components/dashboard/TaskSection';
 import {
   EndpointWarningDialog,
   PublicEndpointWarningDialog,
 } from '../components/dashboard/WarningDialogs';
+import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
+import Tour from '../components/Tour';
+import { showToast } from '../lib/toast';
+import { CHATBOT_TOUR, DASHBOARD_TOUR } from '../lib/tourSteps';
+import { useAuth } from '../lib/useAuth';
 
 export default function Dashboard() {
   const { backend, version } = useAuth();

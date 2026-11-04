@@ -1,29 +1,30 @@
-import Banner from '../components/Banner';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../lib/useAuth';
-import { useDebounced } from '../lib/usePagedList';
-import { backendUrls, rememberPendingOidc, takePendingOidc } from '../lib/backend';
+
+import Banner from '../components/Banner';
+import BackendUrlField from '../components/login/BackendUrlField';
+import ForgotPasswordForm from '../components/login/ForgotPasswordForm';
 import {
-  OidcProvider,
-  canResetPassword,
-  openidExchange,
-  openidLogin,
-  openidProviders,
-  sendResetPasswordLink,
-} from '../lib/api';
-import { errorMessage } from '../lib/errors';
-import {
-  OIDC_CALLBACK_PATH,
   isConfiguredProvider,
+  OIDC_CALLBACK_PATH,
   oidcAuthorizeUrl,
   takeCodeFromUrl,
   takeIdTokenFromUrl,
   takeOidcErrorFromUrl,
 } from '../components/login/oidc';
-import ForgotPasswordForm from '../components/login/ForgotPasswordForm';
-import BackendUrlField from '../components/login/BackendUrlField';
 import ProviderButtons from '../components/login/ProviderButtons';
+import {
+  canResetPassword,
+  OidcProvider,
+  openidExchange,
+  openidLogin,
+  openidProviders,
+  sendResetPasswordLink,
+} from '../lib/api';
+import { backendUrls, rememberPendingOidc, takePendingOidc } from '../lib/backend';
+import { errorMessage } from '../lib/errors';
+import { useAuth } from '../lib/useAuth';
+import { useDebounced } from '../lib/usePagedList';
 
 export default function Login() {
   const { backend, login, loginWithTicket } = useAuth();

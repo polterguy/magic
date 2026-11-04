@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Modal } from '../Dialogs';
-import { MIN_PASSWORD, changePassword } from '../../lib/api';
-import { showToast } from '../../lib/toast';
+
+import { changePassword, MIN_PASSWORD } from '../../lib/api';
 import { showError } from '../../lib/errors';
+import { showToast } from '../../lib/toast';
+import { Modal } from '../Dialogs';
 
 /*
  * Opens by itself after a magic-link sign-in: the user just arrived through

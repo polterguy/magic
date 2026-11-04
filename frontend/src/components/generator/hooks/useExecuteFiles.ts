@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { showToast } from '../../../lib/toast';
+
 import {
   EndpointMeta,
   getHyperlambdaArguments,
@@ -7,12 +7,13 @@ import {
   listFilesRecursively,
   loadFile,
 } from '../../../lib/api';
+import { showToast } from '../../../lib/toast';
 import {
-  TOOLTIP_WIDTH,
   endpointKey,
   extractFileComment,
   formatEndpointMeta,
   formatFallbackMeta,
+  TOOLTIP_WIDTH,
 } from '../endpointMeta';
 import { WizardProps } from '../types';
 

@@ -1,20 +1,21 @@
-import { showToast } from '../lib/toast';
-import { showError } from '../lib/errors';
-import SearchInput from '../components/SearchInput';
-import { useEffect, useMemo, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
+import { useEffect, useMemo, useState } from 'react';
+
 import { Modal } from '../components/Dialogs';
-import { useDialog } from '../lib/useDialog';
+import SearchInput from '../components/SearchInput';
 import { CardGridSkeleton } from '../components/Skeleton';
 import {
-  BazarApp,
   availablePlugins,
-  installModule,
+  BazarApp,
   installedPlugins,
+  installModule,
   installPlugin,
   moduleNameFromZip,
 } from '../lib/api';
+import { showError } from '../lib/errors';
+import { showToast } from '../lib/toast';
+import { useDialog } from '../lib/useDialog';
 
 /*
  * Descriptions come from the Bazar's manifests, which are markdown, so they

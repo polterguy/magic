@@ -3,7 +3,7 @@
  * value. The toast is mocked; nothing is rendered.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../../lib/toast', () => ({ showToast: vi.fn() }));
 

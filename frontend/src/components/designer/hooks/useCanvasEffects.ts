@@ -5,9 +5,10 @@
  */
 
 import { useEffect, useMemo } from 'react';
+
+import { overrideCss, ownStylesheet } from '../css';
 import { canContainChildren } from '../html';
 import { designableChildren } from '../nodes';
-import { ownStylesheet, overrideCss } from '../css';
 import type { DocumentState } from './useDocumentState';
 import type { StylesheetState } from './useStylesheetState';
 

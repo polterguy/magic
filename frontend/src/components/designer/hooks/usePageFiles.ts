@@ -5,22 +5,23 @@
  */
 
 import { useEffect, useEffectEvent, useState } from 'react';
-import type { useDialog } from '../../../lib/useDialog';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
+
 import { createFolder, loadFile, saveFile } from '../../../lib/api';
-import { blankPage } from '../pageUrls';
-import { INLINE } from '../Styles';
-import { prepareDocument, serializeDocument } from '../html';
-import { joinCss, scriptPaths, splitCss, stylesheetPaths } from '../css';
+import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
+import type { useDialog } from '../../../lib/useDialog';
 import { ensureRequiredAssets } from '../assets';
+import { joinCss, scriptPaths, splitCss, stylesheetPaths } from '../css';
 import {
-  SHARED_ASSET_FILES,
-  WEB_ROOT,
   canonicalUrl,
   companionFile,
   listPages,
+  SHARED_ASSET_FILES,
+  WEB_ROOT,
 } from '../designerFiles';
+import { prepareDocument, serializeDocument } from '../html';
+import { blankPage } from '../pageUrls';
+import { INLINE } from '../Styles';
 import type { Cloudlet } from './useCloudlet';
 import type { CodeDraft } from './useCodeDraft';
 import type { DesignerUi } from './useDesignerUi';

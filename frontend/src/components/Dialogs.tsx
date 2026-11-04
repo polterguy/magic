@@ -5,23 +5,24 @@
  */
 
 import {
+  FormEvent,
+  ReactNode,
   useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  FormEvent,
-  ReactNode,
 } from 'react';
+
 import { showToast } from '../lib/toast';
 import {
   type ChoiceOptions,
   type ConfirmOptions,
+  DialogContext,
   type FormOptions,
   type PromptOptions,
   type TypedConfirmOptions,
-  DialogContext,
 } from '../lib/useDialog';
 
 export type {

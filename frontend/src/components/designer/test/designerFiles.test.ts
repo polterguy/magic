@@ -4,7 +4,7 @@
  * touches the network.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../../lib/api', () => ({
   listFilesRecursively: vi.fn(),
@@ -12,12 +12,12 @@ vi.mock('../../../lib/api', () => ({
 
 import { listFilesRecursively } from '../../../lib/api';
 import {
-  SHARED_ASSET_FILES,
-  WEB_ROOT,
   canonicalUrl,
   companionFile,
   isServed,
   listPages,
+  SHARED_ASSET_FILES,
+  WEB_ROOT,
 } from '../designerFiles';
 
 describe('canonicalUrl', () => {

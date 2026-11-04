@@ -1,17 +1,18 @@
-import { copyToClipboard, showToast } from '../lib/toast';
-import { errorMessage, showError } from '../lib/errors';
-import Banner from '../components/Banner';
 import { useEffect, useState } from 'react';
+
+import Banner from '../components/Banner';
 import DateTimePicker from '../components/DateTimePicker';
 import { Modal } from '../components/Dialogs';
 import {
-  MIN_PASSWORD,
   changePassword,
   http,
   listRoles,
   listUsers,
+  MIN_PASSWORD,
   saveUserExtra,
 } from '../lib/api';
+import { errorMessage, showError } from '../lib/errors';
+import { copyToClipboard, showToast } from '../lib/toast';
 import { useAuth } from '../lib/useAuth';
 
 export default function Profile() {

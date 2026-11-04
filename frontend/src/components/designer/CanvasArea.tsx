@@ -1,19 +1,19 @@
-import AiPrompt from '../AiPrompt';
 import { aiContextForFile } from '../../lib/api';
 import { showToast } from '../../lib/toast';
+import AiPrompt from '../AiPrompt';
 import Canvas from './Canvas';
 import CodePane from './CodePane';
-import LivePane from './LivePane';
-import { INLINE } from './Styles';
 import type { DropSpot } from './dropTarget';
-import { writeText } from './nodes';
-import { reportDropped } from './slotWarning';
 import type { Cloudlet } from './hooks/useCloudlet';
 import type { CodeDraft } from './hooks/useCodeDraft';
 import type { DesignerUi } from './hooks/useDesignerUi';
 import type { DocumentState } from './hooks/useDocumentState';
 import type { StylesheetState } from './hooks/useStylesheetState';
 import type { UndoHistory } from './hooks/useUndoHistory';
+import LivePane from './LivePane';
+import { writeText } from './nodes';
+import { reportDropped } from './slotWarning';
+import { INLINE } from './Styles';
 
 // The middle column: the canvas, the code view or the live view, and the prompt bar under them.
 export default function CanvasArea(

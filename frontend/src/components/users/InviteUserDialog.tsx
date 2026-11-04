@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { showError } from '../../lib/errors';
-import { Modal } from '../Dialogs';
-import { useAuth } from '../../lib/useAuth';
+
 import {
-  Role,
   addUserExtra,
   addUserToRole,
   createUser,
+  Role,
   sendResetPasswordLink,
 } from '../../lib/api';
+import { showError } from '../../lib/errors';
+import { useAuth } from '../../lib/useAuth';
+import { Modal } from '../Dialogs';
 import RolesField from './RolesField';
 
 /*

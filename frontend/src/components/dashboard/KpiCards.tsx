@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+
 import { MCP_ENDPOINT_WARNING } from './constants';
 
 // The row of numbers across the top of the dashboard, each linking to its page.

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { showError } from '../../../lib/errors';
+
 import { loadFile } from '../../../lib/api';
 import { useEditToken } from '../../../lib/editor';
-import { restoredSelection, withRestored } from '../helpers';
+import { showError } from '../../../lib/errors';
 import type { OpenTab, Workspace } from '../helpers';
+import { restoredSelection, withRestored } from '../helpers';
 
 /*
  * The open tabs — which files are open and which one is selected — restored

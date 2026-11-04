@@ -20,6 +20,7 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+
 import { MenuIcon } from '../Icons';
 
 export interface MenuItem {

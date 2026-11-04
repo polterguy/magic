@@ -3,9 +3,10 @@
  * roles tab filter. Node environment only.
  */
 
-import { describe, it, expect } from 'vitest';
-import { filterRoles, userCsvRow } from '../helpers';
+import { describe, expect, it } from 'vitest';
+
 import { PAGE_SIZE, PROTECTED_ROLES, PROTECTED_USERS } from '../constants';
+import { filterRoles, userCsvRow } from '../helpers';
 
 describe('userCsvRow', () => {
   it('flattens a local user with extras and roles', () => {

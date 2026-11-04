@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import { copyToClipboard, setToastListener, showToast, type Toast } from '../toast';
 
 afterEach(() => {

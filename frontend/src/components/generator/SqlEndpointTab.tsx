@@ -1,12 +1,12 @@
+import { showToast } from '../../lib/toast';
 import AiPrompt from '../AiPrompt';
 import AiWaiter from '../AiWaiter';
 import CodeEditor from '../CodeEditor';
-import { showToast } from '../../lib/toast';
 import DatabaseSelectors from './DatabaseSelectors';
 import EndpointNameFields from './EndpointNameFields';
+import { useSqlEndpointTab } from './hooks/useSqlEndpointTab';
 import SqlArgumentsToolbar from './SqlArgumentsToolbar';
 import SqlAuthToolbar from './SqlAuthToolbar';
-import { useSqlEndpointTab } from './hooks/useSqlEndpointTab';
 
 // The SQL endpoint generator: publishes a SQL statement, with its arguments, as an endpoint.
 export default function SqlEndpointTab() {

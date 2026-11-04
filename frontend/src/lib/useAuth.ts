@@ -4,6 +4,7 @@
  */
 
 import { createContext, useContext } from 'react';
+
 import type { StoredBackend } from './backend';
 
 export interface AuthState {

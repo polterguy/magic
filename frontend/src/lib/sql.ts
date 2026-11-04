@@ -6,14 +6,15 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+
 import {
   type DatabaseMeta,
-  type TableMeta,
   defaultDatabaseType,
   exportDdl,
   http,
   listDatabases,
   listFiles,
+  type TableMeta,
 } from './api';
 import { errorMessage, showError } from './errors';
 

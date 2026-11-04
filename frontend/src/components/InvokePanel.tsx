@@ -4,16 +4,17 @@
  * and Hyper IDE, which invokes the endpoint file currently open.
  */
 
-import Banner from './Banner';
-import AiWaiter from './AiWaiter';
 import { useEffect, useState } from 'react';
+
+import { apiBaseUrl, Endpoint, generateRoleToken, invokeEndpoint, listRoles } from '../lib/api';
+import { errorMessage } from '../lib/errors';
+import { copyToClipboard } from '../lib/toast';
+import AiWaiter from './AiWaiter';
+import Banner from './Banner';
 import CodeEditor from './CodeEditor';
 import { ChevronIcon } from './Icons';
 import { RawResult } from './ResultViewer';
 import Select from './Select';
-import { copyToClipboard } from '../lib/toast';
-import { Endpoint, apiBaseUrl, generateRoleToken, invokeEndpoint, listRoles } from '../lib/api';
-import { errorMessage } from '../lib/errors';
 
 export interface InvokeResult extends RawResult {
   elapsed: number;

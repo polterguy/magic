@@ -1,9 +1,10 @@
 import { useState } from 'react';
+
+import { createTask, Task, updateTask } from '../../../lib/api';
 import { useEditToken } from '../../../lib/editor';
-import { Task, createTask, updateTask } from '../../../lib/api';
-import { useDialog } from '../../../lib/useDialog';
-import { showToast } from '../../../lib/toast';
 import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
+import { useDialog } from '../../../lib/useDialog';
 import { taskIsDirty } from '../constants';
 
 // The task editor's fields, its unsaved-changes guard, and saving.

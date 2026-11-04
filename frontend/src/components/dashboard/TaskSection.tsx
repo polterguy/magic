@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Pagination from '../Pagination';
-import { useDialog } from '../../lib/useDialog';
-import { Task, executeTask, listTasks } from '../../lib/api';
-import { showToast } from '../../lib/toast';
+
+import { executeTask, listTasks, Task } from '../../lib/api';
 import { showError } from '../../lib/errors';
+import { showToast } from '../../lib/toast';
+import { useDialog } from '../../lib/useDialog';
+import Pagination from '../Pagination';
 import { TASK_PAGE_SIZE, taskPageCount } from './constants';
 
 export default function TaskSection(

@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
-import { useDialog } from '../../../lib/useDialog';
+
 import {
   addColumn,
   addForeignKey,
@@ -12,6 +10,9 @@ import {
   flushSchemaCache,
   importCsvFile,
 } from '../../../lib/api';
+import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
+import { useDialog } from '../../../lib/useDialog';
 import type { ColumnPayload } from '../schema';
 
 /*

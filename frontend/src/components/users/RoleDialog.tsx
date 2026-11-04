@@ -1,7 +1,8 @@
 import { useState } from 'react';
+
+import { createRole, Role, updateRole } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { Modal } from '../Dialogs';
-import { Role, createRole, updateRole } from '../../lib/api';
 
 export default function RoleDialog(
   props: Readonly<{

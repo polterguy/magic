@@ -2,11 +2,11 @@ import AiWaiter from '../AiWaiter';
 import AddRoleRule from './AddRoleRule';
 import CallerRolesField from './CallerRolesField';
 import GeneratedEndpoint from './GeneratedEndpoint';
+import { useSandboxTab } from './hooks/useSandboxTab';
 import RoleRuleCard from './RoleRuleCard';
 import SandboxBaseRule from './SandboxBaseRule';
 import SandboxEndpointToolbar from './SandboxEndpointToolbar';
 import SandboxOptionsToolbar from './SandboxOptionsToolbar';
-import { useSandboxTab } from './hooks/useSandboxTab';
 
 /*
  * The Sandbox API generator: one endpoint that takes caller-supplied Hyperlambda

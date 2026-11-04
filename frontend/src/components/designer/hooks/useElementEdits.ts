@@ -5,15 +5,15 @@
  */
 
 import { ensureWidgetAssets } from '../../../lib/api';
-import { showToast } from '../../../lib/toast';
 import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
+import { ensureRequiredAssets } from '../assets';
+import type { DropSpot } from '../dropTarget';
 import type { Picked } from '../Media';
 import { KIND_FOR_TAG } from '../mediaKinds';
 import { Home, readMeta, writeMeta } from '../metaTags';
-import type { Block } from '../palette';
-import type { DropSpot } from '../dropTarget';
 import { elementOf, isText, writeText } from '../nodes';
-import { ensureRequiredAssets } from '../assets';
+import type { Block } from '../palette';
 import { reportDropped } from '../slotWarning';
 import type { DesignerUi } from './useDesignerUi';
 import type { DocumentState } from './useDocumentState';

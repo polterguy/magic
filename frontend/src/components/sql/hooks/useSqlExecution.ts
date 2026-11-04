@@ -1,9 +1,10 @@
-import { type RefObject, useState } from 'react';
 import type { EditorView } from '@codemirror/view';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
+import { type RefObject, useState } from 'react';
+
+import { executeSql, type SqlRow } from '../../../lib/api';
 import { editorSelection } from '../../../lib/editor';
-import { type SqlRow, executeSql } from '../../../lib/api';
+import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
 import { countRecords, executionMessage, isGoBatch } from '../results';
 
 /*

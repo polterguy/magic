@@ -14,10 +14,10 @@
  *    @codemirror/autocomplete.
  */
 
-import { StreamLanguage } from '@codemirror/language';
+import type { Completion, CompletionContext, CompletionResult } from '@codemirror/autocomplete';
 import type { StreamParser, StringStream } from '@codemirror/language';
+import { StreamLanguage } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
-import type { CompletionContext, CompletionResult, Completion } from '@codemirror/autocomplete';
 
 /*
  * The style names the tokenizer returns. legacy-modes maps them through

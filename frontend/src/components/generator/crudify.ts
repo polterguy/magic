@@ -1,10 +1,10 @@
 import {
   ColumnLock,
   CrudColumn,
-  CrudTable,
   CrudifyArgument,
   CrudifyOptions,
   CrudifyPayload,
+  CrudTable,
   DecoratedColumn,
 } from './types';
 

@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { showToast } from '../../lib/toast';
+
+import { deleteRole, Role } from '../../lib/api';
 import { showError } from '../../lib/errors';
+import { showToast } from '../../lib/toast';
+import { useDialog } from '../../lib/useDialog';
 import AiWaiter from '../AiWaiter';
 import SearchInput from '../SearchInput';
-import { useDialog } from '../../lib/useDialog';
-import { Role, deleteRole } from '../../lib/api';
 import { PROTECTED_ROLES } from './constants';
 import { filterRoles } from './helpers';
 import RoleDialog from './RoleDialog';

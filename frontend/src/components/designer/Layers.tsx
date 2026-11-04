@@ -10,6 +10,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+
 import { ChevronIcon } from '../Icons';
 import { designableChildren, isText, labelOf } from './nodes';
 

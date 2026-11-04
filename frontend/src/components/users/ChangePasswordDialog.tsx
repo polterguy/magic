@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { showToast } from '../../lib/toast';
+
+import { changeUserPassword, MIN_PASSWORD, User } from '../../lib/api';
 import { showError } from '../../lib/errors';
+import { showToast } from '../../lib/toast';
 import { Modal } from '../Dialogs';
-import { MIN_PASSWORD, User, changeUserPassword } from '../../lib/api';
 
 export default function ChangePasswordDialog(
   props: Readonly<{

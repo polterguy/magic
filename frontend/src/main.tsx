@@ -1,12 +1,14 @@
+import './styles.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+
 import App from './App';
-import { AuthProvider } from './lib/AuthContext';
 import { DialogProvider } from './components/Dialogs';
-import { initTheme } from './lib/theme';
+import { AuthProvider } from './lib/AuthContext';
 import { showError } from './lib/errors';
-import './styles.css';
+import { initTheme } from './lib/theme';
 
 initTheme();
 

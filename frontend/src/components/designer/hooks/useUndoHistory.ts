@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+
 import type { Overrides } from '../css';
 import { nodeAt, pathTo } from '../nodes';
 import type { DocumentState } from './useDocumentState';

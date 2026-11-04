@@ -5,16 +5,17 @@
  * Run with `npm run test`. Node environment only.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import {
-  PROTECTED_FOLDERS,
-  ENDPOINT_VERBS,
-  convertArgument,
-  endpointOf,
   ancestorsOf,
-  withRestored,
-  restoredSelection,
+  convertArgument,
+  ENDPOINT_VERBS,
+  endpointOf,
   type OpenTab,
+  PROTECTED_FOLDERS,
+  restoredSelection,
+  withRestored,
 } from '../helpers';
 
 const tab = (path: string, content = 'x'): OpenTab => ({ path, content, saved: content });

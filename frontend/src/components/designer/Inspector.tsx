@@ -13,11 +13,12 @@
  */
 
 import { useEffect, useState } from 'react';
-import { SERVER_FILLED, hasSlot } from './html';
+
 import { CopyIcon, TrashIcon } from '../Icons';
-import { isText, labelOf } from './nodes';
+import { dataGridSources, DataSource, loadEndpoints } from './dataSources';
+import { hasSlot, SERVER_FILLED } from './html';
 import { KIND_FOR_TAG } from './mediaKinds';
-import { DataSource, dataGridSources, loadEndpoints } from './dataSources';
+import { isText, labelOf } from './nodes';
 
 // Attributes with a control of their own, or that belong to the designer.
 const OWN = new Set(['class', 'id', 'style', 'contenteditable']);

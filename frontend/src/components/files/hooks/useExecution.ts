@@ -1,9 +1,7 @@
-import { useRef, useState } from 'react';
 import type { EditorView } from '@codemirror/view';
-import { showToast } from '../../../lib/toast';
-import { showError } from '../../../lib/errors';
-import { editorSelection } from '../../../lib/editor';
-import type { useDialog } from '../../../lib/useDialog';
+import { useRef, useState } from 'react';
+
+import type { DebugRecording, Endpoint } from '../../../lib/api';
 import {
   aiQuery,
   debugHyperlambda,
@@ -11,7 +9,10 @@ import {
   getHyperlambdaArguments,
   listEndpoints,
 } from '../../../lib/api';
-import type { DebugRecording, Endpoint } from '../../../lib/api';
+import { editorSelection } from '../../../lib/editor';
+import { showError } from '../../../lib/errors';
+import { showToast } from '../../../lib/toast';
+import type { useDialog } from '../../../lib/useDialog';
 import type { InvokeResult } from '../../InvokePanel';
 import { convertArgument, endpointOf } from '../helpers';
 import type { OpenTabs } from './useOpenTabs';

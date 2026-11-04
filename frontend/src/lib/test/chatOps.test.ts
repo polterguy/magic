@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+
 import { notifyChatOpsDone, onChatOpsDone } from '../chatOps';
 
 describe('chatOps', () => {
