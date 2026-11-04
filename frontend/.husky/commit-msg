@@ -1,0 +1,2 @@
+# Husky runs hooks from the repository root.
+frontend/node_modules/.bin/commitlint --config frontend/commitlint.config.js --edit "$1"

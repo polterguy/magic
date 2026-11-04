@@ -24,6 +24,9 @@ cd frontend && npm run build
 # Frontend tests (single run, no watch)
 cd frontend && npm run test
 
+# Frontend lint (zero warnings) and formatting
+cd frontend && npm run lint && npm run format:check
+
 ## Project facts
 
 - .NET 10 SDK required (no global.json pins it)
@@ -36,6 +39,11 @@ cd frontend && npm run test
   build, the frontend build and tests, SonarCloud, CodeQL and the secret scan
 - Running `dotnet test magic.sln` from the repo root builds and tests all
   backend projects including plugins
+
+- Commits follow Conventional Commits (`feat(frontend): ...`, `fix: ...`), enforced by commitlint in a
+  husky `commit-msg` hook. The hooks live in `frontend/.husky/` and install with `npm install` in
+  `frontend/`. `pre-commit` runs Prettier and ESLint on staged frontend files, and `pre-push` runs
+  format check, lint, typecheck and tests only when the pushed commits touch `frontend/`
 
 ## Counterintuitive patterns
 

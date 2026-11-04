@@ -32,6 +32,8 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci --ignore-scripts
+      - run: npm run format:check
+      - run: npm run lint   # eslint, zero warnings
       - run: npm run build   # tsc, then vite build
       - run: npm run test
 
