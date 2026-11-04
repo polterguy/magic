@@ -47,7 +47,7 @@ function tokenizeDoc(doc: string): Token[][] {
 
 // First token of a single-line document, for the simple cases.
 function styleOf(line: string, vocabulary: string[] = []): string | null {
-  window._vocabulary = vocabulary;
+  globalThis._vocabulary = vocabulary;
   return tokenizeLine(line, hyperlambdaParser.startState!(4))[0]?.style ?? null;
 }
 
@@ -168,8 +168,8 @@ describe('hyperlambdaCompletions', () => {
   }
 
   beforeAll(() => {
-    window._vocabulary = ['if', 'while', 'log.error'];
-    window._slots = ['foo-bar'];
+    globalThis._vocabulary = ['if', 'while', 'log.error'];
+    globalThis._slots = ['foo-bar'];
   });
 
   it('offers vocabulary entries containing the typed text', () => {
@@ -204,7 +204,7 @@ describe('hyperlambdaCompletions', () => {
   });
 
   it('answers null when the vocabulary has not loaded', () => {
-    delete window._vocabulary;
+    delete globalThis._vocabulary;
     expect(complete('if')).toBeNull();
   });
 });

@@ -6,7 +6,7 @@
  * navigate, so palette jumps respect unsaved-changes guards like nav clicks.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
 import { apiBaseUrl, listEndpoints, listFilesRecursively, listTasks, mlTypes } from '../lib/api';
 import { SECTIONS } from './sections';
@@ -118,7 +118,7 @@ async function loadDynamic(): Promise<DynamicCommand[]> {
  * "get log list" finds "GET magic/system/log/list".
  */
 function score(query: string, candidate: string): number {
-  const q = query.toLowerCase().replace(/\s+/g, '');
+  const q = query.toLowerCase().replaceAll(/\s+/g, '');
   const c = candidate.toLowerCase();
   let total = 0;
   let index = 0;
@@ -144,14 +144,14 @@ function score(query: string, candidate: string): number {
  * Characters the text doesn't carry are skipped rather than failing, since
  * the query may have matched partly against the verb or hint.
  */
-function highlight(text: string, query: string) {
+function highlight(text: string, query: string): ReactNode[] {
   if (!query.trim()) {
-    return text;
+    return [text];
   }
   const positions = new Set<number>();
   const lower = text.toLowerCase();
   let index = 0;
-  for (const char of query.toLowerCase().replace(/\s+/g, '')) {
+  for (const char of query.toLowerCase().replaceAll(/\s+/g, '')) {
     const at = lower.indexOf(char, index);
     if (at === -1) {
       continue;
@@ -160,9 +160,16 @@ function highlight(text: string, query: string) {
     index = at + 1;
   }
   if (positions.size === 0) {
-    return text;
+    return [text];
   }
-  return [...text].map((char, at) => (positions.has(at) ? <b key={at}>{char}</b> : char));
+  // A character's offset is its identity — the text never changes under it.
+  const nodes: ReactNode[] = [];
+  let at = 0;
+  for (const char of text) {
+    nodes.push(positions.has(at) ? <b key={at}>{char}</b> : char);
+    at += 1;
+  }
+  return nodes;
 }
 
 export default function CommandPalette(
@@ -332,10 +339,10 @@ export default function CommandPalette(
         <div className="palette-list" id="palette-list" role="listbox" ref={listRef}>
           {matches.length === 0 && <div className="palette-empty">Nothing matches</div>}
           {matches.map((command, index) => {
-            const header = command.group !== previousGroup ? command.group : null;
+            const header = command.group === previousGroup ? null : command.group;
             previousGroup = command.group;
             return (
-              <div key={command.group + command.label + index} role="presentation">
+              <div key={[command.group, command.verb, command.label].join('|')} role="presentation">
                 {header && <div className="palette-group">{header}</div>}
                 <div
                   id={'palette-option-' + index}
@@ -361,13 +368,10 @@ export default function CommandPalette(
                     // The directory whispers, the filename talks.
                     <span className="palette-label">
                       <span className="palette-file-dir">
-                        {command.label.substring(0, command.label.lastIndexOf('/') + 1)}
+                        {command.label.slice(0, command.label.lastIndexOf('/') + 1)}
                       </span>
                       <span className="palette-file-name">
-                        {highlight(
-                          command.label.substring(command.label.lastIndexOf('/') + 1),
-                          query,
-                        )}
+                        {highlight(command.label.slice(command.label.lastIndexOf('/') + 1), query)}
                       </span>
                     </span>
                   ) : (

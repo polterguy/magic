@@ -185,6 +185,9 @@ export default function Select(
           >
             {options.map((o, i) => (
               <li
+                // The options mirror the <option> children in order, and values may repeat
+                // across groups just as a native <select> allows.
+                // eslint-disable-next-line react/no-array-index-key -- positional, values not unique
                 key={o.value + '·' + i}
                 role="option"
                 aria-selected={o.value === props.value}

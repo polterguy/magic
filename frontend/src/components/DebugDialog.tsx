@@ -70,8 +70,8 @@ export default function DebugDialog(
         setIndex(i => Math.min(lastIndex, i + 1));
       }
     }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    globalThis.addEventListener('keydown', onKey);
+    return () => globalThis.removeEventListener('keydown', onKey);
   }, [lastIndex]);
 
   const total = steps.reduce((sum, step) => sum + (step.elapsed ?? 0), 0);
@@ -91,7 +91,7 @@ export default function DebugDialog(
   return (
     <Modal width={1080} onClose={props.onClose}>
       <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 0 }}>
-        Rewind
+        Rewind{' '}
         <span className="muted mono" style={{ fontSize: 14, fontWeight: 400 }}>
           {props.filename}
         </span>
@@ -227,6 +227,8 @@ function StepTable(
         <tbody>
           {(steps ?? []).map((step, idx) => (
             <tr
+              // A recording never changes once made; a step's number is its identity.
+              // eslint-disable-next-line react/no-array-index-key -- positional, fixed list
               key={idx}
               ref={idx === index ? currentRow : undefined}
               className={
@@ -343,9 +345,11 @@ function lineOfPath(lambda: string, path: string) {
 // The line of the target'th node at the given depth, from the cursor onwards, or -1.
 function findSibling(lines: string[], from: number, depth: number, target: number) {
   let seen = -1;
-  for (let cursor = from; cursor < lines.length; cursor++) {
+  let cursor = from;
+  while (cursor < lines.length) {
     const raw = lines[cursor];
     if (raw.trim() === '') {
+      cursor += 1;
       continue;
     }
     const indent = (raw.length - raw.replace(/^ +/, '').length) / 3;
@@ -360,7 +364,7 @@ function findSibling(lines: string[], from: number, depth: number, target: numbe
     }
     // A value's own verbatim string may carry literal newlines - jump past its
     // closing line so those lines are never recounted as siblings of their own.
-    cursor = skipVerbatimString(lines, cursor);
+    cursor = skipVerbatimString(lines, cursor) + 1;
   }
   return -1;
 }

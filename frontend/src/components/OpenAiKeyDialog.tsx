@@ -94,7 +94,7 @@ export default function OpenAiKeyDialog(
         <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">
           here
         </a>
-        .
+        {'.'}
       </p>
       {error && (
         <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
@@ -102,7 +102,7 @@ export default function OpenAiKeyDialog(
         </Banner>
       )}
       <label className="modal-label">
-        OpenAI API key
+        OpenAI API key{' '}
         <input
           type="text"
           className="secret"

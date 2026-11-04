@@ -13,11 +13,11 @@ import { initTheme } from './lib/theme';
 initTheme();
 
 // A promise nobody handled would otherwise fail silently, so show it.
-window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
+globalThis.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
   showError(event.reason);
 });
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.querySelector('#root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>

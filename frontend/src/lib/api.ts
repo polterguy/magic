@@ -297,10 +297,10 @@ export function loadFile(filename: string) {
 }
 
 export function saveFile(filename: string, content: string) {
-  const folder = filename.substring(0, filename.lastIndexOf('/') + 1);
+  const folder = filename.slice(0, filename.lastIndexOf('/') + 1);
   const formData = new FormData();
   const blob = new Blob([content], { type: 'text/plain' });
-  formData.append('file', blob, filename.substring(filename.lastIndexOf('/') + 1));
+  formData.append('file', blob, filename.slice(filename.lastIndexOf('/') + 1));
   return http.put<MagicResponse>(
     '/magic/system/file-system/file?folder=' + encodeURIComponent(folder),
     formData,

@@ -50,12 +50,16 @@ type Segment =
  * created is revoked when the conversation is cleared or the drawer unmounts.
  */
 interface Attachment {
+  // Unique for the lifetime of the page — the attachment's React key.
+  id: number;
   name: string;
   size: number;
   url?: string;
 }
 
 interface ChatMessage {
+  // Unique for the lifetime of the page — the message's React key.
+  id: number;
   role: 'user' | 'assistant';
   segments: Segment[];
   // Files sent along with a user message.
@@ -68,6 +72,13 @@ interface ChatMessage {
  * list, since this HTML enters the page as a string.
  */
 const renderer = new marked.Renderer();
+
+// Source of the ids messages, attachments and diagrams are told apart by.
+let lastId = 0;
+function nextId() {
+  lastId += 1;
+  return lastId;
+}
 
 function escapeHtml(text: string): string {
   const div = document.createElement('div');
@@ -134,13 +145,16 @@ marked.setOptions({ renderer, breaks: true, gfm: true });
  * do, so `A[my (label)]` becomes `A["my (label)"]` before rendering.
  */
 function sanitiseMermaid(code: string): string {
-  return code.replace(/(?<!\w)(\w+)\[([^[\]]+)\]/g, (_match: string, id: string, label: string) => {
-    const clean = label.replace(/(?:^["'])|(?:["']$)/g, '');
-    if (/[()/"'[\]]/.test(clean)) {
-      return id + '["' + clean.replace(/"/g, String.raw`\"`) + '"]';
-    }
-    return id + '[' + clean + ']';
-  });
+  return code.replaceAll(
+    /(?<!\w)(\w+)\[([^[\]]+)\]/g,
+    (_match: string, id: string, label: string) => {
+      const clean = label.replaceAll(/(?:^["'])|(?:["']$)/g, '');
+      if (/[()/"'[\]]/.test(clean)) {
+        return id + '["' + clean.replaceAll('"', String.raw`\"`) + '"]';
+      }
+      return id + '[' + clean + ']';
+    },
+  );
 }
 
 /*
@@ -165,7 +179,7 @@ async function renderMermaidDiagrams(root: HTMLElement, dark: boolean) {
     const code = (container.querySelector('.chat-mermaid-code')?.textContent ?? '').trim();
     (container as HTMLElement).dataset.rendered = 'true';
     try {
-      const id = 'chat-mermaid-' + Math.random().toString(36).slice(2, 10);
+      const id = 'chat-mermaid-' + nextId();
       const { svg } = await mermaid.render(id, sanitiseMermaid(code));
       container.innerHTML = DOMPurify.sanitize(svg);
     } catch {
@@ -194,7 +208,7 @@ export default function ChatDrawer(
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [executionId, setExecutionId] = useState<string | null>(null);
-  const [files, setFiles] = useState<{ file: File; url?: string }[]>([]);
+  const [files, setFiles] = useState<{ id: number; file: File; url?: string }[]>([]);
   // Every object URL handed out, so none of them leak.
   const objectUrls = useRef<string[]>([]);
   /*
@@ -227,8 +241,8 @@ export default function ChatDrawer(
         onClose();
       }
     }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    globalThis.addEventListener('keydown', onKey);
+    return () => globalThis.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
   useEffect(() => {
@@ -352,11 +366,11 @@ export default function ChatDrawer(
     }
     const added = Array.from(picked).map(file => {
       if (!file.type.startsWith('image/')) {
-        return { file };
+        return { id: nextId(), file };
       }
       const url = URL.createObjectURL(file);
       objectUrls.current.push(url);
-      return { file, url };
+      return { id: nextId(), file, url };
     });
     setFiles([...files, ...added]);
   }
@@ -383,12 +397,14 @@ export default function ChatDrawer(
     setMessages(current => [
       ...current,
       {
+        id: nextId(),
         role: 'user',
         segments: [{ kind: 'text', text: prompt }],
         // Object URLs carry over to the sent message rather than being revoked.
         files:
           attached.length > 0
             ? attached.map(entry => ({
+                id: entry.id,
                 name: entry.file.name,
                 size: entry.file.size,
                 url: entry.url,
@@ -484,7 +500,7 @@ export default function ChatDrawer(
             .join('');
           const finished = !(streaming && index === messages.length - 1);
           return (
-            <div key={index} className={'chat-message ' + message.role}>
+            <div key={message.id} className={'chat-message ' + message.role}>
               {message.role === 'assistant' && finished && raw && (
                 <button
                   className="icon-btn chat-response-copy"
@@ -496,6 +512,9 @@ export default function ChatDrawer(
               )}
               {message.segments.map((segment, segmentIndex) => (
                 <ChatSegment
+                  // Segments are only ever appended or replaced in place, so a
+                  // position is a segment's identity — and keeps its toggler open.
+                  // eslint-disable-next-line react/no-array-index-key -- positional, never reordered or removed
                   key={segmentIndex}
                   segment={segment}
                   markdown={message.role === 'assistant'}
@@ -503,8 +522,8 @@ export default function ChatDrawer(
               ))}
               {message.files && (
                 <div className="chat-tiles" style={{ marginTop: 10 }}>
-                  {message.files.map((file, fileIndex) => (
-                    <FileTile key={fileIndex} name={file.name} size={file.size} url={file.url} />
+                  {message.files.map(file => (
+                    <FileTile key={file.id} name={file.name} size={file.size} url={file.url} />
                   ))}
                 </div>
               )}
@@ -513,8 +532,7 @@ export default function ChatDrawer(
         })}
         {streaming && (
           <div className="muted" style={{ padding: '4px 2px' }}>
-            Thinking
-            <span className="spinner-dots" />
+            <span className="spinner-dots">Thinking</span>
           </div>
         )}
       </div>
@@ -523,7 +541,7 @@ export default function ChatDrawer(
           <div className="chat-tiles">
             {files.map((entry, index) => (
               <FileTile
-                key={index}
+                key={entry.id}
                 name={entry.file.name}
                 size={entry.file.size}
                 url={entry.url}
@@ -702,16 +720,16 @@ function settleWaiting(segments: Segment[], failed: boolean) {
 function applyChunk(current: ChatMessage[], chunk: ChatChunk, done: boolean): ChatMessage[] {
   const next = [...current];
   let last = next.at(-1)!;
-  if (last?.role !== 'assistant') {
+  if (last?.role === 'assistant') {
+    last = { ...last, segments: [...last.segments] };
+    next[next.length - 1] = last;
+  } else {
     // Nothing to attach status-only chunks to — don't invent a bubble.
     if (!hasContent(chunk)) {
       return current;
     }
-    last = { role: 'assistant', segments: [] };
+    last = { id: nextId(), role: 'assistant', segments: [] };
     next.push(last);
-  } else {
-    last = { ...last, segments: [...last.segments] };
-    next[next.length - 1] = last;
   }
   const segments = last.segments;
 
@@ -838,8 +856,7 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
           >
             {segment.state === 'waiting' && (
               <>
-                Executing function
-                <span className="spinner-dots" />
+                <span className="spinner-dots">Executing function</span>
               </>
             )}
             {segment.state === 'success' && (

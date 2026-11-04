@@ -118,8 +118,8 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
         setChatOpen(open => !open);
       }
     }
-    window.addEventListener('keydown', onKey, true);
-    return () => window.removeEventListener('keydown', onKey, true);
+    globalThis.addEventListener('keydown', onKey, true);
+    return () => globalThis.removeEventListener('keydown', onKey, true);
   }, []);
 
   // Lets the pages below open the overlays this component owns.
@@ -160,7 +160,7 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
     setToasts(current => [...current, { id, text, isError, logId }]);
     timers.current.set(
       id,
-      window.setTimeout(
+      globalThis.setTimeout(
         () => {
           timers.current.delete(id);
           setToasts(current => current.filter(toast => toast.id !== id));

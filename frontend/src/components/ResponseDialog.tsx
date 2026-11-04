@@ -28,7 +28,7 @@ export default function ResponseDialog(
   return (
     <Modal width={860} onClose={onClose}>
       <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 0 }}>
-        Response
+        Response{' '}
         <span className={'badge ' + (result.status < 400 ? 'badge-get' : 'badge-error')}>
           {result.status}
         </span>

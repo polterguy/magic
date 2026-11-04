@@ -133,7 +133,9 @@ export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => vo
                     title="A link that opens the dashboard against this backend"
                     onClick={() =>
                       copyToClipboard(
-                        window.location.origin + '?backend=' + encodeURIComponent(candidate.url),
+                        globalThis.location.origin +
+                          '?backend=' +
+                          encodeURIComponent(candidate.url),
                         'The link',
                       )
                     }

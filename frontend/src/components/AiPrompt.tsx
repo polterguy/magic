@@ -6,7 +6,7 @@
  * Renders nothing when OpenAI isn't configured on the backend.
  */
 
-import { CSSProperties, FormEvent, useEffect, useState } from 'react';
+import { CSSProperties, SubmitEvent, useEffect, useState } from 'react';
 
 import { aiQuery, openaiIsConfigured } from '../lib/api';
 import { errorMessage } from '../lib/errors';
@@ -52,7 +52,7 @@ export default function AiPrompt(
       .catch(() => setConfigured(false));
   }, []);
 
-  async function ask(event: FormEvent) {
+  async function ask(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!prompt.trim() || busy) {
       return;

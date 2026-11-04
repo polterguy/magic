@@ -121,7 +121,7 @@ export default function CreateSystemMessageDialog(
             </Banner>
           )}
           <label className="modal-label">
-            Website URL
+            Website URL{' '}
             <input
               type="text"
               placeholder="https://example.com"

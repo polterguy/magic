@@ -3,8 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type Shortcut, SHORTCUTS } from '../shortcuts';
 
 // isMac is decided once, when the module loads — so each platform gets a fresh import.
-async function loadOn(platform: string) {
-  vi.stubGlobal('navigator', { platform });
+async function loadOn(navigator: { userAgent: string; userAgentData?: { platform: string } }) {
+  vi.stubGlobal('navigator', navigator);
   vi.resetModules();
   return import('../shortcuts');
 }
@@ -23,15 +23,31 @@ describe('shortcutDisplay', () => {
   };
   const tab: Shortcut = { group: 'Editor', display: 'Tab', description: 'Indent' };
 
-  it.each(['MacIntel', 'iPhone', 'iPad'])('shows the mac combo on %s', async platform => {
-    const { isMac, shortcutDisplay } = await loadOn(platform);
+  const mac =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Safari/605.1.15';
+  const iphone = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15';
+  const ipad = 'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15';
+  const windows = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0';
+  const linux = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/130.0';
+
+  it.each([
+    ['a Mac user agent', { userAgent: mac }],
+    ['an iPhone user agent', { userAgent: iphone }],
+    ['an iPad user agent', { userAgent: ipad }],
+    ['the macOS client hint', { userAgent: windows, userAgentData: { platform: 'macOS' } }],
+  ])('shows the mac combo on %s', async (_, navigator) => {
+    const { isMac, shortcutDisplay } = await loadOn(navigator);
     expect(isMac).toBe(true);
     expect(shortcutDisplay(save)).toBe('Cmd + S');
     expect(shortcutDisplay(tab)).toBe('Tab');
   });
 
-  it.each(['Win32', 'Linux x86_64'])('shows the plain combo on %s', async platform => {
-    const { isMac, shortcutDisplay } = await loadOn(platform);
+  it.each([
+    ['a Windows user agent', { userAgent: windows }],
+    ['a Linux user agent', { userAgent: linux }],
+    ['the Windows client hint', { userAgent: mac, userAgentData: { platform: 'Windows' } }],
+  ])('shows the plain combo on %s', async (_, navigator) => {
+    const { isMac, shortcutDisplay } = await loadOn(navigator);
     expect(isMac).toBe(false);
     expect(shortcutDisplay(save)).toBe('Ctrl + S');
   });

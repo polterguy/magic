@@ -257,12 +257,10 @@ function quoteRunLength(stream: StringStream): number {
  * overridden from its default.
  */
 declare global {
-  interface Window {
-    // The slot names the editor highlights and completes, loaded by CodeEditor.
-    _vocabulary?: string[] | null;
-    // Dynamic slots, offered as [execute:...] completions.
-    _slots?: string[];
-  }
+  // The slot names the editor highlights and completes, loaded by CodeEditor.
+  var _vocabulary: string[] | null | undefined;
+  // Dynamic slots, offered as [execute:...] completions.
+  var _slots: string[] | undefined;
 }
 
 function getNodeNameType(word: string | null): StyleName | null {
@@ -270,10 +268,10 @@ function getNodeNameType(word: string | null): StyleName | null {
    * Checking if there are any autocomplete keywords, and if not, returning
    * early.
    */
-  const win = window;
+  const win = globalThis;
   if (win._vocabulary === undefined || win._vocabulary === null) {
     const vocabulary = localStorage.getItem('vocabulary');
-    if (vocabulary === null || vocabulary === undefined || vocabulary === '') {
+    if (vocabulary === null || vocabulary === '') {
       return null;
     }
     win._vocabulary = JSON.parse(vocabulary) as string[];
@@ -289,10 +287,10 @@ function getNodeNameType(word: string | null): StyleName | null {
      * a "keyword" or an Active Event. Which type it is, depends upon if it
      * contains a "." or not.
      */
-    if (!word.includes('.')) {
-      return styles.keyword;
-    } else {
+    if (word.includes('.')) {
       return styles.activeevent;
+    } else {
+      return styles.keyword;
     }
   } else if (word?.[0] === '.') {
     /*
@@ -610,7 +608,8 @@ function tokenizeTypeOrValue(stream: StringStream, state: HyperlambdaState): Sty
      * particular type is a lambda expression or not. Expressions have
      * special treatment.
      */
-    if (stream.string.substring(stream.start, stream.pos - 1) === 'x') {
+    // The ':' was just consumed, so pos - 1 never falls before start.
+    if (stream.string.slice(stream.start, stream.pos - 1) === 'x') {
       state.is_ex = true;
     } // else, some arbitrary type, such as "bool", "int", etc ...
 
@@ -665,7 +664,7 @@ function token(stream: StringStream, state: HyperlambdaState): string | null {
  * languageData.
  */
 export function hyperlambdaCompletions(context: CompletionContext): CompletionResult | null {
-  const vocabulary = window._vocabulary;
+  const vocabulary = globalThis._vocabulary;
   if (!vocabulary) {
     return null;
   }
@@ -678,7 +677,7 @@ export function hyperlambdaCompletions(context: CompletionContext): CompletionRe
   const options: Completion[] = vocabulary
     .filter(word => word.includes(curWord))
     .map(word => ({ label: word, type: 'keyword' }));
-  const slots = window._slots ?? [];
+  const slots = globalThis._slots ?? [];
   for (const slot of slots) {
     if (slot.includes(curWord)) {
       options.push({ label: 'execute:' + slot, type: 'function' });

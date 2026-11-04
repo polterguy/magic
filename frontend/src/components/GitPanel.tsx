@@ -42,13 +42,13 @@ const UNMERGED = new Set(['DD', 'AU', 'UD', 'UA', 'DU', 'AA', 'UU']);
  * paths with unusual characters arrive quoted.
  */
 function parseChange(line: string) {
-  const code = line.substring(0, 2);
-  let path = line.substring(3);
+  const code = line.slice(0, 2);
+  let path = line.slice(3);
   if (path.includes(' -> ')) {
-    path = path.substring(path.indexOf(' -> ') + 4);
+    path = path.slice(path.indexOf(' -> ') + 4);
   }
-  if (path.startsWith('"') && path.endsWith('"')) {
-    path = path.substring(1, path.length - 1);
+  if (path.length > 1 && path.startsWith('"') && path.endsWith('"')) {
+    path = path.slice(1, -1);
   }
   return { line, code: code.trim(), path, untracked: code === '??' };
 }
@@ -90,6 +90,8 @@ function DiffLines(props: Readonly<{ diff: string | undefined }>) {
   return (
     <>
       {props.diff.split('\n').map((line, index) => (
+        // A diff is read-only text whose lines repeat freely; position is the only identity.
+        // eslint-disable-next-line react/no-array-index-key -- positional, never reordered
         <span key={index} className={diffLineClass(line)}>
           {line}
           {'\n'}
@@ -132,7 +134,7 @@ export default function GitPanel(
   const refresh = useCallback(async () => {
     try {
       const lines = (await gitStatus(props.path)) ?? [];
-      setBranchLine(lines.find(line => line.startsWith('## '))?.substring(3) ?? '');
+      setBranchLine(lines.find(line => line.startsWith('## '))?.slice(3) ?? '');
       setChanges(lines.filter(line => !line.startsWith('## ')));
       // Whatever was fetched describes the old working tree.
       setOpen({});
@@ -196,9 +198,9 @@ export default function GitPanel(
    */
   const hasUpstream = branchLine.includes('...');
   const nothingToPush = hasUpstream && !branchLine.includes('[ahead');
-  const merging = changes.some(line => UNMERGED.has(line.substring(0, 2)));
+  const merging = changes.some(line => UNMERGED.has(line.slice(0, 2)));
   const currentBranch = unborn
-    ? branchLine.substring('No commits yet on '.length)
+    ? branchLine.slice('No commits yet on '.length)
     : branchLine.split('...')[0].split(' ')[0];
   const branchOptions =
     branches.includes(currentBranch) || !currentBranch ? branches : [currentBranch, ...branches];
@@ -359,8 +361,7 @@ export default function GitPanel(
           <div className="spinner" />
           {busy && (
             <div>
-              Running Git operation
-              <span className="spinner-dots" />
+              <span className="spinner-dots">Running Git operation</span>
             </div>
           )}
         </div>
@@ -607,7 +608,7 @@ export default function GitPanel(
           <h2>Publish to GitHub</h2>
           <p>Creates a GitHub repository and pushes {props.path}</p>
           <label className="modal-label">
-            Repository name
+            Repository name{' '}
             <input
               autoFocus
               type="text"
@@ -628,11 +629,11 @@ export default function GitPanel(
               onChange={event => setPublishing({ ...publishing, isPrivate: event.target.checked })}
             />
             <span>
-              Private
+              Private{' '}
               <span className="muted">
                 {publishing.isPrivate
-                  ? ' — only you can see it'
-                  : ' — anyone can see everything in this folder'}
+                  ? '— only you can see it'
+                  : '— anyone can see everything in this folder'}
               </span>
             </span>
           </label>

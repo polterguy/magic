@@ -88,8 +88,8 @@ export default function Tour(
     element?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     // eslint-disable-next-line react-hooks/set-state-in-effect -- measuring the DOM before paint is what a layout effect is for; deferring it would paint the spotlight at the previous step's position for a frame
     measure();
-    const timer = window.setTimeout(measure, 350);
-    return () => window.clearTimeout(timer);
+    const timer = globalThis.setTimeout(measure, 350);
+    return () => globalThis.clearTimeout(timer);
   }, [step, measure]);
 
   useEffect(() => {
@@ -113,8 +113,8 @@ export default function Tour(
         setIndex(current => Math.min(current + 1, steps.length - 1));
       }
     }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    globalThis.addEventListener('keydown', onKey);
+    return () => globalThis.removeEventListener('keydown', onKey);
   }, [close, steps.length]);
 
   if (!step) {

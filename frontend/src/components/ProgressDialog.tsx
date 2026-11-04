@@ -57,6 +57,8 @@ export default function ProgressDialog(
             </div>
           ) : (
             props.lines.map((line, index) => (
+              // An append-only log whose lines may repeat word for word; position is the identity.
+              // eslint-disable-next-line react/no-array-index-key -- append-only, never reordered
               <div key={index} className={'terminal-line ' + line.type}>
                 {line.message}
               </div>

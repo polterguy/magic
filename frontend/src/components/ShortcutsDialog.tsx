@@ -41,7 +41,7 @@ export default function ShortcutsDialog(props: Readonly<{ onClose: () => void }>
                     {shortcutDisplay(shortcut)
                       .split(' + ')
                       .map((key, index) => (
-                        <span key={index}>
+                        <span key={key}>
                           {index > 0 && <span className="muted"> + </span>}
                           <kbd>{key}</kbd>
                         </span>

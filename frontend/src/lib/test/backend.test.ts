@@ -18,7 +18,7 @@ import { isRootToken, tokenExpiration, tokenExpired, tokenRoles, tokenUsername }
  */
 function makeToken(payload: object): string {
   const b64 = (o: object) =>
-    btoa(JSON.stringify(o)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    btoa(JSON.stringify(o)).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
   return `${b64({ alg: 'none', typ: 'JWT' })}.${b64(payload)}.signature`;
 }
 

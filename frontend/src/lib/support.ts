@@ -15,10 +15,8 @@ const SCRIPT_ID = 'ainiro-support-chatbot';
 
 // What the widget script hangs off window once it has loaded.
 declare global {
-  interface Window {
-    ainiro?: { show: () => void };
-    ainiro_faq_question?: (event: unknown, question: string) => void;
-  }
+  var ainiro: { show: () => void } | undefined;
+  var ainiro_faq_question: ((event: unknown, question: string) => void) | undefined;
 }
 
 /*
@@ -80,7 +78,7 @@ let loading: Promise<void> | null = null;
  * don't append two tags.
  */
 function load(): Promise<void> {
-  if (window.ainiro) {
+  if (globalThis.ainiro) {
     return Promise.resolve();
   }
   loading ??= new Promise<void>((resolve, reject) => {
@@ -95,7 +93,7 @@ function load(): Promise<void> {
       script.remove();
       reject(new Error('Could not load the support chatbot'));
     };
-    document.body.appendChild(script);
+    document.body.append(script);
   });
   return loading;
 }
@@ -104,7 +102,7 @@ function load(): Promise<void> {
 export async function openSupport() {
   try {
     await load();
-    window.ainiro?.show();
+    globalThis.ainiro?.show();
   } catch {
     showToast('Could not reach the support chatbot', true);
   }
@@ -117,7 +115,7 @@ export async function openSupport() {
 export async function askSupport(question: string) {
   try {
     await load();
-    window.ainiro_faq_question?.(null, question);
+    globalThis.ainiro_faq_question?.(null, question);
   } catch {
     showToast('Could not reach the support chatbot', true);
   }

@@ -28,7 +28,7 @@ export function useEditToken(): [number, () => void] {
  * Returns the CodeMirror mode to use for the given filename.
  */
 export function modeForFile(filename: string): string {
-  const extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+  const extension = filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
   switch (extension) {
     case 'hl':
       return 'hyperlambda';

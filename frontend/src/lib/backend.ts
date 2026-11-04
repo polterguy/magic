@@ -181,7 +181,7 @@ export function activateBackend(url: string): StoredBackend | null {
  * whatever it guessed instead of the cloudlet the link asked for.
  */
 export function backendFromUrl(): StoredBackend | null {
-  const target = new URLSearchParams(window.location.search).get('backend');
+  const target = new URLSearchParams(globalThis.location.search).get('backend');
   /*
    * The link is untrusted input, so anything that isn't an http(s) URL is
    * ignored rather than stored, keeping javascript: and data: URLs out.
@@ -278,7 +278,7 @@ export function servedByBackend(): boolean {
   if (!url) {
     return false;
   }
-  return new URL(url).origin === window.location.origin;
+  return new URL(url).origin === globalThis.location.origin;
 }
 
 /*
@@ -299,7 +299,7 @@ function tokenClaims(token: string): Record<string, unknown> | null {
   if (parts.length !== 3) {
     return null;
   }
-  return JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))) as Record<
+  return JSON.parse(atob(parts[1].replaceAll('-', '+').replaceAll('_', '/'))) as Record<
     string,
     unknown
   >;

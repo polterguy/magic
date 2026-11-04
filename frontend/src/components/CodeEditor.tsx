@@ -80,10 +80,10 @@ function ensureVocabulary() {
   if (vocabularyFrom !== apiBaseUrl()) {
     vocabularyPromise = null;
     slotDocs = {};
-    delete window._vocabulary;
-    delete window._slots;
+    delete globalThis._vocabulary;
+    delete globalThis._slots;
   }
-  if (window._vocabulary) {
+  if (globalThis._vocabulary) {
     return Promise.resolve();
   }
   vocabularyFrom = apiBaseUrl();
@@ -100,10 +100,10 @@ function ensureVocabulary() {
     http.get<string[]>('/magic/system/evaluator/slots'),
   ])
     .then(([vocabulary, slots]) => {
-      window._vocabulary = vocabulary;
+      globalThis._vocabulary = vocabulary;
       // The completion source reads _slots to offer [execute:...] completions
       // for dynamic slots.
-      window._slots = slots;
+      globalThis._slots = slots;
     })
     .catch(err => {
       // A failed fetch must not stay cached, or highlighting silently stays
@@ -125,7 +125,7 @@ function showSlotDoc(anchor: HTMLElement, name: string, description: string) {
   if (!slotDocTip) {
     slotDocTip = document.createElement('div');
     slotDocTip.className = 'slot-doc';
-    document.body.appendChild(slotDocTip);
+    document.body.append(slotDocTip);
   }
   slotDocTip.replaceChildren();
   const title = document.createElement('div');

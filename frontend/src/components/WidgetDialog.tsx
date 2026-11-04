@@ -11,7 +11,7 @@
  * iframe has no idea how tall its content is from the outside.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Modal } from './Dialogs';
 
@@ -86,13 +86,28 @@ function widgetDocument(html: string, id: string) {
 
 export default function WidgetDialog(props: Readonly<{ html: string; onClose: () => void }>) {
   // Stable per dialog, so a height message can be matched to this widget.
-  const [id] = useState(() => 'w' + Math.random().toString(36).slice(2));
+  const [id] = useState(() => {
+    const random = crypto.getRandomValues(new Uint32Array(2));
+    return 'w' + Array.from(random, part => part.toString(36)).join('');
+  });
   const [height, setHeight] = useState(240);
+  const frameRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     function onMessage(
       event: MessageEvent<{ type?: unknown; id?: unknown; height?: unknown } | null>,
     ) {
+      /*
+       * Only this dialog's own frame may resize it. The srcdoc frame keeps the
+       * page's origin (allow-same-origin), so anything else is a stranger.
+       */
+      const frame = frameRef.current;
+      if (!frame || event.source !== frame.contentWindow) {
+        return;
+      }
+      if (event.origin !== globalThis.location.origin) {
+        return;
+      }
       if (event.data?.type !== 'widget-height' || event.data?.id !== id) {
         return;
       }
@@ -122,6 +137,7 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
     <Modal width={900} onClose={props.onClose}>
       <h2 style={{ marginTop: 0 }}>Widget</h2>
       <iframe
+        ref={frameRef}
         title="Widget"
         /*
          * allow-same-origin sits alongside allow-scripts because widgets call

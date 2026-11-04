@@ -37,8 +37,8 @@ export function useUnsavedGuard(dirty: boolean, message: string) {
       }),
     );
     const beforeUnload = (event: BeforeUnloadEvent) => {
+      // Every current browser shows its leave-page prompt for a cancelled beforeunload.
       event.preventDefault();
-      event.returnValue = '';
     };
     window.addEventListener('beforeunload', beforeUnload);
     return () => {

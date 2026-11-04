@@ -20,7 +20,7 @@ function renderGuard(dirty: boolean) {
 
 function fireBeforeUnload() {
   const event = new Event('beforeunload', { cancelable: true });
-  window.dispatchEvent(event);
+  globalThis.dispatchEvent(event);
   return event;
 }
 

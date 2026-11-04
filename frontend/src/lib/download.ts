@@ -37,7 +37,7 @@ export function exportCsv(rows: Record<string, unknown>[], filename: string, col
   const names = columns ?? Object.keys(rows[0]);
   const escape = (value: CsvCell) => {
     const text = value === null || value === undefined ? '' : String(value);
-    return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+    return /[",\n]/.test(text) ? '"' + text.replaceAll('"', '""') + '"' : text;
   };
   const csv = [names.join(',')]
     .concat(rows.map(row => names.map(name => escape(row[name] as CsvCell)).join(',')))

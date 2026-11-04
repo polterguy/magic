@@ -16,7 +16,15 @@ import { createPortal } from 'react-dom';
 
 import Select from './Select';
 
-const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const WEEKDAYS = [
+  { key: 'mon', label: 'M' },
+  { key: 'tue', label: 'T' },
+  { key: 'wed', label: 'W' },
+  { key: 'thu', label: 'T' },
+  { key: 'fri', label: 'F' },
+  { key: 'sat', label: 'S' },
+  { key: 'sun', label: 'S' },
+];
 const MONTHS = [
   'January',
   'February',
@@ -135,12 +143,12 @@ export default function DateTimePicker(
     window.addEventListener('scroll', reflow, true);
     window.addEventListener('resize', reflow);
     document.addEventListener('mousedown', onDown);
-    window.addEventListener('keydown', onKey, true);
+    globalThis.addEventListener('keydown', onKey, true);
     return () => {
       window.removeEventListener('scroll', reflow, true);
       window.removeEventListener('resize', reflow);
       document.removeEventListener('mousedown', onDown);
-      window.removeEventListener('keydown', onKey, true);
+      globalThis.removeEventListener('keydown', onKey, true);
     };
   }, [open]);
 
@@ -237,16 +245,16 @@ export default function DateTimePicker(
             </div>
 
             <div className="dtp-grid dtp-dow">
-              {WEEKDAYS.map((d, i) => (
-                <span key={i} className="dtp-dow-cell">
-                  {d}
+              {WEEKDAYS.map(day => (
+                <span key={day.key} className="dtp-dow-cell">
+                  {day.label}
                 </span>
               ))}
             </div>
             <div className="dtp-grid">
-              {cells.map((d, i) => (
+              {cells.map(d => (
                 <button
-                  key={i}
+                  key={d.getTime()}
                   type="button"
                   disabled={disabledDay(d)}
                   className={

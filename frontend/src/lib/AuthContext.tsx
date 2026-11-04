@@ -187,13 +187,17 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
    * repeat the switch, and the address should not keep advertising it.
    */
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(globalThis.location.search);
     if (!params.has('backend')) {
       return;
     }
     params.delete('backend');
     const query = params.toString();
-    window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : ''));
+    globalThis.history.replaceState(
+      null,
+      '',
+      globalThis.location.pathname + (query ? '?' + query : ''),
+    );
   }, []);
 
   /*
@@ -258,12 +262,12 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
          * while the token still works.
          */
         if (!tokenExpired(backend.token!)) {
-          refreshTimer.current = window.setTimeout(refresh, 10000);
+          refreshTimer.current = globalThis.setTimeout(refresh, 10000);
         }
       }
     };
     const millisecondsUntilRefresh = Math.max(0, (exp - 60) * 1000 - Date.now());
-    refreshTimer.current = window.setTimeout(refresh, millisecondsUntilRefresh);
+    refreshTimer.current = globalThis.setTimeout(refresh, millisecondsUntilRefresh);
     return () => {
       if (refreshTimer.current) {
         clearTimeout(refreshTimer.current);

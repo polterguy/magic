@@ -97,8 +97,8 @@ export default function ImportApiTab() {
 
       const guess = (result.title ?? 'imported-api')
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '');
+        .replaceAll(/[^a-z0-9]+/g, '-')
+        .replaceAll(/^-|-$/g, '');
       setModuleName(guess);
       setConfigKey('magic:integrations:' + guess + ':key');
 
@@ -198,7 +198,7 @@ export default function ImportApiTab() {
         }
         node = node[segment] as Record<string, unknown>;
       });
-      node[segments[segments.length - 1]] = value;
+      node[String(segments.at(-1))] = value;
       await saveConfig(config);
       showToast('Credential stored in your configuration');
       setCredential(null);
@@ -297,11 +297,11 @@ export default function ImportApiTab() {
 
           <div className="form-grid columns">
             <label>
-              Module name
+              Module name{' '}
               <input type="text" value={moduleName} onChange={e => setModuleName(e.target.value)} />
             </label>
             <label>
-              Base URL
+              Base URL{' '}
               <input type="text" value={baseUrl} onChange={e => setBaseUrl(e.target.value)} />
             </label>
             <label>
@@ -366,7 +366,7 @@ export default function ImportApiTab() {
               type="checkbox"
               checked={overwrite}
               onChange={e => setOverwrite(e.target.checked)}
-            />
+            />{' '}
             Overwrite existing files
           </label>
 
@@ -544,7 +544,7 @@ export default function ImportApiTab() {
           </p>
           <div className="form-grid" style={{ marginTop: 16 }}>
             <label>
-              Credential
+              Credential{' '}
               <input
                 type="password"
                 autoFocus

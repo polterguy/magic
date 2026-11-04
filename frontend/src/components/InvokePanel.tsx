@@ -68,7 +68,7 @@ function samplePayload(endpoint: Endpoint) {
         payload[argument.name] = 'foo';
     }
   }
-  return JSON.stringify(payload, null, 2).replace(/"__wildcard__"/g, '*');
+  return JSON.stringify(payload, null, 2).replaceAll('"__wildcard__"', '*');
 }
 
 function isValidJson(text: string) {
@@ -140,9 +140,12 @@ export default function InvokePanel(
    * per endpoint, gone when the browser tab closes.
    */
   const storageKey = 'magic2.invoke.' + endpoint.verb + ':' + endpoint.path;
-  const [args, setArgs] = useState<Record<string, string>>(() => {
+  // Partial, since an argument never typed into has no entry at all.
+  const [args, setArgs] = useState<Partial<Record<string, string>>>(() => {
     try {
-      return JSON.parse(sessionStorage.getItem(storageKey) ?? '{}') as Record<string, string>;
+      return JSON.parse(sessionStorage.getItem(storageKey) ?? '{}') as Partial<
+        Record<string, string>
+      >;
     } catch {
       return {};
     }
@@ -216,7 +219,7 @@ export default function InvokePanel(
 
   const description = endpoint.description ?? '';
   const period = description.indexOf('. ');
-  const shortDescription = period === -1 ? description : description.substring(0, period + 1);
+  const shortDescription = period === -1 ? description : description.slice(0, period + 1);
 
   // Socket endpoints and binary payloads can't be invoked from here.
   const canInvoke =
@@ -285,7 +288,7 @@ export default function InvokePanel(
     } else if (!usesQuery) {
       lines.push(
         '-H "Content-Type: ' + (endpoint.consumes ?? 'application/json') + '"',
-        "-d '" + payload.replace(/'/g, String.raw`'\''`) + "'",
+        "-d '" + payload.replaceAll("'", String.raw`'\''`) + "'",
       );
     }
     void copyToClipboard(lines.join(' \\\n  '), 'The cURL command');
@@ -478,7 +481,7 @@ export default function InvokePanel(
                    * just the same, and the label can look like any button.
                    */}
                   <label className="btn btn-secondary" style={{ alignSelf: 'flex-start' }}>
-                    Choose files…
+                    Choose files…{' '}
                     <input
                       type="file"
                       multiple
@@ -501,14 +504,14 @@ export default function InvokePanel(
                         gap: 4,
                       }}
                     >
-                      {selected.map((file, index) => (
+                      {selected.map(file => (
                         <FileChip
-                          key={index}
+                          key={fileKey(file)}
                           file={file}
                           onRemove={() =>
                             setFiles({
                               ...files,
-                              [argument.name]: selected.filter((_, i) => i !== index),
+                              [argument.name]: selected.filter(other => other !== file),
                             })
                           }
                         />
@@ -605,6 +608,22 @@ export default function InvokePanel(
  * One picked file. Images get a thumbnail rendered straight onto the form,
  * so what's about to be uploaded is visible without opening anything.
  */
+/*
+ * A key per picked file. Every picking hands over new File objects, so the
+ * object is the file's identity — two picks of the same file are two chips.
+ */
+const fileKeys = new WeakMap<File, number>();
+let lastFileKey = 0;
+function fileKey(file: File) {
+  let key = fileKeys.get(file);
+  if (key === undefined) {
+    lastFileKey += 1;
+    key = lastFileKey;
+    fileKeys.set(file, key);
+  }
+  return key;
+}
+
 function FileChip({ file, onRemove }: Readonly<{ file: File; onRemove: () => void }>) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   // Only an image has a thumbnail.

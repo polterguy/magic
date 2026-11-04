@@ -16,8 +16,8 @@ import { showError } from './errors';
 export function useDebounced<T>(value: T, delayMs = 300): T {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
-    const timer = window.setTimeout(() => setDebounced(value), delayMs);
-    return () => window.clearTimeout(timer);
+    const timer = globalThis.setTimeout(() => setDebounced(value), delayMs);
+    return () => globalThis.clearTimeout(timer);
   }, [value, delayMs]);
   return debounced;
 }

@@ -5,8 +5,8 @@
  */
 
 import {
-  FormEvent,
   ReactNode,
+  SubmitEvent,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -114,18 +114,20 @@ export function Modal(
     if (event.key !== 'Tab' || !boxRef.current) {
       return;
     }
-    const focusable = boxRef.current.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input:not([disabled]), ' +
-        'textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    );
+    const focusable = [
+      ...boxRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), ' +
+          'textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    ];
     if (focusable.length === 0) {
       return;
     }
     const first = focusable[0];
-    const last = focusable[focusable.length - 1];
+    const last = focusable.at(-1) ?? first;
     if (event.shiftKey && document.activeElement === first) {
       event.preventDefault();
-      last.focus();
+      last?.focus();
     } else if (!event.shiftKey && document.activeElement === last) {
       event.preventDefault();
       first.focus();
@@ -153,8 +155,8 @@ export function Modal(
       }
       onCloseRef.current();
     };
-    window.addEventListener('keydown', handler, true);
-    return () => window.removeEventListener('keydown', handler, true);
+    globalThis.addEventListener('keydown', handler, true);
+    return () => globalThis.removeEventListener('keydown', handler, true);
   }, [id]);
 
   return (
@@ -285,7 +287,7 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
     setActive(null);
   }
 
-  function submit(event: FormEvent) {
+  function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     switch (active!.kind) {
       case 'confirm':
