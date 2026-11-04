@@ -1,8 +1,9 @@
-import { copyToClipboard, showToast } from '../lib/toast';
+import { copyToClipboard } from '../lib/toast';
+import { showError } from '../lib/errors';
 import { CopyIcon } from '../components/Icons';
 import SearchInput from '../components/SearchInput';
 import { useSearchParams } from 'react-router-dom';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LogItem, countLog, listLog } from '../lib/api';
 import { TableSkeleton } from '../components/Skeleton';
 import { useDebounced } from '../lib/usePagedList';
@@ -17,73 +18,95 @@ export default function Log() {
   const [expanded, setExpanded] = useState<number | null>(null);
   // Stack of "from" ids used to page backwards through the log.
   const [fromStack, setFromStack] = useState<number[]>([]);
-  // Disables the pagers while a page is in flight, so rapid clicks can't
-  // push several "from" ids and race their responses.
-  const [loading, setLoading] = useState(false);
-  // Only the newest request may paint — typing fires one per (debounced)
-  // change, and whichever answers last would win otherwise.
-  const seq = useRef(0);
   const debouncedQuery = useDebounced(query);
   // The entry a ?id= deep link pointed at, marked in the list.
   const [highlight, setHighlight] = useState<number | null>(null);
+  // Bumped by a deep link, so following one reloads even when it lands on the page already shown.
+  const [linkTick, setLinkTick] = useState(0);
 
-  const load = useCallback(async (from: number | null, filter: string) => {
-    const current = ++seq.current;
-    setLoading(true);
-    try {
-      const [logItems, logCount] = await Promise.all([
-        listLog(from, PAGE_SIZE, filter || undefined),
-        countLog(filter || undefined),
-      ]);
-      if (current !== seq.current) {
-        return;
-      }
-      setItems(logItems ?? []);
-      setCount(logCount.count);
-    } catch (err: any) {
-      if (current === seq.current) {
-        showToast(err.message, true, err.logId);
-      }
-    } finally {
-      if (current === seq.current) {
-        setLoading(false);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    load(null, debouncedQuery);
+  // A changed filter starts over from the head of the log.
+  const [stackQuery, setStackQuery] = useState(debouncedQuery);
+  if (stackQuery !== debouncedQuery) {
+    setStackQuery(debouncedQuery);
     setFromStack([]);
-  }, [load, debouncedQuery]);
+  }
 
   /*
    * ?id= deep links — error toasts link here with the id of the log entry
    * behind the error. Paging starts just above that id so the entry is the
    * top row, and "‹ Newer" walks back to the head of the log. Consumed
-   * once, and declared after the initial load so this request wins.
+   * once: the parameter is dropped from the URL right after.
    */
   const [searchParams, setSearchParams] = useSearchParams();
-  useEffect(() => {
-    const target = searchParams.get('id');
+  const target = searchParams.get('id');
+  const [linkedTarget, setLinkedTarget] = useState<string | null>(null);
+  if (linkedTarget !== target) {
+    setLinkedTarget(target);
     if (target !== null) {
-      const from = Number(target) + 1;
-      setFromStack([from]);
+      setFromStack([Number(target) + 1]);
       setHighlight(Number(target));
-      load(from, '');
+      setLinkTick(tick => tick + 1);
+    }
+  }
+  useEffect(() => {
+    if (target !== null) {
       setSearchParams({}, { replace: true });
     }
-  }, [searchParams, setSearchParams, load]);
+  }, [target, setSearchParams]);
+
+  /*
+   * The page shown is derived from the paging stack and the filter. Loading is
+   * derived too: the pagers are disabled until the request for the current page
+   * has settled, so rapid clicks can't push several "from" ids and race their
+   * responses. Only the newest request may paint — typing fires one per
+   * (debounced) change, and whichever answers last would win otherwise.
+   */
+  const from = fromStack.at(-1) ?? null;
+  const filter = debouncedQuery;
+  const requestKey = JSON.stringify([from, filter, linkTick]);
+  const [settledKey, setSettledKey] = useState<string | null>(null);
+  const loading = settledKey !== requestKey;
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([listLog(from, PAGE_SIZE, filter || undefined), countLog(filter || undefined)])
+      .then(([logItems, logCount]) => {
+        if (cancelled) {
+          return;
+        }
+        setItems(logItems ?? []);
+        setCount(logCount.count);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          showError(err);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setSettledKey(requestKey);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [requestKey, from, filter]);
 
   // Deep-linked entries open expanded — the details are what you came for.
-  useEffect(() => {
-    if (highlight === null || items === null) {
-      return;
-    }
-    const hit = items.find(item => Number(item.id) === highlight);
+  const [expandedFor, setExpandedFor] = useState<{
+    items: LogItem[] | null;
+    highlight: number | null;
+  }>({ items: null, highlight: null });
+  if (expandedFor.items !== items || expandedFor.highlight !== highlight) {
+    setExpandedFor({ items, highlight });
+    const hit =
+      highlight === null || items === null
+        ? undefined
+        : items.find(item => Number(item.id) === highlight);
     if (hit && (hit.exception || hit.meta)) {
       setExpanded(hit.id);
     }
-  }, [items, highlight]);
+  }
 
   function nextPage() {
     if (!items || items.length === 0) {
@@ -91,14 +114,12 @@ export default function Log() {
     }
     const last = items[items.length - 1].id;
     setFromStack([...fromStack, last]);
-    load(last, debouncedQuery);
   }
 
   function previousPage() {
     const stack = [...fromStack];
     stack.pop();
     setFromStack(stack);
-    load(stack.at(-1) ?? null, debouncedQuery);
   }
 
   return (

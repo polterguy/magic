@@ -1,4 +1,4 @@
-import { showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import SearchInput from '../components/SearchInput';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -126,7 +126,7 @@ export default function Endpoints() {
   useEffect(() => {
     listEndpoints()
       .then(setEndpoints)
-      .catch(err => showToast(err.message, true, err.logId))
+      .catch((err: unknown) => showError(err))
       .finally(() => setLoading(false));
   }, []);
 
@@ -138,34 +138,40 @@ export default function Endpoints() {
   // The row key to bring into view when it appears — consumed by its ref.
   const scrollTarget = useRef<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  useEffect(() => {
-    const target = searchParams.get('filter');
-    const wantsPublicOnly = searchParams.get('publicOnly') === '1';
-    if (wantsPublicOnly) {
+  const linkFilter = searchParams.get('filter');
+  const linkPublicOnly = searchParams.get('publicOnly') === '1';
+  const linkVerb = searchParams.get('expand');
+  const link = searchParams.toString();
+  const [consumedLink, setConsumedLink] = useState('');
+  if (consumedLink !== link) {
+    setConsumedLink(link);
+    if (linkPublicOnly) {
       setPublicOnly(true);
     }
-    if (target !== null) {
-      setFilter(target);
+    if (linkFilter !== null) {
+      setFilter(linkFilter);
       // A deep link into a system endpoint must also reveal system endpoints,
       // or the filter matches an empty list.
-      if (target.startsWith('magic/system/')) {
+      if (linkFilter.startsWith('magic/system/')) {
         setShowSystem(true);
       }
       /*
        * The command palette names the exact verb too — that row opens its
        * invoke panel by itself and scrolls into view once rendered.
        */
-      const verb = searchParams.get('expand');
-      if (verb !== null) {
-        const key = verb + ' ' + target;
-        setExpanded(key);
-        scrollTarget.current = key;
+      if (linkVerb !== null) {
+        setExpanded(linkVerb + ' ' + linkFilter);
       }
     }
-    if (target !== null || wantsPublicOnly) {
+  }
+  useEffect(() => {
+    if (linkFilter !== null && linkVerb !== null) {
+      scrollTarget.current = linkVerb + ' ' + linkFilter;
+    }
+    if (linkFilter !== null || linkPublicOnly) {
       setSearchParams({}, { replace: true });
     }
-  }, [searchParams, setSearchParams]);
+  }, [linkFilter, linkVerb, linkPublicOnly, setSearchParams]);
 
   const query = filter.trim().toLowerCase();
 
@@ -193,8 +199,8 @@ export default function Endpoints() {
     try {
       const spec = await getOpenApiSpec(target);
       setOpenApiSpec({ json: JSON.stringify(spec, null, 2), target });
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -205,13 +211,13 @@ export default function Endpoints() {
    * source has to be fetched before it can be recorded — the debugger takes
    * Hyperlambda, not an endpoint URL.
    */
-  async function runDebug(endpoint: Endpoint, args: Record<string, any>) {
+  async function runDebug(endpoint: Endpoint, args: Record<string, unknown>) {
     const file = sourceFile(endpoint);
     setWaiting(true);
     try {
       setRecording({ file, steps: await debugHyperlambda(await loadFile(file), args) });
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }

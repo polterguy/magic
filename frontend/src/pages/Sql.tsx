@@ -5,9 +5,11 @@ import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
 import { useSessionState } from '../lib/useSessionState';
 import type { EditorView } from '@codemirror/view';
-import CodeEditor, { editorSelection, useEditToken } from '../components/CodeEditor';
+import CodeEditor from '../components/CodeEditor';
+import { editorSelection, useEditToken } from '../lib/editor';
 import { SparkIcon } from '../components/Icons';
-import { Modal, useDialog } from '../components/Dialogs';
+import { Modal } from '../components/Dialogs';
+import { useDialog } from '../lib/useDialog';
 import Tabs from '../components/Tabs';
 import Select from '../components/Select';
 import { CardGridSkeleton } from '../components/Skeleton';
@@ -824,7 +826,8 @@ function formatCell(value: unknown) {
     return JSON.stringify(value);
   }
   // A JSON result cell: what is left is a string, number or boolean.
-  return String(value as string | number | boolean);
+  const scalar = value as string | number | boolean;
+  return String(scalar);
 }
 
 /*

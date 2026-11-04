@@ -1,14 +1,17 @@
 import { showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import Select from '../components/Select';
 import DateTimePicker from '../components/DateTimePicker';
 import SearchInput from '../components/SearchInput';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import CodeEditor, { useEditToken } from '../components/CodeEditor';
+import CodeEditor from '../components/CodeEditor';
+import { useEditToken } from '../lib/editor';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
 import Pagination from '../components/Pagination';
-import { Modal, useDialog } from '../components/Dialogs';
+import { Modal } from '../components/Dialogs';
+import { useDialog } from '../lib/useDialog';
 import { TableSkeleton } from '../components/Skeleton';
 import { usePagedList } from '../lib/usePagedList';
 import {
@@ -63,8 +66,8 @@ export default function Tasks() {
     setWaiting(true);
     try {
       setEditing({ task: await getTask(id), isNew: false });
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -112,8 +115,8 @@ export default function Tasks() {
     try {
       await executeTask(task.id);
       showToast('Task ' + task.id + ' executed');
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -138,8 +141,8 @@ export default function Tasks() {
       await deleteTask(task.id);
       showToast('Task ' + task.id + ' deleted');
       list.refresh();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -167,8 +170,8 @@ export default function Tasks() {
     try {
       await deleteSchedule(schedule.id);
       list.refresh();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -184,8 +187,8 @@ export default function Tasks() {
       setScheduling(null);
       showToast('Schedule added to ' + scheduling.id);
       list.refresh();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -369,8 +372,8 @@ function TaskDialog(
       }
       setSaved({ description, code });
       props.onSaved(id, props.isNew);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -534,7 +537,7 @@ function ScheduleDialog(
               </div>
               <div style={{ marginTop: 6 }}>
                 Use <strong className="mono">**</strong> as a wildcard for the months, days or
-                weekdays part, meaning "every one of them". Give several values with{' '}
+                weekdays part, meaning &quot;every one of them&quot;. Give several values with{' '}
                 <strong className="mono">|</strong> between them. Hours, minutes and seconds are
                 always exact — they take no wildcard.
               </div>

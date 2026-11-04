@@ -1,12 +1,15 @@
 import { copyToClipboard, showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import AiWaiter from '../components/AiWaiter';
 import Select from '../components/Select';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Modal, useDialog } from '../components/Dialogs';
+import { Modal } from '../components/Dialogs';
+import { useDialog } from '../lib/useDialog';
 import { TableSkeleton } from '../components/Skeleton';
 import Tabs from '../components/Tabs';
 import {
+  DatabaseMeta,
   addConnectionString,
   createDatabase,
   deleteConnectionString,
@@ -55,25 +58,23 @@ export default function Databases() {
  * Internal SQLite databases — list, create, delete, backup up/down.
  */
 function InternalTab() {
-  const [databases, setDatabases] = useState<any[]>([]);
+  const [databases, setDatabases] = useState<DatabaseMeta[]>([]);
   const [name, setName] = useState('');
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const { prompt } = useDialog();
 
-  const refresh = useCallback(async () => {
-    try {
-      const response = await listDatabases('sqlite', 'generic');
-      setDatabases(response.databases ?? []);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const refresh = useCallback(
+    () =>
+      listDatabases('sqlite', 'generic')
+        .then(response => setDatabases(response.databases ?? []))
+        .catch((err: unknown) => showError(err))
+        .finally(() => setLoading(false)),
+    [],
+  );
 
   useEffect(() => {
-    refresh();
+    void refresh();
   }, [refresh]);
 
   async function create() {
@@ -87,8 +88,8 @@ function InternalTab() {
       showToast('Database ' + name + ' created');
       setName('');
       await refresh();
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -112,8 +113,8 @@ function InternalTab() {
       await dropDatabase('sqlite', 'generic', database);
       showToast('Database ' + database + ' deleted');
       await refresh();
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -129,8 +130,8 @@ function InternalTab() {
       await uploadDatabaseBackup(file);
       showToast('Backup ' + file.name + ' uploaded');
       await refresh();
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -248,51 +249,52 @@ function ExternalTab() {
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [managing, setManaging] = useState<string | null>(null);
-  const [catalogs, setCatalogs] = useState<{ row: ConnectionRow; list: any[] } | null>(null);
+  const [catalogs, setCatalogs] = useState<{ row: ConnectionRow; list: DatabaseMeta[] } | null>(
+    null,
+  );
   const { confirm, prompt } = useDialog();
 
-  const refresh = useCallback(async () => {
-    try {
-      const config = await loadConfig();
-      const found: ConnectionRow[] = [];
-      for (const dbType of EXTERNAL_TYPES.map(entry => entry.type)) {
-        // Next to the per-type maps sits "default", a plain string naming the default type.
-        const entry = config?.magic?.databases?.[dbType];
-        const connections = typeof entry === 'object' ? entry : {};
-        for (const key of Object.keys(connections)) {
-          found.push({
-            type: dbType,
-            name: key,
-            connectionString: connections[key],
-            status: 'testing',
-          });
-        }
-      }
-      setRows(found);
-      for (const row of found) {
-        testConnectionString(row.type, row.connectionString)
-          .then(response => updateStatus(row, response.result === 'success' ? 'live' : 'down'))
-          .catch(() => updateStatus(row, 'down'));
-      }
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  function updateStatus(row: ConnectionRow, status: 'live' | 'down') {
-    setRows(current =>
-      current.map(candidate =>
-        candidate.type === row.type && candidate.name === row.name
-          ? { ...candidate, status }
-          : candidate,
-      ),
-    );
-  }
+  const refresh = useCallback(
+    () =>
+      loadConfig()
+        .then(config => {
+          const found: ConnectionRow[] = [];
+          for (const dbType of EXTERNAL_TYPES.map(entry => entry.type)) {
+            // Next to the per-type maps sits "default", a plain string naming the default type.
+            const entry = config?.magic?.databases?.[dbType];
+            const connections = typeof entry === 'object' ? entry : {};
+            for (const key of Object.keys(connections)) {
+              found.push({
+                type: dbType,
+                name: key,
+                connectionString: connections[key],
+                status: 'testing',
+              });
+            }
+          }
+          setRows(found);
+          const updateStatus = (row: ConnectionRow, status: 'live' | 'down') => {
+            setRows(current =>
+              current.map(candidate =>
+                candidate.type === row.type && candidate.name === row.name
+                  ? { ...candidate, status }
+                  : candidate,
+              ),
+            );
+          };
+          for (const row of found) {
+            testConnectionString(row.type, row.connectionString)
+              .then(response => updateStatus(row, response.result === 'success' ? 'live' : 'down'))
+              .catch(() => updateStatus(row, 'down'));
+          }
+        })
+        .catch((err: unknown) => showError(err))
+        .finally(() => setLoading(false)),
+    [],
+  );
 
   useEffect(() => {
-    refresh();
+    void refresh();
   }, [refresh]);
 
   async function testOrConnect(connectAfter: boolean) {
@@ -336,8 +338,8 @@ function ExternalTab() {
       setName('');
       setConnectionString('');
       await refresh();
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -361,8 +363,8 @@ function ExternalTab() {
       await deleteConnectionString(row.type, row.name);
       showToast('Connection ' + row.name + ' deleted');
       await refresh();
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -386,8 +388,8 @@ function ExternalTab() {
     try {
       await createDatabase(row.type, row.name, catalogName);
       showToast('Catalog ' + catalogName + ' created');
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -398,8 +400,8 @@ function ExternalTab() {
     try {
       const response = await listDatabases(row.type, row.name);
       setCatalogs({ row, list: response.databases ?? [] });
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setManaging(null);
     }
@@ -422,8 +424,8 @@ function ExternalTab() {
     try {
       await dropDatabase(row.type, row.name, catalog);
       await manageCatalogs(row);
-    } catch (err: any) {
-      showToast(err.message, true);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }

@@ -1,11 +1,13 @@
 import { showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import Select from '../components/Select';
 import { explainHyperlambda } from '../lib/support';
 import { useEffect, useState } from 'react';
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
-import CodeEditor, { useEditToken } from '../components/CodeEditor';
-import { useDialog } from '../components/Dialogs';
+import CodeEditor from '../components/CodeEditor';
+import { useEditToken } from '../lib/editor';
+import { useDialog } from '../lib/useDialog';
 import { aiContextForFile, evaluate, listFiles, loadFile, saveFile } from '../lib/api';
 import { useSessionState } from '../lib/useSessionState';
 
@@ -60,10 +62,11 @@ export default function Playground() {
       let display = raw;
       let mode = 'text/plain';
       try {
-        const parsed = JSON.parse(raw);
+        const parsed: unknown = JSON.parse(raw);
         if (
           parsed &&
           typeof parsed === 'object' &&
+          'result' in parsed &&
           typeof parsed.result === 'string' &&
           Object.keys(parsed).length === 1
         ) {
@@ -77,8 +80,8 @@ export default function Playground() {
       }
       setResult(display);
       setResultMode(mode);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
       setResult('');
     } finally {
       setBusy(false);
@@ -112,8 +115,8 @@ export default function Playground() {
       setCode(text);
       bumpCodeEditId();
       setSavedCode(text);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -141,8 +144,8 @@ export default function Playground() {
         setSnippets([...snippets, filename].sort((a, b) => a.localeCompare(b)));
       }
       showToast('Saved ' + filename, false);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
