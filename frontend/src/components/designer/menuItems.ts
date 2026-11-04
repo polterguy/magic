@@ -72,7 +72,7 @@ export function designerMenuItems(o: DesignerMenuOptions): MenuItem[] {
     {
       label: 'Add a script file',
       hint: path
-        ? 'Creates ' + companionFile(path, 'js').substring(WEB_ROOT.length) + ' and links it'
+        ? 'Creates ' + companionFile(path, 'js').slice(WEB_ROOT.length) + ' and links it'
         : 'Creates a script file for this page and links it',
       /*
        * Disabled only once THIS page's own same-named script exists —
@@ -88,7 +88,7 @@ export function designerMenuItems(o: DesignerMenuOptions): MenuItem[] {
     {
       label: 'Add a stylesheet',
       hint: path
-        ? 'Creates ' + companionFile(path, 'css').substring(WEB_ROOT.length) + ' and links it'
+        ? 'Creates ' + companionFile(path, 'css').slice(WEB_ROOT.length) + ' and links it'
         : 'Creates a stylesheet for this page and links it',
       disabled: !path || busy || sheets.includes(companionFile(path, 'css')),
       onClick: () => addCompanionFile('css'),

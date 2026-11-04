@@ -158,7 +158,7 @@ function resolve(address: string, href: string) {
 
 export function absoluteUrls(css: string, href: string): string {
   return css
-    .replace(
+    .replaceAll(
       /\burl\(\s*(?:"([^"]*)"|'([^']*)'|([^'")\s]+))\s*\)/gi,
       (
         whole: string,
@@ -179,7 +179,7 @@ export function absoluteUrls(css: string, href: string): string {
           : 'url(' + quote + resolve(address, href) + quote + ')';
       },
     )
-    .replace(/@import\s+(['"])([^'"]+)\1/gi, (whole: string, quote: string, address: string) =>
+    .replaceAll(/@import\s+(['"])([^'"]+)\1/gi, (whole: string, quote: string, address: string) =>
       ABSOLUTE.test(address) ? whole : '@import ' + quote + resolve(address, href) + quote,
     );
 }
@@ -303,13 +303,13 @@ export function splitCss(css: string): { head: string; overrides: Overrides; tai
   if (opening.at === -1) {
     return { head: css, overrides: {}, tail: '' };
   }
-  const head = css.substring(0, opening.at);
-  const after = css.substring(opening.at + opening.marker.length);
+  const head = css.slice(0, opening.at);
+  const after = css.slice(opening.at + opening.marker.length);
   // The closing marker matches whichever opening one was found.
   const closeMarker = opening.marker === OPEN ? CLOSE : CLOSE_WAS;
   const close = after.indexOf(closeMarker);
-  const body = close === -1 ? after : after.substring(0, close);
-  let tail = close === -1 ? '' : after.substring(close + closeMarker.length);
+  const body = close === -1 ? after : after.slice(0, close);
+  let tail = close === -1 ? '' : after.slice(close + closeMarker.length);
 
   const overrides: Overrides = {};
   const rescued: string[] = [];

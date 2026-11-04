@@ -28,10 +28,10 @@ export default function CodePane(
           title="The file in the editor"
           onChange={event => props.switchCodeTarget(event.target.value)}
         >
-          <option value={path}>{path.substring(WEB_ROOT.length)}</option>
+          <option value={path}>{path.slice(WEB_ROOT.length)}</option>
           {[...sheets, ...scripts].map(file => (
             <option key={file} value={file}>
-              {file.substring(WEB_ROOT.length)}
+              {file.slice(WEB_ROOT.length)}
             </option>
           ))}
         </select>

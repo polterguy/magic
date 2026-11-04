@@ -63,7 +63,7 @@ const KINDS: Record<
 };
 
 function extensionOf(file: string) {
-  return file.substring(file.lastIndexOf('.') + 1).toLowerCase();
+  return file.slice(file.lastIndexOf('.') + 1).toLowerCase();
 }
 
 /*
@@ -76,7 +76,7 @@ function extensionOf(file: string) {
  * thing from every page on the site.
  */
 function webPath(file: string) {
-  return file.substring(WEB_ROOT.length);
+  return file.slice(WEB_ROOT.length);
 }
 
 export interface Picked {
@@ -92,7 +92,7 @@ export interface Picked {
  */
 function folderOf(current: string) {
   const at = current.lastIndexOf('/');
-  return at > 0 ? current.substring(0, at) : '';
+  return at > 0 ? current.slice(0, at) : '';
 }
 
 function countLabel(shown: number, total: number) {
@@ -180,7 +180,7 @@ export default function Media(
     );
     const byFolder = new Map<string, string[]>();
     matching.forEach(file => {
-      const at = webPath(file.substring(0, file.lastIndexOf('/'))) || '/';
+      const at = webPath(file.slice(0, Math.max(0, file.lastIndexOf('/')))) || '/';
       byFolder.set(at, [...(byFolder.get(at) ?? []), file]);
     });
     return Array.from(byFolder.entries()).sort((a, b) => a[0].localeCompare(b[0]));
@@ -189,7 +189,9 @@ export default function Media(
   // Every folder that already holds one of these, plus the web root itself.
   const folders = useMemo(() => {
     const all = new Set<string>(['']);
-    (files ?? []).forEach(file => all.add(webPath(file.substring(0, file.lastIndexOf('/')))));
+    (files ?? []).forEach(file =>
+      all.add(webPath(file.slice(0, Math.max(0, file.lastIndexOf('/'))))),
+    );
     return Array.from(all).sort((a, b) => a.localeCompare(b));
   }, [files]);
 
@@ -303,7 +305,7 @@ export default function Media(
                   >
                     {preview(file, path)}
                     <span className="designer-image-name">
-                      {path.substring(path.lastIndexOf('/') + 1)}
+                      {path.slice(path.lastIndexOf('/') + 1)}
                     </span>
                     <span className="designer-image-size">
                       {size ? size[0] + ' × ' + size[1] : ''}

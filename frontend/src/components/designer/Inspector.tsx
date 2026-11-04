@@ -18,7 +18,7 @@ import { CopyIcon, TrashIcon } from '../Icons';
 import { dataGridSources, DataSource, loadEndpoints } from './dataSources';
 import { hasSlot, SERVER_FILLED } from './html';
 import { KIND_FOR_TAG } from './mediaKinds';
-import { isText, labelOf } from './nodes';
+import { isText, keyOf, labelOf } from './nodes';
 
 // Attributes with a control of their own, or that belong to the designer.
 const OWN = new Set(['class', 'id', 'style', 'contenteditable']);
@@ -424,9 +424,9 @@ export default function Inspector(
 
   const crumbs = (
     <div className="designer-crumbs">
-      {chain.map((parent, index) => (
+      {chain.map(parent => (
         <button
-          key={index}
+          key={keyOf(parent)}
           className="designer-crumb"
           title={'Select this ' + labelOf(parent)}
           onClick={() => props.onSelect(parent)}
@@ -799,7 +799,7 @@ export default function Inspector(
                         checked={deleteOn}
                         disabled={!currentSource.deleteUrl}
                         onChange={event => toggleDelete(event.target.checked)}
-                      />
+                      />{' '}
                       Allow delete
                     </label>
                     <label
@@ -815,7 +815,7 @@ export default function Inspector(
                         checked={editOn}
                         disabled={!currentSource.updateUrl}
                         onChange={event => toggleEdit(event.target.checked)}
-                      />
+                      />{' '}
                       Allow inline editing
                     </label>
                     <label className="checkbox-row">
@@ -854,8 +854,8 @@ export default function Inspector(
              */
             const creatable = sources?.filter(source => source.createUrl) ?? null;
             const data = (element as HTMLElement).dataset;
-            const currentSource =
-              creatable?.find(source => source.createUrl === data.createUrl) ?? null;
+            const createUrl = data.createUrl ?? null;
+            const currentSource = creatable?.find(source => source.createUrl === createUrl) ?? null;
             const currentFields = gridColumns(data.columns ?? null);
 
             /*

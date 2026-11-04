@@ -24,6 +24,24 @@ export function isElement(node: Node): node is Element {
 }
 
 /*
+ * A React key for a node. Nodes carry no identity of their own that survives
+ * an edit (an id is optional, a label is shared), so each one is handed a
+ * number the first time it is asked for, held only as long as the node is.
+ */
+const nodeKeys = new WeakMap<Node, string>();
+let nextNodeKey = 0;
+
+export function keyOf(node: Node): string {
+  let key = nodeKeys.get(node);
+  if (key === undefined) {
+    nextNodeKey += 1;
+    key = 'node-' + nextNodeKey;
+    nodeKeys.set(node, key);
+  }
+  return key;
+}
+
+/*
  * The element a node's styles belong to. Text has no styles of its own, so
  * styling a run means styling whatever contains it — which is what anybody
  * means when they pick a colour with a sentence selected.
@@ -146,7 +164,7 @@ export function labelOf(node: Node): string {
     return node.textContent ?? '{{}}';
   }
   if (isText(node)) {
-    const text = node.data.trim().replace(/\s+/g, ' ');
+    const text = node.data.trim().replaceAll(/\s+/g, ' ');
     return text.length > 26 ? '"' + text.slice(0, 26) + '…"' : '"' + text + '"';
   }
   if (!isElement(node)) {

@@ -32,7 +32,7 @@ export const WIDGET_ASSET_HREFS = ['/assets/magic-widgets.js', '/assets/magic-wi
  * Bump only the file you actually touched. Editing the .js and leaving the
  * .css alone bumps only '/assets/magic-widgets.js'.
  */
-export const CANONICAL_VERSIONS: Record<string, number> = {
+export const CANONICAL_VERSIONS: Partial<Record<string, number>> = {
   '/assets/magic-widgets.js': 3,
   '/assets/magic-widgets.css': 2,
 };

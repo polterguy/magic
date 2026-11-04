@@ -46,7 +46,7 @@ function NewPageNote(
             {addCss && addJs ? ' / ' : ''}
             {addJs ? '.js' : ''}
           </code>
-          , linked from it.
+          {', linked from it.'}
         </>
       )}
     </p>
@@ -126,7 +126,7 @@ export default function NewPage(
               type="checkbox"
               checked={addCss}
               onChange={event => setAddCss(event.target.checked)}
-            />
+            />{' '}
             Create a stylesheet for it too
           </label>
         )}
@@ -136,7 +136,7 @@ export default function NewPage(
               type="checkbox"
               checked={addJs}
               onChange={event => setAddJs(event.target.checked)}
-            />
+            />{' '}
             Create a script for it too
           </label>
         )}

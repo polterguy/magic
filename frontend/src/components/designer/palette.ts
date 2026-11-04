@@ -429,7 +429,7 @@ export function customBlock(name: string): Block | null {
   const tagName = name
     .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '');
+    .replaceAll(/[^a-z0-9-]/g, '');
   if (tagName === '') {
     return null;
   }

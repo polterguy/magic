@@ -20,7 +20,7 @@ export function useCloudlet() {
    * because they ARE the same origin — so Live is sandboxed harder and the
    * trade-off is said out loud once.
    */
-  const sameOrigin = origin !== '' && origin === window.location.origin;
+  const sameOrigin = origin !== '' && origin === globalThis.location.origin;
   const warnedKey = 'magic2.designer.live-warning.' + (backend?.url ?? '');
   const [liveWarned, setLiveWarned] = useState(() => localStorage.getItem(warnedKey) === 'seen');
 

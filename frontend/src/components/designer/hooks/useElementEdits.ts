@@ -12,7 +12,7 @@ import type { DropSpot } from '../dropTarget';
 import type { Picked } from '../Media';
 import { KIND_FOR_TAG } from '../mediaKinds';
 import { Home, readMeta, writeMeta } from '../metaTags';
-import { elementOf, isText, writeText } from '../nodes';
+import { elementOf, isElement, isText, writeText } from '../nodes';
 import type { Block } from '../palette';
 import { reportDropped } from '../slotWarning';
 import type { DesignerUi } from './useDesignerUi';
@@ -109,13 +109,12 @@ export function useElementEdits(o: {
     if (!node || !current || node === current.body || node === current.documentElement) {
       return;
     }
-    const element = elementOf(node);
     const inline =
-      isText(node) || (element === node && getComputedStyle(element).display.startsWith('inline'));
+      isText(node) || (isElement(node) && getComputedStyle(node).display.startsWith('inline'));
     mutate(() => {
       const wrapper = current.createElement(inline ? 'span' : 'div');
       (node as ChildNode).before(wrapper);
-      wrapper.appendChild(node);
+      wrapper.append(node);
       setSelected(wrapper);
     });
   }

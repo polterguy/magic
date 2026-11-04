@@ -261,8 +261,8 @@ export default function Styles(
       )}
       {props.onText && (
         <p className="designer-note">
-          A run of text has no styles of its own, so these belong to the
-          <code> {element.tagName.toLowerCase()} </code> around it.
+          A run of text has no styles of its own, so these belong to the{' '}
+          <code>{element.tagName.toLowerCase()}</code> around it.
         </p>
       )}
       {props.missing.length > 0 && (

@@ -265,7 +265,7 @@ export function usePageFiles(o: {
     setBusy(true);
     try {
       const folders = file
-        .substring(WEB_ROOT.length + 1)
+        .slice(WEB_ROOT.length + 1)
         .split('/')
         .slice(0, -1);
       let sofar = WEB_ROOT;
@@ -274,7 +274,7 @@ export function usePageFiles(o: {
         // Already there is the normal case and not a problem.
         await createFolder(sofar + '/').catch(() => undefined);
       }
-      const url = file.substring(WEB_ROOT.length).replace(/\.html$/, '');
+      const url = file.slice(WEB_ROOT.length).replace(/\.html$/, '');
       const source = copyFrom ? await loadFile(copyFrom) : blankPage(url, companions);
       await saveFile(file, source);
       /*
@@ -312,7 +312,7 @@ export function usePageFiles(o: {
       return;
     }
     const file = companionFile(path, kind);
-    const href = file.substring(WEB_ROOT.length);
+    const href = file.slice(WEB_ROOT.length);
     setBusy(true);
     try {
       await saveFile(file, '');

@@ -36,6 +36,19 @@ function stripHtmlExt(value: string) {
   return value.replace(/\.html?$/i, '');
 }
 
+// A redirect row as edited here. The id is generated when the row is made and
+// never sent to the server; it only keeps each row's inputs attached to that
+// row when another one above it is removed.
+type RedirectRow = WebsiteRedirect & { id: string };
+
+function toRow(redirect: WebsiteRedirect): RedirectRow {
+  return { ...redirect, id: crypto.randomUUID() };
+}
+
+function toRedirect({ from, to }: RedirectRow): WebsiteRedirect {
+  return { from, to };
+}
+
 function redirectIsValid(entry: WebsiteRedirect) {
   return entry.from.trim() !== '' && entry.to.trim() !== '';
 }
@@ -63,13 +76,13 @@ export default function Website(
 
   const [spaEnabled, setSpaEnabled] = useState(false);
   const [notFound, setNotFound] = useState('');
-  const [redirects, setRedirects] = useState<WebsiteRedirect[]>([]);
+  const [redirects, setRedirects] = useState<RedirectRow[]>([]);
   // Whatever was last read from, or written to, the server — compared
   // against the fields above to know whether there is anything to save.
   const [saved, setSaved] = useState<{
     spaEnabled: boolean;
     notFound: string;
-    redirects: WebsiteRedirect[];
+    redirects: RedirectRow[];
   } | null>(null);
 
   /*
@@ -95,7 +108,7 @@ export default function Website(
         const normalised = {
           spaEnabled: config.spa_enabled,
           notFound: stripHtmlExt(config.not_found),
-          redirects: config.redirects ?? [],
+          redirects: (config.redirects ?? []).map(toRow),
         };
         setSpaEnabled(normalised.spaEnabled);
         setNotFound(normalised.notFound);
@@ -135,7 +148,7 @@ export default function Website(
   const canAddRedirect = redirects.every(redirectIsValid);
 
   function addRedirect() {
-    setRedirects(list => [...list, { from: '', to: '' }]);
+    setRedirects(list => [...list, toRow({ from: '', to: '' })]);
   }
 
   function updateRedirect(index: number, field: 'from' | 'to', value: string) {
@@ -161,7 +174,7 @@ export default function Website(
         // ends in .html. Left alone when empty: "" plus ".html" is not a
         // sibling file, it is a typo.
         not_found: notFoundTrimmed === '' ? '' : notFoundTrimmed + '.html',
-        redirects: cleaned,
+        redirects: cleaned.map(toRedirect),
       });
       setRedirects(cleaned);
       setSaved({ spaEnabled, notFound: notFoundTrimmed, redirects: cleaned });
@@ -188,7 +201,7 @@ export default function Website(
           type="checkbox"
           checked={spaEnabled}
           onChange={event => setSpaEnabled(event.target.checked)}
-        />
+        />{' '}
         Serve this site as a single-page app
       </label>
       <p className="designer-note">
@@ -222,7 +235,7 @@ export default function Website(
       <div className="designer-field">
         <span>Redirects</span>
         {redirects.map((redirect, index) => (
-          <div key={index} className="designer-redirect-row">
+          <div key={redirect.id} className="designer-redirect-row">
             <input
               type="text"
               value={redirect.from}

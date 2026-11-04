@@ -32,8 +32,8 @@ function fakeDoc(baseURI: string, links: string[], scripts: string[]) {
   const body: FakeElement[] = scripts.map(src => element('script', { src }));
   const doc = {
     baseURI,
-    head: { appendChild: (child: FakeElement) => head.push(child) },
-    body: { appendChild: (child: FakeElement) => body.push(child) },
+    head: { append: (child: FakeElement) => head.push(child) },
+    body: { append: (child: FakeElement) => body.push(child) },
     createElement: (tag: string) => element(tag, {}),
     querySelectorAll: (selector: string) =>
       selector === 'script[src]' ? body.filter(one => one.tag === 'script') : head,

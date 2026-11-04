@@ -90,7 +90,7 @@ export function useUndoHistory(
 
   function undo() {
     const current = docRef.current;
-    const snapshot = history[history.length - 1];
+    const snapshot = history.at(-1);
     if (!current || !snapshot) {
       return;
     }
@@ -117,7 +117,7 @@ export function useUndoHistory(
    */
   function redo() {
     const current = docRef.current;
-    const snapshot = future[future.length - 1];
+    const snapshot = future.at(-1);
     if (!current || !snapshot) {
       return;
     }

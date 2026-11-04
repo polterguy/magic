@@ -36,7 +36,7 @@ export function ensureRequiredAssets(doc: Document, requires: Block['requires'])
         'href',
         href + (CANONICAL_VERSIONS[href] ? '?v=' + CANONICAL_VERSIONS[href] : ''),
       );
-      doc.head.appendChild(link);
+      doc.head.append(link);
       addedAny = true;
     }
   });
@@ -50,7 +50,7 @@ export function ensureRequiredAssets(doc: Document, requires: Block['requires'])
         'src',
         src + (CANONICAL_VERSIONS[src] ? '?v=' + CANONICAL_VERSIONS[src] : ''),
       );
-      doc.body.appendChild(script);
+      doc.body.append(script);
       addedAny = true;
     }
   });

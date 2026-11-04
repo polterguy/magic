@@ -410,7 +410,7 @@ function isBlockContext(element: Element) {
 }
 
 function escapeText(text: string) {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }
 
 /*
@@ -426,7 +426,7 @@ function writeAttributes(element: Element) {
         ' ' +
         attribute.name +
         '="' +
-        attribute.value.replace(/&/g, '&amp;').replace(/"/g, '&quot;') +
+        attribute.value.replaceAll('&', '&amp;').replaceAll('"', '&quot;') +
         '"',
     )
     .join('');
@@ -446,7 +446,7 @@ function closeTag(element: Element) {
  */
 function oneLine(node: Node): string {
   if (node.nodeType === Node.TEXT_NODE) {
-    return escapeText((node as Text).data).replace(/\s+/g, ' ');
+    return escapeText((node as Text).data).replaceAll(/\s+/g, ' ');
   }
   if (node.nodeType === Node.COMMENT_NODE) {
     return '<!--' + (node as Comment).data + '-->';
@@ -497,7 +497,7 @@ function writeBlockChild(child: Node, depth: number, out: string[]) {
     // by writeElement — but real text among them has to survive.
     const text = (child as Text).data.trim();
     if (text !== '') {
-      out.push(INDENT.repeat(depth) + escapeText(text).replace(/\s+/g, ' '));
+      out.push(INDENT.repeat(depth) + escapeText(text).replaceAll(/\s+/g, ' '));
     }
   } else if (child.nodeType === Node.COMMENT_NODE) {
     out.push(INDENT.repeat(depth) + '<!--' + (child as Comment).data + '-->');

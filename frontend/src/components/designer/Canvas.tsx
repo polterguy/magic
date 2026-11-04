@@ -221,7 +221,7 @@ export default function Canvas(props: Readonly<CanvasProps>) {
     span.setAttribute('contenteditable', 'true');
     span.dataset.magicEditing = '';
     node.before(span);
-    span.appendChild(node);
+    span.append(node);
     editRef.current = { element, index, html, text: node.data, span };
     /*
      * Typing into a server-filled value is allowed — renaming the expression
@@ -281,7 +281,7 @@ export default function Canvas(props: Readonly<CanvasProps>) {
     edit.span.removeEventListener('keydown', editKeys);
     edit.span.removeEventListener('blur', commitEdit);
     edit.element.removeAttribute(SLOT_EDITING);
-    const typed = (edit.span.textContent ?? '').replace(/\s+/g, ' ').trim();
+    const typed = (edit.span.textContent ?? '').replaceAll(/\s+/g, ' ').trim();
     /*
      * Typing has already changed the document, but the change has to be made
      * by the page so it goes through undo. So the markup is put back exactly
@@ -405,12 +405,12 @@ export default function Canvas(props: Readonly<CanvasProps>) {
       }
       showSpot(findDropSpot(doc, x, y, null));
     }
-    window.addEventListener('mousemove', move);
-    window.addEventListener('mouseup', up);
+    globalThis.addEventListener('mousemove', move);
+    globalThis.addEventListener('mouseup', up);
     window.addEventListener('resize', remeasure);
     return () => {
-      window.removeEventListener('mousemove', move);
-      window.removeEventListener('mouseup', up);
+      globalThis.removeEventListener('mousemove', move);
+      globalThis.removeEventListener('mouseup', up);
       window.removeEventListener('resize', remeasure);
     };
   }, []);
@@ -533,6 +533,7 @@ export default function Canvas(props: Readonly<CanvasProps>) {
       />
       {props.note && <p className="designer-canvas-note">{props.note}</p>}
       {boxes.matching.map((box, index) => (
+        // eslint-disable-next-line react/no-array-index-key -- stateless outlines, re-measured in document order on every pass and replaced wholesale
         <div key={index} className="designer-outline matching" style={box} />
       ))}
       {boxes.hover && <div className="designer-outline hover" style={boxes.hover} />}

@@ -13,7 +13,7 @@
  */
 
 import { canContainChildren } from './html';
-import { elementOf, labelOf } from './nodes';
+import { elementOf, keyOf, labelOf } from './nodes';
 
 export interface Finding {
   // What kind of problem, for grouping.
@@ -141,7 +141,7 @@ function audit(doc: Document, urls: string[]): Finding[] {
   // -- Heading order -------------------------------------------------------
   let previous = 0;
   body.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(heading => {
-    const level = Number(heading.tagName.substring(1));
+    const level = Number(heading.tagName.slice(1));
     if (previous !== 0 && level > previous + 1) {
       findings.push({
         kind: 'Headings',
@@ -209,9 +209,9 @@ export default function Quality(
           <div className="designer-meta-group">{kind}</div>
           {findings
             .filter(finding => finding.kind === kind)
-            .map((finding, index) => (
+            .map(finding => (
               <button
-                key={index}
+                key={(finding.node ? keyOf(finding.node) : 'page') + ':' + finding.detail}
                 className="designer-finding"
                 disabled={!finding.node}
                 title={finding.node ? 'Select it' : 'This is about the page itself'}

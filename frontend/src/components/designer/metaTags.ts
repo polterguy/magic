@@ -89,18 +89,18 @@ export function writeMeta(doc: Document, home: Home, value: string) {
   if (home.at === 'title') {
     const title = doc.createElement('title');
     title.textContent = trimmed;
-    head.appendChild(title);
+    head.append(title);
     return;
   }
   if (home.at === 'canonical') {
     const link = doc.createElement('link');
     link.setAttribute('rel', 'canonical');
     link.setAttribute('href', trimmed);
-    head.appendChild(link);
+    head.append(link);
     return;
   }
   const meta = doc.createElement('meta');
   meta.setAttribute(home.at, home.key);
   meta.setAttribute('content', trimmed);
-  head.appendChild(meta);
+  head.append(meta);
 }

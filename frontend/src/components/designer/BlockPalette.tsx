@@ -73,12 +73,16 @@ export default function BlockPalette(
          * the blocks are reached for occasionally — so the filter above
          * is the fast path, and opening a drawer is one click.
          */
-        return GROUPS.map(group => (
-          <details key={group.label} className="designer-group">
-            <summary>{group.label}</summary>
-            <div className="designer-palette">{group.blocks.map(pill)}</div>
-          </details>
-        ));
+        return (
+          <>
+            {GROUPS.map(group => (
+              <details key={group.label} className="designer-group">
+                <summary>{group.label}</summary>
+                <div className="designer-palette">{group.blocks.map(pill)}</div>
+              </details>
+            ))}
+          </>
+        );
       })()}
       <div className="designer-field">
         <span>Any other tag</span>

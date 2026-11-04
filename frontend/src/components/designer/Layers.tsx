@@ -12,7 +12,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { ChevronIcon } from '../Icons';
-import { designableChildren, isText, labelOf } from './nodes';
+import { designableChildren, isText, keyOf, labelOf } from './nodes';
 
 // How deep the tree stands open before anyone touches it.
 const OPEN_TO = 2;
@@ -178,7 +178,7 @@ export default function Layers(
           )}
           <span className="designer-layer-name">{labelOf(node)}</span>
         </div>
-        {open && children.map((child, index) => <div key={index}>{row(child, depth + 1)}</div>)}
+        {open && children.map(child => <div key={keyOf(child)}>{row(child, depth + 1)}</div>)}
       </div>
     );
   }

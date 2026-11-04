@@ -80,7 +80,7 @@ export function useTreeEdits(o: {
     const { html, isText: wasText } = JSON.parse(stored) as { html: string; isText: boolean };
     const holder = current.createElement('template');
     if (wasText) {
-      holder.content.appendChild(current.createTextNode(html));
+      holder.content.append(current.createTextNode(html));
     } else {
       holder.innerHTML = html;
     }
@@ -95,7 +95,7 @@ export function useTreeEdits(o: {
       const element = node as Element;
       [element, ...Array.from(element.querySelectorAll('[id]'))].forEach(one => {
         const id = one.getAttribute('id');
-        if (id && current.getElementById(id)) {
+        if (id && current.querySelector('#' + CSS.escape(id))) {
           one.removeAttribute('id');
         }
       });
@@ -119,7 +119,7 @@ export function useTreeEdits(o: {
 
   function remove() {
     const node = selected;
-    if (!node || node === doc?.body) {
+    if (!node || (doc && node === doc.body)) {
       return;
     }
     mutate(() => {

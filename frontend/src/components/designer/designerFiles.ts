@@ -7,8 +7,6 @@ import { listFilesRecursively } from '../../lib/api';
 import { WEB_ROOT } from './pageUrls';
 import { WIDGET_ASSET_HREFS } from './widgetRuntime';
 
-export { WEB_ROOT };
-
 /*
  * The shared widget runtime (magic-widgets.js/.css) is not this page's own
  * file — every page that drops an App block links it, so editing it from one
@@ -25,9 +23,9 @@ export const SHARED_ASSET_FILES = new Set(WIDGET_ASSET_HREFS.map(href => WEB_ROO
  * live preview has to ask for exactly this or it spends a redirect finding out.
  */
 export function canonicalUrl(file: string) {
-  const relative = file.substring(WEB_ROOT.length);
+  const relative = file.slice(WEB_ROOT.length);
   if (relative.endsWith('/index.html')) {
-    const parent = relative.substring(0, relative.length - '/index.html'.length);
+    const parent = relative.slice(0, -'/index.html'.length);
     return parent === '' ? '/' : parent;
   }
   return relative.replace(/\.html?$/i, '');
@@ -48,7 +46,7 @@ export function companionFile(file: string, kind: 'js' | 'css') {
  */
 export function isServed(file: string) {
   return !file
-    .substring(WEB_ROOT.length)
+    .slice(WEB_ROOT.length)
     .split('/')
     .some(part => part.startsWith('.'));
 }
@@ -60,3 +58,5 @@ export async function listPages() {
     .filter(file => /\.html?$/i.test(file) && isServed(file))
     .sort((left, right) => canonicalUrl(left).localeCompare(canonicalUrl(right)));
 }
+
+export { WEB_ROOT } from './pageUrls';

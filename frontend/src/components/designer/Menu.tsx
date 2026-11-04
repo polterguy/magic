@@ -153,11 +153,7 @@ export default function Menu(
             }}
           >
             {props.items.map((item, index) =>
-              item.heading !== undefined ? (
-                <li key={item.heading} className="designer-menu-heading">
-                  {item.heading}
-                </li>
-              ) : (
+              item.heading === undefined ? (
                 // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- keyboard lives on the trigger, which keeps focus and points here with aria-activedescendant
                 <li
                   key={item.label}
@@ -178,6 +174,10 @@ export default function Menu(
                     {item.checked ? '✓' : ''}
                   </span>
                   <span className="select-option-label">{item.label}</span>
+                </li>
+              ) : (
+                <li key={item.heading} className="designer-menu-heading">
+                  {item.heading}
                 </li>
               ),
             )}
