@@ -11,8 +11,9 @@
 import Banner from '../components/Banner';
 import { FormEvent, useState } from 'react';
 import { EyeIcon, EyeOffIcon } from '../components/Icons';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 import { ApiError, MIN_PASSWORD, saveUserExtra, setupSystem } from '../lib/api';
+import { errorMessage } from '../lib/errors';
 
 function firstProblem(
   name: string,
@@ -69,13 +70,13 @@ export default function Setup() {
       await saveUserExtra('root', 'name', name);
       await saveUserExtra('root', 'email', email);
       setupCompleted();
-    } catch (err: any) {
+    } catch (err) {
       // Already configured — let them through rather than trapping them here.
       if (err instanceof ApiError && err.status === 401) {
         setupCompleted();
         return;
       }
-      setError(err.message);
+      setError(errorMessage(err));
     } finally {
       setBusy(false);
     }

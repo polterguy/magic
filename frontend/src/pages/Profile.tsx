@@ -1,4 +1,5 @@
 import { copyToClipboard, showToast } from '../lib/toast';
+import { errorMessage, showError } from '../lib/errors';
 import Banner from '../components/Banner';
 import { useEffect, useState } from 'react';
 import DateTimePicker from '../components/DateTimePicker';
@@ -11,7 +12,7 @@ import {
   listUsers,
   saveUserExtra,
 } from '../lib/api';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 
 export default function Profile() {
   const { backend, logout } = useAuth();
@@ -34,7 +35,7 @@ export default function Profile() {
         setName(me?.extra?.find(entry => entry.type === 'name')?.value ?? '');
         setEmail(me?.extra?.find(entry => entry.type === 'email')?.value ?? '');
       })
-      .catch(err => showToast(err.message, true, err.logId));
+      .catch((err: unknown) => showError(err));
   }, [backend?.username]);
 
   async function saveDetails() {
@@ -43,8 +44,8 @@ export default function Profile() {
       await saveUserExtra(backend!.username, 'name', name.trim());
       await saveUserExtra(backend!.username, 'email', email.trim());
       showToast('Your details were saved');
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setSavingDetails(false);
     }
@@ -64,8 +65,8 @@ export default function Profile() {
       await changePassword(password);
       showToast('Password changed — sign in again with your new password');
       setTimeout(logout, 2000);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
       setChangingPassword(false);
     }
   }
@@ -194,8 +195,8 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
           encodeURIComponent(new Date(expires).toISOString()),
       );
       setToken(response.ticket);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(errorMessage(err));
     } finally {
       setBusy(false);
     }

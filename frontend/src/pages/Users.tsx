@@ -1,16 +1,19 @@
 import { showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import AiWaiter from '../components/AiWaiter';
 import SearchInput from '../components/SearchInput';
 import { useCallback, useEffect, useState } from 'react';
-import { Modal, useDialog } from '../components/Dialogs';
-import SortHeader, { useSort } from '../components/SortHeader';
+import { Modal } from '../components/Dialogs';
+import { useDialog } from '../lib/useDialog';
+import SortHeader from '../components/SortHeader';
+import { useSort } from '../lib/sort';
 import Pagination from '../components/Pagination';
 import RoleChips from '../components/RoleChips';
 import Tabs from '../components/Tabs';
 import { TableSkeleton } from '../components/Skeleton';
 import { usePagedList } from '../lib/usePagedList';
 import { exportCsv } from '../lib/download';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 import {
   MIN_PASSWORD,
   Role,
@@ -48,20 +51,22 @@ export default function Users() {
   const loadRoles = useCallback(async () => {
     try {
       setRoles((await listRoles()) ?? []);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }, []);
 
   useEffect(() => {
-    loadRoles();
-  }, [loadRoles]);
+    listRoles()
+      .then(list => setRoles(list ?? []))
+      .catch((err: unknown) => showError(err));
+  }, []);
 
   return (
     <>
       <div className="page-header">
         <h1>Users &amp; roles</h1>
-        <p>Manage who can access your backend, and what they're allowed to do</p>
+        <p>Manage who can access your backend, and what they&apos;re allowed to do</p>
       </div>
       <Tabs
         tabs={[
@@ -134,8 +139,8 @@ function UsersTab(props: Readonly<{ roles: Role[] }>) {
       await deleteUser(username);
       showToast(username + ' deleted');
       list.refresh();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -162,8 +167,8 @@ function UsersTab(props: Readonly<{ roles: Role[] }>) {
         })),
         'users.csv',
       );
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -395,8 +400,8 @@ function InviteUserDialog(
       }
       await sendResetPasswordLink(backend?.url ?? '', email);
       props.onInvited(email);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -477,8 +482,8 @@ function NewUserDialog(
         await addUserToRole(username, role);
       }
       props.onCreated(username);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -567,9 +572,9 @@ function EditUserDialog(
       } else {
         await removeUserFromRole(props.user.username, role);
       }
-    } catch (err: any) {
+    } catch (err) {
       setMemberRoles(memberRoles);
-      showToast(err.message, true, err.logId);
+      showError(err);
     }
   }
 
@@ -603,8 +608,8 @@ function EditUserDialog(
         await deleteUserExtra(props.user.username, type);
       }
       setFields(fields.filter(field => field.type !== type));
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -621,8 +626,8 @@ function EditUserDialog(
         }
       }
       props.onSaved();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -725,8 +730,8 @@ function ChangePasswordDialog(
     try {
       await changeUserPassword(props.user.username, password);
       props.onSaved();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -800,8 +805,8 @@ function RolesTab(props: Readonly<{ roles: Role[]; onChanged: () => void }>) {
       await deleteRole(role.name);
       showToast('Role ' + role.name + ' deleted');
       props.onChanged();
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setWaiting(false);
     }
@@ -907,8 +912,8 @@ function RoleDialog(
         await createRole(name, description);
       }
       props.onSaved(name);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -922,7 +927,7 @@ function RoleDialog(
         if (!busy && name) void save();
       }}
     >
-      <h2>{isEdit ? 'Edit role ' + props.role!.name : 'New role'}</h2>
+      <h2>{isEdit ? 'Edit role ' + props.role.name : 'New role'}</h2>
       <div className="form-grid">
         <label>
           Name

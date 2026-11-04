@@ -14,7 +14,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 import { verifyTicket } from '../lib/api';
 
 export const MAGIC_LINK_PATH = '/authentication/magic-link';
@@ -56,16 +56,16 @@ export default function MagicLink() {
            * never pass through this screen, so they never see it.
            */
           sessionStorage.setItem('magic2.magic-link-arrival', '1');
-          navigate('/', { replace: true });
+          void navigate('/', { replace: true });
         } else {
           // Not a token worth keeping.
           logout();
-          navigate('/', { replace: true });
+          void navigate('/', { replace: true });
         }
       })
       .catch(() => {
         logout();
-        navigate('/', { replace: true });
+        void navigate('/', { replace: true });
       });
   }, [token, backend?.token, logout, navigate]);
 

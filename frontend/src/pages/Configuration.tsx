@@ -1,16 +1,56 @@
 import { copyToClipboard, showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import { useEffect, useRef, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import Select from '../components/Select';
 import { Modal } from '../components/Dialogs';
 import Menu from './designer/Menu';
-import { downloadBlob } from '../components/ResultViewer';
-import { downloadFileRaw, http, loadConfig, saveConfig, uploadFile } from '../lib/api';
+import { downloadBlob } from '../lib/download';
+import {
+  JsonValue,
+  MagicConfig,
+  downloadFileRaw,
+  http,
+  loadConfig,
+  saveConfig,
+  uploadFile,
+} from '../lib/api';
 
 // Where appsettings.json lives, for the backup download and upload.
 const CONFIG_FOLDER = '/config/';
 const CONFIG_FILE = 'appsettings.json';
+
+/*
+ * The settings dialogs read and patch the editor's JSON text. Anything in it
+ * may be any JSON value, so these narrow it to what the dialogs expect.
+ */
+type JsonObject = { [key: string]: JsonValue };
+
+// The value when it is a JSON object, otherwise an empty one.
+function asObject(value: JsonValue | undefined): JsonObject {
+  return value !== null && typeof value === 'object' && !Array.isArray(value) ? value : {};
+}
+
+// The editor's text as an object, or null when it isn't valid JSON.
+function parseObject(text: string): JsonObject | null {
+  try {
+    const parsed = JSON.parse(text) as JsonValue;
+    return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+// The object found by following path from the root of the editor's text, empty when absent.
+function configSection(text: string, ...path: string[]): JsonObject {
+  return path.reduce<JsonObject>((current, key) => asObject(current[key]), parseObject(text) ?? {});
+}
+
+// A setting as text for an input, the fallback when it is missing.
+function settingText(value: JsonValue | undefined, fallback = ''): string {
+  return value === undefined || value === null ? fallback : fieldText(value);
+}
 
 export default function Configuration() {
   const [config, setConfig] = useState('');
@@ -29,7 +69,7 @@ export default function Configuration() {
   function reload() {
     loadConfig()
       .then(response => setConfig(JSON.stringify(response, null, 2)))
-      .catch(err => showToast(err.message, true, err.logId));
+      .catch((err: unknown) => showError(err));
   }
 
   async function downloadBackup() {
@@ -37,8 +77,8 @@ export default function Configuration() {
     try {
       const result = await downloadFileRaw(CONFIG_FOLDER + CONFIG_FILE);
       downloadBlob(result.blob, CONFIG_FILE);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -59,8 +99,8 @@ export default function Configuration() {
       await uploadFile(CONFIG_FOLDER, file);
       reload();
       showToast('Configuration restored from ' + CONFIG_FILE);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -68,11 +108,11 @@ export default function Configuration() {
 
   async function save(next?: string) {
     const text = next ?? config;
-    let parsed: any;
+    let parsed: MagicConfig;
     try {
-      parsed = JSON.parse(text);
-    } catch (err: any) {
-      showToast('Invalid JSON: ' + err.message, true);
+      parsed = JSON.parse(text) as MagicConfig;
+    } catch (err) {
+      showError(err, 'Invalid JSON: ');
       return;
     }
     setBusy(true);
@@ -80,8 +120,8 @@ export default function Configuration() {
       await saveConfig(parsed);
       setConfig(JSON.stringify(parsed, null, 2));
       showToast('Configuration saved');
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -108,7 +148,7 @@ export default function Configuration() {
               { label: 'reCAPTCHA', onClick: () => setRecaptchaOpen(true) },
               { label: 'OpenID', onClick: () => setOpenidOpen(true) },
               { label: 'Git', onClick: () => setGitOpen(true) },
-              { label: 'Download backup', onClick: downloadBackup },
+              { label: 'Download backup', onClick: () => void downloadBackup() },
               { label: 'Upload backup', onClick: () => uploadInput.current?.click() },
             ]}
           />
@@ -208,31 +248,25 @@ function SmtpDialog(
     onSave: (config: string) => void;
   }>,
 ) {
-  const existing = (() => {
-    try {
-      return JSON.parse(props.config)?.magic?.smtp ?? {};
-    } catch {
-      return {};
-    }
-  })();
+  const existing = configSection(props.config, 'magic', 'smtp');
+  const existingFrom = asObject(existing.from);
 
-  const [host, setHost] = useState(existing.host ?? '');
-  const [port, setPort] = useState(String(existing.port ?? 465));
+  const [host, setHost] = useState(settingText(existing.host));
+  const [port, setPort] = useState(settingText(existing.port, '465'));
   const [secure, setSecure] = useState(existing.secure !== false);
-  const [username, setUsername] = useState(existing.username ?? '');
-  const [password, setPassword] = useState(existing.password ?? '');
-  const [fromName, setFromName] = useState(existing.from?.name ?? '');
-  const [fromAddress, setFromAddress] = useState(existing.from?.address ?? '');
+  const [username, setUsername] = useState(settingText(existing.username));
+  const [password, setPassword] = useState(settingText(existing.password));
+  const [fromName, setFromName] = useState(settingText(existingFrom.name));
+  const [fromAddress, setFromAddress] = useState(settingText(existingFrom.address));
 
   function save() {
-    let parsed: any;
-    try {
-      parsed = JSON.parse(props.config);
-    } catch {
+    const parsed = parseObject(props.config);
+    if (!parsed) {
       return;
     }
-    parsed.magic = parsed.magic ?? {};
-    parsed.magic.smtp = {
+    const magic = asObject(parsed.magic);
+    parsed.magic = magic;
+    magic.smtp = {
       host,
       port: Number(port),
       secure,
@@ -305,33 +339,27 @@ function GitDialog(
     onSave: (config: string) => void;
   }>,
 ) {
-  const existing = (() => {
-    try {
-      return JSON.parse(props.config)?.magic?.git?.github ?? {};
-    } catch {
-      return {};
-    }
-  })();
+  const existing = configSection(props.config, 'magic', 'git', 'github');
 
-  const [username, setUsername] = useState(existing.username ?? '');
-  const [token, setToken] = useState(existing.token ?? '');
-  const [host, setHost] = useState(existing.host ?? 'github.com');
-  const [apiBase, setApiBase] = useState(existing['api-base'] ?? '');
+  const [username, setUsername] = useState(settingText(existing.username));
+  const [token, setToken] = useState(settingText(existing.token));
+  const [host, setHost] = useState(settingText(existing.host, 'github.com'));
+  const [apiBase, setApiBase] = useState(settingText(existing['api-base']));
 
   function save() {
-    let parsed: any;
-    try {
-      parsed = JSON.parse(props.config);
-    } catch {
+    const parsed = parseObject(props.config);
+    if (!parsed) {
       return;
     }
-    parsed.magic = parsed.magic ?? {};
-    parsed.magic.git = parsed.magic.git ?? {};
-    const github: any = { username, token, host };
+    const magic = asObject(parsed.magic);
+    parsed.magic = magic;
+    const git = asObject(magic.git);
+    magic.git = git;
+    const github: JsonObject = { username, token, host };
     if (apiBase) {
       github['api-base'] = apiBase;
     }
-    parsed.magic.git.github = github;
+    git.github = github;
     props.onSave(JSON.stringify(parsed, null, 2));
   }
 
@@ -339,7 +367,7 @@ function GitDialog(
     <Modal width={560} onClose={props.onClose} onSubmit={save}>
       <h2>Git settings</h2>
       <p className="muted" style={{ marginTop: 0 }}>
-        GitHub credentials for Hyper IDE's Git support. Create a{' '}
+        GitHub credentials for Hyper IDE&apos;s Git support. Create a{' '}
         <a
           href="https://github.com/settings/personal-access-tokens"
           target="_blank"
@@ -348,8 +376,8 @@ function GitDialog(
           fine-grained personal access token
         </a>{' '}
         with <em>Contents</em> read and write access to the repositories your cloudlet manages. The
-        token only authenticates transport — commits are authored as the signed-in user's profile
-        name and email.
+        token only authenticates transport — commits are authored as the signed-in user&apos;s
+        profile name and email.
       </p>
       <label className="modal-label">
         Username
@@ -406,27 +434,21 @@ function RecaptchaDialog(
     onSave: (config: string) => void;
   }>,
 ) {
-  const existing = (() => {
-    try {
-      return JSON.parse(props.config)?.magic?.auth?.recaptcha ?? {};
-    } catch {
-      return {};
-    }
-  })();
+  const existing = configSection(props.config, 'magic', 'auth', 'recaptcha');
 
-  const [key, setKey] = useState(existing.key ?? '');
-  const [secret, setSecret] = useState(existing.secret ?? '');
+  const [key, setKey] = useState(settingText(existing.key));
+  const [secret, setSecret] = useState(settingText(existing.secret));
 
   function save() {
-    let parsed: any;
-    try {
-      parsed = JSON.parse(props.config);
-    } catch {
+    const parsed = parseObject(props.config);
+    if (!parsed) {
       return;
     }
-    parsed.magic = parsed.magic ?? {};
-    parsed.magic.auth = parsed.magic.auth ?? {};
-    parsed.magic.auth.recaptcha = { key, secret };
+    const magic = asObject(parsed.magic);
+    parsed.magic = magic;
+    const auth = asObject(magic.auth);
+    magic.auth = auth;
+    auth.recaptcha = { key, secret };
     props.onSave(JSON.stringify(parsed, null, 2));
   }
 
@@ -572,13 +594,7 @@ function OpenIdDialog(
     onSave: (config: string) => void;
   }>,
 ) {
-  const existing: Record<string, any> = (() => {
-    try {
-      return JSON.parse(props.config)?.magic?.oidc ?? {};
-    } catch {
-      return {};
-    }
-  })();
+  const existing = configSection(props.config, 'magic', 'oidc');
 
   // Null until the slot list answers, so loading and "none" look different.
   const [providers, setProviders] = useState<string[] | null>(null);
@@ -592,7 +608,7 @@ function OpenIdDialog(
       Object.keys(existing).map(name => [
         name,
         Object.fromEntries(
-          Object.entries(existing[name] ?? {}).map(([key, value]) => [key, fieldText(value)]),
+          Object.entries(asObject(existing[name])).map(([key, value]) => [key, fieldText(value)]),
         ),
       ]),
     ),
@@ -622,8 +638,8 @@ function OpenIdDialog(
         setProviders(found);
         setProvider(found[0] ?? '');
       })
-      .catch(err => {
-        showToast(err.message, true, err.logId);
+      .catch((err: unknown) => {
+        showError(err);
         setProviders([]);
       });
   }, []);
@@ -631,16 +647,15 @@ function OpenIdDialog(
   const callbackUrl = window.location.origin + OIDC_CALLBACK_PATH;
 
   function save() {
-    let parsed: any;
-    try {
-      parsed = JSON.parse(props.config);
-    } catch {
+    const parsed = parseObject(props.config);
+    if (!parsed) {
       return;
     }
-    parsed.magic = parsed.magic ?? {};
-    const oidc = { ...parsed.magic.oidc };
+    const magic = asObject(parsed.magic);
+    parsed.magic = magic;
+    const oidc = { ...asObject(magic.oidc) };
     for (const [name, settings] of Object.entries(values)) {
-      const entry = { ...oidc[name] };
+      const entry = { ...asObject(oidc[name]) };
       for (const [key, value] of Object.entries(settings)) {
         if (value.trim()) {
           entry[key] = value.trim();
@@ -655,9 +670,9 @@ function OpenIdDialog(
       }
     }
     if (Object.keys(oidc).length === 0) {
-      delete parsed.magic.oidc;
+      delete magic.oidc;
     } else {
-      parsed.magic.oidc = oidc;
+      magic.oidc = oidc;
     }
     props.onSave(JSON.stringify(parsed, null, 2));
   }

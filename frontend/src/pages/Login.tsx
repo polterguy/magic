@@ -2,7 +2,7 @@ import Banner from '../components/Banner';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronIcon } from '../components/Icons';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 import { useDebounced } from '../lib/usePagedList';
 import { backendUrls, rememberPendingOidc, takePendingOidc } from '../lib/backend';
 import {
@@ -13,6 +13,7 @@ import {
   openidProviders,
   sendResetPasswordLink,
 } from '../lib/api';
+import { errorMessage } from '../lib/errors';
 
 /*
  * Where providers send the user back to. This has to match what's registered
@@ -120,6 +121,7 @@ export default function Login() {
     if (providerError) {
       // The redirect is over — consume the pending entry so it can't go stale.
       takePendingOidc();
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- the provider's answer is read from, and stripped off, the URL exactly once on mount; doing that during render would be impure and replay under StrictMode
       setError('The provider refused the sign-in: ' + providerError);
       return;
     }
@@ -144,13 +146,13 @@ export default function Login() {
           window.location.origin + OIDC_CALLBACK_PATH,
         )
       : openidLogin(pending.backendUrl, idToken!);
-    exchange
+    void exchange
       .then(response => {
         // Back to whatever the user was trying to reach before signing in.
-        navigate(pending.returnPath, { replace: true });
+        void navigate(pending.returnPath, { replace: true });
         loginWithTicket(pending.backendUrl, response.ticket);
       })
-      .catch(err => setError(err.message ?? 'Could not complete sign-in'))
+      .catch((err: unknown) => setError(errorMessage(err, 'Could not complete sign-in')))
       .finally(() => setBusy(false));
   }, [loginWithTicket, navigate]);
 
@@ -203,8 +205,8 @@ export default function Login() {
     setBusy(true);
     try {
       await login(url, username, password);
-    } catch (err: any) {
-      setError(err.message ?? 'Could not authenticate');
+    } catch (err) {
+      setError(errorMessage(err, 'Could not authenticate'));
     } finally {
       setBusy(false);
     }
@@ -217,8 +219,8 @@ export default function Login() {
     try {
       const response = await sendResetPasswordLink(url, forgotUser.trim());
       setForgotSent(response.result);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(errorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -265,7 +267,7 @@ export default function Login() {
       query.set('code_challenge', provider.code_challenge);
       query.set('code_challenge_method', 'S256');
     }
-    window.location.href = provider.url + '?' + query.toString();
+    window.location.assign(provider.url + '?' + query.toString());
   }
 
   if (forgotOpen) {

@@ -1,11 +1,14 @@
 import { showToast } from '../lib/toast';
+import { showError } from '../lib/errors';
 import SearchInput from '../components/SearchInput';
 import { useEffect, useMemo, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
-import { Modal, useDialog } from '../components/Dialogs';
+import { Modal } from '../components/Dialogs';
+import { useDialog } from '../lib/useDialog';
 import { CardGridSkeleton } from '../components/Skeleton';
 import {
+  BazarApp,
   availablePlugins,
   installModule,
   installedPlugins,
@@ -20,13 +23,13 @@ import {
  * markup. Markdown permits raw HTML, so a manifest can carry a script tag or
  * an onerror attribute, and every description is put through this first.
  */
-function safeHtml(description: string) {
+function safeHtml(description: string | undefined) {
   return DOMPurify.sanitize(marked.parse(description ?? '') as string);
 }
 
 // Card intro: render the markdown description, extract its plain text, and
 // show the first sentence, capped at 150 characters.
-function intro(description: string) {
+function intro(description: string | undefined) {
   /*
    * Parsed into an inert document rather than assigned to an element's
    * innerHTML: an inert document neither runs scripts nor fetches anything,
@@ -47,25 +50,25 @@ function installLabel(installing: boolean, installed: boolean) {
 }
 
 export default function Plugins() {
-  const [available, setAvailable] = useState<any[]>([]);
+  const [available, setAvailable] = useState<BazarApp[]>([]);
   // The Bazar listing is a slow remote call, so we show a spinner until it lands.
   const [loading, setLoading] = useState(true);
   const [installed, setInstalled] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState('');
   const [installing, setInstalling] = useState<string | null>(null);
-  const [details, setDetails] = useState<any>(null);
+  const [details, setDetails] = useState<BazarApp | null>(null);
   const [uploading, setUploading] = useState(false);
   const { confirm } = useDialog();
 
   useEffect(() => {
     availablePlugins()
       .then(list => setAvailable(list ?? []))
-      .catch(err => showToast(err.message, true, err.logId))
+      .catch((err: unknown) => showError(err))
       .finally(() => setLoading(false));
     installedPlugins()
       // A manifest's module_name is the folder it installed into, which is
       // what the Bazar calls the plugin — its name is a friendlier label.
-      .then(list => setInstalled(new Set((list ?? []).map((app: any) => app.module_name))))
+      .then(list => setInstalled(new Set((list ?? []).flatMap(app => app.module_name ?? []))))
       .catch(() => {});
   }, []);
 
@@ -117,15 +120,15 @@ export default function Plugins() {
       await installModule(file);
       showToast('Module ' + name + ' installed');
       const list = await installedPlugins();
-      setInstalled(new Set((list ?? []).map((app: any) => app.module_name)));
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+      setInstalled(new Set((list ?? []).flatMap(app => app.module_name ?? [])));
+    } catch (err) {
+      showError(err);
     } finally {
       setUploading(false);
     }
   }
 
-  async function install(app: any) {
+  async function install(app: BazarApp) {
     const again = installed.has(app.name);
     if (
       app.type === 'frontend' &&
@@ -162,8 +165,8 @@ export default function Plugins() {
       await installPlugin(app);
       showToast(app.name + ' is installing — you will be notified when it completes');
       setInstalled(current => new Set(current).add(app.name));
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setInstalling(null);
     }
