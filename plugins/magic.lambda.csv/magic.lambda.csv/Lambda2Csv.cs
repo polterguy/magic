@@ -194,7 +194,7 @@ namespace magic.lambda.csv
          */
         static string NeutraliseFormula(string value)
         {
-            if (!string.IsNullOrEmpty(value) && "=+-@\t\r".IndexOf(value[0]) != -1)
+            if (!string.IsNullOrEmpty(value) && "=+-@\t\r".Contains(value[0]))
                 return "'" + value;
             return value;
         }
