@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
  */
 
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using magic.node;
@@ -40,7 +41,13 @@ namespace magic.lambda.sqlite
             {
                 var source = signaler.Peek<SqliteConnectionWrapper>("sqlite.connect").Connection;
                 var name = input.GetEx<string>();
-                using (var destination = new SqliteConnection(string.Format(@"Data Source=files/data/{0};", name)))
+
+                // The target is a filename inside files/data/, never a path, which also keeps it out of the connection string syntax.
+                if (string.IsNullOrEmpty(name) || name != Path.GetFileName(name) || name == "." || name == "..")
+                    throw new HyperlambdaException($"[{input.Name}] expects a filename inside 'files/data/', and '{name}' is not one");
+
+                var connectionString = new SqliteConnectionStringBuilder { DataSource = "files/data/" + name }.ConnectionString;
+                using (var destination = new SqliteConnection(connectionString))
                 {
                     source.BackupDatabase(destination);
                     return Task.CompletedTask;

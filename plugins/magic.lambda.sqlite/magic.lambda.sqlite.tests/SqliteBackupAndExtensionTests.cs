@@ -50,6 +50,19 @@ namespace magic.lambda.sqlite.tests
             }
         }
 
+        [Theory]
+        [InlineData("../escaped.db")]
+        [InlineData("sub/escaped.db")]
+        [InlineData("..")]
+        public async Task BackupRefusesNamesThatAreNotAFilename(string name)
+        {
+            // Anything but a bare filename, which would reach outside files/data/.
+            var ex = await Assert.ThrowsAnyAsync<Exception>(() => _runtime.EvaluateAsync(@"sqlite.connect:{db}
+   sqlite.execute:create table people (id integer primary key autoincrement, name text not null)
+   sqlite.backup:" + name));
+            Assert.Contains("expects a filename", ex.Message);
+        }
+
         [Fact]
         public async Task LoadMissingExtensionThrows()
         {
