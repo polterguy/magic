@@ -1,12 +1,11 @@
-import { copyToClipboard } from '../lib/toast';
 import { showError } from '../lib/errors';
-import { CopyIcon } from '../components/Icons';
 import SearchInput from '../components/SearchInput';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { LogItem, countLog, listLog } from '../lib/api';
 import { TableSkeleton } from '../components/Skeleton';
 import { useDebounced } from '../lib/usePagedList';
+import LogRow from '../components/log/LogRow';
 
 const PAGE_SIZE = 20;
 
@@ -186,124 +185,6 @@ export default function Log() {
           </table>
         )}
       </div>
-    </>
-  );
-}
-
-/* "11 seconds ago", "3 minutes ago", … up through years. */
-function timeAgo(created: string): string {
-  const diff = Math.max(0, Date.now() - new Date(created).getTime());
-  const s = Math.round(diff / 1000);
-  const fmt = (n: number, unit: string) => n + ' ' + unit + (n === 1 ? '' : 's') + ' ago';
-  if (s < 60) return fmt(s, 'second');
-  const m = Math.round(s / 60);
-  if (m < 60) return fmt(m, 'minute');
-  const h = Math.round(m / 60);
-  if (h < 24) return fmt(h, 'hour');
-  const d = Math.round(h / 24);
-  if (d < 7) return fmt(d, 'day');
-  const w = Math.round(d / 7);
-  if (w < 5) return fmt(w, 'week');
-  const mo = Math.round(d / 30);
-  if (mo < 12) return fmt(mo, 'month');
-  return fmt(Math.round(d / 365), 'year');
-}
-
-/* Exact time as ISO 8601 (UTC), milliseconds trimmed. */
-function isoDate(created: string): string {
-  return new Date(created).toISOString().replace(/\.\d{3}Z$/, 'Z');
-}
-
-function LogRow(
-  props: Readonly<{
-    item: LogItem;
-    // The entry a deep link pointed at, marked so the visitor can spot it.
-    highlighted: boolean;
-    expanded: boolean;
-    onToggle: () => void;
-  }>,
-) {
-  const { item } = props;
-  const meta = Object.entries(item.meta ?? {});
-  // Rows carrying a stack trace and/or meta information have something to reveal.
-  const canExpand = !!item.exception || meta.length > 0;
-  return (
-    <>
-      <tr
-        className={(canExpand ? 'clickable' : '') + (props.highlighted ? ' log-target' : '')}
-        tabIndex={canExpand ? 0 : undefined}
-        aria-expanded={canExpand ? props.expanded : undefined}
-        onClick={canExpand ? props.onToggle : undefined}
-        onKeyDown={
-          canExpand
-            ? event => {
-                if (
-                  event.target === event.currentTarget &&
-                  (event.key === 'Enter' || event.key === ' ')
-                ) {
-                  event.preventDefault();
-                  props.onToggle();
-                }
-              }
-            : undefined
-        }
-      >
-        <td className="mono" data-label="When">
-          {timeAgo(item.created)}
-        </td>
-        <td className="mono muted" data-label="Timestamp">
-          {isoDate(item.created)}
-        </td>
-        <td data-label="Type">
-          <span className={'badge badge-' + item.type.toLowerCase()}>{item.type}</span>
-        </td>
-        <td data-label="Content">{item.content}</td>
-        <td className="log-caret-cell" style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-          {meta.length > 0 && (
-            <span
-              className="log-meta-pill"
-              title={meta.length + ' meta value' + (meta.length === 1 ? '' : 's')}
-            >
-              {meta.length}
-            </span>
-          )}
-          {canExpand && <span className="log-caret">{props.expanded ? '▾' : '▸'}</span>}
-        </td>
-      </tr>
-      {props.expanded && (
-        <tr>
-          <td colSpan={5}>
-            {meta.length > 0 && (
-              <div className="log-meta">
-                {meta.map(([key, value]) => (
-                  <div key={key} className="log-meta-row">
-                    <span className="log-meta-key mono">{key}</span>
-                    <span className="log-meta-value">{value}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {item.exception && (
-              <div style={{ position: 'relative' }}>
-                <button
-                  className="icon-btn"
-                  title="Copy exception"
-                  style={{ position: 'absolute', top: 6, right: 6 }}
-                  onClick={() => copyToClipboard(item.exception!, 'Exception')}
-                >
-                  <CopyIcon />
-                </button>
-                <pre
-                  className="result-json"
-                  style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', paddingRight: 44 }}
-                >
-                  {item.exception}
-                </pre>
-              </div>
-            )}
-          </td>
-        </tr>
-      )}
     </>
   );
 }
