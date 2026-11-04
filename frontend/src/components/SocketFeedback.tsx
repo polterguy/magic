@@ -5,7 +5,7 @@
  * as a line in the shared terminal-styled ProgressDialog.
  */
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createSocket } from '../lib/socket';
 import ProgressDialog from './ProgressDialog';
 
@@ -42,12 +42,18 @@ export default function SocketFeedback(
   const [messages, setMessages] = useState<FeedbackMessage[]>([]);
   const [error, setError] = useState('');
   const readyFired = useRef(false);
+  // The newest onReady, so the connection is not torn down when it changes.
+  const onReadyRef = useRef(props.onReady);
+  useLayoutEffect(() => {
+    onReadyRef.current = props.onReady;
+  });
+  const channel = props.channel;
 
   useEffect(() => {
     const connection = createSocket();
 
-    connection.on(props.channel, (args: string) => {
-      const parsed = JSON.parse(args);
+    connection.on(channel, (args: string) => {
+      const parsed = JSON.parse(args) as Partial<FeedbackMessage>;
       setMessages(current => [
         ...current,
         {
@@ -74,10 +80,10 @@ export default function SocketFeedback(
         }
         if (!readyFired.current) {
           readyFired.current = true;
-          props.onReady();
+          onReadyRef.current();
         }
       })
-      .catch(err => {
+      .catch((err: unknown) => {
         if (!cancelled) {
           setError(String(err));
         }
@@ -88,7 +94,7 @@ export default function SocketFeedback(
       // Stopping mid-negotiation rejects; nothing is listening either way.
       connection.stop().catch(() => {});
     };
-  }, [props.channel]);
+  }, [channel]);
 
   return (
     <ProgressDialog

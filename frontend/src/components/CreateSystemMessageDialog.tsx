@@ -7,8 +7,11 @@
 
 import Banner from './Banner';
 import { useRef, useState } from 'react';
+import type { HubConnection } from '@microsoft/signalr';
 import { createSocket } from '../lib/socket';
-import { Modal, useDialog } from './Dialogs';
+import { errorMessage } from '../lib/errors';
+import { Modal } from './Dialogs';
+import { useDialog } from '../lib/useDialog';
 import { createSystemMessage, gibberish } from '../lib/api';
 
 export default function CreateSystemMessageDialog(
@@ -22,7 +25,7 @@ export default function CreateSystemMessageDialog(
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const connectionRef = useRef<any>(null);
+  const connectionRef = useRef<HubConnection | null>(null);
   const { confirm } = useDialog();
 
   async function generate() {
@@ -37,17 +40,17 @@ export default function CreateSystemMessageDialog(
     let channel: string;
     try {
       channel = 'c_' + (await gibberish()).result;
-    } catch (err: any) {
+    } catch (err) {
       setBusy(false);
-      setError(err?.message ?? 'Could not create a feedback channel');
+      setError(errorMessage(err, 'Could not create a feedback channel'));
       return;
     }
     const connection = createSocket();
     connectionRef.current = connection;
 
     connection.on(channel, (raw: string) => {
-      const args = JSON.parse(raw);
-      connection.stop();
+      const args = JSON.parse(raw) as { message: string; extra?: string };
+      void connection.stop();
       setBusy(false);
       if (args.message === 'ERROR') {
         setError(args.extra ?? 'Generation failed');
@@ -59,10 +62,10 @@ export default function CreateSystemMessageDialog(
     connection
       .start()
       .then(() => createSystemMessage(props.instruction, props.template, url, channel))
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         setBusy(false);
-        setError(err?.message ?? 'Could not connect to socket');
-        connection.stop();
+        setError(errorMessage(err, 'Could not connect to socket'));
+        void connection.stop();
       });
   }
 
@@ -84,7 +87,7 @@ export default function CreateSystemMessageDialog(
     ) {
       return;
     }
-    connectionRef.current?.stop();
+    void connectionRef.current?.stop();
     props.onClose();
   }
 

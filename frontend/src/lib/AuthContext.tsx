@@ -3,16 +3,7 @@
  * and keeps the JWT token refreshed before it expires.
  */
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  ReactNode,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, ReactNode } from 'react';
 import {
   StoredBackend,
   activateBackend,
@@ -39,48 +30,7 @@ import {
   verifyTicket,
 } from './api';
 import { showToast } from './toast';
-
-interface AuthState {
-  backend: StoredBackend | null;
-  authenticated: boolean;
-  /*
-   * Whether the signed-in user can actually use the dashboard. Every
-   * dashboard endpoint verifies root, so anyone else is authenticated but
-   * unable to do anything — however they signed in.
-   */
-  isRoot: boolean;
-  /*
-   * Whether the backend still needs its first-run setup. Null until the
-   * status has been fetched — the endpoint requires root, so this can only
-   * be asked once signed in.
-   */
-  setupNeeded: boolean | null;
-  // Called when setup completes, so the app stops showing the setup screen.
-  setupCompleted: () => void;
-  /*
-   * The connected backend's Magic version. Owned here because two unrelated
-   * places want it — the sidebar and the dashboard's KPI card — and asking
-   * the backend once per interested component meant fetching the same
-   * unchanging string twice on every dashboard visit.
-   */
-  version: string;
-  login: (url: string, username: string, password: string) => Promise<void>;
-  // Signs in with a ticket the backend already issued, as OpenID login does.
-  loginWithTicket: (url: string, ticket: string) => void;
-  logout: () => void;
-  // Every backend signed into, so the user can move between cloudlets.
-  backends: StoredBackend[];
-  switchBackend: (url: string) => void;
-  removeBackend: (url: string) => void;
-  // Shows the login screen without disturbing the backends already stored.
-  addBackend: () => void;
-}
-
-const AuthContext = createContext<AuthState>(null!);
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
+import { AuthContext } from './useAuth';
 
 export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [backend, setBackend] = useState<StoredBackend | null>(() => {
@@ -113,9 +63,12 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
    */
   const token = backend?.token ?? null;
   const isRoot = !!token && isRootToken(token);
+  // Signing out of root forgets the answer, so the next root session asks again.
+  if (!isRoot && setupNeeded !== null) {
+    setSetupNeeded(null);
+  }
   useEffect(() => {
     if (!isRoot) {
-      setSetupNeeded(null);
       return;
     }
     let cancelled = false;
@@ -144,9 +97,11 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
    * Root only — the endpoint verifies root, and non-root sign-ins land on
    * the NoAccess screen, which deliberately calls nothing.
    */
+  if ((!token || !isRoot) && version !== '…') {
+    setVersion('…');
+  }
   useEffect(() => {
     if (!token || !isRoot) {
-      setVersion('…');
       return;
     }
     let cancelled = false;

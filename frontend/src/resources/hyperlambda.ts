@@ -256,31 +256,40 @@ function quoteRunLength(stream: StringStream): number {
  * invocation, a "variable", etc, at which point the style of the element is
  * overridden from its default.
  */
+declare global {
+  interface Window {
+    // The slot names the editor highlights and completes, loaded by CodeEditor.
+    _vocabulary?: string[] | null;
+    // Dynamic slots, offered as [execute:...] completions.
+    _slots?: string[];
+  }
+}
+
 function getNodeNameType(word: string | null): StyleName | null {
   /*
    * Checking if there are any autocomplete keywords, and if not, returning
    * early.
    */
-  const win = window as any;
+  const win = window;
   if (win._vocabulary === undefined || win._vocabulary === null) {
     const vocabulary = localStorage.getItem('vocabulary');
     if (vocabulary === null || vocabulary === undefined || vocabulary === '') {
       return null;
     }
-    win._vocabulary = JSON.parse(vocabulary);
+    win._vocabulary = JSON.parse(vocabulary) as string[];
   }
 
   /*
    * Default handling, simply checks if current name is either a "variable"
    * (starts with "_") or an Active Event invocation (contains ".").
    */
-  if (win._vocabulary.includes(word)) {
+  if (word !== null && win._vocabulary.includes(word)) {
     /*
      * The name was found in our Active Events JSON declaration, and is either
      * a "keyword" or an Active Event. Which type it is, depends upon if it
      * contains a "." or not.
      */
-    if (!word!.includes('.')) {
+    if (!word.includes('.')) {
       return styles.keyword;
     } else {
       return styles.activeevent;
@@ -656,7 +665,7 @@ function token(stream: StringStream, state: HyperlambdaState): string | null {
  * languageData.
  */
 export function hyperlambdaCompletions(context: CompletionContext): CompletionResult | null {
-  const vocabulary = (window as any)._vocabulary as string[] | undefined;
+  const vocabulary = window._vocabulary;
   if (!vocabulary) {
     return null;
   }
@@ -669,7 +678,7 @@ export function hyperlambdaCompletions(context: CompletionContext): CompletionRe
   const options: Completion[] = vocabulary
     .filter(word => word.includes(curWord))
     .map(word => ({ label: word, type: 'keyword' }));
-  const slots = ((window as any)._slots as string[] | undefined) ?? [];
+  const slots = window._slots ?? [];
   for (const slot of slots) {
     if (slot.includes(curWord)) {
       options.push({ label: 'execute:' + slot, type: 'function' });

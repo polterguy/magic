@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { useAuth } from './lib/AuthContext';
+import { useAuth } from './lib/useAuth';
 import Login from './pages/Login';
 import NoAccess from './pages/NoAccess';
 import NotFound from './pages/NotFound';

@@ -12,7 +12,7 @@
 
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { HubConnection } from '@microsoft/signalr';
 import { createSocket } from '../lib/socket';
 import { getTheme } from '../lib/theme';
@@ -26,6 +26,7 @@ import {
 } from '../lib/api';
 import { copyToClipboard, showToast } from '../lib/toast';
 import { notifyChatOpsDone } from '../lib/chatOps';
+import { showError } from '../lib/errors';
 import { CopyIcon, DownloadIcon, FilePlusIcon, PaperclipIcon } from './Icons';
 import WidgetDialog from './WidgetDialog';
 
@@ -215,18 +216,19 @@ export default function ChatDrawer(
   const wroteRef = useRef(false);
 
   // Escape closes — plain listener, so open dialogs above still get it first.
+  const { open, onClose } = props;
   useEffect(() => {
-    if (!props.open) {
+    if (!open) {
       return;
     }
     function onKey(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        props.onClose();
+        onClose();
       }
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [props.open, props.onClose]);
+  }, [open, onClose]);
 
   useEffect(() => {
     if (props.open) {
@@ -282,7 +284,7 @@ export default function ChatDrawer(
   useEffect(() => {
     return () => {
       connectionRef.current?.stop().catch(() => {});
-      objectUrls.current.forEach(URL.revokeObjectURL);
+      objectUrls.current.forEach(url => URL.revokeObjectURL(url));
       objectUrls.current = [];
     };
   }, []);
@@ -315,7 +317,9 @@ export default function ChatDrawer(
 
   // Chunk handler behind a ref, so the socket subscription never goes stale.
   const onChunkRef = useRef(onChunk);
-  onChunkRef.current = onChunk;
+  useLayoutEffect(() => {
+    onChunkRef.current = onChunk;
+  });
 
   async function ensureSession(): Promise<string> {
     if (sessionRef.current) {
@@ -328,7 +332,7 @@ export default function ChatDrawer(
     }
     connectionRef.current.on(session, (raw: string) => {
       try {
-        onChunkRef.current(JSON.parse(raw));
+        onChunkRef.current(JSON.parse(raw) as ChatChunk);
       } catch {
         // A chunk that doesn't parse carries nothing we can render.
       }
@@ -402,9 +406,9 @@ export default function ChatDrawer(
         attached.length > 0 && !analyse,
       );
       setExecutionId(response?.execution_id ?? null);
-    } catch (err: any) {
+    } catch (err) {
       setStreaming(false);
-      showToast(err.message, true, err.logId);
+      showError(err);
     }
   }
 
@@ -414,8 +418,8 @@ export default function ChatDrawer(
     }
     try {
       await killExecution(executionId);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setStreaming(false);
       setExecutionId(null);
@@ -433,7 +437,7 @@ export default function ChatDrawer(
     setMessages([]);
     setFiles([]);
     // Every thumbnail belonged to the conversation being thrown away.
-    objectUrls.current.forEach(URL.revokeObjectURL);
+    objectUrls.current.forEach(url => URL.revokeObjectURL(url));
     objectUrls.current = [];
     inputRef.current?.focus();
   }

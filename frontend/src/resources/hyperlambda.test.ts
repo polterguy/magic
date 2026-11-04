@@ -7,7 +7,7 @@
  * Run with `npm run test`.
  */
 
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { StringStream } from '@codemirror/language';
 import { EditorState } from '@codemirror/state';
 import { CompletionContext } from '@codemirror/autocomplete';
@@ -28,7 +28,7 @@ function tokenizeLine(line: string, state: State): Token[] {
     // StreamLanguage sets this before every token call; the expression
     // detection in the value tokenizer reads it.
     stream.start = start;
-    const style = hyperlambdaParser.token!(stream, state);
+    const style = hyperlambdaParser.token(stream, state);
     // A tokenizer bug must not wedge the test in an infinite loop.
     if (stream.pos === start) {
       stream.next();
@@ -46,13 +46,13 @@ function tokenizeDoc(doc: string): Token[][] {
 
 // First token of a single-line document, for the simple cases.
 function styleOf(line: string, vocabulary: string[] = []): string | null {
-  (window as any)._vocabulary = vocabulary;
+  window._vocabulary = vocabulary;
   return tokenizeLine(line, hyperlambdaParser.startState!(4))[0]?.style ?? null;
 }
 
 beforeAll(() => {
-  (globalThis as any).window = { _vocabulary: [], _slots: [] };
-  (globalThis as any).localStorage = { getItem: () => null };
+  vi.stubGlobal('window', { _vocabulary: [], _slots: [] });
+  vi.stubGlobal('localStorage', { getItem: () => null });
 });
 
 describe('hyperlambda tokenizer', () => {
@@ -167,8 +167,8 @@ describe('hyperlambdaCompletions', () => {
   }
 
   beforeAll(() => {
-    (window as any)._vocabulary = ['if', 'while', 'log.error'];
-    (window as any)._slots = ['foo-bar'];
+    window._vocabulary = ['if', 'while', 'log.error'];
+    window._slots = ['foo-bar'];
   });
 
   it('offers vocabulary entries containing the typed text', () => {
@@ -203,7 +203,7 @@ describe('hyperlambdaCompletions', () => {
   });
 
   it('answers null when the vocabulary has not loaded', () => {
-    delete (window as any)._vocabulary;
+    delete window._vocabulary;
     expect(complete('if')).toBeNull();
   });
 });

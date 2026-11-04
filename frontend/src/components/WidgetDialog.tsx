@@ -89,7 +89,9 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
   const [height, setHeight] = useState(240);
 
   useEffect(() => {
-    function onMessage(event: MessageEvent) {
+    function onMessage(
+      event: MessageEvent<{ type?: unknown; id?: unknown; height?: unknown } | null>,
+    ) {
       if (event.data?.type !== 'widget-height' || event.data?.id !== id) {
         return;
       }

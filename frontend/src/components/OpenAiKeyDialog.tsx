@@ -18,6 +18,7 @@ import {
   openaiSetKey,
 } from '../lib/api';
 import type { OpenAiModel } from '../lib/api';
+import { errorMessage } from '../lib/errors';
 
 /*
  * Preselected until we know what the cloudlet already runs — Terra is the
@@ -77,8 +78,8 @@ export default function OpenAiKeyDialog(
         setSavedModel(model);
       }
       props.onSaved();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(errorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -127,7 +128,7 @@ export default function OpenAiKeyDialog(
       </label>
       <p className="muted" style={{ marginTop: 8, marginBottom: 0, fontSize: 'var(--text-sm)' }}>
         Saving also switches the <strong>default</strong> model — the one behind Chat Ops and the
-        dashboard's AI tools.
+        dashboard&apos;s AI tools.
       </p>
       <div className="modal-actions">
         <button className="btn btn-secondary" onClick={props.onClose}>

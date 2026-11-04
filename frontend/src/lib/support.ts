@@ -13,6 +13,14 @@ import { getTheme } from './theme';
 
 const SCRIPT_ID = 'ainiro-support-chatbot';
 
+// What the widget script hangs off window once it has loaded.
+declare global {
+  interface Window {
+    ainiro?: { show: () => void };
+    ainiro_faq_question?: (event: unknown, question: string) => void;
+  }
+}
+
 /*
  * Included with hidden=true, so nothing renders until show() is called - the
  * dashboard has its own button for that. The rest is presentation, and [v] is
@@ -72,7 +80,7 @@ let loading: Promise<void> | null = null;
  * don't append two tags.
  */
 function load(): Promise<void> {
-  if ((window as any).ainiro) {
+  if (window.ainiro) {
     return Promise.resolve();
   }
   loading ??= new Promise<void>((resolve, reject) => {
@@ -96,7 +104,7 @@ function load(): Promise<void> {
 export async function openSupport() {
   try {
     await load();
-    (window as any).ainiro?.show();
+    window.ainiro?.show();
   } catch {
     showToast('Could not reach the support chatbot', true);
   }
@@ -109,7 +117,7 @@ export async function openSupport() {
 export async function askSupport(question: string) {
   try {
     await load();
-    (window as any).ainiro_faq_question?.(null, question);
+    window.ainiro_faq_question?.(null, question);
   } catch {
     showToast('Could not reach the support chatbot', true);
   }

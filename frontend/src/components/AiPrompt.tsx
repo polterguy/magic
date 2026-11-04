@@ -9,6 +9,7 @@
 import AiWaiter from './AiWaiter';
 import { CSSProperties, FormEvent, useEffect, useState } from 'react';
 import { aiQuery, openaiIsConfigured } from '../lib/api';
+import { errorMessage } from '../lib/errors';
 
 const TOOLTIPS: Record<string, string> = {
   hl: 'Ask the Machine to create some Hyperlambda code for you',
@@ -67,8 +68,8 @@ export default function AiPrompt(
       );
       props.onResult(response.result);
       setPrompt('');
-    } catch (err: any) {
-      props.onError(err.message);
+    } catch (err) {
+      props.onError(errorMessage(err));
     } finally {
       setBusy(false);
     }

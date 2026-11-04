@@ -5,7 +5,8 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { Modal, useDialog } from './Dialogs';
+import { Modal } from './Dialogs';
+import { useDialog } from '../lib/useDialog';
 import { ChevronIcon, UndoIcon } from './Icons';
 import { showToast } from '../lib/toast';
 import {
@@ -29,6 +30,7 @@ import {
   listFolders,
   loadFile,
 } from '../lib/api';
+import { showError } from '../lib/errors';
 
 // Status codes of a file a merge could not combine, which leave the merge waiting for the user.
 const UNMERGED = new Set(['DD', 'AU', 'UD', 'UA', 'DU', 'AA', 'UU']);
@@ -149,7 +151,9 @@ export default function GitPanel(
   }, [props.path]);
 
   useEffect(() => {
-    refresh();
+    // refresh() handles its own failures.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- every setState in refresh() runs after an await, so none happens synchronously in this effect
+    void refresh();
   }, [refresh]);
 
   // While an operation runs the dialog must stay open — Escape, backdrop
@@ -161,7 +165,7 @@ export default function GitPanel(
   }
 
   // Runs one git operation with busy-state, toast and refresh handled.
-  async function run(action: () => Promise<any>, done: string, changesTree = false) {
+  async function run(action: () => Promise<unknown>, done: string, changesTree = false) {
     setBusy(true);
     try {
       await action();
@@ -170,8 +174,8 @@ export default function GitPanel(
       if (changesTree) {
         props.onChanged();
       }
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -216,8 +220,8 @@ export default function GitPanel(
             .join('\n')
         : await gitDiff(props.path, change.path);
       setDiffs(current => ({ ...current, [change.path]: diff }));
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }
 
@@ -304,8 +308,8 @@ export default function GitPanel(
           : 'Latest commits',
         lines: text.split('\n').filter(Boolean),
       });
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     }
   }
 

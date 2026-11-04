@@ -7,7 +7,7 @@
  * no counts, no socket. The roles come from the token itself.
  */
 
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 import { tokenRoles } from '../lib/backend';
 
 export default function NoAccess() {

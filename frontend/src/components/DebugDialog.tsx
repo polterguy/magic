@@ -271,7 +271,7 @@ function StepTable(
 function LambdaPane(
   props: Readonly<{
     onReturn: boolean;
-    returned: any;
+    returned: unknown;
     current: DebugStep;
     failed: boolean;
   }>,
@@ -295,7 +295,7 @@ function LambdaPane(
  * String() renders those as "[object Object]" - so structures are summarised by
  * shape instead, with the full JSON available on hover.
  */
-function preview(value: any, max: number) {
+function preview(value: unknown, max: number) {
   if (Array.isArray(value)) {
     return value.length + (value.length === 1 ? ' item' : ' items');
   }

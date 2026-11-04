@@ -5,12 +5,10 @@
  * HTML), an image for image types, and a download button for binaries.
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import CodeEditor from './CodeEditor';
 import { dispositionFilename, downloadBlob } from '../lib/download';
-
-// Long-standing import site for these two — they now live in lib/download.
-export { dispositionFilename, downloadBlob };
+import { errorMessage } from '../lib/errors';
 
 export interface RawResult {
   blob: Blob;
@@ -60,8 +58,13 @@ export default function ResultViewer({
 
   // Surface the displayed text (null for binaries/images) so a parent can offer
   // a "Copy response" action without re-reading and re-formatting the blob.
+  // The newest onText is kept in a ref, so it is called when the text changes only.
+  const onTextRef = useRef(onText);
+  useLayoutEffect(() => {
+    onTextRef.current = onText;
+  });
   useEffect(() => {
-    onText?.(text);
+    onTextRef.current?.(text);
   }, [text]);
 
   const contentType = result.contentType.split(';')[0].trim().toLowerCase();
@@ -69,10 +72,18 @@ export default function ResultViewer({
   const textual = !attachment && isText(contentType);
   const image = !attachment && contentType.startsWith('image/');
 
-  useEffect(() => {
+  // A new result starts out unpreviewed, and a non-text one has no text.
+  const [viewedResult, setViewedResult] = useState(result);
+  if (viewedResult !== result) {
+    setViewedResult(result);
     setPreview(false);
     if (!textual) {
       setText(null);
+    }
+  }
+
+  useEffect(() => {
+    if (!textual) {
       return;
     }
     let cancelled = false;
@@ -91,9 +102,9 @@ export default function ResultViewer({
         }
         setText(value === '' ? 'OK — no result' : value);
       })
-      .catch(error => {
+      .catch((error: unknown) => {
         if (!cancelled) {
-          setText('Could not read the result: ' + error.message);
+          setText('Could not read the result: ' + errorMessage(error));
         }
       });
     return () => {

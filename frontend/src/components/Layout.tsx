@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { createSocket } from '../lib/socket';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 import { openaiIsConfigured } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
 import { setToastListener } from '../lib/toast';
@@ -57,14 +57,14 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
     (to: string) => {
       const guard = getNavGuard();
       if (!guard) {
-        navigate(to);
+        void navigate(to);
         return;
       }
       guard()
         .then(proceed => {
           if (proceed) {
             setNavGuard(null);
-            navigate(to);
+            void navigate(to);
           }
         })
         .catch(error => console.error('Navigation guard failed:', error));
@@ -172,10 +172,11 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
   // Toasts raised from anywhere in the app — clipboard copies, and so on.
   useEffect(() => {
     setToastListener(toast => pushToast(toast.text, toast.isError, toast.logId));
+    const pending = timers.current;
     return () => {
       setToastListener(null);
-      timers.current.forEach(clearTimeout);
-      timers.current.clear();
+      pending.forEach(clearTimeout);
+      pending.clear();
     };
   }, [pushToast]);
 
@@ -185,7 +186,7 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
     }
     const connection = createSocket({ reconnect: true });
     connection.on('magic.backend.message', (raw: string) => {
-      const args = JSON.parse(raw);
+      const args = JSON.parse(raw) as { type?: string; message: string };
       switch (args.type) {
         case 'success':
         case 'error':
@@ -198,7 +199,7 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
     // "Failed to start the HttpConnection before stop() was called."
     const started = connection.start().catch(() => {});
     return () => {
-      started.finally(() => connection.stop().catch(() => {}));
+      void started.finally(() => connection.stop().catch(() => {}));
     };
   }, [backendUrl, backendToken, pushToast]);
 
@@ -350,7 +351,7 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
               : []),
             { label: 'Toggle light/dark theme', action: toggleTheme },
             { label: 'Switch cloudlet', action: () => setSwitching(true) },
-            { label: 'Ask Frank for help', action: openSupport },
+            { label: 'Ask Frank for help', action: () => void openSupport() },
             { label: 'Create an API from your data', action: () => go('/generator?guided=1') },
             { label: 'Keyboard shortcuts', action: () => setShortcutsOpen(true) },
           ]}

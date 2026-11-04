@@ -10,10 +10,11 @@
 
 import SearchInput from './SearchInput';
 import { CopyIcon, TrashIcon } from './Icons';
-import { Modal, useDialog } from './Dialogs';
+import { Modal } from './Dialogs';
+import { useDialog } from '../lib/useDialog';
 import { useMemo, useState } from 'react';
 import { copyToClipboard } from '../lib/toast';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../lib/useAuth';
 import { getNavGuard } from '../lib/navGuard';
 import { tokenExpired } from '../lib/backend';
 

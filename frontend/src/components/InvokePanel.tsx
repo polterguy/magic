@@ -13,6 +13,7 @@ import { RawResult } from './ResultViewer';
 import Select from './Select';
 import { copyToClipboard } from '../lib/toast';
 import { Endpoint, apiBaseUrl, generateRoleToken, invokeEndpoint, listRoles } from '../lib/api';
+import { errorMessage } from '../lib/errors';
 
 export interface InvokeResult extends RawResult {
   elapsed: number;
@@ -31,7 +32,7 @@ const RUN_AS_KEY = 'magic2.invoke.runAs';
 const WILDCARD = '__wildcard__';
 
 function samplePayload(endpoint: Endpoint) {
-  const payload: Record<string, any> = {};
+  const payload: Record<string, unknown> = {};
   for (const argument of endpoint.input ?? []) {
     switch (argument.type) {
       case 'int':
@@ -118,7 +119,7 @@ export default function InvokePanel(
      * so debugging an endpoint is filled in through the same form as invoking it,
      * rather than through a second dialog that merely looks similar.
      */
-    onDebug?: (args: Record<string, any>) => void;
+    onDebug?: (args: Record<string, unknown>) => void;
     /*
      * When supplied, the panel offers to open the endpoint's source file. Hyper
      * IDE does not supply it — the file is already open there — so the action
@@ -140,7 +141,7 @@ export default function InvokePanel(
   const storageKey = 'magic2.invoke.' + endpoint.verb + ':' + endpoint.path;
   const [args, setArgs] = useState<Record<string, string>>(() => {
     try {
-      return JSON.parse(sessionStorage.getItem(storageKey) ?? '{}');
+      return JSON.parse(sessionStorage.getItem(storageKey) ?? '{}') as Record<string, string>;
     } catch {
       return {};
     }
@@ -195,7 +196,7 @@ export default function InvokePanel(
    * invalid JSON is simply left out, since the debugger validates nothing.
    */
   function collectedArgs() {
-    const collected: Record<string, any> = {};
+    const collected: Record<string, unknown> = {};
     for (const argument of formFields) {
       const value = args[argument.name];
       if (value !== undefined && value !== '') {
@@ -204,7 +205,7 @@ export default function InvokePanel(
     }
     if (!usesQuery && consumesJson) {
       try {
-        Object.assign(collected, JSON.parse(payload));
+        Object.assign(collected, JSON.parse(payload) as Record<string, unknown>);
       } catch {
         // Payload is not valid JSON yet, so there is nothing to merge.
       }
@@ -255,8 +256,8 @@ export default function InvokePanel(
     if (runAs) {
       try {
         token = await generateRoleToken(runAs);
-      } catch (err: any) {
-        setInvokeError(err.message);
+      } catch (err) {
+        setInvokeError(errorMessage(err));
         return;
       }
     }
@@ -340,8 +341,8 @@ export default function InvokePanel(
         token,
       );
       props.onResult({ ...response, runAs });
-    } catch (err: any) {
-      setInvokeError(err.message);
+    } catch (err) {
+      setInvokeError(errorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -604,7 +605,9 @@ export default function InvokePanel(
  * so what's about to be uploaded is visible without opening anything.
  */
 function FileChip({ file, onRemove }: Readonly<{ file: File; onRemove: () => void }>) {
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  // Only an image has a thumbnail.
+  const thumbnail = file.type.startsWith('image/') ? imageUrl : null;
 
   /*
    * The object URL is created and revoked inside one effect, so the two are
@@ -614,11 +617,11 @@ function FileChip({ file, onRemove }: Readonly<{ file: File; onRemove: () => voi
    */
   useEffect(() => {
     if (!file.type.startsWith('image/')) {
-      setThumbnail(null);
       return;
     }
     const url = URL.createObjectURL(file);
-    setThumbnail(url);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the object URL is an external resource created and revoked in this effect (see above), so this is the one place it can be stored
+    setImageUrl(url);
     return () => URL.revokeObjectURL(url);
   }, [file]);
 

@@ -28,6 +28,7 @@ import {
 } from '../lib/api';
 import { showToast } from '../lib/toast';
 import { withoutTrailingSlashes } from '../lib/backend';
+import { showError } from '../lib/errors';
 
 // Schemes we can generate. OAuth2 needs a token exchange, which this does not do.
 const SCHEMES = [
@@ -116,8 +117,8 @@ export default function ImportApiTab() {
           setScheme('bearer');
         }
       }
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setBusy(false);
     }
@@ -142,8 +143,8 @@ export default function ImportApiTab() {
        */
       const channel = (await gibberish()).result;
       setRunning({ channel, count: operations.length });
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
       setBusy(false);
     }
   }
@@ -163,7 +164,7 @@ export default function ImportApiTab() {
       overwrite,
       channel,
     })
-      .catch(err => showToast(err.message, true, err.logId))
+      .catch((err: unknown) => showError(err))
       .finally(() => setBusy(false));
   }
 
@@ -189,19 +190,19 @@ export default function ImportApiTab() {
     try {
       const config = await loadConfig();
       const segments = configKey.trim().split(':').filter(Boolean);
-      let node: any = config;
+      let node = config as Record<string, unknown>;
       segments.slice(0, -1).forEach(segment => {
         if (typeof node[segment] !== 'object' || node[segment] === null) {
           node[segment] = {};
         }
-        node = node[segment];
+        node = node[segment] as Record<string, unknown>;
       });
       node[segments[segments.length - 1]] = value;
       await saveConfig(config);
       showToast('Credential stored in your configuration');
       setCredential(null);
-    } catch (err: any) {
-      showToast(err.message, true, err.logId);
+    } catch (err) {
+      showError(err);
     } finally {
       setSavingKey(false);
     }
@@ -257,9 +258,9 @@ export default function ImportApiTab() {
   return (
     <div className="card">
       <p className="muted" style={{ marginTop: 0 }}>
-        Wraps a third-party API's operations as endpoints in your cloudlet. The generated endpoints
-        read their credential from your configuration at invocation time, so it is never written
-        into the files, and they become MCP tools like any other endpoint.
+        Wraps a third-party API&apos;s operations as endpoints in your cloudlet. The generated
+        endpoints read their credential from your configuration at invocation time, so it is never
+        written into the files, and they become MCP tools like any other endpoint.
       </p>
 
       {/* Wrapped in a form-grid so the caption gets the same styling as every other field's. */}
@@ -418,7 +419,11 @@ export default function ImportApiTab() {
                           onClick={() =>
                             setExpandedTags(previous => {
                               const next = new Set(previous);
-                              next.has(tag) ? next.delete(tag) : next.add(tag);
+                              if (next.has(tag)) {
+                                next.delete(tag);
+                              } else {
+                                next.add(tag);
+                              }
                               return next;
                             })
                           }
@@ -532,9 +537,9 @@ export default function ImportApiTab() {
         <Modal width={520} onClose={() => setCredential(null)} onSubmit={storeCredential}>
           <h2>Store credential</h2>
           <p className="muted" style={{ marginTop: 0 }}>
-            Saved into your cloudlet's configuration under <span className="mono">{configKey}</span>
-            , which is where the generated endpoints read it from as they are invoked. It is never
-            written into the generated files.
+            Saved into your cloudlet&apos;s configuration under{' '}
+            <span className="mono">{configKey}</span>, which is where the generated endpoints read
+            it from as they are invoked. It is never written into the generated files.
           </p>
           <div className="form-grid" style={{ marginTop: 16 }}>
             <label>

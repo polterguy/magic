@@ -202,14 +202,15 @@ export default function CommandPalette(
     };
   }, []);
 
+  const { go, actions } = props;
   const commands: PaletteCommand[] = useMemo(
     () => [
       ...SECTIONS.map(section => ({
         group: 'Go to',
         label: section.label,
-        action: () => props.go(section.to),
+        action: () => go(section.to),
       })),
-      ...props.actions.map(entry => ({
+      ...actions.map(entry => ({
         group: 'Actions',
         label: entry.label,
         action: entry.action,
@@ -219,10 +220,10 @@ export default function CommandPalette(
         label: entry.label,
         hint: entry.hint,
         verb: entry.verb,
-        action: () => props.go(entry.to),
+        action: () => go(entry.to),
       })),
     ],
-    [dynamic, props.go, props.actions],
+    [dynamic, go, actions],
   );
 
   const matches = useMemo(() => {
@@ -257,9 +258,10 @@ export default function CommandPalette(
   }, [query, commands]);
 
   // Clamp the selection when the result set shrinks under it.
-  useEffect(() => {
-    setSelected(current => Math.min(current, Math.max(0, matches.length - 1)));
-  }, [matches.length]);
+  const lastIndex = Math.max(0, matches.length - 1);
+  if (selected > lastIndex) {
+    setSelected(lastIndex);
+  }
 
   useEffect(() => {
     listRef.current?.querySelector('.palette-row.selected')?.scrollIntoView({ block: 'nearest' });
@@ -292,13 +294,19 @@ export default function CommandPalette(
   let previousGroup = '';
 
   return (
-    <div className="palette-backdrop" role="presentation" onMouseDown={props.onClose}>
-      <div
-        className="palette"
-        role="dialog"
-        aria-label="Command palette"
-        onMouseDown={event => event.stopPropagation()}
-      >
+    <div
+      className="palette-backdrop"
+      role="presentation"
+      onMouseDown={event => {
+        // A press inside the palette goes no further; one on the backdrop closes it.
+        if (event.target === event.currentTarget) {
+          props.onClose();
+        } else {
+          event.stopPropagation();
+        }
+      }}
+    >
+      <div className="palette" role="dialog" aria-label="Command palette">
         <div className="palette-input">
           <span className="palette-prompt" aria-hidden="true">
             &gt;

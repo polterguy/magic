@@ -16,20 +16,28 @@ interface Opt {
   text: string;
 }
 
+// The props an <option> child (or a wrapper such as <optgroup>) can carry.
+interface OptionProps {
+  value?: string | number;
+  children?: ReactNode;
+  disabled?: boolean;
+}
+
 function collectOptions(children: ReactNode): Opt[] {
   const out: Opt[] = [];
-  Children.forEach(children, (child: any) => {
-    if (!isValidElement(child)) return;
+  Children.forEach(children, child => {
+    if (!isValidElement<OptionProps>(child)) return;
+    const childProps = child.props;
     if (child.type === 'option') {
-      const label = (child.props as any).children;
+      const label = childProps.children;
       out.push({
-        value: String((child.props as any).value ?? ''),
+        value: String(childProps.value ?? ''),
         label,
-        disabled: (child.props as any).disabled,
-        text: typeof label === 'string' ? label : String((child.props as any).value ?? ''),
+        disabled: childProps.disabled,
+        text: typeof label === 'string' ? label : String(childProps.value ?? ''),
       });
-    } else if ((child.props as any)?.children) {
-      out.push(...collectOptions((child.props as any).children));
+    } else if (childProps?.children) {
+      out.push(...collectOptions(childProps.children));
     }
   });
   return out;
@@ -189,6 +197,14 @@ export default function Select(
                 onMouseEnter={() => setActive(i)}
                 onMouseDown={e => e.preventDefault()}
                 onClick={() => !o.disabled && choose(o.value)}
+                // Focus stays on the trigger, whose onKeyDown drives the menu; this
+                // only covers an option that receives key events directly.
+                onKeyDown={e => {
+                  if ((e.key === 'Enter' || e.key === ' ') && !o.disabled) {
+                    e.preventDefault();
+                    choose(o.value);
+                  }
+                }}
               >
                 <span className="select-check" aria-hidden="true">
                   {o.value === props.value ? '✓' : ''}

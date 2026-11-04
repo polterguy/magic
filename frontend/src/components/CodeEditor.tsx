@@ -4,7 +4,7 @@
  * out of the box.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   Annotation,
   Compartment,
@@ -53,6 +53,7 @@ import { hyperlambdaLanguage } from '../resources/hyperlambda.js';
 import '../resources/ainiro.css';
 import { http, apiBaseUrl } from '../lib/api.js';
 import { SHORTCUTS } from '../lib/shortcuts';
+import { editorSelection } from '../lib/editor';
 
 /*
  * The hyperlambda mode colors slot invocations from window._vocabulary,
@@ -77,10 +78,10 @@ function ensureVocabulary() {
   if (vocabularyFrom !== apiBaseUrl()) {
     vocabularyPromise = null;
     slotDocs = {};
-    delete (window as any)._vocabulary;
-    delete (window as any)._slots;
+    delete window._vocabulary;
+    delete window._slots;
   }
-  if ((window as any)._vocabulary) {
+  if (window._vocabulary) {
     return Promise.resolve();
   }
   vocabularyFrom = apiBaseUrl();
@@ -97,10 +98,10 @@ function ensureVocabulary() {
     http.get<string[]>('/magic/system/evaluator/slots'),
   ])
     .then(([vocabulary, slots]) => {
-      (window as any)._vocabulary = vocabulary;
+      window._vocabulary = vocabulary;
       // The completion source reads _slots to offer [execute:...] completions
       // for dynamic slots.
-      (window as any)._slots = slots;
+      window._slots = slots;
     })
     .catch(err => {
       // A failed fetch must not stay cached, or highlighting silently stays
@@ -261,15 +262,6 @@ function wrapsByDefault(mode: string) {
   return mode === 'markdown';
 }
 
-// The current selection's text, replacing CM5's getSelection().
-export function editorSelection(view: EditorView | null): string {
-  if (!view) {
-    return '';
-  }
-  const range = view.state.selection.main;
-  return view.state.sliceDoc(range.from, range.to);
-}
-
 function toggleFullscreen(view: EditorView) {
   view.dom.classList.toggle('cm-fullscreen');
 }
@@ -313,7 +305,7 @@ interface CodeEditorProps {
   // deleteFile, deleteFolder, close.
   onAction?: (action: string) => void;
   /*
-   * Change this (to any new value, from useEditToken below) in the same
+   * Change this (to any new value, from useEditToken in lib/editor) in the same
    * update that hands `value` a deliberate whole-buffer replacement — AI
    * generation, loading a saved snippet, opening a dropped/uploaded file —
    * and that replacement becomes one undo step. Leave it alone for a value
@@ -323,15 +315,6 @@ interface CodeEditorProps {
    * undo history at all, as before.
    */
   undoableEditId?: number;
-}
-
-/*
- * Pairs with `undoableEditId` above. Call bump() in the same handler that
- * sets the state driving a deliberate `value` replacement.
- */
-export function useEditToken(): [number, () => void] {
-  const [token, setToken] = useState(0);
-  return [token, () => setToken(current => current + 1)];
 }
 
 export default function CodeEditor(props: Readonly<CodeEditorProps>) {
@@ -349,7 +332,9 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
    */
   const [ready, setReady] = useState(false);
   const callbacks = useRef(props);
-  callbacks.current = props;
+  useLayoutEffect(() => {
+    callbacks.current = props;
+  });
   const lastUndoableEditId = useRef(props.undoableEditId);
 
   useEffect(() => {
@@ -487,7 +472,7 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
                     !event.metaKey &&
                     /^Key[A-Z]$/.test(event.code ?? '')
                   ) {
-                    const letter = event.code!.slice(3).toLowerCase();
+                    const letter = event.code.slice(3).toLowerCase();
                     if (event.key !== letter) {
                       view.contentDOM.dispatchEvent(
                         new KeyboardEvent('keydown', {
@@ -587,7 +572,7 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
           : [externalChange.of(true), Transaction.addToHistory.of(false)],
       });
     }
-  }, [props.value]);
+  }, [props.value, props.undoableEditId]);
 
   useEffect(() => {
     const view = editor.current;
@@ -647,32 +632,4 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
   }, [props.height]);
 
   return <div className="code-editor" ref={host} />;
-}
-
-/*
- * Returns the CodeMirror mode to use for the given filename.
- */
-export function modeForFile(filename: string): string {
-  const extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
-  switch (extension) {
-    case 'hl':
-      return 'hyperlambda';
-    case 'sql':
-      return 'text/x-sql';
-    case 'js':
-    case 'ts':
-      return 'javascript';
-    case 'json':
-      return 'application/json';
-    case 'html':
-    case 'htm':
-      return 'htmlmixed';
-    case 'css':
-    case 'scss':
-      return 'css';
-    case 'md':
-      return 'markdown';
-    default:
-      return 'text/plain';
-  }
 }
