@@ -85,26 +85,25 @@ export default function DbAccessWizard(
       </div>
       <div className="toolbar">
         <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} />
-          Read
+          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} /> Read
         </label>
         <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={create} onChange={e => setCreate(e.target.checked)} />
+          <input type="checkbox" checked={create} onChange={e => setCreate(e.target.checked)} />{' '}
           Create
         </label>
         <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={update} onChange={e => setUpdate(e.target.checked)} />
+          <input type="checkbox" checked={update} onChange={e => setUpdate(e.target.checked)} />{' '}
           Update
         </label>
         <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <input type="checkbox" checked={remove} onChange={e => setRemove(e.target.checked)} />
+          <input type="checkbox" checked={remove} onChange={e => setRemove(e.target.checked)} />{' '}
           Delete
         </label>
         <label
           style={{ display: 'flex', alignItems: 'center', gap: 4 }}
           title="Adds data.select and data.scalar — raw SQL against this database"
         >
-          <input type="checkbox" checked={rawSql} onChange={e => setRawSql(e.target.checked)} />
+          <input type="checkbox" checked={rawSql} onChange={e => setRawSql(e.target.checked)} />{' '}
           Raw&nbsp;SQL
         </label>
         <span className="spacer" />

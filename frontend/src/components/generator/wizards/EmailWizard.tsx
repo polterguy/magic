@@ -35,14 +35,13 @@ export default function EmailWizard(
           style={{ display: 'flex', alignItems: 'center', gap: 4 }}
           title="Send mail through the configured SMTP server"
         >
-          <input type="checkbox" checked={send} onChange={e => setSend(e.target.checked)} />
-          Send
+          <input type="checkbox" checked={send} onChange={e => setSend(e.target.checked)} /> Send
         </label>
         <label
           style={{ display: 'flex', alignItems: 'center', gap: 4 }}
           title="Fetch mail over POP3"
         >
-          <input type="checkbox" checked={receive} onChange={e => setReceive(e.target.checked)} />
+          <input type="checkbox" checked={receive} onChange={e => setReceive(e.target.checked)} />{' '}
           Receive
         </label>
         <span className="spacer" />

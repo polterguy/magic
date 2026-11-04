@@ -9,7 +9,7 @@ export default function SearchFilterToolbar({ search }: Readonly<{ search: Searc
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         title="The most matches returned"
       >
-        Limit
+        Limit{' '}
         <input
           type="number"
           value={limit}
@@ -21,7 +21,7 @@ export default function SearchFilterToolbar({ search }: Readonly<{ search: Searc
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         title="Similarity cutoff between 0 and 1, where lower is stricter. Blank uses the type's own"
       >
-        Threshold
+        Threshold{' '}
         <input
           type="number"
           step={0.05}
@@ -35,7 +35,7 @@ export default function SearchFilterToolbar({ search }: Readonly<{ search: Searc
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         title="Only matches belonging to exactly this URL or reference"
       >
-        URI
+        URI{' '}
         <input
           type="text"
           placeholder="any"
@@ -48,7 +48,7 @@ export default function SearchFilterToolbar({ search }: Readonly<{ search: Searc
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         title="Only matches whose meta fits this pattern, where % matches any text, such as FACT ==> %"
       >
-        Meta
+        Meta{' '}
         <input
           type="text"
           placeholder="any"

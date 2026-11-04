@@ -49,21 +49,19 @@ export default function FilesAccessWizard(
           style={{ display: 'flex', alignItems: 'center', gap: 4 }}
           title="Load, list, search files and folders"
         >
-          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} />
-          Read
+          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} /> Read
         </label>
         <label
           style={{ display: 'flex', alignItems: 'center', gap: 4 }}
           title="Save, copy, move, patch, unzip; create folders"
         >
-          <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} />
-          Write
+          <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} /> Write
         </label>
         <label
           style={{ display: 'flex', alignItems: 'center', gap: 4 }}
           title="Delete files and folders"
         >
-          <input type="checkbox" checked={remove} onChange={e => setRemove(e.target.checked)} />
+          <input type="checkbox" checked={remove} onChange={e => setRemove(e.target.checked)} />{' '}
           Delete
         </label>
         <span className="spacer" />
@@ -79,7 +77,7 @@ export default function FilesAccessWizard(
           style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}
           title="Folder operations are pinned to exactly this folder, not its subfolders; file operations are pinned to any file directly inside it"
         >
-          Folder
+          Folder{' '}
           <input
             type="text"
             placeholder="/etc/data/  (blank = any path)"
@@ -92,7 +90,7 @@ export default function FilesAccessWizard(
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           title="Narrows file operations to this extension only, e.g. conf for *.conf; blank allows any file in the folder"
         >
-          Extension
+          Extension{' '}
           <input
             type="text"
             placeholder="any"

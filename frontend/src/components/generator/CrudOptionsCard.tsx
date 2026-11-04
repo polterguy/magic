@@ -73,7 +73,7 @@ export default function CrudOptionsCard({ crud }: Readonly<{ crud: CrudTabState 
                 type="checkbox"
                 checked={publicCache}
                 onChange={e => setPublicCache(e.target.checked)}
-              />
+              />{' '}
               Public cache
             </label>
           </div>

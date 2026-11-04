@@ -98,7 +98,7 @@ export default function EditorPane(
       )}
       {current && (
         <AiPrompt
-          fileType={selectedFile.substring(selectedFile.lastIndexOf('.') + 1)}
+          fileType={selectedFile.slice(selectedFile.lastIndexOf('.') + 1)}
           getContext={() => aiContextForFile(selectedFile, content)}
           getOldCode={() => content}
           session={selectedFile}

@@ -59,7 +59,7 @@ export function useExecution(options: {
     try {
       // Executing a selection runs just the selected code, like the old IDE.
       const selection = editorSelection(editorRef.current);
-      const code = selection !== '' ? selection : content;
+      const code = selection === '' ? content : selection;
       setWaiting(true);
       const argSpec = (await getHyperlambdaArguments(code)) ?? {};
       // Waiter off while the parametrise form awaits the user.
@@ -82,7 +82,8 @@ export function useExecution(options: {
         }
         args = {};
         for (const name of names) {
-          const value = values[name];
+          // The form leaves out a field nobody filled in.
+          const value = (values as Partial<Record<string, string>>)[name];
           if (value === undefined || value === '') {
             continue;
           }

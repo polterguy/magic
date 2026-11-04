@@ -11,6 +11,7 @@ export default function AddRoleRule({ sandbox }: Readonly<{ sandbox: SandboxTabS
           setRuleList([
             ...ruleList,
             {
+              id: crypto.randomUUID(),
               role: '',
               limit: baseLimit,
               window: baseWindow,

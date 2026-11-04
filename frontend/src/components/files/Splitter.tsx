@@ -38,11 +38,11 @@ export default function Splitter(
           const move = (ev: MouseEvent) =>
             setTreeWidth(Math.max(220, Math.min(640, startWidth + ev.clientX - startX)));
           const up = () => {
-            window.removeEventListener('mousemove', move);
-            window.removeEventListener('mouseup', up);
+            globalThis.removeEventListener('mousemove', move);
+            globalThis.removeEventListener('mouseup', up);
           };
-          window.addEventListener('mousemove', move);
-          window.addEventListener('mouseup', up);
+          globalThis.addEventListener('mousemove', move);
+          globalThis.addEventListener('mouseup', up);
         }}
       />
     </>

@@ -21,7 +21,7 @@ export default function CrudGenerationOptions({ crud }: Readonly<{ crud: CrudTab
       <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Generation</div>
       <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <input type="checkbox" checked={logging} onChange={e => setLogging(e.target.checked)} />
+          <input type="checkbox" checked={logging} onChange={e => setLogging(e.target.checked)} />{' '}
           Log create/update/delete
         </label>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -29,15 +29,15 @@ export default function CrudGenerationOptions({ crud }: Readonly<{ crud: CrudTab
             type="checkbox"
             checked={overwrite}
             onChange={e => setOverwrite(e.target.checked)}
-          />
+          />{' '}
           Overwrite existing files
         </label>
         <label
           style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
           title="Publish a web socket message after every create, update and delete"
         >
-          <input type="checkbox" checked={live} onChange={e => setLive(e.target.checked)} />
-          Publish live updates
+          <input type="checkbox" checked={live} onChange={e => setLive(e.target.checked)} /> Publish
+          live updates
         </label>
       </div>
       {live && (

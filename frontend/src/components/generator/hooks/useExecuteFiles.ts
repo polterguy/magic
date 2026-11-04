@@ -35,7 +35,7 @@ export function useExecuteFiles(props: WizardProps) {
   // resolved lazily on click and cached per path so re-opening the same file is instant.
   const [tooltip, setTooltip] = useState<FileTooltip | null>(null);
   const [descLoading, setDescLoading] = useState<string | null>(null);
-  const descCache = useRef<Record<string, string>>({});
+  const descCache = useRef<Partial<Record<string, string>>>({});
   // One /magic/system/endpoints/list fetch, keyed by {path, verb} — the same backend-
   // computed description/argument metadata the Web Designer and OpenAPI spec use, so an
   // endpoint file's tooltip costs no extra request once this has loaded.

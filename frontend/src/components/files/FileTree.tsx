@@ -47,7 +47,7 @@ function previewUrl(path: string): string | null {
   if (!path.startsWith(WWW_ROOT + '/') || path.endsWith('.hl')) {
     return null;
   }
-  const relative = path.substring(WWW_ROOT.length);
+  const relative = path.slice(WWW_ROOT.length);
   /*
    * Hidden paths are not served — except .well-known, which the backend
    * exempts because discovery documents have to be publicly reachable.

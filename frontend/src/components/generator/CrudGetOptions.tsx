@@ -29,11 +29,11 @@ export default function CrudGetOptions({ crud }: Readonly<{ crud: CrudTabState }
         }}
       >
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <input type="checkbox" checked={paging} onChange={e => setPaging(e.target.checked)} />
+          <input type="checkbox" checked={paging} onChange={e => setPaging(e.target.checked)} />{' '}
           Paging
         </label>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <input type="checkbox" checked={sorting} onChange={e => setSorting(e.target.checked)} />
+          <input type="checkbox" checked={sorting} onChange={e => setSorting(e.target.checked)} />{' '}
           Sorting
         </label>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -41,15 +41,15 @@ export default function CrudGetOptions({ crud }: Readonly<{ crud: CrudTabState }
             type="checkbox"
             checked={aggregate}
             onChange={e => setAggregate(e.target.checked)}
-          />
+          />{' '}
           Aggregate
         </label>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <input type="checkbox" checked={distinct} onChange={e => setDistinct(e.target.checked)} />
+          <input type="checkbox" checked={distinct} onChange={e => setDistinct(e.target.checked)} />{' '}
           Distinct
         </label>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <input type="checkbox" checked={search} onChange={e => setSearch(e.target.checked)} />
+          <input type="checkbox" checked={search} onChange={e => setSearch(e.target.checked)} />{' '}
           Search
         </label>
         {/*
@@ -61,7 +61,7 @@ export default function CrudGetOptions({ crud }: Readonly<{ crud: CrudTabState }
           style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
           title="Add neq, mt, lt, mteq and lteq filtering arguments for every column"
         >
-          <input type="checkbox" checked={verbose} onChange={e => setVerbose(e.target.checked)} />
+          <input type="checkbox" checked={verbose} onChange={e => setVerbose(e.target.checked)} />{' '}
           Verbose
         </label>
       </div>

@@ -117,6 +117,9 @@ export interface CrudifyOptions {
 }
 
 export interface RoleRule {
+  // Generated once when the rule is added, never sent anywhere — it only keeps
+  // each rule's card (and its editors) attached to that rule when another is removed.
+  id: string;
   role: string;
   // Optional per-role overrides — blank inherits from a later rule or the base.
   limit: string;

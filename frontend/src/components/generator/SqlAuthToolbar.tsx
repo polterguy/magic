@@ -19,7 +19,7 @@ export default function SqlAuthToolbar({ sql }: Readonly<{ sql: SqlEndpointTabSt
         {authOpen ? 'Done' : 'Edit'}
       </button>
       <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
+        <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />{' '}
         Overwrite
       </label>
       {authOpen && (

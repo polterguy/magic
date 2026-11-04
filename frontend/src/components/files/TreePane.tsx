@@ -44,7 +44,7 @@ export default function TreePane(
             type="checkbox"
             checked={tree.systemFiles}
             onChange={e => tree.setSystemFiles(e.target.checked)}
-          />
+          />{' '}
           System files
         </label>
         <button

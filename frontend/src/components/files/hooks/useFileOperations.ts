@@ -87,7 +87,7 @@ export function useFileOperations(options: {
       const remaining = openFiles.filter(candidate => candidate.path !== path);
       setOpenFiles(remaining);
       if (selectedFile === path) {
-        setSelectedFile(remaining.length > 0 ? remaining[remaining.length - 1].path : '');
+        setSelectedFile(remaining.at(-1)?.path ?? '');
       }
       await loadTree(systemFiles);
     } catch (err) {
@@ -131,7 +131,7 @@ export function useFileOperations(options: {
       const remaining = openFiles.filter(file => !file.path.startsWith(path));
       setOpenFiles(remaining);
       if (selectedFile.startsWith(path)) {
-        setSelectedFile(remaining.length > 0 ? remaining[remaining.length - 1].path : '');
+        setSelectedFile(remaining.at(-1)?.path ?? '');
       }
       await loadTree(systemFiles);
     } catch (err) {
@@ -172,7 +172,7 @@ export function useFileOperations(options: {
         if (!isFolder) {
           return candidate === path ? newPath : candidate;
         }
-        return candidate.startsWith(path) ? newPath + candidate.substring(path.length) : candidate;
+        return candidate.startsWith(path) ? newPath + candidate.slice(path.length) : candidate;
       };
       setOpenFiles(files => files.map(file => ({ ...file, path: remap(file.path) })));
       setSelectedFile(remap(selectedFile));

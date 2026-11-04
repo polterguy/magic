@@ -33,7 +33,7 @@ export default function RoleRuleCard(
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           title="Invocations per window, per IP — blank inherits the base"
         >
-          Limit
+          Limit{' '}
           <input
             type="number"
             placeholder="base"
@@ -46,7 +46,7 @@ export default function RoleRuleCard(
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           title="Window length in seconds — used only when this role sets a limit"
         >
-          Window&nbsp;s
+          Window&nbsp;s{' '}
           <input
             type="number"
             placeholder="base"
@@ -59,7 +59,7 @@ export default function RoleRuleCard(
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           title="Timeout in milliseconds — blank inherits the base"
         >
-          Timeout&nbsp;ms
+          Timeout&nbsp;ms{' '}
           <input
             type="number"
             step={1000}
@@ -96,6 +96,7 @@ export default function RoleRuleCard(
         />
       </div>
       {lintSlotLines(rule.slots).map((warning, i) => (
+        // eslint-disable-next-line react/no-array-index-key -- derived from the slot text on every render, never reordered, and two identical lines give two identical warnings
         <div key={i} className="error-box" style={{ marginBottom: 6, fontSize: 13 }}>
           {warning}
         </div>

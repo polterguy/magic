@@ -23,7 +23,7 @@ export default function SandboxBaseRule({ sandbox }: Readonly<{ sandbox: Sandbox
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           title="Fallback invocations per window, per IP, for callers with no matching role rule"
         >
-          Limit
+          Limit{' '}
           <input
             type="number"
             value={baseLimit}
@@ -35,7 +35,7 @@ export default function SandboxBaseRule({ sandbox }: Readonly<{ sandbox: Sandbox
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           title="Window length in seconds"
         >
-          Window&nbsp;s
+          Window&nbsp;s{' '}
           <input
             type="number"
             value={baseWindow}
@@ -47,7 +47,7 @@ export default function SandboxBaseRule({ sandbox }: Readonly<{ sandbox: Sandbox
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           title="Fallback timeout in milliseconds — root is exempt"
         >
-          Timeout&nbsp;ms
+          Timeout&nbsp;ms{' '}
           <input
             type="number"
             step={1000}
@@ -58,6 +58,7 @@ export default function SandboxBaseRule({ sandbox }: Readonly<{ sandbox: Sandbox
         </label>
       </div>
       {lintSlotLines(baseSlots).map((warning, i) => (
+        // eslint-disable-next-line react/no-array-index-key -- derived from the slot text on every render, never reordered, and two identical lines give two identical warnings
         <div key={i} className="error-box" style={{ marginBottom: 6, fontSize: 13 }}>
           {warning}
         </div>

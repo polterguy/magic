@@ -20,7 +20,7 @@ export function useSqlEndpointTab() {
   const [verb, setVerb] = useState('get');
   const [moduleName, setModuleName] = useState('');
   const [endpointName, setEndpointName] = useState('custom-sql');
-  const [args, setArgs] = useState<{ name: string; type: string }[]>([]);
+  const [args, setArgs] = useState<{ id: string; name: string; type: string }[]>([]);
   const [sql, setSql] = useState('');
   const [sqlEditId, bumpSqlEditId] = useEditToken();
   const [overwrite, setOverwrite] = useState(false);

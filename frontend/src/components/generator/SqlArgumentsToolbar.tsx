@@ -8,7 +8,7 @@ export default function SqlArgumentsToolbar({ sql }: Readonly<{ sql: SqlEndpoint
     <div className="toolbar">
       <div style={{ fontWeight: 600, fontSize: 13 }}>Arguments:</div>
       {args.map((argument, index) => (
-        <span key={index} style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+        <span key={argument.id} style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           <input
             type="text"
             placeholder="name"
@@ -48,7 +48,7 @@ export default function SqlArgumentsToolbar({ sql }: Readonly<{ sql: SqlEndpoint
       ))}
       <button
         className="btn btn-secondary btn-small"
-        onClick={() => setArgs([...args, { name: '', type: 'string' }])}
+        onClick={() => setArgs([...args, { id: crypto.randomUUID(), name: '', type: 'string' }])}
       >
         + Argument
       </button>
@@ -60,12 +60,12 @@ export default function SqlArgumentsToolbar({ sql }: Readonly<{ sql: SqlEndpoint
         <option value="">Load snippet…</option>
         {snippets.map(snippet => (
           <option key={snippet} value={snippet}>
-            {snippet.substring(snippet.lastIndexOf('/') + 1)}
+            {snippet.slice(snippet.lastIndexOf('/') + 1)}
           </option>
         ))}
       </Select>
       <label className="btn btn-secondary btn-small" style={{ cursor: 'pointer' }}>
-        Import .sql
+        Import .sql{' '}
         <input
           type="file"
           accept=".sql"

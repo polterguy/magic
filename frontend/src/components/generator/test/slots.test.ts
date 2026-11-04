@@ -21,6 +21,7 @@ import { RoleRule } from '../types';
 
 function rule(overrides: Partial<RoleRule>): RoleRule {
   return {
+    id: 'rule',
     role: '',
     limit: '',
     window: '',

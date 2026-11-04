@@ -19,7 +19,7 @@ export default function SandboxOptionsToolbar({ sandbox }: Readonly<{ sandbox: S
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         title="When on, a root caller runs with the server's full vocabulary and no sandbox"
       >
-        Root bypasses the sandbox
+        Root bypasses the sandbox{' '}
         <input
           type="checkbox"
           checked={overrideRoot}
@@ -30,7 +30,7 @@ export default function SandboxOptionsToolbar({ sandbox }: Readonly<{ sandbox: S
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         title="When on, the response includes the executed code; otherwise it returns only state and result"
       >
-        Return code
+        Return code{' '}
         <input
           type="checkbox"
           checked={returnCode}
@@ -42,7 +42,7 @@ export default function SandboxOptionsToolbar({ sandbox }: Readonly<{ sandbox: S
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           title="Maximum characters accepted in [hyperlambda] — longer code is rejected with a 400 before anything is parsed or executed"
         >
-          Max Hyperlambda length
+          Max Hyperlambda length{' '}
           <input
             type="number"
             value={maxHyperlambda}
@@ -52,7 +52,7 @@ export default function SandboxOptionsToolbar({ sandbox }: Readonly<{ sandbox: S
         </label>
       )}
       <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        Overwrite
+        Overwrite{' '}
         <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
       </label>
     </div>

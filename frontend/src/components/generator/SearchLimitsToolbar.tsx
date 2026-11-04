@@ -18,7 +18,7 @@ export default function SearchLimitsToolbar({ search }: Readonly<{ search: Searc
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         title="Calls an IP may make per window - root is exempt. 0 means no limit"
       >
-        Rate limit
+        Rate limit{' '}
         <input
           type="number"
           value={rateLimit}
@@ -30,7 +30,7 @@ export default function SearchLimitsToolbar({ search }: Readonly<{ search: Searc
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         title="Window length in seconds"
       >
-        Window&nbsp;s
+        Window&nbsp;s{' '}
         <input
           type="number"
           value={rateWindow}
@@ -42,7 +42,7 @@ export default function SearchLimitsToolbar({ search }: Readonly<{ search: Searc
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         title="How long the caller may cache an answer. 0 means not at all"
       >
-        Cache&nbsp;s
+        Cache&nbsp;s{' '}
         <input
           type="number"
           value={cacheSeconds}
@@ -51,7 +51,7 @@ export default function SearchLimitsToolbar({ search }: Readonly<{ search: Searc
         />
       </label>
       <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />
+        <input type="checkbox" checked={overwrite} onChange={e => setOverwrite(e.target.checked)} />{' '}
         Overwrite
       </label>
     </div>

@@ -12,17 +12,20 @@ export const PROTECTED_FOLDERS = new Set([
   '/modules/',
 ]);
 
+// What a Hyperlambda argument can be once converted from its form value.
+export type ArgumentValue = number | boolean | string;
+
 /*
  * Converts a form value to the argument type the Hyperlambda expects.
  */
-export function convertArgument(value: string, type: string) {
+export function convertArgument(value: string, type: string): ArgumentValue {
+  let converted: ArgumentValue = value;
   if (/^(u?int|u?long|u?short|decimal|double|float)$/.test(type)) {
-    return Number(value);
+    converted = Number(value);
+  } else if (type === 'bool') {
+    converted = value === 'true' || value === '1' || value === 'yes';
   }
-  if (type === 'bool') {
-    return value === 'true' || value === '1' || value === 'yes';
-  }
-  return value;
+  return converted;
 }
 
 /*

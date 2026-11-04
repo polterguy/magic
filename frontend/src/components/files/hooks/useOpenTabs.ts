@@ -70,7 +70,7 @@ export function useOpenTabs(
         }
         setOpenFiles(current => withRestored(current, tabs));
         setSelectedFile(current =>
-          current !== '' ? current : restoredSelection(tabs, workspace.selected),
+          current === '' ? restoredSelection(tabs, workspace.selected) : current,
         );
       })
       .catch((err: unknown) => showError(err, 'Could not restore open files: '));

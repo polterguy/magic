@@ -26,8 +26,7 @@ export default function LoggingWizard(
           style={{ display: 'flex', alignItems: 'center', gap: 4 }}
           title="log.info / debug / error / fatal"
         >
-          <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} />
-          Write
+          <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} /> Write
         </label>
         <span className="spacer" />
         <button className="btn btn-small" onClick={add}>

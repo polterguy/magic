@@ -62,7 +62,7 @@ describe('convertArgument', () => {
   });
 
   it('does not truncate a fraction given for an integer type', () => {
-    expect(convertArgument('1.9', 'int')).toBe(1.9);
+    expect(convertArgument('1.9', 'int')).toBeCloseTo(1.9, 10);
   });
 
   it('only matches the exact numeric type names', () => {

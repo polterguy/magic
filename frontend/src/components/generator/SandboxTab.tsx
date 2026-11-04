@@ -41,7 +41,7 @@ export default function SandboxTab() {
       <SandboxBaseRule sandbox={sandbox} />
       {/* Per-role rules — each adds slots on top of the base for its role. */}
       {ruleList.map((rule, index) => (
-        <RoleRuleCard key={index} sandbox={sandbox} rule={rule} index={index} />
+        <RoleRuleCard key={rule.id} sandbox={sandbox} rule={rule} index={index} />
       ))}
       <AddRoleRule sandbox={sandbox} />
       {preview && (

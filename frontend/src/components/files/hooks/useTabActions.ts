@@ -135,7 +135,7 @@ export function useTabActions(
     const remaining = openFiles.filter(candidate => candidate.path !== path);
     setOpenFiles(remaining);
     if (selectedFile === path) {
-      setSelectedFile(remaining.length > 0 ? remaining[remaining.length - 1].path : '');
+      setSelectedFile(remaining.at(-1)?.path ?? '');
     }
   }
 
