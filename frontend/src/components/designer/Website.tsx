@@ -45,8 +45,9 @@ function toRow(redirect: WebsiteRedirect): RedirectRow {
   return { ...redirect, id: crypto.randomUUID() };
 }
 
-function toRedirect({ from, to }: RedirectRow): WebsiteRedirect {
-  return { from, to };
+// Strips only the key; any other field the backend returned is sent back untouched.
+function toRedirect({ id: _id, ...redirect }: RedirectRow): WebsiteRedirect {
+  return redirect;
 }
 
 function redirectIsValid(entry: WebsiteRedirect) {

@@ -37,8 +37,9 @@ export function useUnsavedGuard(dirty: boolean, message: string) {
       }),
     );
     const beforeUnload = (event: BeforeUnloadEvent) => {
-      // Every current browser shows its leave-page prompt for a cancelled beforeunload.
       event.preventDefault();
+      // eslint-disable-next-line sonarjs/deprecation -- older browsers (Chromium before 119) only prompt when returnValue is set
+      event.returnValue = '';
     };
     window.addEventListener('beforeunload', beforeUnload);
     return () => {

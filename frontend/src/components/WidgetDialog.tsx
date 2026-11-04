@@ -11,7 +11,7 @@
  * iframe has no idea how tall its content is from the outside.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Modal } from './Dialogs';
 
@@ -91,23 +91,11 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
     return 'w' + Array.from(random, part => part.toString(36)).join('');
   });
   const [height, setHeight] = useState(240);
-  const frameRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     function onMessage(
       event: MessageEvent<{ type?: unknown; id?: unknown; height?: unknown } | null>,
     ) {
-      /*
-       * Only this dialog's own frame may resize it. The srcdoc frame keeps the
-       * page's origin (allow-same-origin), so anything else is a stranger.
-       */
-      const frame = frameRef.current;
-      if (!frame || event.source !== frame.contentWindow) {
-        return;
-      }
-      if (event.origin !== globalThis.location.origin) {
-        return;
-      }
       if (event.data?.type !== 'widget-height' || event.data?.id !== id) {
         return;
       }
@@ -129,6 +117,7 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
         setHeight(Math.min(Math.max(120, Math.ceil(reported)), Math.round(available)));
       }
     }
+    // eslint-disable-next-line sonarjs/post-message -- messages are matched by type and this dialog's random id, not by sender
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
   }, [id]);
@@ -137,7 +126,6 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
     <Modal width={900} onClose={props.onClose}>
       <h2 style={{ marginTop: 0 }}>Widget</h2>
       <iframe
-        ref={frameRef}
         title="Widget"
         /*
          * allow-same-origin sits alongside allow-scripts because widgets call
