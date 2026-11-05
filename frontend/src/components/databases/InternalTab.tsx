@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { fileWithTokenUrl } from '../../lib/api';
+import { httpUrl } from '../../lib/backend';
 import AiWaiter from '../AiWaiter';
 import { TableSkeleton } from '../Skeleton';
 import { sqlStudioUrl } from './connections';
@@ -80,7 +81,7 @@ export default function InternalTab() {
                       </Link>
                       <a
                         className="btn btn-secondary btn-small"
-                        href={fileWithTokenUrl('/data/' + database.name + '.db')}
+                        href={httpUrl(fileWithTokenUrl('/data/' + database.name + '.db'))}
                         download
                       >
                         Backup

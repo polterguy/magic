@@ -10,7 +10,7 @@ import {
   openaiSystemMessages,
   type SystemMessage,
 } from '../../lib/api';
-import { withoutTrailingSlashes } from '../../lib/backend';
+import { httpUrl, withoutTrailingSlashes } from '../../lib/backend';
 import { showError } from '../../lib/errors';
 import Select from '../Select';
 import SocketFeedback from '../SocketFeedback';
@@ -177,7 +177,7 @@ export default function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
               if (!model) {
                 return null;
               }
-              const href = withoutTrailingSlashes(backendInfo().url) + '/' + model;
+              const href = httpUrl(withoutTrailingSlashes(backendInfo().url) + '/' + model);
               /*
                * Seeing the result comes before tuning it, so opening the chatbot
                * leads. Editing is offered next to it because everything the

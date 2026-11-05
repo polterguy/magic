@@ -101,7 +101,7 @@ function importFromPreviousDashboard(): StoredBackend[] {
  * javascript: and data: URLs out of them.
  */
 export function httpUrl(url: string | null | undefined): string {
-  if (url && /^https?:\/\//i.test(url)) {
+  if (url && (url.startsWith('https://') || url.startsWith('http://'))) {
     return url;
   }
   return '';
