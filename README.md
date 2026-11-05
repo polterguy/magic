@@ -378,14 +378,13 @@ Found a security issue? Please read [SECURITY.md](SECURITY.md) and report it pri
 Magic Cloud and Hyperlambda are developed and professionally maintained by [AINIRO.IO](https://ainiro.io), copyright AINIRO.IO, Ltd 2019 – 2026. We offer hosting, support, and software development services on top of Magic Cloud, in addition to delivering AI agents, chatbots, and AI solutions.
 
 <p align="center">
-  <img src="images/hyperlambda-team.webp" alt="Evangeline Mmayie, Barnabas Olugbogi, Thomas Hansen and Oluwadare Juwon, the people building Magic Cloud and Hyperlambda" width="640" />
+  <img src="images/hyperlambda-team.webp" alt="Evangeline Mmayie, Barnabas Olugbogi and Thomas Hansen, the people building Magic Cloud and Hyperlambda" width="640" />
 </p>
 
 <p align="center">
   <a href="https://github.com/EbubeEvan">Evangeline Mmayie</a> &middot;
   <a href="https://github.com/barnascript">Barnabas Olugbogi</a> &middot;
-  <a href="https://github.com/polterguy">Thomas Hansen</a> &middot;
-  <a href="https://github.com/wintan1418">Oluwadare Juwon</a>
+  <a href="https://github.com/polterguy">Thomas Hansen</a>
 </p>
 
 ## License
