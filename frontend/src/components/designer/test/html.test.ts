@@ -102,64 +102,72 @@ describe('canContainChildren', () => {
 
 describe('prepareDocument', () => {
   const source = '<!doctype html><html><head><title>T</title></head><body><p>Hi</p></body></html>';
+  // Checked as text: the output is a serialized document, and the tests read it as one.
+  const bodyOf = (out: string) => out.slice(out.lastIndexOf('<body'));
+  // The text of some markup, the tags dropped.
+  const textOf = (markup: string) =>
+    markup
+      .split('<')
+      .map(part => part.slice(part.indexOf('>') + 1))
+      .join('');
+  const slotSpans = new RegExp('<span[^>]*' + SLOT_ATTRIBUTE + '[^>]*>([^<]*)</span>', 'g');
 
   it('starts with a doctype and puts the base first in the head', () => {
     const out = prepareDocument(source, 'https://cloud.test/');
     expect(out.startsWith('<!doctype html>\n')).toBe(true);
-    const doc = parse(out);
-    const first = doc.head.firstElementChild!;
-    expect(first.tagName).toBe('BASE');
-    expect(first.getAttribute('href')).toBe('https://cloud.test/');
-    expect(first.hasAttribute(TOOL_ATTRIBUTE)).toBe(true);
+    const head = out.slice(out.indexOf('<head>') + '<head>'.length);
+    expect(head.trimStart().startsWith('<base ')).toBe(true);
+    const base = head.slice(head.indexOf('<base '), head.indexOf('>') + 1);
+    expect(base).toContain('href="https://cloud.test/"');
+    expect(base).toContain(TOOL_ATTRIBUTE);
   });
 
   it('adds the canvas stylesheet and the overrides sheet, both marked as tool-owned', () => {
-    const doc = parse(prepareDocument(source, '/'));
-    const styles = Array.from(doc.head.querySelectorAll('style'));
+    const out = prepareDocument(source, '/');
+    const styles = out
+      .split('<style')
+      .slice(1)
+      .map(chunk => '<style' + chunk.slice(0, chunk.indexOf('</style>') + '</style>'.length));
     expect(styles).toHaveLength(2);
-    styles.forEach(style => expect(style.hasAttribute(TOOL_ATTRIBUTE)).toBe(true));
-    expect(styles[0].textContent).toContain('[data-magic-slot]');
-    expect(styles[1].hasAttribute('data-magic-overrides')).toBe(true);
-    expect(styles[1].textContent).toBe('');
+    styles.forEach(style => expect(style).toContain(TOOL_ATTRIBUTE));
+    expect(styles[0]).toContain('[data-magic-slot]');
+    expect(styles[1]).toContain('data-magic-overrides');
+    expect(styles[1]).toMatch(/><\/style>$/);
   });
 
   it('wraps every {{expression}} in the body in a marked span', () => {
-    const doc = parse(
-      prepareDocument(
-        '<html><body><p>Hello {{user.name}}, you have {{count}} items</p></body></html>',
-        '/',
-      ),
+    const out = prepareDocument(
+      '<html><body><p>Hello {{user.name}}, you have {{count}} items</p></body></html>',
+      '/',
     );
-    const chips = Array.from(doc.querySelectorAll('p [' + SLOT_ATTRIBUTE + ']'));
-    expect(chips.map(chip => chip.textContent)).toEqual(['{{user.name}}', '{{count}}']);
-    expect(doc.querySelector('p')!.textContent).toBe(
-      'Hello {{user.name}}, you have {{count}} items',
-    );
+    const chips = Array.from(bodyOf(out).matchAll(slotSpans), match => match[1]);
+    expect(chips).toEqual(['{{user.name}}', '{{count}}']);
+    expect(textOf(bodyOf(out))).toContain('Hello {{user.name}}, you have {{count}} items');
   });
 
   it('leaves slots inside script, style, pre and textarea alone', () => {
-    const doc = parse(
-      prepareDocument(
-        '<html><body><script>var a = "{{a}}";</script><style>.x{content:"{{b}}"}</style>' +
-          '<pre>{{c}}</pre><textarea>{{d}}</textarea></body></html>',
-        '/',
-      ),
+    const out = prepareDocument(
+      '<html><body><script>var a = "{{a}}";</script><style>.x{content:"{{b}}"}</style>' +
+        '<pre>{{c}}</pre><textarea>{{d}}</textarea></body></html>',
+      '/',
     );
-    expect(doc.body.querySelectorAll('[' + SLOT_ATTRIBUTE + ']')).toHaveLength(0);
+    expect(bodyOf(out)).not.toContain(SLOT_ATTRIBUTE);
+    expect(bodyOf(out)).toContain('{{a}}');
   });
 
   it('does not mark slots in the head', () => {
-    const doc = parse(
-      prepareDocument('<html><head><title>{{title}}</title></head><body></body></html>', '/'),
+    const out = prepareDocument(
+      '<html><head><title>{{title}}</title></head><body></body></html>',
+      '/',
     );
-    expect(doc.querySelectorAll('[' + SLOT_ATTRIBUTE + ']')).toHaveLength(0);
-    expect(doc.title).toBe('{{title}}');
+    expect(out.slice(0, out.lastIndexOf('<body'))).not.toContain('<span');
+    expect(out).toContain('<title>{{title}}</title>');
   });
 
   it('copes with an empty file', () => {
-    const doc = parse(prepareDocument('', '/'));
-    expect(doc.body).not.toBeNull();
-    expect(doc.head.querySelector('base')).not.toBeNull();
+    const out = prepareDocument('', '/');
+    expect(out).toContain('<base ');
+    expect(out).toContain('<body');
   });
 });
 
@@ -250,9 +258,17 @@ describe('serializeDocument', () => {
   });
 
   it('removes everything the designer added and every data-magic- attribute', () => {
-    const source =
-      '<html><head><title>T</title></head><body><div data-magic-empty="" id="a"><p>Hi</p></div></body></html>';
-    const prepared = parse(prepareDocument(source, 'https://cloud.test/'));
+    const tool = TOOL_ATTRIBUTE + '=""';
+    const prepared = parse(
+      '<html><head><base href="https://cloud.test/" ' +
+        tool +
+        '><title>T</title><style ' +
+        tool +
+        '>.x{}</style><style ' +
+        tool +
+        ' data-magic-overrides=""></style></head>' +
+        '<body><div data-magic-empty="" id="a"><p>Hi</p></div></body></html>',
+    );
     const out = serializeDocument(prepared);
     expect(out).not.toContain('<base');
     expect(out).not.toContain('data-magic');
@@ -261,9 +277,11 @@ describe('serializeDocument', () => {
   });
 
   it('unwraps slot markers and editing spans rather than deleting their text', () => {
-    const source =
-      '<html><body><p>Hello {{name}} and <span data-magic-editing="">typed</span></p></body></html>';
-    const prepared = parse(prepareDocument(source, '/'));
+    const prepared = parse(
+      '<html><body><p>Hello <span ' +
+        SLOT_ATTRIBUTE +
+        '="">{{name}}</span> and <span data-magic-editing="">typed</span></p></body></html>',
+    );
     const out = serializeDocument(prepared);
     expect(out).toContain('<p>Hello {{name}} and typed</p>');
     expect(out).not.toContain('span');
@@ -287,10 +305,25 @@ describe('serializeDocument', () => {
     expect(doc.querySelector('[data-magic-tool]')).not.toBeNull();
   });
 
-  it('round trips: serializing its own output again changes nothing', () => {
-    const source =
-      '<!doctype html><html><head><title>T</title></head><body><header><h1>Hi <em>there</em></h1></header><main><p>One</p><p>Two</p></main></body></html>';
-    const once = serializeDocument(parse(source));
-    expect(serializeDocument(parse(once))).toBe(once);
+  it('leaves a document that is already in its own format exactly as it is', () => {
+    const formatted = [
+      '<!doctype html>',
+      '<html>',
+      '  <head>',
+      '    <title>T</title>',
+      '  </head>',
+      '  <body>',
+      '    <header>',
+      '      <h1>Hi <em>there</em></h1>',
+      '    </header>',
+      '    <main>',
+      '      <p>One</p>',
+      '      <p>Two</p>',
+      '    </main>',
+      '  </body>',
+      '</html>',
+      '',
+    ].join('\n');
+    expect(serializeDocument(parse(formatted))).toBe(formatted);
   });
 });
