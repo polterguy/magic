@@ -91,6 +91,10 @@ export interface Picked {
  * default there rather than to the web root.
  */
 function folderOf(current: string) {
+  // An inlined (data:), blob: or remote image has no folder under the web root.
+  if (/^[a-z][a-z0-9+.-]*:/i.test(current)) {
+    return '';
+  }
   const at = current.lastIndexOf('/');
   return at > 0 ? current.slice(0, at) : '';
 }
