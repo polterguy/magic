@@ -37,7 +37,8 @@ export default function OpenIdDialog(
    * Every provider's settings, keyed provider → config key → value — edits
    * accumulate across providers, and one Save writes all of them.
    */
-  const [values, setValues] = useState<OidcValues>(() => initialOidcValues(existing));
+  const [initial] = useState<OidcValues>(() => initialOidcValues(existing));
+  const [values, setValues] = useState<OidcValues>(initial);
 
   // The selected provider's fields — client ID first, then whatever else it needs.
   const fields: OidcField[] = [
@@ -69,7 +70,7 @@ export default function OpenIdDialog(
   const callbackUrl = globalThis.location.origin + OIDC_CALLBACK_PATH;
 
   function save() {
-    const next = applyOidcValues(props.config, values);
+    const next = applyOidcValues(props.config, values, initial);
     if (next === null) {
       return;
     }

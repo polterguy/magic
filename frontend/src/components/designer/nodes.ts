@@ -184,10 +184,33 @@ export function labelOf(node: Node): string {
  * it — so trimming it away would quietly close the gap.
  */
 export function writeText(node: Text, text: string) {
-  const lead = /^\s*/.exec(node.data)![0];
-  const trail = node.data.slice(node.data.trimEnd().length);
+  const data = node.data;
+  let lead: string;
+  let trail: string;
+  if (data.trim() === '') {
+    /*
+     * A run with no words left is whitespace only, so leading and trailing whitespace
+     * can't be told apart from the text — taking both as the whole run doubled it on
+     * every clear and retype. Where we emptied it ourselves, we remember where the two
+     * met; a run we never wrote counts as all leading, so nothing is ever doubled.
+     */
+    const at = emptiedAt.get(node) ?? data.length;
+    lead = data.slice(0, at);
+    trail = data.slice(at);
+  } else {
+    lead = /^\s*/.exec(data)![0];
+    trail = data.slice(data.trimEnd().length);
+  }
   node.data = lead + text + trail;
+  if (node.data.trim() === '') {
+    emptiedAt.set(node, lead.length + text.length);
+  } else {
+    emptiedAt.delete(node);
+  }
 }
+
+// Where the leading whitespace of a run writeText emptied ends and its trailing whitespace starts.
+const emptiedAt = new WeakMap<Text, number>();
 
 /*
  * Where a node sits, as the child indices to walk from an ancestor down to it.

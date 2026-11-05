@@ -16,18 +16,21 @@ import {
 } from '../endpointMeta';
 
 describe('endpointKey', () => {
-  it('turns a verb-suffixed file into a path|verb key', () => {
-    expect(endpointKey('/modules/oauth/authorize.get.hl')).toBe('magic/oauth/authorize|get');
-    expect(endpointKey('/modules/shop/orders.delete.hl')).toBe('magic/shop/orders|delete');
-    expect(endpointKey('/modules/chat/feed.socket.hl')).toBe('magic/chat/feed|socket');
+  // The same keys /magic/system/endpoints/list produces: "magic/" + the path from the files root.
+  it("turns a verb-suffixed file into the backend's path|verb key", () => {
+    expect(endpointKey('/modules/oauth/authorize.get.hl')).toBe(
+      'magic/modules/oauth/authorize|get',
+    );
+    expect(endpointKey('/modules/shop/orders.delete.hl')).toBe('magic/modules/shop/orders|delete');
+    expect(endpointKey('/modules/chat/feed.socket.hl')).toBe('magic/modules/chat/feed|socket');
   });
 
-  it('strips a leading /system/ the same way as /modules/', () => {
-    expect(endpointKey('/system/users/list.get.hl')).toBe('magic/users/list|get');
+  it('keeps /system/ in the path, as the backend does', () => {
+    expect(endpointKey('/system/users/list.get.hl')).toBe('magic/system/users/list|get');
   });
 
-  it('keeps every other leading folder as part of the path', () => {
-    expect(endpointKey('/etc/x/y.post.hl')).toBe('magic//etc/x/y|post');
+  it('keeps any other leading folder as part of the path', () => {
+    expect(endpointKey('/etc/x/y.post.hl')).toBe('magic/etc/x/y|post');
   });
 
   it('returns null for files without an HTTP verb suffix', () => {
@@ -38,7 +41,7 @@ describe('endpointKey', () => {
   });
 
   it('only treats the last verb segment as the verb', () => {
-    expect(endpointKey('/modules/a/get.post.hl')).toBe('magic/a/get|post');
+    expect(endpointKey('/modules/a/get.post.hl')).toBe('magic/modules/a/get|post');
   });
 });
 

@@ -36,9 +36,10 @@ export function sqlStudioUrl(type: string, connectionString: string, database: s
 export function connectionRows(config: MagicConfig | null | undefined): ConnectionRow[] {
   const found: ConnectionRow[] = [];
   for (const dbType of EXTERNAL_TYPES.map(entry => entry.type)) {
-    // Next to the per-type maps sits "default", a plain string naming the default type.
+    // Next to the per-type maps sits "default", a plain string naming the default type,
+    // and a type with no connection strings can be configured as null.
     const entry = config?.magic?.databases?.[dbType];
-    const connections = typeof entry === 'object' ? entry : {};
+    const connections = entry !== null && typeof entry === 'object' ? entry : {};
     for (const key of Object.keys(connections)) {
       found.push({
         type: dbType,

@@ -55,7 +55,7 @@ export default function KpiCards(
           {publicEndpoints ?? '…'}
         </div>
         <div className="kpi-label">Public endpoints</div>
-        {publicEndpoints !== null && publicEndpoints > 1 && (
+        {publicEndpoints !== null && publicEndpoints > 0 && (
           <button
             className="kpi-warn-btn"
             title="Public endpoints require no authentication — click for details"

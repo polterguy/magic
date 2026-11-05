@@ -72,12 +72,27 @@ describe('writeText', () => {
     expect(node.data).toBe('');
   });
 
-  it('doubles the whitespace of a run that is whitespace only', () => {
-    // Lead and trail are both the whole string here, so both are kept.
-    const node = text('  Hi  ');
+  it('restores the whitespace on both sides when an emptied run is retyped', () => {
+    const node = text('\n  Hi ');
     writeText(node, '');
-    expect(node.data).toBe('    ');
+    expect(node.data).toBe('\n   ');
     writeText(node, 'x');
-    expect(node.data).toBe('    x    ');
+    expect(node.data).toBe('\n  x ');
+  });
+
+  it('never grows the whitespace over repeated clears and retypes', () => {
+    const node = text('  Hi  ');
+    for (let round = 0; round < 3; round++) {
+      writeText(node, '');
+      expect(node.data).toBe('    ');
+      writeText(node, 'x');
+      expect(node.data).toBe('  x  ');
+    }
+  });
+
+  it('treats a whitespace-only run it never wrote as all leading whitespace', () => {
+    const node = text('   ');
+    writeText(node, 'x');
+    expect(node.data).toBe('   x');
   });
 });

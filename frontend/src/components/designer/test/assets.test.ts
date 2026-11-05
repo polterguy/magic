@@ -136,8 +136,14 @@ describe('syncSharedAssetVersions', () => {
     expect(body).toHaveLength(0);
   });
 
-  it('also moves a link that is AHEAD of the canonical version back to it', () => {
+  it('leaves a link that is ahead of the canonical version alone', () => {
     const { doc, body } = fakeDoc('https://site.test/', [], ['/assets/magic-widgets.js?v=9']);
+    syncSharedAssetVersions(doc);
+    expect(body[0].attributes.src).toBe('/assets/magic-widgets.js?v=9');
+  });
+
+  it('moves a link with a version that is not a number onto the canonical one', () => {
+    const { doc, body } = fakeDoc('https://site.test/', [], ['/assets/magic-widgets.js?v=abc']);
     syncSharedAssetVersions(doc);
     expect(body[0].attributes.src).toBe('/assets/magic-widgets.js?v=3');
   });

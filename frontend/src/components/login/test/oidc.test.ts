@@ -154,12 +154,18 @@ describe('oidcAuthorizeUrl', () => {
     );
   });
 
-  it('appends with "?" even when the provider URL already has a query', () => {
-    // Today's behaviour: the provider URL is used as is, so a query in it yields two "?".
+  it('continues a query the provider URL already has', () => {
     const url = oidcAuthorizeUrl(
       { name: 'G', issuer: 'g', url: 'https://a/auth?tenant=x', client_id: 'c' },
       redirect,
     );
-    expect(url.startsWith('https://a/auth?tenant=x?client_id=c')).toBe(true);
+    expect(url.startsWith('https://a/auth?tenant=x&client_id=c')).toBe(true);
+  });
+
+  it('adds no separator when the provider URL already ends with one', () => {
+    for (const base of ['https://a/auth?', 'https://a/auth?tenant=x&']) {
+      const url = oidcAuthorizeUrl({ name: 'G', issuer: 'g', url: base, client_id: 'c' }, redirect);
+      expect(url.startsWith(base + 'client_id=c')).toBe(true);
+    }
   });
 });

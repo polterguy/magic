@@ -88,5 +88,13 @@ export function oidcAuthorizeUrl(
     query.set('code_challenge', provider.code_challenge);
     query.set('code_challenge_method', 'S256');
   }
-  return provider.url + '?' + query.toString();
+  return provider.url + querySeparator(provider.url) + query.toString();
+}
+
+// A provider URL can carry its own query (a tenant, say), which ours then continues.
+function querySeparator(url: string) {
+  if (!url.includes('?')) {
+    return '?';
+  }
+  return url.endsWith('?') || url.endsWith('&') ? '' : '&';
 }
