@@ -140,8 +140,7 @@ export default function Website(
   }, []);
 
   const dirty =
-    !saved ||
-    saved.spaEnabled !== spaEnabled ||
+    saved?.spaEnabled !== spaEnabled ||
     saved.notFound !== notFound ||
     JSON.stringify(saved.redirects) !== JSON.stringify(redirects);
   // Stacking a second blank row on top of one nobody has filled in yet

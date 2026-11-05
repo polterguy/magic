@@ -119,7 +119,7 @@ export function useTreeEdits(o: {
 
   function remove() {
     const node = selected;
-    if (!node || (doc && node === doc.body)) {
+    if (!node || doc?.body.isSameNode(node)) {
       return;
     }
     mutate(() => {

@@ -33,7 +33,10 @@ jobs:
 
       - name: Build the report
         run: |
-          alerts() { gh api --paginate "repos/$GITHUB_REPOSITORY/code-scanning/alerts?per_page=100&state=$1&ref=refs/heads/master" | jq -s 'add // []'; }
+          alerts() {
+            local state="$1"
+            gh api --paginate "repos/$GITHUB_REPOSITORY/code-scanning/alerts?per_page=100&state=$state&ref=refs/heads/master" | jq -s 'add // []'
+          }
           alerts open > "$RUNNER_TEMP/open.json"
           alerts dismissed > "$RUNNER_TEMP/dismissed.json"
           alerts fixed > "$RUNNER_TEMP/fixed.json"
