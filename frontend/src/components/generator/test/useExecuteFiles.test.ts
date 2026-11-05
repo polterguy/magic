@@ -46,8 +46,9 @@ async function loaded() {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(api.listFilesRecursively).mockResolvedValue(FILES);
+  // Shaped like the backend's list: "magic/" + the path from the files root, modules/ included.
   vi.mocked(api.listEndpointsDetailed).mockResolvedValue([
-    { path: 'magic/a/one', verb: 'get', description: 'Reads one', input: [] },
+    { path: 'magic/modules/a/one', verb: 'get', description: 'Reads one', input: [] },
   ] as never);
 });
 
