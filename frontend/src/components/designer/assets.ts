@@ -123,14 +123,19 @@ export function syncSharedAssetVersions(current: Document) {
   for (const [element, attribute] of elements) {
     const url = new URL(element.getAttribute(attribute) ?? '', current.baseURI);
     const version = CANONICAL_VERSIONS[url.pathname];
-    if (
-      url.origin !== here ||
-      version === undefined ||
-      url.searchParams.get('v') === String(version)
-    ) {
+    if (url.origin !== here || version === undefined || !isBehind(url, version)) {
       continue;
     }
     url.searchParams.set('v', String(version));
     element.setAttribute(attribute, url.pathname + url.search);
   }
+}
+
+/*
+ * Whether a link's ?v= is behind the canonical version: missing, not a number, or lower.
+ * A link that is ahead is left alone; pulling it back could serve an older cached copy.
+ */
+function isBehind(url: URL, version: number) {
+  const current = Number(url.searchParams.get('v') ?? Number.NaN);
+  return !Number.isInteger(current) || current < version;
 }
