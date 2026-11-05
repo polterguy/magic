@@ -13,9 +13,15 @@ import type { StoredBackend } from '../lib/backend';
 import { AuthContext, type AuthState } from '../lib/useAuth';
 
 class NoopObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe() {
+    // jsdom has no layout, so there is nothing to observe
+  }
+  unobserve() {
+    // see observe
+  }
+  disconnect() {
+    // see observe
+  }
   takeRecords() {
     return [];
   }
