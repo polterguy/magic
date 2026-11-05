@@ -314,9 +314,9 @@ export default function CommandPalette(
         }
       }}
     >
-      <div
+      <div // NOSONAR -- <dialog> needs showModal(); this overlay manages its own focus and Escape
         className="palette"
-        role="dialog" // NOSONAR -- <dialog> needs showModal(); this overlay manages its own focus and Escape
+        role="dialog"
         aria-label="Command palette"
       >
         <div className="palette-input">
@@ -346,9 +346,9 @@ export default function CommandPalette(
             const header = command.group === previousGroup ? null : command.group;
             previousGroup = command.group;
             return (
-              <div
+              <div // NOSONAR -- groups the header with its options so the listbox keeps only options as children
                 key={[command.group, command.verb, command.label].join('|')}
-                role="presentation" // NOSONAR -- groups the header with its options so the listbox keeps only options as children
+                role="presentation"
               >
                 {header && <div className="palette-group">{header}</div>}
                 <div

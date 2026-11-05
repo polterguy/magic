@@ -26,13 +26,14 @@ export function useAiFunctions(systemFiles: boolean, setWaiting: (waiting: boole
             file.endsWith('.hl'),
           );
       for (const file of targets) {
-        await mlSnippetCreate({
-          // NOSONAR -- declared one at a time so a failure stops at a known file and the server is not flooded
+        const completion = await getFileDescription(file); // NOSONAR -- declared one at a time so a failure stops at a known file and the server is not flooded
+        const snippet = {
           prompt: file.split('/').pop()!.replace(/\.hl$/, ''),
-          completion: await getFileDescription(file), // NOSONAR -- declared one at a time so a failure stops at a known file and the server is not flooded
+          completion,
           type,
           meta: 'FUNCTION_INVOCATION ==> ' + file,
-        });
+        };
+        await mlSnippetCreate(snippet); // NOSONAR -- declared one at a time so a failure stops at a known file and the server is not flooded
       }
       showToast(targets.length + ' AI function(s) declared on ' + type);
     } catch (err) {

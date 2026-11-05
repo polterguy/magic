@@ -31,10 +31,10 @@ export default function ModuleCard(
   const { group, expanded, setExpanded, scrollTarget } = props;
   return (
     <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 10 }}>
-      <div
+      <div // NOSONAR -- holds the card's own action buttons, which a <button> cannot nest
         className={'module-header' + (group.system ? ' system' : '')}
         tabIndex={0}
-        role="button" // NOSONAR -- holds the card's own action buttons, which a <button> cannot nest
+        role="button"
         aria-expanded={props.open}
         onClick={props.onToggle}
         onKeyDown={event => {

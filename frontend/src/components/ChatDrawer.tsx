@@ -480,9 +480,9 @@ export default function ChatDrawer(
           ×
         </button>
       </div>
-      <div
+      <div // NOSONAR -- click delegation for links in the messages; the messages themselves are the content
         className="chat-messages"
-        role="presentation" // NOSONAR -- click delegation for links in the messages; the messages themselves are the content
+        role="presentation"
         ref={listRef}
         onClick={onListClick}
         onScroll={onListScroll}

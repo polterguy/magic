@@ -139,25 +139,22 @@ export default function ImportDialog(
         } else if (category === 'csv') {
           response = await uploadCsvFile(props.type, file); // NOSONAR -- files are imported one at a time so a failure stops at a known file
         } else if (category === 'pdf') {
-          response = await uploadTrainingFile(props.type, file, {
-            // NOSONAR -- files are imported one at a time so a failure stops at a known file
+          const options = {
             summarize: pdfSummarize,
             preservePages: pdfPreservePages,
             overwrite: pdfOverwrite,
             massage: pdfMassage || undefined,
-          });
+          };
+          response = await uploadTrainingFile(props.type, file, options); // NOSONAR -- files are imported one at a time so a failure stops at a known file
         } else if (category === 'text') {
-          response = await uploadTrainingFile(props.type, file, {
-            // NOSONAR -- files are imported one at a time so a failure stops at a known file
+          const options = {
             summarize: textSummarize,
             forceAsText: file.name.toLowerCase().endsWith('.csv'),
-          });
+          };
+          response = await uploadTrainingFile(props.type, file, options); // NOSONAR -- files are imported one at a time so a failure stops at a known file
         } else {
-          response = await uploadTrainingFile(props.type, file, {
-            // NOSONAR -- files are imported one at a time so a failure stops at a known file
-            promptField,
-            completionField,
-          });
+          const options = { promptField, completionField };
+          response = await uploadTrainingFile(props.type, file, options); // NOSONAR -- files are imported one at a time so a failure stops at a known file
         }
         count += response.count ?? 0;
       }

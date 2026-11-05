@@ -331,9 +331,9 @@ export default function TrainingTab(
                     </td>
                   )}
                   <td data-label="Embedded">
-                    <span
+                    <span // NOSONAR -- a coloured dot, not an image file; aria-label carries the state
                       className={'status-dot ' + (snippet.embedding_vss ? 'ok' : 'pending')}
-                      role="img" // NOSONAR -- a coloured dot, not an image file; aria-label carries the state
+                      role="img"
                       aria-label={snippet.embedding_vss ? 'Embedded' : 'Not embedded'}
                       title={
                         snippet.embedding_vss
