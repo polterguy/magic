@@ -173,8 +173,6 @@ The one-liner at the top of this README is the fastest route. If you'd rather ke
 <summary>Full <code>docker-compose.yml</code></summary>
 
 ```yaml
-version: "3.8"
-
 services:
   backend:
     image: servergardens/magic-backend:latest
