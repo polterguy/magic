@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) Thomas Hansen, 2021 - 2023 thomas@ainiro.io.
+ * Copyright (c) AINIRO.IO, Ltd, 2021 - 2023 team@ainiro.io.
  */
 
 using magic.node;

@@ -1,5 +1,5 @@
 ﻿/*
- * Magic Cloud, copyright AINIRO.IO, Ltd and Thomas Hansen. See the attached LICENSE file for details. For license inquiries you can send an email to thomas@ainiro.io
+ * Magic Cloud, copyright AINIRO.IO, Ltd. See the attached LICENSE file for details. For license inquiries you can send an email to team@ainiro.io
  */
 
 using System;

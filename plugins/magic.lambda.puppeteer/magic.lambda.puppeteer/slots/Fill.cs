@@ -1,5 +1,5 @@
 /*
- * Magic Cloud, copyright (c) 2026 Thomas Hansen.
+ * Magic Cloud, copyright (c) 2026 AINIRO.IO, Ltd.
  */
 
 using System.Text.Json;
