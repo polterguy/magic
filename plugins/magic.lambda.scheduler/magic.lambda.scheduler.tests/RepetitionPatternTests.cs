@@ -155,7 +155,7 @@ namespace magic.lambda.scheduler.tests
             var pattern = PatternFactory.Create("**.05|15.23.59.59");
             var next = pattern.Next();
             Assert.True(next >= DateTime.UtcNow);
-            if (DateTime.UtcNow.Day >= 5 && DateTime.UtcNow.Day <= 16)
+            if (DateTime.UtcNow.Day >= 6 && DateTime.UtcNow.Day <= 15)
                 Assert.Equal(15, next.Day);
             else
                 Assert.Equal(5, next.Day);
