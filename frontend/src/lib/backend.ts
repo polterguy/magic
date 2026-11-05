@@ -101,8 +101,12 @@ function importFromPreviousDashboard(): StoredBackend[] {
  * javascript: and data: URLs out of them.
  */
 export function httpUrl(url: string | null | undefined): string {
-  if (url && (url.startsWith('https://') || url.startsWith('http://'))) {
-    return url;
+  if (url?.startsWith('https://')) {
+    return 'https://' + url.slice('https://'.length);
+  }
+  if (url?.startsWith('http://')) {
+    // eslint-disable-next-line sonarjs/no-clear-text-protocols -- a local backend is served over plain http
+    return 'http://' + url.slice('http://'.length);
   }
   return '';
 }
