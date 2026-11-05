@@ -320,8 +320,8 @@ select prompt, max(completion) as completion
                            date.unix
                            .:-
                            crypto.random
-                              min:10
-                              max:10
+                              min:20
+                              max:20
                            .:.
                            get-value:x:@strings.split/0/-
                      io.stream.save-file:x:@.filename

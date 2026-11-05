@@ -24,6 +24,9 @@ namespace magic.endpoint.services
     public class HttpFileExecutorAsync : IHttpExecutorAsync
     {
         const string WwwFolder = "/etc/www/";
+
+        // Uploads the AI chat saves so an LLM can fetch them by their random URL. Never cached anywhere, see below.
+        const string UploadsFolder = "/etc/www/tmp/";
         const string ContentTypeHeader = "Content-Type";
         const string LocationHeader = "Location";
         const string TextHtml = "text/html";
@@ -409,6 +412,21 @@ namespace magic.endpoint.services
             // Adding default headers from .config file.
             AddDefaultStaticHttpHeaders(response, ext, config);
 
+            /*
+             * Files in "/etc/www/tmp/" are public only so an LLM can fetch them through their random URL. No browser, proxy
+             * or CDN may ever keep a copy, whatever ".config" says, or a deleted upload keeps being served from the cache.
+             * The default ".config" caches every static file publicly for a year, which a CDN such as Cloudflare honours.
+             */
+            if (IsUpload(url))
+            {
+                response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private, max-age=0";
+                response.Headers["CDN-Cache-Control"] = "no-store";
+                response.Headers["Cloudflare-CDN-Cache-Control"] = "no-store";
+                response.Headers["Pragma"] = "no-cache";
+                response.Headers["Expires"] = "0";
+                response.Headers["X-Robots-Tag"] = "noindex, nofollow, noarchive";
+            }
+
             // Checking if Content-Type is application/json, at which point we load the file before returning it.
             if (response.Headers[ContentTypeHeader].Contains("application/json"))
                 response.Content = await _fileService.LoadAsync(_rootResolver.AbsolutePath(url));
@@ -416,6 +434,17 @@ namespace magic.endpoint.services
                 response.Content = await _streamService.OpenFileAsync(_rootResolver.AbsolutePath(url));
 
             return response;
+        }
+
+        /*
+         * Returns true if the specified file is an upload in "/etc/www/tmp/" (or any folder below it).
+         */
+        static bool IsUpload(string url)
+        {
+            var path = url.Replace('\\', '/');
+            while (path.Contains("//"))
+                path = path.Replace("//", "/");
+            return path.StartsWith(UploadsFolder, StringComparison.OrdinalIgnoreCase);
         }
 
         /*

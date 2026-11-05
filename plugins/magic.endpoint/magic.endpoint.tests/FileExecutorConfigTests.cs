@@ -126,6 +126,45 @@ namespace magic.endpoint.tests
         }
 
         [Fact]
+        public async Task Upload_IsNeverCached_WhateverTheConfigSays()
+        {
+            // The default ".config" caches every static file publicly for a year, which a CDN honours.
+            WriteConfig(Config("public, max-age=31536000"));
+            Directory.CreateDirectory(Path.Combine(Www, "tmp"));
+            File.WriteAllText(Path.Combine(Www, "tmp", "aBcDeFgHiJkLmNoPqRsT.csv"), "a,b\n1,2\n");
+            var executor = Create(new CountingFiles());
+
+            var upload = await Get(executor, "tmp/aBcDeFgHiJkLmNoPqRsT.csv");
+            Assert.Equal(200, upload.Result);
+            Assert.Contains("no-store", upload.Headers["Cache-Control"]);
+            Assert.Contains("private", upload.Headers["Cache-Control"]);
+            Assert.DoesNotContain("public", upload.Headers["Cache-Control"]);
+            Assert.Equal("no-store", upload.Headers["CDN-Cache-Control"]);
+            Assert.Equal("no-store", upload.Headers["Cloudflare-CDN-Cache-Control"]);
+            Assert.Equal("no-cache", upload.Headers["Pragma"]);
+            Assert.Equal("0", upload.Headers["Expires"]);
+            Assert.Contains("noindex", upload.Headers["X-Robots-Tag"]);
+
+            // Every other static file still gets exactly what ".config" says.
+            var css = await Get(executor, "a.css");
+            Assert.Equal("public, max-age=31536000", css.Headers["Cache-Control"]);
+            Assert.False(css.Headers.ContainsKey("CDN-Cache-Control"));
+            Assert.False(css.Headers.ContainsKey("X-Robots-Tag"));
+        }
+
+        [Fact]
+        public async Task Upload_InASubfolderOrWithDoubleSlashes_IsNeverCached()
+        {
+            WriteConfig(Config("public, max-age=31536000"));
+            Directory.CreateDirectory(Path.Combine(Www, "tmp", "sub"));
+            File.WriteAllText(Path.Combine(Www, "tmp", "sub", "x.pdf"), "%PDF");
+            var executor = Create(new CountingFiles());
+
+            Assert.Contains("no-store", (await Get(executor, "tmp/sub/x.pdf")).Headers["Cache-Control"]);
+            Assert.Contains("no-store", (await Get(executor, "/tmp//sub/x.pdf")).Headers["Cache-Control"]);
+        }
+
+        [Fact]
         public async Task EditedConfig_IsPickedUp_EvenWhenTheSizeIsTheSame()
         {
             WriteConfig(Config("public, max-age=60"));
