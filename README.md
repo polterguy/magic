@@ -377,7 +377,7 @@ Found a security issue? Please read [SECURITY.md](SECURITY.md) and report it pri
 
 ## Maintenance
 
-Magic Cloud and Hyperlambda are developed and professionally maintained by [AINIRO.IO](https://ainiro.io), copyright Thomas Hansen 2019 – 2026. We offer hosting, support, and software development services on top of Magic Cloud, in addition to delivering AI agents, chatbots, and AI solutions.
+Magic Cloud and Hyperlambda are developed and professionally maintained by [AINIRO.IO](https://ainiro.io), copyright AINIRO.IO, Ltd 2019 – 2026. We offer hosting, support, and software development services on top of Magic Cloud, in addition to delivering AI agents, chatbots, and AI solutions.
 
 ## License
 

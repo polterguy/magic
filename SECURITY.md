@@ -4,7 +4,7 @@
 
 Please report a vulnerability privately, and not in a public issue or pull request.
 
-- Email **thomas@ainiro.io**, or
+- Email **team@ainiro.io**, or
 - use the **Report a vulnerability** button on the [Security tab](https://github.com/polterguy/magic/security/advisories/new) of this repository.
 
 Include what you found, how to reproduce it, and the version or commit you tested against. A proof of concept helps, but a clear description is enough to start.

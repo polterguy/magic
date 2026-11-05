@@ -1,5 +1,8 @@
 # Who is asked to review a pull request that touches the files. The last matching line wins.
-*                      @polterguy
+*                      @polterguy @EbubeEvan @wintan1418 @barnascript
+/frontend/             @polterguy @EbubeEvan
+/backend/              @polterguy @wintan1418 @barnascript
+/plugins/              @polterguy @wintan1418 @barnascript
 /.github/              @polterguy
 /backend/files/config/ @polterguy
 /Directory.Build.props @polterguy
