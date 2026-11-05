@@ -17,6 +17,25 @@ describe('dispositionFilename', () => {
     expect(dispositionFilename("attachment; filename*=UTF-8''report.zip")).toBe('report.zip');
   });
 
+  it('percent-decodes a filename*, language tag or not', () => {
+    expect(dispositionFilename("attachment; filename*=UTF-8''r%C3%A9sum%C3%A9.pdf")).toBe(
+      'résumé.pdf',
+    );
+    expect(dispositionFilename("attachment; filename*=UTF-8'en'my%20file.txt")).toBe('my file.txt');
+  });
+
+  it('prefers filename* over filename, in either order', () => {
+    const star = "filename*=UTF-8''r%C3%A9sum%C3%A9.pdf";
+    expect(dispositionFilename('attachment; filename="resume.pdf"; ' + star)).toBe('résumé.pdf');
+    expect(dispositionFilename('attachment; ' + star + '; filename="resume.pdf"')).toBe(
+      'résumé.pdf',
+    );
+  });
+
+  it('returns a filename* that will not decode as it came', () => {
+    expect(dispositionFilename("attachment; filename*=UTF-8''100%.txt")).toBe('100%.txt');
+  });
+
   it('returns null without a filename', () => {
     expect(dispositionFilename('attachment')).toBeNull();
     expect(dispositionFilename('')).toBeNull();
