@@ -2,7 +2,7 @@
  * The Inspector wired like the designer wires it: every edit callback is a spy and, when
  * `live` is set, also lands on the node and re-renders the panel.
  */
-import { useState } from 'react';
+import { useReducer } from 'react';
 
 import Inspector from '../Inspector';
 import type { Options, Spies } from './inspectorHarness';
@@ -15,7 +15,8 @@ function setData(text: Text, value: string) {
 export default function InspectorPanel(
   props: Readonly<{ node: Node | null; doc: Document | null; s: Spies; o: Options }>,
 ) {
-  const [, bump] = useState(0);
+  // Only there to render again once an edit has landed on the node.
+  const [, bump] = useReducer((n: number) => n + 1, 0);
   const { node, doc, s, o } = props;
   const live = o.live ?? false;
   const element = node as Element;
@@ -30,28 +31,28 @@ export default function InspectorPanel(
         s.onSetText(text);
         if (live) {
           setData(node as Text, text);
-          bump(n => n + 1);
+          bump();
         }
       }}
       onSetAttribute={(name, value) => {
         s.onSetAttribute(name, value);
         if (live) {
           element.setAttribute(name, value);
-          bump(n => n + 1);
+          bump();
         }
       }}
       onRemoveAttribute={name => {
         s.onRemoveAttribute(name);
         if (live) {
           element.removeAttribute(name);
-          bump(n => n + 1);
+          bump();
         }
       }}
       onSetClasses={classes => {
         s.onSetClasses(classes);
         if (live) {
           element.setAttribute('class', classes.join(' '));
-          bump(n => n + 1);
+          bump();
         }
       }}
       onSelect={s.onSelect}
