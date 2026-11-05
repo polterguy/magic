@@ -128,7 +128,8 @@ export interface MagicConfig {
   magic?: {
     smtp?: { host?: string; [key: string]: unknown };
     // Connection strings per database type, plus "default" naming the default type.
-    databases?: Record<string, Record<string, string> | string | undefined>;
+    // A type with no connection strings can be configured as null.
+    databases?: Record<string, Record<string, string> | string | null | undefined>;
     [key: string]: unknown;
   };
   [key: string]: unknown;

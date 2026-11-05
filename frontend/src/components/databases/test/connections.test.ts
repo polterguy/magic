@@ -88,10 +88,13 @@ describe('connectionRows', () => {
     expect(connectionRows({ magic: { databases: { mysql: 'oops' } } })).toEqual([]);
   });
 
-  it('throws when a type is configured as null', () => {
-    // typeof null is 'object', so Object.keys(null) runs (see report).
-    const config = { magic: { databases: { mysql: null } } } as unknown as MagicConfig;
-    expect(() => connectionRows(config)).toThrow(TypeError);
+  it('skips a type configured as null and still lists the others', () => {
+    const config = {
+      magic: { databases: { mysql: null, pgsql: { main: 'Host=db' } } },
+    } as unknown as MagicConfig;
+    expect(connectionRows(config)).toEqual([
+      { type: 'pgsql', name: 'main', connectionString: 'Host=db', status: 'testing' },
+    ]);
   });
 });
 
