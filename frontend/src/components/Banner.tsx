@@ -19,7 +19,7 @@ export default function Banner(
       style={props.style}
     >
       <span style={{ flex: 1 }}>{props.children}</span>
-      <button className="banner-close" title="Dismiss" onClick={props.onClose}>
+      <button type="button" className="banner-close" title="Dismiss" onClick={props.onClose}>
         ×
       </button>
     </div>

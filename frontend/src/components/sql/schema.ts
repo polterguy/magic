@@ -72,8 +72,12 @@ export function columnPayload(
 ): ColumnPayload | null {
   const { columnName, fieldTypes, fieldType, columnLength, defaultValue, nullable } = fields;
   const { foreignTable, foreignPk, cascading } = fields;
+  // A column needs a name in either mode; Enter in the dialog gets here without going through the disabled button.
+  if (!columnName) {
+    return null;
+  }
   if (mode === 'foreign') {
-    if (!columnName || !foreignTable || !foreignPk) {
+    if (!foreignTable || !foreignPk) {
       return null;
     }
     return {

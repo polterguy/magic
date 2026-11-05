@@ -18,7 +18,7 @@ import { CopyIcon, TrashIcon } from '../Icons';
 import { dataGridSources, DataSource, loadEndpoints } from './dataSources';
 import { hasSlot, SERVER_FILLED } from './html';
 import { KIND_FOR_TAG } from './mediaKinds';
-import { isText, keyOf, labelOf } from './nodes';
+import { elementOf, isText, keyOf, labelOf } from './nodes';
 
 // Attributes with a control of their own, or that belong to the designer.
 const OWN = new Set(['class', 'id', 'style', 'contenteditable']);
@@ -319,8 +319,8 @@ export default function Inspector(
   const [sourcesError, setSourcesError] = useState(false);
   // Flips on, once, the first time a data widget is selected; that is what fetches.
   const [sourcesWanted, setSourcesWanted] = useState(false);
-  const selectedTag =
-    props.node && !isText(props.node) ? (props.node as Element).tagName.toLowerCase() : null;
+  // The element the panel edits, which for a run of words is the element holding them, whose fields it shows.
+  const selectedTag = elementOf(props.node)?.tagName.toLowerCase() ?? null;
   if (
     !sourcesWanted &&
     (selectedTag === 'magic-data-grid' || selectedTag === 'magic-data-create')
