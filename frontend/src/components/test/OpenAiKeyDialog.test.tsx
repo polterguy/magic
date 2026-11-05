@@ -15,7 +15,7 @@ vi.mock('../../lib/api', async importOriginal =>
   (await import('../../test/apiMock')).mockApi(await importOriginal()),
 );
 
-const KEY = 'sk-0123456789abcdefghij';
+const KEY = 'placeholder-not-a-key';
 
 beforeEach(() => {
   vi.mocked(api.openaiModels).mockResolvedValue([

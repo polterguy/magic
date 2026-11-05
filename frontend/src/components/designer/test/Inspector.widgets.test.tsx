@@ -477,13 +477,13 @@ describe('Inspector data widgets inside a live panel', () => {
     expect(screen.getByRole('checkbox', { name: 'Allow delete' })).not.toBeChecked();
   });
 
-  it('does not fetch the tables when only the words inside a grid are selected', () => {
+  it('loads the tables when only the words inside a grid are selected', async () => {
     renderInspector(
       '<magic-data-grid>words</magic-data-grid>',
       doc => doc.querySelector('magic-data-grid')!.firstChild,
     );
     expect(screen.getByText('Table')).toBeInTheDocument();
-    expect(loadEndpoints).not.toHaveBeenCalled();
-    expect(tableSelect()).toBeNull();
+    await waitFor(() => expect(tableSelect()).not.toBeNull());
+    expect(loadEndpoints).toHaveBeenCalledTimes(1);
   });
 });
