@@ -93,12 +93,29 @@ describe('applyOidcValues', () => {
     });
   });
 
-  it('writes structured settings back as the JSON text they were shown as', () => {
-    // Round trip through the dialog: a nested setting comes back as a string.
-    const config = JSON.stringify({ magic: { oidc: { google: { nested: { a: 1 } } } } });
-    const values = initialOidcValues({ google: { nested: { a: 1 } } });
-    expect(parse(applyOidcValues(config, values))).toEqual({
-      magic: { oidc: { google: { nested: '{"a":1}' } } },
+  it('leaves settings nobody edited exactly as they were', () => {
+    // Round trip through the dialog: untouched numbers, objects and padding survive.
+    const oidc = { google: { nested: { a: 1 }, port: 443, 'client-id': ' padded ' } };
+    const config = JSON.stringify({ magic: { oidc } });
+    const initial = initialOidcValues(oidc);
+    expect(parse(applyOidcValues(config, initial, initial))).toEqual({ magic: { oidc } });
+  });
+
+  it('writes only the edited setting, trimmed', () => {
+    const oidc = { google: { nested: { a: 1 }, 'client-id': 'old' } };
+    const initial = initialOidcValues(oidc);
+    const values = { google: { ...initial.google, 'client-id': '  new  ' } };
+    expect(parse(applyOidcValues(JSON.stringify({ magic: { oidc } }), values, initial))).toEqual({
+      magic: { oidc: { google: { nested: { a: 1 }, 'client-id': 'new' } } },
+    });
+  });
+
+  it('removes an edited setting cleared to blank', () => {
+    const oidc = { google: { 'client-id': 'abc', port: 443 } };
+    const initial = initialOidcValues(oidc);
+    const values = { google: { ...initial.google, 'client-id': '' } };
+    expect(parse(applyOidcValues(JSON.stringify({ magic: { oidc } }), values, initial))).toEqual({
+      magic: { oidc: { google: { port: 443 } } },
     });
   });
 

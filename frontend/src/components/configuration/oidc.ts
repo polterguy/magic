@@ -112,8 +112,16 @@ export function oidcProvidersFromSlots(slots: string[] | null | undefined): stri
  * The editor's text with values written into magic.oidc — blank values remove
  * their key, a provider left with no keys is removed, and so is magic.oidc
  * when no provider is left. Null when the text isn't a JSON object.
+ *
+ * Only values that differ from `initial` (what the dialog opened with) are written,
+ * so a setting nobody edited keeps its original JSON value — a number or an object
+ * is not turned into the text it was shown as.
  */
-export function applyOidcValues(config: string, values: OidcValues): string | null {
+export function applyOidcValues(
+  config: string,
+  values: OidcValues,
+  initial: OidcValues = {},
+): string | null {
   const parsed = parseObject(config);
   if (!parsed) {
     return null;
@@ -122,14 +130,7 @@ export function applyOidcValues(config: string, values: OidcValues): string | nu
   parsed.magic = magic;
   const oidc = { ...asObject(magic.oidc) };
   for (const [name, settings] of Object.entries(values)) {
-    const entry = { ...asObject(oidc[name]) };
-    for (const [key, value] of Object.entries(settings)) {
-      if (value.trim()) {
-        entry[key] = value.trim();
-      } else {
-        delete entry[key];
-      }
-    }
+    const entry = withEdits(asObject(oidc[name]), settings, initial[name] ?? {});
     if (Object.keys(entry).length === 0) {
       delete oidc[name];
     } else {
@@ -142,4 +143,24 @@ export function applyOidcValues(config: string, values: OidcValues): string | nu
     magic.oidc = oidc;
   }
   return JSON.stringify(parsed, null, 2);
+}
+
+// One provider's settings with the edited values written in: trimmed, or removed when blank.
+function withEdits(
+  current: JsonObject,
+  settings: Record<string, string>,
+  initial: Record<string, string>,
+): JsonObject {
+  const entry = { ...current };
+  for (const [key, value] of Object.entries(settings)) {
+    if (value === initial[key]) {
+      continue;
+    }
+    if (value.trim()) {
+      entry[key] = value.trim();
+    } else {
+      delete entry[key];
+    }
+  }
+  return entry;
 }
