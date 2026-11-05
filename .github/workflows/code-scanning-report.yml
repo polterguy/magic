@@ -1,0 +1,78 @@
+name: Code scanning report
+
+# Counts the alerts CodeQL has raised, and publishes the result as code-scanning.json on the health-data branch, which
+# hyperlambda.dev/health reads. GitHub only hands the alerts to a token with the security-events scope, so the page cannot
+# read them itself. It runs when CodeQL has finished, since that is when the alerts change, and on a schedule as well, since
+# an alert can be dismissed in the Security tab without any scan running.
+on:
+  workflow_run:
+    workflows: [CodeQL]
+    types: [completed]
+  schedule:
+    - cron: '41 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write         # only to push code-scanning.json to the health-data branch
+      security-events: read   # to read the alerts
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build the report
+        run: |
+          alerts() { gh api --paginate "repos/$GITHUB_REPOSITORY/code-scanning/alerts?per_page=100&state=$1&ref=refs/heads/master" | jq -s 'add // []'; }
+          alerts open > "$RUNNER_TEMP/open.json"
+          alerts dismissed > "$RUNNER_TEMP/dismissed.json"
+          alerts fixed > "$RUNNER_TEMP/fixed.json"
+          jq -n \
+            --arg generated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg commit "$(git rev-parse HEAD)" \
+            --slurpfile open "$RUNNER_TEMP/open.json" \
+            --slurpfile dismissed "$RUNNER_TEMP/dismissed.json" \
+            --slurpfile fixed "$RUNNER_TEMP/fixed.json" '
+              {
+                generated: $generated,
+                commit: $commit,
+                "open-count": ($open[0] | length),
+                "dismissed-count": ($dismissed[0] | length),
+                "fixed-count": ($fixed[0] | length),
+                open: {
+                  critical: ([$open[0][] | select(.rule.security_severity_level == "critical")] | length),
+                  high: ([$open[0][] | select(.rule.security_severity_level == "high")] | length),
+                  medium: ([$open[0][] | select(.rule.security_severity_level == "medium")] | length),
+                  low: ([$open[0][] | select(.rule.security_severity_level == "low")] | length),
+                  error: ([$open[0][] | select(.rule.severity == "error")] | length),
+                  warning: ([$open[0][] | select(.rule.severity == "warning")] | length),
+                  note: ([$open[0][] | select(.rule.severity == "note")] | length)
+                }
+              }' > "$RUNNER_TEMP/code-scanning.json"
+          cat "$RUNNER_TEMP/code-scanning.json"
+
+      - name: Publish to the health-data branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin health-data || true
+          if git rev-parse --verify origin/health-data >/dev/null 2>&1; then
+            git checkout -B health-data origin/health-data
+          else
+            git checkout --orphan health-data
+            git rm -rf . >/dev/null
+          fi
+          cp "$RUNNER_TEMP/code-scanning.json" code-scanning.json
+          git add code-scanning.json
+          git commit -m "Code scanning report for $GITHUB_SHA" || exit 0
+          git push origin health-data
