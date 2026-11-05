@@ -1,13 +1,13 @@
 {
- "generated": "2026-11-04T17:02:39Z",
- "commit": "73ec63efac6e5eba60ecb7f46171b6ca70f66d20",
+ "generated": "2026-11-05T02:13:54Z",
+ "commit": "845b60b7626a1140b9eb56a8f31a26b4d81ed8f6",
  "open": {
   "critical": 0,
   "high": 0,
-  "moderate": 18,
+  "moderate": 8,
   "low": 0
  },
- "open-count": 18,
+ "open-count": 8,
  "suppressed": {
   "critical": 0,
   "high": 0,
@@ -15,73 +15,40 @@
   "low": 0
  },
  "suppressed-count": 0,
- "findings-count": 18,
+ "findings-count": 8,
  "findings": [
   {
    "ecosystem": "npm",
-   "package": "@eslint-community/eslint-utils",
-   "version": "*",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "eslint-plugin-unicorn@4.0.3"
-  },
-  {
-   "ecosystem": "npm",
-   "package": "@eslint/config-array",
-   "version": "*",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "eslint-plugin-unicorn@4.0.3"
-  },
-  {
-   "ecosystem": "npm",
-   "package": "@eslint/eslintrc",
-   "version": "0.0.1 || >=0.1.1",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "eslint-plugin-unicorn@4.0.3"
-  },
-  {
-   "ecosystem": "npm",
    "package": "@typescript-eslint/eslint-plugin",
-   "version": "*",
+   "version": ">=6.16.0",
    "severity": "moderate",
    "advisory": null,
    "projects": 1,
    "suppressed": false,
    "reason": null,
-   "fix": "typescript-eslint@8.14.0"
+   "fix": "typescript-eslint@8.36.0"
   },
   {
    "ecosystem": "npm",
    "package": "@typescript-eslint/parser",
-   "version": "*",
+   "version": ">=6.16.0",
    "severity": "moderate",
    "advisory": null,
    "projects": 1,
    "suppressed": false,
    "reason": null,
-   "fix": "typescript-eslint@8.14.0"
+   "fix": "typescript-eslint@8.36.0"
   },
   {
    "ecosystem": "npm",
    "package": "@typescript-eslint/type-utils",
-   "version": ">=5.9.2-alpha.0",
+   "version": ">=6.16.0",
    "severity": "moderate",
    "advisory": null,
    "projects": 1,
    "suppressed": false,
    "reason": null,
-   "fix": "typescript-eslint@8.14.0"
+   "fix": "typescript-eslint@8.36.0"
   },
   {
    "ecosystem": "npm",
@@ -92,89 +59,23 @@
    "projects": 1,
    "suppressed": false,
    "reason": null,
-   "fix": "typescript-eslint@8.14.0"
+   "fix": "typescript-eslint@8.36.0"
   },
   {
    "ecosystem": "npm",
    "package": "@typescript-eslint/utils",
-   "version": "*",
+   "version": ">=6.16.0",
    "severity": "moderate",
    "advisory": null,
    "projects": 1,
    "suppressed": false,
    "reason": null,
-   "fix": "typescript-eslint@8.14.0"
-  },
-  {
-   "ecosystem": "npm",
-   "package": "eslint",
-   "version": "0.7.1 - 2.0.0-rc.1 || >=4.1.0",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "eslint-plugin-unicorn@4.0.3"
-  },
-  {
-   "ecosystem": "npm",
-   "package": "eslint-config-prettier",
-   "version": ">=7.0.0",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "eslint-config-prettier@6.15.0"
-  },
-  {
-   "ecosystem": "npm",
-   "package": "eslint-plugin-jsx-a11y",
-   "version": ">=6.5.0",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "eslint-plugin-jsx-a11y@6.4.1"
-  },
-  {
-   "ecosystem": "npm",
-   "package": "eslint-plugin-react",
-   "version": ">=7.23.0",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "eslint-plugin-react@7.22.0"
-  },
-  {
-   "ecosystem": "npm",
-   "package": "eslint-plugin-react-refresh",
-   "version": "*",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": false
-  },
-  {
-   "ecosystem": "npm",
-   "package": "eslint-plugin-simple-import-sort",
-   "version": "*",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": false
+   "fix": "typescript-eslint@8.36.0"
   },
   {
    "ecosystem": "npm",
    "package": "eslint-plugin-sonarjs",
-   "version": ">=0.6.0",
+   "version": ">=2.0.1-alpha.0",
    "severity": "moderate",
    "advisory": null,
    "projects": 1,
@@ -184,25 +85,14 @@
   },
   {
    "ecosystem": "npm",
-   "package": "eslint-plugin-unicorn",
-   "version": ">=5.0.0",
-   "severity": "moderate",
-   "advisory": null,
-   "projects": 1,
-   "suppressed": false,
-   "reason": null,
-   "fix": "eslint-plugin-unicorn@4.0.3"
-  },
-  {
-   "ecosystem": "npm",
    "package": "minimatch",
-   "version": "<11.0.1",
+   "version": "7.0.0 - 11.0.0",
    "severity": "moderate",
    "advisory": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
    "projects": 1,
    "suppressed": false,
    "reason": null,
-   "fix": "eslint-plugin-unicorn@4.0.3"
+   "fix": "eslint-plugin-sonarjs@2.0.0"
   },
   {
    "ecosystem": "npm",
@@ -213,7 +103,7 @@
    "projects": 1,
    "suppressed": false,
    "reason": null,
-   "fix": "typescript-eslint@8.14.0"
+   "fix": "typescript-eslint@8.36.0"
   }
  ]
 }
