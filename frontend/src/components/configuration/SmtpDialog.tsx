@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Modal } from '../Dialogs';
 import { asObject, configSection, parseObject, settingText } from './json';
+import { isValidPort } from './smtp';
 
 /*
  * Patches magic.smtp in the configuration, like the old SMTP dialog.
@@ -24,9 +25,12 @@ export default function SmtpDialog(
   const [fromName, setFromName] = useState(settingText(existingFrom.name));
   const [fromAddress, setFromAddress] = useState(settingText(existingFrom.address));
 
+  const portValid = isValidPort(port);
+
   function save() {
     const parsed = parseObject(props.config);
-    if (!parsed) {
+    // Enter submits the dialog too, so the button being disabled is not enough.
+    if (!parsed || !portValid) {
       return;
     }
     const magic = asObject(parsed.magic);
@@ -50,7 +54,18 @@ export default function SmtpDialog(
           Host <input type="text" value={host} onChange={e => setHost(e.target.value)} />
         </label>
         <label>
-          Port <input type="number" value={port} onChange={e => setPort(e.target.value)} />
+          Port{' '}
+          <input
+            type="number"
+            value={port}
+            aria-invalid={!portValid}
+            onChange={e => setPort(e.target.value)}
+          />
+          {!portValid && (
+            <span style={{ color: 'var(--danger)', fontWeight: 400 }}>
+              A whole number from 1 to 65535
+            </span>
+          )}
         </label>
         <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <input type="checkbox" checked={secure} onChange={e => setSecure(e.target.checked)} />{' '}
@@ -83,7 +98,7 @@ export default function SmtpDialog(
         <button className="btn btn-secondary" onClick={props.onClose}>
           Cancel
         </button>
-        <button className="btn" onClick={save}>
+        <button className="btn" onClick={save} disabled={!portValid}>
           Save
         </button>
       </div>
