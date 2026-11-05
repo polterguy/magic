@@ -1,0 +1,2 @@
+# A placeholder API key in a unit test (replaced in the next commit), not a real secret.
+b884d7b0a5240b3a203180a3faba9a5659c1c0dc:frontend/src/components/test/OpenAiKeyDialog.test.tsx:generic-api-key:18

@@ -137,8 +137,16 @@ describe('columnPayload', () => {
     expect(payload).toMatchObject({ columnType: 'varchar', columnLength: 80, defaultValue: 'x' });
   });
 
-  it('builds a field even without a column name (the button guards that)', () => {
-    expect(columnPayload('field', { ...base, columnName: '' })?.columnName).toBe('');
+  it('builds no column without a name, in either mode, since Enter skips the disabled button', () => {
+    expect(columnPayload('field', { ...base, columnName: '' })).toBeNull();
+    expect(
+      columnPayload('foreign', {
+        ...base,
+        columnName: '',
+        foreignTable: 'users',
+        foreignPk: foreignPrimaryKey(tables, 'users'),
+      }),
+    ).toBeNull();
   });
 
   it('types a foreign key after a numeric primary key as the first field type', () => {
