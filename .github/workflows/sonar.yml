@@ -82,6 +82,20 @@ jobs:
         run: dotnet test magic.sln
       - if: env.SONAR_TOKEN != ''
         run: dotnet tool install --global dotnet-sonarscanner
+      # The dashboard's unit tests, with coverage, so the frontend counts towards the coverage SonarCloud reports. The
+      # lcov paths are relative to frontend/, and SonarCloud resolves them from the repository root, hence the prefix.
+      - if: env.SONAR_TOKEN != ''
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - if: env.SONAR_TOKEN != ''
+        working-directory: frontend
+        run: |
+          npm ci --ignore-scripts
+          npm run test:coverage
+          sed -i 's#^SF:#SF:frontend/#' coverage/lcov.info
       - if: env.SONAR_TOKEN != ''
         env:
           MAGIC_TEST_CHROME: /usr/bin/google-chrome
@@ -93,7 +107,8 @@ jobs:
             /d:sonar.qualitygate.wait=true \
             /d:sonar.qualitygate.timeout=600 \
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
-            /d:sonar.coverage.exclusions="frontend/**,backend/files/**,backend/Program.cs,backend/Startup.cs" \
+            /d:sonar.javascript.lcov.reportPaths="frontend/coverage/lcov.info" \
+            /d:sonar.coverage.exclusions="backend/files/**,backend/Program.cs,backend/Startup.cs,frontend/src/**/test/**,frontend/src/test/**,frontend/src/**/*.test.*" \
             /d:sonar.exclusions="update-deployments.sh,**/*.sql,.do/**,.vscode/**,backend/files/system/openai/front.files/chat/*.css,**/*.tests/**"
           dotnet build magic.sln -p:SonarGate=false
           dotnet test magic.sln --no-build --collect:"XPlat Code Coverage" \
