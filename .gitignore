@@ -388,3 +388,6 @@ frontend2/dist/**
 # Qoder IDE local state (RepoWiki etc.)
 .qoder/
 bench/**
+
+# Frontend unit test coverage
+frontend/coverage/
