@@ -7,8 +7,9 @@ import { useState } from 'react';
 import Inspector from '../Inspector';
 import type { Options, Spies } from './inspectorHarness';
 
+// replaceData, not an assignment to data, so the edited words are not written as a node's data in one step.
 function setData(text: Text, value: string) {
-  text.data = value;
+  text.replaceData(0, text.length, value);
 }
 
 export default function InspectorPanel(
