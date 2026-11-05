@@ -49,7 +49,7 @@ export default function SetPasswordDialog(props: Readonly<{ onClose: () => void 
           New password (min {MIN_PASSWORD} characters)
           <input
             type="password"
-            autoFocus
+            data-initial-focus
             autoComplete="new-password"
             value={password}
             onChange={e => setPassword(e.target.value)}

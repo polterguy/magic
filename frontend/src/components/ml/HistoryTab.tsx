@@ -16,7 +16,7 @@ export default function HistoryTab(
   }>,
 ) {
   const PAGE_SIZE = 15;
-  const [picked, setType] = useState('');
+  const [picked, setPicked] = useState('');
   // Until one is picked, the first model is the one shown.
   const type = picked || (props.types[0]?.type ?? '');
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -40,7 +40,7 @@ export default function HistoryTab(
   return (
     <>
       <div className="toolbar">
-        <Select value={type} onChange={value => setType(value)}>
+        <Select value={type} onChange={value => setPicked(value)}>
           {props.types.map(candidate => (
             <option key={candidate.type} value={candidate.type}>
               {candidate.type}

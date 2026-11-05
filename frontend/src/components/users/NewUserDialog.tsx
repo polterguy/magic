@@ -36,7 +36,7 @@ export default function NewUserDialog(
         await addUserExtra(username, 'email', email);
       }
       for (const role of selectedRoles) {
-        await addUserToRole(username, role);
+        await addUserToRole(username, role); // NOSONAR -- roles are added in order and the first failure stops the creation
       }
       props.onCreated(username);
     } catch (err) {
@@ -60,7 +60,7 @@ export default function NewUserDialog(
           Username{' '}
           <input
             type="text"
-            autoFocus
+            data-initial-focus
             autoComplete="off"
             value={username}
             onChange={e => setUsername(e.target.value)}

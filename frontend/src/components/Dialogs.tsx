@@ -102,10 +102,11 @@ export function Modal(
    */
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
-    // Fields with autoFocus have already claimed focus by now — only move
-    // it when nothing inside the dialog took it.
-    if (boxRef.current && !boxRef.current.contains(document.activeElement)) {
-      boxRef.current.focus();
+    // The field marked data-initial-focus gets focus, else the dialog box
+    // itself — unless something inside already claimed it.
+    const box = boxRef.current;
+    if (box && !box.contains(document.activeElement)) {
+      (box.querySelector<HTMLElement>('[data-initial-focus]') ?? box).focus();
     }
     return () => opener?.focus();
   }, []);

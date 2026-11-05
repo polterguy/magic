@@ -381,7 +381,7 @@ function QuestionnaireDialog(
           Name{' '}
           <input
             type="text"
-            autoFocus={!existing}
+            data-initial-focus={!existing || undefined}
             autoComplete="off"
             disabled={existing !== null}
             title={
@@ -491,7 +491,7 @@ function QuestionDialog(
         <label>
           Question{' '}
           <textarea
-            autoFocus
+            data-initial-focus
             rows={3}
             value={question}
             onChange={e => setQuestion(e.target.value)}

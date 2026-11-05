@@ -155,7 +155,7 @@ export default function Media(
     try {
       const names: string[] = [];
       for (const file of Array.from(chosen)) {
-        await uploadFile(WEB_ROOT + folder + '/', file);
+        await uploadFile(WEB_ROOT + folder + '/', file); // NOSONAR -- uploaded in order so the list names exactly what arrived before a failure
         names.push(file.name);
       }
       await reload();
@@ -269,7 +269,7 @@ export default function Media(
       <h2 style={{ marginTop: 0 }}>{kind.title}</h2>
       <input
         type="text"
-        autoFocus
+        data-initial-focus
         className="designer-image-filter"
         placeholder="Filter by name or folder…"
         value={filter}

@@ -101,7 +101,7 @@ export default function NewPage(
           <span>URL</span>
           <input
             type="text"
-            autoFocus
+            data-initial-focus
             value={url}
             placeholder="/pricing, or / for the home page"
             onChange={event => setUrl(event.target.value)}

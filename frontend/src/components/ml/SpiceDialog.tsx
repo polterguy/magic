@@ -34,7 +34,7 @@ export default function SpiceDialog(
           Page URL{' '}
           <input
             type="text"
-            autoFocus
+            data-initial-focus
             placeholder="https://example.com/some-page"
             value={url}
             onChange={e => setUrl(e.target.value)}

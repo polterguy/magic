@@ -46,7 +46,7 @@ export default function RoleDialog(
           Name{' '}
           <input
             type="text"
-            autoFocus={!isEdit}
+            data-initial-focus={!isEdit || undefined}
             // The name is the role's primary key, so it can't be changed.
             readOnly={isEdit}
             value={name}
@@ -57,7 +57,7 @@ export default function RoleDialog(
           Description{' '}
           <textarea
             rows={4}
-            autoFocus={isEdit}
+            data-initial-focus={isEdit || undefined}
             value={description}
             onChange={e => setDescription(e.target.value)}
           />

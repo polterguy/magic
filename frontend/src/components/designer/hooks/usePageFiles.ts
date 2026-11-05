@@ -198,7 +198,7 @@ export function usePageFiles(o: {
     const absent: string[] = [];
     for (const sheet of linked) {
       try {
-        const text = await loadFile(sheet);
+        const text = await loadFile(sheet); // NOSONAR -- each step depends on the previous; one failed read or folder stops the walk in order
         readable.push(sheet);
         // The first one that is really there is the one rule edits go into.
         if (readable.length === 1) {
@@ -239,7 +239,7 @@ export function usePageFiles(o: {
         continue;
       }
       try {
-        await loadFile(script);
+        await loadFile(script); // NOSONAR -- each step depends on the previous; one failed read or folder stops the walk in order
         running.push(script);
       } catch {
         // Linked but not here. A visitor gets nothing from it either.
@@ -272,7 +272,7 @@ export function usePageFiles(o: {
       for (const folder of folders) {
         sofar += '/' + folder;
         // Already there is the normal case and not a problem.
-        await createFolder(sofar + '/').catch(() => undefined);
+        await createFolder(sofar + '/').catch(() => undefined); // NOSONAR -- each step depends on the previous; one failed read or folder stops the walk in order
       }
       const url = file.slice(WEB_ROOT.length).replace(/\.html$/, '');
       const source = copyFrom ? await loadFile(copyFrom) : blankPage(url, companions);

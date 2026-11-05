@@ -2,6 +2,9 @@ import type { SubmitEvent } from 'react';
 
 import Banner from '../Banner';
 
+// A stable callback ref, so the field is focused once on mount rather than every render.
+const focusOnMount = (element: HTMLInputElement | null) => element?.focus();
+
 /*
  * The "login using magic link" screen: asks for a username or email, and
  * shows what the backend answered once the link is sent.
@@ -33,7 +36,7 @@ export default function ForgotPasswordForm(
             Username or email{' '}
             <input
               type="text"
-              autoFocus
+              ref={focusOnMount}
               value={props.forgotUser}
               onChange={e => props.onForgotUser(e.target.value)}
               required

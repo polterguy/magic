@@ -3905,7 +3905,7 @@ tr.vss-irrelevant td {
     flex-direction: column;
   }
   .file-tree {
-    width: auto !important;
+    width: auto !important; /* NOSONAR -- overrides an inline style set from JS */
     max-height: 38vh;
   }
   .splitter {
@@ -3921,7 +3921,7 @@ tr.vss-irrelevant td {
   .editor-split {
     flex-direction: column;
     flex: none;
-    align-items: stretch !important;
+    align-items: stretch !important; /* NOSONAR -- overrides an inline style set from JS */
   }
   /* Editor panes get a fixed height so CodeMirror fills exactly; cards
      (Profile/Generator reuse .editor-split) keep their content height. */
@@ -4045,7 +4045,7 @@ tr.vss-irrelevant td {
    * a normal (full-width) table. The Generator's table picker is one.
    */
   .gen-table-card {
-    max-width: none !important;
+    max-width: none !important; /* NOSONAR -- overrides an inline style set from JS */
   }
   .content table.compact-table {
     display: table;

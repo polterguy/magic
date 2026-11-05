@@ -34,7 +34,7 @@ export function useAgentPlugins() {
         if (!app) {
           throw new Error(name + ' is not available in the plugin repository');
         }
-        await installPlugin(app);
+        await installPlugin(app); // NOSONAR -- plugins install one at a time, the repository cannot take them in parallel
       }
       showToast(
         'Installing ' + missingPlugins.join(' and ') + " — you'll be notified when it completes.",

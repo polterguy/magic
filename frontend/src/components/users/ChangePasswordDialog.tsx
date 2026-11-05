@@ -44,7 +44,7 @@ export default function ChangePasswordDialog(
         New password (min {MIN_PASSWORD} characters)
         <input
           type="text"
-          autoFocus
+          data-initial-focus
           // Someone else's password, so it is masked with CSS rather than
           // being a password field the browser offers to save as yours.
           className="secret"

@@ -44,7 +44,7 @@ export default function InviteUserDialog(
         await addUserExtra(email, 'name', name);
       }
       for (const role of selectedRoles) {
-        await addUserToRole(email, role);
+        await addUserToRole(email, role); // NOSONAR -- roles are added in order and the first failure stops the invite
       }
       await sendResetPasswordLink(backend?.url ?? '', email);
       props.onInvited(email);
@@ -73,7 +73,7 @@ export default function InviteUserDialog(
           Email — also becomes the username{' '}
           <input
             type="text"
-            autoFocus
+            data-initial-focus
             autoComplete="off"
             value={email}
             onChange={e => setEmail(e.target.value)}

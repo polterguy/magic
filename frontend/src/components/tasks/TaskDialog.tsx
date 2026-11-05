@@ -40,7 +40,7 @@ export default function TaskDialog(
         <input
           type="text"
           placeholder="task-name"
-          autoFocus={props.isNew}
+          data-initial-focus={props.isNew || undefined}
           autoComplete="off"
           // The name is the task's identifier, so it can't be changed.
           readOnly={!props.isNew}

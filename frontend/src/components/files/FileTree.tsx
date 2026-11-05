@@ -240,7 +240,11 @@ function FolderActions(
   }>,
 ) {
   return (
-    <span className="row-actions" role="presentation" onClick={e => e.stopPropagation()}>
+    <span
+      className="row-actions"
+      role="presentation" // NOSONAR -- only stops the click reaching the row; its buttons are the controls
+      onClick={e => e.stopPropagation()}
+    >
       <button className="icon-btn" title="New file" onClick={props.onNewFile}>
         <FilePlusIcon />
       </button>

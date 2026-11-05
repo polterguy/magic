@@ -16,7 +16,7 @@ export default function Splitter(
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- a focusable separator is the ARIA splitter pattern (a widget), which jsx-a11y does not model */}
       <div
         className="splitter"
-        role="separator"
+        role="separator" // NOSONAR -- a focusable separator is the ARIA splitter pattern; <hr> cannot take focus or a value
         aria-orientation="vertical"
         aria-label="Resize the file tree"
         aria-valuemin={220}

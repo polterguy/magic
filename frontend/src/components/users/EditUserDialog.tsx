@@ -94,9 +94,9 @@ export default function EditUserDialog(
     try {
       for (const field of fields) {
         if (saved.some(existing => existing.type === field.type)) {
-          await updateUserExtra(props.user.username, field.type, field.value);
+          await updateUserExtra(props.user.username, field.type, field.value); // NOSONAR -- one user's extras are written in order and the first failure stops the save
         } else {
-          await addUserExtra(props.user.username, field.type, field.value);
+          await addUserExtra(props.user.username, field.type, field.value); // NOSONAR -- one user's extras are written in order and the first failure stops the save
         }
       }
       props.onSaved();

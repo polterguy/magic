@@ -27,8 +27,9 @@ export function useAiFunctions(systemFiles: boolean, setWaiting: (waiting: boole
           );
       for (const file of targets) {
         await mlSnippetCreate({
+          // NOSONAR -- declared one at a time so a failure stops at a known file and the server is not flooded
           prompt: file.split('/').pop()!.replace(/\.hl$/, ''),
-          completion: await getFileDescription(file),
+          completion: await getFileDescription(file), // NOSONAR -- declared one at a time so a failure stops at a known file and the server is not flooded
           type,
           meta: 'FUNCTION_INVOCATION ==> ' + file,
         });

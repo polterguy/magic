@@ -34,7 +34,7 @@ export default function ModuleCard(
       <div
         className={'module-header' + (group.system ? ' system' : '')}
         tabIndex={0}
-        role="button"
+        role="button" // NOSONAR -- holds the card's own action buttons, which a <button> cannot nest
         aria-expanded={props.open}
         onClick={props.onToggle}
         onKeyDown={event => {

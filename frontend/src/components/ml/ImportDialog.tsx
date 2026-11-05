@@ -135,11 +135,12 @@ export default function ImportDialog(
       for (const file of files) {
         let response: { count: number };
         if (category === 'images') {
-          response = await uploadImageFile(props.type, file);
+          response = await uploadImageFile(props.type, file); // NOSONAR -- files are imported one at a time so a failure stops at a known file
         } else if (category === 'csv') {
-          response = await uploadCsvFile(props.type, file);
+          response = await uploadCsvFile(props.type, file); // NOSONAR -- files are imported one at a time so a failure stops at a known file
         } else if (category === 'pdf') {
           response = await uploadTrainingFile(props.type, file, {
+            // NOSONAR -- files are imported one at a time so a failure stops at a known file
             summarize: pdfSummarize,
             preservePages: pdfPreservePages,
             overwrite: pdfOverwrite,
@@ -147,11 +148,13 @@ export default function ImportDialog(
           });
         } else if (category === 'text') {
           response = await uploadTrainingFile(props.type, file, {
+            // NOSONAR -- files are imported one at a time so a failure stops at a known file
             summarize: textSummarize,
             forceAsText: file.name.toLowerCase().endsWith('.csv'),
           });
         } else {
           response = await uploadTrainingFile(props.type, file, {
+            // NOSONAR -- files are imported one at a time so a failure stops at a known file
             promptField,
             completionField,
           });

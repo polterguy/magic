@@ -204,7 +204,7 @@ export function useFileOperations(options: {
     setWaiting(true);
     try {
       for (const file of files) {
-        await uploadFile(activeFolder, file);
+        await uploadFile(activeFolder, file); // NOSONAR -- uploaded one at a time so a failure stops at a known file
       }
       showToast('Uploaded ' + files.length + ' file(s) to ' + activeFolder);
       await loadTree(systemFiles);

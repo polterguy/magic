@@ -69,7 +69,7 @@ export default function TrainingTab(
   }>,
 ) {
   const PAGE_SIZE = 12;
-  const [picked, setType] = useState(props.initialType ?? '');
+  const [picked, setPicked] = useState(props.initialType ?? '');
   // Until one is picked, the first model is the one shown.
   const type = picked || (props.types[0]?.type ?? '');
 
@@ -81,7 +81,7 @@ export default function TrainingTab(
   if (seenInitialType !== props.initialType) {
     setSeenInitialType(props.initialType);
     if (props.initialType) {
-      setType(props.initialType);
+      setPicked(props.initialType);
     }
   }
   const [filter, setFilter] = useState('');
@@ -220,7 +220,7 @@ export default function TrainingTab(
   return (
     <>
       <div className="toolbar">
-        <Select value={type} onChange={value => setType(value)}>
+        <Select value={type} onChange={value => setPicked(value)}>
           {props.types.map(candidate => (
             <option key={candidate.type} value={candidate.type}>
               {candidate.type}
@@ -333,7 +333,7 @@ export default function TrainingTab(
                   <td data-label="Embedded">
                     <span
                       className={'status-dot ' + (snippet.embedding_vss ? 'ok' : 'pending')}
-                      role="img"
+                      role="img" // NOSONAR -- a coloured dot, not an image file; aria-label carries the state
                       aria-label={snippet.embedding_vss ? 'Embedded' : 'Not embedded'}
                       title={
                         snippet.embedding_vss

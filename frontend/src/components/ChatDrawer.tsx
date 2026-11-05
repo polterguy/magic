@@ -482,7 +482,7 @@ export default function ChatDrawer(
       </div>
       <div
         className="chat-messages"
-        role="presentation"
+        role="presentation" // NOSONAR -- click delegation for links in the messages; the messages themselves are the content
         ref={listRef}
         onClick={onListClick}
         onScroll={onListScroll}
@@ -855,9 +855,7 @@ function ChatSegment({ segment, markdown }: Readonly<{ segment: Segment; markdow
             onClick={() => setShowDetail(current => !current)}
           >
             {segment.state === 'waiting' && (
-              <>
-                <span className="spinner-dots">Executing function</span>
-              </>
+              <span className="spinner-dots">Executing function</span>
             )}
             {segment.state === 'success' && (
               <>✓ {functionName(segment.file) ?? 'Function executed'}</>
