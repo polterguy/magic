@@ -6,14 +6,16 @@ export const TOOLTIP_WIDTH = 560;
 
 /*
  * Matches a candidate file's path (e.g. "/modules/oauth/authorize.get.hl") against the
- * {path, verb} shape /magic/system/endpoints/list keys its entries by (e.g.
- * "magic/oauth/authorize" + "get") — null for files with no HTTP-verb suffix, since
- * those are never HTTP endpoints and so never appear in that list.
+ * {path, verb} shape /magic/system/endpoints/list keys its entries by. The backend
+ * builds that path as "magic/" + the file's path relative to the files root, so the
+ * "modules/" or "system/" folder stays in it (e.g. "magic/modules/oauth/authorize" +
+ * "get"). Null for files with no HTTP-verb suffix, since those are never HTTP
+ * endpoints and so never appear in that list.
  */
 export const VERB_SUFFIX = /^(.*)\.(get|post|put|patch|delete|socket)\.hl$/;
 
 export function endpointKey(filePath: string): string | null {
-  const relative = filePath.replace(/^\/(modules|system)\//, '');
+  const relative = filePath.replace(/^\//, '');
   const match = VERB_SUFFIX.exec(relative);
   return match ? 'magic/' + match[1] + '|' + match[2] : null;
 }
