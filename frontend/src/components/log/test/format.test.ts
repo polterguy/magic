@@ -58,8 +58,8 @@ describe('timeAgo', () => {
     expect(timeAgo(new Date(NOW + HOUR).toISOString())).toBe('0 seconds ago');
   });
 
-  it('gives "NaN years ago" for an unparseable timestamp', () => {
-    expect(timeAgo('not a date')).toBe('NaN years ago');
+  it('shows an unparseable timestamp as it came', () => {
+    expect(timeAgo('not a date')).toBe('not a date');
   });
 });
 
@@ -72,7 +72,7 @@ describe('isoDate', () => {
     expect(isoDate('2026-03-04T05:06:07+02:00')).toBe('2026-03-04T03:06:07Z');
   });
 
-  it('throws on an unparseable timestamp', () => {
-    expect(() => isoDate('not a date')).toThrow(RangeError);
+  it('shows an unparseable timestamp as it came, instead of throwing', () => {
+    expect(isoDate('not a date')).toBe('not a date');
   });
 });

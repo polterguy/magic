@@ -3,8 +3,13 @@
  */
 
 /* "11 seconds ago", "3 minutes ago", … up through years. */
+// A timestamp the backend sent that doesn't parse is shown as it came, rather than breaking the row.
 export function timeAgo(created: string): string {
-  const diff = Math.max(0, Date.now() - new Date(created).getTime());
+  const time = new Date(created).getTime();
+  if (Number.isNaN(time)) {
+    return created;
+  }
+  const diff = Math.max(0, Date.now() - time);
   const s = Math.round(diff / 1000);
   const fmt = (n: number, unit: string) => n + ' ' + unit + (n === 1 ? '' : 's') + ' ago';
   if (s < 60) return fmt(s, 'second');
@@ -23,5 +28,9 @@ export function timeAgo(created: string): string {
 
 /* Exact time as ISO 8601 (UTC), milliseconds trimmed. */
 export function isoDate(created: string): string {
-  return new Date(created).toISOString().replace(/\.\d{3}Z$/, 'Z');
+  const date = new Date(created);
+  if (Number.isNaN(date.getTime())) {
+    return created;
+  }
+  return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
 }
