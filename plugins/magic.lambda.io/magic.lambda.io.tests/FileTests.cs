@@ -2185,5 +2185,34 @@ io.content.zip-stream
             }
             Assert.Equal("/another-folder/foo3.txt", entry.FullName);
         }
+
+        [Theory]
+        [InlineData("io.file.copy")]
+        [InlineData("io.file.move")]
+        public void CopyMoveFile_ChildCannotChangeApprovedSource(string slot)
+        {
+            string used = null;
+            var fileService = new FileService
+            {
+                ExistsAction = (path) => false,
+                CopyAction = (src, dest) => used = src,
+                MoveAction = (src, dest) => used = src,
+            };
+
+            // A child rewriting the source expression's node must not change the source the whitelist approved.
+            Common.Evaluate($@"
+whitelist
+   vocabulary
+      {slot}:/etc/*
+      set-value
+   .lambda
+      .src:/etc/approved.txt
+      {slot}:x:@.src
+         .:/etc/dest.txt
+         set-value:x:@.src
+            .:/secret/unapproved.txt
+", fileService);
+            Assert.EndsWith("/etc/approved.txt", used);
+        }
     }
 }

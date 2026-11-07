@@ -508,5 +508,34 @@ io.path.get-folder:/foo/howdy/
 ");
             Assert.Equal("/foo/howdy/", lambda.Children.First().Value);
         }
+
+        [Theory]
+        [InlineData("io.folder.copy")]
+        [InlineData("io.folder.move")]
+        public void CopyMoveFolder_ChildCannotChangeApprovedSource(string slot)
+        {
+            string used = null;
+            var folderService = new FolderService
+            {
+                ExistsAction = (path) => false,
+                CopyAction = (src, dest) => used = src,
+                MoveAction = (src, dest) => used = src,
+            };
+
+            // A child rewriting the source expression's node must not change the source the whitelist approved.
+            Common.Evaluate($@"
+whitelist
+   vocabulary
+      {slot}:/etc/*/
+      set-value
+   .lambda
+      .src:/etc/approved/
+      {slot}:x:@.src
+         .:/etc/dest/
+         set-value:x:@.src
+            .:/secret/unapproved/
+", null, folderService);
+            Assert.EndsWith("/etc/approved/", used);
+        }
     }
 }
