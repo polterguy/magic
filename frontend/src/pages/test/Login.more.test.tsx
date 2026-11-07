@@ -337,7 +337,7 @@ describe('Login magic link', () => {
     vi.mocked(api.sendResetPasswordLink).mockResolvedValue({ result: 'Link sent' });
     await openMagicLink();
 
-    const user = screen.getByLabelText(/^Username or email/);
+    const user = screen.getByLabelText(/^Username/);
     await userEvent.clear(user);
     expect(screen.getByRole('button', { name: 'Send link' })).toBeDisabled();
     await userEvent.type(user, '  alice@example.com ');
@@ -373,6 +373,6 @@ describe('Login magic link', () => {
       await screen.findByRole('button', { name: 'Login using magic link' }, SLOW),
     );
 
-    expect(screen.getByLabelText(/^Username or email/)).toHaveValue('alice');
+    expect(screen.getByLabelText(/^Username/)).toHaveValue('alice');
   });
 });
