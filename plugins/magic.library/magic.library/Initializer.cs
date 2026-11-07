@@ -600,7 +600,7 @@ namespace magic.library
             this IApplicationBuilder app,
             IConfiguration configuration)
         {
-            if (configuration["magic:auth:secret"]?.Length > 50)
+            if (AuthKeyDerivation.IsConfigured(configuration["magic:auth:secret"]))
             {
                 // Starting task scheduler.
                 await app.ApplicationServices.GetService<ITaskScheduler>().StartAsync();

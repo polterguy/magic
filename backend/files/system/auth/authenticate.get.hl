@@ -31,6 +31,19 @@ execution.throttle:auth.global
  *
  * This is necessary to allow for configuring a new cloudlet where the user haven't selected a root
  * password yet.
+ *
+ * Notice, root/root only works as long as the JWT secret is missing or shorter than 50 characters,
+ * and the tokens it creates are signed with a random key that only exists in memory. If you don't
+ * want your backend to ever be in this state, for instance when you create your own Docker image or
+ * deployment, you can avoid it entirely by executing a Hyperlambda startup file in a magic.startup
+ * folder, or an SQL "migration" file, that runs before your backend accepts requests, and does the
+ * same as /system/config/setup does; Insert your root user into the magic database, with a password
+ * of your choosing, and replace the JWT secret in appsettings.json with a value created by the
+ * built-in CSRNG, [crypto.random] with at least 100 characters, saved using [config.save].
+ *
+ * Notice, an SQL file can only insert the root user, since the JWT secret lives in appsettings.json
+ * and not in the database, so the secret must still be changed by Hyperlambda or by your image.
+ * Once the secret is 50 characters or longer, this check is skipped and root/root never works.
  */
 config.get:"magic:auth:secret"
 if
