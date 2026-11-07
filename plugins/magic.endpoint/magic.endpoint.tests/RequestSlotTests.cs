@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using magic.node;
 using magic.node.extensions;
+using magic.node.extensions.hyperlambda;
 using magic.signals.contracts;
 using magic.endpoint.contracts.poco;
 
@@ -123,6 +124,33 @@ namespace magic.endpoint.tests
             var listed = Signal("mime.list", Request());
             Assert.Equal("application/x-magic-test", listed.Children.First(x => x.Name == extension).Value);
             Assert.Contains(listed.Children, x => x.Name == "json");
+        }
+
+        [Fact]
+        public void MimeAddChildCannotChangeApprovedExtension()
+        {
+            var approved = string.Concat("a", Guid.NewGuid().ToString("N").AsSpan(0, 8));
+            var swapped = string.Concat("b", Guid.NewGuid().ToString("N").AsSpan(0, 8));
+            var signaler = Common.Initialize().GetService<ISignaler>();
+
+            // A child rewriting the extension's node must not change the extension the whitelist approved.
+            var lambda = HyperlambdaParser.Parse($@"
+whitelist
+   vocabulary
+      mime.add:{approved}
+      set-value
+   .lambda
+      .ext:{approved}
+      mime.add:x:@.ext
+         .:application/x-magic-test
+         set-value:x:@.ext
+            .:{swapped}
+");
+            signaler.Signal("eval", lambda);
+
+            var mimeTypes = Signal("mime.list", Request());
+            Assert.Contains(mimeTypes.Children, x => x.Name == approved);
+            Assert.DoesNotContain(mimeTypes.Children, x => x.Name == swapped);
         }
     }
 }
