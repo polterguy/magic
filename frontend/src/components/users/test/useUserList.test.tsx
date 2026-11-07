@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /*
- * useUserList: the paged, filtered, sorted user list, SMTP readiness for invites, typed-name
+ * useUserList: the paged, filtered, sorted user list, whether invites can be sent, typed-name
  * confirmed deletion and the CSV export of every matching user.
  */
 import { act, renderHook, waitFor } from '@testing-library/react';
@@ -10,7 +10,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '../../../lib/api';
 import * as download from '../../../lib/download';
 import { setToastListener, type Toast } from '../../../lib/toast';
+import { AuthContext } from '../../../lib/useAuth';
 import { DialogContext } from '../../../lib/useDialog';
+import { fakeAuth, TEST_BACKEND } from '../../../test/renderPage';
 import { PAGE_SIZE } from '../constants';
 import { useUserList } from '../hooks/useUserList';
 
@@ -31,7 +33,9 @@ const dialog = {
   choice: vi.fn(),
 };
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <DialogContext.Provider value={dialog}>{children}</DialogContext.Provider>
+  <AuthContext.Provider value={fakeAuth()}>
+    <DialogContext.Provider value={dialog}>{children}</DialogContext.Provider>
+  </AuthContext.Provider>
 );
 
 const USERS = [
@@ -42,7 +46,7 @@ const USERS = [
 beforeEach(() => {
   toasts.length = 0;
   setToastListener(toast => toasts.push(toast));
-  vi.mocked(api.loadConfig).mockResolvedValue({ magic: { smtp: { host: 'smtp.test' } } });
+  vi.mocked(api.canResetPassword).mockResolvedValue(true);
   vi.mocked(api.listUsers).mockResolvedValue(USERS);
   vi.mocked(api.countUsers).mockResolvedValue({ count: 2 });
 });
@@ -97,29 +101,24 @@ describe('list', () => {
   });
 });
 
-describe('smtpReady', () => {
-  it('is unknown, then true when an SMTP host is configured', async () => {
+describe('canInvite', () => {
+  it('is unknown, then true when the backend can send links', async () => {
     const { result } = renderHook(() => useUserList(), { wrapper });
-    expect(result.current.smtpReady).toBeNull();
-    await waitFor(() => expect(result.current.smtpReady).toBe(true));
+    expect(result.current.canInvite).toBeNull();
+    await waitFor(() => expect(result.current.canInvite).toBe(true));
   });
 
-  it('is false without an SMTP host', async () => {
-    vi.mocked(api.loadConfig).mockResolvedValue({ magic: {} });
+  it('asks the signed-in backend, once', async () => {
     const { result } = renderHook(() => useUserList(), { wrapper });
-    await waitFor(() => expect(result.current.smtpReady).toBe(false));
+    await waitFor(() => expect(result.current.canInvite).toBe(true));
+    expect(api.canResetPassword).toHaveBeenCalledTimes(1);
+    expect(api.canResetPassword).toHaveBeenCalledWith(TEST_BACKEND.url);
   });
 
-  it('is false when the configuration is empty', async () => {
-    vi.mocked(api.loadConfig).mockResolvedValue(null as never);
+  it('is false when the backend cannot send links', async () => {
+    vi.mocked(api.canResetPassword).mockResolvedValue(false);
     const { result } = renderHook(() => useUserList(), { wrapper });
-    await waitFor(() => expect(result.current.smtpReady).toBe(false));
-  });
-
-  it('is false when the configuration cannot be loaded', async () => {
-    vi.mocked(api.loadConfig).mockRejectedValue(new Error('denied'));
-    const { result } = renderHook(() => useUserList(), { wrapper });
-    await waitFor(() => expect(result.current.smtpReady).toBe(false));
+    await waitFor(() => expect(result.current.canInvite).toBe(false));
   });
 });
 

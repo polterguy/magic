@@ -46,7 +46,7 @@ beforeEach(() => {
   setToastListener(toast => toasts.push(toast));
   vi.mocked(api.listUsers).mockResolvedValue(USERS);
   vi.mocked(api.countUsers).mockResolvedValue({ count: 3 });
-  vi.mocked(api.loadConfig).mockResolvedValue({ magic: { smtp: { host: 'smtp.test' } } });
+  vi.mocked(api.canResetPassword).mockResolvedValue(true);
   vi.mocked(api.deleteUser).mockResolvedValue({} as never);
   vi.mocked(api.createUser).mockResolvedValue({} as never);
   vi.mocked(api.changeUserPassword).mockResolvedValue({} as never);
@@ -219,8 +219,8 @@ describe('UsersTab new user', () => {
 });
 
 describe('UsersTab invite', () => {
-  it('explains why invites are unavailable without an SMTP server', async () => {
-    vi.mocked(api.loadConfig).mockResolvedValue({ magic: {} });
+  it('explains why invites are unavailable when the backend cannot send links', async () => {
+    vi.mocked(api.canResetPassword).mockResolvedValue(false);
     await renderTab();
 
     const invite = screen.getByRole('button', { name: /Invite user/ });
@@ -228,21 +228,8 @@ describe('UsersTab invite', () => {
     expect(invite).toBeDisabled();
   });
 
-  it('is disabled when the configuration cannot be read', async () => {
-    vi.mocked(api.loadConfig).mockRejectedValue(new Error('no config'));
-    await renderTab();
-
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: /Invite user/ })).toHaveAttribute(
-        'title',
-        expect.stringContaining('SMTP'),
-      ),
-    );
-    expect(screen.getByRole('button', { name: /Invite user/ })).toBeDisabled();
-  });
-
-  it('stays disabled, without the SMTP hint, until the configuration has been read', () => {
-    vi.mocked(api.loadConfig).mockReturnValue(new Promise(() => {}));
+  it('stays disabled, without the SMTP hint, until the backend has answered', () => {
+    vi.mocked(api.canResetPassword).mockReturnValue(new Promise(() => {}));
     renderPage(<UsersTab roles={ROLES} />);
 
     const invite = screen.getByRole('button', { name: /Invite user/ });

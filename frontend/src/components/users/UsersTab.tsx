@@ -15,7 +15,7 @@ import InviteUserDialog from './InviteUserDialog';
 import NewUserDialog from './NewUserDialog';
 
 export default function UsersTab(props: Readonly<{ roles: Role[] }>) {
-  const { filter, setFilter, sort, setSort, waiting, smtpReady, list, removeUser, exportUsers } =
+  const { filter, setFilter, sort, setSort, waiting, canInvite, list, removeUser, exportUsers } =
     useUserList();
   const [editing, setEditing] = useState<User | null>(null);
   const [changingPassword, setChangingPassword] = useState<User | null>(null);
@@ -38,10 +38,10 @@ export default function UsersTab(props: Readonly<{ roles: Role[] }>) {
         </button>
         <button
           className="btn btn-secondary"
-          disabled={smtpReady !== true}
+          disabled={canInvite !== true}
           title={
-            smtpReady === false
-              ? 'Sending invites needs an SMTP server — configure one under Configuration first'
+            canInvite === false
+              ? 'Sending invites needs SMTP, the backend URL and the frontend URLs — configure them under Configuration first'
               : 'Create a user and email them a sign-in link'
           }
           onClick={() => setInviting(true)}
