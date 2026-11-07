@@ -1679,10 +1679,18 @@
       // Buffer for follow up questions. This will be empty if we don't have follow up questions.
       let followUpQuestions = [];
 
-      const markdownSections = wholeMarkdown.split('\n---');
-      if (this.ainiro_settings.follow_up && markdownSections.length > 1) {
-        followUpQuestions = markdownSections.pop();
-        wholeMarkdown = markdownSections.join('\n---').trim();
+      if (this.ainiro_settings.follow_up) {
+
+        /*
+         * The questions come after the last horizontal rule. A rule closing the response, with
+         * nothing after it, is dropped first, since otherwise it is the last one, the section
+         * after it is empty, and the real questions stay in the message as an ordinary list.
+         */
+        const markdownSections = wholeMarkdown.replace(/(\n[ \t]*-{3,}[ \t]*)+\s*$/, '').split('\n---');
+        if (markdownSections.length > 1) {
+          followUpQuestions = markdownSections.pop();
+          wholeMarkdown = markdownSections.join('\n---').trim();
+        }
       }
       const html = this.renderMarkdownWithScriptPassthrough(wholeMarkdown);
 
