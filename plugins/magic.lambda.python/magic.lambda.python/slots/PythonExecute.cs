@@ -22,6 +22,7 @@ namespace magic.lambda.python
     /// </summary>
     [Slot(
         Name = "python.execute",
+        Whitelistable = false,
         Description = "Runs a Python script or file in a subprocess and captures stdout, stderr, and exit code",
         ReturnsMode = SlotReturnsMode.Both,
         ReturnsKind = "terminal-response,text",

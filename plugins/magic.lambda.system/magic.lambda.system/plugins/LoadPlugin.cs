@@ -19,6 +19,7 @@ namespace magic.lambda.system.plugins
     /// </summary>
     [Slot(
         Name = "system.plugin.load",
+        Whitelistable = false,
         Description = "Loads a plugin assembly",
         ValueKind = "plugin-assembly,binary-content",
         ValueDescription = "Plugin assembly filename or assembly bytes",

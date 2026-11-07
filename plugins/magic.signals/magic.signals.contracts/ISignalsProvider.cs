@@ -41,6 +41,15 @@ namespace magic.signals.contracts
         }
 
         /// <summary>
+        /// Returns true if a [whitelist] may name the slot with the specified name in its vocabulary,
+        /// which is declared on the slot with <see cref="SlotAttribute.Whitelistable"/>. A name that
+        /// is not a registered slot, such as a dynamic slot, is whitelistable.
+        /// </summary>
+        /// <param name="name">Slot name to check.</param>
+        /// <returns>False if the slot declares that it can never be whitelisted.</returns>
+        bool IsWhitelistable(string name) => true;
+
+        /// <summary>
         /// Returns all keys, implying names registered for your signals
         /// implementation.
         /// </summary>

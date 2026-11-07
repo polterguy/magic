@@ -25,6 +25,17 @@ namespace magic.lambda.eval
         SignatureType = typeof(global::magic.lambda.signatures.WhitelistSignature))]
     public class Whitelist : ISlotAsync
     {
+        readonly ISignalsProvider _signals;
+
+        /// <summary>
+        /// Constructs a new instance of your type.
+        /// </summary>
+        /// <param name="signals">Provider telling which slots declare that they can never be whitelisted.</param>
+        public Whitelist(ISignalsProvider signals)
+        {
+            _signals = signals;
+        }
+
         /// <summary>
         /// Async implementation of signal
         /// </summary>
@@ -43,10 +54,18 @@ namespace magic.lambda.eval
             if (signaler.Peek<List<Node>>("whitelist") != null)
                 throw new HyperlambdaException("You cannot declare a [whitelist] inside another [whitelist]");
 
+            /*
+             * A slot declaring it can never be whitelisted is refused here, when the vocabulary is
+             * created, which is the only place a vocabulary is ever created.
+             */
+            var whitelist = GetWhitelist(input);
+            var forbidden = whitelist.Vocabulary.FirstOrDefault(x => !_signals.IsWhitelistable(x.Name));
+            if (forbidden != null)
+                throw new HyperlambdaException($"[{forbidden.Name}] can never be used inside a [whitelist]");
+
             var result = new Node();
             await signaler.ScopeAsync("slots.result", result, async () =>
             {
-                var whitelist = GetWhitelist(input);
                 await signaler.ScopeAsync("whitelist", whitelist.Vocabulary, async () =>
                 {
                     await signaler.SignalAsync("eval", whitelist.Lambda.Clone(), skipWhitelist: true);

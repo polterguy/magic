@@ -18,6 +18,7 @@ namespace magic.lambda.sqlite
     /// </summary>
     [Slot(
         Name = "sqlite.load-extension",
+        Whitelistable = false,
         Description = "Loads a SQLite extension into the current connection from child-node arguments",
         ReturnsMode = SlotReturnsMode.None,
         RequiresScope = "sqlite.connection",

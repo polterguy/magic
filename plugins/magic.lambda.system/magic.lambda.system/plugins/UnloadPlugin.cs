@@ -15,6 +15,7 @@ namespace magic.lambda.system.plugins
     /// </summary>
     [Slot(
         Name = "system.plugin.unload",
+        Whitelistable = false,
         Description = "Unloads a plugin assembly",
         ValueKind = "plugin-assembly-name",
         ValueDescription = "Assembly name to unload",

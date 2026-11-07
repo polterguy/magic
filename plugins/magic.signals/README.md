@@ -161,6 +161,24 @@ values such as the execution id through ordinary context values such as `dynamic
 allowing code to use existing helpers such as **[get-context]** without exposing internal runtime
 objects.
 
+## Slots a whitelist can never name
+
+A **[whitelist]** restricts the slots a piece of Hyperlambda can invoke, which is how a sandboxed caller is given
+a small vocabulary. A slot that would hand that caller the host itself, such as running a command, loading code,
+minting a ticket or reading secrets, declares so on its `[Slot]` attribute
+
+```csharp
+[Slot(Name = "system.execute", Whitelistable = false)]
+```
+
+`Whitelistable` defaults to `true`. A **[whitelist]** whose **[vocabulary]** names a slot declaring `false` is
+refused when it is created, with `[system.execute] can never be used inside a [whitelist]`. It is declared per slot
+name, so a class declaring several slots can mark only some of them. The declaration is read once at startup by the
+`ISignalsProvider`, never while slots are invoked.
+
+Notice, this only limits what a **[whitelist]** can grant. A trusted file invoked with **[execute-file]** runs
+without the whitelist, so it still calls whatever slots it needs.
+
 ## Magic Signals a DSL
 
 A lot of the idea behind Magic Signals is that combined with magic.node,

@@ -20,6 +20,7 @@ namespace magic.lambda.scheduler.slots.scheduler
     /// </summary>
     [Slot(
         Name = "tasks.schedule",
+        Whitelistable = false,
         Description = "Schedules a stored task for future execution; use [due] for a one-shot run or [repeats] for a recurring pattern",
         ValueKind = "task-id",
         ValueDescription = "Task ID to schedule",
