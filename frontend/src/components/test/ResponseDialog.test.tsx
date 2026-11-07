@@ -75,6 +75,52 @@ describe('ResponseDialog summary', () => {
     expect(screen.getByText('as guest')).toBeInTheDocument();
   });
 
+  it('counts the items when the body is a JSON array', async () => {
+    const json = (body: unknown) =>
+      result({ blob: new Blob([JSON.stringify(body)]), contentType: 'application/json' });
+    const { unmount } = render(
+      <DialogProvider>
+        <ResponseDialog result={json([{ a: 1 }, { a: 2 }])} onClose={vi.fn()} />
+      </DialogProvider>,
+    );
+    expect(await screen.findByText('2 items')).toBeInTheDocument();
+    unmount();
+
+    render(
+      <DialogProvider>
+        <ResponseDialog result={json([1])} onClose={vi.fn()} />
+      </DialogProvider>,
+    );
+    expect(await screen.findByText('1 item')).toBeInTheDocument();
+  });
+
+  it('counts an empty array and shows no count for other bodies', async () => {
+    const json = (text: string) =>
+      result({ blob: new Blob([text]), contentType: 'application/json' });
+    const { unmount } = render(
+      <DialogProvider>
+        <ResponseDialog result={json('[]')} onClose={vi.fn()} />
+      </DialogProvider>,
+    );
+    expect(await screen.findByText('0 items')).toBeInTheDocument();
+    unmount();
+
+    for (const text of ['{"a":[1,2]}', '{not json']) {
+      const view = render(
+        <DialogProvider>
+          <ResponseDialog result={json(text)} onClose={vi.fn()} />
+        </DialogProvider>,
+      );
+      await screen.findByLabelText('code editor application/json');
+      expect(screen.queryByText(/ items?$/)).not.toBeInTheDocument();
+      view.unmount();
+    }
+
+    renderDialog(result());
+    await screen.findByLabelText('code editor text/plain');
+    expect(screen.queryByText(/ items?$/)).not.toBeInTheDocument();
+  });
+
   it('closes with the Close button', async () => {
     const { onClose } = renderDialog(result());
     await userEvent.click(screen.getByRole('button', { name: 'Close' }));
