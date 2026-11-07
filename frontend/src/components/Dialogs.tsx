@@ -73,6 +73,8 @@ export function Modal(
     // not <input> elements and handle Enter themselves.
     onSubmit?: () => void;
     width?: number;
+    // Drops the box around the children, for content that is its own surface, like a lightbox.
+    bare?: boolean;
     children: ReactNode;
   }>,
 ) {
@@ -154,6 +156,12 @@ export function Modal(
       ) {
         return;
       }
+      /*
+       * Escape closes this dialog and nothing else. Without this it would keep
+       * travelling and also close whatever the dialog was opened from, such as
+       * the Chat Ops drawer.
+       */
+      event.stopPropagation();
       onCloseRef.current();
     };
     globalThis.addEventListener('keydown', handler, true);
@@ -193,7 +201,7 @@ export function Modal(
     >
       <div
         ref={boxRef}
-        className="modal-box"
+        className={props.bare ? 'modal-box modal-bare' : 'modal-box'}
         role="dialog"
         aria-modal="true"
         tabIndex={-1}
