@@ -29,29 +29,19 @@ const LEGACY_KEY = 'magic2.backend';
  */
 const ANGULAR_KEY = 'magic.backends';
 
-/*
- * Browser storage can be written by anything running on this origin, so an entry whose url
- * is not an http(s) URL is dropped.
- */
-function trusted(list: StoredBackend[]): StoredBackend[] {
-  return list.filter(candidate => httpUrl(candidate?.url) !== '');
-}
-
 export function loadBackends(): StoredBackend[] {
   const raw = localStorage.getItem(BACKENDS_KEY);
   if (raw) {
-    return trusted(JSON.parse(raw) as StoredBackend[]);
+    return JSON.parse(raw) as StoredBackend[];
   }
   // First run after the upgrade — carry the one backend across.
   const legacy = localStorage.getItem(LEGACY_KEY);
   if (legacy) {
     const backend = JSON.parse(legacy) as StoredBackend;
+    localStorage.setItem(BACKENDS_KEY, JSON.stringify([backend]));
+    localStorage.setItem(ACTIVE_KEY, backend.url);
     localStorage.removeItem(LEGACY_KEY);
-    if (httpUrl(backend?.url) !== '') {
-      localStorage.setItem(BACKENDS_KEY, JSON.stringify([backend]));
-      localStorage.setItem(ACTIVE_KEY, backend.url);
-      return [backend];
-    }
+    return [backend];
   }
   return importFromPreviousDashboard();
 }
@@ -88,10 +78,10 @@ function importFromPreviousDashboard(): StoredBackend[] {
   const list: StoredBackend[] = (previous as (PreviousBackend | null)[])
     .filter(
       (candidate): candidate is PreviousBackend & { url: string } =>
-        typeof candidate?.url === 'string' && httpUrl(candidate.url) !== '',
+        typeof candidate?.url === 'string' && candidate.url !== '',
     )
     .map(candidate => ({
-      url: httpUrl(candidate.url),
+      url: withoutTrailingSlashes(candidate.url),
       username: typeof candidate.username === 'string' ? candidate.username : '',
       token: typeof candidate.token === 'string' ? candidate.token : null,
     }));

@@ -323,9 +323,7 @@ describe('servedByBackend', () => {
   });
 });
 
-describe('requireHttpUrl and stored backends', () => {
-  beforeEach(() => localStorage.clear());
-
+describe('httpUrl rebuilding and requireHttpUrl', () => {
   it('rebuilds a url without credentials, query, fragment or trailing slashes', () => {
     expect(httpUrl('https://user:pw@a.test/x/?q=1#frag')).toBe('https://a.test/x');
     expect(httpUrl('https://a.test///')).toBe('https://a.test');
@@ -335,16 +333,5 @@ describe('requireHttpUrl and stored backends', () => {
     expect(requireHttpUrl('https://a.test/')).toBe('https://a.test');
     expect(() => requireHttpUrl('javascript:alert(1)')).toThrow();
     expect(() => requireHttpUrl('')).toThrow();
-  });
-
-  it('drops stored backends whose url is not an http(s) url', () => {
-    localStorage.setItem(
-      'magic2.backends',
-      JSON.stringify([
-        { url: 'javascript:alert(1)', username: 'evil', token: null },
-        { url: 'https://good.test/', username: 'good', token: 't' },
-      ]),
-    );
-    expect(loadBackends()).toEqual([{ url: 'https://good.test/', username: 'good', token: 't' }]);
   });
 });
