@@ -13,6 +13,7 @@ namespace magic.lambda.system.plugins
     /// </summary>
     [Slot(
         Name = "system.plugin.list",
+        Whitelistable = false,
         Description = "Lists dynamically loaded plugins",
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "plugin-assembly-list,string-list",

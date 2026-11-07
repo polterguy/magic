@@ -211,6 +211,17 @@ namespace magic.signals.contracts
         /// (ChildNodes) sources into them.
         /// </summary>
         public SlotValueExpressionResolution ValueExpressionResolution { get; set; }
+
+        /// <summary>
+        /// Whether a [whitelist] is allowed to name this slot in its vocabulary. Set this to false
+        /// for a slot that would hand a sandboxed caller the host itself, such as running a command,
+        /// loading code, minting a ticket, reading secrets, or scheduling code to run later without
+        /// the whitelist. A [whitelist] naming such a slot is refused when it is created.
+        ///
+        /// Notice, this is per slot NAME, since a class can declare several, and it only limits what
+        /// a [whitelist] can grant. A trusted file run with [execute-file] still calls what it needs.
+        /// </summary>
+        public bool Whitelistable { get; set; } = true;
     }
 
     /// <summary>

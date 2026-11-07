@@ -13,6 +13,7 @@ namespace magic.lambda.slots
     /// </summary>
     [Slot(
         Name = "slots.delete",
+        Whitelistable = false,
         Description = "Deletes a dynamic slot",
         ValueKind = "dynamic-slot-name",
         ValueDescription = "Name of the dynamic slot to delete",

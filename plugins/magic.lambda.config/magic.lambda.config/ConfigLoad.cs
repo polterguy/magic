@@ -14,6 +14,7 @@ namespace magic.lambda.config
     /// </summary>
     [Slot(
         Name = "config.load",
+        Whitelistable = false,
         Description = "Returns the raw contents of appsettings.json; pair with [config.save] for round-trip config editing",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "json,text",

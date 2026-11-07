@@ -17,6 +17,7 @@ namespace magic.signals.services
     {
         readonly Dictionary<string, Type> _slots = new Dictionary<string, Type>();
         readonly Dictionary<string, StatelessSlot> _stateless = new Dictionary<string, StatelessSlot>();
+        readonly HashSet<string> _notWhitelistable = new HashSet<string>();
 
         /// <summary>
         /// Creates an instance of the signals provider class. Notice, this should normally be associated
@@ -46,6 +47,7 @@ namespace magic.signals.services
                     _slots[idxAtr] = idxType;
                     RegisterStateless(idxAtr, idxType);
                 }
+                RegisterNotWhitelistable(idxType);
             }
         }
 
@@ -55,6 +57,11 @@ namespace magic.signals.services
         /// Returns all slots, or rather all slot names to be specific.
         /// </summary>
         public IEnumerable<string> Keys => _slots.Keys;
+
+        public bool IsWhitelistable(string name)
+        {
+            return !_notWhitelistable.Contains(name);
+        }
 
         /// <summary>
         /// Returns the slot with the specified name.
@@ -106,6 +113,7 @@ namespace magic.signals.services
                 _slots[idxAtr] = type;
                 RegisterStateless(idxAtr, type);
             }
+            RegisterNotWhitelistable(type);
         }
 
         /// <summary>
@@ -118,12 +126,25 @@ namespace magic.signals.services
             {
                 _slots.Remove(idxAtr);
                 _stateless.Remove(idxAtr);
+                _notWhitelistable.Remove(idxAtr);
             }
         }
 
         #endregion
 
         #region [ -- Private helper methods -- ]
+
+        /*
+         * Remembers the slots of the type declaring that a [whitelist] can never name them, which
+         * is read from the attribute here, once, and never while invoking slots.
+         */
+        void RegisterNotWhitelistable(Type type)
+        {
+            foreach (var idx in type.GetCustomAttributes(true).OfType<SlotAttribute>().Where(x => !x.Whitelistable))
+            {
+                _notWhitelistable.Add(idx.Name);
+            }
+        }
 
         /*
          * Remembers the slot as one that can be shared, if it provably holds no state, which is decided

@@ -18,6 +18,7 @@ namespace magic.lambda.scheduler.slots.tasks
     /// </summary>
     [Slot(
         Name = "tasks.create",
+        Whitelistable = false,
         Description = "Saves a named task containing a Hyperlambda body that can later be scheduled or executed on demand",
         ValueKind = "task-id",
         ValueDescription = "Task ID to create",

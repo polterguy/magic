@@ -14,6 +14,7 @@ namespace magic.lambda.slots
     /// </summary>
     [Slot(
         Name = "function",
+        Whitelistable = false,
         Description = "Creates a dynamic slot that can be invoked with [signal]",
         ValueKind = "dynamic-slot-name",
         ValueDescription = "Name of the dynamic slot to create",
@@ -24,6 +25,7 @@ namespace magic.lambda.slots
         SignatureType = typeof(global::magic.lambda.slots.signatures.CreateSlotSignature))]
     [Slot(
         Name = "slots.create",
+        Whitelistable = false,
         Description = "Creates a dynamic slot that can be invoked with [signal]",
         ValueKind = "dynamic-slot-name",
         ValueDescription = "Name of the dynamic slot to create",
