@@ -1761,6 +1761,16 @@ tr.clickable:hover td {
   object-fit: cover;
 }
 
+.chat-tile-zoom {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
 .chat-tile-ext {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -2493,6 +2503,77 @@ pre.result-json {
   max-height: 88vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px var(--shadow-color);
+}
+
+/* A box that is only a frame — the content is its own surface. */
+.modal-bare {
+  min-width: 0;
+  max-width: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.lightbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.lightbox-stage {
+  max-width: 92vw;
+  max-height: 84vh;
+  overflow: auto;
+}
+
+.lightbox-image {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.lightbox-image img {
+  display: block;
+  max-width: 92vw;
+  max-height: 84vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+}
+
+/* At its own size the image decides, and the stage scrolls. */
+.lightbox-stage.actual .lightbox-image {
+  cursor: zoom-out;
+}
+
+.lightbox-stage.actual .lightbox-image img {
+  max-width: none;
+  max-height: none;
+}
+
+.lightbox-caption {
+  color: #fff;
+  font-size: var(--text-sm);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .modal-box h2 {

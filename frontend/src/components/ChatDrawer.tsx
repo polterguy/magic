@@ -29,6 +29,7 @@ import { createSocket } from '../lib/socket';
 import { getTheme } from '../lib/theme';
 import { copyToClipboard, showToast } from '../lib/toast';
 import { CopyIcon, DownloadIcon, FilePlusIcon, PaperclipIcon } from './Icons';
+import ImageLightbox from './ImageLightbox';
 import WidgetDialog from './WidgetDialog';
 
 type Segment =
@@ -209,6 +210,8 @@ export default function ChatDrawer(
   const [streaming, setStreaming] = useState(false);
   const [executionId, setExecutionId] = useState<string | null>(null);
   const [files, setFiles] = useState<{ id: number; file: File; url?: string }[]>([]);
+  // The image shown in the lightbox, if any.
+  const [zoomed, setZoomed] = useState<Attachment | null>(null);
   // Every object URL handed out, so none of them leak.
   const objectUrls = useRef<string[]>([]);
   /*
@@ -453,6 +456,7 @@ export default function ChatDrawer(
     sessionRef.current = null;
     setMessages([]);
     setFiles([]);
+    setZoomed(null);
     // Every thumbnail belonged to the conversation being thrown away.
     objectUrls.current.forEach(url => URL.revokeObjectURL(url));
     objectUrls.current = [];
@@ -523,7 +527,13 @@ export default function ChatDrawer(
               {message.files && (
                 <div className="chat-tiles" style={{ marginTop: 10 }}>
                   {message.files.map(file => (
-                    <FileTile key={file.id} name={file.name} size={file.size} url={file.url} />
+                    <FileTile
+                      key={file.id}
+                      name={file.name}
+                      size={file.size}
+                      url={file.url}
+                      onZoom={() => setZoomed(file)}
+                    />
                   ))}
                 </div>
               )}
@@ -545,6 +555,14 @@ export default function ChatDrawer(
                 name={entry.file.name}
                 size={entry.file.size}
                 url={entry.url}
+                onZoom={() =>
+                  setZoomed({
+                    id: entry.id,
+                    name: entry.file.name,
+                    size: entry.file.size,
+                    url: entry.url,
+                  })
+                }
                 onRemove={() => removeFile(index)}
               />
             ))}
@@ -611,6 +629,14 @@ export default function ChatDrawer(
           </button>
         )}
       </div>
+      {zoomed?.url && (
+        <ImageLightbox
+          url={zoomed.url}
+          name={zoomed.name}
+          detail={formatSize(zoomed.size)}
+          onClose={() => setZoomed(null)}
+        />
+      )}
     </aside>
   );
 }
@@ -626,11 +652,18 @@ function formatSize(bytes: number): string {
 }
 
 /*
- * One attached file — a thumbnail for images, the extension otherwise.
- * Removable while pending, read-only once the message has been sent.
+ * One attached file — a thumbnail for images, the extension otherwise. An image
+ * opens in the lightbox. Removable while pending, read-only once the message
+ * has been sent.
  */
 function FileTile(
-  props: Readonly<{ name: string; size: number; url?: string; onRemove?: () => void }>,
+  props: Readonly<{
+    name: string;
+    size: number;
+    url?: string;
+    onZoom: () => void;
+    onRemove?: () => void;
+  }>,
 ) {
   const extension = props.name.includes('.')
     ? props.name.split('.').pop()!.toUpperCase().slice(0, 4)
@@ -639,7 +672,14 @@ function FileTile(
     <div className="chat-tile" title={props.name}>
       <div className="chat-tile-preview">
         {props.url ? (
-          <img src={props.url} alt={props.name} />
+          <button
+            type="button"
+            className="chat-tile-zoom"
+            title={'View ' + props.name}
+            onClick={props.onZoom}
+          >
+            <img src={props.url} alt={props.name} />
+          </button>
         ) : (
           <span className="chat-tile-ext">{extension}</span>
         )}
