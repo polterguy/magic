@@ -15,7 +15,8 @@ namespace magic.library.tests
      * magic.library references every plugin, which makes it the one place the slots declaring that a [whitelist] can
      * never name them can be checked together. A new slot is whitelistable unless its author says otherwise, so
      * whoever adds a slot that hands a sandboxed caller the host itself, and whoever removes such a declaration,
-     * has to change this list on purpose.
+     * has to change this list on purpose. Notice, [python.execute] is also never whitelistable, but the python
+     * plugin is referenced by the backend and not by magic.library, so it can't be checked here.
      */
     public class WhitelistableTests
     {
@@ -27,7 +28,6 @@ namespace magic.library.tests
             "config.save",
             "config.section",
             "function",
-            "python.execute",
             "slots.create",
             "slots.delete",
             "sqlite.load-extension",
