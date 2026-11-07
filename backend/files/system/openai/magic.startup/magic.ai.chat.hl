@@ -296,12 +296,22 @@ select prompt, max(completion) as completion
                   .:bool:true
             .lambda
 
-               // Client only wants to upload files, making sure upload folder exists.
+               /*
+                * Client only wants to upload files, making sure upload folder exists.
+                *
+                * Notice, these files are saved outside of /etc/www/, since nothing needs to fetch them
+                * over HTTP, and everything in /etc/www/ is served to the public.
+                */
                if
                   not
-                     io.folder.exists:/etc/www/tmp/
+                     io.folder.exists:/etc/tmp/
                   .lambda
-                     io.folder.create:/etc/www/tmp/
+                     io.folder.create:/etc/tmp/
+               if
+                  not
+                     io.folder.exists:/etc/tmp/uploads/
+                  .lambda
+                     io.folder.create:/etc/tmp/uploads/
 
                // Client only wants to upload. Building our "user uploaded files" message.
                .message:"User uploaded the following files;\n"
@@ -316,7 +326,7 @@ select prompt, max(completion) as completion
                      .filename
                      set-value:x:-
                         strings.concat
-                           .:/etc/www/tmp/
+                           .:/etc/tmp/uploads/
                            date.unix
                            .:-
                            crypto.random
