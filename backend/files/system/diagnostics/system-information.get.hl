@@ -8,8 +8,11 @@ auth.ticket.verify:root
 // Verifying system has been setup.
 config.get:"magic:auth:secret"
 if
-   neq:x:@config.get
-      .:THIS-IS-NOT-A-GOOD-SECRET-PLEASE-CHANGE-IT
+   and
+      not-null:x:@config.get
+      mte
+         strings.length:x:@config.get
+         .:int:50
    .lambda
 
       // Retrieving default database adapter.
