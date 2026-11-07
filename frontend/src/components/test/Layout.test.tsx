@@ -10,7 +10,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as api from '../../lib/api';
 import { setNavGuard } from '../../lib/navGuard';
-import { openChatOps, openPalette, setDashboardTourRunner } from '../../lib/shellActions';
+import {
+  openChatOps,
+  openPalette,
+  refreshChat,
+  setDashboardTourRunner,
+} from '../../lib/shellActions';
 import { openSupport } from '../../lib/support';
 import { showToast } from '../../lib/toast';
 import { fakeToken, renderPage, TEST_BACKEND } from '../../test/renderPage';
@@ -252,6 +257,18 @@ describe('Chat Ops availability', () => {
     expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
     await userEvent.keyboard('{Control>}.{/Control}');
     expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
+  });
+
+  it('shows the chat once a key is added, without reloading the page', async () => {
+    renderLayout();
+    await waitFor(() => expect(mocked.openaiIsConfigured).toHaveBeenCalled());
+    expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
+
+    mocked.openaiIsConfigured.mockResolvedValue({ result: true });
+    act(() => refreshChat());
+    expect(await screen.findByTestId('chat')).toBeInTheDocument();
+    await userEvent.keyboard('{Control>}.{/Control}');
+    expect(screen.getByTestId('chat')).toHaveAttribute('data-open', 'true');
   });
 
   it('stays hidden when the availability check fails', async () => {
