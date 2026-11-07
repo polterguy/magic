@@ -29,6 +29,9 @@ namespace magic.lambda.image.slots
         SignatureType = typeof(global::magic.lambda.image.signatures.ImageResizeSignature))]
     public class ImageResize : ISlotAsync
     {
+        const string Width = "width";
+        const string Height = "height";
+
         /// <summary>
         /// Slot implementation.
         /// </summary>
@@ -37,12 +40,18 @@ namespace magic.lambda.image.slots
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Figuring out new width and height.
-            var widthNode = input.Children.FirstOrDefault(x => x.Name == "width");
-            var heightNode = input.Children.FirstOrDefault(x => x.Name == "height");
+            var widthNode = input.Children.FirstOrDefault(x => x.Name == Width);
+            var heightNode = input.Children.FirstOrDefault(x => x.Name == Height);
             if (widthNode == null && heightNode == null)
                 throw new HyperlambdaException("You have to provide either [width], [height] or both to [image.resize]");
             var width = widthNode?.GetEx<int>() ?? 0;
             var height = heightNode?.GetEx<int>() ?? 0;
+
+            // Rejecting oversized values before the image is even loaded.
+            if (widthNode != null)
+                Utilities.CheckDimension(width, Width);
+            if (heightNode != null)
+                Utilities.CheckDimension(height, Height);
 
             // Resizing image.
             await Utilities.TransformImageAsync(input, signaler, (img) =>
@@ -50,6 +59,10 @@ namespace magic.lambda.image.slots
                 // A missing width or height is calculated from the other, keeping the aspect ratio.
                 var newWidth = width > 0 ? width : Math.Max(1, (int)Math.Round(img.Width * (double)height / img.Height));
                 var newHeight = height > 0 ? height : Math.Max(1, (int)Math.Round(img.Height * (double)width / img.Width));
+
+                // A calculated dimension can be oversized even when the one the caller gave is not.
+                Utilities.CheckDimension(newWidth, Width);
+                Utilities.CheckDimension(newHeight, Height);
                 return img.Resize(new SKImageInfo(newWidth, newHeight), new SKSamplingOptions(SKCubicResampler.Mitchell))
                     ?? throw new HyperlambdaException("Could not resize the image");
             });

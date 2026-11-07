@@ -47,6 +47,8 @@ namespace magic.lambda.image.slots
                 throw new HyperlambdaException("No [width] provided to [image.chart]");
             var height = input.Children.FirstOrDefault(x => x.Name == "height")?.GetEx<int>() ?? 
                 throw new HyperlambdaException("No [height] provided to [image.chart]");
+            Utilities.CheckDimension(width, "width");
+            Utilities.CheckDimension(height, "height");
 
             // Buffer for chart.
             var plot = new Plot();

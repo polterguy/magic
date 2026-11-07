@@ -40,8 +40,8 @@ image.resize:/some-image.png
 The above will resize the specified image to a width of 250 pixel, converting it to PNG, while keeping the
 aspect ratio by calculating the new height automatically. You can provide either of.
 
-* __[width]__ - New width
-* __[height]__ - New height
+* __[width]__ - New width, between 1 and 8192 pixels
+* __[height]__ - New height, between 1 and 8192 pixels
 
 You can provide both of the above, but at least one of the above _must_ be specified. If one of the values are
 omitted, it will be calculated by keeping the aspect ratio of the image as is. The **[type]** argument is how
@@ -85,7 +85,7 @@ allows you to return its output directly over the HTTP response object, which ag
 back as the response to the caller if you're in a web project of some sort using Magic. The slot takes two arguments.
 
 * Value of node - Mandatory string, or an expression leading to a string, which is to become the content of the generated QR code
-* __[size]__ - Optional argument declaring the size of your QR code
+* __[size]__ - Optional argument declaring the size of your QR code in pixels per module, which must be at least 1, and small enough for the image to be at most 8192 pixels wide
 
 Below is an example of usage
 
@@ -109,8 +109,8 @@ This slot allows you to dynamically generate charts, and either save these to di
 
 The primary argument to the slot invocation must be one of the above values, which defines what chart type to generate. Each chart type requires different arguments, but the common arguments are as follows:
 
-* width - Width of chart
-* height - Height of chart
+* width - Width of chart, between 1 and 8192 pixels
+* height - Height of chart, between 1 and 8192 pixels
 * filename - Path and name of file of where to save the chart. If not specified the slot will return the chart as a stream.
 
 The slot will always return the chart as a PNG image, and if you provide a **[filename]** the slot will overwrite any existing files automatically with the same path and filename.
