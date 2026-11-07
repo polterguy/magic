@@ -19,6 +19,21 @@ namespace magic.lambda.image.slots
     internal static class Utilities
     {
         /*
+         * Largest width or height in pixels a caller can ask for, since the value becomes the size of
+         * a bitmap allocation, and callers are not trusted to choose it.
+         */
+        public const int MaxDimension = 8192;
+
+        /*
+         * Throws if the specified width or height is not between 1 and MaxDimension.
+         */
+        public static void CheckDimension(int value, string name)
+        {
+            if (value < 1 || value > MaxDimension)
+                throw new HyperlambdaException($"[{name}] must be between 1 and {MaxDimension} pixels, but was {value}");
+        }
+
+        /*
          * Returns an image given the specified input node.
          */
         public static async Task TransformImageAsync(

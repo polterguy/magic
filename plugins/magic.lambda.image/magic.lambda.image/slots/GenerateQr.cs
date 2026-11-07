@@ -41,6 +41,13 @@ namespace magic.lambda.image.slots
             {
                 using (var qrData = generator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q))
                 {
+                    /*
+                     * The size is pixels per module, so the image's width is the module count (quiet zone
+                     * included) times size. Checked as a long, since a huge size would overflow an int.
+                     */
+                    var side = (long)qrData.ModuleMatrix.Count * size;
+                    if (size < 1 || side > Utilities.MaxDimension)
+                        throw new HyperlambdaException($"[size] of {size} must be at least 1, and render a QR code at most {Utilities.MaxDimension} pixels wide, but it would be {side}");
                     using (var code = new PngByteQRCode(qrData))
                     {
                         // Intentionally NOT disposing stream, it's anyways a MemoryStream

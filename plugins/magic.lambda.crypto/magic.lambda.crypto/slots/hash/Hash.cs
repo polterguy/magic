@@ -30,7 +30,7 @@ namespace magic.lambda.crypto.slots.hash
         SignatureType = typeof(global::magic.lambda.crypto.signatures.ConfigurableHashSignature))]
     [Slot(
         Name = "crypto.hash.sha1",
-        Description = "Hashes input using the SHA1 algorithm",
+        Description = "Hashes input using the SHA1 algorithm, which is broken for collision resistance and only here for legacy data; use [crypto.password.hash] for passwords",
         ValueKind = "text,binary-content",
         ValueDescription = "String or byte[] content to hash when [filename] is not supplied",
         ValueRequired = false,
@@ -41,7 +41,7 @@ namespace magic.lambda.crypto.slots.hash
         SignatureType = typeof(global::magic.lambda.crypto.signatures.HashSignature))]
     [Slot(
         Name = "crypto.hash.md5",
-        Description = "Hashes input using the MD5 algorithm",
+        Description = "Hashes input using the MD5 algorithm, which is broken for collision resistance and only here for legacy data; use [crypto.password.hash] for passwords",
         ValueKind = "text,binary-content",
         ValueDescription = "String or byte[] content to hash when [filename] is not supplied",
         ValueRequired = false,

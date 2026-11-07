@@ -139,6 +139,27 @@ namespace magic.lambda.image.tests
         }
 
         [Fact]
+        public async Task ResizeAcceptsTheLargestAllowedDimension()
+        {
+            var node = await Run("image.resize", new MemoryStream(Qr()), ("width", 8192), ("height", 1));
+            var info = Identify(node.Value);
+            Assert.Equal(8192, info.Width);
+            Assert.Equal(1, info.Height);
+        }
+
+        [Theory]
+        [InlineData("width", 8193)]
+        [InlineData("height", 100000)]
+        [InlineData("width", 0)]
+        [InlineData("height", -5)]
+        public async Task ResizeRejectsDimensionsOutsideTheAllowedRange(string name, int value)
+        {
+            var exception = await Assert.ThrowsAsync<HyperlambdaException>(
+                () => Run("image.resize", new MemoryStream(Qr()), (name, value)));
+            Assert.Equal($"[{name}] must be between 1 and 8192 pixels, but was {value}", exception.Message);
+        }
+
+        [Fact]
         public async Task CropRemovesTheGivenMargins()
         {
             var original = Identify(new MemoryStream(Qr()));

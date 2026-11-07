@@ -97,6 +97,12 @@ namespace magic.lambda.io.file
                  * every slot THAT FILE calls internally (e.g. [data.connect]) rejected, because
                  * the ambient whitelist from the caller's own scope would otherwise still apply.
                  *
+                 * Notice, this means granting [io.file.execute] for a path trusts EVERYTHING that file
+                 * does, e.g. a file calling [data.connect] or [io.file.save] gives its sandboxed caller
+                 * that power through the file. The caller cannot add statements to the file, but its
+                 * [.arguments] flow into it, so the file's author must validate them before using them
+                 * in sensitive slots.
+                 *
                  * This file's statements also belong to this file, not whoever invoked us, so a
                  * recording of the caller would otherwise step into them too.
                  */

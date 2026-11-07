@@ -36,6 +36,19 @@ namespace magic.lambda.image.tests
             Assert.Equal(stream1.Length, stream2.Length);
         }
 
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-4)]
+        [InlineData(1000)]
+        [InlineData(int.MaxValue)]
+        public void GenerateQrCodeRejectsSizesOutsideTheAllowedRange(int size)
+        {
+            var exception = Assert.ThrowsAny<Exception>(() => Common.Evaluate($"image.generate-qr:foo-bar\r\n   size:int:{size}"));
+            var inner = exception is AggregateException aggregate ? aggregate.InnerException : exception;
+            Assert.IsType<HyperlambdaException>(inner);
+            Assert.StartsWith($"[size] of {size} must be at least 1", inner.Message);
+        }
+
         [Fact]
         public void ImageConvertSignatureDocumentsStreamOutputAndOptions()
         {
