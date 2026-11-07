@@ -345,6 +345,6 @@ describe('requireHttpUrl and stored backends', () => {
         { url: 'https://good.test/', username: 'good', token: 't' },
       ]),
     );
-    expect(loadBackends()).toEqual([{ url: 'https://good.test', username: 'good', token: 't' }]);
+    expect(loadBackends()).toEqual([{ url: 'https://good.test/', username: 'good', token: 't' }]);
   });
 });

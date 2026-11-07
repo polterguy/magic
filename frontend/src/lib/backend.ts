@@ -31,12 +31,10 @@ const ANGULAR_KEY = 'magic.backends';
 
 /*
  * Browser storage can be written by anything running on this origin, so an entry whose url
- * is not an http(s) URL is dropped, and the others get their url rebuilt by [httpUrl].
+ * is not an http(s) URL is dropped.
  */
 function trusted(list: StoredBackend[]): StoredBackend[] {
-  return list
-    .filter(candidate => httpUrl(candidate?.url) !== '')
-    .map(candidate => ({ ...candidate, url: httpUrl(candidate.url) }));
+  return list.filter(candidate => httpUrl(candidate?.url) !== '');
 }
 
 export function loadBackends(): StoredBackend[] {
@@ -47,14 +45,13 @@ export function loadBackends(): StoredBackend[] {
   // First run after the upgrade — carry the one backend across.
   const legacy = localStorage.getItem(LEGACY_KEY);
   if (legacy) {
-    const list = trusted([JSON.parse(legacy) as StoredBackend]);
+    const backend = JSON.parse(legacy) as StoredBackend;
     localStorage.removeItem(LEGACY_KEY);
-    if (list.length === 0) {
-      return importFromPreviousDashboard();
+    if (httpUrl(backend?.url) !== '') {
+      localStorage.setItem(BACKENDS_KEY, JSON.stringify([backend]));
+      localStorage.setItem(ACTIVE_KEY, backend.url);
+      return [backend];
     }
-    persist(list);
-    localStorage.setItem(ACTIVE_KEY, list[0].url);
-    return list;
   }
   return importFromPreviousDashboard();
 }
