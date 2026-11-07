@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as api from '../../lib/api';
+import { setShellActions } from '../../lib/shellActions';
 import OpenAiKeyDialog from '../OpenAiKeyDialog';
 
 vi.mock('../../lib/api', async importOriginal =>
@@ -139,6 +140,17 @@ describe('OpenAiKeyDialog', () => {
     await waitFor(() => expect(onSaved).toHaveBeenCalled());
     expect(api.openaiSetKey).toHaveBeenCalledWith(KEY);
     expect(api.mlTypeUpdate).not.toHaveBeenCalled();
+  });
+
+  it('tells the shell to look for Chat Ops once the key is saved', async () => {
+    const refreshChat = vi.fn();
+    setShellActions({ openPalette: vi.fn(), openChatOps: vi.fn(), refreshChat });
+    renderDialog();
+    await userEvent.type(keyField(), KEY);
+    await userEvent.click(screen.getByRole('button', { name: 'Save key' }));
+
+    await waitFor(() => expect(refreshChat).toHaveBeenCalledTimes(1));
+    setShellActions(null);
   });
 
   it('also switches the default model when another one is picked', async () => {

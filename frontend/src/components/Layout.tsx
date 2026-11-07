@@ -97,11 +97,12 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
    */
   const [chatAvailable, setChatAvailable] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  useEffect(() => {
+  const refreshChat = useCallback(() => {
     openaiIsConfigured()
       .then(response => setChatAvailable(!!response.result))
       .catch(() => {});
   }, []);
+  useEffect(refreshChat, [refreshChat]);
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -127,9 +128,10 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
     setShellActions({
       openPalette: () => setPaletteOpen(true),
       openChatOps: () => setChatOpen(true),
+      refreshChat,
     });
     return () => setShellActions(null);
-  }, []);
+  }, [refreshChat]);
 
   /*
    * App-wide socket channel the backend pushes notifications through —
