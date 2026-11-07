@@ -86,6 +86,15 @@ describe('Configuration', () => {
     expect(screen.getByRole('heading', { name: 'SMTP settings' })).toBeInTheDocument();
   });
 
+  it('opens the URLs dialog from the menu', async () => {
+    renderPage(<Configuration />);
+    await screen.findByLabelText('code editor application/json');
+
+    await openMenuItem('URLs');
+
+    expect(screen.getByRole('heading', { name: 'Backend and frontend URLs' })).toBeInTheDocument();
+  });
+
   it('downloads a backup of appsettings.json', async () => {
     const blob = new Blob(['{}']);
     vi.mocked(api.downloadFileRaw).mockResolvedValue({ blob } as never);

@@ -6,6 +6,7 @@ import GitDialog from '../components/configuration/GitDialog';
 import OpenIdDialog from '../components/configuration/OpenIdDialog';
 import RecaptchaDialog from '../components/configuration/RecaptchaDialog';
 import SmtpDialog from '../components/configuration/SmtpDialog';
+import UrlsDialog from '../components/configuration/UrlsDialog';
 import Menu from '../components/designer/Menu';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import { downloadFileRaw, loadConfig, MagicConfig, saveConfig, uploadFile } from '../lib/api';
@@ -21,6 +22,7 @@ export default function Configuration() {
   const [recaptchaOpen, setRecaptchaOpen] = useState(false);
   const [gitOpen, setGitOpen] = useState(false);
   const [openidOpen, setOpenidOpen] = useState(false);
+  const [urlsOpen, setUrlsOpen] = useState(false);
   const uploadInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -109,6 +111,7 @@ export default function Configuration() {
               { label: 'reCAPTCHA', onClick: () => setRecaptchaOpen(true) },
               { label: 'OpenID', onClick: () => setOpenidOpen(true) },
               { label: 'Git', onClick: () => setGitOpen(true) },
+              { label: 'URLs', onClick: () => setUrlsOpen(true) },
               { label: 'Download backup', onClick: () => void downloadBackup() },
               { label: 'Upload backup', onClick: () => uploadInput.current?.click() },
             ]}
@@ -166,6 +169,16 @@ export default function Configuration() {
           onClose={() => setGitOpen(false)}
           onSave={next => {
             setGitOpen(false);
+            void save(next);
+          }}
+        />
+      )}
+      {urlsOpen && (
+        <UrlsDialog
+          config={config}
+          onClose={() => setUrlsOpen(false)}
+          onSave={next => {
+            setUrlsOpen(false);
             void save(next);
           }}
         />
