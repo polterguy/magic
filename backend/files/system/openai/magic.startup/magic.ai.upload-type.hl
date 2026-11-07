@@ -1,0 +1,146 @@
+
+/*
+ * Slot validating a file uploaded to the chat endpoint, and deciding how it is stored.
+ *
+ * Expects [filename] being the name the caller gave the file.
+ *
+ * Throws a 400 unless the file is of a type OpenAI can analyse. Returns [extension] being the
+ * lowercased extension of the file, [stored] being the extension the file is saved with,
+ * [image] being true if the file is an image, and [display] being the name of the file, stripped
+ * of anything that could be mistaken for part of the conversation.
+ *
+ * Web and code files are saved with a .txt extension. Uploaded files are saved in a folder the
+ * server serves to the public, with the content type of their own extension, and websites list
+ * their .html files in their sitemaps. OpenAI analyses a .txt file as text, so its content is
+ * analysed just the same.
+ */
+slots.create:magic.ai.upload-type
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/filename
+
+   // A file without an extension cannot be told apart from any other file.
+   strings.split:x:@.arguments/*/filename
+      .:.
+   if
+      eq
+         get-count:x:@strings.split/*
+         .:int:1
+      .lambda
+         throw:A file must have an extension
+            public:bool:true
+            status:int:400
+
+   // Retrieving the extension, which is the part after the last period.
+   .file-extension
+   set-value:x:@.file-extension
+      strings.to-lower:x:@strings.split/0/-
+
+   // Only allowing the file types OpenAI can analyse.
+   validators.enum:x:@.file-extension
+      .:png
+      .:jpg
+      .:jpeg
+      .:webp
+      .:gif
+      .:pdf
+      .:doc
+      .:docx
+      .:dot
+      .:odt
+      .:rtf
+      .:ppt
+      .:pptx
+      .:pot
+      .:pps
+      .:xls
+      .:xlsx
+      .:csv
+      .:tsv
+      .:txt
+      .:text
+      .:md
+      .:markdown
+      .:rst
+      .:log
+      .:json
+      .:html
+      .:htm
+      .:xml
+      .:js
+      .:mjs
+      .:css
+      .:asm
+      .:bat
+      .:c
+      .:cc
+      .:cpp
+      .:cxx
+      .:h
+      .:hh
+      .:ksh
+      .:pl
+      .:py
+      .:s
+      .:sql
+
+   // Files OpenAI sees as images.
+   .image:bool:false
+   switch:x:@.file-extension
+      case:png
+      case:jpg
+      case:jpeg
+      case:webp
+      case:gif
+         set-value:x:@.image
+            .:bool:true
+
+   // Web and code files are saved as text.
+   .stored
+   set-value:x:@.stored
+      get-value:x:@.file-extension
+   switch:x:@.file-extension
+      case:html
+      case:htm
+      case:xml
+      case:js
+      case:mjs
+      case:css
+      case:asm
+      case:bat
+      case:c
+      case:cc
+      case:cpp
+      case:cxx
+      case:h
+      case:hh
+      case:ksh
+      case:pl
+      case:py
+      case:s
+      case:sql
+         set-value:x:@.stored
+            .:txt
+
+   /*
+    * Creating the name we show the model, which is the caller's own text, and as such must not be
+    * able to end a line or a quote, or contain a path. Control characters, quotes and slashes are
+    * replaced, and the name is cut to 100 characters.
+    */
+   .display
+   set-value:x:@.display
+      strings.regex-replace:x:@.arguments/*/filename
+         .:@"[\p{Cc}""\\/]"
+         .:_
+   set-value:x:@.display
+      strings.regex-replace:x:@.display
+         .:@"^([\s\S]{0,100})[\s\S]*$"
+         .:$1
+
+   // Returning result of invocation to caller.
+   unwrap:x:+/*
+   yield
+      extension:x:@.file-extension
+      stored:x:@.stored
+      image:x:@.image
+      display:x:@.display

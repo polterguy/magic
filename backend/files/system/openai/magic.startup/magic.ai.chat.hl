@@ -391,6 +391,15 @@ select prompt, max(completion) as completion
                            public:bool:true
 
                   /*
+                   * Verifying the file is of a type the LLM can analyse, which throws if it is not,
+                   * and figuring out what to save it as. Notice, this must happen before anything
+                   * is saved, such that a rejected file never reaches the disk.
+                   */
+                  unwrap:x:+/*
+                  signal:magic.ai.upload-type
+                     filename:x:@.arguments/*/file/[0,1]/*/name
+
+                  /*
                    * Saving files locally in etc folder to expose to LLM,
                    * using a random filename to ensure unique filenames.
                    *
@@ -402,8 +411,6 @@ select prompt, max(completion) as completion
                      .lambda
                         io.folder.create:/etc/www/tmp/
 
-                  strings.split:x:@.arguments/*/file/[0,1]/*/name
-                     .:.
                   .filename
                   set-value:x:-
                      strings.concat
@@ -414,14 +421,31 @@ select prompt, max(completion) as completion
                            min:25
                            max:25
                         .:.
-                        get-value:x:@strings.split/0/-
+                        get-value:x:@signal/*/stored
                   io.stream.save-file:x:@.filename
                      get-value:x:@.arguments/*/file/[0,1]/*/stream
+
+                  /*
+                   * Telling the LLM the name the file had when it was uploaded, since the name
+                   * it is saved under is random, and its extension might have been replaced.
+                   */
                   set-value:x:@.tail
                      strings.concat
-                        get-value:x:@.tail
-                        .:"* "
-                        get-value:x:@.filename
+                        .:x:@.tail
+                        .:"* \""
+                        .:x:@signal/*/display
+                        .:"\""
+                  if
+                     neq:x:@signal/*/stored
+                        .:x:@signal/*/extension
+                     .lambda
+                        set-value:x:@.tail
+                           strings.concat
+                              .:x:@.tail
+                              .:" (attached as plain text)"
+                  set-value:x:@.tail
+                     strings.concat
+                        .:x:@.tail
                         .:"\n"
                   .url
                   set-value:x:-
@@ -431,30 +455,23 @@ select prompt, max(completion) as completion
                         .:/tmp/
                         strings.substring:x:@.filename
                            .:13
-                  switch:x:@strings.split/0/-
-                     case:png
-                     case:PNG
-                     case:jpg
-                     case:JPG
-                     case:jpeg
-                     case:JPEG
-                     case:webp
-                     case:WEBP
-                     case:gif
-                     case:GIF
+                  if
+                     eq:x:@signal/*/image
+                        .:bool:true
+                     .lambda
                         unwrap:x:+/*/**
                         add:x:@.session/0/-/*/content
                            .
                               .
                                  type:input_image
                                  image_url:x:@.url
-                     default
-                        unwrap:x:+/*/**
-                        add:x:@.session/0/-/*/content
+                  else
+                     unwrap:x:+/*/**
+                     add:x:@.session/0/-/*/content
+                        .
                            .
-                              .
-                                 type:input_file
-                                 file_url:x:@.url
+                              type:input_file
+                              file_url:x:@.url
                   remove-nodes:x:@.arguments/*/file/[0,1]
 
             unwrap:x:+/*/*/*
