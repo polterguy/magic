@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { countUsers, deleteUser, listUsers, loadConfig, User } from '../../../lib/api';
+import { canResetPassword, countUsers, deleteUser, listUsers, User } from '../../../lib/api';
 import { exportCsv } from '../../../lib/download';
 import { showError } from '../../../lib/errors';
 import { useSort } from '../../../lib/sort';
 import { showToast } from '../../../lib/toast';
+import { useAuth } from '../../../lib/useAuth';
 import { useDialog } from '../../../lib/useDialog';
 import { usePagedList } from '../../../lib/usePagedList';
 import { PAGE_SIZE } from '../constants';
@@ -21,15 +22,16 @@ export function useUserList() {
   const { confirmTyped } = useDialog();
 
   /*
-   * Inviting emails a sign-in link, which needs a configured SMTP server —
-   * null until the answer arrives, so the button doesn't flicker.
+   * Inviting emails a sign-in link, which needs everything the backend asks for before it sends one:
+   * SMTP, its own URL and the frontend URLs. The backend answers that in one request, so the rule
+   * lives there and nowhere else. Null until the answer arrives, so the button doesn't flicker.
    */
-  const [smtpReady, setSmtpReady] = useState<boolean | null>(null);
+  const { backend } = useAuth();
+  const backendUrl = backend?.url ?? '';
+  const [canInvite, setCanInvite] = useState<boolean | null>(null);
   useEffect(() => {
-    loadConfig()
-      .then(config => setSmtpReady(!!config?.magic?.smtp?.host))
-      .catch(() => setSmtpReady(false));
-  }, []);
+    void canResetPassword(backendUrl).then(setCanInvite);
+  }, [backendUrl]);
 
   const list = usePagedList<User>({
     load: async (offset, limit) => {
@@ -93,7 +95,7 @@ export function useUserList() {
     sort,
     setSort,
     waiting,
-    smtpReady,
+    canInvite,
     list,
     removeUser,
     exportUsers,
