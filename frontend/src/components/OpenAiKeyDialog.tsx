@@ -17,6 +17,7 @@ import {
   openaiSetKey,
 } from '../lib/api';
 import { errorMessage } from '../lib/errors';
+import { refreshChat } from '../lib/shellActions';
 import Banner from './Banner';
 import { Modal } from './Dialogs';
 import Select from './Select';
@@ -74,6 +75,8 @@ export default function OpenAiKeyDialog(
     setBusy(true);
     try {
       await openaiSetKey(key);
+      // Chat Ops appears with the key, so the shell has to look again.
+      refreshChat();
       if (model !== savedModel) {
         await mlTypeUpdate({ type: 'default', model });
         setSavedModel(model);

@@ -7,6 +7,7 @@
 
 let paletteOpener: (() => void) | null = null;
 let chatOpsOpener: (() => void) | null = null;
+let chatRefresher: (() => void) | null = null;
 // Registered by the Dashboard while it is mounted, for the palette entry.
 let dashboardTourRunner: (() => void) | null = null;
 
@@ -26,10 +27,12 @@ export function setShellActions(
   actions: {
     openPalette: () => void;
     openChatOps: () => void;
+    refreshChat: () => void;
   } | null,
 ) {
   paletteOpener = actions?.openPalette ?? null;
   chatOpsOpener = actions?.openChatOps ?? null;
+  chatRefresher = actions?.refreshChat ?? null;
 }
 
 export function openPalette() {
@@ -38,4 +41,9 @@ export function openPalette() {
 
 export function openChatOps() {
   chatOpsOpener?.();
+}
+
+// Chat Ops only exists with an OpenAI key, so whoever changes the key says so here.
+export function refreshChat() {
+  chatRefresher?.();
 }
