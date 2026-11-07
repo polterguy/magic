@@ -24,6 +24,8 @@ export default function ResponseDialog(
   // The displayed body, when textual — null for images/binaries, which have
   // nothing to copy. Kept here so the Copy button can sit beside Close.
   const [body, setBody] = useState<string | null>(null);
+  // How many items a JSON array body holds, null for anything else.
+  const [items, setItems] = useState<number | null>(null);
 
   return (
     <Modal width={860} onClose={onClose}>
@@ -35,6 +37,11 @@ export default function ResponseDialog(
         <span className="muted" style={{ fontSize: 13, fontWeight: 400 }}>
           {result.elapsed} ms
         </span>
+        {items !== null && (
+          <span className="muted" style={{ fontSize: 13, fontWeight: 400 }}>
+            {items} {items === 1 ? 'item' : 'items'}
+          </span>
+        )}
         {result.runAs && (
           <span className="badge" title="This call ran as a caller holding only this role">
             as {result.runAs}
@@ -48,7 +55,7 @@ export default function ResponseDialog(
           of the response headers — the server may have sent more.
         </p>
       )}
-      <ResultViewer result={result} height="42vh" onText={setBody} />
+      <ResultViewer result={result} height="42vh" onText={setBody} onItems={setItems} />
       <div className="modal-actions">
         {body !== null && (
           <button

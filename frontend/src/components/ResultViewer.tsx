@@ -53,8 +53,16 @@ export default function ResultViewer({
   result,
   height = '55vh',
   onText,
-}: Readonly<{ result: RawResult; height?: string; onText?: (text: string | null) => void }>) {
+  onItems,
+}: Readonly<{
+  result: RawResult;
+  height?: string;
+  onText?: (text: string | null) => void;
+  // How many items the body holds when it is a JSON array, otherwise null.
+  onItems?: (items: number | null) => void;
+}>) {
   const [text, setText] = useState<string | null>(null);
+  const [items, setItems] = useState<number | null>(null);
   const [preview, setPreview] = useState(false);
 
   // Surface the displayed text (null for binaries/images) so a parent can offer
@@ -67,6 +75,13 @@ export default function ResultViewer({
   useEffect(() => {
     onTextRef.current?.(text);
   }, [text]);
+  const onItemsRef = useRef(onItems);
+  useLayoutEffect(() => {
+    onItemsRef.current = onItems;
+  });
+  useEffect(() => {
+    onItemsRef.current?.(items);
+  }, [items]);
 
   const contentType = result.contentType.split(';')[0].trim().toLowerCase();
   const attachment = result.disposition.includes('attachment');
@@ -80,6 +95,7 @@ export default function ResultViewer({
     setPreview(false);
     if (!textual) {
       setText(null);
+      setItems(null);
     }
   }
 
@@ -94,13 +110,17 @@ export default function ResultViewer({
         if (cancelled) {
           return;
         }
+        let count: number | null = null;
         if (contentType.includes('json')) {
           try {
-            value = JSON.stringify(JSON.parse(value), null, 2);
+            const parsed: unknown = JSON.parse(value);
+            count = Array.isArray(parsed) ? parsed.length : null;
+            value = JSON.stringify(parsed, null, 2);
           } catch {
             // Malformed JSON — show raw.
           }
         }
+        setItems(count);
         setText(value === '' ? 'OK — no result' : value);
       })
       .catch((error: unknown) => {
