@@ -23,12 +23,12 @@ import {
   isRootToken,
   loadBackend,
   loadBackends,
+  requireHttpUrl,
   saveBackend,
   StoredBackend,
   tokenExpiration,
   tokenExpired,
   tokenUsername,
-  withoutTrailingSlashes,
 } from './backend';
 import { showToast } from './toast';
 import { AuthContext } from './useAuth';
@@ -277,7 +277,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
 
   const login = useCallback(
     async (url: string, username: string, password: string) => {
-      url = withoutTrailingSlashes(url);
+      url = requireHttpUrl(url);
       const response = await authenticate(url, username, password);
       applyBackend({ url, username, token: response.ticket });
     },
@@ -286,7 +286,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
 
   const loginWithTicket = useCallback(
     (url: string, ticket: string) => {
-      url = withoutTrailingSlashes(url);
+      url = requireHttpUrl(url);
       // Whoever the ticket belongs to — the caller has no better source.
       applyBackend({ url, username: tokenUsername(ticket), token: ticket });
     },

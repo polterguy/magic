@@ -4,7 +4,7 @@
  * Angular service layer.
  */
 
-import { httpUrl, loadBackend, withoutTrailingSlashes } from './backend';
+import { httpUrl, loadBackend, requireHttpUrl } from './backend';
 
 let baseUrl = '';
 let bearerToken: string | null = null;
@@ -1582,7 +1582,7 @@ export interface OidcProvider {
 export async function canResetPassword(backendUrl: string) {
   try {
     const response = await fetch(
-      withoutTrailingSlashes(backendUrl) + '/magic/system/auth/can-reset-password',
+      requireHttpUrl(backendUrl) + '/magic/system/auth/can-reset-password',
     );
     if (!response.ok) {
       return false;
@@ -1599,7 +1599,7 @@ export async function canResetPassword(backendUrl: string) {
  */
 export async function sendResetPasswordLink(backendUrl: string, user: string) {
   const response = await fetch(
-    withoutTrailingSlashes(backendUrl) + '/magic/system/auth/send-reset-password-link',
+    requireHttpUrl(backendUrl) + '/magic/system/auth/send-reset-password-link',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1624,7 +1624,7 @@ export async function verifyTicket() {
 
 export async function openidProviders(backendUrl: string) {
   const response = await fetch(
-    withoutTrailingSlashes(backendUrl) + '/magic/system/auth/openid-providers?createNonce=true',
+    requireHttpUrl(backendUrl) + '/magic/system/auth/openid-providers?createNonce=true',
   );
   if (!response.ok) {
     return [];
@@ -1636,7 +1636,7 @@ export async function openidProviders(backendUrl: string) {
 // Exchanges a provider's id_token for a Magic JWT.
 export async function openidLogin(backendUrl: string, token: string) {
   const response = await fetch(
-    withoutTrailingSlashes(backendUrl) +
+    requireHttpUrl(backendUrl) +
       '/magic/system/auth/openid-login?token=' +
       encodeURIComponent(token),
   );
@@ -1657,14 +1657,11 @@ export async function openidExchange(
   state: string,
   redirectUri: string,
 ) {
-  const response = await fetch(
-    withoutTrailingSlashes(backendUrl) + '/magic/system/auth/openid-exchange',
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, state, redirect_uri: redirectUri }),
-    },
-  );
+  const response = await fetch(requireHttpUrl(backendUrl) + '/magic/system/auth/openid-exchange', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, state, redirect_uri: redirectUri }),
+  });
   if (!response.ok) {
     await throwApiError(response);
   }

@@ -29,19 +29,32 @@ const LEGACY_KEY = 'magic2.backend';
  */
 const ANGULAR_KEY = 'magic.backends';
 
+/*
+ * Browser storage can be written by anything running on this origin, so an entry whose url
+ * is not an http(s) URL is dropped, and the others get their url rebuilt by [httpUrl].
+ */
+function trusted(list: StoredBackend[]): StoredBackend[] {
+  return list
+    .filter(candidate => httpUrl(candidate?.url) !== '')
+    .map(candidate => ({ ...candidate, url: httpUrl(candidate.url) }));
+}
+
 export function loadBackends(): StoredBackend[] {
   const raw = localStorage.getItem(BACKENDS_KEY);
   if (raw) {
-    return JSON.parse(raw) as StoredBackend[];
+    return trusted(JSON.parse(raw) as StoredBackend[]);
   }
   // First run after the upgrade — carry the one backend across.
   const legacy = localStorage.getItem(LEGACY_KEY);
   if (legacy) {
-    const backend = JSON.parse(legacy) as StoredBackend;
-    localStorage.setItem(BACKENDS_KEY, JSON.stringify([backend]));
-    localStorage.setItem(ACTIVE_KEY, backend.url);
+    const list = trusted([JSON.parse(legacy) as StoredBackend]);
     localStorage.removeItem(LEGACY_KEY);
-    return [backend];
+    if (list.length === 0) {
+      return importFromPreviousDashboard();
+    }
+    persist(list);
+    localStorage.setItem(ACTIVE_KEY, list[0].url);
+    return list;
   }
   return importFromPreviousDashboard();
 }
@@ -78,10 +91,10 @@ function importFromPreviousDashboard(): StoredBackend[] {
   const list: StoredBackend[] = (previous as (PreviousBackend | null)[])
     .filter(
       (candidate): candidate is PreviousBackend & { url: string } =>
-        typeof candidate?.url === 'string' && candidate.url !== '',
+        typeof candidate?.url === 'string' && httpUrl(candidate.url) !== '',
     )
     .map(candidate => ({
-      url: withoutTrailingSlashes(candidate.url),
+      url: httpUrl(candidate.url),
       username: typeof candidate.username === 'string' ? candidate.username : '',
       token: typeof candidate.token === 'string' ? candidate.token : null,
     }));
@@ -96,19 +109,32 @@ function importFromPreviousDashboard(): StoredBackend[] {
 }
 
 /*
- * The URL itself when it is an http(s) URL, and an empty string otherwise.
- * Backend URLs are typed by the user and end up in hrefs, so this keeps
- * javascript: and data: URLs out of them.
+ * The URL rebuilt from its parsed parts when it is an http(s) URL, and an empty string otherwise.
+ * Backend URLs come from the user, browser storage and "?backend=" links, and end up in hrefs
+ * and requests, so this keeps javascript: and data: URLs out of them, and drops any credentials,
+ * query and fragment, leaving only the origin and path of the backend.
  */
 export function httpUrl(url: string | null | undefined): string {
-  if (url?.startsWith('https://')) {
-    return 'https://' + url.slice('https://'.length);
+  if (!url || !URL.canParse(url)) {
+    return '';
   }
-  if (url?.startsWith('http://')) {
-    // eslint-disable-next-line sonarjs/no-clear-text-protocols -- a local backend is served over plain http
-    return 'http://' + url.slice('http://'.length);
+  const parsed = new URL(url);
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    return '';
   }
-  return '';
+  return parsed.protocol + '//' + parsed.host + withoutTrailingSlashes(parsed.pathname);
+}
+
+/*
+ * Like [httpUrl], but for a URL a request is about to be sent to, where an empty string would
+ * silently mean this page's own origin, so it throws instead.
+ */
+export function requireHttpUrl(url: string | null | undefined): string {
+  const result = httpUrl(url);
+  if (result === '') {
+    throw new Error('The backend URL must be an http:// or https:// URL');
+  }
+  return result;
 }
 
 /*
@@ -190,10 +216,10 @@ export function backendFromUrl(): StoredBackend | null {
    * The link is untrusted input, so anything that isn't an http(s) URL is
    * ignored rather than stored, keeping javascript: and data: URLs out.
    */
-  if (!target || !URL.canParse(target) || !/^https?:$/.test(new URL(target).protocol)) {
+  const url = httpUrl(target);
+  if (url === '') {
     return null;
   }
-  const url = withoutTrailingSlashes(target);
   const stored = activateBackend(url);
   if (stored) {
     return stored;
