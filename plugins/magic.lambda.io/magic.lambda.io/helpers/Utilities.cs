@@ -109,12 +109,20 @@ namespace magic.lambda.io.helpers
             bool copy,
             bool isFolder)
         {
-            // Sanity checking arguments and evaluating them.
+            // Sanity checking arguments.
             SanityCheckArguments(input);
+
+            /*
+             * Retrieving source before evaluating children, since this is the value the whitelist
+             * approved, and no child should be able to change it afterwards.
+             */
+            var src = input.GetEx<string>();
+
+            // Evaluating children, to make sure any signals wanting to retrieve our destination is evaluated.
             await signaler.SignalAsync("eval", input, skipWhitelist: true);
 
             // Retrieving source and destination path.
-            var (Source, Destination) = GetCopyMovePaths(signaler, input, rootResolver, isFolder);
+            var (Source, Destination) = GetCopyMovePaths(signaler, input, src, rootResolver, isFolder);
 
             // Checking if IO object exists, at which point we delete it.
             if (await service.ExistsAsync(Destination))
@@ -147,11 +155,11 @@ namespace magic.lambda.io.helpers
         static (string Source, string Destination) GetCopyMovePaths(
             ISignaler signaler,
             Node input,
+            string src,
             IRootResolver rootResolver,
             bool isFolder)
         {
-            // Retrieving source and destination paths as specified by caller.
-            var src = input.GetEx<string>();
+            // Retrieving destination path as specified by caller, the source was retrieved before children were evaluated.
             var dest = input.Children.First().GetEx<string>();
 
             // Normalising paths for folders.
