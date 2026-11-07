@@ -32,8 +32,15 @@ namespace magic.endpoint.services.slots.misc
         /// <param name="input">Arguments to your slot.</param>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
+            /*
+             * Resolving extension before evaluating children, since this is the value the whitelist
+             * approved, and no child should be able to change it afterwards.
+             */
+            var extension = input.GetEx<string>();
+
+            // Evaluating children, to make sure any signals wanting to retrieve our content type is evaluated.
             await signaler.SignalAsync("eval", input, skipWhitelist: true);
-            HttpFileExecutorAsync.AddMimeType(input.GetEx<string>(), input.Children.First().GetEx<string>());
+            HttpFileExecutorAsync.AddMimeType(extension, input.Children.First().GetEx<string>());
         }
     }
 }
