@@ -6,8 +6,9 @@ import Banner from '../Banner';
 const focusOnMount = (element: HTMLInputElement | null) => element?.focus();
 
 /*
- * The "login using magic link" screen: asks for a username or email, and
- * shows what the backend answered once the link is sent.
+ * The "login using magic link" screen: asks for a username, which for users
+ * invited by email is their email address, and shows what the backend
+ * answered once the link is sent.
  */
 export default function ForgotPasswordForm(
   props: Readonly<{
@@ -33,7 +34,7 @@ export default function ForgotPasswordForm(
           <p style={{ textAlign: 'center', margin: 0 }}>{props.forgotSent}</p>
         ) : (
           <label>
-            Username or email{' '}
+            Username{' '}
             <input
               type="text"
               ref={focusOnMount}
