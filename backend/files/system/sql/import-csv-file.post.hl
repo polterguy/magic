@@ -197,7 +197,7 @@ fork
       get-value:x:@.arguments/*/databaseName
       .:]
    data.connect:x:@strings.concat
-      type:x:@.arguments/*/databaseType
+      database-type:x:@.arguments/*/databaseType
 
       // Iterating through each row and importing into table.
       for-each:x:@csv2lambda/*
@@ -211,7 +211,7 @@ fork
 
          // Inserting into database.
          data.create
-            type:x:@.arguments/*/databaseType
+            database-type:x:@.arguments/*/databaseType
             table:x:@.table
             values
 
