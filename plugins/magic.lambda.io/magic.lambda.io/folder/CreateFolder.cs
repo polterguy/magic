@@ -17,6 +17,7 @@ namespace magic.lambda.io.folder
     /// </summary>
     [Slot(
         Name = "io.folder.create",
+        Whitelistable = false,
         Description = "Creates a folder on the server",
         ValueKind = "folder-path",
         ValueDescription = "Folder path to create",

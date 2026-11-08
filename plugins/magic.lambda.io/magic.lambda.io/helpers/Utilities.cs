@@ -34,6 +34,35 @@ namespace magic.lambda.io.helpers
         }
 
         /*
+         * Whether a path is the configuration folder or inside it, which only ever matters inside a [whitelist].
+         *
+         * The configuration folder carries the server's secrets, such as the key tickets are signed with, and a
+         * vocabulary that grants a reading slot without a pin grants every file. Hence code inside a [whitelist] can
+         * never read it, while the code that runs without one, which is trusted, still can.
+         *
+         * Notice, the path is resolved first, since '/./config/x' and '/Config/x' name the same file as '/config/x'.
+         */
+        internal static bool IsConfig(ISignaler signaler, IRootResolver rootResolver, string path)
+        {
+            if (signaler.Peek<List<Node>>("whitelist") == null)
+                return false;
+
+            var config = Path.GetFullPath(rootResolver.DynamicFiles + "config");
+            var resolved = Path.GetFullPath(path);
+            return resolved.Equals(config, StringComparison.OrdinalIgnoreCase) ||
+                resolved.StartsWith(config + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /*
+         * Throws if a [whitelist] is in scope and the path is the configuration folder or inside it.
+         */
+        internal static void EnsureNotConfig(ISignaler signaler, IRootResolver rootResolver, string slot, string path)
+        {
+            if (IsConfig(signaler, rootResolver, path))
+                throw new HyperlambdaException($"Slot [{slot}] is not allowed to read the configuration folder in current scope");
+        }
+
+        /*
          * Compares a whitelist vocabulary pin to a FILENAME, such as "/etc/*" or "/etc/*.md".
          */
         internal static bool MatchesFile(string pattern, string filename)

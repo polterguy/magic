@@ -17,7 +17,9 @@ namespace magic.library.tests
      * whoever adds a slot that hands a sandboxed caller the host itself, and whoever removes such a declaration,
      * has to change this list on purpose. The git slots that talk to a remote take caller-supplied remotes, refspecs, branches and URLs,
      * which git reads as options, and [--upload-pack] and [--receive-pack] run a command, so they are on this list as well
-     * as the GitHub slots, which act with the server's token. Notice, [python.execute] is also never whitelistable, but the python
+     * as the GitHub slots, which act with the server's token. The slots that read the server's log can't be granted either, since a log can carry stack traces and context
+     * that only the host should see. The [io] slots that change the file system are on it too, since a sandbox that has to
+     * write a file executes a file that does, pinned by name, rather than being handed the ability itself. Notice, [python.execute] is also never whitelistable, but the python
      * plugin is referenced by the backend and not by magic.library, so it can't be checked here.
      */
     public class WhitelistableTests
@@ -38,6 +40,23 @@ namespace magic.library.tests
             "github.repo.create",
             "github.repo.delete",
             "github.repo.list",
+            "io.file.copy",
+            "io.file.delete",
+            "io.file.move",
+            "io.file.patch",
+            "io.file.save",
+            "io.file.save.binary",
+            "io.file.unzip",
+            "io.folder.copy",
+            "io.folder.create",
+            "io.folder.delete",
+            "io.folder.move",
+            "io.stream.save-file",
+            "log.capabilities",
+            "log.count",
+            "log.get",
+            "log.query",
+            "log.timeshift",
             "slots.create",
             "slots.delete",
             "sqlite.load-extension",

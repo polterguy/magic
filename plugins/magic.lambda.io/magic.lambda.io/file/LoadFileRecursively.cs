@@ -3,6 +3,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using magic.node;
@@ -56,8 +57,10 @@ namespace magic.lambda.io.file
         /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
+            var folder = _rootResolver.AbsolutePath(input.GetEx<string>());
+            Utilities.EnsureNotConfig(signaler, _rootResolver, input.Name, folder);
             input.Clear();
-            foreach (var idx in await _service.LoadAllAsync(_rootResolver.AbsolutePath(input.GetEx<string>()), null))
+            foreach (var idx in (await _service.LoadAllAsync(folder, null)).Where(x => !Utilities.IsConfig(signaler, _rootResolver, x.Filename)))
             {
                 var idxNode = new Node(".");
                 idxNode.Add(new Node("name", _rootResolver.RelativePath(idx.Filename)));

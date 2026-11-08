@@ -19,6 +19,7 @@ namespace magic.lambda.logging.slots
     /// </summary>
     [Slot(
         Name = "log.timeshift",
+        Whitelistable = false,
         Description = "Aggregates log entries into time buckets",
         ValueKind = "log-search",
         ValueDescription = "Search string or log entry type to aggregate over the last two weeks",

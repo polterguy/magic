@@ -75,10 +75,12 @@ namespace magic.lambda.io.file
         /// <returns>An awaitable task.</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
+            var path = _rootResolver.AbsolutePath(input.GetEx<string>());
+            Utilities.EnsureNotConfig(signaler, _rootResolver, input.Name, path);
             if (input.Name == "io.file.load.binary")
-                input.Value = await _service.LoadBinaryAsync(_rootResolver.AbsolutePath(input.GetEx<string>()));
+                input.Value = await _service.LoadBinaryAsync(path);
             else
-                input.Value = await _service.LoadAsync(_rootResolver.AbsolutePath(input.GetEx<string>()));
+                input.Value = await _service.LoadAsync(path);
         }
     }
 }

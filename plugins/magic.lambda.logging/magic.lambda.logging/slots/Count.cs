@@ -15,6 +15,7 @@ namespace magic.lambda.logging.slots
     /// </summary>
     [Slot(
         Name = "log.count",
+        Whitelistable = false,
         Description = "Returns the total number of log entries, optionally restricted to a single content type",
         ValueKind = "content-type",
         ValueDescription = "Optional content type filter",

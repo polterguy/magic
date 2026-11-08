@@ -54,7 +54,9 @@ namespace magic.lambda.io.stream
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             // Opening file and returning to caller.
-            input.Value = await _service.OpenFileAsync(_rootResolver.AbsolutePath(input.GetEx<string>()));
+            var path = _rootResolver.AbsolutePath(input.GetEx<string>());
+            Utilities.EnsureNotConfig(signaler, _rootResolver, input.Name, path);
+            input.Value = await _service.OpenFileAsync(path);
         }
     }
 }

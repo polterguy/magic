@@ -4,7 +4,7 @@ import { generateSandboxEndpoint, listRoles } from '../../../lib/api';
 import { showError } from '../../../lib/errors';
 import { showToast } from '../../../lib/toast';
 import { DEFAULT_BASE_SLOTS } from '../baseSlots';
-import { linesToSlots, ruleIsIncomplete } from '../slots';
+import { linesToSlots, refusedSlots, ruleIsIncomplete } from '../slots';
 import { GeneratedInfo, PolicyRule, RoleRule, SandboxPolicy } from '../types';
 
 // SandboxTab's state: the endpoint, its base vocabulary and role rules, and generating it.
@@ -49,9 +49,18 @@ export function useSandboxTab() {
   // Rules carrying slots/overrides but no role would be dropped silently — block on them.
   const hasIncompleteRule = ruleList.some(ruleIsIncomplete);
 
+  // A slot that changes the file system can never be granted to a sandbox, so block on those too.
+  const hasRefusedSlot = [baseSlots, ...ruleList.map(rule => rule.slots)].some(
+    text => refusedSlots(text).length > 0,
+  );
+
   async function generate() {
     if (!moduleName || !endpointName) {
       showToast('Provide a module name and an endpoint name', true);
+      return;
+    }
+    if (hasRefusedSlot) {
+      showToast('A sandbox cannot be granted slots that change the file system', true);
       return;
     }
     /*
@@ -152,6 +161,7 @@ export function useSandboxTab() {
     generated,
     updateRule,
     hasIncompleteRule,
+    hasRefusedSlot,
     generate,
   };
 }

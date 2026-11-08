@@ -16,6 +16,7 @@ namespace magic.lambda.io.file
     /// </summary>
     [Slot(
         Name = "io.file.copy",
+        Whitelistable = false,
         Description = "Copies a file on the server",
         ValueKind = "file-path",
         ValueDescription = "Source file path",
@@ -25,6 +26,7 @@ namespace magic.lambda.io.file
         SignatureType = typeof(global::magic.lambda.io.signatures.FileCopyMoveSignature))]
     [Slot(
         Name = "io.file.move",
+        Whitelistable = false,
         Description = "Moves a file on the server",
         ValueKind = "file-path",
         ValueDescription = "Source file path",

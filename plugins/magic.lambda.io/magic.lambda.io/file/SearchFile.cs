@@ -60,7 +60,8 @@ namespace magic.lambda.io.file
         {
             var args = GetArgs(input);
             var rootFolder = _rootResolver.AbsolutePath(args.Folder);
-            var files = _service.ListAll(rootFolder);
+            Utilities.EnsureNotConfig(signaler, _rootResolver, input.Name, rootFolder);
+            var files = _service.ListAll(rootFolder).Where(x => !Utilities.IsConfig(signaler, _rootResolver, x));
 
             foreach (var filename in files)
             {

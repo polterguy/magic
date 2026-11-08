@@ -18,7 +18,14 @@ export default function SandboxEndpointToolbar({
     generate,
     busy,
     hasIncompleteRule,
+    hasRefusedSlot,
   } = sandbox;
+  let blocked: string | undefined;
+  if (hasIncompleteRule) {
+    blocked = 'A role rule has slots but no role — choose a role or remove it';
+  } else if (hasRefusedSlot) {
+    blocked = 'A slot that changes the file system cannot be granted to a sandbox — remove it';
+  }
   return (
     <div className="toolbar">
       <EndpointNameFields
@@ -42,16 +49,7 @@ export default function SandboxEndpointToolbar({
         </Select>
       </label>
       <span className="spacer" />
-      <button
-        className="btn"
-        onClick={generate}
-        disabled={busy || hasIncompleteRule}
-        title={
-          hasIncompleteRule
-            ? 'A role rule has slots but no role — choose a role or remove it'
-            : undefined
-        }
-      >
+      <button className="btn" onClick={generate} disabled={busy || !!blocked} title={blocked}>
         {busy ? 'Generating…' : '⚙ Generate endpoint'}
       </button>
     </div>

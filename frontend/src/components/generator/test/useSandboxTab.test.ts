@@ -71,6 +71,27 @@ describe('useSandboxTab', () => {
     expect(api.generateSandboxEndpoint).not.toHaveBeenCalled();
   });
 
+  it('blocks generation while a slot that changes the file system is granted', async () => {
+    const { result } = renderHook(() => useSandboxTab());
+    act(() => result.current.setModuleName('mod'));
+    expect(result.current.hasRefusedSlot).toBe(false);
+
+    act(() => result.current.setBaseSlots('math.add\nio.file.save:/etc/*'));
+    expect(result.current.hasRefusedSlot).toBe(true);
+    await act(() => result.current.generate());
+
+    expect(showToast).toHaveBeenCalledWith(
+      'A sandbox cannot be granted slots that change the file system',
+      true,
+    );
+    expect(api.generateSandboxEndpoint).not.toHaveBeenCalled();
+
+    act(() => result.current.setBaseSlots('math.add\nio.file.load:/etc/*'));
+    expect(result.current.hasRefusedSlot).toBe(false);
+    act(() => result.current.setRuleList([rule({ slots: 'io.folder.delete' })]));
+    expect(result.current.hasRefusedSlot).toBe(true);
+  });
+
   it('updates one rule and flags rules that have slots but no role', () => {
     const { result } = renderHook(() => useSandboxTab());
 

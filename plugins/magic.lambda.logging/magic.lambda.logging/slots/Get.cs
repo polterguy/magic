@@ -16,6 +16,7 @@ namespace magic.lambda.logging.slots
     /// </summary>
     [Slot(
         Name = "log.get",
+        Whitelistable = false,
         Description = "Returns a log entry by ID",
         ValueKind = "log-entry-id,integer,number",
         ValueDescription = "ID of the log entry to retrieve",
