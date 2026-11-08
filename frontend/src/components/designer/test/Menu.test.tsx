@@ -233,3 +233,44 @@ describe('Menu options', () => {
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
 });
+
+describe('Menu initialActive', () => {
+  const items: MenuItem[] = [
+    { label: 'Upload', onClick: vi.fn() },
+    { label: 'Analyse', onClick: vi.fn() },
+    { label: 'Locked', disabled: true, onClick: vi.fn() },
+  ];
+
+  it('opens with that item active, and Enter takes it', async () => {
+    const onClick = vi.fn();
+    render(
+      <Menu
+        items={[items[0], { label: 'Analyse', onClick }]}
+        title="More actions"
+        initialActive={1}
+      />,
+    );
+    const trigger = screen.getByRole('button', { name: 'More actions' });
+    await userEvent.click(trigger);
+    expect(screen.getByRole('menuitem', { name: 'Analyse' })).toHaveClass('active');
+    expect(screen.getByRole('menuitem', { name: 'Upload' })).not.toHaveClass('active');
+    expect(activeOf(trigger)).not.toBeNull();
+    await userEvent.keyboard('{Enter}');
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('starts on nothing when that item is disabled, and when it is not given', async () => {
+    const { unmount } = render(<Menu items={items} title="More actions" initialActive={2} />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    expect(screen.getAllByRole('menuitem').some(item => item.classList.contains('active'))).toBe(
+      false,
+    );
+    unmount();
+
+    render(<Menu items={items} title="More actions" />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    expect(screen.getAllByRole('menuitem').some(item => item.classList.contains('active'))).toBe(
+      false,
+    );
+  });
+});

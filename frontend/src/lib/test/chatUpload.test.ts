@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { backendIsLocal } from '../chatUpload';
+import { backendIsLocal, defaultAttachMode } from '../chatUpload';
 
 describe('backendIsLocal', () => {
   it.each([
@@ -25,4 +25,20 @@ describe('backendIsLocal', () => {
   ])('treats %s as reachable', url => {
     expect(backendIsLocal(url)).toBe(false);
   });
+});
+
+describe('defaultAttachMode', () => {
+  it.each(['http://localhost:5000', 'http://127.0.0.1:5000', 'http://[::1]:5000'])(
+    'is Upload on %s',
+    url => {
+      expect(defaultAttachMode(url)).toBe('upload');
+    },
+  );
+
+  it.each(['https://app.ainiro.io', 'http://192.168.1.20:5000', 'https://localhost.example.com'])(
+    'is Analyse on %s',
+    url => {
+      expect(defaultAttachMode(url)).toBe('analyse');
+    },
+  );
 });

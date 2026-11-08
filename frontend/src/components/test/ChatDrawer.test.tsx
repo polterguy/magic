@@ -66,6 +66,27 @@ describe('Attach menu', () => {
     expect(screen.getByRole('menuitem', { name: 'Analyse' })).not.toHaveClass('disabled');
   });
 
+  it('opens on Analyse for a public backend', async () => {
+    renderDrawer('https://app.example.com');
+    await userEvent.click(screen.getByTitle(/Attach files/));
+    expect(screen.getByRole('menuitem', { name: 'Analyse' })).toHaveClass('active');
+    expect(screen.getByRole('menuitem', { name: 'Upload' })).not.toHaveClass('active');
+  });
+
+  it('opens on Upload for a local backend', async () => {
+    renderDrawer('http://localhost:5000');
+    await userEvent.click(screen.getByTitle(/Attach files/));
+    expect(screen.getByRole('menuitem', { name: 'Upload' })).toHaveClass('active');
+    expect(screen.getByRole('menuitem', { name: 'Analyse' })).not.toHaveClass('active');
+  });
+
+  it('opens on the mode of the files that are waiting', async () => {
+    const container = renderDrawer('https://app.example.com');
+    await attach(container, 'Upload');
+    await userEvent.click(screen.getByTitle(/Attach files/));
+    expect(screen.getByRole('menuitem', { name: 'Upload' })).toHaveClass('active');
+  });
+
   it('sends Upload files with the upload-only flag', async () => {
     const container = renderDrawer();
     await attach(container, 'Upload');

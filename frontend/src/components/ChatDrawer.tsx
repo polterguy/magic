@@ -25,7 +25,7 @@ import {
   MAX_CHAT_FILES,
 } from '../lib/api';
 import { notifyChatOpsDone } from '../lib/chatOps';
-import { type AttachMode, backendIsLocal } from '../lib/chatUpload';
+import { type AttachMode, backendIsLocal, defaultAttachMode } from '../lib/chatUpload';
 import { showError } from '../lib/errors';
 import { createSocket } from '../lib/socket';
 import { getTheme } from '../lib/theme';
@@ -231,9 +231,10 @@ export default function ChatDrawer(
    * where they landed, which is the right choice when a function is meant to read
    * them — and the only one that works on localhost, since analysing needs a host
    * the model can fetch from. The whole message has one mode, so it only matters
-   * while files are waiting.
+   * while files are waiting. Upload is the default on a local backend and Analyse
+   * on any other, which is the item the Attach menu opens on.
    */
-  const [mode, setMode] = useState<AttachMode>('analyse');
+  const [mode, setMode] = useState<AttachMode>(() => defaultAttachMode(backendInfo().url));
   const fileRef = useRef<HTMLInputElement>(null);
   // Session id doubles as the socket channel name; null until the first send.
   const sessionRef = useRef<string | null>(null);
@@ -481,6 +482,8 @@ export default function ChatDrawer(
   }
 
   const switching = files.length > 0;
+  // Files waiting leave only their own mode on offer, otherwise the host decides.
+  const menuStart: AttachMode = switching ? mode : defaultAttachMode(backendInfo().url);
   const attachItems: MenuItem[] = [
     {
       label: 'Upload',
@@ -649,6 +652,7 @@ export default function ChatDrawer(
             title={'Attach files (max ' + MAX_CHAT_FILES + ')'}
             className="btn btn-secondary chat-attach"
             items={attachItems}
+            initialActive={menuStart === 'upload' ? 0 : 1}
             placement="top"
             align="start"
             disabled={streaming || files.length >= MAX_CHAT_FILES}

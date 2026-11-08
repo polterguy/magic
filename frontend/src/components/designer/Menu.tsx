@@ -41,6 +41,8 @@ interface MenuProps {
   title: string;
   className?: string;
   disabled?: boolean;
+  // The item the keyboard starts on when the trigger opens the menu, so Enter takes it.
+  initialActive?: number;
   // What the trigger shows, which is the overflow icon unless told otherwise.
   children?: ReactNode;
   // Opens upwards, for a trigger that sits at the bottom of the screen.
@@ -223,9 +225,8 @@ export default function Menu(props: Readonly<MenuProps>) {
         onKeyDown={onKeyDown}
         onClick={() => {
           place();
-          if (open) {
-            setActive(-1);
-          }
+          const start = props.initialActive;
+          setActive(!open && start !== undefined && selectable(start) ? start : -1);
           setOpen(!open);
         }}
       >
