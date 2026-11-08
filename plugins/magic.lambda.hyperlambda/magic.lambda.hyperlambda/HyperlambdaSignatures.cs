@@ -36,6 +36,17 @@ namespace magic.lambda.hyperlambda.signatures
         public IEnumerable<SlotChild> Children => new[]
         {
             Hyper2LambdaSignature.Option("comments", "bool", "Whether generated Hyperlambda should include comments", "false"),
+            new SlotChild
+            {
+                Name = "*",
+                Type = "lambda",
+                Description = "Nodes to convert, used when the slot has no value",
+                Required = false,
+                Mode = SlotChildMode.SourceLambda,
+                Cardinality = SlotChildCardinality.ZeroOrMore,
+                Role = SlotChildRole.Payload,
+                Projection = SlotChildProjection.Self,
+            },
         };
     }
 }

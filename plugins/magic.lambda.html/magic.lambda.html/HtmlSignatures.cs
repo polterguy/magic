@@ -49,5 +49,20 @@ namespace magic.lambda.html.signatures
     }
 
     public class Lambda2HtmlSignature : HtmlSignature
-    { }
+    {
+        public override IEnumerable<SlotChild> Children => new[]
+        {
+            new SlotChild
+            {
+                Name = "*",
+                Type = "lambda",
+                Description = "Nodes to convert, used when the slot has no value",
+                Required = false,
+                Mode = SlotChildMode.SourceLambda,
+                Cardinality = SlotChildCardinality.ZeroOrMore,
+                Role = SlotChildRole.Payload,
+                Projection = SlotChildProjection.Self,
+            },
+        };
+    }
 }

@@ -17,7 +17,31 @@ namespace magic.lambda.mail.signatures
         public IEnumerable<SlotChild> Children => new[]
         {
             Message(),
+            Server(),
         };
+
+        static internal SlotChild Server()
+        {
+            return new SlotChild
+            {
+                Name = "server",
+                Type = "lambda",
+                Description = "Connection settings, where anything left out comes from the configured server",
+                Required = false,
+                Mode = SlotChildMode.StructuredArguments,
+                Cardinality = SlotChildCardinality.ZeroOrOne,
+                Role = SlotChildRole.StructuredObject,
+                Projection = SlotChildProjection.StructuredTree,
+                Children =
+                {
+                    Option("host", "string", "Host name of the server", false),
+                    Option("port", "int", "Port of the server", false),
+                    Option("secure", "bool", "Whether to connect securely", false),
+                    Option("username", "string", "User name to authenticate with", false),
+                    Option("password", "string", "Password to authenticate with", false),
+                },
+            };
+        }
 
         static SlotChild Message()
         {
@@ -121,6 +145,7 @@ namespace magic.lambda.mail.signatures
         {
             MailSmtpSendSignature.Option("raw", "bool", "Whether to pass raw MIME text to the callback", false),
             MailSmtpSendSignature.Option("max", "int", "Maximum number of messages to fetch", false),
+            MailSmtpSendSignature.Server(),
             new SlotChild
             {
                 Name = ".lambda",

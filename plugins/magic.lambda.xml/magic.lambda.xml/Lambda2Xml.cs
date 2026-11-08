@@ -22,7 +22,7 @@ namespace magic.lambda.xml
         Description = "Converts a lambda object to an XML fragment or document",
         ValueKind = "xml-tree",
         ValueDescription = "Expression selecting a SINGLE lambda root to transform (XML has exactly one document root)",
-        ValueRequired = true,
+        ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.Expression,
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,

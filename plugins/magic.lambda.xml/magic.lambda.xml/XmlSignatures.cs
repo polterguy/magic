@@ -9,6 +9,19 @@ namespace magic.lambda.xml.signatures
 {
     public class Lambda2XmlSignature : ISlotSignature
     {
-        public IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
+        public IEnumerable<SlotChild> Children => new[]
+        {
+            new SlotChild
+            {
+                Name = "*",
+                Type = "lambda",
+                Description = "Nodes to convert, used when the slot has no value",
+                Required = false,
+                Mode = SlotChildMode.SourceLambda,
+                Cardinality = SlotChildCardinality.ZeroOrMore,
+                Role = SlotChildRole.Payload,
+                Projection = SlotChildProjection.Self,
+            },
+        };
     }
 }

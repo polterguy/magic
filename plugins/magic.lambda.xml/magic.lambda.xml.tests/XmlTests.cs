@@ -32,15 +32,16 @@ xml2lambda:x:@.xml");
         }
 
         [Fact]
-        public void Lambda2XmlSignatureDocumentsExpressionOnly()
+        public void Lambda2XmlSignatureDocumentsExpressionOrChildren()
         {
             var lambda = Common.Evaluate(@"slot.signature:lambda2xml");
             var result = lambda.Children.First();
             var input = result.Children.First(x => x.Name == "input");
+            var children = result.Children.First(x => x.Name == "children");
 
-            Assert.True(input.Children.First(x => x.Name == "required").GetEx<bool>());
+            Assert.False(input.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Equal(SlotValueMode.Expression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.DoesNotContain(result.Children, x => x.Name == "children");
+            Assert.Contains(children.Children, x => x.Name == "*");
         }
 
         [Fact]
