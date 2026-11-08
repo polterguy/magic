@@ -122,9 +122,7 @@ slots.create:magic.ai.create-system-message
             status:x:@http.post
             error:x:@lambda2hyper
          throw:Something went wrong while invoking OpenAI
-            message:x:@http.post/*/content/*/error/*/message
             status:x:@http.post
-            error:x:@lambda2hyper
 
    /*
     * Returning answer to caller.
