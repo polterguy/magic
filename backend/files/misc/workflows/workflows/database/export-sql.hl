@@ -89,7 +89,7 @@ data.connect:x:-
 
    // Signaling frontend that file can be downloaded
    sockets.signal:x:@.arguments/*/_session
-      role:root
+      roles:root
       args
          type:download_file
          ticket:x:@auth.ticket.create

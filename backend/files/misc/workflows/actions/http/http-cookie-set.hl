@@ -50,7 +50,7 @@ if:x:@.arguments/*/expires
    math.add
       date.now
       time
-         expires:x:@.arguments/*/expires
+         days:x:@.arguments/*/expires
    unwrap:x:+/*/*
    add:x:../*/response.cookies.set
       .

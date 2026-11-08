@@ -24,7 +24,7 @@ strings.concat
    get-value:x:@.arguments/*/databaseName
    .:]
 data.connect:x:@strings.concat
-   type:x:@.arguments/*/databaseType
+   database-type:x:@.arguments/*/databaseType
    data.read
       table:x:@.arguments/*/tableName
       limit:-1
