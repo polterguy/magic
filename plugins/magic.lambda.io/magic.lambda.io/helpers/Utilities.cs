@@ -44,7 +44,8 @@ namespace magic.lambda.io.helpers
          */
         internal static bool IsConfig(ISignaler signaler, IRootResolver rootResolver, string path)
         {
-            if (signaler.Peek<List<Node>>("whitelist") == null)
+            // No signaler means no scope, which is how a slot is invoked directly by a test.
+            if (signaler?.Peek<List<Node>>("whitelist") == null)
                 return false;
 
             var config = Path.GetFullPath(rootResolver.DynamicFiles + "config");
