@@ -29,6 +29,8 @@ namespace magic.lambda.hyperlambda
     ///   - Name "*"       -> the body is the slot's OWN direct children ([for-each], [map],
     ///                       [filter], [include], [data.connect], [if]/[while] condition,
     ///                       [and]/[or], [sort], [add], [set-value], ...).
+    ///   - Name "."       -> with Mode ExecutableLambda, a positional argument the slot evaluates,
+    ///                       counted as a "*" body ([strings.concat], [strings.replace], [mime.add], ...).
     ///   - any other Name -> the body lives inside the child(ren) with that name: the wrapper
     ///                       ([.lambda] for [if]/[while]/[context]/[whitelist]), a named branch
     ///                       ([default] for [switch]), a fork ([fork] for [join]), or a callback
@@ -302,7 +304,17 @@ namespace magic.lambda.hyperlambda
         {
             if (string.IsNullOrEmpty(child.Name))
                 return;
-            if (child.Name == "*")
+
+            /*
+             * An executable "." child is a positional argument the slot [eval]s, e.g. the segments of
+             * [strings.concat] or the arguments of [strings.replace] and [mime.add], so it is either a
+             * literal "." or a slot invocation such as [get-value]. It is therefore treated exactly like
+             * a "*" body; a named child is a slot dispatched at runtime, and a "."-prefixed child is
+             * static data.
+             */
+            var evaluated = child.Name == "*" ||
+                (child.Name == "." && child.Mode == SlotChildMode.ExecutableLambda);
+            if (evaluated)
                 result.AcceptsAnyChild = true;
             else
             {
@@ -324,7 +336,7 @@ namespace magic.lambda.hyperlambda
              */
             if (child.Mode == SlotChildMode.ExecutableLambda)
             {
-                if (child.Name == "*")
+                if (evaluated)
                     result.HasStarBody = true;
                 else
                     result.WrapperNames.Add(child.Name);

@@ -672,6 +672,113 @@ test.dot-child:hi there you
             AssertInvalidInvocation(result, "test.dot-child", "[.foo]");
         }
 
+        [Fact]
+        public void VerifySlots_NonExecutableDotArgumentRejectsSlotChild()
+        {
+            var result = VerifySlots(@"
+test.dot-child:hi there you
+   get-value:x:@.separator");
+            AssertInvalidInvocation(result, "test.dot-child", "[get-value]");
+        }
+
+        [Fact]
+        public void VerifySlots_ConcatWithSlotChild()
+        {
+            var result = VerifySlots(@".message:boom
+strings.concat
+   .:""Error: ""
+   get-value:x:@.message");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_ConcatWithLiteralChildren()
+        {
+            var result = VerifySlots(@"strings.concat
+   .:""Error: ""
+   .:boom");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_ConcatWithNestedSlotChildren()
+        {
+            var result = VerifySlots(@"strings.concat
+   .:""Error: ""
+   strings.concat
+      .:""code ""
+      get-value:x:@.code");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Theory]
+        [InlineData("strings.concat")]
+        [InlineData("strings.contains")]
+        [InlineData("strings.ends-with")]
+        [InlineData("strings.join")]
+        [InlineData("strings.matches")]
+        [InlineData("strings.regex-replace")]
+        [InlineData("strings.replace")]
+        [InlineData("strings.replace-not-of")]
+        [InlineData("strings.split")]
+        [InlineData("strings.starts-with")]
+        [InlineData("strings.substring")]
+        [InlineData("strings.trim")]
+        public void VerifySlots_EvaluatedArgumentsAcceptSlotChildren(string slot)
+        {
+            var result = VerifySlots($"{slot}:x:@.source\n   get-value:x:@.argument");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Theory]
+        [InlineData("strings.concat")]
+        [InlineData("strings.contains")]
+        [InlineData("strings.ends-with")]
+        [InlineData("strings.join")]
+        [InlineData("strings.matches")]
+        [InlineData("strings.regex-replace")]
+        [InlineData("strings.replace")]
+        [InlineData("strings.replace-not-of")]
+        [InlineData("strings.split")]
+        [InlineData("strings.starts-with")]
+        [InlineData("strings.substring")]
+        [InlineData("strings.trim")]
+        public void VerifySlots_EvaluatedArgumentsRejectMissingSlots(string slot)
+        {
+            AssertMissingSlots($"{slot}:x:@.source\n   missing.argument.slot", "missing.argument.slot");
+        }
+
+        [Fact]
+        public void VerifySlots_EvaluatedArgumentNestedInvocationError()
+        {
+            var result = VerifySlots(@"strings.concat
+   .:""Error: ""
+   hyper2lambda:return
+      maximum:bool:true");
+            AssertInvalidInvocation(result, "hyper2lambda", "maximum");
+        }
+
+        [Fact]
+        public void VerifySlots_EvaluatedDotArgumentAcceptsSlotChild()
+        {
+            var result = VerifySlots(@"test.evaluated-dot-child:foo
+   .:bar
+   get-value:x:@.baz");
+            Assert.True(result.Get<bool>());
+            Assert.Empty(result.Children);
+        }
+
+        [Fact]
+        public void VerifySlots_EvaluatedDotArgumentRejectsMissingSlot()
+        {
+            AssertMissingSlots(@"test.evaluated-dot-child:foo
+   missing.dot.slot", "missing.dot.slot");
+        }
+
         static void AssertInvalidInvocation(
             Node result,
             string slot,
@@ -761,6 +868,32 @@ foo:date:'2019-07-10T08:12:39'").Children.ToList();
         ValueMode = SlotValueMode.ValueOrExpression,
         SignatureType = typeof(DotChildTestSignature))]
     public class DotChildTestSlot : ISlot
+    {
+        public void Signal(ISignaler signaler, Node input)
+        {
+        }
+    }
+
+    public class EvaluatedDotChildTestSignature : ISlotSignature
+    {
+        public IEnumerable<SlotChild> Children => new[]
+        {
+            new SlotChild
+            {
+                Name = ".",
+                Type = "string",
+                Description = "Positional argument the slot evaluates",
+                Mode = SlotChildMode.ExecutableLambda,
+                Evaluation = SlotChildEvaluation.EvalSelf,
+            }
+        };
+    }
+
+    [Slot(
+        Name = "test.evaluated-dot-child",
+        ValueMode = SlotValueMode.ValueOrExpression,
+        SignatureType = typeof(EvaluatedDotChildTestSignature))]
+    public class EvaluatedDotChildTestSlot : ISlot
     {
         public void Signal(ISignaler signaler, Node input)
         {
