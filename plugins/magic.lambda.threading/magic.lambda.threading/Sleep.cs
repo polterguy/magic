@@ -33,7 +33,11 @@ namespace magic.lambda.threading
         /// <returns>An awaiatble task.</returns>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            await Sys.Tasks.Task.Delay(input.GetEx<int>(), signaler.GetCancellationToken());
+            // Notice, a negative value would either throw or, for -1, wait until the request is cancelled.
+            var milliseconds = input.GetEx<int>();
+            if (milliseconds < 0)
+                throw new HyperlambdaException("[sleep] cannot be given a negative number of milliseconds");
+            await Sys.Tasks.Task.Delay(milliseconds, signaler.GetCancellationToken());
         }
     }
 }

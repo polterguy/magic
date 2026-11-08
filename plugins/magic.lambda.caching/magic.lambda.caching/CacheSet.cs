@@ -27,6 +27,8 @@ namespace magic.lambda.caching
         SignatureType = typeof(global::magic.lambda.caching.signatures.CacheSetSignature))]
     public class CacheSet : ISlotAsync
     {
+        const long MaxExpirationSeconds = 315_360_000; // Ten years.
+
         readonly IMagicCache _cache;
 
         /// <summary>
@@ -64,6 +66,8 @@ namespace magic.lambda.caching
                 .Children
                 .FirstOrDefault(x => x.Name == "expiration")?
                 .GetEx<long>() ?? 5;
+            if (expiration < 1 || expiration > MaxExpirationSeconds)
+                throw new HyperlambdaException($"[expiration] must be between 1 and {MaxExpirationSeconds} seconds");
 
             await _cache.UpsertAsync(key, val, DateTime.UtcNow.AddSeconds(expiration));
         }
