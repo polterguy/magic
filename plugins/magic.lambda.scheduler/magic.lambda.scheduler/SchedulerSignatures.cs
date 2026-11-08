@@ -77,6 +77,7 @@ namespace magic.lambda.scheduler.signatures
         /// <inheritdoc />
         public override IEnumerable<SlotChild> Children => new[]
         {
+            Option("id", "string", "Task ID, used in place of the slot's value", kind: "task-id"),
             Option("description", "string", "Optional task description", kind: "task-description"),
             Option("due", "DateTime", "Optional one-time due date", kind: "date"),
             Option("repeats", "string", "Optional repeat pattern", kind: "task-repeat-pattern"),

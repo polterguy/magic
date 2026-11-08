@@ -18,7 +18,7 @@ namespace magic.lambda.scheduler.slots.tasks
         Description = "Runs a stored task synchronously right now, ignoring its schedule; handy for ad-hoc invocations or testing",
         ValueKind = "task-id",
         ValueDescription = "Task ID to execute",
-        ValueRequired = true,
+        ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.None)]
     public class ExecuteTask : ISlotAsync
