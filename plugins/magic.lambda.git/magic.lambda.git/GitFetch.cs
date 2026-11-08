@@ -17,6 +17,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.fetch",
+        Whitelistable = false,
         Description = "Fetches updates from a Git remote",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",

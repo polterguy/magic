@@ -19,6 +19,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "github.repo.list",
+        Whitelistable = false,
         Description = "Lists GitHub repositories using child-node filters",
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "github-repository-list,node-list",

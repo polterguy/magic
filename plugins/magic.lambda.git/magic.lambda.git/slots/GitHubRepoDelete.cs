@@ -17,6 +17,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "github.repo.delete",
+        Whitelistable = false,
         Description = "Deletes a GitHub repository",
         ValueKind = "github-repo-name",
         ValueDescription = "GitHub repository name",
