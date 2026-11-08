@@ -1,0 +1,64 @@
+{
+  "title": "Hyperlambda (Magic) vs FastAPI, pooled SQLite read of ten rows",
+  "published": "2026-10-24",
+  "article": "https://hyperlambda.dev/blog/hyperlambda-vs-fastapi-round-two-3-7x-faster-than-tuned-python-fully-reproducible",
+  "page": "https://hyperlambda.dev/benchmark",
+  "claim": "On a pooled SQLite read of 10 rows at 128 connections, Hyperlambda served 3.7 times the requests per second of FastAPI on four worker processes (14 times FastAPI on one worker). Per CPU core the gap is 1.8 times, because Hyperlambda used about twice the cores. The headline needs SQLite connection pooling, which is not Magic's shipped default.",
+  "conditions": {
+    "workload": "GET returning the first 10 rows of the Chinook Artist table ordered by ArtistId, identical JSON verified on every server before measuring",
+    "database": "Chinook SQLite, Artist table with 275 rows and 5,658 name characters, pooled connections on both sides",
+    "load_generator": "wrk 4.2.0, 4 threads, 128 connections, 3 s warm-up discarded, 10 s measured, run on the same machine as the servers",
+    "authentication": "none on either side",
+    "logging": "Magic at Warning level",
+    "machine": "MacBook Pro Mac15,6, Apple M3 Pro, 11 cores, 18 GB RAM, macOS 14.8",
+    "magic_build": "Release, .NET SDK 10.0.107, server GC",
+    "magic_commits": {
+      "before": "27f6711236783178d9e6775aac1fe4eaec3cb5e4",
+      "after": "ffaaac757b6702265d23a3c266f15ca35dc48618"
+    },
+    "python": "3.13.9, fastapi 0.161.1, uvicorn 0.54.0, aiosqlite 0.22.1, uvloop 0.23.0, httptools 0.9.0, async handlers, no ORM, no middleware"
+  },
+  "headline_128_connections": [
+    { "server": "Hyperlambda, one process", "requests_per_second": 64664, "p99_ms": 5.6, "peak_memory_mb": 309, "cpu_percent": 914, "requests_per_second_per_core": 7075 },
+    { "server": "FastAPI, 4 workers", "requests_per_second": 17686, "p99_ms": 77.4, "peak_memory_mb": 311, "cpu_percent": 459, "requests_per_second_per_core": 3853 },
+    { "server": "FastAPI, 1 worker", "requests_per_second": 4564, "p99_ms": 83.9, "peak_memory_mb": 63, "cpu_percent": 232, "requests_per_second_per_core": 1967 }
+  ],
+  "ratios": {
+    "versus_fastapi_4_workers": 3.7,
+    "versus_fastapi_1_worker": 14,
+    "per_core_versus_fastapi_4_workers": 1.8,
+    "from_scratch_rerun_versus_4_workers": 3.5,
+    "from_scratch_rerun_versus_1_worker": 13
+  },
+  "requests_per_second_by_connections": {
+    "hyperlambda": { "64": 61077, "128": 64664, "256": 63956 },
+    "fastapi_4_workers": { "64": 18405, "128": 17686, "256": 17413 },
+    "fastapi_1_worker": { "64": 4584, "128": 4564, "256": 4410 },
+    "fastapi_11_workers": { "64": 15702, "128": 10778, "256": 10448 }
+  },
+  "from_scratch_rerun_by_connections": {
+    "hyperlambda": { "64": 59911, "128": 62003, "256": 61770 },
+    "fastapi_4_workers": { "64": 18343, "128": 17564, "256": 16793 },
+    "fastapi_1_worker": { "64": 4864, "128": 4775, "256": 4742 },
+    "fastapi_11_workers": { "64": 15702, "128": 10778, "256": 10448 }
+  },
+  "connection_pooling_128_connections": {
+    "hyperlambda": { "per_request_connections": 4232, "pooled": 62003 },
+    "fastapi_4_workers": { "per_request_connections": 6245, "pooled": 17564 },
+    "fastapi_1_worker": { "per_request_connections": 1877, "pooled": 4775 }
+  },
+  "trivial_string_endpoint_128_connections": [
+    { "server": "Hyperlambda", "requests_per_second": 99805, "cpu_percent": 822, "requests_per_second_per_core": 12141 },
+    { "server": "FastAPI, 4 workers", "requests_per_second": 84584, "cpu_percent": 385, "requests_per_second_per_core": 21970 },
+    { "server": "FastAPI, 1 worker", "requests_per_second": 20645, "cpu_percent": 100, "requests_per_second_per_core": 20645 }
+  ],
+  "limits": [
+    "One machine, one 10-row read, localhost, no authentication, no writes or joins.",
+    "Hyperlambda used about twice the cores of four-worker FastAPI, so 3.7 times is a whole-machine figure and 1.8 times is the per-core figure.",
+    "With Magic's shipped Pooling=False the same read does 4,232 requests per second, which is slower than four-worker FastAPI with per-request connections (6,245).",
+    "On a trivial string-concatenation endpoint FastAPI is more efficient per core.",
+    "Only 1, 4 and 11 FastAPI workers were tried; 11 was slower than 4 and was not investigated.",
+    "Run by the author of Magic. No independent replication has been published."
+  ],
+  "reproduce": "The article contains setup.sh, bench.py, app.py, requirements.txt and the three Hyperlambda endpoints in full. About 20 minutes, needing git, the .NET 10 SDK, Python 3.13, sqlite3, rsync, curl and wrk."
+}
