@@ -1,16 +1,16 @@
 {
-  "generated": "2026-11-08T06:20:58Z",
+  "generated": "2026-11-08T06:25:56Z",
   "commit": "b37a794346a1668258c944efa17b6a5116569005",
-  "open-count": 0,
+  "open-count": 1,
   "dismissed-count": 86,
-  "fixed-count": 120,
+  "fixed-count": 119,
   "open": {
     "critical": 0,
-    "high": 0,
+    "high": 1,
     "medium": 0,
     "low": 0,
     "error": 0,
-    "warning": 0,
+    "warning": 1,
     "note": 0
   }
 }
