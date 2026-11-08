@@ -17,7 +17,7 @@ namespace magic.lambda.scheduler.slots.tasks
         Description = "Removes a stored task by ID along with any of its scheduled future runs",
         ValueKind = "task-id",
         ValueDescription = "Task ID to delete",
-        ValueRequired = true,
+        ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.None)]
     public class DeleteTask : ISlotAsync
