@@ -1,6 +1,5 @@
 
 // Returns the status of the setup process back to caller.
-.description:Returns the setup status of the system
 .type:internal
 
 // Ensures user is authorized to access endpoint.

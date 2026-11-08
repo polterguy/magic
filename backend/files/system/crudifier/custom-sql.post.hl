@@ -10,7 +10,6 @@
    endpointName:string
    sql:string
    overwrite:bool
-.description:Creates a custom SQL HTTP endpoint according to the specified arguments
 .type:internal
 
 // Sanity checks invocation.

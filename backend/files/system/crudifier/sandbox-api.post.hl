@@ -41,7 +41,6 @@
    authorization:string
    policy:string
    overwrite:bool
-.description:Creates a sandboxed Hyperlambda HTTP endpoint executing caller supplied code inside a role based whitelist
 .type:internal
 
 // Sanity checking invocation.

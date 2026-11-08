@@ -3,7 +3,6 @@
 .arguments
    file:string
    create_folder:bool
-.description:Unzips the specified file in its current folder
 .type:internal
 
 // Ensures user is authorized to access endpoint.

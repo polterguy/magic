@@ -4,7 +4,6 @@
    databaseType:string
    filename:string
    content:string
-.description:Saves an SQL template file according to the specified arguments.
 .type:internal
 
 // Ensures user is authorized to access endpoint.

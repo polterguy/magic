@@ -2,7 +2,6 @@
 // Exports all leads from training requests and returns as a CSV file.
 .arguments
    type:string
-.description:Exports all leads from training requests and returns as a CSV file
 .type:internal
 
 // Verifying user is authorized to access endpoint.

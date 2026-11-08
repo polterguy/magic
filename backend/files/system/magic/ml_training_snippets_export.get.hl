@@ -5,7 +5,6 @@
    ml_training_snippets.prompt.like:string
    ml_training_snippets.uri.like:string
    ml_training_snippets.type.eq:string
-.description:Returns all filtered training snippets as a CSV file
 .type:internal
 
 // Verifying user is authorized to access endpoint.

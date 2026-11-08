@@ -17,7 +17,6 @@
    tableName:string
    fkName:string
    generate:bool
-.description:Deletes the specified foreign key from your database
 .type:internal
 
 // Ensures user is authorized to access endpoint.

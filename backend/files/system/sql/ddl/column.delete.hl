@@ -17,7 +17,6 @@
    tableName:string
    columnName:string
    generate:bool
-.description:Deletes the specified column from your database
 .type:internal
 
 // Ensures user is authorized to access endpoint.

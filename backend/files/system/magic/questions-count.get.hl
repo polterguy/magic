@@ -6,7 +6,6 @@
    questions.question.eq:string
    questions.questionnaire.like:string
    questions.questionnaire.eq:string
-.description:Endpoint counting items in your questions table in your magic database
 .type:crud-count
 
 // Verifying user is authorized to access endpoint.

@@ -21,7 +21,6 @@
    foreignTable:string
    foreignField:string
    generate:bool
-.description:Adds the specified foreign key to your specified table
 .type:internal
 
 // Ensures user is authorized to access endpoint.

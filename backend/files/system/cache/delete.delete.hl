@@ -2,7 +2,6 @@
 // Deletes the cache item with the specified id.
 .arguments
    id:string
-.description:Deletes the specified cache item
 .type:internal
 
 // Ensures user is authorized to access endpoint.

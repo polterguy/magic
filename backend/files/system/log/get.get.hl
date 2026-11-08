@@ -2,7 +2,6 @@
 // Returns the specified log item to caller.
 .arguments
    id:string
-.description:Returns the specified log item
 .type:internal
 
 // Ensures user is authorized to access endpoint.

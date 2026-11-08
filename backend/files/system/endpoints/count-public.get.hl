@@ -7,7 +7,6 @@
  * Sibling of "count.get.hl", avoiding the ~100KB full endpoint list for
  * something that only wants to display how many endpoints are public.
  */
-.description:Returns the number of endpoints in the system that require no authentication
 .type:internal
 
 // Ensures user is authorized to access endpoint.

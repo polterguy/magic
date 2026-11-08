@@ -2,7 +2,6 @@
 // Returns the named task to caller.
 .arguments
    name:string
-.description:Returns the named task to caller.
 .type:internal
 
 // Sanity checking invocation.

@@ -1,12 +1,10 @@
 
 /*
- * Template for HTTP PUT CRUD requests.
- * This file was automatically generated using Magic's CRUDifier.
+ * Updates an existing item in your roles table in your [generic|magic] database according to the specified arguments
  */
 .arguments
    name:string
    description:string
-.description:Updates an existing item in your roles table in your [generic|magic] database according to the specified arguments
 .type:crud-update
 
 // Verifying user is authorized to access endpoint.

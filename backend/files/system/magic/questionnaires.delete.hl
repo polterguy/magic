@@ -2,7 +2,6 @@
 // CRUD delete endpoint deleting one record from your questionnaires table in your magic database with name matching argument with authentication and authorisation for root,admin roles
 .arguments
    name:string
-.description:CRUD delete endpoint deleting one record from your questionnaires table in your magic database with name matching argument with authentication and authorisation for root,admin roles
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.

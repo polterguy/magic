@@ -12,7 +12,6 @@
    // Optional argument being how many URLs to return. Defaults to 10 if not specified.
    max_urls:int
 
-.description:Searches the web
 .type:public
 
 // Returns [max_urls] for the specified [query] by searching DuckDuckGo.

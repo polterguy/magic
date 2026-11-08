@@ -2,7 +2,6 @@
 // Returns all available template snippets from the backend.
 .arguments
    private:bool
-.description:Returns all available template snippets from the backend
 .type:internal
 
 // Making sure user has access to invoked endpoint.

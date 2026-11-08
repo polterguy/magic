@@ -3,7 +3,6 @@
 .arguments
    file:*
    folder:string
-.description:Saves the specified file in the specified folder
 .type:internal
 .accept:multipart/form-data
 

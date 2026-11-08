@@ -2,7 +2,6 @@
 // Deletes the specified due date instance.
 .arguments
    id:long
-.description:Deletes the task due with the specified [id].
 .type:internal
 
 // Sanity checking invocation.

@@ -28,7 +28,6 @@
    aggregate:bool
    distinct:bool
    search:bool
-.description:Creates an HTTP REST CRUD endpoint, wrapping your database and table according to the specified arguments
 .type:internal
 
 // Sanity checks invocation.

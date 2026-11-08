@@ -18,7 +18,6 @@
    ml_requests.completion.eq:string
    ml_requests.finish_reason.like:string
    ml_requests.finish_reason.eq:string
-.description:CRUD read endpoint with paging, sorting, filtering selecting records from your ml_requests table in your magic database returning id, created, type, prompt, completion, finish_reason filtering on id, created, type, prompt, completion, finish_reason with authentication and authorisation for root roles
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.

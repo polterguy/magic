@@ -9,7 +9,6 @@
 .arguments
    databaseType:string
    connectionString:string
-.description:Tests the specified connection string, making sure the backend can somehow actually connect to the database
 .type:internal
 
 // Ensures user is authorized to access endpoint.

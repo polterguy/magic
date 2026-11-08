@@ -2,7 +2,6 @@
 // Returns the Magic CAPTCHA JavaScript library to caller.
 .arguments
    v:string
-.description:Returns the Magic CAPTCHA JavaScript library to caller
 .type:public
 
 // Getting server auth secret.

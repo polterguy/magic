@@ -5,7 +5,6 @@
  * the dashboard's editor and similar consumers. Slots without a declared
  * description map to null.
  */
-.description:Returns every static slot registered in the system as a name to description map
 .type:internal
 
 // Ensures user is authorized to access endpoint.

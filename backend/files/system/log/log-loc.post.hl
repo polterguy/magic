@@ -4,7 +4,6 @@
    loc:int
    type:string
    name:string
-.description:Logs lines of code (LOC) generated
 .type:internal
 
 // Sanity checking invocation.

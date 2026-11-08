@@ -3,7 +3,6 @@
 .arguments
    name:string
    questions:string
-.description:Upsert endpoint upserting questions for questionnaire, assumes [questions] is Markdown with list items
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root

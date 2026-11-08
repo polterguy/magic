@@ -4,7 +4,6 @@
  * solve a Proof of Work CAPTCHA puzzle.
  */
 .arguments
-.description:Returns a Magic CAPTCHA challenge to caller according to arguments specified that can be used to solve a Proof of Work puzzle
 .type:public
 
 // Generating cryptographically secure random text.

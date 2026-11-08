@@ -2,7 +2,6 @@
 // Deletes the specified [folder] folder.
 .arguments
    folder:string
-.description:Deletes the specified [folder] on your server
 .type:internal
 
 // Ensures user is authorized to access endpoint.

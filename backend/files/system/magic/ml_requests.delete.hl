@@ -2,7 +2,6 @@
 // CRUD delete endpoint deleting one record from your ml_requests table in your magic database with id matching argument with authentication and authorisation for root roles
 .arguments
    id:long
-.description:CRUD delete endpoint deleting one record from your ml_requests table in your magic database with id matching argument with authentication and authorisation for root roles
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.

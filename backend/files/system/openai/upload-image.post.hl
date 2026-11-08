@@ -7,7 +7,6 @@
    file:*
 .type:internal
 .accept:multipart/form-data
-.description:Imports the specified image file as training data for the specified model
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

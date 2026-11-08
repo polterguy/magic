@@ -4,7 +4,6 @@
  * static model-catalogue.hl. Never asks OpenAI, so it works before an API key exists.
  */
 .type:internal
-.description:Returns the OpenAI models Magic supports, with context window and prices
 
 // Making sure user has access to invoked endpoint.
 auth.ticket.verify:root

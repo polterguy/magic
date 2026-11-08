@@ -5,7 +5,6 @@
    ml_training_snippets.completion.like:string
    ml_training_snippets.uri.like:string
    ml_training_snippets.type.eq:string
-.description:CRUD delete endpoint deleting multiple records from your ml_training_snippets table in your magic database matching filter authentication and authorisation for root roles
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.

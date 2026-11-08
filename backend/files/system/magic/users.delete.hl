@@ -1,11 +1,9 @@
 
 /*
- * Template for HTTP DELETE CRUD requests.
- * This file was automatically generated using Magic's CRUDifier.
+ * Deletes one item from your users table in your [generic|magic] database matching the specified argument(s)
  */
 .arguments
    username:string
-.description:Deletes one item from your users table in your [generic|magic] database matching the specified argument(s)
 .type:crud-delete
 
 // Verifying user is authorized to access endpoint.

@@ -2,7 +2,6 @@
 // Deletes the specified [file] file.
 .arguments
    file:string
-.description:Deletes the specified file on the server
 .type:internal
 
 // Ensures user is authorized to access endpoint.

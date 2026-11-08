@@ -4,7 +4,6 @@
  */
 .arguments
    slot:string
-.description:Returns maximum tokens for specified completion slot
 .type:internal
 
 // Making sure user is authenticate to access endpoint

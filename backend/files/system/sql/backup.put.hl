@@ -2,7 +2,6 @@
 // Uploads the specified backup.
 .arguments
    file:*
-.description:Uploads the specified backup
 .type:internal
 .accept:multipart/form-data
 

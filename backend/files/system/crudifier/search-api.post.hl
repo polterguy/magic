@@ -30,7 +30,6 @@
    rateWindow:int
    cacheSeconds:int
    overwrite:bool
-.description:Creates an HTTP endpoint searching the training snippets of one machine learning type by keyword, by meaning or both
 .type:internal
 
 // Sanity checking invocation.

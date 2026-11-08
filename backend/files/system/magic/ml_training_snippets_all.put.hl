@@ -8,7 +8,6 @@
    values
       type:string
       pushed:long
-.description:CRUD update endpoint updating all filtered records in your ml_training_snippets table in your magic database with authentication and authorisation for root roles
 .type:crud-update
 
 // Verifying user is authorized to access endpoint.
