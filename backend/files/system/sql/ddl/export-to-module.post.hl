@@ -11,7 +11,6 @@
    databaseType:string
    module:string
    sql:string
-.description:Exports the specified SQL to a module folder
 .type:internal
 
 // Ensures user is authorized to access endpoint.

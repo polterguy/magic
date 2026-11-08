@@ -25,7 +25,6 @@
    ml_types.twilio_account_sid.eq:string
    ml_types.system_message.like:string
    ml_types.system_message.eq:string
-.description:CRUD read endpoint with paging, sorting, filtering selecting records from your ml_types table in your magic database returning type, model, max_tokens, temperature filtering on type, model, max_tokens, temperature with authentication and authorisation for root roles
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.

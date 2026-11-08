@@ -4,7 +4,6 @@
  */
 .arguments
    file:string
-.description:Returns the specified OpenAI training PDF file to the client.
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/file

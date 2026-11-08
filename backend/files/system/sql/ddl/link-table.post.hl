@@ -28,7 +28,6 @@
             type:string
             length:int
    generate:bool
-.description:Adds the specified link table to the specified database
 .type:internal
 
 // Ensures user is authorized to access endpoint.

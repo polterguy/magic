@@ -10,7 +10,6 @@
    batch_size:int
    learning_rate_multiplier:decimal
    prompt_loss_weight:decimal
-.description:Uploads training data to your OpenAI API account, and starts training the model associated with the specified type according to the arguments specified
 .type:internal
 
 // Making sure user has access to invoked endpoint.

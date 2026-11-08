@@ -2,7 +2,6 @@
 // Exports all questionnaire data from training requests for the specified type and returns as a CSV file.
 .arguments
    type:string
-.description:Exports all questionnaire data from training requests for the specified type and returns as a CSV file
 .type:internal
 
 // Verifying user is authorized to access endpoint.

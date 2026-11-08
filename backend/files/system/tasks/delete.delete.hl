@@ -2,7 +2,6 @@
 // Deletes the named task from the task scheduler.
 .arguments
    id:string
-.description:Deletes the task with the specified [id].
 .type:internal
 
 // Ensures user is authorized to access endpoint.

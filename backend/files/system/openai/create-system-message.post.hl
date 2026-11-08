@@ -7,7 +7,6 @@
    template:string
    instruction:string
    channel:string
-.description:Creates a system message from the specified arguments
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

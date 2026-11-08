@@ -9,7 +9,6 @@
    url:string
    name:string
    type:string
-.description:Installs the specified Bazar module into the local server
 .type:internal
 
 // Ensures user is authorized to access endpoint.

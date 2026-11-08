@@ -2,7 +2,6 @@
 // Executes an existing task.
 .arguments
    id:string
-.description:Executes an existing task
 .type:internal
 
 // Ensures user is authorized to access endpoint.

@@ -1,7 +1,6 @@
 
 /*
- * Template for HTTP GET CRUD requests.
- * This file was automatically generated using Magic's CRUDifier.
+ * Returns items from your users_roles table in your [generic|magic] database according to the specified arguments
  */
 .arguments
    limit:long
@@ -11,7 +10,6 @@
    operator:string
    role.eq:string
    user.eq:string
-.description:Returns items from your users_roles table in your [generic|magic] database according to the specified arguments
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.

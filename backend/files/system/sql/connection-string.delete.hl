@@ -9,7 +9,6 @@
 .arguments
    databaseType:string
    name:string
-.description:Deletes the specified connection string
 .type:internal
 
 // Ensures user is authorized to access endpoint.

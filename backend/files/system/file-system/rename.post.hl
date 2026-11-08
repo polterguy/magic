@@ -3,7 +3,6 @@
 .arguments
    oldName:string
    newName:string
-.description:Renames the specified file or folder
 .type:internal
 
 // Ensures user is authorized to access endpoint.

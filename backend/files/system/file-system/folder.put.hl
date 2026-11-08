@@ -2,7 +2,6 @@
 // Creates the specified [folder] on your server.
 .arguments
    folder:string
-.description:Creates the specified [folder] on your server
 .type:internal
 
 // Ensures user is authorized to access endpoint.

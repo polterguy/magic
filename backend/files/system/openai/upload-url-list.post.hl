@@ -12,7 +12,6 @@
    file:*
 .type:internal
 .accept:multipart/form-data
-.description:Imports the specified CSV file as a URL set by scraping all URLs found in the specified CSV file.
 
 // Ensures user is authorized to access endpoint.
 auth.ticket.verify:root

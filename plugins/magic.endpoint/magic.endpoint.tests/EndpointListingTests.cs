@@ -66,7 +66,7 @@ namespace magic.endpoint.tests
         [Fact]
         public async Task PlainEndpoint()
         {
-            Write("plain.get.hl", @".description:Returns a greeting
+            Write("plain.get.hl", @"..:Returns a greeting
 auth.ticket.verify:root, admin
 response.headers.set
    Content-Type:text/plain
@@ -88,6 +88,18 @@ return:foo");
             var endpoint = await EndpointAsync("commented", "get");
             Assert.Equal("This is the comment", Child(endpoint, "description").Value);
             Assert.Equal("application/json", Child(endpoint, "produces").Value);
+        }
+
+        [Fact]
+        public async Task DescriptionNodeIsIgnored()
+        {
+            Write("described.get.hl", @"..:This is the comment
+.description:This is ignored
+return:foo");
+            Write("undescribed.get.hl", @".description:This is ignored
+return:foo");
+            Assert.Equal("This is the comment", Child(await EndpointAsync("described", "get"), "description").Value);
+            Assert.Null(Child(await EndpointAsync("undescribed", "get"), "description"));
         }
 
         [Fact]

@@ -2,7 +2,6 @@
 // Returns number of log items in the database.
 .arguments
    query:string
-.description:Returns the number of log items in your database
 .type:internal
 
 // Ensures user is authorized to access endpoint.

@@ -11,7 +11,6 @@
    databaseType:string
    module:string
    sql:string
-.description:Creates a migration script of the specified SQL for the specified module
 .type:internal
 
 // Ensures user is authorized to access endpoint.

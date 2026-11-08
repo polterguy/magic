@@ -6,7 +6,6 @@
  * a lot to transfer for something that only wants to display how many there
  * are - hence this sibling of "list.get.hl" that counts them server side.
  */
-.description:Returns the number of endpoints in the system
 .type:internal
 
 // Ensures user is authorized to access endpoint.

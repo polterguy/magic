@@ -3,7 +3,6 @@
 .arguments
    file:*
    folder:string
-.description:Uploads, unzips, and overwrites the specified folder
 .type:internal
 .accept:multipart/form-data
 

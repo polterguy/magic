@@ -1,6 +1,5 @@
 
 // Returns all dynamic slots in the system.
-.description:Returns all dynamic slots in the system
 .type:internal
 
 // Ensures user is authorized to access endpoint.

@@ -13,7 +13,6 @@
    name:string
    connectionString:string
    useAsDefault:bool
-.description:Adds the specified connection string, making sure the backend can somehow actually connect to the database
 .type:internal
 
 // Ensures user is authorized to access endpoint.

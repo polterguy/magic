@@ -1,6 +1,5 @@
 
 // Returns all endpoints in the system.
-.description:Returns all endpoints in the system, and their associated meta information
 .type:internal
 
 // Ensures user is authorized to access endpoint.

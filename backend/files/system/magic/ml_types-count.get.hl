@@ -33,7 +33,6 @@
    ml_types.webhook_outgoing_url.eq:string
    ml_types.system_message.like:string
    ml_types.system_message.eq:string
-.description:Endpoint counting items in your ml_types table in your magic database
 .type:crud-count
 
 // Verifying user is authorized to access endpoint.

@@ -15,7 +15,6 @@
    databaseName:string
    tableName:string
    generate:bool
-.description:Drops the specified table from the specified database
 .type:internal
 
 // Ensures user is authorized to access endpoint.

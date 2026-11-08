@@ -4,7 +4,6 @@
  */
 .arguments
    type:string
-.description:Returns the conversation starters for the specified type
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/type

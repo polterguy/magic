@@ -30,7 +30,6 @@
    nullable:bool
    indexed:bool
    generate:bool
-.description:Adds the specified column to your specified table
 .type:internal
 
 // Ensures user is authorized to access endpoint.

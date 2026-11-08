@@ -4,7 +4,6 @@
    from:string
    max:long
    query:string
-.description:Returns log items according to the optional arguments
 .type:internal
 
 // Ensures user is authorized to access endpoint.

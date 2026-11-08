@@ -185,7 +185,6 @@ namespace magic.endpoint.services.utilities
                 .Children
                 .Where(x =>
                     x.Name == ".arguments" ||
-                    x.Name == ".description" ||
                     x.Name == ".type" ||
                     x.Name == "auth.ticket.verify" ||
                     x.Name.StartsWith("validators.", StringComparison.Ordinal));

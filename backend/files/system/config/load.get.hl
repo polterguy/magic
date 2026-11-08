@@ -1,6 +1,5 @@
 
 // Loads appsettings.json, and returns its content to caller.
-.description:"Returns the system's configuration"
 .type:internal
 
 // Ensuring user is authorized to access endpoint.

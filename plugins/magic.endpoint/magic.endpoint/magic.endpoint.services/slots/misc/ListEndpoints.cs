@@ -266,18 +266,10 @@ namespace magic.endpoint.services.slots.misc
         }
 
         /*
-         * Extracts description, if existing.
+         * Extracts description, which is the file's leading comment, if existing.
          */
         static Node GetDescription(Node lambda)
         {
-            var result = lambda
-                .Children
-                .FirstOrDefault(x => x.Name == ".description")?
-                .Get<string>();
-
-            if (!string.IsNullOrEmpty(result))
-                return new Node("description", result);
-
             if (lambda.Children.FirstOrDefault()?.Name == "..")
                 return new Node("description", lambda.Children.First().GetEx<string>());
 

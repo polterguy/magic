@@ -22,7 +22,6 @@
    upload_file_only:bool
    system_message_override:string
    meta:string
-.description:@"OpenAI chat endpoint, for having conversations with OpenAI's models"
 .type:public
 
 // Executing all registered interceptor slots.

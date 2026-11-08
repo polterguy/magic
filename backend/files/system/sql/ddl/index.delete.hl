@@ -17,7 +17,6 @@
    tableName:string
    indexName:string
    generate:bool
-.description:Deletes the specified index from your database
 .type:internal
 
 // Ensures user is authorized to access endpoint.

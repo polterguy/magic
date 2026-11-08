@@ -1,6 +1,5 @@
 
 // Returns the manifests for all installed apps.
-.description:Returns the manifests for all installed apps
 .type:internal
 
 // Ensures user is authorized to access endpoint.

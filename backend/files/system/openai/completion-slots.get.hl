@@ -3,7 +3,6 @@
  * Returns all possible LLMs the system supports.
  */
 .arguments
-.description:Returns all possible LLMs the system supports
 .type:internal
 
 // Making sure user is authenticate to access endpoint

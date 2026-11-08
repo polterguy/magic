@@ -3,7 +3,6 @@
 .arguments
    folder:string
    sys:bool
-.description:List all files in the specified folder recursively matching the (optional) filter argument
 .type:internal
 
 // Ensures user is authorized to access endpoint.

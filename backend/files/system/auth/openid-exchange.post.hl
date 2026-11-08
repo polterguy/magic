@@ -19,7 +19,6 @@
    state:string
    redirect_uri:string
 
-.description:Exchanges an OpenID Connect authorization code for an application JWT token
 .type:public
 
 // Sanity checks invocation.

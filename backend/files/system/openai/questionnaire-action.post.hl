@@ -5,7 +5,6 @@
 .arguments
    action:string
    values:*
-.description:Invokes the specified [action] with the specified [values]
 
 // Sanity checking invocation.
 validators.mandatory:x:@.arguments/*/action

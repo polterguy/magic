@@ -4,7 +4,6 @@
    id:string
    description:string
    hyperlambda:string
-.description:Creates a new task according to the arguments specified.
 .type:internal
 
 // Ensures user is authorized to access endpoint.

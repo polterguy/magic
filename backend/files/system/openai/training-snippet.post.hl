@@ -16,7 +16,6 @@
    // Mandatory machine learning to to associate snippet with
    type:string
 
-.description:Creates a new training snippet
 .type:private
 
 // Verifying user is authorized to access endpoint.

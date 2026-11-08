@@ -5,7 +5,6 @@
  */
 .arguments
    databaseType:string
-.description:Returns all connection strings in your installation for the specified database type
 .type:internal
 
 // Ensures user is authorized to access endpoint.

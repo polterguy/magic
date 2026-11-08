@@ -13,7 +13,6 @@
    connectionString:string
    databaseName:string
    generate:bool
-.description:Creates a new database with the specified name
 .type:internal
 
 // Ensures user is authorized to access endpoint.

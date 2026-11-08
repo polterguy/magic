@@ -1,12 +1,10 @@
 
 /*
- * Template for HTTP POST CRUD requests.
- * This file was automatically generated using Magic's CRUDifier.
+ * Creates an item in your users_roles table in your [generic|magic] database according to the specified arguments
  */
 .arguments
    role:string
    user:string
-.description:Creates an item in your users_roles table in your [generic|magic] database according to the specified arguments
 .type:crud-create
 
 // Verifying user is authorized to access endpoint.

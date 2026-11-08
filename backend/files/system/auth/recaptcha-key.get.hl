@@ -1,6 +1,5 @@
 
 // Returns reCAPTCHA key.
-.description:This endpoint returns the reCAPTCHA key if registrations etc requires a reCAPTCHA token, otherwise it returns null or empty string.
 .type:public
 
 // Retrieving key configuration setting and returning to caller.
