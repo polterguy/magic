@@ -19,6 +19,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "github.repo.create",
+        Whitelistable = false,
         Description = "Creates a GitHub repository",
         ValueKind = "github-repo-name",
         ValueDescription = "GitHub repository name",

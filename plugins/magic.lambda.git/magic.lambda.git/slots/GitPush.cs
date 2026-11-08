@@ -15,6 +15,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.push",
+        Whitelistable = false,
         Description = "Pushes changes to a Git remote",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",

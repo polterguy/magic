@@ -15,6 +15,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.clone-repo",
+        Whitelistable = false,
         Description = "Clones a Git repository",
         ValueKind = "git-url",
         ValueDescription = "Repository URL to clone",

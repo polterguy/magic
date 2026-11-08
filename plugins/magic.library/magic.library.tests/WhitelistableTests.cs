@@ -15,7 +15,9 @@ namespace magic.library.tests
      * magic.library references every plugin, which makes it the one place the slots declaring that a [whitelist] can
      * never name them can be checked together. A new slot is whitelistable unless its author says otherwise, so
      * whoever adds a slot that hands a sandboxed caller the host itself, and whoever removes such a declaration,
-     * has to change this list on purpose. Notice, [python.execute] is also never whitelistable, but the python
+     * has to change this list on purpose. The git slots that talk to a remote take caller-supplied remotes, refspecs, branches and URLs,
+     * which git reads as options, and [--upload-pack] and [--receive-pack] run a command, so they are on this list as well
+     * as the GitHub slots, which act with the server's token. Notice, [python.execute] is also never whitelistable, but the python
      * plugin is referenced by the backend and not by magic.library, so it can't be checked here.
      */
     public class WhitelistableTests
@@ -28,6 +30,14 @@ namespace magic.library.tests
             "config.save",
             "config.section",
             "function",
+            "git.clone-repo",
+            "git.fetch",
+            "git.pull",
+            "git.push",
+            "git.remote.add",
+            "github.repo.create",
+            "github.repo.delete",
+            "github.repo.list",
             "slots.create",
             "slots.delete",
             "sqlite.load-extension",
