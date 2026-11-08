@@ -109,7 +109,7 @@ jobs:
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
             /d:sonar.javascript.lcov.reportPaths="frontend/coverage/lcov.info" \
             /d:sonar.coverage.exclusions="backend/files/**,backend/Program.cs,backend/Startup.cs,frontend/src/**/test/**,frontend/src/test/**,frontend/src/**/*.test.*" \
-            /d:sonar.exclusions="update-deployments.sh,**/*.sql,.do/**,.vscode/**,backend/files/system/openai/front.files/chat/*.css,**/*.tests/**"
+            /d:sonar.exclusions="update-deployments.sh,**/*.sql,.do/**,.vscode/**,backend/files/system/openai/front.files/chat/*.css,**/*.tests/**,benchmarks/**"
           dotnet build magic.sln -p:SonarGate=false
           dotnet test magic.sln --no-build --collect:"XPlat Code Coverage" \
             -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
