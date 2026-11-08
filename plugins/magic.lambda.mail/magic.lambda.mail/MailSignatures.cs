@@ -13,6 +13,9 @@ namespace magic.lambda.mail.signatures
     /// </summary>
     public class MailSmtpSendSignature : ISlotSignature
     {
+        internal const string Text = "string";
+        internal const string Lambda = "lambda";
+
         /// <inheritdoc />
         public IEnumerable<SlotChild> Children => new[]
         {
@@ -25,7 +28,7 @@ namespace magic.lambda.mail.signatures
             return new SlotChild
             {
                 Name = "server",
-                Type = "lambda",
+                Type = Lambda,
                 Description = "Connection settings, where anything left out comes from the configured server",
                 Required = false,
                 Mode = SlotChildMode.StructuredArguments,
@@ -34,11 +37,11 @@ namespace magic.lambda.mail.signatures
                 Projection = SlotChildProjection.StructuredTree,
                 Children =
                 {
-                    Option("host", "string", "Host name of the server", false),
+                    Option("host", Text, "Host name of the server", false),
                     Option("port", "int", "Port of the server", false),
                     Option("secure", "bool", "Whether to connect securely", false),
-                    Option("username", "string", "User name to authenticate with", false),
-                    Option("password", "string", "Password to authenticate with", false),
+                    Option("username", Text, "User name to authenticate with", false),
+                    Option("password", Text, "Password to authenticate with", false),
                 },
             };
         }
@@ -48,7 +51,7 @@ namespace magic.lambda.mail.signatures
             return new SlotChild
             {
                 Name = "message",
-                Type = "lambda",
+                Type = Lambda,
                 Kind = "mail-message",
                 Description = "Email message to send",
                 Required = true,
@@ -58,7 +61,7 @@ namespace magic.lambda.mail.signatures
                 Projection = SlotChildProjection.StructuredTree,
                 Children =
                 {
-                    Option("subject", "string", "Message subject", false, "mail-subject,text"),
+                    Option("subject", Text, "Message subject", false, "mail-subject,text"),
                     Addresses("to", true),
                     Addresses("from", false),
                     Addresses("cc", false),
@@ -90,7 +93,7 @@ namespace magic.lambda.mail.signatures
             return new SlotChild
             {
                 Name = name,
-                Type = "lambda",
+                Type = Lambda,
                 Kind = "mail-address-list",
                 Description = "Email address collection",
                 Required = required,
@@ -103,7 +106,7 @@ namespace magic.lambda.mail.signatures
                     new SlotChild
                     {
                         Name = ".",
-                        Type = "lambda",
+                        Type = Lambda,
                         Kind = "mail-address",
                         Description = "Structured address containing [email] and optional [name]",
                         Required = required,
@@ -113,8 +116,8 @@ namespace magic.lambda.mail.signatures
                         Projection = SlotChildProjection.StructuredTree,
                         Children =
                         {
-                            Option("name", "string", "Display name", false, "display-name,text"),
-                            Option("email", "string", "Email address", true, "email"),
+                            Option("name", Text, "Display name", false, "display-name,text"),
+                            Option("email", Text, "Email address", true, "email"),
                         },
                     },
                 },
@@ -149,7 +152,7 @@ namespace magic.lambda.mail.signatures
             new SlotChild
             {
                 Name = ".lambda",
-                Type = "lambda",
+                Type = MailSmtpSendSignature.Lambda,
                 Description = "Callback evaluated once per fetched message with [.message] injected",
                 Required = true,
                 Mode = SlotChildMode.ExecutableLambda,

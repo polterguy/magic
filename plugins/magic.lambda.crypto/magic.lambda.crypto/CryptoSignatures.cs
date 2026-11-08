@@ -9,6 +9,8 @@ namespace magic.lambda.crypto.signatures
 {
     public abstract class CryptoSignature : ISlotSignature
     {
+        protected const string Text = "string";
+
         public virtual IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
 
         public virtual IEnumerable<SlotConstraint> Constraints => System.Array.Empty<SlotConstraint>();
@@ -89,8 +91,8 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("filename", "string", "File to hash when no input content is supplied", kind: "file-path"),
-            Option("format", "string", "Hash output format: text, raw, or fingerprint", defaultValue: "text", kind: "hash-format"),
+            Option("filename", Text, "File to hash when no input content is supplied", kind: "file-path"),
+            Option("format", Text, "Hash output format: text, raw, or fingerprint", defaultValue: "text", kind: "hash-format"),
         };
 
         public override IEnumerable<SlotConstraint> Constraints
@@ -112,10 +114,10 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("algorithm", "string", "Hash algorithm: md5, sha1, sha256, sha384, or sha512", defaultValue: "sha256", kind: "hash-algorithm"),
-            Option("algo", "string", "Short form of [algorithm]", kind: "hash-algorithm"),
-            Option("filename", "string", "File to hash when no input content is supplied", kind: "file-path"),
-            Option("format", "string", "Hash output format: text, raw, or fingerprint", defaultValue: "text", kind: "hash-format"),
+            Option("algorithm", Text, "Hash algorithm: md5, sha1, sha256, sha384, or sha512", defaultValue: "sha256", kind: "hash-algorithm"),
+            Option("algo", Text, "Short form of [algorithm]", kind: "hash-algorithm"),
+            Option("filename", Text, "File to hash when no input content is supplied", kind: "file-path"),
+            Option("format", Text, "Hash output format: text, raw, or fingerprint", defaultValue: "text", kind: "hash-format"),
         };
     }
 
@@ -123,7 +125,7 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("hash", "string", "BCrypt password hash produced by [crypto.password.hash]", true, kind: "password-hash"),
+            Option("hash", Text, "BCrypt password hash produced by [crypto.password.hash]", true, kind: "password-hash"),
         };
     }
 
@@ -134,7 +136,7 @@ namespace magic.lambda.crypto.signatures
             Option("min", "int", "Minimum random length", defaultValue: "10"),
             Option("max", "int", "Maximum random length"),
             Raw(),
-            Option("seed", "string", "Optional deterministic seed", kind: "crypto-seed"),
+            Option("seed", Text, "Optional deterministic seed", kind: "crypto-seed"),
         };
     }
 
@@ -143,7 +145,7 @@ namespace magic.lambda.crypto.signatures
         public override IEnumerable<SlotChild> Children => new[]
         {
             Option("max", "int", "Exclusive maximum integer", defaultValue: "int.MaxValue"),
-            Option("seed", "string", "Optional deterministic seed", kind: "crypto-seed"),
+            Option("seed", Text, "Optional deterministic seed", kind: "crypto-seed"),
         };
     }
 

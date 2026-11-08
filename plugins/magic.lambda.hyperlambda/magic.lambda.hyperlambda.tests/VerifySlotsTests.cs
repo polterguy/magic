@@ -91,31 +91,38 @@ namespace magic.lambda.hyperlambda.tests
             "/*\n{slot}\n*/",
         ];
 
-        public static IEnumerable<object[]> PositionData => Positions.Select(x => new object[] { x });
+        public static TheoryData<string> PositionData => new(Positions);
 
-        public static IEnumerable<object[]> DataPositionData => DataPositions.Select(x => new object[] { x });
+        public static TheoryData<string> DataPositionData => new(DataPositions);
 
-        public static IEnumerable<object[]> SlotNames => Registered.Keys.OrderBy(x => x).Select(x => new object[] { x });
+        public static TheoryData<string> SlotNames => new(Registered.Keys.OrderBy(x => x));
 
-        public static IEnumerable<object[]> RequiredValueSlotNames => Registered
+        public static TheoryData<string> RequiredValueSlotNames => new(Registered
             .Where(x => x.Value.ValueRequired && !x.Value.ValueOrChildrenRequired)
             .OrderBy(x => x.Key)
-            .Select(x => new object[] { x.Key });
+            .Select(x => x.Key));
 
-        public static IEnumerable<object[]> ValueOrChildrenSlotNames => Registered
+        public static TheoryData<string> ValueOrChildrenSlotNames => new(Registered
             .Where(x => x.Value.ValueOrChildrenRequired)
             .OrderBy(x => x.Key)
-            .Select(x => new object[] { x.Key });
+            .Select(x => x.Key));
 
-        public static IEnumerable<object[]> SignatureSlotNames => Registered
+        public static TheoryData<string> SignatureSlotNames => new(Registered
             .Where(x => x.Value.SignatureType != null && !AcceptsAnyChild(x.Value))
             .OrderBy(x => x.Key)
-            .Select(x => new object[] { x.Key });
+            .Select(x => x.Key));
 
-        public static IEnumerable<object[]> NamedChildSlots => Registered
-            .Where(x => x.Value.SignatureType != null)
-            .OrderBy(x => x.Key)
-            .SelectMany(x => DeclaredNamedChildren(x.Value).Select(y => new object[] { x.Key, y }));
+        public static TheoryData<string, string> NamedChildSlots
+        {
+            get
+            {
+                var data = new TheoryData<string, string>();
+                foreach (var slot in Registered.Where(x => x.Value.SignatureType != null).OrderBy(x => x.Key))
+                    foreach (var child in DeclaredNamedChildren(slot.Value))
+                        data.Add(slot.Key, child);
+                return data;
+            }
+        }
 
         #region [ -- Missing slots -- ]
 
