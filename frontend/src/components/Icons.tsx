@@ -332,6 +332,31 @@ export function PaperclipIcon() {
   );
 }
 
+// A file with an arrow pointing up — saving a file on the cloudlet.
+export function FileUpIcon() {
+  return (
+    <svg {...base}>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <path d="M12 18v-6" />
+      <path d="m9 15 3-3 3 3" />
+    </svg>
+  );
+}
+
+// A large and a small sparkle — having the model look at something.
+export function SparklesIcon() {
+  return (
+    <svg {...base}>
+      <path d="M9.9 4.6 11 8.2a2 2 0 0 0 1.3 1.3l3.6 1.1-3.6 1.1a2 2 0 0 0-1.3 1.3L9.9 16.6 8.8 13a2 2 0 0 0-1.3-1.3L3.9 10.6l3.6-1.1A2 2 0 0 0 8.8 8.2z" />
+      <path d="M18 3v4" />
+      <path d="M16 5h4" />
+      <path d="M18 17v4" />
+      <path d="M16 19h4" />
+    </svg>
+  );
+}
+
 // A question mark in a circle — asking for help.
 export function HelpIcon() {
   return (

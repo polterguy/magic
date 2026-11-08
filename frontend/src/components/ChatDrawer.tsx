@@ -16,6 +16,7 @@ import { marked } from 'marked';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import {
+  backendInfo,
   ChatChunk,
   chatDownloadUrl,
   chatPrompt,
@@ -24,11 +25,20 @@ import {
   MAX_CHAT_FILES,
 } from '../lib/api';
 import { notifyChatOpsDone } from '../lib/chatOps';
+import { type AttachMode, backendIsLocal, defaultAttachMode } from '../lib/chatUpload';
 import { showError } from '../lib/errors';
 import { createSocket } from '../lib/socket';
 import { getTheme } from '../lib/theme';
 import { copyToClipboard, showToast } from '../lib/toast';
-import { CopyIcon, DownloadIcon, FilePlusIcon, PaperclipIcon } from './Icons';
+import Menu, { type MenuItem } from './designer/Menu';
+import {
+  CopyIcon,
+  DownloadIcon,
+  FilePlusIcon,
+  FileUpIcon,
+  PaperclipIcon,
+  SparklesIcon,
+} from './Icons';
 import ImageLightbox from './ImageLightbox';
 import WidgetDialog from './WidgetDialog';
 
@@ -215,13 +225,16 @@ export default function ChatDrawer(
   // Every object URL handed out, so none of them leak.
   const objectUrls = useRef<string[]>([]);
   /*
-   * On by default: analysing is the only mode that puts the file contents in
-   * front of the model. Uploading merely saves them on the cloudlet and tells
-   * the model where they landed, which is the right choice when a function is
-   * meant to read them — and the only one that works on localhost, since
-   * analysing needs a host the model can fetch from.
+   * How the files attached to the next message are treated, chosen from the
+   * Attach menu. Analysing is the only mode that puts the file contents in front
+   * of the model. Uploading merely saves them on the cloudlet and tells the model
+   * where they landed, which is the right choice when a function is meant to read
+   * them — and the only one that works on localhost, since analysing needs a host
+   * the model can fetch from. The whole message has one mode, so it only matters
+   * while files are waiting. Upload is the default on a local backend and Analyse
+   * on any other, which is the item the Attach menu opens on.
    */
-  const [analyse, setAnalyse] = useState(true);
+  const [mode, setMode] = useState<AttachMode>(() => defaultAttachMode(backendInfo().url));
   const fileRef = useRef<HTMLInputElement>(null);
   // Session id doubles as the socket channel name; null until the first send.
   const sessionRef = useRef<string | null>(null);
@@ -423,7 +436,7 @@ export default function ChatDrawer(
         prompt,
         props.userId,
         attached.length > 0 ? attached.map(entry => entry.file) : undefined,
-        attached.length > 0 && !analyse,
+        attached.length > 0 && mode === 'upload',
       );
       setExecutionId(response?.execution_id ?? null);
     } catch (err) {
@@ -461,6 +474,44 @@ export default function ChatDrawer(
     objectUrls.current.forEach(url => URL.revokeObjectURL(url));
     objectUrls.current = [];
     inputRef.current?.focus();
+  }
+
+  function attach(next: AttachMode) {
+    setMode(next);
+    fileRef.current?.click();
+  }
+
+  const switching = files.length > 0;
+  // Files waiting leave only their own mode on offer, otherwise the host decides.
+  const menuStart: AttachMode = switching ? mode : defaultAttachMode(backendInfo().url);
+  const attachItems: MenuItem[] = [
+    {
+      label: 'Upload',
+      icon: <FileUpIcon />,
+      hint:
+        switching && mode !== 'upload'
+          ? 'Remove the attached files to switch to Upload'
+          : 'Saves the files on the cloudlet and tells the model where they landed. Works anywhere.',
+      disabled: switching && mode !== 'upload',
+      onClick: () => attach('upload'),
+    },
+    {
+      label: 'Analyse',
+      icon: <SparklesIcon />,
+      hint: analyseHint(),
+      disabled: backendIsLocal(backendInfo().url) || (switching && mode !== 'analyse'),
+      onClick: () => attach('analyse'),
+    },
+  ];
+
+  function analyseHint() {
+    if (backendIsLocal(backendInfo().url)) {
+      return 'Needs a backend the model can reach, so not localhost. Use Upload instead.';
+    }
+    if (switching && mode !== 'analyse') {
+      return 'Remove the attached files to switch to Analyse';
+    }
+    return 'Exposes the files over HTTP for the model to read.';
   }
 
   return (
@@ -567,24 +618,9 @@ export default function ChatDrawer(
               />
             ))}
           </div>
-          <div className="chat-mode" role="group" aria-label="How the model should treat the files">
-            <button
-              type="button"
-              className={analyse ? '' : 'active'}
-              title="Saves the files on the cloudlet and tells the model where they landed. Works anywhere."
-              onClick={() => setAnalyse(false)}
-            >
-              Upload
-            </button>
-            <button
-              type="button"
-              className={analyse ? 'active' : ''}
-              title="Exposes the files over HTTP for the model to read — needs a publicly reachable backend, so not localhost."
-              onClick={() => setAnalyse(true)}
-            >
-              Analyse
-            </button>
-          </div>
+          <span className="chat-mode" title="How the model treats these files">
+            {mode === 'upload' ? 'Upload' : 'Analyse'}
+          </span>
         </div>
       )}
       <div className="chat-composer">
@@ -598,14 +634,6 @@ export default function ChatDrawer(
             event.target.value = '';
           }}
         />
-        <button
-          className="btn btn-secondary chat-attach"
-          title={'Attach files (max ' + MAX_CHAT_FILES + ')'}
-          disabled={streaming || files.length >= MAX_CHAT_FILES}
-          onClick={() => fileRef.current?.click()}
-        >
-          <PaperclipIcon />
-        </button>
         <textarea
           ref={inputRef}
           placeholder="Ask the default model…"
@@ -619,15 +647,29 @@ export default function ChatDrawer(
             }
           }}
         />
-        {streaming ? (
-          <button className="btn btn-secondary" onClick={stop} disabled={!executionId}>
-            Stop
-          </button>
-        ) : (
-          <button className="btn" onClick={send} disabled={!input.trim()}>
-            Send
-          </button>
-        )}
+        <div className="chat-composer-bar">
+          <Menu
+            title={'Attach files (max ' + MAX_CHAT_FILES + ')'}
+            className="btn btn-secondary chat-attach"
+            items={attachItems}
+            initialActive={menuStart === 'upload' ? 0 : 1}
+            placement="top"
+            align="start"
+            disabled={streaming || files.length >= MAX_CHAT_FILES}
+          >
+            Attach
+            <PaperclipIcon />
+          </Menu>
+          {streaming ? (
+            <button className="btn btn-secondary chat-send" onClick={stop} disabled={!executionId}>
+              Stop
+            </button>
+          ) : (
+            <button className="btn chat-send" onClick={send} disabled={!input.trim()}>
+              Send
+            </button>
+          )}
+        </div>
       </div>
       {zoomed?.url && (
         <ImageLightbox

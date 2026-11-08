@@ -31,12 +31,27 @@ export interface MenuItem {
   checked?: boolean;
   disabled?: boolean;
   hint?: string;
+  // Shown in place of the tick column, for a menu of actions rather than options.
+  icon?: ReactNode;
   onClick?: () => void;
 }
 
-export default function Menu(
-  props: Readonly<{ items: MenuItem[]; title: string; className?: string }>,
-) {
+interface MenuProps {
+  items: MenuItem[];
+  title: string;
+  className?: string;
+  disabled?: boolean;
+  // The item the keyboard starts on when the trigger opens the menu, so Enter takes it.
+  initialActive?: number;
+  // What the trigger shows, which is the overflow icon unless told otherwise.
+  children?: ReactNode;
+  // Opens upwards, for a trigger that sits at the bottom of the screen.
+  placement?: 'bottom' | 'top';
+  // Which edge of the trigger the menu lines up with.
+  align?: 'end' | 'start';
+}
+
+export default function Menu(props: Readonly<MenuProps>) {
   const [open, setOpen] = useState(false);
   // The item the keyboard is on, or -1 for none.
   const [active, setActive] = useState(-1);
@@ -148,8 +163,12 @@ export default function Menu(
             role="menu"
             style={{
               position: 'fixed',
-              top: rect.bottom + 4,
-              right: window.innerWidth - rect.right,
+              ...(props.placement === 'top'
+                ? { bottom: window.innerHeight - rect.top + 4 }
+                : { top: rect.bottom + 4 }),
+              ...(props.align === 'start'
+                ? { left: rect.left }
+                : { right: window.innerWidth - rect.right }),
             }}
           >
             {props.items.map((item, index) =>
@@ -170,9 +189,15 @@ export default function Menu(
                   onMouseDown={event => event.preventDefault()}
                   onClick={() => choose(item)}
                 >
-                  <span className="select-check" aria-hidden="true">
-                    {item.checked ? '✓' : ''}
-                  </span>
+                  {item.icon ? (
+                    <span className="select-icon" aria-hidden="true">
+                      {item.icon}
+                    </span>
+                  ) : (
+                    <span className="select-check" aria-hidden="true">
+                      {item.checked ? '✓' : ''}
+                    </span>
+                  )}
                   <span className="select-option-label">{item.label}</span>
                 </li>
               ) : (
@@ -192,6 +217,7 @@ export default function Menu(
         ref={triggerRef}
         className={props.className ?? 'btn btn-secondary btn-small'}
         title={props.title}
+        disabled={props.disabled}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
@@ -199,13 +225,12 @@ export default function Menu(
         onKeyDown={onKeyDown}
         onClick={() => {
           place();
-          if (open) {
-            setActive(-1);
-          }
+          const start = props.initialActive;
+          setActive(!open && start !== undefined && selectable(start) ? start : -1);
           setOpen(!open);
         }}
       >
-        <MenuIcon />
+        {props.children ?? <MenuIcon />}
       </button>
       {menu}
     </>

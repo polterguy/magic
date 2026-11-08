@@ -828,6 +828,19 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   flex: 1;
 }
 
+/* An action's icon, in the column a toggle's tick would use. */
+.select-icon {
+  display: inline-flex;
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+}
+
+.select-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
 /* ---------- Date / time picker ---------- */
 
 .dtp {
@@ -1820,47 +1833,45 @@ tr.clickable:hover td {
 
 /* Upload versus analyse — one switch for the whole message. */
 .chat-mode {
-  display: inline-flex;
   flex-shrink: 0;
   margin-left: auto;
   border: 1px solid var(--border);
   border-radius: 999px;
-  overflow: hidden;
-}
-
-.chat-mode button {
-  border: none;
-  background: transparent;
-  color: var(--muted);
+  background: var(--accent-soft);
+  color: var(--text);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   padding: 5px 14px;
-  cursor: pointer;
-}
-
-.chat-mode button.active {
-  background: var(--accent-soft);
-  color: var(--text);
 }
 
 .chat-composer {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: flex-end;
   padding: 12px 16px;
   border-top: 1px solid var(--border);
+}
+
+.chat-composer textarea {
+  resize: none;
+}
+
+.chat-composer-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .chat-attach {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  padding: 9px 12px;
+  gap: 8px;
+  padding: 9px 14px;
 }
 
-.chat-composer textarea {
-  flex: 1;
-  resize: none;
+.chat-send {
+  margin-left: auto;
 }
 
 @media (max-width: 720px) {

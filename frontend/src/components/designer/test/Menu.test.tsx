@@ -177,3 +177,100 @@ describe('Menu keyboard', () => {
     expect(activeOf(trigger)).toBeNull();
   });
 });
+
+describe('Menu options', () => {
+  const items: MenuItem[] = [
+    { label: 'Upload', icon: <svg data-testid="upload-icon" />, onClick: vi.fn() },
+    { label: 'Show hidden', checked: true, onClick: vi.fn() },
+  ];
+
+  it('shows the overflow icon on the trigger unless given content', () => {
+    const { rerender } = render(<Menu items={items} title="More actions" />);
+    expect(screen.getByTitle('More actions')).not.toHaveTextContent('Attach');
+    rerender(
+      <Menu items={items} title="More actions">
+        Attach
+      </Menu>,
+    );
+    expect(screen.getByTitle('More actions')).toHaveTextContent('Attach');
+  });
+
+  it('shows an item icon in place of the tick column', async () => {
+    render(<Menu items={items} title="More actions" />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    const upload = screen.getByRole('menuitem', { name: 'Upload' });
+    expect(upload.querySelector('.select-icon')).toContainElement(
+      screen.getByTestId('upload-icon'),
+    );
+    expect(upload.querySelector('.select-check')).toBeNull();
+    expect(
+      screen.getByRole('menuitem', { name: /Show hidden/ }).querySelector('.select-check'),
+    ).not.toBeNull();
+  });
+
+  it('opens below and right-aligned by default, and above and left-aligned on request', async () => {
+    const { unmount } = render(<Menu items={items} title="More actions" />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    expect(screen.getByRole('menu').style.top).toBe('4px');
+    expect(screen.getByRole('menu').style.right).not.toBe('');
+    expect(screen.getByRole('menu').style.bottom).toBe('');
+    unmount();
+
+    render(<Menu items={items} title="More actions" placement="top" align="start" />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    const menu = screen.getByRole('menu');
+    expect(menu.style.bottom).toBe(window.innerHeight + 4 + 'px');
+    expect(menu.style.left).toBe('0px');
+    expect(menu.style.top).toBe('');
+    expect(menu.style.right).toBe('');
+  });
+
+  it('cannot be opened while disabled', async () => {
+    render(<Menu items={items} title="More actions" disabled />);
+    const trigger = screen.getByRole('button', { name: 'More actions' });
+    expect(trigger).toBeDisabled();
+    await userEvent.click(trigger);
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
+});
+
+describe('Menu initialActive', () => {
+  const items: MenuItem[] = [
+    { label: 'Upload', onClick: vi.fn() },
+    { label: 'Analyse', onClick: vi.fn() },
+    { label: 'Locked', disabled: true, onClick: vi.fn() },
+  ];
+
+  it('opens with that item active, and Enter takes it', async () => {
+    const onClick = vi.fn();
+    render(
+      <Menu
+        items={[items[0], { label: 'Analyse', onClick }]}
+        title="More actions"
+        initialActive={1}
+      />,
+    );
+    const trigger = screen.getByRole('button', { name: 'More actions' });
+    await userEvent.click(trigger);
+    expect(screen.getByRole('menuitem', { name: 'Analyse' })).toHaveClass('active');
+    expect(screen.getByRole('menuitem', { name: 'Upload' })).not.toHaveClass('active');
+    expect(activeOf(trigger)).not.toBeNull();
+    await userEvent.keyboard('{Enter}');
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('starts on nothing when that item is disabled, and when it is not given', async () => {
+    const { unmount } = render(<Menu items={items} title="More actions" initialActive={2} />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    expect(screen.getAllByRole('menuitem').some(item => item.classList.contains('active'))).toBe(
+      false,
+    );
+    unmount();
+
+    render(<Menu items={items} title="More actions" />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    expect(screen.getAllByRole('menuitem').some(item => item.classList.contains('active'))).toBe(
+      false,
+    );
+  });
+});
