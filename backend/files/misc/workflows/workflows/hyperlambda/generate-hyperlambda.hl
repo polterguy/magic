@@ -61,7 +61,7 @@ if
    eq:x:@.arguments/*/filename
       .:
    .lambda
-      remove-nodex:x:@.arguments/*/filename
+      remove-nodes:x:@.arguments/*/filename
 
 try
    add:x:./*/http.post/*/payload

@@ -17,7 +17,7 @@ slots.create:magic.io.file.load-recursively
 
    // Lists all files in current [folder], and adds up the result to return value.
    io.file.list-recursively:x:@.arguments/0
-      show-hidden:x:@.arguments/*/.hidden-files
+      display-hidden:x:@.arguments/*/.hidden-files
 
    /*
     * Iterating through all files listed above, and loads them,
