@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 AINIRO.IO, Ltd. See the attached LICENSE file for details. For license inquiries you can send an email to team@ainiro.io
  */
 
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using magic.node.extensions;
@@ -21,7 +22,8 @@ namespace magic.lambda.threading.tests
         [Fact]
         public async Task ZeroDelayIsAccepted()
         {
-            await Common.EvaluateAsync("sleep:int:0");
+            var lambda = await Common.EvaluateAsync("sleep:int:0");
+            Assert.Equal(0, lambda.Children.First().Value);
         }
     }
 }
