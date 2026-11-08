@@ -44,9 +44,17 @@ namespace magic.lambda.image.slots
             // Resizing image.
             await Utilities.TransformImageAsync(input, signaler, (img) =>
             {
-                if (left + right >= img.Width)
+                /*
+                 * Margins can only remove pixels, since a negative one would make the result larger than
+                 * the source, and its size would be chosen by the caller.
+                 */
+                if (left < 0 || top < 0 || right < 0 || bottom < 0)
+                    throw new HyperlambdaException("[left], [top], [right] and [bottom] cannot be negative");
+
+                // Notice, summing as long, since two large margins would wrap around to a negative int.
+                if ((long)left + right >= img.Width)
                     throw new HyperlambdaException("[left] + [right] is larger than image width");
-                if (top + bottom >= img.Height)
+                if ((long)top + bottom >= img.Height)
                     throw new HyperlambdaException("[top] + [bottom] is larger than image height");
                 var result = new SKBitmap(img.Width - left - right, img.Height - top - bottom, img.ColorType, img.AlphaType);
                 using (var canvas = new SKCanvas(result))
