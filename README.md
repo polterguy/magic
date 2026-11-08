@@ -73,11 +73,9 @@ Install the `mcp` plugin, point Claude Code, Cowork, or OpenAI's Codex at your c
 
 ## Performance
 
-On a Chinook read endpoint (10 rows per request, pooled SQLite connections, 128 concurrent connections, measured with [wrk](https://github.com/wg/wrk)), Hyperlambda served **64,664 requests per second**, **3.7× the throughput of FastAPI with 4 workers** (17,686) and **14× that of FastAPI with 1 worker** (4,564). The 99th percentile latency was **5.6 ms**, against 77.4 ms and 83.9 ms for FastAPI. Hyperlambda used about 9 cores and FastAPI with 4 workers about 4.6, so this is a measurement of throughput on one machine, not of efficiency per core.
+On a Chinook read endpoint (10 rows per request, pooled SQLite connections, 128 concurrent connections, measured with [wrk](https://github.com/wg/wrk)), Hyperlambda served **64,664 requests per second**, **3.7× the throughput of FastAPI with 4 workers** (17,686) and **14× that of FastAPI with 1 worker** (4,564). The 99th percentile latency was **5.6 ms**, against 77.4 ms and 83.9 ms for FastAPI. Hyperlambda used about 9 cores and FastAPI with 4 workers about 4.6, so this is a measurement of throughput on one machine, not of efficiency per core: per core the gap is 1.8×. It needs connection pooling (`Pooling=True`), which is not the shipped default, it was run by the author on one laptop, and it has not been independently replicated. The conditions, the caveats and the results as JSON are at [hyperlambda.dev/benchmark](https://hyperlambda.dev/benchmark), and the scripts to reproduce it are in [`benchmarks/fastapi`](benchmarks/fastapi).
 
 ![Chinook Artist read: Hyperlambda versus FastAPI](images/hyperlambda-vs-fastapi.png)
-
-Our earlier measurements put Hyperlambda around **50× faster than LangChain**, and **100–1,000× faster than** graphical workflow tools such as n8n, Zapier and Make, because it runs a real compiled runtime instead of interpreting logic out of JSON, XML or YAML. Hyperlambda solutions are broadly on par with C# and Entity Framework on both performance and scalability.
 
 ## The dashboard
 
