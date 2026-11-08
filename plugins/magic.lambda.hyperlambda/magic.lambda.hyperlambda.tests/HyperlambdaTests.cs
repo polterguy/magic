@@ -779,7 +779,7 @@ strings.concat
    missing.dot.slot", "missing.dot.slot");
         }
 
-        static void AssertInvalidInvocation(
+        internal static void AssertInvalidInvocation(
             Node result,
             string slot,
             string detail,
@@ -793,14 +793,14 @@ strings.concat
                 x.Get<string>().Contains(detail, StringComparison.Ordinal));
         }
 
-        static Node VerifySlots(string hyperlambda)
+        internal static Node VerifySlots(string hyperlambda)
         {
             var node = new Node("", hyperlambda);
             Common.GetSignaler().Signal("hyperlambda.verify-slots", node);
             return node;
         }
 
-        static void AssertMissingSlots(string hyperlambda, params string[] expected)
+        internal static void AssertMissingSlots(string hyperlambda, params string[] expected)
         {
             var result = VerifySlots(hyperlambda);
             Assert.False(result.Get<bool>());
