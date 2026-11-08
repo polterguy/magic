@@ -1,9 +1,9 @@
 {
-  "generated": "2026-11-08T11:44:17Z",
-  "commit": "9453866282bf1f50d332e1878eea648086822b90",
+  "generated": "2026-11-08T11:53:12Z",
+  "commit": "214806f5a8084e75367c70ad0b89118d8f7e113f",
   "open-count": 0,
   "dismissed-count": 87,
-  "fixed-count": 119,
+  "fixed-count": 120,
   "open": {
     "critical": 0,
     "high": 0,
