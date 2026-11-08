@@ -197,6 +197,26 @@ namespace magic.lambda.image.tests
             Assert.Equal("[top] + [bottom] is larger than image height", exception.Message);
         }
 
+        [Theory]
+        [InlineData("left")]
+        [InlineData("top")]
+        [InlineData("right")]
+        [InlineData("bottom")]
+        public async Task CropRejectsNegativeMargins(string name)
+        {
+            var exception = await Assert.ThrowsAsync<HyperlambdaException>(
+                () => Run("image.crop", new MemoryStream(Qr()), (name, -50000)));
+            Assert.Equal("[left], [top], [right] and [bottom] cannot be negative", exception.Message);
+        }
+
+        [Fact]
+        public async Task CropRejectsMarginsWhoseSumOverflows()
+        {
+            var exception = await Assert.ThrowsAsync<HyperlambdaException>(
+                () => Run("image.crop", new MemoryStream(Qr()), ("left", 1500000000), ("right", 1500000000)));
+            Assert.Equal("[left] + [right] is larger than image width", exception.Message);
+        }
+
         [Fact]
         public async Task SizeReturnsWidthAndHeight()
         {
