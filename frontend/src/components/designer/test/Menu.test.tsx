@@ -177,3 +177,59 @@ describe('Menu keyboard', () => {
     expect(activeOf(trigger)).toBeNull();
   });
 });
+
+describe('Menu options', () => {
+  const items: MenuItem[] = [
+    { label: 'Upload', icon: <svg data-testid="upload-icon" />, onClick: vi.fn() },
+    { label: 'Show hidden', checked: true, onClick: vi.fn() },
+  ];
+
+  it('shows the overflow icon on the trigger unless given content', () => {
+    const { rerender } = render(<Menu items={items} title="More actions" />);
+    expect(screen.getByTitle('More actions')).not.toHaveTextContent('Attach');
+    rerender(
+      <Menu items={items} title="More actions">
+        Attach
+      </Menu>,
+    );
+    expect(screen.getByTitle('More actions')).toHaveTextContent('Attach');
+  });
+
+  it('shows an item icon in place of the tick column', async () => {
+    render(<Menu items={items} title="More actions" />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    const upload = screen.getByRole('menuitem', { name: 'Upload' });
+    expect(upload.querySelector('.select-icon')).toContainElement(
+      screen.getByTestId('upload-icon'),
+    );
+    expect(upload.querySelector('.select-check')).toBeNull();
+    expect(
+      screen.getByRole('menuitem', { name: /Show hidden/ }).querySelector('.select-check'),
+    ).not.toBeNull();
+  });
+
+  it('opens below and right-aligned by default, and above and left-aligned on request', async () => {
+    const { unmount } = render(<Menu items={items} title="More actions" />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    expect(screen.getByRole('menu').style.top).toBe('4px');
+    expect(screen.getByRole('menu').style.right).not.toBe('');
+    expect(screen.getByRole('menu').style.bottom).toBe('');
+    unmount();
+
+    render(<Menu items={items} title="More actions" placement="top" align="start" />);
+    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
+    const menu = screen.getByRole('menu');
+    expect(menu.style.bottom).toBe(window.innerHeight + 4 + 'px');
+    expect(menu.style.left).toBe('0px');
+    expect(menu.style.top).toBe('');
+    expect(menu.style.right).toBe('');
+  });
+
+  it('cannot be opened while disabled', async () => {
+    render(<Menu items={items} title="More actions" disabled />);
+    const trigger = screen.getByRole('button', { name: 'More actions' });
+    expect(trigger).toBeDisabled();
+    await userEvent.click(trigger);
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
+});
