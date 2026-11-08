@@ -31,6 +31,7 @@ namespace magic.lambda.logging.services
         const string MySql = "mysql";
         const string Sqlite = "sqlite";
         const string DatabasePlaceholder = "{database}";
+        const int MaxQueryItems = 1000;
 
         readonly ISignaler _signaler;
         readonly LogSettings _setting;
@@ -132,6 +133,7 @@ namespace magic.lambda.logging.services
         /// <inheritdoc/>
         public Task<IEnumerable<LogItem>> QueryAsync(int max, object fromId, string content = null)
         {
+            EnsureMaxInRange(max);
             return WithCommandAsync<IEnumerable<LogItem>>(async command =>
             {
                 var builder = new StringBuilder();
@@ -274,6 +276,15 @@ namespace magic.lambda.logging.services
         #endregion
 
         #region [ -- Private helper methods and properties -- ]
+
+        /*
+         * SQLite treats a negative limit as no limit at all, while other databases fail on it.
+         */
+        static void EnsureMaxInRange(int max)
+        {
+            if (max < 1 || max > MaxQueryItems)
+                throw new HyperlambdaException($"[max] must be between 1 and {MaxQueryItems}");
+        }
 
         /*
          * Opens a connection to the log database, hands a command on it to the body, and closes everything again afterwards.

@@ -41,6 +41,8 @@ namespace magic.lambda.strings.replace
             var start = input.Children.First().GetEx<int>();
             var end = input.Children.Skip(1).FirstOrDefault()?.GetEx<int>() ?? -1;
             var source = input.GetEx<string>();
+            if (start < 0 || start > source.Length || end < -1)
+                throw new HyperlambdaException("[strings.substring] offset must be between 0 and the length of the string, and length cannot be less than -1");
             if (end == -1)
                 input.Value = source.Substring(start);
             else

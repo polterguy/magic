@@ -238,6 +238,16 @@ namespace magic.lambda.logging.tests
         }
 
         [Theory]
+        [InlineData(-5)]
+        [InlineData(0)]
+        [InlineData(1001)]
+        [InlineData(int.MaxValue)]
+        public async Task OutOfRangeMaxIsRejected(int max)
+        {
+            await Assert.ThrowsAsync<HyperlambdaException>(() => _logger.QueryAsync(max, null));
+        }
+
+        [Theory]
         [InlineData("[1,2,3]", "not a JSON object")]
         [InlineData("{\"a\":{\"b\":1}}", "not a simple value")]
         public async Task MalformedMetaIsReportedWhenRead(string meta, string complaint)

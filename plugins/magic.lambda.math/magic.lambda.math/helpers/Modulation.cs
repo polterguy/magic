@@ -2,8 +2,10 @@
  * Magic Cloud, copyright (c) 2023 AINIRO.IO, Ltd. See the attached LICENSE file for details. For license inquiries you can send an email to team@ainiro.io
  */
 
+using System;
 using System.Threading.Tasks;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.math.utilities;
 
@@ -31,9 +33,16 @@ namespace magic.lambda.math.helpers
         {
             await signaler.SignalAsync("eval", input, skipWhitelist: true);
             dynamic sum = Utilities.GetBase(input);
-            foreach (var idx in Utilities.AllButBase(input))
+            try
             {
-                sum %= idx;
+                foreach (var idx in Utilities.AllButBase(input))
+                {
+                    sum %= idx;
+                }
+            }
+            catch (DivideByZeroException err)
+            {
+                throw new HyperlambdaException("Cannot take the remainder of a division by zero", err);
             }
             input.Clear();
             input.Value = sum;

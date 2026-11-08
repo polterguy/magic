@@ -39,6 +39,8 @@ namespace magic.lambda.math.scalars
             {
                 // One argument, returning random integer between 0 and argument.
                 var max = input.Children.First().GetEx<int>();
+                if (max < 0)
+                    throw new HyperlambdaException("[math.random] [max] cannot be negative");
                 input.Value = System.Random.Shared.Next(max);
             }
             else
@@ -47,6 +49,8 @@ namespace magic.lambda.math.scalars
                 // Notice, we expect arguments to be named 'min' and 'max', but we don't enforce it, we just take first and second.
                 var min = input.Children.First().GetEx<int>();
                 var max = input.Children.Skip(1).First().GetEx<int>();
+                if (min > max)
+                    throw new HyperlambdaException("[math.random] [min] cannot be greater than [max]");
                 input.Value = System.Random.Shared.Next(min, max);
             }
         }
