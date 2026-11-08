@@ -444,6 +444,7 @@ namespace magic.data.common.signatures
             SqlCreateSignature.Where(),
             Group(),
             Order(),
+            Direction(),
             Limit(),
             Offset(),
         };
@@ -720,6 +721,7 @@ namespace magic.data.common.signatures
             SqlCreateSignature.Where(),
             Group(),
             Order(),
+            Direction(),
             Limit(),
             Offset(),
         };
@@ -849,6 +851,7 @@ namespace magic.data.common.signatures
             SqlCreateSignature.Where(),
             Group(),
             Order(),
+            Direction(),
             Limit(),
             Offset(),
         };

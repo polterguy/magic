@@ -18,7 +18,7 @@ namespace magic.lambda.hyperlambda
         Description = "Transforms a lambda hierarchy into Hyperlambda",
         ValueKind = "lambda-tree,node-list",
         ValueDescription = "Expression selecting the lambda hierarchy to transform",
-        ValueRequired = true,
+        ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "hyperlambda,text",

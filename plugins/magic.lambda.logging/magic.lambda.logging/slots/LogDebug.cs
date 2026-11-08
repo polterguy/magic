@@ -18,7 +18,7 @@ namespace magic.lambda.logging.slots
         Description = "Writes a debug-level log entry; useful during development for high-volume diagnostic detail",
         ValueKind = "log-message,text",
         ValueDescription = "Log message to write",
-        ValueRequired = true,
+        ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "log-entry-id",

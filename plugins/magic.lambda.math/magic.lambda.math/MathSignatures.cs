@@ -71,6 +71,18 @@ namespace magic.lambda.math.signatures
                 Role = SlotChildRole.Option,
                 Projection = SlotChildProjection.Value,
             },
+            new SlotChild
+            {
+                Name = "*",
+                Type = "number",
+                Description = "The first child is the step whatever its name, and it is evaluated, so it can be the result of a slot",
+                Required = false,
+                Mode = SlotChildMode.ValueOrExpression,
+                Cardinality = SlotChildCardinality.ZeroOrOne,
+                Role = SlotChildRole.Option,
+                Evaluation = SlotChildEvaluation.EvalSelf,
+                Projection = SlotChildProjection.Value,
+            },
         };
     }
 

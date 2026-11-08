@@ -25,29 +25,30 @@ namespace magic.lambda.json.tests
         }
 
         [Fact]
-        public void Lambda2JsonSignatureDocumentsExpressionAndFormatOnly()
+        public void Lambda2JsonSignatureDocumentsExpressionOrChildrenAndFormat()
         {
             var lambda = Common.Evaluate(@"slot.signature:lambda2json");
             var result = lambda.Children.First();
             var input = result.Children.First(x => x.Name == "input");
             var children = result.Children.First(x => x.Name == "children");
 
-            Assert.True(input.Children.First(x => x.Name == "required").GetEx<bool>());
+            Assert.False(input.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Equal(SlotValueMode.Expression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Contains(children.Children, x => x.Name == "format");
-            Assert.DoesNotContain(children.Children, x => x.Name == "*");
+            Assert.Contains(children.Children, x => x.Name == "*");
         }
 
         [Fact]
-        public void Lambda2YamlSignatureDocumentsExpressionOnly()
+        public void Lambda2YamlSignatureDocumentsExpressionOrChildren()
         {
             var lambda = Common.Evaluate(@"slot.signature:lambda2yaml");
             var result = lambda.Children.First();
             var input = result.Children.First(x => x.Name == "input");
+            var children = result.Children.First(x => x.Name == "children");
 
-            Assert.True(input.Children.First(x => x.Name == "required").GetEx<bool>());
+            Assert.False(input.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Equal(SlotValueMode.Expression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
-            Assert.DoesNotContain(result.Children, x => x.Name == "children");
+            Assert.Contains(children.Children, x => x.Name == "*");
         }
 
         [Fact]

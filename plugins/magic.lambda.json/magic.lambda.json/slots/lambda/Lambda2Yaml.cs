@@ -20,7 +20,7 @@ namespace magic.lambda.json.slots.lambda
         Description = "Transforms a lambda hierarchy into YAML",
         ValueKind = "node-list,lambda-tree",
         ValueDescription = "Expression selecting the nodes (rows) to transform",
-        ValueRequired = true,
+        ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "yaml,text",

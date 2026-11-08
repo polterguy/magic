@@ -464,7 +464,6 @@ slots.create:magic.ai.url.scrape
 
                   // Oops, type does not exist.
                   throw:Machine learning type does not exist.
-                     type:x:@.arguments/*/type
 
             /*
              * Deleting all training snippets matching type, URL, and meta.

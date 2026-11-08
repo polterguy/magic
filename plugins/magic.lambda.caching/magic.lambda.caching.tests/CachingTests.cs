@@ -287,7 +287,7 @@ cache.list:foo");
         }
 
         [Fact]
-        public void CacheListSignatureDoesNotDocumentDuplicateFilterChild()
+        public void CacheListSignatureDocumentsFilterOffsetAndLimit()
         {
             var lambda = Common.Evaluate(@"slot.signature:cache.list");
             var result = lambda.Children.First();
@@ -295,7 +295,7 @@ cache.list:foo");
 
             Assert.Contains(children.Children, x => x.Name == "offset");
             Assert.Contains(children.Children, x => x.Name == "limit");
-            Assert.DoesNotContain(children.Children, x => x.Name == "filter");
+            Assert.Contains(children.Children, x => x.Name == "filter");
         }
 
         [Fact]

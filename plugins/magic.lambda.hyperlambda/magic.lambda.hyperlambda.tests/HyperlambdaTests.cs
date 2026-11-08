@@ -37,7 +37,7 @@ namespace magic.lambda.hyperlambda.tests
         }
 
         [Fact]
-        public void Lambda2HyperSignatureDocumentsExpressionAndCommentsOnly()
+        public void Lambda2HyperSignatureDocumentsExpressionOrChildrenAndComments()
         {
             var lambda = Common.Evaluate(@"slot.signature:lambda2hyper");
             var result = lambda.Children.First();
@@ -45,10 +45,10 @@ namespace magic.lambda.hyperlambda.tests
             var children = result.Children.First(x => x.Name == "children");
             var comments = children.Children.First(x => x.Name == "comments");
 
-            Assert.True(input.Children.First(x => x.Name == "required").GetEx<bool>());
+            Assert.False(input.Children.First(x => x.Name == "required").GetEx<bool>());
             Assert.Equal(SlotValueMode.Expression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal("Whether generated Hyperlambda should include comments", comments.Children.First(x => x.Name == "description").GetEx<string>());
-            Assert.DoesNotContain(children.Children, x => x.Name == "*");
+            Assert.Contains(children.Children, x => x.Name == "*");
         }
 
         [Fact]
@@ -779,7 +779,7 @@ strings.concat
    missing.dot.slot", "missing.dot.slot");
         }
 
-        static void AssertInvalidInvocation(
+        internal static void AssertInvalidInvocation(
             Node result,
             string slot,
             string detail,
@@ -793,14 +793,14 @@ strings.concat
                 x.Get<string>().Contains(detail, StringComparison.Ordinal));
         }
 
-        static Node VerifySlots(string hyperlambda)
+        internal static Node VerifySlots(string hyperlambda)
         {
             var node = new Node("", hyperlambda);
             Common.GetSignaler().Signal("hyperlambda.verify-slots", node);
             return node;
         }
 
-        static void AssertMissingSlots(string hyperlambda, params string[] expected)
+        internal static void AssertMissingSlots(string hyperlambda, params string[] expected)
         {
             var result = VerifySlots(hyperlambda);
             Assert.False(result.Get<bool>());

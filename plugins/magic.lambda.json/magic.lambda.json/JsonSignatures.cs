@@ -48,7 +48,23 @@ namespace magic.lambda.json.signatures
                 Role = SlotChildRole.Option,
                 Projection = SlotChildProjection.Value,
             },
+            SourceNodes(),
         };
+
+        internal static SlotChild SourceNodes()
+        {
+            return new SlotChild
+            {
+                Name = "*",
+                Type = "lambda",
+                Description = "Nodes to convert, used when the slot has no value",
+                Required = false,
+                Mode = SlotChildMode.SourceLambda,
+                Cardinality = SlotChildCardinality.ZeroOrMore,
+                Role = SlotChildRole.Payload,
+                Projection = SlotChildProjection.Self,
+            };
+        }
 
         internal static SlotChild RootNode(string description)
         {
@@ -68,7 +84,10 @@ namespace magic.lambda.json.signatures
 
     public class Lambda2YamlSignature : ISlotSignature
     {
-        public IEnumerable<SlotChild> Children => System.Array.Empty<SlotChild>();
+        public IEnumerable<SlotChild> Children => new[]
+        {
+            Lambda2JsonSignature.SourceNodes(),
+        };
     }
 
     public class Lambda2JsonRawSignature : ISlotSignature

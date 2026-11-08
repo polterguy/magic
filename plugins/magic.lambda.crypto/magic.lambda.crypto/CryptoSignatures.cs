@@ -113,6 +113,7 @@ namespace magic.lambda.crypto.signatures
         public override IEnumerable<SlotChild> Children => new[]
         {
             Option("algorithm", "string", "Hash algorithm: md5, sha1, sha256, sha384, or sha512", defaultValue: "sha256", kind: "hash-algorithm"),
+            Option("algo", "string", "Short form of [algorithm]", kind: "hash-algorithm"),
             Option("filename", "string", "File to hash when no input content is supplied", kind: "file-path"),
             Option("format", "string", "Hash output format: text, raw, or fingerprint", defaultValue: "text", kind: "hash-format"),
         };
@@ -177,7 +178,7 @@ namespace magic.lambda.crypto.signatures
     {
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("verification-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Public key used to verify the signature", true, kind: "crypto-public-key"),
+            Option("public-key",CryptoSignaturesLiterals.TypeStringOrBytes, "Public key used to verify the signature", true, kind: "crypto-public-key"),
             Raw(),
         };
     }
@@ -187,7 +188,7 @@ namespace magic.lambda.crypto.signatures
         public override IEnumerable<SlotChild> Children => new[]
         {
             Option("decryption-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Private decryption key", true, kind: "crypto-private-key"),
-            Option("verification-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Public key used to verify the signature", true, kind: "crypto-public-key"),
+            Option("verify-key", CryptoSignaturesLiterals.TypeStringOrBytes, "Public key used to verify the signature, if the package is signed", false, kind: "crypto-public-key"),
             Raw(),
         };
     }

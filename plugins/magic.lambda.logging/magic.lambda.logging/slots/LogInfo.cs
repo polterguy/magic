@@ -18,7 +18,7 @@ namespace magic.lambda.logging.slots
         Description = "Writes an informational log entry capturing routine, non-error events of interest",
         ValueKind = "log-message,text",
         ValueDescription = "Log message to write",
-        ValueRequired = true,
+        ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "log-entry-id",

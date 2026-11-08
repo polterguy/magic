@@ -94,6 +94,7 @@ namespace magic.lambda.caching.signatures
         /// <inheritdoc />
         public override IEnumerable<SlotChild> Children => new[]
         {
+            Option("filter", "string", "Optional cache key filter", kind: "cache-key"),
             Option("offset", "int", "Result offset", "0"),
             Option("limit", "int", "Maximum number of items to return", "10"),
         };

@@ -20,7 +20,7 @@ namespace magic.lambda.logging.slots
         Description = "Writes a fatal-level log entry; reserve for unrecoverable failures that warrant immediate attention",
         ValueKind = "log-message,text",
         ValueDescription = "Log message to write",
-        ValueRequired = true,
+        ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "log-entry-id",

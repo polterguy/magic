@@ -20,7 +20,7 @@ namespace magic.lambda.logging.slots
         Description = "Writes an error-level log entry; use for caught exceptions or failed operations that need follow-up",
         ValueKind = "log-message,text",
         ValueDescription = "Log message to write",
-        ValueRequired = true,
+        ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "log-entry-id",
