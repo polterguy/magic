@@ -6,7 +6,7 @@ The scripts behind the benchmark published at <https://hyperlambda.dev/benchmark
 
 On a pooled SQLite read of ten rows at 128 connections, Hyperlambda served 64,664 requests per second against 17,686
 for FastAPI on four workers (3.7x) and 4,564 on one worker (14x). Per CPU core the gap is 1.8x, because Hyperlambda
-used about twice the cores. Run by the author, on one laptop, and not independently replicated.
+used about twice the cores. Measured mostly by Claude, an AI model, under the supervision of Magic's author, on one laptop, and not independently replicated.
 
 ## Run it
 
@@ -39,7 +39,9 @@ runs just those cells. `bench.py` fetches every endpoint from every server and a
 - It needs SQLite connection pooling. Magic's shipped default is `Pooling=False`, and then the same read does 4,232
   requests per second, which is slower than four-worker FastAPI with per-request connections (6,245).
 - On a trivial string-concatenation endpoint FastAPI is more efficient per core.
-- Only 1, 4 and 11 FastAPI workers were tried. Eleven was slower than four, and that was not investigated.
+- Four FastAPI workers was the best Python configuration found, and more was slower (11 workers did 10,778 requests per
+  second at 128 connections). Runs with 6, 8 and 10 workers also gave lower throughput but were not recorded, so only
+  1, 4 and 11 are published. Why more workers are slower was not investigated.
 - One read of ten rows, on localhost, with no authentication, writes or joins, and `wrk` on the same machine.
 
 If your numbers disagree, please publish them and send them to thomas@ainiro.io.

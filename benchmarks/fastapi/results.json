@@ -57,8 +57,8 @@
     "Hyperlambda used about twice the cores of four-worker FastAPI, so 3.7 times is a whole-machine figure and 1.8 times is the per-core figure.",
     "With Magic's shipped Pooling=False the same read does 4,232 requests per second, which is slower than four-worker FastAPI with per-request connections (6,245).",
     "On a trivial string-concatenation endpoint FastAPI is more efficient per core.",
-    "Only 1, 4 and 11 FastAPI workers were tried; 11 was slower than 4 and was not investigated.",
-    "Run by the author of Magic. No independent replication has been published."
+    "Four FastAPI workers was the best Python configuration found. More workers were slower: 11 workers did 10,778 requests per second at 128 connections. Runs with 6, 8 and 10 workers also gave lower throughput but were not recorded, so only 1, 4 and 11 are published. Why more workers are slower was not investigated.",
+    "Measured mostly by Claude, an AI model, under the supervision of Magic's author, who wrote Magic. No independent replication has been published."
   ],
   "reproduce": "The article contains setup.sh, bench.py, app.py, requirements.txt and the three Hyperlambda endpoints in full. About 20 minutes, needing git, the .NET 10 SDK, Python 3.13, sqlite3, rsync, curl and wrk."
 }
