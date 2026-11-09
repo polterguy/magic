@@ -17,6 +17,7 @@ namespace magic.lambda.scheduler.slots.tasks
     /// </summary>
     [Slot(
         Name = "tasks.get",
+        Whitelistable = false,
         Description = "Looks up a single stored task by ID and returns its body, description, and next due date",
         ValueKind = "task-id",
         ValueDescription = "Task ID to retrieve",
