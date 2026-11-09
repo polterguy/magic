@@ -20,7 +20,7 @@ namespace magic.data.common.slots
         ScopeDescription = "Requires an open database connection created by [data.connect]",
         ProvidesScope = "data.transaction",
         ScopeRequiresStrictExit = true,
-        SignatureType = typeof(global::magic.data.common.signatures.DataTransactionSignature))]
+        SignatureType = typeof(global::magic.data.common.signatures.DataTransactionCreateSignature))]
     public class CreateTransaction : DataSlotBase
     {
         /// <summary>

@@ -20,7 +20,8 @@ namespace magic.lambda.odbc
         RequiresScope = "odbc.connection",
         ScopeDescription = "Requires an open ODBC connection created by [odbc.connect]",
         ProvidesScope = "odbc.transaction",
-        ScopeRequiresStrictExit = true)]
+        ScopeRequiresStrictExit = true,
+        SignatureType = typeof(global::magic.data.common.signatures.DbConnectSignature))]
     public class CreateTransaction : ISlotAsync
     {
         /// <summary>

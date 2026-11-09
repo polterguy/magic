@@ -20,7 +20,8 @@ namespace magic.lambda.pgsql
         RequiresScope = "pgsql.connection",
         ScopeDescription = "Requires an open PostgreSQL connection created by [pgsql.connect]",
         ProvidesScope = "pgsql.transaction",
-        ScopeRequiresStrictExit = true)]
+        ScopeRequiresStrictExit = true,
+        SignatureType = typeof(global::magic.data.common.signatures.DbConnectSignature))]
     public class CreateTransaction : ISlotAsync
     {
         /// <summary>
