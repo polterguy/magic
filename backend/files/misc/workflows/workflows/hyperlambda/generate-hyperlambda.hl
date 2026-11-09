@@ -12,6 +12,10 @@
  * access restriction. Do NOT write Hyperlambda yourself or describe node structure or indentation;
  * the generator produces correct syntax. One focused task per call; overly complex multi-step
  * instructions degrade output.
+ *
+ * To understand Hyperlambda, and which capabilities you've got, and slots you can use, you can
+ * fetch https://hyperlambda.dev/magic/modules/docs/slots that returns JSON declarations of
+ * every single slot, its arguments, etc.
  */
 .arguments
 

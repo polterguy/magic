@@ -58,38 +58,37 @@ namespace magic.lambda.crypto.slots.misc
             }
             else
             {
-                /*
-                 * Mapping random bytes onto our alphabet using rejection sampling. A plain
-                 * modulo would bias the first (256 % alphabet length) characters, since those
-                 * residues occur for one more byte value than the rest, measurably skewing the
-                 * distribution of any secret generated through this slot. We therefore discard
-                 * byte values in the final partial block so that every character is equally likely,
-                 * drawing fresh bytes in batches until the requested length has been produced.
-                 */
-                var limit = 256 - (256 % _alphabet.Length);
-                var result = new StringBuilder(length);
-                var block = bytes;
-                while (true)
-                {
-                    foreach (var b in block)
-                    {
-                        if (b < limit)
-                        {
-                            result.Append(_alphabet[b % _alphabet.Length]);
-                            if (result.Length == length)
-                                break;
-                        }
-                    }
-                    if (result.Length == length)
-                        break;
-                    block = new byte[length - result.Length];
-                    SharedRandom.NextBytes(block);
-                }
-                input.Value = result.ToString();
+                input.Value = ToAlphabet(bytes);
             }
 
             // House cleaning.
             input.Clear();
+        }
+
+        /*
+         * Mapping random bytes onto our alphabet using rejection sampling. A plain
+         * modulo would bias the first (256 % alphabet length) characters, since those
+         * residues occur for one more byte value than the rest, measurably skewing the
+         * distribution of any secret generated through this slot. We therefore discard
+         * byte values in the final partial block so that every character is equally likely,
+         * drawing fresh bytes in batches until the requested length has been produced.
+         */
+        static string ToAlphabet(byte[] bytes)
+        {
+            var length = bytes.Length;
+            var limit = 256 - (256 % _alphabet.Length);
+            var result = new StringBuilder(length);
+            var block = bytes;
+            while (result.Length < length)
+            {
+                foreach (var b in block.Where(x => x < limit).Take(length - result.Length))
+                {
+                    result.Append(_alphabet[b % _alphabet.Length]);
+                }
+                block = new byte[length - result.Length];
+                SharedRandom.NextBytes(block);
+            }
+            return result.ToString();
         }
     }
 }
