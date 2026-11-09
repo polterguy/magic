@@ -15,9 +15,9 @@ namespace magic.library.tests
      * magic.library references every plugin, which makes it the one place the slots declaring that a [whitelist] can
      * never name them can be checked together. A new slot is whitelistable unless its author says otherwise, so
      * whoever adds a slot that hands a sandboxed caller the host itself, and whoever removes such a declaration,
-     * has to change this list on purpose. The git slots that talk to a remote take caller-supplied remotes, refspecs, branches and URLs,
-     * which git reads as options, and [--upload-pack] and [--receive-pack] run a command, so they are on this list as well
-     * as the GitHub slots, which act with the server's token. The slots that read the server's log can't be granted either, since a log can carry stack traces and context
+     * has to change this list on purpose. Every git slot is on it, since the ones that talk to a remote take caller-supplied remotes, refspecs, branches and URLs,
+     * which git reads as options, and [--upload-pack] and [--receive-pack] run a command, and the rest read or rewrite any repository the server can reach,
+     * and so are the GitHub slots, which act with the server's token. The slots that read the server's log can't be granted either, since a log can carry stack traces and context
      * that only the host should see. The [io] slots that change the file system are on it too, since a sandbox that has to
      * write a file executes a file that does, pinned by name, rather than being handed the ability itself. Notice, [python.execute] is also never whitelistable, but the python
      * plugin is referenced by the backend and not by magic.library, so it can't be checked here.
@@ -32,11 +32,21 @@ namespace magic.library.tests
             "config.save",
             "config.section",
             "function",
+            "git.branch.list",
+            "git.checkout",
             "git.clone-repo",
+            "git.commit",
+            "git.create-repo",
+            "git.delete-repo",
+            "git.diff",
             "git.fetch",
+            "git.log",
+            "git.merge",
             "git.pull",
             "git.push",
             "git.remote.add",
+            "git.restore",
+            "git.status",
             "github.repo.create",
             "github.repo.delete",
             "github.repo.list",

@@ -16,6 +16,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.commit",
+        Whitelistable = false,
         Description = "Stages all changes in the repo and creates a new commit with the supplied message and author",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",

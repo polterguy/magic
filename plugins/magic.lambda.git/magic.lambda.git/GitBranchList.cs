@@ -17,6 +17,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.branch.list",
+        Whitelistable = false,
         Description = "Returns every branch in the local repository, marking which one is currently checked out",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",
