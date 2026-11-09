@@ -17,25 +17,6 @@ export const IMAGE_OPS: { key: string; label: string }[] = [
  * because it exposes secrets, and identity is read-only - never minting a ticket.
  */
 export const TIER2_WIZARDS: Record<string, WizardSpec> = {
-  tasks: {
-    label: 'Tasks',
-    title: 'Scheduled tasks',
-    defaults: ['read'],
-    groups: [
-      {
-        key: 'read',
-        label: 'Read',
-        title: 'List and read tasks',
-        slots: ['tasks.list', 'tasks.get', 'tasks.count'],
-      },
-      {
-        key: 'manage',
-        label: 'Delete',
-        title: 'Delete tasks and their schedules',
-        slots: ['tasks.delete', 'tasks.schedule.delete'],
-      },
-    ],
-  },
   cache: {
     label: 'Cache',
     title: 'Caching',

@@ -19,7 +19,7 @@ namespace magic.library.tests
      * which git reads as options, and [--upload-pack] and [--receive-pack] run a command, and the rest read or rewrite any repository the server can reach,
      * and so are the GitHub slots, which act with the server's token. The slots that read the server's log can't be granted either, since a log can carry stack traces and context
      * that only the host should see. The [io] slots that change the file system are on it too, since a sandbox that has to
-     * write a file executes a file that does, pinned by name, rather than being handed the ability itself. Notice, [python.execute] is also never whitelistable, but the python
+     * write a file executes a file that does, pinned by name, rather than being handed the ability itself. The same goes for every [tasks] slot, since a task is code the server runs later. Notice, [python.execute] is also never whitelistable, but the python
      * plugin is referenced by the backend and not by magic.library, so it can't be checked here.
      */
     public class WhitelistableTests
@@ -76,9 +76,14 @@ namespace magic.library.tests
             "system.plugin.list",
             "system.plugin.load",
             "system.plugin.unload",
+            "tasks.count",
             "tasks.create",
+            "tasks.delete",
             "tasks.execute",
+            "tasks.get",
+            "tasks.list",
             "tasks.schedule",
+            "tasks.schedule.delete",
             "tasks.update",
         ];
 
