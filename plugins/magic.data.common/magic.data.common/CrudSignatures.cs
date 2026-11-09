@@ -834,6 +834,20 @@ namespace magic.data.common.signatures
     }
 
     /// <summary>
+    /// Child signature for [data.transaction.create], which unlike [data.transaction.commit] and
+    /// [data.transaction.rollback] holds the code to run inside the transaction.
+    /// </summary>
+    public class DataTransactionCreateSignature : DbConnectSignature
+    {
+        /// <inheritdoc />
+        public override IEnumerable<SlotChild> Children => new[]
+        {
+            DataCreateSignature.DatabaseType(),
+            Body(),
+        };
+    }
+
+    /// <summary>
     /// Child signature for dispatching data read slots.
     /// </summary>
     public class DataReadSignature : DbReadSignature

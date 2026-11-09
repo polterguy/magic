@@ -126,6 +126,33 @@ namespace magic.library.tests
 
         #endregion
 
+        #region [ -- The code inside a transaction -- ]
+
+        [Theory]
+        [InlineData("data.connect:[generic|magic]\n   data.transaction.create\n      data.select:select 1\n      data.execute:delete from foo\n      data.transaction.commit")]
+        [InlineData("data.connect:[generic|magic]\n   data.transaction.create\n      database-type:sqlite\n      data.execute:delete from foo\n      data.transaction.rollback")]
+        [InlineData("sqlite.connect:[generic|magic]\n   sqlite.transaction.create\n      sqlite.execute:delete from foo\n      sqlite.transaction.commit")]
+        public void CodeInsideATransactionIsAccepted(string snippet)
+        {
+            AssertValid(snippet);
+        }
+
+        [Theory]
+        [InlineData("data")]
+        [InlineData("sqlite")]
+        [InlineData("mysql")]
+        [InlineData("pgsql")]
+        [InlineData("mssql")]
+        [InlineData("odbc")]
+        public void MissingSlotInsideATransactionIsRejected(string adapter)
+        {
+            var result = Verify($"{adapter}.transaction.create\n   no.such.slot");
+            Assert.False(result.Get<bool>());
+            Assert.Contains(result.Children, x => x.Get<string>().Contains("no.such.slot", StringComparison.Ordinal));
+        }
+
+        #endregion
+
         #region [ -- Private helpers -- ]
 
         /*

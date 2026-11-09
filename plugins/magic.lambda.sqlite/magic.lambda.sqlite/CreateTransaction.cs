@@ -20,7 +20,8 @@ namespace magic.lambda.sqlite
         RequiresScope = "sqlite.connection",
         ScopeDescription = "Requires an open SQLite connection created by [sqlite.connect]",
         ProvidesScope = "sqlite.transaction",
-        ScopeRequiresStrictExit = true)]
+        ScopeRequiresStrictExit = true,
+        SignatureType = typeof(global::magic.data.common.signatures.DbConnectSignature))]
     public class CreateTransaction : ISlotAsync
     {
         /// <summary>
