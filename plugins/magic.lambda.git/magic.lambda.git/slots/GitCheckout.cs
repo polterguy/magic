@@ -16,6 +16,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.checkout",
+        Whitelistable = false,
         Description = "Checks out a Git branch",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",

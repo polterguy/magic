@@ -16,6 +16,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.diff",
+        Whitelistable = false,
         Description = "Returns the unified diff between the working tree and HEAD, for the whole repository or one file",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",

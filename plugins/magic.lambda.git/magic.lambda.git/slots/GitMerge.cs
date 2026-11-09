@@ -16,6 +16,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.merge",
+        Whitelistable = false,
         Description = "Merges a Git branch into the current branch, or aborts a merge that stopped on conflicts",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",

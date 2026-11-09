@@ -17,6 +17,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.log",
+        Whitelistable = false,
         Description = "Lists commits, one per line as side, hash, author, age and subject separated by tabs, where side is '<' for a commit only on the left of a range and '>' for one only on the right",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",

@@ -17,6 +17,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.status",
+        Whitelistable = false,
         Description = "Returns Git repository status",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",

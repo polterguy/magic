@@ -15,6 +15,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.create-repo",
+        Whitelistable = false,
         Description = "Initializes a Git repository",
         ValueKind = "folder-path",
         ValueDescription = "Folder path to initialize as a repository",
