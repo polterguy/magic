@@ -6,9 +6,7 @@
  * verdict is machine checked - the code is parsed, and every slot referenced in executable position
  * is checked against its registered existence, primary-value, and child-argument metadata.
  *
- * This is the only admissible way to conclude that Hyperlambda is broken. Hyperlambda resembles no
- * other programming language, and reading it is not sufficient grounds for reporting a defect. If
- * this function returns valid, treat the code as correct and do not report bugs in it. To find out
+ * If this function returns valid, treat the code as correct and do not report bugs in it. To find out
  * whether it does the right thing, execute it and read the log instead of reading the code.
  */
 .arguments
