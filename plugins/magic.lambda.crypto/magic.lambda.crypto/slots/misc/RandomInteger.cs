@@ -35,19 +35,37 @@ namespace magic.lambda.crypto.slots.misc
             var max = input.Children.FirstOrDefault(x => x.Name == "max")?.GetEx<int>() ?? int.MaxValue;
             var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
 
+            // Sanity checking invocation, since [max] is the exclusive upper bound and must be positive.
+            if (max <= 0)
+                throw new HyperlambdaException("[max] must be a positive integer for [crypto.random.int]");
+
             // Creating a new CSRNG, seeding it if caller provided a [seed].
             var rnd = new SecureRandom();
             if (!string.IsNullOrEmpty(seed))
                 rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
 
-            // Retrieving a random number of bytes, between min/max values provided by caller.
+            /*
+             * Returning a uniformly distributed integer in the range [0, max).
+             *
+             * We read 4 random bytes as an unsigned 32 bit value and apply rejection sampling,
+             * discarding the small unusable tail so that values of [max] that do not divide 2^32
+             * evenly are not biased towards the lower end of the range. We deliberately avoid
+             * Math.Abs(BitConverter.ToInt32(...)), which throws an OverflowException on the one
+             * input where the random bytes decode to int.MinValue.
+             */
+            var upperBound = (uint)max;
+            var reject = (uint)(((ulong)uint.MaxValue + 1UL) % upperBound);
             var bytes = new byte[4];
-            rnd.NextBytes(bytes);
+            uint value;
+            do
+            {
+                rnd.NextBytes(bytes);
+                value = BitConverter.ToUInt32(bytes, 0);
+            }
+            while (value < reject);
 
             // Assigning result to caller.
-            var result = BitConverter.ToInt32(bytes, 0);
-            result = Math.Abs(result);
-            input.Value = result % max;
+            input.Value = (int)(value % upperBound);
 
             // House cleaning.
             input.Clear();
