@@ -79,7 +79,9 @@ namespace magic.lambda.io.file
             {
                 // Loading file and converting its content to Hyperlambda.
                 var filename = input.GetEx<string>();
-                var hyperlambda = await _service.LoadAsync(_rootResolver.AbsolutePath(filename));
+                var path = _rootResolver.AbsolutePath(filename);
+                Utilities.EnsureNotConfig(signaler, _rootResolver, input.Name, path);
+                var hyperlambda = await _service.LoadAsync(path);
 
                 // Creating and parametrising our lambda object from argument + file's Hyperlambda content.
                 var lambda = GetLambda(input, hyperlambda, filename);
