@@ -727,6 +727,33 @@ select prompt, max(completion) as completion
                                     .
                                        description:x:@.dp/#/-
 
+                  /*
+                   * The arguments the function's file always validates as mandatory are the ones whose
+                   * validators.mandatory line sits at the start of a line in the file. They are listed as
+                   * [required] in the parameters, so the model knows to supply them.
+                   */
+                  .required
+                  strings.split:x:@load-file
+                     .:"\nvalidators.mandatory:x:@.arguments/*/"
+                  remove-nodes:x:@strings.split/0
+                  for-each:x:@strings.split/*
+                     strings.split:x:@.dp/#
+                        .:"\n"
+                     strings.replace:x:@strings.split/0
+                        .:"\r"
+                     unwrap:x:+/*/*
+                     add:x:@.required
+                        .
+                           .:x:@strings.replace
+                  if
+                     exists:x:@.required/*
+                     .lambda
+                        add:x:@.parameters
+                           .
+                              required
+                        add:x:@.parameters/*/required
+                           get-nodes:x:@.required/*
+
                   unwrap:x:+/*/*/*
                   add:x:@.tools
                      .
