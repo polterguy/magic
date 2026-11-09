@@ -15,6 +15,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.click",
+        Whitelistable = false,
         Description = "Clicks an element on the page",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

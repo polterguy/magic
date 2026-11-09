@@ -18,6 +18,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.fill",
+        Whitelistable = false,
         Description = "Fills an input element with text",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

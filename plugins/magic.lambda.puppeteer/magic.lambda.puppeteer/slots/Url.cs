@@ -12,6 +12,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.url",
+        Whitelistable = false,
         Description = "Returns the current page URL",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

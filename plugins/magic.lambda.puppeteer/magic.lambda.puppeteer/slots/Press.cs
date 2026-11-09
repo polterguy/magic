@@ -16,6 +16,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.press",
+        Whitelistable = false,
         Description = "Sends a key press to the page",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

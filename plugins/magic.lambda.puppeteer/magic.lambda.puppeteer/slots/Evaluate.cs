@@ -16,6 +16,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.evaluate",
+        Whitelistable = false,
         Description = "Evaluates JavaScript in the page context",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

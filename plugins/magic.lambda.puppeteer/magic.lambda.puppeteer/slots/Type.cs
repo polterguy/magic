@@ -17,6 +17,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.type",
+        Whitelistable = false,
         Description = "Types text into an element",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

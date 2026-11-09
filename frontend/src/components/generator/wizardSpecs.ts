@@ -161,38 +161,4 @@ export const TIER2_WIZARDS: Record<string, WizardSpec> = {
       },
     ],
   },
-  puppeteer: {
-    label: 'Browser',
-    title: 'Headless browser',
-    defaults: ['browse'],
-    groups: [
-      {
-        key: 'browse',
-        label: 'Browse & read',
-        slots: [
-          'puppeteer.connect',
-          'puppeteer.goto',
-          'puppeteer.close',
-          'puppeteer.url',
-          'puppeteer.title',
-          'puppeteer.content',
-          'puppeteer.evaluate',
-          'puppeteer.screenshot',
-          'puppeteer.wait-for-selector',
-          'puppeteer.wait-for-url',
-        ],
-      },
-      {
-        key: 'interact',
-        label: 'Interact',
-        slots: [
-          'puppeteer.click',
-          'puppeteer.type',
-          'puppeteer.fill',
-          'puppeteer.select',
-          'puppeteer.press',
-        ],
-      },
-    ],
-  },
 };

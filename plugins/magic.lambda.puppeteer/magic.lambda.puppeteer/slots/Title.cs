@@ -13,6 +13,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.title",
+        Whitelistable = false,
         Description = "Returns the current page title",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

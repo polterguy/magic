@@ -18,6 +18,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.screenshot",
+        Whitelistable = false,
         Description = "Captures a screenshot of the page",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

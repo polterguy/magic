@@ -16,6 +16,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.goto",
+        Whitelistable = false,
         Description = "Navigates the current page to a URL",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",
