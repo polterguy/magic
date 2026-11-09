@@ -16,6 +16,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.restore",
+        Whitelistable = false,
         Description = "Discards uncommitted changes by restoring one file from HEAD, or resets the whole working tree to HEAD including removal of untracked files",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path",

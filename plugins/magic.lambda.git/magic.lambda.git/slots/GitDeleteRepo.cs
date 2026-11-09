@@ -14,6 +14,7 @@ namespace magic.lambda.git
     /// </summary>
     [Slot(
         Name = "git.delete-repo",
+        Whitelistable = false,
         Description = "Deletes a local Git repository",
         ValueKind = "git-repo-path",
         ValueDescription = "Repository path to delete",
