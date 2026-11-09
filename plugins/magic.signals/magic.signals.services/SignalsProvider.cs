@@ -18,6 +18,7 @@ namespace magic.signals.services
         readonly Dictionary<string, Type> _slots = new Dictionary<string, Type>();
         readonly Dictionary<string, StatelessSlot> _stateless = new Dictionary<string, StatelessSlot>();
         readonly HashSet<string> _notWhitelistable = new HashSet<string>();
+        readonly HashSet<string> _pinRequired = new HashSet<string>();
 
         /// <summary>
         /// Creates an instance of the signals provider class. Notice, this should normally be associated
@@ -47,7 +48,7 @@ namespace magic.signals.services
                     _slots[idxAtr] = idxType;
                     RegisterStateless(idxAtr, idxType);
                 }
-                RegisterNotWhitelistable(idxType);
+                RegisterWhitelistRules(idxType);
             }
         }
 
@@ -61,6 +62,11 @@ namespace magic.signals.services
         public bool IsWhitelistable(string name)
         {
             return !_notWhitelistable.Contains(name);
+        }
+
+        public bool RequiresPin(string name)
+        {
+            return _pinRequired.Contains(name);
         }
 
         /// <summary>
@@ -113,7 +119,7 @@ namespace magic.signals.services
                 _slots[idxAtr] = type;
                 RegisterStateless(idxAtr, type);
             }
-            RegisterNotWhitelistable(type);
+            RegisterWhitelistRules(type);
         }
 
         /// <summary>
@@ -127,6 +133,7 @@ namespace magic.signals.services
                 _slots.Remove(idxAtr);
                 _stateless.Remove(idxAtr);
                 _notWhitelistable.Remove(idxAtr);
+                _pinRequired.Remove(idxAtr);
             }
         }
 
@@ -135,14 +142,17 @@ namespace magic.signals.services
         #region [ -- Private helper methods -- ]
 
         /*
-         * Remembers the slots of the type declaring that a [whitelist] can never name them, which
-         * is read from the attribute here, once, and never while invoking slots.
+         * Remembers the slots of the type declaring that a [whitelist] can never name them, or only
+         * with a pin, which is read from the attribute here, once, and never while invoking slots.
          */
-        void RegisterNotWhitelistable(Type type)
+        void RegisterWhitelistRules(Type type)
         {
-            foreach (var idx in type.GetCustomAttributes(true).OfType<SlotAttribute>().Where(x => !x.Whitelistable))
+            foreach (var idx in type.GetCustomAttributes(true).OfType<SlotAttribute>())
             {
-                _notWhitelistable.Add(idx.Name);
+                if (!idx.Whitelistable)
+                    _notWhitelistable.Add(idx.Name);
+                if (idx.PinRequired)
+                    _pinRequired.Add(idx.Name);
             }
         }
 

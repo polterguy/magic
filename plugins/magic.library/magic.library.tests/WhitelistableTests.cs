@@ -77,8 +77,20 @@ namespace magic.library.tests
             "tasks.update",
         ];
 
-        [Fact]
-        public void OnlyTheExpectedSlotsDeclareThemselvesNotWhitelistable()
+        /*
+         * The slots a [whitelist] can only name with a pin, since their argument is their security boundary and an
+         * entry without a value grants them for every argument.
+         */
+        static readonly string[] MustBePinned =
+        [
+            "http.delete",
+            "http.get",
+            "http.patch",
+            "http.post",
+            "http.put",
+        ];
+
+        static string[] Declaring(Func<SlotAttribute, bool> declares)
         {
             // Plugins are only loaded once something needs them, so loading them all, the way Magic does at startup.
             var loaded = AppDomain.CurrentDomain.GetAssemblies().Select(x => x.Location).ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -86,15 +98,26 @@ namespace magic.library.tests
             {
                 Assembly.LoadFrom(idx);
             }
-            var actual = AppDomain.CurrentDomain.GetAssemblies()
+            return AppDomain.CurrentDomain.GetAssemblies()
                 .Where(x => !x.IsDynamic && x.FullName.StartsWith("magic.", StringComparison.Ordinal) && !x.FullName.Contains(".tests"))
                 .SelectMany(x => x.GetTypes())
                 .SelectMany(x => x.GetCustomAttributes(true).OfType<SlotAttribute>())
-                .Where(x => !x.Whitelistable)
+                .Where(declares)
                 .Select(x => x.Name)
                 .Order(StringComparer.Ordinal)
                 .ToArray();
-            Assert.Equal(NeverWhitelistable, actual);
+        }
+
+        [Fact]
+        public void OnlyTheExpectedSlotsDeclareThemselvesNotWhitelistable()
+        {
+            Assert.Equal(NeverWhitelistable, Declaring(x => !x.Whitelistable));
+        }
+
+        [Fact]
+        public void OnlyTheExpectedSlotsDeclareThatTheyMustBePinned()
+        {
+            Assert.Equal(MustBePinned, Declaring(x => x.PinRequired));
         }
     }
 }

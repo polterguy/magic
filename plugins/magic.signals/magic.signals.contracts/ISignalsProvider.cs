@@ -50,6 +50,15 @@ namespace magic.signals.contracts
         bool IsWhitelistable(string name) => true;
 
         /// <summary>
+        /// Returns true if a [whitelist] must pin the slot with the specified name to a value in its
+        /// vocabulary, which is declared on the slot with <see cref="SlotAttribute.PinRequired"/>. A name
+        /// that is not a registered slot, such as a dynamic slot, needs no pin.
+        /// </summary>
+        /// <param name="name">Slot name to check.</param>
+        /// <returns>True if the slot declares that a vocabulary entry for it must carry a pin.</returns>
+        bool RequiresPin(string name) => false;
+
+        /// <summary>
         /// Returns all keys, implying names registered for your signals
         /// implementation.
         /// </summary>
