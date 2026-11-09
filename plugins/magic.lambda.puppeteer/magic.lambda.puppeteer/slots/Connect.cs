@@ -21,6 +21,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.connect",
+        Whitelistable = false,
         Description = "Creates or reuses a Puppeteer browser session",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "puppeteer-session",

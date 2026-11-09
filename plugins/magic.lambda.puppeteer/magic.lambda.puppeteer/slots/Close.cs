@@ -13,6 +13,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.close",
+        Whitelistable = false,
         Description = "Closes a Puppeteer session",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

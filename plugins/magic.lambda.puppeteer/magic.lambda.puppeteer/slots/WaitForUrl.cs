@@ -15,6 +15,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.wait-for-url",
+        Whitelistable = false,
         Description = "Waits for the page URL to match a condition",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

@@ -15,6 +15,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.select",
+        Whitelistable = false,
         Description = "Selects an option in a select element",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

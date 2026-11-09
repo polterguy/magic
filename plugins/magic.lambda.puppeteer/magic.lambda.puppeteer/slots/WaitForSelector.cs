@@ -14,6 +14,7 @@ namespace magic.lambda.puppeteer
     /// </summary>
     [Slot(
         Name = "puppeteer.wait-for-selector",
+        Whitelistable = false,
         Description = "Waits for a selector to appear",
         ValueKind = "puppeteer-session",
         RequiresScope = "puppeteer-session",

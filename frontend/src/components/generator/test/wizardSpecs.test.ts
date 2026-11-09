@@ -59,11 +59,11 @@ describe('TIER2_WIZARDS', () => {
     }
   });
 
-  it('offers no task slot, since none of them can be whitelisted', () => {
+  it('offers no task or puppeteer slot, since none of them can be whitelisted', () => {
     const slots = Object.values(TIER2_WIZARDS).flatMap(spec =>
       spec.groups.flatMap(group => group.slots),
     );
-    expect(slots.filter(slot => slot.startsWith('tasks.'))).toEqual([]);
+    expect(slots.filter(slot => /^(tasks|puppeteer)\./.test(slot))).toEqual([]);
   });
 
   it('never offers ticket minting from the identity wizard', () => {
