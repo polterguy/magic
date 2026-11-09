@@ -5,7 +5,6 @@
 using System;
 using System.Linq;
 using System.Text;
-using Org.BouncyCastle.Security;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -39,10 +38,9 @@ namespace magic.lambda.crypto.slots.misc
             if (max <= 0)
                 throw new HyperlambdaException("[max] must be a positive integer for [crypto.random.int]");
 
-            // Creating a new CSRNG, seeding it if caller provided a [seed].
-            var rnd = new SecureRandom();
+            // Mixing any caller supplied [seed] into the shared CSPRNG before drawing from it.
             if (!string.IsNullOrEmpty(seed))
-                rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
+                SharedRandom.AddSeed(Encoding.UTF8.GetBytes(seed));
 
             /*
              * Returning a uniformly distributed integer in the range [0, max).
@@ -59,7 +57,7 @@ namespace magic.lambda.crypto.slots.misc
             uint value;
             do
             {
-                rnd.NextBytes(bytes);
+                SharedRandom.NextBytes(bytes);
                 value = BitConverter.ToUInt32(bytes, 0);
             }
             while (value < reject);
