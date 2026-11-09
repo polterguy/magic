@@ -76,7 +76,9 @@ namespace magic.library.internals
 
         /// <summary>
         /// Returns true if the specified origin is on the same site as the specified host, implying
-        /// the hosts are equal, or one of them is a subdomain of the other.
+        /// the hosts are equal, or the origin is a subdomain of the host. Notice, an origin that is a
+        /// PARENT of the host, such as "example.com" for the host "api.example.com", is not, since
+        /// that would trust every script running anywhere on the parent domain.
         /// </summary>
         /// <param name="origin">Origin header value from request, e.g. "https://app.example.com".</param>
         /// <param name="host">Host of the backend, e.g. "api.example.com".</param>
@@ -90,8 +92,7 @@ namespace magic.library.internals
             var originHost = uri.Host;
             if (string.Equals(originHost, host, StringComparison.OrdinalIgnoreCase))
                 return true;
-            return originHost.EndsWith("." + host, StringComparison.OrdinalIgnoreCase) ||
-                host.EndsWith("." + originHost, StringComparison.OrdinalIgnoreCase);
+            return originHost.EndsWith("." + host, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
