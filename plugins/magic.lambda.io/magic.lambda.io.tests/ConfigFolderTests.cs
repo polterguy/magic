@@ -61,6 +61,8 @@ whitelist
         [InlineData("io.file.load.binary", "/config/appsettings.json")]
         [InlineData("io.file.exists", "/config/appsettings.json")]
         [InlineData("io.file.mixin", "/config/index.html")]
+        [InlineData("io.file.execute", "/config/appsettings.hl")]
+        [InlineData("execute-file", "/config/appsettings.hl")]
         [InlineData("io.stream.open-file", "/config/appsettings.json")]
         [InlineData("io.file.list", "/config/")]
         [InlineData("io.file.list-recursively", "/config/")]
