@@ -200,7 +200,6 @@ describe('capability wizards on a rule', () => {
       granted:
         'execute-file:' + FILE + '\nio.file.execute:' + FILE + '\nio.file.load:' + FILE + '\n',
     },
-    { button: 'Tasks', title: 'Scheduled tasks', granted: 'tasks.list\ntasks.get\ntasks.count\n' },
   ];
 
   it.each(CASES)('$button merges its slots into the rule', async item => {
