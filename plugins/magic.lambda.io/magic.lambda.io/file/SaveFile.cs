@@ -28,6 +28,7 @@ namespace magic.lambda.io.file
         SignatureType = typeof(global::magic.lambda.io.signatures.TextFileSaveSignature))]
     [Slot(
         Name = "io.file.save",
+        Whitelistable = false,
         Description = "Saves a text file to the server",
         ValueKind = "file-path",
         ValueDescription = "File path to save",
@@ -38,6 +39,7 @@ namespace magic.lambda.io.file
         SignatureType = typeof(global::magic.lambda.io.signatures.TextFileSaveSignature))]
     [Slot(
         Name = "io.file.save.binary",
+        Whitelistable = false,
         Description = "Saves a binary file to the server",
         ValueKind = "binary-file",
         ValueDescription = "File path to save",

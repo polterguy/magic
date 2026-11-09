@@ -14,128 +14,102 @@ namespace magic.lambda.io.tests
     public class FolderTests
     {
         [Fact]
-        public void CreateFolder_WhitelistWildcard_DoesNotCrossFolders()
+        public void FolderExists_WhitelistWildcard_DoesNotCrossFolders()
         {
             var folderService = new FolderService
             {
-                CreateAction = (path) => { },
                 ExistsAction = (path) => false,
             };
 
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.folder.create:/etc/*/
+      io.folder.exists:/etc/*/
    .lambda
-      io.folder.create:/etc/sub/deep/
+      io.folder.exists:/etc/sub/deep/
 ", folderService: folderService));
         }
 
         [Fact]
-        public void CreateFolder_WhitelistWildcardSegment_Succeeds()
+        public void FolderExists_WhitelistWildcardSegment_Succeeds()
         {
-            var createInvoked = false;
+            var existsInvoked = false;
             var folderService = new FolderService
             {
-                CreateAction = (path) => createInvoked = true,
-                ExistsAction = (path) => false,
+                ExistsAction = (path) => existsInvoked = true,
             };
 
             // A wildcard folder level in the middle of the pattern.
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.folder.create:/etc/*/deep/
+      io.folder.exists:/etc/*/deep/
    .lambda
-      io.folder.create:/etc/sub/deep/
+      io.folder.exists:/etc/sub/deep/
 ", folderService: folderService);
-            Assert.True(createInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void CreateFolder_WhitelistExactFolder_Succeeds()
+        public void FolderExists_WhitelistExactFolder_Succeeds()
         {
-            var createInvoked = false;
+            var existsInvoked = false;
             var folderService = new FolderService
             {
-                CreateAction = (path) => createInvoked = true,
-                ExistsAction = (path) => false,
+                ExistsAction = (path) => existsInvoked = true,
             };
 
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.folder.create:/etc/foo/
+      io.folder.exists:/etc/foo/
    .lambda
-      io.folder.create:/etc/foo/
+      io.folder.exists:/etc/foo/
 ", folderService: folderService);
-            Assert.True(createInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void DeleteFolder_WhitelistWildcard_Succeeds()
+        public void FolderExists_WhitelistWildcard_Succeeds()
         {
-            var deleteInvoked = false;
+            var existsInvoked = false;
             var folderService = new FolderService
             {
-                DeleteAction = (path) => deleteInvoked = true,
-                ExistsAction = (path) => true,
+                ExistsAction = (path) => existsInvoked = true,
             };
 
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.folder.delete:/etc/*/
+      io.folder.exists:/etc/*/
    .lambda
-      io.folder.delete:/etc/foo/
+      io.folder.exists:/etc/foo/
 ", folderService: folderService);
-            Assert.True(deleteInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void CreateFolder_WhitelistWildcard_Succeeds()
-        {
-            var createInvoked = false;
-            var folderService = new FolderService
-            {
-                CreateAction = (path) => createInvoked = true,
-                ExistsAction = (path) => false,
-            };
-
-            Common.Evaluate(@"
-whitelist
-   vocabulary
-      io.folder.create:/etc/*/
-   .lambda
-      io.folder.create:/etc/foo/
-", folderService: folderService);
-            Assert.True(createInvoked);
-        }
-
-        [Fact]
-        public void CreateFolder_WhitelistWildcard_Throws()
+        public void FolderExists_WhitelistWildcard_Throws()
         {
             var folderService = new FolderService
             {
-                CreateAction = (path) => { },
                 ExistsAction = (path) => false,
             };
 
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.folder.create:/etc/*/
+      io.folder.exists:/etc/*/
    .lambda
-      io.folder.create:/other/foo/
+      io.folder.exists:/other/foo/
 ", folderService: folderService));
         }
 
         [Fact]
-        public void CreateFolder_WhitelistExtensionPattern_Throws()
+        public void FolderExists_WhitelistExtensionPattern_Throws()
         {
             var folderService = new FolderService
             {
-                CreateAction = (path) => { },
                 ExistsAction = (path) => false,
             };
 
@@ -143,9 +117,9 @@ whitelist
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.folder.create:/etc/*.md
+      io.folder.exists:/etc/*.md
    .lambda
-      io.folder.create:/etc/foo/
+      io.folder.exists:/etc/foo/
 ", folderService: folderService));
         }
 
@@ -507,35 +481,6 @@ io.path.get-folder:/foo/howdy/file.hl
 io.path.get-folder:/foo/howdy/
 ");
             Assert.Equal("/foo/howdy/", lambda.Children.First().Value);
-        }
-
-        [Theory]
-        [InlineData("io.folder.copy")]
-        [InlineData("io.folder.move")]
-        public void CopyMoveFolder_ChildCannotChangeApprovedSource(string slot)
-        {
-            string used = null;
-            var folderService = new FolderService
-            {
-                ExistsAction = (path) => false,
-                CopyAction = (src, dest) => used = src,
-                MoveAction = (src, dest) => used = src,
-            };
-
-            // A child rewriting the source expression's node must not change the source the whitelist approved.
-            Common.Evaluate($@"
-whitelist
-   vocabulary
-      {slot}:/etc/*/
-      set-value
-   .lambda
-      .src:/etc/approved/
-      {slot}:x:@.src
-         .:/etc/dest/
-         set-value:x:@.src
-            .:/secret/unapproved/
-", null, folderService);
-            Assert.EndsWith("/etc/approved/", used);
         }
     }
 }

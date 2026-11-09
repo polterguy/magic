@@ -77,6 +77,7 @@ namespace magic.lambda.io.file
             // Finding static filename and doing some basic sanity checking.
             var staticFilename = input.GetEx<string>() ??
                 throw new HyperlambdaException("No filename specified for [mixin]");
+            Utilities.EnsureNotConfig(signaler, _rootResolver, input.Name, _rootResolver.AbsolutePath(staticFilename));
 
             // Loading Hyperlambda codebehind file and parsing as lambda.
             var codebehindFilename = string.Concat(staticFilename.AsSpan(0, staticFilename.LastIndexOf('.')), ".hl");

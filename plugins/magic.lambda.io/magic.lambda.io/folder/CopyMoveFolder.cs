@@ -16,6 +16,7 @@ namespace magic.lambda.io.folder
     /// </summary>
     [Slot(
         Name = "io.folder.copy",
+        Whitelistable = false,
         Description = "Copies a folder on the server",
         ValueKind = "folder-path",
         ValueDescription = "Source folder path",
@@ -25,6 +26,7 @@ namespace magic.lambda.io.folder
         SignatureType = typeof(global::magic.lambda.io.signatures.FolderCopyMoveSignature))]
     [Slot(
         Name = "io.folder.move",
+        Whitelistable = false,
         Description = "Moves a folder on the server",
         ValueKind = "folder-path",
         ValueDescription = "Source folder path",

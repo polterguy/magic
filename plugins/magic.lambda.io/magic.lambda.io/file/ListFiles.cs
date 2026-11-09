@@ -72,9 +72,10 @@ namespace magic.lambda.io.file
             var args = GetArgs(input);
 
             // Retrieving files.
-            var files = input.Name == "io.file.list" ?
-                _service.List(_rootResolver.AbsolutePath(args.Folder)) : 
-                _service.ListAll(_rootResolver.AbsolutePath(args.Folder));
+            var folder = _rootResolver.AbsolutePath(args.Folder);
+            Utilities.EnsureNotConfig(signaler, _rootResolver, input.Name, folder);
+            var files = (input.Name == "io.file.list" ? _service.List(folder) : _service.ListAll(folder))
+                .Where(x => !Utilities.IsConfig(signaler, _rootResolver, x));
 
             // Returning files as lambda to caller.
             foreach (var idx in files)

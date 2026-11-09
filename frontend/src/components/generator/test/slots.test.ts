@@ -8,12 +8,14 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  FILE_CHANGING_SLOTS,
   FILE_SLOTS,
   fileSystemPin,
   FOLDER_KIND_SLOTS,
   linesToSlots,
   lintSlotLines,
   mergeSlots,
+  refusedSlots,
   ruleIsIncomplete,
   UNPINNED_RISK_SLOTS,
 } from '../slots';
@@ -110,7 +112,7 @@ describe('fileSystemPin', () => {
 
   it('pins file-kind slots to any file directly inside the folder', () => {
     expect(fileSystemPin('io.file.load', '/etc/data', '')).toBe('io.file.load:/etc/data/*');
-    expect(fileSystemPin('io.file.save', '/etc/data/', '  ')).toBe('io.file.save:/etc/data/*');
+    expect(fileSystemPin('io.file.load', '/etc/data/', '  ')).toBe('io.file.load:/etc/data/*');
   });
 
   it('narrows file-kind slots to an extension, with or without its leading dots', () => {
@@ -123,8 +125,8 @@ describe('fileSystemPin', () => {
     expect(fileSystemPin('io.folder.list', ' /etc', '')).toBe('io.folder.list: /etc/');
   });
 
-  it('pins every slot of every tier one way or the other', () => {
-    for (const slot of [...FILE_SLOTS.read, ...FILE_SLOTS.write, ...FILE_SLOTS.delete]) {
+  it('pins every slot one way or the other', () => {
+    for (const slot of FILE_SLOTS.read) {
       const pinned = fileSystemPin(slot, '/x', '');
       expect(pinned).toBe(slot + (FOLDER_KIND_SLOTS.has(slot) ? ':/x/' : ':/x/*'));
     }
@@ -168,8 +170,54 @@ describe('lintSlotLines', () => {
   });
 
   it('covers every file and folder slot the files wizard can grant', () => {
-    for (const slot of [...FILE_SLOTS.read, ...FILE_SLOTS.write, ...FILE_SLOTS.delete]) {
+    for (const slot of FILE_SLOTS.read) {
       expect(UNPINNED_RISK_SLOTS.has(slot)).toBe(true);
+    }
+  });
+
+  it('refuses a slot that changes the file system, pinned or not', () => {
+    const warnings = lintSlotLines(
+      'io.file.save\nio.folder.delete:/etc/data/\nio.file.load:/etc/*.conf',
+    );
+    expect(warnings).toHaveLength(2);
+    expect(warnings[0]).toContain('"io.file.save" changes the file system');
+    expect(warnings[1]).toContain('"io.folder.delete" changes the file system');
+  });
+});
+
+describe('refusedSlots', () => {
+  it('finds every file-changing slot, with or without a pin', () => {
+    expect(
+      refusedSlots(
+        'io.file.copy\nio.file.delete:/etc/*\nio.file.move\nio.file.patch\nio.file.save.binary\nio.file.unzip\n' +
+          'io.folder.copy\nio.folder.create:/etc/x/\nio.folder.move\nio.stream.save-file',
+      ),
+    ).toEqual([
+      'io.file.copy',
+      'io.file.delete',
+      'io.file.move',
+      'io.file.patch',
+      'io.file.save.binary',
+      'io.file.unzip',
+      'io.folder.copy',
+      'io.folder.create',
+      'io.folder.move',
+      'io.stream.save-file',
+    ]);
+  });
+
+  it('leaves the slots that only read, and anything else, alone', () => {
+    expect(
+      refusedSlots(
+        'io.file.load\nio.file.exists:/etc/*\nio.folder.list\nio.stream.open-file\nmath.add',
+      ),
+    ).toEqual([]);
+    expect(refusedSlots('')).toEqual([]);
+  });
+
+  it('keeps no slot a wizard grants on the refused list', () => {
+    for (const slot of FILE_SLOTS.read) {
+      expect(FILE_CHANGING_SLOTS.has(slot)).toBe(false);
     }
   });
 });

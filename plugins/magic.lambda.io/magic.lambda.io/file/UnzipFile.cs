@@ -21,6 +21,7 @@ namespace magic.lambda.io.file
     /// </summary>
     [Slot(
         Name = "io.file.unzip",
+        Whitelistable = false,
         Description = "Extracts a zip archive on the server",
         ValueKind = "zip-file",
         ValueDescription = "Zip archive path to extract",

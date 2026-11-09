@@ -13,6 +13,7 @@ namespace magic.lambda.logging.slots
     /// </summary>
     [Slot(
         Name = "log.capabilities",
+        Whitelistable = false,
         Description = "Returns capabilities of the current log provider",
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "log-capabilities,lambda-tree",

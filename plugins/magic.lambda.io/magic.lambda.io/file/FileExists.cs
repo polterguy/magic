@@ -52,7 +52,9 @@ namespace magic.lambda.io.file
         /// <param name="input">Arguments to slot.</param>
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
-            input.Value = await _service.ExistsAsync(_rootResolver.AbsolutePath(input.GetEx<string>()));
+            var path = _rootResolver.AbsolutePath(input.GetEx<string>());
+            Utilities.EnsureNotConfig(signaler, _rootResolver, input.Name, path);
+            input.Value = await _service.ExistsAsync(path);
         }
     }
 }

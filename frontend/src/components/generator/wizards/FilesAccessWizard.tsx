@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-import { showToast } from '../../../lib/toast';
 import { FILE_SLOTS, fileSystemPin } from '../slots';
 
 /*
- * Wizard granting file-system access in Read / Write / Delete tiers. File and folder
- * slots take their path as the slot value, so an optional [path] pins every granted
- * operation to that exact path; blank grants the operation for any path.
+ * Wizard granting read access to the file system. File and folder slots take their path
+ * as the slot value, so an optional [path] pins every granted operation to that exact
+ * path; blank grants the operation for any path. Slots that change the file system can
+ * never be granted to a sandbox, so they are not offered.
  */
 
 export default function FilesAccessWizard(
@@ -14,30 +14,11 @@ export default function FilesAccessWizard(
 ) {
   const [path, setPath] = useState('');
   const [extension, setExtension] = useState('');
-  const [read, setRead] = useState(true);
-  const [write, setWrite] = useState(false);
-  const [remove, setRemove] = useState(false);
 
   function add() {
-    const slots: string[] = [];
-    if (read) {
-      slots.push(...FILE_SLOTS.read);
-    }
-    if (write) {
-      slots.push(...FILE_SLOTS.write);
-    }
-    if (remove) {
-      slots.push(...FILE_SLOTS.delete);
-    }
-    if (slots.length === 0) {
-      showToast('Tick at least one tier', true);
-      return;
-    }
     const folder = path.trim();
-    const lines = slots.map(slot => fileSystemPin(slot, folder, extension));
-    if (read) {
-      lines.push('io.path.get-folder');
-    }
+    const lines = FILE_SLOTS.read.map(slot => fileSystemPin(slot, folder, extension));
+    lines.push('io.path.get-folder');
     props.onAdd(lines);
   }
 
@@ -45,25 +26,9 @@ export default function FilesAccessWizard(
     <div className="card" style={{ padding: 10, marginBottom: 6 }}>
       <div className="toolbar" style={{ marginBottom: 6 }}>
         <div style={{ fontWeight: 600, fontSize: 13 }}>File system</div>
-        <label
-          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
-          title="Load, list, search files and folders"
-        >
-          <input type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} /> Read
-        </label>
-        <label
-          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
-          title="Save, copy, move, patch, unzip; create folders"
-        >
-          <input type="checkbox" checked={write} onChange={e => setWrite(e.target.checked)} /> Write
-        </label>
-        <label
-          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
-          title="Delete files and folders"
-        >
-          <input type="checkbox" checked={remove} onChange={e => setRemove(e.target.checked)} />{' '}
-          Delete
-        </label>
+        <span className="muted" style={{ fontSize: 12 }}>
+          read only
+        </span>
         <span className="spacer" />
         <button className="btn btn-small" onClick={add}>
           Add
@@ -101,11 +66,12 @@ export default function FilesAccessWizard(
         </label>
       </div>
       <span className="muted" style={{ fontSize: 12 }}>
-        Folder operations (list, exists, create, delete, copy, move on folders) are pinned to
-        exactly this folder — not its subfolders. File operations (load, save, delete, copy, move,
-        exists, patch, unzip) are pinned to any file directly inside it; add an extension above to
-        narrow that further. For a deeper folder, run this wizard again with that folder; for one
-        exact file, edit the list below directly. Leave Folder blank to allow any path.
+        Folder operations (list, exists, search) are pinned to exactly this folder — not its
+        subfolders. File operations (load, exists) are pinned to any file directly inside it; add an
+        extension above to narrow that further. For a deeper folder, run this wizard again with that
+        folder; for one exact file, edit the list below directly. Leave Folder blank to allow any
+        path. A sandbox cannot be granted slots that save, copy, move, patch, unzip or delete files
+        or create folders: put that in a file and grant [execute-file] on it by name.
       </span>
     </div>
   );

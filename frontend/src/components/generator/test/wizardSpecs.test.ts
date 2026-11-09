@@ -59,6 +59,17 @@ describe('TIER2_WIZARDS', () => {
     }
   });
 
+  it('offers no slot that creates, updates, schedules or runs a task', () => {
+    const tasks = TIER2_WIZARDS.tasks.groups.flatMap(group => group.slots);
+    expect(tasks).toEqual([
+      'tasks.list',
+      'tasks.get',
+      'tasks.count',
+      'tasks.delete',
+      'tasks.schedule.delete',
+    ]);
+  });
+
   it('never offers ticket minting from the identity wizard', () => {
     const identity = TIER2_WIZARDS.identity.groups.flatMap(group => group.slots);
     expect(identity).not.toContain('auth.ticket.create');

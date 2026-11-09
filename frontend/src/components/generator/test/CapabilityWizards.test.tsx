@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '../../../lib/api';
 import { setToastListener, type Toast } from '../../../lib/toast';
 import { renderPage } from '../../../test/renderPage';
+import { FILE_CHANGING_SLOTS } from '../slots';
 import DbAccessWizard from '../wizards/DbAccessWizard';
 import DynamicSlotsWizard from '../wizards/DynamicSlotsWizard';
 import FilesAccessWizard from '../wizards/FilesAccessWizard';
@@ -151,7 +152,7 @@ describe('FilesAccessWizard', () => {
     return { onAdd, onCancel };
   }
 
-  it('grants the read tier for any path by default', async () => {
+  it('grants the read slots for any path', async () => {
     const { onAdd } = renderFiles();
 
     await userEvent.click(screen.getByRole('button', { name: 'Add' }));
@@ -160,8 +161,17 @@ describe('FilesAccessWizard', () => {
     expect(lines).toContain('io.file.load');
     expect(lines).toContain('io.folder.list');
     expect(lines).toContain('io.path.get-folder');
-    expect(lines).not.toContain('io.file.save');
-    expect(lines).not.toContain('io.file.delete');
+  });
+
+  it('offers no tier and grants no slot that changes the file system', async () => {
+    const { onAdd } = renderFiles();
+
+    expect(screen.queryByLabelText('Write')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Delete')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Add' }));
+
+    const lines: string[] = onAdd.mock.calls[0][0];
+    expect(lines.filter(line => FILE_CHANGING_SLOTS.has(line.split(':')[0]))).toEqual([]);
   });
 
   it('pins file slots to the folder and extension, and folder slots to the folder', async () => {
@@ -169,40 +179,12 @@ describe('FilesAccessWizard', () => {
 
     await userEvent.type(screen.getByPlaceholderText(/blank = any path/), '/etc/data');
     await userEvent.type(screen.getByPlaceholderText('any'), '.conf');
-    await userEvent.click(screen.getByLabelText('Write'));
-    await userEvent.click(screen.getByLabelText('Delete'));
     await userEvent.click(screen.getByRole('button', { name: 'Add' }));
 
     const lines: string[] = onAdd.mock.calls[0][0];
     expect(lines).toContain('io.file.load:/etc/data/*.conf');
     expect(lines).toContain('io.folder.list:/etc/data/');
-    expect(lines).toContain('io.file.save:/etc/data/*.conf');
-    expect(lines).toContain('io.folder.create:/etc/data/');
-    expect(lines).toContain('io.file.delete:/etc/data/*.conf');
-    expect(lines).toContain('io.folder.delete:/etc/data/');
     expect(lines).toContain('io.path.get-folder');
-  });
-
-  it('adds no path helper when only writing is granted', async () => {
-    const { onAdd } = renderFiles();
-
-    await userEvent.click(screen.getByLabelText('Read'));
-    await userEvent.click(screen.getByLabelText('Write'));
-    await userEvent.click(screen.getByRole('button', { name: 'Add' }));
-
-    const lines: string[] = onAdd.mock.calls[0][0];
-    expect(lines).toContain('io.file.save');
-    expect(lines).not.toContain('io.path.get-folder');
-  });
-
-  it('refuses to add when no tier is ticked', async () => {
-    const { onAdd } = renderFiles();
-
-    await userEvent.click(screen.getByLabelText('Read'));
-    await userEvent.click(screen.getByRole('button', { name: 'Add' }));
-
-    expect(onAdd).not.toHaveBeenCalled();
-    expect(toasts.at(-1)).toMatchObject({ text: 'Tick at least one tier', isError: true });
   });
 
   it('closes without adding', async () => {

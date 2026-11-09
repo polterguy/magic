@@ -112,94 +112,6 @@ whitelist
         }
 
         [Fact]
-        public void UnzipFile_WhitelistAllowsDestination_ExtractsNestedEntries()
-        {
-            var saved = new List<string>();
-            var streamService = new StreamService
-            {
-                OpenFileAction = (path) => CreateArchive("root.txt", "sub/nested.txt"),
-                SaveFileAction = (stream, path) => saved.Add(path),
-            };
-            var folderService = new FolderService
-            {
-                ExistsAction = (path) => true,
-                CreateAction = (path) => { },
-            };
-
-            // The vocabulary grants the archive as a file, and the destination as a folder. An
-            // archive's OWN sub folders are then confined to that destination, not re-compared.
-            Common.Evaluate(@"
-whitelist
-   vocabulary
-      io.file.unzip:/etc/*.zip
-      io.file.unzip:/etc/*/
-   .lambda
-      io.file.unzip:/etc/x.zip
-         folder:/etc/out/
-", streamService: streamService, folderService: folderService);
-
-            Assert.Equal(2, saved.Count);
-            Assert.Contains(saved, x => x.EndsWith("/etc/out/root.txt"));
-            Assert.Contains(saved, x => x.EndsWith("/etc/out/sub/nested.txt"));
-        }
-
-        [Fact]
-        public void UnzipFile_WhitelistRefusesDestination_Throws()
-        {
-            var saveInvoked = false;
-            var streamService = new StreamService
-            {
-                OpenFileAction = (path) => CreateArchive("root.txt"),
-                SaveFileAction = (stream, path) => saveInvoked = true,
-            };
-            var folderService = new FolderService
-            {
-                ExistsAction = (path) => true,
-                CreateAction = (path) => { },
-            };
-
-            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
-whitelist
-   vocabulary
-      io.file.unzip:/etc/*.zip
-      io.file.unzip:/etc/*/
-   .lambda
-      io.file.unzip:/etc/x.zip
-         folder:/other/out/
-", streamService: streamService, folderService: folderService));
-            Assert.False(saveInvoked);
-        }
-
-        [Fact]
-        public void UnzipFile_EntryEscapingDestination_Throws()
-        {
-            var saveInvoked = false;
-            var streamService = new StreamService
-            {
-                OpenFileAction = (path) => CreateArchive("../escaped.txt"),
-                SaveFileAction = (stream, path) => saveInvoked = true,
-            };
-            var folderService = new FolderService
-            {
-                ExistsAction = (path) => true,
-                CreateAction = (path) => { },
-            };
-
-            // Classic zip slip - the entry stays inside the dynamic files folder, but leaves the
-            // destination the caller was granted.
-            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
-whitelist
-   vocabulary
-      io.file.unzip:/etc/*.zip
-      io.file.unzip:/etc/*/
-   .lambda
-      io.file.unzip:/etc/x.zip
-         folder:/etc/out/
-", streamService: streamService, folderService: folderService));
-            Assert.False(saveInvoked);
-        }
-
-        [Fact]
         public void UnzipFile_EntryEscapingDestination_CreatesNoFolders()
         {
             var created = new List<string>();
@@ -245,395 +157,312 @@ io.file.unzip:/etc/x.zip
         }
 
         [Fact]
-        public void CopyFile_WhitelistAllowsBothPaths_Succeeds()
+        public void FileExists_WhitelistWildcardSegment_DoesNotCrossTwoFolders()
         {
-            var copyInvoked = false;
-            var fileService = new FileService
-            {
-                ExistsAction = (path) => false,
-                CopyAction = (src, dest) => copyInvoked = true,
-            };
-
-            Common.Evaluate(@"
-whitelist
-   vocabulary
-      io.file.copy:/etc/*
-   .lambda
-      io.file.copy:/etc/src.txt
-         .:/etc/dest.txt
-", fileService);
-            Assert.True(copyInvoked);
-        }
-
-        [Fact]
-        public void CopyFile_WhitelistRefusesDestination_Throws()
-        {
-            var copyInvoked = false;
-            var fileService = new FileService
-            {
-                ExistsAction = (path) => false,
-                CopyAction = (src, dest) => copyInvoked = true,
-            };
-
-            // The source is allowed, the DESTINATION is not - and the signaler never sees it.
-            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
-whitelist
-   vocabulary
-      io.file.copy:/etc/*
-   .lambda
-      io.file.copy:/etc/src.txt
-         .:/other/dest.txt
-", fileService));
-            Assert.False(copyInvoked);
-        }
-
-        [Fact]
-        public void MoveFile_WhitelistRefusesDestination_Throws()
-        {
-            var moveInvoked = false;
-            var fileService = new FileService
-            {
-                ExistsAction = (path) => false,
-                MoveAction = (src, dest) => moveInvoked = true,
-            };
-
-            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
-whitelist
-   vocabulary
-      io.file.move:/etc/*
-   .lambda
-      io.file.move:/etc/src.txt
-         .:/other/dest.txt
-", fileService));
-            Assert.False(moveInvoked);
-        }
-
-        [Fact]
-        public void SaveFile_WhitelistWildcardSegment_DoesNotCrossTwoFolders()
-        {
-            var fileService = new FileService { SaveAction = (path, content) => { } };
+            var fileService = new FileService { ExistsAction = path => false };
 
             // One wildcard segment matches exactly one folder level, never two.
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*/foo.md
+      io.file.exists:/etc/*/foo.md
    .lambda
-      io.file.save:/etc/bar/baz/foo.md
-         .:foo
+      io.file.exists:/etc/bar/baz/foo.md
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistMultipleExtension_WrongExtensionThrows()
+        public void FileExists_WhitelistMultipleExtension_WrongExtensionThrows()
         {
-            var fileService = new FileService { SaveAction = (path, content) => { } };
+            var fileService = new FileService { ExistsAction = path => false };
 
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*.tar.gz
+      io.file.exists:/etc/*.tar.gz
    .lambda
-      io.file.save:/etc/x.zip
-         .:foo
+      io.file.exists:/etc/x.zip
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistExtensionWildcard_SubFolderThrows()
+        public void FileExists_WhitelistExtensionWildcard_SubFolderThrows()
         {
-            var fileService = new FileService { SaveAction = (path, content) => { } };
+            var fileService = new FileService { ExistsAction = path => false };
 
             // Right extension, wrong folder level.
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*.md
+      io.file.exists:/etc/*.md
    .lambda
-      io.file.save:/etc/sub/foo.md
-         .:foo
+      io.file.exists:/etc/sub/foo.md
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistExactPath_Succeeds()
+        public void FileExists_WhitelistExactPath_Succeeds()
         {
-            var saveInvoked = false;
-            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+            var existsInvoked = false;
+            var fileService = new FileService { ExistsAction = path => existsInvoked = true };
 
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/foo.txt
+      io.file.exists:/etc/foo.txt
    .lambda
-      io.file.save:/etc/foo.txt
-         .:foo
+      io.file.exists:/etc/foo.txt
 ", fileService);
-            Assert.True(saveInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void SaveFile_WhitelistExactPath_Throws()
+        public void FileExists_WhitelistExactPath_Throws()
         {
-            var fileService = new FileService { SaveAction = (path, content) => { } };
+            var fileService = new FileService { ExistsAction = path => false };
 
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/foo.txt
+      io.file.exists:/etc/foo.txt
    .lambda
-      io.file.save:/etc/bar.txt
-         .:foo
+      io.file.exists:/etc/bar.txt
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistWithoutPin_AllowsAnyPath()
+        public void FileExists_WhitelistWithoutPin_AllowsAnyPath()
         {
-            var saveInvoked = false;
-            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+            var existsInvoked = false;
+            var fileService = new FileService { ExistsAction = path => existsInvoked = true };
 
             // An entry with no value permits the slot with any argument, as it always has.
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save
+      io.file.exists
    .lambda
-      io.file.save:/anywhere/at/all.txt
-         .:foo
+      io.file.exists:/anywhere/at/all.txt
 ", fileService);
-            Assert.True(saveInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void SaveFile_WhitelistExtensionIsCaseSensitive_Throws()
+        public void FileExists_WhitelistExtensionIsCaseSensitive_Throws()
         {
-            var fileService = new FileService { SaveAction = (path, content) => { } };
+            var fileService = new FileService { ExistsAction = path => false };
 
             // Ordinal comparison, hence a differing case fails closed.
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*.md
+      io.file.exists:/etc/*.md
    .lambda
-      io.file.save:/etc/foo.MD
-         .:foo
+      io.file.exists:/etc/foo.MD
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistPatternWithoutFolder_Throws()
+        public void FileExists_WhitelistPatternWithoutFolder_Throws()
         {
-            var fileService = new FileService { SaveAction = (path, content) => { } };
+            var fileService = new FileService { ExistsAction = path => false };
 
             // "*" implies no folder, hence can never match a path, hence is refused.
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:*
+      io.file.exists:*
    .lambda
-      io.file.save:/etc/foo.txt
-         .:foo
+      io.file.exists:/etc/foo.txt
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistRootFolder_Succeeds()
+        public void FileExists_WhitelistRootFolder_Succeeds()
         {
-            var saveInvoked = false;
-            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+            var existsInvoked = false;
+            var fileService = new FileService { ExistsAction = path => existsInvoked = true };
 
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/*
+      io.file.exists:/*
    .lambda
-      io.file.save:/foo.txt
-         .:foo
+      io.file.exists:/foo.txt
 ", fileService);
-            Assert.True(saveInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void SaveFile_WhitelistMultipleExtension_Succeeds()
+        public void FileExists_WhitelistMultipleExtension_Succeeds()
         {
-            var saveInvoked = false;
-            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+            var existsInvoked = false;
+            var fileService = new FileService { ExistsAction = path => existsInvoked = true };
 
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*.tar.gz
+      io.file.exists:/etc/*.tar.gz
    .lambda
-      io.file.save:/etc/foo.tar.gz
-         .:foo
+      io.file.exists:/etc/foo.tar.gz
 ", fileService);
-            Assert.True(saveInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void SaveFile_WhitelistExtensionOnFolderSegment_Throws()
+        public void FileExists_WhitelistExtensionOnFolderSegment_Throws()
         {
-            var fileService = new FileService { SaveAction = (path, content) => { } };
+            var fileService = new FileService { ExistsAction = path => false };
 
             // An extension wildcard is only legal as the filename, never as a folder segment.
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/foo.*/howdy/*
+      io.file.exists:/etc/foo.*/howdy/*
    .lambda
-      io.file.save:/etc/foo.bar/howdy/x.txt
-         .:foo
+      io.file.exists:/etc/foo.bar/howdy/x.txt
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistWildcardSegment_Succeeds()
+        public void FileExists_WhitelistWildcardSegment_Succeeds()
         {
-            var saveInvoked = false;
-            var fileService = new FileService { SaveAction = (path, content) => saveInvoked = true };
+            var existsInvoked = false;
+            var fileService = new FileService { ExistsAction = path => existsInvoked = true };
 
             // A wildcard segment matches exactly one folder level.
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*/foo.md
+      io.file.exists:/etc/*/foo.md
    .lambda
-      io.file.save:/etc/bar/foo.md
-         .:foo
+      io.file.exists:/etc/bar/foo.md
 ", fileService);
-            Assert.True(saveInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void SaveFile_WhitelistFolderWildcard_DoesNotCrossFolders()
+        public void FileExists_WhitelistFolderWildcard_DoesNotCrossFolders()
         {
             var fileService = new FileService
             {
-                SaveAction = (path, content) => { },
+                ExistsAction = path => false,
             };
 
             // "/etc/*" grants the folder itself, not everything beneath it.
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*
+      io.file.exists:/etc/*
    .lambda
-      io.file.save:/etc/sub/foo.txt
-         .:foo
+      io.file.exists:/etc/sub/foo.txt
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistIllegalPattern_Throws()
+        public void FileExists_WhitelistIllegalPattern_Throws()
         {
             var fileService = new FileService
             {
-                SaveAction = (path, content) => { },
+                ExistsAction = path => false,
             };
 
             // A wildcard must be the whole segment or its start, hence "f*o.md" is refused.
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/f*o.md
+      io.file.exists:/etc/f*o.md
    .lambda
-      io.file.save:/etc/foo.md
-         .:foo
+      io.file.exists:/etc/foo.md
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistDoubleWildcard_Throws()
+        public void FileExists_WhitelistDoubleWildcard_Throws()
         {
             var fileService = new FileService
             {
-                SaveAction = (path, content) => { },
+                ExistsAction = path => false,
             };
 
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*.*
+      io.file.exists:/etc/*.*
    .lambda
-      io.file.save:/etc/foo.md
-         .:foo
+      io.file.exists:/etc/foo.md
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistFolderWildcard_Succeeds()
+        public void FileExists_WhitelistFolderWildcard_Succeeds()
         {
-            var saveInvoked = false;
+            var existsInvoked = false;
             var fileService = new FileService
             {
-                SaveAction = (path, content) => saveInvoked = true,
+                ExistsAction = path => existsInvoked = true,
             };
 
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*
+      io.file.exists:/etc/*
    .lambda
-      io.file.save:/etc/foo.txt
-         .:foo
+      io.file.exists:/etc/foo.txt
 ", fileService);
-            Assert.True(saveInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void SaveFile_WhitelistFolderWildcard_Throws()
+        public void FileExists_WhitelistFolderWildcard_Throws()
         {
             var fileService = new FileService
             {
-                SaveAction = (path, content) => { },
+                ExistsAction = path => false,
             };
 
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*
+      io.file.exists:/etc/*
    .lambda
-      io.file.save:/other/foo.txt
-         .:foo
+      io.file.exists:/other/foo.txt
 ", fileService));
         }
 
         [Fact]
-        public void SaveFile_WhitelistExtensionWildcard_Succeeds()
+        public void FileExists_WhitelistExtensionWildcard_Succeeds()
         {
-            var saveInvoked = false;
+            var existsInvoked = false;
             var fileService = new FileService
             {
-                SaveAction = (path, content) => saveInvoked = true,
+                ExistsAction = path => existsInvoked = true,
             };
 
             Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*.md
+      io.file.exists:/etc/*.md
    .lambda
-      io.file.save:/etc/foo.md
-         .:foo
+      io.file.exists:/etc/foo.md
 ", fileService);
-            Assert.True(saveInvoked);
+            Assert.True(existsInvoked);
         }
 
         [Fact]
-        public void SaveFile_WhitelistExtensionWildcard_Throws()
+        public void FileExists_WhitelistExtensionWildcard_Throws()
         {
             var fileService = new FileService
             {
-                SaveAction = (path, content) => { },
+                ExistsAction = path => false,
             };
 
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 whitelist
    vocabulary
-      io.file.save:/etc/*.md
+      io.file.exists:/etc/*.md
    .lambda
-      io.file.save:/etc/foo.txt
-         .:foo
+      io.file.exists:/etc/foo.txt
 ", fileService));
         }
 
@@ -2184,35 +2013,6 @@ io.content.zip-stream
                 Assert.Equal("2.0", reader.ReadToEnd());
             }
             Assert.Equal("/another-folder/foo3.txt", entry.FullName);
-        }
-
-        [Theory]
-        [InlineData("io.file.copy")]
-        [InlineData("io.file.move")]
-        public void CopyMoveFile_ChildCannotChangeApprovedSource(string slot)
-        {
-            string used = null;
-            var fileService = new FileService
-            {
-                ExistsAction = (path) => false,
-                CopyAction = (src, dest) => used = src,
-                MoveAction = (src, dest) => used = src,
-            };
-
-            // A child rewriting the source expression's node must not change the source the whitelist approved.
-            Common.Evaluate($@"
-whitelist
-   vocabulary
-      {slot}:/etc/*
-      set-value
-   .lambda
-      .src:/etc/approved.txt
-      {slot}:x:@.src
-         .:/etc/dest.txt
-         set-value:x:@.src
-            .:/secret/unapproved.txt
-", fileService);
-            Assert.EndsWith("/etc/approved.txt", used);
         }
     }
 }
