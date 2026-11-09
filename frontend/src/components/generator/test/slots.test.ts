@@ -175,6 +175,15 @@ describe('lintSlotLines', () => {
     }
   });
 
+  it('warns about an http slot with no pin, or a pin of nothing but wildcards', () => {
+    const warnings = lintSlotLines(
+      'http.get\nhttp.post:*\nhttp.put:https://api.example.com/*\nhttp.delete:https://api.example.com/x',
+    );
+    expect(warnings).toHaveLength(2);
+    expect(warnings[0]).toContain('"http.get" has no pinned argument');
+    expect(warnings[1]).toContain('"http.post" has no pinned argument');
+  });
+
   it('refuses a slot that changes the file system, pinned or not', () => {
     const warnings = lintSlotLines(
       'io.file.save\nio.folder.delete:/etc/data/\nio.file.load:/etc/*.conf',

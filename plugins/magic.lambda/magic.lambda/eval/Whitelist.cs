@@ -63,6 +63,15 @@ namespace magic.lambda.eval
             if (forbidden != null)
                 throw new HyperlambdaException($"[{forbidden.Name}] can never be used inside a [whitelist]");
 
+            /*
+             * A slot declaring that its argument is its security boundary is refused when it is named without
+             * a pin, since an entry without a value grants the slot for every argument, and so is a value of
+             * nothing but wildcards.
+             */
+            var unpinned = whitelist.Vocabulary.FirstOrDefault(x => _signals.RequiresPin(x.Name) && !IsPinned(x));
+            if (unpinned != null)
+                throw new HyperlambdaException($"[{unpinned.Name}] must be pinned to a value inside a [whitelist]");
+
             var result = new Node();
             await signaler.ScopeAsync("slots.result", result, async () =>
             {
@@ -77,6 +86,15 @@ namespace magic.lambda.eval
         }
 
         #region [ -- Private helper methods -- ]
+
+        /*
+         * Returns true if the vocabulary entry carries a value that is more than wildcards.
+         */
+        static bool IsPinned(Node entry)
+        {
+            var pin = entry.Get<string>()?.Trim('*', ' ', '\t', '\r', '\n');
+            return !string.IsNullOrEmpty(pin);
+        }
 
         /*
          * Helper method to retrieve [whitelist] arguments.

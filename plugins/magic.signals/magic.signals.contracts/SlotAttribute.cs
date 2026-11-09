@@ -222,6 +222,18 @@ namespace magic.signals.contracts
         /// a [whitelist] can grant. A trusted file run with [execute-file] still calls what it needs.
         /// </summary>
         public bool Whitelistable { get; set; } = true;
+
+        /// <summary>
+        /// Whether a [whitelist] must pin this slot to a value in its vocabulary. Set this to true for
+        /// a slot whose argument IS its security boundary, such as the URL of an HTTP request, since a
+        /// vocabulary entry without a value grants the slot for EVERY argument. A [whitelist] naming such
+        /// a slot with no value, or with a value of nothing but wildcards, is refused when it is created.
+        ///
+        /// Notice, this is per slot NAME like <see cref="Whitelistable"/>, and it is no use on a slot that
+        /// is not whitelistable. It only checks that a pin is present, the slot's own comparer decides
+        /// what the pin lets through.
+        /// </summary>
+        public bool PinRequired { get; set; }
     }
 
     /// <summary>

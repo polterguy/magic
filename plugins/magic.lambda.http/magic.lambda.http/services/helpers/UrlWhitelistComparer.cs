@@ -38,10 +38,6 @@ namespace magic.lambda.http.services.helpers
         /// <returns>True if the URL matches the pin.</returns>
         public static bool Matches(string pattern, string url)
         {
-            // A bare '*' is the legacy declaration granting any URL.
-            if (pattern == "*")
-                return true;
-
             // A URL without a value simply doesn't match anything.
             if (url == null)
                 return false;
