@@ -15,8 +15,7 @@ namespace magic.lambda.http.tests
     public class UrlWhitelistComparerTests
     {
         [Theory]
-        // The bare wildcard and missing values.
-        [InlineData("*", "https://anything.example.com/x", true)]
+        // Missing values.
         [InlineData("https://example.com/a", null, false)]
         // Scheme, host and port must be exact.
         [InlineData("https://example.com/a", "https://example.com/a", true)]
@@ -90,6 +89,12 @@ namespace magic.lambda.http.tests
         {
             var ex = Assert.Throws<HyperlambdaException>(() => UrlWhitelistComparer.Matches(pin, "https://api.example.com/a"));
             Assert.Contains("host wildcards are not supported", ex.Message);
+        }
+
+        [Fact]
+        public void BareWildcardIsNoLongerALegalPin()
+        {
+            Assert.Throws<HyperlambdaException>(() => UrlWhitelistComparer.Matches("*", "https://anything.example.com/x"));
         }
 
         [Fact]

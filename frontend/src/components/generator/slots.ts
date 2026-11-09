@@ -120,8 +120,10 @@ export function fileSystemPin(slot: string, folder: string, extension: string): 
  * widens it from "this one file/folder/database/slot" to "anything on the server":
  * [execute]/[signal]/[try-signal]/[execute-file]/[io.file.execute] run arbitrary code or
  * files with full trust; [data.connect] reaches any configured database, including the
- * system one; every file and folder slot reaches any path on the filesystem. A bare
- * line (no ":value") or one ending right after the colon is unpinned.
+ * system one; every [http.*] slot reaches any URL, including the server's own network, and the
+ * backend refuses it unpinned; every file and folder slot reaches any path on the filesystem. A
+ * bare line (no ":value"), one ending right after the colon, or a pin of nothing but wildcards
+ * is unpinned.
  */
 export const UNPINNED_RISK_SLOTS = new Set([
   'execute',
@@ -130,6 +132,11 @@ export const UNPINNED_RISK_SLOTS = new Set([
   'execute-file',
   'io.file.execute',
   'data.connect',
+  'http.get',
+  'http.post',
+  'http.put',
+  'http.patch',
+  'http.delete',
   ...FOLDER_KIND_SLOTS,
   ...FILE_SLOTS.read,
 ]);
@@ -144,7 +151,13 @@ export function lintSlotLines(lines: string): string[] {
   for (const raw of linesToSlots(lines)) {
     const colon = raw.indexOf(':');
     const name = colon === -1 ? raw : raw.slice(0, colon);
-    const pin = colon === -1 ? '' : raw.slice(colon + 1).trim();
+    const pin =
+      colon === -1
+        ? ''
+        : raw
+            .slice(colon + 1)
+            .replaceAll('*', '')
+            .trim();
     if (FILE_CHANGING_SLOTS.has(name)) {
       warnings.push(
         '"' +

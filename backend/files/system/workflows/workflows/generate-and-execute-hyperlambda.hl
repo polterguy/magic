@@ -159,7 +159,6 @@ try
             date.now
             date.unix
             guid.new
-            http.get
             math.abs
             math.add
             math.ceil

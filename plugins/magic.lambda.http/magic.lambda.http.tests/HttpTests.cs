@@ -401,22 +401,25 @@ whitelist
 ", (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK))));
         }
 
-        [Fact]
-        public async Task HttpGet_BarePin_AllowsAnyUrl()
+        [Theory]
+        [InlineData("")]
+        [InlineData(":*")]
+        public async Task HttpGet_WithoutAPin_IsRefused(string pin)
         {
             var invoked = false;
-            await Common.EvaluateAsync(@"
+            var exception = await Assert.ThrowsAsync<HyperlambdaException>(() => Common.EvaluateAsync($@"
 whitelist
    vocabulary
-      http.get
+      http.get{pin}
    .lambda
       http.get:""https://anything.example.org/whatever""
 ", async (request, _) =>
             {
                 invoked = true;
                 return new HttpResponseMessage(HttpStatusCode.OK);
-            });
-            Assert.True(invoked);
+            }));
+            Assert.Equal("[http.get] must be pinned to a value inside a [whitelist]", exception.Message);
+            Assert.False(invoked);
         }
 
         [Fact]

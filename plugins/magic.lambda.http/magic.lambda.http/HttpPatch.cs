@@ -17,6 +17,7 @@ namespace magic.lambda.http
     /// </summary>
     [Slot(
         Name = "http.patch",
+        PinRequired = true,
         Description = "Issues an HTTP PATCH to the specified URL with a payload; used to apply partial updates to a remote resource",
         ValueKind = "url-template",
         ValueDescription = "URL to send the request to; supports {placeholder} segments substituted from [url-params]",
