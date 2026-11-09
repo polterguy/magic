@@ -53,7 +53,30 @@ namespace magic.lambda.crypto.slots.misc
             rnd.NextBytes(bytes);
 
             // Returning in the format requested by caller.
-            input.Value = raw ? (object)bytes : string.Concat(bytes.Select(x => _alphabet[x % (_alphabet.Length)]));
+            if (raw)
+            {
+                input.Value = bytes;
+            }
+            else
+            {
+                /*
+                 * Mapping random bytes onto our alphabet using rejection sampling. A plain
+                 * modulo would bias the first (256 % alphabet length) characters, since those
+                 * residues occur for one more byte value than the rest, measurably skewing the
+                 * distribution of any secret generated through this slot. We therefore discard
+                 * byte values in the final partial block so that every character is equally likely.
+                 */
+                var limit = 256 - (256 % _alphabet.Length);
+                var result = new StringBuilder(bytes.Length);
+                var buffer = new byte[1];
+                while (result.Length < bytes.Length)
+                {
+                    rnd.NextBytes(buffer);
+                    if (buffer[0] < limit)
+                        result.Append(_alphabet[buffer[0] % _alphabet.Length]);
+                }
+                input.Value = result.ToString();
+            }
 
             // House cleaning.
             input.Clear();

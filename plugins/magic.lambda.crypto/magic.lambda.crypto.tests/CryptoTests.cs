@@ -3,6 +3,7 @@
  */
 
 using System.Linq;
+using System.Collections.Generic;
 using Xunit;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -199,6 +200,39 @@ crypto.random
             Assert.NotNull(lambda.Children.First().Value);
             Assert.True(lambda.Children.First().Get<string>().Length >= 10);
             Assert.True(lambda.Children.First().Get<string>().Length <= 20);
+        }
+
+        [Fact]
+        public void RandomCharacters_AreUniformlyDistributed()
+        {
+            /*
+             * Regression guard against modulo bias. A plain 'byte % alphabetLength' over the 62
+             * character alphabet over-represents the first (256 % 62) = 8 characters by ~25%,
+             * since those residues occur for one more byte value than the rest. With rejection
+             * sampling every character is equally likely. The sample size and threshold below
+             * leave a wide margin so this never flakes on correct output.
+             */
+            var counts = new Dictionary<char, int>();
+            for (var batch = 0; batch < 80; batch++)
+            {
+                var sample = Common.Evaluate("crypto.random\n   min:4096\n   max:4096").Children.First().Get<string>();
+                foreach (var ch in sample)
+                {
+                    counts.TryGetValue(ch, out var current);
+                    counts[ch] = current + 1;
+                }
+            }
+
+            // Every character of the alphabet must have been produced over this many draws.
+            Assert.Equal(62, counts.Count);
+
+            var max = counts.Values.Max();
+            var min = counts.Values.Min();
+
+            // Biased output lands around 1.25; unbiased sampling stays comfortably under 1.17 here.
+            Assert.True(
+                (double)max / min < 1.17,
+                $"Character distribution too skewed: max={max}, min={min}, ratio={(double)max / min:0.###}");
         }
     }
 }
