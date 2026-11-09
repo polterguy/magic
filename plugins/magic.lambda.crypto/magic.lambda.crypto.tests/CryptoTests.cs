@@ -182,6 +182,23 @@ crypto.random
         }
 
         [Fact]
+        public void Seed_FeedsSubsequentRandomSlots()
+        {
+            // [crypto.seed] now mixes entropy into the shared CSPRNG the random slots draw from,
+            // so a seed followed by a draw must produce valid values rather than being a silent no-op.
+            var lambda = Common.Evaluate(@"
+crypto.seed:some-out-of-band-entropy
+crypto.random
+   min:16
+   max:16
+crypto.random.int
+   max:int:100");
+            Assert.Null(lambda.Children.First().Value);
+            Assert.Equal(16, lambda.Children.Skip(1).First().Get<string>().Length);
+            Assert.InRange((int)lambda.Children.Skip(2).First().Value, 0, 99);
+        }
+
+        [Fact]
         public void RandomBytes()
         {
             var lambda = Common.Evaluate(@"

@@ -3,7 +3,6 @@
  */
 
 using System.Text;
-using Org.BouncyCastle.Security;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -33,9 +32,9 @@ namespace magic.lambda.crypto.slots.misc
         {
             // Retrieving arguments.
             var seedStr = input.GetEx<string>() ?? throw new HyperlambdaException("No value provided to [crypto.seed]");
-            var seed = Encoding.UTF8.GetBytes(seedStr);
-            var rnd = new SecureRandom();
-            rnd.SetSeed(seed);
+
+            // Mixing the supplied entropy into the shared CSPRNG that the [crypto.random*] slots draw from.
+            SharedRandom.AddSeed(Encoding.UTF8.GetBytes(seedStr));
             input.Value = null;
         }
     }
