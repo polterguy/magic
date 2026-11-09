@@ -16,6 +16,7 @@ namespace magic.lambda.scheduler.slots.tasks
     /// </summary>
     [Slot(
         Name = "tasks.count",
+        Whitelistable = false,
         Description = "Counts scheduled tasks",
         ValueKind = "task-id",
         ValueDescription = "Optional filter for task IDs",
