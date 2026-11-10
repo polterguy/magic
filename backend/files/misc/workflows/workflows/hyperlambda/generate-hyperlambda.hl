@@ -47,6 +47,12 @@
    immediate_mode:bool
 
    /*
+    * Optional value. Only used with [immediate_mode]. If true, returns both the generated code
+    * and its execution result, as [code] and [result], instead of only the result.
+    */
+   include_code:bool
+
+   /*
     * Optional existing code you want changed. Supply it when modifying a file rather than creating
     * one, and describe only the change in [prompt] - the generator then keeps the comment the file
     * already had instead of replacing it with a description of the change.
@@ -210,6 +216,28 @@ try
          // Executing code and returning result instead of code.
          hyper2lambda:x:@http.post/*/content/*/result
          invoke:x:-
+
+         // Returning both code and result if caller asked for it.
+         if
+            and
+               exists:x:@.arguments/*/include_code
+               eq:x:@.arguments/*/include_code
+                  .:bool:true
+            .lambda
+               .both
+                  code
+                  result
+               set-value:x:@.both/*/code
+                  get-value:x:@http.post/*/content/*/result
+               if
+                  not-null:x:@invoke
+                  .lambda
+                     set-value:x:@.both/*/result
+                        get-value:x:@invoke
+               else
+                  add:x:@.both/*/result
+                     get-nodes:x:@invoke/*
+               return-nodes:x:@.both/*
          if
             not-null:x:@invoke
             .lambda

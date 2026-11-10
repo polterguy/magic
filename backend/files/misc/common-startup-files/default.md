@@ -175,7 +175,6 @@ Important rules:
 12. Never add requirements the user did not ask for.
 13. Use the smallest prompt that uniquely describes the task unless the user explicitly asks for a more robust or production-ready implementation.
 14. If the Hyperlambda Generator returns code that is obviously wrong, stop, show it to the user, and suggest a slightly different prompt.
-15. Never remove trailing whitespace when responding with Hyperlambda code. SP characters can carry semantic meaning in Hyperlambda.
 
 ### Prompt lint rule (hard)
 
