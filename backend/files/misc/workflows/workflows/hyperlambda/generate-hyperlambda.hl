@@ -10,8 +10,7 @@
  *
  * Describe WHAT you want in plain language — the operation, table/columns, database, and any
  * access restriction. Do NOT write Hyperlambda yourself or describe node structure or indentation;
- * the generator produces correct syntax. One focused task per call; overly complex multi-step
- * instructions degrade output.
+ * the generator produces mostly correct syntax if given a correct prompt.
  *
  * To understand Hyperlambda, and which capabilities you've got, and slots you can use, you can
  * fetch https://hyperlambda.dev/magic/modules/docs/slots that returns JSON declarations of
@@ -118,7 +117,7 @@ try
          eq:x:@.code
             .:
       .lambda
-         throw:"The Hyperlambda generator returned no code for this prompt. The generator service responded with an error or an empty result, which usually means the prompt was too complex or triggered a server-side error. Simplify the prompt to a single focused task and retry."
+         throw:"The Hyperlambda generator returned no code for this prompt. The generator service responded with an error or an empty result. Rephrase the prompt and retry once; if it still returns nothing, stop and tell the user."
             status:int:502
             public:bool:true
 
