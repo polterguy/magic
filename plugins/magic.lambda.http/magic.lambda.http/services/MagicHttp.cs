@@ -556,10 +556,18 @@ namespace magic.lambda.http.services
             // Checking if caller supplied a [payload] value or not, alternatives are structured lambda object.
             if (payloadNode.Value == null)
             {
-                // Figuring out Content-Type of request payload to make sure we correctly transform into the specified value.
-                var contentType = headers.TryGetValue(ContentTypeHeader, out var requestContentType) ?
-                    ContentType.Parse(requestContentType) :
-                    ContentType.Parse(ApplicationJson);
+                /*
+                 * Figuring out Content-Type of request payload to make sure we correctly transform into the specified value.
+                 *
+                 * Notice, a structured payload without a Content-Type is transformed to JSON, so the request must also say
+                 * it is JSON. Otherwise [headers] without a Content-Type would send a JSON body as "text/plain".
+                 */
+                if (!headers.TryGetValue(ContentTypeHeader, out var requestContentType))
+                {
+                    requestContentType = ApplicationJson;
+                    headers[ContentTypeHeader] = requestContentType;
+                }
+                var contentType = ContentType.Parse(requestContentType);
 
                 if (_requestTransformers.TryGetValue(contentType.MimeType, out var functor))
                     return await functor(signaler, headers, payloadNode, input.Name);

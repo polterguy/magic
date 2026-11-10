@@ -58,6 +58,19 @@ http.post:""https://example.com/endpoint""
         }
 
         [Fact]
+        public async Task PayloadWithHeadersButNoContentTypeIsSentAsJson()
+        {
+            var (body, type) = await PostAsync(@"
+http.post:""https://example.com/endpoint""
+   headers
+      X-Trace:trace-42
+   payload
+      name:Ada");
+            Assert.Equal("{\"name\":\"Ada\"}", body);
+            Assert.Equal("application/json", type);
+        }
+
+        [Fact]
         public async Task ExpressionsInAPayloadAreResolvedBeforeItIsSent()
         {
             var (body, _) = await PostAsync(@"

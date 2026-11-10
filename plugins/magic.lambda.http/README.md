@@ -57,7 +57,8 @@ http.get:"https://google.com"
 
 If you don't add an explicit **[headers]** collection the invocation will assume your request payload and
 accepted response is JSON. If you want to change this you'll have to add at least one header to your request,
-at which point the default headers will _not_ be applied.
+at which point the default headers will _not_ be applied. A structured **[payload]** without a `Content-Type`
+header is still sent as JSON, with `Content-Type: application/json`.
 
 ## QUERY parameters
 
