@@ -1,0 +1,730 @@
+/*
+ * Modern "Pro" chat theme.
+ *
+ * A premium, light theme: a floating rounded window with a gradient header, an avatar on
+ * the assistant's answers, solid bubbles for the user's questions, pill-shaped follow-up
+ * chips, and a rounded input with a round send button.
+ *
+ * Colours come from the embed settings:
+ *   start / end  → header gradient, launcher, user bubbles and links (the brand colour)
+ *   link         → accent: send button, avatar, chip hover, list markers
+ *   color        → text on the brand colour (usually white)
+ *
+ * Optional overrides, set on :host from a custom JavaScript file or another stylesheet:
+ *   --pro-primary, --pro-primary-dark, --pro-primary-light, --pro-accent, --pro-accent-dark,
+ *   --pro-avatar (text in the assistant's avatar, default "AI").
+ *
+ * Optional header markup, usable in the "header" setting:
+ *   <span class="pro_seal"><img src="logo.png"></span>
+ *   <span class="pro_titles"><b class="pro_title">Name</b><span class="pro_sub">Subtitle</span></span>
+ */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Roboto:wght@400;500;700&display=swap');
+
+/* DYNAMICALLY_REPLACED */
+.common{opacity:0}
+
+:host {
+  --pro-primary: color-mix(in srgb, var(--ainiro-bg-start) 50%, var(--ainiro-bg-end));
+  --pro-primary-dark: var(--ainiro-bg-start);
+  --pro-primary-light: var(--ainiro-bg-end);
+  --pro-accent: var(--ainiro-link);
+  --pro-accent-dark: color-mix(in srgb, var(--ainiro-link) 85%, #000);
+  --pro-on-primary: var(--ainiro-color);
+  --pro-text: #2f3540;
+  --pro-ink: #221d19;
+  --pro-mute: #6c707a;
+  --pro-line: #e4e1dc;
+  --pro-soft: #f4f4f3;
+  --pro-surface: #ffffff;
+  --pro-surface-2: #fbfaf8;
+  --pro-avatar: "AI";
+  --pro-font: 'Roboto', Arial, Helvetica, sans-serif;
+  --pro-display: 'Montserrat', Arial, sans-serif;
+  --pro-ease: cubic-bezier(.2,.7,.2,1);
+}
+
+.ainiro,
+.ainiro *:not(.hljs_ignore):not(.hljs_ignore *) {
+  font-family: var(--pro-font);
+  box-sizing: border-box;
+}
+
+/*
+ * Launcher button.
+ */
+button.ainiro {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  position: fixed;
+  right: clamp(14px, 2.4vw, 28px);
+  bottom: calc(clamp(14px, 2.4vw, 28px) + env(safe-area-inset-bottom, 0px));
+  z-index: 1000000;
+  padding: 6px 20px 6px 6px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--pro-primary);
+  color: var(--pro-on-primary);
+  font-family: var(--pro-display);
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 18px 44px -12px color-mix(in srgb, var(--pro-primary-dark) 70%, transparent);
+  transition: transform .35s var(--pro-ease), opacity .3s, background .2s;
+  animation: pro_fade_in .4s var(--pro-ease);
+}
+button.ainiro.ainiro_left {
+  left: clamp(14px, 2.4vw, 28px);
+  right: auto;
+}
+/* A text-only launcher (the "button" setting with no icon) gets even padding */
+button.ainiro:not(:has(> i, > .pro_launch_seal)) {
+  padding: 13px 22px;
+}
+button.ainiro:hover {
+  transform: translateY(-2px);
+  background: var(--pro-primary-light);
+}
+button.ainiro.ainiro_hide {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+/* The default chat icon becomes an accent "seal" */
+button.ainiro > i.ainiro-icofont {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--pro-accent) 55%, #fff), var(--pro-accent) 60%, var(--pro-accent-dark));
+  color: #fff;
+  font-size: 22px;
+}
+button.ainiro .pro_launch_seal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--pro-accent) 55%, #fff), var(--pro-accent) 60%, var(--pro-accent-dark));
+  color: #fff;
+}
+button.ainiro .pro_launch_seal svg {
+  width: 22px;
+  height: 22px;
+}
+button.ainiro .pro_launch_seal::after {
+  content: "";
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #45c165;
+  border: 2px solid var(--pro-primary);
+}
+button.ainiro .pro_launch_txt {
+  text-align: left;
+  line-height: 1.15;
+}
+button.ainiro .pro_launch_txt b {
+  display: block;
+  font-family: var(--pro-display);
+  font-weight: 800;
+  font-size: 15px;
+}
+button.ainiro .pro_launch_txt small {
+  font-family: var(--pro-font);
+  font-weight: 400;
+  font-size: 12px;
+  color: color-mix(in srgb, var(--pro-on-primary) 75%, transparent);
+}
+
+/*
+ * Chat window.
+ */
+/*
+ * The window is never display:none, so it can fade and scale both in and out. When closed it is
+ * invisible and cannot be clicked or tabbed into; visibility switches off only after the fade.
+ * (display:flex needs !important to win over the inline display:none that modern.js sets.)
+ */
+div.ainiro {
+  display: flex !important;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px) scale(.96);
+  position: fixed;
+  right: clamp(12px, 2vw, 24px);
+  bottom: calc(clamp(12px, 2vw, 24px) + env(safe-area-inset-bottom, 0px));
+  z-index: 1000001;
+  width: min(440px, calc(100vw - 24px));
+  height: min(740px, calc(100dvh - 32px));
+  flex-direction: column;
+  background: var(--pro-surface);
+  color: var(--pro-text);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 40px 100px -30px rgba(40,10,12,.55), 0 0 0 1px color-mix(in srgb, var(--pro-primary) 12%, transparent);
+  transform-origin: 100% 100%;
+  transition: transform .45s var(--pro-ease), opacity .3s var(--pro-ease), visibility 0s linear .45s, width .45s var(--pro-ease), height .45s var(--pro-ease);
+}
+div.ainiro.ainiro_left {
+  left: clamp(12px, 2vw, 24px);
+  right: auto;
+  transform-origin: 0 100%;
+}
+div.ainiro.show_ainiro_chatbot {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  transition: transform .45s var(--pro-ease), opacity .3s var(--pro-ease), visibility 0s, width .45s var(--pro-ease), height .45s var(--pro-ease);
+}
+div.ainiro.show_ainiro_chatbot.ainiro_maximized {
+  width: min(820px, calc(100vw - 24px));
+  height: calc(100dvh - 32px);
+}
+@keyframes pro_fade_in {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+/*
+ * Header.
+ */
+.ainiro > .ainiro_toolbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 12px 14px 16px;
+  background: linear-gradient(120deg, var(--pro-primary-dark), var(--pro-primary) 60%, var(--pro-primary-light));
+  color: var(--pro-on-primary);
+}
+.ainiro > .ainiro_toolbar > .ainiro_header {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--pro-display);
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--pro-on-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ainiro_header .pro_seal {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 4px;
+}
+.ainiro_header .pro_seal img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.ainiro_header .pro_titles {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ainiro_header .pro_title {
+  font-family: var(--pro-display);
+  font-weight: 800;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ainiro_header .pro_sub {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--pro-font);
+  font-weight: 400;
+  font-size: 12px;
+  color: color-mix(in srgb, var(--pro-on-primary) 75%, transparent);
+}
+.ainiro_header .pro_sub::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5fd27f;
+  box-shadow: 0 0 0 3px rgba(95,210,127,.22);
+}
+.ainiro_toolbar > .ainiro_action {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: color-mix(in srgb, var(--pro-on-primary) 85%, transparent);
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.ainiro_toolbar > .ainiro_action:hover,
+.ainiro_toolbar > .ainiro_action:focus-visible {
+  background: rgba(255,255,255,.14);
+  color: var(--pro-on-primary);
+}
+.ainiro_toolbar > .ainiro_action svg {
+  width: 19px;
+  height: 19px;
+}
+.ainiro_toolbar > .ainiro_action i,
+.ainiro_toolbar > .ainiro_action:hover i {
+  color: inherit;
+}
+.ainiro_action.ainiro_new_chat i,
+.ainiro_action.ainiro_close i {
+  font-size: 20px;
+}
+.ainiro_action.ainiro_maximize i {
+  font-size: 16px;
+}
+
+/*
+ * Conversation surface.
+ */
+.ainiro > .ainiro_chat_surface {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: linear-gradient(var(--pro-surface), var(--pro-surface-2));
+}
+/* Messages keep their natural height and the surface scrolls, instead of squashing them to fit */
+.ainiro > .ainiro_chat_surface > * {
+  flex-shrink: 0;
+}
+.ainiro > .ainiro_chat_surface::-webkit-scrollbar {
+  width: 6px;
+}
+.ainiro > .ainiro_chat_surface::-webkit-scrollbar-thumb {
+  background: #ddd7cf;
+  border-radius: 6px;
+}
+
+/* Messages from the assistant, with an avatar */
+.ainiro_machine {
+  position: relative;
+  padding-left: 37px;
+  min-height: 28px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--pro-text);
+}
+.ainiro_machine::before {
+  content: var(--pro-avatar);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--pro-accent);
+  color: #fff;
+  font-family: var(--pro-display);
+  font-weight: 800;
+  font-size: 10px;
+  line-height: 1;
+}
+/*
+ * Text styles for answers. Every rule skips HTML widgets (.hljs_ignore), so widgets keep their own look.
+ */
+.ainiro_machine p:not(.hljs_ignore *) {
+  margin: 0 0 .7em;
+}
+.ainiro_machine > :last-child {
+  margin-bottom: 0;
+}
+.ainiro_machine a:not(.hljs_ignore *) {
+  color: var(--pro-primary);
+  font-weight: 500;
+  text-decoration-color: var(--pro-accent);
+  text-underline-offset: 3px;
+}
+.ainiro_machine strong:not(.hljs_ignore *) {
+  font-weight: 700;
+  color: var(--pro-ink);
+}
+.ainiro_machine :is(h1, h2, h3, h4):not(.hljs_ignore *) {
+  font-family: var(--pro-display);
+  font-weight: 700;
+  color: var(--pro-ink);
+  margin: .9em 0 .35em;
+}
+.ainiro_machine h1:not(.hljs_ignore *) { font-size: 18px; }
+.ainiro_machine h2:not(.hljs_ignore *) { font-size: 17px; }
+.ainiro_machine :is(h3, h4):not(.hljs_ignore *) { font-size: 16px; }
+.ainiro_machine :is(ul, ol):not(.hljs_ignore *) {
+  margin: .3em 0 .8em;
+  padding-left: 1.2em;
+}
+.ainiro_machine li:not(.hljs_ignore *) {
+  margin: .2em 0;
+}
+.ainiro_machine li:not(.hljs_ignore *)::marker {
+  color: var(--pro-accent);
+}
+.ainiro_machine hr:not(.hljs_ignore *) {
+  border: 0;
+  border-top: 1px solid var(--pro-line);
+  margin: 1em 0;
+}
+.ainiro_machine .hljs_ignore img {
+  max-height: none;
+  margin: 0;
+}
+
+/* The greeting: a first paragraph followed by more text becomes a headline */
+.ainiro_machine.greeting > p:first-child:not(:last-child) {
+  margin-bottom: 14px;
+  font-family: var(--pro-display);
+  font-weight: 800;
+  font-size: 21px;
+  line-height: 1.3;
+  letter-spacing: -.3px;
+  color: var(--pro-ink);
+}
+
+/* Questions from the user */
+.ainiro_human {
+  align-self: flex-end;
+  width: fit-content;
+  max-width: 82%;
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: 18px 18px 4px 18px;
+  background: var(--pro-primary);
+  color: var(--pro-on-primary);
+  font-size: 15px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+/* Entry animations */
+.ainiro_just_added,
+.ainiro_machine.ainiro_question {
+  animation: pro_fade_in .4s var(--pro-ease);
+}
+
+/* Errors */
+.ainiro_machine.ainiro_error > *:not(.hljs_ignore) {
+  border-left: 3px solid #bd1026;
+  padding-left: 10px;
+}
+
+/* Typing indicator */
+.ainiro_machine > p > span.ainiro-dot {
+  position: relative;
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 8px 4px 8px 0;
+  border-radius: 50%;
+  background-color: var(--pro-accent) !important;
+  animation: pro_dot 1.2s infinite ease-in-out;
+}
+.ainiro_machine > p > span.ainiro-dot.ainiro-dot-2 { animation-delay: .15s; }
+.ainiro_machine > p > span.ainiro-dot.ainiro-dot-3 { animation-delay: .3s; }
+@keyframes pro_dot {
+  0%, 80%, 100% { opacity: .25; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* Function status */
+.ainiro_machine > p > span.ainiro_function_waiting {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--pro-mute);
+  font-size: 14px;
+  opacity: 1;
+  animation: none;
+}
+.ainiro_machine > p > span.ainiro_function_waiting > i.ainiro-icofont {
+  display: none;
+}
+.ainiro_machine > p > span.ainiro_function_waiting .pro_dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.ainiro_machine > p > span.ainiro_function_waiting .pro_dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pro-accent);
+  animation: pro_dot 1.2s infinite ease-in-out;
+}
+.ainiro_machine > p > span.ainiro_function_waiting .pro_dots i:nth-child(2) { animation-delay: .15s; }
+.ainiro_machine > p > span.ainiro_function_waiting .pro_dots i:nth-child(3) { animation-delay: .3s; }
+.ainiro_machine > p > span.ainiro_function_succeeded,
+.ainiro_machine > p > span.ainiro_function_failed {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: var(--pro-soft);
+  color: var(--pro-mute);
+}
+
+/* HTML widgets use the full width of the conversation */
+.ainiro div.hljs_ignore {
+  display: block;
+  margin: 10px 0 10px -37px;
+  width: calc(100% + 37px);
+}
+.ainiro_machine > div.hljs_ignore:first-child {
+  margin-top: 0;
+}
+/* An answer that starts with a widget has no avatar, since the widget covers that space */
+.ainiro_machine:has(> div.hljs_ignore:first-child)::before {
+  display: none;
+}
+
+/* Follow-up questions, stacked under the answer */
+.ainiro > .ainiro_chat_surface > .ainiro_starters {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin: -2px 0 0 37px;
+}
+button.ainiro_starter {
+  text-align: left;
+  border: 1px solid color-mix(in srgb, var(--pro-primary) 22%, transparent);
+  background: #fff;
+  color: var(--pro-primary);
+  border-radius: 14px;
+  padding: 8px 13px;
+  font-family: var(--pro-font);
+  font-size: 13.5px;
+  line-height: 1.35;
+  font-weight: 500;
+  cursor: pointer;
+  animation: pro_fade_in .4s var(--pro-ease) both;
+  transition: background .2s, border-color .2s;
+}
+button.ainiro_starter:hover,
+button.ainiro_starter:focus-visible {
+  background: color-mix(in srgb, var(--pro-accent) 10%, #fff);
+  border-color: var(--pro-accent);
+}
+.ainiro_starters > button.ainiro_starter:nth-child(2) { animation-delay: .06s; }
+.ainiro_starters > button.ainiro_starter:nth-child(3) { animation-delay: .12s; }
+.ainiro_starters > button.ainiro_starter:nth-child(4) { animation-delay: .18s; }
+
+/* Quick-start chips in a row above the input (used by custom JavaScript files) */
+.ainiro > .ainiro_quick {
+  flex: none;
+  display: flex;
+  flex-direction: row;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 2px 16px 10px;
+  margin: 0;
+  scrollbar-width: none;
+}
+.ainiro > .ainiro_quick::-webkit-scrollbar {
+  display: none;
+}
+.ainiro > .ainiro_quick[hidden] {
+  display: none;
+}
+.ainiro > .ainiro_quick > button.ainiro_starter {
+  flex: none;
+  white-space: nowrap;
+  border-radius: 999px;
+}
+
+/*
+ * Input.
+ */
+.ainiro_form {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 0 12px 10px;
+  padding: 5px 5px 5px 16px;
+  background: #fff;
+  border: 1.5px solid var(--pro-line);
+  border-radius: 22px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.ainiro_form:focus-within {
+  border-color: var(--pro-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--pro-primary) 10%, transparent);
+}
+.ainiro_form > .ainiro_query {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--pro-text);
+  padding: 9px 0;
+  height: 41px;
+  max-height: 140px;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+.ainiro_form > .ainiro_query::placeholder {
+  color: #8a8e97;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ainiro_form > .ainiro_attachments,
+.ainiro_form > .ainiro_scan {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: var(--pro-primary);
+  cursor: pointer;
+  transition: background .2s;
+}
+.ainiro_form > .ainiro_attachments:hover,
+.ainiro_form > .ainiro_scan:hover {
+  background: color-mix(in srgb, var(--pro-primary) 8%, transparent);
+}
+.ainiro_form > .ainiro_scan svg {
+  width: 20px;
+  height: 20px;
+}
+.ainiro_form > .ainiro_send {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--pro-accent);
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s, opacity .2s;
+}
+.ainiro_form > .ainiro_send:hover {
+  background: var(--pro-accent-dark);
+}
+.ainiro_form > .ainiro_send:disabled {
+  opacity: .35;
+  cursor: default;
+}
+.ainiro_form > .ainiro_send svg {
+  width: 18px;
+  height: 18px;
+}
+.ainiro_form > .ainiro_send i {
+  color: #fff;
+  font-size: 17px;
+}
+div.ainiro_filename {
+  margin: -6px 16px 6px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--pro-mute);
+}
+
+/* Small print under the input, and the watermark */
+.ainiro > .ainiro_foot {
+  flex: none;
+  margin: 0;
+  padding: 0 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  text-align: center;
+  font-size: 11px;
+  color: var(--pro-mute);
+}
+.ainiro_watermark {
+  text-align: center;
+  font-size: 11px;
+  color: var(--pro-mute);
+}
+.ainiro_watermark a,
+.ainiro_foot a {
+  color: var(--pro-mute);
+}
+
+/* Copy response button */
+.ainiro_copy_response {
+  float: right;
+  border: 0;
+  background: transparent;
+  color: var(--pro-mute);
+  cursor: pointer;
+  opacity: .6;
+}
+.ainiro_copy_response:hover {
+  opacity: 1;
+}
+
+/*
+ * Phones: full screen.
+ */
+@media (max-width: 560px) {
+  div.ainiro,
+  div.ainiro.ainiro_left,
+  div.ainiro.show_ainiro_chatbot.ainiro_maximized {
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+  }
+  .ainiro > .ainiro_toolbar {
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  }
+  .ainiro_toolbar > .ainiro_maximize {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ainiro *, .ainiro *::before, .ainiro *::after, button.ainiro, div.ainiro {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+button.ainiro_hidden {
+  display: none !important;
+}
