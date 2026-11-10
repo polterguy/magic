@@ -146,8 +146,17 @@ button.ainiro .pro_launch_txt small {
 /*
  * Chat window.
  */
+/*
+ * The window is never display:none, so it can fade and scale both in and out. When closed it is
+ * invisible and cannot be clicked or tabbed into; visibility switches off only after the fade.
+ * (display:flex needs !important to win over the inline display:none that modern.js sets.)
+ */
 div.ainiro {
-  display: none;
+  display: flex !important;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px) scale(.96);
   position: fixed;
   right: clamp(12px, 2vw, 24px);
   bottom: calc(clamp(12px, 2vw, 24px) + env(safe-area-inset-bottom, 0px));
@@ -161,7 +170,7 @@ div.ainiro {
   overflow: hidden;
   box-shadow: 0 40px 100px -30px rgba(40,10,12,.55), 0 0 0 1px color-mix(in srgb, var(--pro-primary) 12%, transparent);
   transform-origin: 100% 100%;
-  transition: width .45s var(--pro-ease), height .45s var(--pro-ease);
+  transition: transform .45s var(--pro-ease), opacity .3s var(--pro-ease), visibility 0s linear .45s, width .45s var(--pro-ease), height .45s var(--pro-ease);
 }
 div.ainiro.ainiro_left {
   left: clamp(12px, 2vw, 24px);
@@ -169,16 +178,15 @@ div.ainiro.ainiro_left {
   transform-origin: 0 100%;
 }
 div.ainiro.show_ainiro_chatbot {
-  display: flex !important;
-  animation: pro_open .45s var(--pro-ease);
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  transition: transform .45s var(--pro-ease), opacity .3s var(--pro-ease), visibility 0s, width .45s var(--pro-ease), height .45s var(--pro-ease);
 }
 div.ainiro.show_ainiro_chatbot.ainiro_maximized {
   width: min(820px, calc(100vw - 24px));
   height: calc(100dvh - 32px);
-}
-@keyframes pro_open {
-  from { opacity: 0; transform: translateY(16px) scale(.96); }
-  to { opacity: 1; transform: none; }
 }
 @keyframes pro_fade_in {
   from { opacity: 0; transform: translateY(6px); }
