@@ -835,7 +835,8 @@
           switch (obj.type) {
 
             case 'render_html':
-              this.response += '<div class="hljs_ignore">' + obj.html + '</div>';
+              // Blank lines around the widget, so Markdown treats it as its own HTML block even when text comes before it.
+              this.response += '\n\n<div class="hljs_ignore">' + obj.html + '</div>\n\n';
               break;
 
             default:

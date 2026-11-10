@@ -53,6 +53,7 @@ validators.default:x:@.arguments
    code:bool:false
    animation:
    popup:
+   header:
    hidden:bool:false
    sticky:bool:false
    attachments:bool:false
