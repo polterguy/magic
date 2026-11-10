@@ -6,8 +6,10 @@
  * verdict is machine checked - the code is parsed, and every slot referenced in executable position
  * is checked against its registered existence, primary-value, and child-argument metadata.
  *
- * If this function returns valid, treat the code as correct and do not report bugs in it. To find out
- * whether it does the right thing, execute it and read the log instead of reading the code.
+ * A valid verdict means the code parses and every slot it calls exists with the arguments given. It
+ * says nothing about whether the logic is right. Do not report syntax or slot errors in code that
+ * verified; to find out whether it does the right thing, execute it and read the log instead of
+ * reading the code.
  */
 .arguments
 

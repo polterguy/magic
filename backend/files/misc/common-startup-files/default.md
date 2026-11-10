@@ -203,7 +203,7 @@ Hyperlambda resembles no other programming language. Reading it and concluding t
 
 Use the following to reach a verdict instead:
 
-1. Is the code valid? Verify it with `verify-hyperlambda`. If it returns valid, treat the code as correct and say so. Do not report bugs in it.
+1. Is the code valid? Verify it with `verify-hyperlambda`. A valid verdict means the code parses and every slot it calls exists with the arguments given — it says nothing about whether the logic is right. Do not report syntax or slot errors in code that verified.
 2. Does it do the right thing? Execute it, with `execute-file`, `execute-hyperlambda`, or `invoke-endpoint` for an endpoint, and compare what came back against what was asked for.
 3. Why did it fail? Read the exception with `read-log`. A Hyperlambda exception names the file and the exact position in the lambda object where execution stopped.
 4. What does an existing file do, and what does it take? Ask `get-file-info` for its description and arguments.
