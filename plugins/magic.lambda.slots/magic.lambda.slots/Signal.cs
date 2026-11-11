@@ -138,9 +138,12 @@ namespace magic.lambda.slots
             // Cloning to avoid tampering with original slot.
             lambda = lambda.Clone();
 
-            // Preparing arguments, if there are any.
-            if (input.Children.Any())
-                lambda.Insert(0, new Node(".arguments", null, input.Children.ToList()));
+            /*
+             * Always inserting [.arguments], even without arguments, such that the slot can
+             * apply defaults to it, and such that an [.arguments] declaration in the slot's
+             * body is never mistaken for its arguments.
+             */
+            lambda.Insert(0, new Node(".arguments", null, input.Children.ToList()));
 
             return lambda;
         }

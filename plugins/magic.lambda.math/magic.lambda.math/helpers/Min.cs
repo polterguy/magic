@@ -15,6 +15,9 @@ namespace magic.lambda.math.basics
     [Slot(
         Name = "math.min",
         Description = "Returns the smallest value from the supplied inputs",
+        ValueKind = "number",
+        ValueDescription = "Base operand the child operands are applied to; omit to use the first child operand as the base",
+        ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "number",
         ReturnsDescription = "Resolves to the smallest supplied value",

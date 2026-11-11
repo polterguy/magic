@@ -30,7 +30,9 @@ namespace magic.lambda.slots
     [Slot(
         Name = "yield",
         Description = "Returns multiple child nodes or evaluated nodes to the caller",
-        ValueMode = SlotValueMode.None,
+        ValueKind = "node-list",
+        ValueDescription = "Expression evaluating to the nodes to return; omit to return the literal child nodes instead",
+        ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "node-list",
         ReturnsDescription = "Returns child nodes to the caller",

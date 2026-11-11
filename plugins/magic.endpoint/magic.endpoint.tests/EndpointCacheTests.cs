@@ -324,7 +324,8 @@ namespace magic.endpoint.tests
         {
             var response = await executor.ExecuteAsync(Request(endpoint));
             Assert.Equal(200, response.Result);
-            return HyperlambdaParser.Parse(Assert.IsType<string>(response.Content)).Children.First().Name;
+            // Skipping the [.arguments] node every endpoint invocation gets.
+            return HyperlambdaParser.Parse(Assert.IsType<string>(response.Content)).Children.First(x => x.Name != ".arguments").Name;
         }
 
         static IHttpExecutorAsync CreateExecutor(IFileService files = null)

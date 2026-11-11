@@ -47,9 +47,9 @@ cd frontend && npm run lint && npm run format:check
 
 ## Counterintuitive patterns
 
-- `backend/backend.csproj` copies `files/**` to the output directory with
-  PreserveNewest. Editing files under `backend/files/` changes runtime
-  behavior without a rebuild.
+- `backend/backend.csproj` copies `files/**` only on `dotnet publish`; local
+  builds leave it alone and `dotnet run` reads `backend/files/` directly.
+  Editing files under `backend/files/` changes runtime behavior without a rebuild.
 - Plugins communicate through slots/signals, not direct project references.
   A C# slot is registered with `[Slot(Name = "...", ValueKind = ...)]` and
   invoked by name in Hyperlambda. Adding a new slot does not require

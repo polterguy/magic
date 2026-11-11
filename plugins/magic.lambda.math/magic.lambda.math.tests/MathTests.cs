@@ -342,14 +342,16 @@ math.dot
         [InlineData("math.modulo")]
         [InlineData("math.max")]
         [InlineData("math.min")]
-        public void ArithmeticSignaturesDocumentChildOperandsOnly(string slotName)
+        public void ArithmeticSignaturesDocumentBaseOperandAndChildOperands(string slotName)
         {
             var lambda = Common.Evaluate($"slot.signature:{slotName}");
             var signature = lambda.Children.First();
             var children = signature.Children.First(x => x.Name == "children");
             var operand = children.Children.First();
 
-            Assert.DoesNotContain(signature.Children, x => x.Name == "input");
+            // The value is the optional base operand (Utilities.GetBase), the children the operands applied to it.
+            var input = signature.Children.First(x => x.Name == "input");
+            Assert.Equal(SlotValueMode.ValueOrExpression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal("*", operand.Name);
             Assert.Equal(SlotChildCardinality.TwoOrMore.ToString(), operand.Children.First(x => x.Name == "cardinality").GetEx<string>());
             Assert.Equal(SlotChildMode.ExecutableLambda.ToString(), operand.Children.First(x => x.Name == "mode").GetEx<string>());
