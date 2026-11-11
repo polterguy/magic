@@ -428,6 +428,28 @@ div.ainiro.show_ainiro_chatbot.ainiro_maximized {
   overflow-wrap: break-word;
 }
 
+/* A file sent with a question, shown on top of the question (used by custom JavaScript files) */
+.ainiro_human .ainiro_human_file {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 8px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.22);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ainiro_human .ainiro_human_file::before {
+  content: "\1F4CE";
+  flex: none;
+}
+
 /* Entry animations */
 .ainiro_just_added,
 .ainiro_machine.ainiro_question {
@@ -657,11 +679,28 @@ button.ainiro_starter:focus-visible {
   color: #fff;
   font-size: 17px;
 }
+/* The attached file's name, shown as a chip above the input */
 div.ainiro_filename {
-  margin: -6px 16px 6px;
-  text-align: right;
-  font-size: 12px;
-  color: var(--pro-mute);
+  flex: none;
+  margin: 0;
+  padding: 0;
+  font-size: 12.5px;
+  color: var(--pro-text);
+}
+div.ainiro_filename:not(:empty) {
+  align-self: flex-start;
+  max-width: calc(100% - 32px);
+  margin: 0 16px 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pro-primary) 7%, #fff);
+  border: 1px solid color-mix(in srgb, var(--pro-primary) 18%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+div.ainiro_filename:not(:empty)::before {
+  content: "\1F4CE  ";
 }
 
 /* Small print under the input, and the watermark */
