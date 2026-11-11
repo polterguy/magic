@@ -65,7 +65,7 @@ namespace magic.data.common.builders
             parser.Tokenize();
             var sql = parser.Expression();
             string alias = null;
-            if (allowAlias && parser.Peek()?.ToLowerInvariant() == "as")
+            if (allowAlias && string.Equals(parser.Peek(), "as", StringComparison.OrdinalIgnoreCase))
             {
                 parser._position++;
                 alias = parser.Next();
@@ -105,7 +105,7 @@ namespace magic.data.common.builders
                 return ReadWhile(idx, x => char.IsDigit(x) || x == '.');
             if (c == '\'')
                 return ReadString(idx);
-            if ("(),+-*/".IndexOf(c) == -1)
+            if (!"(),+-*/".Contains(c))
                 throw Error();
             _tokens.Add(c.ToString());
             return idx + 1;
@@ -131,7 +131,7 @@ namespace magic.data.common.builders
                 throw Error();
             for (var idx = start + 1; idx < end; idx++)
             {
-                if (!char.IsLetterOrDigit(_expression[idx]) && StringCharacters.IndexOf(_expression[idx]) == -1)
+                if (!char.IsLetterOrDigit(_expression[idx]) && !StringCharacters.Contains(_expression[idx]))
                     throw Error();
             }
             _tokens.Add(_expression.Substring(start, end - start + 1));
@@ -204,7 +204,7 @@ namespace magic.data.common.builders
         string CastArguments()
         {
             var builder = new StringBuilder(Expression());
-            if (Next().ToLowerInvariant() != "as")
+            if (!string.Equals(Next(), "as", StringComparison.OrdinalIgnoreCase))
                 throw Error();
             var type = Next();
             if (!IsWord(type))
@@ -232,7 +232,7 @@ namespace magic.data.common.builders
             if (Peek() == ")")
                 return "";
             var builder = new StringBuilder();
-            if (Peek()?.ToLowerInvariant() == "distinct" && Peek(1) != ")" && Peek(1) != "(")
+            if (string.Equals(Peek(), "distinct", StringComparison.OrdinalIgnoreCase) && Peek(1) != ")" && Peek(1) != "(")
             {
                 _position++;
                 builder.Append("distinct ");
