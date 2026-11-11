@@ -69,11 +69,12 @@ export default function CrudTablePicker({ crud }: Readonly<{ crud: CrudTabState 
               {expandedTables.has(table.name) && (
                 <tr>
                   {/*
-                   * 80px left padding lines the column names up directly
-                   * under the table name above: 40px checkbox column +
-                   * cell padding + the expand chevron and its gap.
+                   * 101px left padding lines the column names up directly
+                   * under the table name above: the checkbox column (its
+                   * 13px box plus 21px of cell padding each side) + the name
+                   * cell's 21px padding + the expand chevron and its gap.
                    */}
-                  <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
+                  <td colSpan={3} style={{ padding: '6px 21px 18px 101px' }}>
                     {(table.columns ?? []).map(column => (
                       <ColumnRow
                         key={column.name}

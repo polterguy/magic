@@ -15,6 +15,16 @@ import { errorMessage, showError } from '../lib/errors';
 import { copyToClipboard, showToast } from '../lib/toast';
 import { useAuth } from '../lib/useAuth';
 
+// Up to two initials from a full name, or the first letter of a username.
+function initials(value: string | undefined) {
+  const words = (value ?? '').trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return '?';
+  }
+  const letters = words.length === 1 ? words[0][0] : words[0][0] + words.at(-1)![0];
+  return letters.toUpperCase();
+}
+
 export default function Profile() {
   const { backend, logout } = useAuth();
   const [password, setPassword] = useState('');
@@ -80,10 +90,23 @@ export default function Profile() {
           Signed in as {backend?.username} on {backend?.url}
         </p>
       </div>
-      <div className="editor-split" style={{ flex: 'unset', alignItems: 'flex-start' }}>
-        <div className="card">
-          <h2 style={{ marginTop: 0 }}>Your details</h2>
-          <div className="form-grid">
+      <div className="card profile-identity">
+        <span className="profile-avatar mono" aria-hidden="true">
+          {initials(name || backend?.username)}
+        </span>
+        <div className="profile-identity-text">
+          <strong>{name || backend?.username}</strong>
+          <span className="muted">{email || 'No email on file'}</span>
+        </div>
+        <span className="dash-chip mono">{backend?.username}</span>
+      </div>
+      <div className="profile-grid">
+        <div className="card settings-card">
+          <div className="settings-card-head">
+            <h2>Your details</h2>
+            <p className="muted">How you appear to others on this cloudlet.</p>
+          </div>
+          <div className="form-grid settings-card-body">
             <label>
               Full name{' '}
               <input
@@ -103,18 +126,18 @@ export default function Profile() {
               />
             </label>
           </div>
-          <button
-            className="btn"
-            style={{ marginTop: 12 }}
-            onClick={saveDetails}
-            disabled={savingDetails}
-          >
-            {savingDetails ? 'Saving…' : 'Save details'}
-          </button>
+          <div className="settings-card-foot">
+            <button className="btn" onClick={saveDetails} disabled={savingDetails}>
+              {savingDetails ? 'Saving…' : 'Save details'}
+            </button>
+          </div>
         </div>
-        <div className="card">
-          <h2 style={{ marginTop: 0 }}>Change password</h2>
-          <div className="form-grid">
+        <div className="card settings-card">
+          <div className="settings-card-head">
+            <h2>Change password</h2>
+            <p className="muted">You are signed out afterwards, to sign in with the new one.</p>
+          </div>
+          <div className="form-grid settings-card-body">
             <label>
               New password (min {MIN_PASSWORD} characters)
               <input
@@ -135,26 +158,28 @@ export default function Profile() {
                 onChange={e => setConfirmPassword(e.target.value)}
               />
             </label>
-            <div>
-              <button
-                className="btn"
-                disabled={!password || changingPassword}
-                onClick={submitPassword}
-              >
-                {changingPassword ? 'Changing…' : 'Change password'}
-              </button>
-            </div>
+          </div>
+          <div className="settings-card-foot">
+            <button
+              className="btn"
+              disabled={!password || changingPassword}
+              onClick={submitPassword}
+            >
+              {changingPassword ? 'Changing…' : 'Change password'}
+            </button>
           </div>
         </div>
-        <div className="card">
-          <h2 style={{ marginTop: 0 }}>Access tokens</h2>
+      </div>
+      <div className="card profile-tokens">
+        <div className="settings-card-head">
+          <h2>Access tokens</h2>
           <p className="muted">
             Generate a long-lived JWT token for service accounts, CI/CD, or integrations.
           </p>
-          <button className="btn btn-secondary" onClick={() => setTokenOpen(true)}>
-            Generate token…
-          </button>
         </div>
+        <button className="btn btn-secondary" onClick={() => setTokenOpen(true)}>
+          Generate token…
+        </button>
       </div>
       {tokenOpen && <GenerateTokenDialog onClose={() => setTokenOpen(false)} />}
     </>

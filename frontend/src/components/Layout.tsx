@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import { openaiIsConfigured } from '../lib/api';
 import { getNavGuard, setNavGuard } from '../lib/navGuard';
@@ -26,10 +26,29 @@ import {
 import { SECTIONS } from './sections';
 import ShortcutsDialog from './ShortcutsDialog';
 
+/*
+ * Pages made of lists and tables. On very wide screens their rows stretch too
+ * far to scan, so the content area takes in its sides, as the dashboard does.
+ * Profile too, so its cards line up with them. Workspaces (SQL Studio, Hyper IDE,
+ * Web Designer, Playground) keep every pixel.
+ */
+const ROOMY_PAGES = new Set([
+  '/databases',
+  '/generator',
+  '/endpoints',
+  '/user-roles-management',
+  '/task-manager',
+  '/machine-learning',
+  '/plugins',
+  '/log',
+  '/user-profile',
+]);
+
 export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
   const { backend, logout, backends, version } = useAuth();
   const [switching, setSwitching] = useState(false);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem('magic2.navCollapsed') === 'true',
   );
@@ -377,7 +396,9 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
           <ChevronIcon />
         </span>
       </button>
-      <main className="content">{children}</main>
+      <main className={ROOMY_PAGES.has(pathname) ? 'content content-roomy' : 'content'}>
+        {children}
+      </main>
       {/* Mounted while closed too — the conversation survives closing it. */}
       {chatAvailable && (
         <ChatDrawer
