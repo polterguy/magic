@@ -11,12 +11,18 @@ export default function SearchInput(
     onChange: (value: string) => void;
     placeholder?: string;
     style?: CSSProperties;
+    // Accessible name, for a field without a visible label.
+    label?: string;
+    // Takes focus when the surrounding Modal opens.
+    initialFocus?: boolean;
   }>,
 ) {
   return (
     <span className="search-input" style={props.style}>
       <input
         type="text"
+        aria-label={props.label}
+        data-initial-focus={props.initialFocus || undefined}
         placeholder={props.placeholder}
         autoComplete="off"
         value={props.value}
