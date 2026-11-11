@@ -3,6 +3,8 @@
  */
 
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using Builder = magic.data.common.builders;
 
@@ -21,5 +23,17 @@ namespace magic.lambda.mysql.crud.builders
         public SqlReadBuilder(Node node)
             : base(node, "`", DateTimeKind.Local)
         { }
+
+        /*
+         * Functions of the MySQL dialect allowed in column, group and order expressions, in
+         * addition to the ones every database has.
+         */
+        static readonly string[] _dialectFunctions = new[]
+        {
+            "date_format", "year", "month", "day", "ifnull", "rand", "concat", "substring", "trim",
+        };
+
+        /// <inheritdoc />
+        protected override IEnumerable<string> Functions => base.Functions.Concat(_dialectFunctions);
     }
 }
