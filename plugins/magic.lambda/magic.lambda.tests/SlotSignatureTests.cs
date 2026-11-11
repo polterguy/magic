@@ -96,7 +96,7 @@ namespace magic.lambda.tests
         }
 
         [Fact]
-        public void ReturnsConditionalBlockWithoutInputOrExclusiveChildren()
+        public void ReturnsConditionalBlockWithValueConditionAndNoExclusiveChildren()
         {
             var lambda = Common.Evaluate(@"slot.signature:if");
             var result = lambda.Children.First();
@@ -104,7 +104,9 @@ namespace magic.lambda.tests
             var condition = children.Children.First(x => x.Name == "*");
             var body = children.Children.First(x => x.Name == ".lambda");
 
-            Assert.DoesNotContain(result.Children, x => x.Name == "input");
+            // The value is an alternative to the condition child (branching/Common.cs).
+            var input = result.Children.First(x => x.Name == "input");
+            Assert.Equal(SlotValueMode.ValueOrExpression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.DoesNotContain(condition.Children, x => x.Name == "exclusive-with");
             Assert.Equal(SlotChildRole.Condition.ToString(), condition.Children.First(x => x.Name == "role").GetEx<string>());
             Assert.Equal(SlotChildRole.LambdaBlock.ToString(), body.Children.First(x => x.Name == "role").GetEx<string>());
@@ -160,7 +162,9 @@ namespace magic.lambda.tests
                 .First(x => x.Name == "*");
             var output = result.Children.First(x => x.Name == "output");
 
-            Assert.DoesNotContain(result.Children, x => x.Name == "input");
+            // The value is the left-hand operand when the right-hand one is the only child (BaseComparison).
+            var input = result.Children.First(x => x.Name == "input");
+            Assert.Equal(SlotValueMode.ValueOrExpression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotChildCardinality.ExactlyTwo.ToString(), operand.Children.First(x => x.Name == "cardinality").GetEx<string>());
             Assert.Equal(SlotChildRole.OperandPaired.ToString(), operand.Children.First(x => x.Name == "role").GetEx<string>());
             Assert.Equal(SlotChildEvaluation.EvalSelf.ToString(), operand.Children.First(x => x.Name == "evaluation").GetEx<string>());
@@ -180,7 +184,9 @@ namespace magic.lambda.tests
                 .First(x => x.Name == "*");
             var output = result.Children.First(x => x.Name == "output");
 
-            Assert.DoesNotContain(result.Children, x => x.Name == "input");
+            // The value is tried first, before the candidate children (GetFirstValue.TryValue).
+            var input = result.Children.First(x => x.Name == "input");
+            Assert.Equal(SlotValueMode.ValueOrExpression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotChildCardinality.OneOrMore.ToString(), candidate.Children.First(x => x.Name == "cardinality").GetEx<string>());
             Assert.Equal(SlotChildMode.ExecutableLambda.ToString(), candidate.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotChildProjection.Value.ToString(), candidate.Children.First(x => x.Name == "projection").GetEx<string>());

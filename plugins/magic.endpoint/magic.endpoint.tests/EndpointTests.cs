@@ -577,10 +577,11 @@ input2:int:5");
             var hl = result.Content as string;
             Assert.NotNull(hl);
             var lambda = HyperlambdaParser.Parse(hl);
-            Assert.Equal(".interceptor-value", lambda.Children.First().Name);
-            Assert.Equal("howdy", lambda.Children.First().Value);
-            Assert.Equal(".endpoint-value", lambda.Children.Skip(1).First().Name);
-            Assert.Equal("world", lambda.Children.Skip(1).First().Value);
+            Assert.Equal(".arguments", lambda.Children.First().Name);
+            Assert.Equal(".interceptor-value", lambda.Children.Skip(1).First().Name);
+            Assert.Equal("howdy", lambda.Children.Skip(1).First().Value);
+            Assert.Equal(".endpoint-value", lambda.Children.Skip(2).First().Name);
+            Assert.Equal("world", lambda.Children.Skip(2).First().Value);
         }
 
         [Fact]
