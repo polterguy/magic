@@ -1085,14 +1085,18 @@ th {
   text-transform: uppercase;
   letter-spacing: 0.4px;
   color: var(--text-soft);
-  padding: 10px 14px;
+  padding: 15px 21px;
   border-bottom: 2px solid var(--border);
 }
 
 td {
-  padding: 10px 14px;
+  padding: 15px 21px;
   border-bottom: 1px solid var(--border);
-  vertical-align: top;
+  /*
+   * Middle, so a row holding a cell of buttons doesn't leave its text cells
+   * hanging at the top with a gap underneath.
+   */
+  vertical-align: middle;
 }
 
 /*
@@ -1955,7 +1959,7 @@ tr.clickable:hover td {
 }
 
 .skeleton-table td {
-  padding: 12px;
+  padding: 18px;
 }
 
 .skeleton-row:not(:last-child) td {
@@ -4017,6 +4021,15 @@ tr.vss-irrelevant td {
   .dash-page {
     padding-inline: clamp(24px, (100vw - 1500px) / 2.5, 320px);
   }
+
+  /*
+   * The same inset for the pages made of lists and tables (Layout's
+   * ROOMY_PAGES), added to .content's own 32px so their edges line up with
+   * the dashboard's.
+   */
+  .content.content-roomy {
+    padding-inline: calc(32px + clamp(24px, (100vw - 1500px) / 2.5, 320px));
+  }
 }
 
 .dash-header {
@@ -4306,6 +4319,218 @@ a.kpi-link:hover .kpi-icon {
 
 .dash-section-link:hover {
   color: var(--accent);
+}
+
+/*
+ * Plugins: a row of filter pills, then the plugins grouped into Modules and
+ * Frontends, each a grid of cards shaped like the dashboard's.
+ */
+.plugin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin: 0 0 22px;
+  padding: 0;
+  border: none;
+}
+
+.plugin-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-soft);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.plugin-filter:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.plugin-filter.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.plugin-filter-count {
+  font-size: 11px;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+.plugin-section + .plugin-section {
+  margin-top: 32px;
+}
+
+.plugin-section .dash-section-head {
+  margin-bottom: 14px;
+}
+
+.plugin-section-hint {
+  font-size: var(--text-sm);
+}
+
+.plugin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.plugin-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  transition: border-color 0.15s;
+}
+
+.plugin-card:hover {
+  border-color: var(--border-strong);
+}
+
+.plugin-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.plugin-card-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+
+.plugin-card-installed .plugin-card-icon {
+  background: var(--tint-green-bg);
+  color: var(--tint-green-text);
+  border-color: transparent;
+}
+
+.plugin-card-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plugin-card-text {
+  flex: 1;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.plugin-card-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/*
+ * Profile: who you are on top, the two forms side by side as cards with a
+ * heading, a hint and their button in a footer, then access tokens as a row.
+ */
+.profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+
+.profile-identity-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.profile-identity-text strong {
+  font-size: var(--text-lg);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.settings-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.settings-card-head h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.settings-card-head p {
+  margin: 4px 0 0;
+  font-size: var(--text-sm);
+}
+
+.settings-card > .settings-card-head {
+  padding: 20px 22px 0;
+}
+
+.settings-card-body {
+  flex: 1;
+  padding: 18px 22px 22px;
+}
+
+.settings-card-foot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.profile-tokens {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .dash-section-text {

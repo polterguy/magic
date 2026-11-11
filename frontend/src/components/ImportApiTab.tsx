@@ -452,10 +452,10 @@ export default function ImportApiTab() {
                         {expandedTags.has(tag) && (
                           <tr>
                             {/*
-                             * Matching the CRUD table's detail row: 80px of left padding lines the
+                             * Matching the CRUD table's detail row: 101px of left padding lines the
                              * operations up under the tag name above.
                              */}
-                            <td colSpan={3} style={{ padding: '4px 14px 12px 80px' }}>
+                            <td colSpan={3} style={{ padding: '6px 21px 18px 101px' }}>
                               {ops.map(op => (
                                 <label
                                   key={op.id}

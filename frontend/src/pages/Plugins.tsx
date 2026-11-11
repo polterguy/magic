@@ -50,12 +50,32 @@ function installLabel(installing: boolean, installed: boolean) {
   return installed ? 'Reinstall' : 'Install';
 }
 
+type Kind = 'all' | 'module' | 'frontend' | 'installed';
+
+const FILTERS: { key: Kind; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'module', label: 'Modules' },
+  { key: 'frontend', label: 'Frontends' },
+  { key: 'installed', label: 'Installed' },
+];
+
+const SECTIONS: { key: 'module' | 'frontend'; title: string; hint: string }[] = [
+  { key: 'module', title: 'Modules', hint: 'Backend code installed into its own module folder' },
+  { key: 'frontend', title: 'Frontends', hint: 'Served from your cloudlet’s root URL' },
+];
+
+// Anything the Bazar doesn't call a frontend installs as a module.
+function sectionOf(app: BazarApp): 'module' | 'frontend' {
+  return app.type === 'frontend' ? 'frontend' : 'module';
+}
+
 export default function Plugins() {
   const [available, setAvailable] = useState<BazarApp[]>([]);
   // The Bazar listing is a slow remote call, so we show a spinner until it lands.
   const [loading, setLoading] = useState(true);
   const [installed, setInstalled] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState('');
+  const [kind, setKind] = useState<Kind>('all');
   const [installing, setInstalling] = useState<string | null>(null);
   const [details, setDetails] = useState<BazarApp | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -73,7 +93,8 @@ export default function Plugins() {
       .catch(() => {});
   }, []);
 
-  const visible = useMemo(() => {
+  // Matching the search box, before the kind filter, so every filter button can count its share.
+  const matching = useMemo(() => {
     const query = filter.toLowerCase();
     return available.filter(
       app =>
@@ -83,6 +104,20 @@ export default function Plugins() {
         app.description?.toLowerCase().includes(query),
     );
   }, [available, filter]);
+
+  const counts: Record<Kind, number> = {
+    all: matching.length,
+    module: matching.filter(app => sectionOf(app) === 'module').length,
+    frontend: matching.filter(app => sectionOf(app) === 'frontend').length,
+    installed: matching.filter(app => installed.has(app.name)).length,
+  };
+
+  const visible = matching.filter(app => {
+    if (kind === 'installed') {
+      return installed.has(app.name);
+    }
+    return kind === 'all' || sectionOf(app) === kind;
+  });
 
   /*
    * A module of your own, as a ZIP, rather than one from the Bazar. Same
@@ -207,43 +242,53 @@ export default function Plugins() {
           <span className="muted">{visible.length} shown</span>
         </div>
       </div>
-      {loading && <CardGridSkeleton />}
-      <div
-        style={{
-          display: loading ? 'none' : 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: 14,
-        }}
-      >
-        {visible.map(app => (
-          <div className="card" key={app.name} style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-              <strong style={{ flex: 1 }}>{app.name}</strong>
-              <span className="badge badge-module">{app.type}</span>
-            </div>
-            <p className="muted line-clamp" style={{ flex: 1, marginTop: 8 }}>
-              {intro(app.description)}
-            </p>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn btn-secondary btn-small" onClick={() => setDetails(app)}>
-                Details
-              </button>
-              <button
-                className={'btn btn-small' + (installed.has(app.name) ? ' btn-secondary' : '')}
-                disabled={installing === app.name}
-                title={
-                  installed.has(app.name)
-                    ? "Install the plugin repository's current version over the one you have"
-                    : undefined
-                }
-                onClick={() => install(app)}
-              >
-                {installLabel(installing === app.name, installed.has(app.name))}
-              </button>
-            </div>
-          </div>
+      <fieldset className="plugin-filters" aria-label="Show plugins">
+        {FILTERS.map(option => (
+          <button
+            key={option.key}
+            className={'plugin-filter' + (kind === option.key ? ' active' : '')}
+            aria-pressed={kind === option.key}
+            onClick={() => setKind(option.key)}
+          >
+            {option.label}
+            <span className="plugin-filter-count">{counts[option.key]}</span>
+          </button>
         ))}
-      </div>
+      </fieldset>
+      {loading && <CardGridSkeleton />}
+      {!loading && visible.length === 0 && (
+        <div className="info-box">
+          {filter ? 'No plugins match “' + filter + '”.' : 'No plugins to show here.'}
+        </div>
+      )}
+      {!loading &&
+        SECTIONS.map(section => {
+          const apps = visible.filter(app => sectionOf(app) === section.key);
+          if (apps.length === 0) {
+            return null;
+          }
+          return (
+            <section key={section.key} className="plugin-section">
+              <div className="dash-section-head">
+                <h2>{section.title}</h2>
+                <span className="dash-count">{apps.length}</span>
+                <span className="plugin-section-hint muted">{section.hint}</span>
+              </div>
+              <div className="plugin-grid">
+                {apps.map(app => (
+                  <PluginCard
+                    key={app.name}
+                    app={app}
+                    installed={installed.has(app.name)}
+                    installing={installing === app.name}
+                    onDetails={() => setDetails(app)}
+                    onInstall={() => install(app)}
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       {details && (
         <Modal width={700} onClose={() => setDetails(null)}>
           <h2>{details.name}</h2>
@@ -270,5 +315,52 @@ export default function Plugins() {
         </Modal>
       )}
     </>
+  );
+}
+
+// One plugin: its initial, name and install state, the first sentence of its description, and its actions.
+function PluginCard(
+  props: Readonly<{
+    app: BazarApp;
+    installed: boolean;
+    installing: boolean;
+    onDetails: () => void;
+    onInstall: () => void;
+  }>,
+) {
+  const { app } = props;
+  return (
+    <div className={'card plugin-card' + (props.installed ? ' plugin-card-installed' : '')}>
+      <div className="plugin-card-head">
+        <span className="plugin-card-icon mono" aria-hidden="true">
+          {(app.name?.[0] ?? '?').toUpperCase()}
+        </span>
+        <strong className="plugin-card-name mono">{app.name}</strong>
+        {props.installed && (
+          <span className="dash-status dash-status-ok">
+            <span className="dash-status-dot" />
+            {'Installed'}
+          </span>
+        )}
+      </div>
+      <p className="plugin-card-text line-clamp">{intro(app.description)}</p>
+      <div className="plugin-card-actions">
+        <button className="btn btn-ghost btn-small" onClick={props.onDetails}>
+          Details
+        </button>
+        <button
+          className={'btn btn-small' + (props.installed ? ' btn-secondary' : '')}
+          disabled={props.installing}
+          title={
+            props.installed
+              ? "Install the plugin repository's current version over the one you have"
+              : undefined
+          }
+          onClick={props.onInstall}
+        >
+          {installLabel(props.installing, props.installed)}
+        </button>
+      </div>
+    </div>
   );
 }
