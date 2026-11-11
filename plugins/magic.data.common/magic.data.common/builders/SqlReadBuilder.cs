@@ -18,38 +18,15 @@ namespace magic.data.common.builders
     public class SqlReadBuilder : SqlWhereBuilder
     {
         /*
-         * White list of allowed aggregate function expressions, on the form 'fun(col)',
-         * 'fun(distinct col)', 'fun(col1 * col2)' or 'cast(fun(col) as type)', where 'fun' is one
-         * of the explicitly allowed function names, and operands are constrained to letters,
-         * digits, underscore and dot - or a lone '*' - making sure no SQL injection can occur
-         * through aggregate expressions. Arithmetic operands deliberately exclude '*' inside
-         * identifiers such that '/*' can never form a comment sequence.
+         * Functions every supported database has, allowed in column, group and order expressions. A database
+         * adapter adds the functions of its own dialect by overriding [Functions].
          */
-        const string _aggregateCall =
-            @"(?<fun>count|sum|avg|min|max|group_concat|string_agg)\s*\(\s*(?<distinct>distinct\s+)?(?<args>\*|[A-Za-z0-9_.]+(\s*[-+*/]\s*[A-Za-z0-9_.]+)*)\s*\)";
-        readonly static Regex _aggregateFunction = new Regex(
-            $"^{_aggregateCall}$",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled,
-            TimeSpan.FromSeconds(1));
-
-        /*
-         * The 'cast(fun(col) as type)' variant, matched separately from the plain call such that the
-         * two never share capture group names, and the type name is captured on its own.
-         */
-        readonly static Regex _castedAggregate = new Regex(
-            $@"^cast\s*\(\s*{_aggregateCall}\s+as\s+(?<type>[A-Za-z0-9_]+)\s*\)$",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled,
-            TimeSpan.FromSeconds(1));
-
-        /*
-         * Splits an aggregate's argument list on its arithmetic operators, keeping the operators
-         * themselves as elements, such that operands land on the even indexes and can be escaped
-         * individually while the operators are passed through verbatim.
-         */
-        readonly static Regex _arithmeticOperator = new Regex(
-            @"(\s*[-+*/]\s*)",
-            RegexOptions.Compiled,
-            TimeSpan.FromSeconds(1));
+        static readonly string[] _functions = new[]
+        {
+            "count", "sum", "avg", "min", "max", "group_concat", "string_agg",
+            "round", "abs", "coalesce", "lower", "upper", "length",
+        };
+        HashSet<string> _allowedFunctions;
 
         /*
          * White list of allowed table and join alias names, constraining aliases to plain
@@ -104,6 +81,12 @@ namespace magic.data.common.builders
         }
 
         #region [ -- Protected, overridden, and virtual methods -- ]
+
+        /// <summary>
+        /// Names of the functions allowed in column, group and order expressions, such as
+        /// 'round(avg(price), 2)'. Override to add the functions of a specific database's dialect.
+        /// </summary>
+        protected virtual IEnumerable<string> Functions => _functions;
 
         /// <inheritdoc />
         protected override void AppendTableName(StringBuilder builder)
@@ -258,44 +241,22 @@ namespace magic.data.common.builders
         }
 
         /*
-         * Validates that the specified name is a white listed aggregate function expression, and
-         * returns it with every identifier operand escaped. Throws an exception if not, to avoid
-         * SQL injection attacks through aggregate expressions being appended raw to the resulting SQL.
+         * Validates that the specified expression only uses allowed functions, and returns it with every
+         * identifier escaped. Throws an exception if not, to avoid SQL injection attacks through column,
+         * group and order expressions. See SqlExpression for the grammar.
          *
-         * Escaping the operands matters beyond injection: every other identifier in the statement is
+         * Escaping the identifiers matters beyond injection: every other identifier in the statement is
          * escaped, and PostgreSQL folds unquoted identifiers to lower case - so an unescaped
          * 'min(Album.Total)' cannot resolve against the escaped '"Album"' the from clause declares.
          */
         string EscapeAggregateName(string name)
         {
-            // The cast variant wraps an aggregate, and its type name is white listed but never an identifier.
-            var casted = _castedAggregate.Match(name);
-            if (casted.Success)
-                return $"cast({BuildAggregate(casted)} as {casted.Groups["type"].Value})";
-
-            var match = _aggregateFunction.Match(name);
-            if (!match.Success)
-                throw new HyperlambdaException($"'{name}' is not a supported aggregate function expression");
-            return BuildAggregate(match);
+            return SqlExpression.Build(name, AllowedFunctions(), EscapeTypeName, false).Sql;
         }
 
-        /*
-         * Rebuilds an already validated aggregate expression, escaping each identifier operand, and
-         * leaving a lone '*' alone since it is a wildcard and not an identifier. Splitting the
-         * argument list keeps the arithmetic operators on the odd indexes, and those are appended
-         * verbatim, their character set constrained by the white list above.
-         */
-        string BuildAggregate(Match match)
+        ISet<string> AllowedFunctions()
         {
-            var args = match.Groups["args"].Value;
-            if (args != "*")
-                args = string.Join(
-                    "",
-                    _arithmeticOperator
-                        .Split(args)
-                        .Select((x, idx) => idx % 2 == 0 ? EscapeTypeName(x) : x));
-
-            return $"{match.Groups["fun"].Value}({(match.Groups["distinct"].Success ? "distinct " : "")}{args})";
+            return _allowedFunctions ??= new HashSet<string>(Functions.Select(x => x.ToLowerInvariant()));
         }
 
         /*
@@ -391,9 +352,18 @@ namespace magic.data.common.builders
         string GetSingleColumn(Node column)
         {
             var builder = new StringBuilder();
-            if (column.Name.Contains('(') && column.Name.Contains(')'))
+            var alias = column.Children.FirstOrDefault(x => x.Name == "as")?.GetEx<string>();
+            if (column.Name.Contains('('))
             {
-                builder.Append(EscapeAggregateName(column.Name)); // Aggregate column, white listed shape.
+                // Expression column, which may declare its alias inline, as in 'count(*) as total'.
+                var expression = SqlExpression.Build(column.Name, AllowedFunctions(), EscapeTypeName, true);
+                builder.Append(expression.Sql);
+                if (expression.Alias != null)
+                {
+                    if (!string.IsNullOrEmpty(alias))
+                        throw new HyperlambdaException($"'{column.Name}' declares its alias both inline and with an [as] argument");
+                    alias = expression.Alias;
+                }
             }
             else
             {
@@ -405,7 +375,6 @@ namespace magic.data.common.builders
             }
 
             // Checking if caller supplied an alias for column.
-            var alias = column.Children.FirstOrDefault(x => x.Name == "as")?.GetEx<string>();
             if (!string.IsNullOrEmpty(alias))
                 builder.Append(" as ").Append(EscapeColumnName(alias));
 

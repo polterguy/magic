@@ -4,6 +4,7 @@
 
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 using magic.node;
 using magic.node.extensions;
 using Build = magic.data.common.builders;
@@ -22,6 +23,18 @@ namespace magic.lambda.mssql.crud.builders
         public SqlReadBuilder(Node node)
             : base(node, "\"")
         { }
+
+        /*
+         * Functions of the SQL Server dialect allowed in column, group and order expressions, in
+         * addition to the ones every database has.
+         */
+        static readonly string[] _dialectFunctions = new[]
+        {
+            "year", "month", "day", "format", "isnull", "newid", "concat", "substring", "trim",
+        };
+
+        /// <inheritdoc />
+        protected override IEnumerable<string> Functions => base.Functions.Concat(_dialectFunctions);
 
         /// <summary>
         /// Appends the "tail" parts of your SQL into the specified builder.

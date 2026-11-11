@@ -2,6 +2,8 @@
  * Magic Cloud, copyright (c) 2023 AINIRO.IO, Ltd. See the attached LICENSE file for details. For license inquiries you can send an email to team@ainiro.io
  */
 
+using System.Linq;
+using System.Collections.Generic;
 using magic.node;
 using Builder = magic.data.common.builders;
 
@@ -20,5 +22,17 @@ namespace magic.lambda.pgsql.crud.builders
         public SqlReadBuilder(Node node)
             : base(node, "\"")
         { }
+
+        /*
+         * Functions of the PostgreSQL dialect allowed in column, group and order expressions, in
+         * addition to the ones every database has.
+         */
+        static readonly string[] _dialectFunctions = new[]
+        {
+            "to_char", "date_trunc", "random", "concat", "substring", "trim",
+        };
+
+        /// <inheritdoc />
+        protected override IEnumerable<string> Functions => base.Functions.Concat(_dialectFunctions);
     }
 }
