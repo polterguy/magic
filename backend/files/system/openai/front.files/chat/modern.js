@@ -463,9 +463,14 @@
       // Replacing all @import statements with empty text.
       cssText = cssText.replace(importRegex, '');
 
-      // Adding style as inline style into DOM.
+      /*
+       * Adding style as inline style into DOM. The page stays scrollable while
+       * the chatbot is open, so the surface contains its own scrolling - reaching
+       * the top or bottom of the conversation must not start scrolling the page.
+       * Prepended so a theme can still override it.
+       */
       const style = document.createElement('style');
-      style.textContent = cssText;
+      style.textContent = '#ainiro_chat_surf { overscroll-behavior: contain; }\n' + cssText;
       shadowRoot.appendChild(style);
     },
 
@@ -678,10 +683,6 @@
       // Showing chat window.
       const wnd = this.shadow.getElementById('ainiro_chat_wnd');
       wnd.classList.add('show_ainiro_chatbot');
-
-      // Making sure body element cannot scroll.
-      document.body.style.height = '100vh';
-      document.body.style.overflowY = 'hidden';
 
       // In case there we've got the stupid Shopify chat thing on page, we hide it, since it's way too greedy on z-index.
       const shopifyChatbot = document.getElementById('shopify-chat');
@@ -1208,10 +1209,6 @@
       // Hides chat window.
       const wnd = this.shadow.getElementById('ainiro_chat_wnd');
       wnd.classList.remove('show_ainiro_chatbot');
-
-      // Making sure body element cannot scroll.
-      document.body.style.height = '';
-      document.body.style.overflowY = '';
 
       // Showing Shopify chat again (if it exists on page).
       const shopifyChatbot = document.getElementById('shopify-chat');
