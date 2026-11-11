@@ -14,6 +14,9 @@ namespace magic.lambda.branching
     [Slot(
         Name = "if",
         Description = "Evaluates the child lambda only if the condition is true; chain with [else-if] and [else] for additional branches",
+        ValueKind = "boolean",
+        ValueDescription = "Condition to evaluate, used instead of a condition child node",
+        ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.None,
         ProvidesScope = "if",
         SignatureType = typeof(global::magic.lambda.signatures.ConditionalBlockSignature))]

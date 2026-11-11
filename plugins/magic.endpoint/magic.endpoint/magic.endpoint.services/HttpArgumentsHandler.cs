@@ -26,7 +26,7 @@ namespace magic.endpoint.services
             var declaration = lambda.Children.FirstOrDefault(x => x.Name == ".arguments");
             declaration?.UnTie();
 
-            // [.arguments] not to insert into lambda if we have any arguments.
+            // Arguments supplied by the client.
             var args = new Node("");
 
             // Checking if query parameters was supplied, and if so, attach them as arguments.
@@ -53,9 +53,11 @@ namespace magic.endpoint.services
             if (args.Children.Any())
                 argsSorted.AddRange(args.Children);
 
-            // Only inserting [.arguments] node if there are any arguments.
-            if (argsSorted.Children.Any())
-                lambda.Insert(0, argsSorted);
+            /*
+             * Always inserting [.arguments], even without arguments, such that the file can
+             * apply defaults to it, e.g. with [validators.default].
+             */
+            lambda.Insert(0, argsSorted);
         }
 
         #region [ -- Private helper methods -- ]

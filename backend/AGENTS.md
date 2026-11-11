@@ -14,9 +14,10 @@ dotnet build
 ## Project facts
 
 - Target framework: net10.0
-- `backend.csproj` copies `files/**` to the output directory with
-  PreserveNewest. The `files/` tree is runtime content, not a build
-  artifact — editing it changes behavior without a rebuild.
+- `backend.csproj` copies `files/**` only on `dotnet publish` (the Docker
+  image runs from its publish folder); builds neither scan nor copy it, and
+  `dotnet run` reads it from `backend/files/`. The `files/` tree is runtime
+  content, not a build artifact — editing it changes behavior without a rebuild.
 - The backend references only three plugin projects directly
   (magic.lambda.python, magic.lambda.system, magic.library). Other plugins
   arrive transitively through magic.library.

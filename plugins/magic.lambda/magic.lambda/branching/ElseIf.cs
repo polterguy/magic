@@ -14,6 +14,9 @@ namespace magic.lambda.branching
     [Slot(
         Name = "else-if",
         Description = "Evaluates the child lambda when its condition is true and no preceding [if]/[else-if] branch matched",
+        ValueKind = "boolean",
+        ValueDescription = "Condition to evaluate, used instead of a condition child node",
+        ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.None,
         SignatureType = typeof(global::magic.lambda.signatures.ElseIfSignature))]
     public class ElseIf : ISlotAsync

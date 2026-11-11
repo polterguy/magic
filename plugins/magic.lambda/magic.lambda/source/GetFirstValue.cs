@@ -17,6 +17,8 @@ namespace magic.lambda.source
     [Slot(
         Name = "get-first-value",
         Description = "Returns the first non-null value produced by candidate child nodes",
+        ValueDescription = "Value, or expression whose first non-null value is returned; omit to try the candidate child nodes instead",
+        ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "",
         ReturnsDescription = "Resolves to the first non-null value produced by the candidate child nodes",

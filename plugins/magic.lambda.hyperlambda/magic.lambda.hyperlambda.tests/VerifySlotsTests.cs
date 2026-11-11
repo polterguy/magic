@@ -107,6 +107,16 @@ namespace magic.lambda.hyperlambda.tests
             .OrderBy(x => x.Key)
             .Select(x => x.Key));
 
+        public static TheoryData<string> NoValueSlotNames => new(Registered
+            .Where(x => x.Value.ValueMode == SlotValueMode.None && !x.Key.StartsWith('.'))
+            .OrderBy(x => x.Key)
+            .Select(x => x.Key));
+
+        public static TheoryData<string> ValueSlotNames => new(Registered
+            .Where(x => x.Value.ValueMode != SlotValueMode.None && !x.Key.StartsWith('.'))
+            .OrderBy(x => x.Key)
+            .Select(x => x.Key));
+
         public static TheoryData<string> SignatureSlotNames => new(Registered
             .Where(x => x.Value.SignatureType != null && !AcceptsAnyChild(x.Value))
             .OrderBy(x => x.Key)
@@ -289,6 +299,25 @@ else
         {
             var result = HyperlambdaTests.VerifySlots($"{name}:x:@.a");
             Assert.DoesNotContain(result.Children, x => x.Get<string>().Contains("value or child nodes", StringComparison.Ordinal));
+        }
+
+        [Theory]
+        [MemberData(nameof(NoValueSlotNames))]
+        public void SlotWithoutAValueIsRejectedWhenGivenOne(string name)
+        {
+            var result = HyperlambdaTests.VerifySlots($"{name}:x:@.a");
+            Assert.Contains(
+                result.Children,
+                x => x.Name == InvalidInvocationNode &&
+                    x.Get<string>().Contains($"Slot [{name}] does not accept a primary (RHS) value", StringComparison.Ordinal));
+        }
+
+        [Theory]
+        [MemberData(nameof(ValueSlotNames))]
+        public void SlotAcceptingAValueIsNotRejectedForHavingOne(string name)
+        {
+            var result = HyperlambdaTests.VerifySlots($"{name}:x:@.a");
+            Assert.DoesNotContain(result.Children, x => x.Get<string>().Contains("does not accept a primary", StringComparison.Ordinal));
         }
 
         [Theory]

@@ -15,6 +15,9 @@ namespace magic.lambda.comparison
     [Slot(
         Name = "neq",
         Description = "Returns true if two operands are not equal",
+        ValueKind = "object",
+        ValueDescription = "Left-hand operand, compared against the single child operand; omit to compare two child operands instead",
+        ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
         ReturnsDescription = "Resolves to true if the operands are not equal",
