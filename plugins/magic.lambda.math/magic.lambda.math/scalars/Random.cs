@@ -15,7 +15,7 @@ namespace magic.lambda.math.scalars
     /// </summary>
     [Slot(
         Name = "math.random",
-        Description = "Returns a random number from optional child-node bounds",
+        Description = "Returns a random number, an integer between the [min] and [max] children when [max] is given",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "number",
         ReturnsDescription = "Resolves to a random double, or a random integer when bounds are supplied",
@@ -30,29 +30,31 @@ namespace magic.lambda.math.scalars
         /// <returns>An awaitable task.</returns>
         public void Signal(ISignaler signaler, Node input)
         {
-            if (!input.Children.Any())
+            // Bounds are only ever read from [min] and [max], whose values may be expressions.
+            var unknown = input.Children.FirstOrDefault(x => x.Name != "min" && x.Name != "max");
+            if (unknown != null)
+                throw new HyperlambdaException($"[math.random] only accepts [min] and [max] children, not [{unknown.Name}]");
+            var minNode = input.Children.FirstOrDefault(x => x.Name == "min");
+            var maxNode = input.Children.FirstOrDefault(x => x.Name == "max");
+
+            if (maxNode == null)
             {
-                // No arguments, returning random double between 0.0 and 1.0.
+                if (minNode != null)
+                    throw new HyperlambdaException("[math.random] [min] requires [max]");
+
+                // No bounds, returning random double between 0.0 and 1.0.
                 input.Value = System.Random.Shared.NextDouble();
+                return;
             }
-            else if (input.Children.Count() == 1)
-            {
-                // One argument, returning random integer between 0 and argument.
-                var max = input.Children.First().GetEx<int>();
-                if (max < 0)
-                    throw new HyperlambdaException("[math.random] [max] cannot be negative");
-                input.Value = System.Random.Shared.Next(max);
-            }
-            else
-            {
-                // Two arguments, returning random integer between min and max.
-                // Notice, we expect arguments to be named 'min' and 'max', but we don't enforce it, we just take first and second.
-                var min = input.Children.First().GetEx<int>();
-                var max = input.Children.Skip(1).First().GetEx<int>();
-                if (min > max)
-                    throw new HyperlambdaException("[math.random] [min] cannot be greater than [max]");
-                input.Value = System.Random.Shared.Next(min, max);
-            }
+
+            // Returning random integer between [min], defaulting to 0, and [max], exclusive.
+            var max = maxNode.GetEx<int>();
+            var min = minNode?.GetEx<int>() ?? 0;
+            if (minNode == null && max < 0)
+                throw new HyperlambdaException("[math.random] [max] cannot be negative");
+            if (min > max)
+                throw new HyperlambdaException("[math.random] [min] cannot be greater than [max]");
+            input.Value = System.Random.Shared.Next(min, max);
         }
     }
 }

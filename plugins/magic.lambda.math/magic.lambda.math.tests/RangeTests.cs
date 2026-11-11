@@ -12,19 +12,29 @@ namespace magic.lambda.math.tests
     public class RangeTests
     {
         [Theory]
-        [InlineData("math.random\n   :int:-1")]
+        [InlineData("math.random\n   max:int:-1")]
         [InlineData("math.random\n   min:int:5\n   max:int:4")]
+        [InlineData("math.random\n   min:int:5")]
+        [InlineData("math.random\n   .:int:5")]
+        [InlineData("math.random\n   get-value:x:@.foo")]
         public void InvalidRandomBoundsAreRejected(string hl)
         {
             Assert.Throws<HyperlambdaException>(() => Common.Evaluate(hl));
         }
 
         [Theory]
-        [InlineData("math.random\n   :int:0", 0)]
+        [InlineData("math.random\n   max:int:0", 0)]
         [InlineData("math.random\n   min:int:7\n   max:int:7", 7)]
         public void DegenerateRandomBoundsAreAccepted(string hl, int expected)
         {
             Assert.Equal(expected, Common.Evaluate(hl).Children.First().Value);
+        }
+
+        [Fact]
+        public void RandomBoundsResolveExpressions()
+        {
+            var lambda = Common.Evaluate(".lower:int:4\n.upper:int:5\nmath.random\n   min:x:@.lower\n   max:x:@.upper");
+            Assert.Equal(4, lambda.Children.Skip(2).First().Value);
         }
 
         [Theory]
