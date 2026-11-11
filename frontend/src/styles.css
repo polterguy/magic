@@ -2748,6 +2748,254 @@ pre.result-json {
   justify-content: flex-end;
 }
 
+/*
+ * The CRUD generator's options card: rows of label + hint on the left and
+ * controls on the right, separated by hairlines, with the summary and the
+ * Generate button in a footer strip.
+ */
+.crud-opts {
+  padding: 0;
+  overflow: hidden;
+}
+
+.crud-opts-body {
+  padding: 0 20px;
+}
+
+.crud-opt-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 200px) 1fr;
+  gap: 8px 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.crud-opt-row:last-child {
+  border-bottom: none;
+}
+
+.crud-opt-title {
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.crud-opt-hint {
+  margin-top: 3px;
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.crud-opt-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.crud-opt-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.crud-opt-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crud-opt-panel {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  font-size: var(--text-sm);
+}
+
+.crud-opts-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.crud-opts-summary {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.crud-opts-summary.muted {
+  font-weight: 400;
+}
+
+/* A checkbox drawn as a toggle pill: outlined when off, filled when on. */
+.opt-pill {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.12s,
+    color 0.12s,
+    border-color 0.12s;
+}
+
+.opt-pill:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* The real checkbox stays for keyboard and screen readers, out of sight. */
+.opt-pill input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.opt-pill::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  flex: none;
+}
+
+.opt-pill:has(input:checked) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.opt-pill:has(input:checked)::before {
+  background: currentColor;
+}
+
+.opt-pill:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* A read-only value tag, such as a role the endpoints require. */
+.opt-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.opt-tag-warn {
+  background: var(--tint-amber-bg);
+  color: var(--tint-amber-text);
+  border-color: transparent;
+}
+
+/* Fixed URL segments and editable ones joined into one field. */
+.url-group {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  overflow: hidden;
+  font-size: var(--text-sm);
+}
+
+.url-group:focus-within {
+  border-color: var(--accent);
+}
+
+.url-group-fixed {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  color: var(--text-soft);
+  user-select: none;
+}
+
+.url-group-fixed:first-child {
+  padding-left: 12px;
+}
+
+.url-group input {
+  width: 15ch;
+  min-width: 0;
+  border: none;
+  border-radius: 0;
+  padding: 8px 6px;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.url-group input:disabled {
+  background: transparent;
+}
+
+/* A number field with its unit inside the same box. */
+.unit-group {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.unit-group:focus-within {
+  border-color: var(--accent);
+}
+
+.unit-group input {
+  width: 90px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.unit-group-unit {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-left: 1px solid var(--border);
+  color: var(--text-soft);
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 720px) {
+  .crud-opt-row {
+    grid-template-columns: 1fr;
+  }
+
+  .crud-opts-footer {
+    flex-wrap: wrap;
+  }
+}
+
 .line-clamp {
   display: -webkit-box;
   -webkit-line-clamp: 3;

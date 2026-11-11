@@ -1,3 +1,5 @@
+import CrudOptionRow from './CrudOptionRow';
+
 // The module and component segments of the URL the endpoints are generated under.
 export default function UrlFields(
   props: Readonly<{
@@ -10,21 +12,29 @@ export default function UrlFields(
   }>,
 ) {
   return (
-    <div>
-      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>URL</div>
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+    <CrudOptionRow
+      label="URL"
+      hint={
+        props.singleTable
+          ? 'Module and component the endpoints live under.'
+          : 'Each table uses its own name — select one table to rename it.'
+      }
+    >
+      <div className="url-group mono">
+        <span className="url-group-fixed">/magic/</span>
         <input
           type="text"
-          placeholder="Module…"
+          placeholder={props.database}
+          aria-label="Module"
           title="Module segment of the URL — defaults to the database name"
           value={props.moduleName}
           onChange={e => props.onModuleName(e.target.value)}
-          style={{ width: 160 }}
         />
-        <span className="muted">/</span>
+        <span className="url-group-fixed">/</span>
         <input
           type="text"
-          placeholder="table name"
+          placeholder="<table>"
+          aria-label="Component"
           title={
             props.singleTable
               ? 'Component segment of the URL — defaults to the table name'
@@ -33,13 +43,8 @@ export default function UrlFields(
           value={props.singleTable ? props.componentUrl : ''}
           disabled={!props.singleTable}
           onChange={e => props.onComponentUrl(e.target.value)}
-          style={{ width: 160 }}
         />
-        <span className="muted mono" style={{ fontSize: 12 }}>
-          → /magic/{props.moduleName || props.database}/
-          {props.singleTable ? props.componentUrl || props.singleTable : '<table>'}
-        </span>
       </div>
-    </div>
+    </CrudOptionRow>
   );
 }

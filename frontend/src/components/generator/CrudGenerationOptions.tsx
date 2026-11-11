@@ -1,4 +1,5 @@
 import Select from '../Select';
+import CrudOptionRow, { OptionPill } from './CrudOptionRow';
 import { CrudTabState } from './hooks/useCrudTab';
 
 // How generation behaves: logging, overwriting, and the live updates published after every change.
@@ -17,32 +18,20 @@ export default function CrudGenerationOptions({ crud }: Readonly<{ crud: CrudTab
     setLiveValues,
   } = crud;
   return (
-    <div>
-      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Generation</div>
-      <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <input type="checkbox" checked={logging} onChange={e => setLogging(e.target.checked)} />{' '}
-          Log create/update/delete
-        </label>
-        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <input
-            type="checkbox"
-            checked={overwrite}
-            onChange={e => setOverwrite(e.target.checked)}
-          />{' '}
-          Overwrite existing files
-        </label>
-        <label
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+    <CrudOptionRow label="Generation" hint="How the files are written and what they do.">
+      <div className="crud-opt-inline">
+        <OptionPill label="Log create/update/delete" checked={logging} onChange={setLogging} />
+        <OptionPill label="Overwrite existing files" checked={overwrite} onChange={setOverwrite} />
+        <OptionPill
+          label="Publish live updates"
+          checked={live}
+          onChange={setLive}
           title="Publish a web socket message after every create, update and delete"
-        >
-          <input type="checkbox" checked={live} onChange={e => setLive(e.target.checked)} /> Publish
-          live updates
-        </label>
+        />
       </div>
       {live && (
-        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="crud-opt-sub crud-opt-panel">
+          <div className="crud-opt-inline">
             <span>Notify</span>
             <Select value={liveAudience} onChange={value => setLiveAudience(value)}>
               <option value="inherited">The endpoint&apos;s own roles</option>
@@ -65,11 +54,11 @@ export default function CrudGenerationOptions({ crud }: Readonly<{ crud: CrudTab
             </em>
           )}
           <span className="muted">
-            Messages are named {'<module>.<table>.<post|put|delete>'}, carrying the request&apos;s
-            arguments as JSON.
+            Messages are named <code>{'<module>.<table>.<post|put|delete>'}</code>, carrying the
+            request&apos;s arguments as JSON.
           </span>
         </div>
       )}
-    </div>
+    </CrudOptionRow>
   );
 }
