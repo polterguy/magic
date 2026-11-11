@@ -22,8 +22,11 @@ import {
   EndpointWarningDialog,
   PublicEndpointWarningDialog,
 } from '../components/dashboard/WarningDialogs';
+import { RobotIcon, SearchIcon } from '../components/Icons';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import Tour from '../components/Tour';
+import { openChatOps, openPalette } from '../lib/shellActions';
+import { isMac } from '../lib/shortcuts';
 import { showToast } from '../lib/toast';
 import { CHATBOT_TOUR, DASHBOARD_TOUR } from '../lib/tourSteps';
 import { useAuth } from '../lib/useAuth';
@@ -49,18 +52,36 @@ export default function Dashboard() {
   const mcpUrl = mcpEndpointUrl(backend?.url);
 
   return (
-    <>
+    <div className="dash-page">
       {tour && (
         <Tour steps={tour === 'chatbot' ? CHATBOT_TOUR : DASHBOARD_TOUR} onClose={closeTour} />
       )}
-      <div className="page-header">
-        <h1>Dashboard</h1>
-        <p>
-          Connected to {backend?.url} as {backend?.username}
-        </p>
+      <div className="page-header dash-header">
+        <div className="dash-header-title">
+          <h1>Dashboard</h1>
+          <p className="dash-connection">
+            <span className="dash-live-dot" aria-hidden="true" />
+            <span>
+              Connected to {backend?.url} as {backend?.username}
+            </span>
+          </p>
+        </div>
+        <div className="dash-header-tools">
+          <span className="dash-chip" title="The Magic version this cloudlet runs">
+            <span className="muted">magic</span>
+            <span>{version}</span>
+          </span>
+          <button type="button" className="btn btn-secondary btn-small" onClick={openPalette}>
+            <SearchIcon /> Search <kbd>{isMac ? '⌘K' : 'Ctrl K'}</kbd>
+          </button>
+          {openaiConfigured === true && (
+            <button type="button" className="btn btn-small" onClick={openChatOps}>
+              <RobotIcon /> Chat Ops
+            </button>
+          )}
+        </div>
       </div>
       <KpiCards
-        version={version}
         endpoints={endpoints}
         publicEndpoints={publicEndpoints}
         users={users}
@@ -69,25 +90,29 @@ export default function Dashboard() {
         onEndpointWarning={() => setShowEndpointWarning(true)}
         onPublicEndpointWarning={() => setShowPublicEndpointWarning(true)}
       />
-      <AgentPluginsCard
-        missingPlugins={missingPlugins}
-        installing={installing}
-        onInstall={installAgentPlugins}
-        mcpUrl={mcpUrl}
-      />
-      {openaiConfigured === false && (
-        <OpenAiKeyCard onConfigure={() => setConfiguringOpenai(true)} />
-      )}
-      {openaiConfigured === true && <CreateChatbot onTour={() => setTour('chatbot')} />}
-      <ApiWizardCard />
-      <ExpertSystemCard
-        rootServed={rootServed}
-        installing={installingExpertSystem}
-        onInstall={installExpertSystem}
-        backendUrl={backend?.url}
-      />
-      <GuideDetails openaiConfigured={openaiConfigured} />
-      <TaskSection count={tasks} />
+      <div className="dash-grid">
+        <AgentPluginsCard
+          missingPlugins={missingPlugins}
+          installing={installing}
+          onInstall={installAgentPlugins}
+          mcpUrl={mcpUrl}
+        />
+        {openaiConfigured === false && (
+          <OpenAiKeyCard onConfigure={() => setConfiguringOpenai(true)} />
+        )}
+        {openaiConfigured === true && <CreateChatbot onTour={() => setTour('chatbot')} />}
+        <div className="dash-pair">
+          <ApiWizardCard />
+          <ExpertSystemCard
+            rootServed={rootServed}
+            installing={installingExpertSystem}
+            onInstall={installExpertSystem}
+            backendUrl={backend?.url}
+          />
+        </div>
+        <TaskSection count={tasks} />
+        <GuideDetails openaiConfigured={openaiConfigured} />
+      </div>
       {showEndpointWarning && (
         <EndpointWarningDialog
           endpoints={endpoints}
@@ -111,6 +136,6 @@ export default function Dashboard() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }

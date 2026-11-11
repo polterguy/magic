@@ -12,8 +12,10 @@ import {
 } from '../../lib/api';
 import { httpUrl, withoutTrailingSlashes } from '../../lib/backend';
 import { showError } from '../../lib/errors';
+import { RobotIcon } from '../Icons';
 import Select from '../Select';
 import SocketFeedback from '../SocketFeedback';
+import { ActionCard } from './ActionCards';
 import { chatbotModelFromProgress, DEFAULT_BOT_MODEL } from './constants';
 
 /*
@@ -68,20 +70,16 @@ export default function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
   const selected = flavors.find(candidate => candidate.name === flavor);
 
   return (
-    /*
-     * Same action-card chrome as its dashboard siblings — the inner wrapper
-     * is the card's single flex child, so the form keeps its block layout.
-     */
-    <div className="card agent-prompt" data-tour="chatbot-wizard">
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <h2 style={{ marginTop: 0 }}>Chatbot Wizard</h2>
-        <p className="muted" style={{ marginTop: 0 }}>
-          Crawls the site, turns what it finds into training data, and gives you a chatbot you can
-          embed. Takes a few minutes.{' '}
-          <button type="button" className="link-btn" onClick={props.onTour}>
-            What do these fields do?
-          </button>
-        </p>
+    // Same action-card chrome as its dashboard siblings, with the form as its body.
+    <ActionCard tour="chatbot-wizard" icon={<RobotIcon />} title="Chatbot Wizard">
+      <p>
+        Crawls the site, turns what it finds into training data, and gives you a chatbot you can
+        embed. Takes a few minutes.{' '}
+        <button type="button" className="link-btn" onClick={props.onTour}>
+          What do these fields do?
+        </button>
+      </p>
+      <div>
         <form
           onFocus={loadOptions}
           onSubmit={e => {
@@ -203,6 +201,6 @@ export default function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
           />
         )}
       </div>
-    </div>
+    </ActionCard>
   );
 }

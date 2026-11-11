@@ -12,7 +12,7 @@ import { SECTIONS } from '../sections';
  */
 export default function GuideDetails(props: Readonly<{ openaiConfigured: boolean | null }>) {
   return (
-    <details className="card guide-details" style={{ marginBottom: 16 }}>
+    <details className="card guide-details">
       <summary>
         <span className="guide-summary-title">What everything does</span>
         <span className="muted">Every part of your cloudlet, and where to find it.</span>

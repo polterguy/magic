@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import RoleChips from '../RoleChips';
+import CrudOptionRow from './CrudOptionRow';
 
 // The roles the generated endpoints are restricted to, which can be edited in place.
 export default function AuthorisationField(
@@ -12,22 +13,23 @@ export default function AuthorisationField(
 ) {
   const [open, setOpen] = useState(false);
   return (
-    <div>
-      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Authorisation</div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-        <span>
-          {props.auth.length > 0 ? (
-            props.auth.join(', ')
-          ) : (
-            <em className="muted">public — no roles</em>
-          )}
-        </span>
+    <CrudOptionRow label="Authorisation" hint="Roles allowed to invoke the endpoints.">
+      <div className="crud-opt-inline">
+        {props.auth.length > 0 ? (
+          props.auth.map(role => (
+            <span key={role} className="opt-tag mono">
+              {role}
+            </span>
+          ))
+        ) : (
+          <span className="opt-tag opt-tag-warn">Public — no roles</span>
+        )}
         <button className="btn btn-secondary btn-small" onClick={() => setOpen(!open)}>
           {open ? 'Done' : 'Edit'}
         </button>
       </div>
       {open && (
-        <div style={{ marginTop: 8 }}>
+        <div className="crud-opt-sub">
           <RoleChips
             roles={props.roles}
             selected={props.auth}
@@ -41,6 +43,6 @@ export default function AuthorisationField(
           />
         </div>
       )}
-    </div>
+    </CrudOptionRow>
   );
 }

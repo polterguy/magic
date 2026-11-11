@@ -2244,7 +2244,7 @@ tr.clickable:hover td {
  */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 0;
   margin-bottom: 24px;
   border: 1px solid var(--border);
@@ -2748,6 +2748,254 @@ pre.result-json {
   justify-content: flex-end;
 }
 
+/*
+ * The CRUD generator's options card: rows of label + hint on the left and
+ * controls on the right, separated by hairlines, with the summary and the
+ * Generate button in a footer strip.
+ */
+.crud-opts {
+  padding: 0;
+  overflow: hidden;
+}
+
+.crud-opts-body {
+  padding: 0 20px;
+}
+
+.crud-opt-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 200px) 1fr;
+  gap: 8px 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.crud-opt-row:last-child {
+  border-bottom: none;
+}
+
+.crud-opt-title {
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.crud-opt-hint {
+  margin-top: 3px;
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.crud-opt-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.crud-opt-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.crud-opt-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crud-opt-panel {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  font-size: var(--text-sm);
+}
+
+.crud-opts-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.crud-opts-summary {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.crud-opts-summary.muted {
+  font-weight: 400;
+}
+
+/* A checkbox drawn as a toggle pill: outlined when off, filled when on. */
+.opt-pill {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.12s,
+    color 0.12s,
+    border-color 0.12s;
+}
+
+.opt-pill:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* The real checkbox stays for keyboard and screen readers, out of sight. */
+.opt-pill input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.opt-pill::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  flex: none;
+}
+
+.opt-pill:has(input:checked) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.opt-pill:has(input:checked)::before {
+  background: currentColor;
+}
+
+.opt-pill:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* A read-only value tag, such as a role the endpoints require. */
+.opt-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.opt-tag-warn {
+  background: var(--tint-amber-bg);
+  color: var(--tint-amber-text);
+  border-color: transparent;
+}
+
+/* Fixed URL segments and editable ones joined into one field. */
+.url-group {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  overflow: hidden;
+  font-size: var(--text-sm);
+}
+
+.url-group:focus-within {
+  border-color: var(--accent);
+}
+
+.url-group-fixed {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  color: var(--text-soft);
+  user-select: none;
+}
+
+.url-group-fixed:first-child {
+  padding-left: 12px;
+}
+
+.url-group input {
+  width: 15ch;
+  min-width: 0;
+  border: none;
+  border-radius: 0;
+  padding: 8px 6px;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.url-group input:disabled {
+  background: transparent;
+}
+
+/* A number field with its unit inside the same box. */
+.unit-group {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.unit-group:focus-within {
+  border-color: var(--accent);
+}
+
+.unit-group input {
+  width: 90px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.unit-group-unit {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-left: 1px solid var(--border);
+  color: var(--text-soft);
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 720px) {
+  .crud-opt-row {
+    grid-template-columns: 1fr;
+  }
+
+  .crud-opts-footer {
+    flex-wrap: wrap;
+  }
+}
+
 .line-clamp {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -2949,55 +3197,297 @@ kbd {
   line-height: 1.5;
 }
 
-.shortcuts-group {
-  font-weight: 600;
-  font-size: 13px;
-  margin-bottom: 8px;
-}
-
-.shortcuts-list {
-  display: grid;
-  gap: 6px;
-}
-
 /*
- * The three groups side by side rather than stacked — the whole list then
- * fits one screen instead of scrolling. Rows stack their keys above the
- * description, since a third of the dialog is too narrow for both.
+ * The shortcuts overview — Ctrl/Cmd+/. A header with a live filter, the groups
+ * as cards flowing through two columns (so a long group never leaves a hole
+ * beside a short one), and keycaps that read as keys rather than as badges.
  */
-.shortcuts-columns {
+.shortcuts {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.shortcuts-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.shortcuts-badge {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
-  align-items: start;
-  margin-bottom: 18px;
+  place-items: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  box-shadow: inset 0 -2px 0 var(--border-strong);
 }
 
-.shortcut-row {
-  display: grid;
-  grid-template-columns: 170px 1fr;
-  gap: 12px;
-  align-items: baseline;
-  font-size: var(--text-sm);
+.shortcuts-badge svg {
+  width: 22px;
+  height: 22px;
 }
 
-.shortcuts-columns .shortcut-row {
-  grid-template-columns: 1fr;
-  gap: 1px;
+.shortcuts-heading {
+  flex: 1;
+  min-width: 0;
 }
 
-.shortcuts-columns .shortcuts-list {
-  gap: 10px;
+.modal-box .shortcuts-heading h2 {
+  margin: 0;
 }
 
-@media (max-width: 860px) {
-  .shortcuts-columns {
-    grid-template-columns: 1fr;
+/* The terminal voice — the same small caps as the palette's group labels. */
+.shortcuts-subtitle {
+  margin-top: 2px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.shortcuts-header .search-input {
+  width: 240px;
+}
+
+.shortcuts-close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    color 0.12s,
+    border-color 0.12s;
+}
+
+.shortcuts-close:hover {
+  background: var(--overlay);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.shortcuts-grid {
+  columns: 2;
+  column-gap: 16px;
+}
+
+.shortcuts-card {
+  break-inside: avoid;
+  margin-bottom: 16px;
+  padding: 14px 14px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--overlay-faint), transparent 70%), var(--surface-2);
+  animation: shortcuts-card-in 0.28s ease-out both;
+  animation-delay: calc(var(--stagger, 0) * 45ms);
+  transition: border-color 0.15s;
+}
+
+.shortcuts-card:hover {
+  border-color: var(--border-strong);
+}
+
+@keyframes shortcuts-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .shortcuts-card {
+    animation: none;
+  }
+}
+
+.shortcuts-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shortcuts-card-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.shortcuts-card-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.shortcuts-card-head h3 {
+  flex: 1;
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.shortcuts-count {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--tint-neutral-bg);
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.shortcuts-note {
+  margin: 6px 0 8px 36px;
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+.shortcuts-list {
+  margin: 0 -6px;
+  padding: 0;
+  list-style: none;
+}
+
+/* Description left, keys right; the hover is the app's tint-and-edge-bar. */
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 7px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  transition: background 0.1s;
+}
+
+.shortcut-row + .shortcut-row {
+  border-top: 1px dashed var(--border);
+}
+
+.shortcut-row:hover {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+  border-top-color: transparent;
+}
+
+.shortcut-row:hover + .shortcut-row {
+  border-top-color: transparent;
+}
+
+.shortcut-description {
+  color: var(--text-soft);
+  line-height: 1.4;
+}
+
+.shortcut-row:hover .shortcut-description {
+  color: var(--text);
+}
+
+.shortcut-description mark {
+  padding: 0 1px;
+  border-radius: 3px;
+  background: var(--tint-amber-bg);
+  color: var(--tint-amber-text);
+}
+
 .shortcut-keys {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
   white-space: nowrap;
+}
+
+.shortcut-key {
+  display: inline-flex;
+  align-items: center;
+}
+
+.shortcut-plus {
+  margin: 0 4px;
+  font-size: 11px;
+  color: var(--text-soft);
+  opacity: 0.6;
+}
+
+/* Keycaps: a lit top edge and a deeper bottom lip, so they read as pressable. */
+.shortcuts kbd {
+  min-width: 24px;
+  padding: 2px 7px;
+  border-color: var(--border-strong);
+  border-bottom-width: 3px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--overlay), transparent), var(--surface);
+  box-shadow: inset 0 1px 0 var(--overlay-strong);
+  color: var(--text);
+  font-family: var(--font-mono);
+  text-align: center;
+  transition: transform 0.08s;
+}
+
+.shortcut-row:hover kbd {
+  transform: translateY(1px);
+  border-bottom-width: 2px;
+  margin-bottom: 1px;
+}
+
+.shortcuts-empty {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--text-soft);
+}
+
+.shortcuts-empty b {
+  color: var(--text);
+}
+
+.shortcuts-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+.shortcuts-footer .shortcut-keys {
+  margin-right: 6px;
+}
+
+@media (max-width: 860px) {
+  .shortcuts-grid {
+    columns: 1;
+  }
+
+  .shortcuts-header {
+    flex-wrap: wrap;
+  }
+
+  .shortcuts-header .search-input {
+    order: 1;
+    width: 100%;
+  }
 }
 
 /* The command palette — Ctrl/Cmd+K. */
@@ -3350,62 +3840,6 @@ tr.log-target > td:first-child {
   z-index: 2000000;
 }
 
-/* Dashboard hero — the "this cloudlet is an AI agent" / MCP block. The most
-   differentiating thing Magic does, so it reads as the anchor: violet-tinted
-   surface, a thick accent bar, and a hard offset shadow. */
-.agent-prompt {
-  display: flex;
-  /* Button drops to the bottom-right corner of the card on desktop; the phone
-     layout resets this back to center in the media query below. */
-  align-items: flex-end;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-  border: 1px solid var(--border-strong);
-  border-left: 4px solid var(--accent);
-  background: linear-gradient(90deg, var(--accent-soft), transparent 60%), var(--surface);
-  box-shadow: var(--shadow-hard);
-}
-
-/* The MCP URL, rendered as a terminal command line with a $ prompt. */
-.agent-prompt .mono {
-  display: block;
-  margin-top: 10px;
-  padding: 10px 12px;
-  background: var(--bg-deep);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
-}
-
-.agent-prompt .mono::before {
-  content: '$ ';
-  color: var(--accent);
-  font-weight: 700;
-}
-
-/* A card offering several routes rather than one, as the API Wizard does. */
-.agent-prompt-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-/*
- * Three routes do not fit beside the text the way a single button does, so the
- * description takes the full width and the routes form a toolbar beneath it -
- * matching the Chatbot Wizard above, whose controls also sit in a bottom row.
- * The description carries no flex of its own; the 100% basis is what breaks the
- * row.
- */
-.agent-prompt-stacked > :first-child {
-  flex-basis: 100%;
-}
-
-.agent-prompt-stacked .agent-prompt-actions {
-  margin-left: auto;
-}
-
 .btn-large {
   padding: 14px 28px;
   font-size: var(--text-base);
@@ -3559,16 +3993,6 @@ tr.vss-irrelevant td {
   color: var(--accent-dark);
 }
 
-/* Dashboard task tiles — a guide card with an action on the right. */
-.task-card {
-  align-items: center;
-  gap: 14px;
-}
-
-.task-card .guide-text {
-  margin-top: 2px;
-}
-
 /* Section icons are SVG now, sized here rather than by font-size. */
 .nav-icon svg {
   width: 17px;
@@ -3578,6 +4002,408 @@ tr.vss-irrelevant td {
 .guide-icon svg {
   width: 17px;
   height: 17px;
+}
+
+/*
+ * The dashboard. A header that says where you are and what runs there, the
+ * count strip, then the next steps as cards sharing one shape: an icon tile,
+ * a title with its status, the text, and the actions pinned to the bottom.
+ */
+/*
+ * On very wide screens the dashboard's cards and their text stretch too far to
+ * scan, so the page takes in its sides — growing with the viewport, capped.
+ */
+@media (min-width: 1600px) {
+  .dash-page {
+    padding-inline: clamp(24px, (100vw - 1500px) / 2.5, 320px);
+  }
+}
+
+.dash-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dash-connection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* A soft pulse, so the connection reads as live rather than as a label. */
+.dash-live-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 0 var(--tint-green-border);
+  animation: dash-pulse 2.4s ease-out infinite;
+}
+
+@keyframes dash-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--tint-green-border);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+
+.dash-header-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dash-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-header-tools .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dash-header-tools kbd {
+  margin-left: 2px;
+  padding: 0 5px;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* Count tiles: the icon sits quietly in the corner and lights up on hover. */
+.kpi-icon {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  color: var(--text-soft);
+  opacity: 0.45;
+  transition:
+    opacity 0.12s,
+    color 0.12s;
+}
+
+.kpi-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+a.kpi-link:hover .kpi-icon {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.kpi-warn .kpi-icon {
+  color: var(--danger);
+  opacity: 0.8;
+}
+
+.kpi-grid .kpi-warn-btn {
+  top: auto;
+  right: 14px;
+  bottom: 14px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 11px;
+  background: var(--tint-red-bg);
+  box-shadow: 0 0 0 1px var(--tint-red-border);
+}
+
+.kpi-grid .kpi-warn-btn:hover {
+  background: var(--danger);
+  color: var(--accent-contrast);
+}
+
+.dash-grid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Two cards side by side, or one filling the row when its partner is absent. */
+.dash-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px;
+}
+
+.dash-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  transition: border-color 0.15s;
+}
+
+.dash-card:hover {
+  border-color: var(--border-strong);
+}
+
+/* The MCP card is the anchor — the most differentiating thing Magic does. */
+.dash-card-hero {
+  border-color: var(--border-strong);
+}
+
+.dash-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-card-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.dash-card-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.dash-card-head h2 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.dash-card-hero .dash-card-head h2 {
+  font-size: var(--text-xl);
+}
+
+.dash-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dash-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.dash-status-ok {
+  background: var(--tint-green-bg);
+  color: var(--tint-green-text);
+}
+
+.dash-status-warn {
+  background: var(--tint-amber-bg);
+  color: var(--tint-amber-text);
+}
+
+.dash-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-card-body > p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.dash-card-body > p + * {
+  margin-top: 14px;
+}
+
+.dash-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* A URL rendered as a terminal command line, with its action inside the line. */
+.dash-command {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-deep);
+}
+
+.dash-command-prompt {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.dash-command .mono {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 0;
+  overflow-wrap: anywhere;
+}
+
+.dash-command .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dash-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dash-section-head h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.dash-count {
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--tint-neutral-bg);
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.dash-section-link {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  color: var(--text-soft);
+  text-decoration: none;
+}
+
+.dash-section-link:hover {
+  color: var(--accent);
+}
+
+.dash-section-text {
+  margin: 6px 0 14px;
+  font-size: var(--text-sm);
+}
+
+.dash-task-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dash-task {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  transition:
+    border-color 0.12s,
+    background 0.12s;
+}
+
+.dash-task:hover {
+  border-color: var(--border-strong);
+  background: var(--accent-soft);
+}
+
+.dash-task-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  background: var(--overlay-faint);
+  color: var(--text-soft);
+}
+
+.dash-task-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.dash-task-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-task-name {
+  display: block;
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-task-description {
+  margin-top: 2px;
+  color: var(--text-soft);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  -webkit-line-clamp: 2;
+}
+
+.dash-task .btn {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .dash-pair,
+  .dash-task-list {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-card-actions {
+    flex-direction: column;
+  }
+
+  .dash-card-actions .btn {
+    width: 100%;
+  }
+
+  .dash-command {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-live-dot {
+    animation: none;
+  }
 }
 
 /* The no-access warning's exclamation mark. */
@@ -3941,23 +4767,6 @@ tr.vss-irrelevant td {
   /* KPI cards keep the compact two-up wrap on a phone. */
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  /* Dashboard — the agent banners stack instead of squeezing the heading. */
-  /* Keep the MCP hero's button centered on phones — the desktop bottom-right
-     alignment is deliberately not applied here. */
-  .agent-prompt {
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-  }
-  .agent-prompt .btn-large {
-    width: 100%;
-  }
-  /* Several routes stack rather than sitting side by side on a phone. */
-  .agent-prompt-actions {
-    flex-direction: column;
-    width: 100%;
   }
 
   /*

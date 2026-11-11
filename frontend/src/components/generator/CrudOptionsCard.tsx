@@ -2,6 +2,7 @@ import AuthorisationField from './AuthorisationField';
 import CrudGenerationOptions from './CrudGenerationOptions';
 import CrudGetOptions from './CrudGetOptions';
 import { ALL_VERBS, crudSummary } from './crudify';
+import CrudOptionRow, { OptionPill } from './CrudOptionRow';
 import { CrudTabState } from './hooks/useCrudTab';
 import UrlFields from './UrlFields';
 
@@ -28,9 +29,10 @@ export default function CrudOptionsCard({ crud }: Readonly<{ crud: CrudTabState 
     generate,
     busy,
   } = crud;
+  const ready = selectedTables.size > 0 && verbs.size > 0;
   return (
-    <div className="card">
-      <div className="form-grid" style={{ gap: 18 }}>
+    <div className="card crud-opts">
+      <div className="crud-opts-body">
         <UrlFields
           database={selection.database}
           moduleName={moduleName}
@@ -39,71 +41,55 @@ export default function CrudOptionsCard({ crud }: Readonly<{ crud: CrudTabState 
           componentUrl={componentUrl}
           onComponentUrl={setComponentUrl}
         />
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>HTTP verbs</div>
-          <div style={{ display: 'flex', gap: 14 }}>
+        <CrudOptionRow label="HTTP verbs" hint="One endpoint per verb and table.">
+          <div className="crud-opt-inline">
             {ALL_VERBS.map(verb => (
-              <label key={verb} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <input
-                  type="checkbox"
-                  checked={verbs.has(verb)}
-                  onChange={() => toggleVerb(verb)}
-                />
-                {verb.toUpperCase()}
-              </label>
+              <OptionPill
+                key={verb}
+                mono
+                label={verb.toUpperCase()}
+                checked={verbs.has(verb)}
+                onChange={() => toggleVerb(verb)}
+              />
             ))}
           </div>
-        </div>
+        </CrudOptionRow>
         <AuthorisationField roles={roles} auth={auth} onAuth={setAuth} />
         <CrudGetOptions crud={crud} />
         <CrudGenerationOptions crud={crud} />
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
-            GET cache (seconds, 0 = off)
-          </div>
-          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-            <input
-              type="number"
-              value={cache}
-              onChange={e => setCache(e.target.value)}
-              style={{ width: 120 }}
-            />
-            <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+        <CrudOptionRow label="GET cache" hint="Seconds to cache responses, 0 turns it off.">
+          <div className="crud-opt-inline">
+            <div className="unit-group">
               <input
-                type="checkbox"
-                checked={publicCache}
-                onChange={e => setPublicCache(e.target.checked)}
-              />{' '}
-              Public cache
-            </label>
+                type="number"
+                min={0}
+                aria-label="GET cache in seconds"
+                value={cache}
+                onChange={e => setCache(e.target.value)}
+              />
+              <span className="unit-group-unit">sec</span>
+            </div>
+            <OptionPill
+              label="Public cache"
+              checked={publicCache}
+              onChange={setPublicCache}
+              title="Let proxies and CDNs cache the responses, not only the browser"
+            />
           </div>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            borderTop: '1px solid var(--border)',
-            paddingTop: 14,
-          }}
-        >
-          <span className="muted">
-            {crudSummary(
-              selectedTables.size,
-              verbs.size,
-              plannedEndpoints,
-              moduleName || selection.database,
-            )}
-          </span>
-          <span style={{ flex: 1 }} />
-          <button
-            className="btn"
-            onClick={generate}
-            disabled={busy || selectedTables.size === 0 || verbs.size === 0}
-          >
-            {busy ? 'Generating…' : '⚙ Generate backend'}
-          </button>
-        </div>
+        </CrudOptionRow>
+      </div>
+      <div className="crud-opts-footer">
+        <span className={ready ? 'crud-opts-summary' : 'crud-opts-summary muted'}>
+          {crudSummary(
+            selectedTables.size,
+            verbs.size,
+            plannedEndpoints,
+            moduleName || selection.database,
+          )}
+        </span>
+        <button className="btn" onClick={generate} disabled={busy || !ready}>
+          {busy ? 'Generating…' : '⚙ Generate backend'}
+        </button>
       </div>
     </div>
   );
