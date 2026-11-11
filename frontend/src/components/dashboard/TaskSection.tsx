@@ -5,6 +5,7 @@ import { executeTask, listTasks, Task } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 import { useDialog } from '../../lib/useDialog';
+import { ClockIcon } from '../Icons';
 import Pagination from '../Pagination';
 import { TASK_PAGE_SIZE, taskPageCount } from './constants';
 
@@ -54,18 +55,28 @@ export default function TaskSection(
   const pageCount = taskPageCount(props.count);
 
   return (
-    <div className="card">
-      <h2 style={{ marginTop: 0 }}>Tasks</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Run one of your tasks now. <Link to="/task-manager">Task Manager</Link> is where you write
-        and schedule them.
+    <section className="card dash-tasks">
+      <div className="dash-section-head">
+        <h2>Tasks</h2>
+        {props.count !== null && <span className="dash-count">{props.count}</span>}
+        <Link className="dash-section-link" to="/task-manager">
+          Task Manager →
+        </Link>
+      </div>
+      <p className="muted dash-section-text">
+        Run one of your tasks now. The Task Manager is where you write and schedule them.
       </p>
-      <div className="guide-grid">
+      <ul className="dash-task-list">
         {tasks.map(task => (
-          <div className="guide-card task-card" key={task.id}>
-            <span style={{ flex: 1, minWidth: 0 }}>
-              <span className="guide-title">{task.id}</span>
-              <span className="guide-text line-clamp">{task.description || 'No description'}</span>
+          <li className="dash-task" key={task.id}>
+            <span className="dash-task-icon" aria-hidden="true">
+              <ClockIcon />
+            </span>
+            <span className="dash-task-text">
+              <span className="dash-task-name">{task.id}</span>
+              <span className="dash-task-description line-clamp">
+                {task.description || 'No description'}
+              </span>
             </span>
             <button
               className="btn btn-secondary btn-small"
@@ -75,14 +86,14 @@ export default function TaskSection(
             >
               {running === task.id ? 'Running…' : '▷ Execute'}
             </button>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
       {pageCount > 1 && (
         <div className="pagination" style={{ marginTop: 14 }}>
           <Pagination page={page} pageCount={pageCount} onPage={setPage} />
         </div>
       )}
-    </div>
+    </section>
   );
 }

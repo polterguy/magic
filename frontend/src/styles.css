@@ -2244,7 +2244,7 @@ tr.clickable:hover td {
  */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 0;
   margin-bottom: 24px;
   border: 1px solid var(--border);
@@ -3592,62 +3592,6 @@ tr.log-target > td:first-child {
   z-index: 2000000;
 }
 
-/* Dashboard hero — the "this cloudlet is an AI agent" / MCP block. The most
-   differentiating thing Magic does, so it reads as the anchor: violet-tinted
-   surface, a thick accent bar, and a hard offset shadow. */
-.agent-prompt {
-  display: flex;
-  /* Button drops to the bottom-right corner of the card on desktop; the phone
-     layout resets this back to center in the media query below. */
-  align-items: flex-end;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-  border: 1px solid var(--border-strong);
-  border-left: 4px solid var(--accent);
-  background: linear-gradient(90deg, var(--accent-soft), transparent 60%), var(--surface);
-  box-shadow: var(--shadow-hard);
-}
-
-/* The MCP URL, rendered as a terminal command line with a $ prompt. */
-.agent-prompt .mono {
-  display: block;
-  margin-top: 10px;
-  padding: 10px 12px;
-  background: var(--bg-deep);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
-}
-
-.agent-prompt .mono::before {
-  content: '$ ';
-  color: var(--accent);
-  font-weight: 700;
-}
-
-/* A card offering several routes rather than one, as the API Wizard does. */
-.agent-prompt-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-/*
- * Three routes do not fit beside the text the way a single button does, so the
- * description takes the full width and the routes form a toolbar beneath it -
- * matching the Chatbot Wizard above, whose controls also sit in a bottom row.
- * The description carries no flex of its own; the 100% basis is what breaks the
- * row.
- */
-.agent-prompt-stacked > :first-child {
-  flex-basis: 100%;
-}
-
-.agent-prompt-stacked .agent-prompt-actions {
-  margin-left: auto;
-}
-
 .btn-large {
   padding: 14px 28px;
   font-size: var(--text-base);
@@ -3801,16 +3745,6 @@ tr.vss-irrelevant td {
   color: var(--accent-dark);
 }
 
-/* Dashboard task tiles — a guide card with an action on the right. */
-.task-card {
-  align-items: center;
-  gap: 14px;
-}
-
-.task-card .guide-text {
-  margin-top: 2px;
-}
-
 /* Section icons are SVG now, sized here rather than by font-size. */
 .nav-icon svg {
   width: 17px;
@@ -3820,6 +3754,408 @@ tr.vss-irrelevant td {
 .guide-icon svg {
   width: 17px;
   height: 17px;
+}
+
+/*
+ * The dashboard. A header that says where you are and what runs there, the
+ * count strip, then the next steps as cards sharing one shape: an icon tile,
+ * a title with its status, the text, and the actions pinned to the bottom.
+ */
+/*
+ * On very wide screens the dashboard's cards and their text stretch too far to
+ * scan, so the page takes in its sides — growing with the viewport, capped.
+ */
+@media (min-width: 1600px) {
+  .dash-page {
+    padding-inline: clamp(24px, (100vw - 1500px) / 2.5, 320px);
+  }
+}
+
+.dash-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dash-connection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* A soft pulse, so the connection reads as live rather than as a label. */
+.dash-live-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 0 var(--tint-green-border);
+  animation: dash-pulse 2.4s ease-out infinite;
+}
+
+@keyframes dash-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--tint-green-border);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+
+.dash-header-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dash-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-header-tools .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dash-header-tools kbd {
+  margin-left: 2px;
+  padding: 0 5px;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* Count tiles: the icon sits quietly in the corner and lights up on hover. */
+.kpi-icon {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  color: var(--text-soft);
+  opacity: 0.45;
+  transition:
+    opacity 0.12s,
+    color 0.12s;
+}
+
+.kpi-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+a.kpi-link:hover .kpi-icon {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.kpi-warn .kpi-icon {
+  color: var(--danger);
+  opacity: 0.8;
+}
+
+.kpi-grid .kpi-warn-btn {
+  top: auto;
+  right: 14px;
+  bottom: 14px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 11px;
+  background: var(--tint-red-bg);
+  box-shadow: 0 0 0 1px var(--tint-red-border);
+}
+
+.kpi-grid .kpi-warn-btn:hover {
+  background: var(--danger);
+  color: var(--accent-contrast);
+}
+
+.dash-grid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Two cards side by side, or one filling the row when its partner is absent. */
+.dash-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px;
+}
+
+.dash-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  transition: border-color 0.15s;
+}
+
+.dash-card:hover {
+  border-color: var(--border-strong);
+}
+
+/* The MCP card is the anchor — the most differentiating thing Magic does. */
+.dash-card-hero {
+  border-color: var(--border-strong);
+}
+
+.dash-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-card-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.dash-card-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.dash-card-head h2 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.dash-card-hero .dash-card-head h2 {
+  font-size: var(--text-xl);
+}
+
+.dash-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dash-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.dash-status-ok {
+  background: var(--tint-green-bg);
+  color: var(--tint-green-text);
+}
+
+.dash-status-warn {
+  background: var(--tint-amber-bg);
+  color: var(--tint-amber-text);
+}
+
+.dash-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-card-body > p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.dash-card-body > p + * {
+  margin-top: 14px;
+}
+
+.dash-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* A URL rendered as a terminal command line, with its action inside the line. */
+.dash-command {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-deep);
+}
+
+.dash-command-prompt {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.dash-command .mono {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 0;
+  overflow-wrap: anywhere;
+}
+
+.dash-command .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dash-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dash-section-head h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.dash-count {
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--tint-neutral-bg);
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.dash-section-link {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  color: var(--text-soft);
+  text-decoration: none;
+}
+
+.dash-section-link:hover {
+  color: var(--accent);
+}
+
+.dash-section-text {
+  margin: 6px 0 14px;
+  font-size: var(--text-sm);
+}
+
+.dash-task-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dash-task {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  transition:
+    border-color 0.12s,
+    background 0.12s;
+}
+
+.dash-task:hover {
+  border-color: var(--border-strong);
+  background: var(--accent-soft);
+}
+
+.dash-task-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  background: var(--overlay-faint);
+  color: var(--text-soft);
+}
+
+.dash-task-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.dash-task-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-task-name {
+  display: block;
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-task-description {
+  margin-top: 2px;
+  color: var(--text-soft);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  -webkit-line-clamp: 2;
+}
+
+.dash-task .btn {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .dash-pair,
+  .dash-task-list {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-card-actions {
+    flex-direction: column;
+  }
+
+  .dash-card-actions .btn {
+    width: 100%;
+  }
+
+  .dash-command {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-live-dot {
+    animation: none;
+  }
 }
 
 /* The no-access warning's exclamation mark. */
@@ -4183,23 +4519,6 @@ tr.vss-irrelevant td {
   /* KPI cards keep the compact two-up wrap on a phone. */
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  /* Dashboard — the agent banners stack instead of squeezing the heading. */
-  /* Keep the MCP hero's button centered on phones — the desktop bottom-right
-     alignment is deliberately not applied here. */
-  .agent-prompt {
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-  }
-  .agent-prompt .btn-large {
-    width: 100%;
-  }
-  /* Several routes stack rather than sitting side by side on a phone. */
-  .agent-prompt-actions {
-    flex-direction: column;
-    width: 100%;
   }
 
   /*

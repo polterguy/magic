@@ -11,7 +11,6 @@ function renderCards(publicEndpoints: number | null, onPublicEndpointWarning = v
   render(
     <MemoryRouter>
       <KpiCards
-        version="1.0"
         endpoints={10}
         publicEndpoints={publicEndpoints}
         users={1}
