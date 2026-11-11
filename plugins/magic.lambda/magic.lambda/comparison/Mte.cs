@@ -15,6 +15,9 @@ namespace magic.lambda.comparison
     [Slot(
         Name = "mte",
         Description = "Returns true if the first operand is greater than or equal to the second operand",
+        ValueKind = "object",
+        ValueDescription = "Left-hand operand, compared against the single child operand; omit to compare two child operands instead",
+        ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
         ReturnsDescription = "Resolves to true if the first operand is greater than or equal to the second operand",

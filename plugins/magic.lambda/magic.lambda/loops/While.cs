@@ -18,6 +18,9 @@ namespace magic.lambda.loops
     [Slot(
         Name = "while",
         Description = "Repeats execution while a condition is true",
+        ValueKind = "boolean",
+        ValueDescription = "Condition to evaluate, used instead of a condition child node",
+        ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.None,
         ProvidesScope = "while",
         SignatureType = typeof(global::magic.lambda.signatures.ConditionalBlockSignature))]

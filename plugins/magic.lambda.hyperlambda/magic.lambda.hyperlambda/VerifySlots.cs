@@ -19,7 +19,8 @@ namespace magic.lambda.hyperlambda
     /// Intended as a cheap static sanity check on generated Hyperlambda: a hallucinated
     /// slot (e.g. a made up "strings.reverse") is silently treated as an inert data node
     /// by the evaluator, so this slot surfaces such names before the code is executed.
-    /// It also rejects undeclared child argument names and missing mandatory primary values.
+    /// It also rejects undeclared child argument names, missing mandatory primary values, and
+    /// primary values given to slots whose metadata declares no value (ValueMode None).
     ///
     /// SCOPE - the executable statements that are checked are the ROOT level of the supplied
     /// Hyperlambda plus the body of every body-bearing slot it encounters, resolved from slot
@@ -204,6 +205,10 @@ namespace magic.lambda.hyperlambda
         {
             if (info.Attribute?.ValueRequired == true && node.Value == null)
                 invalid.Add($"Slot [{node.Name}] requires a primary (RHS) value");
+
+            // A slot without a documented value never reads one, so a value given to it is silently ignored.
+            if (info.Attribute?.ValueMode == SlotValueMode.None && node.Value != null)
+                invalid.Add($"Slot [{node.Name}] does not accept a primary (RHS) value");
             if (info.Attribute?.ValueOrChildrenRequired == true &&
                 node.Value == null &&
                 !node.Children.Any())

@@ -5,12 +5,15 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <AssemblyName>backend</AssemblyName>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- files/ is runtime content, read from this folder when running locally, so builds never scan it. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);files\**</DefaultItemExcludes>
   </PropertyGroup>
 
-  <ItemGroup> 
-    <None Include="files\**"> 
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
-    </None> 
+  <!-- A published build, such as the Docker image, runs from its output folder, so only publishing copies files/. -->
+  <ItemGroup Condition="'$(_IsPublishing)' == 'true'">
+    <None Include="files\**">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

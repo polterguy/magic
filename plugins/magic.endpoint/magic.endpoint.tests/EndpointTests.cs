@@ -637,11 +637,13 @@ input2:int:5");
             Assert.NotNull(hl);
             var lambda = HyperlambdaParser.Parse(hl);
 
-            // Notice, no [.arguments] node since no arguments were supplied to endpoint file.
-            Assert.Equal(".interceptor-value", lambda.Children.First().Name);
-            Assert.Equal("howdy", lambda.Children.First().Value);
-            Assert.Equal(".endpoint-value", lambda.Children.Skip(1).First().Name);
-            Assert.Equal("world", lambda.Children.Skip(1).First().Value);
+            // Notice, an empty [.arguments] node is inserted even though no arguments were supplied to endpoint file.
+            Assert.Equal(".arguments", lambda.Children.First().Name);
+            Assert.Empty(lambda.Children.First().Children);
+            Assert.Equal(".interceptor-value", lambda.Children.Skip(1).First().Name);
+            Assert.Equal("howdy", lambda.Children.Skip(1).First().Value);
+            Assert.Equal(".endpoint-value", lambda.Children.Skip(2).First().Name);
+            Assert.Equal("world", lambda.Children.Skip(2).First().Value);
         }
 
         [Fact]

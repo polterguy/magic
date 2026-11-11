@@ -17,6 +17,9 @@ namespace magic.lambda.math.basics
     [Slot(
         Name = "math.divide",
         Description = "Divides numeric values",
+        ValueKind = "number",
+        ValueDescription = "Base operand the child operands are applied to; omit to use the first child operand as the base",
+        ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "number",
         ReturnsDescription = "Resolves to the quotient of the supplied operands",
