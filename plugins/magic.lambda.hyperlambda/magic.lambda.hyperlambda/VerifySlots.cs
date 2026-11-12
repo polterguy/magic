@@ -44,7 +44,11 @@ namespace magic.lambda.hyperlambda
     /// through NextSiblingMustBeOneOf ([.catch]/[.finally] after [try]) are traversed as bodies,
     /// not checked as slots themselves. All body kinds are traversed to any depth.
     ///
-    /// STILL IGNORED: non-executable arguments (e.g. [table]/[where] under [data.read]), and
+    /// Non-executable arguments (e.g. [table]/[limit] under [data.read]) are not slot invocations; they are
+    /// only checked for children their declaration does not take: an argument declared as a plain value
+    /// with no children of its own must have none, as in a [join] wrongly placed under [limit].
+    ///
+    /// STILL IGNORED: undeclared names under arguments that declare children, and
     /// every node whose name starts with a "." that is not a declared body (variables, comments,
     /// [.arguments]). Note that [add]/[insert-*] source bodies ARE checked - those slots [eval]
     /// their children, so a named child is a slot invocation at runtime while "." children are
@@ -240,6 +244,8 @@ namespace magic.lambda.hyperlambda
                     invalid.Add($"Slot [{node.Name}] requires {info.DescribeOperands()}, but was given {operands + (valueOperand ? 1 : 0)}");
             }
 
+            VerifyArguments(node.Name, node.Children, info.Declarations, invalid);
+
             // Without an attached signature, the accepted child argument names are unknown.
             if (!info.HasSignature || info.AcceptsAnyChild)
                 return;
@@ -247,6 +253,34 @@ namespace magic.lambda.hyperlambda
             {
                 invalid.Add($"Slot [{node.Name}] does not accept a child argument named [{child.Name}]");
             }
+        }
+
+        /*
+         * An argument the signature declares as a plain value (not of type "lambda", which holds a tree, as
+         * the payload [args] of [sockets.signal] does), with no children of its own, never reads
+         * children, so any child given to it is silently ignored, as in a [join] placed under [limit]
+         * instead of under [table]. Arguments that declare children are descended into through the
+         * children they declare by name, so the same rule applies at every level, e.g. [table]/[join]/[type].
+         * A name declared more than once (alternative sections) has no single declaration to check against.
+         */
+        static void VerifyArguments(string slot, IEnumerable<Node> arguments, List<SlotChild> declarations, List<string> invalid)
+        {
+            var declared = arguments
+                .Select(x => (Argument: x, Matches: declarations.FindAll(y => y.Name == x.Name)))
+                .Where(x => x.Matches.Count == 1);
+            foreach (var (argument, matches) in declared)
+            {
+                VerifyArgument(slot, argument, matches[0], invalid);
+            }
+        }
+
+        static void VerifyArgument(string slot, Node argument, SlotChild declaration, List<string> invalid)
+        {
+            if (declaration.Children.Count > 0)
+                VerifyArguments(slot, argument.Children, declaration.Children, invalid);
+            else if (declaration.Mode is SlotChildMode.Value or SlotChildMode.Expression or SlotChildMode.ValueOrExpression &&
+                declaration.Type != "lambda")
+                invalid.AddRange(argument.Children.Select(x => $"Argument [{argument.Name}] of slot [{slot}] does not accept children, but was given [{x.Name}]"));
         }
 
         static (int Min, int Max) Range(SlotChildCardinality cardinality)
@@ -288,6 +322,7 @@ namespace magic.lambda.hyperlambda
             public HashSet<string> NestedBodyNames = new HashSet<string>(StringComparer.Ordinal);
             public HashSet<string> ContinuationBodyNames = new HashSet<string>(StringComparer.Ordinal);
             public HashSet<string> ArgumentNames = new HashSet<string>(StringComparer.Ordinal);
+            public List<SlotChild> Declarations = new List<SlotChild>();
             public bool HasOperands;
             public bool HasConditionOperand;
             public int OperandMin;
@@ -417,6 +452,7 @@ namespace magic.lambda.hyperlambda
             else if (child.Name != "*")
             {
                 result.ArgumentNames.Add(child.Name);
+                result.Declarations.Add(child);
                 if (child.Children.Any(x => x.Name == "*" && x.Mode == SlotChildMode.ExecutableLambda))
                     result.NestedBodyNames.Add(child.Name);
             }

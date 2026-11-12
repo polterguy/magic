@@ -126,6 +126,31 @@ namespace magic.library.tests
 
         #endregion
 
+        #region [ -- A child placed under a plain value argument -- ]
+
+        [Theory]
+        [InlineData("data.read\n   table:orders\n   limit:-1\n      join:regions", "limit", "[join]")]
+        [InlineData("data.read\n   table:orders\n   offset:x:@.arguments/*/offset\n      join:regions", "offset", "[join]")]
+        [InlineData("data.read\n   table:orders\n      join:regions\n         type:inner\n            as:r\n         on\n            and\n               orders.region:regions.id", "type", "[as]")]
+        [InlineData("sqlite.read\n   table:orders\n   limit:10\n      join:regions", "limit", "[join]")]
+        [InlineData("cache.set:preferences\n   value\n      dark-mode:bool:true", "value", "[dark-mode]")]
+        public void ChildUnderAPlainValueArgumentIsRejected(string snippet, string argument, string child)
+        {
+            var result = Verify(snippet);
+            AssertInvalidInvocation(result, argument, child);
+        }
+
+        [Theory]
+        [InlineData("data.read\n   table:orders\n      join:regions\n         type:inner\n         on\n            and\n               orders.region:regions.id\n   limit:-1")]
+        [InlineData("data.read\n   table:orders\n   where\n      and\n         status.in\n            .:open\n            .:closed\n   limit:x:@.arguments/*/limit\n   offset:x:@.arguments/*/offset")]
+        [InlineData("sockets.signal:chat.message\n   args\n      message:Hello\n      user\n         name:x:@.name\n   roles:root")]
+        public void ChildUnderAnArgumentThatDeclaresItIsAccepted(string snippet)
+        {
+            AssertValid(snippet);
+        }
+
+        #endregion
+
         #region [ -- The code inside a transaction -- ]
 
         [Theory]
