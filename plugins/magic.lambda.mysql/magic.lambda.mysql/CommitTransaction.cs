@@ -17,7 +17,8 @@ namespace magic.lambda.mysql
         Description = "Commits the current MySQL transaction",
         ReturnsMode = SlotReturnsMode.None,
         RequiresScope = "mysql.transaction",
-        ScopeDescription = "Requires an active MySQL transaction created by [mysql.transaction.create]")]
+        ScopeDescription = "Requires an active MySQL transaction created by [mysql.transaction.create]",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class CommitTransaction : ISlot
     {
         /// <summary>

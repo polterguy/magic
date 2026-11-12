@@ -21,7 +21,8 @@ namespace magic.lambda.auth
         ValueDescription = "Optional comma-separated roles to require",
         ValueRequired = false,
         ValueMode = SlotValueMode.ValueOrExpression,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class VerifyTicket : ISlot
     {
         readonly ITicketProvider _ticketProvider;

@@ -17,7 +17,8 @@ namespace magic.lambda.odbc
         Description = "Commits the current ODBC transaction",
         ReturnsMode = SlotReturnsMode.None,
         RequiresScope = "odbc.transaction",
-        ScopeDescription = "Requires an active ODBC transaction created by [odbc.transaction.create]")]
+        ScopeDescription = "Requires an active ODBC transaction created by [odbc.transaction.create]",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class CommitTransaction : ISlot
     {
         /// <summary>

@@ -22,7 +22,8 @@ namespace magic.endpoint.services.slots.cookies
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "cookie-value,text",
-        ReturnsDescription = "Resolves to the value of the named request cookie, or null if it does not exist")]
+        ReturnsDescription = "Resolves to the value of the named request cookie, or null if it does not exist",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetCookie : ISlot
     {
         /// <summary>

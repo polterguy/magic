@@ -21,7 +21,8 @@ namespace magic.lambda.math.scalars
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "number",
-        ReturnsDescription = "Resolves to the absolute value")]
+        ReturnsDescription = "Resolves to the absolute value",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Abs : ISlot
     {
         /// <summary>

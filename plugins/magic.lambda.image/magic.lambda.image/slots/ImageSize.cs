@@ -25,7 +25,8 @@ namespace magic.lambda.image.slots
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "image-dimensions,lambda-tree",
-        ReturnsDescription = "Returns [width:int] and [height:int] child nodes for the image dimensions")]
+        ReturnsDescription = "Returns [width:int] and [height:int] child nodes for the image dimensions",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ImageSize : ISlotAsync
     {
         /// <summary>

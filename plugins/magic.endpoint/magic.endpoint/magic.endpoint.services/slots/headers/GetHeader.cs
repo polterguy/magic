@@ -23,7 +23,8 @@ namespace magic.endpoint.services.slots.headers
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "http-header-value,text",
-        ReturnsDescription = "Resolves to the value of the named request header, or null if it does not exist")]
+        ReturnsDescription = "Resolves to the value of the named request header, or null if it does not exist",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetHeader : ISlot
     {
         /// <summary>

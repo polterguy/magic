@@ -22,7 +22,8 @@ namespace magic.lambda.math.scalars
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "number",
-        ReturnsDescription = "Resolves to the rounded-down value")]
+        ReturnsDescription = "Resolves to the rounded-down value",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Floor : ISlot
     {
         /// <summary>

@@ -16,7 +16,8 @@ namespace magic.lambda.dates
         Description = "Returns the current UTC time as a Unix timestamp",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "unix-timestamp,integer,number",
-        ReturnsDescription = "Resolves to the current UTC Unix timestamp in milliseconds")]
+        ReturnsDescription = "Resolves to the current UTC Unix timestamp in milliseconds",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Unix : ISlot
     {
         /// <summary>

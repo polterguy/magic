@@ -29,7 +29,8 @@ namespace magic.lambda.logging.slots
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "log-timeshift-list,node-list",
         ReturnsElementKind = "log-timeshift-bucket",
-        ReturnsDescription = "Returns one child node per day with [when] and [count] values for the time bucket")]
+        ReturnsDescription = "Returns one child node per day with [when] and [count] values for the time bucket",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Timeshift : ISlotAsync
     {
         readonly ILogQuery _query;

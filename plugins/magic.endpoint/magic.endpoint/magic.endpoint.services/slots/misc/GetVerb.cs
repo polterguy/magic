@@ -16,7 +16,8 @@ namespace magic.endpoint.services.slots.misc
         Description = "Returns the HTTP verb (get, post, put, delete, etc.) of the current incoming request",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "http-method,text",
-        ReturnsDescription = "Resolves to the HTTP verb of the current request")]
+        ReturnsDescription = "Resolves to the HTTP verb of the current request",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetVerb : ISlot
     {
         /// <summary>

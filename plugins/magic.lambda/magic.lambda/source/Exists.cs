@@ -21,7 +21,8 @@ namespace magic.lambda.source
         ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the expression resolves to one or more nodes")]
+        ReturnsDescription = "Returns true if the expression resolves to one or more nodes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     [Slot(
         Name = "not-exists",
         Description = "Returns true if the specified node or expression does not exist",
@@ -31,7 +32,8 @@ namespace magic.lambda.source
         ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the expression resolves to no nodes")]
+        ReturnsDescription = "Returns true if the expression resolves to no nodes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Exists : ISlot
     {
         /// <summary>

@@ -22,7 +22,8 @@ namespace magic.lambda.strings.replace
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "html-unencoded,text",
-        ReturnsDescription = "Resolves to the decoded HTML markup")]
+        ReturnsDescription = "Resolves to the decoded HTML markup",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class HtmlDecode : ISlot
     {
         /// <summary>

@@ -16,7 +16,8 @@ namespace magic.endpoint.services.slots.misc
         Description = "Returns the scheme (http or https) of the current incoming request",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "http-scheme,text",
-        ReturnsDescription = "Resolves to the scheme of the current request, such as http or https")]
+        ReturnsDescription = "Resolves to the scheme of the current request, such as http or https",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetScheme : ISlot
     {
         /// <summary>

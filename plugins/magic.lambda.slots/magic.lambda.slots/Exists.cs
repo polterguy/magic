@@ -21,7 +21,8 @@ namespace magic.lambda.slots
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the slot exists")]
+        ReturnsDescription = "Returns true if the slot exists",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Exists : ISlot
     {
         /// <summary>

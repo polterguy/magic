@@ -29,7 +29,8 @@ namespace magic.lambda.slots
         ReturnsKind = "context-value",
         ReturnsDescription = "Resolves to the requested stack value or context object",
         RequiresScope = "context",
-        ScopeDescription = "Requires a named context created by [context] using the same input value")]
+        ScopeDescription = "Requires a named context created by [context] using the same input value",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetContext : ISlot
     {
         /// <summary>

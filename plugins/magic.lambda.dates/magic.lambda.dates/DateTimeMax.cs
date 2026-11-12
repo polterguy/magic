@@ -16,7 +16,8 @@ namespace magic.lambda.dates
         Description = "Returns the maximum DateTime value",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "date",
-        ReturnsDescription = "Resolves to the maximum supported DateTime value")]
+        ReturnsDescription = "Resolves to the maximum supported DateTime value",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class DateTimeMax : ISlot
     {
         /// <summary>

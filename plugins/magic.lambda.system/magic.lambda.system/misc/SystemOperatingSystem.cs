@@ -16,7 +16,8 @@ namespace magic.lambda.system
         Description = "Returns a description of the current operating system",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "current-os-name,text",
-        ReturnsDescription = "Resolves to the current operating system name")]
+        ReturnsDescription = "Resolves to the current operating system name",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class SystemOperatingSystem : ISlot
     {
         /// <summary>

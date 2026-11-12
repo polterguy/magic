@@ -23,7 +23,8 @@ namespace magic.lambda.system
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the current operating system matches the supplied platform name")]
+        ReturnsDescription = "Returns true if the current operating system matches the supplied platform name",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class IsOperatingSystem : ISlot
     {
         /// <summary>

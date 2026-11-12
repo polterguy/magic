@@ -19,7 +19,8 @@ namespace magic.lambda.change
         ValueDescription = "Expression selecting the node or nodes to remove",
         ValueRequired = true,
         ValueMode = SlotValueMode.Expression,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class RemoveNodes : ISlot
     {
         /// <summary>

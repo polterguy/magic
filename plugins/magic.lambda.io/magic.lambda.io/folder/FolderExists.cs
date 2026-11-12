@@ -25,7 +25,8 @@ namespace magic.lambda.io.folder
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the folder exists")]
+        ReturnsDescription = "Returns true if the folder exists",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class FolderExists : ISlotAsync, IWhitelistComparer
     {
 

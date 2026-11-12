@@ -21,7 +21,8 @@ namespace magic.lambda.source
         ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the expression resolves to a null value")]
+        ReturnsDescription = "Returns true if the expression resolves to a null value",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     [Slot(
         Name = "not-null",
         Description = "Returns true if the specified node or expression is not null",
@@ -31,7 +32,8 @@ namespace magic.lambda.source
         ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the expression resolves to a non-null value")]
+        ReturnsDescription = "Returns true if the expression resolves to a non-null value",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class IsNull : ISlot
     {
         /// <summary>

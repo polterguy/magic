@@ -22,7 +22,8 @@ namespace magic.lambda.strings.replace
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "html-encoded,text",
-        ReturnsDescription = "Resolves to the HTML-encoded string")]
+        ReturnsDescription = "Resolves to the HTML-encoded string",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class HtmlEncode : ISlot
     {
         /// <summary>

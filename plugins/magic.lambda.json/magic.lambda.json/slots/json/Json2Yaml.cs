@@ -22,7 +22,8 @@ namespace magic.lambda.json.slots.json
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "yaml,text",
-        ReturnsDescription = "Resolves to the generated YAML string")]
+        ReturnsDescription = "Resolves to the generated YAML string",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Json2Yaml : ISlot
     {
         /// <summary>

@@ -24,7 +24,8 @@ namespace magic.lambda.scheduler.slots.tasks
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "integer,number",
-        ReturnsDescription = "Resolves to the number of scheduled tasks matching the optional filter")]
+        ReturnsDescription = "Resolves to the number of scheduled tasks matching the optional filter",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class CountTasks :ISlotAsync
     {
         readonly ITaskStorage _storage;

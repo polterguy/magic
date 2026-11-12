@@ -17,7 +17,8 @@ namespace magic.lambda.sqlite
         Description = "Commits the current SQLite transaction",
         ReturnsMode = SlotReturnsMode.None,
         RequiresScope = "sqlite.transaction",
-        ScopeDescription = "Requires an active SQLite transaction created by [sqlite.transaction.create]")]
+        ScopeDescription = "Requires an active SQLite transaction created by [sqlite.transaction.create]",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class CommitTransaction : ISlot
     {
         /// <summary>

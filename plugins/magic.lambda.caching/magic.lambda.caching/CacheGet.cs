@@ -23,7 +23,8 @@ namespace magic.lambda.caching
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "cache-value,text",
-        ReturnsDescription = "Resolves to the cached value, or null if the key does not exist")]
+        ReturnsDescription = "Resolves to the cached value, or null if the key does not exist",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class CacheGet : ISlotAsync
     {
         readonly IMagicCache _cache;

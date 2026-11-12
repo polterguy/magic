@@ -18,7 +18,8 @@ namespace magic.lambda.misc
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "type-name-list,string-list",
         ReturnsElementKind = "type-name,text",
-        ReturnsDescription = "Resolves to one child node per known CLR type name")]
+        ReturnsDescription = "Resolves to one child node per known CLR type name",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Types : ISlot
     {
         /// <summary>

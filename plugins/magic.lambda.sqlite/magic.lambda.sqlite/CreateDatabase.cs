@@ -14,7 +14,8 @@ namespace magic.lambda.sqlite
     [Slot(
         Name = "sqlite.connections.flush",
         Description = "Flushes cached SQLite connections",
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class FlushConnections : ISlot
     {
         /// <summary>

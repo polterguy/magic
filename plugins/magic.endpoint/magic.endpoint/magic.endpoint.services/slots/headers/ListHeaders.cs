@@ -22,7 +22,8 @@ namespace magic.endpoint.services.slots.headers
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "http-header-map,lambda-tree",
         ReturnsElementKind = "http-header-value,text",
-        ReturnsDescription = "Resolves to one child node per request header, with the header name as the node name and its value as the node value")]
+        ReturnsDescription = "Resolves to one child node per request header, with the header name as the node name and its value as the node value",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ListHeaders : ISlot
     {
         /// <summary>

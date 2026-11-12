@@ -22,7 +22,8 @@ namespace magic.lambda.source
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "",
         ReturnsDescription = "Resolves to the value of the first matching node",
-        ValueExpressionResolution = SlotValueExpressionResolution.SingleNode)]
+        ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetValue : ISlot
     {
         /// <summary>

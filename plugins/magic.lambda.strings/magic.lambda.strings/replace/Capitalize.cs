@@ -23,7 +23,8 @@ namespace magic.lambda.strings.replace
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "text",
-        ReturnsDescription = "Resolves to the capitalized string")]
+        ReturnsDescription = "Resolves to the capitalized string",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Capitalize : ISlot
     {
         /// <summary>

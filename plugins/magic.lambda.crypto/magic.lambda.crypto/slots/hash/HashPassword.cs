@@ -25,7 +25,8 @@ namespace magic.lambda.crypto.slots.hash
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "password-hash,text",
-        ReturnsDescription = "Resolves to the password hash")]
+        ReturnsDescription = "Resolves to the password hash",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class HashPassword : ISlot
     {
         /// <summary>

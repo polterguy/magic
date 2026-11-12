@@ -17,7 +17,8 @@ namespace magic.lambda.logging.slots
         Description = "Returns capabilities of the current log provider",
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "log-capabilities,lambda-tree",
-        ReturnsDescription = "Returns [can-filter] and [can-timeshift] capability nodes for the current log provider")]
+        ReturnsDescription = "Returns [can-filter] and [can-timeshift] capability nodes for the current log provider",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Capabilities : ISlot
     {
         readonly ILogQuery _query;

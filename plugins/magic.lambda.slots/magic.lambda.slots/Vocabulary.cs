@@ -23,7 +23,8 @@ namespace magic.lambda.slots
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "dynamic-slot-name-list,string-list",
         ReturnsElementKind = "dynamic-slot-name,text",
-        ReturnsDescription = "Resolves to available dynamic slot names as child nodes")]
+        ReturnsDescription = "Resolves to available dynamic slot names as child nodes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Vocabulary : ISlot
     {
         /// <summary>

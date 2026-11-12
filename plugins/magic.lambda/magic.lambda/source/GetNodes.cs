@@ -22,7 +22,8 @@ namespace magic.lambda.source
         ReturnsKind = "node-list",
         ReturnsElementKind = "node",
         ReturnsDescription = "Resolves to the nodes matched by the expression as child nodes",
-        PreservesInputShape = true)]
+        PreservesInputShape = true,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetNodes : ISlot
     {
         /// <summary>

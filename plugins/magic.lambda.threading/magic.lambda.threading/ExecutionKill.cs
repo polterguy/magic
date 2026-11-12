@@ -22,7 +22,8 @@ namespace magic.lambda.threading
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the execution was cancelled")]
+        ReturnsDescription = "Returns true if the execution was cancelled",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ExecutionKill : ISlot
     {
         readonly IExecutionRegistry _executionRegistry;

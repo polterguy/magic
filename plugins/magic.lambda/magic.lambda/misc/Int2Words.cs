@@ -23,7 +23,8 @@ namespace magic.lambda.misc
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "text",
-        ReturnsDescription = "Resolves to the supplied integer written as words")]
+        ReturnsDescription = "Resolves to the supplied integer written as words",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Int2Words : ISlot
     {
         static readonly string[] _unitsMap =

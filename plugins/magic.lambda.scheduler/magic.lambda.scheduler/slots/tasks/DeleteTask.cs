@@ -20,7 +20,8 @@ namespace magic.lambda.scheduler.slots.tasks
         ValueDescription = "Task ID to delete",
         ValueOrChildrenRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.lambda.scheduler.signatures.TaskIdSignature))]
     public class DeleteTask : ISlotAsync
     {
         readonly ITaskStorage _storage;

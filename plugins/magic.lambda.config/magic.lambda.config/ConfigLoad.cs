@@ -18,7 +18,8 @@ namespace magic.lambda.config
         Description = "Returns the raw contents of appsettings.json; pair with [config.save] for round-trip config editing",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "json,text",
-        ReturnsDescription = "Resolves to the raw appsettings.json content")]
+        ReturnsDescription = "Resolves to the raw appsettings.json content",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class LoadAppSettings : ISlotAsync
     {
         readonly IFileService _fileService;

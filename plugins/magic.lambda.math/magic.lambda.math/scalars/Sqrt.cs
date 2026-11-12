@@ -21,7 +21,8 @@ namespace magic.lambda.math.scalars
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "number",
-        ReturnsDescription = "Resolves to the square root of the supplied value")]
+        ReturnsDescription = "Resolves to the square root of the supplied value",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Sqrt : ISlot
     {
         /// <summary>

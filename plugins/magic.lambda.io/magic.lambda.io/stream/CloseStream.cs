@@ -19,7 +19,8 @@ namespace magic.lambda.io.stream
         ValueDescription = "Stream instance to close",
         ValueRequired = true,
         ValueMode = SlotValueMode.Expression,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class CloseStream : ISlot
     {
         /// <summary>

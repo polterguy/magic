@@ -24,7 +24,8 @@ namespace magic.lambda.json.slots.yaml
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "lambda-tree",
-        ReturnsDescription = "Resolves to the parsed lambda hierarchy as child nodes")]
+        ReturnsDescription = "Resolves to the parsed lambda hierarchy as child nodes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Yaml2Lambda : ISlot
     {
         /// <summary>

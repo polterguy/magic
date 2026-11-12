@@ -21,7 +21,8 @@ namespace magic.lambda.strings.misc
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "integer,number",
-        ReturnsDescription = "Resolves to the number of characters in the string")]
+        ReturnsDescription = "Resolves to the number of characters in the string",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Length : ISlot
     {
         /// <summary>
