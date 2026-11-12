@@ -568,17 +568,10 @@ hyperlambda.verify-slots:x:@.code");
 
         [Theory]
         [InlineData("strings.concat")]
-        [InlineData("strings.contains")]
-        [InlineData("strings.ends-with")]
-        [InlineData("strings.join")]
-        [InlineData("strings.matches")]
         [InlineData("strings.regex-replace")]
         [InlineData("strings.replace")]
         [InlineData("strings.replace-not-of")]
-        [InlineData("strings.split")]
-        [InlineData("strings.starts-with")]
         [InlineData("strings.substring")]
-        [InlineData("strings.trim")]
         public void EvaluatedArgumentsAreVerifiedWhateverTheirPosition(string slot)
         {
             HyperlambdaTests.AssertMissingSlots($"{slot}:x:@.a\n   .:foo\n   {Missing}", Missing);
@@ -586,6 +579,25 @@ hyperlambda.verify-slots:x:@.code");
             HyperlambdaTests.AssertMissingSlots($"{slot}:x:@.a\n   {Missing}\n   {Missing}", Missing);
             AssertValid($"{slot}:x:@.a\n   .:foo\n   get-value:x:@.b");
             AssertValid($"{slot}:x:@.a\n   .:foo\n   .bar:baz");
+        }
+
+        /*
+         * These slots take a single evaluated argument besides their value, so two arguments would be
+         * reported as the wrong number of operands.
+         */
+        [Theory]
+        [InlineData("strings.contains")]
+        [InlineData("strings.ends-with")]
+        [InlineData("strings.join")]
+        [InlineData("strings.matches")]
+        [InlineData("strings.split")]
+        [InlineData("strings.starts-with")]
+        [InlineData("strings.trim")]
+        public void SingleEvaluatedArgumentIsVerified(string slot)
+        {
+            HyperlambdaTests.AssertMissingSlots($"{slot}:x:@.a\n   {Missing}", Missing);
+            AssertValid($"{slot}:x:@.a\n   get-value:x:@.b");
+            AssertValid($"{slot}:x:@.a\n   .:foo");
         }
 
         [Fact]
