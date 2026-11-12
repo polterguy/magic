@@ -20,7 +20,8 @@ namespace magic.lambda.puppeteer
         ValueDescription = "Puppeteer session ID",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Close : ISlotAsync
     {
         public async Task SignalAsync(ISignaler signaler, Node input)

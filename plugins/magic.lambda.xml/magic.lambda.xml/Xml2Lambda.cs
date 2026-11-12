@@ -25,7 +25,8 @@ namespace magic.lambda.xml
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "xml-tree",
         ReturnsElementKind = "xml-element",
-        ReturnsDescription = "Resolves to the parsed XML hierarchy as child nodes; attributes are emitted as @name child nodes, text as #text child nodes, and comments/whitespace-only text nodes are omitted")]
+        ReturnsDescription = "Resolves to the parsed XML hierarchy as child nodes; attributes are emitted as @name child nodes, text as #text child nodes, and comments/whitespace-only text nodes are omitted",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Xml2Lambda : ISlot
     {
         /// <summary>

@@ -884,6 +884,7 @@ foo:date:'2019-07-10T08:12:39'").Children.ToList();
                 Type = "string",
                 Description = "Positional argument the slot evaluates",
                 Mode = SlotChildMode.ExecutableLambda,
+                Cardinality = SlotChildCardinality.ZeroOrMore,
                 Evaluation = SlotChildEvaluation.EvalSelf,
             }
         };

@@ -22,7 +22,8 @@ namespace magic.lambda.source
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "node-reference",
         ReturnsDescription = "Resolves to a reference to the first matching node value",
-        ValueExpressionResolution = SlotValueExpressionResolution.SingleNode)]
+        ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Reference : ISlot
     {
         /// <summary>

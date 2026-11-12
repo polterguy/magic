@@ -16,7 +16,8 @@ namespace magic.lambda.guid
         Description = "Generates a random version-4 GUID for use as a unique identifier",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "guid,text",
-        ReturnsDescription = "Resolves to a new GUID string")]
+        ReturnsDescription = "Resolves to a new GUID string",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GuidNew : ISlot
     {
         /// <summary>

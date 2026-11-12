@@ -25,7 +25,8 @@ namespace magic.lambda.misc
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "slot-name-list,string-list",
         ReturnsElementKind = "slot-name,text",
-        ReturnsDescription = "Resolves to available slot names as child nodes")]
+        ReturnsDescription = "Resolves to available slot names as child nodes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Vocabulary : ISlot
     {
         readonly ISignalsProvider _signalProvider;

@@ -22,7 +22,8 @@ namespace magic.lambda.strings.replace
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "url-component,text",
-        ReturnsDescription = "Resolves to the URL-decoded string")]
+        ReturnsDescription = "Resolves to the URL-decoded string",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class UrlDecode : ISlot
     {
         /// <summary>

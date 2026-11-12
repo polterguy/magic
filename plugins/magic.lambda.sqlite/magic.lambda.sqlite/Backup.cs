@@ -26,7 +26,8 @@ namespace magic.lambda.sqlite
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.None,
         RequiresScope = "sqlite.connection",
-        ScopeDescription = "Requires an open SQLite connection created by [sqlite.connect]")]
+        ScopeDescription = "Requires an open SQLite connection created by [sqlite.connect]",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Backup : ISlotAsync
     {
         /// <summary>

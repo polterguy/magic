@@ -23,7 +23,8 @@ namespace magic.lambda.io.stream
         ValueMode = SlotValueMode.Expression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "binary-content,fingerprint-source",
-        ReturnsDescription = "Resolves to the bytes read from the stream")]
+        ReturnsDescription = "Resolves to the bytes read from the stream",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ReadStream : ISlotAsync
     {
         /// <summary>

@@ -25,7 +25,8 @@ namespace magic.lambda.logging.slots
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "log-entry,lambda-tree",
-        ReturnsDescription = "Resolves to the log entry as child nodes")]
+        ReturnsDescription = "Resolves to the log entry as child nodes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Get : ISlotAsync
     {
         readonly ILogQuery _query;

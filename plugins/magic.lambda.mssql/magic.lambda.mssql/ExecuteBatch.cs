@@ -32,7 +32,8 @@ namespace magic.lambda.mssql
         ReturnsElementKind = "row",
         ReturnsDescription = "Returns one child node per batch execution result",
         RequiresScope = "mssql.connection",
-        ScopeDescription = "Requires an open SQL Server connection created by [mssql.connect]")]
+        ScopeDescription = "Requires an open SQL Server connection created by [mssql.connect]",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ExecuteBatch : ISlotAsync
     {
         static readonly char[] _lineBreaks = ['\r', '\n'];

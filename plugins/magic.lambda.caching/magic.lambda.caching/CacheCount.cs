@@ -24,7 +24,8 @@ namespace magic.lambda.caching
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "integer,number",
-        ReturnsDescription = "Resolves to the number of cached items matching the optional filter")]
+        ReturnsDescription = "Resolves to the number of cached items matching the optional filter",
+        SignatureType = typeof(global::magic.lambda.caching.signatures.CacheFilterSignature))]
     public class CacheCount : ISlotAsync
     {
         readonly IMagicCache _cache;

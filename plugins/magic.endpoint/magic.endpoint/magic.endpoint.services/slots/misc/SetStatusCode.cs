@@ -20,7 +20,8 @@ namespace magic.endpoint.services.slots.misc
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class SetStatusCode : ISlot
     {
         /// <summary>

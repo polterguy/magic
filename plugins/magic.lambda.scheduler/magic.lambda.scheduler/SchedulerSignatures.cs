@@ -41,6 +41,11 @@ namespace magic.lambda.scheduler.signatures
             };
         }
 
+        internal static SlotChild Id()
+        {
+            return Option("id", "string", "Task ID, used in place of the slot's value", kind: "task-id");
+        }
+
         internal static SlotChild Lambda()
         {
             return new SlotChild
@@ -77,7 +82,7 @@ namespace magic.lambda.scheduler.signatures
         /// <inheritdoc />
         public override IEnumerable<SlotChild> Children => new[]
         {
-            Option("id", "string", "Task ID, used in place of the slot's value", kind: "task-id"),
+            Id(),
             Option("description", "string", "Optional task description", kind: "task-description"),
             Option("due", "DateTime", "Optional one-time due date", kind: "date"),
             Option("repeats", "string", "Optional repeat pattern", kind: "task-repeat-pattern"),
@@ -101,6 +106,17 @@ namespace magic.lambda.scheduler.signatures
         public override IEnumerable<SlotConstraint> Constraints => new[]
         {
             AtLeastOneSchedule(),
+        };
+    }
+
+    /// <summary>
+    /// Signature for [tasks.delete] and [tasks.execute], taking the task ID as value or [id].
+    /// </summary>
+    public class TaskIdSignature : SchedulerSignature
+    {
+        public override IEnumerable<SlotChild> Children => new[]
+        {
+            Id(),
         };
     }
 

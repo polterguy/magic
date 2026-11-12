@@ -22,7 +22,8 @@ namespace magic.lambda.strings.builder
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         RequiresScope = "strings.builder",
         ScopeDescription = "Requires an active string builder scope created by [strings.builder]",
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Append : ISlot
     {
         /// <summary>

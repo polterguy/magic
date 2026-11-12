@@ -18,7 +18,8 @@ namespace magic.lambda.validators.validators
         ValueDescription = "Literal value or expression to validate as mandatory",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ValidateMandatory : ISlot
     {
         /// <summary>

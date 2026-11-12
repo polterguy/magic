@@ -25,7 +25,8 @@ namespace magic.lambda.misc
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "slot-signature,lambda-tree",
-        ReturnsDescription = "Resolves to input and output contract metadata for the requested slot")]
+        ReturnsDescription = "Resolves to input and output contract metadata for the requested slot",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class SlotSignature : ISlot
     {
         const string DescriptionName = "description";

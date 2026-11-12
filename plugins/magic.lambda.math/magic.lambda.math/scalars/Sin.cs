@@ -21,7 +21,8 @@ namespace magic.lambda.math.scalars
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "number",
-        ReturnsDescription = "Resolves to the sine of the supplied angle")]
+        ReturnsDescription = "Resolves to the sine of the supplied angle",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Sin : ISlot
     {
         /// <summary>

@@ -24,7 +24,8 @@ namespace magic.lambda.config
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "config-section,text,lambda-tree",
-        ReturnsDescription = "Returns one child node per key/value entry in the requested configuration section")]
+        ReturnsDescription = "Returns one child node per key/value entry in the requested configuration section",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ConfigSection : ISlot
     {
         readonly IMagicConfiguration _configuration;

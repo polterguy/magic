@@ -18,7 +18,8 @@ namespace magic.lambda.auth
         Description = "Returns the current ticket username, roles, and claims",
         ReturnsMode = SlotReturnsMode.Both,
         ReturnsKind = "username,text",
-        ReturnsDescription = "Resolves to the username in value and roles and claims as child nodes")]
+        ReturnsDescription = "Resolves to the username in value and roles and claims as child nodes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetTicket : ISlot
     {
         readonly ITicketProvider _ticketProvider;

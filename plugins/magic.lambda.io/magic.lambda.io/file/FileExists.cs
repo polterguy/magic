@@ -25,7 +25,8 @@ namespace magic.lambda.io.file
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the file exists")]
+        ReturnsDescription = "Returns true if the file exists",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class FileExists : ISlotAsync, IWhitelistComparer
     {
 

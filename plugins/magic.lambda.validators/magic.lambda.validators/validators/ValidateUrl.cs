@@ -20,7 +20,8 @@ namespace magic.lambda.validators.validators
         ValueDescription = "URL value or expression selecting the node or nodes to validate",
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ValidateUrl : ISlot
     {
         /// <summary>

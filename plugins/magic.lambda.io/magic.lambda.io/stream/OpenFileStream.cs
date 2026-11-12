@@ -26,7 +26,8 @@ namespace magic.lambda.io.stream
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "stream",
-        ReturnsDescription = "Resolves to an open file stream")]
+        ReturnsDescription = "Resolves to an open file stream",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class OpenFileStream : ISlotAsync, IWhitelistComparer
     {
 

@@ -22,7 +22,8 @@ namespace magic.lambda.dates
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "date",
-        ReturnsDescription = "Resolves to the date represented by the supplied Unix timestamp")]
+        ReturnsDescription = "Resolves to the date represented by the supplied Unix timestamp",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class FromUnix : ISlot
     {
         /// <summary>

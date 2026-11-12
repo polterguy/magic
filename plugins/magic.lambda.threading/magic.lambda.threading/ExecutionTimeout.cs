@@ -19,7 +19,8 @@ namespace magic.lambda.threading
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the timeout was applied")]
+        ReturnsDescription = "Returns true if the timeout was applied",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ExecutionTimeout : ISlot
     {
         public void Signal(ISignaler signaler, Node input)

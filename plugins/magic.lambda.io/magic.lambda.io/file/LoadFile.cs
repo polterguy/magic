@@ -25,7 +25,8 @@ namespace magic.lambda.io.file
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "text-file-content,text",
-        ReturnsDescription = "Resolves to the loaded file content")]
+        ReturnsDescription = "Resolves to the loaded file content",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     [Slot(
         Name = "io.file.load",
         Description = "Loads a text file from the server",
@@ -36,7 +37,8 @@ namespace magic.lambda.io.file
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "text-file-content,text",
-        ReturnsDescription = "Resolves to the loaded file content")]
+        ReturnsDescription = "Resolves to the loaded file content",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     [Slot(
         Name = "io.file.load.binary",
         Description = "Loads a binary file from the server",
@@ -47,7 +49,8 @@ namespace magic.lambda.io.file
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "binary-file-content,binary-content,fingerprint-source",
-        ReturnsDescription = "Resolves to the loaded binary file bytes")]
+        ReturnsDescription = "Resolves to the loaded binary file bytes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class LoadFile : ISlotAsync, IWhitelistComparer
     {
 

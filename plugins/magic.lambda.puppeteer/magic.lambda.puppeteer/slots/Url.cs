@@ -22,7 +22,8 @@ namespace magic.lambda.puppeteer
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "url,text",
-        ReturnsDescription = "Resolves to the current page URL")]
+        ReturnsDescription = "Resolves to the current page URL",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Url : ISlot
     {
         public void Signal(ISignaler signaler, Node input)

@@ -21,7 +21,8 @@ namespace magic.lambda.slots
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "dynamic-slot-lambda,lambda-object,lambda-tree",
-        ReturnsDescription = "Resolves to the dynamic slot lambda body as child nodes")]
+        ReturnsDescription = "Resolves to the dynamic slot lambda body as child nodes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Get : ISlot
     {
         /// <summary>

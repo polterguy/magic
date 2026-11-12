@@ -16,7 +16,8 @@ namespace magic.endpoint.services.slots.misc
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "mime-type-list,string-list",
         ReturnsElementKind = "mime-type-mapping,text",
-        ReturnsDescription = "Resolves to one named child node per registered MIME type mapping, where the child name is the file extension and the value is the MIME type")]
+        ReturnsDescription = "Resolves to one named child node per registered MIME type mapping, where the child name is the file extension and the value is the MIME type",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetMimeTypes : ISlot
     {
         /// <summary>

@@ -20,7 +20,8 @@ namespace magic.lambda.crypto.slots.misc
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "fingerprint,text",
-        ReturnsDescription = "Resolves to the SHA256 hash of the supplied content formatted as a fingerprint")]
+        ReturnsDescription = "Resolves to the SHA256 hash of the supplied content formatted as a fingerprint",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Fingerprint : ISlot
     {
         /// <summary>

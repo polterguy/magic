@@ -23,7 +23,8 @@ namespace magic.lambda.pdf
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "pdf-content,binary-content",
-        ReturnsDescription = "Resolves to the generated PDF bytes")]
+        ReturnsDescription = "Resolves to the generated PDF bytes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Html2Pdf : ISlot
     {
         /// <summary>

@@ -16,7 +16,8 @@ namespace magic.lambda.dates
         Description = "Returns the current server time in UTC",
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "date",
-        ReturnsDescription = "Resolves to the current UTC date and time")]
+        ReturnsDescription = "Resolves to the current UTC date and time",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class DateTimeNow : ISlot
     {
         /// <summary>

@@ -21,7 +21,8 @@ namespace magic.lambda.dates
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "duration-ms,number",
-        ReturnsDescription = "Resolves to the total number of milliseconds in the supplied time span")]
+        ReturnsDescription = "Resolves to the total number of milliseconds in the supplied time span",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class TimeTotalMilliseconds : ISlot
     {
         /// <summary>

@@ -18,7 +18,8 @@ namespace magic.lambda.system.plugins
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "plugin-assembly-list,string-list",
         ReturnsElementKind = "plugin-assembly-name,text",
-        ReturnsDescription = "Returns one child node per dynamically loaded plugin name")]
+        ReturnsDescription = "Returns one child node per dynamically loaded plugin name",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ListPlugins : ISlot
     {
         /// <summary>

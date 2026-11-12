@@ -22,7 +22,8 @@ namespace magic.lambda.misc
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "binary-content",
-        ReturnsDescription = "Resolves to the float array converted to bytes")]
+        ReturnsDescription = "Resolves to the float array converted to bytes",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class FloatArray2Bytes : ISlot
     {
         /// <summary>

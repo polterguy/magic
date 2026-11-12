@@ -24,7 +24,8 @@ namespace magic.lambda.slots
         ReturnsDescription = "Resolves to a value to the caller",
         IsBlockTerminator = true,
         PipelineOutputUsable = false,
-        WritesScopeResult = true)]
+        WritesScopeResult = true,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ReturnValue : ISlot
     {
         /// <summary>

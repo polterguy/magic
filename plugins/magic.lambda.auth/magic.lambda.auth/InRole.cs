@@ -24,7 +24,8 @@ namespace magic.lambda.auth
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "boolean",
-        ReturnsDescription = "Returns true if the current ticket belongs to at least one of the comma-separated roles")]
+        ReturnsDescription = "Returns true if the current ticket belongs to at least one of the comma-separated roles",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class InRole : ISlot
     {
         readonly ITicketProvider _ticketProvider;

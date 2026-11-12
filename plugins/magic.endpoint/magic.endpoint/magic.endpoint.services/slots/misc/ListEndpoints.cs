@@ -26,7 +26,8 @@ namespace magic.endpoint.services.slots.misc
         ReturnsMode = SlotReturnsMode.Lambda,
         ReturnsKind = "endpoint-list,node-list",
         ReturnsElementKind = "endpoint,lambda-tree",
-        ReturnsDescription = "Resolves to one child node per discovered endpoint, including its endpoint metadata")]
+        ReturnsDescription = "Resolves to one child node per discovered endpoint, including its endpoint metadata",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ListEndpoints : ISlotAsync
     {
         /*

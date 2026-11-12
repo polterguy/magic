@@ -21,7 +21,8 @@ namespace magic.lambda.strings.replace
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "text",
-        ReturnsDescription = "Resolves to the uppercased string")]
+        ReturnsDescription = "Resolves to the uppercased string",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class ToUpper : ISlot
     {
         /// <summary>

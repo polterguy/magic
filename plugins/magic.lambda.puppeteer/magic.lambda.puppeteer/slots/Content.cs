@@ -23,7 +23,8 @@ namespace magic.lambda.puppeteer
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "html,text",
-        ReturnsDescription = "Resolves to the current page HTML content")]
+        ReturnsDescription = "Resolves to the current page HTML content",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Content : ISlotAsync
     {
         public async Task SignalAsync(ISignaler signaler, Node input)

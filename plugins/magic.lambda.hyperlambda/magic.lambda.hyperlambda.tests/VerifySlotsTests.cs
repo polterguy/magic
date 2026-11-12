@@ -60,8 +60,8 @@ namespace magic.lambda.hyperlambda.tests
             "insert-before:x:@.dst\n   {slot}",
             "insert-after:x:@.dst\n   {slot}",
             "include:x:@.dst\n   {slot}",
-            "and\n   {slot}",
-            "or\n   {slot}",
+            "and\n   {slot}\n   eval",
+            "or\n   {slot}\n   eval",
             "not\n   {slot}",
             "get-first-value\n   {slot}",
             "switch:foo\n   case:foo\n      {slot}",
@@ -388,6 +388,58 @@ else
                 result.Children.Single().Get<string>());
         }
 
+        [Theory]
+        [InlineData("mt\n   get-count:x:@.a")]
+        [InlineData("mt:x:@.a")]
+        [InlineData("eq\n   .:a\n   .:b\n   .:c")]
+        [InlineData("and\n   eval")]
+        [InlineData("not\n   eval\n   eval")]
+        [InlineData("if\n   eval\n   eval\n   .lambda\n      eval")]
+        [InlineData("strings.replace:x:@.a\n   .:a\n   .:b\n   .:c")]
+        public void WrongNumberOfOperandsIsRejected(string hyperlambda)
+        {
+            var result = HyperlambdaTests.VerifySlots(hyperlambda);
+            Assert.Contains(
+                result.Children,
+                x => x.Name == InvalidInvocationNode && x.Get<string>().Contains(", but was given ", StringComparison.Ordinal));
+        }
+
+        [Theory]
+        [InlineData("mt:x:@.a\n   .:int:5")]
+        [InlineData("mt\n   get-count:x:@.a\n   .:int:5")]
+        [InlineData("and\n   eval\n   eval\n   eval")]
+        [InlineData("not\n   eval")]
+        [InlineData("for-each:x:@.a\n   eval")]
+        [InlineData("strings.replace:x:@.a\n   .:a")]
+        [InlineData("strings.replace:x:@.a\n   .:a\n   .:b")]
+        [InlineData("strings.regex-replace:x:@.a\n   .:a\n   .:b")]
+        [InlineData("if:x:@.a\n   eval\n   eval")]
+        [InlineData("while:x:@.a\n   eval\n   eval\n   eval")]
+        [InlineData("mt")]
+        [InlineData("add:x:+\n   .\n      .:a\n      .:b\nget-first-value")]
+        public void RightNumberOfOperandsIsAccepted(string hyperlambda)
+        {
+            AssertValid(hyperlambda);
+        }
+
+        [Fact]
+        public void WrongNumberOfOperandsMessageNamesSlotAndCounts()
+        {
+            var result = HyperlambdaTests.VerifySlots("mt\n   get-count:x:@.a");
+            Assert.Equal(
+                "Slot [mt] requires exactly 2 operands, but was given 1",
+                result.Children.Single().Get<string>());
+        }
+
+        [Fact]
+        public void SingleOperandMessageUsesTheSingular()
+        {
+            var result = HyperlambdaTests.VerifySlots("not\n   eval\n   eval");
+            Assert.Equal(
+                "Slot [not] requires exactly 1 operand, but was given 2",
+                result.Children.Single().Get<string>());
+        }
+
         #endregion
 
         #region [ -- Input and result -- ]
@@ -525,17 +577,10 @@ hyperlambda.verify-slots:x:@.code");
 
         [Theory]
         [InlineData("strings.concat")]
-        [InlineData("strings.contains")]
-        [InlineData("strings.ends-with")]
-        [InlineData("strings.join")]
-        [InlineData("strings.matches")]
         [InlineData("strings.regex-replace")]
         [InlineData("strings.replace")]
         [InlineData("strings.replace-not-of")]
-        [InlineData("strings.split")]
-        [InlineData("strings.starts-with")]
         [InlineData("strings.substring")]
-        [InlineData("strings.trim")]
         public void EvaluatedArgumentsAreVerifiedWhateverTheirPosition(string slot)
         {
             HyperlambdaTests.AssertMissingSlots($"{slot}:x:@.a\n   .:foo\n   {Missing}", Missing);
@@ -543,6 +588,25 @@ hyperlambda.verify-slots:x:@.code");
             HyperlambdaTests.AssertMissingSlots($"{slot}:x:@.a\n   {Missing}\n   {Missing}", Missing);
             AssertValid($"{slot}:x:@.a\n   .:foo\n   get-value:x:@.b");
             AssertValid($"{slot}:x:@.a\n   .:foo\n   .bar:baz");
+        }
+
+        /*
+         * These slots take a single evaluated argument besides their value, so two arguments would be
+         * reported as the wrong number of operands.
+         */
+        [Theory]
+        [InlineData("strings.contains")]
+        [InlineData("strings.ends-with")]
+        [InlineData("strings.join")]
+        [InlineData("strings.matches")]
+        [InlineData("strings.split")]
+        [InlineData("strings.starts-with")]
+        [InlineData("strings.trim")]
+        public void SingleEvaluatedArgumentIsVerified(string slot)
+        {
+            HyperlambdaTests.AssertMissingSlots($"{slot}:x:@.a\n   {Missing}", Missing);
+            AssertValid($"{slot}:x:@.a\n   get-value:x:@.b");
+            AssertValid($"{slot}:x:@.a\n   .:foo");
         }
 
         [Fact]

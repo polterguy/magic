@@ -22,7 +22,8 @@ namespace magic.lambda.misc
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "type-name,text",
         ReturnsDescription = "Resolves to the runtime type name of the first matching value",
-        ValueExpressionResolution = SlotValueExpressionResolution.SingleNode)]
+        ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Type : ISlot
     {
         /// <summary>

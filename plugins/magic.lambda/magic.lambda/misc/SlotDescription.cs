@@ -24,7 +24,8 @@ namespace magic.lambda.misc
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "slot-description,text",
-        ReturnsDescription = "Resolves to the description of the requested slot")]
+        ReturnsDescription = "Resolves to the description of the requested slot",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class SlotDescription : ISlot
     {
         readonly ISignalsProvider _signalProvider;

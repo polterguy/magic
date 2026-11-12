@@ -24,7 +24,8 @@ namespace magic.lambda.io.misc
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "folder-path,text",
-        ReturnsDescription = "Resolves to the folder portion of the supplied path")]
+        ReturnsDescription = "Resolves to the folder portion of the supplied path",
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class GetPathFolder : ISlot
     {
         /// <summary>

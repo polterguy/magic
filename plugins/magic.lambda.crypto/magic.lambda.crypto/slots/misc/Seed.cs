@@ -20,7 +20,8 @@ namespace magic.lambda.crypto.slots.misc
         ValueRequired = true,
         ValueMode = SlotValueMode.ValueOrExpression,
         ValueExpressionResolution = SlotValueExpressionResolution.SingleNode,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.signals.contracts.NoChildrenSignature))]
     public class Seed : ISlot
     {
         /// <summary>

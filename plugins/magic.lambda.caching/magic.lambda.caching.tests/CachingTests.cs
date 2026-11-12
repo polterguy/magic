@@ -266,24 +266,26 @@ cache.list:foo");
         }
 
         [Fact]
-        public void CacheClearSignatureDocumentsInputOnly()
+        public void CacheClearSignatureDocumentsInputAndFilter()
         {
             var lambda = Common.Evaluate(@"slot.signature:cache.clear");
             var result = lambda.Children.First();
+            var children = result.Children.First(x => x.Name == "children");
 
             Assert.Contains(result.Children, x => x.Name == "input");
-            Assert.DoesNotContain(result.Children, x => x.Name == "children");
+            Assert.Equal("filter", Assert.Single(children.Children).Name);
         }
 
         [Fact]
-        public void CacheCountSignatureDocumentsInputAndOutputOnly()
+        public void CacheCountSignatureDocumentsInputOutputAndFilter()
         {
             var lambda = Common.Evaluate(@"slot.signature:cache.count");
             var result = lambda.Children.First();
+            var children = result.Children.First(x => x.Name == "children");
 
             Assert.Contains(result.Children, x => x.Name == "input");
             Assert.Contains(result.Children, x => x.Name == "output");
-            Assert.DoesNotContain(result.Children, x => x.Name == "children");
+            Assert.Equal("filter", Assert.Single(children.Children).Name);
         }
 
         [Fact]

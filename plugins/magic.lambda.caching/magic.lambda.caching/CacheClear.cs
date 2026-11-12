@@ -22,7 +22,8 @@ namespace magic.lambda.caching
         ValueDescription = "Optional filter for cache keys",
         ValueRequired = false,
         ValueMode = SlotValueMode.ValueOrExpression,
-        ReturnsMode = SlotReturnsMode.None)]
+        ReturnsMode = SlotReturnsMode.None,
+        SignatureType = typeof(global::magic.lambda.caching.signatures.CacheFilterSignature))]
     public class CacheClear : ISlotAsync
     {
         readonly IMagicCache _cache;
