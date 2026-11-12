@@ -293,12 +293,12 @@ if
       get-value:x:@hyperlambda.verify-slots
    .lambda
       if
-         exists:x:@hyperlambda.verify-slots/invalid-invocation
+         exists:x:@hyperlambda.verify-slots/*/invalid-invocation
          .lambda
             set-value:x:@.state
                .:invalid-invocation
             set-value:x:@.reason
-               strings.join:x:@hyperlambda.verify-slots/invalid-invocation
+               strings.join:x:@hyperlambda.verify-slots/*/invalid-invocation
                   .:"; "
       else
          set-value:x:@.state
