@@ -401,7 +401,7 @@ else
             var result = HyperlambdaTests.VerifySlots(hyperlambda);
             Assert.Contains(
                 result.Children,
-                x => x.Name == InvalidInvocationNode && x.Get<string>().Contains(" operands, but was given ", StringComparison.Ordinal));
+                x => x.Name == InvalidInvocationNode && x.Get<string>().Contains(", but was given ", StringComparison.Ordinal));
         }
 
         [Theory]
@@ -416,7 +416,7 @@ else
         [InlineData("if:x:@.a\n   eval\n   eval")]
         [InlineData("while:x:@.a\n   eval\n   eval\n   eval")]
         [InlineData("mt")]
-        [InlineData("add:x:+\n   .\n      .:a\n      .:b\nfork")]
+        [InlineData("add:x:+\n   .\n      .:a\n      .:b\nget-first-value")]
         public void RightNumberOfOperandsIsAccepted(string hyperlambda)
         {
             AssertValid(hyperlambda);
@@ -428,6 +428,15 @@ else
             var result = HyperlambdaTests.VerifySlots("mt\n   get-count:x:@.a");
             Assert.Equal(
                 "Slot [mt] requires exactly 2 operands, but was given 1",
+                result.Children.Single().Get<string>());
+        }
+
+        [Fact]
+        public void SingleOperandMessageUsesTheSingular()
+        {
+            var result = HyperlambdaTests.VerifySlots("not\n   eval\n   eval");
+            Assert.Equal(
+                "Slot [not] requires exactly 1 operand, but was given 2",
                 result.Children.Single().Get<string>());
         }
 
