@@ -216,6 +216,30 @@ namespace magic.lambda.hyperlambda
                 invalid.Add($"Slot [{node.Name}] requires either a primary (RHS) value or child nodes");
             }
 
+            /*
+             * The number of evaluated children must be within the range the signature declares for them,
+             * summed over every evaluated declaration, e.g. the two operands of [mt], or the one or two
+             * of [strings.replace]. Named arguments and wrappers are not operands. A value may stand in
+             * for one operand, as in [mt:x:@.a] with one child, so either count within range is accepted.
+             *
+             * Not checked:
+             *   - a value replacing a Condition operand, as in [if:x:@.a] or [while:x:@.a], since the
+             *     children are then the body;
+             *   - an invocation with neither value nor children, since its operands are commonly added
+             *     at runtime, as in [add:x:+] followed by an empty [fork]. Children are only ever added,
+             *     so too many operands is always reported.
+             */
+            var checkOperands = info.HasOperands &&
+                !(info.HasConditionOperand && node.Value != null) &&
+                (node.Value != null || node.Children.Any());
+            if (checkOperands)
+            {
+                var operands = node.Children.Count(x => !info.ArgumentNames.Contains(x.Name) && !info.WrapperNames.Contains(x.Name));
+                var valueOperand = node.Value != null && info.Attribute?.ValueMode != SlotValueMode.None;
+                if (!info.AllowsOperands(operands) && !(valueOperand && info.AllowsOperands(operands + 1)))
+                    invalid.Add($"Slot [{node.Name}] requires {info.DescribeOperands()}, but was given {operands + (valueOperand ? 1 : 0)}");
+            }
+
             // Without an attached signature, the accepted child argument names are unknown.
             if (!info.HasSignature || info.AcceptsAnyChild)
                 return;
@@ -223,6 +247,19 @@ namespace magic.lambda.hyperlambda
             {
                 invalid.Add($"Slot [{node.Name}] does not accept a child argument named [{child.Name}]");
             }
+        }
+
+        static (int Min, int Max) Range(SlotChildCardinality cardinality)
+        {
+            return cardinality switch
+            {
+                SlotChildCardinality.ZeroOrOne => (0, 1),
+                SlotChildCardinality.ExactlyOne => (1, 1),
+                SlotChildCardinality.ExactlyTwo => (2, 2),
+                SlotChildCardinality.TwoOrMore => (2, int.MaxValue),
+                SlotChildCardinality.OneOrMore => (1, int.MaxValue),
+                _ => (0, int.MaxValue),
+            };
         }
 
         /*
@@ -235,6 +272,9 @@ namespace magic.lambda.hyperlambda
          *   - ContinuationBodyNames: executable sibling blocks following the slot ([.catch],
          *                            [.finally]); these siblings are not slot invocations.
          *   - ArgumentNames        : named non-executable children to exclude from a "*" body.
+         *   - OperandMin/OperandMax: how many evaluated ("*" or executable ".") children the slot takes,
+         *                            summed over its evaluated declarations; HasOperands if it declares any.
+         *   - HasConditionOperand  : one of them is a Condition, which a value replaces ([if], [while]).
          * "[.lambda]" is always a wrapper so signature-less slots work by convention.
          */
         sealed class BodyInfo
@@ -248,6 +288,27 @@ namespace magic.lambda.hyperlambda
             public HashSet<string> NestedBodyNames = new HashSet<string>(StringComparer.Ordinal);
             public HashSet<string> ContinuationBodyNames = new HashSet<string>(StringComparer.Ordinal);
             public HashSet<string> ArgumentNames = new HashSet<string>(StringComparer.Ordinal);
+            public bool HasOperands;
+            public bool HasConditionOperand;
+            public int OperandMin;
+            public int OperandMax;
+
+            public bool AllowsOperands(int count)
+            {
+                return count >= OperandMin && count <= OperandMax;
+            }
+
+            public string DescribeOperands()
+            {
+                var noun = OperandMax == 1 ? "operand" : "operands";
+                if (OperandMin == OperandMax)
+                    return $"exactly {OperandMin} {noun}";
+                if (OperandMax == int.MaxValue)
+                    return $"{OperandMin} or more {noun}";
+                if (OperandMin == 0)
+                    return $"at most {OperandMax} {noun}";
+                return $"between {OperandMin} and {OperandMax} {noun}";
+            }
         }
 
         /*
@@ -320,7 +381,14 @@ namespace magic.lambda.hyperlambda
             var evaluated = child.Name == "*" ||
                 (child.Name == "." && child.Mode == SlotChildMode.ExecutableLambda);
             if (evaluated)
+            {
                 result.AcceptsAnyChild = true;
+                var (min, max) = Range(child.Cardinality);
+                result.HasOperands = true;
+                result.HasConditionOperand |= child.Role == SlotChildRole.Condition;
+                result.OperandMin += min;
+                result.OperandMax = result.OperandMax == int.MaxValue || max == int.MaxValue ? int.MaxValue : result.OperandMax + max;
+            }
             else
             {
                 /*

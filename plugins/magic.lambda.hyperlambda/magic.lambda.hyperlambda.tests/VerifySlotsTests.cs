@@ -60,8 +60,8 @@ namespace magic.lambda.hyperlambda.tests
             "insert-before:x:@.dst\n   {slot}",
             "insert-after:x:@.dst\n   {slot}",
             "include:x:@.dst\n   {slot}",
-            "and\n   {slot}",
-            "or\n   {slot}",
+            "and\n   {slot}\n   eval",
+            "or\n   {slot}\n   eval",
             "not\n   {slot}",
             "get-first-value\n   {slot}",
             "switch:foo\n   case:foo\n      {slot}",
@@ -385,6 +385,49 @@ else
             var result = HyperlambdaTests.VerifySlots("hyper2lambda:x:@.a\n   bogus:bool:true");
             Assert.Equal(
                 "Slot [hyper2lambda] does not accept a child argument named [bogus]",
+                result.Children.Single().Get<string>());
+        }
+
+        [Theory]
+        [InlineData("mt\n   get-count:x:@.a")]
+        [InlineData("mt:x:@.a")]
+        [InlineData("eq\n   .:a\n   .:b\n   .:c")]
+        [InlineData("and\n   eval")]
+        [InlineData("not\n   eval\n   eval")]
+        [InlineData("if\n   eval\n   eval\n   .lambda\n      eval")]
+        [InlineData("strings.replace:x:@.a\n   .:a\n   .:b\n   .:c")]
+        public void WrongNumberOfOperandsIsRejected(string hyperlambda)
+        {
+            var result = HyperlambdaTests.VerifySlots(hyperlambda);
+            Assert.Contains(
+                result.Children,
+                x => x.Name == InvalidInvocationNode && x.Get<string>().Contains(" operands, but was given ", StringComparison.Ordinal));
+        }
+
+        [Theory]
+        [InlineData("mt:x:@.a\n   .:int:5")]
+        [InlineData("mt\n   get-count:x:@.a\n   .:int:5")]
+        [InlineData("and\n   eval\n   eval\n   eval")]
+        [InlineData("not\n   eval")]
+        [InlineData("for-each:x:@.a\n   eval")]
+        [InlineData("strings.replace:x:@.a\n   .:a")]
+        [InlineData("strings.replace:x:@.a\n   .:a\n   .:b")]
+        [InlineData("strings.regex-replace:x:@.a\n   .:a\n   .:b")]
+        [InlineData("if:x:@.a\n   eval\n   eval")]
+        [InlineData("while:x:@.a\n   eval\n   eval\n   eval")]
+        [InlineData("mt")]
+        [InlineData("add:x:+\n   .\n      .:a\n      .:b\nfork")]
+        public void RightNumberOfOperandsIsAccepted(string hyperlambda)
+        {
+            AssertValid(hyperlambda);
+        }
+
+        [Fact]
+        public void WrongNumberOfOperandsMessageNamesSlotAndCounts()
+        {
+            var result = HyperlambdaTests.VerifySlots("mt\n   get-count:x:@.a");
+            Assert.Equal(
+                "Slot [mt] requires exactly 2 operands, but was given 1",
                 result.Children.Single().Get<string>());
         }
 
