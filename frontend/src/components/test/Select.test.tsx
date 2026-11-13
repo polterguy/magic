@@ -70,8 +70,62 @@ describe('Select', () => {
     await userEvent.click(trigger);
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
     const options = screen.getAllByRole('option');
-    expect(options.map(o => o.textContent)).toEqual(['Apple', '✓Banana', 'Cherry', 'Date']);
+    expect(options.map(o => o.textContent)).toEqual(['Apple', 'Banana', 'Cherry', 'Date']);
     expect(screen.getByRole('option', { name: /Banana/ })).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('names the trigger with ariaLabel, keeping the value visible', () => {
+    render(
+      <Select value="a" onChange={vi.fn()} ariaLabel="Fruit">
+        <option value="a">Apple</option>
+      </Select>,
+    );
+    expect(screen.getByRole('button', { name: 'Fruit' })).toHaveTextContent('Apple');
+  });
+
+  it('ticks only the selected option', async () => {
+    const { trigger } = renderSelect();
+    await userEvent.click(trigger);
+    const ticked = screen
+      .getAllByRole('option')
+      .filter(option => option.querySelector('.select-check svg'));
+    expect(ticked.map(option => option.textContent)).toEqual(['Banana']);
+  });
+
+  it('points the trigger at the highlighted option', async () => {
+    const { trigger } = renderSelect();
+    expect(trigger).not.toHaveAttribute('aria-activedescendant');
+    await userEvent.click(trigger);
+    const listbox = screen.getByRole('listbox');
+    expect(trigger).toHaveAttribute('aria-controls', listbox.id);
+    const highlighted = () =>
+      // useId's ids hold characters a #id selector would need escaped.
+      document.querySelector(`[id="${trigger.getAttribute('aria-activedescendant')}"]`);
+    expect(highlighted()).toHaveTextContent('Banana');
+    await userEvent.keyboard('{ArrowDown}');
+    // Cherry is disabled, so the highlight skips it.
+    expect(highlighted()).toHaveTextContent('Date');
+  });
+
+  it('opens below the trigger when there is room', async () => {
+    const { trigger } = renderSelect();
+    trigger.getBoundingClientRect = () => new DOMRect(10, 100, 120, 36);
+    await userEvent.click(trigger);
+    const menu = screen.getByRole('listbox');
+    expect(menu.style.top).toBe(100 + 36 + 4 + 'px');
+    expect(menu.style.bottom).toBe('');
+  });
+
+  it('opens above the trigger near the bottom of the window', async () => {
+    const { trigger } = renderSelect();
+    const top = window.innerHeight - 50;
+    trigger.getBoundingClientRect = () => new DOMRect(10, top, 120, 36);
+    await userEvent.click(trigger);
+    const menu = screen.getByRole('listbox');
+    expect(menu.style.bottom).toBe(window.innerHeight - top + 4 + 'px');
+    expect(menu.style.top).toBe('');
+    // Never taller than the room above it.
+    expect(Number.parseFloat(menu.style.maxHeight)).toBeLessThanOrEqual(top);
   });
 
   it('chooses an option by mouse and closes', async () => {

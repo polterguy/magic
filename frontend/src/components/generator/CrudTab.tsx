@@ -58,7 +58,7 @@ export default function CrudTab(props: Readonly<{ guided: boolean }>) {
       {selection.loading && (
         <div
           className="card gen-table-card"
-          style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}
+          style={{ padding: 0, overflow: 'auto', maxWidth: 520 }}
         >
           <TableSkeleton columns={2} />
         </div>

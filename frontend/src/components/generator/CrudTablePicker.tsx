@@ -19,7 +19,7 @@ export default function CrudTablePicker({ crud }: Readonly<{ crud: CrudTabState 
     setColumnLock,
   } = crud;
   return (
-    <div className="card gen-table-card" style={{ padding: 0, overflow: 'auto', maxWidth: 460 }}>
+    <div className="card gen-table-card" style={{ padding: 0, overflow: 'auto', maxWidth: 520 }}>
       <table className="compact-table">
         <thead>
           <tr>
@@ -75,6 +75,11 @@ export default function CrudTablePicker({ crud }: Readonly<{ crud: CrudTabState 
                    * cell's 21px padding + the expand chevron and its gap.
                    */}
                   <td colSpan={3} style={{ padding: '6px 21px 18px 101px' }}>
+                    {/* One heading for the rows' two columns, rather than "Lock to" on every row. */}
+                    <div className="gen-col gen-col-head" aria-hidden="true">
+                      <span>Column</span>
+                      <span>Locked to</span>
+                    </div>
                     {(table.columns ?? []).map(column => (
                       <ColumnRow
                         key={column.name}

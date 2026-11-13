@@ -5,8 +5,44 @@
  * is never clipped by a card or modal. Keyboard: Up/Down/Enter/Escape, plus
  * type-ahead by first letter.
  */
-import { Children, isValidElement, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Children,
+  isValidElement,
+  ReactNode,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
+
+import { CheckIcon } from './Icons';
+
+// The menu's tallest size, and the gap between it and the trigger.
+const MENU_MAX_HEIGHT = 320;
+const MENU_GAP = 4;
+// Space kept between the menu and the window's edge.
+const VIEWPORT_MARGIN = 8;
+
+/*
+ * Where the menu goes: below the trigger, unless there is too little room there and more above,
+ * as for a Select near the bottom of the window. Its height is capped by the room it has.
+ */
+function placeMenu(rect: DOMRect): React.CSSProperties {
+  const below = window.innerHeight - rect.bottom - MENU_GAP - VIEWPORT_MARGIN;
+  const above = rect.top - MENU_GAP - VIEWPORT_MARGIN;
+  const up = below < Math.min(MENU_MAX_HEIGHT, 200) && above > below;
+  return {
+    position: 'fixed',
+    left: rect.left,
+    minWidth: rect.width,
+    maxHeight: Math.min(MENU_MAX_HEIGHT, up ? above : below),
+    ...(up
+      ? { bottom: window.innerHeight - rect.top + MENU_GAP }
+      : { top: rect.bottom + MENU_GAP }),
+  };
+}
 
 interface Opt {
   value: string;
@@ -50,6 +86,8 @@ export default function Select(
     children: ReactNode;
     disabled?: boolean;
     title?: string;
+    // The trigger's accessible name, for a Select with no visible label of its own.
+    ariaLabel?: string;
     className?: string;
     style?: React.CSSProperties;
     placeholder?: string;
@@ -62,6 +100,7 @@ export default function Select(
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLUListElement>(null);
   const typed = useRef({ str: '', at: 0 });
+  const menuId = useId();
 
   const selected = options.find(o => o.value === props.value);
 
@@ -92,6 +131,13 @@ export default function Select(
       document.removeEventListener('mousedown', onDown);
     };
   }, [open]);
+
+  // Keeps the highlighted option in view as the arrow keys move through a long menu.
+  useEffect(() => {
+    if (open && active >= 0) {
+      menuRef.current?.children[active]?.scrollIntoView?.({ block: 'nearest' });
+    }
+  }, [open, active]);
 
   function choose(value: string) {
     props.onChange(value);
@@ -157,31 +203,39 @@ export default function Select(
         className="select-trigger"
         disabled={props.disabled}
         title={props.title}
+        aria-label={props.ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-controls={open ? menuId : undefined}
+        aria-activedescendant={open && active >= 0 ? menuId + '-' + active : undefined}
         onClick={() => (open ? setOpen(false) : openMenu())}
         onKeyDown={onKeyDown}
       >
         <span className="select-value">
           {selected ? selected.label : (props.placeholder ?? '')}
         </span>
-        <span className="select-caret" aria-hidden="true">
-          ▾
-        </span>
+        <svg
+          className="select-caret"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2.2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
       </button>
       {open &&
         rect &&
         createPortal(
           <ul
             ref={menuRef}
+            id={menuId}
             className="select-menu"
             role="listbox"
-            style={{
-              position: 'fixed',
-              top: rect.bottom + 4,
-              left: rect.left,
-              minWidth: rect.width,
-            }}
+            style={placeMenu(rect)}
           >
             {options.map((o, i) => (
               <li
@@ -189,6 +243,7 @@ export default function Select(
                 // across groups just as a native <select> allows.
                 // eslint-disable-next-line react/no-array-index-key -- positional, values not unique
                 key={o.value + '·' + i}
+                id={menuId + '-' + i}
                 role="option"
                 aria-selected={o.value === props.value}
                 className={
@@ -210,7 +265,7 @@ export default function Select(
                 }}
               >
                 <span className="select-check" aria-hidden="true">
-                  {o.value === props.value ? '✓' : ''}
+                  {o.value === props.value && <CheckIcon />}
                 </span>
                 <span className="select-option-label">{o.label}</span>
               </li>
