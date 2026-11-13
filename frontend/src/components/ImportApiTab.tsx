@@ -24,6 +24,7 @@ import { withoutTrailingSlashes } from '../lib/backend';
 import { showError } from '../lib/errors';
 import { showToast } from '../lib/toast';
 import AiWaiter from './AiWaiter';
+import BusyLabel from './BusyLabel';
 import { Modal } from './Dialogs';
 import { ChevronIcon } from './Icons';
 import RoleChips from './RoleChips';
@@ -283,7 +284,7 @@ export default function ImportApiTab() {
               }}
             />
             <button className="btn" onClick={read} disabled={busy}>
-              {busy && !running ? 'Reading…' : 'Read'}
+              <BusyLabel busy={busy && !running} label="Read" busyLabel="Reading…" />
             </button>
           </div>
         </label>
@@ -516,7 +517,11 @@ export default function ImportApiTab() {
 
       <div className="form-row" style={{ marginTop: 16 }}>
         <button className="btn" onClick={run} disabled={busy || !spec || count === 0}>
-          {busy && running ? 'Importing…' : importLabel(count)}
+          <BusyLabel
+            busy={busy && running !== null}
+            label={importLabel(count)}
+            busyLabel="Importing…"
+          />
         </button>
       </div>
       {busy && !running && <AiWaiter />}
@@ -559,7 +564,7 @@ export default function ImportApiTab() {
               Cancel
             </button>
             <button className="btn" onClick={storeCredential} disabled={savingKey}>
-              {savingKey ? 'Storing…' : 'Store'}
+              <BusyLabel busy={savingKey} label="Store" busyLabel="Storing…" />
             </button>
           </div>
         </Modal>

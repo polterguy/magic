@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { createRole, Role, updateRole } from '../../lib/api';
 import { showError } from '../../lib/errors';
+import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
 
 export default function RoleDialog(
@@ -68,7 +69,7 @@ export default function RoleDialog(
           Cancel
         </button>
         <button className="btn" onClick={save} disabled={busy || !name}>
-          {busy ? 'Saving…' : 'Save'}
+          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
         </button>
       </div>
     </Modal>

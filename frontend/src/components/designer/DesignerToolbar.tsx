@@ -1,3 +1,4 @@
+import BusyLabel from '../BusyLabel';
 import { RedoIcon, SaveIcon, UndoIcon } from '../Icons';
 import { canonicalUrl } from './designerFiles';
 import DesignerMenu from './DesignerMenu';
@@ -95,7 +96,7 @@ export default function DesignerToolbar(
         disabled={!path || !props.dirty || props.saving}
       >
         <SaveIcon />
-        {props.saving ? 'Saving…' : 'Save'}
+        <BusyLabel busy={props.saving} label="Save" busyLabel="Saving…" />
       </button>
     </div>
   );

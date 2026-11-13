@@ -1,3 +1,4 @@
+import BusyLabel from '../BusyLabel';
 import Select from '../Select';
 import EndpointNameFields from './EndpointNameFields';
 import { SandboxTabState } from './hooks/useSandboxTab';
@@ -50,7 +51,7 @@ export default function SandboxEndpointToolbar({
       </label>
       <span className="spacer" />
       <button className="btn" onClick={generate} disabled={busy || !!blocked} title={blocked}>
-        {busy ? 'Generating…' : '⚙ Generate endpoint'}
+        <BusyLabel busy={busy} label="⚙ Generate endpoint" busyLabel="Generating…" />
       </button>
     </div>
   );

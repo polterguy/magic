@@ -1,4 +1,5 @@
 import { copyToClipboard } from '../../lib/toast';
+import BusyLabel from '../BusyLabel';
 import { BracesIcon, CopyIcon, DownloadIcon, PlayIcon, SaveIcon, SparkIcon } from '../Icons';
 import { endpointOf } from './helpers';
 
@@ -80,7 +81,7 @@ export default function IdeHeader(
           disabled={generating || !hasSelection}
         >
           <SparkIcon />
-          {generating ? 'Generating…' : 'Generate'}
+          <BusyLabel busy={generating} label="Generate" busyLabel="Generating…" />
         </button>
       )}
       {selectedFile.endsWith('.hl') && (
@@ -95,7 +96,7 @@ export default function IdeHeader(
         disabled={!selectedFile || !dirty || saving}
       >
         <SaveIcon />
-        {saving ? 'Saving…' : 'Save'}
+        <BusyLabel busy={saving} label="Save" busyLabel="Saving…" />
       </button>
     </div>
   );

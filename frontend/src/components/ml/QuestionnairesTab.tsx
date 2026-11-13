@@ -22,6 +22,7 @@ import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 import { useDialog } from '../../lib/useDialog';
 import AiWaiter from '../AiWaiter';
+import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
 import Select from '../Select';
 
@@ -550,7 +551,7 @@ function QuestionDialog(
           Cancel
         </button>
         <button className="btn" onClick={save} disabled={busy || !question}>
-          {busy ? 'Saving…' : 'Save'}
+          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
         </button>
       </div>
     </Modal>

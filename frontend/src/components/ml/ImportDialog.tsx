@@ -15,6 +15,7 @@ import {
 } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
 import Select from '../Select';
 import SocketFeedback from '../SocketFeedback';
@@ -270,7 +271,7 @@ export default function ImportDialog(
                 Cancel
               </button>
               <button className="btn" onClick={crawl} disabled={!url || uploading}>
-                {uploading ? 'Starting…' : 'Start crawling'}
+                <BusyLabel busy={uploading} label="Start crawling" busyLabel="Starting…" />
               </button>
             </div>
           </div>
@@ -378,7 +379,7 @@ export default function ImportDialog(
               className="btn btn-secondary"
               style={{ cursor: 'pointer', alignSelf: 'flex-start' }}
             >
-              {uploading ? 'Uploading…' : 'Select files'}
+              <BusyLabel busy={uploading} label="Select files" busyLabel="Uploading…" />
               <input
                 type="file"
                 multiple

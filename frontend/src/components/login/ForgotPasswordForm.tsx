@@ -1,6 +1,7 @@
 import type { SubmitEvent } from 'react';
 
 import Banner from '../Banner';
+import BusyLabel from '../BusyLabel';
 
 // A stable callback ref, so the field is focused once on mount rather than every render.
 const focusOnMount = (element: HTMLInputElement | null) => element?.focus();
@@ -46,7 +47,7 @@ export default function ForgotPasswordForm(
         )}
         {!props.forgotSent && (
           <button className="btn" type="submit" disabled={props.busy || !props.forgotUser.trim()}>
-            {props.busy ? 'Sending…' : 'Send link'}
+            <BusyLabel busy={props.busy} label="Send link" busyLabel="Sending…" />
           </button>
         )}
         <button type="button" className="link-like" onClick={props.onBack}>

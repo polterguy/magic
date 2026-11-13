@@ -1,4 +1,5 @@
 import AiWaiter from '../AiWaiter';
+import BusyLabel from '../BusyLabel';
 import CallerRolesField from './CallerRolesField';
 import EndpointNameFields from './EndpointNameFields';
 import GeneratedEndpoint from './GeneratedEndpoint';
@@ -52,7 +53,7 @@ export default function SearchTab() {
           onClick={generate}
           disabled={busy || !moduleName || !endpointName || !type}
         >
-          {busy ? 'Generating…' : '⚙ Generate endpoint'}
+          <BusyLabel busy={busy} label="⚙ Generate endpoint" busyLabel="Generating…" />
         </button>
       </div>
       <SearchSourceToolbar search={search} />

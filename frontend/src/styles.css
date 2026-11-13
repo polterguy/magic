@@ -363,6 +363,12 @@ body {
 .content {
   flex: 1;
   overflow: auto;
+  /*
+   * Keep room for the scrollbar even when there is nothing to scroll. Otherwise the scrollbar
+   * appearing (results arriving, a list growing) narrows the pane, and every right-aligned
+   * toolbar shifts left under the cursor.
+   */
+  scrollbar-gutter: stable;
   padding: 28px 32px;
   display: flex;
   flex-direction: column;
@@ -399,8 +405,9 @@ h1 {
  * default the title is the item that gives way: it gets squeezed under its
  * natural width, wraps onto two or three lines, and grows the header — moving
  * everything below it. Whenever the controls change width (a toolbar appearing,
- * a select populating, "Run" becoming "Running…") that turns into a visible
- * jump. So the title keeps its width and the controls take the pressure.
+ * a select populating) that turns into a visible jump. So the title keeps its
+ * width and the controls take the pressure. A button whose label goes busy ("Run" becoming
+ * "Running…") does not change width at all: see .busy-label.
  */
 .page-header .page-title {
   flex: 0 0 auto;
@@ -489,6 +496,26 @@ a:hover {
 
 .toolbar .spacer {
   flex: 1;
+}
+
+/*
+ * A button label that swaps to a busy form (components/BusyLabel.tsx). The label for the other
+ * state sits invisibly in the same grid cell, so the label is as wide as the wider of the two and
+ * the button does not change width (and shift its neighbours) when it goes busy and back.
+ */
+.busy-label {
+  display: inline-grid;
+}
+
+.busy-label > span,
+.busy-label::after {
+  grid-area: 1 / 1;
+  text-align: center;
+}
+
+.busy-label::after {
+  content: attr(data-alt);
+  visibility: hidden;
 }
 
 /* inline-flex so a button can carry an icon beside its label. */

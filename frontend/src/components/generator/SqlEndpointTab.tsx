@@ -1,6 +1,7 @@
 import { showToast } from '../../lib/toast';
 import AiPrompt from '../AiPrompt';
 import AiWaiter from '../AiWaiter';
+import BusyLabel from '../BusyLabel';
 import CodeEditor from '../CodeEditor';
 import DatabaseSelectors from './DatabaseSelectors';
 import EndpointNameFields from './EndpointNameFields';
@@ -49,7 +50,7 @@ export default function SqlEndpointTab() {
         />
         <span className="spacer" />
         <button className="btn" onClick={generate} disabled={busy || !selection.database}>
-          {busy ? 'Generating…' : '⚙ Generate endpoint'}
+          <BusyLabel busy={busy} label="⚙ Generate endpoint" busyLabel="Generating…" />
         </button>
       </div>
       <SqlAuthToolbar sql={state} />

@@ -10,6 +10,7 @@ import { useEditToken } from '../../lib/editor';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 import AiPrompt from '../AiPrompt';
+import BusyLabel from '../BusyLabel';
 import CodeEditor from '../CodeEditor';
 import { Modal } from '../Dialogs';
 
@@ -169,7 +170,7 @@ export default function EditSnippetDialog(
           Cancel
         </button>
         <button className="btn" onClick={save} disabled={!prompt || busy}>
-          {busy ? 'Saving…' : 'Save'}
+          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
         </button>
       </div>
     </Modal>

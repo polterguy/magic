@@ -13,6 +13,7 @@ import {
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 import { useDialog } from '../../lib/useDialog';
+import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
 import RoleChips from '../RoleChips';
 
@@ -178,7 +179,7 @@ export default function EditUserDialog(
           Cancel
         </button>
         <button className="btn" onClick={save} disabled={busy}>
-          {busy ? 'Saving…' : 'Save'}
+          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
         </button>
       </div>
     </Modal>

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { changeUserPassword, MIN_PASSWORD, User } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
 
 export default function ChangePasswordDialog(
@@ -58,7 +59,7 @@ export default function ChangePasswordDialog(
           Cancel
         </button>
         <button className="btn" onClick={save} disabled={busy || !password}>
-          {busy ? 'Saving…' : 'Change password'}
+          <BusyLabel busy={busy} label="Change password" busyLabel="Saving…" />
         </button>
       </div>
     </Modal>

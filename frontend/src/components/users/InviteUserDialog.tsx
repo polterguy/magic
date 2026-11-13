@@ -9,6 +9,7 @@ import {
 } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { useAuth } from '../../lib/useAuth';
+import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
 import RolesField from './RolesField';
 
@@ -90,7 +91,7 @@ export default function InviteUserDialog(
           Cancel
         </button>
         <button className="btn" onClick={invite} disabled={busy || !email.includes('@')}>
-          {busy ? 'Inviting…' : 'Send invite'}
+          <BusyLabel busy={busy} label="Send invite" busyLabel="Inviting…" />
         </button>
       </div>
     </Modal>

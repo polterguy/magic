@@ -1,3 +1,4 @@
+import BusyLabel from '../../BusyLabel';
 import SearchInput from '../../SearchInput';
 import { useExecuteFiles } from '../hooks/useExecuteFiles';
 import { WizardProps } from '../types';
@@ -94,7 +95,7 @@ export default function ExecuteFilesWizard(props: WizardProps) {
               style={{ marginLeft: 'auto', padding: '0 6px', minWidth: 20 }}
               onClick={e => toggleDescription(path, e)}
             >
-              {descLoading === path ? '…' : '?'}
+              <BusyLabel busy={descLoading === path} label="?" busyLabel="…" />
             </button>
           </label>
         ))}

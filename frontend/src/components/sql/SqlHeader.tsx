@@ -1,4 +1,5 @@
 import type { DatabaseSelection } from '../../lib/sql';
+import BusyLabel from '../BusyLabel';
 import { SparkIcon } from '../Icons';
 import Select from '../Select';
 
@@ -74,7 +75,7 @@ export default function SqlHeader(
                 disabled={generating || !hasSelection}
               >
                 <SparkIcon />
-                {generating ? 'Generating…' : 'Generate'}
+                <BusyLabel busy={generating} label="Generate" busyLabel="Generating…" />
               </button>
             )}
             {/*
@@ -87,7 +88,7 @@ export default function SqlHeader(
               onClick={props.onExecute}
               disabled={busy || !database || !sql.trim()}
             >
-              {busy ? 'Running…' : '▷ Run'}
+              <BusyLabel busy={busy} label="▷ Run" busyLabel="Running…" />
             </button>
           </>
         )}

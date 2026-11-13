@@ -21,6 +21,7 @@ import {
 } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+import BusyLabel from '../BusyLabel';
 import CodeEditor from '../CodeEditor';
 import CreateSystemMessageDialog from '../CreateSystemMessageDialog';
 import { Modal } from '../Dialogs';
@@ -606,7 +607,7 @@ export default function EditModelDialog(
           disabled={busy || !canSave}
           title={canSave ? undefined : 'Give the model a name, and select an LLM'}
         >
-          {busy ? 'Saving…' : 'Save'}
+          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
         </button>
       </div>
       {largeEditor && (

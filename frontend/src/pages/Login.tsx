@@ -2,6 +2,7 @@ import { type SubmitEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Banner from '../components/Banner';
+import BusyLabel from '../components/BusyLabel';
 import BackendUrlField from '../components/login/BackendUrlField';
 import ForgotPasswordForm from '../components/login/ForgotPasswordForm';
 import {
@@ -268,7 +269,7 @@ export default function Login() {
           />
         </label>
         <button className="btn" type="submit" disabled={busy}>
-          {busy ? 'Signing in…' : 'Sign in'}
+          <BusyLabel busy={busy} label="Sign in" busyLabel="Signing in…" />
         </button>
         {canReset && (
           <button

@@ -11,6 +11,7 @@
 import { type SubmitEvent, useState } from 'react';
 
 import Banner from '../components/Banner';
+import BusyLabel from '../components/BusyLabel';
 import { EyeIcon, EyeOffIcon } from '../components/Icons';
 import { ApiError, MIN_PASSWORD, saveUserExtra, setupSystem } from '../lib/api';
 import { errorMessage } from '../lib/errors';
@@ -160,7 +161,7 @@ export default function Setup() {
           Subscribe to the newsletter
         </label>
         <button className="btn" type="submit" disabled={busy}>
-          {busy ? 'Setting up…' : 'Save'}
+          <BusyLabel busy={busy} label="Save" busyLabel="Setting up…" />
         </button>
         <p className="muted" style={{ fontSize: 12, textAlign: 'center', margin: 0 }}>
           This takes a few seconds — the server generates a new signing key and prepares its

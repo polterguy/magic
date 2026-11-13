@@ -1,6 +1,7 @@
 import { Task } from '../../lib/api';
 import { showToast } from '../../lib/toast';
 import AiPrompt from '../AiPrompt';
+import BusyLabel from '../BusyLabel';
 import CodeEditor from '../CodeEditor';
 import { Modal } from '../Dialogs';
 import { useTaskDialog } from './hooks/useTaskDialog';
@@ -82,7 +83,7 @@ export default function TaskDialog(
           Close
         </button>
         <button className="btn" onClick={save} disabled={busy || (props.isNew && !id)}>
-          {busy ? 'Saving…' : 'Save'}
+          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
         </button>
       </div>
     </Modal>
