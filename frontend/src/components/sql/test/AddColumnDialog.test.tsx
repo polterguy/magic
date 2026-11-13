@@ -44,9 +44,7 @@ function renderDialog(databaseType = 'sqlite') {
 
 // The select trigger showing `shown` — its label wraps it, so its name is not just the value.
 function trigger(shown: string) {
-  return screen
-    .getAllByRole('button')
-    .find(button => button.textContent === shown + '▾') as HTMLElement;
+  return screen.getAllByRole('button').find(button => button.textContent === shown) as HTMLElement;
 }
 
 async function pick(shown: string, option: string) {

@@ -744,6 +744,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   display: inline-block;
 }
 
+/* The same box as a text input (border, padding, surface), so a Select and an input side by side line up. */
 .select-trigger {
   display: inline-flex;
   align-items: center;
@@ -752,20 +753,29 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 8px 12px;
+  padding: 8px 10px 8px 12px;
   background: var(--surface-2);
   color: var(--text);
   font-family: var(--app-font);
   font-size: var(--text-base);
+  line-height: 1.25;
   cursor: pointer;
   text-align: left;
+  transition:
+    border-color 0.12s,
+    background-color 0.12s,
+    box-shadow 0.12s;
 }
 
 .select-trigger:hover {
   border-color: var(--border-strong);
 }
+
+/* No focus ring (removed globally), so the border and a soft halo carry focus, as on inputs. */
+.select-trigger:focus-visible,
 .select-trigger[aria-expanded='true'] {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .select.disabled .select-trigger {
@@ -781,9 +791,30 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
 }
 
 .select-caret {
-  color: var(--text-soft);
-  font-size: 0.8em;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
+  color: var(--text-soft);
+  transition:
+    transform 0.15s,
+    color 0.12s;
+}
+
+.select-trigger:hover .select-caret {
+  color: var(--text);
+}
+
+.select-trigger[aria-expanded='true'] .select-caret {
+  color: var(--text);
+  transform: rotate(180deg);
+}
+
+/* A tighter Select for dense rows, such as one per column in a table. */
+.select-sm .select-trigger {
+  gap: 6px;
+  padding: 5px 8px 5px 10px;
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
 }
 
 .select-menu {
@@ -796,17 +827,35 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   box-shadow: var(--shadow-hard);
   max-height: 320px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   /* Above modals (100) and CodeMirror hints (2000000). */
   z-index: 2000002;
   font-family: var(--app-font);
   font-size: var(--text-base);
+  animation: select-menu-in 0.12s ease-out;
+}
+
+@keyframes select-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .select-menu {
+    animation: none;
+  }
+  .select-caret {
+    transition: none;
+  }
 }
 
 .select-option {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  gap: 8px;
+  padding: 7px 10px 7px 8px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   color: var(--text);
@@ -835,25 +884,40 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   margin-bottom: 3px;
 }
 
-.select-option:hover {
-  background: var(--accent-soft);
-}
+/* Hover and the keyboard's highlight look the same, so the pointer and the arrows never disagree. */
+.select-option:hover,
 .select-option.active {
-  background: var(--accent-soft);
+  background: var(--overlay);
 }
+
 .select-option.selected {
-  color: var(--accent);
+  font-weight: 600;
 }
+
 .select-option.disabled {
   opacity: 0.4;
   cursor: default;
 }
 
+.select-option.disabled:hover {
+  background: none;
+}
+
+/* The selected option's tick, in a column every option keeps so the labels line up. */
 .select-check {
-  display: inline-block;
-  width: 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
   color: var(--accent);
+  font-size: 0.9em;
+}
+
+.select-check svg {
+  width: 100%;
+  height: 100%;
 }
 
 .select-option-label {
@@ -871,6 +935,77 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
 .select-icon svg {
   width: 100%;
   height: 100%;
+}
+
+/* ---------- Endpoint Generator: one column of an expanded table ---------- */
+
+/*
+ * The column's facts on the left, its lock on the right. The lock keeps its own column, so every
+ * row's Select lines up, and a long name or type wraps in its cell instead of pushing the lock
+ * onto a line of its own.
+ */
+.gen-col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 16px;
+  row-gap: 6px;
+  min-height: 42px;
+  padding: 5px 0;
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--border);
+}
+
+.gen-col:last-child {
+  border-bottom: none;
+}
+
+.gen-col-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-width: 0;
+}
+
+.gen-col-name {
+  overflow-wrap: anywhere;
+}
+
+.gen-col-null {
+  font-size: var(--text-xs);
+}
+
+.gen-col-lock {
+  grid-column: 2;
+}
+
+/* Wide enough for its longest choice, "Current username", so every row's Select is one size. */
+.gen-col-lock .select {
+  width: 180px;
+}
+
+.gen-col-head {
+  min-height: 0;
+  padding: 0 0 6px;
+  color: var(--text-soft);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gen-col-head > :last-child {
+  width: 180px;
+}
+
+/* The custom slot's name, under the Select it belongs to. */
+.gen-col-slot {
+  grid-column: 2;
+  justify-self: end;
+  width: 180px;
+  padding: 5px 10px;
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
 }
 
 /* ---------- Date / time picker ---------- */

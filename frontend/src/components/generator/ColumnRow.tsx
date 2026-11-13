@@ -11,44 +11,28 @@ export default function ColumnRow(
 ) {
   const { column, lock } = props;
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '3px 0',
-        fontSize: 13,
-        // The lock controls drop to their own line when the row is too narrow for them.
-        flexWrap: 'wrap',
-      }}
-    >
-      <span className="mono">{column.name}</span>
-      <span className="muted">{column.db}</span>
-      {column.primary && <span className="badge badge-get">PK</span>}
-      {column.automatic && <span className="badge badge-debug">auto</span>}
-      {column.foreign_key && (
-        <span className="badge badge-info">
-          FK → {column.foreign_key.foreign_table}.{column.foreign_key.foreign_column}
-        </span>
-      )}
-      {column.nullable && <span className="muted">nullable</span>}
+    <div className="gen-col">
+      <div className="gen-col-info">
+        <span className="mono gen-col-name">{column.name}</span>
+        <span className="muted">{column.db}</span>
+        {column.primary && <span className="badge badge-get">PK</span>}
+        {column.automatic && <span className="badge badge-debug">auto</span>}
+        {column.foreign_key && (
+          <span className="badge badge-info">
+            FK → {column.foreign_key.foreign_table}.{column.foreign_key.foreign_column}
+          </span>
+        )}
+        {column.nullable && <span className="muted gen-col-null">nullable</span>}
+      </div>
       {/*
        * Primary keys identify the row in PUT and DELETE, so they cannot
        * be locked. Every other column can hold its row's owner.
        */}
       {!column.primary && (
-        <span
-          style={{
-            marginLeft: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-          }}
-        >
-          <span className="muted" style={{ whiteSpace: 'nowrap' }}>
-            Lock to
-          </span>
+        <div className="gen-col-lock">
           <Select
+            className="select-sm"
+            ariaLabel={'Lock ' + column.name + ' to'}
             value={lock.mode}
             onChange={value => props.onLock({ mode: value as ColumnLock['mode'], slot: lock.slot })}
           >
@@ -56,16 +40,17 @@ export default function ColumnRow(
             <option value="username">Current username</option>
             <option value="custom">Custom slot…</option>
           </Select>
-          {lock.mode === 'custom' && (
-            <input
-              type="text"
-              placeholder="slot name"
-              style={{ minWidth: 160 }}
-              value={lock.slot}
-              onChange={e => props.onLock({ mode: 'custom', slot: e.target.value })}
-            />
-          )}
-        </span>
+        </div>
+      )}
+      {!column.primary && lock.mode === 'custom' && (
+        <input
+          type="text"
+          className="gen-col-slot"
+          placeholder="slot name"
+          aria-label={'Slot for ' + column.name}
+          value={lock.slot}
+          onChange={e => props.onLock({ mode: 'custom', slot: e.target.value })}
+        />
       )}
     </div>
   );
