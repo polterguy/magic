@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import type { TableMeta } from '../../lib/api';
 import AddColumnDialog from './AddColumnDialog';
@@ -7,7 +7,7 @@ import DesignerToolbar from './DesignerToolbar';
 import type { SchemaDesigner } from './hooks/useSchemaDesigner';
 import NewTableDialog from './NewTableDialog';
 import { filterTables } from './schema';
-import TableCard from './TableCard';
+import TableCard, { type ColumnTarget } from './TableCard';
 
 /*
  * The Designer tab — the selected database's tables as cards, with the
@@ -26,6 +26,21 @@ export default function DesignerView(
   const { ddl, setDdl, newTable, setNewTable, addingColumn, setAddingColumn } = designer;
   const [filter, setFilter] = useState('');
   const shown = filterTables(tables, filter);
+  const knownTables = useMemo(() => new Set(tables.map(table => table.name)), [tables]);
+  /*
+   * Where a clicked reference points. A fresh object per click, so clicking the same reference
+   * again scrolls and highlights again.
+   */
+  const [target, setTarget] = useState<{ table: string; column: ColumnTarget } | null>(null);
+
+  function openTable(tableName: string, columnName: string) {
+    // A filter that hides the target would leave nothing to go to.
+    if (!shown.some(table => table.name === tableName)) {
+      setFilter('');
+    }
+    setTarget({ table: tableName, column: { column: columnName } });
+  }
+
   return (
     <>
       <DesignerToolbar
@@ -57,6 +72,9 @@ export default function DesignerView(
             onViewDdl={() => designer.viewDdl([table.name], false, table.name + ' — DDL')}
             onDropTable={() => designer.dropTableConfirmed(table.name)}
             onDropColumn={columnName => designer.dropColumnConfirmed(table.name, columnName)}
+            knownTables={knownTables}
+            onOpenTable={openTable}
+            target={target?.table === table.name ? target.column : null}
           />
         ))}
       </div>

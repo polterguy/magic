@@ -3,21 +3,29 @@
  * One table in the Designer: its columns with key and nullability markers, its references, the
  * collapse of a long column list, and the actions.
  */
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { TableMeta } from '../../../lib/api';
-import TableCard from '../TableCard';
+import TableCard, { type ColumnTarget } from '../TableCard';
 
-function renderCard(table: TableMeta) {
+function renderCard(table: TableMeta, target: ColumnTarget | null = null) {
   const handlers = {
     onAddColumn: vi.fn(),
     onViewDdl: vi.fn(),
     onDropTable: vi.fn(),
     onDropColumn: vi.fn(),
+    onOpenTable: vi.fn(),
   };
-  render(<TableCard table={table} {...handlers} />);
+  render(
+    <TableCard
+      table={table}
+      knownTables={new Set(['tasks', 'task_due'])}
+      target={target}
+      {...handlers}
+    />,
+  );
   return handlers;
 }
 
@@ -90,5 +98,41 @@ describe('TableCard', () => {
 
     expect(screen.getAllByRole('listitem')).toHaveLength(12);
     expect(screen.queryByRole('button', { name: /Show all/ })).not.toBeInTheDocument();
+  });
+
+  it('links a reference to a table on the page', async () => {
+    const handlers = renderCard(taskDue);
+
+    await userEvent.click(screen.getByRole('button', { name: 'tasks.id' }));
+    expect(handlers.onOpenTable).toHaveBeenCalledWith('tasks', 'id');
+  });
+
+  it('shows a reference to a table that is not on the page as plain text', () => {
+    renderCard({
+      ...taskDue,
+      foreign_keys: [{ column: 'task', foreign_table: 'elsewhere', foreign_column: 'id' }],
+    });
+
+    expect(screen.getByText('elsewhere.id')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'elsewhere.id' })).not.toBeInTheDocument();
+  });
+
+  it('focuses and highlights the card and the target column', async () => {
+    renderCard(taskDue, { column: 'task' });
+
+    const card = screen.getByRole('region', { name: 'task_due' });
+    expect(card).toHaveFocus();
+    await waitFor(() => expect(card).toHaveClass('schema-card-flash'));
+    expect(row('task')).toHaveClass('schema-col-flash');
+    expect(row('id')).not.toHaveClass('schema-col-flash');
+  });
+
+  it('expands a collapsed table to reveal the target column', async () => {
+    const columns = Array.from({ length: 22 }, (_, index) => ({ name: 'c' + index, db: 'TEXT' }));
+    renderCard({ name: 'wide', columns }, { column: 'c18' });
+
+    expect(screen.getAllByRole('listitem')).toHaveLength(22);
+    await waitFor(() => expect(row('c18')).toHaveClass('schema-col-flash'));
+    expect(screen.getByRole('button', { name: 'Show fewer columns' })).toBeInTheDocument();
   });
 });

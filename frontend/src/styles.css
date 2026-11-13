@@ -2386,6 +2386,69 @@ tr.clickable:hover td {
   color: var(--tint-blue-text);
 }
 
+/* A reference to a table on the page: a link that takes you to its card. */
+.schema-fk-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.12s;
+}
+
+.schema-fk-link:hover,
+.schema-fk-link:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/*
+ * The card a reference took you to: a ring that pulses in the accent colour and fades, so the
+ * eye lands on it after the scroll. The page has no global focus ring, so this also shows where
+ * focus went.
+ */
+.schema-card-flash {
+  animation: schema-card-flash 1.8s ease-out;
+}
+
+@keyframes schema-card-flash {
+  0%,
+  35% {
+    box-shadow: 0 0 0 3px var(--accent);
+    border-color: var(--accent);
+  }
+  100% {
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
+
+/* The referenced column inside that card, tinted in the accent colour while the ring fades. */
+.schema-col-flash {
+  animation: schema-col-flash 2.4s ease-out;
+}
+
+@keyframes schema-col-flash {
+  0%,
+  45% {
+    background: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+  100% {
+    background: transparent;
+    box-shadow: inset 3px 0 0 transparent;
+  }
+}
+
+/* No pulse with reduced motion, just a highlight that holds briefly and then goes. */
+@media (prefers-reduced-motion: reduce) {
+  .schema-col-flash,
+  .schema-card-flash {
+    animation-timing-function: steps(1, end);
+  }
+}
+
 .schema-empty {
   margin: 0 0 14px;
   padding: 40px 16px;
