@@ -10,7 +10,7 @@ namespace magic.signals.contracts
 {
     public sealed class ExecutionContext
     {
-        readonly object _syncRoot = new();
+        readonly Lock _syncRoot = new();
         int _referenceCount = 1;
         Timer _timeoutTimer;
         DateTime? _deadlineUtc;

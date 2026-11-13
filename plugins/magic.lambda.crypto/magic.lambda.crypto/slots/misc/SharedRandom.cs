@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 AINIRO.IO, Ltd. See the attached LICENSE file for details. For license inquiries you can send an email to team@ainiro.io
  */
 
+using System.Threading;
 using Org.BouncyCastle.Security;
 
 namespace magic.lambda.crypto.slots.misc
@@ -21,7 +22,7 @@ namespace magic.lambda.crypto.slots.misc
     internal static class SharedRandom
     {
         static readonly SecureRandom _rnd = new SecureRandom();
-        static readonly object _lock = new object();
+        static readonly Lock _lock = new();
 
         /// <summary>
         /// Mixes additional seed material into the shared generator.

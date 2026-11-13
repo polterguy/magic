@@ -53,7 +53,7 @@ namespace magic.node.extensions
 
         const int MaxCachedExpressions = 4096;
         const int MaxCachedLength = 256;
-        static readonly object _rotation = new();
+        static readonly Lock _rotation = new();
         static volatile Generations _generations = new(new());
 
         /// <summary>
