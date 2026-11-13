@@ -1,5 +1,5 @@
 /*
- * Pure helpers behind the Designer's new-table and add-column dialogs.
+ * Pure helpers behind the Designer: its table filter, and its new-table and add-column dialogs.
  */
 
 import type { ColumnMeta, TableMeta } from '../../lib/api';
@@ -101,4 +101,17 @@ export function columnPayload(
     foreignField: '',
     cascading: false,
   };
+}
+
+// A table matches the filter when its name, or the name of one of its columns, contains it.
+export function filterTables(tables: TableMeta[], filter: string) {
+  const needle = filter.trim().toLowerCase();
+  if (!needle) {
+    return tables;
+  }
+  return tables.filter(
+    table =>
+      table.name.toLowerCase().includes(needle) ||
+      (table.columns ?? []).some(column => column.name.toLowerCase().includes(needle)),
+  );
 }

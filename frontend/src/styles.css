@@ -2196,8 +2196,203 @@ tr.clickable:hover td {
 .col-drop {
   opacity: 0;
 }
-.col-row:hover .col-drop {
+.col-row:hover .col-drop,
+.col-drop:focus-visible {
   opacity: 1;
+}
+
+/* ---------- SQL Studio: schema designer ---------- */
+
+/*
+ * Masonry, not a grid: every card keeps its own height. In a grid, a row was as tall as its
+ * longest table, and the short tables beside it were stretched into mostly empty cards.
+ */
+.schema-grid {
+  columns: 300px;
+  column-gap: 14px;
+}
+
+.schema-card {
+  break-inside: avoid;
+  margin-bottom: 14px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.schema-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 10px 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.schema-card-title {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Long table names wrap rather than running under the actions. */
+.schema-card-title h3 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  overflow-wrap: anywhere;
+}
+
+.schema-card-meta {
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+/* Quiet until the card is pointed at or focused, so the column lists carry the page. */
+.schema-card-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0.55;
+  transition: opacity 0.12s;
+}
+
+.schema-card:hover .schema-card-actions,
+.schema-card:focus-within .schema-card-actions {
+  opacity: 1;
+}
+
+.schema-cols {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.schema-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 8px 0 16px;
+  font-size: var(--text-sm);
+}
+
+.schema-col:hover {
+  background: var(--overlay-faint);
+}
+
+.schema-col-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.schema-badge {
+  flex-shrink: 0;
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  line-height: 1.4;
+}
+
+.schema-badge.pk {
+  background: var(--tint-amber-bg);
+  color: var(--tint-amber-text);
+}
+
+.schema-badge.fk {
+  background: var(--tint-blue-bg);
+  color: var(--tint-blue-text);
+}
+
+.schema-col-type {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+  white-space: nowrap;
+}
+
+.schema-col-null {
+  margin-left: 6px;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.schema-col-drop {
+  display: inline-flex;
+  justify-content: center;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.schema-col-drop .icon-btn {
+  padding: 3px;
+}
+
+.schema-col-drop .icon-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.schema-card-empty {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: var(--text-sm);
+  color: var(--text-soft);
+}
+
+.schema-more {
+  display: block;
+  width: 100%;
+  padding: 7px;
+  border: none;
+  border-top: 1px dashed var(--border);
+  background: transparent;
+  color: var(--text-soft);
+  font: inherit;
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.schema-more:hover {
+  background: var(--overlay-faint);
+  color: var(--text);
+}
+
+.schema-fks {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 16px 10px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+.schema-fks-label {
+  margin-bottom: 2px;
+  font-family: var(--app-font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.schema-fk-target {
+  color: var(--tint-blue-text);
+}
+
+.schema-empty {
+  margin: 0 0 14px;
+  padding: 40px 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  color: var(--text-soft);
 }
 
 /* System folders are tinted red like the old dashboard. */

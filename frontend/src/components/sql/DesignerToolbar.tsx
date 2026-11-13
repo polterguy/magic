@@ -1,8 +1,13 @@
 import type { TableMeta } from '../../lib/api';
+import SearchInput from '../SearchInput';
 
 export default function DesignerToolbar(
   props: Readonly<{
     tables: TableMeta[];
+    // How many tables the filter leaves.
+    shownCount: number;
+    filter: string;
+    onFilterChange: (filter: string) => void;
     database: string;
     connectionString: string;
     onNewTable: () => void;
@@ -11,14 +16,23 @@ export default function DesignerToolbar(
     onViewDdl: (tables: string[], full: boolean, title: string) => void;
   }>,
 ) {
-  const { tables, database, connectionString } = props;
+  const { tables, database, connectionString, filter, shownCount } = props;
+  const total = tables.length + (tables.length === 1 ? ' table' : ' tables');
+  const count = filter.trim() ? shownCount + ' of ' + total : total + ' in ' + database;
   return (
     <div className="toolbar">
-      <span className="muted">
-        {tables.length} tables in {database}
-      </span>
+      {tables.length > 0 && (
+        <SearchInput
+          value={filter}
+          onChange={props.onFilterChange}
+          placeholder="Filter tables or columns…"
+          label="Filter tables or columns"
+          style={{ width: 260 }}
+        />
+      )}
+      <span className="muted">{count}</span>
       <span className="spacer" />
-      <button className="btn btn-secondary btn-small" onClick={props.onNewTable}>
+      <button className="btn btn-small" onClick={props.onNewTable}>
         + New table
       </button>
       <label

@@ -1,5 +1,5 @@
 /*
- * Unit tests for the Designer's new-table and add-column helpers.
+ * Unit tests for the Designer's table filter, and its new-table and add-column helpers.
  */
 
 import { describe, expect, it } from 'vitest';
@@ -11,6 +11,7 @@ import {
   canCreateTable,
   columnPayload,
   defaultFieldType,
+  filterTables,
   foreignPrimaryKey,
   primaryKeyName,
   referenceableTables,
@@ -190,5 +191,30 @@ describe('columnPayload', () => {
     ).toBeNull();
     expect(columnPayload('foreign', { ...base, foreignTable: '', foreignPk: pk })).toBeNull();
     expect(columnPayload('foreign', { ...base, foreignTable: 'log' })).toBeNull();
+  });
+});
+
+describe('filterTables', () => {
+  const tables: TableMeta[] = [
+    { name: 'users', columns: [{ name: 'username', db: 'varchar' }] },
+    { name: 'ml_types', columns: [{ name: 'model', db: 'TEXT' }] },
+    { name: 'roles' },
+  ];
+
+  it('keeps every table for an empty or blank filter', () => {
+    expect(filterTables(tables, '')).toBe(tables);
+    expect(filterTables(tables, '   ')).toBe(tables);
+  });
+
+  it('matches table names, ignoring case', () => {
+    expect(filterTables(tables, 'ML_').map(table => table.name)).toEqual(['ml_types']);
+  });
+
+  it('matches column names too', () => {
+    expect(filterTables(tables, 'model').map(table => table.name)).toEqual(['ml_types']);
+  });
+
+  it('matches nothing when no name contains the filter', () => {
+    expect(filterTables(tables, 'orders')).toEqual([]);
   });
 });

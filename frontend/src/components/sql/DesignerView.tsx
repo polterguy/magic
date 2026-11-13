@@ -1,9 +1,12 @@
+import { useState } from 'react';
+
 import type { TableMeta } from '../../lib/api';
 import AddColumnDialog from './AddColumnDialog';
 import DdlDialog from './DdlDialog';
 import DesignerToolbar from './DesignerToolbar';
 import type { SchemaDesigner } from './hooks/useSchemaDesigner';
 import NewTableDialog from './NewTableDialog';
+import { filterTables } from './schema';
 import TableCard from './TableCard';
 
 /*
@@ -21,10 +24,15 @@ export default function DesignerView(
 ) {
   const { type, connectionString, database, tables, designer } = props;
   const { ddl, setDdl, newTable, setNewTable, addingColumn, setAddingColumn } = designer;
+  const [filter, setFilter] = useState('');
+  const shown = filterTables(tables, filter);
   return (
     <>
       <DesignerToolbar
         tables={tables}
+        shownCount={shown.length}
+        filter={filter}
+        onFilterChange={setFilter}
         database={database}
         connectionString={connectionString}
         onNewTable={() => setNewTable(true)}
@@ -32,15 +40,16 @@ export default function DesignerView(
         onFlushCache={designer.flushCache}
         onViewDdl={designer.viewDdl}
       />
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: 14,
-          overflow: 'auto',
-        }}
-      >
-        {tables.map(table => (
+      {tables.length === 0 && (
+        <p className="schema-empty">
+          {database ? 'No tables in ' + database + ' yet. Create one with New table.' : ''}
+        </p>
+      )}
+      {tables.length > 0 && shown.length === 0 && (
+        <p className="schema-empty">No tables or columns match “{filter.trim()}”.</p>
+      )}
+      <div className="schema-grid">
+        {shown.map(table => (
           <TableCard
             key={table.name}
             table={table}
