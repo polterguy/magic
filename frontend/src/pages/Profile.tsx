@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Banner from '../components/Banner';
 import DateTimePicker from '../components/DateTimePicker';
 import { Modal } from '../components/Dialogs';
+import FontPicker from '../components/profile/FontPicker';
 import {
   changePassword,
   http,
@@ -170,6 +171,7 @@ export default function Profile() {
           </div>
         </div>
       </div>
+      <FontPicker />
       <div className="card profile-tokens">
         <div className="settings-card-head">
           <h2>Access tokens</h2>

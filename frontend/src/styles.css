@@ -91,6 +91,11 @@
   --font-mono:
     ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /*
+   * The UI font, picked on the Profile page (lib/font.ts sets it on <html>). Body and the
+   * controls read it; code, terminals and identifiers keep --font-mono whatever is picked.
+   */
+  --app-font: var(--font-mono);
 
   /*
    * Render native browser UI dark: the datetime-local calendar popup and its
@@ -175,7 +180,7 @@ body,
 }
 
 body {
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-base);
   color: var(--text);
   background: var(--bg);
@@ -491,7 +496,7 @@ a:hover {
   border: 1px solid var(--accent);
   border-radius: var(--radius);
   padding: 8px 16px;
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -723,7 +728,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   padding: 8px 12px;
   background: var(--surface-2);
   color: var(--text);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-base);
   cursor: pointer;
   text-align: left;
@@ -766,7 +771,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   overflow-y: auto;
   /* Above modals (100) and CodeMirror hints (2000000). */
   z-index: 2000002;
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-base);
 }
 
@@ -863,7 +868,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   border-radius: var(--radius);
   background: var(--surface-2);
   color: var(--text);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-base);
   cursor: pointer;
   text-align: left;
@@ -889,7 +894,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-hard);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   color: var(--text);
 }
 
@@ -942,7 +947,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   border-radius: var(--radius);
   background: transparent;
   color: var(--text);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-sm);
   cursor: pointer;
 }
@@ -999,7 +1004,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   border: none;
   padding: 0;
   color: var(--text-soft);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-sm);
   cursor: pointer;
 }
@@ -1843,7 +1848,7 @@ tr.clickable:hover td {
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--text);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-xs);
   padding: 5px 14px;
 }
@@ -4531,6 +4536,63 @@ a.kpi-link:hover .kpi-icon {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+/*
+ * The font picker: one tile per font, each drawn in its own font. The radio stays in the tile for
+ * keyboard and screen readers, but it is visually hidden, because the selected tile's border shows the choice.
+ */
+.profile-font {
+  margin-bottom: 16px;
+}
+
+.font-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.font-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+.font-option:hover {
+  border-color: var(--border-strong);
+}
+
+.font-option.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  background: var(--accent-soft);
+}
+
+.font-option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.font-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.font-option-sample {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.font-option-label {
+  font-size: var(--text-sm);
 }
 
 .dash-section-text {
