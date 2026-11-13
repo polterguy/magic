@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { useEffect, useMemo, useState } from 'react';
 
+import BusyLabel from '../components/BusyLabel';
 import { Modal } from '../components/Dialogs';
 import SearchInput from '../components/SearchInput';
 import { CardGridSkeleton } from '../components/Skeleton';
@@ -217,7 +218,7 @@ export default function Plugins() {
         </div>
         <div className="page-tools">
           <label className={'btn btn-secondary' + (uploading ? ' disabled' : '')}>
-            {uploading ? 'Installing…' : 'Install from file…'}
+            <BusyLabel busy={uploading} label="Install from file…" busyLabel="Installing…" />
             <input
               type="file"
               accept=".zip"

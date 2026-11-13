@@ -19,6 +19,7 @@ import {
 import { errorMessage } from '../lib/errors';
 import { refreshChat } from '../lib/shellActions';
 import Banner from './Banner';
+import BusyLabel from './BusyLabel';
 import { Modal } from './Dialogs';
 import Select from './Select';
 
@@ -139,7 +140,7 @@ export default function OpenAiKeyDialog(
           Cancel
         </button>
         <button className="btn" onClick={save} disabled={busy || !key}>
-          {busy ? 'Saving…' : 'Save key'}
+          <BusyLabel busy={busy} label="Save key" busyLabel="Saving…" />
         </button>
       </div>
     </Modal>

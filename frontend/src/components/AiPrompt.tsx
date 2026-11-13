@@ -11,6 +11,7 @@ import { CSSProperties, SubmitEvent, useEffect, useState } from 'react';
 import { aiQuery, openaiIsConfigured } from '../lib/api';
 import { errorMessage } from '../lib/errors';
 import AiWaiter from './AiWaiter';
+import BusyLabel from './BusyLabel';
 
 const TOOLTIPS: Record<string, string> = {
   hl: 'Ask the Machine to create some Hyperlambda code for you',
@@ -101,7 +102,7 @@ export default function AiPrompt(
           title="Ask the AI to generate code"
           disabled={busy || !prompt.trim()}
         >
-          {busy ? 'Asking…' : 'Ask'}
+          <BusyLabel busy={busy} label="Ask" busyLabel="Asking…" />
         </button>
       </form>
       {busy && <AiWaiter />}

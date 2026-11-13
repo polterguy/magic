@@ -1,10 +1,13 @@
+import { useMemo, useState } from 'react';
+
 import type { TableMeta } from '../../lib/api';
 import AddColumnDialog from './AddColumnDialog';
 import DdlDialog from './DdlDialog';
 import DesignerToolbar from './DesignerToolbar';
 import type { SchemaDesigner } from './hooks/useSchemaDesigner';
 import NewTableDialog from './NewTableDialog';
-import TableCard from './TableCard';
+import { filterTables } from './schema';
+import TableCard, { type ColumnTarget } from './TableCard';
 
 /*
  * The Designer tab — the selected database's tables as cards, with the
@@ -21,10 +24,30 @@ export default function DesignerView(
 ) {
   const { type, connectionString, database, tables, designer } = props;
   const { ddl, setDdl, newTable, setNewTable, addingColumn, setAddingColumn } = designer;
+  const [filter, setFilter] = useState('');
+  const shown = filterTables(tables, filter);
+  const knownTables = useMemo(() => new Set(tables.map(table => table.name)), [tables]);
+  /*
+   * Where a clicked reference points. A fresh object per click, so clicking the same reference
+   * again scrolls and highlights again.
+   */
+  const [target, setTarget] = useState<{ table: string; column: ColumnTarget } | null>(null);
+
+  function openTable(tableName: string, columnName: string) {
+    // A filter that hides the target would leave nothing to go to.
+    if (!shown.some(table => table.name === tableName)) {
+      setFilter('');
+    }
+    setTarget({ table: tableName, column: { column: columnName } });
+  }
+
   return (
     <>
       <DesignerToolbar
         tables={tables}
+        shownCount={shown.length}
+        filter={filter}
+        onFilterChange={setFilter}
         database={database}
         connectionString={connectionString}
         onNewTable={() => setNewTable(true)}
@@ -32,15 +55,16 @@ export default function DesignerView(
         onFlushCache={designer.flushCache}
         onViewDdl={designer.viewDdl}
       />
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: 14,
-          overflow: 'auto',
-        }}
-      >
-        {tables.map(table => (
+      {tables.length === 0 && (
+        <p className="schema-empty">
+          {database ? 'No tables in ' + database + ' yet. Create one with New table.' : ''}
+        </p>
+      )}
+      {tables.length > 0 && shown.length === 0 && (
+        <p className="schema-empty">No tables or columns match “{filter.trim()}”.</p>
+      )}
+      <div className="schema-grid">
+        {shown.map(table => (
           <TableCard
             key={table.name}
             table={table}
@@ -48,6 +72,9 @@ export default function DesignerView(
             onViewDdl={() => designer.viewDdl([table.name], false, table.name + ' — DDL')}
             onDropTable={() => designer.dropTableConfirmed(table.name)}
             onDropColumn={columnName => designer.dropColumnConfirmed(table.name, columnName)}
+            knownTables={knownTables}
+            onOpenTable={openTable}
+            target={target?.table === table.name ? target.column : null}
           />
         ))}
       </div>

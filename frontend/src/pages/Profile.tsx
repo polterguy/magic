@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import Banner from '../components/Banner';
+import BusyLabel from '../components/BusyLabel';
 import DateTimePicker from '../components/DateTimePicker';
 import { Modal } from '../components/Dialogs';
+import FontPicker from '../components/profile/FontPicker';
 import {
   changePassword,
   http,
@@ -128,7 +130,7 @@ export default function Profile() {
           </div>
           <div className="settings-card-foot">
             <button className="btn" onClick={saveDetails} disabled={savingDetails}>
-              {savingDetails ? 'Saving…' : 'Save details'}
+              <BusyLabel busy={savingDetails} label="Save details" busyLabel="Saving…" />
             </button>
           </div>
         </div>
@@ -165,11 +167,12 @@ export default function Profile() {
               disabled={!password || changingPassword}
               onClick={submitPassword}
             >
-              {changingPassword ? 'Changing…' : 'Change password'}
+              <BusyLabel busy={changingPassword} label="Change password" busyLabel="Changing…" />
             </button>
           </div>
         </div>
       </div>
+      <FontPicker />
       <div className="card profile-tokens">
         <div className="settings-card-head">
           <h2>Access tokens</h2>
@@ -309,7 +312,7 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
           onClick={generate}
           disabled={!username || selectedRoles.length === 0 || busy}
         >
-          {busy ? 'Generating…' : 'Generate'}
+          <BusyLabel busy={busy} label="Generate" busyLabel="Generating…" />
         </button>
       </div>
     </Modal>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import AiPrompt from '../components/AiPrompt';
 import AiWaiter from '../components/AiWaiter';
+import BusyLabel from '../components/BusyLabel';
 import CodeEditor from '../components/CodeEditor';
 import Select from '../components/Select';
 import { aiContextForFile, evaluate, listFiles, loadFile, saveFile } from '../lib/api';
@@ -172,7 +173,7 @@ export default function Playground() {
             Save snippet
           </button>
           <button className="btn" onClick={execute} disabled={busy}>
-            {busy ? 'Running…' : '▷ Run'}
+            <BusyLabel busy={busy} label="▷ Run" busyLabel="Running…" />
           </button>
         </div>
       </div>

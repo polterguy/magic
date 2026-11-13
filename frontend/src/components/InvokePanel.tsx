@@ -11,6 +11,7 @@ import { errorMessage } from '../lib/errors';
 import { copyToClipboard } from '../lib/toast';
 import AiWaiter from './AiWaiter';
 import Banner from './Banner';
+import BusyLabel from './BusyLabel';
 import CodeEditor from './CodeEditor';
 import { ChevronIcon } from './Icons';
 import { RawResult } from './ResultViewer';
@@ -536,7 +537,7 @@ export default function InvokePanel(
       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
         {canInvoke ? (
           <button className="btn" type="submit" disabled={busy}>
-            {busy ? 'Invoking…' : '▷ Invoke'}
+            <BusyLabel busy={busy} label="▷ Invoke" busyLabel="Invoking…" />
           </button>
         ) : (
           <span className="muted">This endpoint cannot be invoked from here.</span>

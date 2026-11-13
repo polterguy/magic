@@ -21,6 +21,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { listFilesRecursively, uploadFile } from '../../lib/api';
 import { errorMessage } from '../../lib/errors';
+import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
 import type { MediaKind } from './mediaKinds';
 
@@ -357,7 +358,7 @@ export default function Media(
           disabled={uploading}
           onClick={() => fileRef.current?.click()}
         >
-          {uploading ? 'Uploading…' : 'Upload…'}
+          <BusyLabel busy={uploading} label="Upload…" busyLabel="Uploading…" />
         </button>
         <button className="btn btn-secondary" onClick={props.onCancel}>
           Cancel

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { changePassword, MIN_PASSWORD } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
 
 /*
@@ -61,7 +62,7 @@ export default function SetPasswordDialog(props: Readonly<{ onClose: () => void 
           Not now
         </button>
         <button className="btn" onClick={save} disabled={busy || password.length < MIN_PASSWORD}>
-          {busy ? 'Saving…' : 'Set password'}
+          <BusyLabel busy={busy} label="Set password" busyLabel="Saving…" />
         </button>
       </div>
     </Modal>

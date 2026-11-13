@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 
 import { httpUrl } from '../../lib/backend';
 import { copyToClipboard } from '../../lib/toast';
+import BusyLabel from '../BusyLabel';
 import { BoltIcon, CopyIcon, GearIcon, LayoutIcon, NeuralIcon, SparklesIcon } from '../Icons';
 
 /*
@@ -68,7 +69,11 @@ export function AgentPluginsCard(
       status={{ label: 'Setup needed', tone: 'warn' }}
       actions={
         <button className="btn" onClick={props.onInstall} disabled={props.installing}>
-          {props.installing ? 'Installing…' : 'Install ' + missingPlugins.join(' + ')}
+          <BusyLabel
+            busy={props.installing}
+            label={'Install ' + missingPlugins.join(' + ')}
+            busyLabel="Installing…"
+          />
         </button>
       }
     >
@@ -186,7 +191,11 @@ export function ExpertSystemCard(
         title="AI Expert System"
         actions={
           <button className="btn" onClick={props.onInstall} disabled={props.installing}>
-            {props.installing ? 'Installing…' : 'Install Expert System'}
+            <BusyLabel
+              busy={props.installing}
+              label="Install Expert System"
+              busyLabel="Installing…"
+            />
           </button>
         }
       >

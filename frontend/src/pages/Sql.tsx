@@ -108,6 +108,8 @@ export default function Sql() {
       {selection.schemaLoading && view === 'tables' && <CardGridSkeleton />}
       {view === 'tables' && !selection.schemaLoading && (
         <DesignerView
+          // A fresh view per database, so a table filter does not carry over to the next one.
+          key={connectionString + '/' + database}
           type={type}
           connectionString={connectionString}
           database={database}

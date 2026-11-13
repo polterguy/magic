@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 /*
  * Profile page: loads the signed in user's name and email, saves them as extra fields, validates
- * and submits a password change, and generates an access token for the chosen roles.
+ * and submits a password change, generates an access token for the chosen roles, and picks the UI
+ * font.
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -39,6 +40,8 @@ beforeEach(() => {
 
 afterEach(() => {
   setToastListener(null);
+  localStorage.clear();
+  document.documentElement.style.removeProperty('--app-font');
 });
 
 describe('Profile', () => {
@@ -110,5 +113,30 @@ describe('Profile', () => {
     const url = vi.mocked(api.http.get).mock.calls.at(-1)![0];
     expect(url).toContain('username=service');
     expect(url).toContain('role=' + encodeURIComponent('admin,root'));
+  });
+
+  it('selects the default font when none is saved', () => {
+    renderPage(<Profile />);
+
+    expect(screen.getByRole('radio', { name: 'Default (monospace)' })).toBeChecked();
+  });
+
+  it('picking a font applies and saves it at once', async () => {
+    renderPage(<Profile />);
+
+    await userEvent.click(screen.getByRole('radio', { name: 'Inter' }));
+
+    expect(screen.getByRole('radio', { name: 'Inter' })).toBeChecked();
+    expect(document.documentElement.style.getPropertyValue('--app-font')).toContain(
+      'Inter Variable',
+    );
+    expect(localStorage.getItem('magic2.font')).toBe('inter');
+  });
+
+  it('selects the default font when the saved one is unknown', () => {
+    localStorage.setItem('magic2.font', 'removed-font');
+    renderPage(<Profile />);
+
+    expect(screen.getByRole('radio', { name: 'Default (monospace)' })).toBeChecked();
   });
 });

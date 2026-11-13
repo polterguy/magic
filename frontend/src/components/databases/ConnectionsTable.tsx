@@ -1,4 +1,5 @@
 import { copyToClipboard, showToast } from '../../lib/toast';
+import BusyLabel from '../BusyLabel';
 import { TableSkeleton } from '../Skeleton';
 import { type ConnectionRow, statusBadge } from './connections';
 
@@ -56,7 +57,11 @@ export default function ConnectionsTable(
                       disabled={row.status !== 'live' || managing !== null}
                       onClick={() => props.onManage(row)}
                     >
-                      {managing === row.type + '/' + row.name ? 'Loading…' : 'Manage'}
+                      <BusyLabel
+                        busy={managing === row.type + '/' + row.name}
+                        label="Manage"
+                        busyLabel="Loading…"
+                      />
                     </button>
                     <button
                       className="btn btn-secondary btn-small"

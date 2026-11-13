@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { addUserExtra, addUserToRole, createUser, MIN_PASSWORD, Role } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
 import RolesField from './RolesField';
 
@@ -93,7 +94,7 @@ export default function NewUserDialog(
           Cancel
         </button>
         <button className="btn" onClick={save} disabled={busy || !username || !password}>
-          {busy ? 'Creating…' : 'Create user'}
+          <BusyLabel busy={busy} label="Create user" busyLabel="Creating…" />
         </button>
       </div>
     </Modal>

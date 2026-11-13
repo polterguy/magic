@@ -5,6 +5,7 @@ import { executeTask, listTasks, Task } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 import { useDialog } from '../../lib/useDialog';
+import BusyLabel from '../BusyLabel';
 import { ClockIcon } from '../Icons';
 import Pagination from '../Pagination';
 import { TASK_PAGE_SIZE, taskPageCount } from './constants';
@@ -84,7 +85,7 @@ export default function TaskSection(
               title={'Run ' + task.id + ' on your server now'}
               onClick={() => execute(task)}
             >
-              {running === task.id ? 'Running…' : '▷ Execute'}
+              <BusyLabel busy={running === task.id} label="▷ Execute" busyLabel="Running…" />
             </button>
           </li>
         ))}

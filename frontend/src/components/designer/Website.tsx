@@ -25,6 +25,7 @@ import {
 } from '../../lib/api';
 import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
+import BusyLabel from '../BusyLabel';
 import { TrashIcon } from '../Icons';
 import { WEB_ROOT } from './pageUrls';
 
@@ -279,7 +280,7 @@ export default function Website(
 
       <div className="modal-actions">
         <button className="btn" onClick={save} disabled={!dirty || saving}>
-          {saving ? 'Saving…' : 'Save'}
+          <BusyLabel busy={saving} label="Save" busyLabel="Saving…" />
         </button>
       </div>
     </div>

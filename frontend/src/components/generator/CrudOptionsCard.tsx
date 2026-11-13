@@ -1,3 +1,4 @@
+import BusyLabel from '../BusyLabel';
 import AuthorisationField from './AuthorisationField';
 import CrudGenerationOptions from './CrudGenerationOptions';
 import CrudGetOptions from './CrudGetOptions';
@@ -88,7 +89,7 @@ export default function CrudOptionsCard({ crud }: Readonly<{ crud: CrudTabState 
           )}
         </span>
         <button className="btn" onClick={generate} disabled={busy || !ready}>
-          {busy ? 'Generating…' : '⚙ Generate backend'}
+          <BusyLabel busy={busy} label="⚙ Generate backend" busyLabel="Generating…" />
         </button>
       </div>
     </div>

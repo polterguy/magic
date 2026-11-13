@@ -91,6 +91,11 @@
   --font-mono:
     ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /*
+   * The UI font, picked on the Profile page (lib/font.ts sets it on <html>). Body and the
+   * controls read it; code, terminals and identifiers keep --font-mono whatever is picked.
+   */
+  --app-font: var(--font-mono);
 
   /*
    * Render native browser UI dark: the datetime-local calendar popup and its
@@ -175,7 +180,7 @@ body,
 }
 
 body {
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-base);
   color: var(--text);
   background: var(--bg);
@@ -358,6 +363,12 @@ body {
 .content {
   flex: 1;
   overflow: auto;
+  /*
+   * Keep room for the scrollbar even when there is nothing to scroll. Otherwise the scrollbar
+   * appearing (results arriving, a list growing) narrows the pane, and every right-aligned
+   * toolbar shifts left under the cursor.
+   */
+  scrollbar-gutter: stable;
   padding: 28px 32px;
   display: flex;
   flex-direction: column;
@@ -394,8 +405,9 @@ h1 {
  * default the title is the item that gives way: it gets squeezed under its
  * natural width, wraps onto two or three lines, and grows the header — moving
  * everything below it. Whenever the controls change width (a toolbar appearing,
- * a select populating, "Run" becoming "Running…") that turns into a visible
- * jump. So the title keeps its width and the controls take the pressure.
+ * a select populating) that turns into a visible jump. So the title keeps its
+ * width and the controls take the pressure. A button whose label goes busy ("Run" becoming
+ * "Running…") does not change width at all: see .busy-label.
  */
 .page-header .page-title {
   flex: 0 0 auto;
@@ -486,12 +498,32 @@ a:hover {
   flex: 1;
 }
 
+/*
+ * A button label that swaps to a busy form (components/BusyLabel.tsx). The label for the other
+ * state sits invisibly in the same grid cell, so the label is as wide as the wider of the two and
+ * the button does not change width (and shift its neighbours) when it goes busy and back.
+ */
+.busy-label {
+  display: inline-grid;
+}
+
+.busy-label > span,
+.busy-label::after {
+  grid-area: 1 / 1;
+  text-align: center;
+}
+
+.busy-label::after {
+  content: attr(data-alt);
+  visibility: hidden;
+}
+
 /* inline-flex so a button can carry an icon beside its label. */
 .btn {
   border: 1px solid var(--accent);
   border-radius: var(--radius);
   padding: 8px 16px;
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -723,7 +755,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   padding: 8px 12px;
   background: var(--surface-2);
   color: var(--text);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-base);
   cursor: pointer;
   text-align: left;
@@ -766,7 +798,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   overflow-y: auto;
   /* Above modals (100) and CodeMirror hints (2000000). */
   z-index: 2000002;
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-base);
 }
 
@@ -863,7 +895,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   border-radius: var(--radius);
   background: var(--surface-2);
   color: var(--text);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-base);
   cursor: pointer;
   text-align: left;
@@ -889,7 +921,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-hard);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   color: var(--text);
 }
 
@@ -942,7 +974,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   border-radius: var(--radius);
   background: transparent;
   color: var(--text);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-sm);
   cursor: pointer;
 }
@@ -999,7 +1031,7 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   border: none;
   padding: 0;
   color: var(--text-soft);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-sm);
   cursor: pointer;
 }
@@ -1843,7 +1875,7 @@ tr.clickable:hover td {
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--text);
-  font-family: var(--font-mono);
+  font-family: var(--app-font);
   font-size: var(--text-xs);
   padding: 5px 14px;
 }
@@ -2164,8 +2196,266 @@ tr.clickable:hover td {
 .col-drop {
   opacity: 0;
 }
-.col-row:hover .col-drop {
+.col-row:hover .col-drop,
+.col-drop:focus-visible {
   opacity: 1;
+}
+
+/* ---------- SQL Studio: schema designer ---------- */
+
+/*
+ * Masonry, not a grid: every card keeps its own height. In a grid, a row was as tall as its
+ * longest table, and the short tables beside it were stretched into mostly empty cards.
+ */
+.schema-grid {
+  columns: 300px;
+  column-gap: 14px;
+}
+
+.schema-card {
+  break-inside: avoid;
+  margin-bottom: 14px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.schema-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 10px 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.schema-card-title {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Long table names wrap rather than running under the actions. */
+.schema-card-title h3 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  overflow-wrap: anywhere;
+}
+
+.schema-card-meta {
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+/* Quiet until the card is pointed at or focused, so the column lists carry the page. */
+.schema-card-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0.55;
+  transition: opacity 0.12s;
+}
+
+.schema-card:hover .schema-card-actions,
+.schema-card:focus-within .schema-card-actions {
+  opacity: 1;
+}
+
+.schema-cols {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.schema-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 8px 0 16px;
+  font-size: var(--text-sm);
+}
+
+.schema-col:hover {
+  background: var(--overlay-faint);
+}
+
+.schema-col-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.schema-badge {
+  flex-shrink: 0;
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  line-height: 1.4;
+}
+
+.schema-badge.pk {
+  background: var(--tint-amber-bg);
+  color: var(--tint-amber-text);
+}
+
+.schema-badge.fk {
+  background: var(--tint-blue-bg);
+  color: var(--tint-blue-text);
+}
+
+.schema-col-type {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+  white-space: nowrap;
+}
+
+.schema-col-null {
+  margin-left: 6px;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.schema-col-drop {
+  display: inline-flex;
+  justify-content: center;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.schema-col-drop .icon-btn {
+  padding: 3px;
+}
+
+.schema-col-drop .icon-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.schema-card-empty {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: var(--text-sm);
+  color: var(--text-soft);
+}
+
+.schema-more {
+  display: block;
+  width: 100%;
+  padding: 7px;
+  border: none;
+  border-top: 1px dashed var(--border);
+  background: transparent;
+  color: var(--text-soft);
+  font: inherit;
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.schema-more:hover {
+  background: var(--overlay-faint);
+  color: var(--text);
+}
+
+.schema-fks {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 16px 10px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+.schema-fks-label {
+  margin-bottom: 2px;
+  font-family: var(--app-font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.schema-fk-target {
+  color: var(--tint-blue-text);
+}
+
+/* A reference to a table on the page: a link that takes you to its card. */
+.schema-fk-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.12s;
+}
+
+.schema-fk-link:hover,
+.schema-fk-link:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/*
+ * The card a reference took you to: a ring that pulses in the accent colour and fades, so the
+ * eye lands on it after the scroll. The page has no global focus ring, so this also shows where
+ * focus went.
+ */
+.schema-card-flash {
+  animation: schema-card-flash 1.8s ease-out;
+}
+
+@keyframes schema-card-flash {
+  0%,
+  35% {
+    box-shadow: 0 0 0 3px var(--accent);
+    border-color: var(--accent);
+  }
+  100% {
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
+
+/* The referenced column inside that card, tinted in the accent colour while the ring fades. */
+.schema-col-flash {
+  animation: schema-col-flash 2.4s ease-out;
+}
+
+@keyframes schema-col-flash {
+  0%,
+  45% {
+    background: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+  100% {
+    background: transparent;
+    box-shadow: inset 3px 0 0 transparent;
+  }
+}
+
+/* No pulse with reduced motion, just a highlight that holds briefly and then goes. */
+@media (prefers-reduced-motion: reduce) {
+  .schema-col-flash,
+  .schema-card-flash {
+    animation-timing-function: steps(1, end);
+  }
+}
+
+.schema-empty {
+  margin: 0 0 14px;
+  padding: 40px 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  color: var(--text-soft);
 }
 
 /* System folders are tinted red like the old dashboard. */
@@ -4531,6 +4821,63 @@ a.kpi-link:hover .kpi-icon {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+/*
+ * The font picker: one tile per font, each drawn in its own font. The radio stays in the tile for
+ * keyboard and screen readers, but it is visually hidden, because the selected tile's border shows the choice.
+ */
+.profile-font {
+  margin-bottom: 16px;
+}
+
+.font-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.font-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+.font-option:hover {
+  border-color: var(--border-strong);
+}
+
+.font-option.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  background: var(--accent-soft);
+}
+
+.font-option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.font-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.font-option-sample {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.font-option-label {
+  font-size: var(--text-sm);
 }
 
 .dash-section-text {
