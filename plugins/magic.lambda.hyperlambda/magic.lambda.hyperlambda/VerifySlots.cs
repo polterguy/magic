@@ -207,6 +207,14 @@ namespace magic.lambda.hyperlambda
          */
         static void VerifyInvocation(Node node, BodyInfo info, List<string> invalid)
         {
+            VerifyValue(node, info, invalid);
+            VerifyOperands(node, info, invalid);
+            VerifyArguments(node.Name, node.Children, info.Declarations, invalid);
+            VerifyChildNames(node, info, invalid);
+        }
+
+        static void VerifyValue(Node node, BodyInfo info, List<string> invalid)
+        {
             if (info.Attribute?.ValueRequired == true && node.Value == null)
                 invalid.Add($"Slot [{node.Name}] requires a primary (RHS) value");
 
@@ -219,7 +227,10 @@ namespace magic.lambda.hyperlambda
             {
                 invalid.Add($"Slot [{node.Name}] requires either a primary (RHS) value or child nodes");
             }
+        }
 
+        static void VerifyOperands(Node node, BodyInfo info, List<string> invalid)
+        {
             /*
              * The number of evaluated children must be within the range the signature declares for them,
              * summed over every evaluated declaration, e.g. the two operands of [mt], or the one or two
@@ -236,16 +247,16 @@ namespace magic.lambda.hyperlambda
             var checkOperands = info.HasOperands &&
                 !(info.HasConditionOperand && node.Value != null) &&
                 (node.Value != null || node.Children.Any());
-            if (checkOperands)
-            {
-                var operands = node.Children.Count(x => !info.ArgumentNames.Contains(x.Name) && !info.WrapperNames.Contains(x.Name));
-                var valueOperand = node.Value != null && info.Attribute?.ValueMode != SlotValueMode.None;
-                if (!info.AllowsOperands(operands) && !(valueOperand && info.AllowsOperands(operands + 1)))
-                    invalid.Add($"Slot [{node.Name}] requires {info.DescribeOperands()}, but was given {operands + (valueOperand ? 1 : 0)}");
-            }
+            if (!checkOperands)
+                return;
+            var operands = node.Children.Count(x => !info.ArgumentNames.Contains(x.Name) && !info.WrapperNames.Contains(x.Name));
+            var valueOperand = node.Value != null && info.Attribute?.ValueMode != SlotValueMode.None;
+            if (!info.AllowsOperands(operands) && !(valueOperand && info.AllowsOperands(operands + 1)))
+                invalid.Add($"Slot [{node.Name}] requires {info.DescribeOperands()}, but was given {operands + (valueOperand ? 1 : 0)}");
+        }
 
-            VerifyArguments(node.Name, node.Children, info.Declarations, invalid);
-
+        static void VerifyChildNames(Node node, BodyInfo info, List<string> invalid)
+        {
             // Without an attached signature, the accepted child argument names are unknown.
             if (!info.HasSignature || info.AcceptsAnyChild)
                 return;
@@ -417,12 +428,7 @@ namespace magic.lambda.hyperlambda
                 (child.Name == "." && child.Mode == SlotChildMode.ExecutableLambda);
             if (evaluated)
             {
-                result.AcceptsAnyChild = true;
-                var (min, max) = Range(child.Cardinality);
-                result.HasOperands = true;
-                result.HasConditionOperand |= child.Role == SlotChildRole.Condition;
-                result.OperandMin += min;
-                result.OperandMax = result.OperandMax == int.MaxValue || max == int.MaxValue ? int.MaxValue : result.OperandMax + max;
+                AddOperand(result, child);
             }
             else
             {
@@ -434,7 +440,21 @@ namespace magic.lambda.hyperlambda
                 if (child.Name == ".")
                     result.ChildNames.Add("");
             }
+            AddLayout(result, child, evaluated);
+        }
 
+        static void AddOperand(BodyInfo result, SlotChild child)
+        {
+            result.AcceptsAnyChild = true;
+            var (min, max) = Range(child.Cardinality);
+            result.HasOperands = true;
+            result.HasConditionOperand |= child.Role == SlotChildRole.Condition;
+            result.OperandMin += min;
+            result.OperandMax = result.OperandMax == int.MaxValue || max == int.MaxValue ? int.MaxValue : result.OperandMax + max;
+        }
+
+        static void AddLayout(BodyInfo result, SlotChild child, bool evaluated)
+        {
             /*
              * Note that SourceContainer bodies ([add]/[insert-before]/[insert-after]/
              * [include]) are deliberately included here: their implementations raise
