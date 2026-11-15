@@ -16,6 +16,29 @@ validators.mandatory:x:@.arguments/*/type
 validators.mandatory:x:@.arguments/*/session
 validators.mandatory:x:@.arguments/*/question
 validators.mandatory:x:@.arguments/*/answer
+validators.mandatory:x:@.arguments/*/user_id
+
+/*
+ * Avoiding "session injection attacks".
+ *
+ * An anonymous visitor's user_id starts with "u_" and is random, while a real user's
+ * user_id is their username. So only the user themselves can store answers for a
+ * real user, since these answers become context in the user's future chats.
+ */
+if
+   and
+      neq:x:@.arguments/*/user_id
+         auth.ticket.get
+      not
+         strings.starts-with:x:@.arguments/*/user_id
+            .:u_
+   .lambda
+
+      // Oops, somebody tried to inject data into another user's questionnaire answers.
+      log.error:Injection attack attempted
+      throw:Not allowed
+         status:int:400
+         public:bool:true
 
 // Opening up database connection.
 data.connect:[generic|magic]
@@ -28,6 +51,16 @@ data.connect:[generic|magic]
       where
          and
             type.eq:x:@.arguments/*/type
+
+   // Verifying type exists, since an unknown type would skip reCAPTCHA validation below.
+   if
+      not-exists:x:@data.read/*
+      .lambda
+
+         // Oops, no such type.
+         throw:No such type
+            status:int:400
+            public:bool:true
 
    // Checking if type is configured to demand reCAPTCHA validation.
    if
