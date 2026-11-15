@@ -51,7 +51,7 @@ export default function SocketFeedback(
   const channel = props.channel;
 
   useEffect(() => {
-    const connection = createSocket();
+    const connection = createSocket({ channel });
 
     connection.on(channel, (args: string) => {
       const parsed = JSON.parse(args) as Partial<FeedbackMessage>;

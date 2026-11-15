@@ -80,6 +80,7 @@ namespace magic.lambda.sockets.tests
             clients.SetupGet(x => x.All).Returns(Proxy("all", null));
             clients.Setup(x => x.Users(It.IsAny<IReadOnlyList<string>>())).Returns((IReadOnlyList<string> n) => Proxy("users", n));
             clients.Setup(x => x.Groups(It.IsAny<IReadOnlyList<string>>())).Returns((IReadOnlyList<string> n) => Proxy("groups", n));
+            clients.Setup(x => x.Group(It.IsAny<string>())).Returns((string n) => Proxy("group", new[] { n }));
             clients.Setup(x => x.Clients(It.IsAny<IReadOnlyList<string>>())).Returns((IReadOnlyList<string> n) => Proxy("clients", n));
             Context.SetupGet(x => x.Clients).Returns(clients.Object);
 
@@ -103,6 +104,14 @@ namespace magic.lambda.sockets.tests
                 .Returns(Task.CompletedTask);
             return proxy.Object;
         }
+    }
+
+    /*
+     * Hands the hub the HTTP request its socket connected with, so it can read the query string.
+     */
+    public sealed class HttpFeature : Microsoft.AspNetCore.Http.Connections.Features.IHttpContextFeature
+    {
+        public Microsoft.AspNetCore.Http.HttpContext HttpContext { get; set; }
     }
 
     public static class Common
