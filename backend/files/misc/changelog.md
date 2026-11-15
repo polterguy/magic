@@ -1,5 +1,15 @@
 
 
+## Unreleased
+
+Security release
+
+* An unfiltered `sockets.signal` (no `roles`, `users`, `groups` or `clients`) no longer reaches every connected socket. It reaches only sockets connected with `/sockets?channel=<channel>`. Custom clients listening to such channels must add the `channel` query parameter to their socket URL. Signals using `roles`, `users`, `groups` or `clients` are unchanged
+
+
+----
+
+
 ## Version 20.3.1
 
 Minor feature release
