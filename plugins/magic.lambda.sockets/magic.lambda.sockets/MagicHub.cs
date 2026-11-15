@@ -199,6 +199,17 @@ namespace magic.lambda.sockets
             }
 
             /*
+             * Joining the connection to the channel(s) it named in its connect URL
+             * (/sockets?channel=xyz), so an unfiltered [sockets.signal] reaches only
+             * the sockets that asked for that channel, never every connected socket.
+             */
+            var channels = Context.GetHttpContext()?.Request.Query["channel"] ?? default;
+            foreach (var idx in channels.Where(x => !string.IsNullOrEmpty(x)))
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, "channel:" + idx);
+            }
+
+            /*
              * Creating an association between a user and all connections in our shared static
              * dictionary.
              *

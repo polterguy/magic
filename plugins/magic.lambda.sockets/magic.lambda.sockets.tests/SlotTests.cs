@@ -25,6 +25,8 @@ namespace magic.lambda.sockets.tests
         static readonly string[] TwoClients = ["c1", "c2"];
         static readonly string[] AConnections = ["conn-a1", "conn-a2"];
         static readonly string[] SecondConnection = ["c2"];
+        static readonly string[] FooBarChannel = ["channel:foo.bar"];
+        static readonly string[] TwoChannels = ["channel:abc", "channel:def"];
 
         static async Task<(FakeHub Hub, Node Lambda)> Run(string hl, bool enabled = true)
         {
@@ -57,9 +59,16 @@ namespace magic.lambda.sockets.tests
             return user?.Children.Skip(1).First().Children.Select(x => x.Get<string>()).ToArray() ?? Array.Empty<string>();
         }
 
-        internal static MagicHub NewHub(FakeHub fake, string connection, string username, Mock<magic.lambda.logging.contracts.ILogger> logger = null, Mock<magic.node.contracts.IFileService> files = null)
+        internal static MagicHub NewHub(FakeHub fake, string connection, string username, Mock<magic.lambda.logging.contracts.ILogger> logger = null, Mock<magic.node.contracts.IFileService> files = null, string query = null)
         {
+            var http = new Microsoft.AspNetCore.Http.DefaultHttpContext();
+            if (query != null)
+                http.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString(query);
+            var features = new Microsoft.AspNetCore.Http.Features.FeatureCollection();
+            features.Set<Microsoft.AspNetCore.Http.Connections.Features.IHttpContextFeature>(new HttpFeature { HttpContext = http });
+
             var ctx = new Mock<HubCallerContext>();
+            ctx.SetupGet(x => x.Features).Returns(features);
             ctx.SetupGet(x => x.ConnectionId).Returns(connection);
             ctx.SetupGet(x => x.ConnectionAborted).Returns(CancellationToken.None);
             ctx.SetupGet(x => x.User).Returns(username == null ? null : new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) }, "test")));
@@ -86,11 +95,12 @@ namespace magic.lambda.sockets.tests
         }
 
         [Fact]
-        public async Task SignalToEveryone()
+        public async Task SignalWithoutFilterReachesOnlyChannelGroup()
         {
             var (hub, _) = await Run("sockets.signal:foo.bar\n   args\n      a:b");
             var sent = Assert.Single(hub.Sent);
-            Assert.Equal("all", sent.Target);
+            Assert.Equal("group", sent.Target);
+            Assert.Equal(FooBarChannel, sent.Names);
             Assert.Equal("foo.bar", sent.Method);
             Assert.Contains("\"a\"", sent.Argument as string);
             Assert.Contains("\"b\"", sent.Argument as string);
@@ -236,6 +246,19 @@ namespace magic.lambda.sockets.tests
             await NewHub(fake, "conn-r", StubTicket.Username).OnConnectedAsync();
             Assert.Equal(RoleGroups, fake.Groups.Select(x => x.Group).ToArray());
             Assert.All(fake.Groups, x => Assert.Equal("conn-r", x.Connection));
+        }
+
+        [Fact]
+        public async Task ConnectingAddsConnectionToChannelGroups()
+        {
+            StubTicket.Username = null;
+            StubTicket.Roles = Array.Empty<string>();
+            var fake = new FakeHub();
+            var connection = "conn-c" + Guid.NewGuid().ToString("N");
+            await NewHub(fake, connection, null, query: "?channel=abc&channel=def&channel=").OnConnectedAsync();
+            Assert.Equal(TwoChannels, fake.Groups.Select(x => x.Group).ToArray());
+            Assert.All(fake.Groups, x => Assert.Equal(connection, x.Connection));
+            await NewHub(new FakeHub(), connection, null).OnDisconnectedAsync(null);
         }
 
         [Fact]

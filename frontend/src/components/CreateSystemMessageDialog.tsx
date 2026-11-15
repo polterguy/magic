@@ -46,7 +46,7 @@ export default function CreateSystemMessageDialog(
       setError(errorMessage(err, 'Could not create a feedback channel'));
       return;
     }
-    const connection = createSocket();
+    const connection = createSocket({ channel });
     connectionRef.current = connection;
 
     connection.on(channel, (raw: string) => {
