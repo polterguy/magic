@@ -4947,7 +4947,7 @@ a.kpi-link:hover .kpi-icon {
   justify-content: flex-end;
   padding: 14px 22px;
   border-top: 1px solid var(--border);
-  background: var(--surface-2);
+  background: var(--surface);
 }
 
 .profile-tokens {
