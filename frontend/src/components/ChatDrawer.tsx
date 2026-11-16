@@ -357,10 +357,9 @@ export default function ChatDrawer(
       return sessionRef.current;
     }
     const session = (await gibberish()).result;
-    if (!connectionRef.current) {
-      connectionRef.current = createSocket({ reconnect: true });
-      await connectionRef.current.start();
-    }
+    // One socket per session, since the socket joins its session's channel when it connects.
+    connectionRef.current?.stop().catch(() => {});
+    connectionRef.current = createSocket({ reconnect: true, channel: session });
     connectionRef.current.on(session, (raw: string) => {
       try {
         onChunkRef.current(JSON.parse(raw) as ChatChunk);
@@ -368,6 +367,7 @@ export default function ChatDrawer(
         // A chunk that doesn't parse carries nothing we can render.
       }
     });
+    await connectionRef.current.start();
     sessionRef.current = session;
     return session;
   }
@@ -463,9 +463,8 @@ export default function ChatDrawer(
     if (streaming) {
       return;
     }
-    if (sessionRef.current && connectionRef.current) {
-      connectionRef.current.off(sessionRef.current);
-    }
+    connectionRef.current?.stop().catch(() => {});
+    connectionRef.current = null;
     sessionRef.current = null;
     setMessages([]);
     setFiles([]);

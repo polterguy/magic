@@ -7,9 +7,15 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microso
 
 import { backendInfo } from './api';
 
-export function createSocket(options?: { reconnect?: boolean }): HubConnection {
+/*
+ * A [channel] joins the socket to that channel when it connects, which is the
+ * only way to receive what the backend signals on it without a role, user,
+ * group or client filter.
+ */
+export function createSocket(options?: { reconnect?: boolean; channel?: string }): HubConnection {
   const backend = backendInfo();
-  const builder = new HubConnectionBuilder().withUrl(backend.url + '/sockets', {
+  const query = options?.channel ? '?channel=' + encodeURIComponent(options.channel) : '';
+  const builder = new HubConnectionBuilder().withUrl(backend.url + '/sockets' + query, {
     accessTokenFactory: () => backend.token ?? '',
     skipNegotiation: true,
     transport: HttpTransportType.WebSockets,

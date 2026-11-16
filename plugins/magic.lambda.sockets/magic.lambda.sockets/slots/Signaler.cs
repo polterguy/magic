@@ -19,7 +19,7 @@ namespace magic.lambda.sockets.slots
     /// </summary>
     [Slot(
         Name = "sockets.signal",
-        Description = "Pushes a SignalR message to clients subscribed to the channel; use to broadcast events from server to browsers",
+        Description = "Pushes a SignalR message to clients; without [roles], [users], [groups] or [clients] it reaches only sockets connected with /sockets?channel=<channel>",
         ValueKind = "socket-channel",
         ValueDescription = "Socket channel to publish",
         ValueRequired = true,
@@ -86,7 +86,7 @@ namespace magic.lambda.sockets.slots
                 else
                     await _context
                         .Clients
-                        .All
+                        .Group("channel:" + args.Method)
                         .SendAsync(args.Method, args.Json);
             }
 

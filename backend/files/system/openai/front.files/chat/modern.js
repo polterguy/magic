@@ -401,8 +401,8 @@
         localStorage.setItem('ainiroUserId', this.userId);
       }
 
-      // Creating a unique session.
-      this.session = 'c_' + Date.now() + Math.random();
+      // Creating a unique session, unguessable since it is also our socket channel.
+      this.session = 'c_' + Date.now() + '_' + crypto.randomUUID();
 
       setTimeout(() => {
 
@@ -816,10 +816,10 @@
      */
     initSocket: function(onAfter) {
 
-      // Creating socket connection.
+      // Creating socket connection, naming our session as its channel, so the server only sends our messages to us.
       this.socket = new signalR.HubConnectionBuilder()
       .withAutomaticReconnect()
-      .withUrl(this.ainiro_settings.url + '/sockets', {
+      .withUrl(this.ainiro_settings.url + '/sockets?channel=' + encodeURIComponent(this.session), {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
       }).build();
@@ -1044,7 +1044,7 @@
       this.execQuestionnaires = false;
 
       // Creating a new session and stopping existing socket connection.
-      this.session = 'c_' + Date.now() + Math.random();
+      this.session = 'c_' + Date.now() + '_' + crypto.randomUUID();
       this.socket?.stop();
 
       this.initSession = true;
