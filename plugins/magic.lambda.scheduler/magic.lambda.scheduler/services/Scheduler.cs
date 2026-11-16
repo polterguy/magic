@@ -198,7 +198,7 @@ namespace magic.lambda.scheduler.services
             var signaler = _signalCreator.Create();
 
             // Sanity checking invocation.
-            if (task.Schedules.Any())
+            if (task.Schedules.Count > 0)
                 throw new HyperlambdaException("You cannot update schedules for tasks when updating your task");
 
             await DatabaseHelper.ConnectAsync(

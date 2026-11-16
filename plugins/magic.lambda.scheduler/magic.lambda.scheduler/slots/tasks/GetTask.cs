@@ -82,7 +82,7 @@ namespace magic.lambda.scheduler.slots.tasks
                 input.Add(new Node("description", task.Description));
 
             // Returning schedules for task.
-            if (task.Schedules.Any())
+            if (task.Schedules.Count > 0)
             {
                 var scheduleNode = new Node("schedules");
                 foreach (var idx in task.Schedules)
