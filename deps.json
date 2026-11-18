@@ -1,13 +1,13 @@
 {
- "generated": "2026-11-17T13:26:47Z",
+ "generated": "2026-11-18T13:04:07Z",
  "commit": "60adb227a83cdc44a3c487f30a43573e263f747e",
  "open": {
   "critical": 0,
-  "high": 0,
+  "high": 14,
   "moderate": 0,
   "low": 0
  },
- "open-count": 0,
+ "open-count": 14,
  "suppressed": {
   "critical": 0,
   "high": 0,
@@ -15,6 +15,161 @@
   "low": 0
  },
  "suppressed-count": 0,
- "findings-count": 0,
- "findings": []
+ "findings-count": 14,
+ "findings": [
+  {
+   "ecosystem": "npm",
+   "package": "@typescript-eslint/eslint-plugin",
+   "version": ">=8.47.1-alpha.0",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "typescript-eslint@8.47.0"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "@typescript-eslint/parser",
+   "version": ">=8.47.1-alpha.0",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "typescript-eslint@8.47.0"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "@typescript-eslint/type-utils",
+   "version": ">=8.47.1-alpha.0",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "typescript-eslint@8.47.0"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "@typescript-eslint/typescript-estree",
+   "version": ">=8.47.1-alpha.0",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "typescript-eslint@8.47.0"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "@typescript-eslint/utils",
+   "version": ">=8.47.1-alpha.0",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "typescript-eslint@8.47.0"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "@vitejs/plugin-react",
+   "version": ">=6.0.0-beta.0",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "@vitejs/plugin-react@5.2.0"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "@vitest/coverage-v8",
+   "version": ">=3.2.0-beta.1",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "@vitest/coverage-v8@3.1.4"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "fdir",
+   "version": ">=5.2.1",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "vitest@3.1.4"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "lint-staged",
+   "version": ">=16.4.0",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "lint-staged@16.3.4"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "picomatch",
+   "version": "*",
+   "severity": "high",
+   "advisory": "https://github.com/advisories/GHSA-fc5q-39xc-vjpf",
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "lint-staged@16.3.4"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "tinyglobby",
+   "version": "*",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "vitest@3.1.4"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "typescript-eslint",
+   "version": ">=8.47.1-alpha.0",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "typescript-eslint@8.47.0"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "vite",
+   "version": ">=6.3.0-beta.0",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "vite@6.2.7"
+  },
+  {
+   "ecosystem": "npm",
+   "package": "vitest",
+   "version": ">=3.1.2",
+   "severity": "high",
+   "advisory": null,
+   "projects": 1,
+   "suppressed": false,
+   "reason": null,
+   "fix": "vitest@3.1.4"
+  }
+ ]
 }
