@@ -7,7 +7,7 @@ import OpenIdDialog from '../components/configuration/OpenIdDialog';
 import RecaptchaDialog from '../components/configuration/RecaptchaDialog';
 import SmtpDialog from '../components/configuration/SmtpDialog';
 import UrlsDialog from '../components/configuration/UrlsDialog';
-import Menu from '../components/designer/Menu';
+import Menu from '../components/Menu';
 import OpenAiKeyDialog from '../components/OpenAiKeyDialog';
 import { downloadFileRaw, loadConfig, MagicConfig, saveConfig, uploadFile } from '../lib/api';
 import { downloadBlob } from '../lib/download';

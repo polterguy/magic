@@ -30,7 +30,6 @@ import { showError } from '../lib/errors';
 import { createSocket } from '../lib/socket';
 import { getTheme } from '../lib/theme';
 import { copyToClipboard, showToast } from '../lib/toast';
-import Menu, { type MenuItem } from './designer/Menu';
 import {
   CopyIcon,
   DownloadIcon,
@@ -40,6 +39,7 @@ import {
   SparklesIcon,
 } from './Icons';
 import ImageLightbox from './ImageLightbox';
+import Menu, { type MenuItem } from './Menu';
 import WidgetDialog from './WidgetDialog';
 
 type Segment =

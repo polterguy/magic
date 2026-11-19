@@ -427,11 +427,64 @@ h1 {
   margin-left: auto;
 }
 
+/*
+ * A toolbar whose actions move into a "more" menu rather than wrap (components/Toolbar.tsx). It
+ * takes the free space in its row with a basis of zero, so its buttons never count when a
+ * wrapping header decides where to break, and its width is the room it has, whatever is in it.
+ */
+.overflow-toolbar {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Every action, laid out invisibly, so the toolbar knows each one's width. */
+.overflow-toolbar-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  gap: 10px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.overflow-toolbar-measure > * {
+  flex: none;
+}
+
+/*
+ * The Hyper IDE shows only the open file's name, with the full path in its tooltip, so a deep
+ * path doesn't take the toolbar's room. The unsaved marker keeps a fixed slot and is only made
+ * visible, so editing a file moves nothing.
+ */
 .ide-path {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 40ch;
+  display: flex;
+  white-space: nowrap;
+}
+
+.ide-path-text {
   min-width: 0;
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.ide-dirty {
+  flex: none;
+  width: 1.5ch;
+  text-align: right;
+  visibility: hidden;
+}
+
+.ide-dirty.is-dirty {
+  visibility: visible;
 }
 
 /*
