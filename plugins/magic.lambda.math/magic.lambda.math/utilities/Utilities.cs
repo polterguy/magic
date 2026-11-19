@@ -25,6 +25,21 @@ namespace magic.lambda.math.utilities
             return node.Children.Skip(1).Select(x => x.GetEx<dynamic>());
         }
 
+        /*
+         * Every operand of [math.max] and [math.min]. A value expression without children supplies all
+         * of them, one per node it matches, as in [math.max:x:@.numbers/*]; otherwise the operands are
+         * the base followed by the children, as for every other arithmetic slot.
+         */
+        public static List<dynamic> AllOperands(Node node)
+        {
+            if (node.Value is not Expression || node.Children.Any())
+                return AllButBase(node).Prepend((object)GetBase(node)).ToList();
+            var result = node.Evaluate().Select(x => x.GetEx<dynamic>()).ToList();
+            if (result.Count == 0)
+                throw new HyperlambdaException($"Expression '{node.Value}' did not match any values during calculation attempt");
+            return result;
+        }
+
         public static dynamic GetStep(Node input)
         {
             return input.Children.FirstOrDefault()?.Value ?? 1;

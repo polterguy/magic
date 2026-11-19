@@ -285,6 +285,37 @@ math.max:x:@.foo/*/foo1
         }
 
         [Fact]
+        public void Max_04_ExpressionSuppliesEveryOperand()
+        {
+            var lambda = Common.Evaluate(@"
+.numbers
+   .:int:17
+   .:int:4
+   .:int:92
+   .:int:33
+math.max:x:@.numbers/*");
+            Assert.Equal(92, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void Max_05_ExpressionMatchingOneNode()
+        {
+            var lambda = Common.Evaluate(@"
+.numbers
+   .:int:17
+math.max:x:@.numbers/*");
+            Assert.Equal(17, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void Max_06_ExpressionMatchingNothingThrows()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+.numbers
+math.max:x:@.numbers/*"));
+        }
+
+        [Fact]
         public void Min_01()
         {
             var lambda = Common.Evaluate(@"
@@ -317,6 +348,26 @@ math.min:x:@.foo/*/foo1
         }
 
         [Fact]
+        public void Min_04_ExpressionSuppliesEveryOperand()
+        {
+            var lambda = Common.Evaluate(@"
+.numbers
+   .:decimal:17.5
+   .:decimal:4.25
+   .:decimal:92
+math.min:x:@.numbers/*");
+            Assert.Equal(4.25M, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void Min_05_ExpressionMatchingNothingThrows()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+.numbers
+math.min:x:@.numbers/*"));
+        }
+
+        [Fact]
         public void Dot_01()
         {
             var lambda = Common.Evaluate(@"
@@ -335,14 +386,14 @@ math.dot
         }
 
         [Theory]
-        [InlineData("math.add")]
-        [InlineData("math.subtract")]
-        [InlineData("math.multiply")]
-        [InlineData("math.divide")]
-        [InlineData("math.modulo")]
-        [InlineData("math.max")]
-        [InlineData("math.min")]
-        public void ArithmeticSignaturesDocumentBaseOperandAndChildOperands(string slotName)
+        [InlineData("math.add", "TwoOrMore")]
+        [InlineData("math.subtract", "TwoOrMore")]
+        [InlineData("math.multiply", "TwoOrMore")]
+        [InlineData("math.divide", "TwoOrMore")]
+        [InlineData("math.modulo", "TwoOrMore")]
+        [InlineData("math.max", "OneOrMore")]
+        [InlineData("math.min", "OneOrMore")]
+        public void ArithmeticSignaturesDocumentBaseOperandAndChildOperands(string slotName, string cardinality)
         {
             var lambda = Common.Evaluate($"slot.signature:{slotName}");
             var signature = lambda.Children.First();
@@ -353,7 +404,7 @@ math.dot
             var input = signature.Children.First(x => x.Name == "input");
             Assert.Equal(SlotValueMode.ValueOrExpression.ToString(), input.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal("*", operand.Name);
-            Assert.Equal(SlotChildCardinality.TwoOrMore.ToString(), operand.Children.First(x => x.Name == "cardinality").GetEx<string>());
+            Assert.Equal(cardinality, operand.Children.First(x => x.Name == "cardinality").GetEx<string>());
             Assert.Equal(SlotChildMode.ExecutableLambda.ToString(), operand.Children.First(x => x.Name == "mode").GetEx<string>());
             Assert.Equal(SlotChildRole.OperandPaired.ToString(), operand.Children.First(x => x.Name == "role").GetEx<string>());
             Assert.Equal(SlotChildEvaluation.EvalSelf.ToString(), operand.Children.First(x => x.Name == "evaluation").GetEx<string>());
