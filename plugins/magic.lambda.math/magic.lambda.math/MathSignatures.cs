@@ -9,6 +9,9 @@ namespace magic.lambda.math.signatures
 {
     public class ArithmeticSignature : ISlotSignature
     {
+        // How many operands, the base value counted as one, the slot takes.
+        protected virtual SlotChildCardinality OperandCardinality => SlotChildCardinality.TwoOrMore;
+
         public IEnumerable<SlotChild> Children => new[]
         {
             new SlotChild
@@ -19,7 +22,7 @@ namespace magic.lambda.math.signatures
                 Description = "Numeric operand evaluated before calculating the result",
                 Required = true,
                 Mode = SlotChildMode.ExecutableLambda,
-                Cardinality = SlotChildCardinality.TwoOrMore,
+                Cardinality = OperandCardinality,
                 // OperandPaired (not Operand): arithmetic operations combine
                 // their operands; mixing numeric subtypes (decimal + int)
                 // produces ambiguous coercion. The synth narrows subsequent
@@ -30,6 +33,15 @@ namespace magic.lambda.math.signatures
                 Projection = SlotChildProjection.Value,
             },
         };
+    }
+
+    /*
+     * [math.max] and [math.min] take one operand at least, since a value expression without children
+     * supplies every operand, one per node it matches, as in [math.max:x:@.numbers/*].
+     */
+    public class ExtremumSignature : ArithmeticSignature
+    {
+        protected override SlotChildCardinality OperandCardinality => SlotChildCardinality.OneOrMore;
     }
 
     public class DotProductSignature : ISlotSignature
