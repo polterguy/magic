@@ -21,7 +21,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
-import { MenuIcon } from '../Icons';
+import { MenuIcon } from './Icons';
 
 export interface MenuItem {
   // A heading above a run of items, rather than an item itself.

@@ -1,4 +1,4 @@
-import Menu from './Menu';
+import Menu from '../Menu';
 import { designerMenuItems, DesignerMenuOptions } from './menuItems';
 
 // The "more" menu in the toolbar, built from the designer's current state.
