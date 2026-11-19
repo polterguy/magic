@@ -2,6 +2,7 @@
  * Magic Cloud, copyright (c) 2023 AINIRO.IO, Ltd. See the attached LICENSE file for details. For license inquiries you can send an email to team@ainiro.io
  */
 
+using System.Linq;
 using System.Threading.Tasks;
 using magic.node;
 using magic.signals.contracts;
@@ -16,12 +17,12 @@ namespace magic.lambda.math.basics
         Name = "math.max",
         Description = "Returns the largest value from the supplied inputs",
         ValueKind = "number",
-        ValueDescription = "Base operand the child operands are applied to; omit to use the first child operand as the base",
+        ValueDescription = "Base operand compared with the child operands; omit to use the first child operand as the base. Without children, an expression supplies every operand, one per node it matches",
         ValueMode = SlotValueMode.ValueOrExpression,
         ReturnsMode = SlotReturnsMode.Value,
         ReturnsKind = "number",
         ReturnsDescription = "Resolves to the largest supplied value",
-        SignatureType = typeof(global::magic.lambda.math.signatures.ArithmeticSignature))]
+        SignatureType = typeof(global::magic.lambda.math.signatures.ExtremumSignature))]
     public class Max : ISlotAsync
     {
         /// <summary>
@@ -33,8 +34,9 @@ namespace magic.lambda.math.basics
         public async Task SignalAsync(ISignaler signaler, Node input)
         {
             await signaler.SignalAsync("eval", input, skipWhitelist: true);
-            dynamic cur = Utilities.GetBase(input);
-            foreach (var idx in Utilities.AllButBase(input))
+            var operands = Utilities.AllOperands(input);
+            dynamic cur = operands[0];
+            foreach (var idx in operands.Skip(1))
             {
                 if (idx > cur)
                     cur = idx;
