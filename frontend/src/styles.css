@@ -458,14 +458,15 @@ h1 {
 }
 
 /*
- * The Hyper IDE shows only the open file's name, with the full path in its tooltip, so a deep
- * path doesn't take the toolbar's room. The unsaved marker keeps a fixed slot and is only made
- * visible, so editing a file moves nothing.
+ * The Hyper IDE's path takes at most half the header, so a deep path can't crowd every button
+ * into the toolbar's menu. When it is cut short it loses its start, not its end: the right-to-left
+ * box puts the ellipsis on the left, and the <bdi> inside keeps the path itself left-to-right. The
+ * unsaved marker keeps a fixed slot and is only made visible, so editing a file moves nothing.
  */
 .ide-path {
   flex: 0 1 auto;
   min-width: 0;
-  max-width: 40ch;
+  max-width: 50%;
   display: flex;
   white-space: nowrap;
 }
@@ -474,6 +475,7 @@ h1 {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  direction: rtl;
 }
 
 .ide-dirty {

@@ -103,13 +103,14 @@ export default function IdeHeader(
         {!selectedFile && <p>Browse and edit any file on your server</p>}
       </div>
       {/*
-       * Only the file's name, with the full path in the tooltip and behind Copy path. The
-       * unsaved marker always occupies its slot, only shown or hidden, so editing the file
-       * changes the width of nothing.
+       * The full path, since the tab already names the file. When it doesn't fit it loses its
+       * start rather than its end, so the folders nearest the file stay readable. The unsaved
+       * marker always occupies its slot, only shown or hidden, so editing the file changes the
+       * width of nothing.
        */}
       <span className="mono ide-path" title={selectedFile || undefined}>
         <span className="ide-path-text">
-          {selectedFile ? selectedFile.split('/').pop() : 'No file open'}
+          <bdi dir="ltr">{selectedFile || 'No file open'}</bdi>
         </span>
         <span
           className={dirty ? 'ide-dirty is-dirty' : 'ide-dirty'}
