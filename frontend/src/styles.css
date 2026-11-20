@@ -457,6 +457,18 @@ h1 {
   flex: none;
 }
 
+/* The ▾ on a toolbar menu's trigger, smaller and quieter than the icon and label beside it. */
+.toolbar-caret {
+  display: inline-flex;
+  margin-left: -2px;
+  opacity: 0.6;
+}
+
+.toolbar-caret svg {
+  width: 12px;
+  height: 12px;
+}
+
 /*
  * The Hyper IDE's path takes at most half the header, so a deep path can't crowd every button
  * into the toolbar's menu. When it is cut short it loses its start, not its end: the right-to-left

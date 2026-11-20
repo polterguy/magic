@@ -1,6 +1,15 @@
 import { copyToClipboard } from '../../lib/toast';
-import { BracesIcon, CopyIcon, DownloadIcon, PlayIcon, SaveIcon, SparkIcon } from '../Icons';
-import Toolbar, { type ToolbarAction } from '../Toolbar';
+import {
+  BracesIcon,
+  CodeFileIcon,
+  CopyIcon,
+  DownloadIcon,
+  FileIcon,
+  PlayIcon,
+  SaveIcon,
+  SparkIcon,
+} from '../Icons';
+import Toolbar, { type ToolbarAction, type ToolbarEntry } from '../Toolbar';
 import { endpointOf } from './helpers';
 
 /*
@@ -25,12 +34,12 @@ export default function IdeHeader(
   const hyperlambda = selectedFile.endsWith('.hl');
 
   /*
-   * Listed left to right. When the row runs out of room the leftmost go into the "more" menu
-   * first, so the occasional actions leave before the frequent ones, and Save never does.
+   * Related actions share a dropdown, so the bar stays short: File, Hyperlambda, then Save. When
+   * the row runs out of room the leftmost menus go into the "more" menu first, and Save never does.
    */
-  const actions: ToolbarAction[] = [];
+  const entries: ToolbarEntry[] = [];
   if (selectedFile) {
-    actions.push(
+    const fileItems: ToolbarAction[] = [
       {
         id: 'copy',
         label: 'Copy path',
@@ -39,44 +48,58 @@ export default function IdeHeader(
       },
       {
         id: 'download',
-        label: 'Download',
-        title: 'Download file',
+        label: 'Download file',
         icon: <DownloadIcon />,
         onClick: () => void props.onDownload(),
       },
-    );
-  }
-  if (endpointOf(selectedFile)) {
-    actions.push({
-      id: 'openapi',
-      label: 'OpenAPI',
-      title: 'OpenAPI specification for this endpoint',
-      icon: <BracesIcon />,
-      onClick: () => void props.onOpenApi(selectedFile),
+    ];
+    if (endpointOf(selectedFile)) {
+      fileItems.push({
+        id: 'openapi',
+        label: 'OpenAPI specification',
+        title: 'OpenAPI specification for this endpoint',
+        icon: <BracesIcon />,
+        onClick: () => void props.onOpenApi(selectedFile),
+      });
+    }
+    entries.push({
+      id: 'file',
+      label: 'File',
+      title: 'File actions',
+      icon: <FileIcon />,
+      items: fileItems,
     });
   }
   if (hyperlambda) {
-    actions.push(
-      {
-        id: 'generate',
-        label: 'Generate',
-        busyLabel: 'Generating…',
-        title: 'Run the selected text through the Hyperlambda generator',
-        icon: <SparkIcon />,
-        busy: generating,
-        disabled: !hasSelection,
-        onClick: () => void props.onGenerate(),
-      },
-      {
-        id: 'execute',
-        label: 'Execute',
-        title: 'Execute this Hyperlambda',
-        icon: <PlayIcon />,
-        onClick: () => void props.onExecute(),
-      },
-    );
+    entries.push({
+      id: 'hyperlambda',
+      label: 'Hyperlambda',
+      title: 'Hyperlambda actions',
+      icon: <CodeFileIcon />,
+      items: [
+        {
+          id: 'execute',
+          label: 'Execute',
+          title: 'Execute this Hyperlambda',
+          icon: <PlayIcon />,
+          onClick: () => void props.onExecute(),
+        },
+        {
+          id: 'generate',
+          label: 'Generate from selection',
+          busyLabel: 'Generating…',
+          title: hasSelection
+            ? 'Run the selected text through the Hyperlambda generator'
+            : 'Select some text to run it through the Hyperlambda generator',
+          icon: <SparkIcon />,
+          busy: generating,
+          disabled: !hasSelection,
+          onClick: () => void props.onGenerate(),
+        },
+      ],
+    });
   }
-  actions.push({
+  entries.push({
     id: 'save',
     label: 'Save',
     busyLabel: 'Saving…',
@@ -120,7 +143,7 @@ export default function IdeHeader(
           •
         </span>
       </span>
-      <Toolbar actions={actions} moreTitle="More file actions" />
+      <Toolbar actions={entries} moreTitle="More file actions" />
     </div>
   );
 }
