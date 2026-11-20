@@ -213,7 +213,7 @@ describe('BackendsDialog', () => {
 
   it('closes with Close and starts a new sign-in with Add backend', async () => {
     const { onClose, auth } = renderDialog();
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    await userEvent.click(screen.getByText('Close', { selector: 'button' }));
     expect(onClose).toHaveBeenCalledTimes(1);
 
     await userEvent.click(screen.getByRole('button', { name: 'Add backend' }));

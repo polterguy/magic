@@ -190,7 +190,7 @@ describe('GitPanel resets', () => {
 describe('GitPanel busy state and closing', () => {
   it('closes through the Close button and Escape', async () => {
     await open();
-    await userEvent.click(button('Close'));
+    await userEvent.click(screen.getByText('Close', { selector: 'button' }));
     expect(onClose).toHaveBeenCalledTimes(1);
     await userEvent.keyboard('{Escape}');
     expect(onClose).toHaveBeenCalledTimes(2);
@@ -202,12 +202,14 @@ describe('GitPanel busy state and closing', () => {
     await open();
     await userEvent.click(button('Fetch'));
     expect(await screen.findByText('Running Git operation')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Close' })).toBeNull();
+    // The footer's Close goes while Git runs, and the header's close does nothing until it is done.
+    expect(screen.queryByText('Close', { selector: 'button' })).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: 'Close dialog' }));
     await userEvent.keyboard('{Escape}');
     expect(onClose).not.toHaveBeenCalled();
     gate.resolve();
     await waitFor(() => expect(screen.queryByText('Running Git operation')).toBeNull());
-    expect(button('Close')).toBeInTheDocument();
+    expect(screen.getByText('Close', { selector: 'button' })).toBeInTheDocument();
     await userEvent.keyboard('{Escape}');
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -300,7 +302,7 @@ describe('GitPanel folder that is not a repository', () => {
 
   it('closes', async () => {
     await open();
-    await userEvent.click(button('Close'));
+    await userEvent.click(screen.getByText('Close', { selector: 'button' }));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

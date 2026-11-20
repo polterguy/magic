@@ -4,6 +4,7 @@ import Banner from '../components/Banner';
 import BusyLabel from '../components/BusyLabel';
 import DateTimePicker from '../components/DateTimePicker';
 import { Modal } from '../components/Dialogs';
+import OptionPill from '../components/OptionPill';
 import FontPicker from '../components/profile/FontPicker';
 import {
   changePassword,
@@ -233,87 +234,78 @@ function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
 
   return (
     <Modal
-      width={560}
+      size="md"
       onClose={onClose}
       onSubmit={() => {
         if (username && selectedRoles.length > 0) void generate();
       }}
+      title="Generate token"
+      actions={
+        <>
+          {token && (
+            <button
+              className="btn btn-secondary"
+              onClick={() => copyToClipboard(token, 'The token')}
+            >
+              Copy
+            </button>
+          )}
+          <button className="btn btn-secondary" onClick={onClose}>
+            Close
+          </button>
+          <button
+            className="btn"
+            onClick={generate}
+            disabled={!username || selectedRoles.length === 0 || busy}
+          >
+            <BusyLabel busy={busy} label="Generate" busyLabel="Generating…" />
+          </button>
+        </>
+      }
     >
-      <h2>Generate token</h2>
-      {error && (
-        <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
-          {error}
-        </Banner>
-      )}
-      <div className="form-grid">
-        <label>
-          Username{' '}
-          <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
-        </label>
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+      <div className="modal-section">
+        {error && <Banner onClose={() => setError('')}>{error}</Banner>}
+        <div className="form-cols-2">
+          <label>
+            Username{' '}
+            <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
+          </label>
+          <label>
+            Expires
+            {/* A token that expired before it was issued is never what's wanted. */}
+            <DateTimePicker
+              dateOnly
+              value={expires}
+              min={new Date().toISOString().slice(0, 10)}
+              onChange={setExpires}
+              placeholder="Pick an expiry date"
+            />
+          </label>
+        </div>
+        <div className="form-group">
+          <div className="form-group-label">Roles</div>
+          <div className="pill-row">
             {roles.map(role => (
-              <label
+              <OptionPill
                 key={role}
-                className="chip"
-                style={{
-                  display: 'inline-flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  userSelect: 'none',
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedRoles.includes(role)}
-                  onChange={e =>
-                    setSelectedRoles(
-                      e.target.checked
-                        ? [...selectedRoles, role]
-                        : selectedRoles.filter(candidate => candidate !== role),
-                    )
-                  }
-                />
-                {role}
-              </label>
+                label={role}
+                checked={selectedRoles.includes(role)}
+                onChange={checked =>
+                  setSelectedRoles(
+                    checked
+                      ? [...selectedRoles, role]
+                      : selectedRoles.filter(candidate => candidate !== role),
+                  )
+                }
+              />
             ))}
           </div>
         </div>
-        <label>
-          Expires
-          {/* A token that expired before it was issued is never what's wanted. */}
-          <DateTimePicker
-            dateOnly
-            value={expires}
-            min={new Date().toISOString().slice(0, 10)}
-            onChange={setExpires}
-            placeholder="Pick an expiry date"
-          />
-        </label>
         {token && (
           <div className="success-box mono" style={{ overflowWrap: 'anywhere', fontSize: 12 }}>
             {token}
           </div>
         )}
-      </div>
-      <div className="modal-actions">
-        {token && (
-          <button className="btn btn-secondary" onClick={() => copyToClipboard(token, 'The token')}>
-            Copy
-          </button>
-        )}
-        <button className="btn btn-secondary" onClick={onClose}>
-          Close
-        </button>
-        <button
-          className="btn"
-          onClick={generate}
-          disabled={!username || selectedRoles.length === 0 || busy}
-        >
-          <BusyLabel busy={busy} label="Generate" busyLabel="Generating…" />
-        </button>
       </div>
     </Modal>
   );

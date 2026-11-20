@@ -38,8 +38,19 @@ export default function ProgressDialog(
   }, [props.lines.length]);
 
   return (
-    <Modal width={760} onClose={props.onClose}>
-      <h2 style={{ marginTop: 0 }}>{props.title}</h2>
+    <Modal
+      size="lg"
+      onClose={props.onClose}
+      title={props.title}
+      actions={
+        <>
+          {props.actions}
+          <button className="btn" onClick={props.onClose}>
+            Close
+          </button>
+        </>
+      }
+    >
       {props.error && (
         <Banner onClose={() => props.onDismissError?.()} style={{ marginBottom: 10 }}>
           {props.error}
@@ -66,12 +77,6 @@ export default function ProgressDialog(
           )}
           <span className="terminal-caret" />
         </div>
-      </div>
-      <div className="modal-actions">
-        {props.actions}
-        <button className="btn" onClick={props.onClose}>
-          Close
-        </button>
       </div>
     </Modal>
   );

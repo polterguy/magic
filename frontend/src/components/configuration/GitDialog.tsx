@@ -39,59 +39,72 @@ export default function GitDialog(
   }
 
   return (
-    <Modal width={560} onClose={props.onClose} onSubmit={save}>
-      <h2>Git settings</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        GitHub credentials for Hyper IDE&apos;s Git support. Create a{' '}
-        <a
-          href="https://github.com/settings/personal-access-tokens"
-          target="_blank"
-          rel="noreferrer"
-        >
-          fine-grained personal access token
-        </a>{' '}
-        with <em>Contents</em> read and write access to the repositories your cloudlet manages. The
-        token only authenticates transport — commits are authored as the signed-in user&apos;s
-        profile name and email.
-      </p>
-      <label className="modal-label">
-        Username{' '}
-        <input
-          type="text"
-          autoComplete="off"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-        />
-      </label>
-      <label className="modal-label">
-        Token{' '}
-        <input
-          type="text"
-          className="secret"
-          autoComplete="off"
-          value={token}
-          onChange={e => setToken(e.target.value)}
-        />
-      </label>
-      <label className="modal-label">
-        Host <input type="text" value={host} onChange={e => setHost(e.target.value)} />
-      </label>
-      <label className="modal-label">
-        API base (optional, for GitHub Enterprise){' '}
-        <input
-          type="text"
-          placeholder="https://api.github.com"
-          value={apiBase}
-          onChange={e => setApiBase(e.target.value)}
-        />
-      </label>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save}>
-          Save
-        </button>
+    <Modal
+      size="md"
+      onClose={props.onClose}
+      onSubmit={save}
+      title="Git settings"
+      subtitle={
+        <>
+          GitHub credentials for Hyper IDE&apos;s Git support. Create a{' '}
+          <a
+            href="https://github.com/settings/personal-access-tokens"
+            target="_blank"
+            rel="noreferrer"
+          >
+            fine-grained personal access token
+          </a>{' '}
+          with <em>Contents</em> read and write access to the repositories your cloudlet manages.
+          The token only authenticates transport — commits are authored as the signed-in user&apos;s
+          profile name and email.
+        </>
+      }
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save}>
+            Save
+          </button>
+        </>
+      }
+    >
+      <div className="form-grid">
+        <div className="form-cols-2">
+          <label>
+            Username{' '}
+            <input
+              type="text"
+              autoComplete="off"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+            />
+          </label>
+          <label>
+            Token{' '}
+            <input
+              type="text"
+              className="secret"
+              autoComplete="off"
+              value={token}
+              onChange={e => setToken(e.target.value)}
+            />
+          </label>
+        </div>
+        <label>
+          Host <input type="text" value={host} onChange={e => setHost(e.target.value)} />
+        </label>
+        <label>
+          API base{' '}
+          <input
+            type="text"
+            placeholder="https://api.github.com"
+            value={apiBase}
+            onChange={e => setApiBase(e.target.value)}
+          />
+        </label>
+        <span className="modal-hint">Optional, only needed for GitHub Enterprise.</span>
       </div>
     </Modal>
   );

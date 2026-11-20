@@ -540,14 +540,30 @@ export default function ImportApiTab() {
         />
       )}
       {credential !== null && (
-        <Modal width={520} onClose={() => setCredential(null)} onSubmit={storeCredential}>
-          <h2>Store credential</h2>
-          <p className="muted" style={{ marginTop: 0 }}>
-            Saved into your cloudlet&apos;s configuration under{' '}
-            <span className="mono">{configKey}</span>, which is where the generated endpoints read
-            it from as they are invoked. It is never written into the generated files.
-          </p>
-          <div className="form-grid" style={{ marginTop: 16 }}>
+        <Modal
+          size="md"
+          onClose={() => setCredential(null)}
+          onSubmit={storeCredential}
+          title="Store credential"
+          subtitle={
+            <>
+              Saved into your cloudlet&apos;s configuration under{' '}
+              <span className="mono">{configKey}</span>, which is where the generated endpoints read
+              it from as they are invoked. It is never written into the generated files.
+            </>
+          }
+          actions={
+            <>
+              <button className="btn btn-secondary" onClick={() => setCredential(null)}>
+                Cancel
+              </button>
+              <button className="btn" onClick={storeCredential} disabled={savingKey}>
+                <BusyLabel busy={savingKey} label="Store" busyLabel="Storing…" />
+              </button>
+            </>
+          }
+        >
+          <div className="form-grid">
             <label>
               Credential{' '}
               <input
@@ -558,14 +574,6 @@ export default function ImportApiTab() {
                 onChange={e => setCredential(e.target.value)}
               />
             </label>
-          </div>
-          <div className="modal-actions">
-            <button className="btn btn-secondary" onClick={() => setCredential(null)}>
-              Cancel
-            </button>
-            <button className="btn" onClick={storeCredential} disabled={savingKey}>
-              <BusyLabel busy={savingKey} label="Store" busyLabel="Storing…" />
-            </button>
           </div>
         </Modal>
       )}

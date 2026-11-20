@@ -276,7 +276,7 @@ describe('ImportDialog upload tab', () => {
   it('closes from the upload tab', async () => {
     const { onClose } = renderDialog();
     await openUploadTab();
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }));
     expect(onClose).toHaveBeenCalled();
   });
 });

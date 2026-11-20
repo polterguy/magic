@@ -110,78 +110,69 @@ export default function EditUserDialog(
 
   return (
     <Modal
-      width={620}
+      size="lg"
       onClose={props.onClose}
       onSubmit={() => {
         if (!busy) void save();
       }}
+      title={'Edit ' + props.user.username}
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={busy}>
+            <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
+          </button>
+        </>
+      }
     >
-      <h2>Edit {props.user.username}</h2>
-      <div className="form-grid">
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles</div>
-          <RoleChips roles={props.roles} selected={memberRoles} onToggle={toggleRole} />
-        </div>
-        <div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              marginBottom: 6,
-            }}
-          >
-            <span style={{ fontWeight: 600, fontSize: 13 }}>Extra fields</span>
-            <button className="btn btn-secondary btn-small" onClick={addField}>
-              + Add field
+      <section className="modal-section">
+        <div className="modal-section-title">Roles</div>
+        <div className="modal-hint">Role changes apply immediately.</div>
+        <RoleChips roles={props.roles} selected={memberRoles} onToggle={toggleRole} />
+      </section>
+      <section className="modal-section">
+        <div className="modal-section-title">Extra fields</div>
+        {fields.length === 0 && (
+          <div className="modal-hint">
+            No extra fields — add name, email, or anything else you want to store.
+          </div>
+        )}
+        {fields.map(field => (
+          <div key={field.type} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="mono" style={{ width: 140, flexShrink: 0 }}>
+              {field.type}
+            </span>
+            <input
+              type="text"
+              style={{ flex: 1 }}
+              value={field.value}
+              onChange={e =>
+                setFields(
+                  fields.map(candidate =>
+                    candidate.type === field.type
+                      ? { ...candidate, value: e.target.value }
+                      : candidate,
+                  ),
+                )
+              }
+            />
+            <button
+              className="btn btn-danger btn-small"
+              title="Delete field"
+              onClick={() => removeField(field.type)}
+            >
+              ✕
             </button>
           </div>
-          {fields.length === 0 && (
-            <div className="muted">
-              No extra fields — add name, email, or anything else you want to store.
-            </div>
-          )}
-          {fields.map(field => (
-            <div
-              key={field.type}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}
-            >
-              <span className="mono" style={{ width: 140, flexShrink: 0 }}>
-                {field.type}
-              </span>
-              <input
-                type="text"
-                style={{ flex: 1 }}
-                value={field.value}
-                onChange={e =>
-                  setFields(
-                    fields.map(candidate =>
-                      candidate.type === field.type
-                        ? { ...candidate, value: e.target.value }
-                        : candidate,
-                    ),
-                  )
-                }
-              />
-              <button
-                className="btn btn-danger btn-small"
-                title="Delete field"
-                onClick={() => removeField(field.type)}
-              >
-                ✕
-              </button>
-            </div>
-          ))}
+        ))}
+        <div>
+          <button className="btn btn-secondary btn-small" onClick={addField}>
+            + Add field
+          </button>
         </div>
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={busy}>
-          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
-        </button>
-      </div>
+      </section>
     </Modal>
   );
 }

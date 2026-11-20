@@ -70,49 +70,49 @@ export default function UrlsDialog(
   }
 
   return (
-    <Modal width={560} onClose={props.onClose}>
-      <h2>Backend and frontend URLs</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Used for the links in emails, such as password resets and invitations, and for deciding
-        which dashboards may call this backend.
-      </p>
-      {error && (
-        <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
-          {error}
-        </Banner>
-      )}
-      <label className="modal-label">
-        Backend URL{' '}
-        <input
-          type="text"
-          autoComplete="off"
-          placeholder="https://api.example.com"
-          value={backendUrl}
-          onChange={e => setBackendUrl(e.target.value)}
-        />
-      </label>
-      <label className="modal-label">
-        Frontend URLs{' '}
-        <textarea
-          rows={4}
-          autoComplete="off"
-          placeholder="https://dashboard.example.com"
-          value={frontendUrls}
-          onChange={e => setFrontendUrls(e.target.value)}
-        />
-      </label>
-      <p className="muted" style={{ marginTop: 0, fontSize: 'var(--text-sm)' }}>
-        One per line. The first one is the dashboard that links in emails point to. The dashboard
-        you are using is {dashboard}. With no frontend URLs any website may call this backend, and
-        no emails with links can be sent.
-      </p>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save}>
-          Save
-        </button>
+    <Modal
+      size="md"
+      onClose={props.onClose}
+      title="Backend and frontend URLs"
+      subtitle="Used for the links in emails, such as password resets and invitations, and for deciding which dashboards may call this backend."
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save}>
+            Save
+          </button>
+        </>
+      }
+    >
+      <div className="form-grid">
+        {error && <Banner onClose={() => setError('')}>{error}</Banner>}
+        <label>
+          Backend URL{' '}
+          <input
+            type="text"
+            autoComplete="off"
+            placeholder="https://api.example.com"
+            value={backendUrl}
+            onChange={e => setBackendUrl(e.target.value)}
+          />
+        </label>
+        <label>
+          Frontend URLs{' '}
+          <textarea
+            rows={4}
+            autoComplete="off"
+            placeholder="https://dashboard.example.com"
+            value={frontendUrls}
+            onChange={e => setFrontendUrls(e.target.value)}
+          />
+        </label>
+        <span className="modal-hint">
+          One per line. The first one is the dashboard that links in emails point to. The dashboard
+          you are using is {dashboard}. With no frontend URLs any website may call this backend, and
+          no emails with links can be sent.
+        </span>
       </div>
     </Modal>
   );

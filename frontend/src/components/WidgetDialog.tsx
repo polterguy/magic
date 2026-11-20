@@ -111,7 +111,7 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
          * scrolls inside its own frame.
          *
          * The dialog is 88vh at most and spends roughly 160px of that on its
-         * heading, padding and buttons.
+         * header, body padding and footer.
          */
         const available = Math.max(240, window.innerHeight * 0.88 - 160);
         setHeight(Math.min(Math.max(120, Math.ceil(reported)), Math.round(available)));
@@ -123,8 +123,16 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
   }, [id]);
 
   return (
-    <Modal width={900} onClose={props.onClose}>
-      <h2 style={{ marginTop: 0 }}>Widget</h2>
+    <Modal
+      size="xl"
+      onClose={props.onClose}
+      title="Widget"
+      actions={
+        <button className="btn" onClick={props.onClose}>
+          Done
+        </button>
+      }
+    >
       <iframe
         title="Widget"
         /*
@@ -141,11 +149,6 @@ export default function WidgetDialog(props: Readonly<{ html: string; onClose: ()
          */
         style={{ display: 'block', width: '100%', height, border: 0, background: 'transparent' }}
       />
-      <div className="modal-actions">
-        <button className="btn" onClick={props.onClose}>
-          Close
-        </button>
-      </div>
     </Modal>
   );
 }

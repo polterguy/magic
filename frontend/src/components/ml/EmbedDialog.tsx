@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { backendInfo, openaiThemes } from '../../lib/api';
 import { copyToClipboard } from '../../lib/toast';
 import { Modal } from '../Dialogs';
+import OptionPill from '../OptionPill';
 import Select from '../Select';
 
 function boolParam(name: string, value: boolean) {
@@ -91,10 +92,31 @@ export default function EmbedDialog(props: Readonly<{ type: string; onClose: () 
   const copied = copiedScript === script;
 
   return (
-    <Modal width={680} onClose={props.onClose}>
-      <h2>Embed {props.type}</h2>
-      <div style={{ maxHeight: '55vh', overflow: 'auto', paddingRight: 6 }}>
-        <div className="form-grid">
+    <Modal
+      size="lg"
+      onClose={props.onClose}
+      title={'Embed ' + props.type}
+      subtitle="Style the chatbot, then paste the script into your website."
+      actions={
+        <>
+          <button
+            className="btn btn-secondary"
+            onClick={() => {
+              void copyToClipboard(script, 'The embed script');
+              setCopiedScript(script);
+            }}
+          >
+            {copied ? 'Copied!' : 'Copy embed code'}
+          </button>
+          <button className="btn" onClick={props.onClose}>
+            Done
+          </button>
+        </>
+      }
+    >
+      <section className="modal-section">
+        <div className="modal-section-title">Look</div>
+        <div className="form-cols-2">
           <label>
             Theme
             <Select value={modernTheme} onChange={value => setModernTheme(value)}>
@@ -109,100 +131,68 @@ export default function EmbedDialog(props: Readonly<{ type: string; onClose: () 
           <label>
             Header <input type="text" value={header} onChange={e => setHeader(e.target.value)} />
           </label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <label>
-              Button text{' '}
-              <input type="text" value={buttonText} onChange={e => setButtonText(e.target.value)} />
-            </label>
-            <label>
-              Input placeholder{' '}
-              <input
-                type="text"
-                value={placeholder}
-                onChange={e => setPlaceholder(e.target.value)}
-              />
-            </label>
-            <label>
-              Position
-              <Select value={position} onChange={value => setPosition(value)}>
-                <option value="right">right</option>
-                <option value="left">left</option>
-              </Select>
-            </label>
-            <label>
-              Animation
-              <Select value={animation} onChange={value => setAnimation(value)}>
-                <option value="none">none</option>
-                <option value="scaleUp">scaleUp</option>
-                <option value="slideInBottom">slideInBottom</option>
-                <option value="fadeIn">fadeIn</option>
-              </Select>
-            </label>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10 }}>
-            <label style={{ fontSize: 12 }}>
-              Gradient start{' '}
-              <input
-                type="color"
-                value={startColor}
-                onChange={e => setStartColor(e.target.value)}
-              />
-            </label>
-            <label style={{ fontSize: 12 }}>
-              Gradient end{' '}
-              <input type="color" value={endColor} onChange={e => setEndColor(e.target.value)} />
-            </label>
-            <label style={{ fontSize: 12 }}>
-              Foreground{' '}
-              <input type="color" value={foreColor} onChange={e => setForeColor(e.target.value)} />
-            </label>
-            <label style={{ fontSize: 12 }}>
-              Links{' '}
-              <input type="color" value={linkColor} onChange={e => setLinkColor(e.target.value)} />
-            </label>
-          </div>
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-            {(
-              [
-                ['References', references, setReferences],
-                ['Follow-up questions', followUp, setFollowUp],
-                ['Copy button', copyButton, setCopyButton],
-                ['Right-to-left', rtl, setRtl],
-                ['Sticky', sticky, setSticky],
-                ['History', history, setHistory],
-                ['Attachments', attachments, setAttachments],
-              ] as [string, boolean, (checked: boolean) => void][]
-            ).map(([label, value, setter]) => (
-              <label key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <input type="checkbox" checked={value} onChange={e => setter(e.target.checked)} />
-                {label}
-              </label>
-            ))}
-          </div>
+          <label>
+            Button text{' '}
+            <input type="text" value={buttonText} onChange={e => setButtonText(e.target.value)} />
+          </label>
+          <label>
+            Input placeholder{' '}
+            <input type="text" value={placeholder} onChange={e => setPlaceholder(e.target.value)} />
+          </label>
+          <label>
+            Position
+            <Select value={position} onChange={value => setPosition(value)}>
+              <option value="right">Right</option>
+              <option value="left">Left</option>
+            </Select>
+          </label>
+          <label>
+            Animation
+            <Select value={animation} onChange={value => setAnimation(value)}>
+              <option value="none">None</option>
+              <option value="scaleUp">Scale up</option>
+              <option value="slideInBottom">Slide in from bottom</option>
+              <option value="fadeIn">Fade in</option>
+            </Select>
+          </label>
         </div>
-        <div style={{ marginTop: 12 }}>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>
-            Paste this into your website
-          </div>
-          <pre className="result-json" style={{ whiteSpace: 'pre-wrap', fontSize: 12 }}>
-            {script}
-          </pre>
+        <div className="form-cols-4">
+          <label>
+            Gradient start{' '}
+            <input type="color" value={startColor} onChange={e => setStartColor(e.target.value)} />
+          </label>
+          <label>
+            Gradient end{' '}
+            <input type="color" value={endColor} onChange={e => setEndColor(e.target.value)} />
+          </label>
+          <label>
+            Foreground{' '}
+            <input type="color" value={foreColor} onChange={e => setForeColor(e.target.value)} />
+          </label>
+          <label>
+            Links{' '}
+            <input type="color" value={linkColor} onChange={e => setLinkColor(e.target.value)} />
+          </label>
         </div>
-      </div>
-      <div className="modal-actions">
-        <button
-          className="btn btn-secondary"
-          onClick={() => {
-            void copyToClipboard(script, 'The embed script');
-            setCopiedScript(script);
-          }}
-        >
-          {copied ? 'Copied!' : 'Copy embed code'}
-        </button>
-        <button className="btn" onClick={props.onClose}>
-          Close
-        </button>
-      </div>
+      </section>
+      <section className="modal-section">
+        <div className="modal-section-title">Features</div>
+        <div className="pill-row">
+          <OptionPill label="References" checked={references} onChange={setReferences} />
+          <OptionPill label="Follow-up questions" checked={followUp} onChange={setFollowUp} />
+          <OptionPill label="Copy button" checked={copyButton} onChange={setCopyButton} />
+          <OptionPill label="Right-to-left" checked={rtl} onChange={setRtl} />
+          <OptionPill label="Sticky" checked={sticky} onChange={setSticky} />
+          <OptionPill label="History" checked={history} onChange={setHistory} />
+          <OptionPill label="Attachments" checked={attachments} onChange={setAttachments} />
+        </div>
+      </section>
+      <section className="modal-section">
+        <div className="modal-section-title">Embed script</div>
+        <pre className="result-json" style={{ whiteSpace: 'pre-wrap' }}>
+          {script}
+        </pre>
+      </section>
     </Modal>
   );
 }

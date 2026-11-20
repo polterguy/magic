@@ -291,28 +291,32 @@ export default function Plugins() {
           );
         })}
       {details && (
-        <Modal width={700} onClose={() => setDetails(null)}>
-          <h2>{details.name}</h2>
+        <Modal
+          size="lg"
+          onClose={() => setDetails(null)}
+          title={details.name}
+          actions={
+            <>
+              <button className="btn btn-secondary" onClick={() => setDetails(null)}>
+                Close
+              </button>
+              <button
+                className="btn"
+                onClick={() => {
+                  const app = details;
+                  setDetails(null);
+                  void install(app);
+                }}
+              >
+                {installed.has(details.name) ? 'Reinstall' : 'Install'}
+              </button>
+            </>
+          }
+        >
           <div
             className="markdown-body"
-            style={{ maxHeight: '60vh', overflowY: 'auto' }}
             dangerouslySetInnerHTML={{ __html: safeHtml(details.description) }}
           />
-          <div className="modal-actions">
-            <button className="btn btn-secondary" onClick={() => setDetails(null)}>
-              Close
-            </button>
-            <button
-              className="btn"
-              onClick={() => {
-                const app = details;
-                setDetails(null);
-                void install(app);
-              }}
-            >
-              {installed.has(details.name) ? 'Reinstall' : 'Install'}
-            </button>
-          </div>
         </Modal>
       )}
     </>

@@ -25,6 +25,7 @@ import BusyLabel from '../BusyLabel';
 import CodeEditor from '../CodeEditor';
 import CreateSystemMessageDialog from '../CreateSystemMessageDialog';
 import { Modal } from '../Dialogs';
+import OptionPill from '../OptionPill';
 import RoleChips from '../RoleChips';
 import Select from '../Select';
 import Tabs from '../Tabs';
@@ -262,8 +263,27 @@ export default function EditModelDialog(
   const tabStyle = (tab: string) => ({ display: dialogTab === tab ? 'flex' : 'none' });
 
   return (
-    <Modal width={640} onClose={props.onClose} onSubmit={save}>
-      <h2>{existing ? 'Edit ' + existing.type : 'New model'}</h2>
+    <Modal
+      size="lg"
+      onClose={props.onClose}
+      onSubmit={save}
+      title={existing ? 'Edit ' + existing.type : 'New model'}
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button
+            className="btn"
+            onClick={save}
+            disabled={busy || !canSave}
+            title={canSave ? undefined : 'Give the model a name, and select an LLM'}
+          >
+            <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
+          </button>
+        </>
+      }
+    >
       <Tabs
         tabs={[
           { id: 'general', label: 'General' },
@@ -273,8 +293,9 @@ export default function EditModelDialog(
         active={dialogTab}
         onChange={setDialogTab}
       />
-      <div style={{ maxHeight: '55vh', overflow: 'auto', paddingRight: 6 }}>
-        <div className="form-grid" style={tabStyle('general')}>
+      {/* A plain column, not a form-grid, holds the pills: form-grid restyles every label in it. */}
+      <div className="modal-section" style={tabStyle('general')}>
+        <div className="form-grid">
           {!existing && (
             <label>
               Type name <input type="text" value={type} onChange={e => setType(e.target.value)} />
@@ -330,7 +351,7 @@ export default function EditModelDialog(
             Greeting{' '}
             <input type="text" value={greeting} onChange={e => setGreeting(e.target.value)} />
           </label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <div className="form-cols-2">
             {/* Threshold is dead weight when embeddings are off — and for pure
                 keyword retrieval, which takes BM25 rank order as it comes. In
                 mixed mode it doubles as the keyword leg's relative cutoff. */}
@@ -373,8 +394,10 @@ export default function EditModelDialog(
           {/* Collapsed behind a summary, same as the Generator's auth section —
               ten role chips earn their space only while being edited. */}
           <div>
-            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Authorisation</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <div className="modal-label" style={{ marginTop: 0, marginBottom: 6 }}>
+              Authorisation
+            </div>
+            <div className="pill-row">
               <span>
                 {auth.length > 0 ? auth.join(', ') : <em className="muted">public — no roles</em>}
               </span>
@@ -400,220 +423,190 @@ export default function EditModelDialog(
               </div>
             )}
           </div>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <input
-                type="checkbox"
-                checked={supervised}
-                onChange={e => setSupervised(e.target.checked)}
-              />{' '}
-              Supervised
-            </label>
-            <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <input
-                type="checkbox"
-                checked={useEmbeddings}
-                onChange={e => setUseEmbeddings(e.target.checked)}
-              />{' '}
-              Use embeddings
-            </label>
-            <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <input type="checkbox" checked={cached} onChange={e => setCached(e.target.checked)} />{' '}
-              Cached
-            </label>
-          </div>
         </div>
-        <div className="form-grid" style={tabStyle('behaviour')}>
+        <div className="pill-row">
+          <OptionPill label="Supervised" checked={supervised} onChange={setSupervised} />
+          <OptionPill label="Use embeddings" checked={useEmbeddings} onChange={setUseEmbeddings} />
+          <OptionPill label="Cached" checked={cached} onChange={setCached} />
+        </div>
+      </div>
+      <div className="form-grid" style={tabStyle('behaviour')}>
+        <label>
+          Conversation starters (markdown list){' '}
+          <textarea
+            rows={4}
+            value={extra.conversation_starters}
+            onChange={e => setField('conversation_starters', e.target.value)}
+          />
+        </label>
+        <div className="form-cols-2">
           <label>
-            Conversation starters (markdown list){' '}
-            <textarea
-              rows={4}
-              value={extra.conversation_starters}
-              onChange={e => setField('conversation_starters', e.target.value)}
+            Completion slot
+            <Select
+              value={extra.completion_slot}
+              onChange={value => setField('completion_slot', value)}
+            >
+              {!completionSlots.includes(extra.completion_slot) && (
+                <option value={extra.completion_slot}>{extra.completion_slot}</option>
+              )}
+              {completionSlots.map(slot => (
+                <option key={slot} value={slot}>
+                  {slot}
+                </option>
+              ))}
+            </Select>
+          </label>
+          <label>
+            Max requests (-1 = unlimited){' '}
+            <input
+              type="number"
+              value={extra.max_requests}
+              onChange={e => setField('max_requests', e.target.value)}
             />
           </label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <label>
-              Completion slot
-              <Select
-                value={extra.completion_slot}
-                onChange={value => setField('completion_slot', value)}
-              >
-                {!completionSlots.includes(extra.completion_slot) && (
-                  <option value={extra.completion_slot}>{extra.completion_slot}</option>
-                )}
-                {completionSlots.map(slot => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </Select>
-            </label>
-            <label>
-              Max requests (-1 = unlimited){' '}
-              <input
-                type="number"
-                value={extra.max_requests}
-                onChange={e => setField('max_requests', e.target.value)}
-              />
-            </label>
-            <label>
-              Max function invocations{' '}
-              <input
-                type="number"
-                value={extra.max_function_invocations}
-                onChange={e => setField('max_function_invocations', e.target.value)}
-              />
-            </label>
-            <label>
-              Max session items{' '}
-              <input
-                type="number"
-                value={extra.max_session_items}
-                onChange={e => setField('max_session_items', e.target.value)}
-              />
-            </label>
-            <label>
-              Session timeout{' '}
-              <input
-                type="number"
-                min="0"
-                title="Seconds a conversation's history is remembered between questions. Defaults to 1200, twenty minutes."
-                value={extra.session_timeout}
-                onChange={e => setField('session_timeout', e.target.value)}
-              />
-            </label>
-            <label>
-              No requests served{' '}
-              <input
-                type="number"
-                title="How many requests this model has answered so far"
-                value={extra.no_requests}
-                onChange={e => setField('no_requests', e.target.value)}
-              />
-            </label>
-            {/* The single value carries three modes: negative → no captcha,
+          <label>
+            Max function invocations{' '}
+            <input
+              type="number"
+              value={extra.max_function_invocations}
+              onChange={e => setField('max_function_invocations', e.target.value)}
+            />
+          </label>
+          <label>
+            Max session items{' '}
+            <input
+              type="number"
+              value={extra.max_session_items}
+              onChange={e => setField('max_session_items', e.target.value)}
+            />
+          </label>
+          <label>
+            Session timeout{' '}
+            <input
+              type="number"
+              min="0"
+              title="Seconds a conversation's history is remembered between questions. Defaults to 1200, twenty minutes."
+              value={extra.session_timeout}
+              onChange={e => setField('session_timeout', e.target.value)}
+            />
+          </label>
+          <label>
+            No requests served{' '}
+            <input
+              type="number"
+              title="How many requests this model has answered so far"
+              value={extra.no_requests}
+              onChange={e => setField('no_requests', e.target.value)}
+            />
+          </label>
+          {/* The single value carries three modes: negative → no captcha,
                 0 → Magic's built-in captcha, above 0 → Google reCAPTCHA using
                 this as the minimum score. It is persisted exactly as typed —
                 ml_types.recaptcha is NOT NULL, so "no captcha" is a negative
                 number rather than null. */}
-            <label>
-              Captcha{' '}
-              <input
-                type="number"
-                step="0.1"
-                title="Below 0: no captcha. 0: Magic's built-in captcha. Above 0: Google reCAPTCHA, using this as the minimum score (0-1)."
-                value={extra.recaptcha}
-                onChange={e => setField('recaptcha', e.target.value)}
-              />
-            </label>
-          </div>
+          <label>
+            Captcha{' '}
+            <input
+              type="number"
+              step="0.1"
+              title="Below 0: no captcha. 0: Magic's built-in captcha. Above 0: Google reCAPTCHA, using this as the minimum score (0-1)."
+              value={extra.recaptcha}
+              onChange={e => setField('recaptcha', e.target.value)}
+            />
+          </label>
         </div>
-        <div className="form-grid" style={tabStyle('integrations')}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {/* base_url is the site the daily "ainiro-crawl-machine-learning-models"
+      </div>
+      <div className="form-grid" style={tabStyle('integrations')}>
+        <div className="form-cols-2">
+          {/* base_url is the site the daily "ainiro-crawl-machine-learning-models"
                 task re-crawls to keep the model's training data fresh — not an
                 LLM API base. */}
-            <label>
-              Auto-crawl URL{' '}
-              <input
-                type="text"
-                placeholder="https://example.com"
-                title="If set, this site is re-crawled once a day to add new pages to the model"
-                value={extra.base_url}
-                onChange={e => setField('base_url', e.target.value)}
-              />
-            </label>
-            <label>
-              API key override{' '}
-              <input
-                type="text"
-                className="secret"
-                autoComplete="off"
-                value={extra.api_key}
-                onChange={e => setField('api_key', e.target.value)}
-              />
-            </label>
-            <label>
-              Initial questionnaire
-              <Select
-                value={extra.initial_questionnaire}
-                onChange={value => setField('initial_questionnaire', value)}
-              >
-                <option value="">No questionnaire</option>
-                {/* A questionnaire that has since been deleted still shows,
+          <label>
+            Auto-crawl URL{' '}
+            <input
+              type="text"
+              placeholder="https://example.com"
+              title="If set, this site is re-crawled once a day to add new pages to the model"
+              value={extra.base_url}
+              onChange={e => setField('base_url', e.target.value)}
+            />
+          </label>
+          <label>
+            API key override{' '}
+            <input
+              type="text"
+              className="secret"
+              autoComplete="off"
+              value={extra.api_key}
+              onChange={e => setField('api_key', e.target.value)}
+            />
+          </label>
+          <label>
+            Initial questionnaire
+            <Select
+              value={extra.initial_questionnaire}
+              onChange={value => setField('initial_questionnaire', value)}
+            >
+              <option value="">No questionnaire</option>
+              {/* A questionnaire that has since been deleted still shows,
                     so saving doesn't silently drop it. */}
-                {extra.initial_questionnaire !== '' &&
-                  !questionnaires.some(q => q.name === extra.initial_questionnaire) && (
-                    <option value={extra.initial_questionnaire}>
-                      {extra.initial_questionnaire}
-                    </option>
-                  )}
-                {questionnaires.map(item => (
-                  <option key={item.name} value={item.name}>
-                    {item.name}
-                  </option>
-                ))}
-              </Select>
-            </label>
-            {/* How snippets are found for a question. Keyword (BM25) needs no
+              {extra.initial_questionnaire !== '' &&
+                !questionnaires.some(q => q.name === extra.initial_questionnaire) && (
+                  <option value={extra.initial_questionnaire}>{extra.initial_questionnaire}</option>
+                )}
+              {questionnaires.map(item => (
+                <option key={item.name} value={item.name}>
+                  {item.name}
+                </option>
+              ))}
+            </Select>
+          </label>
+          {/* How snippets are found for a question. Keyword (BM25) needs no
                 OpenAI key at all; Hybrid merges both with rank fusion. "Use
                 embeddings" is the master switch for retrieval as such, so
                 without it there is nothing here to choose between. */}
-            <label style={fadedUnlessEmbeddings}>
-              Retrieval
-              <Select
-                value={retrieval}
-                disabled={!useEmbeddings}
-                title={embeddingsHint}
-                onChange={value => setRetrieval(value)}
-              >
-                <option value="embeddings">Semantic (embeddings)</option>
-                <option value="bm25">Keyword (BM25)</option>
-                <option value="mixed">Hybrid (mixed)</option>
-              </Select>
-            </label>
-            {/* Only relevant when embeddings are involved — it's the model
+          <label style={fadedUnlessEmbeddings}>
+            Retrieval
+            <Select
+              value={retrieval}
+              disabled={!useEmbeddings}
+              title={embeddingsHint}
+              onChange={value => setRetrieval(value)}
+            >
+              <option value="embeddings">Semantic (embeddings)</option>
+              <option value="bm25">Keyword (BM25)</option>
+              <option value="mixed">Hybrid (mixed)</option>
+            </Select>
+          </label>
+          {/* Only relevant when embeddings are involved — it's the model
                 used to vectorise the training snippets. */}
-            <label style={fadedUnlessVectors}>
-              Vector model
-              <Select
-                value={extra.vector_model}
-                disabled={!useEmbeddings || retrieval === 'bm25'}
-                onChange={value => setField('vector_model', value)}
-              >
-                {!models.some(candidate => candidate.id === extra.vector_model) && (
-                  <option value={extra.vector_model}>{extra.vector_model}</option>
-                )}
-                {models
-                  .filter(candidate => candidate.vector)
-                  .map(candidate => (
-                    <option key={candidate.id} value={candidate.id}>
-                      {candidate.id}
-                    </option>
-                  ))}
-              </Select>
-            </label>
-          </div>
+          <label style={fadedUnlessVectors}>
+            Vector model
+            <Select
+              value={extra.vector_model}
+              disabled={!useEmbeddings || retrieval === 'bm25'}
+              onChange={value => setField('vector_model', value)}
+            >
+              {!models.some(candidate => candidate.id === extra.vector_model) && (
+                <option value={extra.vector_model}>{extra.vector_model}</option>
+              )}
+              {models
+                .filter(candidate => candidate.vector)
+                .map(candidate => (
+                  <option key={candidate.id} value={candidate.id}>
+                    {candidate.id}
+                  </option>
+                ))}
+            </Select>
+          </label>
         </div>
       </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button
-          className="btn"
-          onClick={save}
-          disabled={busy || !canSave}
-          title={canSave ? undefined : 'Give the model a name, and select an LLM'}
-        >
-          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
-        </button>
-      </div>
       {largeEditor && (
-        <Modal width={1100} onClose={() => setLargeEditor(false)}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-            <h2 style={{ margin: 0, flex: 1 }}>System instruction — {type || 'new model'}</h2>
+        <Modal
+          size="xl"
+          onClose={() => setLargeEditor(false)}
+          title={'System instruction — ' + (type || 'new model')}
+          headerExtra={
             <Select
               value=""
               onChange={value => {
@@ -663,21 +656,24 @@ export default function EditModelDialog(
                 </option>
               ))}
             </Select>
-          </div>
+          }
+          actions={
+            <>
+              <button
+                className="btn btn-secondary"
+                title="Append an AI function's declaration to the system instruction"
+                onClick={() => setAddingFunction(true)}
+              >
+                + AI function
+              </button>
+              <button className="btn" onClick={() => setLargeEditor(false)}>
+                Done
+              </button>
+            </>
+          }
+        >
           <div style={{ height: '65vh', display: 'flex', flexDirection: 'column' }}>
             <CodeEditor value={systemMessage} onChange={setSystemMessage} mode="markdown" />
-          </div>
-          <div className="modal-actions">
-            <button
-              className="btn btn-secondary"
-              title="Append an AI function's declaration to the system instruction"
-              onClick={() => setAddingFunction(true)}
-            >
-              + AI function
-            </button>
-            <button className="btn" onClick={() => setLargeEditor(false)}>
-              Done
-            </button>
           </div>
           {addingFunction && (
             <AddFunctionDialog

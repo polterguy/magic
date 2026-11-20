@@ -8,7 +8,7 @@ import { CSSProperties, ReactNode, useState } from 'react';
 
 import { isMac, Shortcut, shortcutDisplay, SHORTCUTS } from '../lib/shortcuts';
 import { Modal } from './Dialogs';
-import { BoltIcon, CodeFileIcon, FolderIcon, KeyboardIcon, LayoutIcon } from './Icons';
+import { BoltIcon, CodeFileIcon, FolderIcon, LayoutIcon } from './Icons';
 import SearchInput from './SearchInput';
 
 const GROUPS: {
@@ -91,84 +91,74 @@ export default function ShortcutsDialog(props: Readonly<{ onClose: () => void }>
   const paletteCombo = isMac ? 'Cmd + /' : 'Ctrl + /';
 
   return (
-    <Modal width={1000} onClose={props.onClose}>
-      <div className="shortcuts">
-        <header className="shortcuts-header">
-          <span className="shortcuts-badge" aria-hidden="true">
-            <KeyboardIcon />
-          </span>
-          <div className="shortcuts-heading">
-            <h2>Keyboard shortcuts</h2>
-            <div className="shortcuts-subtitle">
-              {query === ''
-                ? `${SHORTCUTS.length} shortcuts`
-                : `${shown} of ${SHORTCUTS.length} shortcuts`}
-              {' · '}
-              {isMac ? 'macOS keys' : 'Windows & Linux keys'}
-            </div>
-          </div>
-          <SearchInput
-            value={filter}
-            onChange={setFilter}
-            placeholder="Filter shortcuts…"
-            label="Filter shortcuts"
-            initialFocus
-          />
-          <button
-            type="button"
-            className="shortcuts-close"
-            title="Close (Esc)"
-            aria-label="Close"
-            onClick={props.onClose}
-          >
-            ×
-          </button>
-        </header>
-
-        {groups.length === 0 ? (
-          <div className="shortcuts-empty">
-            No shortcut matches <b>“{filter.trim()}”</b>
-          </div>
-        ) : (
-          <div className="shortcuts-grid">
-            {groups.map(({ id, title, note, Icon, shortcuts }, index) => (
-              <section
-                className="shortcuts-card"
-                key={id}
-                style={{ '--stagger': index } as CSSProperties}
-              >
-                <div className="shortcuts-card-head">
-                  <span className="shortcuts-card-icon" aria-hidden="true">
-                    <Icon />
-                  </span>
-                  <h3>{title}</h3>
-                  <span className="shortcuts-count">{shortcuts.length}</span>
-                </div>
-                <div className="shortcuts-note">{note}</div>
-                <ul className="shortcuts-list">
-                  {shortcuts.map(shortcut => (
-                    <li className="shortcut-row" key={shortcut.display + shortcut.description}>
-                      <span className="shortcut-description">
-                        {highlight(shortcut.description, query)}
-                      </span>
-                      <Keys combo={shortcutDisplay(shortcut)} />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </div>
-        )}
-
-        <footer className="shortcuts-footer">
+    <Modal
+      size="xl"
+      onClose={props.onClose}
+      title="Keyboard shortcuts"
+      subtitle={
+        <span className="shortcuts-subtitle">
+          {query === ''
+            ? `${SHORTCUTS.length} shortcuts`
+            : `${shown} of ${SHORTCUTS.length} shortcuts`}
+          {' · '}
+          {isMac ? 'macOS keys' : 'Windows & Linux keys'}
+        </span>
+      }
+      headerExtra={
+        <SearchInput
+          value={filter}
+          onChange={setFilter}
+          placeholder="Filter shortcuts…"
+          label="Filter shortcuts"
+          initialFocus
+          style={{ width: 240 }}
+        />
+      }
+      footerStart={
+        <>
           <span>
             <Keys combo={paletteCombo} /> opens this anywhere
           </span>
           <span>
             <Keys combo="Esc" /> closes it
           </span>
-        </footer>
-      </div>
+        </>
+      }
+    >
+      {groups.length === 0 ? (
+        <div className="shortcuts-empty">
+          No shortcut matches <b>“{filter.trim()}”</b>
+        </div>
+      ) : (
+        <div className="shortcuts-grid">
+          {groups.map(({ id, title, note, Icon, shortcuts }, index) => (
+            <section
+              className="shortcuts-card"
+              key={id}
+              style={{ '--stagger': index } as CSSProperties}
+            >
+              <div className="shortcuts-card-head">
+                <span className="shortcuts-card-icon" aria-hidden="true">
+                  <Icon />
+                </span>
+                <h3>{title}</h3>
+                <span className="shortcuts-count">{shortcuts.length}</span>
+              </div>
+              <div className="shortcuts-note">{note}</div>
+              <ul className="shortcuts-list">
+                {shortcuts.map(shortcut => (
+                  <li className="shortcut-row" key={shortcut.display + shortcut.description}>
+                    <span className="shortcut-description">
+                      {highlight(shortcut.description, query)}
+                    </span>
+                    <Keys combo={shortcutDisplay(shortcut)} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      )}
     </Modal>
   );
 }

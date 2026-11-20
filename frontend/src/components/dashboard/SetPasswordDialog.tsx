@@ -34,17 +34,24 @@ export default function SetPasswordDialog(props: Readonly<{ onClose: () => void 
 
   return (
     <Modal
-      width={460}
+      size="sm"
       onClose={props.onClose}
       onSubmit={() => {
         if (!busy && password) void save();
       }}
+      title="Set your password"
+      subtitle="You signed in through an emailed link, which only works once. Set a password so you can sign in normally next time."
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Not now
+          </button>
+          <button className="btn" onClick={save} disabled={busy || password.length < MIN_PASSWORD}>
+            <BusyLabel busy={busy} label="Set password" busyLabel="Saving…" />
+          </button>
+        </>
+      }
     >
-      <h2>Set your password</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        You signed in through an emailed link, which only works once. Set a password so you can sign
-        in normally next time.
-      </p>
       <div className="form-grid">
         <label>
           New password (min {MIN_PASSWORD} characters)
@@ -56,14 +63,6 @@ export default function SetPasswordDialog(props: Readonly<{ onClose: () => void 
             onChange={e => setPassword(e.target.value)}
           />
         </label>
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Not now
-        </button>
-        <button className="btn" onClick={save} disabled={busy || password.length < MIN_PASSWORD}>
-          <BusyLabel busy={busy} label="Set password" busyLabel="Saving…" />
-        </button>
       </div>
     </Modal>
   );

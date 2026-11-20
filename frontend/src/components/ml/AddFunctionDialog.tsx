@@ -77,20 +77,30 @@ export default function AddFunctionDialog(
   );
 
   return (
-    <Modal width={720} onClose={props.onClose}>
-      <h2>Add AI function to {props.type}</h2>
+    <Modal
+      size="lg"
+      onClose={props.onClose}
+      title={'Add AI function to ' + props.type}
+      headerExtra={
+        <SearchInput
+          placeholder="Filter functions…"
+          value={filter}
+          onChange={setFilter}
+          style={{ width: 220 }}
+        />
+      }
+      actions={
+        <button className="btn" onClick={props.onClose}>
+          Done
+        </button>
+      }
+    >
       {error && (
         <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
           {error}
         </Banner>
       )}
-      <SearchInput
-        placeholder="Filter functions…"
-        value={filter}
-        onChange={setFilter}
-        style={{ width: '100%', marginBottom: 10 }}
-      />
-      <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
+      <div>
         {loading && <ListSkeleton withAction />}
         {!loading &&
           visible.map(workflow => (
@@ -108,12 +118,8 @@ export default function AddFunctionDialog(
                 <div>
                   <strong>{workflow.name}</strong>
                 </div>
-                <div className="muted" style={{ fontSize: 13 }}>
-                  {workflow.description}
-                </div>
-                <div className="mono muted" style={{ fontSize: 11 }}>
-                  {workflow.file}
-                </div>
+                <div className="modal-hint">{workflow.description}</div>
+                <div className="mono modal-hint">{workflow.file}</div>
               </div>
               <button
                 className="btn btn-secondary btn-small"
@@ -125,11 +131,6 @@ export default function AddFunctionDialog(
             </div>
           ))}
         {!loading && visible.length === 0 && <div className="muted">No functions found.</div>}
-      </div>
-      <div className="modal-actions">
-        <button className="btn" onClick={props.onClose}>
-          Close
-        </button>
       </div>
     </Modal>
   );

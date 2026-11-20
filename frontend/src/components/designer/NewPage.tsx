@@ -10,6 +10,7 @@
 import { useState } from 'react';
 
 import { Modal } from '../Dialogs';
+import OptionPill from '../OptionPill';
 import { fileForUrl, tidyUrl, urlProblem } from './pageUrls';
 
 // What will happen on Create, or what is wrong with the address typed.
@@ -25,16 +26,16 @@ function NewPageNote(
   const { url, problem, blank, addCss, addJs } = props;
   if (url.trim() === '') {
     return (
-      <p className="designer-note">
+      <p className="modal-hint">
         The address the page will be served at — type / for the site’s own home page.
       </p>
     );
   }
   if (problem) {
-    return <p className="designer-note">{problem}</p>;
+    return <p className="modal-hint">{problem}</p>;
   }
   return (
-    <p className="designer-note">
+    <p className="modal-hint">
       Creates <code>{fileForUrl(url)}</code>, served at <code>{tidyUrl(url)}</code>.
       {blank && (addCss || addJs) && (
         <>
@@ -94,11 +95,25 @@ export default function NewPage(
   }
 
   return (
-    <Modal width={520} onClose={props.onCancel} onSubmit={create}>
-      <h2 style={{ marginTop: 0 }}>New page</h2>
-      <div className="designer-fields">
-        <label className="designer-field">
-          <span>URL</span>
+    <Modal
+      size="md"
+      onClose={props.onCancel}
+      onSubmit={create}
+      title="New page"
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onCancel}>
+            Cancel
+          </button>
+          <button className="btn" onClick={create} disabled={!!problem}>
+            Create
+          </button>
+        </>
+      }
+    >
+      <div className="form-grid">
+        <label>
+          URL{' '}
           <input
             type="text"
             data-initial-focus
@@ -108,8 +123,8 @@ export default function NewPage(
           />
         </label>
 
-        <label className="designer-field">
-          <span>Start from</span>
+        <label>
+          Start from{' '}
           <select value={copyFrom} onChange={event => setCopyFrom(event.target.value)}>
             <option value="">A blank page</option>
             {props.pages.map(page => (
@@ -121,35 +136,17 @@ export default function NewPage(
         </label>
 
         {blank && (
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
+          <div className="pill-row">
+            <OptionPill
+              label="Create a stylesheet for it too"
               checked={addCss}
-              onChange={event => setAddCss(event.target.checked)}
-            />{' '}
-            Create a stylesheet for it too
-          </label>
-        )}
-        {blank && (
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              checked={addJs}
-              onChange={event => setAddJs(event.target.checked)}
-            />{' '}
-            Create a script for it too
-          </label>
+              onChange={setAddCss}
+            />
+            <OptionPill label="Create a script for it too" checked={addJs} onChange={setAddJs} />
+          </div>
         )}
 
         <NewPageNote url={url} problem={problem} blank={blank} addCss={addCss} addJs={addJs} />
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onCancel}>
-          Cancel
-        </button>
-        <button className="btn" onClick={create} disabled={!!problem}>
-          Create
-        </button>
       </div>
     </Modal>
   );

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Modal } from '../Dialogs';
+import OptionPill from '../OptionPill';
 import { asObject, configSection, parseObject, settingText } from './json';
 import { isValidPort } from './smtp';
 
@@ -47,61 +48,80 @@ export default function SmtpDialog(
   }
 
   return (
-    <Modal onClose={props.onClose} onSubmit={save}>
-      <h2>SMTP settings</h2>
-      <div className="form-grid">
-        <label>
-          Host <input type="text" value={host} onChange={e => setHost(e.target.value)} />
-        </label>
-        <label>
-          Port{' '}
-          <input
-            type="number"
-            value={port}
-            aria-invalid={!portValid}
-            onChange={e => setPort(e.target.value)}
-          />
-          {!portValid && (
-            <span style={{ color: 'var(--danger)', fontWeight: 400 }}>
-              A whole number from 1 to 65535
-            </span>
-          )}
-        </label>
-        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input type="checkbox" checked={secure} onChange={e => setSecure(e.target.checked)} />{' '}
-          Secure (TLS)
-        </label>
-        <label>
-          Username{' '}
-          <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
-        </label>
-        <label>
-          Password{' '}
-          <input
-            type="text"
-            className="secret"
-            autoComplete="off"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-        </label>
-        <label>
-          From name{' '}
-          <input type="text" value={fromName} onChange={e => setFromName(e.target.value)} />
-        </label>
-        <label>
-          From address{' '}
-          <input type="text" value={fromAddress} onChange={e => setFromAddress(e.target.value)} />
-        </label>
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={!portValid}>
-          Save
-        </button>
-      </div>
+    <Modal
+      size="md"
+      onClose={props.onClose}
+      onSubmit={save}
+      title="SMTP settings"
+      subtitle="The mail server the backend sends emails through."
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={!portValid}>
+            Save
+          </button>
+        </>
+      }
+    >
+      <section className="modal-section">
+        <div className="modal-section-title">Server</div>
+        <div className="form-cols-2">
+          <label>
+            Host <input type="text" value={host} onChange={e => setHost(e.target.value)} />
+          </label>
+          <label>
+            Port{' '}
+            <input
+              type="number"
+              value={port}
+              aria-invalid={!portValid}
+              onChange={e => setPort(e.target.value)}
+            />
+          </label>
+        </div>
+        {!portValid && (
+          <span className="modal-hint modal-hint-error">
+            The port must be a whole number from 1 to 65535
+          </span>
+        )}
+        <div className="pill-row">
+          <OptionPill label="Secure (TLS)" checked={secure} onChange={setSecure} />
+        </div>
+      </section>
+      <section className="modal-section">
+        <div className="modal-section-title">Sign-in</div>
+        <div className="form-cols-2">
+          <label>
+            Username{' '}
+            <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
+          </label>
+          <label>
+            Password{' '}
+            <input
+              type="text"
+              className="secret"
+              autoComplete="off"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+          </label>
+        </div>
+      </section>
+      <section className="modal-section">
+        <div className="modal-section-title">Sender</div>
+        <div className="form-cols-2">
+          <label>
+            From name{' '}
+            <input type="text" value={fromName} onChange={e => setFromName(e.target.value)} />
+          </label>
+          <label>
+            From address{' '}
+            <input type="text" value={fromAddress} onChange={e => setFromAddress(e.target.value)} />
+          </label>
+        </div>
+      </section>
     </Modal>
   );
 }

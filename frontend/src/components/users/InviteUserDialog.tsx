@@ -58,17 +58,24 @@ export default function InviteUserDialog(
 
   return (
     <Modal
-      width={520}
+      size="md"
       onClose={props.onClose}
       onSubmit={() => {
         if (!busy && email) void invite();
       }}
+      title="Invite user"
+      subtitle="Creates the account and emails a sign-in link. The link works once and expires after 20 minutes — the invitee sets their own password after arriving."
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={invite} disabled={busy || !email.includes('@')}>
+            <BusyLabel busy={busy} label="Send invite" busyLabel="Inviting…" />
+          </button>
+        </>
+      }
     >
-      <h2>Invite user</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Creates the account and emails a sign-in link. The link works once and expires after 20
-        minutes — the invitee sets their own password after arriving.
-      </p>
       <div className="form-grid">
         <label>
           Email — also becomes the username{' '}
@@ -85,14 +92,6 @@ export default function InviteUserDialog(
           <input type="text" value={name} onChange={e => setName(e.target.value)} />
         </label>
         <RolesField roles={props.roles} selected={selectedRoles} onChange={setSelectedRoles} />
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={invite} disabled={busy || !email.includes('@')}>
-          <BusyLabel busy={busy} label="Send invite" busyLabel="Inviting…" />
-        </button>
       </div>
     </Modal>
   );

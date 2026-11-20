@@ -168,9 +168,9 @@ describe('AddFunctionDialog', () => {
     await waitFor(() => expect(buttons[1]).toBeEnabled());
   });
 
-  it('closes with the Close button', async () => {
+  it('closes with the Done button', async () => {
     const { onClose } = renderDialog();
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }));
     expect(onClose).toHaveBeenCalled();
   });
 });

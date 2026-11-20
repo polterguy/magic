@@ -69,20 +69,30 @@ export default function AddWidgetDialog(
   );
 
   return (
-    <Modal width={720} onClose={props.onClose}>
-      <h2>Add widget to {props.type}</h2>
+    <Modal
+      size="lg"
+      onClose={props.onClose}
+      title={'Add widget to ' + props.type}
+      headerExtra={
+        <SearchInput
+          placeholder="Filter widgets…"
+          value={filter}
+          onChange={setFilter}
+          style={{ width: 220 }}
+        />
+      }
+      actions={
+        <button className="btn btn-secondary" onClick={props.onClose}>
+          Done
+        </button>
+      }
+    >
       {error && (
         <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
           {error}
         </Banner>
       )}
-      <SearchInput
-        placeholder="Filter widgets…"
-        value={filter}
-        onChange={setFilter}
-        style={{ width: '100%', marginBottom: 10 }}
-      />
-      <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
+      <div>
         {loading && <ListSkeleton withAction />}
         {!loading &&
           visible.map(widget => (
@@ -98,7 +108,7 @@ export default function AddWidgetDialog(
             >
               <div style={{ flex: 1 }}>
                 <strong>{widget.name}</strong>
-                {widget.description && <div className="muted">{widget.description}</div>}
+                {widget.description && <div className="modal-hint">{widget.description}</div>}
               </div>
               <button
                 className="btn btn-secondary btn-small"
@@ -110,11 +120,6 @@ export default function AddWidgetDialog(
             </div>
           ))}
         {!loading && visible.length === 0 && <div className="muted">No widgets available.</div>}
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Close
-        </button>
       </div>
     </Modal>
   );

@@ -40,22 +40,37 @@ export default function ScheduleDialog(
   }
 
   return (
-    <Modal onClose={props.onClose} onSubmit={save}>
-      <h2>Schedule {props.taskId}</h2>
+    <Modal
+      size="sm"
+      onClose={props.onClose}
+      onSubmit={save}
+      title={'Schedule ' + props.taskId}
+      subtitle="Run the task once at a set time, or over and over."
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={!valid}>
+            Schedule
+          </button>
+        </>
+      }
+    >
       <div className="form-grid">
-        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <label className="checkbox-row">
           <input type="radio" checked={mode === 'fixed'} onChange={() => setMode('fixed')} /> Once,
           at a fixed date
         </label>
         {mode === 'fixed' && (
           <DateTimePicker value={due} onChange={setDue} placeholder="Pick a date and time" />
         )}
-        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <label className="checkbox-row">
           <input type="radio" checked={mode === 'repeat'} onChange={() => setMode('repeat')} />{' '}
           Repeating
         </label>
         {mode === 'repeat' && (
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div className="form-cols-2">
             <Select value={String(number)} onChange={value => setNumber(Number(value))}>
               {REPEAT_NUMBERS.map(option => (
                 <option key={option} value={option}>
@@ -72,7 +87,7 @@ export default function ScheduleDialog(
             </Select>
           </div>
         )}
-        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <label className="checkbox-row">
           <input type="radio" checked={mode === 'custom'} onChange={() => setMode('custom')} />{' '}
           Custom repetition pattern
         </label>
@@ -88,14 +103,6 @@ export default function ScheduleDialog(
           </>
         )}
       </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={!valid}>
-          Schedule
-        </button>
-      </div>
     </Modal>
   );
 }
@@ -103,20 +110,19 @@ export default function ScheduleDialog(
 // The custom pattern's syntax, with worked examples.
 function PatternHelp() {
   return (
-    <div className="muted" style={{ fontSize: 12, lineHeight: 1.6 }}>
-      <div>
+    <div className="modal-hint">
+      <p>
         <strong>MM.dd.HH.mm.ss</strong> — months.days.hours.minutes.seconds
-      </div>
-      <div>
+        <br />
         <strong>ww.HH.mm.ss</strong> — weekdays.hours.minutes.seconds
-      </div>
-      <div style={{ marginTop: 6 }}>
+      </p>
+      <p>
         Use <strong className="mono">**</strong> as a wildcard for the months, days or weekdays
         part, meaning &quot;every one of them&quot;. Give several values with{' '}
         <strong className="mono">|</strong> between them. Hours, minutes and seconds are always
         exact — they take no wildcard.
-      </div>
-      <div style={{ marginTop: 6 }}>
+      </p>
+      <p>
         <span className="mono">**.**.17.30.00</span> — every day at 17:30
         <br />
         <span className="mono">**.01|15.02.00.00</span> — the 1st and 15th of every month at 02:00
@@ -126,7 +132,7 @@ function PatternHelp() {
         <span className="mono">Monday|Friday.09.00.00</span> — Mondays and Fridays at 09:00
         <br />
         <span className="mono">**.22.00.00</span> — every weekday at 22:00
-      </div>
+      </p>
     </div>
   );
 }

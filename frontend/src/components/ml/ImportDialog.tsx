@@ -17,6 +17,7 @@ import { showError } from '../../lib/errors';
 import { showToast } from '../../lib/toast';
 import BusyLabel from '../BusyLabel';
 import { Modal } from '../Dialogs';
+import OptionPill from '../OptionPill';
 import Select from '../Select';
 import SocketFeedback from '../SocketFeedback';
 import Tabs from '../Tabs';
@@ -172,13 +173,48 @@ export default function ImportDialog(
   return (
     <>
       <Modal
-        width={620}
+        size="lg"
         onClose={props.onClose}
         onSubmit={() => {
           if (url) void crawl();
         }}
+        title={'Import into ' + props.type}
+        actions={
+          tab === 'crawl' ? (
+            <>
+              <button className="btn btn-secondary" onClick={props.onClose}>
+                Cancel
+              </button>
+              <button className="btn" onClick={crawl} disabled={!url || uploading}>
+                <BusyLabel busy={uploading} label="Start crawling" busyLabel="Starting…" />
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="btn btn-secondary" onClick={props.onClose}>
+                Done
+              </button>
+              <label className="btn" style={{ cursor: 'pointer' }}>
+                <BusyLabel busy={uploading} label="Select files" busyLabel="Uploading…" />
+                <input
+                  type="file"
+                  multiple
+                  accept={UPLOAD_CATEGORIES[category].accept}
+                  style={{ display: 'none' }}
+                  disabled={uploading}
+                  onChange={e => {
+                    const files = Array.from(e.target.files ?? []);
+                    e.target.value = '';
+                    if (files.length > 0) {
+                      void upload(files);
+                    }
+                  }}
+                />
+              </label>
+            </>
+          )
+        }
       >
-        <h2>Import into {props.type}</h2>
         <Tabs
           tabs={[
             { id: 'crawl', label: 'Crawl website' },
@@ -187,115 +223,88 @@ export default function ImportDialog(
           active={tab}
           onChange={setTab}
         />
+        {/* Plain columns, not form-grids, hold the pills: form-grid restyles every label in it. */}
         {tab === 'crawl' && (
-          <div className="form-grid">
-            <label>
-              Website URL{' '}
-              <input
-                type="text"
-                placeholder="https://example.com"
-                value={url}
-                onChange={e => setUrl(e.target.value)}
-              />
-            </label>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: 12,
-              }}
-            >
+          <div className="modal-section">
+            <div className="form-grid">
               <label>
-                Max pages{' '}
+                Website URL{' '}
                 <input
-                  type="number"
-                  min={1}
-                  max={5000}
-                  title="Maximum number of URLs to crawl"
-                  value={max}
-                  onChange={e => setMax(e.target.value)}
+                  type="text"
+                  placeholder="https://example.com"
+                  value={url}
+                  onChange={e => setUrl(e.target.value)}
                 />
               </label>
-              <label>
-                Delay (seconds){' '}
-                <input
-                  type="number"
-                  min={0.5}
-                  max={30}
-                  step={0.5}
-                  title="Delay between each page requested"
-                  value={delay}
-                  onChange={e => setDelay(e.target.value)}
-                />
-              </label>
+              <div className="form-cols-3">
+                <label>
+                  Max pages{' '}
+                  <input
+                    type="number"
+                    min={1}
+                    max={5000}
+                    title="Maximum number of URLs to crawl"
+                    value={max}
+                    onChange={e => setMax(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Delay (seconds){' '}
+                  <input
+                    type="number"
+                    min={0.5}
+                    max={30}
+                    step={0.5}
+                    title="Delay between each page requested"
+                    value={delay}
+                    onChange={e => setDelay(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Meta value{' '}
+                  <input
+                    type="text"
+                    placeholder="AINIRO-Website-Crawler"
+                    title="Tag associated with every snippet the crawl creates"
+                    value={meta}
+                    onChange={e => setMeta(e.target.value)}
+                  />
+                </label>
+              </div>
             </div>
-            <label>
-              Meta value{' '}
-              <input
-                type="text"
-                placeholder="AINIRO-Website-Crawler"
-                title="Tag associated with every snippet the crawl creates"
-                value={meta}
-                onChange={e => setMeta(e.target.value)}
-              />
-            </label>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, max-content)',
-                gap: '6px 24px',
-              }}
-            >
-              <label
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+            <div className="pill-row">
+              <OptionPill
+                label="Insert source URL"
                 title="Insert the source URL into the completion of each snippet"
-              >
-                <input
-                  type="checkbox"
-                  checked={insertUrl}
-                  onChange={e => setInsertUrl(e.target.checked)}
-                />{' '}
-                Insert source URL
-              </label>
-              <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <input
-                  type="checkbox"
-                  checked={images}
-                  onChange={e => setImages(e.target.checked)}
-                />{' '}
-                Import images
-              </label>
-            </div>
-            <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={props.onClose}>
-                Cancel
-              </button>
-              <button className="btn" onClick={crawl} disabled={!url || uploading}>
-                <BusyLabel busy={uploading} label="Start crawling" busyLabel="Starting…" />
-              </button>
+                checked={insertUrl}
+                onChange={setInsertUrl}
+              />
+              <OptionPill label="Import images" checked={images} onChange={setImages} />
             </div>
           </div>
         )}
         {tab === 'upload' && (
-          <div className="form-grid">
-            <label>
-              File category
-              <Select
-                value={category}
-                onChange={value => setCategory(value as keyof typeof UPLOAD_CATEGORIES)}
-              >
-                {Object.entries(UPLOAD_CATEGORIES).map(([key, value]) => (
-                  <option key={key} value={key}>
-                    {value.label}
-                  </option>
-                ))}
-              </Select>
-            </label>
-            <p className="muted" style={{ margin: 0, fontSize: 13 }}>
-              {UPLOAD_CATEGORIES[category].help}
-            </p>
+          <div className="modal-section">
+            <div className="form-grid">
+              <label>
+                File category
+                <Select
+                  value={category}
+                  onChange={value => setCategory(value as keyof typeof UPLOAD_CATEGORIES)}
+                >
+                  {Object.entries(UPLOAD_CATEGORIES).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value.label}
+                    </option>
+                  ))}
+                </Select>
+              </label>
+              <p className="modal-hint" style={{ margin: 0 }}>
+                {UPLOAD_CATEGORIES[category].help}
+              </p>
+            </div>
             {category === 'structured' && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div className="form-cols-2">
                 <label>
                   Prompt field{' '}
                   <input
@@ -315,91 +324,51 @@ export default function ImportDialog(
               </div>
             )}
             {category === 'text' && (
-              <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <input
-                  type="checkbox"
+              <div className="pill-row">
+                <OptionPill
+                  label="Summarize each file for better retrieval"
                   checked={textSummarize}
-                  onChange={e => setTextSummarize(e.target.checked)}
-                />{' '}
-                Summarize each file for better retrieval
-              </label>
+                  onChange={setTextSummarize}
+                />
+              </div>
             )}
             {category === 'urls' && (
-              <label
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                title="Create summary prompts for each snippet, improving RAG and VSS lookups"
-              >
-                <input
-                  type="checkbox"
+              <div className="pill-row">
+                <OptionPill
+                  label="Vectorise when done"
+                  title="Create summary prompts for each snippet, improving RAG and VSS lookups"
                   checked={urlListVectorize}
-                  onChange={e => setUrlListVectorize(e.target.checked)}
-                />{' '}
-                Vectorise when done
-              </label>
+                  onChange={setUrlListVectorize}
+                />
+              </div>
             )}
             {category === 'pdf' && (
               <>
-                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <div className="pill-row">
+                  <OptionPill
+                    label="One snippet per page"
+                    checked={pdfPreservePages}
+                    onChange={setPdfPreservePages}
+                  />
+                  <OptionPill label="Summarize" checked={pdfSummarize} onChange={setPdfSummarize} />
+                  <OptionPill
+                    label="Overwrite existing"
+                    checked={pdfOverwrite}
+                    onChange={setPdfOverwrite}
+                  />
+                </div>
+                <div className="form-grid">
+                  <label>
+                    Massage prompt (optional — reshapes content with AI first){' '}
                     <input
-                      type="checkbox"
-                      checked={pdfPreservePages}
-                      onChange={e => setPdfPreservePages(e.target.checked)}
-                    />{' '}
-                    One snippet per page
-                  </label>
-                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <input
-                      type="checkbox"
-                      checked={pdfSummarize}
-                      onChange={e => setPdfSummarize(e.target.checked)}
-                    />{' '}
-                    Summarize
-                  </label>
-                  <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <input
-                      type="checkbox"
-                      checked={pdfOverwrite}
-                      onChange={e => setPdfOverwrite(e.target.checked)}
-                    />{' '}
-                    Overwrite existing
+                      type="text"
+                      value={pdfMassage}
+                      onChange={e => setPdfMassage(e.target.value)}
+                    />
                   </label>
                 </div>
-                <label>
-                  Massage prompt (optional — reshapes content with AI first){' '}
-                  <input
-                    type="text"
-                    value={pdfMassage}
-                    onChange={e => setPdfMassage(e.target.value)}
-                  />
-                </label>
               </>
             )}
-            <label
-              className="btn btn-secondary"
-              style={{ cursor: 'pointer', alignSelf: 'flex-start' }}
-            >
-              <BusyLabel busy={uploading} label="Select files" busyLabel="Uploading…" />
-              <input
-                type="file"
-                multiple
-                accept={UPLOAD_CATEGORIES[category].accept}
-                style={{ display: 'none' }}
-                disabled={uploading}
-                onChange={e => {
-                  const files = Array.from(e.target.files ?? []);
-                  e.target.value = '';
-                  if (files.length > 0) {
-                    void upload(files);
-                  }
-                }}
-              />
-            </label>
-            <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={props.onClose}>
-                Close
-              </button>
-            </div>
           </div>
         )}
       </Modal>
