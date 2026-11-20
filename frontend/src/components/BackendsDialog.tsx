@@ -54,12 +54,52 @@ export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => vo
   const signedOut = backends.filter(candidate => !connected(candidate.token));
 
   return (
-    <Modal width={720} onClose={onClose}>
-      <h2 style={{ marginTop: 0 }}>Backends</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Switch between the cloudlets you are signed in to.
-      </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+    <Modal
+      size="lg"
+      onClose={onClose}
+      title="Backends"
+      subtitle="Switch between the cloudlets you are signed in to."
+      actions={
+        <>
+          {signedOut.length > 0 && (
+            <button
+              className="btn btn-secondary"
+              title="Remove every backend you are no longer signed in to"
+              onClick={async () => {
+                if (
+                  await confirm({
+                    title: 'Forget ' + signedOut.length + ' signed out backends?',
+                    message:
+                      'They are removed from this list only — nothing on any server ' +
+                      'is changed, and signing in again adds them back.',
+                    confirmText: 'Forget them',
+                    danger: true,
+                  })
+                ) {
+                  signedOut.forEach(candidate => removeBackend(candidate.url));
+                }
+              }}
+            >
+              Forget signed out ({signedOut.length})
+            </button>
+          )}
+          <button className="btn btn-secondary" onClick={onClose}>
+            Close
+          </button>
+          <button
+            className="btn"
+            title="Sign in to another cloudlet"
+            onClick={() => {
+              addBackend();
+              onClose();
+            }}
+          >
+            Add backend
+          </button>
+        </>
+      }
+    >
+      <div className="toolbar">
         <SearchInput
           placeholder="Filter backends…"
           value={filter}
@@ -176,43 +216,6 @@ export default function BackendsDialog({ onClose }: Readonly<{ onClose: () => vo
           )}
         </tbody>
       </table>
-      <div className="modal-actions">
-        {signedOut.length > 0 && (
-          <button
-            className="btn btn-secondary"
-            title="Remove every backend you are no longer signed in to"
-            onClick={async () => {
-              if (
-                await confirm({
-                  title: 'Forget ' + signedOut.length + ' signed out backends?',
-                  message:
-                    'They are removed from this list only — nothing on any server ' +
-                    'is changed, and signing in again adds them back.',
-                  confirmText: 'Forget them',
-                  danger: true,
-                })
-              ) {
-                signedOut.forEach(candidate => removeBackend(candidate.url));
-              }
-            }}
-          >
-            Forget signed out ({signedOut.length})
-          </button>
-        )}
-        <button className="btn btn-secondary" onClick={onClose}>
-          Close
-        </button>
-        <button
-          className="btn"
-          title="Sign in to another cloudlet"
-          onClick={() => {
-            addBackend();
-            onClose();
-          }}
-        >
-          Add backend
-        </button>
-      </div>
     </Modal>
   );
 }

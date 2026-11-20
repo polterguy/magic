@@ -91,15 +91,30 @@ export default function OpenAiKeyDialog(
   }
 
   return (
-    <Modal width={560} onClose={props.onClose}>
-      <h2>Configure OpenAI</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Supply your OpenAI API key. You can get one{' '}
-        <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">
-          here
-        </a>
-        {'.'}
-      </p>
+    <Modal
+      size="md"
+      onClose={props.onClose}
+      title="Configure OpenAI"
+      subtitle={
+        <>
+          Supply your OpenAI API key. You can get one{' '}
+          <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">
+            here
+          </a>
+          {'.'}
+        </>
+      }
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={busy || !key}>
+            <BusyLabel busy={busy} label="Save key" busyLabel="Saving…" />
+          </button>
+        </>
+      }
+    >
       {error && (
         <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
           {error}
@@ -131,18 +146,10 @@ export default function OpenAiKeyDialog(
           ))}
         </Select>
       </label>
-      <p className="muted" style={{ marginTop: 8, marginBottom: 0, fontSize: 'var(--text-sm)' }}>
+      <p className="modal-hint" style={{ marginTop: 8 }}>
         Saving also switches the <strong>default</strong> model — the one behind Chat Ops and the
         dashboard&apos;s AI tools.
       </p>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={busy || !key}>
-          <BusyLabel busy={busy} label="Save key" busyLabel="Saving…" />
-        </button>
-      </div>
     </Modal>
   );
 }

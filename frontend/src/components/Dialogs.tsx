@@ -9,6 +9,7 @@ import {
   SubmitEvent,
   useCallback,
   useEffect,
+  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -24,6 +25,7 @@ import {
   type PromptOptions,
   type TypedConfirmOptions,
 } from '../lib/useDialog';
+import { CloseIcon } from './Icons';
 
 export type {
   ChoiceButton,
@@ -60,13 +62,33 @@ const modalStack: symbol[] = [];
 const OVERLAY_BASE_Z = 100;
 let modalSeq = 0;
 
+// Preset widths, so dialogs come in a few sizes rather than one per dialog.
+const MODAL_SIZES = { sm: 440, md: 560, lg: 720, xl: 960 } as const;
+
 /*
  * Shared modal shell — every dialog in the app renders through this, so
  * Escape and backdrop-click always close.
+ *
+ * Given a title, it lays the dialog out the one way every dialog should look: a header with the
+ * title, an optional subtitle and a close button; a body that scrolls on its own when it is
+ * long; and a footer holding the actions, which therefore never scroll out of reach. Without a
+ * title the children are rendered into a plain padded box, as before.
  */
 export function Modal(
   props: Readonly<{
     onClose: () => void;
+    title?: ReactNode;
+    // A line under the title saying what the dialog is for.
+    subtitle?: ReactNode;
+    // Controls in the header, between the title and the close button, such as a search field.
+    headerExtra?: ReactNode;
+    // The footer's buttons, right-aligned, with the main action last.
+    actions?: ReactNode;
+    // Footer content on the left, opposite the actions, such as a status or a secondary link.
+    footerStart?: ReactNode;
+    // Makes the dialog a <form>, so submit buttons and `required` fields work natively.
+    onFormSubmit?: (event: SubmitEvent<HTMLFormElement>) => void;
+    size?: keyof typeof MODAL_SIZES;
     // When set, Enter pressed inside a plain <input> confirms the dialog — the
     // carriage-return behaviour every text field is expected to have. Textareas,
     // the code editor, buttons and custom Selects are left alone, since they are
@@ -79,6 +101,10 @@ export function Modal(
   }>,
 ) {
   const [id] = useState(() => Symbol('modal'));
+  const titleId = useId();
+  const structured = props.title !== undefined;
+  const width =
+    props.width ?? (props.size || structured ? MODAL_SIZES[props.size ?? 'md'] : undefined);
   const [zIndex] = useState(() => OVERLAY_BASE_Z + ++modalSeq);
   const boxRef = useRef<HTMLDivElement>(null);
   // Through a ref so the mount-only effects below never see a stale closure.
@@ -201,15 +227,77 @@ export function Modal(
     >
       <div
         ref={boxRef}
-        className={props.bare ? 'modal-box modal-bare' : 'modal-box'}
+        className={boxClass(props.bare, structured)}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={structured ? titleId : undefined}
         tabIndex={-1}
-        style={props.width ? { width: props.width, maxWidth: '90vw' } : undefined}
+        style={width ? ({ '--modal-width': width + 'px' } as React.CSSProperties) : undefined}
       >
-        {props.children}
+        {structured ? (
+          <ModalLayout {...props} titleId={titleId} body={props.children} />
+        ) : (
+          props.children
+        )}
       </div>
     </div>
+  );
+}
+
+function boxClass(bare: boolean | undefined, structured: boolean) {
+  if (bare) {
+    return 'modal-box modal-bare';
+  }
+  return structured ? 'modal-box modal-structured' : 'modal-box';
+}
+
+// The header, scrolling body and footer of a dialog given a title.
+function ModalLayout(
+  props: Readonly<{
+    title?: ReactNode;
+    subtitle?: ReactNode;
+    headerExtra?: ReactNode;
+    actions?: ReactNode;
+    footerStart?: ReactNode;
+    onFormSubmit?: (event: SubmitEvent<HTMLFormElement>) => void;
+    onClose: () => void;
+    titleId: string;
+    body: ReactNode;
+  }>,
+) {
+  const content = (
+    <>
+      <header className="modal-header">
+        <div className="modal-heading">
+          <h2 id={props.titleId}>{props.title}</h2>
+          {props.subtitle && <div className="modal-subtitle">{props.subtitle}</div>}
+        </div>
+        {props.headerExtra}
+        <button
+          type="button"
+          className="icon-btn modal-close"
+          title="Close dialog"
+          aria-label="Close dialog"
+          onClick={props.onClose}
+        >
+          <CloseIcon />
+        </button>
+      </header>
+      <div className="modal-body">{props.body}</div>
+      {(props.actions || props.footerStart) && (
+        <footer className="modal-footer">
+          {props.footerStart && <div className="modal-footer-start">{props.footerStart}</div>}
+          {props.actions}
+        </footer>
+      )}
+    </>
+  );
+  return props.onFormSubmit ? (
+    <form className="modal-layout" onSubmit={props.onFormSubmit}>
+      {content}
+    </form>
+  ) : (
+    <div className="modal-layout">{content}</div>
   );
 }
 
@@ -321,83 +409,84 @@ export function DialogProvider({ children }: Readonly<{ children: ReactNode }>) 
     <DialogContext.Provider value={dialogs}>
       {children}
       {active && (
-        <Modal onClose={dismiss}>
-          <form onSubmit={submit}>
-            <h2>{active.options.title}</h2>
-            {active.options.message && <p>{active.options.message}</p>}
-            {active.kind === 'prompt' && (
-              <label className="modal-label">
-                {active.options.label}
-                <input
-                  autoFocus
-                  ref={selectSuggestion}
-                  type={active.options.password ? 'password' : 'text'}
-                  // Keeps the browser from autofilling saved credentials into
-                  // a prompt that merely happens to mask its input.
-                  autoComplete={active.options.password ? 'new-password' : 'off'}
-                  value={draft}
-                  onChange={event => setDraft(event.target.value)}
-                />
-              </label>
-            )}
-            {active.kind === 'form' && (
-              <div style={{ maxHeight: '55vh', overflow: 'auto' }}>
-                {active.options.fields!.map((field, index) => (
-                  <label className="modal-label" key={field.name}>
-                    <span>
-                      {field.name}
-                      <span className="muted" style={{ fontWeight: 400 }}>
-                        {' — ' + (field.type ?? 'string')}
-                        {field.mandatory ? ', mandatory' : ''}
-                      </span>
+        <Modal
+          size="sm"
+          onClose={dismiss}
+          onFormSubmit={submit}
+          title={active.options.title}
+          actions={
+            active.kind === 'choice' ? (
+              active.options.buttons!.map(button => (
+                <button
+                  key={button.value}
+                  type="button"
+                  className={BUTTON_CLASSES[button.kind as string] ?? 'btn btn-secondary'}
+                  onClick={() => {
+                    active.resolve(button.value);
+                    setActive(null);
+                  }}
+                >
+                  {button.label}
+                </button>
+              ))
+            ) : (
+              <>
+                <button type="button" className="btn btn-secondary" onClick={dismiss}>
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className={'btn' + (active.options.danger ? ' btn-danger' : '')}
+                >
+                  {active.options.confirmText ?? 'OK'}
+                </button>
+              </>
+            )
+          }
+        >
+          {active.options.message && <p>{active.options.message}</p>}
+          {active.kind === 'prompt' && (
+            <label className="modal-label">
+              {active.options.label}
+              <input
+                autoFocus
+                ref={selectSuggestion}
+                type={active.options.password ? 'password' : 'text'}
+                // Keeps the browser from autofilling saved credentials into
+                // a prompt that merely happens to mask its input.
+                autoComplete={active.options.password ? 'new-password' : 'off'}
+                value={draft}
+                onChange={event => setDraft(event.target.value)}
+              />
+            </label>
+          )}
+          {active.kind === 'form' && (
+            <div className="form-grid">
+              {active.options.fields!.map((field, index) => (
+                <label key={field.name}>
+                  <span>
+                    {field.name}{' '}
+                    <span className="modal-hint">
+                      {(field.type ?? 'string') + (field.mandatory ? ', mandatory' : '')}
                     </span>
-                    <input
-                      autoFocus={index === 0}
-                      type={
-                        /^(u?int|u?long|u?short|decimal|double|float)$/.test(field.type ?? '')
-                          ? 'number'
-                          : 'text'
-                      }
-                      required={field.mandatory ?? false}
-                      value={formDraft[field.name] ?? ''}
-                      onChange={event =>
-                        setFormDraft({ ...formDraft, [field.name]: event.target.value })
-                      }
-                    />
-                  </label>
-                ))}
-              </div>
-            )}
-            <div className="modal-actions">
-              {active.kind === 'choice' ? (
-                active.options.buttons!.map(button => (
-                  <button
-                    key={button.value}
-                    type="button"
-                    className={BUTTON_CLASSES[button.kind as string] ?? 'btn btn-secondary'}
-                    onClick={() => {
-                      active.resolve(button.value);
-                      setActive(null);
-                    }}
-                  >
-                    {button.label}
-                  </button>
-                ))
-              ) : (
-                <>
-                  <button type="button" className="btn btn-secondary" onClick={dismiss}>
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className={'btn' + (active.options.danger ? ' btn-danger' : '')}
-                  >
-                    {active.options.confirmText ?? 'OK'}
-                  </button>
-                </>
-              )}
+                  </span>
+                  <input
+                    autoFocus={index === 0}
+                    type={
+                      /^(u?int|u?long|u?short|decimal|double|float)$/.test(field.type ?? '')
+                        ? 'number'
+                        : 'text'
+                    }
+                    required={field.mandatory ?? false}
+                    value={formDraft[field.name] ?? ''}
+                    onChange={event =>
+                      setFormDraft({ ...formDraft, [field.name]: event.target.value })
+                    }
+                  />
+                </label>
+              ))}
             </div>
-          </form>
+          )}
         </Modal>
       )}
     </DialogContext.Provider>

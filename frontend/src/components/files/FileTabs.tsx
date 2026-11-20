@@ -36,7 +36,7 @@ export default function FileTabs(
           onClick={() => props.onSelect(file.path)}
         >
           <span className="file-tab-name">
-            {nameOf(file.path)}
+            <span className="file-tab-label">{nameOf(file.path)}</span>
             {file.content !== file.saved && <span className="file-tab-dirty" />}
           </span>
           <button

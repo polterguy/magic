@@ -35,13 +35,23 @@ export default function RoleDialog(
 
   return (
     <Modal
-      width={520}
+      size="md"
       onClose={props.onClose}
       onSubmit={() => {
         if (!busy && name) void save();
       }}
+      title={isEdit ? 'Edit role ' + props.role.name : 'New role'}
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={busy || !name}>
+            <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
+          </button>
+        </>
+      }
     >
-      <h2>{isEdit ? 'Edit role ' + props.role.name : 'New role'}</h2>
       <div className="form-grid">
         <label>
           Name{' '}
@@ -63,14 +73,6 @@ export default function RoleDialog(
             onChange={e => setDescription(e.target.value)}
           />
         </label>
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={busy || !name}>
-          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
-        </button>
       </div>
     </Modal>
   );

@@ -33,36 +33,51 @@ export default function RecaptchaDialog(
   }
 
   return (
-    <Modal width={560} onClose={props.onClose} onSubmit={save}>
-      <h2>reCAPTCHA settings</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Your Google reCAPTCHA v3 keys, from{' '}
-        <a href="https://www.google.com/recaptcha/admin" target="_blank" rel="noreferrer">
-          the reCAPTCHA admin console
-        </a>
-        {'. Leave both fields empty to turn reCAPTCHA off.'}
-      </p>
-      <label className="modal-label">
-        Site key{' '}
-        <input type="text" autoComplete="off" value={key} onChange={e => setKey(e.target.value)} />
-      </label>
-      <label className="modal-label">
-        Secret key{' '}
-        <input
-          type="text"
-          className="secret"
-          autoComplete="off"
-          value={secret}
-          onChange={e => setSecret(e.target.value)}
-        />
-      </label>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save}>
-          Save
-        </button>
+    <Modal
+      size="md"
+      onClose={props.onClose}
+      onSubmit={save}
+      title="reCAPTCHA settings"
+      subtitle={
+        <>
+          Your Google reCAPTCHA v3 keys, from{' '}
+          <a href="https://www.google.com/recaptcha/admin" target="_blank" rel="noreferrer">
+            the reCAPTCHA admin console
+          </a>
+          {'. Leave both fields empty to turn reCAPTCHA off.'}
+        </>
+      }
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save}>
+            Save
+          </button>
+        </>
+      }
+    >
+      <div className="form-grid">
+        <label>
+          Site key{' '}
+          <input
+            type="text"
+            autoComplete="off"
+            value={key}
+            onChange={e => setKey(e.target.value)}
+          />
+        </label>
+        <label>
+          Secret key{' '}
+          <input
+            type="text"
+            className="secret"
+            autoComplete="off"
+            value={secret}
+            onChange={e => setSecret(e.target.value)}
+          />
+        </label>
       </div>
     </Modal>
   );

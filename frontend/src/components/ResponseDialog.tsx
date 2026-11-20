@@ -28,47 +28,62 @@ export default function ResponseDialog(
   const [items, setItems] = useState<number | null>(null);
 
   return (
-    <Modal width={860} onClose={onClose}>
-      <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 0 }}>
-        Response{' '}
-        <span className={'badge ' + (result.status < 400 ? 'badge-get' : 'badge-error')}>
-          {result.status}
-        </span>
-        <span className="muted" style={{ fontSize: 13, fontWeight: 400 }}>
-          {result.elapsed} ms
-        </span>
-        {items !== null && (
-          <span className="muted" style={{ fontSize: 13, fontWeight: 400 }}>
-            {items} {items === 1 ? 'item' : 'items'}
+    <Modal
+      size="xl"
+      onClose={onClose}
+      title={
+        <>
+          Response{' '}
+          <span className={'badge ' + (result.status < 400 ? 'badge-get' : 'badge-error')}>
+            {result.status}
           </span>
-        )}
-        {result.runAs && (
-          <span className="badge" title="This call ran as a caller holding only this role">
-            as {result.runAs}
-          </span>
-        )}
-      </h2>
+          {result.runAs && (
+            <>
+              {' '}
+              <span className="badge" title="This call ran as a caller holding only this role">
+                as {result.runAs}
+              </span>
+            </>
+          )}
+        </>
+      }
+      subtitle={
+        <>
+          <span>{result.elapsed} ms</span>
+          {items !== null && (
+            <>
+              {' · '}
+              <span>
+                {items} {items === 1 ? 'item' : 'items'}
+              </span>
+            </>
+          )}
+        </>
+      }
+      actions={
+        <>
+          {body !== null && (
+            <button
+              className="btn btn-secondary"
+              onClick={() => copyToClipboard(body, 'The response')}
+            >
+              Copy response
+            </button>
+          )}
+          <button className="btn" onClick={onClose}>
+            Close
+          </button>
+        </>
+      }
+    >
       <ResponseHeaders headers={result.headers} />
       {props.httpInvocation && !servedByBackend() && (
-        <p className="muted" style={{ fontSize: 12, margin: '0 0 8px 0' }}>
+        <p className="modal-hint" style={{ margin: '0 0 8px 0' }}>
           The dashboard and this backend are on different domains, so the browser only exposes some
           of the response headers — the server may have sent more.
         </p>
       )}
       <ResultViewer result={result} height="42vh" onText={setBody} onItems={setItems} />
-      <div className="modal-actions">
-        {body !== null && (
-          <button
-            className="btn btn-secondary"
-            onClick={() => copyToClipboard(body, 'The response')}
-          >
-            Copy response
-          </button>
-        )}
-        <button className="btn" onClick={onClose}>
-          Close
-        </button>
-      </div>
     </Modal>
   );
 }

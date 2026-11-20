@@ -34,13 +34,23 @@ export default function ChangePasswordDialog(
 
   return (
     <Modal
-      width={480}
+      size="sm"
       onClose={props.onClose}
       onSubmit={() => {
         if (!busy && password) void save();
       }}
+      title={'Change password for ' + props.user.username}
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={busy || !password}>
+            <BusyLabel busy={busy} label="Change password" busyLabel="Saving…" />
+          </button>
+        </>
+      }
     >
-      <h2>Change password for {props.user.username}</h2>
       <label className="modal-label">
         New password (min {MIN_PASSWORD} characters)
         <input
@@ -54,14 +64,6 @@ export default function ChangePasswordDialog(
           onChange={e => setPassword(e.target.value)}
         />
       </label>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={busy || !password}>
-          <BusyLabel busy={busy} label="Change password" busyLabel="Saving…" />
-        </button>
-      </div>
     </Modal>
   );
 }

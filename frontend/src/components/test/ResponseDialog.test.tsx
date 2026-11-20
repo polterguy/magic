@@ -123,7 +123,7 @@ describe('ResponseDialog summary', () => {
 
   it('closes with the Close button', async () => {
     const { onClose } = renderDialog(result());
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    await userEvent.click(screen.getByText('Close', { selector: 'button' }));
     expect(onClose).toHaveBeenCalled();
   });
 });

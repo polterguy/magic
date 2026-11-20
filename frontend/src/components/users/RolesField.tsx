@@ -8,8 +8,8 @@ export default function RolesField(
   props: Readonly<{ roles: Role[]; selected: string[]; onChange: (selected: string[]) => void }>,
 ) {
   return (
-    <div>
-      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Roles (optional)</div>
+    <div className="form-group">
+      <div className="form-group-label">Roles (optional)</div>
       <RoleChips
         roles={props.roles}
         selected={props.selected}

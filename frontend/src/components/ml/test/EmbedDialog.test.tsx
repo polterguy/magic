@@ -123,10 +123,10 @@ describe('EmbedDialog', () => {
 
   it('adds position and animation', async () => {
     renderDialog();
-    await pick('right', 'left');
+    await pick('Right', 'Left');
     expect(scriptText()).toContain('position=left');
     expect(scriptText()).not.toContain('animation');
-    await pick('none', 'fadeIn');
+    await pick('None', 'Fade in');
     expect(scriptText()).toContain('&animation=fadeIn');
   });
 
@@ -145,7 +145,7 @@ describe('EmbedDialog', () => {
 
   it('closes', async () => {
     const { onClose } = renderDialog();
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }));
     expect(onClose).toHaveBeenCalled();
   });
 });

@@ -56,10 +56,16 @@ export default function IdeDialogs(
       )}
       {(execution.generating || props.waiting) && <AiWaiter />}
       {invokeTarget && (
-        <Modal width={860} onClose={() => execution.setInvokeTarget(null)}>
-          <h2 style={{ marginTop: 0 }}>
-            {invokeTarget.verb.toUpperCase()} {invokeTarget.path}
-          </h2>
+        <Modal
+          size="xl"
+          onClose={() => execution.setInvokeTarget(null)}
+          title={invokeTarget.verb.toUpperCase() + ' ' + invokeTarget.path}
+          actions={
+            <button className="btn btn-secondary" onClick={() => execution.setInvokeTarget(null)}>
+              Close
+            </button>
+          }
+        >
           <InvokePanel
             endpoint={invokeTarget}
             /*
@@ -79,11 +85,6 @@ export default function IdeDialogs(
             }}
             onOpenApi={() => props.onOpenApi(selectedFile)}
           />
-          <div className="modal-actions">
-            <button className="btn btn-secondary" onClick={() => execution.setInvokeTarget(null)}>
-              Close
-            </button>
-          </div>
         </Modal>
       )}
       {recording !== null && (

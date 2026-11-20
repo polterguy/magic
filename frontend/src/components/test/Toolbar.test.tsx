@@ -2,13 +2,14 @@
 /*
  * Overflow Toolbar: the fitting arithmetic, and the rendered row — every action on the bar when
  * there is room, the leftmost unpinned ones in the "more" menu when there isn't, the pinned
- * action staying put, and a change of state never moving anything.
+ * action staying put, and a change of state never moving anything. Groups render as dropdown
+ * menus, and fold into the "more" menu under their own heading.
  */
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import Toolbar, { type ToolbarAction } from '../Toolbar';
+import Toolbar, { type ToolbarAction, type ToolbarEntry } from '../Toolbar';
 import { overflowCount } from '../toolbarOverflow';
 
 describe('overflowCount', () => {
@@ -116,5 +117,100 @@ describe('Toolbar', () => {
     rerender(<Toolbar actions={actions({ busy: true })} />);
     expect(screen.getAllByRole('button')).toHaveLength(before.length);
     expect(screen.getByRole('button', { name: 'Saving…' })).toBeDisabled();
+  });
+});
+
+function grouped(generate: Partial<ToolbarAction> = {}): ToolbarEntry[] {
+  return [
+    {
+      id: 'file',
+      label: 'File',
+      icon: null,
+      items: [
+        { id: 'copy', label: 'Copy path', icon: null, onClick: vi.fn() },
+        { id: 'download', label: 'Download file', icon: null, onClick: vi.fn() },
+      ],
+    },
+    {
+      id: 'hyperlambda',
+      label: 'Hyperlambda',
+      icon: null,
+      items: [
+        { id: 'execute', label: 'Execute', icon: null, onClick: vi.fn() },
+        {
+          id: 'generate',
+          label: 'Generate',
+          busyLabel: 'Generating…',
+          icon: null,
+          onClick: vi.fn(),
+          ...generate,
+        },
+      ],
+    },
+    { id: 'save', label: 'Save', icon: null, pinned: true, primary: true, onClick: vi.fn() },
+  ];
+}
+
+describe('Toolbar groups', () => {
+  it('shows a group as a menu trigger that drops down its actions', async () => {
+    const entries = grouped();
+    render(<Toolbar actions={entries} />);
+    expect(visibleLabels()).toEqual(['File', 'Hyperlambda', 'Save']);
+    expect(screen.queryByRole('menuitem')).toBeNull();
+
+    await userEvent.click(screen.getByRole('button', { name: 'File' }));
+    expect(screen.getAllByRole('menuitem').map(item => item.textContent)).toEqual([
+      'Copy path',
+      'Download file',
+    ]);
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Download file' }));
+    const file = entries[0] as Extract<ToolbarEntry, { items: unknown }>;
+    expect(file.items[1].onClick).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('menuitem')).toBeNull();
+  });
+
+  it('does not run a disabled action in a group', async () => {
+    const entries = grouped({ disabled: true });
+    render(<Toolbar actions={entries} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Hyperlambda' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Generate' }));
+    const hyperlambda = entries[1] as Extract<ToolbarEntry, { items: unknown }>;
+    expect(hyperlambda.items[1].onClick).not.toHaveBeenCalled();
+  });
+
+  it('shows a busy action on its group trigger, which stays usable for the rest', () => {
+    render(<Toolbar actions={grouped({ busy: true })} />);
+    expect(screen.getByRole('button', { name: 'Generating…' })).toBeEnabled();
+  });
+
+  it('disables a group trigger when none of its actions can be taken', () => {
+    const entries: ToolbarEntry[] = [
+      {
+        id: 'group',
+        label: 'Group',
+        icon: null,
+        items: [{ id: 'a', label: 'A', icon: null, disabled: true, onClick: vi.fn() }],
+      },
+    ];
+    render(<Toolbar actions={entries} />);
+    expect(screen.getByRole('button', { name: 'Group' })).toBeDisabled();
+  });
+
+  it('folds overflowed groups into the more menu, each under its heading', async () => {
+    rowWidth = 300; // Too narrow for all three entries, so both groups fold and Save stays.
+    render(<Toolbar actions={grouped()} />);
+    expect(visibleLabels()).toEqual(['', 'Save']);
+
+    await userEvent.click(screen.getByTitle('More actions'));
+    expect(within(screen.getByRole('menu')).getByText('File')).toHaveClass('designer-menu-heading');
+    expect(within(screen.getByRole('menu')).getByText('Hyperlambda')).toHaveClass(
+      'designer-menu-heading',
+    );
+    expect(screen.getAllByRole('menuitem').map(item => item.textContent)).toEqual([
+      'Copy path',
+      'Download file',
+      'Execute',
+      'Generate',
+    ]);
   });
 });

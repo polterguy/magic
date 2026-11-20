@@ -31,11 +31,22 @@ export default function SelectModelDialog(
   }, []);
 
   return (
-    <Modal width={520} onClose={props.onClose}>
-      <h2>Create AI function</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Adds {props.target} as an AI function to the model you select.
-      </p>
+    <Modal
+      size="md"
+      onClose={props.onClose}
+      title="Create AI function"
+      subtitle={<>Adds {props.target} as an AI function to the model you select.</>}
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={() => props.onSelected(type)} disabled={!type}>
+            Create
+          </button>
+        </>
+      }
+    >
       {error && (
         <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
           {error}
@@ -51,14 +62,6 @@ export default function SelectModelDialog(
           ))}
         </Select>
       </label>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={() => props.onSelected(type)} disabled={!type}>
-          Create
-        </button>
-      </div>
     </Modal>
   );
 }

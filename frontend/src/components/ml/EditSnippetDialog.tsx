@@ -128,19 +128,34 @@ export default function EditSnippetDialog(
 
   return (
     <Modal
-      width={820}
+      size="xl"
       onClose={props.onClose}
       onSubmit={() => {
         if (prompt) void save();
       }}
+      title={props.existing ? 'Edit snippet' : 'New snippet'}
+      footerStart={
+        props.existing?.meta && <span className="snippet-meta">{props.existing.meta}</span>
+      }
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={!prompt || busy}>
+            <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
+          </button>
+        </>
+      }
     >
-      <h2>{props.existing ? 'Edit snippet' : 'New snippet'}</h2>
       <div className="form-grid">
         <label>
           Prompt <input type="text" value={prompt} onChange={e => setPrompt(e.target.value)} />
         </label>
         <div>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Completion</div>
+          <div className="modal-label" style={{ marginTop: 0, marginBottom: 6 }}>
+            Completion
+          </div>
           <div style={{ height: '38vh', display: 'flex', flexDirection: 'column' }}>
             <CodeEditor
               value={completion}
@@ -163,15 +178,6 @@ export default function EditSnippetDialog(
             style={{ marginTop: 8 }}
           />
         </div>
-      </div>
-      <div className="modal-actions">
-        {props.existing?.meta && <span className="snippet-meta">{props.existing.meta}</span>}
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={!prompt || busy}>
-          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
-        </button>
       </div>
     </Modal>
   );

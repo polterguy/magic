@@ -30,13 +30,29 @@ export default function NewTableDialog(
 
   return (
     <Modal
+      size="sm"
       onClose={props.onClose}
       onSubmit={() => {
         if (canCreateTable(tableName, pkName))
           props.onCreate(tableName, pkName, pkType, Number(pkLength));
       }}
+      title="New table"
+      subtitle="A table starts with its primary key column; add the other columns afterwards."
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button
+            className="btn"
+            disabled={!canCreateTable(tableName, pkName)}
+            onClick={() => props.onCreate(tableName, pkName, pkType, Number(pkLength))}
+          >
+            Create
+          </button>
+        </>
+      }
     >
-      <h2>New table</h2>
       <div className="form-grid">
         <label>
           Table name{' '}
@@ -46,34 +62,24 @@ export default function NewTableDialog(
           Primary key name{' '}
           <input type="text" value={pkName} onChange={e => setPkName(e.target.value)} />
         </label>
-        <label>
-          Primary key type
-          <Select value={pkType} onChange={value => setPkType(value)}>
-            {PK_TYPES.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.name}
-              </option>
-            ))}
-          </Select>
-        </label>
-        {pkType === 'varchar' && (
+        <div className={pkType === 'varchar' ? 'form-cols-2' : 'form-grid'}>
           <label>
-            Primary key length{' '}
-            <input type="number" value={pkLength} onChange={e => setPkLength(e.target.value)} />
+            Primary key type
+            <Select value={pkType} onChange={value => setPkType(value)}>
+              {PK_TYPES.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.name}
+                </option>
+              ))}
+            </Select>
           </label>
-        )}
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button
-          className="btn"
-          disabled={!canCreateTable(tableName, pkName)}
-          onClick={() => props.onCreate(tableName, pkName, pkType, Number(pkLength))}
-        >
-          Create
-        </button>
+          {pkType === 'varchar' && (
+            <label>
+              Primary key length{' '}
+              <input type="number" value={pkLength} onChange={e => setPkLength(e.target.value)} />
+            </label>
+          )}
+        </div>
       </div>
     </Modal>
   );

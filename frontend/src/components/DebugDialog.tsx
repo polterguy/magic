@@ -89,18 +89,22 @@ export default function DebugDialog(
   }, [index]);
 
   return (
-    <Modal width={1080} onClose={props.onClose}>
-      <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 0 }}>
-        Rewind{' '}
-        <span className="muted mono" style={{ fontSize: 14, fontWeight: 400 }}>
-          {props.filename}
-        </span>
-      </h2>
+    <Modal
+      size="xl"
+      onClose={props.onClose}
+      title="Rewind"
+      subtitle={<span className="mono">{props.filename}</span>}
+      actions={
+        <button className="btn" onClick={props.onClose}>
+          Close
+        </button>
+      }
+    >
       {steps.length === 0 ? (
         <div className="info-box">Nothing was recorded. The lambda invoked no slots.</div>
       ) : (
         <>
-          <div className="toolbar" style={{ marginBottom: 10 }}>
+          <div className="toolbar">
             <span className="muted">
               {steps.length} step{steps.length === 1 ? '' : 's'} · {total} ms
             </span>
@@ -188,11 +192,6 @@ export default function DebugDialog(
           </div>
         </>
       )}
-      <div className="modal-actions">
-        <button className="btn" onClick={props.onClose}>
-          Close
-        </button>
-      </div>
     </Modal>
   );
 }

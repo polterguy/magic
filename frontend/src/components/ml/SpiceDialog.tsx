@@ -6,6 +6,7 @@
 import { useState } from 'react';
 
 import { Modal } from '../Dialogs';
+import OptionPill from '../OptionPill';
 
 export default function SpiceDialog(
   props: Readonly<{
@@ -19,39 +20,41 @@ export default function SpiceDialog(
 
   return (
     <Modal
-      width={560}
+      size="md"
       onClose={props.onClose}
       onSubmit={() => {
         if (url) props.onScrape({ url, images });
       }}
+      title={'Spice ' + props.type}
+      subtitle="Scrapes a single web page into this model, without crawling the rest of the site."
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" disabled={!url} onClick={() => props.onScrape({ url, images })}>
+            Scrape page
+          </button>
+        </>
+      }
     >
-      <h2>Spice {props.type}</h2>
-      <p className="muted" style={{ marginTop: 0 }}>
-        Scrapes a single web page into this model, without crawling the rest of the site.
-      </p>
-      <div className="form-grid">
-        <label>
-          Page URL{' '}
-          <input
-            type="text"
-            data-initial-focus
-            placeholder="https://example.com/some-page"
-            value={url}
-            onChange={e => setUrl(e.target.value)}
-          />
-        </label>
-        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <input type="checkbox" checked={images} onChange={e => setImages(e.target.checked)} />{' '}
-          Import images
-        </label>
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" disabled={!url} onClick={() => props.onScrape({ url, images })}>
-          Scrape page
-        </button>
+      {/* A plain column, not a form-grid, holds the pill: form-grid restyles every label in it. */}
+      <div className="modal-section">
+        <div className="form-grid">
+          <label>
+            Page URL{' '}
+            <input
+              type="text"
+              data-initial-focus
+              placeholder="https://example.com/some-page"
+              value={url}
+              onChange={e => setUrl(e.target.value)}
+            />
+          </label>
+        </div>
+        <div className="pill-row">
+          <OptionPill label="Import images" checked={images} onChange={setImages} />
+        </div>
       </div>
     </Modal>
   );

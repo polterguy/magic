@@ -49,13 +49,23 @@ export default function NewUserDialog(
 
   return (
     <Modal
-      width={520}
+      size="md"
       onClose={props.onClose}
       onSubmit={() => {
         if (!busy && username && password) void save();
       }}
+      title="New user"
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={busy || !username || !password}>
+            <BusyLabel busy={busy} label="Create user" busyLabel="Creating…" />
+          </button>
+        </>
+      }
     >
-      <h2>New user</h2>
       <div className="form-grid">
         <label>
           Username{' '}
@@ -88,14 +98,6 @@ export default function NewUserDialog(
           <input type="text" value={email} onChange={e => setEmail(e.target.value)} />
         </label>
         <RolesField roles={props.roles} selected={selectedRoles} onChange={setSelectedRoles} />
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={busy || !username || !password}>
-          <BusyLabel busy={busy} label="Create user" busyLabel="Creating…" />
-        </button>
       </div>
     </Modal>
   );

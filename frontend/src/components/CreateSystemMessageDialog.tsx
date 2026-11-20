@@ -93,24 +93,39 @@ export default function CreateSystemMessageDialog(
   }
 
   return (
-    <Modal width={560} onClose={close}>
-      <h2>Generate system instruction</h2>
+    <Modal
+      size="md"
+      onClose={close}
+      title="Generate system instruction"
+      actions={
+        busy ? undefined : (
+          <>
+            <button className="btn btn-secondary" onClick={close}>
+              Cancel
+            </button>
+            <button className="btn" onClick={generate} disabled={!url}>
+              Generate
+            </button>
+          </>
+        )
+      }
+    >
       {busy ? (
         <div className="spinner-panel">
           <div className="spinner" />
           <div>
-            <div style={{ fontWeight: 600 }}>
+            <strong>
               Generating from {url}
               <span className="spinner-dots" />
-            </div>
-            <div className="muted" style={{ marginTop: 4 }}>
+            </strong>
+            <div className="modal-hint">
               This can take a minute or two. Please keep this window open.
             </div>
           </div>
         </div>
       ) : (
         <>
-          <p className="muted" style={{ marginTop: 0 }}>
+          <p className="muted">
             This template builds a personalised instruction from a website. Enter a URL — the server
             will crawl it and fill in the template. This takes a minute or two; keep this window
             open.
@@ -133,14 +148,6 @@ export default function CreateSystemMessageDialog(
               }}
             />
           </label>
-          <div className="modal-actions">
-            <button className="btn btn-secondary" onClick={close}>
-              Cancel
-            </button>
-            <button className="btn" onClick={generate} disabled={!url}>
-              Generate
-            </button>
-          </div>
         </>
       )}
     </Modal>

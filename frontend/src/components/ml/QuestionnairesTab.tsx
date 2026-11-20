@@ -370,13 +370,23 @@ function QuestionnaireDialog(
 
   return (
     <Modal
-      width={460}
+      size="sm"
       onClose={props.onClose}
       onSubmit={() => {
         if (!busy && valid) void save();
       }}
+      title={existing ? 'Edit ' + existing.name : 'New questionnaire'}
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={busy || !valid}>
+            {saveLabel(busy, !!existing)}
+          </button>
+        </>
+      }
     >
-      <h2>{existing ? 'Edit ' + existing.name : 'New questionnaire'}</h2>
       <div className="form-grid">
         <label>
           Name{' '}
@@ -392,7 +402,7 @@ function QuestionnaireDialog(
             onChange={e => setName(e.target.value)}
           />
           {!existing && (
-            <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>
+            <span className="modal-hint">
               2–20 characters, lowercase letters, digits, underscore or hyphen.
             </span>
           )}
@@ -406,7 +416,7 @@ function QuestionnaireDialog(
               </option>
             ))}
           </Select>
-          <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>
+          <span className="modal-hint">
             {type === 'single-shot'
               ? 'Asked once, then never again for the same visitor.'
               : 'Asked again in later conversations.'}
@@ -422,14 +432,6 @@ function QuestionnaireDialog(
             onChange={e => setAction(e.target.value)}
           />
         </label>
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={busy || !valid}>
-          {saveLabel(busy, !!existing)}
-        </button>
       </div>
     </Modal>
   );
@@ -481,13 +483,23 @@ function QuestionDialog(
 
   return (
     <Modal
-      width={520}
+      size="md"
       onClose={props.onClose}
       onSubmit={() => {
         if (!busy && question) void save();
       }}
+      title={existing ? 'Edit question' : 'Add question'}
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={busy || !question}>
+            <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
+          </button>
+        </>
+      }
     >
-      <h2>{existing ? 'Edit question' : 'Add question'}</h2>
       <div className="form-grid">
         <label>
           Question{' '}
@@ -507,7 +519,7 @@ function QuestionDialog(
               </option>
             ))}
           </Select>
-          <span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>
+          <span className="modal-hint">
             {type === 'message'
               ? 'Said to the user, then the chatbot moves straight on.'
               : 'Asked, and the chatbot waits for the user to answer.'}
@@ -545,14 +557,6 @@ function QuestionDialog(
           />{' '}
           Remember
         </label>
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={props.onClose}>
-          Cancel
-        </button>
-        <button className="btn" onClick={save} disabled={busy || !question}>
-          <BusyLabel busy={busy} label="Save" busyLabel="Saving…" />
-        </button>
       </div>
     </Modal>
   );

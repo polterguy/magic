@@ -4,7 +4,7 @@
  * not a repository yet gets initialize/clone actions instead.
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 
 import {
   gitBranches,
@@ -353,9 +353,105 @@ export default function GitPanel(
     );
   }
 
+  /*
+   * The footer's buttons follow the mode: initialize or clone for a folder that is no repository
+   * yet, the commit and remote actions for one that is, and nothing while a Git operation runs.
+   */
+  const footers: Record<typeof mode, { start?: ReactNode; actions?: ReactNode }> = {
+    loading: {},
+    norepo: {
+      actions: (
+        <>
+          <button
+            className="btn btn-secondary"
+            disabled={busy || !empty}
+            title={
+              empty ? 'Clones a remote repository into this folder' : 'Requires an empty folder'
+            }
+            onClick={clone}
+          >
+            Clone into folder
+          </button>
+          <button
+            className="btn btn-secondary"
+            disabled={busy}
+            onClick={() => run(() => gitInit(props.path), 'Repository initialized', true)}
+          >
+            Initialize repository
+          </button>
+          <button className="btn" onClick={close}>
+            Close
+          </button>
+        </>
+      ),
+    },
+    repo: {
+      start: (
+        <button
+          className="btn btn-secondary"
+          disabled={busy || unborn || changes.length === 0}
+          title="Discards every uncommitted change and deletes untracked files"
+          onClick={restoreAll}
+        >
+          Reset to HEAD…
+        </button>
+      ),
+      actions: (
+        <>
+          <button
+            className="btn btn-secondary"
+            disabled={busy || unborn || hasUpstream}
+            title={
+              hasUpstream
+                ? 'Already has a remote'
+                : 'Creates a GitHub repository and pushes this folder to it'
+            }
+            onClick={() =>
+              setPublishing({
+                name: props.path.split('/').findLast(Boolean) ?? '',
+                isPrivate: true,
+              })
+            }
+          >
+            Publish to GitHub…
+          </button>
+          <button
+            className="btn btn-secondary"
+            disabled={busy || hasUpstream}
+            title={hasUpstream ? 'Already has a remote' : undefined}
+            onClick={addRemote}
+          >
+            Add remote
+          </button>
+          <button
+            className="btn btn-secondary"
+            disabled={busy || !message.trim() || changes.length === 0}
+            onClick={() =>
+              run(async () => {
+                await gitCommit(props.path, message.trim());
+                setMessage('');
+              }, 'Changes committed')
+            }
+          >
+            Commit
+          </button>
+          <button className="btn" onClick={close}>
+            Close
+          </button>
+        </>
+      ),
+    },
+  };
+  const footer = busy ? footers.loading : footers[mode];
+
   return (
-    <Modal width={760} onClose={close}>
-      <h2>Git — {props.path}</h2>
+    <Modal
+      size="lg"
+      onClose={close}
+      title={'Git — ' + props.path}
+      footerStart={footer.start}
+      actions={footer.actions}
+    >
       {(mode === 'loading' || busy) && (
         <div className="spinner-panel">
           <div className="spinner" />
@@ -369,28 +465,6 @@ export default function GitPanel(
       {!busy && mode === 'norepo' && (
         <>
           <p>This folder is not a Git repository.</p>
-          <div className="modal-actions">
-            <button
-              className="btn btn-secondary"
-              disabled={busy || !empty}
-              title={
-                empty ? 'Clones a remote repository into this folder' : 'Requires an empty folder'
-              }
-              onClick={clone}
-            >
-              Clone into folder
-            </button>
-            <button
-              className="btn btn-secondary"
-              disabled={busy}
-              onClick={() => run(() => gitInit(props.path), 'Repository initialized', true)}
-            >
-              Initialize repository
-            </button>
-            <button className="btn" onClick={close}>
-              Close
-            </button>
-          </div>
         </>
       )}
       {!busy && mode === 'repo' && (
@@ -398,15 +472,7 @@ export default function GitPanel(
           <p className="mono" title="Branch and tracking status">
             {branchLine}
           </p>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              gap: 8,
-              marginBottom: 12,
-            }}
-          >
+          <div className="toolbar">
             <select
               style={{ flex: '0 1 220px', minWidth: 0 }}
               value={currentBranch}
@@ -436,7 +502,7 @@ export default function GitPanel(
             >
               Merge
             </button>
-            <span style={{ flex: 1 }} />
+            <span className="spacer" />
             <button
               className="btn btn-secondary btn-small"
               disabled={busy || unborn}
@@ -544,69 +610,33 @@ export default function GitPanel(
             style={{ width: '100%' }}
             onChange={e => setMessage(e.target.value)}
           />
-          <div className="modal-actions">
-            <button
-              className="btn btn-secondary"
-              disabled={busy || unborn || changes.length === 0}
-              title="Discards every uncommitted change and deletes untracked files"
-              onClick={restoreAll}
-            >
-              Reset to HEAD…
-            </button>
-            <button
-              className="btn btn-secondary"
-              disabled={busy || unborn || hasUpstream}
-              title={
-                hasUpstream
-                  ? 'Already has a remote'
-                  : 'Creates a GitHub repository and pushes this folder to it'
-              }
-              onClick={() =>
-                setPublishing({
-                  name: props.path.split('/').findLast(Boolean) ?? '',
-                  isPrivate: true,
-                })
-              }
-            >
-              Publish to GitHub…
-            </button>
-            <button
-              className="btn btn-secondary"
-              disabled={busy || hasUpstream}
-              title={hasUpstream ? 'Already has a remote' : undefined}
-              onClick={addRemote}
-            >
-              Add remote
-            </button>
-            <button
-              className="btn btn-secondary"
-              disabled={busy || !message.trim() || changes.length === 0}
-              onClick={() =>
-                run(async () => {
-                  await gitCommit(props.path, message.trim());
-                  setMessage('');
-                }, 'Changes committed')
-              }
-            >
-              Commit
-            </button>
-            <button className="btn" onClick={close}>
-              Close
-            </button>
-          </div>
         </>
       )}
 
       {publishing && (
         <Modal
-          width={520}
+          size="md"
           onSubmit={() =>
             publishing.name.trim() !== '' && publish(publishing.name.trim(), publishing.isPrivate)
           }
           onClose={() => setPublishing(null)}
+          title="Publish to GitHub"
+          subtitle={'Creates a GitHub repository and pushes ' + props.path}
+          actions={
+            <>
+              <button className="btn btn-secondary" onClick={() => setPublishing(null)}>
+                Cancel
+              </button>
+              <button
+                className="btn"
+                disabled={publishing.name.trim() === ''}
+                onClick={() => publish(publishing.name.trim(), publishing.isPrivate)}
+              >
+                OK
+              </button>
+            </>
+          }
         >
-          <h2>Publish to GitHub</h2>
-          <p>Creates a GitHub repository and pushes {props.path}</p>
           <label className="modal-label">
             Repository name{' '}
             <input
@@ -637,18 +667,6 @@ export default function GitPanel(
               </span>
             </span>
           </label>
-          <div className="modal-actions">
-            <button className="btn btn-secondary" onClick={() => setPublishing(null)}>
-              Cancel
-            </button>
-            <button
-              className="btn"
-              disabled={publishing.name.trim() === ''}
-              onClick={() => publish(publishing.name.trim(), publishing.isPrivate)}
-            >
-              OK
-            </button>
-          </div>
         </Modal>
       )}
     </Modal>

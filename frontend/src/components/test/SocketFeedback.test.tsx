@@ -177,7 +177,7 @@ describe('SocketFeedback connection', () => {
 
   it('closes with the Close button', async () => {
     const { onClose } = setup();
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    await userEvent.click(screen.getByText('Close', { selector: 'button' }));
     expect(onClose).toHaveBeenCalled();
   });
 });

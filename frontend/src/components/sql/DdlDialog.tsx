@@ -7,18 +7,23 @@ export default function DdlDialog(
 ) {
   const { ddl } = props;
   return (
-    <Modal width={760} onClose={props.onClose}>
-      <h2>{ddl.title}</h2>
+    <Modal
+      size="lg"
+      onClose={props.onClose}
+      title={ddl.title}
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={() => copyToClipboard(ddl.sql, 'The DDL')}>
+            Copy
+          </button>
+          <button className="btn" onClick={props.onClose}>
+            Close
+          </button>
+        </>
+      }
+    >
       <div style={{ height: '55vh', display: 'flex', flexDirection: 'column' }}>
         <CodeEditor value={ddl.sql} mode="text/x-sql" readOnly />
-      </div>
-      <div className="modal-actions">
-        <button className="btn btn-secondary" onClick={() => copyToClipboard(ddl.sql, 'The DDL')}>
-          Copy
-        </button>
-        <button className="btn" onClick={props.onClose}>
-          Close
-        </button>
       </div>
     </Modal>
   );

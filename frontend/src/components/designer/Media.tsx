@@ -270,17 +270,63 @@ export default function Media(
   }
 
   return (
-    <Modal width={860} onClose={props.onCancel}>
-      <h2 style={{ marginTop: 0 }}>{kind.title}</h2>
-      <input
-        type="text"
-        data-initial-focus
-        className="designer-image-filter"
-        placeholder="Filter by name or folder…"
-        value={filter}
-        onChange={event => setFilter(event.target.value)}
-      />
-
+    <Modal
+      size="xl"
+      onClose={props.onCancel}
+      title={kind.title}
+      headerExtra={
+        <div className="search-input">
+          <input
+            type="text"
+            data-initial-focus
+            placeholder="Filter by name or folder…"
+            value={filter}
+            onChange={event => setFilter(event.target.value)}
+          />
+        </div>
+      }
+      footerStart={files === null ? '' : countLabel(shown, total)}
+      actions={
+        <>
+          <input
+            ref={fileRef}
+            type="file"
+            accept={props.kind + '/*'}
+            multiple
+            hidden
+            onChange={event => {
+              if (event.target.files && event.target.files.length > 0) {
+                void upload(event.target.files);
+              }
+              // So the same file can be chosen twice in a row.
+              event.target.value = '';
+            }}
+          />
+          <select
+            value={folder}
+            title="Where an upload goes"
+            disabled={uploading}
+            onChange={event => setFolder(event.target.value)}
+          >
+            {folders.map(name => (
+              <option key={name} value={name}>
+                {name === '' ? '/' : name}
+              </option>
+            ))}
+          </select>
+          <button
+            className="btn btn-secondary"
+            disabled={uploading}
+            onClick={() => fileRef.current?.click()}
+          >
+            <BusyLabel busy={uploading} label="Upload…" busyLabel="Uploading…" />
+          </button>
+          <button className="btn btn-secondary" onClick={props.onCancel}>
+            Cancel
+          </button>
+        </>
+      }
+    >
       {error !== '' && <p className="designer-note error">{error}</p>}
       {files === null && error === '' && <p className="designer-note">Loading…</p>}
       {files !== null && total === 0 && (
@@ -321,48 +367,6 @@ export default function Media(
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="modal-actions">
-        <span className="designer-muted" style={{ marginRight: 'auto' }}>
-          {files === null ? '' : countLabel(shown, total)}
-        </span>
-        <input
-          ref={fileRef}
-          type="file"
-          accept={props.kind + '/*'}
-          multiple
-          hidden
-          onChange={event => {
-            if (event.target.files && event.target.files.length > 0) {
-              void upload(event.target.files);
-            }
-            // So the same file can be chosen twice in a row.
-            event.target.value = '';
-          }}
-        />
-        <select
-          value={folder}
-          title="Where an upload goes"
-          disabled={uploading}
-          onChange={event => setFolder(event.target.value)}
-        >
-          {folders.map(name => (
-            <option key={name} value={name}>
-              {name === '' ? '/' : name}
-            </option>
-          ))}
-        </select>
-        <button
-          className="btn btn-secondary"
-          disabled={uploading}
-          onClick={() => fileRef.current?.click()}
-        >
-          <BusyLabel busy={uploading} label="Upload…" busyLabel="Uploading…" />
-        </button>
-        <button className="btn btn-secondary" onClick={props.onCancel}>
-          Cancel
-        </button>
       </div>
     </Modal>
   );

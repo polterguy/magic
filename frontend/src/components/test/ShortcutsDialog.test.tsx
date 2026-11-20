@@ -51,7 +51,7 @@ describe('ShortcutsDialog', () => {
   it('closes from the close button', async () => {
     const onClose = vi.fn();
     render(<ShortcutsDialog onClose={onClose} />);
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Close dialog' }));
     expect(onClose).toHaveBeenCalled();
   });
 });
