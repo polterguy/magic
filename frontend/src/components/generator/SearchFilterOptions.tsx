@@ -30,7 +30,7 @@ export default function SearchFilterOptions({ search }: Readonly<{ search: Searc
               min={0}
               max={1}
               step={0.05}
-              placeholder="type's own"
+              placeholder="default"
               aria-label="Threshold"
               value={threshold}
               onChange={e => setThreshold(e.target.value)}

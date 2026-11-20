@@ -3474,10 +3474,25 @@ pre.result-json {
 .crud-opts {
   padding: 0;
   overflow: hidden;
+  /*
+   * The card never grows taller than the room it has. When the page squeezes it, as on the
+   * Search endpoint tab where it sits straight in the page's column, its rows scroll inside it
+   * and the footer, with the Generate button, stays in view below them.
+   */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .crud-opts-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
   padding: 0 20px;
+}
+
+.crud-opts-footer {
+  flex: none;
 }
 
 .crud-opt-row {
