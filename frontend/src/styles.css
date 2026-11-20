@@ -3491,10 +3491,6 @@ pre.result-json {
   padding: 0 20px;
 }
 
-.crud-opts-footer {
-  flex: none;
-}
-
 .crud-opt-row {
   display: grid;
   grid-template-columns: minmax(150px, 200px) 1fr;
@@ -3549,6 +3545,8 @@ pre.result-json {
 }
 
 .crud-opts-footer {
+  /* Stays in view below the rows, which scroll when the card is squeezed (see .crud-opts). */
+  flex: none;
   display: flex;
   align-items: center;
   gap: 12px;
