@@ -11,6 +11,8 @@ export function useSearchTab() {
   const [endpointName, setEndpointName] = useState('search');
   const [verb, setVerb] = useState('get');
   const [types, setTypes] = useState<MlType[]>([]);
+  // False until the types have loaded, so "no types yet" isn't shown while they are on their way.
+  const [typesLoaded, setTypesLoaded] = useState(false);
   const [type, setType] = useState('');
   // Empty searches the way the type itself is set to.
   const [retrieval, setRetrieval] = useState('');
@@ -35,7 +37,8 @@ export function useSearchTab() {
   useEffect(() => {
     mlTypes()
       .then(list => setTypes(list ?? []))
-      .catch(() => showToast('Could not load machine learning types', true));
+      .catch(() => showToast('Could not load machine learning types', true))
+      .finally(() => setTypesLoaded(true));
     listRoles()
       .then(list => setRoles((list ?? []).map(role => role.name)))
       .catch(() => {});
@@ -83,6 +86,7 @@ export function useSearchTab() {
     verb,
     setVerb,
     types,
+    typesLoaded,
     type,
     setType,
     retrieval,

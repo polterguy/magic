@@ -3480,6 +3480,16 @@ pre.result-json {
   font-size: var(--text-xs);
 }
 
+/* A unit that names the field rather than its unit, so it sits before the input. */
+.unit-group-prefix {
+  border-left: none;
+  border-right: 1px solid var(--border);
+}
+
+.unit-group input[type='text'] {
+  width: 180px;
+}
+
 @media (max-width: 720px) {
   .crud-opt-row {
     grid-template-columns: 1fr;
