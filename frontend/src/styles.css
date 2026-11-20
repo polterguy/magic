@@ -1254,24 +1254,15 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   border-bottom: 2px solid var(--border);
   margin-bottom: 16px;
   /*
-   * Scrolls on its own, rather than forcing whatever holds it to overflow,
-   * once there are more tabs than a narrow container has room for (the Web
-   * Designer's right rail is a fixed 320px - five tabs there no longer fit
-   * at that width, and a sixth tab somewhere else should not have to mean
-   * revisiting this rule again).
+   * Never scrolls. When the tabs don't all fit, they shrink (see .tab) rather than the strip
+   * scrolling. A scrolling strip also showed a vertical scrollbar, since each tab's underline
+   * sits 2px below the strip to cover its border, and a scroll box clips that as overflow.
    */
-  overflow-x: auto;
+  min-width: 0;
+  max-width: 100%;
   /*
-   * Setting overflow-x above makes a browser compute overflow-y as auto too
-   * (the two can't disagree), which erases a flex item's automatic min-height
-   * - so inside a flex column like .designer-rail, this strip became the one
-   * child willing to shrink below its own content height. The Page tab has
-   * the tallest content of the five (two full field groups), so switching to
-   * it was the case that actually ran the rail out of room: the layout
-   * squeezed this strip toward zero height instead of just scrolling the
-   * rail, and the tab strip itself appeared to vanish. Same bug class as
-   * .designer-section below, same fix - keep this strip's own height fixed
-   * and let the rail's own scrollbar absorb tall content instead.
+   * A fixed height inside flex columns like .designer-rail, which once squeezed this strip
+   * toward zero when the rail ran out of room. The rail scrolls its content instead.
    */
   flex-shrink: 0;
 }
@@ -1287,7 +1278,14 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   cursor: pointer;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
-  flex-shrink: 0;
+  /*
+   * Shrinks when the strip runs out of room, cutting its label short with an ellipsis as a last
+   * resort, so the strip never overflows.
+   */
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -3543,18 +3541,23 @@ pre.result-json {
 /* Open-file tabs above the Hyper IDE editor. */
 /* Sits directly on top of the editor — no gap, so the tabs read as part of
    it rather than as a separate strip floating above. */
+/*
+ * Never scrolls. With more files open than fit, the tabs shrink like a browser's and cut their
+ * names short. Each tab's tooltip still shows the full path.
+ */
 .file-tabs {
   display: flex;
-  overflow-x: auto;
   flex-shrink: 0;
+  min-width: 0;
   gap: 2px;
-  scrollbar-width: thin;
 }
 
 .file-tab {
   display: flex;
   align-items: center;
   gap: 4px;
+  flex: 0 1 auto;
+  min-width: 0;
   padding: 5px 6px 5px 12px;
   border-radius: var(--radius) var(--radius) 0 0;
   background: transparent;
@@ -3579,6 +3582,17 @@ pre.result-json {
 .file-tab-name {
   display: inline-flex;
   align-items: center;
+  min-width: 0;
+}
+
+.file-tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-tab-dirty,
+.file-tab-close {
+  flex: none;
 }
 
 .file-tab-dirty {
@@ -5974,6 +5988,16 @@ a.kpi-link:hover .kpi-icon {
 .designer-viewports {
   margin: 0;
   flex-shrink: 0;
+}
+
+/* The Inspector's five tabs share the rail evenly, with tighter padding so all five labels fit. */
+.designer-rail .tabs {
+  gap: 0;
+}
+
+.designer-rail .tab {
+  flex: 1 1 auto;
+  padding: 10px 8px;
 }
 
 /* -- Blocks ---------------------------------------------------------------- */
