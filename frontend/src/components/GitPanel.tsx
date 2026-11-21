@@ -462,11 +462,7 @@ export default function GitPanel(
           )}
         </div>
       )}
-      {!busy && mode === 'norepo' && (
-        <>
-          <p>This folder is not a Git repository.</p>
-        </>
-      )}
+      {!busy && mode === 'norepo' && <p>This folder is not a Git repository.</p>}
       {!busy && mode === 'repo' && (
         <>
           <p className="mono" title="Branch and tracking status">
