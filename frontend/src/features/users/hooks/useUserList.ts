@@ -1,0 +1,103 @@
+import { canResetPassword, countUsers, deleteUser, listUsers, User } from '@core/api';
+import { showError } from '@core/errors';
+import { showToast } from '@core/toast';
+import { useAuth } from '@core/useAuth';
+import { useDialog } from '@shared/hooks/useDialog';
+import { usePagedList } from '@shared/hooks/usePagedList';
+import { exportCsv } from '@shared/lib/download';
+import { useSort } from '@shared/lib/sort';
+import { useEffect, useState } from 'react';
+
+import { PAGE_SIZE } from '../constants';
+import { userCsvRow } from '../helpers';
+
+/*
+ * The users tab's data: the filtered, sorted, paged user list, whether
+ * invites can be sent, and the delete and export actions.
+ */
+export function useUserList() {
+  const [filter, setFilter] = useState('');
+  const [sort, setSort] = useSort();
+  const [waiting, setWaiting] = useState(false);
+  const { confirmTyped } = useDialog();
+
+  /*
+   * Inviting emails a sign-in link, which needs everything the backend asks for before it sends one:
+   * SMTP, its own URL and the frontend URLs. The backend answers that in one request, so the rule
+   * lives there and nowhere else. Null until the answer arrives, so the button doesn't flicker.
+   */
+  const { backend } = useAuth();
+  const backendUrl = backend?.url ?? '';
+  const [canInvite, setCanInvite] = useState<boolean | null>(null);
+  useEffect(() => {
+    void canResetPassword(backendUrl).then(setCanInvite);
+  }, [backendUrl]);
+
+  const list = usePagedList<User>({
+    load: async (offset, limit) => {
+      const [rows, count] = await Promise.all([
+        listUsers(filter, offset, limit, sort),
+        countUsers(filter),
+      ]);
+      return { rows: rows ?? [], count: count.count };
+    },
+    pageSize: PAGE_SIZE,
+    filter,
+    deps: [sort],
+  });
+
+  /*
+   * Deleting a user is permanent, so it follows the old dashboard's rule of
+   * having the user type the username to confirm.
+   */
+  async function removeUser(username: string) {
+    if (
+      !(await confirmTyped({
+        title: 'Delete user?',
+        message: 'This permanently deletes ' + username + '. Type the username to confirm.',
+        label: 'Username',
+        expected: username,
+      }))
+    ) {
+      return;
+    }
+    setWaiting(true);
+    try {
+      await deleteUser(username);
+      showToast(username + ' deleted');
+      list.refresh();
+    } catch (err) {
+      showError(err);
+    } finally {
+      setWaiting(false);
+    }
+  }
+
+  /*
+   * Exports every user matching the current filter — not just the visible
+   * page — by fetching with limit -1, which the backend treats as unlimited.
+   */
+  async function exportUsers() {
+    setWaiting(true);
+    try {
+      const all = (await listUsers(filter, 0, -1, sort)) ?? [];
+      exportCsv(all.map(userCsvRow), 'users.csv');
+    } catch (err) {
+      showError(err);
+    } finally {
+      setWaiting(false);
+    }
+  }
+
+  return {
+    filter,
+    setFilter,
+    sort,
+    setSort,
+    waiting,
+    canInvite,
+    list,
+    removeUser,
+    exportUsers,
+  };
+}

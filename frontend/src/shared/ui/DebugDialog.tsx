@@ -1,0 +1,409 @@
+/*
+ * Rewind — steps through a recorded execution.
+ *
+ * Every entry is one slot invocation, and carries the entire lambda object as
+ * it looked immediately afterwards. So moving through the list is watching the
+ * program's own state evolve, rather than reading a stack trace and guessing.
+ */
+
+import type { DebugRecording, DebugStep } from '@core/api';
+import { useEffect, useRef, useState } from 'react';
+
+import CodeEditor from './CodeEditor';
+import { Modal } from './Dialogs';
+
+/*
+ * Height of both panes. One constant rather than two numbers, since the step
+ * list and the code beside it are read as a single surface and any difference
+ * between them shows as a ragged edge.
+ */
+const PANE_HEIGHT = 460;
+
+export default function DebugDialog(
+  props: Readonly<{
+    filename: string;
+    recording: DebugRecording;
+    onClose: () => void;
+  }>,
+) {
+  const steps = props.recording.steps ?? [];
+  const error = props.recording.error;
+
+  /*
+   * Whatever the lambda returned becomes one more entry after the slots that
+   * ran, rather than a panel of its own. The timeline already ends somewhere,
+   * and the returned value is simply what it ended at - so Next, the arrow keys
+   * and the scrubber all reach it without learning anything new. It also makes
+   * the two outcomes symmetric: a failed run ends at the statement that threw,
+   * a successful one ends at what came out.
+   */
+  const returned = props.recording.returned;
+  const hasReturn = returned !== undefined && returned !== null;
+  const returnIndex = hasReturn ? steps.length : -1;
+  const lastIndex = steps.length - 1 + (hasReturn ? 1 : 0);
+
+  // Opening at the beginning, since stepping forward is how the story reads.
+  const [index, setIndex] = useState(0);
+  const onReturn = index === returnIndex;
+  const current = steps[index];
+
+  /*
+   * Arrow keys step, which is what anyone reaching for a scrubber tries first.
+   * Up and left both go back and down and right both go forward, since the list
+   * reads vertically while the scrubber reads horizontally, and guessing wrong
+   * about which mental model someone has is worse than accepting either.
+   */
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      /*
+       * The scrubber is itself a range input and moves on arrow keys, so keys it
+       * handles are left alone - stepping here as well would move two at a time.
+       */
+      if (e.target instanceof HTMLInputElement) {
+        return;
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        setIndex(i => Math.max(0, i - 1));
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        setIndex(i => Math.min(lastIndex, i + 1));
+      }
+    }
+    globalThis.addEventListener('keydown', onKey);
+    return () => globalThis.removeEventListener('keydown', onKey);
+  }, [lastIndex]);
+
+  const total = steps.reduce((sum, step) => sum + (step.elapsed ?? 0), 0);
+
+  /*
+   * The recorder writes its entry in a finally block, so when an execution threw
+   * the statement that threw is the last one recorded.
+   */
+  const errorIndex = error ? steps.length - 1 : -1;
+
+  // Keeping the current step on screen, since stepping quickly outruns the list.
+  const currentRow = useRef<HTMLTableRowElement>(null);
+  useEffect(() => {
+    currentRow.current?.scrollIntoView({ block: 'nearest' });
+  }, [index]);
+
+  return (
+    <Modal
+      size="xl"
+      onClose={props.onClose}
+      title="Rewind"
+      subtitle={<span className="mono">{props.filename}</span>}
+      actions={
+        <button className="btn" onClick={props.onClose}>
+          Close
+        </button>
+      }
+    >
+      {steps.length === 0 ? (
+        <div className="info-box">Nothing was recorded. The lambda invoked no slots.</div>
+      ) : (
+        <>
+          <div className="toolbar">
+            <span className="muted">
+              {steps.length} step{steps.length === 1 ? '' : 's'} · {total} ms
+            </span>
+            {error && (
+              <button
+                className="badge badge-error"
+                style={{ border: 0, cursor: 'pointer' }}
+                title={error.type + ' — click to jump to the statement that threw'}
+                onClick={() => setIndex(errorIndex)}
+              >
+                {error.message}
+              </button>
+            )}
+            {hasReturn && (
+              <button
+                className="badge badge-get"
+                style={{ border: 0, cursor: 'pointer' }}
+                title="Click to see what it returned"
+                onClick={() => setIndex(returnIndex)}
+              >
+                returned {preview(returned, 40)}
+              </button>
+            )}
+            <span className="spacer" />
+            <button
+              className="btn btn-secondary btn-small"
+              onClick={() => setIndex(i => Math.max(0, i - 1))}
+              disabled={index === 0}
+            >
+              ‹ Prev
+            </button>
+            <span className="mono">
+              {index + 1} / {lastIndex + 1}
+            </span>
+            <button
+              className="btn btn-secondary btn-small"
+              onClick={() => setIndex(i => Math.min(lastIndex, i + 1))}
+              disabled={index >= lastIndex}
+            >
+              Next ›
+            </button>
+          </div>
+
+          <input
+            type="range"
+            min={0}
+            max={lastIndex}
+            value={index}
+            onChange={e => setIndex(Number(e.target.value))}
+            style={{ width: '100%', marginBottom: 12 }}
+            aria-label="Execution step"
+          />
+
+          {/*
+           * Explicit widths rather than the shared editor-split, whose
+           * "flex: 1 on every child" rule collapses the editor pane to zero
+           * width - and a CodeMirror with no width paints nothing at all.
+           */}
+          <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+            <StepTable
+              steps={steps}
+              index={index}
+              errorIndex={errorIndex}
+              hasReturn={hasReturn}
+              onReturn={onReturn}
+              returnIndex={returnIndex}
+              currentRow={currentRow}
+              onSelect={setIndex}
+            />
+
+            {/*
+             * The whole lambda, as it looked after the selected step ran. No
+             * caption above it — the step list already says which step is
+             * selected, and the heading counts it, so a third statement of the
+             * same fact only cost the editor the height to say it.
+             */}
+            <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+              <LambdaPane
+                onReturn={onReturn}
+                returned={returned}
+                current={current}
+                failed={index === errorIndex}
+              />
+            </div>
+          </div>
+        </>
+      )}
+    </Modal>
+  );
+}
+
+// The steps themselves, newest work at the bottom, as they ran.
+function StepTable(
+  props: Readonly<{
+    steps: DebugRecording['steps'];
+    index: number;
+    errorIndex: number;
+    hasReturn: boolean;
+    onReturn: boolean;
+    returnIndex: number;
+    currentRow: React.RefObject<HTMLTableRowElement | null>;
+    onSelect: (index: number) => void;
+  }>,
+) {
+  const { steps, index, errorIndex, onReturn, returnIndex, currentRow } = props;
+  return (
+    <div
+      className="card"
+      style={{ padding: 0, overflow: 'auto', height: PANE_HEIGHT, flex: '0 0 300px' }}
+    >
+      <table className="compact-table debug-steps">
+        <thead>
+          <tr>
+            <th style={{ width: 42 }}>#</th>
+            <th>Slot</th>
+            <th style={{ width: 60 }}>ms</th>
+          </tr>
+        </thead>
+        <tbody>
+          {(steps ?? []).map((step, idx) => (
+            <tr
+              // A recording never changes once made; a step's number is its identity.
+              // eslint-disable-next-line react/no-array-index-key -- positional, fixed list
+              key={idx}
+              ref={idx === index ? currentRow : undefined}
+              className={
+                'clickable' +
+                (idx === index ? ' current' : '') +
+                (idx === errorIndex ? ' failed' : '')
+              }
+              onClick={() => props.onSelect(idx)}
+            >
+              <td className="mono muted">{idx + 1}</td>
+              <td className="mono">{step.slot}</td>
+              <td className="mono muted">{step.elapsed}</td>
+            </tr>
+          ))}
+          {/* The outcome, sitting where the execution actually ended. */}
+          {props.hasReturn && (
+            <tr
+              ref={onReturn ? currentRow : undefined}
+              className={'clickable returned' + (onReturn ? ' current' : '')}
+              onClick={() => props.onSelect(returnIndex)}
+            >
+              <td className="mono muted">↩</td>
+              <td className="mono">returned</td>
+              <td />
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/*
+ * The whole lambda, as it looked after the selected step ran. No
+ * caption above it — the step list already says which step is
+ * selected, and the heading counts it, so a third statement of the
+ * same fact only cost the editor the height to say it.
+ *
+ * The same pane in both modes rather than a second component -
+ * one keystroke separates the final lambda from the value it
+ * produced, and comparing them is the point.
+ */
+function LambdaPane(
+  props: Readonly<{
+    onReturn: boolean;
+    returned: unknown;
+    current: DebugStep;
+    failed: boolean;
+  }>,
+) {
+  const { onReturn, returned, current } = props;
+  return (
+    <CodeEditor
+      value={onReturn ? JSON.stringify(returned, null, 2) : (current.lambda ?? '')}
+      mode={onReturn ? 'application/json' : 'hyperlambda'}
+      readOnly
+      lineNumbers={false}
+      highlightLine={onReturn ? -1 : verifiedLine(current.lambda ?? '', current.path, current.slot)}
+      highlightClass={props.failed ? 'cm-error-step' : 'cm-current-step'}
+      height={PANE_HEIGHT + 'px'}
+    />
+  );
+}
+
+/*
+ * A returned value is as often a list of database rows as it is a scalar, and
+ * String() renders those as "[object Object]" - so structures are summarised by
+ * shape instead, with the full JSON available on hover.
+ */
+function preview(value: unknown, max: number) {
+  if (Array.isArray(value)) {
+    return value.length + (value.length === 1 ? ' item' : ' items');
+  }
+  if (value !== null && typeof value === 'object') {
+    return JSON.stringify(value).slice(0, max);
+  }
+  return String(value).slice(0, max);
+}
+
+/*
+ * Resolves the executing node's index path into a line of the rendered
+ * Hyperlambda, by walking the indentation one level per index.
+ *
+ * The line found is only accepted when the name on it is the slot that actually
+ * ran - highlighting nothing is fine, highlighting the wrong statement is not.
+ */
+function verifiedLine(lambda: string, path: string, slot: string) {
+  const line = lineOfPath(lambda, path);
+  if (line < 0) {
+    return -1;
+  }
+  const name = (lambda.split('\n')[line] ?? '').trim().split(':')[0];
+  return name === slot ? line : -1;
+}
+
+function lineOfPath(lambda: string, path: string) {
+  if (!path) {
+    return -1;
+  }
+  const lines = lambda.split('\n');
+  const targets = path.split('.').map(Number);
+  let cursor = 0;
+  let found = -1;
+  for (let depth = 0; depth < targets.length; depth++) {
+    found = findSibling(lines, cursor, depth, targets[depth]);
+    if (found < 0) {
+      return -1;
+    }
+    cursor = found + 1;
+  }
+  return found;
+}
+
+// The line of the target'th node at the given depth, from the cursor onwards, or -1.
+function findSibling(lines: string[], from: number, depth: number, target: number) {
+  let seen = -1;
+  let cursor = from;
+  while (cursor < lines.length) {
+    const raw = lines[cursor];
+    if (raw.trim() === '') {
+      cursor += 1;
+      continue;
+    }
+    const indent = (raw.length - raw.replace(/^ +/, '').length) / 3;
+    if (indent < depth) {
+      break;
+    }
+    if (indent === depth) {
+      seen += 1;
+      if (seen === target) {
+        return cursor;
+      }
+    }
+    // A value's own verbatim string may carry literal newlines - jump past its
+    // closing line so those lines are never recounted as siblings of their own.
+    cursor = skipVerbatimString(lines, cursor) + 1;
+  }
+  return -1;
+}
+
+/*
+ * Hyperlambda's verbatim string, @"...", may span several real lines, with "" inside
+ * it escaping a literal quote rather than ending the string. Given the line a value
+ * sits on, returns the line its @" literal actually closes on - unchanged when the
+ * line opens no unterminated @" at all - so the caller's line count skips straight
+ * past the lines swallowed by the string instead of mistaking them for siblings.
+ */
+function skipVerbatimString(lines: string[], line: number) {
+  const open = lines[line].indexOf('@"');
+  if (open < 0) {
+    return line;
+  }
+  let index = line;
+  let rest = lines[index].slice(open + 2);
+  while (closingQuote(rest) < 0) {
+    index += 1;
+    if (index >= lines.length) {
+      return lines.length - 1;
+    }
+    rest = lines[index];
+  }
+  return index;
+}
+
+// The index of the first " in text that is not half of a "" escaped literal quote.
+function closingQuote(text: string) {
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === '"') {
+      if (text[i + 1] === '"') {
+        i += 2;
+        continue;
+      }
+      return i;
+    }
+    i += 1;
+  }
+  return -1;
+}

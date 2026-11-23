@@ -1,0 +1,155 @@
+/*
+ * Takes the OpenAI API key and stores it in the backend's configuration,
+ * the way the old dashboard's OpenAI configuration dialog does. Opened from
+ * both the dashboard's setup prompt and the Configuration screen, so it lives
+ * here rather than in either of them.
+ */
+
+import type { OpenAiModel } from '@core/api';
+import {
+  mlTypes,
+  mlTypeUpdate,
+  modelPriceLabel,
+  openaiGetKey,
+  openaiModels,
+  openaiSetKey,
+} from '@core/api';
+import { errorMessage } from '@core/errors';
+import { refreshChat } from '@core/shellActions';
+import { useEffect, useState } from 'react';
+
+import Banner from './Banner';
+import BusyLabel from './BusyLabel';
+import { Modal } from './Dialogs';
+import Select from './Select';
+
+/*
+ * Preselected until we know what the cloudlet already runs — Terra is the
+ * balanced default for the developer tooling behind Chat Ops, where a fumbled
+ * answer costs more than the tokens saved by dropping to Luna.
+ */
+const DEFAULT_MODEL = 'gpt-6.1-terra';
+
+export default function OpenAiKeyDialog(
+  props: Readonly<{
+    onClose: () => void;
+    onSaved: () => void;
+  }>,
+) {
+  const [key, setKey] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [model, setModel] = useState(DEFAULT_MODEL);
+  // The chat models the backend's catalogue lists, which needs no key to be served.
+  const [models, setModels] = useState<OpenAiModel[]>([]);
+  // What "default" runs today, so an unchanged dropdown writes nothing.
+  const [savedModel, setSavedModel] = useState('');
+
+  /*
+   * Prefilled with whatever key is already configured, so opening this to
+   * change an existing key shows what's there instead of an empty field.
+   */
+  useEffect(() => {
+    openaiModels()
+      .then(list => setModels((list ?? []).filter(candidate => candidate.chat)))
+      .catch(() => {});
+    openaiGetKey()
+      .then(response => setKey(response.result ?? ''))
+      .catch(() => {});
+    mlTypes()
+      .then(types => {
+        const current = (types ?? []).find(candidate => candidate.type === 'default')?.model;
+        if (current) {
+          setSavedModel(current);
+          setModel(current);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  async function save() {
+    // The old dashboard's sanity check — real keys are far longer than this.
+    if (key.length < 20) {
+      setError('That does not look like a valid API key');
+      return;
+    }
+    setBusy(true);
+    try {
+      await openaiSetKey(key);
+      // Chat Ops appears with the key, so the shell has to look again.
+      refreshChat();
+      if (model !== savedModel) {
+        await mlTypeUpdate({ type: 'default', model });
+        setSavedModel(model);
+      }
+      props.onSaved();
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Modal
+      size="md"
+      onClose={props.onClose}
+      title="Configure OpenAI"
+      subtitle={
+        <>
+          Supply your OpenAI API key. You can get one{' '}
+          <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">
+            here
+          </a>
+          {'.'}
+        </>
+      }
+      actions={
+        <>
+          <button className="btn btn-secondary" onClick={props.onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={save} disabled={busy || !key}>
+            <BusyLabel busy={busy} label="Save key" busyLabel="Saving…" />
+          </button>
+        </>
+      }
+    >
+      {error && (
+        <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
+          {error}
+        </Banner>
+      )}
+      <label className="modal-label">
+        OpenAI API key{' '}
+        <input
+          type="text"
+          className="secret"
+          autoFocus
+          autoComplete="off"
+          placeholder="sk-…"
+          value={key}
+          onChange={e => setKey(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter') void save();
+          }}
+        />
+      </label>
+      <label className="modal-label">
+        Model
+        <Select value={model} onChange={value => setModel(value)}>
+          {models.map(candidate => (
+            <option key={candidate.id} value={candidate.id}>
+              {candidate.id}
+              {modelPriceLabel(candidate)}
+            </option>
+          ))}
+        </Select>
+      </label>
+      <p className="modal-hint" style={{ marginTop: 8 }}>
+        Saving also switches the <strong>default</strong> model — the one behind Chat Ops and the
+        dashboard&apos;s AI tools.
+      </p>
+    </Modal>
+  );
+}

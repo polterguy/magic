@@ -1,0 +1,172 @@
+/*
+ * First-run setup. A backend that hasn't been configured ships a placeholder
+ * JWT secret, which is what makes root/root work — so until this is done,
+ * anyone can sign in as root. Rendered instead of the layout, so nothing
+ * behind it fetches while the system is still wide open.
+ *
+ * The backend does the rest itself: generates a real secret, ensures the
+ * magic database exists, and answers with a ticket signed by the new secret.
+ */
+
+import { ApiError, MIN_PASSWORD, saveUserExtra, setupSystem } from '@core/api';
+import { errorMessage } from '@core/errors';
+import { useAuth } from '@core/useAuth';
+import Banner from '@shared/ui/Banner';
+import BusyLabel from '@shared/ui/BusyLabel';
+import { EyeIcon, EyeOffIcon } from '@shared/ui/Icons';
+import { type SubmitEvent, useState } from 'react';
+
+function firstProblem(
+  name: string,
+  email: string,
+  password: string,
+  repeat: string,
+  showPassword: boolean,
+) {
+  if (name.trim() === '') {
+    return 'Your name is required';
+  }
+  if (!/^[^@\s]+@[^@\s.]+(?:\.[^@\s.]+)+$/.test(email)) {
+    return 'That does not look like an email address';
+  }
+  if (password.length < MIN_PASSWORD) {
+    return 'The password must be at least ' + MIN_PASSWORD + ' characters';
+  }
+  return !showPassword && password !== repeat ? 'The two passwords do not match' : '';
+}
+
+export default function Setup() {
+  const { backend, loginWithTicket, setupCompleted } = useAuth();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeat, setRepeat] = useState('');
+  const [subscribe, setSubscribe] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const problem = firstProblem(name, email, password, repeat, showPassword);
+
+  async function submit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (problem) {
+      setError(problem);
+      return;
+    }
+    setError('');
+    setBusy(true);
+    try {
+      const response = await setupSystem({ password, name, email, subscribe });
+      /*
+       * The new ticket is signed with the new secret, so the old one is dead
+       * — swap it in before anything else is attempted.
+       */
+      loginWithTicket(backend!.url, response.ticket);
+      /*
+       * Setup only stores name and email when it CREATES root. On a backend
+       * where root already existed it changes the password and drops them,
+       * so they are written here to be certain they took.
+       */
+      await saveUserExtra('root', 'name', name);
+      await saveUserExtra('root', 'email', email);
+      setupCompleted();
+    } catch (err) {
+      // Already configured — let them through rather than trapping them here.
+      if (err instanceof ApiError && err.status === 401) {
+        setupCompleted();
+        return;
+      }
+      setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="login-wrapper">
+      <form className="login-card" style={{ width: 520 }} onSubmit={submit}>
+        <h1>Set up your cloudlet</h1>
+        <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
+          Your backend is still using its default password. Choose a real one for{' '}
+          <strong>root</strong> to lock it down.
+        </p>
+        {error && <Banner onClose={() => setError('')}>{error}</Banner>}
+        <label>
+          Full name{' '}
+          <input
+            type="text"
+            autoFocus
+            autoComplete="name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+        </label>
+        <label>
+          Email{' '}
+          <input
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+        </label>
+        <label>
+          Password (min {MIN_PASSWORD} characters)
+          <div style={{ display: 'flex', gap: 6 }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              style={{ flex: 1, minWidth: 0 }}
+            />
+            <button
+              type="button"
+              className="icon-btn"
+              title={showPassword ? 'Hide the password' : 'Show the password'}
+              onClick={() => {
+                /*
+                 * Keep the repeat field in step with what's on screen, so
+                 * hiding the password again doesn't fail the match check
+                 * against something the user never typed twice.
+                 */
+                setRepeat(password);
+                setShowPassword(!showPassword);
+              }}
+            >
+              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+            </button>
+          </div>
+        </label>
+        {/* Confirming is pointless while the password is legible. */}
+        {!showPassword && (
+          <label>
+            Repeat password{' '}
+            <input
+              type="password"
+              autoComplete="new-password"
+              value={repeat}
+              onChange={e => setRepeat(e.target.value)}
+            />
+          </label>
+        )}
+        <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <input
+            type="checkbox"
+            checked={subscribe}
+            onChange={e => setSubscribe(e.target.checked)}
+          />{' '}
+          Subscribe to the newsletter
+        </label>
+        <button className="btn" type="submit" disabled={busy}>
+          <BusyLabel busy={busy} label="Save" busyLabel="Setting up…" />
+        </button>
+        <p className="muted" style={{ fontSize: 12, textAlign: 'center', margin: 0 }}>
+          This takes a few seconds — the server generates a new signing key and prepares its
+          database.
+        </p>
+      </form>
+    </div>
+  );
+}
