@@ -8,7 +8,7 @@
 
 import { httpUrl, loadBackend, withoutTrailingSlashes } from '../auth/backend';
 
-export let baseUrl = '';
+let baseUrl = '';
 let bearerToken: string | null = null;
 
 export function configureApi(url: string, token: string | null) {

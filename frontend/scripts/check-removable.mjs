@@ -73,7 +73,9 @@ for (const id of ids) {
 // The failing tests or type errors first, then the end of the output for context.
 for (const { id, step, output } of failures) {
   const lines = output.trim().split('\n');
-  const headline = lines.filter(line => /^\s*FAIL\s|error TS\d+|\berror\b.*\[/.test(line));
+  const headline = lines.filter(line =>
+    /(?:^\s*FAIL\s)|(?:error TS\d+)|(?:\berror\b.*\[)/.test(line),
+  );
   console.error(`\n--- without ${id}: ${step} failed ---`);
   console.error([...new Set(headline)].join('\n'));
   console.error(lines.slice(-25).join('\n'));
