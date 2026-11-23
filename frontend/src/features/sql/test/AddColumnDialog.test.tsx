@@ -4,7 +4,7 @@
  * a foreign key (referenceable tables only, typed after the referenced primary key). Add is gated
  * on a column name, and on a resolvable primary key for foreign keys; Enter submits.
  */
-import type { TableMeta } from '@core/api';
+import type { TableMeta } from '@shared/api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

@@ -2,7 +2,7 @@
  * Chat Ops' shortcut, listed with the ones that work everywhere. It reaches the shortcuts
  * overlay through this feature's manifest.
  */
-import type { Shortcut } from '@core/shortcuts';
+import type { Shortcut } from '@shared/shell/shortcuts';
 
 export const CHAT_SHORTCUTS: Shortcut[] = [
   {

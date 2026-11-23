@@ -6,9 +6,9 @@
  * program's own state evolve, rather than reading a stack trace and guessing.
  */
 
-import type { DebugRecording, DebugStep } from '@core/api';
 import { useEffect, useRef, useState } from 'react';
 
+import type { DebugRecording, DebugStep } from '../api';
 import CodeEditor from './CodeEditor';
 import { Modal } from './Dialogs';
 

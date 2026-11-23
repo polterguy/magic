@@ -1,7 +1,7 @@
-import { loadConfig } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { loadConfig } from '@shared/api';
 import { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import { useCallback, useEffect, useState } from 'react';
 
 import { addConnectionString, deleteConnectionString, testConnectionString } from '../lib/api';

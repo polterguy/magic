@@ -1,4 +1,4 @@
-import { featureHref } from '@core/features';
+import { featureHref } from '@shared/shell/features';
 import { ClockIcon, ExchangeIcon, EyeIcon, ListIcon, UserIcon } from '@shared/ui/Icons';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';

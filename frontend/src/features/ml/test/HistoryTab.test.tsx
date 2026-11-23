@@ -4,8 +4,8 @@
  * pages the list, expands a row to show its completion (mouse and keyboard), renders stored
  * conversation text as text rather than markup, and reports load failures.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import HistoryTab from '../components/HistoryTab';
 import * as mlApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

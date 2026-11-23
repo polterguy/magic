@@ -5,10 +5,10 @@ import {
   openaiModels,
   openaiSystemMessages,
   type SystemMessage,
-} from '@core/api';
-import { httpUrl, withoutTrailingSlashes } from '@core/backend';
-import { showError } from '@core/errors';
-import { featureHref } from '@core/features';
+} from '@shared/api';
+import { httpUrl, withoutTrailingSlashes } from '@shared/auth/backend';
+import { showError } from '@shared/lib/errors';
+import { featureHref } from '@shared/shell/features';
 import { RobotIcon } from '@shared/ui/Icons';
 import Select from '@shared/ui/Select';
 import SocketFeedback from '@shared/ui/SocketFeedback';

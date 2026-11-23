@@ -5,15 +5,15 @@
  * defaults for missing fields), shows progress counts and the done actions, and reports a failed
  * connection in a dismissible banner. The socket module is stubbed with a controllable fake.
  */
-import { createSocket } from '@core/socket';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode } from 'react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { createSocket } from '../../api/socket';
 import SocketFeedback from '../SocketFeedback';
 
-vi.mock('@core/socket', () => ({ createSocket: vi.fn() }));
+vi.mock('../../api/socket', () => ({ createSocket: vi.fn() }));
 
 class FakeConnection {
   handlers = new Map<string, (args: string) => void>();

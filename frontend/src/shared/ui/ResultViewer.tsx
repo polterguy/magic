@@ -5,10 +5,10 @@
  * HTML), an image for image types, and a download button for binaries.
  */
 
-import { errorMessage } from '@core/errors';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { dispositionFilename, downloadBlob } from '../lib/download';
+import { errorMessage } from '../lib/errors';
 import CodeEditor from './CodeEditor';
 
 export interface RawResult {

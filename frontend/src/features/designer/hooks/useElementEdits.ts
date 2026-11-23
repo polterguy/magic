@@ -4,8 +4,8 @@
  * plus dropping a new block in and letting the Machine rewrite one.
  */
 
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 
 import type { Picked } from '../components/Media';
 import { ensureWidgetAssets } from '../lib/api';

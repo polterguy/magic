@@ -1,8 +1,8 @@
 /*
  * The calls this feature makes to the backend. The transport they go through — base URL, token,
- * errors — is core/api.
+ * errors — is shared/api.
  */
-import { http, type MagicResponse, type User } from '@core/api';
+import { http, type MagicResponse, type User } from '@shared/api';
 
 // Value of an extra field, or empty when the user hasn't got that field.
 export function userExtra(user: User, type: string) {

@@ -3,9 +3,9 @@
  * useFileOperations: creating, renaming, deleting, uploading and downloading files and
  * folders, with the dialogs that guard them and the open tabs kept in step.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
 import * as download from '@shared/lib/download';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook } from '@testing-library/react';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ import { useFileOperations } from '../hooks/useFileOperations';
 import type { OpenTabs } from '../hooks/useOpenTabs';
 import * as filesApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

@@ -4,7 +4,7 @@
  * then sums it up, flags a search that spends an embedding per call, and points to Machine
  * Learning when there are no types to search.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
@@ -16,7 +16,7 @@ import SearchTab from '../components/SearchTab';
 // It links to these features; stand-ins keep the test valid in a build without them.
 withStandInFeatures([{ id: 'ml', path: '/machine-learning' }]);
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

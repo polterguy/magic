@@ -5,8 +5,9 @@
  * a guard whichever answers LAST wins, stale or not.
  */
 
-import { showError } from '@core/errors';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+
+import { showError } from '../lib/errors';
 
 /*
  * The value, trailing its source by delayMs. The initial render passes

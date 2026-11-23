@@ -3,15 +3,15 @@
  * Generator page: opens on the CRUD tab, honours ?tab= and ?guided=1, and switches between the
  * generators.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Generator from '../components/Generator';
+import Generator from '../pages/Generator';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

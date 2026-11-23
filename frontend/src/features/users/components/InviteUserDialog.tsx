@@ -1,6 +1,6 @@
-import { addUserExtra, Role, sendResetPasswordLink } from '@core/api';
-import { showError } from '@core/errors';
-import { useAuth } from '@core/useAuth';
+import { addUserExtra, Role, sendResetPasswordLink } from '@shared/api';
+import { useAuth } from '@shared/auth/useAuth';
+import { showError } from '@shared/lib/errors';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import { useState } from 'react';

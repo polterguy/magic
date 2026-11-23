@@ -1,4 +1,4 @@
-import { copyToClipboard } from '@core/toast';
+import { copyToClipboard } from '@shared/lib/toast';
 import CodeEditor from '@shared/ui/CodeEditor';
 import { Modal } from '@shared/ui/Dialogs';
 

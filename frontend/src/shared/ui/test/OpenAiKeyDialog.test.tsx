@@ -4,15 +4,15 @@
  * prefilled from the backend, a short key is refused before any request, the default model is
  * only rewritten when it changed, and failures surface in a dismissible banner.
  */
-import * as api from '@core/api';
-import { registerShellAction } from '@core/shellActions';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import * as api from '../../api';
+import { registerShellAction } from '../../shell/shellActions';
 import OpenAiKeyDialog from '../OpenAiKeyDialog';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('../../api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 

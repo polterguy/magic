@@ -5,8 +5,8 @@
  * stylesheets and scripts once the canvas has loaded, creating pages with their folders and
  * companion files, and retrofitting a script or stylesheet onto the open page.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -17,8 +17,8 @@ import { usePageFiles } from '../hooks/usePageFiles';
 import { useStylesheetState } from '../hooks/useStylesheetState';
 import { useUndoHistory } from '../hooks/useUndoHistory';
 
-vi.mock('@core/api', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/api')>()),
+vi.mock('@shared/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('@shared/api')>()),
   createFolder: vi.fn(),
   listFilesRecursively: vi.fn(),
   loadFile: vi.fn(),

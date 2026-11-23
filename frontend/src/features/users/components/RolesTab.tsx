@@ -1,7 +1,7 @@
-import { Role } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { Role } from '@shared/api';
 import { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import AiWaiter from '@shared/ui/AiWaiter';
 import SearchInput from '@shared/ui/SearchInput';
 import { useState } from 'react';

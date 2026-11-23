@@ -1,6 +1,6 @@
-import { listRoles, MlType, mlTypes } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { listRoles, MlType, mlTypes } from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import { useEffect, useState } from 'react';
 
 import { generateSearchEndpoint } from '../lib/api';

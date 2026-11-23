@@ -3,8 +3,8 @@
  * The database, file system and dynamic slot capability wizards: each turns what is ticked or
  * picked into the slot lines handed to onAdd, refuses an empty grant, and closes on request.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -16,7 +16,7 @@ import FilesAccessWizard from '../components/wizards/FilesAccessWizard';
 import * as generatorApi from '../lib/api';
 import { FILE_CHANGING_SLOTS } from '../lib/slots';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

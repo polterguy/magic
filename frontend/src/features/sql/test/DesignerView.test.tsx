@@ -3,7 +3,7 @@
  * The Designer's table filter, and a reference taking you to the card it points at, clearing a
  * filter that hides that card.
  */
-import type { TableMeta } from '@core/api';
+import type { TableMeta } from '@shared/api';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

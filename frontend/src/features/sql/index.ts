@@ -1,6 +1,6 @@
 import './styles/sql.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { TerminalIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -9,7 +9,7 @@ const PATH = '/sql-studio';
 const manifest: FeatureManifest = {
   id: 'sql',
   path: PATH,
-  page: lazy(() => import('./components/Sql')),
+  page: lazy(() => import('./pages/Sql')),
   nav: {
     label: 'SQL Studio',
     Icon: TerminalIcon,

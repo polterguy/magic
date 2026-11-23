@@ -1,6 +1,6 @@
-import { http } from '@core/api';
-import { showError } from '@core/errors';
-import { copyToClipboard } from '@core/toast';
+import { http } from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { copyToClipboard } from '@shared/lib/toast';
 import { Modal } from '@shared/ui/Dialogs';
 import Select from '@shared/ui/Select';
 import { useEffect, useState } from 'react';

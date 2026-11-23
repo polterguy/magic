@@ -1,6 +1,6 @@
 import './styles/files.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { CodeFileIcon, FolderIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -11,7 +11,7 @@ const PATH = '/hyper-ide';
 const manifest: FeatureManifest = {
   id: 'files',
   path: PATH,
-  page: lazy(() => import('./components/Files')),
+  page: lazy(() => import('./pages/Files')),
   nav: {
     label: 'Hyper IDE',
     Icon: CodeFileIcon,

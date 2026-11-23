@@ -4,17 +4,17 @@
  * refuses invalid JSON, opens the settings dialogs from the menu, and downloads or restores a
  * backup (only a file named appsettings.json).
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
 import { downloadBlob } from '@shared/lib/download';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Configuration from '../components/Configuration';
+import Configuration from '../pages/Configuration';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

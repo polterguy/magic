@@ -3,10 +3,10 @@
  * code view can hold.
  */
 
-import { loadFile } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { loadFile } from '@shared/api';
 import type { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 
 import { joinCss, splitCss } from '../lib/css';
 import { canonicalUrl } from '../lib/designerFiles';

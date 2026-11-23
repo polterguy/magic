@@ -1,4 +1,4 @@
-import type { DatabaseMeta } from '@core/api';
+import type { DatabaseMeta } from '@shared/api';
 import { Modal } from '@shared/ui/Dialogs';
 import FeatureLink from '@shared/ui/FeatureLink';
 

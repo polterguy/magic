@@ -3,14 +3,14 @@
  * useOpenApi: fetches the specification for a target, formats it as indented JSON, and holds
  * the waiter on while the request is in flight.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useOpenApi } from '../hooks/useOpenApi';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

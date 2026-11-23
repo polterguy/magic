@@ -3,9 +3,10 @@
  * not part of this build. Features never import each other, so this is how one sends you to
  * another: by id, through the registry.
  */
-import { featureHref } from '@core/features';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+
+import { featureHref } from '../shell/features';
 
 export default function FeatureLink(
   props: Readonly<{

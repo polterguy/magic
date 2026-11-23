@@ -3,7 +3,7 @@
  * This feature's calls to the backend: what each one sends — verb, URL and body — and what it
  * makes of the answer. fetch is replaced, so nothing here needs a backend.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { describe, expect, it } from 'vitest';
 
 import {

@@ -1,9 +1,9 @@
-import { loadFile, saveFile } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { loadFile, saveFile } from '@shared/api';
 import { useDialog } from '@shared/hooks/useDialog';
 import { useSessionState } from '@shared/hooks/useSessionState';
+import { showError } from '@shared/lib/errors';
 import { useSqlSnippets } from '@shared/lib/sql';
+import { showToast } from '@shared/lib/toast';
 
 import { snippetFilename, snippetLabel, snippetSuggestion } from '../lib/snippets';
 

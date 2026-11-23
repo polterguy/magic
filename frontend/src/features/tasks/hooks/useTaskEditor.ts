@@ -1,5 +1,5 @@
-import { Task } from '@core/api';
-import { showError } from '@core/errors';
+import { Task } from '@shared/api';
+import { showError } from '@shared/lib/errors';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SetURLSearchParams } from 'react-router-dom';
 

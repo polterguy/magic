@@ -3,16 +3,16 @@
  * Databases page: lists the SQLite databases from the backend, protects the magic database from
  * deletion, creates a new one, and switches to the external tab.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Databases from '../components/Databases';
 import * as databasesApi from '../lib/api';
+import Databases from '../pages/Databases';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

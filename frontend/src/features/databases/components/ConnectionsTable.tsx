@@ -1,4 +1,4 @@
-import { copyToClipboard, showToast } from '@core/toast';
+import { copyToClipboard, showToast } from '@shared/lib/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { TableSkeleton } from '@shared/ui/Skeleton';
 

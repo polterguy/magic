@@ -7,8 +7,8 @@
  */
 import '@testing-library/jest-dom/vitest';
 
-import { discoverFeatures } from '@app/registry';
-import { registerFeatures } from '@core/features';
+import { discoverFeatures } from '@app/lib/registry';
+import { registerFeatures } from '@shared/shell/features';
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
 

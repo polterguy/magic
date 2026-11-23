@@ -1,5 +1,5 @@
-import { listEndpoints } from '@core/api';
-import type { PaletteEntry } from '@core/features';
+import { listEndpoints } from '@shared/api';
+import type { PaletteEntry } from '@shared/shell/features';
 
 // Every endpoint, for the command palette.
 export async function paletteEntries(path: string): Promise<PaletteEntry[]> {

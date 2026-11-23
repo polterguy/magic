@@ -4,7 +4,7 @@
  * changing tag, head fields, adding text, dropping blocks (with widget assets and the media
  * picker) and applying a Machine rewrite.
  */
-import { setToastListener, type Toast } from '@core/toast';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook } from '@testing-library/react';
 import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

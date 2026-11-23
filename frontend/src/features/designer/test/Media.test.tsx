@@ -5,7 +5,7 @@
  * size for images and videos, never for audio), the upload flow and its folder choice,
  * and error handling.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { DialogProvider } from '@shared/ui/Dialogs';
 import { createEvent, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -14,8 +14,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import Media from '../components/Media';
 import type { MediaKind } from '../lib/mediaKinds';
 
-vi.mock('@core/api', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/api')>()),
+vi.mock('@shared/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('@shared/api')>()),
   listFilesRecursively: vi.fn(),
   uploadFile: vi.fn(),
 }));

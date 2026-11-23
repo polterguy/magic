@@ -1,5 +1,5 @@
-import { aiContextForFile } from '@core/api';
-import { showToast } from '@core/toast';
+import { aiContextForFile } from '@shared/api';
+import { showToast } from '@shared/lib/toast';
 import AiPrompt from '@shared/ui/AiPrompt';
 
 import type { Cloudlet } from '../hooks/useCloudlet';

@@ -1,6 +1,6 @@
-import { availablePlugins, installPlugin, listFolders } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { availablePlugins, installPlugin, listFolders } from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import { useEffect, useState } from 'react';
 
 import { missingAgentPlugins } from '../lib/constants';

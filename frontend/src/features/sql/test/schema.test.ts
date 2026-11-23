@@ -2,7 +2,7 @@
  * Unit tests for the Designer's table filter, and its new-table and add-column helpers.
  */
 
-import type { TableMeta } from '@core/api';
+import type { TableMeta } from '@shared/api';
 import { describe, expect, it } from 'vitest';
 
 import { FIELD_TYPES } from '../lib/dbTypes';

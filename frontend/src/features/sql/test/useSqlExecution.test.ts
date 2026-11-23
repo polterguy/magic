@@ -4,7 +4,7 @@
  * and holds the result sets of the last run.
  */
 import type { EditorView } from '@codemirror/view';
-import { showToast } from '@core/toast';
+import { showToast } from '@shared/lib/toast';
 import { act, renderHook } from '@testing-library/react';
 import type { RefObject } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -12,14 +12,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSqlExecution } from '../hooks/useSqlExecution';
 import * as sqlApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
-vi.mock('@core/toast', async importOriginal => ({
+vi.mock('@shared/lib/toast', async importOriginal => ({
   ...(await importOriginal<Record<string, unknown>>()),
   showToast: vi.fn(),
 }));

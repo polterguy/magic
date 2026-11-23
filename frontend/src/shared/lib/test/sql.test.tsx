@@ -4,17 +4,17 @@
  * and database cascade with its deep links, fallbacks and stale-answer guards, the snippet list
  * and the two pure helpers (autocomplete tables, AI context).
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import * as api from '../../api';
 import { buildSqlAiContext, sqlHintTables, useDatabaseSelection, useSqlSnippets } from '../sql';
+import { setToastListener, type Toast } from '../toast';
 
-vi.mock('@core/api', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/api')>()),
+vi.mock('../../api', async importOriginal => ({
+  ...(await importOriginal<typeof import('../../api')>()),
   defaultDatabaseType: vi.fn(),
   exportDdl: vi.fn(),
   listDatabases: vi.fn(),

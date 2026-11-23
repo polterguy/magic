@@ -7,11 +7,16 @@
  * It runs against stand-in features registered here rather than the real ones, so the shell is
  * tested alone — and so is what it does when a feature it links to is not in the build.
  */
-import { type FeatureManifest, features, registerFeatures } from '@core/features';
-import { setNavGuard } from '@core/navGuard';
-import { addFooterAction, addPaletteAction, openChatOps, openPalette } from '@core/shellActions';
-import { openSupport } from '@core/support';
-import { showToast } from '@core/toast';
+import { setNavGuard } from '@shared/lib/navGuard';
+import { openSupport } from '@shared/lib/support';
+import { showToast } from '@shared/lib/toast';
+import { type FeatureManifest, features, registerFeatures } from '@shared/shell/features';
+import {
+  addFooterAction,
+  addPaletteAction,
+  openChatOps,
+  openPalette,
+} from '@shared/shell/shellActions';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect } from 'react';
@@ -19,7 +24,7 @@ import { useLocation } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fakeToken, renderPage, TEST_BACKEND } from '../../test/renderPage';
-import Layout from '../Layout';
+import Layout from '../components/Layout';
 
 const socket = vi.hoisted(() => {
   const handlers: Record<string, (raw: string) => void> = {};
@@ -33,9 +38,9 @@ const socket = vi.hoisted(() => {
   return { handlers, connection, createSocket: vi.fn(() => connection) };
 });
 
-vi.mock('@core/socket', () => ({ createSocket: socket.createSocket }));
-vi.mock('@core/support', () => ({ openSupport: vi.fn(() => Promise.resolve()) }));
-vi.mock('../BackendsDialog', () => ({
+vi.mock('@shared/api/socket', () => ({ createSocket: socket.createSocket }));
+vi.mock('@shared/lib/support', () => ({ openSupport: vi.fn(() => Promise.resolve()) }));
+vi.mock('../components/BackendsDialog', () => ({
   default: (props: { onClose: () => void }) => (
     <div role="dialog" aria-label="Backends stub">
       <button onClick={props.onClose}>close backends</button>

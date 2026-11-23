@@ -5,15 +5,15 @@
  * values removing their keys. Covers loading, the empty list, a failing slot request, provider
  * specific fields, the console link, the redirect URI copy and Save/Cancel.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import OpenIdDialog from '../components/OpenIdDialog';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

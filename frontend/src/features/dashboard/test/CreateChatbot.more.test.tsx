@@ -4,8 +4,8 @@
  * crawl only for a non-blank URL, hands the chosen settings to createBot once the progress
  * channel listens, and offers the finished chatbot (open / edit) when the crawl announces it.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
@@ -18,7 +18,7 @@ import * as dashboardApi from '../lib/api';
 // It links to these features; stand-ins keep the test valid in a build without them.
 withStandInFeatures([{ id: 'ml', path: '/machine-learning' }]);
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

@@ -4,8 +4,8 @@ import {
   listEndpointsDetailed,
   listFilesRecursively,
   loadFile,
-} from '@core/api';
-import { showToast } from '@core/toast';
+} from '@shared/api';
+import { showToast } from '@shared/lib/toast';
 import { useEffect, useRef, useState } from 'react';
 
 import {

@@ -4,7 +4,7 @@
  * selection, the empty state, creating (name rule) and editing questionnaires, deleting with the
  * typed-name confirmation, and adding, editing and deleting questions.
  */
-import { setToastListener, type Toast } from '@core/toast';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { DialogProvider } from '@shared/ui/Dialogs';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import QuestionnairesTab from '../components/QuestionnairesTab';
 import * as mlApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

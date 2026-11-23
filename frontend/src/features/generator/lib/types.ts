@@ -2,7 +2,7 @@
  * Types shared by the endpoint generator's tabs, wizards and helpers.
  */
 
-import { ColumnMeta } from '@core/api';
+import { ColumnMeta } from '@shared/api';
 
 /*
  * A locked column holds its row's owner: crudify removes it from the endpoint's

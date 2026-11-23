@@ -4,19 +4,19 @@
  * the invalid JSON guard, multipart forms with file pickers and thumbnails, and the cURL command
  * for each body type.
  */
-import * as api from '@core/api';
-import * as toast from '@core/toast';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import * as api from '../../api';
+import * as toast from '../../lib/toast';
 import InvokePanel from '../InvokePanel';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('../../api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
-vi.mock('@core/toast', async importOriginal => ({
+vi.mock('../../lib/toast', async importOriginal => ({
   ...(await importOriginal<typeof toast>()),
   copyToClipboard: vi.fn().mockResolvedValue(undefined),
 }));

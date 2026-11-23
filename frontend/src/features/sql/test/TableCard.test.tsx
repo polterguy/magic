@@ -3,7 +3,7 @@
  * One table in the Designer: its columns with key and nullability markers, its references, the
  * collapse of a long column list, and the actions.
  */
-import type { TableMeta } from '@core/api';
+import type { TableMeta } from '@shared/api';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

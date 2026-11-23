@@ -1,4 +1,4 @@
-import { featureHref } from '@core/features';
+import { featureHref } from '@shared/shell/features';
 import ProgressDialog from '@shared/ui/ProgressDialog';
 import { TableSkeleton } from '@shared/ui/Skeleton';
 import { Link } from 'react-router-dom';

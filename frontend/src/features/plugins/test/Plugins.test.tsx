@@ -4,16 +4,16 @@
  * reinstall, filters them, shows the details of one, and installs after the confirmations the
  * kind of plugin calls for.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Plugins from '../components/Plugins';
 import * as pluginsApi from '../lib/api';
+import Plugins from '../pages/Plugins';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

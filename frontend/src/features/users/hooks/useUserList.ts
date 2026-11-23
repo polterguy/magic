@@ -1,11 +1,11 @@
-import { canResetPassword, countUsers, listUsers, User } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
-import { useAuth } from '@core/useAuth';
+import { canResetPassword, countUsers, listUsers, User } from '@shared/api';
+import { useAuth } from '@shared/auth/useAuth';
 import { useDialog } from '@shared/hooks/useDialog';
 import { usePagedList } from '@shared/hooks/usePagedList';
 import { exportCsv } from '@shared/lib/download';
+import { showError } from '@shared/lib/errors';
 import { useSort } from '@shared/lib/sort';
+import { showToast } from '@shared/lib/toast';
 import { useEffect, useState } from 'react';
 
 import { deleteUser } from '../lib/api';

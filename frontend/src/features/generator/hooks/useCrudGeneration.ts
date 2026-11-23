@@ -1,7 +1,7 @@
-import { crudify } from '@core/api';
-import { errorMessage } from '@core/errors';
-import { showToast } from '@core/toast';
+import { crudify } from '@shared/api';
+import { errorMessage } from '@shared/lib/errors';
 import { DatabaseSelection } from '@shared/lib/sql';
+import { showToast } from '@shared/lib/toast';
 import { ProgressLine } from '@shared/ui/ProgressDialog';
 import { useRef, useState } from 'react';
 

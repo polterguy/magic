@@ -1,4 +1,4 @@
-import { Task } from '@core/api';
+import { Task } from '@shared/api';
 import { TableSkeleton } from '@shared/ui/Skeleton';
 
 import { scheduleLabel } from '../lib/constants';

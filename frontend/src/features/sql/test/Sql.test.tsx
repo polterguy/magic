@@ -4,16 +4,16 @@
  * the chosen database and shows the result set, refuses to run an empty buffer, and switches to
  * the table designer. The code editor is replaced by a textarea stub.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Sql from '../components/Sql';
 import * as sqlApi from '../lib/api';
+import Sql from '../pages/Sql';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

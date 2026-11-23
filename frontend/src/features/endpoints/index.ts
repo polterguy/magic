@@ -1,6 +1,6 @@
 import './styles/endpoints.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { ExchangeIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -9,7 +9,7 @@ const PATH = '/endpoints';
 const manifest: FeatureManifest = {
   id: 'endpoints',
   path: PATH,
-  page: lazy(() => import('./components/Endpoints')),
+  page: lazy(() => import('./pages/Endpoints')),
   nav: {
     label: 'Endpoints',
     Icon: ExchangeIcon,

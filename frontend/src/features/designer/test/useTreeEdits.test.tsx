@@ -4,7 +4,7 @@
  * clipboard (copy, cut, paste with id collision handling and the empty-container rule),
  * delete, nudge among designable siblings and drag-move.
  */
-import { setToastListener, type Toast } from '@core/toast';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 

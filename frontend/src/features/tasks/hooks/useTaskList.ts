@@ -1,4 +1,4 @@
-import { countTasks, listTasks, Task } from '@core/api';
+import { countTasks, listTasks, Task } from '@shared/api';
 import { usePagedList } from '@shared/hooks/usePagedList';
 import { useState } from 'react';
 

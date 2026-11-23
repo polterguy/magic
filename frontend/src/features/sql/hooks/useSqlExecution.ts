@@ -1,7 +1,7 @@
 import type { EditorView } from '@codemirror/view';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
 import { editorSelection } from '@shared/lib/editor';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import { type RefObject, useState } from 'react';
 
 import { executeSql, type SqlRow } from '../lib/api';

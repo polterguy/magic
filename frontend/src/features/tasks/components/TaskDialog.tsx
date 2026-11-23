@@ -1,5 +1,5 @@
-import { Task } from '@core/api';
-import { showToast } from '@core/toast';
+import { Task } from '@shared/api';
+import { showToast } from '@shared/lib/toast';
 import AiPrompt from '@shared/ui/AiPrompt';
 import BusyLabel from '@shared/ui/BusyLabel';
 import CodeEditor from '@shared/ui/CodeEditor';

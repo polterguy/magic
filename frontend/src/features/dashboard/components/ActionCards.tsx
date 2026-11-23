@@ -3,9 +3,9 @@
  * cloudlet: becoming an AI agent, adding an OpenAI key, generating endpoints,
  * or serving a frontend.
  */
-import { httpUrl } from '@core/backend';
-import { featureHref } from '@core/features';
-import { copyToClipboard } from '@core/toast';
+import { httpUrl } from '@shared/auth/backend';
+import { copyToClipboard } from '@shared/lib/toast';
+import { featureHref } from '@shared/shell/features';
 import BusyLabel from '@shared/ui/BusyLabel';
 import {
   BoltIcon,

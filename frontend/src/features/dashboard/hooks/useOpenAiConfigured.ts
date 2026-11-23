@@ -1,4 +1,4 @@
-import { openaiIsConfigured } from '@core/api';
+import { openaiIsConfigured } from '@shared/api';
 import { useEffect, useState } from 'react';
 
 // Whether an OpenAI API key is configured, and the dialog that adds one.

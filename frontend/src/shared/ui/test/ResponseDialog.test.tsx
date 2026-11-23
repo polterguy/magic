@@ -4,12 +4,12 @@
  * sorted response headers, the cross-origin header note (only for real HTTP invocations served from
  * another origin), and Copy response for textual bodies only.
  */
-import { servedByBackend } from '@core/backend';
-import { copyToClipboard } from '@core/toast';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { servedByBackend } from '../../auth/backend';
+import { copyToClipboard } from '../../lib/toast';
 import { DialogProvider } from '../Dialogs';
 import type { InvokeResult } from '../InvokePanel';
 import ResponseDialog from '../ResponseDialog';
@@ -18,13 +18,13 @@ vi.mock('../CodeEditor', async () => ({
   default: (await import('../../../test/CodeEditorStub')).default,
 }));
 
-vi.mock('@core/backend', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/backend')>()),
+vi.mock('../../auth/backend', async importOriginal => ({
+  ...(await importOriginal<typeof import('../../auth/backend')>()),
   servedByBackend: vi.fn(),
 }));
 
-vi.mock('@core/toast', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/toast')>()),
+vi.mock('../../lib/toast', async importOriginal => ({
+  ...(await importOriginal<typeof import('../../lib/toast')>()),
   copyToClipboard: vi.fn(),
 }));
 

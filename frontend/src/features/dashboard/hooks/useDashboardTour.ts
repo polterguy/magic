@@ -1,4 +1,4 @@
-import { addPaletteAction } from '@core/shellActions';
+import { addPaletteAction } from '@shared/shell/shellActions';
 import { useEffect, useState } from 'react';
 
 /*

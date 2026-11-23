@@ -3,7 +3,7 @@
  * useDashboardTour: the tour offers itself once per backend when the flags it depends on have
  * resolved, only a completed tour is remembered, and the command palette can re-run it.
  */
-import { shellContributions } from '@core/shellActions';
+import { shellContributions } from '@shared/shell/shellActions';
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 

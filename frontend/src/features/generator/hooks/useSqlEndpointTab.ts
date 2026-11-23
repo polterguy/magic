@@ -1,13 +1,13 @@
-import { listRoles, loadFile } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { listRoles, loadFile } from '@shared/api';
 import { useEditToken } from '@shared/lib/editor';
+import { showError } from '@shared/lib/errors';
 import {
   buildSqlAiContext,
   sqlHintTables,
   useDatabaseSelection,
   useSqlSnippets,
 } from '@shared/lib/sql';
+import { showToast } from '@shared/lib/toast';
 import { useEffect, useMemo, useState } from 'react';
 
 import { customSqlEndpoint } from '../lib/api';

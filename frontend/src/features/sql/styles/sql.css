@@ -1,5 +1,5 @@
 /*
- * Styles only the sql feature uses. Loaded through its manifest, after app/styles.css.
+ * Styles only the sql feature uses. Loaded through its manifest, after app/styles/app.css.
  */
 
 /* Column drop button appears only on row hover. */

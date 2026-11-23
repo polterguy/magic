@@ -4,8 +4,8 @@
  * optional name), adds the chosen roles and mails the sign-in link to the backend the dashboard
  * is signed in to. Send is gated on an email address; failures show a toast and report nothing.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -14,7 +14,7 @@ import { renderPage, type RenderPageOptions } from '../../../test/renderPage';
 import InviteUserDialog from '../components/InviteUserDialog';
 import * as usersApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

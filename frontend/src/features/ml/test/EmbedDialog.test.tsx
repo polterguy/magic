@@ -4,8 +4,8 @@
  * modern themes the backend lists, copies the script, and stops claiming it is copied once an
  * option changes.
  */
-import * as api from '@core/api';
-import * as toast from '@core/toast';
+import * as api from '@shared/api';
+import * as toast from '@shared/lib/toast';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -13,15 +13,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import EmbedDialog from '../components/EmbedDialog';
 import * as mlApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
-vi.mock('@core/toast', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/toast')>()),
+vi.mock('@shared/lib/toast', async importOriginal => ({
+  ...(await importOriginal<typeof import('@shared/lib/toast')>()),
   copyToClipboard: vi.fn().mockResolvedValue(undefined),
 }));
 

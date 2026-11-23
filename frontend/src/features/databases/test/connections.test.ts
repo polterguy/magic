@@ -3,7 +3,7 @@
  * parsing and the connection status bookkeeping.
  */
 
-import type { MagicConfig } from '@core/api';
+import type { MagicConfig } from '@shared/api';
 import { describe, expect, it } from 'vitest';
 
 import {

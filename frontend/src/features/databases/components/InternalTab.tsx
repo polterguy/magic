@@ -1,5 +1,5 @@
-import { fileWithTokenUrl } from '@core/api';
-import { httpUrl } from '@core/backend';
+import { fileWithTokenUrl } from '@shared/api';
+import { httpUrl } from '@shared/auth/backend';
 import AiWaiter from '@shared/ui/AiWaiter';
 import FeatureLink from '@shared/ui/FeatureLink';
 import { TableSkeleton } from '@shared/ui/Skeleton';

@@ -5,7 +5,9 @@
  * here rather than in either of them.
  */
 
-import type { OpenAiModel } from '@core/api';
+import { useEffect, useState } from 'react';
+
+import type { OpenAiModel } from '../api';
 import {
   mlTypes,
   mlTypeUpdate,
@@ -13,11 +15,9 @@ import {
   openaiGetKey,
   openaiModels,
   openaiSetKey,
-} from '@core/api';
-import { errorMessage } from '@core/errors';
-import { refreshChat } from '@core/shellActions';
-import { useEffect, useState } from 'react';
-
+} from '../api';
+import { errorMessage } from '../lib/errors';
+import { refreshChat } from '../shell/shellActions';
 import Banner from './Banner';
 import BusyLabel from './BusyLabel';
 import { Modal } from './Dialogs';

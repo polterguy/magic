@@ -1,4 +1,4 @@
-import type { Endpoint } from '@core/api';
+import type { Endpoint } from '@shared/api';
 
 /*
  * Pure helpers behind the Endpoints page — which module an endpoint belongs

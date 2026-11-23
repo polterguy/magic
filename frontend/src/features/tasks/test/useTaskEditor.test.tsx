@@ -3,7 +3,7 @@
  * useTaskEditor: opening an existing task (fetching its Hyperlambda), opening a blank new one,
  * and the one-shot "?edit=" deep link that is consumed from the URL.
  */
-import { setToastListener, type Toast } from '@core/toast';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import type { SetURLSearchParams } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -12,7 +12,7 @@ import { useTaskEditor } from '../hooks/useTaskEditor';
 import * as tasksApi from '../lib/api';
 import { NEW_TASK_CODE } from '../lib/constants';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

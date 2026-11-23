@@ -5,8 +5,8 @@
  * comma separated list of origins, and saving is refused for bad URLs and for a list that would
  * lock this dashboard out.
  */
-import { servedByBackend } from '@core/backend';
-import { AuthContext } from '@core/useAuth';
+import { servedByBackend } from '@shared/auth/backend';
+import { AuthContext } from '@shared/auth/useAuth';
 import { DialogProvider } from '@shared/ui/Dialogs';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -15,8 +15,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeAuth } from '../../../test/renderPage';
 import UrlsDialog from '../components/UrlsDialog';
 
-vi.mock('@core/backend', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/backend')>()),
+vi.mock('@shared/auth/backend', async importOriginal => ({
+  ...(await importOriginal<typeof import('@shared/auth/backend')>()),
   servedByBackend: vi.fn(),
 }));
 

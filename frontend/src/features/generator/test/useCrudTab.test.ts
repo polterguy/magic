@@ -3,13 +3,13 @@
  * useCrudTab: resets the selection when the database changes, keeps the component URL on the
  * single selected table, counts the endpoints the selection would produce, and drives generation.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useCrudTab } from '../hooks/useCrudTab';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

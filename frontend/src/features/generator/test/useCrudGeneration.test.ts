@@ -3,22 +3,22 @@
  * useCrudGeneration: validates the request, runs one crudify call per table and verb into the
  * progress feed, stops at a failure or a cancel, and reveals the guided flow's done panel.
  */
-import * as api from '@core/api';
-import { showToast } from '@core/toast';
+import * as api from '@shared/api';
+import { showToast } from '@shared/lib/toast';
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CrudGenerationContext, useCrudGeneration } from '../hooks/useCrudGeneration';
 import { CrudTable } from '../lib/types';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
-vi.mock('@core/toast', async importOriginal => ({
+vi.mock('@shared/lib/toast', async importOriginal => ({
   ...(await importOriginal<Record<string, unknown>>()),
   showToast: vi.fn(),
 }));

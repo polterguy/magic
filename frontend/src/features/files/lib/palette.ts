@@ -1,5 +1,5 @@
-import { listFilesRecursively } from '@core/api';
-import type { PaletteEntry } from '@core/features';
+import { listFilesRecursively } from '@shared/api';
+import type { PaletteEntry } from '@shared/shell/features';
 
 // Every module and configuration file, for the command palette. A folder that fails adds nothing.
 export async function paletteEntries(path: string): Promise<PaletteEntry[]> {

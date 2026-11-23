@@ -3,12 +3,12 @@
  * siblings by crudify's own type and path convention, deriving keys and editable columns, and
  * the session cache of the endpoint list.
  */
-import { type EndpointMeta, listEndpointsDetailed } from '@core/api';
+import { type EndpointMeta, listEndpointsDetailed } from '@shared/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { dataGridSources, loadEndpoints } from '../lib/dataSources';
 
-vi.mock('@core/api', () => ({ listEndpointsDetailed: vi.fn() }));
+vi.mock('@shared/api', () => ({ listEndpointsDetailed: vi.fn() }));
 
 function ep(path: string, verb: string, type: string, extra: Partial<EndpointMeta> = {}) {
   return { path, verb, type, ...extra } satisfies EndpointMeta;

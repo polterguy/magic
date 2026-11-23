@@ -4,15 +4,15 @@
  * matches URL and username, switching asks the page's navigation guard first, forgetting asks
  * for confirmation, and "Forget signed out" clears every backend without a live token.
  */
-import type { StoredBackend } from '@core/backend';
-import { setNavGuard } from '@core/navGuard';
-import { setToastListener, type Toast } from '@core/toast';
+import type { StoredBackend } from '@shared/auth/backend';
+import { setNavGuard } from '@shared/lib/navGuard';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fakeToken, renderPage } from '../../test/renderPage';
-import BackendsDialog from '../BackendsDialog';
+import BackendsDialog from '../components/BackendsDialog';
 
 const LIVE = fakeToken({ unique_name: 'root', exp: Math.floor(Date.now() / 1000) + 3600 });
 const EXPIRED = fakeToken({ unique_name: 'root', exp: Math.floor(Date.now() / 1000) - 3600 });

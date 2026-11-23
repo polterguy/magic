@@ -1,4 +1,4 @@
-import { copyToClipboard } from '@core/toast';
+import { copyToClipboard } from '@shared/lib/toast';
 import {
   BracesIcon,
   CodeFileIcon,

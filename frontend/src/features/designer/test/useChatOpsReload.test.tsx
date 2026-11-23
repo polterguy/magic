@@ -3,8 +3,8 @@
  * The wire between the Web Designer and Chat Ops: a finished turn reloads the open page and the
  * page list when nothing is unsaved, and only says so (marking the canvas stale) when there is.
  */
-import { notifyChatOpsDone } from '@core/chatOps';
-import { setToastListener, type Toast } from '@core/toast';
+import { setToastListener, type Toast } from '@shared/lib/toast';
+import { notifyChatOpsDone } from '@shared/shell/chatOps';
 import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

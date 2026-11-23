@@ -9,18 +9,18 @@
  */
 import '../../test/renderPage';
 
-import { configureApi } from '@core/api';
+import { configureApi } from '@shared/api';
 import {
   type FeatureManifest,
   features,
   type PaletteEntry,
   registerFeatures,
-} from '@core/features';
+} from '@shared/shell/features';
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import CommandPalette from '../CommandPalette';
+import CommandPalette from '../components/CommandPalette';
 
 const sources = {
   endpoints: vi.fn<() => Promise<PaletteEntry[]>>(),

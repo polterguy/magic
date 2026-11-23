@@ -1,5 +1,5 @@
-import { Role, User } from '@core/api';
-import { showToast } from '@core/toast';
+import { Role, User } from '@shared/api';
+import { showToast } from '@shared/lib/toast';
 import AiWaiter from '@shared/ui/AiWaiter';
 import Pagination from '@shared/ui/Pagination';
 import SearchInput from '@shared/ui/SearchInput';

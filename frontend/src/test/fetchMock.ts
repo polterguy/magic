@@ -4,7 +4,7 @@
  * a describe block; the tests in it then read `sent` (or `last()`) and set answers with
  * `respondWith`.
  */
-import { configureApi, setUnauthorizedHandler } from '@core/api';
+import { configureApi, setUnauthorizedHandler } from '@shared/api';
 import { afterEach, beforeEach, expect, vi } from 'vitest';
 
 export const BASE = 'https://backend.test';

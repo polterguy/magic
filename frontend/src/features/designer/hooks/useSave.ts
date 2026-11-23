@@ -3,9 +3,9 @@
  * changed with it.
  */
 
-import { saveFile } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { saveFile } from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 
 import { bumpAsset, syncSharedAssetVersions } from '../lib/assets';
 import { joinCss, splitCss } from '../lib/css';

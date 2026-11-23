@@ -1,8 +1,8 @@
 /*
  * The calls this feature makes to the backend. The transport they go through — base URL, token,
- * errors — is core/api.
+ * errors — is shared/api.
  */
-import { http } from '@core/api';
+import { http } from '@shared/api';
 
 /*
  * The cloudlet-wide website configuration (/etc/www/.config) — root-only.

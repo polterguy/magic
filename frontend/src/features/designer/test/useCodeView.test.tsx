@@ -5,8 +5,8 @@
  * confirmation with unsaved work, applying typed markup or CSS on the way out, and loading
  * (or refreshing) the text on the way in.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -18,8 +18,8 @@ import { useUndoHistory } from '../hooks/useUndoHistory';
 import { joinCss, splitCss } from '../lib/css';
 import { serializeDocument } from '../lib/html';
 
-vi.mock('@core/api', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/api')>()),
+vi.mock('@shared/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('@shared/api')>()),
   loadFile: vi.fn(),
 }));
 

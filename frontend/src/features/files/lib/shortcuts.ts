@@ -3,7 +3,7 @@
  * They reach the shortcuts overlay (and, for editor bindings, the editor's keymap) through this
  * feature's manifest.
  */
-import type { Shortcut } from '@core/shortcuts';
+import type { Shortcut } from '@shared/shell/shortcuts';
 
 export const FILES_SHORTCUTS: Shortcut[] = [
   {

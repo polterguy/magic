@@ -2,10 +2,10 @@
  * Models tab — the ml_types registry.
  */
 
-import { gibberish, type MlType } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { gibberish, type MlType } from '@shared/api';
 import { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import AiWaiter from '@shared/ui/AiWaiter';
 import { CheckIcon, DashIcon } from '@shared/ui/Icons';
 import SocketFeedback from '@shared/ui/SocketFeedback';

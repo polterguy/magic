@@ -1,4 +1,4 @@
-import { featureHref } from '@core/features';
+import { featureHref } from '@shared/shell/features';
 import CodeEditor from '@shared/ui/CodeEditor';
 import { useNavigate } from 'react-router-dom';
 

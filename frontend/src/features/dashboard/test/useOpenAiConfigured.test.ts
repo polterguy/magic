@@ -3,13 +3,13 @@
  * useOpenAiConfigured: null while unknown, then whether an OpenAI key is configured; a failed
  * check goes back to unknown rather than claiming either answer.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { useOpenAiConfigured } from '../hooks/useOpenAiConfigured';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

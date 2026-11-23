@@ -3,7 +3,7 @@
  * served at. Shared by the page and its hooks, and pure apart from listPages().
  */
 
-import { listFilesRecursively } from '@core/api';
+import { listFilesRecursively } from '@shared/api';
 
 import { WEB_ROOT } from './pageUrls';
 import { WIDGET_ASSET_HREFS } from './widgetRuntime';

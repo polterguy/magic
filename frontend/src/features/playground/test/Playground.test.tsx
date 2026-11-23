@@ -4,15 +4,15 @@
  * {"result": ...} shape, or showing JSON as returned), loads a snippet into the editor, and saves
  * the editor as a named snippet. The code editors are replaced by textarea stubs.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Playground from '../components/Playground';
+import Playground from '../pages/Playground';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('@shared/ui/CodeEditor', async () => ({

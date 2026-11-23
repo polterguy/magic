@@ -3,10 +3,10 @@
  * in a markdown editor, with an AI bar that can rewrite the snippet in place.
  */
 
-import { type MlSnippet, mlSnippetCreate } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { type MlSnippet, mlSnippetCreate } from '@shared/api';
 import { useEditToken } from '@shared/lib/editor';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import AiPrompt from '@shared/ui/AiPrompt';
 import BusyLabel from '@shared/ui/BusyLabel';
 import CodeEditor from '@shared/ui/CodeEditor';

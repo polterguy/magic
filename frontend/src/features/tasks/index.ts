@@ -1,6 +1,6 @@
 import './styles/tasks.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { ClockIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -9,7 +9,7 @@ const PATH = '/task-manager';
 const manifest: FeatureManifest = {
   id: 'tasks',
   path: PATH,
-  page: lazy(() => import('./components/Tasks')),
+  page: lazy(() => import('./pages/Tasks')),
   nav: {
     label: 'Task Manager',
     Icon: ClockIcon,

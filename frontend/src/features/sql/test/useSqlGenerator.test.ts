@@ -4,22 +4,22 @@
  * selected text into the whole buffer.
  */
 import type { EditorView } from '@codemirror/view';
-import * as api from '@core/api';
-import { showToast } from '@core/toast';
+import * as api from '@shared/api';
+import { showToast } from '@shared/lib/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import type { RefObject } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSqlGenerator } from '../hooks/useSqlGenerator';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
-vi.mock('@core/toast', async importOriginal => ({
+vi.mock('@shared/lib/toast', async importOriginal => ({
   ...(await importOriginal<Record<string, unknown>>()),
   showToast: vi.fn(),
 }));

@@ -1,5 +1,5 @@
-import { mlTypes } from '@core/api';
-import type { PaletteEntry } from '@core/features';
+import { mlTypes } from '@shared/api';
+import type { PaletteEntry } from '@shared/shell/features';
 
 /*
  * Two ways in per model, told apart by their group rather than by a decorated label — the name

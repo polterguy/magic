@@ -1,4 +1,4 @@
-import type { TableMeta } from '@core/api';
+import type { TableMeta } from '@shared/api';
 import { CodeFileIcon, PlusIcon, TrashIcon } from '@shared/ui/Icons';
 import { useEffect, useRef, useState } from 'react';
 

@@ -1,8 +1,8 @@
-import { Task } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { Task } from '@shared/api';
 import { useDialog } from '@shared/hooks/useDialog';
 import type { PagedList } from '@shared/hooks/usePagedList';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import { useState } from 'react';
 
 import { deleteSchedule, scheduleTask } from '../lib/api';

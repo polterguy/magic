@@ -3,20 +3,20 @@
 import '@fontsource-variable/inter';
 import '@fontsource-variable/roboto';
 import '@fontsource-variable/ibm-plex-sans';
-import './styles.css';
+import './styles/app.css';
 
-import { AuthProvider } from '@core/AuthContext';
-import { showError } from '@core/errors';
-import { registerFeatures } from '@core/features';
-import { initFont } from '@core/font';
-import { initTheme } from '@core/theme';
+import { AuthProvider } from '@shared/auth/AuthContext';
+import { showError } from '@shared/lib/errors';
+import { initFont } from '@shared/lib/font';
+import { initTheme } from '@shared/lib/theme';
+import { registerFeatures } from '@shared/shell/features';
 import { DialogProvider } from '@shared/ui/Dialogs';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
-import App from './App';
-import { discoverFeatures } from './registry';
+import { discoverFeatures } from './lib/registry';
+import AppRoutes from './routes/AppRoutes';
 
 registerFeatures(discoverFeatures());
 initTheme();
@@ -32,7 +32,7 @@ ReactDOM.createRoot(document.querySelector('#root')!).render(
     <BrowserRouter>
       <AuthProvider>
         <DialogProvider>
-          <App />
+          <AppRoutes />
         </DialogProvider>
       </AuthProvider>
     </BrowserRouter>

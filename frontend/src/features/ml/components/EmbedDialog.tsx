@@ -3,8 +3,8 @@
  * Legacy classic-chatbot and AI-search embeds are intentionally dropped.
  */
 
-import { backendInfo } from '@core/api';
-import { copyToClipboard } from '@core/toast';
+import { backendInfo } from '@shared/api';
+import { copyToClipboard } from '@shared/lib/toast';
 import { Modal } from '@shared/ui/Dialogs';
 import OptionPill from '@shared/ui/OptionPill';
 import Select from '@shared/ui/Select';

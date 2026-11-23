@@ -1,6 +1,6 @@
 import './styles/designer.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { LayoutIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -11,7 +11,7 @@ const PATH = '/web-designer';
 const manifest: FeatureManifest = {
   id: 'designer',
   path: PATH,
-  page: lazy(() => import('./components/WebDesigner')),
+  page: lazy(() => import('./pages/WebDesigner')),
   nav: {
     label: 'Web Designer',
     Icon: LayoutIcon,

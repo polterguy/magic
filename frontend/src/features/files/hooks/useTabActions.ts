@@ -1,7 +1,7 @@
-import { loadFile, saveFile } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { loadFile, saveFile } from '@shared/api';
 import type { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import { useState } from 'react';
 
 import type { OpenTabs } from './useOpenTabs';

@@ -10,13 +10,13 @@
  * independently — one chunk may carry several of them at once.
  */
 
-import { backendInfo, gibberish } from '@core/api';
-import { notifyChatOpsDone } from '@core/chatOps';
-import { showError } from '@core/errors';
-import { createSocket } from '@core/socket';
-import { getTheme } from '@core/theme';
-import { copyToClipboard, showToast } from '@core/toast';
 import { HubConnection } from '@microsoft/signalr';
+import { backendInfo, gibberish } from '@shared/api';
+import { createSocket } from '@shared/api/socket';
+import { showError } from '@shared/lib/errors';
+import { getTheme } from '@shared/lib/theme';
+import { copyToClipboard, showToast } from '@shared/lib/toast';
+import { notifyChatOpsDone } from '@shared/shell/chatOps';
 import {
   CopyIcon,
   DownloadIcon,

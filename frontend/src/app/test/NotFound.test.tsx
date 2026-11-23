@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { renderPage } from '../../test/renderPage';
-import NotFound from '../NotFound';
+import NotFound from '../pages/NotFound';
 
 describe('NotFound', () => {
   it('says nothing is here and links home', () => {

@@ -3,7 +3,7 @@
  * database types, and reading connection strings out of the config.
  */
 
-import type { MagicConfig } from '@core/api';
+import type { MagicConfig } from '@shared/api';
 
 export const DB_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 export const STATUS_BADGES: Record<string, string> = { live: 'badge-get', down: 'badge-error' };

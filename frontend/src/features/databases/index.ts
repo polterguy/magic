@@ -1,4 +1,4 @@
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { DatabaseIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -7,7 +7,7 @@ const PATH = '/databases';
 const manifest: FeatureManifest = {
   id: 'databases',
   path: PATH,
-  page: lazy(() => import('./components/Databases')),
+  page: lazy(() => import('./pages/Databases')),
   nav: {
     label: 'Databases',
     Icon: DatabaseIcon,

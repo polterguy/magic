@@ -3,16 +3,16 @@
  * Users page: lists users and roles from the backend, protects the root user from deletion,
  * deletes a user after the typed-name confirmation, and switches between the two tabs.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Users from '../components/Users';
 import * as usersApi from '../lib/api';
+import Users from '../pages/Users';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

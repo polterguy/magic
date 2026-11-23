@@ -1,6 +1,6 @@
 import './styles/configuration.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { GearIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -9,7 +9,7 @@ const PATH = '/configuration';
 const manifest: FeatureManifest = {
   id: 'configuration',
   path: PATH,
-  page: lazy(() => import('./components/Configuration')),
+  page: lazy(() => import('./pages/Configuration')),
   nav: {
     label: 'Configuration',
     Icon: GearIcon,

@@ -1,4 +1,4 @@
-import { Role } from '@core/api';
+import { Role } from '@shared/api';
 import RoleChips from '@shared/ui/RoleChips';
 
 /*

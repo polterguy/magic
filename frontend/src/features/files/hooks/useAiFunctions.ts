@@ -1,6 +1,6 @@
-import { listFilesRecursively, mlSnippetCreate } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { listFilesRecursively, mlSnippetCreate } from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import { useState } from 'react';
 
 import { getFileDescription } from '../lib/api';

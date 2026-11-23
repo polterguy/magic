@@ -131,8 +131,8 @@ export default defineConfig(
   {
     /*
      * The modular monolith's import rules. Every feature must be removable by deleting its
-     * folder, so a feature imports only itself and the platform (core, shared); nothing outside
-     * a feature imports into one — the app finds features through app/registry.ts's glob.
+     * folder, so a feature imports only itself and shared code; nothing outside a feature
+     * imports into one — the app finds features through app/lib/registry.ts's glob.
      */
     files: ['src/**/*.{ts,tsx}'],
     plugins: { boundaries },
@@ -140,7 +140,6 @@ export default defineConfig(
       'import/resolver': { typescript: { project: './tsconfig.json' } },
       'boundaries/elements': [
         { type: 'app', pattern: 'src/app/**' },
-        { type: 'core', pattern: 'src/core/**' },
         { type: 'shared', pattern: 'src/shared/**' },
         { type: 'feature', pattern: 'src/features/*/**', capture: ['feature'] },
         { type: 'testing', pattern: 'src/test/**' },
@@ -153,12 +152,12 @@ export default defineConfig(
           default: 'disallow',
           policies: [
             {
-              from: { element: { types: ['core', 'shared'] } },
-              allow: { to: { element: { types: ['core', 'shared', 'testing'] } } },
+              from: { element: { type: 'shared' } },
+              allow: { to: { element: { types: ['shared', 'testing'] } } },
             },
             {
               from: { element: { type: 'feature' } },
-              allow: { to: { element: { types: ['core', 'shared', 'testing'] } } },
+              allow: { to: { element: { types: ['shared', 'testing'] } } },
             },
             {
               from: { element: { type: 'feature' } },
@@ -173,11 +172,11 @@ export default defineConfig(
             },
             {
               from: { element: { type: 'app' } },
-              allow: { to: { element: { types: ['app', 'core', 'shared', 'testing'] } } },
+              allow: { to: { element: { types: ['app', 'shared', 'testing'] } } },
             },
             {
               from: { element: { type: 'testing' } },
-              allow: { to: { element: { types: ['app', 'core', 'shared', 'testing'] } } },
+              allow: { to: { element: { types: ['app', 'shared', 'testing'] } } },
             },
           ],
         },

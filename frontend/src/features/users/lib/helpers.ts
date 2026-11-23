@@ -1,4 +1,4 @@
-import { Role, User } from '@core/api';
+import { Role, User } from '@shared/api';
 
 import { userExtra } from './api';
 

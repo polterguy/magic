@@ -4,17 +4,17 @@
  * the configuration and saving it (or being cancelled), the editor's save shortcut, the backup
  * file chooser, and what the user sees when loading, saving, downloading or restoring fails.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
 import { downloadBlob } from '@shared/lib/download';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Configuration from '../components/Configuration';
+import Configuration from '../pages/Configuration';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

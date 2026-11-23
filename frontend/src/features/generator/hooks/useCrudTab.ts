@@ -1,4 +1,4 @@
-import { DatabaseMeta, listRoles } from '@core/api';
+import { DatabaseMeta, listRoles } from '@shared/api';
 import { useDatabaseSelection } from '@shared/lib/sql';
 import { useEffect, useMemo, useState } from 'react';
 

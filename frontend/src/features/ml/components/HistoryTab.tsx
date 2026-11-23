@@ -2,7 +2,7 @@
  * History tab — requests towards your models.
  */
 
-import { type MlType } from '@core/api';
+import { type MlType } from '@shared/api';
 import { usePagedList } from '@shared/hooks/usePagedList';
 import Pagination from '@shared/ui/Pagination';
 import Select from '@shared/ui/Select';

@@ -3,7 +3,7 @@
  * through, and writing to the element itself or to one of those rules.
  */
 
-import { showToast } from '@core/toast';
+import { showToast } from '@shared/lib/toast';
 import { useMemo } from 'react';
 
 import { INLINE } from '../components/Styles';

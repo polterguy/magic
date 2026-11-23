@@ -1,4 +1,4 @@
-import { countLog, countTasks, countUsers } from '@core/api';
+import { countLog, countTasks, countUsers } from '@shared/api';
 import { useEffect, useState } from 'react';
 
 import { countEndpoints, countPublicEndpoints } from '../lib/api';

@@ -1,6 +1,6 @@
 import './styles/plugins.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { PuzzleIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -9,7 +9,7 @@ const PATH = '/plugins';
 const manifest: FeatureManifest = {
   id: 'plugins',
   path: PATH,
-  page: lazy(() => import('./components/Plugins')),
+  page: lazy(() => import('./pages/Plugins')),
   nav: {
     label: 'Plugins',
     Icon: PuzzleIcon,

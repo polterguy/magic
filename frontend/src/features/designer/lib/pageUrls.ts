@@ -3,7 +3,7 @@
  * becomes, which file it lands in, and the blank page written there.
  */
 
-import { withoutTrailingSlashes } from '@core/backend';
+import { withoutTrailingSlashes } from '@shared/auth/backend';
 
 export const WEB_ROOT = '/etc/www';
 

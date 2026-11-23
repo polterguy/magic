@@ -4,16 +4,16 @@
  * after the typed-name confirmation, and opens on the tab a ?tab= deep link names (training data
  * for the model in ?type=).
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import MachineLearning from '../components/MachineLearning';
 import * as mlApi from '../lib/api';
+import MachineLearning from '../pages/MachineLearning';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

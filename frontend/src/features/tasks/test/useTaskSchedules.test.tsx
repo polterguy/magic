@@ -3,10 +3,10 @@
  * useTaskSchedules: adding a schedule to the task being scheduled, and removing one behind a
  * confirmation.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
 import { DialogContext } from '@shared/hooks/useDialog';
 import type { PagedList } from '@shared/hooks/usePagedList';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useTaskSchedules } from '../hooks/useTaskSchedules';
 import * as tasksApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

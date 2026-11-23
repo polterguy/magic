@@ -5,9 +5,9 @@
  * and its ready callback), opening the Edit / Import / Embed dialogs, and jumping to
  * a model asked for by the command palette. Child dialogs are stubbed.
  */
-import type { MlType } from '@core/api';
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import type { MlType } from '@shared/api';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { DialogProvider } from '@shared/ui/Dialogs';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -16,8 +16,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ModelsTab from '../components/ModelsTab';
 import * as mlApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/api')>()),
+vi.mock('@shared/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('@shared/api')>()),
   gibberish: vi.fn(),
 }));
 vi.mock('../lib/api', async importOriginal => ({

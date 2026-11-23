@@ -3,8 +3,8 @@
  * GitPanel, second part: aborting a merge, history, resets, the busy state, closing, and a folder that
  * is not a repository yet. The API layer is mocked; dialogs and the toast are the real ones.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
@@ -13,7 +13,7 @@ import { renderPage } from '../../../test/renderPage';
 import GitPanel from '../components/GitPanel';
 import * as filesApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

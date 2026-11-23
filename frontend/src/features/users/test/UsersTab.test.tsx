@@ -4,9 +4,9 @@
  * busy overlay, and the new user, invite, edit and password dialogs with what each does on
  * success and on cancel.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
 import { exportCsv } from '@shared/lib/download';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,7 +15,7 @@ import { renderPage } from '../../../test/renderPage';
 import UsersTab from '../components/UsersTab';
 import * as usersApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

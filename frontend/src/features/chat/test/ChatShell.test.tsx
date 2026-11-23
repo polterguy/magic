@@ -4,8 +4,8 @@
  * closed for the signed-in user, a footer button, a palette action and Ctrl/Cmd+. to toggle it,
  * plus the shell actions pages use to open it and to ask it to check the key again.
  */
-import * as api from '@core/api';
-import { openChatOps, refreshChat, shellContributions } from '@core/shellActions';
+import * as api from '@shared/api';
+import { openChatOps, refreshChat, shellContributions } from '@shared/shell/shellActions';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -13,7 +13,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderPage } from '../../../test/renderPage';
 import ChatShell from '../components/ChatShell';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

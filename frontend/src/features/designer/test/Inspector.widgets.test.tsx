@@ -4,7 +4,7 @@
  * is selected, then the table picker, the column checklist, the delete / inline editing /
  * filtering / live switches of the grid, and the field checklist of Create Row.
  */
-import type { EndpointMeta } from '@core/api';
+import type { EndpointMeta } from '@shared/api';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

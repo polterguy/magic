@@ -1,6 +1,6 @@
-import { listFilesRecursively } from '@core/api';
-import { showError } from '@core/errors';
+import { listFilesRecursively } from '@shared/api';
 import { useDebounced } from '@shared/hooks/usePagedList';
+import { showError } from '@shared/lib/errors';
 import type { Dispatch, SetStateAction } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 

@@ -1,5 +1,5 @@
-import { type MlType, mlTypes } from '@core/api';
-import { errorMessage } from '@core/errors';
+import { type MlType, mlTypes } from '@shared/api';
+import { errorMessage } from '@shared/lib/errors';
 import Banner from '@shared/ui/Banner';
 import { Modal } from '@shared/ui/Dialogs';
 import Select from '@shared/ui/Select';

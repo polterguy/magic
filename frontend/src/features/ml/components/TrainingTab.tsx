@@ -2,13 +2,13 @@
  * Training data tab.
  */
 
-import { gibberish, type MlSnippet, type MlType } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { gibberish, type MlSnippet, type MlType } from '@shared/api';
 import { useDialog } from '@shared/hooks/useDialog';
 import { usePagedList } from '@shared/hooks/usePagedList';
 import { dispositionFilename, downloadBlob } from '@shared/lib/download';
+import { showError } from '@shared/lib/errors';
 import { useSort } from '@shared/lib/sort';
+import { showToast } from '@shared/lib/toast';
 import AiWaiter from '@shared/ui/AiWaiter';
 import Pagination from '@shared/ui/Pagination';
 import SearchInput from '@shared/ui/SearchInput';

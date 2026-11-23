@@ -4,9 +4,9 @@
  * right. A model points at one through its "Initial questionnaire" setting.
  */
 
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import AiWaiter from '@shared/ui/AiWaiter';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';

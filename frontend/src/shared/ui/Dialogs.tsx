@@ -4,7 +4,6 @@
  * styled modals instead of native alerts.
  */
 
-import { showToast } from '@core/toast';
 import {
   ReactNode,
   SubmitEvent,
@@ -25,6 +24,7 @@ import {
   type PromptOptions,
   type TypedConfirmOptions,
 } from '../hooks/useDialog';
+import { showToast } from '../lib/toast';
 import { CloseIcon } from './Icons';
 
 export type {

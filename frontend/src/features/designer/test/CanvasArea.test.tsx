@@ -5,8 +5,8 @@
  * element in the design view. The panes themselves are replaced by stubs that record their props,
  * since each has its own tests.
  */
-import { aiContextForFile } from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import { aiContextForFile } from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect } from 'react';

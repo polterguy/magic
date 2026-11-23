@@ -4,11 +4,11 @@
  * and Hyper IDE, which invokes the endpoint file currently open.
  */
 
-import { apiBaseUrl, Endpoint, generateRoleToken, invokeEndpoint, listRoles } from '@core/api';
-import { errorMessage } from '@core/errors';
-import { copyToClipboard } from '@core/toast';
 import { useEffect, useState } from 'react';
 
+import { apiBaseUrl, Endpoint, generateRoleToken, invokeEndpoint, listRoles } from '../api';
+import { errorMessage } from '../lib/errors';
+import { copyToClipboard } from '../lib/toast';
 import AiWaiter from './AiWaiter';
 import Banner from './Banner';
 import BusyLabel from './BusyLabel';

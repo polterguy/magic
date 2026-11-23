@@ -5,9 +5,9 @@
  * parameters.
  */
 
-import { mlSnippetCreate } from '@core/api';
-import { errorMessage, showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { mlSnippetCreate } from '@shared/api';
+import { errorMessage, showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import Banner from '@shared/ui/Banner';
 import { Modal } from '@shared/ui/Dialogs';
 import SearchInput from '@shared/ui/SearchInput';

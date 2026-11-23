@@ -1,4 +1,4 @@
-import { applyFont, FONTS, getFont } from '@core/font';
+import { applyFont, FONTS, getFont } from '@shared/lib/font';
 import { useState } from 'react';
 
 /*

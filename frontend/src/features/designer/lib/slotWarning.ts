@@ -2,7 +2,7 @@
  * The warning shown when an edit replaces a value the server fills in.
  */
 
-import { showToast } from '@core/toast';
+import { showToast } from '@shared/lib/toast';
 
 import { slotsDropped } from './html';
 

@@ -8,10 +8,10 @@
  * and flood every connected AI agent's tool list — so choosing is the point, not a convenience.
  */
 
-import { gibberish, listRoles, loadConfig, saveConfig } from '@core/api';
-import { withoutTrailingSlashes } from '@core/backend';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { gibberish, listRoles, loadConfig, saveConfig } from '@shared/api';
+import { withoutTrailingSlashes } from '@shared/auth/backend';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import AiWaiter from '@shared/ui/AiWaiter';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';

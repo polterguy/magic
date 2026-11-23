@@ -1,4 +1,4 @@
-import { featureHref } from '@core/features';
+import { featureHref } from '@shared/shell/features';
 import Select from '@shared/ui/Select';
 import { Link } from 'react-router-dom';
 

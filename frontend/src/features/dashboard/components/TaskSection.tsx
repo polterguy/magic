@@ -1,8 +1,8 @@
-import { executeTask, listTasks, Task } from '@core/api';
-import { showError } from '@core/errors';
-import { featureHref } from '@core/features';
-import { showToast } from '@core/toast';
+import { executeTask, listTasks, Task } from '@shared/api';
 import { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
+import { featureHref } from '@shared/shell/features';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { ClockIcon } from '@shared/ui/Icons';
 import Pagination from '@shared/ui/Pagination';

@@ -5,15 +5,15 @@
  * itself (an iframe that jsdom cannot render) and the code editor are replaced by stubs, so this
  * covers the page's wiring rather than direct manipulation of the DOM inside the canvas.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage, TEST_BACKEND } from '../../../test/renderPage';
-import WebDesigner from '../components/WebDesigner';
+import WebDesigner from '../pages/WebDesigner';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

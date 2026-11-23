@@ -1,6 +1,6 @@
 import './styles/profile.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { ProfileIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -9,7 +9,7 @@ const PATH = '/user-profile';
 const manifest: FeatureManifest = {
   id: 'profile',
   path: PATH,
-  page: lazy(() => import('./components/Profile')),
+  page: lazy(() => import('./pages/Profile')),
   nav: {
     label: 'Profile',
     Icon: ProfileIcon,

@@ -3,15 +3,15 @@
  * Endpoints page: groups the endpoints by module, hides system modules and filters on request,
  * expands a module, and honours the ?filter= deep link and the OpenAPI button.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Endpoints from '../components/Endpoints';
+import Endpoints from '../pages/Endpoints';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 

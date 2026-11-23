@@ -1,5 +1,5 @@
-import { getOpenApiSpec } from '@core/api';
-import { showError } from '@core/errors';
+import { getOpenApiSpec } from '@shared/api';
+import { showError } from '@shared/lib/errors';
 import { useState } from 'react';
 
 /*

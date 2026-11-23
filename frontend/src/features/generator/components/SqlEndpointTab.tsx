@@ -1,4 +1,4 @@
-import { showToast } from '@core/toast';
+import { showToast } from '@shared/lib/toast';
 import AiPrompt from '@shared/ui/AiPrompt';
 import AiWaiter from '@shared/ui/AiWaiter';
 import BusyLabel from '@shared/ui/BusyLabel';

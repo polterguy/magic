@@ -1,8 +1,8 @@
 /*
  * The calls this feature makes to the backend. The transport they go through — base URL, token,
- * errors — is core/api.
+ * errors — is shared/api.
  */
-import { http, type MagicResponse, type MlSnippet, type MlType, requestRaw } from '@core/api';
+import { http, type MagicResponse, type MlSnippet, type MlType, requestRaw } from '@shared/api';
 
 // A logged question and answer, a row of ml_requests.
 export interface MlRequest {

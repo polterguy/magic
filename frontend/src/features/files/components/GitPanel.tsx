@@ -4,10 +4,10 @@
  * not a repository yet gets initialize/clone actions instead.
  */
 
-import { listFiles, listFolders, loadFile } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { listFiles, listFolders, loadFile } from '@shared/api';
 import { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import { Modal } from '@shared/ui/Dialogs';
 import { ChevronIcon, UndoIcon } from '@shared/ui/Icons';
 import { ReactNode, useCallback, useEffect, useState } from 'react';

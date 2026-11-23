@@ -6,9 +6,9 @@
  * The drawer only exists when the backend has an OpenAI API key — without one the "default"
  * model cannot answer, so the whole surface stays hidden.
  */
-import { openaiIsConfigured } from '@core/api';
-import { addFooterAction, addPaletteAction, registerShellAction } from '@core/shellActions';
-import { useAuth } from '@core/useAuth';
+import { openaiIsConfigured } from '@shared/api';
+import { useAuth } from '@shared/auth/useAuth';
+import { addFooterAction, addPaletteAction, registerShellAction } from '@shared/shell/shellActions';
 import { RobotIcon } from '@shared/ui/Icons';
 import { useCallback, useEffect, useState } from 'react';
 

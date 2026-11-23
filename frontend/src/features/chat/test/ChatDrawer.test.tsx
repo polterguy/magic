@@ -4,8 +4,8 @@
  * the file picker and decides how the message's files are sent (the upload-only flag), the
  * mode can't be switched while files are waiting, and Analyse is off on a local backend.
  */
-import { backendInfo, gibberish } from '@core/api';
-import { createSocket } from '@core/socket';
+import { backendInfo, gibberish } from '@shared/api';
+import { createSocket } from '@shared/api/socket';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -13,9 +13,9 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import ChatDrawer from '../components/ChatDrawer';
 import { chatPrompt } from '../lib/api';
 
-vi.mock('@core/socket', () => ({ createSocket: vi.fn() }));
-vi.mock('@core/api', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/api')>()),
+vi.mock('@shared/api/socket', () => ({ createSocket: vi.fn() }));
+vi.mock('@shared/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('@shared/api')>()),
   backendInfo: vi.fn(),
   gibberish: vi.fn(),
 }));

@@ -15,7 +15,6 @@
     "strict": true,
     "paths": {
       "@app/*": ["./src/app/*"],
-      "@core/*": ["./src/core/*"],
       "@shared/*": ["./src/shared/*"],
       "@features/*": ["./src/features/*"]
     },

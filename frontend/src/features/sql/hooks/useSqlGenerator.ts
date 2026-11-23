@@ -1,7 +1,7 @@
 import type { EditorView } from '@codemirror/view';
-import { aiQuery, openaiIsConfigured } from '@core/api';
-import { showError } from '@core/errors';
+import { aiQuery, openaiIsConfigured } from '@shared/api';
 import { editorSelection } from '@shared/lib/editor';
+import { showError } from '@shared/lib/errors';
 import { type RefObject, useEffect, useState } from 'react';
 
 /*

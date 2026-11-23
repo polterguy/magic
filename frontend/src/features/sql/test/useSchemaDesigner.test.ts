@@ -3,8 +3,8 @@
  * useSchemaDesigner: every schema change asks first where it is destructive, shows the busy
  * state while it runs, reloads the schema afterwards and surfaces failures as error toasts.
  */
-import * as api from '@core/api';
-import { showToast } from '@core/toast';
+import * as api from '@shared/api';
+import { showToast } from '@shared/lib/toast';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -12,14 +12,14 @@ import { useSchemaDesigner } from '../hooks/useSchemaDesigner';
 import * as sqlApi from '../lib/api';
 import type { ColumnPayload } from '../lib/schema';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
-vi.mock('@core/toast', async importOriginal => ({
+vi.mock('@shared/lib/toast', async importOriginal => ({
   ...(await importOriginal<Record<string, unknown>>()),
   showToast: vi.fn(),
 }));

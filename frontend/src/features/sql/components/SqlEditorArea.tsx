@@ -1,5 +1,5 @@
 import type { EditorView } from '@codemirror/view';
-import { showToast } from '@core/toast';
+import { showToast } from '@shared/lib/toast';
 import AiPrompt from '@shared/ui/AiPrompt';
 import CodeEditor from '@shared/ui/CodeEditor';
 import type { RefObject } from 'react';

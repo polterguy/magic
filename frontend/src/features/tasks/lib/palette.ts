@@ -1,5 +1,5 @@
-import { listTasks } from '@core/api';
-import type { PaletteEntry } from '@core/features';
+import { listTasks } from '@shared/api';
+import type { PaletteEntry } from '@shared/shell/features';
 
 /*
  * Every task, for the command palette. Picking one opens its editor on arrival — picking a name

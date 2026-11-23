@@ -17,8 +17,8 @@
  * preview of the real thing rather than a picture of one.
  */
 
-import { listFilesRecursively, uploadFile } from '@core/api';
-import { errorMessage } from '@core/errors';
+import { listFilesRecursively, uploadFile } from '@shared/api';
+import { errorMessage } from '@shared/lib/errors';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';

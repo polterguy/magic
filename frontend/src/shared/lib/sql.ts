@@ -4,6 +4,9 @@
  * read and write the same snippet folder, and frame the same AI context.
  */
 
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+
 import {
   type DatabaseMeta,
   defaultDatabaseType,
@@ -12,10 +15,8 @@ import {
   listDatabases,
   listFiles,
   type TableMeta,
-} from '@core/api';
-import { errorMessage, showError } from '@core/errors';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+} from '../api';
+import { errorMessage, showError } from './errors';
 
 export function useDatabaseSelection(options?: { preferMagic?: boolean }) {
   const preferMagic = options?.preferMagic ?? false;

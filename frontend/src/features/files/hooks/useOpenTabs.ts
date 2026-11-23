@@ -1,6 +1,6 @@
-import { loadFile } from '@core/api';
-import { showError } from '@core/errors';
+import { loadFile } from '@shared/api';
 import { useEditToken } from '@shared/lib/editor';
+import { showError } from '@shared/lib/errors';
 import { useEffect, useRef, useState } from 'react';
 
 import type { OpenTab, Workspace } from '../lib/helpers';

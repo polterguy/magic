@@ -1,4 +1,4 @@
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { UserIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -7,7 +7,7 @@ const PATH = '/user-roles-management';
 const manifest: FeatureManifest = {
   id: 'users',
   path: PATH,
-  page: lazy(() => import('./components/Users')),
+  page: lazy(() => import('./pages/Users')),
   nav: {
     label: 'Users & roles',
     Icon: UserIcon,

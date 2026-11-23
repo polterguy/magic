@@ -1,6 +1,6 @@
 import './styles/ml.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { NeuralIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -9,7 +9,7 @@ const PATH = '/machine-learning';
 const manifest: FeatureManifest = {
   id: 'ml',
   path: PATH,
-  page: lazy(() => import('./components/MachineLearning')),
+  page: lazy(() => import('./pages/MachineLearning')),
   nav: {
     label: 'Machine Learning',
     Icon: NeuralIcon,

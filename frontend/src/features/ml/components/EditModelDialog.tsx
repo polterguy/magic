@@ -12,9 +12,9 @@ import {
   openaiModels,
   openaiSystemMessages,
   type SystemMessage,
-} from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+} from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
 import CodeEditor from '@shared/ui/CodeEditor';
 import { Modal } from '@shared/ui/Dialogs';

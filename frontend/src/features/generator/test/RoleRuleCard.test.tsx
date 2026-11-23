@@ -5,7 +5,7 @@
  * capability button opens its wizard (toggling closed on a second press) whose Add merges the
  * granted slots into the rule's editor.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
@@ -16,7 +16,7 @@ import { useSandboxTab } from '../hooks/useSandboxTab';
 import * as generatorApi from '../lib/api';
 import { RoleRule } from '../lib/types';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

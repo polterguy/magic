@@ -5,8 +5,8 @@
  * panels, one upload call per file with the right options, the URL-list socket flow,
  * success and error toasts). SocketFeedback is stubbed.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { DialogProvider } from '@shared/ui/Dialogs';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -15,8 +15,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ImportDialog from '../components/ImportDialog';
 import * as mlApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/api')>()),
+vi.mock('@shared/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('@shared/api')>()),
   gibberish: vi.fn(),
 }));
 vi.mock('../lib/api', async importOriginal => ({

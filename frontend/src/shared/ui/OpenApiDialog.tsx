@@ -4,9 +4,8 @@
  * spec URL for external tools like Swagger UI or Postman.
  */
 
-import { backendInfo } from '@core/api';
-import { copyToClipboard } from '@core/toast';
-
+import { backendInfo } from '../api';
+import { copyToClipboard } from '../lib/toast';
 import CodeEditor from './CodeEditor';
 import { Modal } from './Dialogs';
 

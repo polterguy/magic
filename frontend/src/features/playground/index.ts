@@ -1,4 +1,4 @@
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { PlayIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -7,7 +7,7 @@ const PATH = '/hyperlambda-playground';
 const manifest: FeatureManifest = {
   id: 'playground',
   path: PATH,
-  page: lazy(() => import('./components/Playground')),
+  page: lazy(() => import('./pages/Playground')),
   nav: {
     label: 'Playground',
     Icon: PlayIcon,

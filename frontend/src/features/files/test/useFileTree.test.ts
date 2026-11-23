@@ -3,15 +3,15 @@
  * useFileTree and its companions: the tree state seeded from the remembered workspace, loading
  * the tree from the backend, toggling folders, and the path-based filter.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useFileTree, useTreeFilter, useTreeLoad } from '../hooks/useFileTree';
 import * as filesApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

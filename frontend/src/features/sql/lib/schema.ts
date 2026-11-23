@@ -2,7 +2,7 @@
  * Pure helpers behind the Designer: its table filter, and its new-table and add-column dialogs.
  */
 
-import type { ColumnMeta, TableMeta } from '@core/api';
+import type { ColumnMeta, TableMeta } from '@shared/api';
 
 import type { FieldType } from './dbTypes';
 

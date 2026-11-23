@@ -1,4 +1,4 @@
-import type { TableMeta } from '@core/api';
+import type { TableMeta } from '@shared/api';
 import SearchInput from '@shared/ui/SearchInput';
 
 export default function DesignerToolbar(

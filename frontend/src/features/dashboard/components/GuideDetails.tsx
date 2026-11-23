@@ -1,6 +1,6 @@
-import { features, hasFeature } from '@core/features';
-import { openChatOps, openPalette } from '@core/shellActions';
-import { openSupport } from '@core/support';
+import { openSupport } from '@shared/lib/support';
+import { features, hasFeature } from '@shared/shell/features';
+import { openChatOps, openPalette } from '@shared/shell/shellActions';
 import { RobotIcon, SearchIcon } from '@shared/ui/Icons';
 import { Link } from 'react-router-dom';
 

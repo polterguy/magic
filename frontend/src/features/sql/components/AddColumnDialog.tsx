@@ -1,4 +1,4 @@
-import type { TableMeta } from '@core/api';
+import type { TableMeta } from '@shared/api';
 import { Modal } from '@shared/ui/Dialogs';
 import OptionPill from '@shared/ui/OptionPill';
 import Select from '@shared/ui/Select';

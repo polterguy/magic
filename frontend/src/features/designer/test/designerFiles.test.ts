@@ -6,11 +6,11 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@core/api', () => ({
+vi.mock('@shared/api', () => ({
   listFilesRecursively: vi.fn(),
 }));
 
-import { listFilesRecursively } from '@core/api';
+import { listFilesRecursively } from '@shared/api';
 
 import {
   canonicalUrl,

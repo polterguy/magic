@@ -1,4 +1,4 @@
-import { EndpointMeta } from '@core/api';
+import { EndpointMeta } from '@shared/api';
 
 // Width of the description tooltip ExecuteFilesWizard shows next to a file.
 

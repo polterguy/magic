@@ -12,7 +12,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@app': layer('app'),
-      '@core': layer('core'),
       '@shared': layer('shared'),
       '@features': layer('features'),
     },

@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
-import { setToastListener, type Toast } from '@core/toast';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { useDialog } from '../../hooks/useDialog';
+import { setToastListener, type Toast } from '../../lib/toast';
 import { DialogProvider, Modal } from '../Dialogs';
 
 type Dialogs = ReturnType<typeof useDialog>;

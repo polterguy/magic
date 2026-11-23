@@ -1,7 +1,7 @@
-import { addUserExtra, deleteUserExtra, Role, updateUserExtra, User, UserExtra } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { addUserExtra, deleteUserExtra, Role, updateUserExtra, User, UserExtra } from '@shared/api';
 import { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import RoleChips from '@shared/ui/RoleChips';

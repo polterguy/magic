@@ -3,16 +3,16 @@
  * Tasks page: lists tasks with their schedules, shows the empty state, executes a task after
  * confirmation, and deletes one after the typed-name confirmation.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import Tasks from '../components/Tasks';
 import * as tasksApi from '../lib/api';
+import Tasks from '../pages/Tasks';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

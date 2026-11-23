@@ -1,7 +1,7 @@
-import { aiContextForFile } from '@core/api';
-import { explainHyperlambda } from '@core/support';
-import { showToast } from '@core/toast';
+import { aiContextForFile } from '@shared/api';
 import { modeForFile } from '@shared/lib/editor';
+import { explainHyperlambda } from '@shared/lib/support';
+import { showToast } from '@shared/lib/toast';
 import AiPrompt from '@shared/ui/AiPrompt';
 import CodeEditor from '@shared/ui/CodeEditor';
 

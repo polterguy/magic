@@ -1,4 +1,4 @@
-import { featureHref } from '@core/features';
+import { featureHref } from '@shared/shell/features';
 import { Link } from 'react-router-dom';
 
 import WizardSteps from './WizardSteps';

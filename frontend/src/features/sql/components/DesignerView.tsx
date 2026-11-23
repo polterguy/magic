@@ -1,4 +1,4 @@
-import type { TableMeta } from '@core/api';
+import type { TableMeta } from '@shared/api';
 import { useMemo, useState } from 'react';
 
 import type { SchemaDesigner } from '../hooks/useSchemaDesigner';

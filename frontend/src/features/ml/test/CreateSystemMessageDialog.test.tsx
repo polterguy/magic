@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import CreateSystemMessageDialog from '../components/CreateSystemMessageDialog';
 import * as mlApi from '../lib/api';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>
@@ -28,7 +28,7 @@ interface FakeConnection {
 
 const sockets = vi.hoisted(() => ({ connection: undefined as FakeConnection | undefined }));
 
-vi.mock('@core/socket', () => ({
+vi.mock('@shared/api/socket', () => ({
   createSocket: () => sockets.connection,
 }));
 

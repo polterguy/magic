@@ -1,0 +1,312 @@
+import {
+  changePassword,
+  http,
+  listRoles,
+  listUsers,
+  MIN_PASSWORD,
+  saveUserExtra,
+} from '@shared/api';
+import { useAuth } from '@shared/auth/useAuth';
+import { errorMessage, showError } from '@shared/lib/errors';
+import { copyToClipboard, showToast } from '@shared/lib/toast';
+import Banner from '@shared/ui/Banner';
+import BusyLabel from '@shared/ui/BusyLabel';
+import DateTimePicker from '@shared/ui/DateTimePicker';
+import { Modal } from '@shared/ui/Dialogs';
+import OptionPill from '@shared/ui/OptionPill';
+import { useEffect, useState } from 'react';
+
+import FontPicker from '../components/FontPicker';
+
+// Up to two initials from a full name, or the first letter of a username.
+function initials(value: string | undefined) {
+  const words = (value ?? '').trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return '?';
+  }
+  const letters = words.length === 1 ? words[0][0] : words[0][0] + words.at(-1)![0];
+  return letters.toUpperCase();
+}
+
+export default function Profile() {
+  const { backend, logout } = useAuth();
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [tokenOpen, setTokenOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [savingDetails, setSavingDetails] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
+
+  // Name and email live as extra fields on the user, not on the account row.
+  useEffect(() => {
+    if (!backend?.username) {
+      return;
+    }
+    listUsers(backend.username, 0, 1)
+      .then(users => {
+        const me = users.find(user => user.username === backend.username);
+        setName(me?.extra?.find(entry => entry.type === 'name')?.value ?? '');
+        setEmail(me?.extra?.find(entry => entry.type === 'email')?.value ?? '');
+      })
+      .catch((err: unknown) => showError(err));
+  }, [backend?.username]);
+
+  async function saveDetails() {
+    setSavingDetails(true);
+    try {
+      await saveUserExtra(backend!.username, 'name', name.trim());
+      await saveUserExtra(backend!.username, 'email', email.trim());
+      showToast('Your details were saved');
+    } catch (err) {
+      showError(err);
+    } finally {
+      setSavingDetails(false);
+    }
+  }
+
+  async function submitPassword() {
+    if (password.length < MIN_PASSWORD) {
+      showToast('Passwords must be at least ' + MIN_PASSWORD + ' characters', true);
+      return;
+    }
+    if (password !== confirmPassword) {
+      showToast('Passwords do not match', true);
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      await changePassword(password);
+      showToast('Password changed — sign in again with your new password');
+      setTimeout(logout, 2000);
+    } catch (err) {
+      showError(err);
+      setChangingPassword(false);
+    }
+  }
+
+  return (
+    <>
+      <div className="page-header">
+        <h1>Profile</h1>
+        <p>
+          Signed in as {backend?.username} on {backend?.url}
+        </p>
+      </div>
+      <div className="card profile-identity">
+        <span className="profile-avatar mono" aria-hidden="true">
+          {initials(name || backend?.username)}
+        </span>
+        <div className="profile-identity-text">
+          <strong>{name || backend?.username}</strong>
+          <span className="muted">{email || 'No email on file'}</span>
+        </div>
+        <span className="dash-chip mono">{backend?.username}</span>
+      </div>
+      <div className="profile-grid">
+        <div className="card settings-card">
+          <div className="settings-card-head">
+            <h2>Your details</h2>
+            <p className="muted">How you appear to others on this cloudlet.</p>
+          </div>
+          <div className="form-grid settings-card-body">
+            <label>
+              Full name{' '}
+              <input
+                type="text"
+                autoComplete="name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+              />
+            </label>
+            <label>
+              Email{' '}
+              <input
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </label>
+          </div>
+          <div className="settings-card-foot">
+            <button className="btn" onClick={saveDetails} disabled={savingDetails}>
+              <BusyLabel busy={savingDetails} label="Save details" busyLabel="Saving…" />
+            </button>
+          </div>
+        </div>
+        <div className="card settings-card">
+          <div className="settings-card-head">
+            <h2>Change password</h2>
+            <p className="muted">You are signed out afterwards, to sign in with the new one.</p>
+          </div>
+          <div className="form-grid settings-card-body">
+            <label>
+              New password (min {MIN_PASSWORD} characters)
+              <input
+                type="password"
+                // Tells the browser this sets a password rather than logging
+                // in, so it doesn't autofill saved credentials.
+                autoComplete="new-password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+            </label>
+            <label>
+              Confirm password{' '}
+              <input
+                type="password"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+              />
+            </label>
+          </div>
+          <div className="settings-card-foot">
+            <button
+              className="btn"
+              disabled={!password || changingPassword}
+              onClick={submitPassword}
+            >
+              <BusyLabel busy={changingPassword} label="Change password" busyLabel="Changing…" />
+            </button>
+          </div>
+        </div>
+      </div>
+      <FontPicker />
+      <div className="card profile-tokens">
+        <div className="settings-card-head">
+          <h2>Access tokens</h2>
+          <p className="muted">
+            Generate a long-lived JWT token for service accounts, CI/CD, or integrations.
+          </p>
+        </div>
+        <button className="btn btn-secondary" onClick={() => setTokenOpen(true)}>
+          Generate token…
+        </button>
+      </div>
+      {tokenOpen && <GenerateTokenDialog onClose={() => setTokenOpen(false)} />}
+    </>
+  );
+}
+
+function GenerateTokenDialog({ onClose }: Readonly<{ onClose: () => void }>) {
+  const [username, setUsername] = useState('service');
+  const [roles, setRoles] = useState<string[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(['admin']);
+  const [expires, setExpires] = useState(() => {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() + 1);
+    return date.toISOString().slice(0, 10);
+  });
+  const [token, setToken] = useState('');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    listRoles()
+      .then(list => setRoles((list ?? []).map(role => role.name)))
+      .catch(() => {});
+  }, []);
+
+  async function generate() {
+    if (busy) {
+      return;
+    }
+    setError('');
+    setBusy(true);
+    try {
+      const response = await http.get<{ ticket: string }>(
+        '/magic/system/auth/generate-token?username=' +
+          encodeURIComponent(username) +
+          '&role=' +
+          encodeURIComponent(selectedRoles.join(',')) +
+          '&expires=' +
+          encodeURIComponent(new Date(expires).toISOString()),
+      );
+      setToken(response.ticket);
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Modal
+      size="md"
+      onClose={onClose}
+      onSubmit={() => {
+        if (username && selectedRoles.length > 0) void generate();
+      }}
+      title="Generate token"
+      actions={
+        <>
+          {token && (
+            <button
+              className="btn btn-secondary"
+              onClick={() => copyToClipboard(token, 'The token')}
+            >
+              Copy
+            </button>
+          )}
+          <button className="btn btn-secondary" onClick={onClose}>
+            Close
+          </button>
+          <button
+            className="btn"
+            onClick={generate}
+            disabled={!username || selectedRoles.length === 0 || busy}
+          >
+            <BusyLabel busy={busy} label="Generate" busyLabel="Generating…" />
+          </button>
+        </>
+      }
+    >
+      <div className="modal-section">
+        {error && <Banner onClose={() => setError('')}>{error}</Banner>}
+        <div className="form-cols-2">
+          <label>
+            Username{' '}
+            <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
+          </label>
+          <label>
+            Expires
+            {/* A token that expired before it was issued is never what's wanted. */}
+            <DateTimePicker
+              dateOnly
+              value={expires}
+              min={new Date().toISOString().slice(0, 10)}
+              onChange={setExpires}
+              placeholder="Pick an expiry date"
+            />
+          </label>
+        </div>
+        <div className="form-group">
+          <div className="form-group-label">Roles</div>
+          <div className="pill-row">
+            {roles.map(role => (
+              <OptionPill
+                key={role}
+                label={role}
+                checked={selectedRoles.includes(role)}
+                onChange={checked =>
+                  setSelectedRoles(
+                    checked
+                      ? [...selectedRoles, role]
+                      : selectedRoles.filter(candidate => candidate !== role),
+                  )
+                }
+              />
+            ))}
+          </div>
+        </div>
+        {token && (
+          <div className="success-box mono" style={{ overflowWrap: 'anywhere', fontSize: 12 }}>
+            {token}
+          </div>
+        )}
+      </div>
+    </Modal>
+  );
+}

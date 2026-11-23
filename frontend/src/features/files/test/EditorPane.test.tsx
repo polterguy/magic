@@ -5,7 +5,7 @@
  * hooks, focuses a newly attached editor once, and feeds the AI prompt the file's context.
  */
 import type { EditorView } from '@codemirror/view';
-import { setToastListener, type Toast } from '@core/toast';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

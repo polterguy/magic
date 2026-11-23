@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
-import { type FeatureManifest, features, registerFeatures } from '@core/features';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
+import { type FeatureManifest, features, registerFeatures } from '../../shell/features';
 import FeatureLink from '../FeatureLink';
 
 let real: readonly FeatureManifest[] = [];

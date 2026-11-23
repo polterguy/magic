@@ -1,6 +1,6 @@
 import './styles/chat.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { lazy } from 'react';
 
 import { CHAT_SHORTCUTS } from './lib/shortcuts';

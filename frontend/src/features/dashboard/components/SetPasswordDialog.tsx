@@ -1,6 +1,6 @@
-import { changePassword, MIN_PASSWORD } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { changePassword, MIN_PASSWORD } from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import { useState } from 'react';

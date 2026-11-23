@@ -7,7 +7,7 @@
  * copies sit at backend/files/etc/system/web-designer/ (tracked in git,
  * shipped with every backend deployment), and POST
  * /magic/system/www/ensure-widget-assets (see ensureWidgetAssets() in
- * core/api.ts) copies them into /etc/www/assets/ — gitignored, per-cloudlet
+ * shared/api/index.ts) copies them into /etc/www/assets/ — gitignored, per-cloudlet
  * deployment state — the first time a page needs them. This dashboard used
  * to carry its own embedded copy of that source instead, which meant two
  * places could drift; the backend copying from its own single file removes

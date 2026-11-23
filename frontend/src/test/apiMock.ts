@@ -1,10 +1,10 @@
 /*
- * Builds the module that stands in for core/api in page tests. Every network function becomes a
+ * Builds the module that stands in for shared/api in page tests. Every network function becomes a
  * vi.fn() resolving to undefined, so a test only states the handful of answers its page reads;
  * the pure helpers, constants and the ApiError class stay real.
  *
  * Use it from a test file as:
- *   vi.mock('@core/api', async importOriginal =>
+ *   vi.mock('@shared/api', async importOriginal =>
  *     (await import('../../test/apiMock')).mockApi(await importOriginal()));
  */
 import { vi } from 'vitest';

@@ -5,7 +5,7 @@
  * Run with `npm run test`. Node environment only.
  */
 
-import type { Endpoint } from '@core/api';
+import type { Endpoint } from '@shared/api';
 import { describe, expect, it } from 'vitest';
 
 import { groupEndpoints, isVisible, moduleOf, sourceFile } from '../lib/helpers';

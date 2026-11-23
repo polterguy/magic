@@ -1,16 +1,16 @@
 // @vitest-environment jsdom
 /*
- * The shortcuts overview: every group of the registry as a card — the core ones and those a
+ * The shortcuts overview: every group of the registry as a card — the built-in ones and those a
  * feature brings — the live filter that narrows the rows and highlights why they matched, the
  * empty state, and the close button. Runs against a stand-in feature registered here.
  */
-import { type FeatureManifest, features, registerFeatures } from '@core/features';
-import { allShortcuts } from '@core/shortcuts';
+import { type FeatureManifest, features, registerFeatures } from '@shared/shell/features';
+import { allShortcuts } from '@shared/shell/shortcuts';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import ShortcutsDialog from '../ShortcutsDialog';
+import ShortcutsDialog from '../components/ShortcutsDialog';
 
 const Icon = () => <svg />;
 const CANVAS: FeatureManifest = {
@@ -20,7 +20,7 @@ const CANVAS: FeatureManifest = {
     entries: [
       { group: 'Canvas', display: 'Delete', description: 'Remove the selected shape' },
       { group: 'Canvas', display: 'Esc', description: 'Deselect' },
-      // A feature can also add to a core group.
+      // A feature can also add to a built-in group.
       { group: 'Global', display: 'Ctrl + .', description: 'Toggle the canvas helper' },
     ],
   },

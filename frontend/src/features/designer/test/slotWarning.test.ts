@@ -5,9 +5,9 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@core/toast', () => ({ showToast: vi.fn() }));
+vi.mock('@shared/lib/toast', () => ({ showToast: vi.fn() }));
 
-import { showToast } from '@core/toast';
+import { showToast } from '@shared/lib/toast';
 
 import { reportDropped } from '../lib/slotWarning';
 

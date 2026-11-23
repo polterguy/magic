@@ -3,7 +3,7 @@
  * its pages are served from, and the per-cloudlet keys it remembers things by.
  */
 
-import { useAuth } from '@core/useAuth';
+import { useAuth } from '@shared/auth/useAuth';
 import { useState } from 'react';
 
 export function useCloudlet() {

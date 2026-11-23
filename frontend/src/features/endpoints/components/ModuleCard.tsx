@@ -1,4 +1,4 @@
-import type { Endpoint } from '@core/api';
+import type { Endpoint } from '@shared/api';
 import { BracesIcon, ChevronIcon } from '@shared/ui/Icons';
 import type { InvokeResult } from '@shared/ui/InvokePanel';
 import InvokePanel from '@shared/ui/InvokePanel';

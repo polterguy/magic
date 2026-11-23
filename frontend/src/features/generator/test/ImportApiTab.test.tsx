@@ -5,8 +5,8 @@
  * through the socket dialog with the right payload, and storing the upstream credential into the
  * cloudlet configuration. SocketFeedback is stubbed.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,7 +15,7 @@ import ImportApiTab from '../components/ImportApiTab';
 import * as generatorApi from '../lib/api';
 
 // gibberish is one of the helpers apiMock keeps real, but here it is a network call to stand in for.
-vi.mock('@core/api', async importOriginal => ({
+vi.mock('@shared/api', async importOriginal => ({
   ...(await import('../../../test/apiMock')).mockApi(await importOriginal()),
   gibberish: vi.fn(),
 }));

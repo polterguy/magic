@@ -3,15 +3,15 @@
  * useExpertSystem: whether anything is served at the root URL (an index.html under
  * /etc/www/), and installing the Expert System plugin and polling until it appears.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
+import * as api from '@shared/api';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useExpertSystem } from '../hooks/useExpertSystem';
 import { EXPERT_SYSTEM_PLUGIN, EXPERT_SYSTEM_POLLS } from '../lib/constants';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

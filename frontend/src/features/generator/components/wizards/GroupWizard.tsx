@@ -1,4 +1,4 @@
-import { showToast } from '@core/toast';
+import { showToast } from '@shared/lib/toast';
 import { useState } from 'react';
 
 import { WizardSpec } from '../../lib/types';

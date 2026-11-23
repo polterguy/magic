@@ -3,8 +3,8 @@
  * useSandboxTab: loads the roles, blocks incomplete role rules, and turns the form into the
  * policy the sandbox endpoint generator receives.
  */
-import * as api from '@core/api';
-import { showToast } from '@core/toast';
+import * as api from '@shared/api';
+import { showToast } from '@shared/lib/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -12,14 +12,14 @@ import { useSandboxTab } from '../hooks/useSandboxTab';
 import * as generatorApi from '../lib/api';
 import { RoleRule } from '../lib/types';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
-vi.mock('@core/toast', async importOriginal => ({
+vi.mock('@shared/lib/toast', async importOriginal => ({
   ...(await importOriginal<Record<string, unknown>>()),
   showToast: vi.fn(),
 }));

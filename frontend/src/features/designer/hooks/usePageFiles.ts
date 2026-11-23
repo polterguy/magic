@@ -4,10 +4,10 @@
  * canvas has it, and creating new pages and companion files.
  */
 
-import { createFolder, loadFile, saveFile } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { createFolder, loadFile, saveFile } from '@shared/api';
 import type { useDialog } from '@shared/hooks/useDialog';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import { useEffect, useEffectEvent, useState } from 'react';
 
 import { INLINE } from '../components/Styles';

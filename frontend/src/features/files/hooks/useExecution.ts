@@ -1,10 +1,10 @@
 import type { EditorView } from '@codemirror/view';
-import type { DebugRecording, Endpoint } from '@core/api';
-import { aiQuery, debugHyperlambda, getHyperlambdaArguments, listEndpoints } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import type { DebugRecording, Endpoint } from '@shared/api';
+import { aiQuery, debugHyperlambda, getHyperlambdaArguments, listEndpoints } from '@shared/api';
 import type { useDialog } from '@shared/hooks/useDialog';
 import { editorSelection } from '@shared/lib/editor';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import type { InvokeResult } from '@shared/ui/InvokePanel';
 import { useRef, useState } from 'react';
 

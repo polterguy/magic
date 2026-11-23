@@ -6,10 +6,10 @@
  * Renders nothing when OpenAI isn't configured on the backend.
  */
 
-import { aiQuery, openaiIsConfigured } from '@core/api';
-import { errorMessage } from '@core/errors';
 import { CSSProperties, SubmitEvent, useEffect, useState } from 'react';
 
+import { aiQuery, openaiIsConfigured } from '../api';
+import { errorMessage } from '../lib/errors';
 import AiWaiter from './AiWaiter';
 import BusyLabel from './BusyLabel';
 

@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
-import { ApiError } from '@core/api';
-import { setToastListener } from '@core/toast';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { ApiError } from '../../api';
+import { setToastListener } from '../../lib/toast';
 import { useDebounced, usePagedList } from '../usePagedList';
 
 type Page = { rows: string[]; count: number };

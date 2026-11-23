@@ -1,8 +1,8 @@
 /*
  * The calls this feature makes to the backend. The transport they go through — base URL, token,
- * errors — is core/api.
+ * errors — is shared/api.
  */
-import { bustSchemaCache, http, type MagicResponse } from '@core/api';
+import { bustSchemaCache, http, type MagicResponse } from '@shared/api';
 
 // One row of an SQL result set, column name to value.
 export type SqlRow = Record<string, unknown>;

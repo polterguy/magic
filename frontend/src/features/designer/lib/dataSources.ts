@@ -10,7 +10,7 @@
  * what a file is, not re-deriving a guess from its name.
  */
 
-import { EndpointField, EndpointMeta, listEndpointsDetailed } from '@core/api';
+import { EndpointField, EndpointMeta, listEndpointsDetailed } from '@shared/api';
 
 export interface DataColumn {
   name: string;

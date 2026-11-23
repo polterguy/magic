@@ -1,0 +1,161 @@
+// @vitest-environment jsdom
+/*
+ * The app's routing gates, in the order they apply: a magic link before anything, then login,
+ * then the root-only check, then first-time setup, and only then the layout with its routes.
+ * Every page is replaced by a stub, and the features by stand-ins, so what is asserted is which
+ * one the app chooses.
+ */
+import { AuthContext, type AuthState } from '@shared/auth/useAuth';
+import { type FeatureManifest, features, registerFeatures } from '@shared/shell/features';
+import { render, screen } from '@testing-library/react';
+import { lazy, useEffect } from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { fakeAuth, TEST_BACKEND } from '../../test/renderPage';
+import AppRoutes from '../routes/AppRoutes';
+
+const mounts = vi.hoisted(() => ({ layout: 0 }));
+
+function stub(name: string) {
+  return { default: () => <div data-testid={name} /> };
+}
+
+vi.mock('../pages/auth/Login', () => stub('login'));
+vi.mock('../pages/auth/NoAccess', () => stub('no-access'));
+vi.mock('../pages/NotFound', () => stub('not-found'));
+vi.mock('../pages/auth/Setup', () => stub('setup'));
+vi.mock('../pages/auth/MagicLink', () => ({
+  default: () => <div data-testid="magic-link" />,
+  MAGIC_LINK_PATH: '/authentication/magic-link',
+}));
+vi.mock('../components/Layout', () => ({
+  default: function LayoutStub({ children }: { children: React.ReactNode }) {
+    useEffect(() => {
+      mounts.layout++;
+    }, []);
+    return <div data-testid="layout">{children}</div>;
+  },
+}));
+/*
+ * Stand-in features, so the routing is tested without the real ones. Each page renders its id;
+ * the last one has no page, which must not produce a route.
+ */
+function standIn(id: string, path: string): FeatureManifest {
+  return {
+    id,
+    path,
+    page: lazy(() => Promise.resolve(stub(id))),
+  };
+}
+const FEATURES: FeatureManifest[] = [
+  standIn('dashboard', '/'),
+  standIn('sql', '/sql-studio'),
+  standIn('log', '/log'),
+  { id: 'shell-only' },
+];
+
+let realFeatures: readonly FeatureManifest[] = [];
+beforeAll(() => {
+  realFeatures = features();
+  registerFeatures(FEATURES);
+});
+afterAll(() => registerFeatures([...realFeatures]));
+
+beforeEach(() => {
+  mounts.layout = 0;
+});
+
+function app(route: string, auth: Partial<AuthState> = {}) {
+  return (
+    <MemoryRouter initialEntries={[route]}>
+      <AuthContext.Provider value={fakeAuth(auth)}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    </MemoryRouter>
+  );
+}
+
+// Runs first: the lazy imports are cached after their first load, and the fallback shows only then.
+describe('App while loading', () => {
+  it('shows a spinner while the code-split layout loads for the first time', () => {
+    const { container } = render(app('/'));
+    expect(container.querySelector('.spinner')).not.toBeNull();
+  });
+});
+
+describe('App gates', () => {
+  it('shows the login screen when nobody is signed in', () => {
+    render(app('/', { authenticated: false }));
+    expect(screen.getByTestId('login')).toBeInTheDocument();
+    expect(screen.queryByTestId('layout')).not.toBeInTheDocument();
+  });
+
+  it('shows the magic link screen before every other gate, signed in or not', () => {
+    const { unmount } = render(app('/authentication/magic-link', { authenticated: false }));
+    expect(screen.getByTestId('magic-link')).toBeInTheDocument();
+    unmount();
+    render(app('/authentication/magic-link', { isRoot: false, setupNeeded: true }));
+    expect(screen.getByTestId('magic-link')).toBeInTheDocument();
+    expect(screen.queryByTestId('no-access')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('setup')).not.toBeInTheDocument();
+  });
+
+  it('keeps a signed-in user who is not root out of the layout', () => {
+    render(app('/', { isRoot: false }));
+    expect(screen.getByTestId('no-access')).toBeInTheDocument();
+    expect(screen.queryByTestId('layout')).not.toBeInTheDocument();
+  });
+
+  it('asks a root user on a fresh backend to finish setup first', () => {
+    render(app('/', { setupNeeded: true }));
+    expect(screen.getByTestId('setup')).toBeInTheDocument();
+    expect(screen.queryByTestId('layout')).not.toBeInTheDocument();
+  });
+
+  it('checks root before setup', () => {
+    render(app('/', { isRoot: false, setupNeeded: true }));
+    expect(screen.getByTestId('no-access')).toBeInTheDocument();
+  });
+
+  it('checks the login before everything but the magic link', () => {
+    render(app('/', { authenticated: false, isRoot: false, setupNeeded: true }));
+    expect(screen.getByTestId('login')).toBeInTheDocument();
+  });
+});
+
+describe('App routes behind the gates', () => {
+  const ROUTES: [string, string][] = [
+    ['/', 'dashboard'],
+    ['/sql-studio', 'sql'],
+    ['/log', 'log'],
+  ];
+
+  it.each(ROUTES)('renders the page for %s inside the layout', async (route, page) => {
+    render(app(route));
+    expect(await screen.findByTestId(page)).toBeInTheDocument();
+    expect(screen.getByTestId('layout')).toContainElement(screen.getByTestId(page));
+    // Exactly that page, nothing else from the route table.
+    expect(screen.queryByTestId('not-found')).not.toBeInTheDocument();
+  });
+
+  it('shows the not found page for an unknown address, still inside the layout', async () => {
+    render(app('/nowhere'));
+    expect(await screen.findByTestId('not-found')).toBeInTheDocument();
+    expect(screen.getByTestId('layout')).toContainElement(screen.getByTestId('not-found'));
+  });
+
+  it('rebuilds the whole layout when the backend changes', async () => {
+    const { rerender } = render(app('/'));
+    await screen.findByTestId('dashboard');
+    expect(mounts.layout).toBe(1);
+    rerender(app('/'));
+    expect(mounts.layout).toBe(1);
+    rerender(
+      app('/', {
+        backend: { ...TEST_BACKEND, url: 'https://other.test' },
+      }),
+    );
+    expect(mounts.layout).toBe(2);
+  });
+});

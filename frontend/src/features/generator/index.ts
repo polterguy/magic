@@ -1,6 +1,6 @@
 import './styles/generator.css';
 
-import type { FeatureManifest } from '@core/features';
+import type { FeatureManifest } from '@shared/shell/features';
 import { BoltIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
@@ -9,7 +9,7 @@ const PATH = '/generator';
 const manifest: FeatureManifest = {
   id: 'generator',
   path: PATH,
-  page: lazy(() => import('./components/Generator')),
+  page: lazy(() => import('./pages/Generator')),
   nav: {
     label: 'Endpoint Generator',
     Icon: BoltIcon,

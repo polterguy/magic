@@ -1,4 +1,4 @@
-import { showToast } from '@core/toast';
+import { showToast } from '@shared/lib/toast';
 import SearchInput from '@shared/ui/SearchInput';
 import { useEffect, useState } from 'react';
 

@@ -15,9 +15,9 @@
  * all, and the save endpoint is the one responsible for leaving it alone.
  */
 
-import { listFilesRecursively } from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+import { listFilesRecursively } from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { TrashIcon } from '@shared/ui/Icons';
 import { useEffect, useState } from 'react';

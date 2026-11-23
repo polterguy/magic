@@ -3,15 +3,15 @@
  * Dashboard page: shows the connection, the KPI counts, the agent-plugin and OpenAI cards that
  * depend on what is installed, and installs the missing agent plugins from the repository.
  */
-import * as api from '@core/api';
+import * as api from '@shared/api';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { withStandInFeatures } from '../../../test/features';
 import { renderPage, TEST_BACKEND } from '../../../test/renderPage';
-import Dashboard from '../components/Dashboard';
 import * as dashboardApi from '../lib/api';
+import Dashboard from '../pages/Dashboard';
 
 // It links to these features; stand-ins keep the test valid in a build without them.
 withStandInFeatures([
@@ -19,7 +19,7 @@ withStandInFeatures([
   { id: 'users', path: '/user-roles-management' },
 ]);
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

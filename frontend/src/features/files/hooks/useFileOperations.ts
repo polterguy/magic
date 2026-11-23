@@ -7,11 +7,11 @@ import {
   moduleNameFromZip,
   saveFile,
   uploadFile,
-} from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
+} from '@shared/api';
 import type { useDialog } from '@shared/hooks/useDialog';
 import { dispositionFilename, downloadBlob } from '@shared/lib/download';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
 import type { ChangeEvent } from 'react';
 
 import { downloadFolderRaw, renamePath } from '../lib/api';

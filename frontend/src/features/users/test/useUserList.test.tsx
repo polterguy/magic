@@ -3,11 +3,11 @@
  * useUserList: the paged, filtered, sorted user list, whether invites can be sent, typed-name
  * confirmed deletion and the CSV export of every matching user.
  */
-import * as api from '@core/api';
-import { setToastListener, type Toast } from '@core/toast';
-import { AuthContext } from '@core/useAuth';
+import * as api from '@shared/api';
+import { AuthContext } from '@shared/auth/useAuth';
 import { DialogContext } from '@shared/hooks/useDialog';
 import * as download from '@shared/lib/download';
+import { setToastListener, type Toast } from '@shared/lib/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -17,7 +17,7 @@ import { useUserList } from '../hooks/useUserList';
 import * as usersApi from '../lib/api';
 import { PAGE_SIZE } from '../lib/constants';
 
-vi.mock('@core/api', async importOriginal =>
+vi.mock('@shared/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('../lib/api', async importOriginal =>

@@ -1,5 +1,5 @@
-import { servedByBackend } from '@core/backend';
-import { useAuth } from '@core/useAuth';
+import { servedByBackend } from '@shared/auth/backend';
+import { useAuth } from '@shared/auth/useAuth';
 import Banner from '@shared/ui/Banner';
 import { Modal } from '@shared/ui/Dialogs';
 import { useState } from 'react';

@@ -1,5 +1,5 @@
-import { Role } from '@core/api';
-import { showError } from '@core/errors';
+import { Role } from '@shared/api';
+import { showError } from '@shared/lib/errors';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import { useState } from 'react';

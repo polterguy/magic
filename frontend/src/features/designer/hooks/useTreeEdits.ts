@@ -3,7 +3,7 @@
  * cutting, pasting, deleting, nudging and dragging it.
  */
 
-import { showToast } from '@core/toast';
+import { showToast } from '@shared/lib/toast';
 
 import type { DropSpot } from '../lib/dropTarget';
 import { canContainChildren } from '../lib/html';

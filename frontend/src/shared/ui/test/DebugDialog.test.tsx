@@ -4,11 +4,11 @@
  * the buttons, rows, scrubber and arrow keys, the error and returned-value shortcuts,
  * and which lambda / highlight the (stubbed) code editor is handed.
  */
-import type { DebugRecording } from '@core/api';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
+import type { DebugRecording } from '../../api';
 import DebugDialog from '../DebugDialog';
 
 vi.mock('../CodeEditor', () => ({

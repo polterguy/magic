@@ -1,8 +1,8 @@
 /*
  * The calls this feature makes to the backend. The transport they go through — base URL, token,
- * errors — is core/api.
+ * errors — is shared/api.
  */
-import { http, type MagicResponse } from '@core/api';
+import { http, type MagicResponse } from '@shared/api';
 
 /*
  * Databases management.

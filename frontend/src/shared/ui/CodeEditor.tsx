@@ -49,13 +49,13 @@ import {
   lineNumbers,
   tooltips,
 } from '@codemirror/view';
-import { apiBaseUrl, http } from '@core/api';
-import { allShortcuts } from '@core/shortcuts';
 import { tags } from '@lezer/highlight';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
+import { apiBaseUrl, http } from '../api';
 import { editorSelection } from '../lib/editor';
 import { hyperlambdaLanguage } from '../resources/hyperlambda';
+import { allShortcuts } from '../shell/shortcuts';
 
 /*
  * The hyperlambda mode colors slot invocations from window._vocabulary,

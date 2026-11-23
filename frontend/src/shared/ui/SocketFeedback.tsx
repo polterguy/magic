@@ -5,9 +5,9 @@
  * as a line in the shared terminal-styled ProgressDialog.
  */
 
-import { createSocket } from '@core/socket';
 import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
+import { createSocket } from '../api/socket';
 import ProgressDialog from './ProgressDialog';
 
 interface FeedbackMessage {

@@ -1,5 +1,5 @@
-import { showToast } from '@core/toast';
 import { useDatabaseSelection } from '@shared/lib/sql';
+import { showToast } from '@shared/lib/toast';
 import Select from '@shared/ui/Select';
 import { useState } from 'react';
 

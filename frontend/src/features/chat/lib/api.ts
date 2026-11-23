@@ -1,8 +1,8 @@
 /*
  * The calls this feature makes to the backend. The transport they go through — base URL, token,
- * errors — is core/api.
+ * errors — is shared/api.
  */
-import { backendInfo, http, type MagicResponse } from '@core/api';
+import { backendInfo, http, type MagicResponse } from '@shared/api';
 
 /*
  * AI chat against the "default" code-generation model. Responses stream over

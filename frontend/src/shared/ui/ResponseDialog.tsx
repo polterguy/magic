@@ -4,10 +4,10 @@
  * open file in Hyper IDE look and behave identically.
  */
 
-import { servedByBackend } from '@core/backend';
-import { copyToClipboard } from '@core/toast';
 import { useState } from 'react';
 
+import { servedByBackend } from '../auth/backend';
+import { copyToClipboard } from '../lib/toast';
 import { Modal } from './Dialogs';
 import { InvokeResult } from './InvokePanel';
 import ResultViewer from './ResultViewer';
