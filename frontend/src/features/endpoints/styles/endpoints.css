@@ -1,0 +1,39 @@
+/*
+ * Styles only the endpoints feature uses. Loaded through its manifest, after app/styles/app.css.
+ */
+
+/*
+ * Keeps a set of role chips clustered together (right-aligned) as one unit,
+ * rather than each chip becoming its own space-between item when the row
+ * turns into a flex card on phones.
+ */
+.role-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+/*
+ * Verb badge cell on the Endpoints screen. 38px left padding lines the verb up
+ * under the module name above it (module-header padding 16 + chevron 12 + gap
+ * 10). On phones the card's `.content td` padding out-specifies this, so the
+ * badge stays at the card's left edge there.
+ */
+.verb-cell {
+  padding-left: 38px;
+}
+
+/* Collapsible module sections on the Endpoints screen. */
+.module-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.module-header:hover {
+  background: var(--accent-soft);
+}

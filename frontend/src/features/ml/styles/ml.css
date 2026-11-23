@@ -1,0 +1,13 @@
+/*
+ * Styles only the ml feature uses. Loaded through its manifest, after app/styles/app.css.
+ */
+
+/* Vector-search results, coloured by whether they'd reach the model's
+   context — the model's threshold decides where that line falls. */
+tr.vss-relevant td {
+  color: var(--tint-green-text);
+}
+
+tr.vss-irrelevant td {
+  color: #7a7488;
+}

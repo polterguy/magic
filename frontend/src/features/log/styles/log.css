@@ -1,0 +1,20 @@
+/*
+ * Styles only the log feature uses. Loaded through its manifest, after app/styles/app.css.
+ */
+
+.log-meta-row + .log-meta-row {
+  border-top: 1px solid var(--border);
+}
+
+.log-meta-value {
+  overflow-wrap: anywhere;
+}
+
+/* The log entry an error toast deep-linked to. */
+tr.log-target > td {
+  background: var(--overlay);
+}
+
+tr.log-target > td:first-child {
+  box-shadow: inset 3px 0 0 var(--danger);
+}

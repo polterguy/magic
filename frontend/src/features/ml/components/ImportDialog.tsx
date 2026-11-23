@@ -1,0 +1,415 @@
+/*
+ * Import dialog — crawl a website (progress over the socket), or upload
+ * training files.
+ */
+
+import { gibberish } from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
+import BusyLabel from '@shared/ui/BusyLabel';
+import { Modal } from '@shared/ui/Dialogs';
+import OptionPill from '@shared/ui/OptionPill';
+import Select from '@shared/ui/Select';
+import SocketFeedback from '@shared/ui/SocketFeedback';
+import Tabs from '@shared/ui/Tabs';
+import { useState } from 'react';
+
+import {
+  importUrl,
+  uploadCsvFile,
+  uploadImageFile,
+  uploadTrainingFile,
+  uploadUrlList,
+} from '../lib/api';
+
+/*
+ * The file categories the old dashboard supports, each mapping to its own
+ * backend endpoint and accepted extensions.
+ */
+const UPLOAD_CATEGORIES = {
+  structured: {
+    label: 'Structured data (CSV, XML, YAML, JSON)',
+    accept: '.csv,.xml,.yaml,.yml,.json',
+    help:
+      'Files containing lists of objects with at least two fields. ' +
+      'Declare which field becomes the prompt and which the completion below.',
+  },
+  text: {
+    label: 'Text (TXT, Markdown, CSV as text)',
+    accept: '.txt,.md,.csv',
+    help: 'Plain-text files imported as content, optionally summarized.',
+  },
+  pdf: {
+    label: 'PDF documents',
+    accept: '.pdf',
+    help: 'PDF files, optionally one snippet per page or AI-summarized.',
+  },
+  csv: {
+    label: 'CSV — first column prompt, rest completion',
+    accept: '.csv',
+    help:
+      'Imports every row using the first column as prompt, and all ' +
+      'remaining columns concatenated as the completion.',
+  },
+  images: {
+    label: 'Images (PNG, JPG, WEBP, GIF)',
+    accept: '.png,.jpg,.jpeg,.webp,.gif',
+    help: 'Images vectorised and stored as training data.',
+  },
+  urls: {
+    label: 'URL list (CSV of URLs to scrape)',
+    accept: '.csv',
+    help:
+      'Scrapes every URL in the file. The CSV must have a header row and ' +
+      'exactly one column, containing nothing but http:// or https:// URLs.',
+  },
+};
+
+export default function ImportDialog(
+  props: Readonly<{
+    type: string;
+    onClose: () => void;
+  }>,
+) {
+  const [tab, setTab] = useState('crawl');
+  // Crawl-tab options, defaulted the way the old dashboard defaults them.
+  const [url, setUrl] = useState('');
+  const [delay, setDelay] = useState('1');
+  const [max, setMax] = useState('25');
+  const [meta, setMeta] = useState('');
+  const [insertUrl, setInsertUrl] = useState(false);
+  const [images, setImages] = useState(true);
+
+  // URL-list tab: a single-column CSV of URLs to scrape.
+  const [urlListFile, setUrlListFile] = useState<File | null>(null);
+  const [urlListVectorize, setUrlListVectorize] = useState(false);
+  const [scraping, setScraping] = useState<string | null>(null);
+  const [crawling, setCrawling] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  // Upload-tab options.
+  const [category, setCategory] = useState<keyof typeof UPLOAD_CATEGORIES>('structured');
+  const [promptField, setPromptField] = useState('prompt');
+  const [completionField, setCompletionField] = useState('completion');
+  const [textSummarize, setTextSummarize] = useState(false);
+  const [pdfPreservePages, setPdfPreservePages] = useState(false);
+  const [pdfSummarize, setPdfSummarize] = useState(false);
+  const [pdfOverwrite, setPdfOverwrite] = useState(false);
+  const [pdfMassage, setPdfMassage] = useState('');
+
+  async function crawl() {
+    // The uploading guard doubles as a re-entry lock — a second click while
+    // the channel is being created would discard the first crawl's terminal.
+    if (!url || uploading) {
+      return;
+    }
+    setUploading(true);
+    try {
+      const channel = (await gibberish()).result;
+      setCrawling(channel);
+    } catch (err) {
+      showError(err);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function upload(files: File[]) {
+    /*
+     * A URL list is scraped asynchronously with progress over the socket,
+     * so it takes the feedback-channel route rather than a plain upload.
+     */
+    if (category === 'urls') {
+      setUploading(true);
+      try {
+        setUrlListFile(files[0]);
+        setScraping((await gibberish()).result);
+      } catch (err) {
+        showError(err);
+      } finally {
+        setUploading(false);
+      }
+      return;
+    }
+    setUploading(true);
+    let count = 0;
+    try {
+      for (const file of files) {
+        let response: { count: number };
+        if (category === 'images') {
+          response = await uploadImageFile(props.type, file); // NOSONAR -- files are imported one at a time so a failure stops at a known file
+        } else if (category === 'csv') {
+          response = await uploadCsvFile(props.type, file); // NOSONAR -- files are imported one at a time so a failure stops at a known file
+        } else if (category === 'pdf') {
+          const options = {
+            summarize: pdfSummarize,
+            preservePages: pdfPreservePages,
+            overwrite: pdfOverwrite,
+            massage: pdfMassage || undefined,
+          };
+          response = await uploadTrainingFile(props.type, file, options); // NOSONAR -- files are imported one at a time so a failure stops at a known file
+        } else if (category === 'text') {
+          const options = {
+            summarize: textSummarize,
+            forceAsText: file.name.toLowerCase().endsWith('.csv'),
+          };
+          response = await uploadTrainingFile(props.type, file, options); // NOSONAR -- files are imported one at a time so a failure stops at a known file
+        } else {
+          const options = { promptField, completionField };
+          response = await uploadTrainingFile(props.type, file, options); // NOSONAR -- files are imported one at a time so a failure stops at a known file
+        }
+        count += response.count ?? 0;
+      }
+      const noun = category === 'images' ? 'image(s) imported' : 'training snippets imported';
+      showToast(count + ' ' + noun);
+      props.onClose();
+    } catch (err) {
+      showError(err);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <>
+      <Modal
+        size="lg"
+        onClose={props.onClose}
+        onSubmit={() => {
+          if (url) void crawl();
+        }}
+        title={'Import into ' + props.type}
+        actions={
+          tab === 'crawl' ? (
+            <>
+              <button className="btn btn-secondary" onClick={props.onClose}>
+                Cancel
+              </button>
+              <button className="btn" onClick={crawl} disabled={!url || uploading}>
+                <BusyLabel busy={uploading} label="Start crawling" busyLabel="Starting…" />
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="btn btn-secondary" onClick={props.onClose}>
+                Done
+              </button>
+              <label className="btn" style={{ cursor: 'pointer' }}>
+                <BusyLabel busy={uploading} label="Select files" busyLabel="Uploading…" />
+                <input
+                  type="file"
+                  multiple
+                  accept={UPLOAD_CATEGORIES[category].accept}
+                  style={{ display: 'none' }}
+                  disabled={uploading}
+                  onChange={e => {
+                    const files = Array.from(e.target.files ?? []);
+                    e.target.value = '';
+                    if (files.length > 0) {
+                      void upload(files);
+                    }
+                  }}
+                />
+              </label>
+            </>
+          )
+        }
+      >
+        <Tabs
+          tabs={[
+            { id: 'crawl', label: 'Crawl website' },
+            { id: 'upload', label: 'Upload files' },
+          ]}
+          active={tab}
+          onChange={setTab}
+        />
+        {/* Plain columns, not form-grids, hold the pills: form-grid restyles every label in it. */}
+        {tab === 'crawl' && (
+          <div className="modal-section">
+            <div className="form-grid">
+              <label>
+                Website URL{' '}
+                <input
+                  type="text"
+                  placeholder="https://example.com"
+                  value={url}
+                  onChange={e => setUrl(e.target.value)}
+                />
+              </label>
+              <div className="form-cols-3">
+                <label>
+                  Max pages{' '}
+                  <input
+                    type="number"
+                    min={1}
+                    max={5000}
+                    title="Maximum number of URLs to crawl"
+                    value={max}
+                    onChange={e => setMax(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Delay (seconds){' '}
+                  <input
+                    type="number"
+                    min={0.5}
+                    max={30}
+                    step={0.5}
+                    title="Delay between each page requested"
+                    value={delay}
+                    onChange={e => setDelay(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Meta value{' '}
+                  <input
+                    type="text"
+                    placeholder="AINIRO-Website-Crawler"
+                    title="Tag associated with every snippet the crawl creates"
+                    value={meta}
+                    onChange={e => setMeta(e.target.value)}
+                  />
+                </label>
+              </div>
+            </div>
+            <div className="pill-row">
+              <OptionPill
+                label="Insert source URL"
+                title="Insert the source URL into the completion of each snippet"
+                checked={insertUrl}
+                onChange={setInsertUrl}
+              />
+              <OptionPill label="Import images" checked={images} onChange={setImages} />
+            </div>
+          </div>
+        )}
+        {tab === 'upload' && (
+          <div className="modal-section">
+            <div className="form-grid">
+              <label>
+                File category
+                <Select
+                  value={category}
+                  onChange={value => setCategory(value as keyof typeof UPLOAD_CATEGORIES)}
+                >
+                  {Object.entries(UPLOAD_CATEGORIES).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value.label}
+                    </option>
+                  ))}
+                </Select>
+              </label>
+              <p className="modal-hint" style={{ margin: 0 }}>
+                {UPLOAD_CATEGORIES[category].help}
+              </p>
+            </div>
+            {category === 'structured' && (
+              <div className="form-cols-2">
+                <label>
+                  Prompt field{' '}
+                  <input
+                    type="text"
+                    value={promptField}
+                    onChange={e => setPromptField(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Completion field{' '}
+                  <input
+                    type="text"
+                    value={completionField}
+                    onChange={e => setCompletionField(e.target.value)}
+                  />
+                </label>
+              </div>
+            )}
+            {category === 'text' && (
+              <div className="pill-row">
+                <OptionPill
+                  label="Summarize each file for better retrieval"
+                  checked={textSummarize}
+                  onChange={setTextSummarize}
+                />
+              </div>
+            )}
+            {category === 'urls' && (
+              <div className="pill-row">
+                <OptionPill
+                  label="Vectorise when done"
+                  title="Create summary prompts for each snippet, improving RAG and VSS lookups"
+                  checked={urlListVectorize}
+                  onChange={setUrlListVectorize}
+                />
+              </div>
+            )}
+            {category === 'pdf' && (
+              <>
+                <div className="pill-row">
+                  <OptionPill
+                    label="One snippet per page"
+                    checked={pdfPreservePages}
+                    onChange={setPdfPreservePages}
+                  />
+                  <OptionPill label="Summarize" checked={pdfSummarize} onChange={setPdfSummarize} />
+                  <OptionPill
+                    label="Overwrite existing"
+                    checked={pdfOverwrite}
+                    onChange={setPdfOverwrite}
+                  />
+                </div>
+                <div className="form-grid">
+                  <label>
+                    Massage prompt (optional — reshapes content with AI first){' '}
+                    <input
+                      type="text"
+                      value={pdfMassage}
+                      onChange={e => setPdfMassage(e.target.value)}
+                    />
+                  </label>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </Modal>
+      {crawling && (
+        <SocketFeedback
+          title={'Crawling ' + url}
+          channel={crawling}
+          onReady={() => {
+            importUrl({
+              url,
+              type: props.type,
+              // The backend wants milliseconds, the field asks for seconds.
+              delay: Math.round(Number(delay) * 1000),
+              max: Number(max),
+              insert_url: insertUrl,
+              images,
+              meta,
+              channel: crawling,
+            }).catch((err: unknown) => showError(err));
+          }}
+          onClose={() => {
+            setCrawling(null);
+            props.onClose();
+          }}
+        />
+      )}
+      {scraping && urlListFile && (
+        <SocketFeedback
+          title={'Scraping URLs from ' + urlListFile.name}
+          channel={scraping}
+          onReady={() => {
+            uploadUrlList(props.type, urlListFile, scraping, urlListVectorize).catch(
+              (err: unknown) => showError(err),
+            );
+          }}
+          onClose={() => {
+            setScraping(null);
+            props.onClose();
+          }}
+        />
+      )}
+    </>
+  );
+}

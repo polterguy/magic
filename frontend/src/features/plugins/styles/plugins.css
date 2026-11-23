@@ -1,0 +1,121 @@
+/*
+ * Styles only the plugins feature uses. Loaded through its manifest, after app/styles/app.css.
+ */
+
+.markdown-body pre {
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  overflow-x: auto;
+}
+
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.markdown-body img {
+  max-width: 100%;
+}
+
+/*
+ * Plugins: a row of filter pills, then the plugins grouped into Modules and
+ * Frontends, each a grid of cards shaped like the dashboard's.
+ */
+.plugin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin: 0 0 22px;
+  padding: 0;
+  border: none;
+}
+
+.plugin-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-soft);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.plugin-filter-count {
+  font-size: 11px;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+.plugin-section + .plugin-section {
+  margin-top: 32px;
+}
+
+.plugin-section-hint {
+  font-size: var(--text-sm);
+}
+
+.plugin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.plugin-card:hover {
+  border-color: var(--border-strong);
+}
+
+.plugin-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.plugin-card-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+
+.plugin-card-installed .plugin-card-icon {
+  background: var(--tint-green-bg);
+  color: var(--tint-green-text);
+  border-color: transparent;
+}
+
+.plugin-card-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plugin-card-text {
+  flex: 1;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.plugin-card-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}

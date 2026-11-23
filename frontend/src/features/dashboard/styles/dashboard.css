@@ -1,0 +1,380 @@
+/*
+ * Styles only the dashboard feature uses. Loaded through its manifest, after app/styles/app.css.
+ */
+
+.link-btn:hover {
+  color: var(--accent-dark);
+}
+
+/*
+ * Only the card takes clicks — the scrim and the spotlight let them through,
+ * so the reader can use the button the tour is pointing at without losing
+ * their place.
+ */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 350;
+  pointer-events: none;
+}
+
+.tour-scrim {
+  position: absolute;
+  inset: 0;
+}
+
+/* Same cover as the spotlight's shadow, for steps that spotlight nothing. */
+.tour-scrim.dim {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/*
+ * The hole: a transparent box over the target whose enormous box-shadow
+ * dims the rest of the page. No clip-path, and the target renders normally.
+ */
+.tour-spotlight {
+  position: absolute;
+  border-radius: var(--radius);
+  border: 2px solid var(--accent);
+  /*
+   * Real black rather than --scrim: the modal scrim is a warm near-black at
+   * 0.55, which over this theme's near-black canvas dims by almost nothing —
+   * and a spotlight is only as good as the contrast between hole and cover.
+   *
+   * No transition either: the step change smooth-scrolls the target into
+   * view, and an animated hole lags behind the scroll it is chasing, dragging
+   * a bright rectangle across the page on the way.
+   */
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.tour-card {
+  pointer-events: auto;
+  position: absolute;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+}
+
+.tour-step-count {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/*
+ * Terminal status strip: the five counts sit in one bordered bar, divided by
+ * hairlines like columns in a readout, rather than five floating metric cards.
+ * Still a responsive grid, so it wraps to 2-3 columns on narrow screens.
+ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  /*
+   * No overflow:hidden here — this strip is a flex-column child, and a
+   * non-visible overflow makes its min-height:auto compute to 0, so flex
+   * collapses the whole strip to its borders and clips the cells.
+   */
+  flex-shrink: 0;
+}
+
+.kpi-value {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+  /* Same-width digits, so a row of counts lines up instead of drifting. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* Endpoint count past what MCP clients cope with. */
+.kpi-value.warn {
+  color: var(--danger);
+}
+
+/*
+ * The clickable "!" badge opening the explanation, pinned to the cell's
+ * top-right corner — the cells are the positioning context below.
+ */
+.kpi-warn-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #fbeaec;
+  color: var(--danger);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.kpi-label {
+  color: var(--text-soft);
+  font-weight: 500;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+}
+
+a.kpi-link:hover {
+  color: inherit;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+a.kpi-link:hover .kpi-label {
+  color: var(--accent);
+}
+
+a.kpi-link:hover .kpi-label::after {
+  opacity: 1;
+}
+
+a.kpi-link:active {
+  transform: translateY(1px);
+}
+
+.guide-details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.guide-summary-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.guide-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 18px var(--shadow-color);
+  transform: translateY(-2px);
+}
+
+.guide-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: var(--text-md);
+}
+
+.guide-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.guide-card:hover .guide-title {
+  color: var(--accent-dark);
+}
+
+.guide-text {
+  display: block;
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.dash-header-tools kbd {
+  margin-left: 2px;
+  padding: 0 5px;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* Count tiles: the icon sits quietly in the corner and lights up on hover. */
+.kpi-icon {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  color: var(--text-soft);
+  opacity: 0.45;
+  transition:
+    opacity 0.12s,
+    color 0.12s;
+}
+
+a.kpi-link:hover .kpi-icon {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.kpi-warn .kpi-icon {
+  color: var(--danger);
+  opacity: 0.8;
+}
+
+.kpi-grid .kpi-warn-btn {
+  top: auto;
+  right: 14px;
+  bottom: 14px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 11px;
+  background: var(--tint-red-bg);
+  box-shadow: 0 0 0 1px var(--tint-red-border);
+}
+
+.kpi-grid .kpi-warn-btn:hover {
+  background: var(--danger);
+  color: var(--accent-contrast);
+}
+
+.dash-grid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Two cards side by side, or one filling the row when its partner is absent. */
+.dash-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px;
+}
+
+.dash-card:hover {
+  border-color: var(--border-strong);
+}
+
+/* The MCP card is the anchor — the most differentiating thing Magic does. */
+.dash-card-hero {
+  border-color: var(--border-strong);
+}
+
+.dash-card-hero .dash-card-head h2 {
+  font-size: var(--text-xl);
+}
+
+.dash-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* A URL rendered as a terminal command line, with its action inside the line. */
+.dash-command {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-deep);
+}
+
+.dash-command-prompt {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.dash-section-link {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  color: var(--text-soft);
+  text-decoration: none;
+}
+
+.dash-section-link:hover {
+  color: var(--accent);
+}
+
+.dash-section-text {
+  margin: 6px 0 14px;
+  font-size: var(--text-sm);
+}
+
+.dash-task-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dash-task:hover {
+  border-color: var(--border-strong);
+  background: var(--accent-soft);
+}
+
+.dash-task-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  background: var(--overlay-faint);
+  color: var(--text-soft);
+}
+
+.dash-task-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-task-name {
+  display: block;
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-task-description {
+  margin-top: 2px;
+  color: var(--text-soft);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 768px) {
+  .dash-pair,
+  .dash-task-list {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-card-actions {
+    flex-direction: column;
+  }
+
+  .dash-command {
+    flex-wrap: wrap;
+  }
+}

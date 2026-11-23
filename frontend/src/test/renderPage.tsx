@@ -3,14 +3,13 @@
  * (router, auth context, dialogs) and stubs the browser APIs jsdom lacks. Stubs live here, never
  * in production code.
  */
+import type { StoredBackend } from '@shared/auth/backend';
+import { AuthContext, type AuthState } from '@shared/auth/useAuth';
+import { DialogProvider } from '@shared/ui/Dialogs';
 import { render } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
-
-import { DialogProvider } from '../components/Dialogs';
-import type { StoredBackend } from '../lib/backend';
-import { AuthContext, type AuthState } from '../lib/useAuth';
 
 class NoopObserver {
   observe() {

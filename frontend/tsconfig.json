@@ -13,6 +13,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@features/*": ["./src/features/*"]
+    },
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"]

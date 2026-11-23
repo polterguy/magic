@@ -1,0 +1,50 @@
+import { listFilesRecursively, mlSnippetCreate } from '@shared/api';
+import { showError } from '@shared/lib/errors';
+import { showToast } from '@shared/lib/toast';
+import { useState } from 'react';
+
+import { getFileDescription } from '../lib/api';
+
+/*
+ * Declaring Hyperlambda files as AI functions on a machine learning model.
+ */
+export function useAiFunctions(systemFiles: boolean, setWaiting: (waiting: boolean) => void) {
+  // File or folder awaiting a model choice for AI-function generation.
+  const [aiFunctionTarget, setAiFunctionTarget] = useState<string | null>(null);
+
+  /*
+   * Declares a single Hyperlambda file, or every Hyperlambda file inside a
+   * folder, as AI functions on the chosen model. The declaration is the file
+   * path; the model reads each tool's description and arguments from the file.
+   */
+  async function createAiFunctions(target: string, type: string) {
+    setAiFunctionTarget(null);
+    setWaiting(true);
+    try {
+      const targets = target.endsWith('.hl')
+        ? [target]
+        : ((await listFilesRecursively(target, systemFiles)) ?? []).filter(file =>
+            file.endsWith('.hl'),
+          );
+      for (const file of targets) {
+        const completion = await getFileDescription(file); // NOSONAR -- declared one at a time so a failure stops at a known file and the server is not flooded
+        const snippet = {
+          prompt: file.split('/').pop()!.replace(/\.hl$/, ''),
+          completion,
+          type,
+          meta: 'FUNCTION_INVOCATION ==> ' + file,
+        };
+        await mlSnippetCreate(snippet); // NOSONAR -- declared one at a time so a failure stops at a known file and the server is not flooded
+      }
+      showToast(targets.length + ' AI function(s) declared on ' + type);
+    } catch (err) {
+      showError(err);
+    } finally {
+      setWaiting(false);
+    }
+  }
+
+  return { aiFunctionTarget, setAiFunctionTarget, createAiFunctions };
+}
+
+export type AiFunctions = ReturnType<typeof useAiFunctions>;

@@ -1,0 +1,157 @@
+/*
+ * Styles only the chat feature uses. Loaded through its manifest, after app/styles/app.css.
+ */
+
+/* Copy-entire-response, top right of every finished answer. */
+.chat-response-copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
+.chat-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+/* Marked-rendered assistant messages — normal flow, not pre-wrap. */
+.chat-markdown {
+  white-space: normal;
+}
+
+.chat-markdown li {
+  margin-bottom: 2px;
+}
+
+/*
+ * Token colors wherever chat highlights something — code blocks in answers
+ * and the JSON behind a function pill. The same --cm-* variables the Hyper
+ * IDE editor theme resolves, so both match editor code in light and dark.
+ */
+.chat-hl .hljs-keyword,
+.chat-hl .hljs-built_in,
+.chat-hl .hljs-selector-tag,
+.chat-hl .hljs-name {
+  color: var(--cm-keyword);
+}
+
+.chat-hl .hljs-string,
+.chat-hl .hljs-regexp {
+  color: var(--cm-string);
+}
+
+.chat-hl .hljs-symbol,
+.chat-hl .hljs-variable,
+.chat-hl .hljs-params {
+  color: var(--cm-text, var(--text));
+}
+
+.chat-hl .hljs-meta {
+  color: var(--cm-variable-2);
+}
+
+.chat-hl .hljs-type,
+.chat-hl .hljs-selector-class {
+  color: var(--cm-type);
+}
+
+.chat-hl .hljs-number,
+.chat-hl .hljs-literal {
+  color: var(--cm-number);
+}
+
+.chat-hl .hljs-comment {
+  color: var(--cm-comment);
+  font-style: italic;
+}
+
+.chat-hl .hljs-title,
+.chat-hl .hljs-attr,
+.chat-hl .hljs-attribute,
+.chat-hl .hljs-property {
+  color: var(--cm-property);
+}
+
+.chat-function {
+  margin: 6px 0;
+}
+
+.chat-pill:disabled {
+  cursor: default;
+}
+
+.chat-tile {
+  width: 76px;
+}
+
+.chat-tile-name {
+  margin-top: 5px;
+}
+
+.chat-composer textarea {
+  resize: none;
+}
+
+.chat-send {
+  margin-left: auto;
+}
+
+@media (max-width: 720px) {
+  .chat-drawer {
+    width: 100vw;
+  }
+}
+
+.lightbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.lightbox-stage {
+  max-width: 92vw;
+  max-height: 84vh;
+  overflow: auto;
+}
+
+.lightbox-image {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+/* At its own size the image decides, and the stage scrolls. */
+.lightbox-stage.actual .lightbox-image {
+  cursor: zoom-out;
+}
+
+.lightbox-stage.actual .lightbox-image img {
+  max-width: none;
+  max-height: none;
+}
+
+.lightbox-caption {
+  color: #fff;
+  font-size: var(--text-sm);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}

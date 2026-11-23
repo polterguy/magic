@@ -1,0 +1,91 @@
+/*
+ * Styles only the sql feature uses. Loaded through its manifest, after app/styles/app.css.
+ */
+
+/* Column drop button appears only on row hover. */
+.col-drop {
+  opacity: 0;
+}
+
+.col-row:hover .col-drop,
+.col-drop:focus-visible {
+  opacity: 1;
+}
+
+/*
+ * Masonry, not a grid: every card keeps its own height. In a grid, a row was as tall as its
+ * longest table, and the short tables beside it were stretched into mostly empty cards.
+ */
+.schema-grid {
+  columns: 300px;
+  column-gap: 14px;
+}
+
+.schema-card-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.schema-card:hover .schema-card-actions,
+.schema-card:focus-within .schema-card-actions {
+  opacity: 1;
+}
+
+.schema-col-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.schema-col-null {
+  margin-left: 6px;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.schema-fks-label {
+  margin-bottom: 2px;
+  font-family: var(--app-font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.schema-fk-link:hover,
+.schema-fk-link:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/*
+ * The card a reference took you to: a ring that pulses in the accent colour and fades, so the
+ * eye lands on it after the scroll. The page has no global focus ring, so this also shows where
+ * focus went.
+ */
+.schema-card-flash {
+  animation: schema-card-flash 1.8s ease-out;
+}
+
+/* The referenced column inside that card, tinted in the accent colour while the ring fades. */
+.schema-col-flash {
+  animation: schema-col-flash 2.4s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schema-col-flash,
+  .schema-card-flash {
+    animation-timing-function: steps(1, end);
+  }
+}
+
+.schema-empty {
+  margin: 0 0 14px;
+  padding: 40px 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  color: var(--text-soft);
+}

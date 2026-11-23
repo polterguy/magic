@@ -1,0 +1,156 @@
+/*
+ * Generates a personalised system instruction from a "templated template"
+ * (a DYNAMIC flavor whose text contains [[...]] placeholders). The user
+ * supplies a URL; the backend crawls it, fills the placeholders using the
+ * flavor's instruction, and streams the result back over a socket.
+ */
+
+import type { HubConnection } from '@microsoft/signalr';
+import { gibberish } from '@shared/api';
+import { createSocket } from '@shared/api/socket';
+import { useDialog } from '@shared/hooks/useDialog';
+import { errorMessage } from '@shared/lib/errors';
+import Banner from '@shared/ui/Banner';
+import { Modal } from '@shared/ui/Dialogs';
+import { useRef, useState } from 'react';
+
+import { createSystemMessage } from '../lib/api';
+
+export default function CreateSystemMessageDialog(
+  props: Readonly<{
+    instruction: string;
+    template: string;
+    onGenerated: (message: string) => void;
+    onClose: () => void;
+  }>,
+) {
+  const [url, setUrl] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const connectionRef = useRef<HubConnection | null>(null);
+  const { confirm } = useDialog();
+
+  async function generate() {
+    if (!url) {
+      return;
+    }
+    setBusy(true);
+    setError('');
+
+    // Channel names come from the server's random-string endpoint, like every
+    // other socket consumer — a timestamp is guessable and can collide.
+    let channel: string;
+    try {
+      channel = 'c_' + (await gibberish()).result;
+    } catch (err) {
+      setBusy(false);
+      setError(errorMessage(err, 'Could not create a feedback channel'));
+      return;
+    }
+    const connection = createSocket({ channel });
+    connectionRef.current = connection;
+
+    connection.on(channel, (raw: string) => {
+      const args = JSON.parse(raw) as { message: string; extra?: string };
+      void connection.stop();
+      setBusy(false);
+      if (args.message === 'ERROR') {
+        setError(args.extra ?? 'Generation failed');
+        return;
+      }
+      props.onGenerated(args.message);
+    });
+
+    connection
+      .start()
+      .then(() => createSystemMessage(props.instruction, props.template, url, channel))
+      .catch((err: unknown) => {
+        setBusy(false);
+        setError(errorMessage(err, 'Could not connect to socket'));
+        void connection.stop();
+      });
+  }
+
+  /*
+   * The crawl takes minutes and shouldn't be dismissed by a stray Escape —
+   * but a user must never be trapped if the answer never arrives, so leaving
+   * mid-generation is allowed after a confirmation. The crawl itself carries
+   * on server-side either way; only the result is lost.
+   */
+  async function close() {
+    if (
+      busy &&
+      !(await confirm({
+        title: 'Stop waiting?',
+        message: 'The generation continues on the server, but its result will be lost.',
+        confirmText: 'Stop waiting',
+        danger: true,
+      }))
+    ) {
+      return;
+    }
+    void connectionRef.current?.stop();
+    props.onClose();
+  }
+
+  return (
+    <Modal
+      size="md"
+      onClose={close}
+      title="Generate system instruction"
+      actions={
+        busy ? undefined : (
+          <>
+            <button className="btn btn-secondary" onClick={close}>
+              Cancel
+            </button>
+            <button className="btn" onClick={generate} disabled={!url}>
+              Generate
+            </button>
+          </>
+        )
+      }
+    >
+      {busy ? (
+        <div className="spinner-panel">
+          <div className="spinner" />
+          <div>
+            <strong>
+              Generating from {url}
+              <span className="spinner-dots" />
+            </strong>
+            <div className="modal-hint">
+              This can take a minute or two. Please keep this window open.
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          <p className="muted">
+            This template builds a personalised instruction from a website. Enter a URL — the server
+            will crawl it and fill in the template. This takes a minute or two; keep this window
+            open.
+          </p>
+          {error && (
+            <Banner onClose={() => setError('')} style={{ marginBottom: 10 }}>
+              {error}
+            </Banner>
+          )}
+          <label className="modal-label">
+            Website URL{' '}
+            <input
+              type="text"
+              placeholder="https://example.com"
+              value={url}
+              autoFocus
+              onChange={e => setUrl(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') void generate();
+              }}
+            />
+          </label>
+        </>
+      )}
+    </Modal>
+  );
+}

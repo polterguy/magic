@@ -1,0 +1,130 @@
+/*
+ * Styles only the profile feature uses. Loaded through its manifest, after app/styles/app.css.
+ */
+
+/*
+ * Profile: who you are on top, the two forms side by side as cards with a
+ * heading, a hint and their button in a footer, then access tokens as a row.
+ */
+.profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+
+.profile-identity-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.profile-identity-text strong {
+  font-size: var(--text-lg);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.settings-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.settings-card-head h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.settings-card > .settings-card-head {
+  padding: 20px 22px 0;
+}
+
+.settings-card-body {
+  flex: 1;
+  padding: 18px 22px 22px;
+}
+
+.settings-card-foot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.profile-tokens {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/*
+ * The font picker: one tile per font, each drawn in its own font. The radio stays in the tile for
+ * keyboard and screen readers, but it is visually hidden, because the selected tile's border shows the choice.
+ */
+.profile-font {
+  margin-bottom: 16px;
+}
+
+.font-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.font-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+.font-option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.font-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.font-option-sample {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.font-option-label {
+  font-size: var(--text-sm);
+}

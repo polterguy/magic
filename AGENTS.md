@@ -31,6 +31,8 @@ cd frontend && npm run lint && npm run format:check
 
 - .NET 10 SDK required (no global.json pins it)
 - Frontend uses Vite + React + TypeScript, not Angular CLI
+- The frontend is a modular monolith: each `frontend/src/features/<id>/` folder is removable on its
+  own, with import boundaries enforced by lint. See `frontend/AGENTS.md` before adding code there
 - The C# build treats warnings as errors, and runs the Sonar rules (SonarAnalyzer.CSharp) next to the Roslyn ones, with
   the severities of `.editorconfig`. A violation fails `dotnet build`, so fix it, or, for a rule that is not meant for
   that code, say so in `.editorconfig` with the reason. The SonarCloud workflow builds with `-p:SonarGate=false`
