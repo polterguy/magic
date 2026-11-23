@@ -72,9 +72,19 @@ describe('with an OpenAI key', () => {
     mocked.openaiIsConfigured.mockResolvedValue({ result: true });
   });
 
+  /*
+   * The drawer renders before the effect that registers its actions has run, so wait for those
+   * too — under load a test can otherwise reach for them in between.
+   */
+  async function ready() {
+    const chat = await screen.findByTestId('chat');
+    await waitFor(() => expect(footerButton()).toBeDefined());
+    return chat;
+  }
+
   it('mounts the drawer closed for the signed-in user, and Ctrl+. and close toggle it', async () => {
     renderPage(<ChatShell />);
-    const chat = await screen.findByTestId('chat');
+    const chat = await ready();
     expect(chat).toHaveAttribute('data-open', 'false');
     expect(chat).toHaveAttribute('data-user', 'root');
     await userEvent.keyboard('{Control>}.{/Control}');
@@ -88,7 +98,7 @@ describe('with an OpenAI key', () => {
 
   it('adds a footer button that toggles the drawer', async () => {
     renderPage(<ChatShell />);
-    const chat = await screen.findByTestId('chat');
+    const chat = await ready();
     expect(footerButton()?.title).toMatch(/^Chat Ops/);
     act(() => footerButton()!.onClick());
     expect(chat).toHaveAttribute('data-open', 'true');
@@ -98,21 +108,21 @@ describe('with an OpenAI key', () => {
 
   it('adds a palette action that opens the drawer', async () => {
     renderPage(<ChatShell />);
-    const chat = await screen.findByTestId('chat');
+    const chat = await ready();
     act(() => paletteAction()!.action());
     expect(chat).toHaveAttribute('data-open', 'true');
   });
 
   it('lets pages open it through the shell actions', async () => {
     renderPage(<ChatShell />);
-    const chat = await screen.findByTestId('chat');
+    const chat = await ready();
     act(() => openChatOps());
     expect(chat).toHaveAttribute('data-open', 'true');
   });
 
   it('withdraws everything it added once unmounted', async () => {
     const view = renderPage(<ChatShell />);
-    await screen.findByTestId('chat');
+    await ready();
     view.unmount();
     expect(footerButton()).toBeUndefined();
     expect(paletteAction()).toBeUndefined();

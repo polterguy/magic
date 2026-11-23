@@ -11,6 +11,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import prettier from 'eslint-config-prettier';
+import boundaries from 'eslint-plugin-boundaries';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import sonarjs from 'eslint-plugin-sonarjs';
 import unicorn from 'eslint-plugin-unicorn';
@@ -126,6 +127,62 @@ export default defineConfig(
     files: ['*.config.{js,ts}'],
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: { globals: globals.node },
+  },
+  {
+    /*
+     * The modular monolith's import rules. Every feature must be removable by deleting its
+     * folder, so a feature imports only itself and the platform (core, shared); nothing outside
+     * a feature imports into one — the app finds features through app/registry.ts's glob.
+     */
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: { boundaries },
+    settings: {
+      'import/resolver': { typescript: { project: './tsconfig.json' } },
+      'boundaries/elements': [
+        { type: 'app', pattern: 'src/app/**' },
+        { type: 'core', pattern: 'src/core/**' },
+        { type: 'shared', pattern: 'src/shared/**' },
+        { type: 'feature', pattern: 'src/features/*/**', capture: ['feature'] },
+        { type: 'testing', pattern: 'src/test/**' },
+      ],
+    },
+    rules: {
+      'boundaries/dependencies': [
+        'error',
+        {
+          default: 'disallow',
+          policies: [
+            {
+              from: { element: { types: ['core', 'shared'] } },
+              allow: { to: { element: { types: ['core', 'shared', 'testing'] } } },
+            },
+            {
+              from: { element: { type: 'feature' } },
+              allow: { to: { element: { types: ['core', 'shared', 'testing'] } } },
+            },
+            {
+              from: { element: { type: 'feature' } },
+              allow: {
+                to: {
+                  element: {
+                    type: 'feature',
+                    captured: { feature: '{{ from.element.captured.feature }}' },
+                  },
+                },
+              },
+            },
+            {
+              from: { element: { type: 'app' } },
+              allow: { to: { element: { types: ['app', 'core', 'shared', 'testing'] } } },
+            },
+            {
+              from: { element: { type: 'testing' } },
+              allow: { to: { element: { types: ['app', 'core', 'shared', 'testing'] } } },
+            },
+          ],
+        },
+      ],
+    },
   },
   prettier,
   {

@@ -8,9 +8,16 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { withStandInFeatures } from '../../../test/features';
 import { renderPage, TEST_BACKEND } from '../../../test/renderPage';
 import Dashboard from '../components/Dashboard';
 import * as dashboardApi from '../lib/api';
+
+// It links to these features; stand-ins keep the test valid in a build without them.
+withStandInFeatures([
+  { id: 'endpoints', path: '/endpoints' },
+  { id: 'users', path: '/user-roles-management' },
+]);
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

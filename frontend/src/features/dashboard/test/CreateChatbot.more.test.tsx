@@ -11,8 +11,12 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { withStandInFeatures } from '../../../test/features';
 import CreateChatbot from '../components/CreateChatbot';
 import * as dashboardApi from '../lib/api';
+
+// It links to these features; stand-ins keep the test valid in a build without them.
+withStandInFeatures([{ id: 'ml', path: '/machine-learning' }]);
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
