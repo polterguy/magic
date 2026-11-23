@@ -1,4 +1,4 @@
-import { customSqlEndpoint, listRoles, loadFile } from '@core/api';
+import { listRoles, loadFile } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useEditToken } from '@shared/lib/editor';
@@ -9,6 +9,8 @@ import {
   useSqlSnippets,
 } from '@shared/lib/sql';
 import { useEffect, useMemo, useState } from 'react';
+
+import { customSqlEndpoint } from '../lib/api';
 
 // SqlEndpointTab's state: the database, the endpoint's name and arguments, its SQL, and generating it.
 export function useSqlEndpointTab() {

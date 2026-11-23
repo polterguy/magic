@@ -15,6 +15,9 @@ import SearchTab from '../components/SearchTab';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 beforeEach(() => {
   vi.clearAllMocks();

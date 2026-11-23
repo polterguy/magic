@@ -1,10 +1,11 @@
-import { addUserExtra, addUserToRole, createUser, Role, sendResetPasswordLink } from '@core/api';
+import { addUserExtra, Role, sendResetPasswordLink } from '@core/api';
 import { showError } from '@core/errors';
 import { useAuth } from '@core/useAuth';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import { useState } from 'react';
 
+import { addUserToRole, createUser } from '../lib/api';
 import RolesField from './RolesField';
 
 /*

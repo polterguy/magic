@@ -12,8 +12,12 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useTaskActions } from '../hooks/useTaskActions';
+import * as tasksApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -88,7 +92,7 @@ describe('remove', () => {
     expect(dialog.confirmTyped).toHaveBeenCalledWith(
       expect.objectContaining({ title: 'Delete task?', expected: 'nightly', label: 'Task name' }),
     );
-    expect(api.deleteTask).not.toHaveBeenCalled();
+    expect(tasksApi.deleteTask).not.toHaveBeenCalled();
     expect(list.refresh).not.toHaveBeenCalled();
   });
 
@@ -96,14 +100,14 @@ describe('remove', () => {
     dialog.confirmTyped.mockResolvedValue(true);
     const { result, list } = mount();
     await act(() => result.current.remove(task));
-    expect(api.deleteTask).toHaveBeenCalledWith('nightly');
+    expect(tasksApi.deleteTask).toHaveBeenCalledWith('nightly');
     expect(toasts[0]).toMatchObject({ text: 'Task nightly deleted', isError: false });
     expect(list.refresh).toHaveBeenCalledTimes(1);
   });
 
   it('reports a failed delete without refreshing', async () => {
     dialog.confirmTyped.mockResolvedValue(true);
-    vi.mocked(api.deleteTask).mockRejectedValue(new Error('still scheduled'));
+    vi.mocked(tasksApi.deleteTask).mockRejectedValue(new Error('still scheduled'));
     const { result, list, setWaiting } = mount();
     await act(() => result.current.remove(task));
     expect(toasts[0]).toMatchObject({ text: 'still scheduled', isError: true });

@@ -15,18 +15,14 @@
  * all, and the save endpoint is the one responsible for leaving it alone.
  */
 
-import {
-  listFilesRecursively,
-  loadWebsiteConfig,
-  saveWebsiteConfig,
-  WebsiteRedirect,
-} from '@core/api';
+import { listFilesRecursively } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { TrashIcon } from '@shared/ui/Icons';
 import { useEffect, useState } from 'react';
 
+import { loadWebsiteConfig, saveWebsiteConfig, WebsiteRedirect } from '../lib/api';
 import { WEB_ROOT } from '../lib/pageUrls';
 
 // What the backend actually needs is always this plus ".html" - nobody

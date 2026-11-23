@@ -12,10 +12,14 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import Website from '../components/Website';
+import * as designerApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),
   listFilesRecursively: vi.fn(),
+}));
+vi.mock('../lib/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('../lib/api')>()),
   loadWebsiteConfig: vi.fn(),
   saveWebsiteConfig: vi.fn(),
 }));
@@ -25,7 +29,7 @@ let toasts: Toast[];
 beforeEach(() => {
   toasts = [];
   setToastListener(t => toasts.push(t));
-  vi.mocked(api.loadWebsiteConfig).mockResolvedValue({
+  vi.mocked(designerApi.loadWebsiteConfig).mockResolvedValue({
     spa_enabled: false,
     not_found: '/etc/www/.components/404.html',
     redirects: [{ from: '/old', to: '/new' }],
@@ -37,7 +41,7 @@ beforeEach(() => {
     '/etc/www/a.htm',
     '/etc/www/style.css',
   ]);
-  vi.mocked(api.saveWebsiteConfig).mockResolvedValue({ saved: true });
+  vi.mocked(designerApi.saveWebsiteConfig).mockResolvedValue({ saved: true });
 });
 
 afterEach(() => {
@@ -67,7 +71,7 @@ describe('Website loading', () => {
   });
 
   it('shows an error when the configuration cannot be loaded', async () => {
-    vi.mocked(api.loadWebsiteConfig).mockRejectedValue(new Error('forbidden'));
+    vi.mocked(designerApi.loadWebsiteConfig).mockRejectedValue(new Error('forbidden'));
     render(<Website urls={[]} />);
     expect(
       await screen.findByText('Could not load the website configuration.'),
@@ -75,7 +79,7 @@ describe('Website loading', () => {
   });
 
   it('treats null redirects as none', async () => {
-    vi.mocked(api.loadWebsiteConfig).mockResolvedValue({
+    vi.mocked(designerApi.loadWebsiteConfig).mockResolvedValue({
       spa_enabled: true,
       not_found: '',
       redirects: null,
@@ -172,7 +176,7 @@ describe('Website saving', () => {
     await userEvent.type(notFound(), ' /etc/www/oops ');
     await userEvent.click(save());
     await waitFor(() =>
-      expect(api.saveWebsiteConfig).toHaveBeenCalledWith({
+      expect(designerApi.saveWebsiteConfig).toHaveBeenCalledWith({
         spa_enabled: true,
         not_found: '/etc/www/oops.html',
         redirects: [{ from: '/old', to: '/new' }],
@@ -191,7 +195,7 @@ describe('Website saving', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add a redirect' }));
     await userEvent.click(save());
     await waitFor(() =>
-      expect(api.saveWebsiteConfig).toHaveBeenCalledWith({
+      expect(designerApi.saveWebsiteConfig).toHaveBeenCalledWith({
         spa_enabled: false,
         not_found: '',
         redirects: [{ from: '/old', to: '/new' }],
@@ -201,7 +205,7 @@ describe('Website saving', () => {
   });
 
   it('shows the error and stays dirty when saving fails', async () => {
-    vi.mocked(api.saveWebsiteConfig).mockRejectedValue(new Error('read-only'));
+    vi.mocked(designerApi.saveWebsiteConfig).mockRejectedValue(new Error('read-only'));
     await renderWebsite();
     await userEvent.click(screen.getByRole('checkbox'));
     await userEvent.click(save());

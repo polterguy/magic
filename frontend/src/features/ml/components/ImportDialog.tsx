@@ -3,14 +3,7 @@
  * training files.
  */
 
-import {
-  gibberish,
-  importUrl,
-  uploadCsvFile,
-  uploadImageFile,
-  uploadTrainingFile,
-  uploadUrlList,
-} from '@core/api';
+import { gibberish } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
@@ -20,6 +13,14 @@ import Select from '@shared/ui/Select';
 import SocketFeedback from '@shared/ui/SocketFeedback';
 import Tabs from '@shared/ui/Tabs';
 import { useState } from 'react';
+
+import {
+  importUrl,
+  uploadCsvFile,
+  uploadImageFile,
+  uploadTrainingFile,
+  uploadUrlList,
+} from '../lib/api';
 
 /*
  * The file categories the old dashboard supports, each mapping to its own

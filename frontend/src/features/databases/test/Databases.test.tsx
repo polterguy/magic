@@ -10,8 +10,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
 import Databases from '../components/Databases';
+import * as databasesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -23,7 +27,7 @@ beforeEach(() => {
       { name: 'shop', tables: [] },
     ],
   });
-  vi.mocked(api.createDatabase).mockResolvedValue({} as never);
+  vi.mocked(databasesApi.createDatabase).mockResolvedValue({} as never);
   vi.mocked(api.loadConfig).mockResolvedValue({ magic: { databases: {} } });
 });
 
@@ -48,7 +52,7 @@ describe('Databases', () => {
     await userEvent.type(screen.getByPlaceholderText('New database name…'), 'inventory');
     await userEvent.click(screen.getByRole('button', { name: 'Create' }));
 
-    expect(api.createDatabase).toHaveBeenCalledWith('sqlite', 'generic', 'inventory');
+    expect(databasesApi.createDatabase).toHaveBeenCalledWith('sqlite', 'generic', 'inventory');
   });
 
   it('switches to the external databases tab', async () => {

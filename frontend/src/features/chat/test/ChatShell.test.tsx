@@ -16,6 +16,9 @@ import ChatShell from '../components/ChatShell';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 vi.mock('../components/ChatDrawer', () => ({
   default: (props: { open: boolean; userId: string; onClose: () => void }) => (
     <div data-testid="chat" data-open={String(props.open)} data-user={props.userId}>

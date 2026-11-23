@@ -10,8 +10,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
 import Users from '../components/Users';
+import * as usersApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -32,7 +36,7 @@ beforeEach(() => {
   ]);
   vi.mocked(api.countUsers).mockResolvedValue({ count: 2 });
   vi.mocked(api.loadConfig).mockResolvedValue({ magic: { smtp: { host: 'smtp.test' } } });
-  vi.mocked(api.deleteUser).mockResolvedValue({} as never);
+  vi.mocked(usersApi.deleteUser).mockResolvedValue({} as never);
 });
 
 describe('Users', () => {
@@ -58,7 +62,7 @@ describe('Users', () => {
       within(screen.getByRole('dialog')).getByRole('button', { name: 'Delete' }),
     );
 
-    expect(api.deleteUser).toHaveBeenCalledWith('alice');
+    expect(usersApi.deleteUser).toHaveBeenCalledWith('alice');
   });
 
   it('shows the roles on the roles tab', async () => {

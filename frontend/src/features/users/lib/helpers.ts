@@ -1,4 +1,6 @@
-import { Role, User, userExtra } from '@core/api';
+import { Role, User } from '@core/api';
+
+import { userExtra } from './api';
 
 /*
  * One CSV row for the users export.

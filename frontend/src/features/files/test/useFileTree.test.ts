@@ -9,8 +9,12 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useFileTree, useTreeFilter, useTreeLoad } from '../hooks/useFileTree';
+import * as filesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -61,20 +65,20 @@ describe('useFileTree', () => {
   });
 
   it('loads folders and files recursively for the given system toggle', async () => {
-    vi.mocked(api.listFoldersRecursively).mockResolvedValue(['/etc/']);
+    vi.mocked(filesApi.listFoldersRecursively).mockResolvedValue(['/etc/']);
     vi.mocked(api.listFilesRecursively).mockResolvedValue(['/etc/a.txt']);
     const { result } = renderHook(() => useFileTree({}));
 
     await act(() => result.current.loadTree(true));
 
-    expect(api.listFoldersRecursively).toHaveBeenCalledWith('/', true);
+    expect(filesApi.listFoldersRecursively).toHaveBeenCalledWith('/', true);
     expect(api.listFilesRecursively).toHaveBeenCalledWith('/', true);
     expect(result.current.folders).toEqual(['/etc/']);
     expect(result.current.files).toEqual(['/etc/a.txt']);
   });
 
   it('falls back to empty lists when the server answers nothing', async () => {
-    vi.mocked(api.listFoldersRecursively).mockResolvedValue(undefined as never);
+    vi.mocked(filesApi.listFoldersRecursively).mockResolvedValue(undefined as never);
     vi.mocked(api.listFilesRecursively).mockResolvedValue(undefined as never);
     const { result } = renderHook(() => useFileTree({}));
     act(() => result.current.setFiles(['/old.txt']));
@@ -84,7 +88,7 @@ describe('useFileTree', () => {
   });
 
   it('reports a load failure and keeps the previous tree', async () => {
-    vi.mocked(api.listFoldersRecursively).mockRejectedValue(new Error('offline'));
+    vi.mocked(filesApi.listFoldersRecursively).mockRejectedValue(new Error('offline'));
     vi.mocked(api.listFilesRecursively).mockResolvedValue([]);
     const { result } = renderHook(() => useFileTree({}));
     act(() => result.current.setFiles(['/keep.txt']));
@@ -96,7 +100,7 @@ describe('useFileTree', () => {
 
 describe('useTreeLoad', () => {
   it('loads the tree on mount and again when the toggle changes', async () => {
-    vi.mocked(api.listFoldersRecursively).mockResolvedValue(['/f/']);
+    vi.mocked(filesApi.listFoldersRecursively).mockResolvedValue(['/f/']);
     vi.mocked(api.listFilesRecursively).mockResolvedValue(['/f/a']);
     const setFolders = vi.fn();
     const setFiles = vi.fn();
@@ -105,14 +109,16 @@ describe('useTreeLoad', () => {
     });
     await waitFor(() => expect(setFiles).toHaveBeenCalledWith(['/f/a']));
     expect(setFolders).toHaveBeenCalledWith(['/f/']);
-    expect(api.listFoldersRecursively).toHaveBeenLastCalledWith('/', false);
+    expect(filesApi.listFoldersRecursively).toHaveBeenLastCalledWith('/', false);
 
     rerender({ sys: true });
-    await waitFor(() => expect(api.listFoldersRecursively).toHaveBeenLastCalledWith('/', true));
+    await waitFor(() =>
+      expect(filesApi.listFoldersRecursively).toHaveBeenLastCalledWith('/', true),
+    );
   });
 
   it('reports a failed load', async () => {
-    vi.mocked(api.listFoldersRecursively).mockRejectedValue(new Error('denied'));
+    vi.mocked(filesApi.listFoldersRecursively).mockRejectedValue(new Error('denied'));
     vi.mocked(api.listFilesRecursively).mockResolvedValue([]);
     renderHook(() => useTreeLoad(false, vi.fn(), vi.fn()));
     await waitFor(() => expect(toasts).toHaveLength(1));
@@ -120,7 +126,7 @@ describe('useTreeLoad', () => {
   });
 
   it('uses empty lists for empty answers', async () => {
-    vi.mocked(api.listFoldersRecursively).mockResolvedValue(undefined as never);
+    vi.mocked(filesApi.listFoldersRecursively).mockResolvedValue(undefined as never);
     vi.mocked(api.listFilesRecursively).mockResolvedValue(undefined as never);
     const setFolders = vi.fn();
     const setFiles = vi.fn();

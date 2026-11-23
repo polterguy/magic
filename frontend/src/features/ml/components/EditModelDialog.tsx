@@ -4,17 +4,13 @@
  */
 
 import {
-  listQuestionnaires,
   listRoles,
   type MlType,
-  mlTypeCreate,
   mlTypeUpdate,
   modelPriceLabel,
-  openaiCompletionSlots,
   type OpenAiModel,
   openaiModels,
   openaiSystemMessages,
-  Questionnaire,
   type SystemMessage,
 } from '@core/api';
 import { showError } from '@core/errors';
@@ -28,6 +24,7 @@ import Select from '@shared/ui/Select';
 import Tabs from '@shared/ui/Tabs';
 import { useEffect, useState } from 'react';
 
+import { listQuestionnaires, mlTypeCreate, openaiCompletionSlots, Questionnaire } from '../lib/api';
 import AddFunctionDialog from './AddFunctionDialog';
 import CreateSystemMessageDialog from './CreateSystemMessageDialog';
 

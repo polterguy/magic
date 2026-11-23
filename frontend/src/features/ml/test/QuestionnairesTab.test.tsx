@@ -4,7 +4,6 @@
  * selection, the empty state, creating (name rule) and editing questionnaires, deleting with the
  * typed-name confirmation, and adding, editing and deleting questions.
  */
-import * as api from '@core/api';
 import { setToastListener, type Toast } from '@core/toast';
 import { DialogProvider } from '@shared/ui/Dialogs';
 import { render, screen, waitFor, within } from '@testing-library/react';
@@ -12,19 +11,23 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import QuestionnairesTab from '../components/QuestionnairesTab';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
 let toasts: Toast[];
 
-const QUESTIONNAIRES: api.Questionnaire[] = [
+const QUESTIONNAIRES: mlApi.Questionnaire[] = [
   { name: 'intake', type: 'single-shot', action: 'notify' },
   { name: 'survey', type: 'recurring', action: null },
 ];
 
-const INTAKE_QUESTIONS: api.Question[] = [
+const INTAKE_QUESTIONS: mlApi.Question[] = [
   {
     question_id: 1,
     question: 'What is your name?',
@@ -46,8 +49,8 @@ const INTAKE_QUESTIONS: api.Question[] = [
 beforeEach(() => {
   toasts = [];
   setToastListener(t => toasts.push(t));
-  vi.mocked(api.listQuestionnaires).mockResolvedValue(QUESTIONNAIRES);
-  vi.mocked(api.listQuestions).mockImplementation(name =>
+  vi.mocked(mlApi.listQuestionnaires).mockResolvedValue(QUESTIONNAIRES);
+  vi.mocked(mlApi.listQuestions).mockImplementation(name =>
     Promise.resolve(name === 'intake' ? INTAKE_QUESTIONS : []),
   );
 });
@@ -80,7 +83,7 @@ describe('QuestionnairesTab listing', () => {
   it('lists the questionnaires and shows the first one with its questions', async () => {
     await renderTab();
     expect(screen.getByText('2 questionnaires')).toBeInTheDocument();
-    expect(api.listQuestions).toHaveBeenCalledWith('intake');
+    expect(mlApi.listQuestions).toHaveBeenCalledWith('intake');
     expect(screen.getByRole('heading', { name: 'intake' })).toBeInTheDocument();
     expect(screen.getByText('intake', { selector: 'strong' }).closest('tr')).toHaveClass(
       'row-selected',
@@ -94,12 +97,12 @@ describe('QuestionnairesTab listing', () => {
     await renderTab();
     await userEvent.click(screen.getByText('survey'));
     expect(await screen.findByText(/No questions yet/)).toBeInTheDocument();
-    expect(api.listQuestions).toHaveBeenCalledWith('survey');
+    expect(mlApi.listQuestions).toHaveBeenCalledWith('survey');
     expect(screen.queryByText('What is your name?')).not.toBeInTheDocument();
   });
 
   it('explains the empty state', async () => {
-    vi.mocked(api.listQuestionnaires).mockResolvedValue([]);
+    vi.mocked(mlApi.listQuestionnaires).mockResolvedValue([]);
     render(
       <DialogProvider>
         <QuestionnairesTab />
@@ -110,7 +113,7 @@ describe('QuestionnairesTab listing', () => {
   });
 
   it('shows the error when the list cannot be loaded', async () => {
-    vi.mocked(api.listQuestionnaires).mockRejectedValueOnce(new Error('offline'));
+    vi.mocked(mlApi.listQuestionnaires).mockRejectedValueOnce(new Error('offline'));
     render(
       <DialogProvider>
         <QuestionnairesTab />
@@ -121,7 +124,7 @@ describe('QuestionnairesTab listing', () => {
   });
 
   it('shows the error when the questions cannot be loaded', async () => {
-    vi.mocked(api.listQuestions).mockRejectedValueOnce(new Error('no questions for you'));
+    vi.mocked(mlApi.listQuestions).mockRejectedValueOnce(new Error('no questions for you'));
     render(
       <DialogProvider>
         <QuestionnairesTab />
@@ -145,14 +148,14 @@ describe('QuestionnairesTab questionnaires', () => {
     await userEvent.type(screen.getByLabelText('Action (optional)'), 'mail');
     await userEvent.click(screen.getByRole('button', { name: 'Create' }));
 
-    await waitFor(() => expect(api.createQuestionnaire).toHaveBeenCalled());
-    expect(api.createQuestionnaire).toHaveBeenCalledWith({
+    await waitFor(() => expect(mlApi.createQuestionnaire).toHaveBeenCalled());
+    expect(mlApi.createQuestionnaire).toHaveBeenCalledWith({
       name: 'feedback',
       type: 'recurring',
       action: 'mail',
     });
     expect(toasts.at(-1)).toMatchObject({ text: 'Questionnaire feedback created', isError: false });
-    await waitFor(() => expect(api.listQuestions).toHaveBeenCalledWith('feedback'));
+    await waitFor(() => expect(mlApi.listQuestions).toHaveBeenCalledWith('feedback'));
     expect(screen.queryByText('New questionnaire')).not.toBeInTheDocument();
   });
 
@@ -168,8 +171,8 @@ describe('QuestionnairesTab questionnaires', () => {
     await userEvent.clear(name);
     await userEvent.type(name, 'ok_name-1');
     await userEvent.click(screen.getByRole('button', { name: 'Create' }));
-    await waitFor(() => expect(api.createQuestionnaire).toHaveBeenCalled());
-    expect(api.createQuestionnaire).toHaveBeenCalledWith({
+    await waitFor(() => expect(mlApi.createQuestionnaire).toHaveBeenCalled());
+    expect(mlApi.createQuestionnaire).toHaveBeenCalledWith({
       name: 'ok_name-1',
       type: 'single-shot',
       action: null,
@@ -181,13 +184,13 @@ describe('QuestionnairesTab questionnaires', () => {
     await userEvent.click(screen.getByRole('button', { name: '+ New questionnaire' }));
     const name = screen.getByLabelText('Name', { exact: false });
     await userEvent.type(name, 'x{Enter}');
-    expect(api.createQuestionnaire).not.toHaveBeenCalled();
+    expect(mlApi.createQuestionnaire).not.toHaveBeenCalled();
     await userEvent.type(name, 'y{Enter}');
-    await waitFor(() => expect(api.createQuestionnaire).toHaveBeenCalled());
+    await waitFor(() => expect(mlApi.createQuestionnaire).toHaveBeenCalled());
   });
 
   it('shows the error and keeps the dialog when creating fails', async () => {
-    vi.mocked(api.createQuestionnaire).mockRejectedValueOnce(new Error('exists'));
+    vi.mocked(mlApi.createQuestionnaire).mockRejectedValueOnce(new Error('exists'));
     await renderTab();
     await userEvent.click(screen.getByRole('button', { name: '+ New questionnaire' }));
     await userEvent.type(screen.getByLabelText('Name', { exact: false }), 'intake');
@@ -201,7 +204,7 @@ describe('QuestionnairesTab questionnaires', () => {
     await userEvent.click(screen.getByRole('button', { name: '+ New questionnaire' }));
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(screen.queryByText('New questionnaire')).not.toBeInTheDocument();
-    expect(api.createQuestionnaire).not.toHaveBeenCalled();
+    expect(mlApi.createQuestionnaire).not.toHaveBeenCalled();
   });
 
   it('edits a questionnaire without being able to rename it, and does not select its row', async () => {
@@ -215,8 +218,8 @@ describe('QuestionnairesTab questionnaires', () => {
     await userEvent.type(screen.getByLabelText('Action (optional)'), 'hook');
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
-    await waitFor(() => expect(api.updateQuestionnaire).toHaveBeenCalled());
-    expect(api.updateQuestionnaire).toHaveBeenCalledWith({
+    await waitFor(() => expect(mlApi.updateQuestionnaire).toHaveBeenCalled());
+    expect(mlApi.updateQuestionnaire).toHaveBeenCalledWith({
       name: 'survey',
       type: 'single-shot',
       action: 'hook',
@@ -231,9 +234,9 @@ describe('QuestionnairesTab questionnaires', () => {
     await userEvent.type(screen.getByLabelText('Name'), 'survey');
     await userEvent.click(screen.getAllByRole('button', { name: 'Delete' }).at(-1)!);
 
-    await waitFor(() => expect(api.deleteQuestionnaire).toHaveBeenCalledWith('survey'));
+    await waitFor(() => expect(mlApi.deleteQuestionnaire).toHaveBeenCalledWith('survey'));
     expect(toasts.at(-1)).toMatchObject({ text: 'survey deleted' });
-    await waitFor(() => expect(api.listQuestionnaires).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mlApi.listQuestionnaires).toHaveBeenCalledTimes(2));
   });
 
   it('deletes nothing when the typed name does not match', async () => {
@@ -242,18 +245,18 @@ describe('QuestionnairesTab questionnaires', () => {
     await userEvent.type(screen.getByLabelText('Name'), 'surve');
     await userEvent.click(screen.getAllByRole('button', { name: 'Delete' }).at(-1)!);
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ isError: true }));
-    expect(api.deleteQuestionnaire).not.toHaveBeenCalled();
+    expect(mlApi.deleteQuestionnaire).not.toHaveBeenCalled();
   });
 
   it('deletes nothing when the confirmation is cancelled', async () => {
     await renderTab();
     await userEvent.click(within(rowOf('survey')).getByRole('button', { name: 'Delete' }));
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-    expect(api.deleteQuestionnaire).not.toHaveBeenCalled();
+    expect(mlApi.deleteQuestionnaire).not.toHaveBeenCalled();
   });
 
   it('shows the error when deleting fails', async () => {
-    vi.mocked(api.deleteQuestionnaire).mockRejectedValueOnce(new Error('in use'));
+    vi.mocked(mlApi.deleteQuestionnaire).mockRejectedValueOnce(new Error('in use'));
     await renderTab();
     await userEvent.click(within(rowOf('survey')).getByRole('button', { name: 'Delete' }));
     await userEvent.type(screen.getByLabelText('Name'), 'survey');
@@ -272,15 +275,15 @@ describe('QuestionnairesTab questions', () => {
     await userEvent.click(screen.getByLabelText('Remember'));
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
-    await waitFor(() => expect(api.createQuestion).toHaveBeenCalled());
-    expect(api.createQuestion).toHaveBeenCalledWith({
+    await waitFor(() => expect(mlApi.createQuestion).toHaveBeenCalled());
+    expect(mlApi.createQuestion).toHaveBeenCalledWith({
       question: 'Your email?',
       questionnaire: 'intake',
       type: 'question',
       name: 'email',
       context: 1,
     });
-    await waitFor(() => expect(api.listQuestions).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mlApi.listQuestions).toHaveBeenCalledTimes(2));
   });
 
   it('disables name and remember for a message', async () => {
@@ -293,8 +296,8 @@ describe('QuestionnairesTab questions', () => {
     expect(screen.getByLabelText('Remember')).toBeDisabled();
     await userEvent.type(screen.getByLabelText('Question'), 'Hello there');
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
-    await waitFor(() => expect(api.createQuestion).toHaveBeenCalled());
-    expect(api.createQuestion).toHaveBeenCalledWith({
+    await waitFor(() => expect(mlApi.createQuestion).toHaveBeenCalled());
+    expect(mlApi.createQuestion).toHaveBeenCalledWith({
       question: 'Hello there',
       questionnaire: 'intake',
       type: 'message',
@@ -315,8 +318,8 @@ describe('QuestionnairesTab questions', () => {
     await userEvent.clear(screen.getByLabelText('Name (optional)'));
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
-    await waitFor(() => expect(api.updateQuestion).toHaveBeenCalled());
-    expect(api.updateQuestion).toHaveBeenCalledWith({
+    await waitFor(() => expect(mlApi.updateQuestion).toHaveBeenCalled());
+    expect(mlApi.updateQuestion).toHaveBeenCalledWith({
       question_id: 1,
       question: 'What is your name? really',
       questionnaire: 'intake',
@@ -330,14 +333,14 @@ describe('QuestionnairesTab questions', () => {
     await renderTab();
     await userEvent.click(screen.getByRole('button', { name: '+ Add question' }));
     await userEvent.type(screen.getByLabelText('Name (optional)'), 'n{Enter}');
-    expect(api.createQuestion).not.toHaveBeenCalled();
+    expect(mlApi.createQuestion).not.toHaveBeenCalled();
     await userEvent.type(screen.getByLabelText('Question'), 'Q');
     await userEvent.type(screen.getByLabelText('Name (optional)'), '{Enter}');
-    await waitFor(() => expect(api.createQuestion).toHaveBeenCalled());
+    await waitFor(() => expect(mlApi.createQuestion).toHaveBeenCalled());
   });
 
   it('shows the error and keeps the dialog when saving a question fails', async () => {
-    vi.mocked(api.createQuestion).mockRejectedValueOnce(new Error('bad question'));
+    vi.mocked(mlApi.createQuestion).mockRejectedValueOnce(new Error('bad question'));
     await renderTab();
     await userEvent.click(screen.getByRole('button', { name: '+ Add question' }));
     await userEvent.type(screen.getByLabelText('Question'), 'Q');
@@ -360,19 +363,19 @@ describe('QuestionnairesTab questions', () => {
     await userEvent.click(within(rowOf('Welcome aboard')).getByRole('button', { name: 'Delete' }));
     expect(screen.getByText('Delete question?')).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('button', { name: 'Delete' }).at(-1)!);
-    await waitFor(() => expect(api.deleteQuestion).toHaveBeenCalledWith(2));
-    await waitFor(() => expect(api.listQuestions).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mlApi.deleteQuestion).toHaveBeenCalledWith(2));
+    await waitFor(() => expect(mlApi.listQuestions).toHaveBeenCalledTimes(2));
   });
 
   it('keeps the question when the delete is declined', async () => {
     await renderTab();
     await userEvent.click(within(rowOf('Welcome aboard')).getByRole('button', { name: 'Delete' }));
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-    expect(api.deleteQuestion).not.toHaveBeenCalled();
+    expect(mlApi.deleteQuestion).not.toHaveBeenCalled();
   });
 
   it('shows the error when deleting a question fails', async () => {
-    vi.mocked(api.deleteQuestion).mockRejectedValueOnce(new Error('locked'));
+    vi.mocked(mlApi.deleteQuestion).mockRejectedValueOnce(new Error('locked'));
     await renderTab();
     await userEvent.click(within(rowOf('Welcome aboard')).getByRole('button', { name: 'Delete' }));
     await userEvent.click(screen.getAllByRole('button', { name: 'Delete' }).at(-1)!);

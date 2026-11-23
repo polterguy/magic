@@ -1,15 +1,10 @@
-import {
-  createDatabase,
-  type DatabaseMeta,
-  dropDatabase,
-  listDatabases,
-  uploadDatabaseBackup,
-} from '@core/api';
+import { type DatabaseMeta, listDatabases } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import { useCallback, useEffect, useState } from 'react';
 
+import { createDatabase, dropDatabase, uploadDatabaseBackup } from '../lib/api';
 import { DB_NAME_PATTERN } from '../lib/connections';
 
 /*

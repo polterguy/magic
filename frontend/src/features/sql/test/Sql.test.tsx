@@ -11,8 +11,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
 import Sql from '../components/Sql';
+import * as sqlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('@shared/ui/CodeEditor', async () => ({
@@ -37,7 +41,7 @@ beforeEach(() => {
   } as never);
   vi.mocked(api.listFiles).mockResolvedValue([]);
   vi.mocked(api.openaiIsConfigured).mockResolvedValue({ result: false });
-  vi.mocked(api.executeSql).mockResolvedValue([[{ id: 1, title: 'Widget' }]]);
+  vi.mocked(sqlApi.executeSql).mockResolvedValue([[{ id: 1, title: 'Widget' }]]);
 });
 
 async function ready() {
@@ -71,7 +75,7 @@ describe('Sql', () => {
     await userEvent.click(screen.getByRole('button', { name: '▷ Run' }));
 
     await waitFor(() =>
-      expect(api.executeSql).toHaveBeenCalledWith(
+      expect(sqlApi.executeSql).toHaveBeenCalledWith(
         'sqlite',
         '[generic|shop]',
         'select * from products',

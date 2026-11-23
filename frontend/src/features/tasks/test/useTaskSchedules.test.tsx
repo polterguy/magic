@@ -12,8 +12,12 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useTaskSchedules } from '../hooks/useTaskSchedules';
+import * as tasksApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -67,7 +71,7 @@ describe('removeSchedule', () => {
     dialog.confirm.mockResolvedValue(false);
     const { result, list } = mount();
     await act(() => result.current.removeSchedule(task, schedule));
-    expect(api.deleteSchedule).not.toHaveBeenCalled();
+    expect(tasksApi.deleteSchedule).not.toHaveBeenCalled();
     expect(list.refresh).not.toHaveBeenCalled();
   });
 
@@ -75,14 +79,14 @@ describe('removeSchedule', () => {
     dialog.confirm.mockResolvedValue(true);
     const { result, list, setWaiting } = mount();
     await act(() => result.current.removeSchedule(task, schedule));
-    expect(api.deleteSchedule).toHaveBeenCalledWith(7);
+    expect(tasksApi.deleteSchedule).toHaveBeenCalledWith(7);
     expect(list.refresh).toHaveBeenCalledTimes(1);
     expect(setWaiting.mock.calls).toEqual([[true], [false]]);
   });
 
   it('reports a failed delete without refreshing', async () => {
     dialog.confirm.mockResolvedValue(true);
-    vi.mocked(api.deleteSchedule).mockRejectedValue(new Error('gone'));
+    vi.mocked(tasksApi.deleteSchedule).mockRejectedValue(new Error('gone'));
     const { result, list, setWaiting } = mount();
     await act(() => result.current.removeSchedule(task, schedule));
     expect(toasts[0]).toMatchObject({ text: 'gone', isError: true });
@@ -95,7 +99,7 @@ describe('addSchedule', () => {
   it('does nothing when no task is being scheduled', async () => {
     const { result } = mount();
     await act(() => result.current.addSchedule('2030-01-01', undefined));
-    expect(api.scheduleTask).not.toHaveBeenCalled();
+    expect(tasksApi.scheduleTask).not.toHaveBeenCalled();
   });
 
   it('schedules the chosen task, closes the dialog and refreshes', async () => {
@@ -103,14 +107,14 @@ describe('addSchedule', () => {
     act(() => result.current.setScheduling(task));
     expect(result.current.scheduling).toBe(task);
     await act(() => result.current.addSchedule(undefined, '10.minutes'));
-    expect(api.scheduleTask).toHaveBeenCalledWith('nightly', undefined, '10.minutes');
+    expect(tasksApi.scheduleTask).toHaveBeenCalledWith('nightly', undefined, '10.minutes');
     expect(result.current.scheduling).toBeNull();
     expect(toasts[0]).toMatchObject({ text: 'Schedule added to nightly', isError: false });
     expect(list.refresh).toHaveBeenCalledTimes(1);
   });
 
   it('keeps the dialog open when scheduling fails', async () => {
-    vi.mocked(api.scheduleTask).mockRejectedValue(new Error('bad pattern'));
+    vi.mocked(tasksApi.scheduleTask).mockRejectedValue(new Error('bad pattern'));
     const { result, list, setWaiting } = mount();
     act(() => result.current.setScheduling(task));
     await act(() => result.current.addSchedule('2030-01-01T00:00:00Z', undefined));

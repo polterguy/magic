@@ -11,8 +11,12 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import EditUserDialog from '../components/EditUserDialog';
+import * as usersApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -59,19 +63,19 @@ describe('EditUserDialog roles', () => {
 
     await userEvent.click(screen.getByLabelText('admin'));
 
-    expect(api.addUserToRole).toHaveBeenCalledWith('alice', 'admin');
+    expect(usersApi.addUserToRole).toHaveBeenCalledWith('alice', 'admin');
     expect(screen.getByLabelText('admin')).toBeChecked();
   });
 
   it('removes a role immediately', async () => {
     renderDialog();
     await userEvent.click(screen.getByLabelText('guest'));
-    expect(api.removeUserFromRole).toHaveBeenCalledWith('alice', 'guest');
+    expect(usersApi.removeUserFromRole).toHaveBeenCalledWith('alice', 'guest');
     expect(screen.getByLabelText('guest')).not.toBeChecked();
   });
 
   it('reverts the checkbox and shows an error when the call fails', async () => {
-    vi.mocked(api.addUserToRole).mockRejectedValueOnce(new Error('nope'));
+    vi.mocked(usersApi.addUserToRole).mockRejectedValueOnce(new Error('nope'));
     renderDialog();
     await userEvent.click(screen.getByLabelText('admin'));
     await waitFor(() => expect(screen.getByLabelText('admin')).not.toBeChecked());

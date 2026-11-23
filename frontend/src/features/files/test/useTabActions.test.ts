@@ -15,6 +15,9 @@ import { useTabActions } from '../hooks/useTabActions';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 type File = { path: string; content: string; saved: string };
 const toasts: Toast[] = [];

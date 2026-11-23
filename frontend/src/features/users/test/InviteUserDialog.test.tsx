@@ -12,8 +12,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage, type RenderPageOptions } from '../../../test/renderPage';
 import InviteUserDialog from '../components/InviteUserDialog';
+import * as usersApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -55,12 +59,12 @@ describe('InviteUserDialog', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Send invite' }));
 
     await waitFor(() => expect(onInvited).toHaveBeenCalledWith('alice@x.test'));
-    expect(api.createUser).toHaveBeenCalledWith('alice@x.test', expect.any(String));
-    const password = vi.mocked(api.createUser).mock.calls[0][1];
+    expect(usersApi.createUser).toHaveBeenCalledWith('alice@x.test', expect.any(String));
+    const password = vi.mocked(usersApi.createUser).mock.calls[0][1];
     expect(password.length).toBeGreaterThanOrEqual(api.MIN_PASSWORD);
     expect(api.addUserExtra).toHaveBeenCalledTimes(1);
     expect(api.addUserExtra).toHaveBeenCalledWith('alice@x.test', 'email', 'alice@x.test');
-    expect(api.addUserToRole).not.toHaveBeenCalled();
+    expect(usersApi.addUserToRole).not.toHaveBeenCalled();
     expect(api.sendResetPasswordLink).toHaveBeenCalledWith('https://cloudlet.test', 'alice@x.test');
   });
 
@@ -75,8 +79,8 @@ describe('InviteUserDialog', () => {
 
     await waitFor(() => expect(onInvited).toHaveBeenCalled());
     expect(api.addUserExtra).toHaveBeenCalledWith('alice@x.test', 'name', 'Alice A');
-    expect(api.addUserToRole).toHaveBeenCalledTimes(1);
-    expect(api.addUserToRole).toHaveBeenCalledWith('alice@x.test', 'guest');
+    expect(usersApi.addUserToRole).toHaveBeenCalledTimes(1);
+    expect(usersApi.addUserToRole).toHaveBeenCalledWith('alice@x.test', 'guest');
   });
 
   it('mails with an empty backend url when no backend is selected', async () => {
@@ -99,7 +103,7 @@ describe('InviteUserDialog', () => {
   });
 
   it('stops at the first failing role', async () => {
-    vi.mocked(api.addUserToRole).mockRejectedValueOnce(new Error('no such role'));
+    vi.mocked(usersApi.addUserToRole).mockRejectedValueOnce(new Error('no such role'));
     renderDialog();
     await userEvent.type(screen.getByLabelText(/^Email/), 'alice@x.test');
     await userEvent.click(screen.getByLabelText('admin'));
@@ -107,7 +111,7 @@ describe('InviteUserDialog', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Send invite' }));
 
     await waitFor(() => expect(toasts.at(-1)?.text).toBe('no such role'));
-    expect(api.addUserToRole).toHaveBeenCalledTimes(1);
+    expect(usersApi.addUserToRole).toHaveBeenCalledTimes(1);
     expect(api.sendResetPasswordLink).not.toHaveBeenCalled();
   });
 
@@ -115,7 +119,7 @@ describe('InviteUserDialog', () => {
     let finish: () => void = () => {
       // replaced below
     };
-    vi.mocked(api.createUser).mockReturnValueOnce(
+    vi.mocked(usersApi.createUser).mockReturnValueOnce(
       new Promise<api.MagicResponse>(resolve => {
         finish = () => resolve({} as api.MagicResponse);
       }),
@@ -132,7 +136,7 @@ describe('InviteUserDialog', () => {
     const { onInvited } = renderDialog();
     await userEvent.click(screen.getByLabelText(/^Email/));
     await userEvent.keyboard('{Enter}');
-    expect(api.createUser).not.toHaveBeenCalled();
+    expect(usersApi.createUser).not.toHaveBeenCalled();
 
     await userEvent.type(screen.getByLabelText(/^Email/), 'alice@x.test{Enter}');
     await waitFor(() => expect(onInvited).toHaveBeenCalledWith('alice@x.test'));

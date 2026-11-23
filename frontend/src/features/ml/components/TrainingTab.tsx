@@ -2,17 +2,7 @@
  * Training data tab.
  */
 
-import {
-  gibberish,
-  importPage,
-  type MlSnippet,
-  mlSnippetDelete,
-  mlSnippets,
-  mlSnippetsCount,
-  mlSnippetsDeleteAll,
-  mlSnippetsExportRaw,
-  type MlType,
-} from '@core/api';
+import { gibberish, type MlSnippet, type MlType } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
@@ -28,6 +18,14 @@ import SocketFeedback from '@shared/ui/SocketFeedback';
 import SortHeader from '@shared/ui/SortHeader';
 import { useState } from 'react';
 
+import {
+  importPage,
+  mlSnippetDelete,
+  mlSnippets,
+  mlSnippetsCount,
+  mlSnippetsDeleteAll,
+  mlSnippetsExportRaw,
+} from '../lib/api';
 import AddFunctionDialog from './AddFunctionDialog';
 import AddWidgetDialog from './AddWidgetDialog';
 import EditSnippetDialog from './EditSnippetDialog';

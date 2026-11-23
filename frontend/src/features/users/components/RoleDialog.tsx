@@ -1,8 +1,10 @@
-import { createRole, Role, updateRole } from '@core/api';
+import { Role } from '@core/api';
 import { showError } from '@core/errors';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import { useState } from 'react';
+
+import { createRole, updateRole } from '../lib/api';
 
 export default function RoleDialog(
   props: Readonly<{

@@ -13,8 +13,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useFileOperations } from '../hooks/useFileOperations';
 import type { OpenTabs } from '../hooks/useOpenTabs';
+import * as filesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('@shared/lib/download', async importOriginal => ({
@@ -221,7 +225,7 @@ describe('rename', () => {
     await act(() => result.current.ops.rename('/modules/a.hl', false));
     await act(() => result.current.ops.rename('/modules/a.hl', false));
     expect(dialog.prompt).toHaveBeenCalledWith(expect.objectContaining({ initial: 'a.hl' }));
-    expect(api.renamePath).not.toHaveBeenCalled();
+    expect(filesApi.renamePath).not.toHaveBeenCalled();
   });
 
   it('passes only the bare new name for a file and remaps its tab', async () => {
@@ -231,7 +235,7 @@ describe('rename', () => {
     );
     dialog.prompt.mockResolvedValue('z.hl');
     await act(() => result.current.ops.rename('/modules/a.hl', false));
-    expect(api.renamePath).toHaveBeenCalledWith('/modules/a.hl', 'z.hl');
+    expect(filesApi.renamePath).toHaveBeenCalledWith('/modules/a.hl', 'z.hl');
     expect(result.current.openFiles.map(f => f.path)).toEqual(['/modules/z.hl', '/b.hl']);
     expect(result.current.selectedFile).toBe('/modules/z.hl');
     expect(loadTree).toHaveBeenCalled();
@@ -244,7 +248,7 @@ describe('rename', () => {
     );
     dialog.prompt.mockResolvedValue('renamed');
     await act(() => result.current.ops.rename('/modules/app/', true));
-    expect(api.renamePath).toHaveBeenCalledWith('/modules/app/', '/modules/renamed/');
+    expect(filesApi.renamePath).toHaveBeenCalledWith('/modules/app/', '/modules/renamed/');
     expect(result.current.openFiles.map(f => f.path)).toEqual([
       '/modules/renamed/a.hl',
       '/modules/app2/b.hl',
@@ -256,7 +260,7 @@ describe('rename', () => {
   it('keeps the tabs when the rename fails', async () => {
     const { result, dialog } = setup([file('/a.hl')], '/a.hl');
     dialog.prompt.mockResolvedValue('b.hl');
-    vi.mocked(api.renamePath).mockRejectedValue(new Error('taken'));
+    vi.mocked(filesApi.renamePath).mockRejectedValue(new Error('taken'));
     await act(() => result.current.ops.rename('/a.hl', false));
     expect(result.current.openFiles[0].path).toBe('/a.hl');
     expect(toasts[0].text).toBe('taken');
@@ -294,15 +298,15 @@ describe('downloads', () => {
 
   it('downloads the active folder as a zip, defaulting its name', async () => {
     const blob = new Blob(['z']);
-    vi.mocked(api.downloadFolderRaw).mockResolvedValue(raw(blob, ''));
+    vi.mocked(filesApi.downloadFolderRaw).mockResolvedValue(raw(blob, ''));
     const { result } = setup([], '', '/modules/app/');
     await act(() => result.current.ops.downloadFolder());
-    expect(api.downloadFolderRaw).toHaveBeenCalledWith('/modules/app/');
+    expect(filesApi.downloadFolderRaw).toHaveBeenCalledWith('/modules/app/');
     expect(download.downloadBlob).toHaveBeenCalledWith(blob, 'folder.zip');
   });
 
   it('reports a failed folder download', async () => {
-    vi.mocked(api.downloadFolderRaw).mockRejectedValue(new Error('too big'));
+    vi.mocked(filesApi.downloadFolderRaw).mockRejectedValue(new Error('too big'));
     const { result } = setup();
     await act(() => result.current.ops.downloadFolder());
     expect(toasts[0].text).toBe('too big');

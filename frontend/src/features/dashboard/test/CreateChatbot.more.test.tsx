@@ -12,8 +12,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import CreateChatbot from '../components/CreateChatbot';
+import * as dashboardApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -66,7 +70,7 @@ beforeEach(() => {
     { id: 'embedder', chat: false },
   ]);
   vi.mocked(api.openaiSystemMessages).mockResolvedValue(PERSONAS);
-  vi.mocked(api.createBot).mockResolvedValue({} as never);
+  vi.mocked(dashboardApi.createBot).mockResolvedValue({} as never);
   vi.mocked(api.backendInfo).mockReturnValue({ url: 'https://cloudlet.test//', token: 't' });
 });
 
@@ -176,10 +180,10 @@ describe('CreateChatbot crawl', () => {
 
     await startCrawl('  https://example.com  ');
     expect(screen.getByText(/Creating a chatbot from/)).toBeInTheDocument();
-    expect(api.createBot).not.toHaveBeenCalled();
+    expect(dashboardApi.createBot).not.toHaveBeenCalled();
     await userEvent.click(screen.getByRole('button', { name: 'listening' }));
 
-    expect(api.createBot).toHaveBeenCalledWith({
+    expect(dashboardApi.createBot).toHaveBeenCalledWith({
       url: 'https://example.com',
       model: 'gpt-6-luna',
       flavor: 'PREFIX-F',
@@ -205,7 +209,7 @@ describe('CreateChatbot crawl', () => {
     await startCrawl();
     await userEvent.click(screen.getByRole('button', { name: 'listening' }));
 
-    expect(api.createBot).toHaveBeenCalledWith(
+    expect(dashboardApi.createBot).toHaveBeenCalledWith(
       expect.objectContaining({
         model: 'gpt-chat',
         max: 40,
@@ -221,7 +225,7 @@ describe('CreateChatbot crawl', () => {
     await startCrawl();
     await userEvent.click(screen.getByRole('button', { name: 'listening' }));
 
-    expect(api.createBot).toHaveBeenCalledWith(
+    expect(dashboardApi.createBot).toHaveBeenCalledWith(
       expect.objectContaining({ flavor: '', instruction: '' }),
     );
   });
@@ -233,11 +237,11 @@ describe('CreateChatbot crawl', () => {
     await startCrawl();
     await userEvent.click(screen.getByRole('button', { name: 'listening' }));
 
-    expect(api.createBot).toHaveBeenCalledWith(expect.objectContaining({ max: 25 }));
+    expect(dashboardApi.createBot).toHaveBeenCalledWith(expect.objectContaining({ max: 25 }));
   });
 
   it('shows why the bot could not be created', async () => {
-    vi.mocked(api.createBot).mockRejectedValue(new Error('Quota exceeded'));
+    vi.mocked(dashboardApi.createBot).mockRejectedValue(new Error('Quota exceeded'));
     renderWizard();
 
     await startCrawl();

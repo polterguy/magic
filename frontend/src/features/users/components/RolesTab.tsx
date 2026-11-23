@@ -1,4 +1,4 @@
-import { deleteRole, Role } from '@core/api';
+import { Role } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
@@ -6,6 +6,7 @@ import AiWaiter from '@shared/ui/AiWaiter';
 import SearchInput from '@shared/ui/SearchInput';
 import { useState } from 'react';
 
+import { deleteRole } from '../lib/api';
 import { PROTECTED_ROLES } from '../lib/constants';
 import { filterRoles } from '../lib/helpers';
 import RoleDialog from './RoleDialog';

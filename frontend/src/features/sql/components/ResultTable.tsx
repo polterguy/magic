@@ -1,5 +1,4 @@
-import type { SqlRow } from '@core/api';
-
+import type { SqlRow } from '../lib/api';
 import { formatCell, MAX_RENDERED_ROWS } from '../lib/results';
 
 export default function ResultTable({ rows }: Readonly<{ rows: SqlRow[] }>) {

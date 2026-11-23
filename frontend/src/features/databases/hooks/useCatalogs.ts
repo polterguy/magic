@@ -1,9 +1,10 @@
-import { createDatabase, type DatabaseMeta, dropDatabase, listDatabases } from '@core/api';
+import { type DatabaseMeta, listDatabases } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import { useState } from 'react';
 
+import { createDatabase, dropDatabase } from '../lib/api';
 import { type ConnectionRow, CSTRING_NAME_PATTERN } from '../lib/connections';
 
 /*

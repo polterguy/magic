@@ -11,8 +11,12 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useTaskDialog } from '../hooks/useTaskDialog';
+import * as tasksApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -120,7 +124,7 @@ describe('save', () => {
     const { result, onSaved } = mount(fresh, true);
     await act(() => result.current.save());
     expect(toasts[0]).toMatchObject({ text: 'Give the task a name', isError: true });
-    expect(api.createTask).not.toHaveBeenCalled();
+    expect(tasksApi.createTask).not.toHaveBeenCalled();
     expect(onSaved).not.toHaveBeenCalled();
   });
 
@@ -132,8 +136,8 @@ describe('save', () => {
       result.current.setCode('log.info:report');
     });
     await act(() => result.current.save());
-    expect(api.createTask).toHaveBeenCalledWith('report', 'Monthly report', 'log.info:report');
-    expect(api.updateTask).not.toHaveBeenCalled();
+    expect(tasksApi.createTask).toHaveBeenCalledWith('report', 'Monthly report', 'log.info:report');
+    expect(tasksApi.updateTask).not.toHaveBeenCalled();
     expect(onSaved).toHaveBeenCalledWith('report', true);
     expect(result.current.busy).toBe(false);
   });
@@ -142,8 +146,8 @@ describe('save', () => {
     const { result, onClose, onSaved } = mount(existing, false);
     act(() => result.current.setCode('log.info:v2'));
     await act(() => result.current.save());
-    expect(api.updateTask).toHaveBeenCalledWith('nightly', 'Cleans up', 'log.info:v2');
-    expect(api.createTask).not.toHaveBeenCalled();
+    expect(tasksApi.updateTask).toHaveBeenCalledWith('nightly', 'Cleans up', 'log.info:v2');
+    expect(tasksApi.createTask).not.toHaveBeenCalled();
     expect(onSaved).toHaveBeenCalledWith('nightly', false);
     await act(() => result.current.close());
     expect(dialog.confirm).not.toHaveBeenCalled();
@@ -151,7 +155,7 @@ describe('save', () => {
   });
 
   it('reports a failed save, stays dirty and releases busy', async () => {
-    vi.mocked(api.updateTask).mockRejectedValue(new Error('invalid hyperlambda'));
+    vi.mocked(tasksApi.updateTask).mockRejectedValue(new Error('invalid hyperlambda'));
     dialog.confirm.mockResolvedValue(false);
     const { result, onSaved } = mount(existing, false);
     act(() => result.current.setCode('broken'));

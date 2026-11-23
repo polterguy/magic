@@ -11,8 +11,12 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import AddWidgetDialog from '../components/AddWidgetDialog';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -27,7 +31,7 @@ let toasts: Toast[];
 beforeEach(() => {
   toasts = [];
   setToastListener(t => toasts.push(t));
-  vi.mocked(api.availableWidgets).mockResolvedValue(WIDGETS);
+  vi.mocked(mlApi.availableWidgets).mockResolvedValue(WIDGETS);
   vi.mocked(api.mlSnippetCreate).mockResolvedValue(undefined as never);
 });
 
@@ -75,13 +79,13 @@ describe('AddWidgetDialog', () => {
   });
 
   it('says so when there are no widgets, also for a null answer', async () => {
-    vi.mocked(api.availableWidgets).mockResolvedValue(null as never);
+    vi.mocked(mlApi.availableWidgets).mockResolvedValue(null as never);
     renderDialog();
     expect(await screen.findByText('No widgets available.')).toBeInTheDocument();
   });
 
   it('shows a failing list in a dismissible banner', async () => {
-    vi.mocked(api.availableWidgets).mockRejectedValue(new Error('list failed'));
+    vi.mocked(mlApi.availableWidgets).mockRejectedValue(new Error('list failed'));
     renderDialog();
     expect(await screen.findByText('list failed')).toBeInTheDocument();
     await userEvent.click(screen.getByTitle('Dismiss'));

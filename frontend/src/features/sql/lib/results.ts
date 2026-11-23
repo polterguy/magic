@@ -3,8 +3,9 @@
  * how a cell renders, and what the toast says after a run.
  */
 
-import type { SqlRow } from '@core/api';
 import { createElement, type ReactNode } from 'react';
+
+import type { SqlRow } from './api';
 
 /*
  * With safe mode off a query can answer with hundreds of thousands of rows,

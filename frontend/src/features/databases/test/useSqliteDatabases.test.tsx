@@ -11,8 +11,12 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSqliteDatabases } from '../hooks/useSqliteDatabases';
+import * as databasesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -71,7 +75,7 @@ describe('create', () => {
     const { result } = await mount();
     act(() => result.current.setName('bad name!'));
     await act(() => result.current.create());
-    expect(api.createDatabase).not.toHaveBeenCalled();
+    expect(databasesApi.createDatabase).not.toHaveBeenCalled();
     expect(toasts[0]).toMatchObject({
       text: 'Database names accept alphanumeric characters, - and _',
       isError: true,
@@ -83,7 +87,7 @@ describe('create', () => {
     act(() => result.current.setName('sales-2024'));
     vi.mocked(api.listDatabases).mockClear();
     await act(() => result.current.create());
-    expect(api.createDatabase).toHaveBeenCalledWith('sqlite', 'generic', 'sales-2024');
+    expect(databasesApi.createDatabase).toHaveBeenCalledWith('sqlite', 'generic', 'sales-2024');
     expect(result.current.name).toBe('');
     expect(toasts.at(-1)).toMatchObject({ text: 'Database sales-2024 created', isError: false });
     expect(api.listDatabases).toHaveBeenCalledTimes(1);
@@ -91,7 +95,7 @@ describe('create', () => {
   });
 
   it('reports a failed creation and keeps the name', async () => {
-    vi.mocked(api.createDatabase).mockRejectedValue(new Error('exists'));
+    vi.mocked(databasesApi.createDatabase).mockRejectedValue(new Error('exists'));
     const { result } = await mount();
     act(() => result.current.setName('sales'));
     await act(() => result.current.create());
@@ -106,7 +110,7 @@ describe('remove', () => {
     dialog.prompt.mockResolvedValue(null);
     const { result } = await mount();
     await act(() => result.current.remove('magic'));
-    expect(api.dropDatabase).not.toHaveBeenCalled();
+    expect(databasesApi.dropDatabase).not.toHaveBeenCalled();
     expect(toasts).toHaveLength(0);
   });
 
@@ -114,7 +118,7 @@ describe('remove', () => {
     dialog.prompt.mockResolvedValue('mag');
     const { result } = await mount();
     await act(() => result.current.remove('magic'));
-    expect(api.dropDatabase).not.toHaveBeenCalled();
+    expect(databasesApi.dropDatabase).not.toHaveBeenCalled();
     expect(toasts[0].text).toBe('Name did not match — nothing deleted');
   });
 
@@ -123,14 +127,14 @@ describe('remove', () => {
     const { result } = await mount();
     vi.mocked(api.listDatabases).mockClear();
     await act(() => result.current.remove('magic'));
-    expect(api.dropDatabase).toHaveBeenCalledWith('sqlite', 'generic', 'magic');
+    expect(databasesApi.dropDatabase).toHaveBeenCalledWith('sqlite', 'generic', 'magic');
     expect(toasts.at(-1)).toMatchObject({ text: 'Database magic deleted', isError: false });
     expect(api.listDatabases).toHaveBeenCalledTimes(1);
   });
 
   it('reports a failed drop', async () => {
     dialog.prompt.mockResolvedValue('magic');
-    vi.mocked(api.dropDatabase).mockRejectedValue(new Error('in use'));
+    vi.mocked(databasesApi.dropDatabase).mockRejectedValue(new Error('in use'));
     const { result } = await mount();
     await act(() => result.current.remove('magic'));
     expect(toasts.at(-1)?.text).toBe('in use');
@@ -142,7 +146,7 @@ describe('upload', () => {
   it('accepts only .db backups', async () => {
     const { result } = await mount();
     await act(() => result.current.upload(new globalThis.File(['x'], 'backup.sql')));
-    expect(api.uploadDatabaseBackup).not.toHaveBeenCalled();
+    expect(databasesApi.uploadDatabaseBackup).not.toHaveBeenCalled();
     expect(toasts[0]).toMatchObject({ text: 'Backups must be .db files', isError: true });
   });
 
@@ -151,13 +155,13 @@ describe('upload', () => {
     const { result } = await mount();
     vi.mocked(api.listDatabases).mockClear();
     await act(() => result.current.upload(backup));
-    expect(api.uploadDatabaseBackup).toHaveBeenCalledWith(backup);
+    expect(databasesApi.uploadDatabaseBackup).toHaveBeenCalledWith(backup);
     expect(toasts.at(-1)).toMatchObject({ text: 'Backup magic.db uploaded', isError: false });
     expect(api.listDatabases).toHaveBeenCalledTimes(1);
   });
 
   it('reports a failed upload', async () => {
-    vi.mocked(api.uploadDatabaseBackup).mockRejectedValue(new Error('corrupt'));
+    vi.mocked(databasesApi.uploadDatabaseBackup).mockRejectedValue(new Error('corrupt'));
     const { result } = await mount();
     await act(() => result.current.upload(new globalThis.File(['x'], 'magic.db')));
     expect(toasts.at(-1)?.text).toBe('corrupt');

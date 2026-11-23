@@ -9,9 +9,13 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSchemaDesigner } from '../hooks/useSchemaDesigner';
+import * as sqlApi from '../lib/api';
 import type { ColumnPayload } from '../lib/schema';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -95,7 +99,7 @@ describe('useSchemaDesigner', () => {
 
     await act(() => result.current.importCsv(file));
 
-    expect(api.importCsvFile).toHaveBeenCalledWith('sqlite', 'generic', 'shop', file);
+    expect(sqlApi.importCsvFile).toHaveBeenCalledWith('sqlite', 'generic', 'shop', file);
     expect(showToast).toHaveBeenCalledWith(
       "Importing people.csv — you'll be notified when it completes",
     );
@@ -103,7 +107,7 @@ describe('useSchemaDesigner', () => {
   });
 
   it('reports a failed CSV import', async () => {
-    vi.mocked(api.importCsvFile).mockRejectedValue(new Error('bad csv'));
+    vi.mocked(sqlApi.importCsvFile).mockRejectedValue(new Error('bad csv'));
     const { result } = setup();
 
     await act(() => result.current.importCsv(new File([''], 'x.csv')));
@@ -120,7 +124,7 @@ describe('useSchemaDesigner', () => {
     expect(dialog.confirmTyped).toHaveBeenCalledWith(
       expect.objectContaining({ expected: 'orders', title: 'Drop table?' }),
     );
-    expect(api.dropTable).toHaveBeenCalledWith('sqlite', 'generic', 'shop', 'orders');
+    expect(sqlApi.dropTable).toHaveBeenCalledWith('sqlite', 'generic', 'shop', 'orders');
     expect(showToast).toHaveBeenCalledWith('Table orders dropped');
     expect(reloadSchema).toHaveBeenCalled();
     expectWaitingBracketed();
@@ -132,12 +136,12 @@ describe('useSchemaDesigner', () => {
 
     await act(() => result.current.dropTableConfirmed('orders'));
 
-    expect(api.dropTable).not.toHaveBeenCalled();
+    expect(sqlApi.dropTable).not.toHaveBeenCalled();
     expect(setWaiting).not.toHaveBeenCalled();
   });
 
   it('reports a failed table drop without reloading', async () => {
-    vi.mocked(api.dropTable).mockRejectedValue(new Error('locked'));
+    vi.mocked(sqlApi.dropTable).mockRejectedValue(new Error('locked'));
     const { result } = setup();
 
     await act(() => result.current.dropTableConfirmed('orders'));
@@ -158,7 +162,7 @@ describe('useSchemaDesigner', () => {
         danger: true,
       }),
     );
-    expect(api.dropColumn).toHaveBeenCalledWith('sqlite', 'generic', 'shop', 'orders', 'title');
+    expect(sqlApi.dropColumn).toHaveBeenCalledWith('sqlite', 'generic', 'shop', 'orders', 'title');
     expect(showToast).toHaveBeenCalledWith('Column title dropped');
     expect(reloadSchema).toHaveBeenCalled();
   });
@@ -169,11 +173,11 @@ describe('useSchemaDesigner', () => {
 
     await act(() => result.current.dropColumnConfirmed('orders', 'title'));
 
-    expect(api.dropColumn).not.toHaveBeenCalled();
+    expect(sqlApi.dropColumn).not.toHaveBeenCalled();
   });
 
   it('reports a failed column drop', async () => {
-    vi.mocked(api.dropColumn).mockRejectedValue(new Error('in use'));
+    vi.mocked(sqlApi.dropColumn).mockRejectedValue(new Error('in use'));
     const { result } = setup();
 
     await act(() => result.current.dropColumnConfirmed('orders', 'title'));
@@ -214,7 +218,7 @@ describe('useSchemaDesigner', () => {
 
     await act(() => result.current.createTable('orders', 'id', 'int', 0));
 
-    expect(api.addTable).toHaveBeenCalledWith(
+    expect(sqlApi.addTable).toHaveBeenCalledWith(
       'sqlite',
       'generic',
       'shop',
@@ -230,7 +234,7 @@ describe('useSchemaDesigner', () => {
   });
 
   it('keeps the new-table dialog open when creation fails', async () => {
-    vi.mocked(api.addTable).mockRejectedValue(new Error('exists'));
+    vi.mocked(sqlApi.addTable).mockRejectedValue(new Error('exists'));
     const { result } = setup();
     act(() => result.current.setNewTable(true));
 
@@ -248,7 +252,7 @@ describe('useSchemaDesigner', () => {
 
     await act(() => result.current.submitColumn('orders', payload));
 
-    expect(api.addColumn).toHaveBeenCalledWith(
+    expect(sqlApi.addColumn).toHaveBeenCalledWith(
       {
         databaseType: 'sqlite',
         connectionString: 'generic',
@@ -257,7 +261,7 @@ describe('useSchemaDesigner', () => {
       },
       payload,
     );
-    expect(api.addForeignKey).not.toHaveBeenCalled();
+    expect(sqlApi.addForeignKey).not.toHaveBeenCalled();
     expect(result.current.addingColumn).toBeNull();
     expect(showToast).toHaveBeenCalledWith('Column note added');
     expect(reloadSchema).toHaveBeenCalled();
@@ -273,15 +277,15 @@ describe('useSchemaDesigner', () => {
 
     await act(() => result.current.submitColumn('orders', payload));
 
-    expect(api.addForeignKey).toHaveBeenCalledWith(
+    expect(sqlApi.addForeignKey).toHaveBeenCalledWith(
       expect.objectContaining({ tableName: 'orders' }),
       payload,
     );
-    expect(api.addColumn).not.toHaveBeenCalled();
+    expect(sqlApi.addColumn).not.toHaveBeenCalled();
   });
 
   it('keeps the add-column dialog open when adding fails', async () => {
-    vi.mocked(api.addColumn).mockRejectedValue(new Error('dup'));
+    vi.mocked(sqlApi.addColumn).mockRejectedValue(new Error('dup'));
     const { result } = setup();
     act(() => result.current.setAddingColumn('orders'));
 

@@ -2,15 +2,7 @@
  * Models tab — the ml_types registry.
  */
 
-import {
-  deleteVectors,
-  gibberish,
-  mlSnippetsCount,
-  type MlType,
-  mlTypeDelete,
-  mlUnvectorisedCount,
-  vectoriseType,
-} from '@core/api';
+import { gibberish, type MlType } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
@@ -19,6 +11,13 @@ import { CheckIcon, DashIcon } from '@shared/ui/Icons';
 import SocketFeedback from '@shared/ui/SocketFeedback';
 import { useEffect, useRef, useState } from 'react';
 
+import {
+  deleteVectors,
+  mlSnippetsCount,
+  mlTypeDelete,
+  mlUnvectorisedCount,
+  vectoriseType,
+} from '../lib/api';
 import EditModelDialog from './EditModelDialog';
 import EmbedDialog from './EmbedDialog';
 import ImportDialog from './ImportDialog';

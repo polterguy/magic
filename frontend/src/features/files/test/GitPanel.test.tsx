@@ -13,8 +13,12 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 
 import { renderPage } from '../../../test/renderPage';
 import GitPanel from '../components/GitPanel';
+import * as filesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -25,7 +29,7 @@ let onClose: Mock<() => void>;
 let onChanged: Mock<() => void>;
 
 function status(...lines: string[]) {
-  vi.mocked(api.gitStatus).mockResolvedValue(lines);
+  vi.mocked(filesApi.gitStatus).mockResolvedValue(lines);
 }
 
 beforeEach(() => {
@@ -34,9 +38,9 @@ beforeEach(() => {
   onClose = vi.fn<() => void>();
   onChanged = vi.fn<() => void>();
   status('## main...origin/main', ' M src/a.hl');
-  vi.mocked(api.gitBranches).mockResolvedValue(['main', 'dev']);
-  vi.mocked(api.gitDiff).mockResolvedValue('');
-  vi.mocked(api.gitLog).mockResolvedValue('');
+  vi.mocked(filesApi.gitBranches).mockResolvedValue(['main', 'dev']);
+  vi.mocked(filesApi.gitDiff).mockResolvedValue('');
+  vi.mocked(filesApi.gitLog).mockResolvedValue('');
   vi.mocked(api.listFiles).mockResolvedValue([]);
   vi.mocked(api.listFolders).mockResolvedValue([]);
 });
@@ -69,7 +73,7 @@ describe('GitPanel status', () => {
   it('shows the branch line and the changed files of a repository', async () => {
     status('## main...origin/main [ahead 1]', ' M src/a.hl', 'A  new.hl', ' D gone.hl');
     await open();
-    expect(api.gitStatus).toHaveBeenCalledWith(PATH);
+    expect(filesApi.gitStatus).toHaveBeenCalledWith(PATH);
     expect(screen.getByText('Git — ' + PATH)).toBeInTheDocument();
     expect(screen.getByText('main...origin/main [ahead 1]')).toBeInTheDocument();
     expect(screen.getByText('src/a.hl')).toBeInTheDocument();
@@ -104,8 +108,8 @@ describe('GitPanel status', () => {
   });
 
   it('copes with a backend that answers nothing', async () => {
-    vi.mocked(api.gitStatus).mockResolvedValue(undefined as unknown as string[]);
-    vi.mocked(api.gitBranches).mockResolvedValue(undefined as unknown as string[]);
+    vi.mocked(filesApi.gitStatus).mockResolvedValue(undefined as unknown as string[]);
+    vi.mocked(filesApi.gitBranches).mockResolvedValue(undefined as unknown as string[]);
     await open();
     expect(screen.getByText('Working tree clean.')).toBeInTheDocument();
     expect(screen.getByRole('combobox')).toBeInTheDocument();
@@ -139,7 +143,7 @@ describe('GitPanel status', () => {
 describe('GitPanel unborn repository', () => {
   beforeEach(() => {
     status('## No commits yet on trunk', '?? a.hl');
-    vi.mocked(api.gitBranches).mockResolvedValue([]);
+    vi.mocked(filesApi.gitBranches).mockResolvedValue([]);
   });
 
   it('disables everything that needs a commit', async () => {
@@ -161,14 +165,14 @@ describe('GitPanel unborn repository', () => {
 
 describe('GitPanel diffs', () => {
   it('fetches and colours a diff when a file is opened, and does not fetch it twice', async () => {
-    vi.mocked(api.gitDiff).mockResolvedValue(
+    vi.mocked(filesApi.gitDiff).mockResolvedValue(
       ['--- a/src/a.hl', '+++ b/src/a.hl', '@@ -1 +1 @@', '-old', '+new', ' same', 'other'].join(
         '\n',
       ),
     );
     await open();
     await userEvent.click(screen.getByText('src/a.hl'));
-    expect(api.gitDiff).toHaveBeenCalledWith(PATH, 'src/a.hl');
+    expect(filesApi.gitDiff).toHaveBeenCalledWith(PATH, 'src/a.hl');
     const pre = await waitFor(() => {
       const found = document.querySelector('.git-diff');
       expect(found?.querySelectorAll('span').length).toBeGreaterThan(3);
@@ -188,7 +192,7 @@ describe('GitPanel diffs', () => {
     expect(document.querySelector('.git-diff')).toBeNull();
     await userEvent.click(screen.getByText('src/a.hl'));
     expect(document.querySelector('.git-diff')).not.toBeNull();
-    expect(api.gitDiff).toHaveBeenCalledTimes(1);
+    expect(filesApi.gitDiff).toHaveBeenCalledTimes(1);
   });
 
   it('says there are no changes for an empty diff', async () => {
@@ -199,7 +203,7 @@ describe('GitPanel diffs', () => {
 
   it('shows a loading note until the diff arrives', async () => {
     const gate = deferred();
-    vi.mocked(api.gitDiff).mockReturnValue(gate.promise.then(() => 'late line'));
+    vi.mocked(filesApi.gitDiff).mockReturnValue(gate.promise.then(() => 'late line'));
     await open();
     await userEvent.click(screen.getByText('src/a.hl'));
     expect(screen.getByText('Loading…')).toBeInTheDocument();
@@ -216,11 +220,11 @@ describe('GitPanel diffs', () => {
     expect(await screen.findByText('+one')).toHaveClass('add');
     expect(screen.getByText('+two')).toBeInTheDocument();
     expect(api.loadFile).toHaveBeenCalledWith(PATH + 'notes.txt');
-    expect(api.gitDiff).not.toHaveBeenCalled();
+    expect(filesApi.gitDiff).not.toHaveBeenCalled();
   });
 
   it('reports a diff that cannot be read', async () => {
-    vi.mocked(api.gitDiff).mockRejectedValue(new Error('diff broke'));
+    vi.mocked(filesApi.gitDiff).mockRejectedValue(new Error('diff broke'));
     await open();
     await userEvent.click(screen.getByText('src/a.hl'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ isError: true }));
@@ -235,8 +239,8 @@ describe('GitPanel commit', () => {
     await userEvent.type(screen.getByPlaceholderText('Commit message…'), '  Fix it  ');
     await userEvent.click(button('Commit'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ text: 'Changes committed' }));
-    expect(api.gitCommit).toHaveBeenCalledWith(PATH, 'Fix it');
-    expect(api.gitStatus).toHaveBeenCalledTimes(2);
+    expect(filesApi.gitCommit).toHaveBeenCalledWith(PATH, 'Fix it');
+    expect(filesApi.gitStatus).toHaveBeenCalledTimes(2);
     expect(screen.getByPlaceholderText('Commit message…')).toHaveValue('');
     expect(onChanged).not.toHaveBeenCalled();
   });
@@ -248,14 +252,14 @@ describe('GitPanel commit', () => {
   });
 
   it('shows the error and keeps the message when the commit fails', async () => {
-    vi.mocked(api.gitCommit).mockRejectedValue(new Error('nothing staged'));
+    vi.mocked(filesApi.gitCommit).mockRejectedValue(new Error('nothing staged'));
     await open();
     await userEvent.type(screen.getByPlaceholderText('Commit message…'), 'msg');
     await userEvent.click(button('Commit'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ isError: true }));
     expect(toasts.at(-1)!.text).toContain('nothing staged');
     expect(screen.getByPlaceholderText('Commit message…')).toHaveValue('msg');
-    expect(api.gitStatus).toHaveBeenCalledTimes(1);
+    expect(filesApi.gitStatus).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -264,7 +268,7 @@ describe('GitPanel remote operations', () => {
     await open();
     await userEvent.click(button('Fetch'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ text: 'Fetched from remote' }));
-    expect(api.gitFetch).toHaveBeenCalledWith(PATH);
+    expect(filesApi.gitFetch).toHaveBeenCalledWith(PATH);
     expect(onChanged).not.toHaveBeenCalled();
   });
 
@@ -272,7 +276,7 @@ describe('GitPanel remote operations', () => {
     await open();
     await userEvent.click(button('Pull'));
     await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
-    expect(api.gitPull).toHaveBeenCalledWith(PATH, 'main');
+    expect(filesApi.gitPull).toHaveBeenCalledWith(PATH, 'main');
     expect(toasts.at(-1)).toMatchObject({ text: 'Pulled from remote' });
   });
 
@@ -288,7 +292,7 @@ describe('GitPanel remote operations', () => {
     expect(button('Push')).toBeEnabled();
     await userEvent.click(button('Push'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ text: 'Pushed to remote' }));
-    expect(api.gitPush).toHaveBeenCalledWith(PATH, 'main');
+    expect(filesApi.gitPush).toHaveBeenCalledWith(PATH, 'main');
   });
 
   it('keeps Push enabled without an upstream, since the first push creates it', async () => {
@@ -297,21 +301,21 @@ describe('GitPanel remote operations', () => {
     expect(button('Push')).toBeEnabled();
     expect(button('Push')).not.toHaveAttribute('title');
     await userEvent.click(button('Push'));
-    await waitFor(() => expect(api.gitPush).toHaveBeenCalledWith(PATH, 'main'));
+    await waitFor(() => expect(filesApi.gitPush).toHaveBeenCalledWith(PATH, 'main'));
   });
 
   it('pulls and pushes without a branch name when the status line names none', async () => {
     status(' M a.hl');
-    vi.mocked(api.gitBranches).mockResolvedValue([]);
+    vi.mocked(filesApi.gitBranches).mockResolvedValue([]);
     await open();
     await userEvent.click(button('Pull'));
-    await waitFor(() => expect(api.gitPull).toHaveBeenCalledWith(PATH, undefined));
+    await waitFor(() => expect(filesApi.gitPull).toHaveBeenCalledWith(PATH, undefined));
     await userEvent.click(button('Push'));
-    await waitFor(() => expect(api.gitPush).toHaveBeenCalledWith(PATH, undefined));
+    await waitFor(() => expect(filesApi.gitPush).toHaveBeenCalledWith(PATH, undefined));
   });
 
   it('shows the error of a failed pull', async () => {
-    vi.mocked(api.gitPull).mockRejectedValue(new Error('conflict'));
+    vi.mocked(filesApi.gitPull).mockRejectedValue(new Error('conflict'));
     await open();
     await userEvent.click(button('Pull'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ isError: true }));
@@ -339,18 +343,20 @@ describe('GitPanel add remote and publish', () => {
     await userEvent.type(screen.getByLabelText('HTTPS repository URL'), 'https://git.test/x.git');
     await userEvent.click(button('OK'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ text: 'Remote added' }));
-    expect(api.gitRemoteAdd).toHaveBeenCalledWith(PATH, 'https://git.test/x.git');
+    expect(filesApi.gitRemoteAdd).toHaveBeenCalledWith(PATH, 'https://git.test/x.git');
   });
 
   it('does nothing when the remote prompt is cancelled', async () => {
     await open();
     await userEvent.click(button('Add remote'));
     await userEvent.click(button('Cancel'));
-    expect(api.gitRemoteAdd).not.toHaveBeenCalled();
+    expect(filesApi.gitRemoteAdd).not.toHaveBeenCalled();
   });
 
   it('proposes the folder name, private by default, and publishes through GitHub', async () => {
-    vi.mocked(api.gitGithubCreate).mockResolvedValue({ url: 'https://github.test/me/shop.git' });
+    vi.mocked(filesApi.gitGithubCreate).mockResolvedValue({
+      url: 'https://github.test/me/shop.git',
+    });
     await open();
     await userEvent.click(button('Publish to GitHub…'));
     const name = screen.getByLabelText<HTMLInputElement>('Repository name', { exact: false });
@@ -361,14 +367,16 @@ describe('GitPanel add remote and publish', () => {
     await waitFor(() =>
       expect(toasts.at(-1)).toMatchObject({ text: 'Published to shop on GitHub' }),
     );
-    expect(api.gitGithubCreate).toHaveBeenCalledWith('shop', true);
-    expect(api.gitRemoteAdd).toHaveBeenCalledWith(PATH, 'https://github.test/me/shop.git');
-    expect(api.gitPush).toHaveBeenCalledWith(PATH, 'main');
+    expect(filesApi.gitGithubCreate).toHaveBeenCalledWith('shop', true);
+    expect(filesApi.gitRemoteAdd).toHaveBeenCalledWith(PATH, 'https://github.test/me/shop.git');
+    expect(filesApi.gitPush).toHaveBeenCalledWith(PATH, 'main');
     expect(screen.queryByText('Publish to GitHub', { selector: 'h2' })).toBeNull();
   });
 
   it('publishes a renamed public repository and warns about visibility', async () => {
-    vi.mocked(api.gitGithubCreate).mockResolvedValue({ url: 'https://github.test/me/pub.git' });
+    vi.mocked(filesApi.gitGithubCreate).mockResolvedValue({
+      url: 'https://github.test/me/pub.git',
+    });
     await open();
     await userEvent.click(button('Publish to GitHub…'));
     const name = screen.getByLabelText<HTMLInputElement>('Repository name', { exact: false });
@@ -377,15 +385,15 @@ describe('GitPanel add remote and publish', () => {
     await userEvent.click(screen.getByRole('checkbox'));
     expect(screen.getByText('— anyone can see everything in this folder')).toBeInTheDocument();
     await userEvent.click(button('OK'));
-    await waitFor(() => expect(api.gitGithubCreate).toHaveBeenCalledWith('pub', false));
+    await waitFor(() => expect(filesApi.gitGithubCreate).toHaveBeenCalledWith('pub', false));
   });
 
   it('publishes with Enter in the name field', async () => {
-    vi.mocked(api.gitGithubCreate).mockResolvedValue({ url: 'u' });
+    vi.mocked(filesApi.gitGithubCreate).mockResolvedValue({ url: 'u' });
     await open();
     await userEvent.click(button('Publish to GitHub…'));
     await userEvent.type(screen.getByLabelText('Repository name', { exact: false }), 'x{Enter}');
-    await waitFor(() => expect(api.gitGithubCreate).toHaveBeenCalledWith('shopx', true));
+    await waitFor(() => expect(filesApi.gitGithubCreate).toHaveBeenCalledWith('shopx', true));
   });
 
   it('refuses a blank name', async () => {
@@ -395,7 +403,7 @@ describe('GitPanel add remote and publish', () => {
     await userEvent.clear(name);
     expect(button('OK')).toBeDisabled();
     await userEvent.type(name, '{Enter}');
-    expect(api.gitGithubCreate).not.toHaveBeenCalled();
+    expect(filesApi.gitGithubCreate).not.toHaveBeenCalled();
   });
 
   it('cancels publishing', async () => {
@@ -403,7 +411,7 @@ describe('GitPanel add remote and publish', () => {
     await userEvent.click(button('Publish to GitHub…'));
     await userEvent.click(button('Cancel'));
     expect(screen.queryByText('Repository name', { exact: false })).toBeNull();
-    expect(api.gitGithubCreate).not.toHaveBeenCalled();
+    expect(filesApi.gitGithubCreate).not.toHaveBeenCalled();
   });
 
   it('starts with an empty name when the path has no folder', async () => {
@@ -414,12 +422,12 @@ describe('GitPanel add remote and publish', () => {
   });
 
   it('reports a failure to create the repository without adding a remote', async () => {
-    vi.mocked(api.gitGithubCreate).mockRejectedValue(new Error('name taken'));
+    vi.mocked(filesApi.gitGithubCreate).mockRejectedValue(new Error('name taken'));
     await open();
     await userEvent.click(button('Publish to GitHub…'));
     await userEvent.click(button('OK'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ isError: true }));
-    expect(api.gitRemoteAdd).not.toHaveBeenCalled();
+    expect(filesApi.gitRemoteAdd).not.toHaveBeenCalled();
   });
 });
 
@@ -428,7 +436,7 @@ describe('GitPanel branches', () => {
     await open();
     await userEvent.selectOptions(screen.getByRole('combobox'), 'dev');
     await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
-    expect(api.gitCheckout).toHaveBeenCalledWith(PATH, 'dev');
+    expect(filesApi.gitCheckout).toHaveBeenCalledWith(PATH, 'dev');
     expect(toasts.at(-1)).toMatchObject({ text: 'Checked out dev' });
   });
 
@@ -438,7 +446,7 @@ describe('GitPanel branches', () => {
     await userEvent.type(screen.getByLabelText('Branch name'), 'topic');
     await userEvent.click(button('OK'));
     await waitFor(() => expect(onChanged).toHaveBeenCalled());
-    expect(api.gitCheckout).toHaveBeenCalledWith(PATH, 'topic', true);
+    expect(filesApi.gitCheckout).toHaveBeenCalledWith(PATH, 'topic', true);
     expect(toasts.at(-1)).toMatchObject({ text: 'Created and checked out topic' });
   });
 
@@ -446,7 +454,7 @@ describe('GitPanel branches', () => {
     await open();
     await userEvent.click(button('New branch'));
     await userEvent.click(button('OK'));
-    expect(api.gitCheckout).not.toHaveBeenCalled();
+    expect(filesApi.gitCheckout).not.toHaveBeenCalled();
   });
 
   it('merges the named branch and lists the other branches in the prompt', async () => {
@@ -456,7 +464,7 @@ describe('GitPanel branches', () => {
     await userEvent.type(screen.getByLabelText('Branch to merge'), 'dev');
     await userEvent.click(button('OK'));
     await waitFor(() => expect(onChanged).toHaveBeenCalled());
-    expect(api.gitMerge).toHaveBeenCalledWith(PATH, 'dev');
+    expect(filesApi.gitMerge).toHaveBeenCalledWith(PATH, 'dev');
     expect(toasts.at(-1)).toMatchObject({ text: 'Merged dev into main' });
   });
 
@@ -464,11 +472,11 @@ describe('GitPanel branches', () => {
     await open();
     await userEvent.click(button('Merge'));
     await userEvent.click(button('Cancel'));
-    expect(api.gitMerge).not.toHaveBeenCalled();
+    expect(filesApi.gitMerge).not.toHaveBeenCalled();
   });
 
   it('cannot merge with only one branch', async () => {
-    vi.mocked(api.gitBranches).mockResolvedValue(['main']);
+    vi.mocked(filesApi.gitBranches).mockResolvedValue(['main']);
     await open();
     expect(button('Merge')).toBeDisabled();
   });

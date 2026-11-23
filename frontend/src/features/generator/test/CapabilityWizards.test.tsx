@@ -13,9 +13,13 @@ import { renderPage } from '../../../test/renderPage';
 import DbAccessWizard from '../components/wizards/DbAccessWizard';
 import DynamicSlotsWizard from '../components/wizards/DynamicSlotsWizard';
 import FilesAccessWizard from '../components/wizards/FilesAccessWizard';
+import * as generatorApi from '../lib/api';
 import { FILE_CHANGING_SLOTS } from '../lib/slots';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -206,7 +210,7 @@ describe('DynamicSlotsWizard', () => {
   }
 
   it('lists the slots and pins all three aliases of every picked one', async () => {
-    vi.mocked(api.listDynamicSlots).mockResolvedValue(['custom.alpha', 'custom.beta']);
+    vi.mocked(generatorApi.listDynamicSlots).mockResolvedValue(['custom.alpha', 'custom.beta']);
     const { onAdd } = renderSlots();
 
     expect(screen.getByText('loading…')).toBeInTheDocument();
@@ -224,7 +228,7 @@ describe('DynamicSlotsWizard', () => {
   });
 
   it('keeps Add disabled until a slot is picked', async () => {
-    vi.mocked(api.listDynamicSlots).mockResolvedValue(['custom.alpha']);
+    vi.mocked(generatorApi.listDynamicSlots).mockResolvedValue(['custom.alpha']);
     const { onAdd } = renderSlots();
     await screen.findByLabelText('custom.alpha');
 
@@ -235,7 +239,7 @@ describe('DynamicSlotsWizard', () => {
   });
 
   it('filters the list case-insensitively and clears the filter', async () => {
-    vi.mocked(api.listDynamicSlots).mockResolvedValue(['custom.alpha', 'other.beta']);
+    vi.mocked(generatorApi.listDynamicSlots).mockResolvedValue(['custom.alpha', 'other.beta']);
     renderSlots();
     await screen.findByLabelText('custom.alpha');
 
@@ -251,14 +255,14 @@ describe('DynamicSlotsWizard', () => {
   });
 
   it('says so when the server has no dynamic slots', async () => {
-    vi.mocked(api.listDynamicSlots).mockResolvedValue([]);
+    vi.mocked(generatorApi.listDynamicSlots).mockResolvedValue([]);
     renderSlots();
 
     expect(await screen.findByText('No dynamic slots found.')).toBeInTheDocument();
   });
 
   it('reports a failure to load the slots', async () => {
-    vi.mocked(api.listDynamicSlots).mockRejectedValue(new Error('denied'));
+    vi.mocked(generatorApi.listDynamicSlots).mockRejectedValue(new Error('denied'));
     renderSlots();
 
     await waitFor(() =>
@@ -268,7 +272,7 @@ describe('DynamicSlotsWizard', () => {
   });
 
   it('closes without adding', async () => {
-    vi.mocked(api.listDynamicSlots).mockResolvedValue([]);
+    vi.mocked(generatorApi.listDynamicSlots).mockResolvedValue([]);
     const { onAdd, onCancel } = renderSlots();
     await screen.findByText('No dynamic slots found.');
 

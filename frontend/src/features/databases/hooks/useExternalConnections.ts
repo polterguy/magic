@@ -1,14 +1,10 @@
-import {
-  addConnectionString,
-  deleteConnectionString,
-  loadConfig,
-  testConnectionString,
-} from '@core/api';
+import { loadConfig } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import { useCallback, useEffect, useState } from 'react';
 
+import { addConnectionString, deleteConnectionString, testConnectionString } from '../lib/api';
 import {
   connectionError,
   type ConnectionRow,

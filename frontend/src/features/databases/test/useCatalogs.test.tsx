@@ -11,8 +11,12 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useCatalogs } from '../hooks/useCatalogs';
+import * as databasesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -50,14 +54,14 @@ describe('createCatalog', () => {
     dialog.prompt.mockResolvedValue(null);
     const { result } = mount();
     await act(() => result.current.createCatalog(row));
-    expect(api.createDatabase).not.toHaveBeenCalled();
+    expect(databasesApi.createDatabase).not.toHaveBeenCalled();
   });
 
   it('rejects a name with characters beyond alphanumerics and underscore', async () => {
     dialog.prompt.mockResolvedValue('my-db');
     const { result } = mount();
     await act(() => result.current.createCatalog(row));
-    expect(api.createDatabase).not.toHaveBeenCalled();
+    expect(databasesApi.createDatabase).not.toHaveBeenCalled();
     expect(toasts[0]).toMatchObject({
       text: 'Catalog names accept alphanumeric characters and _',
       isError: true,
@@ -68,14 +72,14 @@ describe('createCatalog', () => {
     dialog.prompt.mockResolvedValue('sales_2024');
     const { result, setBusy } = mount();
     await act(() => result.current.createCatalog(row));
-    expect(api.createDatabase).toHaveBeenCalledWith('mysql', 'shop', 'sales_2024');
+    expect(databasesApi.createDatabase).toHaveBeenCalledWith('mysql', 'shop', 'sales_2024');
     expect(toasts[0]).toMatchObject({ text: 'Catalog sales_2024 created', isError: false });
     expect(setBusy.mock.calls).toEqual([[true], [false]]);
   });
 
   it('reports a failed creation and releases busy', async () => {
     dialog.prompt.mockResolvedValue('sales');
-    vi.mocked(api.createDatabase).mockRejectedValue(new Error('exists'));
+    vi.mocked(databasesApi.createDatabase).mockRejectedValue(new Error('exists'));
     const { result, setBusy } = mount();
     await act(() => result.current.createCatalog(row));
     expect(toasts[0]).toMatchObject({ text: 'exists', isError: true });
@@ -148,7 +152,7 @@ describe('removeCatalog', () => {
     dialog.prompt.mockResolvedValue(null);
     const { result } = mount();
     await act(() => result.current.removeCatalog(row, 'sales'));
-    expect(api.dropDatabase).not.toHaveBeenCalled();
+    expect(databasesApi.dropDatabase).not.toHaveBeenCalled();
     expect(toasts).toHaveLength(0);
   });
 
@@ -156,7 +160,7 @@ describe('removeCatalog', () => {
     dialog.prompt.mockResolvedValue('sale');
     const { result } = mount();
     await act(() => result.current.removeCatalog(row, 'sales'));
-    expect(api.dropDatabase).not.toHaveBeenCalled();
+    expect(databasesApi.dropDatabase).not.toHaveBeenCalled();
     expect(toasts[0]).toMatchObject({
       text: 'Name did not match — nothing deleted',
       isError: true,
@@ -168,14 +172,14 @@ describe('removeCatalog', () => {
     vi.mocked(api.listDatabases).mockResolvedValue({ databases: [{ name: 'other' }] });
     const { result, setBusy } = mount();
     await act(() => result.current.removeCatalog(row, 'sales'));
-    expect(api.dropDatabase).toHaveBeenCalledWith('mysql', 'shop', 'sales');
+    expect(databasesApi.dropDatabase).toHaveBeenCalledWith('mysql', 'shop', 'sales');
     expect(result.current.catalogs?.list).toEqual([{ name: 'other' }]);
     expect(setBusy).toHaveBeenLastCalledWith(false);
   });
 
   it('reports a failed drop', async () => {
     dialog.prompt.mockResolvedValue('sales');
-    vi.mocked(api.dropDatabase).mockRejectedValue(new Error('locked'));
+    vi.mocked(databasesApi.dropDatabase).mockRejectedValue(new Error('locked'));
     const { result } = mount();
     await act(() => result.current.removeCatalog(row, 'sales'));
     expect(toasts[0].text).toBe('locked');

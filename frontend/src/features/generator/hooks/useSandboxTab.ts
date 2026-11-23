@@ -1,8 +1,9 @@
-import { generateSandboxEndpoint, listRoles } from '@core/api';
+import { listRoles } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useEffect, useState } from 'react';
 
+import { generateSandboxEndpoint } from '../lib/api';
 import { DEFAULT_BASE_SLOTS } from '../lib/baseSlots';
 import { linesToSlots, refusedSlots, ruleIsIncomplete } from '../lib/slots';
 import { GeneratedInfo, PolicyRule, RoleRule, SandboxPolicy } from '../lib/types';

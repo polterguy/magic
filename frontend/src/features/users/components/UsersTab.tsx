@@ -1,4 +1,4 @@
-import { Role, User, userExtra } from '@core/api';
+import { Role, User } from '@core/api';
 import { showToast } from '@core/toast';
 import AiWaiter from '@shared/ui/AiWaiter';
 import Pagination from '@shared/ui/Pagination';
@@ -8,6 +8,7 @@ import SortHeader from '@shared/ui/SortHeader';
 import { useState } from 'react';
 
 import { useUserList } from '../hooks/useUserList';
+import { userExtra } from '../lib/api';
 import { PROTECTED_USERS } from '../lib/constants';
 import ChangePasswordDialog from './ChangePasswordDialog';
 import EditUserDialog from './EditUserDialog';

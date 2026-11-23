@@ -1,9 +1,11 @@
-import { changeUserPassword, MIN_PASSWORD, User } from '@core/api';
+import { MIN_PASSWORD, User } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import { useState } from 'react';
+
+import { changeUserPassword } from '../lib/api';
 
 export default function ChangePasswordDialog(
   props: Readonly<{

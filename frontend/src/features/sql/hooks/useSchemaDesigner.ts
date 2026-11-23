@@ -1,18 +1,17 @@
+import { exportDdl, flushSchemaCache } from '@core/api';
+import { showError } from '@core/errors';
+import { showToast } from '@core/toast';
+import { useDialog } from '@shared/hooks/useDialog';
+import { useState } from 'react';
+
 import {
   addColumn,
   addForeignKey,
   addTable,
   dropColumn,
   dropTable,
-  exportDdl,
-  flushSchemaCache,
   importCsvFile,
-} from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
-import { useDialog } from '@shared/hooks/useDialog';
-import { useState } from 'react';
-
+} from '../lib/api';
 import type { ColumnPayload } from '../lib/schema';
 
 /*

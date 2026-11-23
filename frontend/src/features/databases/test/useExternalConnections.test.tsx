@@ -11,8 +11,12 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useExternalConnections } from '../hooks/useExternalConnections';
+import * as databasesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -43,7 +47,7 @@ beforeEach(() => {
   toasts.length = 0;
   setToastListener(toast => toasts.push(toast));
   vi.mocked(api.loadConfig).mockResolvedValue(CONFIG);
-  vi.mocked(api.testConnectionString).mockResolvedValue({ result: 'success' });
+  vi.mocked(databasesApi.testConnectionString).mockResolvedValue({ result: 'success' });
 });
 
 afterEach(() => {
@@ -59,7 +63,7 @@ async function mount() {
 
 describe('loading', () => {
   it('lists the configured connections and tests each for a status', async () => {
-    vi.mocked(api.testConnectionString).mockImplementation(type =>
+    vi.mocked(databasesApi.testConnectionString).mockImplementation(type =>
       Promise.resolve({ result: type === 'mysql' ? 'success' : 'failure' }),
     );
     const { result } = await mount();
@@ -68,11 +72,14 @@ describe('loading', () => {
       expect.objectContaining({ type: 'mysql', name: 'shop', status: 'live' }),
       expect.objectContaining({ type: 'pgsql', name: 'crm', status: 'down' }),
     ]);
-    expect(api.testConnectionString).toHaveBeenCalledWith('mysql', 'Server=a;Database={database}');
+    expect(databasesApi.testConnectionString).toHaveBeenCalledWith(
+      'mysql',
+      'Server=a;Database={database}',
+    );
   });
 
   it('marks a connection down when its test throws', async () => {
-    vi.mocked(api.testConnectionString).mockRejectedValue(new Error('timeout'));
+    vi.mocked(databasesApi.testConnectionString).mockRejectedValue(new Error('timeout'));
     const { result } = await mount();
     await waitFor(() => expect(result.current.rows.every(row => row.status === 'down')).toBe(true));
     expect(toasts).toHaveLength(0);
@@ -99,13 +106,13 @@ describe('testOrConnect', () => {
 
   it('refuses invalid input before touching the server', async () => {
     const { result } = await filled('', '');
-    vi.mocked(api.testConnectionString).mockClear();
+    vi.mocked(databasesApi.testConnectionString).mockClear();
     await act(() => result.current.testOrConnect(true));
     expect(toasts[0]).toMatchObject({
       text: 'Give the connection a name and a connection string',
       isError: true,
     });
-    expect(api.testConnectionString).not.toHaveBeenCalled();
+    expect(databasesApi.testConnectionString).not.toHaveBeenCalled();
   });
 
   it('refuses a name that is already used for the type', async () => {
@@ -118,24 +125,24 @@ describe('testOrConnect', () => {
     const { result } = await filled('new', 'Server=x;Database={database}');
     await act(() => result.current.testOrConnect(false));
     expect(toasts.at(-1)).toMatchObject({ text: 'Connection succeeded', isError: false });
-    expect(api.addConnectionString).not.toHaveBeenCalled();
+    expect(databasesApi.addConnectionString).not.toHaveBeenCalled();
     expect(result.current.busy).toBe(false);
   });
 
   it('shows the server message when the test fails', async () => {
     const { result } = await filled('new', 'Server=x;Database={database}');
-    vi.mocked(api.testConnectionString).mockResolvedValue({
+    vi.mocked(databasesApi.testConnectionString).mockResolvedValue({
       result: 'failure',
       message: 'bad password',
     });
     await act(() => result.current.testOrConnect(true));
     expect(toasts.at(-1)).toMatchObject({ text: 'bad password', isError: true });
-    expect(api.addConnectionString).not.toHaveBeenCalled();
+    expect(databasesApi.addConnectionString).not.toHaveBeenCalled();
   });
 
   it('falls back to a generic message when the failure carries none', async () => {
     const { result } = await filled('new', 'Server=x;Database={database}');
-    vi.mocked(api.testConnectionString).mockResolvedValue({ result: 'failure' });
+    vi.mocked(databasesApi.testConnectionString).mockResolvedValue({ result: 'failure' });
     await act(() => result.current.testOrConnect(true));
     expect(toasts.at(-1)?.text).toBe('Could not connect');
   });
@@ -145,7 +152,7 @@ describe('testOrConnect', () => {
     vi.mocked(api.loadConfig).mockClear();
     await act(() => result.current.testOrConnect(true));
     expect(dialog.confirm).not.toHaveBeenCalled();
-    expect(api.addConnectionString).toHaveBeenCalledWith(
+    expect(databasesApi.addConnectionString).toHaveBeenCalledWith(
       'mysql',
       'analytics',
       'Server=x;Database={database}',
@@ -164,7 +171,7 @@ describe('testOrConnect', () => {
     expect(dialog.confirm).toHaveBeenCalledWith(
       expect.objectContaining({ title: 'Use as default database?' }),
     );
-    expect(api.addConnectionString).toHaveBeenCalledWith(
+    expect(databasesApi.addConnectionString).toHaveBeenCalledWith(
       'pgsql',
       'generic',
       'Server=x;Database={database}',
@@ -174,7 +181,7 @@ describe('testOrConnect', () => {
 
   it('reports a failure while adding and releases busy', async () => {
     const { result } = await filled('analytics', 'Server=x;Database={database}');
-    vi.mocked(api.addConnectionString).mockRejectedValue(new Error('denied'));
+    vi.mocked(databasesApi.addConnectionString).mockRejectedValue(new Error('denied'));
     await act(() => result.current.testOrConnect(true));
     expect(toasts.at(-1)).toMatchObject({ text: 'denied', isError: true });
     expect(result.current.busy).toBe(false);
@@ -188,7 +195,7 @@ describe('remove', () => {
     dialog.prompt.mockResolvedValue(null);
     const { result } = await mount();
     await act(() => result.current.remove(row));
-    expect(api.deleteConnectionString).not.toHaveBeenCalled();
+    expect(databasesApi.deleteConnectionString).not.toHaveBeenCalled();
     expect(toasts).toHaveLength(0);
   });
 
@@ -196,7 +203,7 @@ describe('remove', () => {
     dialog.prompt.mockResolvedValue('shp');
     const { result } = await mount();
     await act(() => result.current.remove(row));
-    expect(api.deleteConnectionString).not.toHaveBeenCalled();
+    expect(databasesApi.deleteConnectionString).not.toHaveBeenCalled();
     expect(toasts[0]).toMatchObject({
       text: 'Name did not match — nothing deleted',
       isError: true,
@@ -208,14 +215,14 @@ describe('remove', () => {
     const { result } = await mount();
     vi.mocked(api.loadConfig).mockClear();
     await act(() => result.current.remove(row));
-    expect(api.deleteConnectionString).toHaveBeenCalledWith('mysql', 'shop');
+    expect(databasesApi.deleteConnectionString).toHaveBeenCalledWith('mysql', 'shop');
     expect(toasts.at(-1)).toMatchObject({ text: 'Connection shop deleted', isError: false });
     expect(api.loadConfig).toHaveBeenCalledTimes(1);
   });
 
   it('reports a failed delete', async () => {
     dialog.prompt.mockResolvedValue('shop');
-    vi.mocked(api.deleteConnectionString).mockRejectedValue(new Error('in use'));
+    vi.mocked(databasesApi.deleteConnectionString).mockRejectedValue(new Error('in use'));
     const { result } = await mount();
     await act(() => result.current.remove(row));
     expect(toasts.at(-1)?.text).toBe('in use');

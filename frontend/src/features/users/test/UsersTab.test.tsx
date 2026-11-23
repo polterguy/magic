@@ -13,8 +13,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
 import UsersTab from '../components/UsersTab';
+import * as usersApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('@shared/lib/download', async importOriginal => ({
@@ -47,9 +51,9 @@ beforeEach(() => {
   vi.mocked(api.listUsers).mockResolvedValue(USERS);
   vi.mocked(api.countUsers).mockResolvedValue({ count: 3 });
   vi.mocked(api.canResetPassword).mockResolvedValue(true);
-  vi.mocked(api.deleteUser).mockResolvedValue({} as never);
-  vi.mocked(api.createUser).mockResolvedValue({} as never);
-  vi.mocked(api.changeUserPassword).mockResolvedValue({} as never);
+  vi.mocked(usersApi.deleteUser).mockResolvedValue({} as never);
+  vi.mocked(usersApi.createUser).mockResolvedValue({} as never);
+  vi.mocked(usersApi.changeUserPassword).mockResolvedValue({} as never);
   vi.mocked(api.sendResetPasswordLink).mockResolvedValue({ result: 'sent' });
 });
 
@@ -170,7 +174,7 @@ describe('UsersTab export and delete', () => {
     let finish: (value: unknown) => void = () => {
       // replaced as soon as deleteUser is called
     };
-    vi.mocked(api.deleteUser).mockReturnValue(
+    vi.mocked(usersApi.deleteUser).mockReturnValue(
       new Promise(resolve => {
         finish = resolve;
       }) as never,
@@ -186,7 +190,7 @@ describe('UsersTab export and delete', () => {
     await waitFor(() => expect(container.querySelector('.ai-waiter')).not.toBeNull());
     finish({});
     await waitFor(() => expect(container.querySelector('.ai-waiter')).toBeNull());
-    expect(api.deleteUser).toHaveBeenCalledWith('bob');
+    expect(usersApi.deleteUser).toHaveBeenCalledWith('bob');
     expect(toasts.at(-1)?.text).toBe('bob deleted');
   });
 });
@@ -202,7 +206,7 @@ describe('UsersTab new user', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Create user' }));
 
     await waitFor(() => expect(toasts.at(-1)?.text).toBe('User carol created'));
-    expect(api.createUser).toHaveBeenCalledWith('carol', 'a-long-enough-password');
+    expect(usersApi.createUser).toHaveBeenCalledWith('carol', 'a-long-enough-password');
     expect(screen.queryByRole('dialog')).toBeNull();
     await waitFor(() => expect(vi.mocked(api.listUsers).mock.calls.length).toBeGreaterThan(loads));
   });
@@ -214,7 +218,7 @@ describe('UsersTab new user', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(api.createUser).not.toHaveBeenCalled();
+    expect(usersApi.createUser).not.toHaveBeenCalled();
   });
 });
 
@@ -251,7 +255,7 @@ describe('UsersTab invite', () => {
         'Invite sent — dave@example.com has 20 minutes to use the link',
       ),
     );
-    expect(api.createUser).toHaveBeenCalledWith('dave@example.com', expect.any(String));
+    expect(usersApi.createUser).toHaveBeenCalledWith('dave@example.com', expect.any(String));
     expect(api.sendResetPasswordLink).toHaveBeenCalledWith(
       'https://cloudlet.test',
       'dave@example.com',
@@ -268,7 +272,7 @@ describe('UsersTab invite', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(api.createUser).not.toHaveBeenCalled();
+    expect(usersApi.createUser).not.toHaveBeenCalled();
   });
 });
 
@@ -305,7 +309,7 @@ describe('UsersTab edit and password', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Change password' }));
 
     await waitFor(() => expect(toasts.at(-1)?.text).toBe('Password changed'));
-    expect(api.changeUserPassword).toHaveBeenCalledWith('alice', 'a-brand-new-password');
+    expect(usersApi.changeUserPassword).toHaveBeenCalledWith('alice', 'a-brand-new-password');
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
@@ -320,7 +324,7 @@ describe('UsersTab edit and password', () => {
       text: 'Passwords must be at least ' + api.MIN_PASSWORD + ' characters',
       isError: true,
     });
-    expect(api.changeUserPassword).not.toHaveBeenCalled();
+    expect(usersApi.changeUserPassword).not.toHaveBeenCalled();
   });
 
   it('closes the password dialog without changing anything', async () => {
@@ -330,6 +334,6 @@ describe('UsersTab edit and password', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(api.changeUserPassword).not.toHaveBeenCalled();
+    expect(usersApi.changeUserPassword).not.toHaveBeenCalled();
   });
 });

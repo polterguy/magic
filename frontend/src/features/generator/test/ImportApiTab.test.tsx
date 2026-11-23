@@ -12,12 +12,16 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import ImportApiTab from '../components/ImportApiTab';
+import * as generatorApi from '../lib/api';
 
 // gibberish is one of the helpers apiMock keeps real, but here it is a network call to stand in for.
 vi.mock('@core/api', async importOriginal => ({
   ...(await import('../../../test/apiMock')).mockApi(await importOriginal()),
   gibberish: vi.fn(),
 }));
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 vi.mock('@shared/ui/SocketFeedback', () => ({
   default: (
@@ -37,7 +41,7 @@ let toasts: Toast[];
 
 const SPEC_URL = 'https://shop.test/docs/openapi.json';
 
-function spec(overrides: Partial<api.OpenApiSpec> = {}): api.OpenApiSpec {
+function spec(overrides: Partial<generatorApi.OpenApiSpec> = {}): generatorApi.OpenApiSpec {
   return {
     title: 'Pet Store API!',
     version: '1.2',
@@ -70,9 +74,9 @@ beforeEach(() => {
   toasts = [];
   setToastListener(t => toasts.push(t));
   vi.mocked(api.listRoles).mockResolvedValue([{ name: 'root' }, { name: 'guest' }]);
-  vi.mocked(api.parseOpenApi).mockResolvedValue(spec());
+  vi.mocked(generatorApi.parseOpenApi).mockResolvedValue(spec());
   vi.mocked(api.gibberish).mockResolvedValue({ result: 'chan-1' });
-  vi.mocked(api.importOpenApi).mockResolvedValue({ created: [], skipped: [], loc: 0 });
+  vi.mocked(generatorApi.importOpenApi).mockResolvedValue({ created: [], skipped: [], loc: 0 });
 });
 
 afterEach(() => {
@@ -102,12 +106,12 @@ describe('ImportApiTab reading', () => {
       text: 'Give me the URL of an OpenAPI specification',
       isError: true,
     });
-    expect(api.parseOpenApi).not.toHaveBeenCalled();
+    expect(generatorApi.parseOpenApi).not.toHaveBeenCalled();
   });
 
   it('derives module name, base URL and configuration key from the specification', async () => {
     await readSpec();
-    expect(api.parseOpenApi).toHaveBeenCalledWith(SPEC_URL);
+    expect(generatorApi.parseOpenApi).toHaveBeenCalledWith(SPEC_URL);
     expect(screen.getByText(/3 operations/)).toBeInTheDocument();
     expect(field('Module name').value).toBe('pet-store-api');
     expect(field('Base URL').value).toBe('https://shop.test/v1');
@@ -118,7 +122,7 @@ describe('ImportApiTab reading', () => {
   });
 
   it('keeps an absolute server and falls back to a default module name', async () => {
-    vi.mocked(api.parseOpenApi).mockResolvedValue(
+    vi.mocked(generatorApi.parseOpenApi).mockResolvedValue(
       spec({ title: null, servers: ['https://api.other.test/'], operations: null }),
     );
     render(<ImportApiTab />);
@@ -133,7 +137,7 @@ describe('ImportApiTab reading', () => {
   });
 
   it('shows the error when the specification cannot be read', async () => {
-    vi.mocked(api.parseOpenApi).mockRejectedValueOnce(new Error('not a spec'));
+    vi.mocked(generatorApi.parseOpenApi).mockRejectedValueOnce(new Error('not a spec'));
     render(<ImportApiTab />);
     await userEvent.type(
       screen.getByPlaceholderText('https://api.example.com/openapi.json'),
@@ -176,7 +180,9 @@ describe('ImportApiTab reading', () => {
   ])(
     'preselects the %s scheme the specification declares',
     async (_name, scheme, label, nameLabel, nameValue) => {
-      vi.mocked(api.parseOpenApi).mockResolvedValue(spec({ 'security-schemes': [scheme] }));
+      vi.mocked(generatorApi.parseOpenApi).mockResolvedValue(
+        spec({ 'security-schemes': [scheme] }),
+      );
       await readSpec();
       expect(screen.getByText(label, { selector: '.select-value' })).toBeInTheDocument();
       if (nameLabel) {
@@ -283,7 +289,7 @@ describe('ImportApiTab importing', () => {
   });
 
   it('opens the progress dialog on a fresh channel and imports once it is ready', async () => {
-    vi.mocked(api.parseOpenApi).mockResolvedValue(
+    vi.mocked(generatorApi.parseOpenApi).mockResolvedValue(
       spec({
         'security-schemes': [
           { name: 'k', type: 'apiKey', in: 'header', 'header-name': 'X-Key', scheme: null },
@@ -296,11 +302,11 @@ describe('ImportApiTab importing', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Import 3' }));
 
     expect(await screen.findByText('Importing 3 operations via chan-1')).toBeInTheDocument();
-    expect(api.importOpenApi).not.toHaveBeenCalled();
+    expect(generatorApi.importOpenApi).not.toHaveBeenCalled();
 
     await userEvent.click(screen.getByRole('button', { name: 'Socket ready' }));
 
-    expect(api.importOpenApi).toHaveBeenCalledWith({
+    expect(generatorApi.importOpenApi).toHaveBeenCalledWith({
       url: SPEC_URL,
       moduleName: 'pet-store-api',
       baseUrl: 'https://shop.test/v1',
@@ -319,7 +325,7 @@ describe('ImportApiTab importing', () => {
   });
 
   it('says "operation" for a single one and reports an import failure', async () => {
-    vi.mocked(api.importOpenApi).mockRejectedValueOnce(new Error('import broke'));
+    vi.mocked(generatorApi.importOpenApi).mockRejectedValueOnce(new Error('import broke'));
     await readSpec();
     await userEvent.click(screen.getByText('orders').closest('tr')!.querySelector('input')!);
     await userEvent.click(screen.getByRole('button', { name: 'Import 1' }));
@@ -342,7 +348,7 @@ describe('ImportApiTab importing', () => {
 
 describe('ImportApiTab credential', () => {
   async function readWithKeyScheme() {
-    vi.mocked(api.parseOpenApi).mockResolvedValue(
+    vi.mocked(generatorApi.parseOpenApi).mockResolvedValue(
       spec({
         'security-schemes': [
           { name: 'k', type: 'apiKey', in: 'header', 'header-name': 'X-Key', scheme: null },

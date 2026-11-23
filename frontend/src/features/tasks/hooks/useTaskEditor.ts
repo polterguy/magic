@@ -1,8 +1,9 @@
-import { getTask, Task } from '@core/api';
+import { Task } from '@core/api';
 import { showError } from '@core/errors';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SetURLSearchParams } from 'react-router-dom';
 
+import { getTask } from '../lib/api';
 import { NEW_TASK_CODE } from '../lib/constants';
 
 // Which task the editor dialog has open, if any, and the ways of opening it.

@@ -14,11 +14,15 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import ModelsTab from '../components/ModelsTab';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),
-  deleteVectors: vi.fn(),
   gibberish: vi.fn(),
+}));
+vi.mock('../lib/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('../lib/api')>()),
+  deleteVectors: vi.fn(),
   mlSnippetsCount: vi.fn(),
   mlTypeDelete: vi.fn(),
   mlUnvectorisedCount: vi.fn(),
@@ -149,11 +153,11 @@ describe('ModelsTab dialogs', () => {
 
 describe('ModelsTab delete', () => {
   it('deletes after the model name is typed back', async () => {
-    vi.mocked(api.mlTypeDelete).mockResolvedValue(undefined as never);
+    vi.mocked(mlApi.mlTypeDelete).mockResolvedValue(undefined as never);
     const { onChanged } = renderTab();
     await userEvent.click(within(rowOf('sales')).getByRole('button', { name: 'Delete' }));
     await userEvent.type(screen.getByLabelText('Model name'), 'sales{Enter}');
-    await waitFor(() => expect(api.mlTypeDelete).toHaveBeenCalledWith('sales'));
+    await waitFor(() => expect(mlApi.mlTypeDelete).toHaveBeenCalledWith('sales'));
     await waitFor(() => expect(onChanged).toHaveBeenCalled());
     expect(toasts.map(t => t.text)).toContain('Model sales deleted');
   });
@@ -163,11 +167,11 @@ describe('ModelsTab delete', () => {
     await userEvent.click(within(rowOf('sales')).getByRole('button', { name: 'Delete' }));
     await userEvent.type(screen.getByLabelText('Model name'), 'oops{Enter}');
     await waitFor(() => expect(toasts.some(t => t.isError)).toBe(true));
-    expect(api.mlTypeDelete).not.toHaveBeenCalled();
+    expect(mlApi.mlTypeDelete).not.toHaveBeenCalled();
   });
 
   it('reports a failed delete as an error toast without refreshing', async () => {
-    vi.mocked(api.mlTypeDelete).mockRejectedValue(new Error('locked'));
+    vi.mocked(mlApi.mlTypeDelete).mockRejectedValue(new Error('locked'));
     const { onChanged } = renderTab();
     await userEvent.click(within(rowOf('sales')).getByRole('button', { name: 'Delete' }));
     await userEvent.type(screen.getByLabelText('Model name'), 'sales{Enter}');
@@ -178,22 +182,22 @@ describe('ModelsTab delete', () => {
 
 describe('ModelsTab vectorise', () => {
   it('opens the socket feedback with the unvectorised count and starts on ready', async () => {
-    vi.mocked(api.mlUnvectorisedCount).mockResolvedValue({ count: 7 });
+    vi.mocked(mlApi.mlUnvectorisedCount).mockResolvedValue({ count: 7 });
     vi.mocked(api.gibberish).mockResolvedValue({ result: 'chan-1' });
-    vi.mocked(api.vectoriseType).mockResolvedValue(undefined as never);
+    vi.mocked(mlApi.vectoriseType).mockResolvedValue(undefined as never);
     renderTab();
     await userEvent.click(within(rowOf('support')).getByRole('button', { name: 'Vectorise' }));
     expect(await screen.findByText('Vectorising support on chan-1 (7)')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Socket ready' }));
-    expect(api.vectoriseType).toHaveBeenCalledWith('support', 'chan-1');
+    expect(mlApi.vectoriseType).toHaveBeenCalledWith('support', 'chan-1');
     await userEvent.click(screen.getByRole('button', { name: 'Close socket' }));
     expect(screen.queryByText(/Vectorising support/)).not.toBeInTheDocument();
   });
 
   it('toasts when the vectoriser start fails', async () => {
-    vi.mocked(api.mlUnvectorisedCount).mockResolvedValue({ count: 1 });
+    vi.mocked(mlApi.mlUnvectorisedCount).mockResolvedValue({ count: 1 });
     vi.mocked(api.gibberish).mockResolvedValue({ result: 'c' });
-    vi.mocked(api.vectoriseType).mockRejectedValue(new Error('no key'));
+    vi.mocked(mlApi.vectoriseType).mockRejectedValue(new Error('no key'));
     renderTab();
     await userEvent.click(within(rowOf('support')).getByRole('button', { name: 'Vectorise' }));
     await userEvent.click(await screen.findByRole('button', { name: 'Socket ready' }));
@@ -201,8 +205,8 @@ describe('ModelsTab vectorise', () => {
   });
 
   it('refuses to vectorise a model without snippets', async () => {
-    vi.mocked(api.mlUnvectorisedCount).mockResolvedValue({ count: 0 });
-    vi.mocked(api.mlSnippetsCount).mockResolvedValue({ count: 0 });
+    vi.mocked(mlApi.mlUnvectorisedCount).mockResolvedValue({ count: 0 });
+    vi.mocked(mlApi.mlSnippetsCount).mockResolvedValue({ count: 0 });
     renderTab();
     await userEvent.click(within(rowOf('support')).getByRole('button', { name: 'Vectorise' }));
     await waitFor(() =>
@@ -212,9 +216,9 @@ describe('ModelsTab vectorise', () => {
   });
 
   it('asks before throwing away existing vectors, then re-vectorises them all', async () => {
-    vi.mocked(api.mlUnvectorisedCount).mockResolvedValue({ count: 0 });
-    vi.mocked(api.mlSnippetsCount).mockResolvedValue({ count: 12 });
-    vi.mocked(api.deleteVectors).mockResolvedValue(undefined as never);
+    vi.mocked(mlApi.mlUnvectorisedCount).mockResolvedValue({ count: 0 });
+    vi.mocked(mlApi.mlSnippetsCount).mockResolvedValue({ count: 12 });
+    vi.mocked(mlApi.deleteVectors).mockResolvedValue(undefined as never);
     vi.mocked(api.gibberish).mockResolvedValue({ result: 'chan-2' });
     renderTab();
     await userEvent.click(within(rowOf('support')).getByRole('button', { name: 'Vectorise' }));
@@ -224,21 +228,21 @@ describe('ModelsTab vectorise', () => {
       within(dialog).getByRole('button', { name: 'Delete vectors and re-vectorise' }),
     );
     expect(await screen.findByText('Vectorising support on chan-2 (12)')).toBeInTheDocument();
-    expect(api.deleteVectors).toHaveBeenCalledWith('support');
+    expect(mlApi.deleteVectors).toHaveBeenCalledWith('support');
   });
 
   it('leaves the vectors alone when the re-vectorise confirmation is declined', async () => {
-    vi.mocked(api.mlUnvectorisedCount).mockResolvedValue({ count: 0 });
-    vi.mocked(api.mlSnippetsCount).mockResolvedValue({ count: 3 });
+    vi.mocked(mlApi.mlUnvectorisedCount).mockResolvedValue({ count: 0 });
+    vi.mocked(mlApi.mlSnippetsCount).mockResolvedValue({ count: 3 });
     renderTab();
     await userEvent.click(within(rowOf('support')).getByRole('button', { name: 'Vectorise' }));
     await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }));
-    expect(api.deleteVectors).not.toHaveBeenCalled();
+    expect(mlApi.deleteVectors).not.toHaveBeenCalled();
     expect(api.gibberish).not.toHaveBeenCalled();
   });
 
   it('shows an error toast when counting fails', async () => {
-    vi.mocked(api.mlUnvectorisedCount).mockRejectedValue(new Error('db down'));
+    vi.mocked(mlApi.mlUnvectorisedCount).mockRejectedValue(new Error('db down'));
     renderTab();
     await userEvent.click(within(rowOf('support')).getByRole('button', { name: 'Vectorise' }));
     await waitFor(() =>

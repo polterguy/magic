@@ -4,11 +4,11 @@
  * plus dropping a new block in and letting the Machine rewrite one.
  */
 
-import { ensureWidgetAssets } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 
 import type { Picked } from '../components/Media';
+import { ensureWidgetAssets } from '../lib/api';
 import { ensureRequiredAssets } from '../lib/assets';
 import type { DropSpot } from '../lib/dropTarget';
 import { KIND_FOR_TAG } from '../lib/mediaKinds';

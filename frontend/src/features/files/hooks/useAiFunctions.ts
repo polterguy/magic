@@ -1,7 +1,9 @@
-import { getFileDescription, listFilesRecursively, mlSnippetCreate } from '@core/api';
+import { listFilesRecursively, mlSnippetCreate } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useState } from 'react';
+
+import { getFileDescription } from '../lib/api';
 
 /*
  * Declaring Hyperlambda files as AI functions on a machine learning model.

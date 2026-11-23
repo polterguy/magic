@@ -15,6 +15,9 @@ import type { Workspace } from '../lib/helpers';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 const toasts: Toast[] = [];
 const KEY = 'ws-key';

@@ -11,8 +11,12 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import EmbedDialog from '../components/EmbedDialog';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -30,7 +34,7 @@ const BASE =
 
 beforeEach(() => {
   vi.mocked(api.backendInfo).mockReturnValue({ url: 'https://cloudlet.test', token: 't' });
-  vi.mocked(api.openaiThemes).mockResolvedValue(['classic', 'modern-square', 'modern-round']);
+  vi.mocked(mlApi.openaiThemes).mockResolvedValue(['classic', 'modern-square', 'modern-round']);
 });
 
 afterEach(() => {
@@ -69,7 +73,7 @@ describe('EmbedDialog', () => {
   });
 
   it('falls back to the default theme when the themes cannot be loaded', async () => {
-    vi.mocked(api.openaiThemes).mockRejectedValueOnce(new Error('offline'));
+    vi.mocked(mlApi.openaiThemes).mockRejectedValueOnce(new Error('offline'));
     renderDialog();
     await userEvent.click(screen.getByText('modern-square', { selector: '.select-value' }));
     expect(await screen.findAllByRole('option')).toHaveLength(1);

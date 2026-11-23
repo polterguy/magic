@@ -5,15 +5,18 @@
  * (channel, connection, server-reported ERROR) and the confirmation guarding a close mid-crawl.
  * The socket is a fake that records its handlers.
  */
-import * as api from '@core/api';
 import { DialogProvider } from '@shared/ui/Dialogs';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import CreateSystemMessageDialog from '../components/CreateSystemMessageDialog';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -48,7 +51,7 @@ beforeEach(() => {
     ),
   );
   vi.stubGlobal('fetch', fetchMock);
-  vi.mocked(api.createSystemMessage).mockResolvedValue(undefined as never);
+  vi.mocked(mlApi.createSystemMessage).mockResolvedValue(undefined as never);
 });
 
 afterEach(() => {
@@ -100,7 +103,7 @@ describe('CreateSystemMessageDialog', () => {
     await userEvent.type(screen.getByLabelText(/Website URL/), 'https://example.com{Enter}');
 
     await waitFor(() =>
-      expect(api.createSystemMessage).toHaveBeenCalledWith(
+      expect(mlApi.createSystemMessage).toHaveBeenCalledWith(
         'make it about a site',
         'About [[site]]',
         'https://example.com',
@@ -117,7 +120,7 @@ describe('CreateSystemMessageDialog', () => {
   it('shows the server-reported failure and returns to the form', async () => {
     const { onGenerated } = renderDialog();
     await startGenerating();
-    await waitFor(() => expect(api.createSystemMessage).toHaveBeenCalled());
+    await waitFor(() => expect(mlApi.createSystemMessage).toHaveBeenCalled());
 
     deliver({ message: 'ERROR', extra: 'Site unreachable' });
     expect(await screen.findByText('Site unreachable')).toBeInTheDocument();
@@ -128,7 +131,7 @@ describe('CreateSystemMessageDialog', () => {
   it('falls back to a generic message when the server gives no reason', async () => {
     renderDialog();
     await startGenerating();
-    await waitFor(() => expect(api.createSystemMessage).toHaveBeenCalled());
+    await waitFor(() => expect(mlApi.createSystemMessage).toHaveBeenCalled());
 
     deliver({ message: 'ERROR' });
     expect(await screen.findByText('Generation failed')).toBeInTheDocument();
@@ -149,12 +152,12 @@ describe('CreateSystemMessageDialog', () => {
     await startGenerating();
 
     expect(await screen.findByText('socket down')).toBeInTheDocument();
-    expect(api.createSystemMessage).not.toHaveBeenCalled();
+    expect(mlApi.createSystemMessage).not.toHaveBeenCalled();
     expect(connection.stop).toHaveBeenCalled();
   });
 
   it('reports a failing crawl request and lets the banner be dismissed', async () => {
-    vi.mocked(api.createSystemMessage).mockRejectedValue(new Error('crawl refused'));
+    vi.mocked(mlApi.createSystemMessage).mockRejectedValue(new Error('crawl refused'));
     renderDialog();
     await startGenerating();
 
@@ -172,7 +175,7 @@ describe('CreateSystemMessageDialog', () => {
   it('asks before closing mid-generation and keeps waiting when declined', async () => {
     const { onClose } = renderDialog();
     await startGenerating();
-    await waitFor(() => expect(api.createSystemMessage).toHaveBeenCalled());
+    await waitFor(() => expect(mlApi.createSystemMessage).toHaveBeenCalled());
 
     await userEvent.keyboard('{Escape}');
     expect(await screen.findByText('Stop waiting?')).toBeInTheDocument();
@@ -186,7 +189,7 @@ describe('CreateSystemMessageDialog', () => {
   it('closes and drops the socket when stopping the wait is confirmed', async () => {
     const { onClose } = renderDialog();
     await startGenerating();
-    await waitFor(() => expect(api.createSystemMessage).toHaveBeenCalled());
+    await waitFor(() => expect(mlApi.createSystemMessage).toHaveBeenCalled());
 
     await userEvent.keyboard('{Escape}');
     await userEvent.click(await screen.findByRole('button', { name: 'Stop waiting' }));

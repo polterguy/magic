@@ -1,7 +1,7 @@
-import type { LogItem } from '@core/api';
 import { copyToClipboard } from '@core/toast';
 import { CopyIcon } from '@shared/ui/Icons';
 
+import type { LogItem } from '../lib/api';
 import { isoDate, timeAgo } from '../lib/format';
 
 /*

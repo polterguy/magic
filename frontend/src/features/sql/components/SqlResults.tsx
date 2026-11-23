@@ -1,6 +1,6 @@
-import type { SqlRow } from '@core/api';
 import { exportCsv } from '@shared/lib/download';
 
+import type { SqlRow } from '../lib/api';
 import ResultTable from './ResultTable';
 
 // One toolbar and table per result set of the last execution.

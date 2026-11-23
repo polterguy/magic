@@ -12,8 +12,12 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import NewUserDialog from '../components/NewUserDialog';
+import * as usersApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -65,9 +69,9 @@ describe('NewUserDialog', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Create user' }));
 
     await waitFor(() => expect(onCreated).toHaveBeenCalledWith('bob'));
-    expect(api.createUser).toHaveBeenCalledWith('bob', PASSWORD);
+    expect(usersApi.createUser).toHaveBeenCalledWith('bob', PASSWORD);
     expect(api.addUserExtra).not.toHaveBeenCalled();
-    expect(api.addUserToRole).not.toHaveBeenCalled();
+    expect(usersApi.addUserToRole).not.toHaveBeenCalled();
   });
 
   it('stores name, email and the toggled roles after creating the user', async () => {
@@ -84,8 +88,8 @@ describe('NewUserDialog', () => {
     await waitFor(() => expect(onCreated).toHaveBeenCalledWith('bob'));
     expect(api.addUserExtra).toHaveBeenCalledWith('bob', 'name', 'Bob B');
     expect(api.addUserExtra).toHaveBeenCalledWith('bob', 'email', 'bob@x.test');
-    expect(api.addUserToRole).toHaveBeenCalledTimes(1);
-    expect(api.addUserToRole).toHaveBeenCalledWith('bob', 'guest');
+    expect(usersApi.addUserToRole).toHaveBeenCalledTimes(1);
+    expect(usersApi.addUserToRole).toHaveBeenCalledWith('bob', 'guest');
   });
 
   it('refuses a password shorter than the minimum without calling the server', async () => {
@@ -97,12 +101,12 @@ describe('NewUserDialog', () => {
       text: 'Passwords must be at least ' + api.MIN_PASSWORD + ' characters',
       isError: true,
     });
-    expect(api.createUser).not.toHaveBeenCalled();
+    expect(usersApi.createUser).not.toHaveBeenCalled();
     expect(onCreated).not.toHaveBeenCalled();
   });
 
   it('shows the error and re-enables Create when creating fails', async () => {
-    vi.mocked(api.createUser).mockRejectedValueOnce(new Error('user exists'));
+    vi.mocked(usersApi.createUser).mockRejectedValueOnce(new Error('user exists'));
     const { onCreated } = renderDialog();
     await fill('bob', PASSWORD);
     await userEvent.click(screen.getByRole('button', { name: 'Create user' }));
@@ -115,7 +119,7 @@ describe('NewUserDialog', () => {
   });
 
   it('stops at the first failing role and does not report the user as created', async () => {
-    vi.mocked(api.addUserToRole).mockRejectedValueOnce(new Error('no such role'));
+    vi.mocked(usersApi.addUserToRole).mockRejectedValueOnce(new Error('no such role'));
     const { onCreated } = renderDialog();
     await fill('bob', PASSWORD);
     await userEvent.click(screen.getByLabelText('admin'));
@@ -123,7 +127,7 @@ describe('NewUserDialog', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Create user' }));
 
     await waitFor(() => expect(toasts.at(-1)?.text).toBe('no such role'));
-    expect(api.addUserToRole).toHaveBeenCalledTimes(1);
+    expect(usersApi.addUserToRole).toHaveBeenCalledTimes(1);
     expect(onCreated).not.toHaveBeenCalled();
   });
 
@@ -131,7 +135,7 @@ describe('NewUserDialog', () => {
     let finish: () => void = () => {
       // replaced below
     };
-    vi.mocked(api.createUser).mockReturnValueOnce(
+    vi.mocked(usersApi.createUser).mockReturnValueOnce(
       new Promise<api.MagicResponse>(resolve => {
         finish = () => resolve({} as api.MagicResponse);
       }),
@@ -155,7 +159,7 @@ describe('NewUserDialog', () => {
   it('ignores Enter while the form is incomplete', async () => {
     renderDialog();
     await userEvent.type(screen.getByLabelText(/^Username/), 'bob{Enter}');
-    expect(api.createUser).not.toHaveBeenCalled();
+    expect(usersApi.createUser).not.toHaveBeenCalled();
     expect(toasts).toHaveLength(0);
   });
 

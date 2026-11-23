@@ -5,7 +5,7 @@
  * flavor's instruction, and streams the result back over a socket.
  */
 
-import { createSystemMessage, gibberish } from '@core/api';
+import { gibberish } from '@core/api';
 import { errorMessage } from '@core/errors';
 import { createSocket } from '@core/socket';
 import type { HubConnection } from '@microsoft/signalr';
@@ -13,6 +13,8 @@ import { useDialog } from '@shared/hooks/useDialog';
 import Banner from '@shared/ui/Banner';
 import { Modal } from '@shared/ui/Dialogs';
 import { useRef, useState } from 'react';
+
+import { createSystemMessage } from '../lib/api';
 
 export default function CreateSystemMessageDialog(
   props: Readonly<{

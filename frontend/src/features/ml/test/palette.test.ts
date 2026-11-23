@@ -6,6 +6,9 @@ import { paletteEntries } from '../lib/palette';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 describe('machine learning palette source', () => {
   it('offers each model twice, opening its editor or its training data', async () => {

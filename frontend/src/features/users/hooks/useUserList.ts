@@ -1,4 +1,4 @@
-import { canResetPassword, countUsers, deleteUser, listUsers, User } from '@core/api';
+import { canResetPassword, countUsers, listUsers, User } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useAuth } from '@core/useAuth';
@@ -8,6 +8,7 @@ import { exportCsv } from '@shared/lib/download';
 import { useSort } from '@shared/lib/sort';
 import { useEffect, useState } from 'react';
 
+import { deleteUser } from '../lib/api';
 import { PAGE_SIZE } from '../lib/constants';
 import { userCsvRow } from '../lib/helpers';
 

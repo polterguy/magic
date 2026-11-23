@@ -1,7 +1,8 @@
-import { listDynamicSlots } from '@core/api';
 import { showToast } from '@core/toast';
 import SearchInput from '@shared/ui/SearchInput';
 import { useEffect, useState } from 'react';
+
+import { listDynamicSlots } from '../../lib/api';
 
 /*
  * Wizard granting dynamic-slot invocation. [execute]/[signal]/[try-signal] do NOT

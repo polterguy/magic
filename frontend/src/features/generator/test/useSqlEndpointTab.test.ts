@@ -10,8 +10,12 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSqlEndpointTab } from '../hooks/useSqlEndpointTab';
+import * as generatorApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -44,7 +48,7 @@ beforeEach(() => {
   select('shop');
   vi.mocked(api.listRoles).mockResolvedValue([{ name: 'root' }, { name: 'dev' }] as never);
   vi.mocked(api.listFiles).mockResolvedValue(['/etc/sqlite/templates/a.sql', '/etc/x.txt']);
-  vi.mocked(api.customSqlEndpoint).mockResolvedValue(undefined as never);
+  vi.mocked(generatorApi.customSqlEndpoint).mockResolvedValue(undefined as never);
 });
 
 describe('useSqlEndpointTab', () => {
@@ -152,7 +156,7 @@ describe('useSqlEndpointTab', () => {
       'Provide SQL, a module name, and an endpoint name',
       true,
     );
-    expect(api.customSqlEndpoint).not.toHaveBeenCalled();
+    expect(generatorApi.customSqlEndpoint).not.toHaveBeenCalled();
   });
 
   it('generates the endpoint, sending only the named arguments', async () => {
@@ -170,7 +174,7 @@ describe('useSqlEndpointTab', () => {
 
     await act(() => result.current.generate());
 
-    expect(api.customSqlEndpoint).toHaveBeenCalledWith({
+    expect(generatorApi.customSqlEndpoint).toHaveBeenCalledWith({
       databaseType: 'sqlite',
       database: 'shop',
       authorization: 'root,admin',
@@ -186,7 +190,7 @@ describe('useSqlEndpointTab', () => {
   });
 
   it('reports a failed generation as an error toast', async () => {
-    vi.mocked(api.customSqlEndpoint).mockRejectedValue(new Error('bad sql'));
+    vi.mocked(generatorApi.customSqlEndpoint).mockRejectedValue(new Error('bad sql'));
     const { result } = renderHook(() => useSqlEndpointTab());
     act(() => result.current.setSql('select 1'));
 

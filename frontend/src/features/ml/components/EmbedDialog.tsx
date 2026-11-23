@@ -3,12 +3,14 @@
  * Legacy classic-chatbot and AI-search embeds are intentionally dropped.
  */
 
-import { backendInfo, openaiThemes } from '@core/api';
+import { backendInfo } from '@core/api';
 import { copyToClipboard } from '@core/toast';
 import { Modal } from '@shared/ui/Dialogs';
 import OptionPill from '@shared/ui/OptionPill';
 import Select from '@shared/ui/Select';
 import { useEffect, useState } from 'react';
+
+import { openaiThemes } from '../lib/api';
 
 function boolParam(name: string, value: boolean) {
   return name + '=' + (value ? 'true' : 'false');

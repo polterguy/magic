@@ -15,10 +15,14 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import TrainingTab from '../components/TrainingTab';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),
   gibberish: vi.fn(),
+}));
+vi.mock('../lib/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('../lib/api')>()),
   importPage: vi.fn(),
   mlSnippetDelete: vi.fn(),
   mlSnippets: vi.fn(),
@@ -118,8 +122,8 @@ let toasts: Toast[];
 beforeEach(() => {
   toasts = [];
   setToastListener(t => toasts.push(t));
-  vi.mocked(api.mlSnippets).mockResolvedValue(SNIPPETS);
-  vi.mocked(api.mlSnippetsCount).mockResolvedValue({ count: 2 });
+  vi.mocked(mlApi.mlSnippets).mockResolvedValue(SNIPPETS);
+  vi.mocked(mlApi.mlSnippetsCount).mockResolvedValue({ count: 2 });
 });
 
 afterEach(() => {
@@ -143,7 +147,7 @@ describe('TrainingTab listing', () => {
   it('loads the first model by default and lists its snippets', async () => {
     renderTab();
     await loaded();
-    expect(api.mlSnippets).toHaveBeenCalledWith(
+    expect(mlApi.mlSnippets).toHaveBeenCalledWith(
       'support',
       '',
       0,
@@ -151,7 +155,7 @@ describe('TrainingTab listing', () => {
       { column: null, direction: 'asc' },
       false,
     );
-    expect(api.mlSnippetsCount).toHaveBeenCalledWith('support', '', false);
+    expect(mlApi.mlSnippetsCount).toHaveBeenCalledWith('support', '', false);
     expect(screen.getByText('2 snippets')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Embedded' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Not embedded' })).toBeInTheDocument();
@@ -161,12 +165,12 @@ describe('TrainingTab listing', () => {
   it('starts on the model the palette asked for', async () => {
     renderTab({ initialType: 'sales' });
     await loaded();
-    expect(api.mlSnippets).toHaveBeenCalledWith('sales', '', 0, 12, expect.anything(), false);
+    expect(mlApi.mlSnippets).toHaveBeenCalledWith('sales', '', 0, 12, expect.anything(), false);
   });
 
   it('shows an empty state', async () => {
-    vi.mocked(api.mlSnippets).mockResolvedValue([]);
-    vi.mocked(api.mlSnippetsCount).mockResolvedValue({ count: 0 });
+    vi.mocked(mlApi.mlSnippets).mockResolvedValue([]);
+    vi.mocked(mlApi.mlSnippetsCount).mockResolvedValue({ count: 0 });
     renderTab();
     expect(await screen.findByText('No training snippets.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Delete all' })).toBeDisabled();
@@ -176,7 +180,7 @@ describe('TrainingTab listing', () => {
   it('asks for nothing when there are no models', async () => {
     renderTab({ types: [] });
     expect(await screen.findByText('No training snippets.')).toBeInTheDocument();
-    expect(api.mlSnippets).not.toHaveBeenCalled();
+    expect(mlApi.mlSnippets).not.toHaveBeenCalled();
   });
 
   it('reloads for another model picked in the dropdown', async () => {
@@ -185,7 +189,14 @@ describe('TrainingTab listing', () => {
     await userEvent.click(screen.getByRole('button', { name: 'support' }));
     await userEvent.click(screen.getByRole('option', { name: 'sales' }));
     await waitFor(() =>
-      expect(api.mlSnippets).toHaveBeenLastCalledWith('sales', '', 0, 12, expect.anything(), false),
+      expect(mlApi.mlSnippets).toHaveBeenLastCalledWith(
+        'sales',
+        '',
+        0,
+        12,
+        expect.anything(),
+        false,
+      ),
     );
   });
 
@@ -194,7 +205,7 @@ describe('TrainingTab listing', () => {
     await loaded();
     await userEvent.type(screen.getByPlaceholderText('Filter prompts…'), 'price');
     await waitFor(() =>
-      expect(api.mlSnippets).toHaveBeenLastCalledWith(
+      expect(mlApi.mlSnippets).toHaveBeenLastCalledWith(
         'support',
         'price',
         0,
@@ -211,7 +222,7 @@ describe('TrainingTab listing', () => {
     await loaded();
     await userEvent.click(screen.getByRole('columnheader', { name: /Prompt/ }));
     await waitFor(() =>
-      expect(api.mlSnippets).toHaveBeenLastCalledWith(
+      expect(mlApi.mlSnippets).toHaveBeenLastCalledWith(
         'support',
         '',
         0,
@@ -223,12 +234,12 @@ describe('TrainingTab listing', () => {
   });
 
   it('pages through snippets', async () => {
-    vi.mocked(api.mlSnippetsCount).mockResolvedValue({ count: 30 });
+    vi.mocked(mlApi.mlSnippetsCount).mockResolvedValue({ count: 30 });
     renderTab();
     await loaded();
     await userEvent.click(screen.getByRole('button', { name: /Next/ }));
     await waitFor(() =>
-      expect(api.mlSnippets).toHaveBeenLastCalledWith(
+      expect(mlApi.mlSnippets).toHaveBeenLastCalledWith(
         'support',
         '',
         12,
@@ -249,7 +260,7 @@ describe('TrainingTab vector search', () => {
   ];
 
   it('shows distances and greys out snippets beyond the model threshold', async () => {
-    vi.mocked(api.mlSnippets).mockResolvedValue(VSS);
+    vi.mocked(mlApi.mlSnippets).mockResolvedValue(VSS);
     renderTab();
     await screen.findByText('Near one');
     await userEvent.click(screen.getByRole('checkbox', { name: /Vector search/ }));
@@ -258,7 +269,7 @@ describe('TrainingTab vector search', () => {
     await userEvent.type(screen.getByPlaceholderText('Search meaning…'), 'help');
     expect(await screen.findByText('Distance')).toBeInTheDocument();
     await waitFor(() =>
-      expect(api.mlSnippets).toHaveBeenLastCalledWith(
+      expect(mlApi.mlSnippets).toHaveBeenLastCalledWith(
         'support',
         'help',
         0,
@@ -281,15 +292,15 @@ describe('TrainingTab vector search', () => {
 
 describe('TrainingTab deleting and exporting', () => {
   it('deletes one snippet after confirmation and reloads', async () => {
-    vi.mocked(api.mlSnippetDelete).mockResolvedValue(undefined as never);
+    vi.mocked(mlApi.mlSnippetDelete).mockResolvedValue(undefined as never);
     renderTab();
     await loaded();
     await userEvent.click(within(screen.getByText('Pricing?').closest('tr')!).getByText('Delete'));
     const dialog = await screen.findByRole('dialog');
     expect(dialog).toHaveTextContent('Pricing?');
     await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
-    await waitFor(() => expect(api.mlSnippetDelete).toHaveBeenCalledWith(2));
-    await waitFor(() => expect(api.mlSnippets).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mlApi.mlSnippetDelete).toHaveBeenCalledWith(2));
+    await waitFor(() => expect(mlApi.mlSnippets).toHaveBeenCalledTimes(2));
   });
 
   it('keeps the snippet when the delete is cancelled', async () => {
@@ -299,11 +310,11 @@ describe('TrainingTab deleting and exporting', () => {
       within(screen.getByText('Pricing?').closest('tr')!).getByRole('button', { name: 'Delete' }),
     );
     await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }));
-    expect(api.mlSnippetDelete).not.toHaveBeenCalled();
+    expect(mlApi.mlSnippetDelete).not.toHaveBeenCalled();
   });
 
   it('toasts a failed delete', async () => {
-    vi.mocked(api.mlSnippetDelete).mockRejectedValue(new Error('nope'));
+    vi.mocked(mlApi.mlSnippetDelete).mockRejectedValue(new Error('nope'));
     renderTab();
     await loaded();
     await userEvent.click(
@@ -316,12 +327,12 @@ describe('TrainingTab deleting and exporting', () => {
   });
 
   it('deletes every snippet matching the filter once the count is typed back', async () => {
-    vi.mocked(api.mlSnippetsDeleteAll).mockResolvedValue(undefined as never);
+    vi.mocked(mlApi.mlSnippetsDeleteAll).mockResolvedValue(undefined as never);
     renderTab();
     await loaded();
     await userEvent.click(screen.getByRole('button', { name: 'Delete all' }));
     await userEvent.type(screen.getByLabelText('Number of snippets'), '2{Enter}');
-    await waitFor(() => expect(api.mlSnippetsDeleteAll).toHaveBeenCalledWith('support', ''));
+    await waitFor(() => expect(mlApi.mlSnippetsDeleteAll).toHaveBeenCalledWith('support', ''));
     await waitFor(() => expect(toasts.map(t => t.text)).toContain('2 snippet(s) deleted'));
   });
 
@@ -333,12 +344,12 @@ describe('TrainingTab deleting and exporting', () => {
     await waitFor(() =>
       expect(toasts.map(t => t.text)).toContain('Number did not match — nothing deleted'),
     );
-    expect(api.mlSnippetsDeleteAll).not.toHaveBeenCalled();
+    expect(mlApi.mlSnippetsDeleteAll).not.toHaveBeenCalled();
   });
 
   it('exports with the server-suggested filename', async () => {
     const blob = new Blob(['a,b']);
-    vi.mocked(api.mlSnippetsExportRaw).mockResolvedValue({
+    vi.mocked(mlApi.mlSnippetsExportRaw).mockResolvedValue({
       blob,
       contentType: 'text/csv',
       disposition: 'attachment; filename="support-export.csv"',
@@ -350,12 +361,12 @@ describe('TrainingTab deleting and exporting', () => {
     await loaded();
     await userEvent.click(screen.getByRole('button', { name: 'Export' }));
     await waitFor(() => expect(downloadBlob).toHaveBeenCalledWith(blob, 'support-export.csv'));
-    expect(api.mlSnippetsExportRaw).toHaveBeenCalledWith('support', '');
+    expect(mlApi.mlSnippetsExportRaw).toHaveBeenCalledWith('support', '');
   });
 
   it('falls back to <type>.csv and toasts a failed export', async () => {
     const blob = new Blob(['a']);
-    vi.mocked(api.mlSnippetsExportRaw).mockResolvedValueOnce({
+    vi.mocked(mlApi.mlSnippetsExportRaw).mockResolvedValueOnce({
       blob,
       contentType: 'text/csv',
       disposition: '',
@@ -367,7 +378,7 @@ describe('TrainingTab deleting and exporting', () => {
     await loaded();
     await userEvent.click(screen.getByRole('button', { name: 'Export' }));
     await waitFor(() => expect(downloadBlob).toHaveBeenCalledWith(blob, 'support.csv'));
-    vi.mocked(api.mlSnippetsExportRaw).mockRejectedValueOnce(new Error('export broke'));
+    vi.mocked(mlApi.mlSnippetsExportRaw).mockRejectedValueOnce(new Error('export broke'));
     await userEvent.click(screen.getByRole('button', { name: 'Export' }));
     await waitFor(() =>
       expect(toasts).toContainEqual(expect.objectContaining({ text: 'export broke' })),
@@ -385,7 +396,7 @@ describe('TrainingTab dialogs', () => {
     expect(screen.getByText('Snippet editor support Pricing?')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Save snippet' }));
     expect(screen.queryByText(/Snippet editor/)).not.toBeInTheDocument();
-    await waitFor(() => expect(api.mlSnippets).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mlApi.mlSnippets).toHaveBeenCalledTimes(2));
   });
 
   it('opens an empty editor for a new snippet and closes it', async () => {
@@ -408,14 +419,14 @@ describe('TrainingTab dialogs', () => {
     expect(screen.getByText('Widget picker support')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Add widget' }));
     expect(screen.queryByText(/Widget picker/)).not.toBeInTheDocument();
-    await waitFor(() => expect(api.mlSnippets).toHaveBeenCalledTimes(3));
+    await waitFor(() => expect(mlApi.mlSnippets).toHaveBeenCalledTimes(3));
   });
 });
 
 describe('TrainingTab scraping', () => {
   it('scrapes over a socket channel, imports the page when ready and reloads on close', async () => {
     vi.mocked(api.gibberish).mockResolvedValue({ result: 'chan-9' });
-    vi.mocked(api.importPage).mockResolvedValue(undefined as never);
+    vi.mocked(mlApi.importPage).mockResolvedValue(undefined as never);
     renderTab();
     await loaded();
     await userEvent.click(screen.getByRole('button', { name: '+ Spice' }));
@@ -423,7 +434,7 @@ describe('TrainingTab scraping', () => {
     expect(await screen.findByText('Scraping https://a.test/page via chan-9')).toBeInTheDocument();
     expect(screen.queryByText('Spice support')).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Socket ready' }));
-    expect(api.importPage).toHaveBeenCalledWith({
+    expect(mlApi.importPage).toHaveBeenCalledWith({
       url: 'https://a.test/page',
       images: true,
       type: 'support',
@@ -431,7 +442,7 @@ describe('TrainingTab scraping', () => {
     });
     await userEvent.click(screen.getByRole('button', { name: 'Close socket' }));
     expect(screen.queryByText(/Scraping/)).not.toBeInTheDocument();
-    await waitFor(() => expect(api.mlSnippets).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mlApi.mlSnippets).toHaveBeenCalledTimes(2));
   });
 
   it('toasts when the channel cannot be created', async () => {

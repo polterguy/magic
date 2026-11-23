@@ -12,6 +12,9 @@ import { useOpenAiConfigured } from '../hooks/useOpenAiConfigured';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 afterEach(() => {
   vi.clearAllMocks();

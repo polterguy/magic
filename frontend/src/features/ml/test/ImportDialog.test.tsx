@@ -13,10 +13,14 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import ImportDialog from '../components/ImportDialog';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),
   gibberish: vi.fn(),
+}));
+vi.mock('../lib/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('../lib/api')>()),
   importUrl: vi.fn(),
   uploadCsvFile: vi.fn(),
   uploadImageFile: vi.fn(),
@@ -83,7 +87,7 @@ describe('ImportDialog crawl tab', () => {
 
   it('opens a channel, then crawls with the entered options when the socket is ready', async () => {
     vi.mocked(api.gibberish).mockResolvedValue({ result: 'chan-1' });
-    vi.mocked(api.importUrl).mockResolvedValue(undefined as never);
+    vi.mocked(mlApi.importUrl).mockResolvedValue(undefined as never);
     renderDialog();
     await userEvent.type(screen.getByPlaceholderText('https://example.com'), 'https://a.test');
     await userEvent.type(screen.getByPlaceholderText('AINIRO-Website-Crawler'), 'tag');
@@ -96,7 +100,7 @@ describe('ImportDialog crawl tab', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Start crawling' }));
     expect(await screen.findByText('Crawling https://a.test via chan-1')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Socket ready' }));
-    expect(api.importUrl).toHaveBeenCalledWith({
+    expect(mlApi.importUrl).toHaveBeenCalledWith({
       url: 'https://a.test',
       type: 'support',
       delay: 2000,
@@ -121,7 +125,7 @@ describe('ImportDialog crawl tab', () => {
 
   it('toasts a failed crawl request', async () => {
     vi.mocked(api.gibberish).mockResolvedValue({ result: 'c' });
-    vi.mocked(api.importUrl).mockRejectedValue(new Error('blocked'));
+    vi.mocked(mlApi.importUrl).mockRejectedValue(new Error('blocked'));
     renderDialog();
     await userEvent.type(screen.getByPlaceholderText('https://example.com'), 'https://a.test');
     await userEvent.click(screen.getByRole('button', { name: 'Start crawling' }));
@@ -151,7 +155,7 @@ describe('ImportDialog crawl tab', () => {
 
 describe('ImportDialog upload tab', () => {
   it('defaults to structured data with prompt and completion fields', async () => {
-    vi.mocked(api.uploadTrainingFile).mockResolvedValue({ count: 3 });
+    vi.mocked(mlApi.uploadTrainingFile).mockResolvedValue({ count: 3 });
     const { onClose } = renderDialog();
     await openUploadTab();
     expect(screen.getByText(/lists of objects with at least two fields/)).toBeInTheDocument();
@@ -163,11 +167,11 @@ describe('ImportDialog upload tab', () => {
     const b = file('b.yaml');
     await userEvent.upload(screen.getByLabelText('Select files'), [a, b]);
     await waitFor(() => expect(onClose).toHaveBeenCalled());
-    expect(api.uploadTrainingFile).toHaveBeenNthCalledWith(1, 'support', a, {
+    expect(mlApi.uploadTrainingFile).toHaveBeenNthCalledWith(1, 'support', a, {
       promptField: 'q',
       completionField: 'a',
     });
-    expect(api.uploadTrainingFile).toHaveBeenNthCalledWith(2, 'support', b, {
+    expect(mlApi.uploadTrainingFile).toHaveBeenNthCalledWith(2, 'support', b, {
       promptField: 'q',
       completionField: 'a',
     });
@@ -175,7 +179,7 @@ describe('ImportDialog upload tab', () => {
   });
 
   it('uploads text files, summarising and forcing CSV to text', async () => {
-    vi.mocked(api.uploadTrainingFile).mockResolvedValue({ count: 1 });
+    vi.mocked(mlApi.uploadTrainingFile).mockResolvedValue({ count: 1 });
     renderDialog();
     await openUploadTab();
     await pickCategory('Text (TXT, Markdown, CSV as text)');
@@ -183,7 +187,7 @@ describe('ImportDialog upload tab', () => {
     const csv = file('Notes.CSV');
     await userEvent.upload(screen.getByLabelText('Select files'), csv);
     await waitFor(() =>
-      expect(api.uploadTrainingFile).toHaveBeenCalledWith('support', csv, {
+      expect(mlApi.uploadTrainingFile).toHaveBeenCalledWith('support', csv, {
         summarize: true,
         forceAsText: true,
       }),
@@ -191,7 +195,7 @@ describe('ImportDialog upload tab', () => {
   });
 
   it('uploads PDFs with the chosen options', async () => {
-    vi.mocked(api.uploadTrainingFile).mockResolvedValue({ count: 1 });
+    vi.mocked(mlApi.uploadTrainingFile).mockResolvedValue({ count: 1 });
     renderDialog();
     await openUploadTab();
     await pickCategory('PDF documents');
@@ -202,7 +206,7 @@ describe('ImportDialog upload tab', () => {
     const pdf = file('doc.pdf');
     await userEvent.upload(screen.getByLabelText('Select files'), pdf);
     await waitFor(() =>
-      expect(api.uploadTrainingFile).toHaveBeenCalledWith('support', pdf, {
+      expect(mlApi.uploadTrainingFile).toHaveBeenCalledWith('support', pdf, {
         summarize: true,
         preservePages: true,
         overwrite: true,
@@ -212,30 +216,30 @@ describe('ImportDialog upload tab', () => {
   });
 
   it('uploads CSV and image categories through their own endpoints', async () => {
-    vi.mocked(api.uploadCsvFile).mockResolvedValue({ count: 4 });
-    vi.mocked(api.uploadImageFile).mockResolvedValue({ count: 1 });
+    vi.mocked(mlApi.uploadCsvFile).mockResolvedValue({ count: 4 });
+    vi.mocked(mlApi.uploadImageFile).mockResolvedValue({ count: 1 });
     renderDialog();
     await openUploadTab();
     await pickCategory('CSV — first column prompt, rest completion');
     const csv = file('rows.csv');
     await userEvent.upload(screen.getByLabelText('Select files'), csv);
-    await waitFor(() => expect(api.uploadCsvFile).toHaveBeenCalledWith('support', csv));
+    await waitFor(() => expect(mlApi.uploadCsvFile).toHaveBeenCalledWith('support', csv));
     expect(toasts.map(t => t.text)).toContain('4 training snippets imported');
   });
 
   it('reports images as images', async () => {
-    vi.mocked(api.uploadImageFile).mockResolvedValue({ count: 1 });
+    vi.mocked(mlApi.uploadImageFile).mockResolvedValue({ count: 1 });
     renderDialog();
     await openUploadTab();
     await pickCategory('Images (PNG, JPG, WEBP, GIF)');
     const png = file('pic.png');
     await userEvent.upload(screen.getByLabelText('Select files'), png);
-    await waitFor(() => expect(api.uploadImageFile).toHaveBeenCalledWith('support', png));
+    await waitFor(() => expect(mlApi.uploadImageFile).toHaveBeenCalledWith('support', png));
     expect(toasts.map(t => t.text)).toContain('1 image(s) imported');
   });
 
   it('toasts an upload failure and keeps the dialog open', async () => {
-    vi.mocked(api.uploadTrainingFile).mockRejectedValue(new Error('too big'));
+    vi.mocked(mlApi.uploadTrainingFile).mockRejectedValue(new Error('too big'));
     const { onClose } = renderDialog();
     await openUploadTab();
     await userEvent.upload(screen.getByLabelText('Select files'), file('a.json'));
@@ -248,7 +252,7 @@ describe('ImportDialog upload tab', () => {
 
   it('scrapes a URL list over a socket channel, optionally vectorising', async () => {
     vi.mocked(api.gibberish).mockResolvedValue({ result: 'chan-7' });
-    vi.mocked(api.uploadUrlList).mockResolvedValue(undefined as never);
+    vi.mocked(mlApi.uploadUrlList).mockResolvedValue(undefined as never);
     const { onClose } = renderDialog();
     await openUploadTab();
     await pickCategory('URL list (CSV of URLs to scrape)');
@@ -257,7 +261,7 @@ describe('ImportDialog upload tab', () => {
     await userEvent.upload(screen.getByLabelText('Select files'), urls);
     expect(await screen.findByText('Scraping URLs from urls.csv via chan-7')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Socket ready' }));
-    expect(api.uploadUrlList).toHaveBeenCalledWith('support', urls, 'chan-7', true);
+    expect(mlApi.uploadUrlList).toHaveBeenCalledWith('support', urls, 'chan-7', true);
     await userEvent.click(screen.getByRole('button', { name: 'Close socket' }));
     expect(onClose).toHaveBeenCalled();
   });

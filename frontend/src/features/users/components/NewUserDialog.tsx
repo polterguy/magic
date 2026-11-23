@@ -1,10 +1,11 @@
-import { addUserExtra, addUserToRole, createUser, MIN_PASSWORD, Role } from '@core/api';
+import { addUserExtra, MIN_PASSWORD, Role } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import { useState } from 'react';
 
+import { addUserToRole, createUser } from '../lib/api';
 import RolesField from './RolesField';
 
 export default function NewUserDialog(

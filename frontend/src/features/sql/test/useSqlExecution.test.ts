@@ -4,15 +4,18 @@
  * and holds the result sets of the last run.
  */
 import type { EditorView } from '@codemirror/view';
-import * as api from '@core/api';
 import { showToast } from '@core/toast';
 import { act, renderHook } from '@testing-library/react';
 import type { RefObject } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSqlExecution } from '../hooks/useSqlExecution';
+import * as sqlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -51,7 +54,7 @@ function setup(sql: string, editorRef: RefObject<EditorView | null>, type = 'sql
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(api.executeSql).mockResolvedValue([[{ a: 1 }, { a: 2 }]] as never);
+  vi.mocked(sqlApi.executeSql).mockResolvedValue([[{ a: 1 }, { a: 2 }]] as never);
 });
 
 describe('useSqlExecution', () => {
@@ -61,7 +64,7 @@ describe('useSqlExecution', () => {
     await act(() => result.current.execute());
 
     expect(showToast).toHaveBeenCalledWith('Write some SQL first', true);
-    expect(api.executeSql).not.toHaveBeenCalled();
+    expect(sqlApi.executeSql).not.toHaveBeenCalled();
     expect(pushHistory).not.toHaveBeenCalled();
   });
 
@@ -71,7 +74,7 @@ describe('useSqlExecution', () => {
     await act(() => result.current.execute());
 
     expect(pushHistory).toHaveBeenCalledWith('select 1');
-    expect(api.executeSql).toHaveBeenCalledWith(
+    expect(sqlApi.executeSql).toHaveBeenCalledWith(
       'sqlite',
       '[generic|shop]',
       'select 1',
@@ -89,7 +92,7 @@ describe('useSqlExecution', () => {
     await act(() => result.current.execute());
 
     expect(pushHistory).toHaveBeenCalledWith('select 2');
-    expect(vi.mocked(api.executeSql).mock.calls[0][2]).toBe('select 2');
+    expect(vi.mocked(sqlApi.executeSql).mock.calls[0][2]).toBe('select 2');
   });
 
   it('passes the safe mode switch along', async () => {
@@ -98,23 +101,23 @@ describe('useSqlExecution', () => {
 
     await act(() => result.current.execute());
 
-    expect(vi.mocked(api.executeSql).mock.calls[0][3]).toBe(false);
+    expect(vi.mocked(sqlApi.executeSql).mock.calls[0][3]).toBe(false);
   });
 
   it('runs a GO-separated script as a batch on mssql only', async () => {
     const script = 'select 1\nGO\nselect 2';
     const mssql = setup(script, { current: null }, 'mssql');
     await act(() => mssql.result.current.execute());
-    expect(vi.mocked(api.executeSql).mock.calls[0][4]).toBe(true);
+    expect(vi.mocked(sqlApi.executeSql).mock.calls[0][4]).toBe(true);
 
-    vi.mocked(api.executeSql).mockClear();
+    vi.mocked(sqlApi.executeSql).mockClear();
     const sqlite = setup(script, { current: null }, 'sqlite');
     await act(() => sqlite.result.current.execute());
-    expect(vi.mocked(api.executeSql).mock.calls[0][4]).toBe(false);
+    expect(vi.mocked(sqlApi.executeSql).mock.calls[0][4]).toBe(false);
   });
 
   it('says so when a statement returns no result at all', async () => {
-    vi.mocked(api.executeSql).mockResolvedValue(null as never);
+    vi.mocked(sqlApi.executeSql).mockResolvedValue(null as never);
     const { result } = setup('create table t(a int)', { current: null });
 
     await act(() => result.current.execute());
@@ -124,7 +127,9 @@ describe('useSqlExecution', () => {
   });
 
   it('warns when safe mode capped the result at 200 records', async () => {
-    vi.mocked(api.executeSql).mockResolvedValue([Array.from({ length: 200 }, () => ({}))] as never);
+    vi.mocked(sqlApi.executeSql).mockResolvedValue([
+      Array.from({ length: 200 }, () => ({})),
+    ] as never);
     const { result } = setup('select * from t', { current: null });
 
     await act(() => result.current.execute());
@@ -139,7 +144,7 @@ describe('useSqlExecution', () => {
     await act(() => result.current.execute());
     expect(result.current.result).not.toBeNull();
 
-    vi.mocked(api.executeSql).mockRejectedValue(new Error('syntax error'));
+    vi.mocked(sqlApi.executeSql).mockRejectedValue(new Error('syntax error'));
     await act(() => result.current.execute());
 
     expect(showToast).toHaveBeenCalledWith('syntax error', true, undefined);

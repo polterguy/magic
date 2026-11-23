@@ -9,9 +9,13 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSandboxTab } from '../hooks/useSandboxTab';
+import * as generatorApi from '../lib/api';
 import { RoleRule } from '../lib/types';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -34,14 +38,14 @@ function rule(patch: Partial<RoleRule> = {}): RoleRule {
 }
 
 function lastPolicy() {
-  const call = vi.mocked(api.generateSandboxEndpoint).mock.calls[0][0];
+  const call = vi.mocked(generatorApi.generateSandboxEndpoint).mock.calls[0][0];
   return { call, policy: JSON.parse(call.policy) };
 }
 
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(api.listRoles).mockResolvedValue([{ name: 'root' }, { name: 'admin' }] as never);
-  vi.mocked(api.generateSandboxEndpoint).mockResolvedValue({
+  vi.mocked(generatorApi.generateSandboxEndpoint).mockResolvedValue({
     hyperlambda: 'code',
     file: '/modules/m/run.post.hl',
   } as never);
@@ -68,7 +72,7 @@ describe('useSandboxTab', () => {
     await act(() => result.current.generate());
 
     expect(showToast).toHaveBeenCalledWith('Provide a module name and an endpoint name', true);
-    expect(api.generateSandboxEndpoint).not.toHaveBeenCalled();
+    expect(generatorApi.generateSandboxEndpoint).not.toHaveBeenCalled();
   });
 
   it('blocks generation while a slot that changes the file system is granted', async () => {
@@ -84,7 +88,7 @@ describe('useSandboxTab', () => {
       'A sandbox cannot be granted slots that change the file system',
       true,
     );
-    expect(api.generateSandboxEndpoint).not.toHaveBeenCalled();
+    expect(generatorApi.generateSandboxEndpoint).not.toHaveBeenCalled();
 
     act(() => result.current.setBaseSlots('math.add\nio.file.load:/etc/*'));
     expect(result.current.hasRefusedSlot).toBe(false);
@@ -164,7 +168,7 @@ describe('useSandboxTab', () => {
     await act(() => result.current.generate());
     expect(lastPolicy().policy.maxHyperlambda).toBeUndefined();
 
-    vi.mocked(api.generateSandboxEndpoint).mockClear();
+    vi.mocked(generatorApi.generateSandboxEndpoint).mockClear();
     act(() => {
       result.current.setInputMode('both');
       result.current.setMaxHyperlambda('');
@@ -193,7 +197,7 @@ describe('useSandboxTab', () => {
   });
 
   it('reports a failed generation as an error toast', async () => {
-    vi.mocked(api.generateSandboxEndpoint).mockRejectedValue(new Error('exists'));
+    vi.mocked(generatorApi.generateSandboxEndpoint).mockRejectedValue(new Error('exists'));
     const { result } = renderHook(() => useSandboxTab());
     act(() => result.current.setModuleName('mod'));
 

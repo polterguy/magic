@@ -10,8 +10,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
 import Log from '../components/Log';
+import * as logApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -27,7 +31,7 @@ function entries(count: number, firstId: number) {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(api.countLog).mockResolvedValue({ count: 42 });
-  vi.mocked(api.listLog).mockResolvedValue([
+  vi.mocked(logApi.listLog).mockResolvedValue([
     { id: 3, created: '2024-05-06T10:00:00Z', type: 'info', content: 'Server started' },
     {
       id: 2,
@@ -46,11 +50,11 @@ describe('Log', () => {
     expect(await screen.findByText('Server started')).toBeInTheDocument();
     expect(screen.getByText('Something broke')).toBeInTheDocument();
     expect(screen.getByText('42 log items')).toBeInTheDocument();
-    expect(api.listLog).toHaveBeenCalledWith(null, 20, undefined);
+    expect(logApi.listLog).toHaveBeenCalledWith(null, 20, undefined);
   });
 
   it('shows an empty state when the log is empty', async () => {
-    vi.mocked(api.listLog).mockResolvedValue([]);
+    vi.mocked(logApi.listLog).mockResolvedValue([]);
     vi.mocked(api.countLog).mockResolvedValue({ count: 0 });
     renderPage(<Log />);
 
@@ -66,7 +70,7 @@ describe('Log', () => {
   });
 
   it('pages to older entries from the last id on the page', async () => {
-    vi.mocked(api.listLog).mockResolvedValueOnce(entries(20, 100));
+    vi.mocked(logApi.listLog).mockResolvedValueOnce(entries(20, 100));
     renderPage(<Log />);
     await screen.findByText('entry number 100');
 
@@ -74,7 +78,7 @@ describe('Log', () => {
     await waitFor(() => expect(older).toBeEnabled());
     await userEvent.click(older);
 
-    await waitFor(() => expect(api.listLog).toHaveBeenLastCalledWith(81, 20, undefined));
+    await waitFor(() => expect(logApi.listLog).toHaveBeenLastCalledWith(81, 20, undefined));
   });
 
   it('sends the typed filter to the backend', async () => {
@@ -83,7 +87,7 @@ describe('Log', () => {
 
     await userEvent.type(screen.getByPlaceholderText('Filter log…'), 'broke');
 
-    await waitFor(() => expect(api.listLog).toHaveBeenLastCalledWith(null, 20, 'broke'));
+    await waitFor(() => expect(logApi.listLog).toHaveBeenLastCalledWith(null, 20, 'broke'));
     expect(api.countLog).toHaveBeenLastCalledWith('broke');
   });
 
@@ -91,6 +95,6 @@ describe('Log', () => {
     renderPage(<Log />, { route: '/log?id=2' });
 
     expect(await screen.findByText(/InvalidOperationException: boom/)).toBeInTheDocument();
-    expect(api.listLog).toHaveBeenCalledWith(3, 20, undefined);
+    expect(logApi.listLog).toHaveBeenCalledWith(3, 20, undefined);
   });
 });

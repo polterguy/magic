@@ -14,9 +14,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fakeAuth, TEST_BACKEND } from '../../../test/renderPage';
 import { useUserList } from '../hooks/useUserList';
+import * as usersApi from '../lib/api';
 import { PAGE_SIZE } from '../lib/constants';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('@shared/lib/download', async importOriginal => ({
@@ -130,7 +134,7 @@ describe('removeUser', () => {
     expect(dialog.confirmTyped).toHaveBeenCalledWith(
       expect.objectContaining({ title: 'Delete user?', expected: 'alice', label: 'Username' }),
     );
-    expect(api.deleteUser).not.toHaveBeenCalled();
+    expect(usersApi.deleteUser).not.toHaveBeenCalled();
   });
 
   it('deletes the user, announces it and reloads the list', async () => {
@@ -138,7 +142,7 @@ describe('removeUser', () => {
     const { result } = await mount();
     vi.mocked(api.listUsers).mockClear();
     await act(() => result.current.removeUser('alice'));
-    expect(api.deleteUser).toHaveBeenCalledWith('alice');
+    expect(usersApi.deleteUser).toHaveBeenCalledWith('alice');
     expect(toasts[0]).toMatchObject({ text: 'alice deleted', isError: false });
     await waitFor(() => expect(api.listUsers).toHaveBeenCalled());
     expect(result.current.waiting).toBe(false);
@@ -146,7 +150,7 @@ describe('removeUser', () => {
 
   it('reports a failed delete and releases waiting', async () => {
     dialog.confirmTyped.mockResolvedValue(true);
-    vi.mocked(api.deleteUser).mockRejectedValue(new Error('cannot delete root'));
+    vi.mocked(usersApi.deleteUser).mockRejectedValue(new Error('cannot delete root'));
     const { result } = await mount();
     await act(() => result.current.removeUser('root'));
     expect(toasts[0]).toMatchObject({ text: 'cannot delete root', isError: true });

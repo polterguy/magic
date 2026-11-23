@@ -11,8 +11,12 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import EditSnippetDialog from '../components/EditSnippetDialog';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -83,7 +87,7 @@ describe('EditSnippetDialog creating', () => {
       meta: null,
       uri: null,
     });
-    expect(api.mlSnippetUpdate).not.toHaveBeenCalled();
+    expect(mlApi.mlSnippetUpdate).not.toHaveBeenCalled();
     expect(toasts.at(-1)).toMatchObject({ text: 'Snippet saved', isError: false });
   });
 
@@ -124,13 +128,13 @@ describe('EditSnippetDialog editing', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(onSaved).toHaveBeenCalled());
-    expect(api.mlSnippetUpdate).toHaveBeenCalledWith({
+    expect(mlApi.mlSnippetUpdate).toHaveBeenCalledWith({
       id: 7,
       prompt: 'How do I reset?',
       completion: 'Press the button. Twice.',
       type: 'support',
     });
-    expect(api.vectoriseSnippet).not.toHaveBeenCalled();
+    expect(mlApi.vectoriseSnippet).not.toHaveBeenCalled();
     expect(toasts.at(-1)).toMatchObject({ text: 'Snippet saved' });
   });
 
@@ -138,7 +142,7 @@ describe('EditSnippetDialog editing', () => {
     const { onSaved } = renderDialog({ ...EXISTING, embedding_vss: 'abc' });
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     await waitFor(() => expect(onSaved).toHaveBeenCalled());
-    expect(api.vectoriseSnippet).toHaveBeenCalledWith(7);
+    expect(mlApi.vectoriseSnippet).toHaveBeenCalledWith(7);
     expect(toasts.at(-1)).toMatchObject({
       text: 'Snippet saved and re-vectorised',
       isError: false,
@@ -146,7 +150,7 @@ describe('EditSnippetDialog editing', () => {
   });
 
   it('reports a failed re-vectorise separately, since the save itself succeeded', async () => {
-    vi.mocked(api.vectoriseSnippet).mockRejectedValueOnce(new Error('quota'));
+    vi.mocked(mlApi.vectoriseSnippet).mockRejectedValueOnce(new Error('quota'));
     const { onSaved } = renderDialog({ ...EXISTING, embedding_vss: 'abc' });
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     await waitFor(() => expect(onSaved).toHaveBeenCalled());
@@ -156,12 +160,12 @@ describe('EditSnippetDialog editing', () => {
   });
 
   it('shows the error when the update fails', async () => {
-    vi.mocked(api.mlSnippetUpdate).mockRejectedValueOnce(new Error('conflict'));
+    vi.mocked(mlApi.mlSnippetUpdate).mockRejectedValueOnce(new Error('conflict'));
     const { onSaved } = renderDialog(EXISTING);
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ text: 'conflict', isError: true }));
     expect(onSaved).not.toHaveBeenCalled();
-    expect(api.vectoriseSnippet).not.toHaveBeenCalled();
+    expect(mlApi.vectoriseSnippet).not.toHaveBeenCalled();
   });
 });
 

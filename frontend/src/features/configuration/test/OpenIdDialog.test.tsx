@@ -16,6 +16,9 @@ import OpenIdDialog from '../components/OpenIdDialog';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 const SLOTS = [
   'magic.openid.providers.microsoft',

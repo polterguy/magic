@@ -14,6 +14,9 @@ import Generator from '../components/Generator';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 vi.mock('@shared/ui/CodeEditor', async () => ({
   default: (await import('../../../test/CodeEditorStub')).default,

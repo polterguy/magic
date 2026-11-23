@@ -14,6 +14,9 @@ import { CrudTable } from '../lib/types';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 vi.mock('@core/toast', async importOriginal => ({
   ...(await importOriginal<Record<string, unknown>>()),

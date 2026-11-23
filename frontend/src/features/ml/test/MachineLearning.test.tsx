@@ -11,8 +11,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
 import MachineLearning from '../components/MachineLearning';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('@shared/ui/CodeEditor', async () => ({
@@ -26,12 +30,12 @@ beforeEach(() => {
     { type: 'sales', model: 'gpt-other', use_embeddings: 0 },
   ]);
   vi.mocked(api.openaiIsConfigured).mockResolvedValue({ result: true });
-  vi.mocked(api.mlTypeDelete).mockResolvedValue({} as never);
-  vi.mocked(api.mlSnippets).mockResolvedValue([
+  vi.mocked(mlApi.mlTypeDelete).mockResolvedValue({} as never);
+  vi.mocked(mlApi.mlSnippets).mockResolvedValue([
     { id: 1, type: 'sales', prompt: 'How much does it cost?', completion: 'Ten euros.' },
   ]);
-  vi.mocked(api.mlSnippetsCount).mockResolvedValue({ count: 1 });
-  vi.mocked(api.listQuestionnaires).mockResolvedValue([]);
+  vi.mocked(mlApi.mlSnippetsCount).mockResolvedValue({ count: 1 });
+  vi.mocked(mlApi.listQuestionnaires).mockResolvedValue([]);
 });
 
 describe('MachineLearning', () => {
@@ -64,14 +68,14 @@ describe('MachineLearning', () => {
       within(screen.getByRole('dialog')).getByRole('button', { name: 'Delete' }),
     );
 
-    await waitFor(() => expect(api.mlTypeDelete).toHaveBeenCalledWith('sales'));
+    await waitFor(() => expect(mlApi.mlTypeDelete).toHaveBeenCalledWith('sales'));
   });
 
   it('opens on the training data of the model a deep link names', async () => {
     renderPage(<MachineLearning />, { route: '/machine-learning?tab=training&type=sales' });
 
     expect(await screen.findByText('How much does it cost?')).toBeInTheDocument();
-    expect(api.mlSnippets).toHaveBeenCalledWith('sales', '', 0, 12, expect.anything(), false);
+    expect(mlApi.mlSnippets).toHaveBeenCalledWith('sales', '', 0, 12, expect.anything(), false);
   });
 
   it('switches to the questionnaires tab', async () => {
@@ -80,7 +84,7 @@ describe('MachineLearning', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Questionnaires' }));
 
-    await waitFor(() => expect(api.listQuestionnaires).toHaveBeenCalled());
+    await waitFor(() => expect(mlApi.listQuestionnaires).toHaveBeenCalled());
     expect(screen.queryByText('gpt-test')).not.toBeInTheDocument();
   });
 });

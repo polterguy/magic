@@ -1,8 +1,9 @@
-import { generateSearchEndpoint, listRoles, MlType, mlTypes } from '@core/api';
+import { listRoles, MlType, mlTypes } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useEffect, useState } from 'react';
 
+import { generateSearchEndpoint } from '../lib/api';
 import { GeneratedInfo } from '../lib/types';
 
 // SearchTab's state: the endpoint, the type it searches and how, who may call it, and generating it.

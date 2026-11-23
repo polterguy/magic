@@ -4,6 +4,14 @@
  * not a repository yet gets initialize/clone actions instead.
  */
 
+import { listFiles, listFolders, loadFile } from '@core/api';
+import { showError } from '@core/errors';
+import { showToast } from '@core/toast';
+import { useDialog } from '@shared/hooks/useDialog';
+import { Modal } from '@shared/ui/Dialogs';
+import { ChevronIcon, UndoIcon } from '@shared/ui/Icons';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
+
 import {
   gitBranches,
   gitCheckout,
@@ -21,16 +29,7 @@ import {
   gitRemoteAdd,
   gitRestore,
   gitStatus,
-  listFiles,
-  listFolders,
-  loadFile,
-} from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
-import { useDialog } from '@shared/hooks/useDialog';
-import { Modal } from '@shared/ui/Dialogs';
-import { ChevronIcon, UndoIcon } from '@shared/ui/Icons';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+} from '../lib/api';
 
 // Status codes of a file a merge could not combine, which leave the merge waiting for the user.
 const UNMERGED = new Set(['DD', 'AU', 'UD', 'UA', 'DU', 'AA', 'UU']);

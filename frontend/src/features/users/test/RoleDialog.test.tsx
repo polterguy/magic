@@ -11,8 +11,12 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import RoleDialog from '../components/RoleDialog';
+import * as usersApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -56,12 +60,12 @@ describe('RoleDialog new role', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(onSaved).toHaveBeenCalledWith('editor'));
-    expect(api.createRole).toHaveBeenCalledWith('editor', 'Can edit');
-    expect(api.updateRole).not.toHaveBeenCalled();
+    expect(usersApi.createRole).toHaveBeenCalledWith('editor', 'Can edit');
+    expect(usersApi.updateRole).not.toHaveBeenCalled();
   });
 
   it('shows the error and keeps the dialog usable when creating fails', async () => {
-    vi.mocked(api.createRole).mockRejectedValueOnce(new Error('role exists'));
+    vi.mocked(usersApi.createRole).mockRejectedValueOnce(new Error('role exists'));
     const { onSaved } = renderDialog(null);
     await userEvent.type(screen.getByLabelText(/^Name/), 'editor');
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
@@ -77,7 +81,7 @@ describe('RoleDialog new role', () => {
     let finish: () => void = () => {
       // replaced below
     };
-    vi.mocked(api.createRole).mockReturnValueOnce(
+    vi.mocked(usersApi.createRole).mockReturnValueOnce(
       new Promise<api.MagicResponse>(resolve => {
         finish = () => resolve({} as api.MagicResponse);
       }),
@@ -94,7 +98,7 @@ describe('RoleDialog new role', () => {
     const { onSaved } = renderDialog(null);
     await userEvent.click(screen.getByLabelText(/^Name/));
     await userEvent.keyboard('{Enter}');
-    expect(api.createRole).not.toHaveBeenCalled();
+    expect(usersApi.createRole).not.toHaveBeenCalled();
 
     await userEvent.type(screen.getByLabelText(/^Name/), 'editor{Enter}');
     await waitFor(() => expect(onSaved).toHaveBeenCalledWith('editor'));
@@ -104,7 +108,7 @@ describe('RoleDialog new role', () => {
     renderDialog(null);
     await userEvent.type(screen.getByLabelText(/^Name/), 'editor');
     await userEvent.type(screen.getByLabelText(/^Description/), 'line one{Enter}line two');
-    expect(api.createRole).not.toHaveBeenCalled();
+    expect(usersApi.createRole).not.toHaveBeenCalled();
     expect(screen.getByLabelText(/^Description/)).toHaveValue('line one\nline two');
   });
 
@@ -133,8 +137,8 @@ describe('RoleDialog edit role', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(onSaved).toHaveBeenCalledWith('admin'));
-    expect(api.updateRole).toHaveBeenCalledWith('admin', 'Most things');
-    expect(api.createRole).not.toHaveBeenCalled();
+    expect(usersApi.updateRole).toHaveBeenCalledWith('admin', 'Most things');
+    expect(usersApi.createRole).not.toHaveBeenCalled();
   });
 
   it('starts with an empty description when the role has none', () => {
@@ -143,7 +147,7 @@ describe('RoleDialog edit role', () => {
   });
 
   it('shows the error when the update fails', async () => {
-    vi.mocked(api.updateRole).mockRejectedValueOnce(new Error('denied'));
+    vi.mocked(usersApi.updateRole).mockRejectedValueOnce(new Error('denied'));
     const { onSaved } = renderDialog(role);
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     await waitFor(() => expect(toasts.at(-1)?.text).toBe('denied'));

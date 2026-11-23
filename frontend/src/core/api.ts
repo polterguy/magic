@@ -1,12 +1,14 @@
 /*
- * HTTP layer towards the currently connected Magic backend, plus one
- * function per backend endpoint the dashboard consumes — mirroring the
- * Angular service layer.
+ * HTTP layer towards the currently connected Magic backend, plus the backend
+ * calls the app shell, the shared components or more than one feature make.
+ *
+ * A call only one feature makes lives in that feature's lib/api.ts and goes
+ * through the http helper exported here, so it leaves with the feature.
  */
 
 import { httpUrl, loadBackend, withoutTrailingSlashes } from './backend';
 
-let baseUrl = '';
+export let baseUrl = '';
 let bearerToken: string | null = null;
 
 export function configureApi(url: string, token: string | null) {
@@ -116,10 +118,6 @@ export interface MagicResponse {
   result: string;
 }
 
-// Any JSON value, for payloads whose shape is only known at runtime.
-export type JsonValue =
-  string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
-
 /*
  * The backend's appsettings, as /magic/system/config/load returns it. Only the parts the
  * dashboard reads are spelled out; the rest is passed through untouched.
@@ -164,9 +162,6 @@ export interface DatabaseMeta {
   name: string;
   tables?: TableMeta[] | null;
 }
-
-// One row of an SQL result set, column name to value.
-export type SqlRow = Record<string, unknown>;
 
 /*
  * Authentication.
@@ -259,15 +254,6 @@ export function listFolders(folder: string) {
   );
 }
 
-export function listFoldersRecursively(folder: string, sysFiles: boolean) {
-  return http.get<string[]>(
-    '/magic/system/file-system/list-folders-recursively?folder=' +
-      encodeURIComponent(folder) +
-      '&sys=' +
-      sysFiles,
-  );
-}
-
 export function listFilesRecursively(folder: string, sysFiles: boolean) {
   return http.get<string[]>(
     '/magic/system/file-system/list-files-recursively?folder=' +
@@ -314,10 +300,6 @@ export function deleteFile(file: string) {
   );
 }
 
-export function renamePath(oldName: string, newName: string) {
-  return http.post<MagicResponse>('/magic/system/file-system/rename', { oldName, newName });
-}
-
 export function createFolder(folder: string) {
   return http.put<MagicResponse>('/magic/system/file-system/folder', { folder });
 }
@@ -339,13 +321,6 @@ export function uploadFile(folder: string, file: File) {
 
 export function downloadFileRaw(file: string) {
   return requestRaw('GET', '/magic/system/file-system/file?file=' + encodeURIComponent(file));
-}
-
-export function downloadFolderRaw(folder: string) {
-  return requestRaw(
-    'GET',
-    '/magic/system/file-system/download-folder?folder=' + encodeURIComponent(folder),
-  );
 }
 
 export function getOpenApiSpec(filter: string) {
@@ -397,42 +372,6 @@ export function listEndpointsDetailed() {
 }
 
 /*
- * The cloudlet-wide website configuration (/etc/www/.config) — root-only.
- * Both endpoints touch only spa_enabled/not_found/redirect in that file;
- * everything else already in it (static_files/headers, anything hand-added)
- * is read and written back untouched by the endpoint itself, never even
- * reaching this shape.
- */
-export interface WebsiteRedirect {
-  from: string;
-  to: string;
-}
-
-export interface WebsiteConfig {
-  spa_enabled: boolean;
-  not_found: string;
-  // The endpoint returns null, not [], when there are none.
-  redirects: WebsiteRedirect[] | null;
-}
-
-export function loadWebsiteConfig() {
-  return http.get<WebsiteConfig>('/magic/system/www/config');
-}
-
-export function saveWebsiteConfig(config: WebsiteConfig) {
-  return http.put<{ saved: boolean }>('/magic/system/www/config', config);
-}
-
-/*
- * Makes sure the Web Designer's shared widget runtime files (magic-widgets.js/.css)
- * exist under /etc/www/assets/ on this cloudlet, copying them server-side from
- * backend/files/etc/system/web-designer/ when missing — see widgetRuntime.ts.
- */
-export function ensureWidgetAssets() {
-  return http.post<{ ensured: boolean }>('/magic/system/www/ensure-widget-assets', {});
-}
-
-/*
  * Hyperlambda evaluator.
  */
 
@@ -461,20 +400,12 @@ export function getHyperlambdaArguments(hyperlambda: string) {
 }
 
 /*
- * Names of every dynamically created slot ([slots.create]) in the system —
- * the vocabulary [execute]/[signal] can invoke. Root-only.
- */
-export function listDynamicSlots() {
-  return http.get<string[]>('/magic/system/evaluator/slots');
-}
-
-/*
  * Issues a request and returns the raw response so callers can dispatch on
  * Content-Type and Content-Disposition (JSON, HTML, files, anything).
  * Throws on non-2xx unless allowErrors is set — invokers want to SHOW
  * error responses rather than throw.
  */
-async function requestRaw(
+export async function requestRaw(
   method: string,
   url: string,
   body?: string | FormData,
@@ -543,14 +474,6 @@ export function debugHyperlambda(hyperlambda: string, args: unknown) {
   return http.post<DebugRecording>('/magic/system/evaluator/debug', { hyperlambda, args });
 }
 
-export function evaluateWithArgs(hyperlambda: string, args: unknown) {
-  return requestRaw(
-    'POST',
-    '/magic/system/evaluator/evaluate-with-args',
-    JSON.stringify({ hyperlambda, args }),
-  );
-}
-
 /*
  * Invokes an endpoint with its actual HTTP verb. url includes any query
  * parameters; payload is the raw request body for POST/PUT/PATCH.
@@ -602,49 +525,6 @@ export function listDatabases(databaseType: string, connectionString: string) {
   );
 }
 
-export function executeSql(
-  databaseType: string,
-  database: string,
-  sql: string,
-  safeMode: boolean,
-  batch: boolean,
-) {
-  return http.post<SqlRow[][]>('/magic/system/sql/evaluate', {
-    databaseType,
-    database,
-    sql,
-    safeMode,
-    batch,
-  });
-}
-
-/*
- * Databases management.
- */
-
-export function createDatabase(
-  databaseType: string,
-  connectionString: string,
-  databaseName: string,
-) {
-  return http.post<MagicResponse>('/magic/system/sql/ddl/database', {
-    databaseType,
-    connectionString,
-    databaseName,
-  });
-}
-
-export function dropDatabase(databaseType: string, connectionString: string, databaseName: string) {
-  return http.delete<MagicResponse>(
-    '/magic/system/sql/ddl/database?databaseType=' +
-      encodeURIComponent(databaseType) +
-      '&connectionString=' +
-      encodeURIComponent(connectionString) +
-      '&databaseName=' +
-      encodeURIComponent(databaseName),
-  );
-}
-
 /*
  * Direct download URL carrying the JWT as query parameter — the pattern the
  * old dashboard uses for SQLite backup downloads.
@@ -659,12 +539,6 @@ export function fileWithTokenUrl(file: string) {
   );
 }
 
-export function uploadDatabaseBackup(file: File) {
-  const formData = new FormData();
-  formData.append('file', file);
-  return http.put<MagicResponse>('/magic/system/sql/backup', formData);
-}
-
 export function loadConfig() {
   return http.get<MagicConfig>('/magic/system/config/load');
 }
@@ -673,161 +547,8 @@ export function saveConfig(config: MagicConfig) {
   return http.post<MagicResponse>('/magic/system/config/save', config);
 }
 
-export function testConnectionString(databaseType: string, connectionString: string) {
-  return http.post<{ result: string; message?: string }>(
-    '/magic/system/sql/test-connection-string',
-    { databaseType, connectionString },
-  );
-}
-
-export function addConnectionString(
-  databaseType: string,
-  name: string,
-  connectionString: string,
-  useAsDefault: boolean,
-) {
-  return http.post<MagicResponse>('/magic/system/sql/connection-string', {
-    databaseType,
-    name,
-    connectionString,
-    useAsDefault,
-  });
-}
-
-export function deleteConnectionString(databaseType: string, name: string) {
-  return http.delete<MagicResponse>(
-    '/magic/system/sql/connection-string?databaseType=' +
-      encodeURIComponent(databaseType) +
-      '&name=' +
-      encodeURIComponent(name),
-  );
-}
-
-/*
- * Backend generator — one invocation per verb per table.
- */
-export interface OpenApiParameter {
-  name: string;
-  in: string;
-  required: boolean;
-  type: string;
-}
-
-export interface OpenApiOperation {
-  id: string;
-  verb: string;
-  path: string;
-  summary: string | null;
-  tag: string | null;
-  parameters: OpenApiParameter[] | null;
-  'has-body'?: boolean;
-}
-
-export interface OpenApiSpec {
-  title: string | null;
-  version: string | null;
-  servers: string[] | null;
-  'security-schemes':
-    | {
-        name: string;
-        type: string;
-        in: string | null;
-        'header-name': string | null;
-        scheme: string | null;
-      }[]
-    | null;
-  operations: OpenApiOperation[] | null;
-}
-
-// Reads an OpenAPI specification without importing anything from it.
-export function parseOpenApi(url: string) {
-  return http.post<OpenApiSpec>('/magic/system/openapi/parse', { url });
-}
-
-// Generates endpoints wrapping the selected operations.
-export function importOpenApi(payload: {
-  url: string;
-  moduleName: string;
-  baseUrl: string;
-  operations: string[];
-  authScheme: string;
-  authName?: string;
-  configKey?: string;
-  auth?: string;
-  overwrite?: boolean;
-  // Feedback channel the importer announces each generated endpoint on.
-  channel?: string;
-}) {
-  return http.post<{ created: string[] | null; skipped: string[] | null; loc: number }>(
-    '/magic/system/openapi/import',
-    payload,
-  );
-}
-
 export function crudify(payload: Record<string, unknown>) {
   return http.post<{ loc: number; result: string }>('/magic/system/crudifier/crudify', payload);
-}
-
-export function customSqlEndpoint(payload: {
-  databaseType: string;
-  database: string;
-  authorization: string;
-  moduleName: string;
-  endpointName: string;
-  verb: string;
-  sql: string;
-  arguments: string;
-  overwrite: boolean;
-}) {
-  return http.post<MagicResponse>('/magic/system/crudifier/custom-sql', payload);
-}
-
-/*
- * Generates one sandboxed Hyperlambda endpoint. [policy] is a JSON string carrying
- * the timeout, root-override flag and the per-role access rules; the backend returns
- * the generated Hyperlambda so the caller can preview what was written.
- */
-export function generateSandboxEndpoint(payload: {
-  moduleName: string;
-  endpointName: string;
-  verb: string;
-  inputMode: string;
-  authorization: string;
-  policy: string;
-  overwrite: boolean;
-}) {
-  return http.post<{ result: string; file: string; hyperlambda: string }>(
-    '/magic/system/crudifier/sandbox-api',
-    payload,
-  );
-}
-
-/*
- * Generates one endpoint searching the training snippets of a single machine learning type by
- * keyword, by meaning or both. Everything but the query is baked into the endpoint; the backend
- * returns the generated Hyperlambda so the caller can preview what was written.
- */
-export function generateSearchEndpoint(payload: {
-  moduleName: string;
-  endpointName: string;
-  verb: string;
-  type: string;
-  retrieval: string;
-  threshold?: number;
-  limit: number;
-  uri: string;
-  meta: string;
-  result: string;
-  authorization: string;
-  rateLimit: number;
-  rateWindow: number;
-  cacheSeconds: number;
-  overwrite: boolean;
-}) {
-  return http.post<{ result: string; file: string; hyperlambda: string }>(
-    '/magic/system/crudifier/search-api',
-    payload,
-  );
 }
 
 export function exportDdl(
@@ -862,154 +583,8 @@ export function flushSchemaCache(databaseType: string, connectionString: string)
   );
 }
 
-/*
- * Imports a CSV file, creating a table named after the file with one column per
- * CSV column. The backend runs the import on a background thread and announces
- * completion over the magic.backend.message socket, so this resolves as soon as
- * the import has started, not when it finishes.
- */
-export function importCsvFile(
-  databaseType: string,
-  connectionString: string,
-  databaseName: string,
-  file: File,
-) {
-  const formData = new FormData();
-  formData.append('databaseType', databaseType);
-  formData.append('connectionString', connectionString);
-  formData.append('databaseName', databaseName);
-  formData.append('file', file, file.name);
-  return http.post<MagicResponse>('/magic/system/sql/import-csv-file', formData);
-}
-
-function bustSchemaCache(databaseType: string, connectionString: string) {
+export function bustSchemaCache(databaseType: string, connectionString: string) {
   return flushSchemaCache(databaseType, connectionString).catch(() => {});
-}
-
-export async function addTable(
-  databaseType: string,
-  connectionString: string,
-  databaseName: string,
-  tableName: string,
-  pkName: string,
-  pkType: string,
-  pkLength: number,
-) {
-  const result = await http.post<MagicResponse>('/magic/system/sql/ddl/table', {
-    databaseType,
-    connectionString,
-    databaseName,
-    tableName,
-    pkName,
-    pkType,
-    pkLength,
-    pkDefault: null,
-  });
-  await bustSchemaCache(databaseType, connectionString);
-  return result;
-}
-
-export async function dropTable(
-  databaseType: string,
-  connectionString: string,
-  databaseName: string,
-  tableName: string,
-) {
-  const result = await http.delete<MagicResponse>(
-    '/magic/system/sql/ddl/table?databaseType=' +
-      encodeURIComponent(databaseType) +
-      '&connectionString=' +
-      encodeURIComponent(connectionString) +
-      '&databaseName=' +
-      encodeURIComponent(databaseName) +
-      '&tableName=' +
-      encodeURIComponent(tableName),
-  );
-  await bustSchemaCache(databaseType, connectionString);
-  return result;
-}
-
-// The table a column is added to, and the database it is in.
-export interface ColumnTarget {
-  databaseType: string;
-  connectionString: string;
-  databaseName: string;
-  tableName: string;
-}
-
-export interface NewColumn {
-  columnName: string;
-  columnType: string;
-  defaultValue: string | null;
-  nullable: boolean;
-  columnLength: number | null;
-}
-
-export interface NewForeignKey {
-  columnName: string;
-  columnType: string;
-  foreignTable: string;
-  foreignField: string;
-  nullable: boolean;
-  columnLength: number | null;
-  cascading: boolean;
-}
-
-export async function addColumn(target: ColumnTarget, column: NewColumn) {
-  const result = await http.post<MagicResponse>('/magic/system/sql/ddl/column', {
-    databaseType: target.databaseType,
-    connectionString: target.connectionString,
-    databaseName: target.databaseName,
-    tableName: target.tableName,
-    columnName: column.columnName,
-    columnType: column.columnType,
-    defaultValue: column.defaultValue,
-    nullable: column.nullable,
-    indexed: false,
-    columnLength: column.columnLength,
-  });
-  await bustSchemaCache(target.databaseType, target.connectionString);
-  return result;
-}
-export async function addForeignKey(target: ColumnTarget, column: NewForeignKey) {
-  const result = await http.post<MagicResponse>('/magic/system/sql/ddl/column', {
-    databaseType: target.databaseType,
-    connectionString: target.connectionString,
-    databaseName: target.databaseName,
-    tableName: target.tableName,
-    columnName: column.columnName,
-    columnType: column.columnType,
-    foreignTable: column.foreignTable,
-    foreignField: column.foreignField,
-    nullable: column.nullable,
-    columnLength: column.columnLength,
-    cascading: column.cascading,
-  });
-  await bustSchemaCache(target.databaseType, target.connectionString);
-  return result;
-}
-
-export async function dropColumn(
-  databaseType: string,
-  connectionString: string,
-  databaseName: string,
-  tableName: string,
-  columnName: string,
-) {
-  const result = await http.delete<MagicResponse>(
-    '/magic/system/sql/ddl/column?databaseType=' +
-      encodeURIComponent(databaseType) +
-      '&connectionString=' +
-      encodeURIComponent(connectionString) +
-      '&databaseName=' +
-      encodeURIComponent(databaseName) +
-      '&tableName=' +
-      encodeURIComponent(tableName) +
-      '&columnName=' +
-      encodeURIComponent(columnName),
-  );
-  await bustSchemaCache(databaseType, connectionString);
-  return result;
 }
 
 export async function addLinkTable(
@@ -1048,19 +623,6 @@ export function listEndpoints() {
 }
 
 /*
- * Just how many endpoints there are. The full list is around 100KB, which is
- * a great deal of traffic for somewhere that only shows the number.
- */
-export function countEndpoints() {
-  return http.get<{ count: number }>('/magic/system/endpoints/count');
-}
-
-// How many of those endpoints require no authentication at all, system endpoints excluded.
-export function countPublicEndpoints() {
-  return http.get<{ count: number }>('/magic/system/endpoints/count-public');
-}
-
-/*
  * Users and roles.
  */
 
@@ -1083,11 +645,6 @@ export interface User {
 export interface Role {
   name: string;
   description?: string;
-}
-
-// Value of an extra field, or empty when the user hasn't got that field.
-export function userExtra(user: User, type: string) {
-  return user.extra?.find(entry => entry.type === type)?.value ?? '';
 }
 
 export function listUsers(
@@ -1114,34 +671,8 @@ export function countUsers(filter: string) {
   return http.get<{ count: number }>('/magic/system/magic/users-count' + query);
 }
 
-export function createUser(username: string, password: string) {
-  return http.post<MagicResponse>('/magic/system/magic/users', { username, password });
-}
-
-export function deleteUser(username: string) {
-  return http.delete<MagicResponse>(
-    '/magic/system/magic/users?username=' + encodeURIComponent(username),
-  );
-}
-
-export function changeUserPassword(username: string, password: string) {
-  return http.put<MagicResponse>('/magic/system/magic/users', { username, password });
-}
-
 export function listRoles() {
   return http.get<Role[]>('/magic/system/magic/roles?limit=-1&order=name');
-}
-
-export function createRole(name: string, description: string) {
-  return http.post<MagicResponse>('/magic/system/magic/roles', { name, description });
-}
-
-export function updateRole(name: string, description: string) {
-  return http.put<MagicResponse>('/magic/system/magic/roles', { name, description });
-}
-
-export function deleteRole(name: string) {
-  return http.delete<MagicResponse>('/magic/system/magic/roles?name=' + encodeURIComponent(name));
 }
 
 /*
@@ -1162,19 +693,6 @@ export function deleteUserExtra(user: string, type: string) {
       encodeURIComponent(user) +
       '&type=' +
       encodeURIComponent(type),
-  );
-}
-
-export function addUserToRole(user: string, role: string) {
-  return http.post<MagicResponse>('/magic/system/magic/users_roles', { user, role });
-}
-
-export function removeUserFromRole(user: string, role: string) {
-  return http.delete<MagicResponse>(
-    '/magic/system/magic/users_roles?user=' +
-      encodeURIComponent(user) +
-      '&role=' +
-      encodeURIComponent(role),
   );
 }
 
@@ -1206,44 +724,8 @@ export function countTasks(filter?: string) {
   return http.get<{ count: number }>(url);
 }
 
-/*
- * The endpoint returns the task's properties without its name — the name is
- * the node the properties hang off, and that gets stripped on the way out —
- * so we put it back to hand callers a complete task.
- */
-export async function getTask(name: string) {
-  const task = await http.get<Task>('/magic/system/tasks/get?name=' + encodeURIComponent(name));
-  return { ...task, id: name };
-}
-
-export function createTask(id: string, description: string, hyperlambda: string) {
-  return http.post<MagicResponse>('/magic/system/tasks/create', { id, description, hyperlambda });
-}
-
-export function updateTask(id: string, description: string, hyperlambda: string) {
-  return http.post<MagicResponse>('/magic/system/tasks/update', { id, description, hyperlambda });
-}
-
-export function deleteTask(id: string) {
-  return http.delete<MagicResponse>('/magic/system/tasks/delete?id=' + encodeURIComponent(id));
-}
-
 export function executeTask(id: string) {
   return http.post<MagicResponse>('/magic/system/tasks/execute', { id });
-}
-
-export function scheduleTask(id: string, due?: string, repeats?: string) {
-  const payload: { id: string; due?: string; repeats?: string } = { id };
-  if (repeats) {
-    payload.repeats = repeats;
-  } else {
-    payload.due = due;
-  }
-  return http.post<MagicResponse>('/magic/system/tasks/due/add', payload);
-}
-
-export function deleteSchedule(id: number) {
-  return http.delete<MagicResponse>('/magic/system/tasks/due/delete?id=' + id);
 }
 
 /*
@@ -1297,22 +779,6 @@ export interface MlSnippet {
   distance?: number;
 }
 
-// A logged question and answer, a row of ml_requests.
-export interface MlRequest {
-  id: number;
-  created: string;
-  type: string;
-  prompt: string;
-  completion: string;
-  finish_reason: string;
-  cached?: number | null;
-  session?: string | null;
-  questionnaire?: number;
-  user_id?: string | null;
-  context?: number;
-  referrer?: string | null;
-}
-
 /*
  * A system message template ("flavor") a model can start from. Files under
  * system-messages/ carry whatever fields they want, so the rest is untyped.
@@ -1340,216 +806,12 @@ export function mlTypes() {
   return http.get<MlType[]>('/magic/system/magic/ml_types?limit=-1&order=type');
 }
 
-export function mlTypeCreate(type: MlType) {
-  return http.post<MagicResponse>('/magic/system/magic/ml_types', type);
-}
-
 export function mlTypeUpdate(type: MlType) {
   return http.put<MagicResponse>('/magic/system/magic/ml_types', type);
 }
 
-export function mlTypeDelete(type: string) {
-  return http.delete<MagicResponse>(
-    '/magic/system/magic/ml_types?type=' + encodeURIComponent(type),
-  );
-}
-
-/*
- * Questionnaires — the question set a model can open a conversation with,
- * and the questions belonging to one. A model points at a questionnaire
- * through its initial_questionnaire setting.
- */
-
-export interface Questionnaire {
-  name: string;
-  type: string;
-  action?: string | null;
-}
-
-export interface Question {
-  question_id: number;
-  question: string;
-  questionnaire: string;
-  type: string;
-  context: number;
-  name?: string | null;
-}
-
-export function listQuestionnaires() {
-  return http.get<Questionnaire[]>(
-    '/magic/system/magic/questionnaires?limit=-1&order=questionnaires.name',
-  );
-}
-
-export function createQuestionnaire(item: Questionnaire) {
-  return http.post<MagicResponse>('/magic/system/magic/questionnaires', item);
-}
-
-export function updateQuestionnaire(item: Questionnaire) {
-  return http.put<MagicResponse>('/magic/system/magic/questionnaires', item);
-}
-
-export function deleteQuestionnaire(name: string) {
-  return http.delete<MagicResponse>(
-    '/magic/system/magic/questionnaires?name=' + encodeURIComponent(name),
-  );
-}
-
-export function listQuestions(questionnaire: string) {
-  return http.get<Question[]>(
-    '/magic/system/magic/questions?limit=-1&order=questions.question_id' +
-      '&questions.questionnaire.eq=' +
-      encodeURIComponent(questionnaire),
-  );
-}
-
-export function createQuestion(item: {
-  question: string;
-  questionnaire: string;
-  type: string;
-  name?: string | null;
-  // 1 replays this answer as context in the user's later conversations.
-  context: number;
-}) {
-  return http.post<MagicResponse>('/magic/system/magic/questions', item);
-}
-
-export function updateQuestion(item: {
-  question_id: number;
-  question: string;
-  questionnaire: string;
-  type: string;
-  name?: string | null;
-  context: number;
-}) {
-  return http.put<MagicResponse>('/magic/system/magic/questions', item);
-}
-
-export function deleteQuestion(id: number) {
-  return http.delete<MagicResponse>('/magic/system/magic/questions?question_id=' + id);
-}
-
-/*
- * Search text matches against prompt, completion or uri — the endpoints nest
- * these three inside an [or], so they widen the search rather than narrowing
- * it, while the type stays ANDed. The uri match is a prefix, since URIs start
- * with their domain.
- */
-function snippetSearchQuery(filter: string) {
-  if (!filter) {
-    return '';
-  }
-  const like = encodeURIComponent('%' + filter + '%');
-  return (
-    '&ml_training_snippets.prompt.like=' +
-    like +
-    '&ml_training_snippets.completion.like=' +
-    like +
-    '&ml_training_snippets.uri.like=' +
-    encodeURIComponent(filter + '%')
-  );
-}
-
-export function mlSnippets(
-  type: string,
-  filter: string,
-  offset: number,
-  limit: number,
-  sort?: { column: string | null; direction: 'asc' | 'desc' },
-  vectorSearch = false,
-) {
-  /*
-   * Vector search asks the model which snippets are semantically closest to
-   * the search text, and answers with a distance per snippet — it takes no
-   * ordering or LIKE filters.
-   */
-  if (vectorSearch) {
-    return http.get<MlSnippet[]>(
-      '/magic/system/magic/ml_training_snippets-vss' +
-        `?limit=${limit}&offset=${offset}` +
-        '&type=' +
-        encodeURIComponent(type) +
-        '&filter=' +
-        encodeURIComponent(filter),
-    );
-  }
-  const order = sort?.column
-    ? `&order=${encodeURIComponent(sort.column)}&direction=${sort.direction}`
-    : '&order=created&direction=desc';
-  const query =
-    `?limit=${limit}&offset=${offset}` +
-    order +
-    '&ml_training_snippets.type.eq=' +
-    encodeURIComponent(type) +
-    snippetSearchQuery(filter);
-  return http.get<MlSnippet[]>('/magic/system/magic/ml_training_snippets' + query);
-}
-
-export function mlSnippetsCount(type: string, filter: string, vectorSearch = false) {
-  // Vector search always considers the whole type, so its count ignores the filter.
-  const query =
-    '?ml_training_snippets.type.eq=' +
-    encodeURIComponent(type) +
-    (vectorSearch ? '' : snippetSearchQuery(filter));
-  return http.get<{ count: number }>('/magic/system/magic/ml_training_snippets-count' + query);
-}
-
-/*
- * How many snippets in the type still lack embeddings — the exact set the
- * vectoriser is about to work through, so it gives us the "of y" to count towards.
- */
-export function mlUnvectorisedCount(type: string) {
-  return http.get<{ count: number }>(
-    '/magic/system/magic/ml_training_snippets-count' +
-      '?not_embedded=true&ml_training_snippets.type.eq=' +
-      encodeURIComponent(type),
-  );
-}
-
-/*
- * Deletes every snippet matching the current filter, rather than one at a
- * time — the filter is passed exactly as the listing uses it.
- */
-export function mlSnippetsDeleteAll(type: string, filter: string) {
-  const query =
-    '?ml_training_snippets.type.eq=' + encodeURIComponent(type) + snippetSearchQuery(filter);
-  return http.delete<MagicResponse>('/magic/system/magic/ml_training_snippets_all' + query);
-}
-
-/*
- * Downloads every snippet matching the filter as CSV — the whole filtered
- * set, not just the page on screen.
- */
-export function mlSnippetsExportRaw(type: string, filter: string) {
-  const query =
-    '?ml_training_snippets.type.eq=' + encodeURIComponent(type) + snippetSearchQuery(filter);
-  return requestRaw('GET', '/magic/system/magic/ml_training_snippets_export' + query);
-}
-
 export function mlSnippetCreate(snippet: Omit<Partial<MlSnippet>, 'id'>) {
   return http.post<MagicResponse>('/magic/system/magic/ml_training_snippets', snippet);
-}
-
-export function mlSnippetUpdate(snippet: Partial<MlSnippet> & { id: number }) {
-  return http.put<MagicResponse>('/magic/system/magic/ml_training_snippets', snippet);
-}
-
-export function mlSnippetDelete(id: number) {
-  return http.delete<MagicResponse>('/magic/system/magic/ml_training_snippets?id=' + id);
-}
-
-export function mlRequests(type: string, offset: number, limit: number) {
-  return http.get<MlRequest[]>(
-    `/magic/system/magic/ml_requests?limit=${limit}&offset=${offset}` +
-      '&order=created&direction=desc&ml_requests.type.eq=' +
-      encodeURIComponent(type),
-  );
-}
-
-export function mlRequestsCount(type: string) {
-  return http.get<{ count: number }>(
-    '/magic/system/magic/ml_requests-count?ml_requests.type.eq=' + encodeURIComponent(type),
-  );
 }
 
 /*
@@ -1850,107 +1112,6 @@ export function gibberish() {
 }
 
 /*
- * AI chat against the "default" code-generation model. Responses stream over
- * the /sockets hub on a channel named after the chat session, one JSON encoded
- * chunk per push. AI functions execute server-side inside the chat pipeline —
- * the chunks merely report their progress.
- */
-export interface ChatChunk {
-  message?: string;
-  error?: boolean;
-  finished?: boolean;
-  type?: string;
-  filename?: string;
-  ticket?: string;
-  html?: string;
-  floating_message?: string;
-  floating_state?: 'success' | 'error';
-  function_waiting?: boolean;
-  function_result?: string;
-  function_error?: string;
-  // Ride along with function_result/function_error — the invoked file and its arguments.
-  invocation?: string;
-  file?: string;
-}
-
-/*
- * Files ride along as [file], [file1], [file2] … — at most five, which is
- * what the backend's chat pipeline consumes. With [upload_file_only] the
- * backend saves them and tells the model where they landed; without it, the
- * files are exposed over HTTP and handed to the model for analysis, which
- * needs a publicly reachable host.
- */
-export const MAX_CHAT_FILES = 5;
-
-export function chatPrompt(
-  session: string,
-  prompt: string,
-  userId: string,
-  files?: File[],
-  uploadOnly?: boolean,
-) {
-  const formData = new FormData();
-  formData.append('prompt', prompt);
-  formData.append('type', 'default');
-  formData.append('chat', 'true');
-  formData.append('stream', 'true');
-  formData.append('references', 'false');
-  formData.append('session', session);
-  formData.append('user_id', userId);
-  if (uploadOnly) {
-    formData.append('upload_file_only', 'true');
-  }
-  files?.slice(0, MAX_CHAT_FILES).forEach((file, index) => {
-    formData.append('file' + (index === 0 ? '' : index), file);
-  });
-  return http.post<{ execution_id?: string }>('/magic/system/openai/chat', formData);
-}
-
-export function killExecution(executionId: string) {
-  return http.post<MagicResponse>('/magic/system/misc/kill-execution', {
-    execution_id: executionId,
-  });
-}
-
-// Short-lived download link for a file an AI function produced during chat.
-export function chatDownloadUrl(ticket: string, file: string) {
-  return (
-    backendInfo().url +
-    '/magic/system/file-system/file-with-token?access_token=' +
-    encodeURIComponent(ticket) +
-    '&file=' +
-    encodeURIComponent(file)
-  );
-}
-
-/*
- * Re-embeds a single snippet. The embedding is computed from prompt and
- * completion together, so editing either one leaves the stored vector
- * describing text that no longer exists.
- */
-export function vectoriseSnippet(id: number) {
-  return http.post<MagicResponse>('/magic/system/openai/vectorise-snippet', { id });
-}
-
-export function vectoriseType(type: string, channel: string) {
-  return http.post<MagicResponse>('/magic/system/openai/vectorise', {
-    type,
-    'feedback-channel': channel,
-  });
-}
-
-/*
- * Resets every embedding in the type back to null. The vectoriser only picks
- * up snippets without embeddings, so this is what makes a re-vectorisation of
- * an already vectorised model actually do something.
- */
-export function deleteVectors(type: string) {
-  return http.delete<MagicResponse>(
-    '/magic/system/openai/vectors?type=' + encodeURIComponent(type),
-  );
-}
-
-/*
  * Prompts the model — stream=false, so the completion comes back in the
  * response instead of over the socket.
  */
@@ -1965,200 +1126,8 @@ export function openaiChat(prompt: string, type: string, session: string, userna
   return http.post<{ result: string }>('/magic/system/openai/chat', payload);
 }
 
-/*
- * Scrapes every URL listed in a CSV file — the file must have a single
- * column containing nothing but URLs. Progress arrives on the feedback
- * channel over the socket, as it does for crawling.
- */
-export function uploadUrlList(type: string, file: File, channel: string, vectorize: boolean) {
-  const formData = new FormData();
-  formData.append('file', file, file.name);
-  formData.append('type', type);
-  formData.append('feedback-channel', channel);
-  formData.append('vectorize', vectorize ? 'true' : 'false');
-  return http.post<MagicResponse>('/magic/system/openai/upload-url-list', formData);
-}
-
-/*
- * Scrapes one single page into training snippets — "spicing" a model with
- * one more page rather than crawling a whole site.
- */
-export function importPage(args: { url: string; type: string; images: boolean; channel: string }) {
-  return http.post<MagicResponse>('/magic/system/openai/import-page', {
-    url: args.url,
-    type: args.type,
-    // The endpoint requires a minimum snippet length; the backend minimum.
-    threshold: 25,
-    images: args.images,
-    'feedback-channel': args.channel,
-  });
-}
-
-// HTML widgets a model can render as part of an answer.
-export function availableWidgets() {
-  return http.get<{ name: string; description: string; file: string }[]>(
-    '/magic/system/openai/available-widgets?private=false',
-  );
-}
-
-/*
- * Crawls a website into training snippets — progress arrives on the
- * feedback channel over the socket.
- */
-export function importUrl(args: {
-  url: string;
-  type: string;
-  delay: number;
-  max: number;
-  insert_url: boolean;
-  images: boolean;
-  channel: string;
-  // Tag associated with the generated snippets — the backend defaults it.
-  meta?: string;
-}) {
-  return http.post<MagicResponse>('/magic/system/openai/import-url', {
-    url: args.url,
-    type: args.type,
-    delay: args.delay,
-    max: args.max,
-    // The endpoint requires a minimum snippet length; the backend minimum.
-    threshold: 25,
-    insert_url: args.insert_url,
-    images: args.images,
-    'feedback-channel': args.channel,
-    meta: args.meta || null,
-  });
-}
-
-// Backend prompt that turns raw content into a searchable one-line summary.
-const SUMMARISE_PROMPT =
-  'Create a short keyword-based single descriptive sentence from the following ' +
-  'information intended for doing VSS-based search on it later to retrieve it using RAG';
-
-export interface UploadOptions {
-  summarize?: boolean;
-  forceAsText?: boolean;
-  // Structured files: which fields in the file become prompt/completion.
-  promptField?: string;
-  completionField?: string;
-  // PDF-only options.
-  preservePages?: boolean;
-  overwrite?: boolean;
-  massage?: string;
-}
-
-/*
- * Uploads a text/structured/PDF file as training data. Structured formats
- * (csv/xml/yaml/json) parse into lists of objects, and promptField /
- * completionField name which fields substitute as prompt and completion.
- */
-export function uploadTrainingFile(type: string, file: File, options: UploadOptions = {}) {
-  const formData = new FormData();
-  formData.append('file', file, file.name);
-  formData.append('type', type);
-  formData.append('prompt', options.promptField || 'prompt');
-  formData.append('completion', options.completionField || 'completion');
-  if (options.forceAsText) {
-    formData.append('forceAsText', 'true');
-  }
-  const isPdf = file.name.toLowerCase().endsWith('.pdf');
-  if (isPdf) {
-    if (options.massage) {
-      formData.append('massage', options.massage);
-    }
-    if (options.preservePages) {
-      formData.append('preservePages', 'true');
-    }
-    if (options.overwrite) {
-      formData.append('overwrite', 'true');
-    }
-  }
-  if (options.summarize) {
-    formData.append('massagePrompt', SUMMARISE_PROMPT);
-  }
-  return http.post<{ count: number }>('/magic/system/openai/upload-training-data', formData);
-}
-
-/*
- * Uploads a CSV whose columns become prompt/completion pairs directly.
- */
-export function uploadCsvFile(type: string, file: File) {
-  const formData = new FormData();
-  formData.append('file', file, file.name);
-  formData.append('type', type);
-  return http.post<{ count: number }>('/magic/system/openai/upload-csv', formData);
-}
-
-/*
- * Uploads an image, vectorising it as training data.
- */
-export function uploadImageFile(type: string, file: File) {
-  const formData = new FormData();
-  formData.append('file', file, file.name);
-  formData.append('type', type);
-  return http.post<{ count: number }>('/magic/system/openai/upload-image', formData);
-}
-
-export function openaiThemes() {
-  return http.get<string[]>('/magic/system/openai/themes');
-}
-
-/*
- * Crawls a website and builds a chatbot from it — the "chatbot wizard" as one
- * call. Long running: progress is published on [channel] over the socket, and
- * the answer only arrives once the crawl is done.
- *
- * [flavor] is the persona's template, stored as the model's system message.
- * [instruction] is what makes the backend hand that template to OpenAI to be
- * filled in from the crawled site — without it the placeholders stay literal.
- */
-export function createBot(args: {
-  url: string;
-  model: string;
-  flavor: string;
-  instruction: string;
-  max: number;
-  autoDestruct: boolean;
-  channel: string;
-}) {
-  return http.post<MagicResponse>('/magic/system/openai/create-bot', {
-    url: args.url,
-    model: args.model,
-    flavor: args.flavor,
-    instruction: args.instruction,
-    max: args.max,
-    auto_destruct: args.autoDestruct,
-    vectorize: true,
-    autocrawl: false,
-    'feedback-channel': args.channel,
-  });
-}
-
 export function openaiSystemMessages() {
   return http.get<SystemMessage[]>('/magic/system/openai/system-messages');
-}
-
-/*
- * Kicks off dynamic system-message generation: the backend crawls `url`,
- * uses `instruction` to fill the `[[...]]` placeholders in `template`, and
- * streams the result back on the socket `channel`.
- */
-export function createSystemMessage(
-  instruction: string,
-  template: string,
-  url: string,
-  channel: string,
-) {
-  return http.post<MagicResponse>('/magic/system/openai/create-system-message', {
-    instruction,
-    template,
-    url,
-    channel,
-  });
-}
-
-export function openaiCompletionSlots() {
-  return http.get<{ llms: string[] }>('/magic/system/openai/completion-slots');
 }
 
 /*
@@ -2173,10 +1142,6 @@ export function availablePlugins() {
   });
 }
 
-export function installedPlugins() {
-  return http.get<BazarApp[]>('/magic/system/bazar/app-manifests');
-}
-
 export function installPlugin(app: { name: string; type: string }) {
   return http.post<MagicResponse>('/magic/system/bazar/install-plugin', {
     url: BAZAR_URL + '/magic/modules/bazar/download-bazar-app?name=' + encodeURIComponent(app.name),
@@ -2185,147 +1150,10 @@ export function installPlugin(app: { name: string; type: string }) {
   });
 }
 
-export function availableWorkflows() {
-  return http.get<{ name: string; description: string; file: string }[]>(
-    '/magic/system/openai/available-workflows?private=false',
-  );
-}
-
-interface HyperlambdaArguments {
-  function?: boolean;
-  description?: string;
-  args?: { name: string; type: string; description?: string }[];
-}
-
-/*
- * The leading comment of a Hyperlambda file. An AI function's declaration is
- * just its file path - the model reads the tool's description and arguments
- * from the file itself - so this is only used to give the training-data row
- * a human readable text.
- */
-export async function getFileDescription(path: string) {
-  const result = await http.post<HyperlambdaArguments>(
-    '/magic/system/workflows/get-hyperlambda-arguments',
-    { path },
-  );
-  return result.description ?? '';
-}
-
-/*
- * Log.
- */
-
-export interface LogItem {
-  id: number;
-  created: string;
-  type: string;
-  content: string;
-  exception?: string;
-  // Key/value pairs the log invocation attached through its [meta] argument.
-  meta?: Record<string, string>;
-}
-
-export function listLog(from: number | null, max: number, query?: string) {
-  let url = '/magic/system/log/list?max=' + max;
-  if (from) {
-    url += '&from=' + from;
-  }
-  if (query) {
-    url += '&query=' + encodeURIComponent(query.includes('%') ? query : query + '%');
-  }
-  return http.get<LogItem[]>(url);
-}
-
 export function countLog(query?: string) {
   let url = '/magic/system/log/count';
   if (query) {
     url += '?query=' + encodeURIComponent(query.includes('%') ? query : query + '%');
   }
   return http.get<{ count: number }>(url);
-}
-
-/*
- * Git.
- */
-
-export function gitStatus(path: string) {
-  return http.get<string[]>('/magic/system/git/status?path=' + encodeURIComponent(path));
-}
-
-// Unified diff of one repository-relative file against HEAD.
-export function gitDiff(path: string, file: string) {
-  return http.getText(
-    '/magic/system/git/diff?path=' + encodeURIComponent(path) + '&file=' + encodeURIComponent(file),
-  );
-}
-
-// Discards uncommitted changes — one file restored from HEAD, or the whole
-// working tree reset to HEAD with untracked files removed when file is omitted.
-export function gitRestore(path: string, file?: string) {
-  return http.post<MagicResponse>('/magic/system/git/restore', file ? { path, file } : { path });
-}
-
-export function gitBranches(path: string) {
-  return http.get<string[]>('/magic/system/git/branches?path=' + encodeURIComponent(path));
-}
-
-export function gitCommit(path: string, message: string) {
-  return http.post<MagicResponse>('/magic/system/git/commit', { path, message });
-}
-
-export function gitPush(path: string, branch?: string) {
-  return http.post<MagicResponse>('/magic/system/git/push', branch ? { path, branch } : { path });
-}
-
-export function gitPull(path: string, branch?: string) {
-  return http.post<MagicResponse>(
-    '/magic/system/git/pull',
-    branch ? { path, branch, merge: true } : { path, merge: true },
-  );
-}
-
-export function gitFetch(path: string) {
-  return http.post<MagicResponse>('/magic/system/git/fetch', { path });
-}
-
-export function gitCheckout(path: string, branch: string, create = false) {
-  return http.post<MagicResponse>('/magic/system/git/checkout', { path, branch, create });
-}
-
-// Merges a branch into the current one, or aborts a merge that stopped on conflicts.
-export function gitMerge(path: string, branch: string) {
-  return http.post<MagicResponse>('/magic/system/git/merge', { path, branch });
-}
-
-export function gitMergeAbort(path: string) {
-  return http.post<MagicResponse>('/magic/system/git/merge', { path, abort: true });
-}
-
-// Commits as tab separated lines of side, hash, author, age and subject. With a
-// range such as 'HEAD...@{u}' only the commits that differ are listed.
-export function gitLog(path: string, range?: string) {
-  return http.getText(
-    '/magic/system/git/log?path=' +
-      encodeURIComponent(path) +
-      (range ? '&range=' + encodeURIComponent(range) : ''),
-  );
-}
-
-export function gitInit(path: string) {
-  return http.post<MagicResponse>('/magic/system/git/init', { path });
-}
-
-export function gitClone(path: string, url: string) {
-  return http.post<MagicResponse>('/magic/system/git/clone', { path, url });
-}
-
-export function gitRemoteAdd(path: string, url: string) {
-  return http.post<MagicResponse>('/magic/system/git/remote', { path, url });
-}
-
-export function gitGithubCreate(name: string, isPrivate: boolean) {
-  return http.post<{ url: string }>('/magic/system/git/github-create', {
-    name,
-    private: isPrivate,
-  });
 }

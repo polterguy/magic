@@ -14,6 +14,9 @@ import { EXPERT_SYSTEM_PLUGIN, EXPERT_SYSTEM_POLLS } from '../lib/constants';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 const toasts: Toast[] = [];
 const app = { name: EXPERT_SYSTEM_PLUGIN } as api.BazarApp;

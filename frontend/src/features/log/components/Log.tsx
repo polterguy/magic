@@ -1,4 +1,4 @@
-import { countLog, listLog, LogItem } from '@core/api';
+import { countLog } from '@core/api';
 import { showError } from '@core/errors';
 import { useDebounced } from '@shared/hooks/usePagedList';
 import SearchInput from '@shared/ui/SearchInput';
@@ -6,6 +6,7 @@ import { TableSkeleton } from '@shared/ui/Skeleton';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { listLog, LogItem } from '../lib/api';
 import LogRow from './LogRow';
 
 const PAGE_SIZE = 20;

@@ -5,7 +5,7 @@
  * arguments come from the file, so nothing else is generated.
  */
 
-import { availableWorkflows, mlSnippetCreate } from '@core/api';
+import { mlSnippetCreate } from '@core/api';
 import { errorMessage, showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import Banner from '@shared/ui/Banner';
@@ -13,6 +13,8 @@ import { Modal } from '@shared/ui/Dialogs';
 import SearchInput from '@shared/ui/SearchInput';
 import { ListSkeleton } from '@shared/ui/Skeleton';
 import { useEffect, useState } from 'react';
+
+import { availableWorkflows } from '../lib/api';
 
 type Workflow = Awaited<ReturnType<typeof availableWorkflows>>[number];
 

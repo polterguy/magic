@@ -1,4 +1,4 @@
-import { JsonValue } from '@core/api';
+import { JsonValue } from './api';
 
 /*
  * The settings dialogs read and patch the editor's JSON text. Anything in it

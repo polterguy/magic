@@ -6,6 +6,9 @@ import { paletteEntries } from '../lib/palette';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 describe('files palette source', () => {
   it('opens module and configuration files in the Hyper IDE', async () => {

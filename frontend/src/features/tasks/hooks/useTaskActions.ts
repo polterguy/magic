@@ -1,8 +1,10 @@
-import { deleteTask, executeTask, Task } from '@core/api';
+import { executeTask, Task } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import type { PagedList } from '@shared/hooks/usePagedList';
+
+import { deleteTask } from '../lib/api';
 
 // Running and deleting tasks from the list, each confirmed first.
 export function useTaskActions(list: PagedList<Task>, setWaiting: (waiting: boolean) => void) {

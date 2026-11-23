@@ -10,8 +10,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage, TEST_BACKEND } from '../../../test/renderPage';
 import Dashboard from '../components/Dashboard';
+import * as dashboardApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('@shared/ui/CodeEditor', async () => ({
@@ -24,8 +28,8 @@ beforeEach(() => {
   sessionStorage.clear();
   // Seen already, so the guided tour does not cover the page.
   localStorage.setItem('magic2.tourSeen.' + TEST_BACKEND.url, '1');
-  vi.mocked(api.countEndpoints).mockResolvedValue({ count: 120 });
-  vi.mocked(api.countPublicEndpoints).mockResolvedValue({ count: 3 });
+  vi.mocked(dashboardApi.countEndpoints).mockResolvedValue({ count: 120 });
+  vi.mocked(dashboardApi.countPublicEndpoints).mockResolvedValue({ count: 3 });
   vi.mocked(api.countUsers).mockResolvedValue({ count: 7 });
   vi.mocked(api.countTasks).mockResolvedValue({ count: 2 });
   vi.mocked(api.countLog).mockResolvedValue({ count: 456 });

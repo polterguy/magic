@@ -10,8 +10,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
 import Tasks from '../components/Tasks';
+import * as tasksApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -28,7 +32,7 @@ beforeEach(() => {
   ]);
   vi.mocked(api.countTasks).mockResolvedValue({ count: 2 });
   vi.mocked(api.executeTask).mockResolvedValue({} as never);
-  vi.mocked(api.deleteTask).mockResolvedValue({} as never);
+  vi.mocked(tasksApi.deleteTask).mockResolvedValue({} as never);
 });
 
 describe('Tasks', () => {
@@ -73,6 +77,6 @@ describe('Tasks', () => {
       within(screen.getByRole('dialog')).getByRole('button', { name: 'Delete' }),
     );
 
-    expect(api.deleteTask).toHaveBeenCalledWith('nightly-cleanup');
+    expect(tasksApi.deleteTask).toHaveBeenCalledWith('nightly-cleanup');
   });
 });

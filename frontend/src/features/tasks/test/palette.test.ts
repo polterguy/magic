@@ -6,6 +6,9 @@ import { paletteEntries } from '../lib/palette';
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
+vi.mock('../lib/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
 
 describe('tasks palette source', () => {
   it('opens a task in its editor, filtered to it, with its description as the hint', async () => {

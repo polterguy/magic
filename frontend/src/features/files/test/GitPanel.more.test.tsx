@@ -11,8 +11,12 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 
 import { renderPage } from '../../../test/renderPage';
 import GitPanel from '../components/GitPanel';
+import * as filesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -23,7 +27,7 @@ let onClose: Mock<() => void>;
 let onChanged: Mock<() => void>;
 
 function status(...lines: string[]) {
-  vi.mocked(api.gitStatus).mockResolvedValue(lines);
+  vi.mocked(filesApi.gitStatus).mockResolvedValue(lines);
 }
 
 beforeEach(() => {
@@ -32,8 +36,8 @@ beforeEach(() => {
   onClose = vi.fn<() => void>();
   onChanged = vi.fn<() => void>();
   status('## main...origin/main', ' M src/a.hl');
-  vi.mocked(api.gitBranches).mockResolvedValue(['main', 'dev']);
-  vi.mocked(api.gitLog).mockResolvedValue('');
+  vi.mocked(filesApi.gitBranches).mockResolvedValue(['main', 'dev']);
+  vi.mocked(filesApi.gitLog).mockResolvedValue('');
   vi.mocked(api.listFiles).mockResolvedValue([]);
   vi.mocked(api.listFolders).mockResolvedValue([]);
 });
@@ -73,7 +77,7 @@ describe('GitPanel merge conflicts', () => {
     expect(screen.getByText(/Abandon the merge/)).toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('button', { name: 'Abort merge' }).at(-1)!);
     await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
-    expect(api.gitMergeAbort).toHaveBeenCalledWith(PATH);
+    expect(filesApi.gitMergeAbort).toHaveBeenCalledWith(PATH);
     expect(toasts.at(-1)).toMatchObject({ text: 'Merge aborted' });
   });
 
@@ -81,16 +85,16 @@ describe('GitPanel merge conflicts', () => {
     await open();
     await userEvent.click(button('Abort merge'));
     await userEvent.click(button('Cancel'));
-    expect(api.gitMergeAbort).not.toHaveBeenCalled();
+    expect(filesApi.gitMergeAbort).not.toHaveBeenCalled();
   });
 });
 
 describe('GitPanel history', () => {
   it('shows the latest commits and hides them again', async () => {
-    vi.mocked(api.gitLog).mockResolvedValue('\tabc123\tAnn\t2 days ago\tFix\tthe thing\n\n');
+    vi.mocked(filesApi.gitLog).mockResolvedValue('\tabc123\tAnn\t2 days ago\tFix\tthe thing\n\n');
     await open();
     await userEvent.click(button('History'));
-    expect(api.gitLog).toHaveBeenCalledWith(PATH, undefined);
+    expect(filesApi.gitLog).toHaveBeenCalledWith(PATH, undefined);
     expect(screen.getByText('Latest commits')).toBeInTheDocument();
     expect(document.querySelector('.git-change-line')).toHaveTextContent(
       'abc123 Fix the thing — Ann, 2 days ago',
@@ -108,10 +112,12 @@ describe('GitPanel history', () => {
 
   it('lists only what differs from the remote when out of sync', async () => {
     status('## main...origin/main [ahead 1, behind 2]', ' M a.hl');
-    vi.mocked(api.gitLog).mockResolvedValue('<\th1\tAnn\tnow\tmine\n>\th2\tBob\tlater\ttheirs');
+    vi.mocked(filesApi.gitLog).mockResolvedValue(
+      '<\th1\tAnn\tnow\tmine\n>\th2\tBob\tlater\ttheirs',
+    );
     await open();
     await userEvent.click(button('History'));
-    expect(api.gitLog).toHaveBeenCalledWith(PATH, 'HEAD...@{u}');
+    expect(filesApi.gitLog).toHaveBeenCalledWith(PATH, 'HEAD...@{u}');
     expect(
       screen.getByText('Not in sync with the remote — < only here, > only on the remote'),
     ).toBeInTheDocument();
@@ -123,18 +129,18 @@ describe('GitPanel history', () => {
     status('## main...origin/main [behind 1]', ' M a.hl');
     await open();
     await userEvent.click(button('History'));
-    expect(api.gitLog).toHaveBeenCalledWith(PATH, 'HEAD...@{u}');
+    expect(filesApi.gitLog).toHaveBeenCalledWith(PATH, 'HEAD...@{u}');
   });
 
   it('shows the latest commits for a branch in sync with its remote', async () => {
     status('## main...origin/main', ' M a.hl');
     await open();
     await userEvent.click(button('History'));
-    expect(api.gitLog).toHaveBeenCalledWith(PATH, undefined);
+    expect(filesApi.gitLog).toHaveBeenCalledWith(PATH, undefined);
   });
 
   it('reports a history that cannot be read', async () => {
-    vi.mocked(api.gitLog).mockRejectedValue(new Error('no log'));
+    vi.mocked(filesApi.gitLog).mockRejectedValue(new Error('no log'));
     await open();
     await userEvent.click(button('History'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ isError: true }));
@@ -146,7 +152,7 @@ describe('GitPanel history', () => {
     await userEvent.click(button('History'));
     await screen.findByText('Latest commits');
     await userEvent.click(button('Fetch'));
-    await waitFor(() => expect(api.gitStatus).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(filesApi.gitStatus).toHaveBeenCalledTimes(2));
     await waitFor(() => expect(screen.queryByText('Latest commits')).toBeNull());
   });
 });
@@ -158,7 +164,7 @@ describe('GitPanel resets', () => {
     expect(screen.getByText(/Discard all uncommitted changes to src\/a.hl/)).toBeInTheDocument();
     await userEvent.click(button('Reset'));
     await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
-    expect(api.gitRestore).toHaveBeenCalledWith(PATH, 'src/a.hl');
+    expect(filesApi.gitRestore).toHaveBeenCalledWith(PATH, 'src/a.hl');
     expect(toasts.at(-1)).toMatchObject({ text: 'Reset src/a.hl to HEAD' });
   });
 
@@ -166,7 +172,7 @@ describe('GitPanel resets', () => {
     await open();
     await userEvent.click(screen.getByTitle('Reset to HEAD'));
     await userEvent.click(button('Cancel'));
-    expect(api.gitRestore).not.toHaveBeenCalled();
+    expect(filesApi.gitRestore).not.toHaveBeenCalled();
   });
 
   it('resets the whole repository after confirmation', async () => {
@@ -175,7 +181,7 @@ describe('GitPanel resets', () => {
     expect(screen.getByText(/delete all untracked files/)).toBeInTheDocument();
     await userEvent.click(button('Reset everything'));
     await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
-    expect(api.gitRestore).toHaveBeenCalledWith(PATH);
+    expect(filesApi.gitRestore).toHaveBeenCalledWith(PATH);
     expect(toasts.at(-1)).toMatchObject({ text: 'Repository reset to HEAD' });
   });
 
@@ -183,7 +189,7 @@ describe('GitPanel resets', () => {
     await open();
     await userEvent.click(button('Reset to HEAD…'));
     await userEvent.click(button('Cancel'));
-    expect(api.gitRestore).not.toHaveBeenCalled();
+    expect(filesApi.gitRestore).not.toHaveBeenCalled();
   });
 });
 
@@ -198,7 +204,7 @@ describe('GitPanel busy state and closing', () => {
 
   it('shows a spinner and ignores closing while an operation runs', async () => {
     const gate = deferred();
-    vi.mocked(api.gitFetch).mockReturnValue(gate.promise);
+    vi.mocked(filesApi.gitFetch).mockReturnValue(gate.promise);
     await open();
     await userEvent.click(button('Fetch'));
     expect(await screen.findByText('Running Git operation')).toBeInTheDocument();
@@ -216,7 +222,7 @@ describe('GitPanel busy state and closing', () => {
 
   it('shows only the spinner while the status loads', async () => {
     const gate = deferred();
-    vi.mocked(api.gitStatus).mockReturnValue(gate.promise.then(() => ['## main']));
+    vi.mocked(filesApi.gitStatus).mockReturnValue(gate.promise.then(() => ['## main']));
     renderPage(<GitPanel path={PATH} onClose={onClose} onChanged={onChanged} />);
     expect(document.querySelector('.spinner')).not.toBeNull();
     expect(screen.queryByText('Running Git operation')).toBeNull();
@@ -228,7 +234,7 @@ describe('GitPanel busy state and closing', () => {
 
 describe('GitPanel folder that is not a repository', () => {
   beforeEach(() => {
-    vi.mocked(api.gitStatus).mockRejectedValue(new Error('not a repository'));
+    vi.mocked(filesApi.gitStatus).mockRejectedValue(new Error('not a repository'));
   });
 
   it('offers to initialize, and enables cloning in an empty folder', async () => {
@@ -265,11 +271,11 @@ describe('GitPanel folder that is not a repository', () => {
 
   it('initializes a repository and tells the owner', async () => {
     await open();
-    vi.mocked(api.gitStatus).mockResolvedValue(['## No commits yet on main']);
-    vi.mocked(api.gitBranches).mockResolvedValue([]);
+    vi.mocked(filesApi.gitStatus).mockResolvedValue(['## No commits yet on main']);
+    vi.mocked(filesApi.gitBranches).mockResolvedValue([]);
     await userEvent.click(button('Initialize repository'));
     await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
-    expect(api.gitInit).toHaveBeenCalledWith(PATH);
+    expect(filesApi.gitInit).toHaveBeenCalledWith(PATH);
     expect(toasts.at(-1)).toMatchObject({ text: 'Repository initialized' });
     expect(await screen.findByRole('button', { name: 'Fetch' })).toBeDisabled();
   });
@@ -280,7 +286,7 @@ describe('GitPanel folder that is not a repository', () => {
     await userEvent.type(screen.getByLabelText('HTTPS repository URL'), 'https://git.test/r.git');
     await userEvent.click(button('OK'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ text: 'Repository cloned' }));
-    expect(api.gitClone).toHaveBeenCalledWith(PATH, 'https://git.test/r.git');
+    expect(filesApi.gitClone).toHaveBeenCalledWith(PATH, 'https://git.test/r.git');
     expect(onChanged).toHaveBeenCalledTimes(1);
   });
 
@@ -288,11 +294,11 @@ describe('GitPanel folder that is not a repository', () => {
     await open();
     await userEvent.click(button('Clone into folder'));
     await userEvent.click(button('Cancel'));
-    expect(api.gitClone).not.toHaveBeenCalled();
+    expect(filesApi.gitClone).not.toHaveBeenCalled();
   });
 
   it('shows the error of a failed initialization and stays on the same screen', async () => {
-    vi.mocked(api.gitInit).mockRejectedValue(new Error('read only'));
+    vi.mocked(filesApi.gitInit).mockRejectedValue(new Error('read only'));
     await open();
     await userEvent.click(button('Initialize repository'));
     await waitFor(() => expect(toasts.at(-1)).toMatchObject({ isError: true }));

@@ -4,7 +4,6 @@
  * changing tag, head fields, adding text, dropping blocks (with widget assets and the media
  * picker) and applying a Machine rewrite.
  */
-import * as api from '@core/api';
 import { setToastListener, type Toast } from '@core/toast';
 import { act, renderHook } from '@testing-library/react';
 import { useState } from 'react';
@@ -14,13 +13,14 @@ import { useDocumentState } from '../hooks/useDocumentState';
 import { useElementEdits } from '../hooks/useElementEdits';
 import { useStylesheetState } from '../hooks/useStylesheetState';
 import { useUndoHistory } from '../hooks/useUndoHistory';
+import * as designerApi from '../lib/api';
 import type { DropSpot } from '../lib/dropTarget';
 import type { MediaKind } from '../lib/mediaKinds';
 import type { Home } from '../lib/metaTags';
 import type { Block } from '../lib/palette';
 
-vi.mock('@core/api', async importOriginal => ({
-  ...(await importOriginal<typeof import('@core/api')>()),
+vi.mock('../lib/api', async importOriginal => ({
+  ...(await importOriginal<typeof import('../lib/api')>()),
   ensureWidgetAssets: vi.fn(),
 }));
 
@@ -39,7 +39,7 @@ let toasts: Toast[];
 beforeEach(() => {
   toasts = [];
   setToastListener(t => toasts.push(t));
-  vi.mocked(api.ensureWidgetAssets).mockResolvedValue(undefined as never);
+  vi.mocked(designerApi.ensureWidgetAssets).mockResolvedValue(undefined as never);
 });
 
 afterEach(() => {
@@ -291,7 +291,7 @@ describe('useElementEdits insert and rewrite', () => {
     act(() => rig.result.current.edits.insert(block('<section id="new">N</section>'), spot));
     expect(by('box').firstElementChild!.id).toBe('new');
     expect(rig.result.current.documentState.selected).toBe(by('new'));
-    expect(api.ensureWidgetAssets).not.toHaveBeenCalled();
+    expect(designerApi.ensureWidgetAssets).not.toHaveBeenCalled();
   });
 
   it('insert of nothing leaves the page alone', () => {
@@ -316,13 +316,13 @@ describe('useElementEdits insert and rewrite', () => {
     });
     act(() => rig.result.current.edits.insert(widget, spot));
     expect(doc.querySelectorAll('script[src^="/assets/magic-widgets.js"]')).toHaveLength(1);
-    expect(api.ensureWidgetAssets).toHaveBeenCalledTimes(1);
+    expect(designerApi.ensureWidgetAssets).toHaveBeenCalledTimes(1);
     act(() => rig.result.current.edits.insert(widget, spot));
-    expect(api.ensureWidgetAssets).toHaveBeenCalledTimes(1);
+    expect(designerApi.ensureWidgetAssets).toHaveBeenCalledTimes(1);
   });
 
   it('insert surfaces a failure to install the widget assets', async () => {
-    vi.mocked(api.ensureWidgetAssets).mockRejectedValue(new Error('no disk'));
+    vi.mocked(designerApi.ensureWidgetAssets).mockRejectedValue(new Error('no disk'));
     const { rig, by } = setup();
     const spot = spotAt(by('box'), null);
     const widget = block('<magic-grid></magic-grid>', {

@@ -11,8 +11,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
 import Plugins from '../components/Plugins';
+import * as pluginsApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -23,7 +27,9 @@ const SHOP = { name: 'shop', type: 'module', description: 'A small webshop.' };
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(api.availablePlugins).mockResolvedValue([MCP, SITE, SHOP]);
-  vi.mocked(api.installedPlugins).mockResolvedValue([{ name: 'mcp', module_name: 'mcp' }] as never);
+  vi.mocked(pluginsApi.installedPlugins).mockResolvedValue([
+    { name: 'mcp', module_name: 'mcp' },
+  ] as never);
   vi.mocked(api.installPlugin).mockResolvedValue({} as never);
 });
 

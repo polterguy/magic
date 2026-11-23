@@ -1,13 +1,4 @@
-import {
-  addUserExtra,
-  addUserToRole,
-  deleteUserExtra,
-  removeUserFromRole,
-  Role,
-  updateUserExtra,
-  User,
-  UserExtra,
-} from '@core/api';
+import { addUserExtra, deleteUserExtra, Role, updateUserExtra, User, UserExtra } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
@@ -15,6 +6,8 @@ import BusyLabel from '@shared/ui/BusyLabel';
 import { Modal } from '@shared/ui/Dialogs';
 import RoleChips from '@shared/ui/RoleChips';
 import { useState } from 'react';
+
+import { addUserToRole, removeUserFromRole } from '../lib/api';
 
 export default function EditUserDialog(
   props: Readonly<{

@@ -8,16 +8,7 @@
  * and flood every connected AI agent's tool list — so choosing is the point, not a convenience.
  */
 
-import {
-  gibberish,
-  importOpenApi,
-  listRoles,
-  loadConfig,
-  OpenApiOperation,
-  OpenApiSpec,
-  parseOpenApi,
-  saveConfig,
-} from '@core/api';
+import { gibberish, listRoles, loadConfig, saveConfig } from '@core/api';
 import { withoutTrailingSlashes } from '@core/backend';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
@@ -30,6 +21,8 @@ import SearchInput from '@shared/ui/SearchInput';
 import Select from '@shared/ui/Select';
 import SocketFeedback from '@shared/ui/SocketFeedback';
 import { Fragment, useEffect, useState } from 'react';
+
+import { importOpenApi, OpenApiOperation, OpenApiSpec, parseOpenApi } from '../lib/api';
 
 // Schemes we can generate. OAuth2 needs a token exchange, which this does not do.
 const SCHEMES = [

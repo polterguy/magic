@@ -1,7 +1,6 @@
 import {
   availablePlugins,
   BazarApp,
-  installedPlugins,
   installModule,
   installPlugin,
   moduleNameFromZip,
@@ -16,6 +15,8 @@ import { CardGridSkeleton } from '@shared/ui/Skeleton';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { useEffect, useMemo, useState } from 'react';
+
+import { installedPlugins } from '../lib/api';
 
 /*
  * Descriptions come from the Bazar's manifests, which are markdown, so they

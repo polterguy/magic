@@ -12,8 +12,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage, TEST_BACKEND } from '../../../test/renderPage';
 import Files from '../components/Files';
+import * as filesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('@shared/ui/CodeEditor', async () => ({
@@ -27,7 +31,7 @@ beforeEach(() => {
   localStorage.clear();
   toasts = [];
   setToastListener(toast => toasts.push(toast));
-  vi.mocked(api.listFoldersRecursively).mockResolvedValue(['/modules/', '/modules/shop/']);
+  vi.mocked(filesApi.listFoldersRecursively).mockResolvedValue(['/modules/', '/modules/shop/']);
   vi.mocked(api.listFilesRecursively).mockResolvedValue([
     '/modules/shop/products.get.hl',
     '/readme.md',

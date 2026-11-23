@@ -12,8 +12,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useExecution } from '../hooks/useExecution';
 import type { OpenTabs } from '../hooks/useOpenTabs';
+import * as filesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -65,17 +69,17 @@ describe('execute', () => {
     const { result } = setup({ selectedFile: '/scripts/readme.md' });
     await act(() => result.current.execute());
     expect(api.getHyperlambdaArguments).not.toHaveBeenCalled();
-    expect(api.evaluateWithArgs).not.toHaveBeenCalled();
+    expect(filesApi.evaluateWithArgs).not.toHaveBeenCalled();
   });
 
   it('evaluates the editor content directly when it takes no arguments', async () => {
     vi.mocked(api.getHyperlambdaArguments).mockResolvedValue({});
-    vi.mocked(api.evaluateWithArgs).mockResolvedValue({ result: 'ok' } as never);
+    vi.mocked(filesApi.evaluateWithArgs).mockResolvedValue({ result: 'ok' } as never);
     const { result, setWaiting, dialog } = setup({ content: 'return:x' });
     await act(() => result.current.execute());
     expect(api.getHyperlambdaArguments).toHaveBeenCalledWith('return:x');
     expect(dialog.form).not.toHaveBeenCalled();
-    expect(api.evaluateWithArgs).toHaveBeenCalledWith('return:x', null);
+    expect(filesApi.evaluateWithArgs).toHaveBeenCalledWith('return:x', null);
     expect(result.current.executeResult).toEqual({ result: 'ok' });
     expect(result.current.resultWasHttp).toBe(false);
     expect(setWaiting).toHaveBeenLastCalledWith(false);
@@ -85,7 +89,7 @@ describe('execute', () => {
     vi.mocked(api.getHyperlambdaArguments).mockResolvedValue(undefined as never);
     const { result } = setup();
     await act(() => result.current.execute());
-    expect(api.evaluateWithArgs).toHaveBeenCalledWith('log.info:hi', null);
+    expect(filesApi.evaluateWithArgs).toHaveBeenCalledWith('log.info:hi', null);
   });
 
   it('runs only the selected code when something is selected', async () => {
@@ -94,7 +98,7 @@ describe('execute', () => {
     result.current.editorRef.current = selectionOf('just this');
     await act(() => result.current.execute());
     expect(api.getHyperlambdaArguments).toHaveBeenCalledWith('just this');
-    expect(api.evaluateWithArgs).toHaveBeenCalledWith('just this', null);
+    expect(filesApi.evaluateWithArgs).toHaveBeenCalledWith('just this', null);
   });
 
   it('asks for the arguments and converts them to their declared types', async () => {
@@ -121,7 +125,7 @@ describe('execute', () => {
         ],
       }),
     );
-    expect(api.evaluateWithArgs).toHaveBeenCalledWith('log.info:hi', {
+    expect(filesApi.evaluateWithArgs).toHaveBeenCalledWith('log.info:hi', {
       count: 5,
       active: true,
       label: 'hi',
@@ -135,13 +139,13 @@ describe('execute', () => {
     const { result, dialog, setWaiting } = setup();
     dialog.form.mockResolvedValue(null);
     await act(() => result.current.execute());
-    expect(api.evaluateWithArgs).not.toHaveBeenCalled();
+    expect(filesApi.evaluateWithArgs).not.toHaveBeenCalled();
     expect(setWaiting).toHaveBeenLastCalledWith(false);
   });
 
   it('reports an evaluation failure', async () => {
     vi.mocked(api.getHyperlambdaArguments).mockResolvedValue({});
-    vi.mocked(api.evaluateWithArgs).mockRejectedValue(new Error('syntax error'));
+    vi.mocked(filesApi.evaluateWithArgs).mockRejectedValue(new Error('syntax error'));
     const { result } = setup();
     await act(() => result.current.execute());
     expect(result.current.executeResult).toBeNull();
@@ -161,7 +165,7 @@ describe('execute on an endpoint file', () => {
     const { result, dialog } = setup({ selectedFile: ENDPOINT_FILE });
     await act(() => result.current.execute());
     expect(dialog.confirm).not.toHaveBeenCalled();
-    expect(api.evaluateWithArgs).not.toHaveBeenCalled();
+    expect(filesApi.evaluateWithArgs).not.toHaveBeenCalled();
     expect(result.current.invokeTarget).toEqual({ ...meta, verb: 'GET' });
   });
 

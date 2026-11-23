@@ -159,13 +159,6 @@ describe('optional arguments left out', () => {
     expect(last().url).toContain('?filter=%25x%25');
   });
 
-  it('scheduleTask sends due for a one-off and repeats for a recurring schedule', async () => {
-    await api.scheduleTask('t1', '2030-01-01T00:00:00');
-    expect(last().body).toEqual({ id: 't1', due: '2030-01-01T00:00:00' });
-    await api.scheduleTask('t1', undefined, '5.seconds');
-    expect(last().body).toEqual({ id: 't1', repeats: '5.seconds' });
-  });
-
   it('countLog keeps a query that already has a wildcard and adds one otherwise', async () => {
     await api.countLog();
     expect(last().url).toBe(BASE + '/magic/system/log/count');
@@ -173,73 +166,6 @@ describe('optional arguments left out', () => {
     expect(last().url).toBe(BASE + '/magic/system/log/count?query=a%25b');
     await api.countLog('ab');
     expect(last().url).toBe(BASE + '/magic/system/log/count?query=ab%25');
-  });
-
-  it('the git helpers send the optional file, branch and range only when given', async () => {
-    await api.gitRestore('/repo');
-    expect(last().body).toEqual({ path: '/repo' });
-    await api.gitRestore('/repo', 'a.hl');
-    expect(last().body).toEqual({ path: '/repo', file: 'a.hl' });
-    await api.gitPush('/repo');
-    expect(last().body).toEqual({ path: '/repo' });
-    await api.gitPush('/repo', 'main');
-    expect(last().body).toEqual({ path: '/repo', branch: 'main' });
-    await api.gitPull('/repo');
-    expect(last().body).toEqual({ path: '/repo', merge: true });
-    await api.gitPull('/repo', 'main');
-    expect(last().body).toEqual({ path: '/repo', branch: 'main', merge: true });
-    await api.gitLog('/repo');
-    expect(last().url).toBe(BASE + '/magic/system/git/log?path=%2Frepo');
-    await api.gitLog('/repo', 'HEAD...@{u}');
-    expect(last().url).toContain('&range=HEAD...%40%7Bu%7D');
-  });
-});
-
-describe('uploads', () => {
-  const file = new File(['a,b'], 'data.csv');
-
-  it('uploadUrlList says whether to vectorize', async () => {
-    await api.uploadUrlList('t', file, 'ch', false);
-    expect(form().get('vectorize')).toBe('false');
-    await api.uploadUrlList('t', file, 'ch', true);
-    expect(form().get('vectorize')).toBe('true');
-  });
-
-  it('uploadTrainingFile falls back to the default prompt and completion fields', async () => {
-    await api.uploadTrainingFile('t', file);
-    expect(form().get('prompt')).toBe('prompt');
-    expect(form().get('completion')).toBe('completion');
-    expect(form().has('forceAsText')).toBe(false);
-    expect(form().has('massagePrompt')).toBe(false);
-  });
-
-  it('uploadTrainingFile passes named fields, text mode and summarising', async () => {
-    await api.uploadTrainingFile('t', file, {
-      promptField: 'q',
-      completionField: 'a',
-      forceAsText: true,
-      summarize: true,
-    });
-    expect(form().get('prompt')).toBe('q');
-    expect(form().get('completion')).toBe('a');
-    expect(form().get('forceAsText')).toBe('true');
-    expect(form().get('massagePrompt')).toBeTruthy();
-  });
-
-  it('uploadTrainingFile sends the PDF options only for a PDF', async () => {
-    const options = { massage: 'tidy', preservePages: true, overwrite: true };
-    await api.uploadTrainingFile('t', file, options);
-    expect(form().has('massage')).toBe(false);
-    expect(form().has('preservePages')).toBe(false);
-    expect(form().has('overwrite')).toBe(false);
-    await api.uploadTrainingFile('t', new File(['x'], 'Doc.PDF'), options);
-    expect(form().get('massage')).toBe('tidy');
-    expect(form().get('preservePages')).toBe('true');
-    expect(form().get('overwrite')).toBe('true');
-    await api.uploadTrainingFile('t', new File(['x'], 'doc.pdf'));
-    expect(form().has('massage')).toBe(false);
-    expect(form().has('preservePages')).toBe(false);
-    expect(form().has('overwrite')).toBe(false);
   });
 });
 

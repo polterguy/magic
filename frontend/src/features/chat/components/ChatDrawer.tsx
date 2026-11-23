@@ -10,15 +10,7 @@
  * independently — one chunk may carry several of them at once.
  */
 
-import {
-  backendInfo,
-  ChatChunk,
-  chatDownloadUrl,
-  chatPrompt,
-  gibberish,
-  killExecution,
-  MAX_CHAT_FILES,
-} from '@core/api';
+import { backendInfo, gibberish } from '@core/api';
 import { notifyChatOpsDone } from '@core/chatOps';
 import { showError } from '@core/errors';
 import { createSocket } from '@core/socket';
@@ -38,6 +30,7 @@ import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
+import { ChatChunk, chatDownloadUrl, chatPrompt, killExecution, MAX_CHAT_FILES } from '../lib/api';
 import { type AttachMode, backendIsLocal, defaultAttachMode } from '../lib/chatUpload';
 import ImageLightbox from './ImageLightbox';
 import WidgetDialog from './WidgetDialog';

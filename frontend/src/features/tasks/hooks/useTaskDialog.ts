@@ -1,10 +1,11 @@
-import { createTask, Task, updateTask } from '@core/api';
+import { Task } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import { useEditToken } from '@shared/lib/editor';
 import { useState } from 'react';
 
+import { createTask, updateTask } from '../lib/api';
 import { taskIsDirty } from '../lib/constants';
 
 // The task editor's fields, its unsaved-changes guard, and saving.

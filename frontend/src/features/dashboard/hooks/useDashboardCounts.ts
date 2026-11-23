@@ -1,5 +1,7 @@
-import { countEndpoints, countLog, countPublicEndpoints, countTasks, countUsers } from '@core/api';
+import { countLog, countTasks, countUsers } from '@core/api';
 import { useEffect, useState } from 'react';
+
+import { countEndpoints, countPublicEndpoints } from '../lib/api';
 
 // The numbers on the dashboard's KPI cards, null until each one answers.
 export function useDashboardCounts() {

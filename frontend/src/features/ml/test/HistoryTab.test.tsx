@@ -11,8 +11,12 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import HistoryTab from '../components/HistoryTab';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -21,8 +25,8 @@ let toasts: Toast[];
 beforeEach(() => {
   toasts = [];
   setToastListener(t => toasts.push(t));
-  vi.mocked(api.mlRequests).mockResolvedValue([]);
-  vi.mocked(api.mlRequestsCount).mockResolvedValue({ count: 0 });
+  vi.mocked(mlApi.mlRequests).mockResolvedValue([]);
+  vi.mocked(mlApi.mlRequestsCount).mockResolvedValue({ count: 0 });
 });
 
 afterEach(() => {
@@ -32,7 +36,7 @@ afterEach(() => {
 
 const TYPES = [{ type: 'support' }, { type: 'sales' }];
 
-function request(id: number, prompt: string, completion = 'answer ' + id): api.MlRequest {
+function request(id: number, prompt: string, completion = 'answer ' + id): mlApi.MlRequest {
   return {
     id,
     created: '2026-03-05T09:07:00Z',
@@ -49,13 +53,13 @@ function renderTab(types: api.MlType[] = TYPES) {
 
 describe('HistoryTab loading', () => {
   it('loads the first page of the first model', async () => {
-    vi.mocked(api.mlRequests).mockResolvedValue([request(1, 'hello there')]);
-    vi.mocked(api.mlRequestsCount).mockResolvedValue({ count: 1 });
+    vi.mocked(mlApi.mlRequests).mockResolvedValue([request(1, 'hello there')]);
+    vi.mocked(mlApi.mlRequestsCount).mockResolvedValue({ count: 1 });
     renderTab();
 
     expect(await screen.findByText('hello there')).toBeInTheDocument();
-    expect(api.mlRequests).toHaveBeenCalledWith('support', 0, 15);
-    expect(api.mlRequestsCount).toHaveBeenCalledWith('support');
+    expect(mlApi.mlRequests).toHaveBeenCalledWith('support', 0, 15);
+    expect(mlApi.mlRequestsCount).toHaveBeenCalledWith('support');
     expect(screen.getByRole('button', { name: 'support' })).toBeInTheDocument();
   });
 
@@ -66,7 +70,7 @@ describe('HistoryTab loading', () => {
   });
 
   it('treats a missing row list as empty', async () => {
-    vi.mocked(api.mlRequests).mockResolvedValue(undefined as unknown as api.MlRequest[]);
+    vi.mocked(mlApi.mlRequests).mockResolvedValue(undefined as unknown as mlApi.MlRequest[]);
     renderTab();
     expect(await screen.findByText('No requests yet.')).toBeInTheDocument();
   });
@@ -74,12 +78,12 @@ describe('HistoryTab loading', () => {
   it('asks the backend for nothing when there are no models', async () => {
     renderTab([]);
     expect(await screen.findByText('No requests yet.')).toBeInTheDocument();
-    expect(api.mlRequests).not.toHaveBeenCalled();
-    expect(api.mlRequestsCount).not.toHaveBeenCalled();
+    expect(mlApi.mlRequests).not.toHaveBeenCalled();
+    expect(mlApi.mlRequestsCount).not.toHaveBeenCalled();
   });
 
   it('shows a toast when loading fails', async () => {
-    vi.mocked(api.mlRequests).mockRejectedValue(new Error('backend down'));
+    vi.mocked(mlApi.mlRequests).mockRejectedValue(new Error('backend down'));
     renderTab();
     await waitFor(() =>
       expect(toasts.at(-1)).toMatchObject({ text: 'backend down', isError: true }),
@@ -87,7 +91,7 @@ describe('HistoryTab loading', () => {
   });
 
   it('reloads for another model when it is picked', async () => {
-    vi.mocked(api.mlRequests).mockImplementation(type =>
+    vi.mocked(mlApi.mlRequests).mockImplementation(type =>
       Promise.resolve([
         request(type === 'sales' ? 2 : 1, type === 'sales' ? 'sales question' : 'support question'),
       ]),
@@ -99,25 +103,25 @@ describe('HistoryTab loading', () => {
     await userEvent.click(screen.getByRole('option', { name: 'sales' }));
 
     expect(await screen.findByText('sales question')).toBeInTheDocument();
-    expect(api.mlRequests).toHaveBeenLastCalledWith('sales', 0, 15);
+    expect(mlApi.mlRequests).toHaveBeenLastCalledWith('sales', 0, 15);
     expect(screen.queryByText('support question')).not.toBeInTheDocument();
   });
 });
 
 describe('HistoryTab paging', () => {
   it('shows no pagination for a single page', async () => {
-    vi.mocked(api.mlRequests).mockResolvedValue([request(1, 'one')]);
-    vi.mocked(api.mlRequestsCount).mockResolvedValue({ count: 15 });
+    vi.mocked(mlApi.mlRequests).mockResolvedValue([request(1, 'one')]);
+    vi.mocked(mlApi.mlRequestsCount).mockResolvedValue({ count: 15 });
     renderTab();
     await screen.findByText('one');
     expect(screen.queryByRole('button', { name: /Next/ })).not.toBeInTheDocument();
   });
 
   it('moves between pages, fetching at the right offset', async () => {
-    vi.mocked(api.mlRequests).mockImplementation((_type, offset) =>
+    vi.mocked(mlApi.mlRequests).mockImplementation((_type, offset) =>
       Promise.resolve([request(offset + 1, 'page starting at ' + offset)]),
     );
-    vi.mocked(api.mlRequestsCount).mockResolvedValue({ count: 40 });
+    vi.mocked(mlApi.mlRequestsCount).mockResolvedValue({ count: 40 });
     renderTab();
     expect(await screen.findByText('page starting at 0')).toBeInTheDocument();
     expect(screen.getByText('1 / 3')).toBeInTheDocument();
@@ -125,17 +129,17 @@ describe('HistoryTab paging', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Next ›' }));
     expect(await screen.findByText('page starting at 15')).toBeInTheDocument();
-    expect(api.mlRequests).toHaveBeenLastCalledWith('support', 15, 15);
+    expect(mlApi.mlRequests).toHaveBeenLastCalledWith('support', 15, 15);
 
     await userEvent.click(screen.getByRole('button', { name: '‹ Prev' }));
     expect(await screen.findByText('page starting at 0')).toBeInTheDocument();
   });
 
   it('starts over on the first page when another model is picked', async () => {
-    vi.mocked(api.mlRequests).mockImplementation((type, offset) =>
+    vi.mocked(mlApi.mlRequests).mockImplementation((type, offset) =>
       Promise.resolve([request(offset + 1, type + ' at ' + offset)]),
     );
-    vi.mocked(api.mlRequestsCount).mockResolvedValue({ count: 40 });
+    vi.mocked(mlApi.mlRequestsCount).mockResolvedValue({ count: 40 });
     renderTab();
     await screen.findByText('support at 0');
     await userEvent.click(screen.getByRole('button', { name: 'Next ›' }));
@@ -150,11 +154,11 @@ describe('HistoryTab paging', () => {
 
 describe('HistoryTab rows', () => {
   beforeEach(() => {
-    vi.mocked(api.mlRequests).mockResolvedValue([
+    vi.mocked(mlApi.mlRequests).mockResolvedValue([
       request(1, 'first prompt', 'first completion'),
       request(2, 'second prompt', 'second completion'),
     ]);
-    vi.mocked(api.mlRequestsCount).mockResolvedValue({ count: 2 });
+    vi.mocked(mlApi.mlRequestsCount).mockResolvedValue({ count: 2 });
   });
 
   async function rowFor(prompt: string) {
@@ -212,10 +216,10 @@ describe('HistoryTab rows', () => {
   });
 
   it('renders stored markup as text, never as live HTML', async () => {
-    vi.mocked(api.mlRequests).mockResolvedValue([
+    vi.mocked(mlApi.mlRequests).mockResolvedValue([
       request(1, '<b>bold</b> prompt', '<img src=x onerror=alert(1)>'),
     ]);
-    vi.mocked(api.mlRequestsCount).mockResolvedValue({ count: 1 });
+    vi.mocked(mlApi.mlRequestsCount).mockResolvedValue({ count: 1 });
     renderTab();
     await userEvent.click(await rowFor('<b>bold</b> prompt'));
     expect(screen.getByText('<img src=x onerror=alert(1)>')).toBeInTheDocument();

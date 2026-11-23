@@ -1,6 +1,5 @@
 import {
   backendInfo,
-  createBot,
   modelPriceLabel,
   type OpenAiModel,
   openaiModels,
@@ -16,6 +15,7 @@ import SocketFeedback from '@shared/ui/SocketFeedback';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { createBot } from '../lib/api';
 import { chatbotModelFromProgress, DEFAULT_BOT_MODEL } from '../lib/constants';
 import { ActionCard } from './ActionCards';
 

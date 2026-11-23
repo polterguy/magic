@@ -4,6 +4,15 @@
  * right. A model points at one through its "Initial questionnaire" setting.
  */
 
+import { showError } from '@core/errors';
+import { showToast } from '@core/toast';
+import { useDialog } from '@shared/hooks/useDialog';
+import AiWaiter from '@shared/ui/AiWaiter';
+import BusyLabel from '@shared/ui/BusyLabel';
+import { Modal } from '@shared/ui/Dialogs';
+import Select from '@shared/ui/Select';
+import { useCallback, useEffect, useState } from 'react';
+
 import {
   createQuestion,
   createQuestionnaire,
@@ -15,15 +24,7 @@ import {
   Questionnaire,
   updateQuestion,
   updateQuestionnaire,
-} from '@core/api';
-import { showError } from '@core/errors';
-import { showToast } from '@core/toast';
-import { useDialog } from '@shared/hooks/useDialog';
-import AiWaiter from '@shared/ui/AiWaiter';
-import BusyLabel from '@shared/ui/BusyLabel';
-import { Modal } from '@shared/ui/Dialogs';
-import Select from '@shared/ui/Select';
-import { useCallback, useEffect, useState } from 'react';
+} from '../lib/api';
 
 /*
  * How a questionnaire behaves. "single-shot" asks everything once at the

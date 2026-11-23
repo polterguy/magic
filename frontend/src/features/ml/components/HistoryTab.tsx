@@ -2,12 +2,14 @@
  * History tab — requests towards your models.
  */
 
-import { type MlRequest, mlRequests, mlRequestsCount, type MlType } from '@core/api';
+import { type MlType } from '@core/api';
 import { usePagedList } from '@shared/hooks/usePagedList';
 import Pagination from '@shared/ui/Pagination';
 import Select from '@shared/ui/Select';
 import { TableSkeleton } from '@shared/ui/Skeleton';
 import { useState } from 'react';
+
+import { type MlRequest, mlRequests, mlRequestsCount } from '../lib/api';
 
 export default function HistoryTab(
   props: Readonly<{

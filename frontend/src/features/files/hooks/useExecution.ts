@@ -1,12 +1,6 @@
 import type { EditorView } from '@codemirror/view';
 import type { DebugRecording, Endpoint } from '@core/api';
-import {
-  aiQuery,
-  debugHyperlambda,
-  evaluateWithArgs,
-  getHyperlambdaArguments,
-  listEndpoints,
-} from '@core/api';
+import { aiQuery, debugHyperlambda, getHyperlambdaArguments, listEndpoints } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import type { useDialog } from '@shared/hooks/useDialog';
@@ -14,6 +8,7 @@ import { editorSelection } from '@shared/lib/editor';
 import type { InvokeResult } from '@shared/ui/InvokePanel';
 import { useRef, useState } from 'react';
 
+import { evaluateWithArgs } from '../lib/api';
 import { convertArgument, endpointOf } from '../lib/helpers';
 import type { OpenTabs } from './useOpenTabs';
 

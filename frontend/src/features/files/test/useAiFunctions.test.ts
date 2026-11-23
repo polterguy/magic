@@ -9,8 +9,12 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useAiFunctions } from '../hooks/useAiFunctions';
+import * as filesApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -19,7 +23,9 @@ const toasts: Toast[] = [];
 beforeEach(() => {
   toasts.length = 0;
   setToastListener(toast => toasts.push(toast));
-  vi.mocked(api.getFileDescription).mockImplementation(path => Promise.resolve('about ' + path));
+  vi.mocked(filesApi.getFileDescription).mockImplementation(path =>
+    Promise.resolve('about ' + path),
+  );
   vi.mocked(api.mlSnippetCreate).mockResolvedValue({} as never);
 });
 

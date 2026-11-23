@@ -1,10 +1,11 @@
-import { deleteSchedule, scheduleTask, Task } from '@core/api';
+import { Task } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import type { PagedList } from '@shared/hooks/usePagedList';
 import { useState } from 'react';
 
+import { deleteSchedule, scheduleTask } from '../lib/api';
 import { scheduleLabel } from '../lib/constants';
 
 // Adding schedules to a task through the schedule dialog, and removing them.

@@ -9,8 +9,12 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSearchTab } from '../hooks/useSearchTab';
+import * as generatorApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -26,7 +30,7 @@ beforeEach(() => {
     { type: 'faq' },
   ] as never);
   vi.mocked(api.listRoles).mockResolvedValue([{ name: 'root' }] as never);
-  vi.mocked(api.generateSearchEndpoint).mockResolvedValue({
+  vi.mocked(generatorApi.generateSearchEndpoint).mockResolvedValue({
     hyperlambda: 'hl',
     file: '/modules/m/search.get.hl',
   } as never);
@@ -92,7 +96,7 @@ describe('useSearchTab', () => {
 
     await act(() => result.current.generate());
 
-    expect(api.generateSearchEndpoint).toHaveBeenCalledWith({
+    expect(generatorApi.generateSearchEndpoint).toHaveBeenCalledWith({
       moduleName: 'mod',
       endpointName: 'search',
       verb: 'get',
@@ -117,7 +121,9 @@ describe('useSearchTab', () => {
 
     await act(() => result.current.generate());
 
-    expect(vi.mocked(api.generateSearchEndpoint).mock.calls[0][0].threshold).toBeUndefined();
+    expect(
+      vi.mocked(generatorApi.generateSearchEndpoint).mock.calls[0][0].threshold,
+    ).toBeUndefined();
     expect(result.current.preview).toBe('hl');
     expect(result.current.generated).toEqual({
       path: 'magic/modules/mod/search',
@@ -129,7 +135,7 @@ describe('useSearchTab', () => {
   });
 
   it('reports a failed generation as an error toast', async () => {
-    vi.mocked(api.generateSearchEndpoint).mockRejectedValue(new Error('nope'));
+    vi.mocked(generatorApi.generateSearchEndpoint).mockRejectedValue(new Error('nope'));
     const { result } = renderHook(() => useSearchTab());
 
     await act(() => result.current.generate());

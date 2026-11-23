@@ -13,9 +13,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import RoleRuleCard from '../components/RoleRuleCard';
 import { useSandboxTab } from '../hooks/useSandboxTab';
+import * as generatorApi from '../lib/api';
 import { RoleRule } from '../lib/types';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 vi.mock('@shared/ui/CodeEditor', async () => ({
@@ -159,7 +163,7 @@ describe('capability wizards on a rule', () => {
     vi.mocked(api.listDatabases).mockResolvedValue({
       databases: [{ name: 'crm', tables: [] }],
     });
-    vi.mocked(api.listDynamicSlots).mockResolvedValue(['custom.alpha']);
+    vi.mocked(generatorApi.listDynamicSlots).mockResolvedValue(['custom.alpha']);
     vi.mocked(api.listFilesRecursively).mockResolvedValue([FILE, '/modules/shop/readme.md']);
     vi.mocked(api.listEndpointsDetailed).mockResolvedValue([]);
   }

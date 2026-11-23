@@ -5,7 +5,7 @@
  * parameters.
  */
 
-import { availableWidgets, mlSnippetCreate } from '@core/api';
+import { mlSnippetCreate } from '@core/api';
 import { errorMessage, showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import Banner from '@shared/ui/Banner';
@@ -13,6 +13,8 @@ import { Modal } from '@shared/ui/Dialogs';
 import SearchInput from '@shared/ui/SearchInput';
 import { ListSkeleton } from '@shared/ui/Skeleton';
 import { useEffect, useState } from 'react';
+
+import { availableWidgets } from '../lib/api';
 
 type Widget = Awaited<ReturnType<typeof availableWidgets>>[number];
 

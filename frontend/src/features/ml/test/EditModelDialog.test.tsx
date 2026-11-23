@@ -14,8 +14,12 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import EditModelDialog from '../components/EditModelDialog';
+import * as mlApi from '../lib/api';
 
 vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../lib/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
 
@@ -90,10 +94,10 @@ beforeEach(() => {
   vi.mocked(api.openaiModels).mockResolvedValue(MODELS);
   vi.mocked(api.listRoles).mockResolvedValue([{ name: 'root' }, { name: 'admin' }]);
   vi.mocked(api.openaiSystemMessages).mockResolvedValue(FLAVORS);
-  vi.mocked(api.openaiCompletionSlots).mockResolvedValue({
+  vi.mocked(mlApi.openaiCompletionSlots).mockResolvedValue({
     llms: ['magic.ai.chat', 'magic.ai.other'],
   });
-  vi.mocked(api.listQuestionnaires).mockResolvedValue([
+  vi.mocked(mlApi.listQuestionnaires).mockResolvedValue([
     { name: 'intake', type: 'support' },
     { name: 'survey', type: 'support' },
   ]);
@@ -196,7 +200,7 @@ describe('EditModelDialog creating', () => {
 
     await waitFor(() => expect(onSaved).toHaveBeenCalled());
     expect(api.mlTypeUpdate).not.toHaveBeenCalled();
-    expect(api.mlTypeCreate).toHaveBeenCalledWith({
+    expect(mlApi.mlTypeCreate).toHaveBeenCalledWith({
       type: 'support',
       model: 'gpt-4o',
       max_context_tokens: 2000,
@@ -244,12 +248,12 @@ describe('EditModelDialog creating', () => {
       text: 'Give the model a name, and select an LLM',
       isError: true,
     });
-    expect(api.mlTypeCreate).not.toHaveBeenCalled();
+    expect(mlApi.mlTypeCreate).not.toHaveBeenCalled();
     expect(onSaved).not.toHaveBeenCalled();
   });
 
   it('shows the error and stays open when the save fails', async () => {
-    vi.mocked(api.mlTypeCreate).mockRejectedValueOnce(new Error('duplicate'));
+    vi.mocked(mlApi.mlTypeCreate).mockRejectedValueOnce(new Error('duplicate'));
     const { onSaved } = renderDialog();
     await nameAndModel();
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
@@ -268,8 +272,8 @@ describe('EditModelDialog creating', () => {
     vi.mocked(api.openaiModels).mockRejectedValueOnce(new Error('x'));
     vi.mocked(api.listRoles).mockRejectedValueOnce(new Error('x'));
     vi.mocked(api.openaiSystemMessages).mockRejectedValueOnce(new Error('x'));
-    vi.mocked(api.openaiCompletionSlots).mockRejectedValueOnce(new Error('x'));
-    vi.mocked(api.listQuestionnaires).mockRejectedValueOnce(new Error('x'));
+    vi.mocked(mlApi.openaiCompletionSlots).mockRejectedValueOnce(new Error('x'));
+    vi.mocked(mlApi.listQuestionnaires).mockRejectedValueOnce(new Error('x'));
     renderDialog();
     expect(screen.getByText('New model')).toBeInTheDocument();
     await userEvent.click(screen.getByText('Select model…', { selector: '.select-value' }));
@@ -291,7 +295,7 @@ describe('EditModelDialog editing', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(onSaved).toHaveBeenCalled());
-    expect(api.mlTypeCreate).not.toHaveBeenCalled();
+    expect(mlApi.mlTypeCreate).not.toHaveBeenCalled();
     expect(api.mlTypeUpdate).toHaveBeenCalledWith({
       type: 'support',
       model: 'gpt-4o',
@@ -409,7 +413,7 @@ describe('EditModelDialog editing', () => {
   });
 
   it('accepts the bare list older backends answer completion slots with', async () => {
-    vi.mocked(api.openaiCompletionSlots).mockResolvedValue(['magic.ai.legacy'] as never);
+    vi.mocked(mlApi.openaiCompletionSlots).mockResolvedValue(['magic.ai.legacy'] as never);
     renderDialog({ ...EXISTING, completion_slot: 'magic.ai.legacy' });
     await userEvent.click(screen.getByRole('button', { name: 'Behaviour' }));
     expect(

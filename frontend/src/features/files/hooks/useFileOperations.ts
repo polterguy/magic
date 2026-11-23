@@ -3,10 +3,8 @@ import {
   deleteFile,
   deleteFolder,
   downloadFileRaw,
-  downloadFolderRaw,
   installModule,
   moduleNameFromZip,
-  renamePath,
   saveFile,
   uploadFile,
 } from '@core/api';
@@ -16,6 +14,7 @@ import type { useDialog } from '@shared/hooks/useDialog';
 import { dispositionFilename, downloadBlob } from '@shared/lib/download';
 import type { ChangeEvent } from 'react';
 
+import { downloadFolderRaw, renamePath } from '../lib/api';
 import { PROTECTED_FOLDERS } from '../lib/helpers';
 import { nameOf, parentOf } from '../lib/paths';
 import type { OpenTabs } from './useOpenTabs';

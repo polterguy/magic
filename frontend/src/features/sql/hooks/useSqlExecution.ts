@@ -1,10 +1,10 @@
 import type { EditorView } from '@codemirror/view';
-import { executeSql, type SqlRow } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { editorSelection } from '@shared/lib/editor';
 import { type RefObject, useState } from 'react';
 
+import { executeSql, type SqlRow } from '../lib/api';
 import { countRecords, executionMessage, isGoBatch } from '../lib/results';
 
 /*

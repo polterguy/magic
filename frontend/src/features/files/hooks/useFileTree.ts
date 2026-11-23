@@ -1,9 +1,10 @@
-import { listFilesRecursively, listFoldersRecursively } from '@core/api';
+import { listFilesRecursively } from '@core/api';
 import { showError } from '@core/errors';
 import { useDebounced } from '@shared/hooks/usePagedList';
 import type { Dispatch, SetStateAction } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { listFoldersRecursively } from '../lib/api';
 import type { Workspace } from '../lib/helpers';
 import { parentOf } from '../lib/paths';
 
