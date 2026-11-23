@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import SearchTab from '../SearchTab';
+import SearchTab from '../components/SearchTab';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

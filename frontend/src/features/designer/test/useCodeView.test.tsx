@@ -10,13 +10,13 @@ import { setToastListener, type Toast } from '@core/toast';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { joinCss, splitCss } from '../css';
 import { useCodeDraft } from '../hooks/useCodeDraft';
 import { useCodeView } from '../hooks/useCodeView';
 import { useDocumentState } from '../hooks/useDocumentState';
 import { useStylesheetState } from '../hooks/useStylesheetState';
 import { useUndoHistory } from '../hooks/useUndoHistory';
-import { serializeDocument } from '../html';
+import { joinCss, splitCss } from '../lib/css';
+import { serializeDocument } from '../lib/html';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),

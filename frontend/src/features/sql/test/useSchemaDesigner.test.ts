@@ -9,7 +9,7 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSchemaDesigner } from '../hooks/useSchemaDesigner';
-import type { ColumnPayload } from '../schema';
+import type { ColumnPayload } from '../lib/schema';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

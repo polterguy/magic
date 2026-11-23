@@ -8,7 +8,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import NewPage from '../NewPage';
+import NewPage from '../components/NewPage';
 
 const PAGES = [
   { file: '/etc/www/index.html', url: '/' },

@@ -2,14 +2,14 @@ import type { FeatureManifest } from '@core/features';
 import { LayoutIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
-import { DESIGNER_SHORTCUTS } from './shortcuts';
+import { DESIGNER_SHORTCUTS } from './lib/shortcuts';
 
 const PATH = '/web-designer';
 
 const manifest: FeatureManifest = {
   id: 'designer',
   path: PATH,
-  page: lazy(() => import('./WebDesigner')),
+  page: lazy(() => import('./components/WebDesigner')),
   nav: {
     label: 'Web Designer',
     Icon: LayoutIcon,

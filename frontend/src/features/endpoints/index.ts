@@ -7,7 +7,7 @@ const PATH = '/endpoints';
 const manifest: FeatureManifest = {
   id: 'endpoints',
   path: PATH,
-  page: lazy(() => import('./Endpoints')),
+  page: lazy(() => import('./components/Endpoints')),
   nav: {
     label: 'Endpoints',
     Icon: ExchangeIcon,
@@ -17,7 +17,7 @@ const manifest: FeatureManifest = {
     order: 40,
   },
   roomy: true,
-  palette: { entries: () => import('./palette').then(module => module.paletteEntries(PATH)) },
+  palette: { entries: () => import('./lib/palette').then(module => module.paletteEntries(PATH)) },
 };
 
 export default manifest;

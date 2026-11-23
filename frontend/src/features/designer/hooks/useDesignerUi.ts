@@ -6,10 +6,10 @@
 
 import { useLayoutEffect, useRef, useState } from 'react';
 
-import { VIEWPORTS } from '../layout';
-import type { MediaKind } from '../mediaKinds';
-import type { Home } from '../metaTags';
-import type { Block } from '../palette';
+import { VIEWPORTS } from '../lib/layout';
+import type { MediaKind } from '../lib/mediaKinds';
+import type { Home } from '../lib/metaTags';
+import type { Block } from '../lib/palette';
 
 export function useDesignerUi() {
   const [reveal, setReveal] = useState(false);

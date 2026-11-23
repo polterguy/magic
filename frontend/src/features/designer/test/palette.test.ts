@@ -6,7 +6,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { customBlock, GROUPS } from '../palette';
+import { customBlock, GROUPS } from '../lib/palette';
 
 function pageWith(body: string) {
   const doc = new DOMParser().parseFromString(

@@ -10,7 +10,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import EditorPane from '../EditorPane';
+import EditorPane from '../components/EditorPane';
 import type { Execution } from '../hooks/useExecution';
 import type { FileOperations } from '../hooks/useFileOperations';
 import type { OpenTabs } from '../hooks/useOpenTabs';

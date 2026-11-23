@@ -9,7 +9,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import Quality from '../Quality';
+import Quality from '../components/Quality';
 
 const CLEAN_HEAD =
   '<title>Home</title><meta name="description" content="d"><meta name="viewport" content="width=device-width">';

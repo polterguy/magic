@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import ColumnRow from '../ColumnRow';
-import type { ColumnLock, CrudColumn } from '../types';
+import ColumnRow from '../components/ColumnRow';
+import type { ColumnLock, CrudColumn } from '../lib/types';
 
 function renderRow(column: Partial<CrudColumn>, lock: ColumnLock = { mode: 'none', slot: '' }) {
   const onLock = vi.fn();

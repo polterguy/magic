@@ -7,7 +7,7 @@ const PATH = '/task-manager';
 const manifest: FeatureManifest = {
   id: 'tasks',
   path: PATH,
-  page: lazy(() => import('./Tasks')),
+  page: lazy(() => import('./components/Tasks')),
   nav: {
     label: 'Task Manager',
     Icon: ClockIcon,
@@ -17,7 +17,7 @@ const manifest: FeatureManifest = {
     order: 90,
   },
   roomy: true,
-  palette: { entries: () => import('./palette').then(module => module.paletteEntries(PATH)) },
+  palette: { entries: () => import('./lib/palette').then(module => module.paletteEntries(PATH)) },
 };
 
 export default manifest;

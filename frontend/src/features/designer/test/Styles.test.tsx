@@ -9,8 +9,8 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { Overrides } from '../css';
-import Styles, { INLINE } from '../Styles';
+import Styles, { INLINE } from '../components/Styles';
+import type { Overrides } from '../lib/css';
 
 type Props = React.ComponentProps<typeof Styles>;
 

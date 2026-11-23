@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { CANVAS_SANDBOX, liveSandbox } from '../html';
+import { CANVAS_SANDBOX, liveSandbox } from '../lib/html';
 
 /*
  * The sandboxes are a security boundary, not a preference, and both are one

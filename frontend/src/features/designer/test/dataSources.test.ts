@@ -6,7 +6,7 @@
 import { type EndpointMeta, listEndpointsDetailed } from '@core/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { dataGridSources, loadEndpoints } from '../dataSources';
+import { dataGridSources, loadEndpoints } from '../lib/dataSources';
 
 vi.mock('@core/api', () => ({ listEndpointsDetailed: vi.fn() }));
 

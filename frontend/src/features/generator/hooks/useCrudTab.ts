@@ -8,8 +8,8 @@ import {
   canGenerate,
   endpointsForVerb,
   resolveLocks,
-} from '../crudify';
-import { ColumnLock } from '../types';
+} from '../lib/crudify';
+import { ColumnLock } from '../lib/types';
 import { useCrudGeneration } from './useCrudGeneration';
 
 // CrudTab's state: the database and tables chosen, every crudify option, and the generation run.

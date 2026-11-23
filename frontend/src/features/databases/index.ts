@@ -7,7 +7,7 @@ const PATH = '/databases';
 const manifest: FeatureManifest = {
   id: 'databases',
   path: PATH,
-  page: lazy(() => import('./Databases')),
+  page: lazy(() => import('./components/Databases')),
   nav: {
     label: 'Databases',
     Icon: DatabaseIcon,

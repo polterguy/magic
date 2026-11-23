@@ -10,18 +10,18 @@ import { showToast } from '@core/toast';
 import type { useDialog } from '@shared/hooks/useDialog';
 import { useEffect, useEffectEvent, useState } from 'react';
 
-import { ensureRequiredAssets } from '../assets';
-import { joinCss, scriptPaths, splitCss, stylesheetPaths } from '../css';
+import { INLINE } from '../components/Styles';
+import { ensureRequiredAssets } from '../lib/assets';
+import { joinCss, scriptPaths, splitCss, stylesheetPaths } from '../lib/css';
 import {
   canonicalUrl,
   companionFile,
   listPages,
   SHARED_ASSET_FILES,
   WEB_ROOT,
-} from '../designerFiles';
-import { prepareDocument, serializeDocument } from '../html';
-import { blankPage } from '../pageUrls';
-import { INLINE } from '../Styles';
+} from '../lib/designerFiles';
+import { prepareDocument, serializeDocument } from '../lib/html';
+import { blankPage } from '../lib/pageUrls';
 import type { Cloudlet } from './useCloudlet';
 import type { CodeDraft } from './useCodeDraft';
 import type { DesignerUi } from './useDesignerUi';

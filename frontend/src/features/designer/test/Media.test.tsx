@@ -11,8 +11,8 @@ import { createEvent, fireEvent, render, screen, waitFor, within } from '@testin
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import Media from '../Media';
-import type { MediaKind } from '../mediaKinds';
+import Media from '../components/Media';
+import type { MediaKind } from '../lib/mediaKinds';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),

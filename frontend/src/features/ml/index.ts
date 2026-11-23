@@ -7,7 +7,7 @@ const PATH = '/machine-learning';
 const manifest: FeatureManifest = {
   id: 'ml',
   path: PATH,
-  page: lazy(() => import('./MachineLearning')),
+  page: lazy(() => import('./components/MachineLearning')),
   nav: {
     label: 'Machine Learning',
     Icon: NeuralIcon,
@@ -17,7 +17,7 @@ const manifest: FeatureManifest = {
     order: 50,
   },
   roomy: true,
-  palette: { entries: () => import('./palette').then(module => module.paletteEntries(PATH)) },
+  palette: { entries: () => import('./lib/palette').then(module => module.paletteEntries(PATH)) },
 };
 
 export default manifest;

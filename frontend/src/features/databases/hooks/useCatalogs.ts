@@ -4,7 +4,7 @@ import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import { useState } from 'react';
 
-import { type ConnectionRow, CSTRING_NAME_PATTERN } from '../connections';
+import { type ConnectionRow, CSTRING_NAME_PATTERN } from '../lib/connections';
 
 /*
  * Catalog management on an external connection — create, list and delete

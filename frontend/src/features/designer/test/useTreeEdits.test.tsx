@@ -8,11 +8,11 @@ import { setToastListener, type Toast } from '@core/toast';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import type { DropSpot } from '../dropTarget';
 import { useDocumentState } from '../hooks/useDocumentState';
 import { useStylesheetState } from '../hooks/useStylesheetState';
 import { useTreeEdits } from '../hooks/useTreeEdits';
 import { useUndoHistory } from '../hooks/useUndoHistory';
+import type { DropSpot } from '../lib/dropTarget';
 
 const KEY = 'test-clip';
 const PAGE =

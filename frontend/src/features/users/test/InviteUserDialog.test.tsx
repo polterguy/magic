@@ -11,7 +11,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage, type RenderPageOptions } from '../../../test/renderPage';
-import InviteUserDialog from '../InviteUserDialog';
+import InviteUserDialog from '../components/InviteUserDialog';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

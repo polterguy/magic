@@ -8,8 +8,8 @@ import { exportCsv } from '@shared/lib/download';
 import { useSort } from '@shared/lib/sort';
 import { useEffect, useState } from 'react';
 
-import { PAGE_SIZE } from '../constants';
-import { userCsvRow } from '../helpers';
+import { PAGE_SIZE } from '../lib/constants';
+import { userCsvRow } from '../lib/helpers';
 
 /*
  * The users tab's data: the filtered, sorted, paged user list, whether

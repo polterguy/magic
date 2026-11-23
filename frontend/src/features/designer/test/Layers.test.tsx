@@ -9,7 +9,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-import Layers from '../Layers';
+import Layers from '../components/Layers';
 
 const scrollIntoView = vi.fn();
 

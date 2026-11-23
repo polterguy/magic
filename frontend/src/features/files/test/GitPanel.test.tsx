@@ -12,7 +12,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import GitPanel from '../GitPanel';
+import GitPanel from '../components/GitPanel';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

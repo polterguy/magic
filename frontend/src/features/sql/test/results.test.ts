@@ -12,7 +12,7 @@ import {
   formatCell,
   isGoBatch,
   MAX_RENDERED_ROWS,
-} from '../results';
+} from '../lib/results';
 
 describe('formatCell', () => {
   it('renders null and undefined as a muted "null" span', () => {

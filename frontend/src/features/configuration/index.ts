@@ -7,7 +7,7 @@ const PATH = '/configuration';
 const manifest: FeatureManifest = {
   id: 'configuration',
   path: PATH,
-  page: lazy(() => import('./Configuration')),
+  page: lazy(() => import('./components/Configuration')),
   nav: {
     label: 'Configuration',
     Icon: GearIcon,

@@ -8,7 +8,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import TableCard, { type ColumnTarget } from '../TableCard';
+import TableCard, { type ColumnTarget } from '../components/TableCard';
 
 function renderCard(table: TableMeta, target: ColumnTarget | null = null) {
   const handlers = {

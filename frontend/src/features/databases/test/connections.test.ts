@@ -15,7 +15,7 @@ import {
   sqlStudioQuery,
   statusBadge,
   withStatus,
-} from '../connections';
+} from '../lib/connections';
 
 describe('DB_NAME_PATTERN', () => {
   it('accepts alphanumerics, - and _', () => {

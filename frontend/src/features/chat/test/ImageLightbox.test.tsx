@@ -7,7 +7,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import ImageLightbox from '../ImageLightbox';
+import ImageLightbox from '../components/ImageLightbox';
 
 function renderLightbox() {
   const onClose = vi.fn();

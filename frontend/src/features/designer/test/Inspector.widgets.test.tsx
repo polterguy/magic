@@ -9,11 +9,11 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import * as dataSources from '../dataSources';
+import * as dataSources from '../lib/dataSources';
 import { renderInspector } from './inspectorHarness';
 
-vi.mock('../dataSources', async importOriginal => ({
-  ...(await importOriginal<typeof import('../dataSources')>()),
+vi.mock('../lib/dataSources', async importOriginal => ({
+  ...(await importOriginal<typeof import('../lib/dataSources')>()),
   loadEndpoints: vi.fn(),
 }));
 

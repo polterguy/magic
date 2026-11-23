@@ -3,9 +3,9 @@ import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useEffect, useState } from 'react';
 
-import { DEFAULT_BASE_SLOTS } from '../baseSlots';
-import { linesToSlots, refusedSlots, ruleIsIncomplete } from '../slots';
-import { GeneratedInfo, PolicyRule, RoleRule, SandboxPolicy } from '../types';
+import { DEFAULT_BASE_SLOTS } from '../lib/baseSlots';
+import { linesToSlots, refusedSlots, ruleIsIncomplete } from '../lib/slots';
+import { GeneratedInfo, PolicyRule, RoleRule, SandboxPolicy } from '../lib/types';
 
 // SandboxTab's state: the endpoint, its base vocabulary and role rules, and generating it.
 export function useSandboxTab() {

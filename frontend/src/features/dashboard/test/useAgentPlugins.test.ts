@@ -8,8 +8,8 @@ import { setToastListener, type Toast } from '@core/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { AGENT_PLUGINS } from '../constants';
 import { useAgentPlugins } from '../hooks/useAgentPlugins';
+import { AGENT_PLUGINS } from '../lib/constants';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

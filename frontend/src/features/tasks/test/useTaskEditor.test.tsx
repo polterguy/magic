@@ -9,8 +9,8 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import type { SetURLSearchParams } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { NEW_TASK_CODE } from '../constants';
 import { useTaskEditor } from '../hooks/useTaskEditor';
+import { NEW_TASK_CODE } from '../lib/constants';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

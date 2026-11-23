@@ -7,7 +7,7 @@ const PATH = '/user-roles-management';
 const manifest: FeatureManifest = {
   id: 'users',
   path: PATH,
-  page: lazy(() => import('./Users')),
+  page: lazy(() => import('./components/Users')),
   nav: {
     label: 'Users & roles',
     Icon: UserIcon,

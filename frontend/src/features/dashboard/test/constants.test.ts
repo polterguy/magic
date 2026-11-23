@@ -13,7 +13,7 @@ import {
   missingAgentPlugins,
   TASK_PAGE_SIZE,
   taskPageCount,
-} from '../constants';
+} from '../lib/constants';
 
 describe('mcpEndpointUrl', () => {
   it('appends the MCP module path to the backend URL', () => {

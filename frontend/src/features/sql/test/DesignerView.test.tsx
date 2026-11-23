@@ -8,7 +8,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import DesignerView from '../DesignerView';
+import DesignerView from '../components/DesignerView';
 import type { SchemaDesigner } from '../hooks/useSchemaDesigner';
 
 const tables: TableMeta[] = [

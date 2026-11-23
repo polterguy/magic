@@ -6,8 +6,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { HISTORY_KEY, HISTORY_LIMIT } from '../history';
 import { useSqlHistory } from '../hooks/useSqlHistory';
+import { HISTORY_KEY, HISTORY_LIMIT } from '../lib/history';
 
 const setSql = vi.fn();
 const bumpSqlEditId = vi.fn();

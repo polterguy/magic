@@ -7,7 +7,7 @@ const PATH = '/sql-studio';
 const manifest: FeatureManifest = {
   id: 'sql',
   path: PATH,
-  page: lazy(() => import('./Sql')),
+  page: lazy(() => import('./components/Sql')),
   nav: {
     label: 'SQL Studio',
     Icon: TerminalIcon,

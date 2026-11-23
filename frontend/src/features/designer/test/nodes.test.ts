@@ -6,7 +6,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { nodeAt, pathTo, writeText } from '../nodes';
+import { nodeAt, pathTo, writeText } from '../lib/nodes';
 
 interface FakeNode {
   name: string;

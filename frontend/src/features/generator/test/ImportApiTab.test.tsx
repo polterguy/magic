@@ -11,7 +11,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import ImportApiTab from '../ImportApiTab';
+import ImportApiTab from '../components/ImportApiTab';
 
 // gibberish is one of the helpers apiMock keeps real, but here it is a network call to stand in for.
 vi.mock('@core/api', async importOriginal => ({

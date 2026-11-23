@@ -17,7 +17,7 @@ import {
   SLOT_ATTRIBUTE,
   slotsDropped,
   TOOL_ATTRIBUTE,
-} from '../html';
+} from '../lib/html';
 
 function parse(source: string) {
   return new DOMParser().parseFromString(source, 'text/html');

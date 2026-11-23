@@ -11,12 +11,12 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import ChatShell from '../ChatShell';
+import ChatShell from '../components/ChatShell';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
 );
-vi.mock('../ChatDrawer', () => ({
+vi.mock('../components/ChatDrawer', () => ({
   default: (props: { open: boolean; userId: string; onClose: () => void }) => (
     <div data-testid="chat" data-open={String(props.open)} data-user={props.userId}>
       <button onClick={props.onClose}>close chat</button>

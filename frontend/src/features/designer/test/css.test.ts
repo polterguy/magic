@@ -6,7 +6,14 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { absoluteUrls, joinCss, overrideCss, scriptPaths, splitCss, stylesheetPaths } from '../css';
+import {
+  absoluteUrls,
+  joinCss,
+  overrideCss,
+  scriptPaths,
+  splitCss,
+  stylesheetPaths,
+} from '../lib/css';
 
 // A document stand-in that answers querySelectorAll from a table.
 function fakeDoc(table: Record<string, Record<string, string>[]>) {

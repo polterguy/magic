@@ -9,8 +9,8 @@ import { setToastListener, type Toast } from '@core/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Workspace } from '../helpers';
 import { useOpenTabs } from '../hooks/useOpenTabs';
+import type { Workspace } from '../lib/helpers';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

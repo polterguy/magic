@@ -10,7 +10,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import ChatDrawer from '../ChatDrawer';
+import ChatDrawer from '../components/ChatDrawer';
 
 vi.mock('@core/socket', () => ({ createSocket: vi.fn() }));
 vi.mock('@core/api', async importOriginal => ({

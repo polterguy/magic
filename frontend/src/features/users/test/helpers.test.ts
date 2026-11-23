@@ -5,8 +5,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { PAGE_SIZE, PROTECTED_ROLES, PROTECTED_USERS } from '../constants';
-import { filterRoles, userCsvRow } from '../helpers';
+import { PAGE_SIZE, PROTECTED_ROLES, PROTECTED_USERS } from '../lib/constants';
+import { filterRoles, userCsvRow } from '../lib/helpers';
 
 describe('userCsvRow', () => {
   it('flattens a local user with extras and roles', () => {

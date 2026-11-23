@@ -6,7 +6,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { nameOf, parentOf } from '../paths';
+import { nameOf, parentOf } from '../lib/paths';
 
 describe('parentOf', () => {
   it('gives the folder a file lives in', () => {

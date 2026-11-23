@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { asObject, configSection, fieldText, parseObject, settingText } from '../json';
+import { asObject, configSection, fieldText, parseObject, settingText } from '../lib/json';
 
 describe('asObject', () => {
   it('returns a JSON object as is', () => {

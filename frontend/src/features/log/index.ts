@@ -7,7 +7,7 @@ const PATH = '/log';
 const manifest: FeatureManifest = {
   id: 'log',
   path: PATH,
-  page: lazy(() => import('./Log')),
+  page: lazy(() => import('./components/Log')),
   nav: {
     label: 'Log',
     Icon: ListIcon,

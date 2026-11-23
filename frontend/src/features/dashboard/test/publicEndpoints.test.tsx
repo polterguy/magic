@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
-import KpiCards from '../KpiCards';
-import { PublicEndpointWarningDialog } from '../WarningDialogs';
+import KpiCards from '../components/KpiCards';
+import { PublicEndpointWarningDialog } from '../components/WarningDialogs';
 
 function renderCards(publicEndpoints: number | null, onPublicEndpointWarning = vi.fn()) {
   render(

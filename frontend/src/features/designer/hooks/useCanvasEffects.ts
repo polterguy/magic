@@ -6,9 +6,9 @@
 
 import { useEffect, useMemo } from 'react';
 
-import { overrideCss, ownStylesheet } from '../css';
-import { canContainChildren } from '../html';
-import { designableChildren } from '../nodes';
+import { overrideCss, ownStylesheet } from '../lib/css';
+import { canContainChildren } from '../lib/html';
+import { designableChildren } from '../lib/nodes';
 import type { DocumentState } from './useDocumentState';
 import type { StylesheetState } from './useStylesheetState';
 

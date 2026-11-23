@@ -6,7 +6,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { findDropSpot } from '../dropTarget';
+import { findDropSpot } from '../lib/dropTarget';
 
 interface Box {
   left: number;

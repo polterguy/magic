@@ -14,7 +14,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import TrainingTab from '../TrainingTab';
+import TrainingTab from '../components/TrainingTab';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),
@@ -32,7 +32,7 @@ vi.mock('@shared/lib/download', async importOriginal => ({
   downloadBlob: vi.fn(),
 }));
 
-vi.mock('../EditSnippetDialog', () => ({
+vi.mock('../components/EditSnippetDialog', () => ({
   default: (
     props: Readonly<{
       type: string;
@@ -50,7 +50,7 @@ vi.mock('../EditSnippetDialog', () => ({
     </div>
   ),
 }));
-vi.mock('../AddFunctionDialog', () => ({
+vi.mock('../components/AddFunctionDialog', () => ({
   default: (props: Readonly<{ type: string; onClose: () => void; onInstalled: () => void }>) => (
     <div>
       <span>Function picker {props.type}</span>
@@ -58,7 +58,7 @@ vi.mock('../AddFunctionDialog', () => ({
     </div>
   ),
 }));
-vi.mock('../AddWidgetDialog', () => ({
+vi.mock('../components/AddWidgetDialog', () => ({
   default: (props: Readonly<{ type: string; onClose: () => void; onAdded: () => void }>) => (
     <div>
       <span>Widget picker {props.type}</span>
@@ -66,7 +66,7 @@ vi.mock('../AddWidgetDialog', () => ({
     </div>
   ),
 }));
-vi.mock('../SpiceDialog', () => ({
+vi.mock('../components/SpiceDialog', () => ({
   default: (
     props: Readonly<{
       type: string;

@@ -7,7 +7,7 @@ const PATH = '/';
 const manifest: FeatureManifest = {
   id: 'dashboard',
   path: PATH,
-  page: lazy(() => import('./Dashboard')),
+  page: lazy(() => import('./components/Dashboard')),
   nav: {
     label: 'Dashboard',
     Icon: HomeIcon,

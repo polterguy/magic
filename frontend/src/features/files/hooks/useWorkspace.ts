@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { Workspace } from '../helpers';
+import type { Workspace } from '../lib/helpers';
 
 /*
  * The remembered workspace shape — open-file paths in tab order, the

@@ -3,7 +3,7 @@ import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useEffect, useState } from 'react';
 
-import { GeneratedInfo } from '../types';
+import { GeneratedInfo } from '../lib/types';
 
 // SearchTab's state: the endpoint, the type it searches and how, who may call it, and generating it.
 export function useSearchTab() {

@@ -5,7 +5,7 @@ import { showToast } from '@core/toast';
 import { editorSelection } from '@shared/lib/editor';
 import { type RefObject, useState } from 'react';
 
-import { countRecords, executionMessage, isGoBatch } from '../results';
+import { countRecords, executionMessage, isGoBatch } from '../lib/results';
 
 /*
  * Running the buffer — or just the selected fragment of it — and holding the

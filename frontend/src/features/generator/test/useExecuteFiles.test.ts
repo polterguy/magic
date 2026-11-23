@@ -9,8 +9,8 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import type { MouseEvent } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TOOLTIP_WIDTH } from '../endpointMeta';
 import { useExecuteFiles } from '../hooks/useExecuteFiles';
+import { TOOLTIP_WIDTH } from '../lib/endpointMeta';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

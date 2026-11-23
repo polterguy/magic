@@ -16,7 +16,7 @@ import {
   PROTECTED_FOLDERS,
   restoredSelection,
   withRestored,
-} from '../helpers';
+} from '../lib/helpers';
 
 const tab = (path: string, content = 'x'): OpenTab => ({ path, content, saved: content });
 

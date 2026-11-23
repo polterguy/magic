@@ -6,9 +6,9 @@
 import { showToast } from '@core/toast';
 import { useMemo } from 'react';
 
-import { selectorsFor } from '../css';
-import { elementOf } from '../nodes';
-import { INLINE } from '../Styles';
+import { INLINE } from '../components/Styles';
+import { selectorsFor } from '../lib/css';
+import { elementOf } from '../lib/nodes';
 import type { DocumentState } from './useDocumentState';
 import type { StylesheetState } from './useStylesheetState';
 import type { UndoHistory } from './useUndoHistory';

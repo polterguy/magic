@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { snippetFilename, snippetLabel, snippetSuggestion } from '../snippets';
+import { snippetFilename, snippetLabel, snippetSuggestion } from '../lib/snippets';
 
 describe('snippetLabel', () => {
   it('drops the folder', () => {

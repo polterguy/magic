@@ -2,7 +2,7 @@ import { countTasks, listTasks, Task } from '@core/api';
 import { usePagedList } from '@shared/hooks/usePagedList';
 import { useState } from 'react';
 
-import { PAGE_SIZE } from '../constants';
+import { PAGE_SIZE } from '../lib/constants';
 
 // The filter box and the server-paged task list it narrows.
 export function useTaskList(initialFilter: string) {

@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { blankPage, fileForUrl, tidyUrl, urlProblem } from '../pageUrls';
+import { blankPage, fileForUrl, tidyUrl, urlProblem } from '../lib/pageUrls';
 
 describe('tidyUrl', () => {
   it('adds a leading slash and drops trailing ones', () => {

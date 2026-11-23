@@ -5,7 +5,7 @@ import { useDialog } from '@shared/hooks/useDialog';
 import { useSessionState } from '@shared/hooks/useSessionState';
 import { useSqlSnippets } from '@shared/lib/sql';
 
-import { snippetFilename, snippetLabel, snippetSuggestion } from '../snippets';
+import { snippetFilename, snippetLabel, snippetSuggestion } from '../lib/snippets';
 
 /*
  * Loading and saving snippet files, and importing a .sql file into the buffer.

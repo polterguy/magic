@@ -9,7 +9,7 @@ vi.mock('@core/toast', () => ({ showToast: vi.fn() }));
 
 import { showToast } from '@core/toast';
 
-import { reportDropped } from '../slotWarning';
+import { reportDropped } from '../lib/slotWarning';
 
 beforeEach(() => {
   vi.mocked(showToast).mockClear();

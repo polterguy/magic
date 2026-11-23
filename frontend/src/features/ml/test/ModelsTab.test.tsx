@@ -13,7 +13,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import ModelsTab from '../ModelsTab';
+import ModelsTab from '../components/ModelsTab';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),
@@ -25,7 +25,7 @@ vi.mock('@core/api', async importOriginal => ({
   vectoriseType: vi.fn(),
 }));
 
-vi.mock('../EditModelDialog', () => ({
+vi.mock('../components/EditModelDialog', () => ({
   default: (
     props: Readonly<{ existing: MlType | null; onClose: () => void; onSaved: () => void }>,
   ) => (
@@ -36,7 +36,7 @@ vi.mock('../EditModelDialog', () => ({
     </div>
   ),
 }));
-vi.mock('../ImportDialog', () => ({
+vi.mock('../components/ImportDialog', () => ({
   default: (props: Readonly<{ type: string; onClose: () => void }>) => (
     <div>
       <span>Importing into {props.type}</span>
@@ -44,7 +44,7 @@ vi.mock('../ImportDialog', () => ({
     </div>
   ),
 }));
-vi.mock('../EmbedDialog', () => ({
+vi.mock('../components/EmbedDialog', () => ({
   default: (props: Readonly<{ type: string; onClose: () => void }>) => (
     <div>
       <span>Embedding {props.type}</span>

@@ -6,7 +6,7 @@
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { type Home, readMeta, writeMeta } from '../metaTags';
+import { type Home, readMeta, writeMeta } from '../lib/metaTags';
 
 let doc: Document;
 

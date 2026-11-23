@@ -8,7 +8,7 @@
 import type { Endpoint } from '@core/api';
 import { describe, expect, it } from 'vitest';
 
-import { groupEndpoints, isVisible, moduleOf, sourceFile } from '../helpers';
+import { groupEndpoints, isVisible, moduleOf, sourceFile } from '../lib/helpers';
 
 const endpoint = (path: string, verb = 'get', auth?: string[]): Endpoint => ({ path, verb, auth });
 

@@ -8,11 +8,11 @@ import { setToastListener, type Toast } from '@core/toast';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
+import { INLINE } from '../components/Styles';
 import { useDocumentState } from '../hooks/useDocumentState';
 import { useStyleEdits } from '../hooks/useStyleEdits';
 import { useStylesheetState } from '../hooks/useStylesheetState';
 import { useUndoHistory } from '../hooks/useUndoHistory';
-import { INLINE } from '../Styles';
 
 const PAGE =
   '<!doctype html><html><head></head><body><p id="one" class="note">One</p><p id="two">Two</p></body></html>';

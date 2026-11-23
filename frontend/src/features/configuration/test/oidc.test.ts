@@ -10,7 +10,7 @@ import {
   initialOidcValues,
   OIDC_SLOT_PREFIX,
   oidcProvidersFromSlots,
-} from '../oidc';
+} from '../lib/oidc';
 
 describe('oidcProvidersFromSlots', () => {
   it('keeps provider slots only, strips the prefix and sorts', () => {

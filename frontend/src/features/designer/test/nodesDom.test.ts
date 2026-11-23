@@ -17,7 +17,7 @@ import {
   nodeAtPoint,
   pathTo,
   rectOf,
-} from '../nodes';
+} from '../lib/nodes';
 
 function body(html: string) {
   return new DOMParser().parseFromString('<html><body>' + html + '</body></html>', 'text/html')

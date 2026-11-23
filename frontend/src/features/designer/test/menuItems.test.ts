@@ -4,8 +4,8 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { railClass, VIEWPORTS, VIEWS } from '../layout';
-import { designerMenuItems, DesignerMenuOptions } from '../menuItems';
+import { railClass, VIEWPORTS, VIEWS } from '../lib/layout';
+import { designerMenuItems, DesignerMenuOptions } from '../lib/menuItems';
 
 function options(overrides: Partial<DesignerMenuOptions> = {}): DesignerMenuOptions {
   return {

@@ -7,7 +7,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import AddColumnDialog from '../AddColumnDialog';
+import AddColumnDialog from '../components/AddColumnDialog';
 
 describe('AddColumnDialog with no column name', () => {
   it('submits nothing on Enter in a field', async () => {

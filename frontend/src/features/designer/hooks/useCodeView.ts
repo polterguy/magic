@@ -8,9 +8,9 @@ import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import type { useDialog } from '@shared/hooks/useDialog';
 
-import { joinCss, splitCss } from '../css';
-import { canonicalUrl } from '../designerFiles';
-import { prepareDocument, serializeDocument } from '../html';
+import { joinCss, splitCss } from '../lib/css';
+import { canonicalUrl } from '../lib/designerFiles';
+import { prepareDocument, serializeDocument } from '../lib/html';
 import type { CodeDraft } from './useCodeDraft';
 import type { DesignerUi } from './useDesignerUi';
 import type { DocumentState } from './useDocumentState';

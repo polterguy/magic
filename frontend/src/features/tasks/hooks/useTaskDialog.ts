@@ -5,7 +5,7 @@ import { useDialog } from '@shared/hooks/useDialog';
 import { useEditToken } from '@shared/lib/editor';
 import { useState } from 'react';
 
-import { taskIsDirty } from '../constants';
+import { taskIsDirty } from '../lib/constants';
 
 // The task editor's fields, its unsaved-changes guard, and saving.
 export function useTaskDialog(

@@ -19,7 +19,7 @@ import {
   listPages,
   SHARED_ASSET_FILES,
   WEB_ROOT,
-} from '../designerFiles';
+} from '../lib/designerFiles';
 
 describe('canonicalUrl', () => {
   it('serves the root index at /', () => {

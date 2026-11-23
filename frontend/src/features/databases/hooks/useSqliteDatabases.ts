@@ -10,7 +10,7 @@ import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import { useCallback, useEffect, useState } from 'react';
 
-import { DB_NAME_PATTERN } from '../connections';
+import { DB_NAME_PATTERN } from '../lib/connections';
 
 /*
  * Internal SQLite databases — list, create, delete, backup up/down.

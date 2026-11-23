@@ -11,7 +11,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage, TEST_BACKEND } from '../../../test/renderPage';
-import WebDesigner from '../WebDesigner';
+import WebDesigner from '../components/WebDesigner';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
@@ -19,7 +19,7 @@ vi.mock('@core/api', async importOriginal =>
 vi.mock('@shared/ui/CodeEditor', async () => ({
   default: (await import('../../../test/CodeEditorStub')).default,
 }));
-vi.mock('../CanvasArea', () => ({
+vi.mock('../components/CanvasArea', () => ({
   default: () => <div data-testid="canvas" />,
 }));
 

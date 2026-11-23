@@ -13,7 +13,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import EditModelDialog from '../EditModelDialog';
+import EditModelDialog from '../components/EditModelDialog';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),
@@ -23,7 +23,7 @@ vi.mock('@shared/ui/CodeEditor', async () => ({
   default: (await import('../../../test/CodeEditorStub')).default,
 }));
 
-vi.mock('../AddFunctionDialog', () => ({
+vi.mock('../components/AddFunctionDialog', () => ({
   default: (
     props: Readonly<{
       type: string;
@@ -42,7 +42,7 @@ vi.mock('../AddFunctionDialog', () => ({
   ),
 }));
 
-vi.mock('../CreateSystemMessageDialog', () => ({
+vi.mock('../components/CreateSystemMessageDialog', () => ({
   default: (
     props: Readonly<{
       instruction: string;

@@ -11,9 +11,9 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import RoleRuleCard from '../components/RoleRuleCard';
 import { useSandboxTab } from '../hooks/useSandboxTab';
-import RoleRuleCard from '../RoleRuleCard';
-import { RoleRule } from '../types';
+import { RoleRule } from '../lib/types';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

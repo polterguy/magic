@@ -16,8 +16,8 @@ import type { useDialog } from '@shared/hooks/useDialog';
 import { dispositionFilename, downloadBlob } from '@shared/lib/download';
 import type { ChangeEvent } from 'react';
 
-import { PROTECTED_FOLDERS } from '../helpers';
-import { nameOf, parentOf } from '../paths';
+import { PROTECTED_FOLDERS } from '../lib/helpers';
+import { nameOf, parentOf } from '../lib/paths';
 import type { OpenTabs } from './useOpenTabs';
 
 /*

@@ -9,7 +9,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import GitDialog from '../GitDialog';
+import GitDialog from '../components/GitDialog';
 
 function renderDialog(config: string) {
   const onClose = vi.fn();

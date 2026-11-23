@@ -3,8 +3,8 @@ import { showError } from '@core/errors';
 import { useEditToken } from '@shared/lib/editor';
 import { useEffect, useRef, useState } from 'react';
 
-import type { OpenTab, Workspace } from '../helpers';
-import { restoredSelection, withRestored } from '../helpers';
+import type { OpenTab, Workspace } from '../lib/helpers';
+import { restoredSelection, withRestored } from '../lib/helpers';
 
 /*
  * The open tabs — which files are open and which one is selected — restored

@@ -9,7 +9,12 @@ import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import { useCallback, useEffect, useState } from 'react';
 
-import { connectionError, type ConnectionRow, connectionRows, withStatus } from '../connections';
+import {
+  connectionError,
+  type ConnectionRow,
+  connectionRows,
+  withStatus,
+} from '../lib/connections';
 
 /*
  * External databases — connection strings with live status, and adding,

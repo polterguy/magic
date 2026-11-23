@@ -7,9 +7,9 @@ import { saveFile } from '@core/api';
 import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 
-import { bumpAsset, syncSharedAssetVersions } from '../assets';
-import { joinCss, splitCss } from '../css';
-import { serializeDocument } from '../html';
+import { bumpAsset, syncSharedAssetVersions } from '../lib/assets';
+import { joinCss, splitCss } from '../lib/css';
+import { serializeDocument } from '../lib/html';
 import type { CodeDraft } from './useCodeDraft';
 import type { DocumentState } from './useDocumentState';
 import type { StylesheetState } from './useStylesheetState';

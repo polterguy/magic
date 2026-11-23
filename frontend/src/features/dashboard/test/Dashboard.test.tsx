@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage, TEST_BACKEND } from '../../../test/renderPage';
-import Dashboard from '../Dashboard';
+import Dashboard from '../components/Dashboard';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

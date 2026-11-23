@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { backendIsLocal, defaultAttachMode } from '../chatUpload';
+import { backendIsLocal, defaultAttachMode } from '../lib/chatUpload';
 
 describe('backendIsLocal', () => {
   it.each([

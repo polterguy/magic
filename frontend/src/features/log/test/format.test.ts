@@ -6,7 +6,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { isoDate, timeAgo } from '../format';
+import { isoDate, timeAgo } from '../lib/format';
 
 const NOW = new Date('2026-01-01T00:00:00.000Z').getTime();
 const ago = (ms: number) => new Date(NOW - ms).toISOString();

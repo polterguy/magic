@@ -21,8 +21,8 @@ import {
   lockSlot,
   resolveLocks,
   withVerbDefaults,
-} from '../crudify';
-import { CrudifyOptions, CrudifyPayload, CrudTable } from '../types';
+} from '../lib/crudify';
+import { CrudifyOptions, CrudifyPayload, CrudTable } from '../lib/types';
 
 const orders: CrudTable = {
   name: 'orders',

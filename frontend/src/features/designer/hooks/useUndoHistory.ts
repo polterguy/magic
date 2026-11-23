@@ -5,8 +5,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import type { Overrides } from '../css';
-import { nodeAt, pathTo } from '../nodes';
+import type { Overrides } from '../lib/css';
+import { nodeAt, pathTo } from '../lib/nodes';
 import type { DocumentState } from './useDocumentState';
 import type { StylesheetState } from './useStylesheetState';
 

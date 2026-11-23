@@ -2,14 +2,14 @@ import type { FeatureManifest } from '@core/features';
 import { CodeFileIcon, FolderIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
 
-import { FILES_SHORTCUTS } from './shortcuts';
+import { FILES_SHORTCUTS } from './lib/shortcuts';
 
 const PATH = '/hyper-ide';
 
 const manifest: FeatureManifest = {
   id: 'files',
   path: PATH,
-  page: lazy(() => import('./Files')),
+  page: lazy(() => import('./components/Files')),
   nav: {
     label: 'Hyper IDE',
     Icon: CodeFileIcon,
@@ -18,7 +18,7 @@ const manifest: FeatureManifest = {
       'your endpoints into AI functions.',
     order: 70,
   },
-  palette: { entries: () => import('./palette').then(module => module.paletteEntries(PATH)) },
+  palette: { entries: () => import('./lib/palette').then(module => module.paletteEntries(PATH)) },
   shortcuts: {
     group: {
       id: 'Hyper IDE',

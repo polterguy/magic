@@ -5,9 +5,9 @@
 
 import { showToast } from '@core/toast';
 
-import type { DropSpot } from '../dropTarget';
-import { canContainChildren } from '../html';
-import { designableChildren, elementOf, isText, labelOf } from '../nodes';
+import type { DropSpot } from '../lib/dropTarget';
+import { canContainChildren } from '../lib/html';
+import { designableChildren, elementOf, isText, labelOf } from '../lib/nodes';
 import type { DocumentState } from './useDocumentState';
 import type { UndoHistory } from './useUndoHistory';
 

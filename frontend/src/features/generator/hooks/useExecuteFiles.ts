@@ -14,8 +14,8 @@ import {
   formatEndpointMeta,
   formatFallbackMeta,
   TOOLTIP_WIDTH,
-} from '../endpointMeta';
-import { WizardProps } from '../types';
+} from '../lib/endpointMeta';
+import { WizardProps } from '../lib/types';
 
 // The description tooltip ExecuteFilesWizard shows for one file, and where it is anchored.
 export interface FileTooltip {

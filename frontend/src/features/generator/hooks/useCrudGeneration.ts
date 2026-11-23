@@ -11,8 +11,8 @@ import {
   canGenerate,
   endpointsForVerb,
   resolveLocks,
-} from '../crudify';
-import { ColumnLock, CrudDone, CrudifyOptions, CrudTable } from '../types';
+} from '../lib/crudify';
+import { ColumnLock, CrudDone, CrudifyOptions, CrudTable } from '../lib/types';
 
 // What a CRUD generation run reads from the rest of the tab.
 export interface CrudGenerationContext {

@@ -8,8 +8,8 @@ import { setToastListener, type Toast } from '@core/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { EXPERT_SYSTEM_PLUGIN, EXPERT_SYSTEM_POLLS } from '../constants';
 import { useExpertSystem } from '../hooks/useExpertSystem';
+import { EXPERT_SYSTEM_PLUGIN, EXPERT_SYSTEM_POLLS } from '../lib/constants';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

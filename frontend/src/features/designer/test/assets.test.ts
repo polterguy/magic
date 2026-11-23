@@ -6,7 +6,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { bumpAsset, ensureRequiredAssets, syncSharedAssetVersions } from '../assets';
+import { bumpAsset, ensureRequiredAssets, syncSharedAssetVersions } from '../lib/assets';
 
 interface FakeElement {
   tag: string;

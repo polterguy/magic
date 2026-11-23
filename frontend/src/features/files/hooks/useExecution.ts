@@ -14,7 +14,7 @@ import { editorSelection } from '@shared/lib/editor';
 import type { InvokeResult } from '@shared/ui/InvokePanel';
 import { useRef, useState } from 'react';
 
-import { convertArgument, endpointOf } from '../helpers';
+import { convertArgument, endpointOf } from '../lib/helpers';
 import type { OpenTabs } from './useOpenTabs';
 
 /*

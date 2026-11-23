@@ -4,7 +4,7 @@
  */
 import { useReducer } from 'react';
 
-import Inspector from '../Inspector';
+import Inspector from '../components/Inspector';
 import type { Options, Spies } from './inspectorHarness';
 
 // replaceData, not an assignment to data, so the edited words are not written as a node's data in one step.

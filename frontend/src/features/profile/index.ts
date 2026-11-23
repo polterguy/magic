@@ -7,7 +7,7 @@ const PATH = '/user-profile';
 const manifest: FeatureManifest = {
   id: 'profile',
   path: PATH,
-  page: lazy(() => import('./Profile')),
+  page: lazy(() => import('./components/Profile')),
   nav: {
     label: 'Profile',
     Icon: ProfileIcon,

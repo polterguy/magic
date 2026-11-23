@@ -11,7 +11,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage, TEST_BACKEND } from '../../../test/renderPage';
-import Files from '../Files';
+import Files from '../components/Files';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

@@ -8,7 +8,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import FileTree from '../FileTree';
+import FileTree from '../components/FileTree';
 
 type Props = React.ComponentProps<typeof FileTree>;
 

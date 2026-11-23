@@ -13,7 +13,7 @@ import {
   extractFileComment,
   formatEndpointMeta,
   formatFallbackMeta,
-} from '../endpointMeta';
+} from '../lib/endpointMeta';
 
 describe('endpointKey', () => {
   // The same keys /magic/system/endpoints/list produces: "magic/" + the path from the files root.

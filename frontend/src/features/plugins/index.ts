@@ -7,7 +7,7 @@ const PATH = '/plugins';
 const manifest: FeatureManifest = {
   id: 'plugins',
   path: PATH,
-  page: lazy(() => import('./Plugins')),
+  page: lazy(() => import('./components/Plugins')),
   nav: {
     label: 'Plugins',
     Icon: PuzzleIcon,

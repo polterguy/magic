@@ -4,8 +4,8 @@ import { useDebounced } from '@shared/hooks/usePagedList';
 import type { Dispatch, SetStateAction } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { Workspace } from '../helpers';
-import { parentOf } from '../paths';
+import type { Workspace } from '../lib/helpers';
+import { parentOf } from '../lib/paths';
 
 // The entire tree, folders and files, as the backend lists it recursively.
 function fetchTree(sys: boolean) {

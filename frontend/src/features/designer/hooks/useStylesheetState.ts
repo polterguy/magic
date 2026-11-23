@@ -5,8 +5,8 @@
 
 import { useState } from 'react';
 
-import { Overrides } from '../css';
-import { INLINE } from '../Styles';
+import { INLINE } from '../components/Styles';
+import { Overrides } from '../lib/css';
 
 export function useStylesheetState() {
   // Every local stylesheet this page links that is actually on disk.

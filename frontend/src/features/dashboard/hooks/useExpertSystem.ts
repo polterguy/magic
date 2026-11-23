@@ -3,7 +3,7 @@ import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useEffect, useState } from 'react';
 
-import { EXPERT_SYSTEM_PLUGIN, EXPERT_SYSTEM_POLLS } from '../constants';
+import { EXPERT_SYSTEM_PLUGIN, EXPERT_SYSTEM_POLLS } from '../lib/constants';
 
 /*
  * Whether anything at all is being served at the cloudlet's root URL. Any

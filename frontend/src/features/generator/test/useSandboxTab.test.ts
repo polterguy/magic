@@ -9,7 +9,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSandboxTab } from '../hooks/useSandboxTab';
-import { RoleRule } from '../types';
+import { RoleRule } from '../lib/types';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

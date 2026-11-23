@@ -9,8 +9,8 @@ import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import Toolbar, { type ToolbarAction, type ToolbarEntry } from '../Toolbar';
-import { overflowCount } from '../toolbarOverflow';
+import Toolbar, { type ToolbarAction, type ToolbarEntry } from '../components/Toolbar';
+import { overflowCount } from '../lib/toolbarOverflow';
 
 describe('overflowCount', () => {
   const pinned = [false, false, false, true];

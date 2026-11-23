@@ -6,7 +6,7 @@ import {
   type HistoryEntry,
   parseHistory,
   serializeHistory,
-} from '../history';
+} from '../lib/history';
 
 /*
  * The last 20 executed statements, newest first — failures included, since

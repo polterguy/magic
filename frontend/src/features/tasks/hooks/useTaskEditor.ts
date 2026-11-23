@@ -3,7 +3,7 @@ import { showError } from '@core/errors';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SetURLSearchParams } from 'react-router-dom';
 
-import { NEW_TASK_CODE } from '../constants';
+import { NEW_TASK_CODE } from '../lib/constants';
 
 // Which task the editor dialog has open, if any, and the ways of opening it.
 export function useTaskEditor(

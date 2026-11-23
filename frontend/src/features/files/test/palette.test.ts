@@ -1,7 +1,7 @@
 import * as api from '@core/api';
 import { describe, expect, it, vi } from 'vitest';
 
-import { paletteEntries } from '../palette';
+import { paletteEntries } from '../lib/palette';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

@@ -7,7 +7,7 @@ const PATH = '/generator';
 const manifest: FeatureManifest = {
   id: 'generator',
   path: PATH,
-  page: lazy(() => import('./Generator')),
+  page: lazy(() => import('./components/Generator')),
   nav: {
     label: 'Endpoint Generator',
     Icon: BoltIcon,

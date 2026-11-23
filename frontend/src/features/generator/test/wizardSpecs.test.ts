@@ -7,9 +7,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { DEFAULT_BASE_SLOTS } from '../baseSlots';
-import { linesToSlots, lintSlotLines } from '../slots';
-import { IMAGE_OPS, TIER2_WIZARDS } from '../wizardSpecs';
+import { DEFAULT_BASE_SLOTS } from '../lib/baseSlots';
+import { linesToSlots, lintSlotLines } from '../lib/slots';
+import { IMAGE_OPS, TIER2_WIZARDS } from '../lib/wizardSpecs';
 
 describe('DEFAULT_BASE_SLOTS', () => {
   const slots = linesToSlots(DEFAULT_BASE_SLOTS);

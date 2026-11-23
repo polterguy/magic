@@ -13,8 +13,8 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fakeAuth, TEST_BACKEND } from '../../../test/renderPage';
-import { PAGE_SIZE } from '../constants';
 import { useUserList } from '../hooks/useUserList';
+import { PAGE_SIZE } from '../lib/constants';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

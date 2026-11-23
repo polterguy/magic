@@ -5,7 +5,7 @@
 import type { TableMeta } from '@core/api';
 import { describe, expect, it } from 'vitest';
 
-import { FIELD_TYPES } from '../dbTypes';
+import { FIELD_TYPES } from '../lib/dbTypes';
 import {
   canAddColumn,
   canCreateTable,
@@ -15,7 +15,7 @@ import {
   foreignPrimaryKey,
   primaryKeyName,
   referenceableTables,
-} from '../schema';
+} from '../lib/schema';
 
 describe('primaryKeyName', () => {
   it('singularises a trailing s and appends _id', () => {

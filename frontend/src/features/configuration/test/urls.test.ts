@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { allowsDashboard, parseFrontendUrls, toBackendUrl, toOrigin } from '../urls';
+import { allowsDashboard, parseFrontendUrls, toBackendUrl, toOrigin } from '../lib/urls';
 
 describe('toOrigin', () => {
   it('reduces an http(s) URL to its origin', () => {

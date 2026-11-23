@@ -13,7 +13,7 @@ import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import { useState } from 'react';
 
-import type { ColumnPayload } from '../schema';
+import type { ColumnPayload } from '../lib/schema';
 
 /*
  * The Designer's schema changes — new tables and columns, drops, CSV imports,

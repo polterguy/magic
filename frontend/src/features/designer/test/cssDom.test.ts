@@ -7,8 +7,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { joinCss, matchingSelectors, ownStylesheet, selectorsFor, splitCss } from '../css';
-import { TOOL_ATTRIBUTE } from '../html';
+import { joinCss, matchingSelectors, ownStylesheet, selectorsFor, splitCss } from '../lib/css';
+import { TOOL_ATTRIBUTE } from '../lib/html';
 
 function page(html: string) {
   return new DOMParser().parseFromString(

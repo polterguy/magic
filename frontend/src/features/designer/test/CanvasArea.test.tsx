@@ -12,8 +12,8 @@ import userEvent from '@testing-library/user-event';
 import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import CanvasArea from '../CanvasArea';
-import { INLINE } from '../Styles';
+import CanvasArea from '../components/CanvasArea';
+import { INLINE } from '../components/Styles';
 
 // Whatever props each stub was last rendered with, and how many times the prompt has mounted.
 const probe = vi.hoisted(() => ({
@@ -24,19 +24,19 @@ const probe = vi.hoisted(() => ({
   aiMounts: 0,
 }));
 
-vi.mock('../Canvas', () => ({
+vi.mock('../components/Canvas', () => ({
   default: (props: Record<string, never>) => {
     probe.canvas = props;
     return <div data-testid="canvas" />;
   },
 }));
-vi.mock('../CodePane', () => ({
+vi.mock('../components/CodePane', () => ({
   default: (props: Record<string, never>) => {
     probe.code = props;
     return <div data-testid="code-pane" />;
   },
 }));
-vi.mock('../LivePane', () => ({
+vi.mock('../components/LivePane', () => ({
   default: (props: Record<string, never>) => {
     probe.live = props;
     return <div data-testid="live-pane" />;

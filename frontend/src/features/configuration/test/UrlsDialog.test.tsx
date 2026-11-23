@@ -13,7 +13,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fakeAuth } from '../../../test/renderPage';
-import UrlsDialog from '../UrlsDialog';
+import UrlsDialog from '../components/UrlsDialog';
 
 vi.mock('@core/backend', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/backend')>()),

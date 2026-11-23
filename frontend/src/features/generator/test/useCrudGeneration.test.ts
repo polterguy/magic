@@ -9,7 +9,7 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CrudGenerationContext, useCrudGeneration } from '../hooks/useCrudGeneration';
-import { CrudTable } from '../types';
+import { CrudTable } from '../lib/types';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

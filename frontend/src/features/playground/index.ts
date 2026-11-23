@@ -7,7 +7,7 @@ const PATH = '/hyperlambda-playground';
 const manifest: FeatureManifest = {
   id: 'playground',
   path: PATH,
-  page: lazy(() => import('./Playground')),
+  page: lazy(() => import('./components/Playground')),
   nav: {
     label: 'Playground',
     Icon: PlayIcon,

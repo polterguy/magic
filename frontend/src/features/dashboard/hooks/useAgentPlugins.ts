@@ -3,7 +3,7 @@ import { showError } from '@core/errors';
 import { showToast } from '@core/toast';
 import { useEffect, useState } from 'react';
 
-import { missingAgentPlugins } from '../constants';
+import { missingAgentPlugins } from '../lib/constants';
 
 // Which of the MCP and OAuth plugins are missing, and installing them.
 export function useAgentPlugins() {

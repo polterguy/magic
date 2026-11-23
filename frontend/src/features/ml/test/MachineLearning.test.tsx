@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import MachineLearning from '../MachineLearning';
+import MachineLearning from '../components/MachineLearning';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

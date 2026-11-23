@@ -10,14 +10,14 @@ import { act, renderHook } from '@testing-library/react';
 import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { DropSpot } from '../dropTarget';
 import { useDocumentState } from '../hooks/useDocumentState';
 import { useElementEdits } from '../hooks/useElementEdits';
 import { useStylesheetState } from '../hooks/useStylesheetState';
 import { useUndoHistory } from '../hooks/useUndoHistory';
-import type { MediaKind } from '../mediaKinds';
-import type { Home } from '../metaTags';
-import type { Block } from '../palette';
+import type { DropSpot } from '../lib/dropTarget';
+import type { MediaKind } from '../lib/mediaKinds';
+import type { Home } from '../lib/metaTags';
+import type { Block } from '../lib/palette';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),

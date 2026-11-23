@@ -18,8 +18,8 @@ import {
   refusedSlots,
   ruleIsIncomplete,
   UNPINNED_RISK_SLOTS,
-} from '../slots';
-import { RoleRule } from '../types';
+} from '../lib/slots';
+import { RoleRule } from '../lib/types';
 
 function rule(overrides: Partial<RoleRule>): RoleRule {
   return {

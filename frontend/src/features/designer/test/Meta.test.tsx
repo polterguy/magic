@@ -8,8 +8,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { SERVER_FILLED } from '../html';
-import Meta from '../Meta';
+import Meta from '../components/Meta';
+import { SERVER_FILLED } from '../lib/html';
 
 const HEAD =
   '<title>My page</title>' +

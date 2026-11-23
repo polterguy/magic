@@ -10,10 +10,10 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { renderPage } from '../../../test/renderPage';
-import { FILE_CHANGING_SLOTS } from '../slots';
-import DbAccessWizard from '../wizards/DbAccessWizard';
-import DynamicSlotsWizard from '../wizards/DynamicSlotsWizard';
-import FilesAccessWizard from '../wizards/FilesAccessWizard';
+import DbAccessWizard from '../components/wizards/DbAccessWizard';
+import DynamicSlotsWizard from '../components/wizards/DynamicSlotsWizard';
+import FilesAccessWizard from '../components/wizards/FilesAccessWizard';
+import { FILE_CHANGING_SLOTS } from '../lib/slots';
 
 vi.mock('@core/api', async importOriginal =>
   (await import('../../../test/apiMock')).mockApi(await importOriginal()),

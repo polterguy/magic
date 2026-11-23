@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { ancestorsOf } from '../helpers';
+import { ancestorsOf } from '../lib/helpers';
 
 /*
  * "?open=/path/file.hl" deep-links straight into a file — how the Endpoints

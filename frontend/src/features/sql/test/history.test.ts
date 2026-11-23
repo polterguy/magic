@@ -11,7 +11,7 @@ import {
   historyLabel,
   parseHistory,
   serializeHistory,
-} from '../history';
+} from '../lib/history';
 
 describe('parseHistory', () => {
   it('is empty when nothing is stored', () => {

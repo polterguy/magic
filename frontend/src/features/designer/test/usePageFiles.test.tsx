@@ -10,12 +10,12 @@ import { setToastListener, type Toast } from '@core/toast';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { INLINE } from '../components/Styles';
 import { useCodeDraft } from '../hooks/useCodeDraft';
 import { useDocumentState } from '../hooks/useDocumentState';
 import { usePageFiles } from '../hooks/usePageFiles';
 import { useStylesheetState } from '../hooks/useStylesheetState';
 import { useUndoHistory } from '../hooks/useUndoHistory';
-import { INLINE } from '../Styles';
 
 vi.mock('@core/api', async importOriginal => ({
   ...(await importOriginal<typeof import('@core/api')>()),

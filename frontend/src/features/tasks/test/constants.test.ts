@@ -7,7 +7,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { scheduleArgs, scheduleIsValid, scheduleLabel, taskIsDirty } from '../constants';
+import { scheduleArgs, scheduleIsValid, scheduleLabel, taskIsDirty } from '../lib/constants';
 
 describe('scheduleLabel', () => {
   it('describes repeating schedules by their pattern', () => {

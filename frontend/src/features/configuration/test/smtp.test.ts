@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isValidPort } from '../smtp';
+import { isValidPort } from '../lib/smtp';
 
 describe('isValidPort', () => {
   it('accepts whole numbers from 1 to 65535', () => {
