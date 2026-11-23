@@ -1,3 +1,5 @@
+import './styles/log.css';
+
 import type { FeatureManifest } from '@core/features';
 import { ListIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';

@@ -1,3 +1,5 @@
+import './styles/files.css';
+
 import type { FeatureManifest } from '@core/features';
 import { CodeFileIcon, FolderIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';

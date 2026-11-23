@@ -1,3 +1,5 @@
+import './styles/generator.css';
+
 import type { FeatureManifest } from '@core/features';
 import { BoltIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';

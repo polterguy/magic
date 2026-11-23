@@ -1,3 +1,5 @@
+import './styles/endpoints.css';
+
 import type { FeatureManifest } from '@core/features';
 import { ExchangeIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';

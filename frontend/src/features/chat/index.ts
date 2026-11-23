@@ -1,3 +1,5 @@
+import './styles/chat.css';
+
 import type { FeatureManifest } from '@core/features';
 import { lazy } from 'react';
 

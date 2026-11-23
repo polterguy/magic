@@ -1,0 +1,10 @@
+/*
+ * Styles only the tasks feature uses. Loaded through its manifest, after app/styles.css.
+ */
+
+/* Single-line cell content, with the full text available on hover. */
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

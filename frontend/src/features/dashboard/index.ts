@@ -1,3 +1,5 @@
+import './styles/dashboard.css';
+
 import type { FeatureManifest } from '@core/features';
 import { HomeIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';

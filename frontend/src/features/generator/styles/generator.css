@@ -1,0 +1,203 @@
+/*
+ * Styles only the generator feature uses. Loaded through its manifest, after app/styles.css.
+ */
+
+.gen-col-name {
+  overflow-wrap: anywhere;
+}
+
+.gen-col-lock {
+  grid-column: 2;
+}
+
+.wizard-pick-row:hover {
+  background: var(--accent-soft);
+}
+
+/*
+ * The CRUD generator's options card: rows of label + hint on the left and
+ * controls on the right, separated by hairlines, with the summary and the
+ * Generate button in a footer strip.
+ */
+.crud-opts {
+  padding: 0;
+  overflow: hidden;
+  /*
+   * The card never grows taller than the room it has. When the page squeezes it, as on the
+   * Search endpoint tab where it sits straight in the page's column, its rows scroll inside it
+   * and the footer, with the Generate button, stays in view below them.
+   */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.crud-opts-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 20px;
+}
+
+.crud-opt-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 200px) 1fr;
+  gap: 8px 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.crud-opt-row:last-child {
+  border-bottom: none;
+}
+
+.crud-opt-title {
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.crud-opt-hint {
+  margin-top: 3px;
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.crud-opt-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.crud-opt-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.crud-opt-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crud-opt-panel {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  font-size: var(--text-sm);
+}
+
+.crud-opts-footer {
+  /* Stays in view below the rows, which scroll when the card is squeezed (see .crud-opts). */
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.crud-opts-summary {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+/* A read-only value tag, such as a role the endpoints require. */
+.opt-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.opt-tag-warn {
+  background: var(--tint-amber-bg);
+  color: var(--tint-amber-text);
+  border-color: transparent;
+}
+
+/* Fixed URL segments and editable ones joined into one field. */
+.url-group {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  overflow: hidden;
+  font-size: var(--text-sm);
+}
+
+.url-group:focus-within {
+  border-color: var(--accent);
+}
+
+.url-group-fixed {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  color: var(--text-soft);
+  user-select: none;
+}
+
+/* A number field with its unit inside the same box. */
+.unit-group {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.unit-group:focus-within {
+  border-color: var(--accent);
+}
+
+.unit-group-unit {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-left: 1px solid var(--border);
+  color: var(--text-soft);
+  font-size: var(--text-xs);
+}
+
+/* A unit that names the field rather than its unit, so it sits before the input. */
+.unit-group-prefix {
+  border-left: none;
+  border-right: 1px solid var(--border);
+}
+
+@media (max-width: 720px) {
+  .crud-opt-row {
+    grid-template-columns: 1fr;
+  }
+
+  .crud-opts-footer {
+    flex-wrap: wrap;
+  }
+}
+
+/* Step header for the Dashboard's "API from your data" guided flow. */
+.wizard-steps {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}

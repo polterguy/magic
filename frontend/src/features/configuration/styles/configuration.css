@@ -1,0 +1,8 @@
+/*
+ * Styles only the configuration feature uses. Loaded through its manifest, after app/styles.css.
+ */
+
+/* A field's error, in the hint's place. */
+.modal-hint-error {
+  color: var(--danger);
+}

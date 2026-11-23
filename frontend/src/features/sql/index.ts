@@ -1,3 +1,5 @@
+import './styles/sql.css';
+
 import type { FeatureManifest } from '@core/features';
 import { TerminalIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';

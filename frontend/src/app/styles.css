@@ -497,10 +497,6 @@ h1 {
   visibility: hidden;
 }
 
-.ide-dirty.is-dirty {
-  visibility: visible;
-}
-
 /*
  * Hyper IDE alone drops its subtitle once a file is open, so it reserves that
  * line to keep the row the same height either way — otherwise opening a file
@@ -1035,16 +1031,8 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   min-width: 0;
 }
 
-.gen-col-name {
-  overflow-wrap: anywhere;
-}
-
 .gen-col-null {
   font-size: var(--text-xs);
-}
-
-.gen-col-lock {
-  grid-column: 2;
 }
 
 /* Wide enough for its longest choice, "Current username", so every row's Select is one size. */
@@ -1369,10 +1357,6 @@ tr.clickable:hover td {
   background: var(--tint-blue-bg);
   color: var(--tint-blue-text);
 }
-.badge-put {
-  background: var(--tint-amber-bg);
-  color: var(--tint-amber-text);
-}
 .badge-delete {
   background: var(--tint-red-bg);
   color: var(--tint-red-text);
@@ -1529,72 +1513,7 @@ tr.clickable:hover td {
   cursor: pointer;
 }
 
-.link-btn:hover {
-  color: var(--accent-dark);
-}
-
 /* ---------- Guided tour ---------- */
-
-/*
- * Only the card takes clicks — the scrim and the spotlight let them through,
- * so the reader can use the button the tour is pointing at without losing
- * their place.
- */
-.tour {
-  position: fixed;
-  inset: 0;
-  z-index: 350;
-  pointer-events: none;
-}
-
-.tour-scrim {
-  position: absolute;
-  inset: 0;
-}
-
-/* Same cover as the spotlight's shadow, for steps that spotlight nothing. */
-.tour-scrim.dim {
-  background: rgba(0, 0, 0, 0.6);
-}
-
-/*
- * The hole: a transparent box over the target whose enormous box-shadow
- * dims the rest of the page. No clip-path, and the target renders normally.
- */
-.tour-spotlight {
-  position: absolute;
-  border-radius: var(--radius);
-  border: 2px solid var(--accent);
-  /*
-   * Real black rather than --scrim: the modal scrim is a warm near-black at
-   * 0.55, which over this theme's near-black canvas dims by almost nothing —
-   * and a spotlight is only as good as the contrast between hole and cover.
-   *
-   * No transition either: the step change smooth-scrolls the target into
-   * view, and an animated hole lags behind the scroll it is chasing, dragging
-   * a bright rectangle across the page on the way.
-   */
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
-  pointer-events: none;
-}
-
-.tour-card {
-  pointer-events: auto;
-  position: absolute;
-  width: 380px;
-  max-width: calc(100vw - 32px);
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 16px 18px;
-}
-
-.tour-step-count {
-  font-size: var(--text-xs);
-  color: var(--muted);
-  margin-bottom: 6px;
-}
 
 .tour-card h3 {
   margin: 0 0 8px;
@@ -1684,33 +1603,10 @@ tr.clickable:hover td {
   line-height: 1.55;
 }
 
-/* Copy-entire-response, top right of every finished answer. */
-.chat-response-copy {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 1;
-}
-
-.chat-text {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  line-height: 1.6;
-}
-
-/* Marked-rendered assistant messages — normal flow, not pre-wrap. */
-.chat-markdown {
-  white-space: normal;
-}
-
 .chat-markdown p,
 .chat-markdown ul,
 .chat-markdown ol {
   margin: 0 0 8px;
-}
-
-.chat-markdown li {
-  margin-bottom: 2px;
 }
 
 /*
@@ -1835,55 +1731,6 @@ tr.clickable:hover td {
   color: var(--text);
 }
 
-/*
- * Token colors wherever chat highlights something — code blocks in answers
- * and the JSON behind a function pill. The same --cm-* variables the Hyper
- * IDE editor theme resolves, so both match editor code in light and dark.
- */
-.chat-hl .hljs-keyword,
-.chat-hl .hljs-built_in,
-.chat-hl .hljs-selector-tag,
-.chat-hl .hljs-name {
-  color: var(--cm-keyword);
-}
-
-.chat-hl .hljs-string,
-.chat-hl .hljs-regexp {
-  color: var(--cm-string);
-}
-
-.chat-hl .hljs-symbol,
-.chat-hl .hljs-variable,
-.chat-hl .hljs-params {
-  color: var(--cm-text, var(--text));
-}
-
-.chat-hl .hljs-meta {
-  color: var(--cm-variable-2);
-}
-
-.chat-hl .hljs-type,
-.chat-hl .hljs-selector-class {
-  color: var(--cm-type);
-}
-
-.chat-hl .hljs-number,
-.chat-hl .hljs-literal {
-  color: var(--cm-number);
-}
-
-.chat-hl .hljs-comment {
-  color: var(--cm-comment);
-  font-style: italic;
-}
-
-.chat-hl .hljs-title,
-.chat-hl .hljs-attr,
-.chat-hl .hljs-attribute,
-.chat-hl .hljs-property {
-  color: var(--cm-property);
-}
-
 /* Mermaid diagrams from chat answers. */
 .chat-mermaid {
   border: 1px solid var(--border);
@@ -1903,10 +1750,6 @@ tr.clickable:hover td {
   font-size: var(--text-sm);
 }
 
-.chat-function {
-  margin: 6px 0;
-}
-
 /* Function-loop progress pills — the visible face of server-side AI functions. */
 .chat-pill {
   display: inline-flex;
@@ -1919,10 +1762,6 @@ tr.clickable:hover td {
   background: var(--surface-2);
   color: var(--text);
   cursor: pointer;
-}
-
-.chat-pill:disabled {
-  cursor: default;
 }
 
 .chat-pill-waiting {
@@ -1985,10 +1824,6 @@ tr.clickable:hover td {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-}
-
-.chat-tile {
-  width: 76px;
 }
 
 .chat-tile-preview {
@@ -2059,10 +1894,6 @@ tr.clickable:hover td {
   font-size: var(--text-xs);
 }
 
-.chat-tile-name {
-  margin-top: 5px;
-}
-
 .chat-tile-size {
   color: var(--muted);
 }
@@ -2088,10 +1919,6 @@ tr.clickable:hover td {
   border-top: 1px solid var(--border);
 }
 
-.chat-composer textarea {
-  resize: none;
-}
-
 .chat-composer-bar {
   display: flex;
   align-items: center;
@@ -2104,16 +1931,6 @@ tr.clickable:hover td {
   flex-shrink: 0;
   gap: 8px;
   padding: 9px 14px;
-}
-
-.chat-send {
-  margin-left: auto;
-}
-
-@media (max-width: 720px) {
-  .chat-drawer {
-    width: 100vw;
-  }
 }
 
 /* ---------- Spinner ---------- */
@@ -2297,13 +2114,6 @@ tr.clickable:hover td {
 
 /* ---------- Files page ---------- */
 
-.files-layout {
-  display: flex;
-  gap: 16px;
-  flex: 1;
-  min-height: 0;
-}
-
 .file-tree {
   flex-shrink: 0;
   overflow: auto;
@@ -2313,27 +2123,11 @@ tr.clickable:hover td {
   padding: 12px;
 }
 
-.splitter {
-  width: 5px;
-  flex-shrink: 0;
-  cursor: col-resize;
-  border-radius: var(--radius-sm);
-  margin: 0 -2px;
-}
-
-.splitter:hover {
-  background: var(--accent-soft);
-}
-
 .file-editor {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
-}
-
-.tree-node {
-  user-select: none;
 }
 
 .tree-row {
@@ -2392,25 +2186,7 @@ tr.clickable:hover td {
   color: var(--selection-text);
 }
 
-/* Column drop button appears only on row hover. */
-.col-drop {
-  opacity: 0;
-}
-.col-row:hover .col-drop,
-.col-drop:focus-visible {
-  opacity: 1;
-}
-
 /* ---------- SQL Studio: schema designer ---------- */
-
-/*
- * Masonry, not a grid: every card keeps its own height. In a grid, a row was as tall as its
- * longest table, and the short tables beside it were stretched into mostly empty cards.
- */
-.schema-grid {
-  columns: 300px;
-  column-gap: 14px;
-}
 
 .schema-card {
   break-inside: avoid;
@@ -2426,11 +2202,6 @@ tr.clickable:hover td {
   padding: 12px 10px 10px 16px;
   border-bottom: 1px solid var(--border);
   background: var(--surface-2);
-}
-
-.schema-card-title {
-  flex: 1;
-  min-width: 0;
 }
 
 /* Long table names wrap rather than running under the actions. */
@@ -2454,11 +2225,6 @@ tr.clickable:hover td {
   transition: opacity 0.12s;
 }
 
-.schema-card:hover .schema-card-actions,
-.schema-card:focus-within .schema-card-actions {
-  opacity: 1;
-}
-
 .schema-cols {
   list-style: none;
   margin: 0;
@@ -2476,15 +2242,6 @@ tr.clickable:hover td {
 
 .schema-col:hover {
   background: var(--overlay-faint);
-}
-
-.schema-col-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--font-mono);
 }
 
 .schema-badge {
@@ -2513,12 +2270,6 @@ tr.clickable:hover td {
   font-size: var(--text-xs);
   color: var(--text-soft);
   white-space: nowrap;
-}
-
-.schema-col-null {
-  margin-left: 6px;
-  font-style: italic;
-  opacity: 0.7;
 }
 
 .schema-col-drop {
@@ -2573,15 +2324,6 @@ tr.clickable:hover td {
   color: var(--text-soft);
 }
 
-.schema-fks-label {
-  margin-bottom: 2px;
-  font-family: var(--app-font);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
 .schema-fk-target {
   color: var(--tint-blue-text);
 }
@@ -2599,20 +2341,6 @@ tr.clickable:hover td {
   transition: text-decoration-color 0.12s;
 }
 
-.schema-fk-link:hover,
-.schema-fk-link:focus-visible {
-  text-decoration-color: currentColor;
-}
-
-/*
- * The card a reference took you to: a ring that pulses in the accent colour and fades, so the
- * eye lands on it after the scroll. The page has no global focus ring, so this also shows where
- * focus went.
- */
-.schema-card-flash {
-  animation: schema-card-flash 1.8s ease-out;
-}
-
 @keyframes schema-card-flash {
   0%,
   35% {
@@ -2622,11 +2350,6 @@ tr.clickable:hover td {
   100% {
     box-shadow: 0 0 0 3px transparent;
   }
-}
-
-/* The referenced column inside that card, tinted in the accent colour while the ring fades. */
-.schema-col-flash {
-  animation: schema-col-flash 2.4s ease-out;
 }
 
 @keyframes schema-col-flash {
@@ -2642,32 +2365,11 @@ tr.clickable:hover td {
 }
 
 /* No pulse with reduced motion, just a highlight that holds briefly and then goes. */
-@media (prefers-reduced-motion: reduce) {
-  .schema-col-flash,
-  .schema-card-flash {
-    animation-timing-function: steps(1, end);
-  }
-}
-
-.schema-empty {
-  margin: 0 0 14px;
-  padding: 40px 16px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-  text-align: center;
-  color: var(--text-soft);
-}
 
 /* System folders are tinted red like the old dashboard. */
 .tree-row.system .tree-name,
 .tree-row.system .tree-icon {
   color: var(--danger);
-}
-
-.tree-name {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .tree-children {
@@ -2688,10 +2390,6 @@ tr.clickable:hover td {
   display: flex;
   gap: 1px;
   opacity: 0;
-}
-
-.tree-row:hover .row-actions {
-  opacity: 1;
 }
 
 .icon-btn {
@@ -2731,27 +2429,6 @@ tr.clickable:hover td {
 
 /* ---------- Dashboard ---------- */
 
-/*
- * Terminal status strip: the five counts sit in one bordered bar, divided by
- * hairlines like columns in a readout, rather than five floating metric cards.
- * Still a responsive grid, so it wraps to 2-3 columns on narrow screens.
- */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0;
-  margin-bottom: 24px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  /*
-   * No overflow:hidden here — this strip is a flex-column child, and a
-   * non-visible overflow makes its min-height:auto compute to 0, so flex
-   * collapses the whole strip to its borders and clips the cells.
-   */
-  flex-shrink: 0;
-}
-
 /* The card wrapper per cell — flat, divided by a left hairline. */
 .kpi-grid > .card {
   border: none;
@@ -2765,51 +2442,6 @@ tr.clickable:hover td {
 
 .kpi-grid > .card:first-child {
   border-left: none;
-}
-
-.kpi-value {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: -0.5px;
-  /* Same-width digits, so a row of counts lines up instead of drifting. */
-  font-variant-numeric: tabular-nums;
-}
-
-/* Endpoint count past what MCP clients cope with. */
-.kpi-value.warn {
-  color: var(--danger);
-}
-
-/*
- * The clickable "!" badge opening the explanation, pinned to the cell's
- * top-right corner — the cells are the positioning context below.
- */
-.kpi-warn-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 15px;
-  height: 15px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: #fbeaec;
-  color: var(--danger);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 15px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.kpi-label {
-  color: var(--text-soft);
-  font-weight: 500;
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 6px;
 }
 
 /* ---------- Misc ---------- */
@@ -2866,16 +2498,8 @@ tr.clickable:hover td {
   padding: 8px 14px;
 }
 
-.log-meta-row + .log-meta-row {
-  border-top: 1px solid var(--border);
-}
-
 .log-meta-key {
   color: var(--accent);
-}
-
-.log-meta-value {
-  overflow-wrap: anywhere;
 }
 
 .mono {
@@ -2906,10 +2530,6 @@ tr.clickable:hover td {
   cursor: pointer;
 }
 
-.git-change-row:hover {
-  background: var(--accent-soft);
-}
-
 .git-change-row svg {
   width: 12px;
   height: 12px;
@@ -2927,10 +2547,6 @@ tr.clickable:hover td {
   flex: 1;
 }
 
-.git-change-line:hover .git-change-row {
-  background: var(--accent-soft);
-}
-
 .git-change-row .git-status {
   width: 2ch;
   flex-shrink: 0;
@@ -2940,9 +2556,6 @@ tr.clickable:hover td {
 
 .git-change-row .git-status.add {
   color: var(--ok);
-}
-.git-change-row .git-status.del {
-  color: var(--danger);
 }
 
 .git-diff {
@@ -3191,11 +2804,6 @@ pre.result-json {
   overflow: visible;
 }
 
-/* A field's error, in the hint's place. */
-.modal-hint-error {
-  color: var(--danger);
-}
-
 /*
  * A toggle pill stays a pill inside a form, where the generic form label rules would otherwise
  * stack its box and its label.
@@ -3245,64 +2853,12 @@ pre.result-json {
   overflow: visible;
 }
 
-.lightbox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.lightbox-stage {
-  max-width: 92vw;
-  max-height: 84vh;
-  overflow: auto;
-}
-
-.lightbox-image {
-  display: block;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: zoom-in;
-}
-
 .lightbox-image img {
   display: block;
   max-width: 92vw;
   max-height: 84vh;
   object-fit: contain;
   border-radius: var(--radius);
-}
-
-/* At its own size the image decides, and the stage scrolls. */
-.lightbox-stage.actual .lightbox-image {
-  cursor: zoom-out;
-}
-
-.lightbox-stage.actual .lightbox-image img {
-  max-width: none;
-  max-height: none;
-}
-
-.lightbox-caption {
-  color: #fff;
-  font-size: var(--text-sm);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-}
-
-.lightbox-close {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--border-strong);
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--text);
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
 }
 
 .modal-box h2 {
@@ -3401,10 +2957,6 @@ pre.result-json {
   border-radius: var(--radius-sm);
 }
 
-.wizard-pick-row:hover {
-  background: var(--accent-soft);
-}
-
 /*
  * A checkbox belongs BESIDE its label, but .form-grid stacks every label as a
  * caption above its control — and wins on specificity. So the row direction is
@@ -3452,114 +3004,6 @@ pre.result-json {
   cursor: pointer;
   font-size: var(--text-sm);
   padding: 0;
-}
-
-/*
- * Keeps a set of role chips clustered together (right-aligned) as one unit,
- * rather than each chip becoming its own space-between item when the row
- * turns into a flex card on phones.
- */
-.role-chips {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: flex-end;
-}
-
-/*
- * The CRUD generator's options card: rows of label + hint on the left and
- * controls on the right, separated by hairlines, with the summary and the
- * Generate button in a footer strip.
- */
-.crud-opts {
-  padding: 0;
-  overflow: hidden;
-  /*
-   * The card never grows taller than the room it has. When the page squeezes it, as on the
-   * Search endpoint tab where it sits straight in the page's column, its rows scroll inside it
-   * and the footer, with the Generate button, stays in view below them.
-   */
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.crud-opts-body {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 0 20px;
-}
-
-.crud-opt-row {
-  display: grid;
-  grid-template-columns: minmax(150px, 200px) 1fr;
-  gap: 8px 24px;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.crud-opt-row:last-child {
-  border-bottom: none;
-}
-
-.crud-opt-title {
-  font-size: var(--text-sm);
-  font-weight: 700;
-}
-
-.crud-opt-hint {
-  margin-top: 3px;
-  font-size: var(--text-xs);
-  color: var(--text-soft);
-  line-height: 1.45;
-}
-
-.crud-opt-controls {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.crud-opt-inline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.crud-opt-sub {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.crud-opt-panel {
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  font-size: var(--text-sm);
-}
-
-.crud-opts-footer {
-  /* Stays in view below the rows, which scroll when the card is squeezed (see .crud-opts). */
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
-  border-top: 1px solid var(--border);
-  background: var(--surface-2);
-}
-
-.crud-opts-summary {
-  flex: 1;
-  min-width: 0;
-  font-size: var(--text-sm);
-  font-weight: 600;
 }
 
 .crud-opts-summary.muted {
@@ -3626,48 +3070,6 @@ pre.result-json {
   outline-offset: 2px;
 }
 
-/* A read-only value tag, such as a role the endpoints require. */
-.opt-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
-  background: var(--accent-soft);
-  border: 1px solid var(--border);
-  font-size: var(--text-sm);
-  font-weight: 600;
-}
-
-.opt-tag-warn {
-  background: var(--tint-amber-bg);
-  color: var(--tint-amber-text);
-  border-color: transparent;
-}
-
-/* Fixed URL segments and editable ones joined into one field. */
-.url-group {
-  display: inline-flex;
-  align-items: stretch;
-  max-width: 100%;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  overflow: hidden;
-  font-size: var(--text-sm);
-}
-
-.url-group:focus-within {
-  border-color: var(--accent);
-}
-
-.url-group-fixed {
-  display: flex;
-  align-items: center;
-  padding: 0 4px;
-  color: var(--text-soft);
-  user-select: none;
-}
-
 .url-group-fixed:first-child {
   padding-left: 12px;
 }
@@ -3687,20 +3089,6 @@ pre.result-json {
   background: transparent;
 }
 
-/* A number field with its unit inside the same box. */
-.unit-group {
-  display: inline-flex;
-  align-items: stretch;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  overflow: hidden;
-}
-
-.unit-group:focus-within {
-  border-color: var(--accent);
-}
-
 .unit-group input {
   width: 90px;
   border: none;
@@ -3708,33 +3096,8 @@ pre.result-json {
   background: transparent;
 }
 
-.unit-group-unit {
-  display: flex;
-  align-items: center;
-  padding: 0 12px;
-  border-left: 1px solid var(--border);
-  color: var(--text-soft);
-  font-size: var(--text-xs);
-}
-
-/* A unit that names the field rather than its unit, so it sits before the input. */
-.unit-group-prefix {
-  border-left: none;
-  border-right: 1px solid var(--border);
-}
-
 .unit-group input[type='text'] {
   width: 180px;
-}
-
-@media (max-width: 720px) {
-  .crud-opt-row {
-    grid-template-columns: 1fr;
-  }
-
-  .crud-opts-footer {
-    flex-wrap: wrap;
-  }
 }
 
 .line-clamp {
@@ -3769,52 +3132,6 @@ pre.result-json {
   font-size: var(--text-xs);
 }
 
-.markdown-body pre {
-  background: var(--accent-soft);
-  border-radius: var(--radius);
-  padding: 10px 12px;
-  overflow-x: auto;
-}
-
-.markdown-body pre code {
-  background: none;
-  padding: 0;
-}
-
-.markdown-body img {
-  max-width: 100%;
-}
-
-/* Open-file tabs above the Hyper IDE editor. */
-/* Sits directly on top of the editor — no gap, so the tabs read as part of
-   it rather than as a separate strip floating above. */
-/*
- * Never scrolls. With more files open than fit, the tabs shrink like a browser's and cut their
- * names short. Each tab's tooltip still shows the full path.
- */
-.file-tabs {
-  display: flex;
-  flex-shrink: 0;
-  min-width: 0;
-  gap: 2px;
-}
-
-.file-tab {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex: 0 1 auto;
-  min-width: 0;
-  padding: 5px 6px 5px 12px;
-  border-radius: var(--radius) var(--radius) 0 0;
-  background: transparent;
-  color: var(--text-soft);
-  font-size: var(--text-sm);
-  white-space: nowrap;
-  cursor: pointer;
-  user-select: none;
-}
-
 .file-tab:hover {
   background: var(--accent-soft);
 }
@@ -3824,45 +3141,6 @@ pre.result-json {
   background: var(--accent-soft);
   color: var(--accent);
   font-weight: 600;
-}
-
-.file-tab-name {
-  display: inline-flex;
-  align-items: center;
-  min-width: 0;
-}
-
-.file-tab-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.file-tab-dirty,
-.file-tab-close {
-  flex: none;
-}
-
-.file-tab-dirty {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-  margin-left: 7px;
-}
-
-.file-tab-close {
-  border: none;
-  background: none;
-  color: inherit;
-  font-size: var(--text-md);
-  line-height: 1;
-  padding: 1px 5px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-}
-
-.file-tab-close:hover {
-  background: var(--overlay);
 }
 
 /* Global notifications pushed from the backend over the socket channel —
@@ -4402,35 +3680,6 @@ a.kpi-link .kpi-label::after {
   transition: opacity 0.12s;
 }
 
-a.kpi-link:hover {
-  color: inherit;
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-a.kpi-link:hover .kpi-label {
-  color: var(--accent);
-}
-
-a.kpi-link:hover .kpi-label::after {
-  opacity: 1;
-}
-
-a.kpi-link:active {
-  transform: translateY(1px);
-}
-
-/* Step header for the Dashboard's "API from your data" guided flow. */
-.wizard-steps {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 14px;
-  font-size: var(--text-sm);
-  font-weight: 600;
-}
-
 .wizard-steps .step,
 .wizard-steps .wizard-arrow {
   opacity: 0.4;
@@ -4447,15 +3696,6 @@ tr.row-selected > td {
 
 tr.row-selected > td:first-child {
   box-shadow: inset 3px 0 0 var(--accent);
-}
-
-/* The log entry an error toast deep-linked to. */
-tr.log-target > td {
-  background: var(--overlay);
-}
-
-tr.log-target > td:first-child {
-  box-shadow: inset 3px 0 0 var(--danger);
 }
 
 .toast-close {
@@ -4554,39 +3794,8 @@ tr.log-target > td:first-child {
   }
 }
 
-/*
- * Verb badge cell on the Endpoints screen. 38px left padding lines the verb up
- * under the module name above it (module-header padding 16 + chevron 12 + gap
- * 10). On phones the card's `.content td` padding out-specifies this, so the
- * badge stays at the card's left edge there.
- */
-.verb-cell {
-  padding-left: 38px;
-}
-
-/* Collapsible module sections on the Endpoints screen. */
-.module-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.module-header:hover {
-  background: var(--accent-soft);
-}
-
 .module-header.system strong {
   color: var(--danger);
-}
-
-/* Single-line cell content, with the full text available on hover. */
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* CodeMirror renders its autocomplete popup into document.body, which would
@@ -4632,22 +3841,6 @@ tr.log-target > td:first-child {
   transition: transform 0.12s;
 }
 
-.guide-details[open] > summary::before {
-  transform: rotate(90deg);
-}
-
-.guide-summary-title {
-  font-size: var(--text-lg);
-  font-weight: 700;
-}
-
-.guide-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 10px;
-  margin-top: 14px;
-}
-
 /* The one guide card that opens a widget rather than a route. */
 button.guide-card {
   font: inherit;
@@ -4670,52 +3863,6 @@ button.guide-card {
     border-color 0.12s,
     box-shadow 0.12s,
     transform 0.12s;
-}
-
-.guide-card:hover {
-  border-color: var(--accent);
-  box-shadow: 0 6px 18px var(--shadow-color);
-  transform: translateY(-2px);
-}
-
-.guide-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius);
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: var(--text-md);
-}
-
-.guide-title {
-  display: block;
-  font-weight: 700;
-  margin-bottom: 3px;
-}
-
-.guide-card:hover .guide-title {
-  color: var(--accent-dark);
-}
-
-.guide-text {
-  display: block;
-  color: var(--text-soft);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-}
-
-/* Vector-search results, coloured by whether they'd reach the model's
-   context — the model's threshold decides where that line falls. */
-tr.vss-relevant td {
-  color: var(--tint-green-text);
-}
-
-tr.vss-irrelevant td {
-  color: #7a7488;
 }
 
 /* Filter box with a clear button, shown once there's text to clear. */
@@ -4845,67 +3992,9 @@ tr.vss-irrelevant td {
   gap: 6px;
 }
 
-.dash-header-tools kbd {
-  margin-left: 2px;
-  padding: 0 5px;
-  font-size: 10px;
-  opacity: 0.8;
-}
-
-/* Count tiles: the icon sits quietly in the corner and lights up on hover. */
-.kpi-icon {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  color: var(--text-soft);
-  opacity: 0.45;
-  transition:
-    opacity 0.12s,
-    color 0.12s;
-}
-
 .kpi-icon svg {
   width: 18px;
   height: 18px;
-}
-
-a.kpi-link:hover .kpi-icon {
-  opacity: 1;
-  color: var(--accent);
-}
-
-.kpi-warn .kpi-icon {
-  color: var(--danger);
-  opacity: 0.8;
-}
-
-.kpi-grid .kpi-warn-btn {
-  top: auto;
-  right: 14px;
-  bottom: 14px;
-  width: 18px;
-  height: 18px;
-  line-height: 18px;
-  font-size: 11px;
-  background: var(--tint-red-bg);
-  box-shadow: 0 0 0 1px var(--tint-red-border);
-}
-
-.kpi-grid .kpi-warn-btn:hover {
-  background: var(--danger);
-  color: var(--accent-contrast);
-}
-
-.dash-grid {
-  display: grid;
-  gap: 16px;
-}
-
-/* Two cards side by side, or one filling the row when its partner is absent. */
-.dash-pair {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-  gap: 16px;
 }
 
 .dash-card {
@@ -4916,15 +4005,6 @@ a.kpi-link:hover .kpi-icon {
   padding: 22px 24px;
   border-radius: var(--radius-lg);
   transition: border-color 0.15s;
-}
-
-.dash-card:hover {
-  border-color: var(--border-strong);
-}
-
-/* The MCP card is the anchor — the most differentiating thing Magic does. */
-.dash-card-hero {
-  border-color: var(--border-strong);
 }
 
 .dash-card-head {
@@ -4957,10 +4037,6 @@ a.kpi-link:hover .kpi-icon {
   font-size: var(--text-lg);
 }
 
-.dash-card-hero .dash-card-head h2 {
-  font-size: var(--text-xl);
-}
-
 .dash-status {
   display: inline-flex;
   align-items: center;
@@ -4991,11 +4067,6 @@ a.kpi-link:hover .kpi-icon {
   color: var(--tint-amber-text);
 }
 
-.dash-card-body {
-  flex: 1;
-  min-width: 0;
-}
-
 .dash-card-body > p {
   margin: 0;
   color: var(--text-soft);
@@ -5004,29 +4075,6 @@ a.kpi-link:hover .kpi-icon {
 
 .dash-card-body > p + * {
   margin-top: 14px;
-}
-
-.dash-card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-/* A URL rendered as a terminal command line, with its action inside the line. */
-.dash-command {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 6px 6px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-deep);
-}
-
-.dash-command-prompt {
-  color: var(--accent);
-  font-weight: 700;
 }
 
 .dash-command .mono {
@@ -5063,46 +4111,6 @@ a.kpi-link:hover .kpi-icon {
   font-weight: 600;
 }
 
-.dash-section-link {
-  margin-left: auto;
-  font-size: var(--text-sm);
-  color: var(--text-soft);
-  text-decoration: none;
-}
-
-.dash-section-link:hover {
-  color: var(--accent);
-}
-
-/*
- * Plugins: a row of filter pills, then the plugins grouped into Modules and
- * Frontends, each a grid of cards shaped like the dashboard's.
- */
-.plugin-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  min-width: 0;
-  margin: 0 0 22px;
-  padding: 0;
-  border: none;
-}
-
-.plugin-filter {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text-soft);
-  font: inherit;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  cursor: pointer;
-}
-
 .plugin-filter:hover {
   border-color: var(--accent);
   color: var(--text);
@@ -5114,28 +4122,8 @@ a.kpi-link:hover .kpi-icon {
   color: var(--accent-contrast);
 }
 
-.plugin-filter-count {
-  font-size: 11px;
-  opacity: 0.7;
-  font-variant-numeric: tabular-nums;
-}
-
-.plugin-section + .plugin-section {
-  margin-top: 32px;
-}
-
 .plugin-section .dash-section-head {
   margin-bottom: 14px;
-}
-
-.plugin-section-hint {
-  font-size: var(--text-sm);
-}
-
-.plugin-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
 }
 
 .plugin-card {
@@ -5148,168 +4136,9 @@ a.kpi-link:hover .kpi-icon {
   transition: border-color 0.15s;
 }
 
-.plugin-card:hover {
-  border-color: var(--border-strong);
-}
-
-.plugin-card-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.plugin-card-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--accent-soft);
-  font-weight: 700;
-}
-
-.plugin-card-installed .plugin-card-icon {
-  background: var(--tint-green-bg);
-  color: var(--tint-green-text);
-  border-color: transparent;
-}
-
-.plugin-card-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.plugin-card-text {
-  flex: 1;
-  margin: 0;
-  color: var(--text-soft);
-  font-size: var(--text-sm);
-  line-height: 1.6;
-}
-
-.plugin-card-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-
-/*
- * Profile: who you are on top, the two forms side by side as cards with a
- * heading, a hint and their button in a footer, then access tokens as a row.
- */
-.profile-identity {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.profile-avatar {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  font-size: var(--text-md);
-  font-weight: 700;
-}
-
-.profile-identity-text {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.profile-identity-text strong {
-  font-size: var(--text-lg);
-}
-
-.profile-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.settings-card {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  overflow: hidden;
-}
-
-.settings-card-head h2 {
-  margin: 0;
-  font-size: var(--text-lg);
-}
-
 .settings-card-head p {
   margin: 4px 0 0;
   font-size: var(--text-sm);
-}
-
-.settings-card > .settings-card-head {
-  padding: 20px 22px 0;
-}
-
-.settings-card-body {
-  flex: 1;
-  padding: 18px 22px 22px;
-}
-
-.settings-card-foot {
-  display: flex;
-  justify-content: flex-end;
-  padding: 14px 22px;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.profile-tokens {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-/*
- * The font picker: one tile per font, each drawn in its own font. The radio stays in the tile for
- * keyboard and screen readers, but it is visually hidden, because the selected tile's border shows the choice.
- */
-.profile-font {
-  margin-bottom: 16px;
-}
-
-.font-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 10px;
-}
-
-.font-option {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  cursor: pointer;
 }
 
 .font-option:hover {
@@ -5320,41 +4149,6 @@ a.kpi-link:hover .kpi-icon {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent);
   background: var(--accent-soft);
-}
-
-.font-option:has(input:focus-visible) {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.font-option input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.font-option-sample {
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.1;
-}
-
-.font-option-label {
-  font-size: var(--text-sm);
-}
-
-.dash-section-text {
-  margin: 6px 0 14px;
-  font-size: var(--text-sm);
-}
-
-.dash-task-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .dash-task {
@@ -5370,46 +4164,9 @@ a.kpi-link:hover .kpi-icon {
     background 0.12s;
 }
 
-.dash-task:hover {
-  border-color: var(--border-strong);
-  background: var(--accent-soft);
-}
-
-.dash-task-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--radius-sm);
-  background: var(--overlay-faint);
-  color: var(--text-soft);
-}
-
 .dash-task-icon svg {
   width: 15px;
   height: 15px;
-}
-
-.dash-task-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.dash-task-name {
-  display: block;
-  overflow: hidden;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dash-task-description {
-  margin-top: 2px;
-  color: var(--text-soft);
-  font-size: var(--text-xs);
-  line-height: 1.5;
-  -webkit-line-clamp: 2;
 }
 
 .dash-task .btn {
@@ -5417,21 +4174,8 @@ a.kpi-link:hover .kpi-icon {
 }
 
 @media (max-width: 768px) {
-  .dash-pair,
-  .dash-task-list {
-    grid-template-columns: 1fr;
-  }
-
-  .dash-card-actions {
-    flex-direction: column;
-  }
-
   .dash-card-actions .btn {
     width: 100%;
-  }
-
-  .dash-command {
-    flex-wrap: wrap;
   }
 }
 
@@ -5582,17 +4326,6 @@ a.kpi-link:hover .kpi-icon {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 12px;
-}
-
-/* The folder that new-file, upload and download-folder act on. */
-.tree-row.active-folder {
-  background: var(--accent-soft);
-  color: var(--accent-dark);
-  font-weight: 600;
-}
-
-.tree-row.active-folder .tree-icon {
-  color: var(--accent-dark);
 }
 
 /* ---------- Terminal ---------- */
@@ -6102,27 +4835,6 @@ a.kpi-link:hover .kpi-icon {
  * part that grows.
  * ------------------------------------------------------------------------- */
 
-.designer-layout {
-  display: flex;
-  gap: 16px;
-  flex: 1;
-  min-height: 0;
-}
-
-.designer-rail {
-  width: 240px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 0;
-  overflow: auto;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px;
-}
-
 /*
  * Wide enough for all five Inspector tabs (Element/Style/Page/Quality/
  * Website) to show at once without the tab strip needing to scroll - the
@@ -6133,27 +4845,6 @@ a.kpi-link:hover .kpi-icon {
  */
 .designer-rail.right {
   width: 420px;
-}
-
-/*
- * A rail folded away to give the canvas the room.
- *
- * Taken out of the layout rather than narrowed, because a 0-width flex child
- * with a border is still a line down the page, and the point of folding it is
- * that the page being designed gets the space.
- */
-.designer-rail.shut {
-  display: none;
-}
-
-/*
- * Centred down the rail it folds, and pulled the width of the layout's gap so
- * it touches that rail rather than floating in the middle of the gutter. The
- * chevron points at what the click will do.
- */
-.designer-rail-toggle {
-  flex-shrink: 0;
-  align-self: center;
 }
 
 .designer-rail-toggle.left {
@@ -6168,75 +4859,6 @@ a.kpi-link:hover .kpi-icon {
   border-radius: var(--radius) 0 0 var(--radius);
 }
 
-/*
- * Sections keep their own height rather than being compressed to fit. Left to
- * shrink, the block list would be squeezed until the tree below it had no
- * height at all — and because the tree absorbed the overflow, the rail never
- * scrolled either, so the tree was simply gone with no way to reach it.
- */
-.designer-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 0;
-  flex-shrink: 0;
-}
-
-/*
- * The tree takes whatever room is left over, but never less than this — and
- * when there is not enough for both, the rail scrolls instead of one of them
- * disappearing.
- */
-/*
- * Nothing special any more: like every other section it keeps its own height
- * and lets the rail do the scrolling.
- */
-.designer-section.grow {
-  flex-shrink: 0;
-}
-
-.designer-section h3 {
-  margin: 0;
-  font-size: var(--text-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-soft);
-}
-
-.designer-note {
-  margin: 0;
-  font-size: var(--text-xs);
-  color: var(--text-soft);
-  line-height: 1.45;
-}
-
-.designer-note code {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  word-break: break-all;
-}
-
-.designer-empty {
-  color: var(--text-soft);
-  font-size: var(--text-sm);
-  padding: 12px 4px;
-  line-height: 1.5;
-}
-
-.designer-muted {
-  color: var(--text-soft);
-  font-size: var(--text-xs);
-}
-
-.designer-page-select {
-  max-width: 260px;
-}
-
-.designer-viewports {
-  margin: 0;
-  flex-shrink: 0;
-}
-
 /* The Inspector's five tabs share the rail evenly, with tighter padding so all five labels fit. */
 .designer-rail .tabs {
   gap: 0;
@@ -6245,64 +4867,6 @@ a.kpi-link:hover .kpi-icon {
 .designer-rail .tab {
   flex: 1 1 auto;
   padding: 10px 8px;
-}
-
-/* -- Blocks ---------------------------------------------------------------- */
-
-.designer-palette {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.designer-block {
-  font: inherit;
-  font-size: var(--text-xs);
-  padding: 5px 10px;
-  color: var(--text);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  cursor: grab;
-}
-
-.designer-block:hover:not(:disabled) {
-  border-color: var(--accent);
-}
-
-.designer-block:active:not(:disabled) {
-  cursor: grabbing;
-}
-
-.designer-block:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-/* -- Tree ------------------------------------------------------------------ */
-
-/*
- * No scroll of its own. The rail scrolls, and a second scroller nested inside
- * it means reaching the bottom of the tree only to discover there is more rail
- * underneath — two wheels for one column.
- */
-.designer-layers {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  /* Double clicking a row means "show me that"; it must not also start
-   * selecting the row's text the way a double click otherwise would. */
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.designer-layer {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 4px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  white-space: nowrap;
 }
 
 .designer-layer:hover {
@@ -6321,61 +4885,6 @@ a.kpi-link:hover .kpi-icon {
   font-style: italic;
 }
 
-.designer-layer-chevron {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--text-soft);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.designer-layer-chevron svg {
-  width: 12px;
-  height: 12px;
-}
-
-.designer-layer-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* -- Canvas ---------------------------------------------------------------- */
-
-.designer-canvas {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  background: var(--bg-deep);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-
-.designer-frame {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  /* White, not the dashboard's surface — a page is designed against what a
-   * visitor will see behind it, not against the tool's own theme. */
-  background: #fff;
-}
-
-/* Outlines are drawn out here, over the frame, so nothing the designer draws
- * can ever end up inside the document that gets saved. */
-.designer-outline {
-  position: absolute;
-  pointer-events: none;
-  z-index: 2;
-}
-
 /*
  * What is under the pointer, or under the row being hovered in the tree.
  *
@@ -6388,33 +4897,6 @@ a.kpi-link:hover .kpi-icon {
   outline: 2px solid #3068e6;
   outline-offset: -1px;
   background: rgba(48, 104, 230, 0.22);
-}
-
-/* The name and size of what is outlined, like a browser inspector's badge. */
-.designer-tag {
-  position: absolute;
-  z-index: 4;
-  pointer-events: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  max-width: 100%;
-  padding: 2px 7px;
-  border-radius: var(--radius-sm);
-  background: #3068e6;
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.5;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-}
-
-.designer-tag em {
-  font-style: normal;
-  opacity: 0.75;
 }
 
 /*
@@ -6435,14 +4917,6 @@ a.kpi-link:hover .kpi-icon {
     0 0 0 2px rgba(0, 0, 0, 0.35);
 }
 
-.designer-drop {
-  position: absolute;
-  pointer-events: none;
-  z-index: 3;
-  background: var(--ok);
-  border-radius: 2px;
-}
-
 /* Dropping into an empty container marks the whole container instead of an
  * edge between two children it does not have. */
 .designer-drop.area {
@@ -6451,55 +4925,9 @@ a.kpi-link:hover .kpi-icon {
   outline-offset: -2px;
 }
 
-/* -- Element and style panels ---------------------------------------------- */
-
-.designer-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  /* Same rule as the tree — the rail scrolls, this does not. */
-  flex-shrink: 0;
-}
-
-.designer-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.designer-field > span {
-  font-size: var(--text-xs);
-  color: var(--text-soft);
-}
-
-.designer-crumbs {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 2px;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-}
-
-.designer-crumb {
-  font: inherit;
-  padding: 1px 4px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: none;
-  color: var(--text-soft);
-  cursor: pointer;
-}
-
 .designer-crumb:hover {
   background: var(--accent-soft);
   color: var(--text);
-}
-
-.designer-crumb::after {
-  content: '/';
-  margin-left: 4px;
-  opacity: 0.4;
 }
 
 .designer-crumb.current {
@@ -6509,42 +4937,6 @@ a.kpi-link:hover .kpi-icon {
 
 .designer-crumb.current::after {
   content: '';
-}
-
-.designer-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.designer-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.designer-chip {
-  font: inherit;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 2px 7px;
-  color: var(--text);
-  background: var(--tint-neutral-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-}
-
-.designer-chip:hover {
-  border-color: var(--danger);
-}
-
-.designer-chip em {
-  font-style: normal;
-  color: var(--text-soft);
 }
 
 /*
@@ -6558,44 +4950,6 @@ a.kpi-link:hover .kpi-icon {
   margin-bottom: 14px;
 }
 
-.designer-images {
-  max-height: 52vh;
-  overflow-y: auto;
-  margin: 0 -4px;
-  padding: 0 4px;
-}
-
-.designer-images-folder {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  padding: 8px 2px 6px;
-  background: var(--surface);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--text-soft);
-}
-
-.designer-images-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
-  gap: 10px;
-  padding-bottom: 12px;
-}
-
-.designer-image {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  cursor: pointer;
-  text-align: left;
-  overflow: hidden;
-}
-
 .designer-image:hover {
   border-color: var(--accent);
 }
@@ -6604,184 +4958,6 @@ a.kpi-link:hover .kpi-icon {
 .designer-image.current {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent);
-}
-
-/*
- * A checkerboard behind the thumbnail, because a transparent PNG on a flat
- * panel is indistinguishable from one with a white background until it is on
- * the page and wrong.
- */
-.designer-image img {
-  width: 100%;
-  height: 84px;
-  object-fit: contain;
-  background-color: #fff;
-  background-image:
-    linear-gradient(45deg, #e9e9e9 25%, transparent 25%, transparent 75%, #e9e9e9 75%),
-    linear-gradient(45deg, #e9e9e9 25%, transparent 25%, transparent 75%, #e9e9e9 75%);
-  background-size: 14px 14px;
-  background-position:
-    0 0,
-    7px 7px;
-  border-radius: 4px;
-}
-
-/* Video previews sit in the same box as an image thumbnail. */
-.designer-image video {
-  width: 100%;
-  height: 84px;
-  object-fit: contain;
-  background: #000;
-  border-radius: 4px;
-}
-
-/* Audio has nothing to show, so the tile carries a mark instead. */
-.designer-media-audio {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 84px;
-  border-radius: 4px;
-  background: var(--surface);
-  color: var(--text-soft);
-}
-
-.designer-image-preview video {
-  display: block;
-  width: 100%;
-  height: 96px;
-  object-fit: contain;
-  background: #000;
-}
-
-.designer-image-preview audio {
-  display: block;
-  width: 100%;
-}
-
-.designer-image-name {
-  font-size: var(--text-xs);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.designer-image-size {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text-soft);
-  min-height: 12px;
-}
-
-/* The preview in the Element panel is the button that opens the picker. */
-.designer-image-preview {
-  display: block;
-  width: 100%;
-  padding: 6px;
-  margin-bottom: 6px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  cursor: pointer;
-}
-
-.designer-image-preview img {
-  display: block;
-  width: 100%;
-  height: 96px;
-  object-fit: contain;
-}
-
-.designer-attribute,
-.designer-style {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.designer-redirect-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.designer-redirect-row input {
-  flex: 1;
-  min-width: 0;
-}
-
-.designer-attribute label,
-.designer-style label {
-  width: 90px;
-  flex-shrink: 0;
-  font-size: var(--text-xs);
-  color: var(--text-soft);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.designer-attribute input,
-.designer-style input,
-.designer-style select {
-  flex: 1;
-  min-width: 0;
-}
-
-.designer-colour {
-  flex: 1;
-  display: flex;
-  gap: 4px;
-  min-width: 0;
-}
-
-.designer-colour input[type='color'] {
-  width: 30px;
-  flex-shrink: 0;
-  padding: 2px;
-}
-
-/*
- * Fixed width so the rows stay in one column whether or not the clear button
- * is there — the empty slot is a span of exactly the button's size.
- */
-.designer-clear {
-  flex-shrink: 0;
-  width: 22px;
-  font-size: var(--text-md);
-  line-height: 1;
-  justify-content: center;
-}
-
-.designer-group {
-  border-top: 1px solid var(--border);
-  padding-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.designer-group summary {
-  cursor: pointer;
-  font-size: var(--text-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-soft);
-  list-style: none;
-}
-
-.designer-group summary::-webkit-details-marker {
-  display: none;
-}
-
-.designer-group summary::before {
-  content: '▾ ';
-  opacity: 0.6;
-}
-
-.designer-group:not([open]) summary::before {
-  content: '▸ ';
 }
 
 @media (max-width: 1100px) {
@@ -6814,102 +4990,8 @@ a.kpi-link:hover .kpi-icon {
   }
 }
 
-/* Why the canvas is empty, said where the emptiness is. */
-.designer-canvas-note {
-  position: absolute;
-  z-index: 4;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 44ch;
-  margin: 0;
-  padding: 20px 22px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-soft);
-  font-size: var(--text-sm);
-  line-height: 1.55;
-  text-align: center;
-  box-shadow: var(--shadow-hard);
-}
-
-/*
- * A style value CSS will not accept. Marked on blur and left in the field —
- * the value is never applied and never rewritten, so what is on screen is
- * always what was actually typed.
- */
-.designer-field input.invalid,
-.designer-style input.invalid {
-  border-color: var(--danger);
-  box-shadow: 0 0 0 1px var(--danger);
-}
-
-/*
- * A value the server fills in when the page is served.
- *
- * Marked rather than hidden, and read-only rather than disabled: the value is
- * real, it is worth reading, and replacing it with fixed text is a decision
- * somebody is allowed to make — just not one they should make by brushing
- * past it. Amber for the same reason the canvas uses amber on one of these:
- * this is the one field where doing the ordinary thing is the wrong thing.
- */
-.designer-server-filled input,
-.designer-server-filled textarea {
-  border-color: #d98324;
-  background: rgba(217, 131, 36, 0.08);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-}
-
-.designer-server-filled .designer-note {
-  color: #d98324;
-}
-
-.designer-unlock {
-  margin-left: 8px;
-  width: auto;
-  white-space: nowrap;
-}
-
-/* One rule in the list of what this page has been given. */
-.designer-rule {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.designer-rule-name {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 7px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  cursor: pointer;
-  text-align: left;
-}
-
 .designer-rule-name.current {
   border-color: var(--accent);
-}
-
-.designer-rule-name code {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* How many properties the rule carries. */
-.designer-rule-name em {
-  flex-shrink: 0;
-  font-style: normal;
-  font-size: var(--text-xs);
-  color: var(--text-soft);
 }
 
 /*
@@ -6922,121 +5004,6 @@ a.kpi-link:hover .kpi-icon {
   border-radius: 2px;
 }
 
-/* One row of the quality panel: where it is, then what is wrong. */
-.designer-finding {
-  display: block;
-  width: 100%;
-  margin-bottom: 6px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  text-align: left;
-  font-size: var(--text-sm);
-  line-height: 1.55;
-  cursor: pointer;
-}
-
-.designer-finding:hover:not(:disabled) {
-  border-color: var(--accent);
-}
-
-.designer-finding:disabled {
-  cursor: default;
-}
-
-.designer-finding-where {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--text-soft);
-}
-
-/* The tree's own filter, above it and outside its scrolling. */
-.designer-tree-search {
-  width: 100%;
-  margin-bottom: 8px;
-  flex-shrink: 0;
-}
-
-/* The heading above each group of page fields. */
-.designer-meta-group {
-  margin: 4px 0 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-soft);
-}
-
-.designer-fields > div + div .designer-meta-group {
-  margin-top: 18px;
-}
-
-/*
- * The one-time note above the Live frame. Shown only when the dashboard is
- * served by the cloudlet being edited, where the isolation is weaker.
- */
-.designer-live-warning {
-  flex-shrink: 0;
-  margin-bottom: 10px;
-  padding: 14px 16px;
-  border: 1px solid var(--danger);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  font-size: var(--text-sm);
-  line-height: 1.6;
-}
-
-.designer-live-warning p {
-  margin: 0 0 10px;
-}
-
-/* The code view fills the same space the canvas does. */
-.designer-code {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-
-/*
- * The file picker above the editor. It keeps its height whatever the editor
- * does, and the note beside it only appears for a stylesheet.
- */
-.designer-code-bar {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-}
-
-.designer-code-bar select {
-  max-width: 320px;
-}
-
-.designer-code .cm-editor {
-  flex: 1;
-  min-height: 0;
-}
-
-/*
- * The editor takes the room; the prompt bar under it keeps its own height.
- * The waiter is full-screen and positioned, so it is not in this flow at all.
- */
-.designer-code > form {
-  flex-shrink: 0;
-}
-
 /* A run of text in the tree — quoted and lighter, so it reads as content
  * rather than as another tag. */
 .designer-layer.text .designer-layer-name {
@@ -7046,30 +5013,6 @@ a.kpi-link:hover .kpi-icon {
 
 .designer-layer.text.selected .designer-layer-name {
   color: var(--selection-text);
-}
-
-/*
- * Marks where a text selection stops describing itself and starts describing
- * the element around it — the fields below act on that element, the buttons
- * above still act on the run.
- */
-.designer-owner {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
-  font-size: var(--text-xs);
-  color: var(--text-soft);
-}
-
-.designer-owner .designer-crumb {
-  font-family: var(--font-mono);
-  color: var(--accent);
-}
-
-.designer-owner .designer-crumb::after {
-  content: '';
 }
 
 /* Toolbar overflow menu — the dashboard's dropdown chrome, with headings. */
@@ -7089,20 +5032,6 @@ a.kpi-link:hover .kpi-icon {
 .designer-menu-heading:not(:first-child) {
   border-top: 1px solid var(--border);
   margin-top: 4px;
-}
-
-/* The middle column: whichever view is showing, with the prompt bar under it. */
-.designer-middle {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* A rail that is not the thing being edited reads as switched off. */
-.designer-rail[inert] {
-  opacity: 0.45;
 }
 
 /*

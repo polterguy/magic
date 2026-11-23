@@ -1,3 +1,5 @@
+import './styles/plugins.css';
+
 import type { FeatureManifest } from '@core/features';
 import { PuzzleIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';

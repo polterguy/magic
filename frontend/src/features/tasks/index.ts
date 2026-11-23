@@ -1,3 +1,5 @@
+import './styles/tasks.css';
+
 import type { FeatureManifest } from '@core/features';
 import { ClockIcon } from '@shared/ui/Icons';
 import { lazy } from 'react';
