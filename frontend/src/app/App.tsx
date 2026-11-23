@@ -1,3 +1,4 @@
+import { features } from '@core/features';
 import { useAuth } from '@core/useAuth';
 import { lazy, Suspense } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
@@ -15,21 +16,6 @@ import NotFound from './NotFound';
  * stay eager: they ARE the first paint.
  */
 const Layout = lazy(() => import('./Layout'));
-const Dashboard = lazy(() => import('@features/dashboard/Dashboard'));
-const Playground = lazy(() => import('@features/playground/Playground'));
-const Files = lazy(() => import('@features/files/Files'));
-const WebDesigner = lazy(() => import('@features/designer/WebDesigner'));
-const Sql = lazy(() => import('@features/sql/Sql'));
-const Databases = lazy(() => import('@features/databases/Databases'));
-const Configuration = lazy(() => import('@features/configuration/Configuration'));
-const Profile = lazy(() => import('@features/profile/Profile'));
-const MachineLearning = lazy(() => import('@features/ml/MachineLearning'));
-const Plugins = lazy(() => import('@features/plugins/Plugins'));
-const Generator = lazy(() => import('@features/generator/Generator'));
-const Endpoints = lazy(() => import('@features/endpoints/Endpoints'));
-const Users = lazy(() => import('@features/users/Users'));
-const Tasks = lazy(() => import('@features/tasks/Tasks'));
-const Log = lazy(() => import('@features/log/Log'));
 
 export default function App() {
   const { authenticated, isRoot, setupNeeded, backend } = useAuth();
@@ -86,21 +72,10 @@ export default function App() {
     >
       <Layout key={backend?.url}>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/hyperlambda-playground" element={<Playground />} />
-          <Route path="/hyper-ide" element={<Files />} />
-          <Route path="/web-designer" element={<WebDesigner />} />
-          <Route path="/sql-studio" element={<Sql />} />
-          <Route path="/databases" element={<Databases />} />
-          <Route path="/generator" element={<Generator />} />
-          <Route path="/endpoints" element={<Endpoints />} />
-          <Route path="/user-roles-management" element={<Users />} />
-          <Route path="/task-manager" element={<Tasks />} />
-          <Route path="/configuration" element={<Configuration />} />
-          <Route path="/user-profile" element={<Profile />} />
-          <Route path="/machine-learning" element={<MachineLearning />} />
-          <Route path="/plugins" element={<Plugins />} />
-          <Route path="/log" element={<Log />} />
+          {/* Every page comes from a feature manifest, lazily loaded like the layout. */}
+          {features().map(({ id, path, page: Page }) =>
+            path !== undefined && Page ? <Route key={id} path={path} element={<Page />} /> : null,
+          )}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>

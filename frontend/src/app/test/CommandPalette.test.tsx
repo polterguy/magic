@@ -1,24 +1,78 @@
 // @vitest-environment jsdom
 /*
  * The command palette: what it lists for an empty query, how it ranks and groups a typed one,
- * keyboard and mouse selection, the dynamic sources (endpoints, files, tasks, models) and how it
- * behaves when one of them fails or the query is remembered between openings.
+ * keyboard and mouse selection, the dynamic sources features contribute and how it behaves when
+ * one of them fails or the query is remembered between openings.
+ *
+ * It runs against stand-in features registered here, not the real ones, so it tests the palette
+ * alone — each feature tests its own palette source next to its code.
  */
 import '../../test/renderPage';
 
-import * as api from '@core/api';
+import { configureApi } from '@core/api';
+import {
+  type FeatureManifest,
+  features,
+  type PaletteEntry,
+  registerFeatures,
+} from '@core/features';
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import CommandPalette from '../CommandPalette';
-import { SECTIONS } from '../sections';
 
-vi.mock('@core/api', async importOriginal =>
-  (await import('../../test/apiMock')).mockApi(await importOriginal()),
-);
+const sources = {
+  endpoints: vi.fn<() => Promise<PaletteEntry[]>>(),
+  files: vi.fn<() => Promise<PaletteEntry[]>>(),
+  tasks: vi.fn<() => Promise<PaletteEntry[]>>(),
+  ml: vi.fn<() => Promise<PaletteEntry[]>>(),
+};
 
-const mocked = vi.mocked(api);
+const Icon = () => <svg />;
+const FEATURES: FeatureManifest[] = [
+  { id: 'dashboard', path: '/', nav: { label: 'Dashboard', Icon, order: 0 } },
+  { id: 'databases', path: '/databases', nav: { label: 'Databases', Icon, order: 10 } },
+  { id: 'sql', path: '/sql-studio', nav: { label: 'SQL Studio', Icon, order: 20 } },
+  {
+    id: 'generator',
+    path: '/generator',
+    nav: { label: 'Endpoint Generator', Icon, order: 30 },
+    palette: { links: [{ label: 'Create an API from your data', to: '?guided=1' }] },
+  },
+  {
+    id: 'endpoints',
+    path: '/endpoints',
+    nav: { label: 'Endpoints', Icon, order: 40 },
+    palette: { entries: () => sources.endpoints() },
+  },
+  {
+    id: 'ml',
+    path: '/machine-learning',
+    nav: { label: 'Machine Learning', Icon, order: 50 },
+    palette: { entries: () => sources.ml() },
+  },
+  {
+    id: 'files',
+    path: '/hyper-ide',
+    nav: { label: 'Hyper IDE', Icon, order: 70 },
+    palette: { entries: () => sources.files() },
+  },
+  {
+    id: 'tasks',
+    path: '/task-manager',
+    nav: { label: 'Task Manager', Icon, order: 90 },
+    palette: { entries: () => sources.tasks() },
+  },
+];
+const NAVIGABLE = FEATURES.filter(feature => feature.nav);
+
+let realFeatures: readonly FeatureManifest[] = [];
+beforeAll(() => {
+  realFeatures = features();
+  registerFeatures(FEATURES);
+});
+afterAll(() => registerFeatures([...realFeatures]));
 
 // Each test gets its own backend url, so the palette's per-backend cache never leaks between tests.
 let backendCounter = 0;
@@ -26,21 +80,60 @@ let backendCounter = 0;
 beforeEach(() => {
   vi.clearAllMocks();
   backendCounter += 1;
-  api.configureApi('https://palette' + backendCounter + '.test', null);
-  mocked.listEndpoints.mockResolvedValue([
-    { path: 'magic/system/log/list', verb: 'get' },
-    { path: 'magic/modules/orders/place', verb: 'post' },
-  ] as never);
-  mocked.listFilesRecursively.mockImplementation((folder: string) =>
-    Promise.resolve(
-      folder === '/modules/' ? ['/modules/orders/place.post.hl'] : ['/etc/www/index.html'],
-    ),
-  );
-  mocked.listTasks.mockResolvedValue([
-    { id: 'nightly-cleanup', description: 'Removes old rows' },
-    { id: 'no-description' },
-  ] as never);
-  mocked.mlTypes.mockResolvedValue([{ type: 'support-bot' }] as never);
+  configureApi('https://palette' + backendCounter + '.test', null);
+  sources.endpoints.mockResolvedValue([
+    {
+      group: 'Endpoints',
+      label: 'magic/system/log/list',
+      verb: 'GET',
+      to: '/endpoints?filter=magic%2Fsystem%2Flog%2Flist&expand=get',
+    },
+    {
+      group: 'Endpoints',
+      label: 'magic/modules/orders/place',
+      verb: 'POST',
+      to: '/endpoints?filter=magic%2Fmodules%2Forders%2Fplace&expand=post',
+    },
+  ]);
+  sources.files.mockResolvedValue([
+    {
+      group: 'Files',
+      label: '/modules/orders/place.post.hl',
+      to: '/hyper-ide?open=%2Fmodules%2Forders%2Fplace.post.hl',
+    },
+    {
+      group: 'Files',
+      label: '/etc/www/index.html',
+      to: '/hyper-ide?open=%2Fetc%2Fwww%2Findex.html',
+    },
+  ]);
+  sources.tasks.mockResolvedValue([
+    {
+      group: 'Tasks',
+      label: 'nightly-cleanup',
+      hint: 'Removes old rows',
+      to: '/task-manager?edit=nightly-cleanup&filter=nightly-cleanup',
+    },
+    {
+      group: 'Tasks',
+      label: 'no-description',
+      to: '/task-manager?edit=no-description&filter=no-description',
+    },
+  ]);
+  sources.ml.mockResolvedValue([
+    {
+      group: 'Models',
+      label: 'support-bot',
+      hint: 'Edit model',
+      to: '/machine-learning?tab=types&edit=support-bot',
+    },
+    {
+      group: 'Training data',
+      label: 'support-bot',
+      hint: 'Training snippets for this model',
+      to: '/machine-learning?tab=training&type=support-bot',
+    },
+  ]);
 });
 
 interface Setup {
@@ -70,7 +163,7 @@ async function typeAndWait(
   text: string,
   expected: string,
 ) {
-  await waitFor(() => expect(mocked.mlTypes).toHaveBeenCalled());
+  await waitFor(() => expect(sources.ml).toHaveBeenCalled());
   await user.type(screen.getByRole('combobox'), text);
   await waitFor(() => expect(document.body.textContent).toContain(expected));
 }
@@ -79,7 +172,9 @@ describe('empty query', () => {
   it('lists every section and the actions, but none of the dynamic entries', async () => {
     await openPalette();
     const options = screen.getAllByRole('option');
-    expect(options).toHaveLength(SECTIONS.length + 1);
+    // The layout's one action here, and the generator's link.
+    expect(options).toHaveLength(NAVIGABLE.length + 2);
+    expect(screen.getByText('Create an API from your data')).toBeInTheDocument();
     expect(screen.getByText('Go to')).toBeInTheDocument();
     expect(screen.getByText('Actions')).toBeInTheDocument();
     expect(screen.getByText('Toggle light/dark theme')).toBeInTheDocument();
@@ -161,11 +256,15 @@ describe('searching', () => {
   });
 
   it('caps the result list at forty rows', async () => {
-    mocked.listFilesRecursively.mockImplementation(() =>
-      Promise.resolve(Array.from({ length: 100 }, (_, i) => '/modules/m/file' + i + '.hl')),
+    sources.files.mockResolvedValue(
+      Array.from({ length: 100 }, (_, i) => ({
+        group: 'Files',
+        label: '/modules/m/file' + i + '.hl',
+        to: '/hyper-ide?open=' + i,
+      })),
     );
     const { user } = await openPalette();
-    await waitFor(() => expect(mocked.mlTypes).toHaveBeenCalled());
+    await waitFor(() => expect(sources.ml).toHaveBeenCalled());
     await user.type(screen.getByRole('combobox'), 'file');
     await waitFor(() => expect(screen.getAllByRole('option')).toHaveLength(40));
   });
@@ -178,6 +277,12 @@ describe('running a command', () => {
     await user.keyboard('{Enter}');
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(go).toHaveBeenCalledWith('/databases');
+  });
+
+  it('a feature link navigates to its address under the feature', async () => {
+    const { user, go } = await openPalette();
+    await user.click(screen.getByRole('option', { name: 'Create an API from your data' }));
+    expect(go).toHaveBeenCalledWith('/generator?guided=1');
   });
 
   it('Enter on an action runs it', async () => {
@@ -253,7 +358,7 @@ describe('keyboard and mouse selection', () => {
   it('Enter runs the row the arrows selected', async () => {
     const { user, go } = await openPalette();
     await user.keyboard('{ArrowDown}{Enter}');
-    expect(go).toHaveBeenCalledWith(SECTIONS[1].to);
+    expect(go).toHaveBeenCalledWith(NAVIGABLE[1].path);
   });
 
   it('hovering a row selects it', async () => {
@@ -305,48 +410,48 @@ describe('closing', () => {
 
 describe('dynamic sources', () => {
   it('a failing source contributes nothing and the others still work', async () => {
-    mocked.listEndpoints.mockRejectedValue(new Error('403'));
-    mocked.mlTypes.mockRejectedValue(new Error('500'));
+    sources.endpoints.mockRejectedValue(new Error('403'));
+    sources.ml.mockRejectedValue(new Error('500'));
     const { user } = await openPalette();
     await typeAndWait(user, 'nightly', 'Tasks');
     expect(screen.queryByText('Endpoints')).not.toBeInTheDocument();
   });
 
-  it('a task list that answers nothing is tolerated', async () => {
-    mocked.listTasks.mockResolvedValue(undefined as never);
-    mocked.mlTypes.mockResolvedValue(undefined as never);
+  it('a source with nothing to offer is tolerated', async () => {
+    sources.tasks.mockResolvedValue([]);
+    sources.ml.mockResolvedValue([]);
     const { user } = await openPalette();
-    await waitFor(() => expect(mocked.mlTypes).toHaveBeenCalled());
+    await waitFor(() => expect(sources.ml).toHaveBeenCalled());
     await user.type(screen.getByRole('combobox'), 'orders');
     expect(await screen.findByText('Endpoints')).toBeInTheDocument();
   });
 
-  it('asks the backend once and reuses the answer on the next opening', async () => {
+  it('asks the sources once and reuses the answer on the next opening', async () => {
     const first = await openPalette();
-    await waitFor(() => expect(mocked.listEndpoints).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(sources.endpoints).toHaveBeenCalledTimes(1));
     await first.user.clear(first.input);
     cleanup();
     const second = await openPalette();
     await second.user.type(screen.getByRole('combobox'), 'nightly');
     expect(await screen.findByText('Tasks')).toBeInTheDocument();
-    expect(mocked.listEndpoints).toHaveBeenCalledTimes(1);
+    expect(sources.endpoints).toHaveBeenCalledTimes(1);
   });
 
   it('asks again for another backend', async () => {
     const first = await openPalette();
-    await waitFor(() => expect(mocked.listEndpoints).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(sources.endpoints).toHaveBeenCalledTimes(1));
     await first.user.keyboard('x');
-    api.configureApi('https://another-backend.test', null);
+    configureApi('https://another-backend.test', null);
     cleanup();
     await openPalette();
-    await waitFor(() => expect(mocked.listEndpoints).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(sources.endpoints).toHaveBeenCalledTimes(2));
   });
 
   it('logs and survives a loader that throws', async () => {
     const error = vi.spyOn(console, 'error').mockImplementation(() => {
       // keep the expected error out of the test output
     });
-    mocked.listTasks.mockImplementation(() => {
+    sources.tasks.mockImplementation(() => {
       throw new Error('sync failure');
     });
     await openPalette();

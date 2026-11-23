@@ -2,6 +2,7 @@ import { crudify } from '@core/api';
 import { errorMessage } from '@core/errors';
 import { showToast } from '@core/toast';
 import { DatabaseSelection } from '@shared/lib/sql';
+import { ProgressLine } from '@shared/ui/ProgressDialog';
 import { useRef, useState } from 'react';
 
 import {
@@ -11,7 +12,6 @@ import {
   endpointsForVerb,
   resolveLocks,
 } from '../crudify';
-import { ProgressLine } from '../ProgressDialog';
 import { ColumnLock, CrudDone, CrudifyOptions, CrudTable } from '../types';
 
 // What a CRUD generation run reads from the rest of the tab.

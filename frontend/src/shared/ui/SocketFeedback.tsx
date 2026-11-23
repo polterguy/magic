@@ -6,8 +6,9 @@
  */
 
 import { createSocket } from '@core/socket';
-import ProgressDialog from '@features/generator/ProgressDialog';
 import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
+
+import ProgressDialog from './ProgressDialog';
 
 interface FeedbackMessage {
   type: string;

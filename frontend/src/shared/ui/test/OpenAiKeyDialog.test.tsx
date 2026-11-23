@@ -5,7 +5,7 @@
  * only rewritten when it changed, and failures surface in a dismissible banner.
  */
 import * as api from '@core/api';
-import { setShellActions } from '@core/shellActions';
+import { registerShellAction } from '@core/shellActions';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -144,13 +144,13 @@ describe('OpenAiKeyDialog', () => {
 
   it('tells the shell to look for Chat Ops once the key is saved', async () => {
     const refreshChat = vi.fn();
-    setShellActions({ openPalette: vi.fn(), openChatOps: vi.fn(), refreshChat });
+    const unregister = registerShellAction('refreshChat', refreshChat);
     renderDialog();
     await userEvent.type(keyField(), KEY);
     await userEvent.click(screen.getByRole('button', { name: 'Save key' }));
 
     await waitFor(() => expect(refreshChat).toHaveBeenCalledTimes(1));
-    setShellActions(null);
+    unregister();
   });
 
   it('also switches the default model when another one is picked', async () => {

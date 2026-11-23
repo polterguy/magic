@@ -1,5 +1,6 @@
 import { executeTask, listTasks, Task } from '@core/api';
 import { showError } from '@core/errors';
+import { featureHref } from '@core/features';
 import { showToast } from '@core/toast';
 import { useDialog } from '@shared/hooks/useDialog';
 import BusyLabel from '@shared/ui/BusyLabel';
@@ -54,15 +55,18 @@ export default function TaskSection(
   }
 
   const pageCount = taskPageCount(props.count);
+  const taskManager = featureHref('tasks');
 
   return (
     <section className="card dash-tasks">
       <div className="dash-section-head">
         <h2>Tasks</h2>
         {props.count !== null && <span className="dash-count">{props.count}</span>}
-        <Link className="dash-section-link" to="/task-manager">
-          Task Manager →
-        </Link>
+        {taskManager !== null && (
+          <Link className="dash-section-link" to={taskManager}>
+            Task Manager →
+          </Link>
+        )}
       </div>
       <p className="muted dash-section-text">
         Run one of your tasks now. The Task Manager is where you write and schedule them.

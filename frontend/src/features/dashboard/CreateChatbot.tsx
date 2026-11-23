@@ -9,6 +9,7 @@ import {
 } from '@core/api';
 import { httpUrl, withoutTrailingSlashes } from '@core/backend';
 import { showError } from '@core/errors';
+import { featureHref } from '@core/features';
 import { RobotIcon } from '@shared/ui/Icons';
 import Select from '@shared/ui/Select';
 import SocketFeedback from '@shared/ui/SocketFeedback';
@@ -176,6 +177,7 @@ export default function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
                 return null;
               }
               const href = httpUrl(withoutTrailingSlashes(backendInfo().url) + '/' + model);
+              const modelHref = featureHref('ml', '?edit=' + encodeURIComponent(model));
               /*
                * Seeing the result comes before tuning it, so opening the chatbot
                * leads. Editing is offered next to it because everything the
@@ -188,12 +190,11 @@ export default function CreateChatbot(props: Readonly<{ onTour: () => void }>) {
                   <a className="btn" href={href} target="_blank" rel="noopener noreferrer">
                     Open chatbot ↗
                   </a>
-                  <Link
-                    className="btn btn-secondary"
-                    to={'/machine-learning?edit=' + encodeURIComponent(model)}
-                  >
-                    Edit model
-                  </Link>
+                  {modelHref !== null && (
+                    <Link className="btn btn-secondary" to={modelHref}>
+                      Edit model
+                    </Link>
+                  )}
                 </div>
               );
             }}

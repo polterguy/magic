@@ -4,36 +4,21 @@
  * list the editor builds its keymap from, so this dialog cannot go stale.
  */
 
-import { isMac, Shortcut, shortcutDisplay, SHORTCUTS } from '@core/shortcuts';
+import { features, type ShortcutGroup } from '@core/features';
+import { allShortcuts, isMac, shortcutDisplay } from '@core/shortcuts';
 import { Modal } from '@shared/ui/Dialogs';
-import { BoltIcon, CodeFileIcon, FolderIcon, LayoutIcon } from '@shared/ui/Icons';
+import { BoltIcon, CodeFileIcon } from '@shared/ui/Icons';
 import SearchInput from '@shared/ui/SearchInput';
 import { CSSProperties, ReactNode, useState } from 'react';
 
-const GROUPS: {
-  id: Shortcut['group'];
-  title: string;
-  note: string;
-  Icon: () => React.JSX.Element;
-}[] = [
+// The groups every build has. Features add their own groups after these, through their manifests.
+const CORE_GROUPS: ShortcutGroup[] = [
   { id: 'Global', title: 'Everywhere', note: 'Anywhere in the dashboard.', Icon: BoltIcon },
   {
     id: 'Editor',
     title: 'Code editors',
-    note: 'With the editor focused — Hyper IDE, Playground, SQL Studio, Web Designer’s code view.',
+    note: 'With a code editor focused.',
     Icon: CodeFileIcon,
-  },
-  {
-    id: 'Hyper IDE',
-    title: 'Hyper IDE file actions',
-    note: 'With the editor focused.',
-    Icon: FolderIcon,
-  },
-  {
-    id: 'Web Designer',
-    title: 'Web Designer',
-    note: 'On the canvas, or with an element selected.',
-    Icon: LayoutIcon,
   },
 ];
 
@@ -73,18 +58,24 @@ export default function ShortcutsDialog(props: Readonly<{ onClose: () => void }>
   const query = filter.trim().toLowerCase();
 
   // A row matches on its description, its keys, or the name of its group.
-  const groups = GROUPS.map(group => {
-    const all = SHORTCUTS.filter(shortcut => shortcut.group === group.id);
-    const groupMatches = query !== '' && group.title.toLowerCase().includes(query);
-    const shortcuts = all.filter(
-      shortcut =>
-        query === '' ||
-        groupMatches ||
-        shortcut.description.toLowerCase().includes(query) ||
-        shortcutDisplay(shortcut).toLowerCase().includes(query),
-    );
-    return { ...group, shortcuts };
-  }).filter(group => group.shortcuts.length > 0);
+  const everything = allShortcuts();
+  const featureGroups = features().flatMap(feature =>
+    feature.shortcuts?.group ? [feature.shortcuts.group] : [],
+  );
+  const groups = [...CORE_GROUPS, ...featureGroups]
+    .map(group => {
+      const all = everything.filter(shortcut => shortcut.group === group.id);
+      const groupMatches = query !== '' && group.title.toLowerCase().includes(query);
+      const shortcuts = all.filter(
+        shortcut =>
+          query === '' ||
+          groupMatches ||
+          shortcut.description.toLowerCase().includes(query) ||
+          shortcutDisplay(shortcut).toLowerCase().includes(query),
+      );
+      return { ...group, shortcuts };
+    })
+    .filter(group => group.shortcuts.length > 0);
 
   const shown = groups.reduce((sum, group) => sum + group.shortcuts.length, 0);
   const paletteCombo = isMac ? 'Cmd + /' : 'Ctrl + /';
@@ -97,8 +88,8 @@ export default function ShortcutsDialog(props: Readonly<{ onClose: () => void }>
       subtitle={
         <span className="shortcuts-subtitle">
           {query === ''
-            ? `${SHORTCUTS.length} shortcuts`
-            : `${shown} of ${SHORTCUTS.length} shortcuts`}
+            ? `${everything.length} shortcuts`
+            : `${shown} of ${everything.length} shortcuts`}
           {' · '}
           {isMac ? 'macOS keys' : 'Windows & Linux keys'}
         </span>

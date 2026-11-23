@@ -1,10 +1,10 @@
 import { fileWithTokenUrl } from '@core/api';
 import { httpUrl } from '@core/backend';
 import AiWaiter from '@shared/ui/AiWaiter';
+import FeatureLink from '@shared/ui/FeatureLink';
 import { TableSkeleton } from '@shared/ui/Skeleton';
-import { Link } from 'react-router-dom';
 
-import { sqlStudioUrl } from './connections';
+import { sqlStudioQuery } from './connections';
 import { useSqliteDatabases } from './hooks/useSqliteDatabases';
 
 /*
@@ -73,12 +73,13 @@ export default function InternalTab() {
                   <td data-label="Tables">{database.tables?.length ?? 0}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-                      <Link
+                      <FeatureLink
+                        feature="sql"
+                        suffix={sqlStudioQuery('sqlite', 'generic', database.name)}
                         className="btn btn-secondary btn-small"
-                        to={sqlStudioUrl('sqlite', 'generic', database.name)}
                       >
                         Edit
-                      </Link>
+                      </FeatureLink>
                       <a
                         className="btn btn-secondary btn-small"
                         href={httpUrl(fileWithTokenUrl('/data/' + database.name + '.db'))}

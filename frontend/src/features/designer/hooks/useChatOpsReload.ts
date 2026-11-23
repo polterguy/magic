@@ -3,8 +3,8 @@
  * finishes having done something, the canvas picks the file up again.
  */
 
+import { onChatOpsDone } from '@core/chatOps';
 import { showToast } from '@core/toast';
-import { onChatOpsDone } from '@features/chat/chatOps';
 import { useEffect, useEffectEvent } from 'react';
 
 export function useChatOpsReload(o: {

@@ -1,21 +1,25 @@
 // @vitest-environment jsdom
 /*
  * The application shell: navigation, collapse and phone drawer, theme, the Ctrl/Cmd shortcuts and
- * the overlays they open, guard-aware navigation, the toast stack and the socket feed behind it.
+ * the overlays they open, what features add to it, guard-aware navigation, the toast stack and
+ * the socket feed behind it.
+ *
+ * It runs against stand-in features registered here rather than the real ones, so the shell is
+ * tested alone — and so is what it does when a feature it links to is not in the build.
  */
-import * as api from '@core/api';
+import { type FeatureManifest, features, registerFeatures } from '@core/features';
 import { setNavGuard } from '@core/navGuard';
-import { openChatOps, openPalette, refreshChat, setDashboardTourRunner } from '@core/shellActions';
+import { addFooterAction, addPaletteAction, openChatOps, openPalette } from '@core/shellActions';
 import { openSupport } from '@core/support';
 import { showToast } from '@core/toast';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fakeToken, renderPage, TEST_BACKEND } from '../../test/renderPage';
 import Layout from '../Layout';
-import { SECTIONS } from '../sections';
 
 const socket = vi.hoisted(() => {
   const handlers: Record<string, (raw: string) => void> = {};
@@ -29,18 +33,8 @@ const socket = vi.hoisted(() => {
   return { handlers, connection, createSocket: vi.fn(() => connection) };
 });
 
-vi.mock('@core/api', async importOriginal =>
-  (await import('../../test/apiMock')).mockApi(await importOriginal()),
-);
 vi.mock('@core/socket', () => ({ createSocket: socket.createSocket }));
 vi.mock('@core/support', () => ({ openSupport: vi.fn(() => Promise.resolve()) }));
-vi.mock('@features/chat/ChatDrawer', () => ({
-  default: (props: { open: boolean; userId: string; onClose: () => void }) => (
-    <div data-testid="chat" data-open={String(props.open)} data-user={props.userId}>
-      <button onClick={props.onClose}>close chat</button>
-    </div>
-  ),
-}));
 vi.mock('../BackendsDialog', () => ({
   default: (props: { onClose: () => void }) => (
     <div role="dialog" aria-label="Backends stub">
@@ -49,7 +43,58 @@ vi.mock('../BackendsDialog', () => ({
   ),
 }));
 
-const mocked = vi.mocked(api);
+const Icon = () => <svg />;
+
+// A feature with no page that adds a footer button and a palette action while it is mounted.
+const widget = vi.hoisted(() => ({ clicked: vi.fn(), ran: vi.fn() }));
+function WidgetShell() {
+  useEffect(() => {
+    const removeFooter = addFooterAction({
+      id: 'widget',
+      title: 'Widget button',
+      Icon,
+      onClick: widget.clicked,
+    });
+    const removeAction = addPaletteAction({ label: 'Run the widget', action: widget.ran });
+    return () => {
+      removeFooter();
+      removeAction();
+    };
+  }, []);
+  return <div data-testid="widget-shell" />;
+}
+
+const FEATURES: FeatureManifest[] = [
+  { id: 'dashboard', path: '/', nav: { label: 'Dashboard', Icon, order: 0 } },
+  {
+    id: 'databases',
+    path: '/databases',
+    nav: { label: 'Databases', Icon, order: 10 },
+    roomy: true,
+  },
+  { id: 'sql', path: '/sql-studio', nav: { label: 'SQL Studio', Icon, order: 20 } },
+  {
+    id: 'generator',
+    path: '/generator',
+    nav: { label: 'Endpoint Generator', Icon, order: 30 },
+    palette: { links: [{ label: 'Create an API from your data', to: '?guided=1' }] },
+  },
+  { id: 'profile', path: '/user-profile', nav: { label: 'Profile', Icon, order: 40 } },
+  { id: 'log', path: '/log', nav: { label: 'Log', Icon, order: 50 } },
+  { id: 'widget', shell: WidgetShell },
+];
+const NAVIGABLE = FEATURES.filter(feature => feature.nav);
+
+let realFeatures: readonly FeatureManifest[] = [];
+beforeAll(() => {
+  realFeatures = features();
+});
+afterAll(() => registerFeatures([...realFeatures]));
+
+// The build without the given features, for as long as the test runs.
+function withoutFeatures(...ids: string[]) {
+  registerFeatures(FEATURES.filter(feature => !ids.includes(feature.id)));
+}
 
 function Where() {
   const location = useLocation();
@@ -69,13 +114,8 @@ beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
   setNavGuard(null);
-  setDashboardTourRunner(null);
+  registerFeatures(FEATURES);
   document.documentElement.removeAttribute('data-theme');
-  mocked.openaiIsConfigured.mockResolvedValue({ result: false });
-  mocked.listEndpoints.mockResolvedValue([]);
-  mocked.listFilesRecursively.mockResolvedValue([]);
-  mocked.listTasks.mockResolvedValue([]);
-  mocked.mlTypes.mockResolvedValue([]);
   for (const key of Object.keys(socket.handlers)) {
     delete socket.handlers[key];
   }
@@ -89,10 +129,10 @@ describe('navigation', () => {
   it('lists every section with its label, the page as content, and the connection', () => {
     renderLayout();
     const nav = screen.getByRole('navigation');
-    for (const section of SECTIONS) {
-      expect(within(nav).getByRole('link', { name: section.label })).toHaveAttribute(
+    for (const feature of NAVIGABLE) {
+      expect(within(nav).getByRole('link', { name: feature.nav!.label })).toHaveAttribute(
         'href',
-        section.to,
+        feature.path,
       );
     }
     expect(screen.getByTestId('where')).toHaveTextContent('/');
@@ -117,6 +157,28 @@ describe('navigation', () => {
     renderLayout();
     await userEvent.click(screen.getByRole('link', { name: /root/ }));
     expect(screen.getByTestId('where')).toHaveTextContent('/user-profile');
+  });
+
+  it('shows the connection without a link when there is no profile feature', () => {
+    withoutFeatures('profile');
+    renderLayout();
+    expect(screen.getByText('cloudlet.test')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /root/ })).not.toBeInTheDocument();
+  });
+
+  it('leaves a missing feature out of the navigation', () => {
+    withoutFeatures('databases');
+    renderLayout();
+    expect(screen.queryByRole('link', { name: 'Databases' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'SQL Studio' })).toBeInTheDocument();
+  });
+
+  it('narrows the content for pages whose manifest asks for it', () => {
+    const view = renderLayout({ route: '/databases' });
+    expect(view.container.querySelector('main')).toHaveClass('content-roomy');
+    view.unmount();
+    const workspace = renderLayout({ route: '/sql-studio' });
+    expect(workspace.container.querySelector('main')).not.toHaveClass('content-roomy');
   });
 });
 
@@ -244,57 +306,28 @@ describe('overlays and shortcuts', () => {
   });
 });
 
-describe('Chat Ops availability', () => {
-  it('has no chat button, drawer or shortcut without an OpenAI key', async () => {
+describe('feature contributions', () => {
+  it('mounts the shell of every feature that has one', async () => {
     renderLayout();
-    await waitFor(() => expect(mocked.openaiIsConfigured).toHaveBeenCalled());
-    expect(screen.queryByTitle(/^Chat Ops/)).not.toBeInTheDocument();
-    expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
-    await userEvent.keyboard('{Control>}.{/Control}');
-    expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
+    expect(await screen.findByTestId('widget-shell')).toBeInTheDocument();
   });
 
-  it('shows the chat once a key is added, without reloading the page', async () => {
-    renderLayout();
-    await waitFor(() => expect(mocked.openaiIsConfigured).toHaveBeenCalled());
-    expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
-
-    mocked.openaiIsConfigured.mockResolvedValue({ result: true });
-    act(() => refreshChat());
-    expect(await screen.findByTestId('chat')).toBeInTheDocument();
-    await userEvent.keyboard('{Control>}.{/Control}');
-    expect(screen.getByTestId('chat')).toHaveAttribute('data-open', 'true');
+  it('renders the footer buttons features add, which also close the phone drawer', async () => {
+    const view = renderLayout();
+    const shell = view.container.querySelector('.shell')!;
+    await userEvent.click(screen.getByRole('button', { name: 'Open navigation' }));
+    await userEvent.click(await screen.findByTitle('Widget button'));
+    expect(widget.clicked).toHaveBeenCalledTimes(1);
+    expect(shell).not.toHaveClass('nav-open');
   });
 
-  it('stays hidden when the availability check fails', async () => {
-    mocked.openaiIsConfigured.mockRejectedValue(new Error('403'));
+  it('drops what a feature added once it is gone', async () => {
+    const view = renderLayout();
+    await screen.findByTitle('Widget button');
+    view.unmount();
+    withoutFeatures('widget');
     renderLayout();
-    await waitFor(() => expect(mocked.openaiIsConfigured).toHaveBeenCalled());
-    expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
-  });
-
-  it('mounts the drawer closed for the signed-in user, and the button and Ctrl+. toggle it', async () => {
-    mocked.openaiIsConfigured.mockResolvedValue({ result: true });
-    renderLayout();
-    const chat = await screen.findByTestId('chat');
-    expect(chat).toHaveAttribute('data-open', 'false');
-    expect(chat).toHaveAttribute('data-user', 'root');
-    await userEvent.click(screen.getByTitle(/^Chat Ops/));
-    expect(chat).toHaveAttribute('data-open', 'true');
-    await userEvent.keyboard('{Control>}.{/Control}');
-    expect(chat).toHaveAttribute('data-open', 'false');
-    await userEvent.keyboard('{Control>}.{/Control}');
-    expect(chat).toHaveAttribute('data-open', 'true');
-    await userEvent.click(screen.getByRole('button', { name: 'close chat' }));
-    expect(chat).toHaveAttribute('data-open', 'false');
-  });
-
-  it('pages can open it through the shell actions', async () => {
-    mocked.openaiIsConfigured.mockResolvedValue({ result: true });
-    renderLayout();
-    const chat = await screen.findByTestId('chat');
-    act(() => openChatOps());
-    expect(chat).toHaveAttribute('data-open', 'true');
+    expect(screen.queryByTitle('Widget button')).not.toBeInTheDocument();
   });
 });
 
@@ -305,7 +338,7 @@ describe('palette actions', () => {
     await screen.findByRole('dialog', { name: 'Command palette' });
   }
 
-  it('offers the layout actions, without chat and tour when they are unavailable', async () => {
+  it('offers the layout actions and the feature links', async () => {
     await openActions();
     for (const label of [
       'Toggle light/dark theme',
@@ -316,11 +349,13 @@ describe('palette actions', () => {
     ]) {
       expect(screen.getByRole('option', { name: label })).toBeInTheDocument();
     }
+  });
+
+  it('offers no generator link without the generator', async () => {
+    withoutFeatures('generator');
+    await openActions();
     expect(
-      screen.queryByRole('option', { name: 'Chat with your cloudlet' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('option', { name: 'Show the dashboard tour' }),
+      screen.queryByRole('option', { name: 'Create an API from your data' }),
     ).not.toBeInTheDocument();
   });
 
@@ -355,21 +390,10 @@ describe('palette actions', () => {
     expect(screen.getByTestId('where')).toHaveTextContent('/generator?guided=1');
   });
 
-  it('the dashboard tour action appears while the dashboard can run it, and runs it', async () => {
-    const tour = vi.fn();
-    setDashboardTourRunner(tour);
+  it('offers the actions features add while they are mounted, and runs them', async () => {
     await openActions();
-    await userEvent.click(screen.getByRole('option', { name: 'Show the dashboard tour' }));
-    expect(tour).toHaveBeenCalledTimes(1);
-  });
-
-  it('the chat action appears with an OpenAI key and opens the drawer', async () => {
-    mocked.openaiIsConfigured.mockResolvedValue({ result: true });
-    renderLayout();
-    const chat = await screen.findByTestId('chat');
-    await userEvent.keyboard('{Control>}k{/Control}');
-    await userEvent.click(await screen.findByRole('option', { name: 'Chat with your cloudlet' }));
-    expect(chat).toHaveAttribute('data-open', 'true');
+    await userEvent.click(await screen.findByRole('option', { name: 'Run the widget' }));
+    expect(widget.ran).toHaveBeenCalledTimes(1);
   });
 
   it('picking a section from the palette navigates there', async () => {
@@ -468,6 +492,14 @@ describe('toasts', () => {
     await userEvent.click(screen.getByRole('link', { name: 'View log entry →' }));
     expect(screen.getByTestId('where')).toHaveTextContent('/log?id=42');
     expect(screen.queryByText('Failed')).not.toBeInTheDocument();
+  });
+
+  it('an error with a log id has no link without the log feature', () => {
+    withoutFeatures('log');
+    renderLayout();
+    act(() => showToast('Failed', true, 42));
+    expect(screen.getByText('Failed')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'View log entry →' })).not.toBeInTheDocument();
   });
 
   it('stops listening for toasts once unmounted', () => {

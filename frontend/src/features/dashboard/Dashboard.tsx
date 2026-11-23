@@ -1,3 +1,4 @@
+import { hasFeature } from '@core/features';
 import { openChatOps, openPalette } from '@core/shellActions';
 import { isMac } from '@core/shortcuts';
 import { showToast } from '@core/toast';
@@ -66,7 +67,7 @@ export default function Dashboard() {
           <button type="button" className="btn btn-secondary btn-small" onClick={openPalette}>
             <SearchIcon /> Search <kbd>{isMac ? '⌘K' : 'Ctrl K'}</kbd>
           </button>
-          {openaiConfigured === true && (
+          {openaiConfigured === true && hasFeature('chat') && (
             <button type="button" className="btn btn-small" onClick={openChatOps}>
               <RobotIcon /> Chat Ops
             </button>

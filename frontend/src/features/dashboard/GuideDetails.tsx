@@ -1,4 +1,4 @@
-import { SECTIONS } from '@app/sections';
+import { features, hasFeature } from '@core/features';
 import { openChatOps, openPalette } from '@core/shellActions';
 import { openSupport } from '@core/support';
 import { RobotIcon, SearchIcon } from '@shared/ui/Icons';
@@ -17,23 +17,27 @@ export default function GuideDetails(props: Readonly<{ openaiConfigured: boolean
         <span className="muted">Every part of your cloudlet, and where to find it.</span>
       </summary>
       <div className="guide-grid">
-        {SECTIONS.filter(section => section.description).map(section => (
-          <Link className="guide-card" key={section.to} to={section.to}>
-            <span className="guide-icon">
-              <section.Icon />
-            </span>
-            <span>
-              <span className="guide-title">{section.label}</span>
-              <span className="guide-text">{section.description}</span>
-            </span>
-          </Link>
-        ))}
+        {features().flatMap(({ id, path, nav }) =>
+          nav?.description && path !== undefined
+            ? [
+                <Link className="guide-card" key={id} to={path}>
+                  <span className="guide-icon">
+                    <nav.Icon />
+                  </span>
+                  <span>
+                    <span className="guide-title">{nav.label}</span>
+                    <span className="guide-text">{nav.description}</span>
+                  </span>
+                </Link>,
+              ]
+            : [],
+        )}
         {/*
          * The last cards are the ones that aren't routes — overlays that
          * open over whatever you are looking at, wearing the same clothes
          * as their neighbours.
          */}
-        {props.openaiConfigured === true && (
+        {props.openaiConfigured === true && hasFeature('chat') && (
           <button className="guide-card" type="button" onClick={openChatOps}>
             <span className="guide-icon">
               <RobotIcon />

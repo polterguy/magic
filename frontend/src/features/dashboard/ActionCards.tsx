@@ -3,8 +3,8 @@
  * cloudlet: becoming an AI agent, adding an OpenAI key, generating endpoints,
  * or serving a frontend.
  */
-
 import { httpUrl } from '@core/backend';
+import { featureHref } from '@core/features';
 import { copyToClipboard } from '@core/toast';
 import BusyLabel from '@shared/ui/BusyLabel';
 import {
@@ -146,6 +146,12 @@ export function OpenAiKeyCard(props: Readonly<{ onConfigure: () => void }>) {
 }
 
 export function ApiWizardCard() {
+  const generator = featureHref('generator');
+  const databases = featureHref('databases');
+  // Every way in leads to the generator, so without it there is nothing to offer.
+  if (generator === null) {
+    return null;
+  }
   return (
     <ActionCard
       tour="api-wizard"
@@ -153,13 +159,13 @@ export function ApiWizardCard() {
       title="API Wizard"
       actions={
         <>
-          <Link className="btn" to="/generator?guided=1">
+          <Link className="btn" to={generator + '?guided=1'}>
             CRUD backend
           </Link>
-          <Link className="btn btn-secondary" to="/generator?tab=sql">
+          <Link className="btn btn-secondary" to={generator + '?tab=sql'}>
             SQL endpoint
           </Link>
-          <Link className="btn btn-secondary" to="/generator?tab=import">
+          <Link className="btn btn-secondary" to={generator + '?tab=import'}>
             Import API
           </Link>
         </>
@@ -168,8 +174,13 @@ export function ApiWizardCard() {
       <p>
         Three ways to get endpoints: turn every table in a database into secured REST endpoints,
         publish your own SQL as an endpoint, or wrap somebody else&apos;s API from its OpenAPI
-        specification. Whatever you generate is published to your AI agent as MCP tools. No database
-        yet? <Link to="/databases">Connect or create one first</Link>.
+        specification. Whatever you generate is published to your AI agent as MCP tools.
+        {databases !== null && (
+          <>
+            {' '}
+            No database yet? <Link to={databases}>Connect or create one first</Link>.
+          </>
+        )}
       </p>
     </ActionCard>
   );

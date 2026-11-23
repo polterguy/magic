@@ -1,0 +1,24 @@
+import * as api from '@core/api';
+import { describe, expect, it, vi } from 'vitest';
+
+import { paletteEntries } from '../palette';
+
+vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+
+describe('endpoints palette source', () => {
+  it('opens the endpoints page filtered to the endpoint, with its verb expanded', async () => {
+    vi.mocked(api.listEndpoints).mockResolvedValue([
+      { path: 'magic/modules/orders/place', verb: 'post' },
+    ] as never);
+    expect(await paletteEntries('/endpoints')).toEqual([
+      {
+        group: 'Endpoints',
+        label: 'magic/modules/orders/place',
+        verb: 'POST',
+        to: '/endpoints?filter=magic%2Fmodules%2Forders%2Fplace&expand=post',
+      },
+    ]);
+  });
+});

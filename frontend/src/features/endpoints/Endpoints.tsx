@@ -7,6 +7,7 @@ import {
   loadFile,
 } from '@core/api';
 import { showError } from '@core/errors';
+import { featureHref, hasFeature } from '@core/features';
 import AiWaiter from '@shared/ui/AiWaiter';
 import DebugDialog from '@shared/ui/DebugDialog';
 import type { InvokeResult } from '@shared/ui/InvokePanel';
@@ -182,8 +183,13 @@ export default function Endpoints() {
               scrollTarget={scrollTarget}
               onResult={setResult}
               onDebug={runDebug}
-              onEdit={endpoint =>
-                navigate('/hyper-ide?open=' + encodeURIComponent(sourceFile(endpoint)))
+              onEdit={
+                hasFeature('files')
+                  ? endpoint =>
+                      void navigate(
+                        featureHref('files', '?open=' + encodeURIComponent(sourceFile(endpoint)))!,
+                      )
+                  : undefined
               }
               onOpenApi={showOpenApi}
             />

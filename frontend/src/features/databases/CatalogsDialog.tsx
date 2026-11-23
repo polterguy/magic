@@ -1,8 +1,8 @@
 import type { DatabaseMeta } from '@core/api';
 import { Modal } from '@shared/ui/Dialogs';
-import { Link } from 'react-router-dom';
+import FeatureLink from '@shared/ui/FeatureLink';
 
-import { type ConnectionRow, sqlStudioUrl } from './connections';
+import { type ConnectionRow, sqlStudioQuery } from './connections';
 
 // The catalogs (databases) of one external connection.
 export default function CatalogsDialog(
@@ -42,13 +42,14 @@ export default function CatalogsDialog(
               <td data-label="Tables">{catalog.tables?.length ?? 0}</td>
               <td>
                 <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-                  <Link
+                  <FeatureLink
+                    feature="sql"
+                    suffix={sqlStudioQuery(catalogs.row.type, catalogs.row.name, catalog.name)}
                     className="btn btn-secondary btn-small"
-                    to={sqlStudioUrl(catalogs.row.type, catalogs.row.name, catalog.name)}
                     onClick={props.onClose}
                   >
                     Edit
-                  </Link>
+                  </FeatureLink>
                   <button
                     className="btn btn-danger btn-small"
                     onClick={() => props.onRemove(catalogs.row, catalog.name)}

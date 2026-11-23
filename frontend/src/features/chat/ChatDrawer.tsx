@@ -19,6 +19,7 @@ import {
   killExecution,
   MAX_CHAT_FILES,
 } from '@core/api';
+import { notifyChatOpsDone } from '@core/chatOps';
 import { showError } from '@core/errors';
 import { createSocket } from '@core/socket';
 import { getTheme } from '@core/theme';
@@ -37,7 +38,6 @@ import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import { notifyChatOpsDone } from './chatOps';
 import { type AttachMode, backendIsLocal, defaultAttachMode } from './chatUpload';
 import ImageLightbox from './ImageLightbox';
 import WidgetDialog from './WidgetDialog';

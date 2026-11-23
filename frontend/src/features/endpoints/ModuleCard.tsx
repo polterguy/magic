@@ -24,7 +24,8 @@ export default function ModuleCard(
     scrollTarget: RefObject<string | null>;
     onResult: (result: InvokeResult) => void;
     onDebug: (endpoint: Endpoint, args: Record<string, unknown>) => Promise<void>;
-    onEdit: (endpoint: Endpoint) => void;
+    // Absent when there is nowhere to edit the endpoint's file (no Hyper IDE in this build).
+    onEdit?: (endpoint: Endpoint) => void;
     onOpenApi: (target: string) => Promise<void>;
   }>,
 ) {
@@ -121,7 +122,7 @@ export default function ModuleCard(
                             endpoint={endpoint}
                             onResult={props.onResult}
                             onDebug={args => props.onDebug(endpoint, args)}
-                            onEdit={() => props.onEdit(endpoint)}
+                            onEdit={props.onEdit && (() => props.onEdit?.(endpoint))}
                             onOpenApi={() => props.onOpenApi(sourceFile(endpoint))}
                           />
                         </div>

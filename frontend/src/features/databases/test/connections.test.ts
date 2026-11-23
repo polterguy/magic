@@ -12,7 +12,7 @@ import {
   connectionRows,
   CSTRING_NAME_PATTERN,
   DB_NAME_PATTERN,
-  sqlStudioUrl,
+  sqlStudioQuery,
   statusBadge,
   withStatus,
 } from '../connections';
@@ -45,10 +45,10 @@ describe('statusBadge', () => {
   });
 });
 
-describe('sqlStudioUrl', () => {
+describe('sqlStudioQuery', () => {
   it('builds the deep link SQL Studio consumes', () => {
-    expect(sqlStudioUrl('sqlite', 'generic', 'magic')).toBe(
-      '/sql-studio?dbType=sqlite&dbCString=generic&dbName=magic',
+    expect(sqlStudioQuery('sqlite', 'generic', 'magic')).toBe(
+      '?dbType=sqlite&dbCString=generic&dbName=magic',
     );
   });
 });

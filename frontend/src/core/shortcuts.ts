@@ -1,28 +1,17 @@
 /*
  * The single source of truth for keyboard shortcuts. CodeEditor builds its
- * CodeMirror keymap FROM this list, and the shortcuts overlay renders it —
+ * CodeMirror keymap FROM these lists, and the shortcuts overlay renders them —
  * so a binding cannot exist without being documented, and vice versa.
  *
- * The docs table on the Hyper IDE documentation page mirrors this list —
- * update it when this changes.
+ * The shortcuts that work everywhere live here. A feature's own shortcuts live
+ * in its folder and reach this list through its manifest, so they leave with it.
+ *
+ * The docs table on the Hyper IDE documentation page mirrors these lists —
+ * update it when they change.
  */
+import { features, type Shortcut } from './features';
 
-export interface Shortcut {
-  group: 'Global' | 'Editor' | 'Hyper IDE' | 'Web Designer';
-  // Human-readable combo, rendered as key chips split on " + ".
-  display: string;
-  // The macOS combo when it differs — Cmd for Ctrl, Opt for Alt, and the
-  // Fn dance macOS demands for Ctrl+Space and function keys.
-  mac?: string;
-  description: string;
-  // CodeMirror 6 key identifiers bound to this action, when it is an editor
-  // shortcut — several combos may share one action. CM6 spelling: single
-  // letters are lowercase, Escape is spelled out, and Mod- is Cmd on macOS
-  // and Ctrl everywhere else.
-  keys?: string[];
-  // Handler id CodeEditor resolves into a CodeMirror command or callback.
-  action?: string;
-}
+export type { Shortcut } from './features';
 
 export const SHORTCUTS: Shortcut[] = [
   {
@@ -36,12 +25,6 @@ export const SHORTCUTS: Shortcut[] = [
     display: 'Ctrl + /',
     mac: 'Cmd + /',
     description: 'Show this keyboard shortcut overview',
-  },
-  {
-    group: 'Global',
-    display: 'Ctrl + .',
-    mac: 'Cmd + .',
-    description: 'Toggle Chat Ops — talk to your cloudlet (requires an OpenAI API key)',
   },
   {
     group: 'Global',
@@ -117,137 +100,6 @@ export const SHORTCUTS: Shortcut[] = [
     keys: ['F1'],
     action: 'help',
   },
-  {
-    group: 'Hyper IDE',
-    display: 'Alt + A',
-    mac: 'Opt + A',
-    description: 'New file',
-    keys: ['Alt-a'],
-    action: 'newFile',
-  },
-  {
-    group: 'Hyper IDE',
-    display: 'Alt + B',
-    mac: 'Opt + B',
-    description: 'New folder',
-    keys: ['Alt-b'],
-    action: 'newFolder',
-  },
-  {
-    group: 'Hyper IDE',
-    display: 'Alt + R',
-    mac: 'Opt + R',
-    description: 'Rename the open file',
-    keys: ['Alt-r'],
-    action: 'renameFile',
-  },
-  {
-    group: 'Hyper IDE',
-    display: 'Alt + D',
-    mac: 'Opt + D',
-    description: 'Delete the open file',
-    keys: ['Alt-d'],
-    action: 'deleteFile',
-  },
-  {
-    group: 'Hyper IDE',
-    display: 'Alt + X',
-    mac: 'Opt + X',
-    description: 'Delete the active folder',
-    keys: ['Alt-x'],
-    action: 'deleteFolder',
-  },
-  {
-    group: 'Hyper IDE',
-    display: 'Alt + C',
-    mac: 'Opt + C',
-    description: 'Close the open file',
-    keys: ['Alt-c'],
-    action: 'close',
-  },
-  /*
-   * Not Ctrl+Tab, even though CodeMirror binds it happily (its keyNames maps
-   * keyCode 9 to "Tab"): Chrome has reserved Ctrl+Tab for its own tab cycling
-   * since Chrome 4 and never delivers it to the page, and Ctrl+PageUp,
-   * Ctrl+PageDown and Ctrl+1..9 are gone for the same reason. Only the
-   * fullscreen-only Keyboard Lock API can claim those back.
-   *
-   * And not Alt+N for "next", which is the obvious pick: on macOS Option+N is
-   * the tilde dead key — like Option+E, I, U and ` — so the OS swallows the
-   * keystroke waiting for the character to accent. F for "forward" instead.
-   */
-  {
-    group: 'Hyper IDE',
-    display: 'Alt + F',
-    mac: 'Opt + F',
-    description: 'Switch to the next open file',
-    keys: ['Alt-f'],
-    action: 'nextTab',
-  },
-  {
-    group: 'Hyper IDE',
-    display: 'Alt + P',
-    mac: 'Opt + P',
-    description: 'Switch to the previous open file',
-    keys: ['Alt-p'],
-    action: 'previousTab',
-  },
-  /*
-   * Web Designer binds these on the page itself rather than through a
-   * CodeMirror keymap, and they fire inside the canvas frame too — the frame
-   * is same-origin, so its key events are handled by the very same listener.
-   */
-  {
-    group: 'Web Designer',
-    display: 'Delete',
-    description: 'Remove the selected element',
-  },
-  {
-    group: 'Web Designer',
-    display: 'Esc',
-    description: 'Deselect',
-  },
-  {
-    group: 'Web Designer',
-    display: 'Ctrl + C',
-    mac: 'Cmd + C',
-    description: 'Copy the selected element or run of text',
-  },
-  {
-    group: 'Web Designer',
-    display: 'Ctrl + X',
-    mac: 'Cmd + X',
-    description: 'Cut the selection',
-  },
-  {
-    group: 'Web Designer',
-    display: 'Ctrl + V',
-    mac: 'Cmd + V',
-    description: 'Paste after the selection, or inside it when it is empty',
-  },
-  {
-    group: 'Web Designer',
-    display: 'Ctrl + Z',
-    mac: 'Cmd + Z',
-    description: 'Undo the last design change',
-  },
-  {
-    group: 'Web Designer',
-    display: 'Ctrl + Shift + Z',
-    mac: 'Cmd + Shift + Z',
-    description: 'Redo the change that was undone',
-  },
-  {
-    group: 'Web Designer',
-    display: 'Ctrl + S',
-    mac: 'Cmd + S',
-    description: 'Save the page, and its stylesheet when it changed',
-  },
-  {
-    group: 'Web Designer',
-    display: 'Double click',
-    description: 'Edit the text of an element that holds nothing but text',
-  },
 ];
 
 /*
@@ -269,4 +121,9 @@ export const isMac = detectMac();
 
 export function shortcutDisplay(shortcut: Shortcut): string {
   return isMac && shortcut.mac ? shortcut.mac : shortcut.display;
+}
+
+// The core shortcuts followed by those of every registered feature.
+export function allShortcuts(): Shortcut[] {
+  return [...SHORTCUTS, ...features().flatMap(feature => feature.shortcuts?.entries ?? [])];
 }

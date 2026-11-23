@@ -6,10 +6,9 @@
  * navigate, so palette jumps respect unsaved-changes guards like nav clicks.
  */
 
-import { apiBaseUrl, listEndpoints, listFilesRecursively, listTasks, mlTypes } from '@core/api';
+import { apiBaseUrl } from '@core/api';
+import { featureHref, features, type PaletteEntry } from '@core/features';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-
-import { SECTIONS } from './sections';
 
 export interface PaletteCommand {
   group: string;
@@ -22,20 +21,11 @@ export interface PaletteCommand {
 }
 
 /*
- * The dynamic entries, fetched once per backend on first open and cached —
- * the palette must feel instant the second time. A failed source contributes
- * nothing rather than breaking the palette.
+ * The dynamic entries every feature contributes, fetched once per backend on first open and
+ * cached — the palette must feel instant the second time. A failed source contributes nothing
+ * rather than breaking the palette.
  */
-interface DynamicCommand {
-  group: string;
-  label: string;
-  hint?: string;
-  // HTTP verb, rendered as the Endpoints page's coloured badge.
-  verb?: string;
-  to: string;
-}
-
-let dynamicCache: { from: string; commands: DynamicCommand[] } | null = null;
+let dynamicCache: { from: string; commands: PaletteEntry[] } | null = null;
 
 /*
  * The last filter, kept for the session so reopening the palette resumes
@@ -44,69 +34,17 @@ let dynamicCache: { from: string; commands: DynamicCommand[] } | null = null;
  */
 let lastQuery = '';
 
-async function loadDynamic(): Promise<DynamicCommand[]> {
+async function loadDynamic(): Promise<PaletteEntry[]> {
   if (dynamicCache?.from === apiBaseUrl()) {
     return dynamicCache.commands;
   }
-  const [endpoints, moduleFiles, wwwFiles, tasks, models] = await Promise.all([
-    listEndpoints().catch(() => []),
-    listFilesRecursively('/modules/', false).catch(() => []),
-    listFilesRecursively('/etc/', false).catch(() => []),
-    listTasks(0, -1).catch(() => []),
-    mlTypes().catch(() => []),
-  ]);
-  const commands = [
-    ...endpoints.map(endpoint => ({
-      group: 'Endpoints',
-      label: endpoint.path,
-      verb: endpoint.verb.toUpperCase(),
-      // The verb travels along, so the Endpoints page can expand and scroll
-      // to the exact row rather than just filtering to it.
-      to:
-        '/endpoints?filter=' +
-        encodeURIComponent(endpoint.path) +
-        '&expand=' +
-        encodeURIComponent(endpoint.verb),
-    })),
-    ...[...moduleFiles, ...wwwFiles].map(file => ({
-      group: 'Files',
-      label: file,
-      to: '/hyper-ide?open=' + encodeURIComponent(file),
-    })),
-    // Both of these open their editor on arrival, the same way endpoints
-    // expand their row — picking a name here means you wanted that one thing,
-    // not the list it lives in. Tasks also filter, so closing the editor
-    // leaves the row you came for on screen rather than page one.
-    ...(tasks ?? []).map(task => ({
-      group: 'Tasks',
-      label: task.id,
-      hint: task.description ?? undefined,
-      to:
-        '/task-manager?edit=' +
-        encodeURIComponent(task.id) +
-        '&filter=' +
-        encodeURIComponent(task.id),
-    })),
-    /*
-     * Two ways in per model, told apart by their group rather than by a
-     * decorated label — the name you are searching for stays the thing you
-     * read, under a heading that says what happens when you pick it.
-     */
-    ...(models ?? []).flatMap(model => [
-      {
-        group: 'Models',
-        label: model.type,
-        hint: 'Edit model',
-        to: '/machine-learning?tab=types&edit=' + encodeURIComponent(model.type),
-      },
-      {
-        group: 'Training data',
-        label: model.type,
-        hint: 'Training snippets for this model',
-        to: '/machine-learning?tab=training&type=' + encodeURIComponent(model.type),
-      },
-    ]),
-  ];
+  const sources = await Promise.all(
+    features().map(feature => {
+      const entries = feature.palette?.entries;
+      return entries ? entries().catch((): PaletteEntry[] => []) : Promise.resolve([]);
+    }),
+  );
+  const commands = sources.flat();
   dynamicCache = { from: apiBaseUrl(), commands };
   return commands;
 }
@@ -183,7 +121,7 @@ export default function CommandPalette(
 ) {
   const [query, setQuery] = useState(lastQuery);
   const [selected, setSelected] = useState(0);
-  const [dynamic, setDynamic] = useState<DynamicCommand[]>([]);
+  const [dynamic, setDynamic] = useState<PaletteEntry[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -213,16 +151,23 @@ export default function CommandPalette(
   const { go, actions } = props;
   const commands: PaletteCommand[] = useMemo(
     () => [
-      ...SECTIONS.map(section => ({
-        group: 'Go to',
-        label: section.label,
-        action: () => go(section.to),
-      })),
+      ...features().flatMap(feature =>
+        feature.nav && feature.path !== undefined
+          ? [{ group: 'Go to', label: feature.nav.label, action: () => go(feature.path!) }]
+          : [],
+      ),
       ...actions.map(entry => ({
         group: 'Actions',
         label: entry.label,
         action: entry.action,
       })),
+      ...features().flatMap(feature =>
+        (feature.palette?.links ?? []).map(link => ({
+          group: 'Actions',
+          label: link.label,
+          action: () => go(featureHref(feature.id, link.to)!),
+        })),
+      ),
       ...dynamic.map(entry => ({
         group: entry.group,
         label: entry.label,

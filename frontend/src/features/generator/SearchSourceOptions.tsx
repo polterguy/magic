@@ -1,3 +1,4 @@
+import { featureHref } from '@core/features';
 import Select from '@shared/ui/Select';
 import { Link } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ import { SearchTabState } from './hooks/useSearchTab';
  * each match returns.
  */
 export default function SearchSourceOptions({ search }: Readonly<{ search: SearchTabState }>) {
+  const mlHref = featureHref('ml');
   const {
     verb,
     setVerb,
@@ -62,7 +64,12 @@ export default function SearchSourceOptions({ search }: Readonly<{ search: Searc
         {typesLoaded && types.length === 0 ? (
           <span className="muted">
             No machine learning types yet.{' '}
-            <Link to="/machine-learning">Create one in Machine Learning</Link> first.
+            {mlHref === null ? (
+              'Create one in Machine Learning'
+            ) : (
+              <Link to={mlHref}>Create one in Machine Learning</Link>
+            )}{' '}
+            first.
           </span>
         ) : (
           <div className="crud-opt-inline">

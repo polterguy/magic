@@ -4,9 +4,10 @@
  * client-side loop — feed it directly, without a socket in between.
  */
 
-import Banner from '@shared/ui/Banner';
-import { Modal } from '@shared/ui/Dialogs';
 import { ReactNode, useEffect, useRef } from 'react';
+
+import Banner from './Banner';
+import { Modal } from './Dialogs';
 
 export interface ProgressLine {
   // information | error | warning | success — the terminal-line colours.

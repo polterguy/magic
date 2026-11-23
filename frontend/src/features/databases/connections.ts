@@ -27,9 +27,9 @@ export function statusBadge(status: string) {
   return 'badge ' + (STATUS_BADGES[status] ?? 'badge-debug');
 }
 
-// SQL Studio deep link, consumed once by its database selection.
-export function sqlStudioUrl(type: string, connectionString: string, database: string) {
-  return '/sql-studio?dbType=' + type + '&dbCString=' + connectionString + '&dbName=' + database;
+// SQL Studio deep link suffix, consumed once by its database selection.
+export function sqlStudioQuery(type: string, connectionString: string, database: string) {
+  return '?dbType=' + type + '&dbCString=' + connectionString + '&dbName=' + database;
 }
 
 // Every external connection string in the config, each still to be tested.

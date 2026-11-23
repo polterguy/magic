@@ -1,3 +1,5 @@
+import { featureHref } from '@core/features';
+import ProgressDialog from '@shared/ui/ProgressDialog';
 import { TableSkeleton } from '@shared/ui/Skeleton';
 import { Link } from 'react-router-dom';
 
@@ -6,11 +8,11 @@ import CrudTablePicker from './CrudTablePicker';
 import DatabaseSelectors from './DatabaseSelectors';
 import DonePanel from './DonePanel';
 import { useCrudTab } from './hooks/useCrudTab';
-import ProgressDialog from './ProgressDialog';
 import WizardSteps from './WizardSteps';
 
 // The CRUD backend generator: pick a database's tables, and crudify every verb of each.
 export default function CrudTab(props: Readonly<{ guided: boolean }>) {
+  const databasesHref = featureHref('databases');
   const crud = useCrudTab(props.guided);
   const {
     selection,
@@ -48,8 +50,13 @@ export default function CrudTab(props: Readonly<{ guided: boolean }>) {
         !selection.loading &&
         !selection.databasesMeta.some(db => db.name !== 'magic') && (
           <div className="info-box" style={{ marginBottom: 12 }}>
-            No database of your own yet — <Link to="/databases">create or connect one</Link> first,
-            then come back here.
+            No database of your own yet —{' '}
+            {databasesHref === null ? (
+              'create or connect one'
+            ) : (
+              <Link to={databasesHref}>create or connect one</Link>
+            )}{' '}
+            first, then come back here.
           </div>
         )}
       <div className="toolbar">

@@ -1,3 +1,4 @@
+import { featureHref } from '@core/features';
 import { Link } from 'react-router-dom';
 
 import WizardSteps from './WizardSteps';
@@ -11,6 +12,8 @@ export default function DonePanel(
   }>,
 ) {
   const { done, auth } = props;
+  const endpointsHref = featureHref('endpoints', '?filter=' + encodeURIComponent(done.module));
+  const usersHref = featureHref('users');
   return (
     <>
       <WizardSteps step={3} />
@@ -27,12 +30,16 @@ export default function DonePanel(
           .
         </p>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <Link className="btn" to={'/endpoints?filter=' + encodeURIComponent(done.module)}>
-            Try your endpoints
-          </Link>
-          <Link className="btn btn-secondary" to="/user-roles-management">
-            Manage users and roles
-          </Link>
+          {endpointsHref !== null && (
+            <Link className="btn" to={endpointsHref}>
+              Try your endpoints
+            </Link>
+          )}
+          {usersHref !== null && (
+            <Link className="btn btn-secondary" to={usersHref}>
+              Manage users and roles
+            </Link>
+          )}
           <button className="btn btn-secondary" onClick={props.onMore}>
             Generate more
           </button>

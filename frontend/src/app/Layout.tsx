@@ -1,12 +1,11 @@
-import { openaiIsConfigured } from '@core/api';
+import { featureHref, features } from '@core/features';
 import { getNavGuard, setNavGuard } from '@core/navGuard';
-import { canRunDashboardTour, runDashboardTour, setShellActions } from '@core/shellActions';
+import { registerShellAction, useShellContributions } from '@core/shellActions';
 import { createSocket } from '@core/socket';
 import { openSupport } from '@core/support';
 import { applyTheme, getTheme } from '@core/theme';
 import { setToastListener } from '@core/toast';
 import { useAuth } from '@core/useAuth';
-import ChatDrawer from '@features/chat/ChatDrawer';
 import {
   ChevronIcon,
   DatabaseIcon,
@@ -14,41 +13,35 @@ import {
   KeyboardIcon,
   LogoutIcon,
   MoonIcon,
-  RobotIcon,
   SearchIcon,
   SunIcon,
 } from '@shared/ui/Icons';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import BackendsDialog from './BackendsDialog';
 import CommandPalette from './CommandPalette';
-import { SECTIONS } from './sections';
 import ShortcutsDialog from './ShortcutsDialog';
-
-/*
- * Pages made of lists and tables. On very wide screens their rows stretch too
- * far to scan, so the content area takes in its sides, as the dashboard does.
- * Profile too, so its cards line up with them. Workspaces (SQL Studio, Hyper IDE,
- * Web Designer, Playground) keep every pixel.
- */
-const ROOMY_PAGES = new Set([
-  '/databases',
-  '/generator',
-  '/endpoints',
-  '/user-roles-management',
-  '/task-manager',
-  '/machine-learning',
-  '/plugins',
-  '/log',
-  '/user-profile',
-]);
 
 export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
   const { backend, logout, backends, version } = useAuth();
   const [switching, setSwitching] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const registered = features();
+  const navigation = registered.flatMap(feature =>
+    feature.nav && feature.path !== undefined ? [{ ...feature.nav, path: feature.path }] : [],
+  );
+  /*
+   * Pages made of lists and tables say so in their manifest. On very wide screens their rows
+   * stretch too far to scan, so the content area takes in its sides. Workspaces (SQL Studio,
+   * Hyper IDE, Web Designer, Playground) keep every pixel.
+   */
+  const roomy = registered.some(feature => feature.roomy && feature.path === pathname);
+  const shells = registered.flatMap(feature =>
+    feature.shell ? [{ id: feature.id, Shell: feature.shell }] : [],
+  );
+  const profileHref = featureHref('profile');
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem('magic2.navCollapsed') === 'true',
   );
@@ -109,19 +102,7 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
    */
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  /*
-   * The chat drawer only exists when the backend has an OpenAI API key —
-   * without one the "default" model cannot answer, so the whole surface
-   * (button, shortcut and palette entry) stays hidden.
-   */
-  const [chatAvailable, setChatAvailable] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
-  const refreshChat = useCallback(() => {
-    openaiIsConfigured()
-      .then(response => setChatAvailable(!!response.result))
-      .catch(() => {});
-  }, []);
-  useEffect(refreshChat, [refreshChat]);
+  const { paletteActions, footerActions } = useShellContributions();
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -132,25 +113,14 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
         event.preventDefault();
         event.stopPropagation();
         setShortcutsOpen(open => !open);
-      } else if ((event.metaKey || event.ctrlKey) && event.key === '.') {
-        event.preventDefault();
-        event.stopPropagation();
-        setChatOpen(open => !open);
       }
     }
     globalThis.addEventListener('keydown', onKey, true);
     return () => globalThis.removeEventListener('keydown', onKey, true);
   }, []);
 
-  // Lets the pages below open the overlays this component owns.
-  useEffect(() => {
-    setShellActions({
-      openPalette: () => setPaletteOpen(true),
-      openChatOps: () => setChatOpen(true),
-      refreshChat,
-    });
-    return () => setShellActions(null);
-  }, [refreshChat]);
+  // Lets the pages below open the palette this component owns.
+  useEffect(() => registerShellAction('openPalette', () => setPaletteOpen(true)), []);
 
   /*
    * App-wide socket channel the backend pushes notifications through —
@@ -225,6 +195,13 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
     };
   }, [backendUrl, backendToken, pushToast]);
 
+  const backendInfo = (
+    <>
+      <div className="backend-user">{backend?.username}</div>
+      <div className="backend-url">{backend?.url.replace(/^https?:\/\//, '')}</div>
+    </>
+  );
+
   return (
     <div className={'shell' + (mobileNav ? ' nav-open' : '')}>
       {/* Phone-only top bar: the hamburger opens the drawer. Hidden on desktop. */}
@@ -259,53 +236,57 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
           <span className="brand-version">{version}</span>
         </div>
         <nav>
-          {SECTIONS.map(section => (
+          {navigation.map(({ path, label, Icon }) => (
             <NavLink
-              key={section.to}
-              to={section.to}
-              end={section.to === '/'}
+              key={path}
+              to={path}
+              end={path === '/'}
               onClick={event => {
-                onNavClick(event, section.to);
+                onNavClick(event, path);
                 setMobileNav(false);
               }}
               className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
             >
               <span className="nav-icon">
-                <section.Icon />
+                <Icon />
               </span>
-              {section.label}
+              {label}
             </NavLink>
           ))}
         </nav>
         <div className="sidebar-footer">
-          <NavLink
-            to="/user-profile"
-            className="backend-info"
-            style={{ textDecoration: 'none', color: 'inherit' }}
-            title="Your profile"
-            onClick={() => setMobileNav(false)}
-          >
-            <div className="backend-user">{backend?.username}</div>
-            <div className="backend-url">{backend?.url.replace(/^https?:\/\//, '')}</div>
-          </NavLink>
+          {profileHref === null ? (
+            <div className="backend-info">{backendInfo}</div>
+          ) : (
+            <NavLink
+              to={profileHref}
+              className="backend-info"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+              title="Your profile"
+              onClick={() => setMobileNav(false)}
+            >
+              {backendInfo}
+            </NavLink>
+          )}
           {/*
            * Tools (find, learn, ask), then environment (theme, cloudlet),
            * and logout isolated last — the one session-ending button never
            * sits between two casually-clicked ones.
            */}
           <div className="footer-actions">
-            {chatAvailable && (
+            {footerActions.map(({ id, title, Icon, onClick }) => (
               <button
+                key={id}
                 className="btn btn-ghost btn-small"
-                title="Chat Ops — talk to your cloudlet (Ctrl+. / Cmd+.)"
+                title={title}
                 onClick={() => {
-                  setChatOpen(open => !open);
+                  onClick();
                   setMobileNav(false);
                 }}
               >
-                <RobotIcon />
+                <Icon />
               </button>
-            )}
+            ))}
             <button
               className="btn btn-ghost btn-small"
               title="Command palette — jump to any page, file or endpoint (Ctrl+K / Cmd+K)"
@@ -364,17 +345,11 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
         <CommandPalette
           go={go}
           actions={[
-            ...(chatAvailable
-              ? [{ label: 'Chat with your cloudlet', action: () => setChatOpen(true) }]
-              : []),
-            // Only offered while the Dashboard is mounted to receive it.
-            ...(canRunDashboardTour()
-              ? [{ label: 'Show the dashboard tour', action: runDashboardTour }]
-              : []),
+            // What features offer while they are mounted — Chat Ops, the dashboard's tour.
+            ...paletteActions,
             { label: 'Toggle light/dark theme', action: toggleTheme },
             { label: 'Switch cloudlet', action: () => setSwitching(true) },
             { label: 'Ask Frank for help', action: () => void openSupport() },
-            { label: 'Create an API from your data', action: () => go('/generator?guided=1') },
             { label: 'Keyboard shortcuts', action: () => setShortcutsOpen(true) },
           ]}
           onClose={() => setPaletteOpen(false)}
@@ -396,17 +371,13 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
           <ChevronIcon />
         </span>
       </button>
-      <main className={ROOMY_PAGES.has(pathname) ? 'content content-roomy' : 'content'}>
-        {children}
-      </main>
-      {/* Mounted while closed too — the conversation survives closing it. */}
-      {chatAvailable && (
-        <ChatDrawer
-          open={chatOpen}
-          userId={backend?.username ?? 'root'}
-          onClose={() => setChatOpen(false)}
-        />
-      )}
+      <main className={roomy ? 'content content-roomy' : 'content'}>{children}</main>
+      {/* What features keep alive across pages, such as the Chat Ops drawer. */}
+      <Suspense fallback={null}>
+        {shells.map(({ id, Shell }) => (
+          <Shell key={id} />
+        ))}
+      </Suspense>
       {toasts.length > 0 && (
         /*
          * The app's only feedback channel, so screen readers must hear it —
@@ -421,9 +392,12 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
             >
               <span>
                 {toast.text}
-                {toast.logId && (
+                {toast.logId && featureHref('log') !== null && (
                   // Backend errors carry the id of the log entry they wrote.
-                  <Link to={'/log?id=' + toast.logId} onClick={() => dismissToast(toast.id)}>
+                  <Link
+                    to={featureHref('log', '?id=' + toast.logId)!}
+                    onClick={() => dismissToast(toast.id)}
+                  >
                     View log entry →
                   </Link>
                 )}

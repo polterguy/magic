@@ -7,6 +7,7 @@ import './styles.css';
 
 import { AuthProvider } from '@core/AuthContext';
 import { showError } from '@core/errors';
+import { registerFeatures } from '@core/features';
 import { initFont } from '@core/font';
 import { initTheme } from '@core/theme';
 import { DialogProvider } from '@shared/ui/Dialogs';
@@ -15,7 +16,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
+import { discoverFeatures } from './registry';
 
+registerFeatures(discoverFeatures());
 initTheme();
 initFont();
 

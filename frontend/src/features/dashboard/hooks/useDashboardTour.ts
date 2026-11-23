@@ -1,4 +1,4 @@
-import { setDashboardTourRunner } from '@core/shellActions';
+import { addPaletteAction } from '@core/shellActions';
 import { useEffect, useState } from 'react';
 
 /*
@@ -33,11 +33,12 @@ export function useDashboardTour(
     setTour('dashboard');
   }
 
-  // Re-runnable on demand, from the command palette.
-  useEffect(() => {
-    setDashboardTourRunner(() => setTour('dashboard'));
-    return () => setDashboardTourRunner(null);
-  }, []);
+  // Re-runnable on demand, from the command palette, for as long as the dashboard is showing.
+  useEffect(
+    () =>
+      addPaletteAction({ label: 'Show the dashboard tour', action: () => setTour('dashboard') }),
+    [],
+  );
 
   function closeTour(completed: boolean) {
     /*

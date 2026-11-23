@@ -2,13 +2,15 @@
 /*
  * The app's routing gates, in the order they apply: a magic link before anything, then login,
  * then the root-only check, then first-time setup, and only then the layout with its routes.
- * Every page is replaced by a stub, so what is asserted is which one the app chooses.
+ * Every page is replaced by a stub, and the features by stand-ins, so what is asserted is which
+ * one the app chooses.
  */
+import { type FeatureManifest, features, registerFeatures } from '@core/features';
 import { AuthContext, type AuthState } from '@core/useAuth';
 import { render, screen } from '@testing-library/react';
-import { useEffect } from 'react';
+import { lazy, useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fakeAuth, TEST_BACKEND } from '../../test/renderPage';
 import App from '../App';
@@ -35,21 +37,30 @@ vi.mock('../Layout', () => ({
     return <div data-testid="layout">{children}</div>;
   },
 }));
-vi.mock('@features/dashboard/Dashboard', () => stub('dashboard'));
-vi.mock('@features/playground/Playground', () => stub('playground'));
-vi.mock('@features/files/Files', () => stub('files'));
-vi.mock('@features/designer/WebDesigner', () => stub('web-designer'));
-vi.mock('@features/sql/Sql', () => stub('sql'));
-vi.mock('@features/databases/Databases', () => stub('databases'));
-vi.mock('@features/configuration/Configuration', () => stub('configuration'));
-vi.mock('@features/profile/Profile', () => stub('profile'));
-vi.mock('@features/ml/MachineLearning', () => stub('machine-learning'));
-vi.mock('@features/plugins/Plugins', () => stub('plugins'));
-vi.mock('@features/generator/Generator', () => stub('generator'));
-vi.mock('@features/endpoints/Endpoints', () => stub('endpoints'));
-vi.mock('@features/users/Users', () => stub('users'));
-vi.mock('@features/tasks/Tasks', () => stub('tasks'));
-vi.mock('@features/log/Log', () => stub('log'));
+/*
+ * Stand-in features, so the routing is tested without the real ones. Each page renders its id;
+ * the last one has no page, which must not produce a route.
+ */
+function standIn(id: string, path: string): FeatureManifest {
+  return {
+    id,
+    path,
+    page: lazy(() => Promise.resolve(stub(id))),
+  };
+}
+const FEATURES: FeatureManifest[] = [
+  standIn('dashboard', '/'),
+  standIn('sql', '/sql-studio'),
+  standIn('log', '/log'),
+  { id: 'shell-only' },
+];
+
+let realFeatures: readonly FeatureManifest[] = [];
+beforeAll(() => {
+  realFeatures = features();
+  registerFeatures(FEATURES);
+});
+afterAll(() => registerFeatures([...realFeatures]));
 
 beforeEach(() => {
   mounts.layout = 0;
@@ -116,19 +127,7 @@ describe('App gates', () => {
 describe('App routes behind the gates', () => {
   const ROUTES: [string, string][] = [
     ['/', 'dashboard'],
-    ['/hyperlambda-playground', 'playground'],
-    ['/hyper-ide', 'files'],
-    ['/web-designer', 'web-designer'],
     ['/sql-studio', 'sql'],
-    ['/databases', 'databases'],
-    ['/generator', 'generator'],
-    ['/endpoints', 'endpoints'],
-    ['/user-roles-management', 'users'],
-    ['/task-manager', 'tasks'],
-    ['/configuration', 'configuration'],
-    ['/user-profile', 'profile'],
-    ['/machine-learning', 'machine-learning'],
-    ['/plugins', 'plugins'],
     ['/log', 'log'],
   ];
 

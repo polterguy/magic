@@ -50,7 +50,7 @@ import {
   tooltips,
 } from '@codemirror/view';
 import { apiBaseUrl, http } from '@core/api';
-import { SHORTCUTS } from '@core/shortcuts';
+import { allShortcuts } from '@core/shortcuts';
 import { tags } from '@lezer/highlight';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
@@ -433,7 +433,7 @@ export default function CodeEditor(props: Readonly<CodeEditorProps>) {
     // The registry already uses CM6 key names (lowercase letters, 'Escape',
     // 'Mod-' for the Cmd/Ctrl combo), so bindings are taken verbatim.
     const bindings: { key: string; run: (view: EditorView) => boolean }[] = [];
-    for (const shortcut of SHORTCUTS) {
+    for (const shortcut of allShortcuts()) {
       if (!shortcut.action || !shortcut.keys) {
         continue;
       }

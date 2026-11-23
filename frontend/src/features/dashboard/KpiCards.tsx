@@ -1,3 +1,4 @@
+import { featureHref } from '@core/features';
 import { ClockIcon, ExchangeIcon, EyeIcon, ListIcon, UserIcon } from '@shared/ui/Icons';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
@@ -7,7 +8,8 @@ import { MCP_ENDPOINT_WARNING } from './constants';
 // One count in the strip — the whole tile is the link to its page.
 function Kpi(
   props: Readonly<{
-    to: string;
+    // The page the tile opens, or null when that feature is not part of this build.
+    to: string | null;
     icon: ReactNode;
     label: string;
     value: number | null;
@@ -15,8 +17,9 @@ function Kpi(
     warning?: { title: string; onClick: () => void };
   }>,
 ) {
-  return (
-    <Link className={props.warn ? 'card kpi-link kpi-warn' : 'card kpi-link'} to={props.to}>
+  const className = props.warn ? 'card kpi-link kpi-warn' : 'card kpi-link';
+  const content = (
+    <>
       <span className="kpi-icon" aria-hidden="true">
         {props.icon}
       </span>
@@ -36,6 +39,13 @@ function Kpi(
           !
         </button>
       )}
+    </>
+  );
+  return props.to === null ? (
+    <div className={className}>{content}</div>
+  ) : (
+    <Link className={className} to={props.to}>
+      {content}
     </Link>
   );
 }
@@ -57,7 +67,7 @@ export default function KpiCards(
   return (
     <div className="kpi-grid">
       <Kpi
-        to="/endpoints"
+        to={featureHref('endpoints')}
         icon={<ExchangeIcon />}
         label="Endpoints"
         value={props.endpoints}
@@ -72,7 +82,7 @@ export default function KpiCards(
         }
       />
       <Kpi
-        to="/endpoints?publicOnly=1"
+        to={featureHref('endpoints', '?publicOnly=1')}
         icon={<EyeIcon />}
         label="Public endpoints"
         value={props.publicEndpoints}
@@ -86,9 +96,9 @@ export default function KpiCards(
             : undefined
         }
       />
-      <Kpi to="/user-roles-management" icon={<UserIcon />} label="Users" value={props.users} />
-      <Kpi to="/task-manager" icon={<ClockIcon />} label="Tasks" value={props.tasks} />
-      <Kpi to="/log" icon={<ListIcon />} label="Log items" value={props.logItems} />
+      <Kpi to={featureHref('users')} icon={<UserIcon />} label="Users" value={props.users} />
+      <Kpi to={featureHref('tasks')} icon={<ClockIcon />} label="Tasks" value={props.tasks} />
+      <Kpi to={featureHref('log')} icon={<ListIcon />} label="Log items" value={props.logItems} />
     </div>
   );
 }

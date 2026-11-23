@@ -3,7 +3,7 @@
  * useDashboardTour: the tour offers itself once per backend when the flags it depends on have
  * resolved, only a completed tour is remembered, and the command palette can re-run it.
  */
-import { canRunDashboardTour, runDashboardTour } from '@core/shellActions';
+import { shellContributions } from '@core/shellActions';
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 
@@ -83,15 +83,17 @@ describe('closing', () => {
 });
 
 describe('re-running', () => {
-  it('registers a runner the command palette can call, and removes it on unmount', () => {
+  it('offers the command palette an action to run it, and withdraws it on unmount', () => {
     localStorage.setItem(KEY, '1');
     const { result, unmount } = renderHook(() => useDashboardTour(...ready));
-    expect(canRunDashboardTour()).toBe(true);
+    const tourAction = () =>
+      shellContributions().paletteActions.find(entry => entry.label === 'Show the dashboard tour');
+    expect(tourAction()).toBeDefined();
     expect(result.current.tour).toBeNull();
-    act(() => runDashboardTour());
+    act(() => tourAction()!.action());
     expect(result.current.tour).toBe('dashboard');
     unmount();
-    expect(canRunDashboardTour()).toBe(false);
+    expect(tourAction()).toBeUndefined();
   });
 
   it('can switch to the chatbot tour', () => {

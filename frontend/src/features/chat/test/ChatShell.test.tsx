@@ -1,0 +1,118 @@
+// @vitest-environment jsdom
+/*
+ * Chat Ops in the layout: nothing at all without an OpenAI key, and with one a drawer mounted
+ * closed for the signed-in user, a footer button, a palette action and Ctrl/Cmd+. to toggle it,
+ * plus the shell actions pages use to open it and to ask it to check the key again.
+ */
+import * as api from '@core/api';
+import { openChatOps, refreshChat, shellContributions } from '@core/shellActions';
+import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { renderPage } from '../../../test/renderPage';
+import ChatShell from '../ChatShell';
+
+vi.mock('@core/api', async importOriginal =>
+  (await import('../../../test/apiMock')).mockApi(await importOriginal()),
+);
+vi.mock('../ChatDrawer', () => ({
+  default: (props: { open: boolean; userId: string; onClose: () => void }) => (
+    <div data-testid="chat" data-open={String(props.open)} data-user={props.userId}>
+      <button onClick={props.onClose}>close chat</button>
+    </div>
+  ),
+}));
+
+const mocked = vi.mocked(api);
+
+const footerButton = () => shellContributions().footerActions.find(entry => entry.id === 'chat');
+const paletteAction = () =>
+  shellContributions().paletteActions.find(entry => entry.label === 'Chat with your cloudlet');
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  mocked.openaiIsConfigured.mockResolvedValue({ result: false });
+});
+
+describe('without an OpenAI key', () => {
+  it('has no drawer, button, palette action or shortcut', async () => {
+    renderPage(<ChatShell />);
+    await waitFor(() => expect(mocked.openaiIsConfigured).toHaveBeenCalled());
+    expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
+    expect(footerButton()).toBeUndefined();
+    expect(paletteAction()).toBeUndefined();
+    await userEvent.keyboard('{Control>}.{/Control}');
+    expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
+  });
+
+  it('stays hidden when the availability check fails', async () => {
+    mocked.openaiIsConfigured.mockRejectedValue(new Error('403'));
+    renderPage(<ChatShell />);
+    await waitFor(() => expect(mocked.openaiIsConfigured).toHaveBeenCalled());
+    expect(screen.queryByTestId('chat')).not.toBeInTheDocument();
+  });
+
+  it('appears once a key is added, without reloading the page', async () => {
+    renderPage(<ChatShell />);
+    await waitFor(() => expect(mocked.openaiIsConfigured).toHaveBeenCalled());
+    mocked.openaiIsConfigured.mockResolvedValue({ result: true });
+    act(() => refreshChat());
+    expect(await screen.findByTestId('chat')).toBeInTheDocument();
+    await userEvent.keyboard('{Control>}.{/Control}');
+    expect(screen.getByTestId('chat')).toHaveAttribute('data-open', 'true');
+  });
+});
+
+describe('with an OpenAI key', () => {
+  beforeEach(() => {
+    mocked.openaiIsConfigured.mockResolvedValue({ result: true });
+  });
+
+  it('mounts the drawer closed for the signed-in user, and Ctrl+. and close toggle it', async () => {
+    renderPage(<ChatShell />);
+    const chat = await screen.findByTestId('chat');
+    expect(chat).toHaveAttribute('data-open', 'false');
+    expect(chat).toHaveAttribute('data-user', 'root');
+    await userEvent.keyboard('{Control>}.{/Control}');
+    expect(chat).toHaveAttribute('data-open', 'true');
+    await userEvent.keyboard('{Meta>}.{/Meta}');
+    expect(chat).toHaveAttribute('data-open', 'false');
+    await userEvent.keyboard('{Control>}.{/Control}');
+    await userEvent.click(screen.getByRole('button', { name: 'close chat' }));
+    expect(chat).toHaveAttribute('data-open', 'false');
+  });
+
+  it('adds a footer button that toggles the drawer', async () => {
+    renderPage(<ChatShell />);
+    const chat = await screen.findByTestId('chat');
+    expect(footerButton()?.title).toMatch(/^Chat Ops/);
+    act(() => footerButton()!.onClick());
+    expect(chat).toHaveAttribute('data-open', 'true');
+    act(() => footerButton()!.onClick());
+    expect(chat).toHaveAttribute('data-open', 'false');
+  });
+
+  it('adds a palette action that opens the drawer', async () => {
+    renderPage(<ChatShell />);
+    const chat = await screen.findByTestId('chat');
+    act(() => paletteAction()!.action());
+    expect(chat).toHaveAttribute('data-open', 'true');
+  });
+
+  it('lets pages open it through the shell actions', async () => {
+    renderPage(<ChatShell />);
+    const chat = await screen.findByTestId('chat');
+    act(() => openChatOps());
+    expect(chat).toHaveAttribute('data-open', 'true');
+  });
+
+  it('withdraws everything it added once unmounted', async () => {
+    const view = renderPage(<ChatShell />);
+    await screen.findByTestId('chat');
+    view.unmount();
+    expect(footerButton()).toBeUndefined();
+    expect(paletteAction()).toBeUndefined();
+    expect(() => openChatOps()).not.toThrow();
+  });
+});
