@@ -1,9 +1,22 @@
 /// <reference types="vitest/config" />
+import { fileURLToPath } from 'node:url';
+
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+// One alias per layer, mirrored in tsconfig.json's paths. Imports that cross a layer use them.
+const layer = (name: string) => fileURLToPath(new URL(`./src/${name}`, import.meta.url));
+
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@app': layer('app'),
+      '@core': layer('core'),
+      '@shared': layer('shared'),
+      '@features': layer('features'),
+    },
+  },
   server: {
     port: 4201,
   },
