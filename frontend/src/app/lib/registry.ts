@@ -6,7 +6,7 @@
  */
 import type { FeatureManifest } from '@shared/shell/features';
 
-const modules = import.meta.glob<{ default: FeatureManifest }>('../features/*/index.ts', {
+const modules = import.meta.glob<{ default: FeatureManifest }>('../../features/*/index.ts', {
   eager: true,
 });
 
