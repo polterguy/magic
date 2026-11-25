@@ -153,4 +153,30 @@ describe('useSqlExecution', () => {
     // The failed statement is still in the history.
     expect(pushHistory).toHaveBeenCalledTimes(2);
   });
+
+  it('ignores a second run while one is still in flight', async () => {
+    let finish!: (rows: never) => void;
+    vi.mocked(sqlApi.executeSql).mockReturnValue(
+      new Promise(resolve => {
+        finish = resolve;
+      }),
+    );
+    const { result } = setup('select 1', { current: null });
+
+    let first!: Promise<void>;
+    act(() => {
+      first = result.current.execute();
+    });
+    expect(result.current.busy).toBe(true);
+    await act(() => result.current.execute());
+
+    expect(sqlApi.executeSql).toHaveBeenCalledTimes(1);
+    expect(pushHistory).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      finish([[{ a: 1 }]] as never);
+      await first;
+    });
+    expect(result.current.busy).toBe(false);
+  });
 });

@@ -87,6 +87,29 @@ describe('Sql', () => {
     expect(screen.getByText('1 rows')).toBeInTheDocument();
   });
 
+  it('covers the page with the waiter while a query runs', async () => {
+    let finish!: (rows: never) => void;
+    vi.mocked(sqlApi.executeSql).mockReturnValue(
+      new Promise(resolve => {
+        finish = resolve;
+      }),
+    );
+    const { container } = renderPage(<Sql />);
+    await screen.findByText('shop');
+
+    fireEvent.change(screen.getByLabelText('code editor text/x-sql'), {
+      target: { value: 'select * from products' },
+    });
+    await userEvent.click(screen.getByRole('button', { name: '▷ Run' }));
+
+    expect(container.querySelector('.ai-waiter')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Running…' })).toBeDisabled();
+
+    finish([[{ id: 1, title: 'Widget' }]] as never);
+    expect(await screen.findByText('Widget')).toBeInTheDocument();
+    expect(container.querySelector('.ai-waiter')).not.toBeInTheDocument();
+  });
+
   it('switches to the designer and lists the tables', async () => {
     await ready();
 

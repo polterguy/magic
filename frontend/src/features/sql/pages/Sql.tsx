@@ -142,7 +142,8 @@ export default function Sql() {
         </>
       )}
       {view === 'sql' && <SqlResults result={execution.result} />}
-      {(waiting || generator.generating) && <AiWaiter />}
+      {/* Long-running queries get the same waiter as every other round-trip here. */}
+      {(waiting || generator.generating || execution.busy) && <AiWaiter />}
     </>
   );
 }
